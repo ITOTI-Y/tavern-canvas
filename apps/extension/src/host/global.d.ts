@@ -11,6 +11,7 @@ declare global {
       getContext(): SillyTavernContextSurface;
     };
     __TAURITAVERN__?: TauriTavernGlobalSurface;
+    __TAURITAVERN_MAIN_READY__?: Promise<void>;
   }
 }
 

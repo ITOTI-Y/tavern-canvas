@@ -43,10 +43,10 @@ export type HostWorldInfoActivationHandler = (
 export type TauriTavernHostUnsubscribe = () => void | Promise<void>;
 
 export interface TauriTavernWorldInfoSurface {
-  getLastActivation(): Promise<TauriWorldInfoActivationBatchSurface | null>;
+  getLastActivation(): Promise<unknown>;
   subscribeActivations(
-    handler: (batch: TauriWorldInfoActivationBatchSurface) => void,
-  ): Promise<TauriTavernHostUnsubscribe>;
+    handler: (batch: unknown) => void,
+  ): Promise<unknown>;
 }
 
 export type TauriChatSurfaceDisposer =
@@ -147,7 +147,7 @@ export interface TauriTavernChatSurfaceSurface {
   isManagedOwnershipRequired(): boolean;
   registerParticipant(
     participant: TauriTavernChatSurfaceParticipantSurface,
-  ): { readonly fault: (error: unknown) => void };
+  ): unknown;
 }
 
 export interface TauriTavernGlobalSurface {
@@ -160,18 +160,105 @@ export interface TauriTavernGlobalSurface {
 }
 
 export interface TauriDetectionGlobals {
-  readonly __TAURITAVERN__?: TauriTavernGlobalSurface | undefined;
+  readonly __TAURITAVERN__?: unknown;
+  readonly __TAURITAVERN_MAIN_READY__?: Promise<void> | undefined;
+}
+
+function is_record(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function read_property(
+  value: Record<string, unknown>,
+  property_name: string,
+): { readonly ok: true; readonly value: unknown } | { readonly ok: false } {
+  try {
+    return { ok: true, value: value[property_name] };
+  } catch {
+    return { ok: false };
+  }
+}
+
+export interface TauriTavernInspection {
+  readonly tauri_chat_surface: boolean;
+  readonly tauri_world_info_activation: boolean;
+}
+
+function has_function_property(
+  value: Record<string, unknown>,
+  property_name: string,
+): boolean {
+  const property = read_property(value, property_name);
+  return property.ok && typeof property.value === "function";
+}
+
+function read_record_property(
+  value: Record<string, unknown>,
+  property_name: string,
+): Record<string, unknown> | undefined {
+  const property = read_property(value, property_name);
+  return property.ok && is_record(property.value) ? property.value : undefined;
+}
+
+export function inspect_tauritavern(value: unknown): TauriTavernInspection {
+  const unavailable: TauriTavernInspection = {
+    tauri_chat_surface: false,
+    tauri_world_info_activation: false,
+  };
+  if (!is_record(value)) {
+    return unavailable;
+  }
+  const abi_version = read_property(value, "abiVersion");
+  if (!abi_version.ok || abi_version.value !== 1) {
+    return unavailable;
+  }
+  const api = read_record_property(value, "api");
+  if (api === undefined) {
+    return unavailable;
+  }
+
+  const chat_surface = read_record_property(api, "chatSurface");
+  const chat_protocol =
+    chat_surface === undefined
+      ? { ok: false as const }
+      : read_property(chat_surface, "protocolVersion");
+  const world_info = read_record_property(api, "worldInfo");
+  return {
+    tauri_chat_surface:
+      chat_surface !== undefined &&
+      chat_protocol.ok &&
+      chat_protocol.value === 1 &&
+      has_function_property(chat_surface, "isManagedOwnershipRequired") &&
+      has_function_property(chat_surface, "registerParticipant"),
+    tauri_world_info_activation:
+      world_info !== undefined &&
+      has_function_property(world_info, "getLastActivation") &&
+      has_function_property(world_info, "subscribeActivations"),
+  };
 }
 
 function normalize_disposer(
-  disposer: void | TauriChatSurfaceDisposer,
+  disposer: unknown,
+  allow_undefined = true,
 ): void | (() => void) {
-  if (disposer === undefined) {
+  if (disposer === undefined && allow_undefined) {
     return undefined;
   }
 
-  const dispose =
-    typeof disposer === "function" ? disposer : () => disposer.dispose();
+  let dispose: () => void;
+  if (typeof disposer === "function") {
+    dispose = () => Reflect.apply(disposer, undefined, []);
+  } else if (is_record(disposer)) {
+    const dispose_method = read_property(disposer, "dispose");
+    if (!dispose_method.ok || typeof dispose_method.value !== "function") {
+      throw new Error("TauriTavern returned an invalid ChatSurface disposer");
+    }
+    const dispose_function = dispose_method.value;
+    dispose = () => Reflect.apply(dispose_function, disposer, []);
+  } else {
+    throw new Error("TauriTavern returned an invalid ChatSurface disposer");
+  }
+
   let disposed = false;
   return () => {
     if (disposed) {
@@ -193,19 +280,76 @@ function normalize_mounted_context(
   };
 }
 
-function normalize_activation(
-  batch: TauriWorldInfoActivationBatchSurface,
-): HostWorldInfoActivationBatch {
+function is_activation_position(
+  value: unknown,
+): value is TauriWorldInfoActivationPosition {
+  return (
+    value === "before" ||
+    value === "after" ||
+    value === "an_top" ||
+    value === "an_bottom" ||
+    value === "depth" ||
+    value === "em_top" ||
+    value === "em_bottom" ||
+    value === "outlet"
+  );
+}
+
+function invalid_activation(): never {
+  throw new Error("TauriTavern returned an invalid WorldInfo activation");
+}
+
+function normalize_activation(batch: unknown): HostWorldInfoActivationBatch {
+  let clone: unknown;
+  try {
+    clone = structuredClone(batch);
+  } catch {
+    return invalid_activation();
+  }
+  if (!is_record(clone)) {
+    return invalid_activation();
+  }
+
+  const { timestampMs, trigger, entries } = clone;
+  if (
+    typeof timestampMs !== "number" ||
+    !Number.isFinite(timestampMs) ||
+    typeof trigger !== "string" ||
+    trigger.length === 0 ||
+    !Array.isArray(entries)
+  ) {
+    return invalid_activation();
+  }
+
+  const normalized_entries: HostWorldInfoActivationEntry[] = [];
+  for (const entry of entries) {
+    if (!is_record(entry)) {
+      return invalid_activation();
+    }
+    const { world, uid, displayName, constant, position } = entry;
+    if (
+      typeof world !== "string" ||
+      (typeof uid !== "string" &&
+        (typeof uid !== "number" || !Number.isFinite(uid))) ||
+      typeof displayName !== "string" ||
+      typeof constant !== "boolean" ||
+      (position !== undefined && !is_activation_position(position))
+    ) {
+      return invalid_activation();
+    }
+    normalized_entries.push({
+      world,
+      uid,
+      display_name: displayName,
+      constant,
+      ...(position === undefined ? {} : { position }),
+    });
+  }
+
   return {
-    timestamp_ms: batch.timestampMs,
-    trigger: batch.trigger,
-    entries: batch.entries.map((entry) => ({
-      world: entry.world,
-      uid: entry.uid,
-      display_name: entry.displayName,
-      constant: entry.constant,
-      ...(entry.position === undefined ? {} : { position: entry.position }),
-    })),
+    timestamp_ms: timestampMs,
+    trigger,
+    entries: normalized_entries,
   };
 }
 
@@ -246,7 +390,7 @@ export class TauriTavernHost {
                         content: runtime_context.content,
                         signal: runtime_context.signal,
                       });
-                      return normalize_disposer(disposer) ?? (() => undefined);
+                      return normalize_disposer(disposer, false) ?? (() => undefined);
                     });
                   },
                 },
@@ -274,7 +418,18 @@ export class TauriTavernHost {
           }),
     });
 
-    return { report_fault: (error) => registration.fault(error) };
+    if (!is_record(registration)) {
+      throw new Error("TauriTavern returned an invalid ChatSurface registration");
+    }
+    const fault = read_property(registration, "fault");
+    if (!fault.ok || typeof fault.value !== "function") {
+      throw new Error("TauriTavern returned an invalid ChatSurface registration");
+    }
+
+    const fault_function = fault.value;
+    return {
+      report_fault: (error) => Reflect.apply(fault_function, registration, [error]),
+    };
   }
 
   async get_last_world_info_activation(): Promise<HostWorldInfoActivationBatch | null> {
@@ -298,13 +453,16 @@ export class TauriTavernHost {
     const unsubscribe = await world_info.subscribeActivations((batch) => {
       handler(normalize_activation(batch));
     });
+    if (typeof unsubscribe !== "function") {
+      throw new Error("TauriTavern returned an invalid WorldInfo unsubscribe");
+    }
     let disposed = false;
     return async () => {
       if (disposed) {
         return;
       }
       disposed = true;
-      await unsubscribe();
+      await Reflect.apply(unsubscribe, undefined, []);
     };
   }
 }
@@ -312,11 +470,24 @@ export class TauriTavernHost {
 export async function create_tauritavern_host(
   globals: TauriDetectionGlobals,
 ): Promise<TauriTavernHost | undefined> {
-  const tauri = globals.__TAURITAVERN__;
-  if (tauri === undefined) {
+  let raw_tauri: unknown;
+  try {
+    raw_tauri = globals.__TAURITAVERN__;
+  } catch {
+    return undefined;
+  }
+  if (!is_record(raw_tauri)) {
+    return undefined;
+  }
+  const abi_version = read_property(raw_tauri, "abiVersion");
+  if (!abi_version.ok || abi_version.value !== 1) {
     return undefined;
   }
 
-  await tauri.ready;
-  return new TauriTavernHost(tauri);
+  const ready = read_property(raw_tauri, "ready");
+  if (!ready.ok) {
+    return undefined;
+  }
+  await (ready.value ?? globals.__TAURITAVERN_MAIN_READY__);
+  return new TauriTavernHost(raw_tauri as unknown as TauriTavernGlobalSurface);
 }
