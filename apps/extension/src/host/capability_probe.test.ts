@@ -305,6 +305,83 @@ describe("probe_host_capabilities", () => {
       });
     },
   );
+  it.each([
+    [
+      "object",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return proxy;
+      })(),
+    ],
+    [
+      "function",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable(() => undefined, {});
+        revoke();
+        return proxy;
+      })(),
+    ],
+  ])("fails closed for a revoked root %s proxy", (_, value) => {
+    expect(() => probe_host_capabilities(value)).not.toThrow();
+    expect(probe_host_capabilities(value)).toEqual({
+      ready: false,
+      error_code: "tavern_helper_missing",
+      missing_capabilities: [
+        "native_tool_manager",
+        "main_generation_events",
+        "private_prompt_generation",
+        "message_swipe_metadata",
+        "host_image_upload",
+        "tavern_helper",
+      ],
+    });
+  });
+
+  it("reads a function root without requiring a plain record", () => {
+    const fixture = create_fixture();
+    const function_globals = Object.assign(() => undefined, fixture.globals);
+
+    const result = probe_host_capabilities(function_globals);
+
+    expect(result.ready).toBe(true);
+    if (result.ready) {
+      expect(result.matrix).toEqual(standard_matrix);
+    }
+  });
+
+  it("does not classify the root through its prototype", () => {
+    const fixture = create_fixture();
+    const hostile_globals = new Proxy(fixture.globals, {
+      getPrototypeOf: () => {
+        throw new Error("prototype failed");
+      },
+    });
+
+    expect(probe_host_capabilities(hostile_globals).ready).toBe(true);
+  });
+
+  it("preserves missing-helper precedence for a hostile root getter", () => {
+    const hostile_globals = new Proxy({}, {
+      get: () => {
+        throw new Error("getter failed");
+      },
+    });
+
+    expect(probe_host_capabilities(hostile_globals)).toEqual({
+      ready: false,
+      error_code: "tavern_helper_missing",
+      missing_capabilities: [
+        "native_tool_manager",
+        "main_generation_events",
+        "private_prompt_generation",
+        "message_swipe_metadata",
+        "host_image_upload",
+        "tavern_helper",
+      ],
+    });
+  });
+
 
   it("fails closed for getter and call exceptions without changing error ordering", () => {
     const fixture = create_fixture();

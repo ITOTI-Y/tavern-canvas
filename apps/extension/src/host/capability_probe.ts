@@ -43,16 +43,15 @@ function available_when(value: boolean, reason: string): CapabilityStatus {
   return value ? { available: true } : unavailable(reason);
 }
 
-function is_record(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function read_global(value: unknown, property_name: string): unknown {
-  if (!is_record(value)) {
+  if (
+    (typeof value !== "object" || value === null) &&
+    typeof value !== "function"
+  ) {
     return undefined;
   }
   try {
-    return value[property_name];
+    return Reflect.get(value, property_name);
   } catch {
     return undefined;
   }
