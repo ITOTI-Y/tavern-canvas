@@ -46,14 +46,203 @@ export interface TavernHelperSurface {
   getChatMessages(
     range: string | number,
     options: { readonly include_swipes: true },
-  ): readonly TavernHelperChatMessage[];
+  ): unknown;
   setChatMessages(
     messages: readonly TavernHelperMessageUpdate[],
     options: { readonly refresh: "affected" },
   ): Promise<void>;
-  generateRaw(
-    request: TavernHelperGenerateRawRequest,
-  ): Promise<string | TavernHelperStructuredGenerationResult>;
+  generateRaw(request: TavernHelperGenerateRawRequest): Promise<unknown>;
+}
+
+function is_record(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export type TavernHelperVersionInspection =
+  | { readonly state: "available"; readonly value: string }
+  | { readonly state: "missing" | "invalid" | "threw" };
+
+export interface TavernHelperInspection {
+  readonly detected: boolean;
+  readonly version: TavernHelperVersionInspection;
+  readonly private_prompt_generation: boolean;
+  readonly message_swipe_metadata: boolean;
+}
+
+type SafePropertyRead =
+  | { readonly ok: true; readonly value: unknown }
+  | { readonly ok: false };
+
+function read_property(
+  value: Record<string, unknown>,
+  property_name: string,
+): SafePropertyRead {
+  try {
+    return { ok: true, value: value[property_name] };
+  } catch {
+    return { ok: false };
+  }
+}
+
+function has_function_property(
+  value: Record<string, unknown>,
+  property_name: string,
+): boolean {
+  const property = read_property(value, property_name);
+  return property.ok && typeof property.value === "function";
+}
+
+function inspect_helper_version(
+  helper: Record<string, unknown>,
+): TavernHelperVersionInspection {
+  const version_method = read_property(helper, "getTavernHelperVersion");
+  if (!version_method.ok) {
+    return { state: "threw" };
+  }
+  if (typeof version_method.value !== "function") {
+    return { state: "missing" };
+  }
+
+  let version: unknown;
+  try {
+    version = Reflect.apply(version_method.value, helper, []);
+  } catch {
+    return { state: "threw" };
+  }
+  return typeof version === "string"
+    ? { state: "available", value: version }
+    : { state: "invalid" };
+}
+
+export function inspect_tavern_helper(value: unknown): TavernHelperInspection {
+  if (value === undefined) {
+    return {
+      detected: false,
+      version: { state: "missing" },
+      private_prompt_generation: false,
+      message_swipe_metadata: false,
+    };
+  }
+  if (!is_record(value)) {
+    return {
+      detected: true,
+      version: { state: "invalid" },
+      private_prompt_generation: false,
+      message_swipe_metadata: false,
+    };
+  }
+
+  return {
+    detected: true,
+    version: inspect_helper_version(value),
+    private_prompt_generation: has_function_property(value, "generateRaw"),
+    message_swipe_metadata:
+      has_function_property(value, "getChatMessages") &&
+      has_function_property(value, "setChatMessages"),
+  };
+}
+
+function is_message_role(value: unknown): value is HostMessageRole {
+  return value === "system" || value === "assistant" || value === "user";
+}
+
+function invalid_chat_messages(): never {
+  throw new Error("TavernHelper returned invalid chat messages");
+}
+
+function validate_chat_message(value: unknown): TavernHelperChatMessage {
+  if (!is_record(value)) {
+    return invalid_chat_messages();
+  }
+
+  const {
+    message_id,
+    name,
+    role,
+    is_hidden,
+    swipe_id,
+    swipes,
+    swipes_data,
+    swipes_info,
+  } = value;
+  if (
+    !Number.isInteger(message_id) ||
+    typeof message_id !== "number" ||
+    message_id < 0 ||
+    typeof name !== "string" ||
+    !is_message_role(role) ||
+    typeof is_hidden !== "boolean" ||
+    !Number.isInteger(swipe_id) ||
+    typeof swipe_id !== "number" ||
+    !Array.isArray(swipes) ||
+    swipes.length === 0 ||
+    !swipes.every((content) => typeof content === "string") ||
+    !Array.isArray(swipes_data) ||
+    !swipes_data.every(is_record) ||
+    !Array.isArray(swipes_info) ||
+    !swipes_info.every(is_record) ||
+    swipes_data.length !== swipes.length ||
+    swipes_info.length !== swipes.length ||
+    swipe_id < 0 ||
+    swipe_id >= swipes.length
+  ) {
+    return invalid_chat_messages();
+  }
+
+  return {
+    message_id,
+    name,
+    role,
+    is_hidden,
+    swipe_id,
+    swipes,
+    swipes_data,
+    swipes_info,
+  };
+}
+
+function validate_and_clone_chat_messages(
+  value: unknown,
+): readonly TavernHelperChatMessage[] {
+  let clone: unknown;
+  try {
+    clone = structuredClone(value);
+  } catch {
+    return invalid_chat_messages();
+  }
+
+  if (!Array.isArray(clone)) {
+    return invalid_chat_messages();
+  }
+  return clone.map(validate_chat_message);
+}
+
+function clone_update_metadata(
+  metadata: MessageUpdateRequest["metadata"],
+): MessageUpdateRequest["metadata"] {
+  try {
+    return structuredClone(metadata);
+  } catch {
+    throw new Error("TavernHelper message update metadata could not be cloned");
+  }
+}
+
+function normalize_chat_message(
+  message: TavernHelperChatMessage,
+): HostChatMessageSnapshot {
+  return {
+    message_id: message.message_id,
+    name: message.name,
+    role: message.role,
+    is_hidden: message.is_hidden,
+    active_swipe_id: message.swipe_id,
+    swipes: message.swipes.map((content, swipe_id) => ({
+      swipe_id,
+      content,
+      data: message.swipes_data[swipe_id] ?? {},
+      metadata: message.swipes_info[swipe_id] ?? {},
+    })),
+  };
 }
 
 export class TavernHelperHost {
@@ -69,13 +258,19 @@ export class TavernHelperHost {
   }
 
   async get_active_chat(): Promise<HostChatSnapshot> {
-    const messages = this.#helper.getChatMessages("0-{{lastMessageId}}", {
-      include_swipes: true,
-    });
+    const messages = validate_and_clone_chat_messages(
+      this.#helper.getChatMessages("0-{{lastMessageId}}", {
+        include_swipes: true,
+      }),
+    );
+    const chat_id = this.#get_active_chat_id();
+    if (typeof chat_id !== "string" || chat_id.trim().length === 0) {
+      throw new Error("TavernHelper returned an invalid active chat ID");
+    }
 
     return {
-      chat_id: this.#get_active_chat_id(),
-      messages: messages.map((message) => this.#clone_message(message)),
+      chat_id,
+      messages: messages.map(normalize_chat_message),
     };
   }
 
@@ -99,9 +294,11 @@ export class TavernHelperHost {
   }
 
   async update_message(request: MessageUpdateRequest): Promise<void> {
-    const messages = this.#helper.getChatMessages(request.message_id, {
-      include_swipes: true,
-    });
+    const messages = validate_and_clone_chat_messages(
+      this.#helper.getChatMessages(request.message_id, {
+        include_swipes: true,
+      }),
+    );
     const message = messages.find(
       (candidate) => candidate.message_id === request.message_id,
     );
@@ -121,47 +318,27 @@ export class TavernHelperHost {
     const swipes = message.swipes.map((content, swipe_id) =>
       swipe_id === request.swipe_id ? request.content : content,
     );
-    const swipes_data = message.swipes_data.map((data) =>
-      structuredClone(data),
+    const swipes_info = message.swipes_info.map((metadata, swipe_id) =>
+      swipe_id === request.swipe_id
+        ? {
+            ...metadata,
+            [TAVERN_CANVAS_SWIPE_METADATA_KEY]: clone_update_metadata(
+              request.metadata,
+            ),
+          }
+        : metadata,
     );
-    const swipes_info = message.swipes.map((_, swipe_id) => {
-      const metadata = structuredClone(message.swipes_info[swipe_id] ?? {});
-      if (swipe_id !== request.swipe_id) {
-        return metadata;
-      }
-
-      return {
-        ...metadata,
-        [TAVERN_CANVAS_SWIPE_METADATA_KEY]: structuredClone(request.metadata),
-      };
-    });
 
     await this.#helper.setChatMessages(
       [
         {
           message_id: message.message_id,
           swipes,
-          swipes_data,
+          swipes_data: message.swipes_data,
           swipes_info,
         },
       ],
       { refresh: "affected" },
     );
-  }
-
-  #clone_message(message: TavernHelperChatMessage): HostChatMessageSnapshot {
-    return {
-      message_id: message.message_id,
-      name: message.name,
-      role: message.role,
-      is_hidden: message.is_hidden,
-      active_swipe_id: message.swipe_id,
-      swipes: message.swipes.map((content, swipe_id) => ({
-        swipe_id,
-        content,
-        data: structuredClone(message.swipes_data[swipe_id] ?? {}),
-        metadata: structuredClone(message.swipes_info[swipe_id] ?? {}),
-      })),
-    };
   }
 }
