@@ -4,13 +4,12 @@ import {
   AssetIdSchema,
   type AssetId,
   type ComfyUiRequest,
-  type GeneratedAsset,
   type ProviderCapability,
 } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 import {
-  create_generated_asset,
+  create_provider_output_asset,
   invalid_request,
   malformed_response,
   result_with_optional_seed,
@@ -20,6 +19,7 @@ import type {
   ProviderAdapter,
   ProviderExecutionContext,
   ProviderPollResult,
+  ProviderOutputAsset,
   ProviderProfile,
   ProviderSourceAsset,
   ProviderSubmission,
@@ -291,7 +291,7 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
       throw malformed_response();
     }
 
-    const assets: GeneratedAsset[] = [];
+    const output_assets: ProviderOutputAsset[] = [];
     let total_bytes = 0;
     for (const image of image_references) {
       const query = new URLSearchParams({
@@ -316,8 +316,8 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
       if (total_bytes > profile.max_response_bytes) {
         throw malformed_response();
       }
-      assets.push(
-        create_generated_asset(
+      output_assets.push(
+        create_provider_output_asset(
           image_response.body,
           undefined,
           undefined,
@@ -333,11 +333,12 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
           {
             request_id: pending_request.request_id,
             provider_id: "comfyui",
-            assets,
+            assets: output_assets.map(({ asset }) => asset),
           },
           pending_request.seed,
         ),
       ),
+      output_assets,
     };
   }
 

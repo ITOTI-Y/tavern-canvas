@@ -23,6 +23,11 @@ export interface ProviderSourceAsset {
   readonly bytes: Uint8Array;
 }
 
+export interface ProviderOutputAsset {
+  readonly asset: GeneratedAsset;
+  readonly bytes: Uint8Array;
+}
+
 export interface ProviderAssetReader {
   read(asset_id: AssetId, signal: AbortSignal): Promise<ProviderSourceAsset>;
 }
@@ -43,6 +48,7 @@ export type ProviderSubmission =
   | {
       readonly state: "completed";
       readonly result: ImageGenerationResult;
+      readonly output_assets: readonly ProviderOutputAsset[];
     }
   | {
       readonly state: "pending";
@@ -59,6 +65,7 @@ export type ProviderPollResult =
   | {
       readonly state: "completed";
       readonly result: ImageGenerationResult;
+      readonly output_assets: readonly ProviderOutputAsset[];
     }
   | {
       readonly state: "failed";

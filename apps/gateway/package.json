@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
     "test": "vitest run --root ../.. --project apps apps/gateway",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
@@ -15,10 +16,17 @@
     "@tavern-canvas/contracts": "workspace:*",
     "@tavern-canvas/providers": "workspace:*",
     "better-sqlite3": "13.0.2",
+    "express": "5.2.1",
+    "express-rate-limit": "8.6.2",
+    "file-type": "22.0.1",
+    "helmet": "8.3.0",
+    "pino": "10.3.1",
+    "sharp": "0.35.3",
     "zod": "4.4.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "9.6.0",
+    "@types/express": "5.0.3",
     "@types/node": "24.13.3"
   }
 }

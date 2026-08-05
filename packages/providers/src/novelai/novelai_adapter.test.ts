@@ -248,10 +248,12 @@ describe("NovelAI response parsing", () => {
         profile.max_archive_entries,
       ),
     ).resolves.toMatchObject({
-      request_id: REQUEST_ID,
-      provider_id: "novelai",
-      seed: 42,
-      assets: [{ media_type: "image/png" }],
+      result: {
+        request_id: REQUEST_ID,
+        provider_id: "novelai",
+        seed: 42,
+        assets: [{ media_type: "image/png" }],
+      },
     });
   });
 
@@ -273,8 +275,10 @@ describe("NovelAI response parsing", () => {
         profile.max_archive_entries,
       ),
     ).resolves.toMatchObject({
-      seed: 42,
-      assets: [{ media_type: "image/png" }, { media_type: "image/png" }],
+      result: {
+        seed: 42,
+        assets: [{ media_type: "image/png" }, { media_type: "image/png" }],
+      },
     });
   });
 
@@ -289,7 +293,7 @@ describe("NovelAI response parsing", () => {
         profile.max_response_bytes,
         profile.max_archive_entries,
       ),
-    ).resolves.toMatchObject({ assets: [{ media_type: "image/png" }] });
+    ).resolves.toMatchObject({ result: { assets: [{ media_type: "image/png" }] } });
   });
 
   it("extracts bounded multipart image parts", async () => {
@@ -311,7 +315,7 @@ describe("NovelAI response parsing", () => {
         profile.max_response_bytes,
         profile.max_archive_entries,
       ),
-    ).resolves.toMatchObject({ assets: [{ media_type: "image/png" }] });
+    ).resolves.toMatchObject({ result: { assets: [{ media_type: "image/png" }] } });
   });
 
   it("rejects excess archive entries, bytes, and image counts", async () => {

@@ -283,7 +283,7 @@ describe("SD WebUI response parsing", () => {
       }),
     );
 
-    expect(parse_sd_webui_response(body, request, 2_000_000)).toMatchObject({
+    expect(parse_sd_webui_response(body, request, 2_000_000).result).toMatchObject({
       request_id: REQUEST_ID,
       provider_id: "sd_webui",
       seed: 42,

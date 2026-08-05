@@ -1,14 +1,13 @@
 import {
   ImageGenerationResultSchema,
   OpenAiImageRequestSchema,
-  type GeneratedAsset,
   type OpenAiImageRequest,
   type ProviderCapability,
 } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 import {
-  create_generated_asset,
+  create_provider_output_asset,
   decode_base64_image,
   invalid_request,
   malformed_response,
@@ -18,6 +17,7 @@ import type {
   ProviderAdapter,
   ProviderExecutionContext,
   ProviderPollResult,
+  ProviderOutputAsset,
   ProviderProfile,
   ProviderSubmission,
 } from "../provider_adapter.js";
@@ -161,7 +161,7 @@ export class OpenAiImageAdapter implements ProviderAdapter<OpenAiImageRequest> {
     }
 
     const dimensions = dimensions_for_size(validated_request.size);
-    const assets: GeneratedAsset[] = [];
+    const output_assets: ProviderOutputAsset[] = [];
     let total_bytes = 0;
     for (const image of parsed_response.data) {
       let bytes: Uint8Array;
@@ -183,16 +183,19 @@ export class OpenAiImageAdapter implements ProviderAdapter<OpenAiImageRequest> {
       if (total_bytes > profile.max_response_bytes) {
         throw malformed_response();
       }
-      const asset = create_generated_asset(
+      const output_asset = create_provider_output_asset(
         bytes,
         dimensions.width,
         dimensions.height,
         profile.output_mime_type_allowlist,
       );
-      if (asset.media_type !== media_type_for_output_format(validated_request.output_format)) {
+      if (
+        output_asset.asset.media_type !==
+        media_type_for_output_format(validated_request.output_format)
+      ) {
         throw malformed_response();
       }
-      assets.push(asset);
+      output_assets.push(output_asset);
     }
 
     return {
@@ -200,8 +203,9 @@ export class OpenAiImageAdapter implements ProviderAdapter<OpenAiImageRequest> {
       result: ImageGenerationResultSchema.parse({
         request_id: validated_request.request_id,
         provider_id: "openai_image",
-        assets,
+        assets: output_assets.map(({ asset }) => asset),
       }),
+      output_assets,
     };
   }
 

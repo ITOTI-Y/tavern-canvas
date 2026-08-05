@@ -26,6 +26,7 @@ export type {
   ProviderAssetReader,
   ProviderExecutionContext,
   ProviderLogSink,
+  ProviderOutputAsset,
   ProviderPollResult,
   ProviderProfile,
   ProviderSourceAsset,

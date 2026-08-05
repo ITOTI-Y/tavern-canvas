@@ -7,11 +7,12 @@ import {
 import { z } from "zod";
 
 import {
-  create_generated_asset,
+  create_provider_output_asset,
   decode_base64_image,
   malformed_response,
   result_with_optional_seed,
 } from "../image_bytes.js";
+import type { ProviderOutputAsset } from "../provider_adapter.js";
 import { ProviderAdapterError } from "../provider_error.js";
 
 const NovelAiJsonResponseSchema = z.object({
@@ -39,7 +40,10 @@ export async function parse_novelai_response(
   max_response_bytes: number,
   max_archive_entries: number,
   allowed_media_types: readonly GeneratedAsset["media_type"][] = ["image/png", "image/webp"],
-): Promise<ImageGenerationResult> {
+): Promise<{
+  readonly result: ImageGenerationResult;
+  readonly output_assets: readonly ProviderOutputAsset[];
+}> {
   try {
     if (body.byteLength === 0 || body.byteLength > max_response_bytes) {
       throw malformed_response();
@@ -72,19 +76,22 @@ export async function parse_novelai_response(
     if (extracted.images.length !== request.output_count) {
       throw malformed_response();
     }
-    const assets = extracted.images.map((bytes) =>
-      create_generated_asset(bytes, request.width, request.height, allowed_media_types),
+    const output_assets = extracted.images.map((bytes) =>
+      create_provider_output_asset(bytes, request.width, request.height, allowed_media_types),
     );
-    return ImageGenerationResultSchema.parse(
-      result_with_optional_seed(
-        {
-          request_id: request.request_id,
-          provider_id: "novelai",
-          assets,
-        },
-        extracted.seed ?? request.seed,
+    return {
+      result: ImageGenerationResultSchema.parse(
+        result_with_optional_seed(
+          {
+            request_id: request.request_id,
+            provider_id: "novelai",
+            assets: output_assets.map(({ asset }) => asset),
+          },
+          extracted.seed ?? request.seed,
+        ),
       ),
-    );
+      output_assets,
+    };
   } catch (error) {
     if (error instanceof ProviderAdapterError) {
       throw error;

@@ -7,12 +7,14 @@ import {
 import { z } from "zod";
 
 import {
-  create_generated_asset,
+  create_provider_output_asset,
   decode_base64_image,
   malformed_response,
   result_with_optional_seed,
 } from "../image_bytes.js";
+import type { ProviderOutputAsset } from "../provider_adapter.js";
 import { ProviderAdapterError } from "../provider_error.js";
+
 const SdWebuiResponseSchema = z.object({
   images: z.array(z.string()),
   info: z.string(),
@@ -21,7 +23,6 @@ const SdWebuiResponseSchema = z.object({
 const SdWebuiInfoSchema = z.object({
   seed: z.number().int().nonnegative().optional(),
 });
-
 export function parse_sd_webui_response(
   body: Uint8Array,
   request: SdWebuiRequest,
@@ -31,7 +32,10 @@ export function parse_sd_webui_response(
     "image/jpeg",
     "image/webp",
   ],
-): ImageGenerationResult {
+): {
+  readonly result: ImageGenerationResult;
+  readonly output_assets: readonly ProviderOutputAsset[];
+} {
   try {
     if (body.byteLength === 0 || body.byteLength > max_response_bytes) {
       throw malformed_response();
@@ -53,26 +57,29 @@ export function parse_sd_webui_response(
         ? request.height
         : Math.round(request.height * request.hires_fix.scale);
     let decoded_bytes = 0;
-    const assets = images.map((image) => {
+    const output_assets = images.map((image) => {
       if (typeof image !== "string") {
         throw malformed_response();
       }
       const bytes = decode_base64_image(image, max_response_bytes - decoded_bytes);
       decoded_bytes += bytes.byteLength;
-      return create_generated_asset(bytes, width, height, allowed_media_types);
+      return create_provider_output_asset(bytes, width, height, allowed_media_types);
     });
 
     const seed = parse_seed(info_text);
-    return ImageGenerationResultSchema.parse(
-      result_with_optional_seed(
-        {
-          request_id: request.request_id,
-          provider_id: "sd_webui",
-          assets,
-        },
-        seed ?? request.seed,
+    return {
+      result: ImageGenerationResultSchema.parse(
+        result_with_optional_seed(
+          {
+            request_id: request.request_id,
+            provider_id: "sd_webui",
+            assets: output_assets.map(({ asset }) => asset),
+          },
+          seed ?? request.seed,
+        ),
       ),
-    );
+      output_assets,
+    };
   } catch (error) {
     if (error instanceof ProviderAdapterError) {
       throw error;

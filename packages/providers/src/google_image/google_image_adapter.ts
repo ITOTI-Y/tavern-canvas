@@ -1,14 +1,13 @@
 import {
   GoogleImageRequestSchema,
   ImageGenerationResultSchema,
-  type GeneratedAsset,
   type GoogleImageRequest,
   type ProviderCapability,
 } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 import {
-  create_generated_asset,
+  create_provider_output_asset,
   decode_base64_image,
   encode_base64,
   invalid_request,
@@ -18,6 +17,7 @@ import type {
   ProviderAdapter,
   ProviderExecutionContext,
   ProviderPollResult,
+  ProviderOutputAsset,
   ProviderProfile,
   ProviderSubmission,
 } from "../provider_adapter.js";
@@ -165,7 +165,7 @@ export class GoogleImageAdapter implements ProviderAdapter<GoogleImageRequest> {
         },
       }),
     );
-    const assets: GeneratedAsset[] = [];
+    const output_assets: ProviderOutputAsset[] = [];
     let total_bytes = 0;
     for (let output_index = 0; output_index < validated_request.output_count; output_index += 1) {
       const response = await execute_non_idempotent_with_retry(
@@ -243,16 +243,16 @@ export class GoogleImageAdapter implements ProviderAdapter<GoogleImageRequest> {
       }
       const bytes = decode_base64_image(image.data, profile.max_response_bytes - total_bytes);
       total_bytes += bytes.byteLength;
-      const asset = create_generated_asset(
+      const output_asset = create_provider_output_asset(
         bytes,
         undefined,
         undefined,
         profile.output_mime_type_allowlist,
       );
-      if (asset.media_type !== validated_request.output_mime_type) {
+      if (output_asset.asset.media_type !== validated_request.output_mime_type) {
         throw malformed_response();
       }
-      assets.push(asset);
+      output_assets.push(output_asset);
     }
 
     return {
@@ -260,8 +260,9 @@ export class GoogleImageAdapter implements ProviderAdapter<GoogleImageRequest> {
       result: ImageGenerationResultSchema.parse({
         request_id: validated_request.request_id,
         provider_id: "google_image",
-        assets,
+        assets: output_assets.map(({ asset }) => asset),
       }),
+      output_assets,
     };
   }
 

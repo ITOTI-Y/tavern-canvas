@@ -7,6 +7,7 @@ import {
 } from "@tavern-canvas/contracts";
 
 import { ProviderAdapterError } from "./provider_error.js";
+import type { ProviderOutputAsset } from "./provider_adapter.js";
 
 export type ImageMediaType = Extract<
   GeneratedAsset["media_type"],
@@ -110,6 +111,18 @@ export function create_generated_asset(
     sha256: sha256_hex,
     ...(width === undefined ? {} : { width }),
     ...(height === undefined ? {} : { height }),
+  };
+}
+
+export function create_provider_output_asset(
+  bytes: Uint8Array,
+  width: number | undefined,
+  height: number | undefined,
+  allowed_media_types: readonly GeneratedAsset["media_type"][],
+): ProviderOutputAsset {
+  return {
+    asset: create_generated_asset(bytes, width, height, allowed_media_types),
+    bytes,
   };
 }
 

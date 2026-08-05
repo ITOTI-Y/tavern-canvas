@@ -146,16 +146,17 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
       },
     );
 
+    const parsed = await parse_novelai_response(
+      response.body,
+      response.headers["content-type"] ?? "",
+      validated_request,
+      profile.max_response_bytes,
+      profile.max_archive_entries,
+      profile.output_mime_type_allowlist,
+    );
     return {
       state: "completed",
-      result: await parse_novelai_response(
-        response.body,
-        response.headers["content-type"] ?? "",
-        validated_request,
-        profile.max_response_bytes,
-        profile.max_archive_entries,
-        profile.output_mime_type_allowlist,
-      ),
+      ...parsed,
     };
   }
 

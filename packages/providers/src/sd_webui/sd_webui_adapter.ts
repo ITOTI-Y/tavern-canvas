@@ -156,14 +156,15 @@ export class SdWebuiAdapter implements ProviderAdapter<SdWebuiRequest> {
       },
     );
 
+    const parsed = parse_sd_webui_response(
+      response.body,
+      validated_request,
+      profile.max_response_bytes,
+      profile.output_mime_type_allowlist,
+    );
     return {
       state: "completed",
-      result: parse_sd_webui_response(
-        response.body,
-        validated_request,
-        profile.max_response_bytes,
-        profile.output_mime_type_allowlist,
-      ),
+      ...parsed,
     };
   }
 

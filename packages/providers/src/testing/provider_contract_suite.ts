@@ -1,3 +1,5 @@
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 import {
   ImageGenerationResultSchema,
   type ImageGenerationRequest,
@@ -8,6 +10,7 @@ import { describe, expect, it } from "vitest";
 import {
   type ProviderAdapter,
   type ProviderExecutionContext,
+  type ProviderOutputAsset,
   type ProviderPollResult,
   type ProviderSubmission,
 } from "../provider_adapter.js";
@@ -42,6 +45,11 @@ export interface ProviderContractHarness<TRequest extends ImageGenerationRequest
   log_records(): readonly unknown[];
 }
 
+type SettledProviderCompletion = {
+  readonly result: ImageGenerationResult;
+  readonly output_assets: readonly ProviderOutputAsset[];
+};
+
 export function define_provider_contract_suite<TRequest extends ImageGenerationRequest>(
   provider_name: string,
   create_harness: (
@@ -66,10 +74,10 @@ export function define_provider_contract_suite<TRequest extends ImageGenerationR
       const context: ProviderExecutionContext = { ...harness.context, profile };
       const source_request = structuredClone(harness.request);
 
-      let result: ImageGenerationResult | undefined;
+      let completion: SettledProviderCompletion | undefined;
       let failure: unknown;
       try {
-        result = await settle_submission(harness.adapter, context, harness.request);
+        completion = await settle_submission(harness.adapter, context, harness.request);
       } catch (error) {
         failure = error;
       }
@@ -77,9 +85,24 @@ export function define_provider_contract_suite<TRequest extends ImageGenerationR
       expect(harness.request).toEqual(source_request);
       if (harness.expectation.kind === "success") {
         expect(failure).toBeUndefined();
-        expect(ImageGenerationResultSchema.parse(result).assets).toHaveLength(
-          harness.expectation.asset_count,
-        );
+        if (completion === undefined) {
+          throw new Error("Expected provider completion");
+        }
+        const result = ImageGenerationResultSchema.parse(completion.result);
+        expect(result.assets).toHaveLength(harness.expectation.asset_count);
+        expect(completion.output_assets).toHaveLength(harness.expectation.asset_count);
+        expect(completion.output_assets.map(({ asset }) => asset)).toEqual(result.assets);
+        completion.output_assets.forEach((output_asset, index) => {
+          const result_asset = result.assets[index];
+          if (result_asset === undefined) {
+            throw new Error(`Missing result asset at index ${String(index)}`);
+          }
+          expect(output_asset.asset).toEqual(result_asset);
+          expect(output_asset.asset.asset_id).toBe(result_asset.asset_id);
+          expect(output_asset.bytes.byteLength).toBe(result_asset.byte_length);
+          expect(bytesToHex(sha256(output_asset.bytes))).toBe(result_asset.sha256);
+        });
+        expect(JSON.stringify(result)).not.toMatch(/"bytes"\s*:/u);
       } else {
         expect(failure).toBeInstanceOf(ProviderAdapterError);
         expect((failure as ProviderAdapterError).provider_error.code).toBe(
@@ -88,6 +111,7 @@ export function define_provider_contract_suite<TRequest extends ImageGenerationR
       }
 
       const logs = JSON.stringify(harness.log_records());
+      expect(logs).not.toMatch(/"bytes"\s*:/u);
       for (const secret of harness.secret_markers) {
         expect(logs).not.toContain(secret);
       }
@@ -99,16 +123,22 @@ async function settle_submission<TRequest extends ImageGenerationRequest>(
   adapter: ProviderAdapter<TRequest>,
   context: ProviderExecutionContext,
   request: TRequest,
-): Promise<ReturnType<typeof ImageGenerationResultSchema.parse>> {
+): Promise<SettledProviderCompletion> {
   let submission = await adapter.submit(context, request);
   for (let poll_count = 0; poll_count < 20; poll_count += 1) {
     if (submission.state === "completed") {
-      return ImageGenerationResultSchema.parse(submission.result);
+      return {
+        result: ImageGenerationResultSchema.parse(submission.result),
+        output_assets: submission.output_assets,
+      };
     }
 
     const poll_result = await adapter.poll(context, submission);
     if (poll_result.state === "completed") {
-      return ImageGenerationResultSchema.parse(poll_result.result);
+      return {
+        result: ImageGenerationResultSchema.parse(poll_result.result),
+        output_assets: poll_result.output_assets,
+      };
     }
     if (poll_result.state === "failed") {
       throw new ProviderAdapterError(poll_result.error);
