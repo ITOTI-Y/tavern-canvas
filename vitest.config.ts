@@ -1,8 +1,20 @@
+import { fileURLToPath, URL } from "node:url";
+
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vitest/config";
 
+const workspace_alias = {
+  "@tavern-canvas/contracts": fileURLToPath(
+    new URL("./packages/contracts/src/index.ts", import.meta.url),
+  ),
+  "@tavern-canvas/core": fileURLToPath(new URL("./packages/core/src/index.ts", import.meta.url)),
+};
+
 export default defineConfig({
   plugins: [vue()],
+  resolve: {
+    alias: workspace_alias,
+  },
   test: {
     projects: [
       {
@@ -26,9 +38,13 @@ export default defineConfig({
         },
       },
       {
+        resolve: {
+          alias: workspace_alias,
+        },
         test: {
           name: "integration",
           include: ["tests/integration/**/*.test.ts", "tests/integration/**/*.spec.ts"],
+          environment: "node",
         },
       },
     ],

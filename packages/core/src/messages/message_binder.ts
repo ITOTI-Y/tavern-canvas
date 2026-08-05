@@ -117,8 +117,13 @@ export class MessageBinder {
       ),
     });
     this.#bindings_by_generation.set(binding.generation_anchor, binding);
-    this.#active_chat_id = binding.chat_id;
-    this.#active_swipes.set(swipe_key(binding.chat_id, binding.message_id), binding.swipe_id);
+    if (this.#active_chat_id === null) {
+      this.#active_chat_id = binding.chat_id;
+    }
+    const active_swipe_key = swipe_key(binding.chat_id, binding.message_id);
+    if (!this.#active_swipes.has(active_swipe_key)) {
+      this.#active_swipes.set(active_swipe_key, binding.swipe_id);
+    }
     this.#retry_pending();
   }
 
