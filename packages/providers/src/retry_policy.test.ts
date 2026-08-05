@@ -77,6 +77,28 @@ describe("execute_with_retry", () => {
     expect(clock.delays).toEqual([250, 500]);
   });
 
+  it("retries transport timeout errors as timed_out", async () => {
+    let attempts = 0;
+    await expect(
+      execute_with_retry(
+        request,
+        () => {
+          attempts += 1;
+          if (attempts === 1) {
+            throw new DOMException("Timed out", "TimeoutError");
+          }
+          return Promise.resolve("complete");
+        },
+        {
+          signal: new AbortController().signal,
+          clock: new RecordingClock(),
+          random: new FixedRandomSource([0.5]),
+        },
+      ),
+    ).resolves.toBe("complete");
+    expect(attempts).toBe(2);
+  });
+
   it.each([
     [408, false, "timed_out"],
     [429, false, "rate_limited"],
@@ -111,6 +133,7 @@ describe("execute_with_retry", () => {
   it.each([
     [400, "invalid_request"],
     [401, "auth_failed"],
+    [402, "auth_failed"],
     [403, "auth_failed"],
     [422, "invalid_request"],
   ] as const)("does not retry HTTP %i", async (status, error_code) => {

@@ -1,0 +1,45 @@
+{
+  "input": "fixture prompt",
+  "model": "nai-diffusion-4-full",
+  "action": "generate",
+  "parameters": {
+    "params_version": 3,
+    "prompt": "fixture prompt",
+    "negative_prompt": "fixture negative prompt",
+    "width": 1024,
+    "height": 1024,
+    "steps": 28,
+    "scale": 5,
+    "cfg_rescale": 0,
+    "sampler": "k_euler_ancestral",
+    "noise_schedule": "native",
+    "seed": 42,
+    "n_samples": 1,
+    "qualityToggle": true,
+    "ucPreset": 0,
+    "sm": false,
+    "sm_dyn": false,
+    "reference_image_multiple": [
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    ],
+    "reference_strength_multiple": [0.6],
+    "reference_information_extracted_multiple": [0.8],
+    "director_reference_images": [
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    ],
+    "director_reference_descriptions": [
+      {
+        "caption": {
+          "base_caption": "character, fixture character",
+          "char_captions": []
+        },
+        "legacy_uc": false,
+        "use_coords": false,
+        "use_order": true
+      }
+    ],
+    "director_reference_strength_values": [0.7],
+    "director_reference_secondary_strength_values": [0.7],
+    "director_reference_information_extracted": [1]
+  }
+}

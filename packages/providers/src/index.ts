@@ -1,3 +1,5 @@
+export { NovelAiAdapter, type NovelAiAdapterOptions } from "./novelai/novelai_adapter.js";
+export { SdWebuiAdapter, type SdWebuiAdapterOptions } from "./sd_webui/sd_webui_adapter.js";
 export type {
   ProviderAdapter,
   ProviderAssetReader,

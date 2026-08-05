@@ -33,7 +33,7 @@ export function provider_error_from_status(
   let code: ProviderErrorCode;
   let retryable = false;
 
-  if (status_code === 401 || status_code === 403) {
+  if (status_code === 401 || status_code === 402 || status_code === 403) {
     code = "auth_failed";
   } else if (status_code === 408) {
     code = "timed_out";
@@ -60,11 +60,14 @@ export function normalize_provider_failure(
   error: unknown,
   signal: AbortSignal,
 ): ProviderAdapterError {
-  if (signal.aborted || is_abort_error(error)) {
+  if (signal.aborted || is_dom_error(error, "AbortError")) {
     return new ProviderAdapterError({ code: "cancelled", retryable: false });
   }
   if (error instanceof ProviderAdapterError) {
     return error;
+  }
+  if (is_dom_error(error, "TimeoutError")) {
+    return new ProviderAdapterError({ code: "timed_out", retryable: true });
   }
   if (error instanceof ProviderNetworkError) {
     return new ProviderAdapterError({ code: "provider_unavailable", retryable: true });
@@ -72,8 +75,6 @@ export function normalize_provider_failure(
   return new ProviderAdapterError({ code: "malformed_response", retryable: false });
 }
 
-function is_abort_error(error: unknown): boolean {
-  return (
-    error instanceof DOMException && (error.name === "AbortError" || error.name === "TimeoutError")
-  );
+function is_dom_error(error: unknown, name: string): boolean {
+  return error instanceof DOMException && error.name === name;
 }

@@ -1,0 +1,19 @@
+{
+  "prompt": "fixture prompt",
+  "batch_size": 1,
+  "n_iter": 1,
+  "sampler_name": "Euler",
+  "scheduler": "Automatic",
+  "width": 768,
+  "height": 1024,
+  "steps": 24,
+  "cfg_scale": 6,
+  "init_images": [
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+  ],
+  "denoising_strength": 0.55,
+  "override_settings": {
+    "sd_model_checkpoint": "sdxl-base"
+  },
+  "override_settings_restore_afterwards": true
+}

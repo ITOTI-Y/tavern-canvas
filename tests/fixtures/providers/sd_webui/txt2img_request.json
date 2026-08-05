@@ -1,0 +1,54 @@
+{
+  "prompt": "fixture prompt, <lora:portrait-style:0.75>",
+  "negative_prompt": "fixture negative prompt",
+  "batch_size": 1,
+  "n_iter": 1,
+  "sampler_name": "DPM++ 2M",
+  "scheduler": "Karras",
+  "width": 1024,
+  "height": 1024,
+  "steps": 30,
+  "cfg_scale": 7,
+  "seed": 42,
+  "override_settings": {
+    "sd_model_checkpoint": "sdxl-base",
+    "sd_vae": "sdxl-vae"
+  },
+  "override_settings_restore_afterwards": true,
+  "enable_hr": true,
+  "hr_scale": 2,
+  "hr_upscaler": "R-ESRGAN 4x+",
+  "hr_second_pass_steps": 12,
+  "denoising_strength": 0.35,
+  "alwayson_scripts": {
+    "ADetailer": {
+      "args": [
+        true,
+        false,
+        {
+          "ad_model": "face_yolov8n.pt",
+          "ad_prompt": "face detail",
+          "ad_negative_prompt": "blur",
+          "ad_confidence": 0.3,
+          "ad_mask_blur": 4,
+          "ad_denoising_strength": 0.4
+        }
+      ]
+    },
+    "controlnet": {
+      "args": [
+        {
+          "enabled": true,
+          "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+          "module": "canny",
+          "model": "controlnet-canny",
+          "weight": 1,
+          "guidance_start": 0,
+          "guidance_end": 1,
+          "control_mode": "Balanced",
+          "resize_mode": "Just Resize"
+        }
+      ]
+    }
+  }
+}
