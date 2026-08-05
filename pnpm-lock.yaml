@@ -62,6 +62,9 @@ importers:
       '@tavern-canvas/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@tavern-canvas/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
       lucide-vue-next:
         specifier: 1.0.0
         version: 1.0.0(vue@3.5.40(typescript@6.0.3))

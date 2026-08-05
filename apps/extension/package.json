@@ -15,6 +15,7 @@
     "@noble/hashes": "2.2.0",
     "@tavern-canvas/contracts": "workspace:*",
     "@tavern-canvas/core": "workspace:*",
+    "@tavern-canvas/providers": "workspace:*",
     "lucide-vue-next": "1.0.0",
     "reka-ui": "2.10.1",
     "semver": "7.8.5",
