@@ -2,58 +2,20 @@ import type { CapabilityMatrix, CapabilityStatus } from "@tavern-canvas/contract
 import { gte, valid } from "semver";
 
 import { HOST_CAPABILITY_IDS, type HostCapabilityId } from "./host_adapter.js";
+import {
+  inspect_sillytavern,
+  type SillyTavernInspection,
+} from "./sillytavern_host.js";
+import {
+  inspect_tauritavern,
+  type TauriTavernInspection,
+} from "./tauritavern_host.js";
+import {
+  inspect_tavern_helper,
+  type TavernHelperInspection,
+} from "./tavern_helper_host.js";
 
 export const MINIMUM_TAVERN_HELPER_VERSION = "4.9.1";
-
-export interface ProbeTavernHelperSurface {
-  readonly getTavernHelperVersion?: () => unknown;
-  readonly generateRaw?: unknown;
-  readonly getChatMessages?: unknown;
-  readonly setChatMessages?: unknown;
-}
-
-export interface ProbeEventSourceSurface {
-  readonly on?: unknown;
-  readonly removeListener?: unknown;
-}
-
-export interface ProbeEventTypesSurface {
-  readonly GENERATION_STARTED?: unknown;
-  readonly GENERATION_STOPPED?: unknown;
-  readonly GENERATION_ENDED?: unknown;
-}
-
-export interface ProbeSillyTavernContext {
-  readonly eventSource?: ProbeEventSourceSurface;
-  readonly eventTypes?: ProbeEventTypesSurface;
-  readonly registerFunctionTool?: unknown;
-  readonly unregisterFunctionTool?: unknown;
-  readonly getRequestHeaders?: unknown;
-}
-
-export interface ProbeSillyTavernGlobal {
-  readonly getContext: () => ProbeSillyTavernContext;
-}
-
-export interface ProbeTauriTavernHost {
-  readonly api?: {
-    readonly chatSurface?: {
-      readonly protocolVersion?: unknown;
-      readonly registerParticipant?: unknown;
-    };
-    readonly worldInfo?: {
-      readonly getLastActivation?: unknown;
-      readonly subscribeActivations?: unknown;
-    };
-  };
-}
-
-export interface HostProbeGlobals {
-  TavernHelper: ProbeTavernHelperSurface | undefined;
-  SillyTavern: ProbeSillyTavernGlobal | undefined;
-  __TAURITAVERN__: ProbeTauriTavernHost | undefined;
-  fetch: unknown;
-}
 
 export type BootstrapProbeResult =
   | {
@@ -77,66 +39,63 @@ function unavailable(reason: string): CapabilityStatus {
   return { available: false, reason };
 }
 
-function is_function(value: unknown): value is (...arguments_: never[]) => unknown {
-  return typeof value === "function";
+function available_when(value: boolean, reason: string): CapabilityStatus {
+  return value ? { available: true } : unavailable(reason);
 }
 
-function has_main_generation_events(
-  context: ProbeSillyTavernContext | undefined,
-): boolean {
-  return Boolean(
-    context &&
-      is_function(context.eventSource?.on) &&
-      is_function(context.eventSource.removeListener) &&
-      typeof context.eventTypes?.GENERATION_STARTED === "string" &&
-      typeof context.eventTypes.GENERATION_STOPPED === "string" &&
-      typeof context.eventTypes.GENERATION_ENDED === "string",
-  );
+function is_record(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function read_global(value: unknown, property_name: string): unknown {
+  if (!is_record(value)) {
+    return undefined;
+  }
+  try {
+    return value[property_name];
+  } catch {
+    return undefined;
+  }
 }
 
 function build_matrix(
-  helper: ProbeTavernHelperSurface | undefined,
-  context: ProbeSillyTavernContext | undefined,
-  tauri: ProbeTauriTavernHost | undefined,
-  fetch_: unknown,
+  helper: TavernHelperInspection,
+  sillytavern: SillyTavernInspection,
+  tauri: TauriTavernInspection,
 ): CapabilityMatrix {
-  const chat_surface = tauri?.api?.chatSurface;
-  const world_info = tauri?.api?.worldInfo;
-
   return {
-    native_tool_manager:
-      is_function(context?.registerFunctionTool) &&
-      is_function(context.unregisterFunctionTool)
-        ? { available: true }
-        : unavailable("SillyTavern ToolManager API is unavailable"),
-    main_generation_events: has_main_generation_events(context)
-      ? { available: true }
-      : unavailable("SillyTavern generation event API is unavailable"),
-    private_prompt_generation: is_function(helper?.generateRaw)
-      ? { available: true }
-      : unavailable("TavernHelper.generateRaw is unavailable"),
-    message_swipe_metadata:
-      is_function(helper?.getChatMessages) &&
-      is_function(helper.setChatMessages)
-        ? { available: true }
-        : unavailable("TavernHelper message swipe API is unavailable"),
-    host_image_upload:
-      is_function(context?.getRequestHeaders) && is_function(fetch_)
-        ? { available: true }
-        : unavailable("SillyTavern image upload API is unavailable"),
-    tavern_helper: is_function(helper?.getTavernHelperVersion)
-      ? { available: true }
-      : unavailable("TavernHelper version API is unavailable"),
-    tauri_chat_surface:
-      chat_surface?.protocolVersion === 1 &&
-      is_function(chat_surface.registerParticipant)
-        ? { available: true }
-        : unavailable("TauriTavern ChatSurface API is unavailable"),
-    tauri_world_info_activation:
-      is_function(world_info?.getLastActivation) &&
-      is_function(world_info.subscribeActivations)
-        ? { available: true }
-        : unavailable("TauriTavern WorldInfo activation API is unavailable"),
+    native_tool_manager: available_when(
+      sillytavern.native_tool_manager,
+      "SillyTavern ToolManager API is unavailable",
+    ),
+    main_generation_events: available_when(
+      sillytavern.main_generation_events,
+      "SillyTavern generation event API is unavailable",
+    ),
+    private_prompt_generation: available_when(
+      helper.private_prompt_generation,
+      "TavernHelper.generateRaw is unavailable",
+    ),
+    message_swipe_metadata: available_when(
+      helper.message_swipe_metadata && sillytavern.message_swipe_metadata,
+      "TavernHelper message swipe API is unavailable",
+    ),
+    host_image_upload: available_when(
+      sillytavern.host_image_upload,
+      "SillyTavern image upload API is unavailable",
+    ),
+    tavern_helper: available_when(
+      helper.version.state === "available",
+      "TavernHelper version API is unavailable",
+    ),
+    tauri_chat_surface: available_when(
+      tauri.tauri_chat_surface,
+      "TauriTavern ChatSurface API is unavailable",
+    ),
+    tauri_world_info_activation: available_when(
+      tauri.tauri_world_info_activation,
+      "TauriTavern WorldInfo activation API is unavailable",
+    ),
     gateway_protocol: unavailable("Gateway protocol is not connected"),
   };
 }
@@ -149,26 +108,28 @@ function missing_required_capabilities(matrix: CapabilityMatrix): string[] {
 }
 
 export function probe_host_capabilities(
-  globals: HostProbeGlobals,
+  globals: unknown,
 ): BootstrapProbeResult {
-  const helper = globals.TavernHelper;
-  const context = globals.SillyTavern?.getContext();
-  const matrix = build_matrix(
-    helper,
-    context,
-    globals.__TAURITAVERN__,
-    globals.fetch,
+  const helper = inspect_tavern_helper(read_global(globals, "TavernHelper"));
+  const sillytavern = inspect_sillytavern(
+    read_global(globals, "SillyTavern"),
+    read_global(globals, "fetch"),
   );
+  const tauri = inspect_tauritavern(
+    read_global(globals, "__TAURITAVERN__"),
+  );
+  const matrix = build_matrix(helper, sillytavern, tauri);
 
-  if (helper === undefined) {
+  if (!helper.detected) {
     return {
       ready: false,
       error_code: "tavern_helper_missing",
       missing_capabilities: missing_required_capabilities(matrix),
     };
   }
+  const version = helper.version;
 
-  if (!is_function(helper.getTavernHelperVersion)) {
+  if (version.state === "missing" || version.state === "threw") {
     return {
       ready: false,
       error_code: "helper_api_incomplete",
@@ -176,8 +137,24 @@ export function probe_host_capabilities(
     };
   }
 
-  const helper_version = helper.getTavernHelperVersion();
-  if (typeof helper_version !== "string" || valid(helper_version) === null) {
+  if (version.state === "invalid") {
+    return {
+      ready: false,
+      error_code: "helper_version_invalid",
+      missing_capabilities: ["tavern_helper"],
+    };
+  }
+
+  if (version.state !== "available") {
+    return {
+      ready: false,
+      error_code: "helper_api_incomplete",
+      missing_capabilities: missing_required_capabilities(matrix),
+    };
+  }
+
+  const helper_version = version.value;
+  if (valid(helper_version) === null) {
     return {
       ready: false,
       error_code: "helper_version_invalid",
