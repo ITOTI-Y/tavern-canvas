@@ -279,7 +279,7 @@ export const RequestImageArgumentsSchema = z.strictObject({
   scene_description: z.string().trim().min(1).max(12_000),
   negative_constraints: z.string().trim().max(4_000).optional(),
   context_turns: z.number().int().min(0).max(12).optional(),
-  style_preset_id: z.string().uuid().optional(),
+  style_preset_id: z.uuid().optional(),
   image_count: z.number().int().min(1).max(4).optional(),
 });
 

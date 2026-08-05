@@ -56,14 +56,14 @@ Every variant includes `request_id`, `generation_anchor`, positive prompt, optio
 
 ```ts
 export const GeneratedAssetSchema = z.strictObject({
-  asset_id: z.string().uuid(),
+  asset_id: z.uuid(),
   media_type: z.enum(["image/png", "image/jpeg", "image/webp", "video/mp4"]),
   byte_length: z.number().int().positive().max(100_000_000),
   sha256: Sha256Schema,
   width: z.number().int().positive().optional(),
   height: z.number().int().positive().optional(),
   duration_ms: z.number().int().positive().optional(),
-  persisted_url: z.string().url().optional(),
+  persisted_url: z.url().optional(),
 });
 
 export const ProviderErrorSchema = z.strictObject({
