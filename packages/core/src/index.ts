@@ -45,3 +45,25 @@ export type {
   HostPromptInjection,
   PrivatePromptPolicy,
 } from "./generation/tool_policy.js";
+
+export { snapshot_generation_job, SystemJobTimeSource } from "./jobs/generation_job.js";
+export type {
+  EnqueueGenerationJobRequest,
+  GenerationJob,
+  GenerationJobSnapshot,
+  JobIdSource,
+  JobTimeSource,
+} from "./jobs/generation_job.js";
+export { DEFAULT_GLOBAL_JOB_CONCURRENCY, ImageJobQueue } from "./jobs/image_job_queue.js";
+export type {
+  GenerationJobListener,
+  ImageJobQueueOptions,
+  JobPersistencePort,
+} from "./jobs/image_job_queue.js";
+export { JobExecutorFailure } from "./jobs/job_executor.js";
+export type { JobExecutionControl, JobExecutionResult, JobExecutor } from "./jobs/job_executor.js";
+export {
+  GenerationJobTransitionError,
+  is_terminal_generation_state,
+  transition_generation_job,
+} from "./jobs/job_state_machine.js";
