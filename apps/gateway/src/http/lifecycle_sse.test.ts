@@ -126,7 +126,11 @@ function create_job(service: JobService): string {
   }).job.job_id;
 }
 
-function append_event(service: JobService, job_id: string, state: "preparing" | "running"): void {
+function append_event(
+  service: JobService,
+  job_id: string,
+  state: "preparing" | "running" | "submitting",
+): void {
   service.transition({
     job_id,
     state,
@@ -237,6 +241,7 @@ describe("Gateway readiness and SSE lifecycle", () => {
       const job_id = create_job(service);
       append_event(service, job_id, "preparing");
       append_event(service, job_id, "running");
+      append_event(service, job_id, "submitting");
 
       const response = await fetch(`${fixture.base_url}/v1/jobs/${job_id}/events`, {
         headers: {
@@ -253,9 +258,20 @@ describe("Gateway readiness and SSE lifecycle", () => {
       const reader = response.body.getReader();
       expect(fixture.runtime.app.gateway.sse_connections.active_connections).toBe(1);
 
-      const replay = await read_until(reader, "id: 2\n");
-      expect(replay).toContain("id: 2\n");
-      expect(replay).not.toContain("id: 1\n");
+      const replay = await read_until(reader, "id: 3\n");
+      const replay_ids = replay
+        .split("\n")
+        .filter((line) => line.startsWith("id: "))
+        .map((line) => Number(line.slice(4)));
+      expect(replay_ids).toEqual([2, 3]);
+
+      append_event(service, job_id, "running");
+      const live = await read_until(reader, "id: 4\n");
+      const live_ids = live
+        .split("\n")
+        .filter((line) => line.startsWith("id: "))
+        .map((line) => Number(line.slice(4)));
+      expect(live_ids).toEqual([4]);
 
       await with_deadline(fixture.runtime.stop());
       await read_to_end(reader);

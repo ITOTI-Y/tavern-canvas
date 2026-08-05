@@ -14,6 +14,7 @@ import { AssetStore } from "../assets/asset_store.js";
 import { create_app, type GatewayApplication } from "./create_app.js";
 import type { GatewayAdapter } from "../jobs/job_worker.js";
 import { describe, expect, it } from "vitest";
+import { GatewayJobEventSchema, GatewayJobResponseSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 const TOKEN = "gateway-test-token";
@@ -177,6 +178,28 @@ function create_job_request(request_id = randomUUID()): {
       input_asset_ids: [],
     },
   };
+}
+
+async function read_gateway_sse_event(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+): Promise<z.infer<typeof GatewayJobEventSchema>> {
+  const decoder = new TextDecoder();
+  let buffered = "";
+  for (let attempt = 0; attempt < 32; attempt += 1) {
+    const result = await reader.read();
+    if (result.done) {
+      throw new Error("SSE stream ended before an event was received");
+    }
+    buffered += decoder.decode(result.value, { stream: true });
+    const data_start = buffered.indexOf("data: ");
+    const data_end = data_start < 0 ? -1 : buffered.indexOf("\n", data_start);
+    if (data_start < 0 || data_end < 0) {
+      continue;
+    }
+    const payload = buffered.slice(data_start + "data: ".length, data_end);
+    return GatewayJobEventSchema.parse(JSON.parse(payload));
+  }
+  throw new Error("SSE stream exceeded the bounded event read");
 }
 
 describe("Gateway HTTP API", () => {
@@ -510,6 +533,8 @@ describe("Gateway HTTP API", () => {
   it("normalizes GET state after an SSE client disconnects", async () => {
     const gateway = await create_test_gateway();
     try {
+      await gateway.app.gateway.ready;
+      await gateway.app.gateway.worker.stop();
       const created = gateway.app.gateway.service.create_job(create_job_request());
       const events = await fetch(`${gateway.base_url}/v1/jobs/${created.job.job_id}/events`, {
         headers: headers(),
@@ -518,7 +543,17 @@ describe("Gateway HTTP API", () => {
       if (events.body === null) {
         throw new Error("SSE response did not expose a body");
       }
-      await events.body.cancel();
+      const reader = events.body.getReader();
+      gateway.app.gateway.service.transition({
+        job_id: created.job.job_id,
+        state: "preparing",
+        event_type: "preparing",
+        event: { state: "preparing" },
+        created_at: new Date().toISOString(),
+      });
+      const observed_event = await read_gateway_sse_event(reader);
+      expect(observed_event.job_id).toBe(created.job.job_id);
+      await reader.cancel();
       const deadline = Date.now() + 1_000;
       while (gateway.app.gateway.sse_connections.active_connections !== 0) {
         if (Date.now() >= deadline) {
@@ -530,7 +565,7 @@ describe("Gateway HTTP API", () => {
       const status = await fetch(`${gateway.base_url}/v1/jobs/${created.job.job_id}`, {
         headers: headers(),
       });
-      const body = GatewayJobBodySchema.parse(await status.json());
+      const body = GatewayJobResponseSchema.parse(await status.json());
       expect(status.status).toBe(200);
       expect(body).toEqual(
         expect.objectContaining({
@@ -540,17 +575,7 @@ describe("Gateway HTTP API", () => {
           provider_id: "openai_image",
         }),
       );
-      expect([
-        "queued",
-        "preparing",
-        "submitting",
-        "running",
-        "completed",
-        "failed",
-        "cancelled",
-        "attached",
-        "orphaned",
-      ]).toContain(body.state);
+      expect(body.state).toBe(observed_event.state);
       expect(body).not.toHaveProperty("request");
       expect(body).not.toHaveProperty("submission");
     } finally {

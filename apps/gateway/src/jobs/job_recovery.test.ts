@@ -471,4 +471,77 @@ describe("JobWorker restart recovery", () => {
       await rm(fixture.directory, { recursive: true, force: true });
     }
   });
+
+  it("submits a queued job recovered before worker start exactly once", async () => {
+    let submit_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      submit: async () => {
+        submit_calls += 1;
+        return {
+          state: "pending" as const,
+          submission_id: "upstream-queued-1",
+        };
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("77777777-7777-4777-8777-777777777777"),
+      });
+      await fixture.worker.start();
+      await wait_for_state(fixture.service, created.job.job_id, "failed");
+      expect(submit_calls).toBe(1);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("polls a persisted submitting job without re-submitting it", async () => {
+    let submit_calls = 0;
+    let poll_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      submit: async () => {
+        submit_calls += 1;
+        return {
+          state: "pending" as const,
+          submission_id: "upstream-unexpected-submit-1",
+        };
+      },
+      poll: async () => {
+        poll_calls += 1;
+        return {
+          state: "failed" as const,
+          error: { code: "provider_unavailable" as const, retryable: true },
+        };
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("88888888-8888-4888-8888-888888888888"),
+      });
+      fixture.job_repository.transition_with_event({
+        job_id: created.job.job_id,
+        state: "submitting",
+        event_type: "submitting",
+        event: { state: "submitting" },
+        submission: { state: "pending", submission_id: "upstream-persisted-1" },
+        created_at: CREATED_AT,
+      });
+      await fixture.worker.start();
+      await wait_for_state(fixture.service, created.job.job_id, "failed");
+      expect(submit_calls).toBe(0);
+      expect(poll_calls).toBe(1);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
 });
