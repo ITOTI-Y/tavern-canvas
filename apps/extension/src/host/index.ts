@@ -31,3 +31,8 @@ export type {
   MessageUpdateRequest,
   PrivatePromptRequest,
 } from "./host_adapter.js";
+
+export {
+  TAVERN_CANVAS_SWIPE_METADATA_KEY,
+  TavernHelperHost,
+} from "./tavern_helper_host.js";
