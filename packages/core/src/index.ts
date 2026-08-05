@@ -9,8 +9,4 @@ export type {
 } from "./domain_event_bus.js";
 
 export { ModuleRuntime } from "./module_runtime.js";
-export type {
-  ModuleContext,
-  RuntimeModule,
-  RuntimeState,
-} from "./module_runtime.js";
+export type { ModuleContext, RuntimeModule, RuntimeState } from "./module_runtime.js";

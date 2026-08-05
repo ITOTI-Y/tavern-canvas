@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { CapabilityRegistry } from "./capability_registry.js";
 import { DomainEventBus } from "./domain_event_bus.js";
-import {
-  ModuleRuntime,
-  type ModuleContext,
-  type RuntimeModule,
-} from "./module_runtime.js";
+import { ModuleRuntime, type ModuleContext, type RuntimeModule } from "./module_runtime.js";
 
 type StartBehavior = (context: ModuleContext) => void | Promise<void>;
 type StopBehavior = () => void | Promise<void>;
@@ -120,11 +116,7 @@ describe("ModuleRuntime", () => {
       context.capabilities.register("cap.leaf", "leaf", { ready: false });
       throw startup_error;
     });
-    const runtime = new ModuleRuntime(
-      [leaf, middle, root],
-      capabilities,
-      new DomainEventBus(),
-    );
+    const runtime = new ModuleRuntime([leaf, middle, root], capabilities, new DomainEventBus());
 
     await expect(runtime.start_all()).rejects.toBe(startup_error);
 
@@ -166,22 +158,13 @@ describe("ModuleRuntime", () => {
         lifecycle.push("stop:second");
       },
     );
-    const runtime = new ModuleRuntime(
-      [second, first],
-      capabilities,
-      new DomainEventBus(),
-    );
+    const runtime = new ModuleRuntime([second, first], capabilities, new DomainEventBus());
 
     await runtime.start_all();
     await runtime.stop_all();
     await runtime.stop_all();
 
-    expect(lifecycle).toEqual([
-      "start:first",
-      "start:second",
-      "stop:second",
-      "stop:first",
-    ]);
+    expect(lifecycle).toEqual(["start:first", "start:second", "stop:second", "stop:first"]);
     expect(capabilities.has("cap.first")).toBe(false);
     expect(capabilities.has("cap.second")).toBe(false);
     expect(runtime.state).toBe("stopped");
@@ -269,10 +252,7 @@ describe("ModuleRuntime", () => {
     }
 
     expect(thrown).toBeInstanceOf(AggregateError);
-    expect((thrown as AggregateError).errors).toEqual([
-      startup_error,
-      rollback_error,
-    ]);
+    expect((thrown as AggregateError).errors).toEqual([startup_error, rollback_error]);
     expect((thrown as AggregateError).cause).toBe(startup_error);
     expect(lifecycle).toEqual([
       "start:root",
@@ -328,11 +308,7 @@ describe("ModuleRuntime", () => {
         lifecycle.push("stop:upper");
       },
     );
-    const runtime = new ModuleRuntime(
-      [upper, middle, root],
-      capabilities,
-      new DomainEventBus(),
-    );
+    const runtime = new ModuleRuntime([upper, middle, root], capabilities, new DomainEventBus());
 
     await runtime.start_all();
     let thrown: unknown;
@@ -402,8 +378,7 @@ describe("ModuleRuntime", () => {
   });
 
   it("rejects lifecycle reentry while start and stop transitions are pending", async () => {
-    const { promise: start_gate, resolve: release_start } =
-      Promise.withResolvers<void>();
+    const { promise: start_gate, resolve: release_start } = Promise.withResolvers<void>();
     const starting_runtime = new ModuleRuntime([
       new RecordingModule("slow-start", [], async () => {
         await start_gate;
@@ -417,8 +392,7 @@ describe("ModuleRuntime", () => {
     release_start();
     await starting;
 
-    const { promise: stop_gate, resolve: release_stop } =
-      Promise.withResolvers<void>();
+    const { promise: stop_gate, resolve: release_stop } = Promise.withResolvers<void>();
     const stopping_runtime = new ModuleRuntime([
       new RecordingModule(
         "slow-stop",
@@ -444,29 +418,20 @@ describe("ModuleRuntime", () => {
 
   it("awaits dependency registration before sharing its capability", async () => {
     const lifecycle: string[] = [];
-    const { promise: dependency_gate, resolve: release_dependency } =
-      Promise.withResolvers<void>();
-    const dependency = new RecordingModule(
-      "dependency",
-      [],
-      async (context) => {
-        lifecycle.push("dependency:starting");
-        await dependency_gate;
-        context.capabilities.register("shared.value", "dependency", {
-          value: 42,
-        });
-        lifecycle.push("dependency:ready");
-      },
-    );
-    const dependent = new RecordingModule(
-      "dependent",
-      ["dependency"],
-      (context) => {
-        lifecycle.push(
-          `dependent:${context.capabilities.require<{ value: number }>("shared.value").value}`,
-        );
-      },
-    );
+    const { promise: dependency_gate, resolve: release_dependency } = Promise.withResolvers<void>();
+    const dependency = new RecordingModule("dependency", [], async (context) => {
+      lifecycle.push("dependency:starting");
+      await dependency_gate;
+      context.capabilities.register("shared.value", "dependency", {
+        value: 42,
+      });
+      lifecycle.push("dependency:ready");
+    });
+    const dependent = new RecordingModule("dependent", ["dependency"], (context) => {
+      lifecycle.push(
+        `dependent:${context.capabilities.require<{ value: number }>("shared.value").value}`,
+      );
+    });
     const runtime = new ModuleRuntime([dependent, dependency]);
 
     const starting = runtime.start_all();
@@ -475,11 +440,7 @@ describe("ModuleRuntime", () => {
     release_dependency();
     await starting;
 
-    expect(lifecycle).toEqual([
-      "dependency:starting",
-      "dependency:ready",
-      "dependent:42",
-    ]);
+    expect(lifecycle).toEqual(["dependency:starting", "dependency:ready", "dependent:42"]);
     await runtime.stop_all();
   });
 });

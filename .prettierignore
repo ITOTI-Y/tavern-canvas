@@ -1,0 +1,4 @@
+dist/
+**/dist/
+pnpm-lock.yaml
+apps/extension/public/vocabulary/**/*.msgpack.gz

@@ -25,15 +25,15 @@
 
 Execute these plans in this exact order:
 
-| Stage | Plan | Deliverable | Blocking gate |
-|---|---|---|---|
-| 01 | `2026-08-04-tavern-canvas-01-foundation-host.md` | Orphan workspace, contracts, microkernel, host adapters, bootstrap, CI | Extension bootstrap contract tests and production bundle pass |
-| 02 | `2026-08-04-tavern-canvas-02-generation-orchestration.md` | Anchors, tool/fallback triggers, queue, state machine, message binding | Parallel tool and fragmented fallback integration tests pass |
-| 03 | `2026-08-04-tavern-canvas-03-providers-gateway.md` | Provider adapters, transports, Gateway API, security and recovery | Provider contract matrix and Gateway smoke scenario pass |
-| 04 | `2026-08-04-tavern-canvas-04-persistence-migration.md` | IndexedDB repositories, content-addressed gallery, export/import, v2 migration | Copy-verify-switch rollback and image hash checks pass |
-| 05 | `2026-08-04-tavern-canvas-05-vocabulary.md` | Versioned vocabulary package, builder, updater, Worker search | 500,000-tag correctness and performance budgets pass |
-| 06 | `2026-08-04-tavern-canvas-06-vue-workbench.md` | Shadow-root Vue UI, bilingual locale, responsive shell, all operational views | Four-viewport browser and accessibility checks pass |
-| 07 | `2026-08-04-tavern-canvas-07-parity-release.md` | Optional modules, parity closure, full E2E, bundle audit, release artifact | All acceptance criteria pass before first public push |
+| Stage | Plan                                                      | Deliverable                                                                    | Blocking gate                                                 |
+| ----- | --------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| 01    | `2026-08-04-tavern-canvas-01-foundation-host.md`          | Orphan workspace, contracts, microkernel, host adapters, bootstrap, CI         | Extension bootstrap contract tests and production bundle pass |
+| 02    | `2026-08-04-tavern-canvas-02-generation-orchestration.md` | Anchors, tool/fallback triggers, queue, state machine, message binding         | Parallel tool and fragmented fallback integration tests pass  |
+| 03    | `2026-08-04-tavern-canvas-03-providers-gateway.md`        | Provider adapters, transports, Gateway API, security and recovery              | Provider contract matrix and Gateway smoke scenario pass      |
+| 04    | `2026-08-04-tavern-canvas-04-persistence-migration.md`    | IndexedDB repositories, content-addressed gallery, export/import, v2 migration | Copy-verify-switch rollback and image hash checks pass        |
+| 05    | `2026-08-04-tavern-canvas-05-vocabulary.md`               | Versioned vocabulary package, builder, updater, Worker search                  | 500,000-tag correctness and performance budgets pass          |
+| 06    | `2026-08-04-tavern-canvas-06-vue-workbench.md`            | Shadow-root Vue UI, bilingual locale, responsive shell, all operational views  | Four-viewport browser and accessibility checks pass           |
+| 07    | `2026-08-04-tavern-canvas-07-parity-release.md`           | Optional modules, parity closure, full E2E, bundle audit, release artifact     | All acceptance criteria pass before first public push         |
 
 A stage is complete only after its plan's verification commands run successfully from a fresh process. Do not mark a stage complete from a previously cached output.
 

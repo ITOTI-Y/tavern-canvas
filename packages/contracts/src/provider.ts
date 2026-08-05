@@ -56,35 +56,28 @@ export const BaseImageGenerationRequestSchema = z.strictObject({
   provider_id: ProviderIdSchema,
   ...base_image_generation_request_fields,
 });
-export type BaseImageGenerationRequest = z.infer<
-  typeof BaseImageGenerationRequestSchema
->;
+export type BaseImageGenerationRequest = z.infer<typeof BaseImageGenerationRequestSchema>;
 
-export const ImageGenerationRequestSchema = z.discriminatedUnion(
-  "provider_id",
-  [
-    z.strictObject({
-      provider_id: z.literal("sd_webui"),
-      ...base_image_generation_request_fields,
-    }),
-    z.strictObject({
-      provider_id: z.literal("novelai"),
-      ...base_image_generation_request_fields,
-    }),
-    z.strictObject({
-      provider_id: z.literal("comfyui"),
-      ...base_image_generation_request_fields,
-    }),
-    z.strictObject({
-      provider_id: z.literal("openai_image"),
-      ...base_image_generation_request_fields,
-    }),
-    z.strictObject({
-      provider_id: z.literal("google_image"),
-      ...base_image_generation_request_fields,
-    }),
-  ],
-);
-export type ImageGenerationRequest = z.infer<
-  typeof ImageGenerationRequestSchema
->;
+export const ImageGenerationRequestSchema = z.discriminatedUnion("provider_id", [
+  z.strictObject({
+    provider_id: z.literal("sd_webui"),
+    ...base_image_generation_request_fields,
+  }),
+  z.strictObject({
+    provider_id: z.literal("novelai"),
+    ...base_image_generation_request_fields,
+  }),
+  z.strictObject({
+    provider_id: z.literal("comfyui"),
+    ...base_image_generation_request_fields,
+  }),
+  z.strictObject({
+    provider_id: z.literal("openai_image"),
+    ...base_image_generation_request_fields,
+  }),
+  z.strictObject({
+    provider_id: z.literal("google_image"),
+    ...base_image_generation_request_fields,
+  }),
+]);
+export type ImageGenerationRequest = z.infer<typeof ImageGenerationRequestSchema>;

@@ -42,12 +42,9 @@ describe("DomainEventBus", () => {
         });
       }
     });
-    unsubscribe_second = bus.subscribe(
-      "counter.incremented",
-      async (event) => {
-        observed.push(`second:${event.payload.amount}`);
-      },
-    );
+    unsubscribe_second = bus.subscribe("counter.incremented", async (event) => {
+      observed.push(`second:${event.payload.amount}`);
+    });
 
     expect(await bus.publish(increment_event("event-1", 1))).toEqual([]);
     expect(await bus.publish(increment_event("event-2", 2))).toEqual([]);
@@ -113,9 +110,7 @@ describe("DomainEventBus", () => {
     });
     unsubscribe_first();
 
-    expect(await bus.publish(increment_event("event-replacement", 1))).toEqual(
-      [],
-    );
+    expect(await bus.publish(increment_event("event-replacement", 1))).toEqual([]);
     expect(observed).toEqual(["replacement"]);
   });
 
@@ -165,13 +160,7 @@ describe("DomainEventBus", () => {
 
     const diagnostics = await bus.publish(increment_event("event-mixed", 4));
 
-    expect(observed).toEqual([
-      "success:0",
-      "failure:1",
-      "success:2",
-      "failure:3",
-      "success:4",
-    ]);
+    expect(observed).toEqual(["success:0", "failure:1", "success:2", "failure:3", "success:4"]);
     expect(diagnostics).toEqual([
       {
         event_id: "event-mixed",

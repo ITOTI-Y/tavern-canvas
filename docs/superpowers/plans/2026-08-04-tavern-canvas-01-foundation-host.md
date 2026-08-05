@@ -13,6 +13,7 @@
 ## Task 1: Create the orphan workspace and copy approved documents
 
 **Files:**
+
 - Create: `.gitignore`
 - Create: `.npmrc`
 - Create: `.nvmrc`
@@ -200,6 +201,7 @@ Expected: the first command prints the new root commit; the second exits `1`.
 ## Task 2: Define shared contracts
 
 **Files:**
+
 - Create: `packages/contracts/package.json`
 - Create: `packages/contracts/tsconfig.json`
 - Create: `packages/contracts/src/ids.ts`
@@ -329,6 +331,7 @@ git commit -m "feat(contracts): define runtime boundary schemas"
 ## Task 3: Build the lifecycle microkernel
 
 **Files:**
+
 - Create: `packages/core/package.json`
 - Create: `packages/core/tsconfig.json`
 - Create: `packages/core/src/capability_registry.ts`
@@ -393,6 +396,7 @@ git commit -m "feat(core): add capability microkernel"
 ## Task 4: Add supported host adapters and capability probing
 
 **Files:**
+
 - Create: `apps/extension/package.json`
 - Create: `apps/extension/tsconfig.json`
 - Create: `apps/extension/src/host/host_adapter.ts`
@@ -482,6 +486,7 @@ git commit -m "feat(host): add supported host adapters"
 ## Task 5: Add manifest, bootstrap, and production bundle
 
 **Files:**
+
 - Create: `manifest.json`
 - Create: `i18n/en.json`
 - Create: `apps/extension/vite.config.ts`
@@ -597,6 +602,7 @@ git commit -m "feat(extension): add validated bootstrap"
 ## Task 6: Add CI and stage quality gates
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 - Create: `tools/first_party_check/package.json`
 - Create: `tools/first_party_check/tsconfig.json`

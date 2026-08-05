@@ -12,10 +12,7 @@ export const TavernCanvasMessageMetadataSchema = z
     image_ids: z.array(ImageIdSchema),
   })
   .check((context) => {
-    if (
-      new Set(context.value.request_ids).size !==
-      context.value.request_ids.length
-    ) {
+    if (new Set(context.value.request_ids).size !== context.value.request_ids.length) {
       context.issues.push({
         code: "custom",
         input: context.value.request_ids,
@@ -24,9 +21,7 @@ export const TavernCanvasMessageMetadataSchema = z
       });
     }
 
-    if (
-      new Set(context.value.image_ids).size !== context.value.image_ids.length
-    ) {
+    if (new Set(context.value.image_ids).size !== context.value.image_ids.length) {
       context.issues.push({
         code: "custom",
         input: context.value.image_ids,
@@ -36,6 +31,4 @@ export const TavernCanvasMessageMetadataSchema = z
     }
   });
 
-export type TavernCanvasMessageMetadata = z.infer<
-  typeof TavernCanvasMessageMetadataSchema
->;
+export type TavernCanvasMessageMetadata = z.infer<typeof TavernCanvasMessageMetadataSchema>;

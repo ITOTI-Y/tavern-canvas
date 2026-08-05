@@ -45,11 +45,11 @@ v3 不保留旧 `index.js` 双运行模式、旧全局变量别名、旧 DOM sel
 
 本设计基于 2026-08-04 获取的源码与公开契约：
 
-| 组件 | 基线版本 | 使用的稳定契约 |
-|---|---:|---|
-| SillyTavern | 1.18.0 | extension manifest、generation events、ToolManager、`setExtensionPrompt`、chat/message metadata、图片上传路由 |
-| TauriTavern | 2.2.0 | `window.__TAURITAVERN__.ready`、ChatSurface、WorldInfo activation、兼容 Provider 路由 |
-| JS Slash Runner | 4.9.1 | `window.TavernHelper`、`generate`、消息与变量 API、typed events |
+| 组件            | 基线版本 | 使用的稳定契约                                                                                                |
+| --------------- | -------: | ------------------------------------------------------------------------------------------------------------- |
+| SillyTavern     |   1.18.0 | extension manifest、generation events、ToolManager、`setExtensionPrompt`、chat/message metadata、图片上传路由 |
+| TauriTavern     |    2.2.0 | `window.__TAURITAVERN__.ready`、ChatSurface、WorldInfo activation、兼容 Provider 路由                         |
+| JS Slash Runner |    4.9.1 | `window.TavernHelper`、`generate`、消息与变量 API、typed events                                               |
 
 `setExtensionPrompt` 支持 `IN_CHAT`、depth、role 和 World Info scan 控制。v3 使用 `IN_CHAT`、`depth=0`、`role=SYSTEM`、`scan=false`，使主 LLM 控制提示进入最终 prompt，同时不参与 World Info 扫描。
 
@@ -350,12 +350,12 @@ streaming_result
 
 运行时选择：
 
-| 环境 | 首选 transport |
-|---|---|
-| 标准 SillyTavern | `host_proxy_transport` |
-| TauriTavern | `tauri_transport` |
-| 独立部署 | `gateway_transport` |
-| 浏览器直连 | 默认关闭，仅显式允许本机端点 |
+| 环境             | 首选 transport               |
+| ---------------- | ---------------------------- |
+| 标准 SillyTavern | `host_proxy_transport`       |
+| TauriTavern      | `tauri_transport`            |
+| 独立部署         | `gateway_transport`          |
+| 浏览器直连       | 默认关闭，仅显式允许本机端点 |
 
 ### 9.2 Provider error contract
 
@@ -420,13 +420,13 @@ HTTP endpoint 首次连接时显示风险：Bearer token、prompt 与图片会�
 
 ### 11.1 数据分层
 
-| 数据 | 位置 | 规则 |
-|---|---|---|
-| 小型全局设置、UI 偏好 | `extension_settings.tavern_canvas` | Zod 校验，带 `schema_version` |
-| 跨聊天业务数据 | `tavern_canvas_v3` IndexedDB | 使用 `idb` 与显式 upgrade transaction |
-| 聊天绑定数据 | message/swipe metadata | 只保存锚点、ID 和必要展示 metadata |
-| 词库数据包 | IndexedDB package/shard stores | 版本化、内容寻址、可原子切换 |
-| Gateway 任务 | SQLite | jobs、events、assets、幂等键 |
+| 数据                  | 位置                               | 规则                                  |
+| --------------------- | ---------------------------------- | ------------------------------------- |
+| 小型全局设置、UI 偏好 | `extension_settings.tavern_canvas` | Zod 校验，带 `schema_version`         |
+| 跨聊天业务数据        | `tavern_canvas_v3` IndexedDB       | 使用 `idb` 与显式 upgrade transaction |
+| 聊天绑定数据          | message/swipe metadata             | 只保存锚点、ID 和必要展示 metadata    |
+| 词库数据包            | IndexedDB package/shard stores     | 版本化、内容寻址、可原子切换          |
+| Gateway 任务          | SQLite                             | jobs、events、assets、幂等键          |
 
 浏览器 IndexedDB stores：
 
@@ -557,15 +557,15 @@ icon rail 包含工作台、Prompt、资产、图库、诊断和设置。context
 
 ### 14.3 信息架构
 
-| 区域 | 内容 |
-|---|---|
-| 工作台 | 当前 Provider、prompt、参考图、生成、活动任务 |
-| Provider | SD、NovelAI、ComfyUI、OpenAI、Google、Gateway |
-| Prompt | preset、质量词、替换规则、regex、LLM prompt builder |
-| 资产 | 词库、角色、服装、LORA、vibe、reference、workflow |
-| 图库 | 图片、参数、来源消息、批量操作、导入导出 |
-| 诊断 | capability、连接测试、任务错误、迁移、存储占用 |
-| 设置 | 自动触发、并发、主题、语言、悬浮入口、更新 |
+| 区域     | 内容                                                |
+| -------- | --------------------------------------------------- |
+| 工作台   | 当前 Provider、prompt、参考图、生成、活动任务       |
+| Provider | SD、NovelAI、ComfyUI、OpenAI、Google、Gateway       |
+| Prompt   | preset、质量词、替换规则、regex、LLM prompt builder |
+| 资产     | 词库、角色、服装、LORA、vibe、reference、workflow   |
+| 图库     | 图片、参数、来源消息、批量操作、导入导出            |
+| 诊断     | capability、连接测试、任务错误、迁移、存储占用      |
+| 设置     | 自动触发、并发、主题、语言、悬浮入口、更新          |
 
 ### 14.4 视觉系统
 
@@ -598,21 +598,21 @@ icon rail 包含工作台、Prompt、资产、图库、诊断和设置。context
 
 ## 15. 功能归并与保留
 
-| 现有能力 | v3 位置 |
-|---|---|
-| SD、NovelAI、ComfyUI、Banana/Grok、OpenAI、Google | Provider modules |
-| 正负 prompt、质量词、preset、替换词 | Prompt module |
-| LORA、workflow、edit workflow、vibe、reference | Asset library |
-| 角色、服装、User persona | Character context module |
-| World Info、资料库、send_data | Knowledge context source |
-| regex、词汇替换、手势规则 | Prompt transformation module |
-| 图片缓存、批量删除、参数查看、重生成 | Gallery module |
-| LLM 配置与 prompt 测试 | Prompt builder module |
-| 悬浮球、独立宠物 | Optional experience module |
-| AI 助手 | Optional assistant module |
-| 日志与任务管理 | Diagnostics 与 task strip |
-| 主题 | 受 schema 约束的 design tokens |
-| 词库导入、搜索、管理 | Vocabulary package module |
+| 现有能力                                          | v3 位置                        |
+| ------------------------------------------------- | ------------------------------ |
+| SD、NovelAI、ComfyUI、Banana/Grok、OpenAI、Google | Provider modules               |
+| 正负 prompt、质量词、preset、替换词               | Prompt module                  |
+| LORA、workflow、edit workflow、vibe、reference    | Asset library                  |
+| 角色、服装、User persona                          | Character context module       |
+| World Info、资料库、send_data                     | Knowledge context source       |
+| regex、词汇替换、手势规则                         | Prompt transformation module   |
+| 图片缓存、批量删除、参数查看、重生成              | Gallery module                 |
+| LLM 配置与 prompt 测试                            | Prompt builder module          |
+| 悬浮球、独立宠物                                  | Optional experience module     |
+| AI 助手                                           | Optional assistant module      |
+| 日志与任务管理                                    | Diagnostics 与 task strip      |
+| 主题                                              | 受 schema 约束的 design tokens |
+| 词库导入、搜索、管理                              | Vocabulary package module      |
 
 AI 助手只能修改 draft，用户确认后才提交设置，且不能读取 secret。World Info 保留数据选择与上下文功能，不能注入 tool 控制规则。
 
@@ -799,16 +799,16 @@ remote script ban
 
 ### 21.2 性能预算
 
-| 指标 | 门槛 |
-|---|---:|
-| 首次启动必需 JS | ≤ 180 KB gzip |
-| 首次启动 CSS | ≤ 40 KB gzip |
-| 已缓存后打开工作台 | 中端移动设备 ≤ 200 ms |
-| 50 万 tags 前缀查询 p95 | ≤ 100 ms |
-| 50 万 tags 内容/模糊查询 p95 | ≤ 300 ms |
-| 搜索主线程 long task | 无单次 > 50 ms |
-| mobile Worker LRU | 默认 ≤ 16 MB |
-| 并发任务 | 4 个任务可独立取消，UI 无主线程阻塞 |
+| 指标                         |                                门槛 |
+| ---------------------------- | ----------------------------------: |
+| 首次启动必需 JS              |                       ≤ 180 KB gzip |
+| 首次启动 CSS                 |                        ≤ 40 KB gzip |
+| 已缓存后打开工作台           |               中端移动设备 ≤ 200 ms |
+| 50 万 tags 前缀查询 p95      |                            ≤ 100 ms |
+| 50 万 tags 内容/模糊查询 p95 |                            ≤ 300 ms |
+| 搜索主线程 long task         |                      无单次 > 50 ms |
+| mobile Worker LRU            |                        默认 ≤ 16 MB |
+| 并发任务                     | 4 个任务可独立取消，UI 无主线程阻塞 |
 
 ## 22. 发布与 clean cutover
 
@@ -857,19 +857,19 @@ v3 稳定发布必须全部满足：
 
 ## 24. 主要风险与控制
 
-| 风险 | 控制 |
-|---|---|
-| 宿主内部 API 变化 | Host adapter、版本基线、contract tests、capability probe |
-| JS Slash Runner 缺失或过旧 | manifest 硬依赖、bootstrap 最低版本校验、明确安装与更新入口 |
-| tool recursion 生命周期复杂 | root generation session、depth 复用、integration tests |
-| 多任务绑定错层 | 双锚点、chat/swipe 复合匹配、禁止 last-message fallback |
-| Provider 重复计费 | request digest、Gateway idempotency、有限重试 |
-| HTTP token 泄露 | 明确提醒、按 origin acknowledgment、最小权限 token、轮换撤销 |
-| 迁移破坏用户数据 | copy-verify-switch、journal、旧库不自动删除 |
-| 大词库拖垮手机 | Worker、分片索引、候选上限、16 MB LRU、性能门槛 |
-| 微内核过度复杂 | 内核职责限定为 5 项，不开放第三方代码插件 |
-| Vue UI 与宿主 CSS 冲突 | Shadow Root 与限定 portal target |
-| 设计效果影响效率 | 固定密度参数、真实工作台首屏、禁用 landing page 动效模式 |
+| 风险                        | 控制                                                         |
+| --------------------------- | ------------------------------------------------------------ |
+| 宿主内部 API 变化           | Host adapter、版本基线、contract tests、capability probe     |
+| JS Slash Runner 缺失或过旧  | manifest 硬依赖、bootstrap 最低版本校验、明确安装与更新入口  |
+| tool recursion 生命周期复杂 | root generation session、depth 复用、integration tests       |
+| 多任务绑定错层              | 双锚点、chat/swipe 复合匹配、禁止 last-message fallback      |
+| Provider 重复计费           | request digest、Gateway idempotency、有限重试                |
+| HTTP token 泄露             | 明确提醒、按 origin acknowledgment、最小权限 token、轮换撤销 |
+| 迁移破坏用户数据            | copy-verify-switch、journal、旧库不自动删除                  |
+| 大词库拖垮手机              | Worker、分片索引、候选上限、16 MB LRU、性能门槛              |
+| 微内核过度复杂              | 内核职责限定为 5 项，不开放第三方代码插件                    |
+| Vue UI 与宿主 CSS 冲突      | Shadow Root 与限定 portal target                             |
+| 设计效果影响效率            | 固定密度参数、真实工作台首屏、禁用 landing page 动效模式     |
 
 ## 25. 推荐实施顺序
 

@@ -13,6 +13,7 @@
 ## Task 1: Implement canonical context hashing and anchors
 
 **Files:**
+
 - Create: `packages/core/src/generation/canonical_json.ts`
 - Create: `packages/core/src/generation/source_context.ts`
 - Create: `packages/core/src/generation/anchors.ts`
@@ -100,6 +101,7 @@ git commit -m "feat(generation): add deterministic generation anchors"
 ## Task 2: Implement root generation sessions and prompt policy
 
 **Files:**
+
 - Create: `packages/core/src/generation/generation_session.ts`
 - Create: `packages/core/src/generation/session_registry.ts`
 - Create: `packages/core/src/generation/tool_policy.ts`
@@ -172,6 +174,7 @@ git commit -m "feat(generation): add root generation sessions"
 ## Task 3: Add the native tool and streaming fallback parser
 
 **Files:**
+
 - Create: `packages/core/src/generation/request_image_tool.ts`
 - Create: `packages/core/src/generation/fallback_stream_parser.ts`
 - Create: `apps/extension/src/modules/generation/generation_trigger_module.ts`
@@ -238,6 +241,7 @@ git commit -m "feat(generation): add tool and fallback triggers"
 ## Task 4: Implement job state, deduplication, queueing, and cancellation
 
 **Files:**
+
 - Modify: `packages/contracts/src/generation.ts`
 - Create: `packages/core/src/jobs/generation_job.ts`
 - Create: `packages/core/src/jobs/job_state_machine.ts`
@@ -316,6 +320,7 @@ git commit -m "feat(generation): add concurrent image job queue"
 ## Task 5: Implement final-assistant swipe binding
 
 **Files:**
+
 - Create: `packages/core/src/messages/message_binding.ts`
 - Create: `packages/core/src/messages/message_binder.ts`
 - Create: `apps/extension/src/modules/generation/message_binding_module.ts`
@@ -377,6 +382,7 @@ git commit -m "feat(generation): bind results to anchored assistant swipes"
 ## Task 6: Prove the complete generation flow in a host harness
 
 **Files:**
+
 - Create: `tests/harness/src/fake_host.ts`
 - Create: `tests/harness/src/controlled_provider.ts`
 - Create: `tests/integration/generation_flow.test.ts`

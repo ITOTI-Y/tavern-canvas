@@ -13,6 +13,7 @@
 ## Task 1: Create a machine-checked feature parity ledger
 
 **Files:**
+
 - Create: `docs/parity/feature_matrix.md`
 - Create: `tools/parity_check/package.json`
 - Create: `tools/parity_check/tsconfig.json`
@@ -89,6 +90,7 @@ At this point rows may reference tests created in later tasks only if those test
 ## Task 2: Complete prompt transformation and context-source parity
 
 **Files:**
+
 - Create: `apps/extension/src/modules/prompt/prompt_pipeline.ts`
 - Create: `apps/extension/src/modules/prompt/context_sources.ts`
 - Create: `apps/extension/src/modules/prompt/world_info_source.ts`
@@ -147,6 +149,7 @@ git commit -m "feat(prompt): complete context and transformation parity"
 ## Task 3: Complete manual image, edit, inpaint, video, and chat interaction flows
 
 **Files:**
+
 - Create: `apps/extension/src/modules/media/media_command_service.ts`
 - Create: `apps/extension/src/modules/media/reference_upload.ts`
 - Create: `apps/extension/src/modules/media/image_edit.ts`
@@ -198,6 +201,7 @@ git commit -m "feat(media): add edit inpaint and chat image flows"
 ## Task 4: Replace the vendored NovelAI tokenizer with a local lazy module
 
 **Files:**
+
 - Create: `apps/extension/src/modules/novelai/tokenizer/tokenizer_service.ts`
 - Create: `apps/extension/src/modules/novelai/tokenizer/tokenizer_worker.ts`
 - Create: `apps/extension/public/tokenizers/novelai/tokenizer.json`
@@ -243,6 +247,7 @@ git commit -m "feat(novelai): add local lazy token counting"
 ## Task 5: Rebuild the optional AI assistant, TTS, and ASR safely
 
 **Files:**
+
 - Create: `apps/extension/src/modules/assistant/assistant_module.ts`
 - Create: `apps/extension/src/modules/assistant/assistant_session.ts`
 - Create: `apps/extension/src/modules/assistant/assistant_context.ts`
@@ -295,6 +300,7 @@ git commit -m "feat(assistant): add constrained optional assistant"
 ## Task 6: Complete optional floating entry, themes, and Tauri enhancements
 
 **Files:**
+
 - Create: `apps/extension/src/modules/experience/floating_entry.ts`
 - Create: `apps/extension/src/modules/experience/media_state_player.ts`
 - Create: `apps/extension/src/modules/experience/theme_tokens.ts`
@@ -333,6 +339,7 @@ git commit -m "feat(parity): add optional experience and Tauri modules"
 ## Task 7: Add full host E2E, security, bundle, and release audits
 
 **Files:**
+
 - Create: `tests/harness/sillytavern_host.html`
 - Create: `tests/harness/tauri_host.html`
 - Create: `tests/e2e/full_standard_host.spec.ts`
@@ -428,6 +435,7 @@ git commit -m "test(release): enforce TavernCanvas acceptance gates"
 ## Task 8: Document, package, review, and publish the clean release
 
 **Files:**
+
 - Create: `README.md`
 - Create: `CHANGELOG.md`
 - Create: `SECURITY.md`

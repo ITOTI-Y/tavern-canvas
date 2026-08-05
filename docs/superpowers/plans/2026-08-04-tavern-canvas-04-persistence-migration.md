@@ -13,6 +13,7 @@
 ## Task 1: Define the browser database and repositories
 
 **Files:**
+
 - Create: `packages/storage/package.json`
 - Create: `packages/storage/tsconfig.json`
 - Create: `packages/storage/src/database_schema.ts`
@@ -34,23 +35,23 @@ Update ignored local `docs/_dev/DATA.md` before opening the database. Register `
 
 Use `fake-indexeddb` and assert a fresh database named `tavern_canvas_v3` creates exactly these stores:
 
-| Store | Key path | Required indexes |
-|---|---|---|
-| `provider_profiles` | `record_key` | `namespace`, `provider_id`, `updated_at` |
-| `prompt_presets` | `record_key` | `namespace`, `updated_at` |
-| `comfy_workflows` | `record_key` | `namespace`, `updated_at` |
-| `novelai_vibes` | `record_key` | `namespace`, `updated_at` |
-| `character_profiles` | `record_key` | `namespace`, `updated_at` |
-| `regex_rules` | `record_key` | `namespace`, `updated_at` |
-| `knowledge_entries` | `record_key` | `namespace`, `source_type`, `updated_at` |
-| `vocabularies` | `record_key` | `namespace`, `updated_at` |
-| `vocabulary_groups` | `record_key` | `namespace`, `vocabulary_id` |
-| `vocabulary_packages` | `record_key` | `namespace`, `data_version`, `state` |
-| `vocabulary_shards` | `record_key` | `namespace`, `data_version`, `kind` |
-| `image_records` | `record_key` | `namespace`, `sha256`, `created_at`, `last_accessed_at`, `pinned` |
-| `image_blobs` | `sha256` | `ref_count`, `byte_length` |
-| `generation_jobs` | `record_key` | `namespace`, `request_id`, `request_digest`, `state`, `updated_at` |
-| `migration_journal` | `migration_id` | `source_version`, `state`, `updated_at` |
+| Store                 | Key path       | Required indexes                                                   |
+| --------------------- | -------------- | ------------------------------------------------------------------ |
+| `provider_profiles`   | `record_key`   | `namespace`, `provider_id`, `updated_at`                           |
+| `prompt_presets`      | `record_key`   | `namespace`, `updated_at`                                          |
+| `comfy_workflows`     | `record_key`   | `namespace`, `updated_at`                                          |
+| `novelai_vibes`       | `record_key`   | `namespace`, `updated_at`                                          |
+| `character_profiles`  | `record_key`   | `namespace`, `updated_at`                                          |
+| `regex_rules`         | `record_key`   | `namespace`, `updated_at`                                          |
+| `knowledge_entries`   | `record_key`   | `namespace`, `source_type`, `updated_at`                           |
+| `vocabularies`        | `record_key`   | `namespace`, `updated_at`                                          |
+| `vocabulary_groups`   | `record_key`   | `namespace`, `vocabulary_id`                                       |
+| `vocabulary_packages` | `record_key`   | `namespace`, `data_version`, `state`                               |
+| `vocabulary_shards`   | `record_key`   | `namespace`, `data_version`, `kind`                                |
+| `image_records`       | `record_key`   | `namespace`, `sha256`, `created_at`, `last_accessed_at`, `pinned`  |
+| `image_blobs`         | `sha256`       | `ref_count`, `byte_length`                                         |
+| `generation_jobs`     | `record_key`   | `namespace`, `request_id`, `request_digest`, `state`, `updated_at` |
+| `migration_journal`   | `migration_id` | `source_version`, `state`, `updated_at`                            |
 
 Every namespaced record uses `record_key = namespace + ":" + id`. A v1 database upgrade must run in the provided upgrade transaction and fail atomically if any store/index creation throws.
 
@@ -89,6 +90,7 @@ git commit -m "feat(storage): add typed browser repositories"
 ## Task 2: Implement small settings and active namespace ownership
 
 **Files:**
+
 - Modify: `packages/contracts/src/settings.ts`
 - Create: `apps/extension/src/storage/settings_port.ts`
 - Create: `apps/extension/src/storage/sillytavern_settings.ts`
@@ -156,6 +158,7 @@ git commit -m "feat(storage): add versioned extension settings"
 ## Task 3: Implement content-addressed image storage and eviction
 
 **Files:**
+
 - Create: `packages/storage/src/images/image_schema.ts`
 - Create: `packages/storage/src/images/image_store.ts`
 - Create: `packages/storage/src/images/image_references.ts`
@@ -210,6 +213,7 @@ git commit -m "feat(storage): add content-addressed gallery cache"
 ## Task 4: Implement verified streaming export and import
 
 **Files:**
+
 - Create: `packages/contracts/src/archive.ts`
 - Create: `packages/storage/src/archive/export_archive.ts`
 - Create: `packages/storage/src/archive/import_archive.ts`
@@ -264,6 +268,7 @@ git commit -m "feat(storage): add verified archive import and export"
 ## Task 5: Inventory every v2 source and create converters
 
 **Files:**
+
 - Create: `tools/v2_migration/package.json`
 - Create: `tools/v2_migration/tsconfig.json`
 - Create: `tools/v2_migration/src/legacy_schema.ts`
@@ -337,6 +342,7 @@ git commit -m "feat(migration): add exhaustive v2 converters"
 ## Task 6: Implement resumable copy-verify-switch migration
 
 **Files:**
+
 - Create: `apps/extension/src/migration/legacy_sources.ts`
 - Create: `apps/extension/src/migration/migration_journal.ts`
 - Create: `apps/extension/src/migration/migration_runner.ts`
@@ -393,6 +399,7 @@ git commit -m "feat(migration): add verified v2 migration runner"
 ## Task 7: Prove migration and storage end to end
 
 **Files:**
+
 - Create: `tests/integration/storage_migration_flow.test.ts`
 - Create: `tests/integration/archive_round_trip.test.ts`
 - Modify: `vitest.config.ts`

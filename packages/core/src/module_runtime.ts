@@ -13,13 +13,7 @@ export interface RuntimeModule {
   stop(): Promise<void>;
 }
 
-export type RuntimeState =
-  | "idle"
-  | "starting"
-  | "started"
-  | "stopping"
-  | "stopped"
-  | "failed";
+export type RuntimeState = "idle" | "starting" | "started" | "stopping" | "stopped" | "failed";
 
 type VisitState = "visiting" | "visited";
 
@@ -117,9 +111,7 @@ export class ModuleRuntime {
     for (const module of this.#modules_by_id.values()) {
       for (const required_module_id of module.requires) {
         if (!this.#modules_by_id.has(required_module_id)) {
-          missing_dependencies.push(
-            `${module.module_id} -> ${required_module_id}`,
-          );
+          missing_dependencies.push(`${module.module_id} -> ${required_module_id}`);
         }
       }
     }
@@ -136,9 +128,7 @@ export class ModuleRuntime {
       }
       if (state === "visiting") {
         const cycle_start = stack.indexOf(module.module_id);
-        cycles.push(
-          [...stack.slice(cycle_start), module.module_id].join(" -> "),
-        );
+        cycles.push([...stack.slice(cycle_start), module.module_id].join(" -> "));
         return;
       }
 

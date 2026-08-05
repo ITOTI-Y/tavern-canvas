@@ -12,8 +12,5 @@ export const CapabilityStatusSchema = z.strictObject({
 });
 export type CapabilityStatus = z.infer<typeof CapabilityStatusSchema>;
 
-export const CapabilityMatrixSchema = z.record(
-  CapabilityIdSchema,
-  CapabilityStatusSchema,
-);
+export const CapabilityMatrixSchema = z.record(CapabilityIdSchema, CapabilityStatusSchema);
 export type CapabilityMatrix = z.infer<typeof CapabilityMatrixSchema>;

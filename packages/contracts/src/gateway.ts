@@ -16,9 +16,7 @@ export const GatewayCreateJobRequestSchema = z.strictObject({
   protocol_version: ProtocolVersionSchema,
   request: ImageGenerationRequestSchema,
 });
-export type GatewayCreateJobRequest = z.infer<
-  typeof GatewayCreateJobRequestSchema
->;
+export type GatewayCreateJobRequest = z.infer<typeof GatewayCreateJobRequestSchema>;
 
 export const GatewayJobResponseSchema = z.strictObject({
   protocol_version: ProtocolVersionSchema,
@@ -46,9 +44,7 @@ export const GatewayProviderCapabilitiesSchema = z.strictObject({
   provider_id: ProviderIdSchema,
   capabilities: z.array(ProviderCapabilitySchema),
 });
-export type GatewayProviderCapabilities = z.infer<
-  typeof GatewayProviderCapabilitiesSchema
->;
+export type GatewayProviderCapabilities = z.infer<typeof GatewayProviderCapabilitiesSchema>;
 
 export const GatewayLimitsSchema = z.strictObject({
   max_concurrency: z.number().int().positive(),
@@ -62,6 +58,4 @@ export const GatewayCapabilitiesResponseSchema = z.strictObject({
   providers: z.array(GatewayProviderCapabilitiesSchema),
   limits: GatewayLimitsSchema,
 });
-export type GatewayCapabilitiesResponse = z.infer<
-  typeof GatewayCapabilitiesResponseSchema
->;
+export type GatewayCapabilitiesResponse = z.infer<typeof GatewayCapabilitiesResponseSchema>;

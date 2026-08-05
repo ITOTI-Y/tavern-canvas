@@ -35,18 +35,13 @@ type EventType<TEventMap> = Extract<keyof TEventMap, string>;
 type StoredHandler = (event: unknown) => void | Promise<void>;
 
 export class DomainEventBus<
-  TEventMap extends SerializableEventMap<TEventMap> = Record<
-    string,
-    SerializableValue
-  >,
+  TEventMap extends SerializableEventMap<TEventMap> = Record<string, SerializableValue>,
 > {
   readonly #handlers = new Map<EventType<TEventMap>, Set<StoredHandler>>();
 
   subscribe<TEventType extends EventType<TEventMap>>(
     event_type: TEventType,
-    handler: DomainEventHandler<
-      DomainEventEnvelope<TEventType, TEventMap[TEventType]>
-    >,
+    handler: DomainEventHandler<DomainEventEnvelope<TEventType, TEventMap[TEventType]>>,
   ): () => void {
     let handlers = this.#handlers.get(event_type);
     if (handlers === undefined) {
@@ -55,9 +50,7 @@ export class DomainEventBus<
     }
 
     const stored_handler: StoredHandler = (event) =>
-      handler(
-        event as DomainEventEnvelope<TEventType, TEventMap[TEventType]>,
-      );
+      handler(event as DomainEventEnvelope<TEventType, TEventMap[TEventType]>);
     handlers.add(stored_handler);
 
     return () => {

@@ -13,6 +13,7 @@
 ## Task 1: Define vocabulary records, manifests, and Worker messages
 
 **Files:**
+
 - Create: `packages/contracts/src/vocabulary.ts`
 - Create: `packages/contracts/src/vocabulary_worker.ts`
 - Test: `packages/contracts/src/vocabulary.test.ts`
@@ -43,13 +44,7 @@ The manifest schema includes package ID, schema version `1`, semantic data versi
 Index kinds are exactly:
 
 ```ts
-export const VocabularyIndexKindSchema = z.enum([
-  "prefix",
-  "alias",
-  "trigram",
-  "detail",
-  "hot",
-]);
+export const VocabularyIndexKindSchema = z.enum(["prefix", "alias", "trigram", "detail", "hot"]);
 ```
 
 **Step 3: Define Worker protocol**
@@ -70,6 +65,7 @@ git commit -m "feat(contracts): define vocabulary package protocol"
 ## Task 2: Build deterministic vocabulary packages
 
 **Files:**
+
 - Create: `tools/vocabulary_builder/package.json`
 - Create: `tools/vocabulary_builder/tsconfig.json`
 - Create: `tools/vocabulary_builder/src/normalize_record.ts`
@@ -141,6 +137,7 @@ git commit -m "feat(vocabulary): add deterministic package builder"
 ## Task 3: Implement package verification, staging, and atomic update
 
 **Files:**
+
 - Create: `packages/vocabulary/package.json`
 - Create: `packages/vocabulary/tsconfig.json`
 - Create: `packages/vocabulary/src/package_client.ts`
@@ -190,6 +187,7 @@ git commit -m "feat(vocabulary): add atomic package updater"
 ## Task 4: Implement tiered Worker search and bounded LRU
 
 **Files:**
+
 - Create: `packages/vocabulary/src/search/query_normalizer.ts`
 - Create: `packages/vocabulary/src/search/query_planner.ts`
 - Create: `packages/vocabulary/src/search/result_ranker.ts`
@@ -249,6 +247,7 @@ git commit -m "feat(vocabulary): add cancellable Worker search"
 ## Task 5: Add user import and baseline package production
 
 **Files:**
+
 - Create: `packages/vocabulary/src/import/import_source.ts`
 - Create: `packages/vocabulary/src/import/import_builder.ts`
 - Test: `packages/vocabulary/src/import/import_builder.test.ts`
@@ -297,6 +296,7 @@ If provenance blocks source publication, omit `data/vocabulary/raw_vocabulary_ta
 ## Task 6: Prove 500,000-record correctness and performance
 
 **Files:**
+
 - Create: `tools/vocabulary_builder/src/generate_benchmark_fixture.ts`
 - Create: `tests/performance/vocabulary_search.bench.ts`
 - Create: `tests/harness/vocabulary_benchmark.html`

@@ -14,9 +14,7 @@ export const RequestImageArgumentsSchema = z.strictObject({
   image_count: z.number().int().min(1).max(4).optional(),
 });
 
-export type RequestImageArguments = z.infer<
-  typeof RequestImageArgumentsSchema
->;
+export type RequestImageArguments = z.infer<typeof RequestImageArgumentsSchema>;
 
 export const GenerationStateSchema = z.enum([
   "queued",

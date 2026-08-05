@@ -297,20 +297,17 @@ describe("provider boundary", () => {
     ).toBe(false);
   });
 
-  it.each([
-    "sd_webui",
-    "novelai",
-    "comfyui",
-    "openai_image",
-    "google_image",
-  ] as const)("parses the strict %s request discriminant", (provider_id) => {
-    expect(
-      ImageGenerationRequestSchema.parse({
-        ...provider_request,
-        provider_id,
-      }).provider_id,
-    ).toBe(provider_id);
-  });
+  it.each(["sd_webui", "novelai", "comfyui", "openai_image", "google_image"] as const)(
+    "parses the strict %s request discriminant",
+    (provider_id) => {
+      expect(
+        ImageGenerationRequestSchema.parse({
+          ...provider_request,
+          provider_id,
+        }).provider_id,
+      ).toBe(provider_id);
+    },
+  );
 
   it("rejects unknown discriminants and undeclared provider payload fields", () => {
     expect(
@@ -363,14 +360,10 @@ describe("Gateway protocol schemas", () => {
 
   it("accepts version 1.0 job creation, response, event, and capabilities", () => {
     expect(PROTOCOL_VERSION).toBe("1.0");
-    expect(GatewayCreateJobRequestSchema.parse(create_request)).toEqual(
-      create_request,
-    );
+    expect(GatewayCreateJobRequestSchema.parse(create_request)).toEqual(create_request);
     expect(GatewayJobResponseSchema.parse(job_response)).toEqual(job_response);
     expect(GatewayJobEventSchema.parse(event)).toEqual(event);
-    expect(GatewayCapabilitiesResponseSchema.parse(capabilities)).toEqual(
-      capabilities,
-    );
+    expect(GatewayCapabilitiesResponseSchema.parse(capabilities)).toEqual(capabilities);
   });
 
   it.each([
@@ -379,9 +372,7 @@ describe("Gateway protocol schemas", () => {
     [GatewayJobEventSchema, event],
     [GatewayCapabilitiesResponseSchema, capabilities],
   ])("rejects protocol drift at every Gateway boundary", (schema, value) => {
-    expect(
-      schema.safeParse({ ...value, protocol_version: "1.1" }).success,
-    ).toBe(false);
+    expect(schema.safeParse({ ...value, protocol_version: "1.1" }).success).toBe(false);
   });
 
   it("rejects unknown Gateway response keys", () => {
@@ -520,32 +511,12 @@ describe("strict public object boundaries", () => {
 
   it.each([
     ["CapabilityStatusSchema", CapabilityStatusSchema, { available: true }],
-    [
-      "RequestImageArgumentsSchema",
-      RequestImageArgumentsSchema,
-      request_image_arguments,
-    ],
-    [
-      "TavernCanvasMessageMetadataSchema",
-      TavernCanvasMessageMetadataSchema,
-      message_metadata,
-    ],
+    ["RequestImageArgumentsSchema", RequestImageArgumentsSchema, request_image_arguments],
+    ["TavernCanvasMessageMetadataSchema", TavernCanvasMessageMetadataSchema, message_metadata],
     ["ProviderErrorSchema", ProviderErrorSchema, provider_error],
-    [
-      "BaseImageGenerationRequestSchema",
-      BaseImageGenerationRequestSchema,
-      provider_request,
-    ],
-    [
-      "ImageGenerationRequestSchema",
-      ImageGenerationRequestSchema,
-      provider_request,
-    ],
-    [
-      "GatewayCreateJobRequestSchema",
-      GatewayCreateJobRequestSchema,
-      gateway_create_request,
-    ],
+    ["BaseImageGenerationRequestSchema", BaseImageGenerationRequestSchema, provider_request],
+    ["ImageGenerationRequestSchema", ImageGenerationRequestSchema, provider_request],
+    ["GatewayCreateJobRequestSchema", GatewayCreateJobRequestSchema, gateway_create_request],
     ["GatewayJobResponseSchema", GatewayJobResponseSchema, job_response],
     ["GatewayJobEventSchema", GatewayJobEventSchema, gateway_event],
     [
@@ -554,17 +525,9 @@ describe("strict public object boundaries", () => {
       gateway_provider_capabilities,
     ],
     ["GatewayLimitsSchema", GatewayLimitsSchema, gateway_limits],
-    [
-      "GatewayCapabilitiesResponseSchema",
-      GatewayCapabilitiesResponseSchema,
-      gateway_capabilities,
-    ],
+    ["GatewayCapabilitiesResponseSchema", GatewayCapabilitiesResponseSchema, gateway_capabilities],
     ["GatewaySettingsSchema", GatewaySettingsSchema, gateway_settings],
-    [
-      "TavernCanvasSettingsSchema",
-      TavernCanvasSettingsSchema,
-      tavern_canvas_settings,
-    ],
+    ["TavernCanvasSettingsSchema", TavernCanvasSettingsSchema, tavern_canvas_settings],
   ])("%s rejects an unknown top-level key", (_name, schema, value) => {
     expect(schema.safeParse(value).success).toBe(true);
 
@@ -583,9 +546,7 @@ describe("strict public object boundaries", () => {
       "providers[]",
       {
         ...gateway_capabilities,
-        providers: [
-          { ...gateway_provider_capabilities, unexpected_field: true },
-        ],
+        providers: [{ ...gateway_provider_capabilities, unexpected_field: true }],
       },
     ],
     [
@@ -596,9 +557,7 @@ describe("strict public object boundaries", () => {
       },
     ],
   ])("Gateway capabilities reject an unknown key in %s", (_path, value) => {
-    expect(GatewayCapabilitiesResponseSchema.safeParse(gateway_capabilities).success).toBe(
-      true,
-    );
+    expect(GatewayCapabilitiesResponseSchema.safeParse(gateway_capabilities).success).toBe(true);
 
     const result = GatewayCapabilitiesResponseSchema.safeParse(value);
 

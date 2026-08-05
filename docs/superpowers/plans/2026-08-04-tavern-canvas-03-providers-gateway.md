@@ -13,6 +13,7 @@
 ## Task 1: Finalize provider request and result contracts
 
 **Files:**
+
 - Modify: `packages/contracts/src/provider.ts`
 - Create: `packages/contracts/src/providers/sd_webui.ts`
 - Create: `packages/contracts/src/providers/novelai.ts`
@@ -99,6 +100,7 @@ git commit -m "feat(contracts): define provider request variants"
 ## Task 2: Add the provider adapter contract harness and retry policy
 
 **Files:**
+
 - Create: `packages/providers/package.json`
 - Create: `packages/providers/tsconfig.json`
 - Create: `packages/providers/src/provider_adapter.ts`
@@ -164,6 +166,7 @@ git commit -m "feat(providers): add adapter and retry contracts"
 ## Task 3: Implement SD WebUI and NovelAI adapters
 
 **Files:**
+
 - Create: `packages/providers/src/sd_webui/sd_webui_adapter.ts`
 - Create: `packages/providers/src/sd_webui/sd_webui_mapping.ts`
 - Create: `packages/providers/src/sd_webui/sd_webui_response.ts`
@@ -208,6 +211,7 @@ git commit -m "feat(providers): add SD WebUI and NovelAI adapters"
 ## Task 4: Implement ComfyUI, OpenAI image, and Google image adapters
 
 **Files:**
+
 - Create: `packages/providers/src/comfyui/comfyui_adapter.ts`
 - Create: `packages/providers/src/comfyui/workflow_renderer.ts`
 - Create: `packages/providers/src/comfyui/comfyui_events.ts`
@@ -270,6 +274,7 @@ git commit -m "feat(providers): add workflow and hosted image adapters"
 ## Task 5: Implement extension transports and protocol fallback
 
 **Files:**
+
 - Create: `apps/extension/src/transport/host_proxy_transport.ts`
 - Create: `apps/extension/src/transport/tauri_transport.ts`
 - Create: `apps/extension/src/transport/gateway_transport.ts`
@@ -326,6 +331,7 @@ git commit -m "feat(transport): add host and Gateway routes"
 ## Task 6: Build Gateway configuration and SQLite persistence
 
 **Files:**
+
 - Create: `apps/gateway/package.json`
 - Create: `apps/gateway/tsconfig.json`
 - Create: `apps/gateway/.env.example`
@@ -424,6 +430,7 @@ git commit -m "feat(gateway): add secure configuration and job storage"
 ## Task 7: Implement Gateway HTTP API, authentication, assets, and workers
 
 **Files:**
+
 - Create: `apps/gateway/src/http/create_app.ts`
 - Create: `apps/gateway/src/http/authentication.ts`
 - Create: `apps/gateway/src/http/error_handler.ts`
@@ -491,6 +498,7 @@ git commit -m "feat(gateway): add persistent image job API"
 ## Task 8: Run provider and Gateway smoke verification
 
 **Files:**
+
 - Create: `tests/integration/gateway_flow.test.ts`
 - Create: `tests/integration/provider_contract_matrix.test.ts`
 - Modify: `vitest.config.ts`

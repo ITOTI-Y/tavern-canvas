@@ -13,6 +13,7 @@
 ## Task 1: Define UI contracts, controller, and design tokens
 
 **Files:**
+
 - Create: `apps/extension/src/ui/contracts/ui_capabilities.ts`
 - Create: `apps/extension/src/ui/contracts/view_models.ts`
 - Create: `apps/extension/src/ui/controllers/studio_controller.ts`
@@ -117,6 +118,7 @@ git commit -m "feat(ui): add studio state and design tokens"
 ## Task 2: Build the Shadow Root application shell and responsive navigation
 
 **Files:**
+
 - Create: `apps/extension/src/ui/AppRoot.vue`
 - Create: `apps/extension/src/ui/shell/StudioShell.vue`
 - Create: `apps/extension/src/ui/shell/TopCommandBar.vue`
@@ -183,6 +185,7 @@ git commit -m "feat(ui): add responsive studio shell"
 ## Task 3: Implement bilingual runtime and locale validation
 
 **Files:**
+
 - Create: `apps/extension/src/i18n/create_i18n.ts`
 - Create: `apps/extension/src/i18n/locale_resolution.ts`
 - Create: `apps/extension/src/i18n/locales/en.ts`
@@ -249,6 +252,7 @@ git commit -m "feat(i18n): add English and Simplified Chinese"
 ## Task 4: Build accessible shared controls and state surfaces
 
 **Files:**
+
 - Create: `apps/extension/src/ui/components/AppIcon.vue`
 - Create: `apps/extension/src/ui/components/IconButton.vue`
 - Create: `apps/extension/src/ui/components/AppButton.vue`
@@ -294,6 +298,7 @@ git commit -m "feat(ui): add accessible studio controls"
 ## Task 5: Implement Workbench and Prompt views
 
 **Files:**
+
 - Create: `apps/extension/src/ui/views/workbench/WorkbenchView.vue`
 - Create: `apps/extension/src/ui/views/workbench/PromptComposer.vue`
 - Create: `apps/extension/src/ui/views/workbench/ReferenceStrip.vue`
@@ -342,6 +347,7 @@ git commit -m "feat(ui): add generation and prompt workspaces"
 ## Task 6: Implement Assets and Gallery views
 
 **Files:**
+
 - Create: `apps/extension/src/ui/views/assets/AssetsView.vue`
 - Create: `apps/extension/src/ui/views/assets/VocabularyPanel.vue`
 - Create: `apps/extension/src/ui/views/assets/CharacterPanel.vue`
@@ -390,6 +396,7 @@ git commit -m "feat(ui): add asset library and gallery"
 ## Task 7: Implement Diagnostics and Settings views
 
 **Files:**
+
 - Create: `apps/extension/src/ui/views/diagnostics/DiagnosticsView.vue`
 - Create: `apps/extension/src/ui/views/diagnostics/CapabilityMatrix.vue`
 - Create: `apps/extension/src/ui/views/diagnostics/ConnectionTests.vue`
@@ -437,6 +444,7 @@ git commit -m "feat(ui): add diagnostics and settings workspaces"
 ## Task 8: Add browser, accessibility, and visual regression gates
 
 **Files:**
+
 - Create: `tests/harness/studio_host.html`
 - Create: `tests/harness/src/studio_host.ts`
 - Create: `tests/e2e/studio_navigation.spec.ts`
