@@ -3736,11 +3736,6 @@ function bs(e) {
 		error_code: "helper_version_invalid",
 		missing_capabilities: ["tavern_helper"]
 	};
-	if (r.state !== "available") return {
-		ready: !1,
-		error_code: "helper_api_incomplete",
-		missing_capabilities: ys(n)
-	};
 	let i = r.value;
 	if ((0, Wo.valid)(i) === null) return {
 		ready: !1,
@@ -3867,7 +3862,9 @@ async function As(e = {}) {
 		status: o,
 		version: e.version ?? "development"
 	});
-	c.provide(Ts, s.portal_element), c.onUnmount(s.remove);
+	c.provide(Ts, s.portal_element), c.onUnmount(() => {
+		s.remove();
+	});
 	try {
 		c.mount(s.app_element);
 	} catch (e) {

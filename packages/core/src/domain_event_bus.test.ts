@@ -31,7 +31,6 @@ describe("DomainEventBus", () => {
     const observed: string[] = [];
     let changed_subscriptions = false;
 
-    let unsubscribe_second: () => void;
     bus.subscribe("counter.incremented", async (event) => {
       observed.push(`first:${event.payload.amount}`);
       if (!changed_subscriptions) {
@@ -42,7 +41,7 @@ describe("DomainEventBus", () => {
         });
       }
     });
-    unsubscribe_second = bus.subscribe("counter.incremented", async (event) => {
+    const unsubscribe_second = bus.subscribe("counter.incremented", async (event) => {
       observed.push(`second:${event.payload.amount}`);
     });
 
@@ -117,9 +116,8 @@ describe("DomainEventBus", () => {
   it("keeps a replacement added by a self-unsubscribing publisher handler", async () => {
     const bus = new DomainEventBus<TestEvents>();
     const observed: string[] = [];
-    let unsubscribe_first: () => void;
 
-    unsubscribe_first = bus.subscribe("counter.incremented", async (event) => {
+    const unsubscribe_first = bus.subscribe("counter.incremented", async (event) => {
       observed.push(`first:${event.payload.amount}`);
       unsubscribe_first();
       bus.subscribe("counter.incremented", async (later_event) => {

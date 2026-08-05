@@ -22,23 +22,65 @@ export default typescriptEslint.config(
     languageOptions: {
       parserOptions: {
         parser: typescriptEslint.parser,
-        projectService: true,
+        extraFileExtensions: [".vue"],
+        projectService: {
+          allowDefaultProject: ["*.config.ts"],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
   },
   {
     ...typescriptEslint.configs.disableTypeChecked,
-    files: ["**/*.js"],
+    files: ["**/*.{cjs,js,mjs}"],
   },
   {
-    files: ["apps/extension/**/*.{js,ts,vue}"],
+    files: ["**/*.{spec,test}.ts"],
+    rules: {
+      "@typescript-eslint/no-confusing-void-expression": "off",
+      "@typescript-eslint/no-deprecated": "off",
+      "@typescript-eslint/no-invalid-void-type": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/unbound-method": "off",
+    },
+  },
+  {
+    files: ["packages/core/src/capability_registry.ts"],
+    rules: {
+      "@typescript-eslint/no-unnecessary-type-parameters": "off",
+    },
+  },
+  {
+    files: ["apps/extension/src/host/tavern_helper_host.ts"],
+    rules: {
+      "@typescript-eslint/require-await": "off",
+    },
+  },
+  {
+    files: ["apps/extension/src/**/*.{js,ts,vue}"],
     languageOptions: {
       globals: globals.browser,
     },
   },
   {
-    files: ["apps/gateway/**/*.{js,ts}", "tools/**/*.{js,ts}"],
+    files: [
+      "apps/extension/scripts/**/*.{cjs,js,mjs,ts}",
+      "apps/gateway/**/*.{cjs,js,mjs,ts}",
+      "tools/**/*.{cjs,js,mjs,ts}",
+    ],
     languageOptions: {
       globals: globals.node,
     },

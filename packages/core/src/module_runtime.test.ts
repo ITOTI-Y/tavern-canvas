@@ -172,7 +172,6 @@ describe("ModuleRuntime", () => {
 
   it("exposes stable state throughout lifecycle transitions", async () => {
     const states_seen_by_module: string[] = [];
-    let runtime: ModuleRuntime;
     const module = new RecordingModule(
       "observer",
       [],
@@ -183,7 +182,7 @@ describe("ModuleRuntime", () => {
         states_seen_by_module.push(runtime.state);
       },
     );
-    runtime = new ModuleRuntime([module]);
+    const runtime = new ModuleRuntime([module]);
 
     expect(runtime.state).toBe("idle");
     await runtime.start_all();

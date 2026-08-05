@@ -57,7 +57,9 @@ export async function bootstrap_tavern_canvas(
     version: options.version ?? "development",
   });
   app.provide(PORTAL_TARGET_KEY, surface.portal_element);
-  app.onUnmount(surface.remove);
+  app.onUnmount(() => {
+    surface.remove();
+  });
 
   try {
     app.mount(surface.app_element);

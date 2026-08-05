@@ -60,7 +60,7 @@ function is_plain_record(value: unknown): value is Record<string, unknown> {
     return false;
   }
   try {
-    const prototype = Object.getPrototypeOf(value);
+    const prototype: unknown = Object.getPrototypeOf(value);
     return prototype === Object.prototype || prototype === null;
   } catch {
     return false;
@@ -78,7 +78,9 @@ function is_dense_array(value: readonly unknown[]): boolean {
 
 export type TavernHelperVersionInspection =
   | { readonly state: "available"; readonly value: string }
-  | { readonly state: "missing" | "invalid" | "threw" };
+  | { readonly state: "missing" }
+  | { readonly state: "invalid" }
+  | { readonly state: "threw" };
 
 export interface TavernHelperInspection {
   readonly detected: boolean;
@@ -210,7 +212,7 @@ function has_plain_chat_records(value: unknown): boolean {
     }
 
     for (let index = 0; index < value.length; index += 1) {
-      const message = value[index];
+      const message: unknown = value[index];
       if (!is_plain_record(message)) {
         return false;
       }
@@ -331,7 +333,7 @@ export class TavernHelperHost {
     );
     const message = messages.find((candidate) => candidate.message_id === request.message_id);
     if (message === undefined) {
-      throw new Error(`Host message ${request.message_id} no longer exists`);
+      throw new Error(`Host message ${String(request.message_id)} no longer exists`);
     }
     if (
       !Number.isInteger(request.swipe_id) ||
@@ -339,7 +341,7 @@ export class TavernHelperHost {
       request.swipe_id >= message.swipes.length
     ) {
       throw new Error(
-        `Host message ${request.message_id} swipe ${request.swipe_id} no longer exists`,
+        `Host message ${String(request.message_id)} swipe ${String(request.swipe_id)} no longer exists`,
       );
     }
 

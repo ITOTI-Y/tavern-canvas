@@ -1,0 +1,14 @@
+{
+  "name": "@tavern-canvas/first-party-check",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tavern-canvas-first-party-check": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --root ../.. --project tools tools/first_party_check",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

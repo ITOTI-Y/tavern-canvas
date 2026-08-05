@@ -31,7 +31,7 @@ export interface HostWorldInfoActivationBatch {
 
 export type HostWorldInfoActivationHandler = (batch: HostWorldInfoActivationBatch) => void;
 
-export type TauriTavernHostUnsubscribe = () => void | Promise<void>;
+export type TauriTavernHostUnsubscribe = () => Promise<void> | undefined;
 
 export interface TauriTavernWorldInfoSurface {
   getLastActivation(): Promise<unknown>;
@@ -71,8 +71,10 @@ export interface TauriChatSurfaceParticipant {
     context: TauriChatSurfaceDetachedContext,
     claims: TauriChatSurfaceRuntimeClaims,
   ): void;
-  did_mount?(context: TauriChatSurfaceMountedContext): void | TauriChatSurfaceDisposer;
-  did_commit_content?(context: TauriChatSurfaceMountedContext): void | TauriChatSurfaceDisposer;
+  did_mount?(context: TauriChatSurfaceMountedContext): TauriChatSurfaceDisposer | undefined;
+  did_commit_content?(
+    context: TauriChatSurfaceMountedContext,
+  ): TauriChatSurfaceDisposer | undefined;
 }
 
 export interface TauriChatSurfaceRegistration {
@@ -113,10 +115,10 @@ export interface TauriTavernChatSurfaceParticipantSurface {
   ) => void;
   readonly didMount?: (
     context: TauriTavernChatSurfaceMountedContextSurface,
-  ) => void | TauriChatSurfaceDisposer;
+  ) => TauriChatSurfaceDisposer | undefined;
   readonly didCommitContent?: (
     context: TauriTavernChatSurfaceMountedContextSurface,
-  ) => void | TauriChatSurfaceDisposer;
+  ) => TauriChatSurfaceDisposer | undefined;
 }
 
 export interface TauriTavernChatSurfaceSurface {
@@ -148,7 +150,7 @@ function is_plain_record(value: unknown): value is Record<string, unknown> {
     return false;
   }
   try {
-    const prototype = Object.getPrototypeOf(value);
+    const prototype: unknown = Object.getPrototypeOf(value);
     return prototype === Object.prototype || prototype === null;
   } catch {
     return false;
@@ -218,21 +220,25 @@ export function inspect_tauritavern(value: unknown): TauriTavernInspection {
   };
 }
 
-function normalize_disposer(disposer: unknown, allow_undefined = true): void | (() => void) {
+function normalize_disposer(disposer: unknown, allow_undefined = true): (() => void) | undefined {
   if (disposer === undefined && allow_undefined) {
     return undefined;
   }
 
   let dispose: () => void;
   if (typeof disposer === "function") {
-    dispose = () => Reflect.apply(disposer, undefined, []);
+    dispose = () => {
+      Reflect.apply(disposer, undefined, []);
+    };
   } else if (is_property_container(disposer)) {
     const dispose_method = read_property(disposer, "dispose");
     if (!dispose_method.ok || typeof dispose_method.value !== "function") {
       throw new Error("TauriTavern returned an invalid ChatSurface disposer");
     }
     const dispose_function = dispose_method.value;
-    dispose = () => Reflect.apply(dispose_function, disposer, []);
+    dispose = () => {
+      Reflect.apply(dispose_function, disposer, []);
+    };
   } else {
     throw new Error("TauriTavern returned an invalid ChatSurface disposer");
   }
@@ -422,7 +428,9 @@ export class TauriTavernHost {
 
     const fault_function = fault.value;
     return {
-      report_fault: (error) => Reflect.apply(fault_function, registration, [error]),
+      report_fault: (error) => {
+        Reflect.apply(fault_function, registration, [error]);
+      },
     };
   }
 

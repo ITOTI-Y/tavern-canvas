@@ -59,7 +59,7 @@ function is_plain_record(value: unknown): value is Record<string, unknown> {
     return false;
   }
   try {
-    const prototype = Object.getPrototypeOf(value);
+    const prototype: unknown = Object.getPrototypeOf(value);
     return prototype === Object.prototype || prototype === null;
   } catch {
     return false;
@@ -354,7 +354,7 @@ export class SillyTavernHost {
       payload = await response.json();
     } catch {
       if (!response.ok) {
-        throw new Error(`Host image upload failed with status ${response.status}`);
+        throw new Error(`Host image upload failed with status ${String(response.status)}`);
       }
       throw new Error("Host image upload returned an invalid response");
     }
@@ -367,7 +367,7 @@ export class SillyTavernHost {
       ) {
         throw new Error(payload.error);
       }
-      throw new Error(`Host image upload failed with status ${response.status}`);
+      throw new Error(`Host image upload failed with status ${String(response.status)}`);
     }
 
     if (

@@ -127,14 +127,6 @@ export function probe_host_capabilities(globals: unknown): BootstrapProbeResult 
     };
   }
 
-  if (version.state !== "available") {
-    return {
-      ready: false,
-      error_code: "helper_api_incomplete",
-      missing_capabilities: missing_required_capabilities(matrix),
-    };
-  }
-
   const helper_version = version.value;
   if (valid(helper_version) === null) {
     return {
