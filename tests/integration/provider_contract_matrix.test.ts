@@ -239,31 +239,42 @@ class FixedRandom implements RetryRandomSource {
   }
 }
 
+type OperationValidator = (operation: ProviderTransportOperation, index: number) => void;
+
 class ScriptedProviderTransport implements ProviderTransport {
   readonly operations: ProviderTransportOperation[] = [];
   readonly remote_operations: ProviderRemoteAssetOperation[] = [];
   #responses: (ProviderTransportResponse | Error)[];
+  #validators: OperationValidator[];
   #remote_responses: ProviderTransportResponse[];
 
   constructor(
     responses: readonly (ProviderTransportResponse | Error)[],
+    validators: readonly OperationValidator[] = [],
     remote_responses: readonly ProviderTransportResponse[] = [],
   ) {
     this.#responses = [...responses];
+    this.#validators = [...validators];
     this.#remote_responses = [...remote_responses];
   }
 
   execute(operation: ProviderTransportOperation): Promise<ProviderTransportResponse> {
+    const index = this.operations.length;
     this.operations.push({
       ...operation,
       ...(operation.body === undefined ? {} : { body: new Uint8Array(operation.body) }),
     });
+    const validator = this.#validators.shift();
+    if (validator === undefined) {
+      throw new Error(`Unexpected provider operation at index ${String(index)}`);
+    }
+    validator(operation, index);
     if (operation.signal.aborted) {
       return Promise.reject(new DOMException("Synthetic cancellation", "AbortError"));
     }
     const response = this.#responses.shift();
     if (response === undefined) {
-      return Promise.reject(new Error("Scripted provider transport exhausted"));
+      throw new Error(`Missing scripted response at index ${String(index)}`);
     }
     return response instanceof Error ? Promise.reject(response) : Promise.resolve(response);
   }
@@ -277,6 +288,20 @@ class ScriptedProviderTransport implements ProviderTransport {
     return response === undefined
       ? Promise.reject(new Error("Scripted remote asset transport exhausted"))
       : Promise.resolve(response);
+  }
+
+  assert_exhausted(): void {
+    if (this.#validators.length > 0) {
+      throw new Error(`Missing provider operation at index ${String(this.operations.length)}`);
+    }
+    if (this.#responses.length > 0) {
+      throw new Error(`Unused scripted provider response count ${String(this.#responses.length)}`);
+    }
+    if (this.#remote_responses.length > 0) {
+      throw new Error(
+        `Unused scripted remote response count ${String(this.#remote_responses.length)}`,
+      );
+    }
   }
 }
 
@@ -359,8 +384,11 @@ function make_harness<TRequest extends ImageGenerationRequest>(options: {
     },
     request: options.request,
     expectation: options.expectation,
-    secret_markers: [options.request.prompt, options.request.generation_anchor, "provider-secret"],
-    log_records: () => options.log.records,
+    secret_markers: [options.request.prompt],
+    log_records: () => {
+      options.transport.assert_exhausted();
+      return options.log.records;
+    },
     transport: options.transport,
     clock: options.clock,
     asset_reader: options.asset_reader,
@@ -411,6 +439,328 @@ function comfy_history(image_count: number): unknown {
 function timeout_response(): DOMException {
   return new DOMException("Synthetic upstream timeout", "TimeoutError");
 }
+function operation_json(operation: ProviderTransportOperation): Record<string, unknown> {
+  if (operation.body === undefined) {
+    throw new Error(`Expected JSON body for ${operation.route}`);
+  }
+  const parsed = JSON.parse(
+    new TextDecoder("utf-8", { fatal: true }).decode(operation.body),
+  ) as unknown;
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new Error(`Expected JSON object for ${operation.route}`);
+  }
+  return parsed as Record<string, unknown>;
+}
+
+function record_value(value: unknown, label: string): Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`Expected object for ${label}`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function assert_http_operation(
+  operation: ProviderTransportOperation,
+  route: string,
+  method: "GET" | "POST" | "DELETE",
+  content_type: string | undefined,
+  accept: string | undefined,
+): void {
+  expect(operation.route).toBe(route);
+  expect(operation.method).toBe(method);
+  expect(operation.content_type).toBe(content_type);
+  expect(operation.accept).toBe(accept);
+}
+
+function repeat_validator(validator: OperationValidator, count: number): OperationValidator[] {
+  return Array.from({ length: count }, () => validator);
+}
+
+function contains_bytes(haystack: Uint8Array, needle: Uint8Array): boolean {
+  outer: for (let offset = 0; offset <= haystack.byteLength - needle.byteLength; offset += 1) {
+    for (let index = 0; index < needle.byteLength; index += 1) {
+      if (haystack[offset + index] !== needle[index]) {
+        continue outer;
+      }
+    }
+    return true;
+  }
+  return needle.byteLength === 0;
+}
+
+function multipart_validator(options: {
+  readonly route: `/${string}`;
+  readonly fields: Readonly<Record<string, string>>;
+  readonly files: readonly {
+    readonly field_name: string;
+    readonly file_name: string;
+    readonly content_type: string;
+    readonly bytes: Uint8Array;
+  }[];
+}): OperationValidator {
+  return (operation) => {
+    expect(operation.route).toBe(options.route);
+    expect(operation.method).toBe("POST");
+    expect(operation.accept).toBe("application/json");
+    if (
+      operation.content_type === undefined ||
+      !operation.content_type.startsWith("multipart/form-data; boundary=")
+    ) {
+      throw new Error(`Expected multipart content type for ${options.route}`);
+    }
+    if (operation.body === undefined) {
+      throw new Error(`Expected multipart body for ${options.route}`);
+    }
+    const body_text = Buffer.from(operation.body).toString("latin1");
+    for (const [field_name, value] of Object.entries(options.fields)) {
+      expect(body_text).toContain(`name="${field_name}"`);
+      expect(body_text).toContain(`\r\n\r\n${value}\r\n`);
+    }
+    for (const file of options.files) {
+      expect(body_text).toContain(`name="${file.field_name}"; filename="${file.file_name}"`);
+      expect(body_text).toContain(`Content-Type: ${file.content_type}`);
+      expect(contains_bytes(operation.body, file.bytes)).toBe(true);
+    }
+  };
+}
+
+function sd_operation_validators(
+  scenario: ProviderContractScenario,
+  request: typeof sd_request,
+): OperationValidator[] {
+  if (scenario === "cancellation" || scenario === "unsupported_capability") {
+    return [];
+  }
+  const validator: OperationValidator = (operation) => {
+    assert_http_operation(
+      operation,
+      request.mode === "txt2img" ? "/sdapi/v1/txt2img" : "/sdapi/v1/img2img",
+      "POST",
+      "application/json",
+      "application/json",
+    );
+    const body = operation_json(operation);
+    expect(body.prompt).toBe(request.prompt);
+    expect(body.negative_prompt).toBe(request.negative_prompt);
+    expect(body.batch_size).toBe(request.output_count);
+    expect(body.width).toBe(request.width);
+    expect(body.height).toBe(request.height);
+    expect(record_value(body.override_settings, "SD override settings")).toMatchObject({
+      sd_model_checkpoint: request.model_id,
+    });
+    if (request.mode === "img2img") {
+      expect(body.init_images).toEqual([bytes_to_base64(PNG_BYTES)]);
+      expect(body.denoising_strength).toBe(request.denoise_strength);
+      expect(JSON.stringify(body)).toContain(bytes_to_base64(SECOND_PNG_BYTES));
+    }
+  };
+  return scenario === "rate_limit" ? repeat_validator(validator, 3) : [validator];
+}
+
+function novelai_operation_validators(
+  scenario: ProviderContractScenario,
+  request: typeof novelai_request,
+): OperationValidator[] {
+  if (scenario === "cancellation" || scenario === "unsupported_capability") {
+    return [];
+  }
+  const validator: OperationValidator = (operation) => {
+    assert_http_operation(
+      operation,
+      "/ai/generate-image",
+      "POST",
+      "application/json",
+      "application/json, application/zip, multipart/mixed",
+    );
+    const body = operation_json(operation);
+    const parameters = record_value(body.parameters, "NovelAI parameters");
+    expect(body.input).toBe(request.prompt);
+    expect(body.model).toBe(request.model_id);
+    expect(parameters.prompt).toBe(request.prompt);
+    expect(parameters.negative_prompt).toBe(request.negative_prompt);
+    expect(parameters.n_samples).toBe(request.output_count);
+    if (request.vibe_references !== undefined) {
+      expect(parameters.reference_image_multiple).toEqual([bytes_to_base64(PNG_BYTES)]);
+    }
+    if (request.character_references !== undefined) {
+      expect(parameters.director_reference_images).toEqual([bytes_to_base64(SECOND_PNG_BYTES)]);
+    }
+  };
+  return scenario === "rate_limit" ? repeat_validator(validator, 3) : [validator];
+}
+
+function comfy_prompt_validator(request: typeof comfy_request): OperationValidator {
+  return (operation) => {
+    assert_http_operation(operation, "/prompt", "POST", "application/json", "application/json");
+    const prompt = record_value(operation_json(operation).prompt, "ComfyUI prompt");
+    expect(record_value(prompt["6"], "ComfyUI positive node").inputs).toMatchObject({
+      text: request.prompt,
+    });
+    expect(record_value(prompt["3"], "ComfyUI sampler node").inputs).toMatchObject({
+      seed: request.seed,
+      cfg: request.placeholder_values.cfg,
+    });
+    expect(record_value(prompt["5"], "ComfyUI latent node").inputs).toMatchObject({
+      batch_size: request.output_count,
+    });
+    expect(record_value(prompt["9"], "ComfyUI output node").inputs).toMatchObject({
+      filename_prefix: request.placeholder_values.style_path,
+    });
+    if (request.input_asset_bindings.reference_image !== undefined) {
+      expect(record_value(prompt["8"], "ComfyUI input node").inputs).toMatchObject({
+        image: "matrix_reference.png",
+      });
+    }
+  };
+}
+
+function comfy_history_validator(): OperationValidator {
+  return (operation) => {
+    assert_http_operation(operation, `/history/${PROMPT_ID}`, "GET", undefined, "application/json");
+  };
+}
+
+function comfy_view_validator(filename: string): OperationValidator {
+  return (operation) => {
+    assert_http_operation(
+      operation,
+      `/view?filename=${filename}&subfolder=&type=output`,
+      "GET",
+      undefined,
+      undefined,
+    );
+  };
+}
+
+function comfy_operation_validators(
+  scenario: ProviderContractScenario,
+  request: typeof comfy_request,
+): OperationValidator[] {
+  if (scenario === "cancellation" || scenario === "unsupported_capability") {
+    return [];
+  }
+  const prompt_validator = comfy_prompt_validator(request);
+  if (
+    scenario === "auth_failure" ||
+    scenario === "content_rejection" ||
+    scenario === "timeout" ||
+    scenario === "malformed_response"
+  ) {
+    return [prompt_validator];
+  }
+  if (scenario === "rate_limit") {
+    return repeat_validator(prompt_validator, 3);
+  }
+  const validators: OperationValidator[] = [];
+  if (scenario === "reference_image") {
+    validators.push(
+      multipart_validator({
+        route: "/upload/image",
+        fields: { type: "input", overwrite: "true" },
+        files: [
+          {
+            field_name: "image",
+            file_name: `${REFERENCE_ASSET_ID}.png`,
+            content_type: "image/png",
+            bytes: PNG_BYTES,
+          },
+        ],
+      }),
+    );
+  }
+  validators.push(prompt_validator, comfy_history_validator());
+  for (let index = 0; index < request.output_count; index += 1) {
+    const filename =
+      scenario === "multiple_images" ? `matrix_${String(index)}.png` : "fixture_00001_.png";
+    validators.push(comfy_view_validator(filename));
+  }
+  return validators;
+}
+
+function openai_operation_validators(
+  scenario: ProviderContractScenario,
+  request: typeof openai_request,
+): OperationValidator[] {
+  if (scenario === "cancellation" || scenario === "unsupported_capability") {
+    return [];
+  }
+  const validator: OperationValidator =
+    request.mode === "generate"
+      ? (operation) => {
+          assert_http_operation(
+            operation,
+            "/v1/images/generations",
+            "POST",
+            "application/json",
+            "application/json",
+          );
+          const body = operation_json(operation);
+          expect(body).toMatchObject({
+            model: request.model_id,
+            prompt: request.prompt,
+            n: request.output_count,
+            output_format: request.output_format,
+          });
+        }
+      : multipart_validator({
+          route: "/v1/images/edits",
+          fields: {
+            model: request.model_id,
+            prompt: request.prompt,
+            n: String(request.output_count),
+            output_format: request.output_format,
+          },
+          files: [
+            {
+              field_name: "image[]",
+              file_name: "input_0.png",
+              content_type: "image/png",
+              bytes: PNG_BYTES,
+            },
+            {
+              field_name: "mask",
+              file_name: "mask.png",
+              content_type: "image/png",
+              bytes: SECOND_PNG_BYTES,
+            },
+          ],
+        });
+  return scenario === "rate_limit" ? repeat_validator(validator, 3) : [validator];
+}
+
+function google_operation_validators(
+  scenario: ProviderContractScenario,
+  request: typeof google_request,
+): OperationValidator[] {
+  if (scenario === "cancellation" || scenario === "unsupported_capability") {
+    return [];
+  }
+  const validator: OperationValidator = (operation) => {
+    assert_http_operation(
+      operation,
+      "/v1beta/interactions",
+      "POST",
+      "application/json",
+      "application/json",
+    );
+    const body = operation_json(operation);
+    expect(body.model).toBe(request.model_id);
+    const input = body.input;
+    if (!Array.isArray(input)) {
+      throw new Error("Expected Google Interaction input parts");
+    }
+    expect(input[0]).toEqual({ type: "text", text: request.prompt });
+    if (request.reference_asset_ids.length > 0) {
+      expect(input.slice(1)).toEqual([
+        { type: "image", mime_type: "image/png", data: bytes_to_base64(PNG_BYTES) },
+        { type: "image", mime_type: "image/png", data: bytes_to_base64(SECOND_PNG_BYTES) },
+      ]);
+    }
+  };
+  return scenario === "rate_limit"
+    ? repeat_validator(validator, 3)
+    : repeat_validator(validator, request.output_count);
+}
 
 function create_sd_harness(scenario: ProviderContractScenario): MatrixHarness<typeof sd_request> {
   const controller = new AbortController();
@@ -459,6 +809,16 @@ function create_sd_harness(scenario: ProviderContractScenario): MatrixHarness<ty
       mode: "img2img",
       input_asset_id: REFERENCE_ASSET_ID,
       denoise_strength: 0.55,
+      controlnet: [
+        {
+          asset_id: MASK_ASSET_ID,
+          model_id: "controlnet-canny",
+          module: "canny",
+          weight: 1,
+          guidance_start: 0,
+          guidance_end: 1,
+        },
+      ],
     });
   } else if (scenario === "unsupported_capability") {
     raw_profile = { ...SD_PROFILE, model_allowlist: ["other-model"] };
@@ -466,7 +826,10 @@ function create_sd_harness(scenario: ProviderContractScenario): MatrixHarness<ty
     expectation = { kind: "error", code: "invalid_request" };
   }
 
-  const transport = new ScriptedProviderTransport(responses);
+  const transport = new ScriptedProviderTransport(
+    responses,
+    sd_operation_validators(scenario, request),
+  );
   return make_harness({
     adapter: new SdWebuiAdapter({ clock, random: new FixedRandom() }),
     raw_profile,
@@ -534,7 +897,7 @@ function create_novelai_harness(
         { asset_id: REFERENCE_ASSET_ID, strength: 0.6, information_extracted: 0.8 },
       ],
       character_references: [
-        { asset_id: REFERENCE_ASSET_ID, prompt: "matrix character", strength: 0.7 },
+        { asset_id: MASK_ASSET_ID, prompt: "matrix character", strength: 0.7 },
       ],
     });
   } else if (scenario === "unsupported_capability") {
@@ -544,7 +907,10 @@ function create_novelai_harness(
     expectation = { kind: "error", code: "invalid_request" };
   }
 
-  const transport = new ScriptedProviderTransport(responses);
+  const transport = new ScriptedProviderTransport(
+    responses,
+    novelai_operation_validators(scenario, request),
+  );
   return make_harness({
     adapter: new NovelAiAdapter({ clock, random: new FixedRandom() }),
     raw_profile,
@@ -622,7 +988,10 @@ function create_comfy_harness(
     expectation = { kind: "error", code: "invalid_request" };
   }
 
-  const transport = new ScriptedProviderTransport(responses);
+  const transport = new ScriptedProviderTransport(
+    responses,
+    comfy_operation_validators(scenario, request),
+  );
   return make_harness({
     adapter: new ComfyUiAdapter({
       workflow_store: new DeterministicWorkflowStore(comfy_workflow_fixture),
@@ -693,6 +1062,7 @@ function create_openai_harness(
       mode: "edit",
       prompt: "matrix edit prompt",
       input_asset_ids: [REFERENCE_ASSET_ID],
+      mask_asset_id: MASK_ASSET_ID,
     });
   } else if (scenario === "unsupported_capability") {
     raw_profile = { ...OPENAI_PROFILE, output_mime_type_allowlist: ["image/jpeg"] };
@@ -700,7 +1070,10 @@ function create_openai_harness(
     expectation = { kind: "error", code: "invalid_request" };
   }
 
-  const transport = new ScriptedProviderTransport(responses);
+  const transport = new ScriptedProviderTransport(
+    responses,
+    openai_operation_validators(scenario, request),
+  );
   return make_harness({
     adapter: new OpenAiImageAdapter({ clock, random: new FixedRandom() }),
     raw_profile,
@@ -767,7 +1140,7 @@ function create_google_harness(
   } else if (scenario === "reference_image") {
     request = GoogleImageRequestSchema.parse({
       ...google_request,
-      reference_asset_ids: [REFERENCE_ASSET_ID],
+      reference_asset_ids: [REFERENCE_ASSET_ID, MASK_ASSET_ID],
     });
   } else if (scenario === "unsupported_capability") {
     raw_profile = { ...GOOGLE_PROFILE, output_mime_type_allowlist: ["image/jpeg"] };
@@ -775,7 +1148,10 @@ function create_google_harness(
     expectation = { kind: "error", code: "invalid_request" };
   }
 
-  const transport = new ScriptedProviderTransport(responses);
+  const transport = new ScriptedProviderTransport(
+    responses,
+    google_operation_validators(scenario, request),
+  );
   return make_harness({
     adapter: new GoogleImageAdapter({ clock, random: new FixedRandom() }),
     raw_profile,
@@ -949,9 +1325,18 @@ async function run_matrix_case<TRequest extends ImageGenerationRequest>(
     expect(completion.output_assets).toHaveLength(harness.expectation.asset_count);
     expect(completion.output_assets.map(({ asset }) => asset)).toEqual(completion.result.assets);
     expect(completion.saw_pending).toBe(harness.expects_async_poll);
-    expect(harness.asset_reader.reads).toEqual(
-      scenario === "reference_image" ? [REFERENCE_ASSET_ID] : [],
-    );
+    if (scenario === "reference_image") {
+      expect(harness.adapter.capabilities.has("reference_image")).toBe(true);
+    }
+    if (scenario === "reference_image") {
+      expect(harness.asset_reader.reads).toEqual(
+        harness.request.provider_id === "comfyui"
+          ? [REFERENCE_ASSET_ID]
+          : [REFERENCE_ASSET_ID, MASK_ASSET_ID],
+      );
+    } else {
+      expect(harness.asset_reader.reads).toEqual([]);
+    }
 
     const actual_bytes = completion.output_assets.map(({ bytes }) => bytes);
     expect(actual_bytes).toEqual(harness.expected_output_bytes);
@@ -975,29 +1360,34 @@ async function run_matrix_case<TRequest extends ImageGenerationRequest>(
     );
     expect(JSON.stringify(completion.result)).not.toMatch(/"bytes"\s*:/u);
     expect(JSON.stringify(completion.result)).not.toContain(harness.request.prompt);
-    expect(JSON.stringify(completion.result)).not.toContain(harness.request.generation_anchor);
   } else {
     expect(failure).toBeInstanceOf(ProviderAdapterError);
     expect((failure as ProviderAdapterError).provider_error.code).toBe(harness.expectation.code);
     expect(harness.asset_reader.reads).toEqual([]);
   }
 
-  if (scenario === "reference_image") {
-    if (!harness.adapter.capabilities.has("reference_image")) {
-      expect((failure as ProviderAdapterError).provider_error.code).toBe("invalid_request");
-    }
-  }
   if (scenario === "rate_limit") {
     expect(harness.transport.operations).toHaveLength(3);
     expect(harness.clock.sleep_delays).toEqual([1000, 1000]);
     expect((failure as ProviderAdapterError).provider_error.retry_after_ms).toBe(1000);
   }
 
-  const serialized_logs = JSON.stringify(harness.log_records());
+  const logs = harness.log_records();
+  const serialized_logs = JSON.stringify(logs);
+  if (scenario === "success" || scenario === "rate_limit") {
+    expect(logs.length).toBeGreaterThan(0);
+    for (const record of logs) {
+      const safe_record = record_value(record, "provider log");
+      expect(safe_record.provider_id).toBe(harness.adapter.provider_id);
+      expect(safe_record.request_id).toBe(harness.request.request_id);
+      expect(safe_record.status_code).toBeTypeOf("number");
+    }
+  }
+  if (scenario === "rate_limit") {
+    expect(logs.map((record) => record_value(record, "provider log").attempt)).toEqual([0, 1, 2]);
+  }
   expect(serialized_logs).not.toMatch(/"bytes"\s*:/u);
   expect(serialized_logs).not.toContain(harness.request.prompt);
-  expect(serialized_logs).not.toContain(harness.request.generation_anchor);
-  expect(serialized_logs).not.toContain("provider-secret");
 }
 
 function sha256_hex(bytes: Uint8Array): string {

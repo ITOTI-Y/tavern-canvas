@@ -36,6 +36,11 @@ const UPSTREAM_RESPONSE_MARKER = "UPSTREAM_FULL_RESPONSE_MARKER";
 const PNG_BASE64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
 const PNG_BYTES = Buffer.from(PNG_BASE64, "base64");
+const CANONICAL_UPLOAD_BASE64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsSAAALEgHS3X78AAAADUlEQVQImWNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==";
+const CANONICAL_UPLOAD_BYTES = Buffer.from(CANONICAL_UPLOAD_BASE64, "base64");
+const CANONICAL_UPLOAD_SHA256 = "3d61666034743c3a1705424e21d3c0de56e05ed63bf893d1e5a4fa57c176a3b2";
+const CANONICAL_UPLOAD_BYTE_LENGTH = 91;
 const WORKFLOW_ID = "44444444-4444-4444-8444-444444444444";
 const FIRST_REQUEST_ID = "11111111-1111-4111-8111-111111111111";
 const SECOND_REQUEST_ID = "11111111-1111-4111-8111-111111111112";
@@ -360,13 +365,6 @@ async function listen_random_port(server: Server): Promise<number> {
   return (address as AddressInfo).port;
 }
 
-async function reserve_loopback_port(): Promise<number> {
-  const server = createServer();
-  const port = await listen_random_port(server);
-  await close_server(server);
-  return port;
-}
-
 async function close_server(server: Server): Promise<void> {
   if (!server.listening) {
     return;
@@ -449,9 +447,9 @@ async function start_gateway(
   logger: GatewayLogger,
   clock: () => string,
 ): Promise<RunningGateway> {
-  const bind_port = await reserve_loopback_port();
+  const validated_config = gateway_config(directory, upstream_base_url, 8787);
   const runtime = create_gateway_runtime({
-    config: gateway_config(directory, upstream_base_url, bind_port),
+    config: { ...validated_config, bind_port: 0 },
     adapters: configured_adapters(),
     logger,
     clock,
@@ -711,6 +709,8 @@ describe("Gateway integration smoke flow", () => {
       expect(accepted_upload.status).toBe(201);
       accepted_uploads += 1;
       const accepted_upload_body = parse_asset_upload_response(await accepted_upload.json());
+      expect(accepted_upload_body.sha256).toBe(CANONICAL_UPLOAD_SHA256);
+      expect(accepted_upload_body.byte_length).toBe(CANONICAL_UPLOAD_BYTE_LENGTH);
 
       const rejected_upload = await fetch(`${gateway.base_url}/v1/assets`, {
         method: "POST",
@@ -829,12 +829,15 @@ describe("Gateway integration smoke flow", () => {
         await uploaded_metadata_response.json(),
       );
       expect(uploaded_metadata.asset_id).toBe(accepted_upload_body.asset_id);
+      expect(uploaded_metadata.sha256).toBe(CANONICAL_UPLOAD_SHA256);
+      expect(uploaded_metadata.byte_length).toBe(CANONICAL_UPLOAD_BYTE_LENGTH);
       const uploaded_content_response = await fetch(
         `${gateway.base_url}/v1/assets/${accepted_upload_body.asset_id}/content`,
         { headers: gateway_headers() },
       );
       expect(uploaded_content_response.status).toBe(200);
       const uploaded_content = Buffer.from(await uploaded_content_response.arrayBuffer());
+      expect(uploaded_content).toEqual(CANONICAL_UPLOAD_BYTES);
       expect(uploaded_content.byteLength).toBe(accepted_upload_body.byte_length);
       expect(createHash("sha256").update(uploaded_content).digest("hex")).toBe(
         accepted_upload_body.sha256,
