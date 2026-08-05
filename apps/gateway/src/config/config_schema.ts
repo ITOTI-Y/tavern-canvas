@@ -150,13 +150,13 @@ function check_openai_remote_origins(
     typeof origin === "string" ? normalize_http_origin(origin) : null,
   );
   if (
-    normalized_origins.some((origin) => origin === null) ||
+    normalized_origins.some((origin) => origin === null || !origin.startsWith("https://")) ||
     new Set(normalized_origins).size !== normalized_origins.length
   ) {
     context.issues.push({
       code: "custom",
       input: "[REDACTED]",
-      message: "Remote asset origins must be unique exact HTTP origins",
+      message: "Remote asset origins must be unique exact HTTPS origins",
       path: ["remote_asset_origin_allowlist"],
     });
   }

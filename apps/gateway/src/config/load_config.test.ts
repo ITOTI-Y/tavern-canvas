@@ -234,6 +234,12 @@ describe("load_gateway_config", () => {
         profile.model_allowlist = ["not-a-supported-openai-model"];
       },
     ],
+    [
+      "cleartext remote asset origin",
+      (profile: Record<string, unknown>) => {
+        profile.remote_asset_origin_allowlist = ["http://assets.example"];
+      },
+    ],
   ])("rejects adapter-invalid profile: %s", (_case_name, mutate) => {
     const env = valid_environment();
     env.TAVERN_CANVAS_PROVIDER_PROFILES = provider_profiles((provider) => {
