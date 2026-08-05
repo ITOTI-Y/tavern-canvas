@@ -3,4 +3,5 @@ packages:
   - packages/*
   - tools/*
 allowBuilds:
+  better-sqlite3: true
   vue-demi: true
