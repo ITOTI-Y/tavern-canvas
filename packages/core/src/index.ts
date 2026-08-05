@@ -16,6 +16,11 @@ export type { GenerationAnchors, RandomSource, SecureCryptoSource } from "./gene
 export { canonical_json } from "./generation/canonical_json.js";
 export { SourceContextSchema } from "./generation/source_context.js";
 export type { SourceContext } from "./generation/source_context.js";
+export {
+  FALLBACK_CANDIDATE_BYTE_LIMIT,
+  FallbackStreamParser,
+} from "./generation/fallback_stream_parser.js";
+export type { FallbackParseDelta } from "./generation/fallback_stream_parser.js";
 export type {
   GenerationSession,
   OpenGenerationSessionRequest,
@@ -26,6 +31,14 @@ export {
   SessionRegistry,
 } from "./generation/session_registry.js";
 export type { GenerationSessionErrorCode, TimeSource } from "./generation/session_registry.js";
+export { BrowserRequestIdSource, RequestImageTool } from "./generation/request_image_tool.js";
+export type {
+  ImageRequestQueuePort,
+  QueuedImageRequest,
+  QueuedImageRequestResult,
+  RequestIdSource,
+  RequestImageToolDefinition,
+} from "./generation/request_image_tool.js";
 export { create_trigger_policy } from "./generation/tool_policy.js";
 export type {
   GenerationTriggerPolicy,

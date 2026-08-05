@@ -1,4 +1,5 @@
 import type {
+  HostGenerationChunkHandler,
   HostGenerationHandler,
   HostImageTool,
   HostImageUploadRequest,
@@ -18,7 +19,7 @@ export interface SillyTavernFunctionTool {
   readonly description: string;
   readonly parameters: Readonly<Record<string, unknown>>;
   readonly action: (arguments_: unknown) => string | Promise<string>;
-  readonly stealth: true;
+  readonly stealth: boolean;
 }
 
 export interface SillyTavernContextSurface {
@@ -30,6 +31,7 @@ export interface SillyTavernContextSurface {
     readonly GENERATION_STARTED: string;
     readonly GENERATION_STOPPED: string;
     readonly GENERATION_ENDED: string;
+    readonly STREAM_TOKEN_RECEIVED: string;
   };
   registerFunctionTool(tool: SillyTavernFunctionTool): void;
   unregisterFunctionTool(name: string): void;
@@ -128,6 +130,7 @@ function has_generation_events(context: object): boolean {
   const started = read_property(event_types, "GENERATION_STARTED");
   const stopped = read_property(event_types, "GENERATION_STOPPED");
   const ended = read_property(event_types, "GENERATION_ENDED");
+  const stream_chunk = read_property(event_types, "STREAM_TOKEN_RECEIVED");
   return (
     has_function_property(event_source_property.value, "on") &&
     has_function_property(event_source_property.value, "removeListener") &&
@@ -139,7 +142,10 @@ function has_generation_events(context: object): boolean {
     stopped.value.length > 0 &&
     ended.ok &&
     typeof ended.value === "string" &&
-    ended.value.length > 0
+    ended.value.length > 0 &&
+    stream_chunk.ok &&
+    typeof stream_chunk.value === "string" &&
+    stream_chunk.value.length > 0
   );
 }
 
@@ -170,10 +176,9 @@ export function inspect_sillytavern(value: unknown, fetch_: unknown): SillyTaver
   const chat_id_available = calls_with_nonempty_string(context, "getCurrentChatId");
   return {
     native_tool_manager:
-      locale_available &&
       has_function_property(context, "registerFunctionTool") &&
       has_function_property(context, "unregisterFunctionTool"),
-    main_generation_events: has_generation_events(context),
+    main_generation_events: locale_available && has_generation_events(context),
     message_swipe_metadata: chat_id_available,
     host_image_upload: typeof fetch_ === "function" && has_valid_request_headers(context),
   };
@@ -317,6 +322,32 @@ export class SillyTavernHost {
     };
   }
 
+  subscribe_generation_chunk(handler: HostGenerationChunkHandler): () => void {
+    const event_name = this.#context.eventTypes.STREAM_TOKEN_RECEIVED;
+    let previous_text = "";
+    const listener: SillyTavernEventListener = (...arguments_) => {
+      const text = arguments_[0];
+      if (typeof text !== "string") {
+        return;
+      }
+      const chunk = text.startsWith(previous_text) ? text.slice(previous_text.length) : text;
+      previous_text = text;
+      if (chunk.length > 0) {
+        handler(chunk);
+      }
+    };
+    this.#context.eventSource.on(event_name, listener);
+
+    let disposed = false;
+    return () => {
+      if (disposed) {
+        return;
+      }
+      disposed = true;
+      this.#context.eventSource.removeListener(event_name, listener);
+    };
+  }
+
   register_image_tool(tool: HostImageTool): () => void {
     this.#context.registerFunctionTool({
       name: tool.name,
@@ -324,7 +355,7 @@ export class SillyTavernHost {
       description: tool.description,
       parameters: structuredClone(tool.parameters),
       action: async (arguments_) => tool.execute(clone_tool_arguments(arguments_)),
-      stealth: true,
+      stealth: tool.stealth,
     });
 
     let disposed = false;

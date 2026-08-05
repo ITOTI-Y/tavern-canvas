@@ -8,6 +8,7 @@ export type {
   HostChatMessageSnapshot,
   HostChatSnapshot,
   HostGenerationEvent,
+  HostGenerationChunkHandler,
   HostGenerationHandler,
   HostImageFormat,
   HostImageTool,

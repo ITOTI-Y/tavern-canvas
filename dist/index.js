@@ -3493,23 +3493,11 @@ var to = /* @__PURE__ */ e(((e, t) => {
 		compareIdentifiers: a.compareIdentifiers,
 		rcompareIdentifiers: a.rcompareIdentifiers
 	};
-})))(), Go = [
-	"native_tool_manager",
-	"main_generation_events",
-	"private_prompt_generation",
-	"message_swipe_metadata",
-	"host_image_upload",
-	"tavern_helper",
-	"tauri_chat_surface",
-	"tauri_world_info_activation",
-	"gateway_protocol"
-];
-//#endregion
-//#region src/host/sillytavern_host.ts
-function Ko(e) {
+})))();
+function Go(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function qo(e) {
+function Ko(e) {
 	if (typeof e != "object" || !e) return !1;
 	try {
 		let t = Object.getPrototypeOf(e);
@@ -3518,13 +3506,13 @@ function qo(e) {
 		return !1;
 	}
 }
-var Jo = {
+var qo = {
 	native_tool_manager: !1,
 	main_generation_events: !1,
 	message_swipe_metadata: !1,
 	host_image_upload: !1
 };
-function Yo(e, t) {
+function Jo(e, t) {
 	try {
 		return {
 			ok: !0,
@@ -3534,12 +3522,12 @@ function Yo(e, t) {
 		return { ok: !1 };
 	}
 }
-function Xo(e, t) {
-	let n = Yo(e, t);
+function Yo(e, t) {
+	let n = Jo(e, t);
 	return n.ok && typeof n.value == "function";
 }
-function Zo(e, t) {
-	let n = Yo(e, t);
+function Xo(e, t) {
+	let n = Jo(e, t);
 	if (!n.ok || typeof n.value != "function") return { ok: !1 };
 	try {
 		return {
@@ -3550,54 +3538,54 @@ function Zo(e, t) {
 		return { ok: !1 };
 	}
 }
-function Qo(e, t) {
-	let n = Zo(e, t);
+function Zo(e, t) {
+	let n = Xo(e, t);
 	return n.ok && typeof n.value == "string" && n.value.trim().length > 0;
 }
-function $o(e) {
-	let t = Yo(e, "eventSource"), n = Yo(e, "eventTypes");
-	if (!t.ok || !Ko(t.value) || !n.ok || !Ko(n.value)) return !1;
-	let r = n.value, i = Yo(r, "GENERATION_STARTED"), a = Yo(r, "GENERATION_STOPPED"), o = Yo(r, "GENERATION_ENDED");
-	return Xo(t.value, "on") && Xo(t.value, "removeListener") && i.ok && typeof i.value == "string" && i.value.length > 0 && a.ok && typeof a.value == "string" && a.value.length > 0 && o.ok && typeof o.value == "string" && o.value.length > 0;
+function Qo(e) {
+	let t = Jo(e, "eventSource"), n = Jo(e, "eventTypes");
+	if (!t.ok || !Go(t.value) || !n.ok || !Go(n.value)) return !1;
+	let r = n.value, i = Jo(r, "GENERATION_STARTED"), a = Jo(r, "GENERATION_STOPPED"), o = Jo(r, "GENERATION_ENDED"), s = Jo(r, "STREAM_TOKEN_RECEIVED");
+	return Yo(t.value, "on") && Yo(t.value, "removeListener") && i.ok && typeof i.value == "string" && i.value.length > 0 && a.ok && typeof a.value == "string" && a.value.length > 0 && o.ok && typeof o.value == "string" && o.value.length > 0 && s.ok && typeof s.value == "string" && s.value.length > 0;
 }
-function es(e) {
-	let t = Zo(e, "getRequestHeaders");
+function $o(e) {
+	let t = Xo(e, "getRequestHeaders");
 	if (!t.ok) return !1;
 	try {
-		return ns(t.value), !0;
+		return ts(t.value), !0;
 	} catch {
 		return !1;
 	}
 }
-function ts(e, t) {
-	if (!Ko(e)) return { ...Jo };
-	let n = Zo(e, "getContext");
-	if (!n.ok || !Ko(n.value)) return { ...Jo };
-	let r = n.value, i = Qo(r, "getCurrentLocale"), a = Qo(r, "getCurrentChatId");
+function es(e, t) {
+	if (!Go(e)) return { ...qo };
+	let n = Xo(e, "getContext");
+	if (!n.ok || !Go(n.value)) return { ...qo };
+	let r = n.value, i = Zo(r, "getCurrentLocale"), a = Zo(r, "getCurrentChatId");
 	return {
-		native_tool_manager: i && Xo(r, "registerFunctionTool") && Xo(r, "unregisterFunctionTool"),
-		main_generation_events: $o(r),
+		native_tool_manager: Yo(r, "registerFunctionTool") && Yo(r, "unregisterFunctionTool"),
+		main_generation_events: i && Qo(r),
 		message_swipe_metadata: a,
-		host_image_upload: typeof t == "function" && es(r)
+		host_image_upload: typeof t == "function" && $o(r)
 	};
 }
-function ns(e) {
-	if (!qo(e)) throw Error("SillyTavern returned invalid request headers");
+function ts(e) {
+	if (!Ko(e)) throw Error("SillyTavern returned invalid request headers");
 	let t;
 	try {
 		t = structuredClone(e);
 	} catch {
 		throw Error("SillyTavern returned invalid request headers");
 	}
-	if (!qo(t) || !Object.values(t).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
+	if (!Ko(t) || !Object.values(t).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
 	return t;
 }
 //#endregion
 //#region src/host/tauritavern_host.ts
-function rs(e) {
+function ns(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function is(e, t) {
+function rs(e, t) {
 	try {
 		return {
 			ok: !0,
@@ -3607,36 +3595,36 @@ function is(e, t) {
 		return { ok: !1 };
 	}
 }
-function as(e, t) {
-	let n = is(e, t);
+function is(e, t) {
+	let n = rs(e, t);
 	return n.ok && typeof n.value == "function";
 }
-function os(e, t) {
-	let n = is(e, t);
-	return n.ok && rs(n.value) ? n.value : void 0;
+function as(e, t) {
+	let n = rs(e, t);
+	return n.ok && ns(n.value) ? n.value : void 0;
 }
-function ss(e) {
+function os(e) {
 	let t = {
 		tauri_chat_surface: !1,
 		tauri_world_info_activation: !1
 	};
-	if (!rs(e)) return t;
-	let n = is(e, "abiVersion");
+	if (!ns(e)) return t;
+	let n = rs(e, "abiVersion");
 	if (!n.ok || n.value !== 1) return t;
-	let r = os(e, "api");
+	let r = as(e, "api");
 	if (r === void 0) return t;
-	let i = os(r, "chatSurface"), a = i === void 0 ? { ok: !1 } : is(i, "protocolVersion"), o = os(r, "worldInfo");
+	let i = as(r, "chatSurface"), a = i === void 0 ? { ok: !1 } : rs(i, "protocolVersion"), o = as(r, "worldInfo");
 	return {
-		tauri_chat_surface: i !== void 0 && a.ok && a.value === 1 && as(i, "isManagedOwnershipRequired") && as(i, "registerParticipant"),
-		tauri_world_info_activation: o !== void 0 && as(o, "getLastActivation") && as(o, "subscribeActivations")
+		tauri_chat_surface: i !== void 0 && a.ok && a.value === 1 && is(i, "isManagedOwnershipRequired") && is(i, "registerParticipant"),
+		tauri_world_info_activation: o !== void 0 && is(o, "getLastActivation") && is(o, "subscribeActivations")
 	};
 }
 //#endregion
 //#region src/host/tavern_helper_host.ts
-function cs(e) {
+function ss(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function ls(e, t) {
+function cs(e, t) {
 	try {
 		return {
 			ok: !0,
@@ -3646,12 +3634,12 @@ function ls(e, t) {
 		return { ok: !1 };
 	}
 }
-function us(e, t) {
-	let n = ls(e, t);
+function ls(e, t) {
+	let n = cs(e, t);
 	return n.ok && typeof n.value == "function";
 }
-function ds(e) {
-	let t = ls(e, "getTavernHelperVersion");
+function us(e) {
+	let t = cs(e, "getTavernHelperVersion");
 	if (!t.ok) return { state: "threw" };
 	if (typeof t.value != "function") return { state: "missing" };
 	let n;
@@ -3665,17 +3653,17 @@ function ds(e) {
 		value: n
 	} : { state: "invalid" };
 }
-function fs(e) {
+function ds(e) {
 	return e === void 0 ? {
 		detected: !1,
 		version: { state: "missing" },
 		private_prompt_generation: !1,
 		message_swipe_metadata: !1
-	} : cs(e) ? {
+	} : ss(e) ? {
 		detected: !0,
-		version: ds(e),
-		private_prompt_generation: us(e, "generateRaw"),
-		message_swipe_metadata: us(e, "getChatMessages") && us(e, "setChatMessages")
+		version: us(e),
+		private_prompt_generation: ls(e, "generateRaw"),
+		message_swipe_metadata: ls(e, "getChatMessages") && ls(e, "setChatMessages")
 	} : {
 		detected: !0,
 		version: { state: "invalid" },
@@ -3685,51 +3673,57 @@ function fs(e) {
 }
 //#endregion
 //#region src/host/capability_probe.ts
-var ps = "4.9.1", ms = Go.slice(0, 6);
-function hs(e) {
+var fs = "4.9.1", ps = [
+	"main_generation_events",
+	"private_prompt_generation",
+	"message_swipe_metadata",
+	"host_image_upload",
+	"tavern_helper"
+];
+function ms(e) {
 	return {
 		available: !1,
 		reason: e
 	};
 }
-function gs(e, t) {
-	return e ? { available: !0 } : hs(t);
+function hs(e, t) {
+	return e ? { available: !0 } : ms(t);
 }
-function _s(e, t) {
+function gs(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function vs(e, t, n) {
+function _s(e, t, n) {
 	return {
-		native_tool_manager: gs(t.native_tool_manager, "SillyTavern ToolManager API is unavailable"),
-		main_generation_events: gs(t.main_generation_events, "SillyTavern generation event API is unavailable"),
-		private_prompt_generation: gs(e.private_prompt_generation, "TavernHelper.generateRaw is unavailable"),
-		message_swipe_metadata: gs(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper message swipe API is unavailable"),
-		host_image_upload: gs(t.host_image_upload, "SillyTavern image upload API is unavailable"),
-		tavern_helper: gs(e.version.state === "available", "TavernHelper version API is unavailable"),
-		tauri_chat_surface: gs(n.tauri_chat_surface, "TauriTavern ChatSurface API is unavailable"),
-		tauri_world_info_activation: gs(n.tauri_world_info_activation, "TauriTavern WorldInfo activation API is unavailable"),
-		gateway_protocol: hs("Gateway protocol is not connected")
+		native_tool_manager: hs(t.native_tool_manager, "SillyTavern ToolManager API is unavailable"),
+		main_generation_events: hs(t.main_generation_events, "SillyTavern generation event API is unavailable"),
+		private_prompt_generation: hs(e.private_prompt_generation, "TavernHelper.generateRaw is unavailable"),
+		message_swipe_metadata: hs(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper message swipe API is unavailable"),
+		host_image_upload: hs(t.host_image_upload, "SillyTavern image upload API is unavailable"),
+		tavern_helper: hs(e.version.state === "available", "TavernHelper version API is unavailable"),
+		tauri_chat_surface: hs(n.tauri_chat_surface, "TauriTavern ChatSurface API is unavailable"),
+		tauri_world_info_activation: hs(n.tauri_world_info_activation, "TauriTavern WorldInfo activation API is unavailable"),
+		gateway_protocol: ms("Gateway protocol is not connected")
 	};
 }
-function ys(e) {
-	return ms.filter((t) => e[t]?.available !== !0);
+function vs(e) {
+	return ps.filter((t) => e[t]?.available !== !0);
 }
-function bs(e) {
-	let t = fs(_s(e, "TavernHelper")), n = vs(t, ts(_s(e, "SillyTavern"), _s(e, "fetch")), ss(_s(e, "__TAURITAVERN__")));
+function ys(e) {
+	let t = ds(gs(e, "TavernHelper")), n = _s(t, es(gs(e, "SillyTavern"), gs(e, "fetch")), os(gs(e, "__TAURITAVERN__")));
 	if (!t.detected) return {
 		ready: !1,
 		error_code: "tavern_helper_missing",
-		missing_capabilities: ys(n)
+		missing_capabilities: vs(n)
 	};
 	let r = t.version;
 	if (r.state === "missing" || r.state === "threw") return {
 		ready: !1,
 		error_code: "helper_api_incomplete",
-		missing_capabilities: ys(n)
+		missing_capabilities: vs(n)
 	};
 	if (r.state === "invalid") return {
 		ready: !1,
@@ -3747,7 +3741,7 @@ function bs(e) {
 		error_code: "helper_version_unsupported",
 		missing_capabilities: ["tavern_helper"]
 	};
-	let a = ys(n);
+	let a = vs(n);
 	return a.length > 0 ? {
 		ready: !1,
 		error_code: "helper_api_incomplete",
@@ -3760,7 +3754,7 @@ function bs(e) {
 }
 //#endregion
 //#region src/ui/BootstrapStatus.vue?vue&type=script&setup=true&lang.ts
-var xs = ["data-startup-state"], Ss = { class: "bootstrap-status__eyebrow" }, Cs = ["href"], ws = /* @__PURE__ */ Fn({
+var bs = ["data-startup-state"], xs = { class: "bootstrap-status__eyebrow" }, Ss = ["href"], Cs = /* @__PURE__ */ Fn({
 	__name: "BootstrapStatus",
 	props: {
 		status: {},
@@ -3772,7 +3766,7 @@ var xs = ["data-startup-state"], Ss = { class: "bootstrap-status__eyebrow" }, Cs
 			"data-startup-state": e.status.state,
 			"aria-live": "polite"
 		}, [
-			Ni("p", Ss, "TavernCanvas " + Ee(e.version), 1),
+			Ni("p", xs, "TavernCanvas " + Ee(e.version), 1),
 			Ni("h1", null, Ee(e.status.title), 1),
 			Ni("p", null, Ee(e.status.message), 1),
 			e.status.state === "blocked" ? (Si(), Di("a", {
@@ -3781,11 +3775,11 @@ var xs = ["data-startup-state"], Ss = { class: "bootstrap-status__eyebrow" }, Cs
 				href: e.status.update_url,
 				target: "_blank",
 				rel: "noreferrer"
-			}, " Open JS Slash Runner ", 8, Cs)) : Ri("", !0)
-		], 8, xs));
+			}, " Open JS Slash Runner ", 8, Ss)) : Ri("", !0)
+		], 8, bs));
 	}
-}), Ts = Symbol("tavern-canvas-portal-target");
-function Es(e, t) {
+}), ws = Symbol("tavern-canvas-portal-target");
+function Ts(e, t) {
 	e.getElementById("tavern-canvas-root")?.remove();
 	let n = e.createElement("div");
 	n.id = "tavern-canvas-root";
@@ -3806,42 +3800,42 @@ function Es(e, t) {
 }
 //#endregion
 //#region src/bootstrap/startup_error.ts
-var Ds = "https://github.com/N0VI028/JS-Slash-Runner";
-function Os(e) {
+var Es = "https://github.com/N0VI028/JS-Slash-Runner";
+function Ds(e) {
 	if (e.ready) return {
 		state: "ready",
 		title: "TavernCanvas ready",
 		message: `Connected through JS Slash Runner ${e.helper_version}.`
 	};
-	let t = `JS Slash Runner ${ps} or newer is required.`;
+	let t = `JS Slash Runner ${fs} or newer is required.`;
 	switch (e.error_code) {
 		case "tavern_helper_missing": return {
 			state: "blocked",
 			title: "JS Slash Runner is required",
 			message: t,
-			update_url: Ds
+			update_url: Es
 		};
 		case "helper_version_invalid": return {
 			state: "blocked",
 			title: "JS Slash Runner version is invalid",
 			message: `TavernCanvas could not verify the installed version. ${t}`,
-			update_url: Ds
+			update_url: Es
 		};
 		case "helper_version_unsupported": return {
 			state: "blocked",
 			title: "Update JS Slash Runner",
 			message: t,
-			update_url: Ds
+			update_url: Es
 		};
 		case "helper_api_incomplete": return {
 			state: "blocked",
 			title: "JS Slash Runner API is incomplete",
 			message: `Required public capabilities are unavailable. ${t}`,
-			update_url: Ds
+			update_url: Es
 		};
 	}
 }
-function ks() {
+function Os() {
 	return {
 		state: "failed",
 		title: "TavernCanvas could not start",
@@ -3850,19 +3844,19 @@ function ks() {
 }
 //#endregion
 //#region src/bootstrap/bootstrap.ts
-async function As(e = {}) {
-	let t = e.document ?? document, n = bs(e.globals ?? globalThis), r = n.ready ? new i(e.modules ?? []) : void 0, a, o;
-	if (!n.ready) a = "blocked", o = Os(n);
+async function ks(e = {}) {
+	let t = e.document ?? document, n = ys(e.globals ?? globalThis), r = n.ready ? new i(e.modules ?? []) : void 0, a, o;
+	if (!n.ready) a = "blocked", o = Ds(n);
 	else try {
-		await r?.start_all(), a = "ready", o = Os(n);
+		await r?.start_all(), a = "ready", o = Ds(n);
 	} catch {
-		a = "failed", o = ks();
+		a = "failed", o = Os();
 	}
-	let s = Es(t, e.stylesheet ?? ""), c = Qa(ws, {
+	let s = Ts(t, e.stylesheet ?? ""), c = Qa(Cs, {
 		status: o,
 		version: e.version ?? "development"
 	});
-	c.provide(Ts, s.portal_element), c.onUnmount(() => {
+	c.provide(ws, s.portal_element), c.onUnmount(() => {
 		s.remove();
 	});
 	try {
@@ -3905,11 +3899,11 @@ async function As(e = {}) {
 }
 //#endregion
 //#region src/index.ts
-var js = As({
+var As = ks({
 	stylesheet: t,
 	version: "3.0.0-alpha.1"
 });
 //#endregion
-export { js as bootstrap_handle };
+export { As as bootstrap_handle };
 
 //# sourceMappingURL=index.js.map

@@ -1,7 +1,7 @@
 import type { CapabilityMatrix, CapabilityStatus } from "@tavern-canvas/contracts";
 import { gte, valid } from "semver";
 
-import { HOST_CAPABILITY_IDS, type HostCapabilityId } from "./host_adapter.js";
+import type { HostCapabilityId } from "./host_adapter.js";
 import { inspect_sillytavern, type SillyTavernInspection } from "./sillytavern_host.js";
 import { inspect_tauritavern, type TauriTavernInspection } from "./tauritavern_host.js";
 import { inspect_tavern_helper, type TavernHelperInspection } from "./tavern_helper_host.js";
@@ -24,7 +24,13 @@ export type BootstrapProbeResult =
       missing_capabilities: string[];
     };
 
-const REQUIRED_CAPABILITY_IDS = HOST_CAPABILITY_IDS.slice(0, 6);
+const REQUIRED_CAPABILITY_IDS = [
+  "main_generation_events",
+  "private_prompt_generation",
+  "message_swipe_metadata",
+  "host_image_upload",
+  "tavern_helper",
+] as const satisfies readonly HostCapabilityId[];
 
 function unavailable(reason: string): CapabilityStatus {
   return { available: false, reason };

@@ -46,12 +46,14 @@ export type HostGenerationEvent =
   | { readonly phase: "ended"; readonly message_id: number };
 
 export type HostGenerationHandler = (event: HostGenerationEvent) => void;
+export type HostGenerationChunkHandler = (chunk: string) => void;
 
 export interface HostImageTool {
   readonly name: string;
   readonly display_name: string;
   readonly description: string;
   readonly parameters: Readonly<Record<string, unknown>>;
+  readonly stealth: boolean;
   execute(arguments_: Readonly<Record<string, unknown>>): string | Promise<string>;
 }
 
@@ -91,6 +93,7 @@ export interface HostAdapter {
   get_locale(): string;
   get_active_chat(): Promise<HostChatSnapshot>;
   subscribe_generation(handler: HostGenerationHandler): () => void;
+  subscribe_generation_chunk(handler: HostGenerationChunkHandler): () => void;
   register_image_tool(tool: HostImageTool): () => void;
   generate_private_prompt(request: PrivatePromptRequest): Promise<string>;
   update_message(request: MessageUpdateRequest): Promise<void>;

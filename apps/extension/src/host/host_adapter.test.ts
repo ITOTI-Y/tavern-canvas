@@ -22,6 +22,7 @@ const adapter: HostAdapter = {
   get_locale: () => "en",
   get_active_chat: async () => ({ chat_id: "chat-1", messages: [] }),
   subscribe_generation: () => () => undefined,
+  subscribe_generation_chunk: () => () => undefined,
   register_image_tool: () => () => undefined,
   generate_private_prompt: async () => "response",
   update_message: async () => undefined,
@@ -43,12 +44,13 @@ describe("HostAdapter boundary", () => {
     ]);
   });
 
-  it("exposes exactly the supported capability property and seven operations", () => {
+  it("exposes exactly the supported capability property and eight operations", () => {
     expect(Object.keys(adapter)).toEqual([
       "capabilities",
       "get_locale",
       "get_active_chat",
       "subscribe_generation",
+      "subscribe_generation_chunk",
       "register_image_tool",
       "generate_private_prompt",
       "update_message",
@@ -62,6 +64,11 @@ describe("HostAdapter boundary", () => {
       .parameter(0)
       .parameter(0)
       .toEqualTypeOf<HostGenerationEvent>();
+    expectTypeOf(adapter.subscribe_generation_chunk)
+      .parameter(0)
+      .parameter(0)
+      .toEqualTypeOf<string>();
+    expectTypeOf<HostImageTool["stealth"]>().toEqualTypeOf<boolean>();
     expectTypeOf(adapter.register_image_tool).parameter(0).toEqualTypeOf<HostImageTool>();
     expectTypeOf(adapter.generate_private_prompt)
       .parameter(0)

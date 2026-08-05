@@ -60,6 +60,7 @@ function create_context(event_source = new FakeEventSource()) {
         GENERATION_STARTED: "generation_started",
         GENERATION_STOPPED: "generation_stopped",
         GENERATION_ENDED: "generation_ended",
+        STREAM_TOKEN_RECEIVED: "stream_token_received",
       },
       registerFunctionTool: register_function_tool,
       unregisterFunctionTool: unregister_function_tool,
@@ -98,6 +99,24 @@ describe("SillyTavernHost", () => {
 
     expect(events).toHaveLength(3);
     expect(context.event_source.remove_count).toBe(3);
+  });
+
+  it("normalizes cumulative streaming snapshots into deduplicated chunks", () => {
+    const context = create_context();
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    const chunks: string[] = [];
+    const dispose = host.subscribe_generation_chunk((chunk) => chunks.push(chunk));
+
+    context.event_source.emit("stream_token_received", "first");
+    context.event_source.emit("stream_token_received", "first second");
+    context.event_source.emit("stream_token_received", "first second");
+    context.event_source.emit("stream_token_received", 2);
+    dispose();
+    dispose();
+    context.event_source.emit("stream_token_received", "ignored");
+
+    expect(chunks).toEqual(["first", " second"]);
+    expect(context.event_source.removed_events).toEqual(["stream_token_received"]);
   });
 
   it.each([2, 3])("rolls back listeners when registration %i fails", (registration_number) => {
@@ -145,6 +164,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: {
         type: "object",
         properties: { scene_description: { type: "string" } },
@@ -157,7 +177,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       displayName: "Request image",
       description: "Queue an image request",
-      stealth: true,
+      stealth: false,
     });
     await expect(registered_tool?.action({ scene_description: "Rainy alley" })).resolves.toBe(
       "queued request-1",
@@ -178,6 +198,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: { type: "object" },
       execute,
     });
@@ -203,6 +224,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: { type: "object" },
       execute,
     });
@@ -242,6 +264,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: { type: "object" },
       execute,
     });
@@ -261,6 +284,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: { type: "object" },
       execute,
     });
@@ -280,6 +304,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: { type: "object" },
       execute,
     });
@@ -303,6 +328,7 @@ describe("SillyTavernHost", () => {
       name: "request_image",
       display_name: "Request image",
       description: "Queue an image request",
+      stealth: false,
       parameters: { type: "object" },
       execute,
     });
@@ -609,7 +635,7 @@ describe("inspect_sillytavern", () => {
   });
 
   it.each([
-    ["getCurrentLocale", "native_tool_manager"],
+    ["getCurrentLocale", "main_generation_events"],
     ["getCurrentChatId", "message_swipe_metadata"],
     ["getRequestHeaders", "host_image_upload"],
   ] as const)(

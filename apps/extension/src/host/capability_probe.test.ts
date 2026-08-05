@@ -53,6 +53,7 @@ function create_fixture(version = "4.9.1"): ProbeFixture {
     GENERATION_STARTED: "generation_started",
     GENERATION_STOPPED: "generation_stopped",
     GENERATION_ENDED: "generation_ended",
+    STREAM_TOKEN_RECEIVED: "stream_token_received",
   };
   const context: Record<string, unknown> = {
     getCurrentLocale: vi.fn(() => "zh-CN"),
@@ -157,23 +158,11 @@ describe("probe_host_capabilities", () => {
       "SillyTavern.getContext",
       "sillytavern",
       "getContext",
-      [
-        "native_tool_manager",
-        "main_generation_events",
-        "message_swipe_metadata",
-        "host_image_upload",
-      ],
+      ["main_generation_events", "message_swipe_metadata", "host_image_upload"],
     ],
-    ["context.getCurrentLocale", "context", "getCurrentLocale", ["native_tool_manager"]],
+    ["context.getCurrentLocale", "context", "getCurrentLocale", ["main_generation_events"]],
     ["context.getCurrentChatId", "context", "getCurrentChatId", ["message_swipe_metadata"]],
     ["context.getRequestHeaders", "context", "getRequestHeaders", ["host_image_upload"]],
-    ["context.registerFunctionTool", "context", "registerFunctionTool", ["native_tool_manager"]],
-    [
-      "context.unregisterFunctionTool",
-      "context",
-      "unregisterFunctionTool",
-      ["native_tool_manager"],
-    ],
     ["eventSource.on", "event_source", "on", ["main_generation_events"]],
     ["eventSource.removeListener", "event_source", "removeListener", ["main_generation_events"]],
     [
@@ -189,6 +178,12 @@ describe("probe_host_capabilities", () => {
       ["main_generation_events"],
     ],
     ["eventTypes.GENERATION_ENDED", "event_types", "GENERATION_ENDED", ["main_generation_events"]],
+    [
+      "eventTypes.STREAM_TOKEN_RECEIVED",
+      "event_types",
+      "STREAM_TOKEN_RECEIVED",
+      ["main_generation_events"],
+    ],
   ] as const)(
     "reports the exact capability when %s is missing",
     (_, target_name, property_name, missing_capabilities) => {
@@ -202,6 +197,25 @@ describe("probe_host_capabilities", () => {
         error_code: "helper_api_incomplete",
         missing_capabilities,
       });
+    },
+  );
+
+  it.each(["registerFunctionTool", "unregisterFunctionTool"] as const)(
+    "keeps fallback mode available when optional context.%s is missing",
+    (property_name) => {
+      const fixture = create_fixture();
+      Reflect.deleteProperty(fixture.context, property_name);
+
+      const result = probe_host_capabilities(fixture.globals);
+
+      expect(result.ready).toBe(true);
+      if (result.ready) {
+        expect(result.matrix.native_tool_manager).toEqual({
+          available: false,
+          reason: "SillyTavern ToolManager API is unavailable",
+        });
+        expect(result.matrix.main_generation_events).toEqual({ available: true });
+      }
     },
   );
 
@@ -308,7 +322,6 @@ describe("probe_host_capabilities", () => {
         ready: false,
         error_code: "tavern_helper_missing",
         missing_capabilities: [
-          "native_tool_manager",
           "main_generation_events",
           "private_prompt_generation",
           "message_swipe_metadata",
@@ -341,7 +354,6 @@ describe("probe_host_capabilities", () => {
       ready: false,
       error_code: "tavern_helper_missing",
       missing_capabilities: [
-        "native_tool_manager",
         "main_generation_events",
         "private_prompt_generation",
         "message_swipe_metadata",
@@ -388,7 +400,6 @@ describe("probe_host_capabilities", () => {
       ready: false,
       error_code: "tavern_helper_missing",
       missing_capabilities: [
-        "native_tool_manager",
         "main_generation_events",
         "private_prompt_generation",
         "message_swipe_metadata",
