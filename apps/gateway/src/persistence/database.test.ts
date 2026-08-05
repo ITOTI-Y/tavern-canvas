@@ -75,6 +75,19 @@ describe("open_gateway_database", () => {
     ]);
   });
 
+  it("keeps repeated startup decisions idempotent across open connections", () => {
+    const file_path = create_database_path();
+    const first = open_database(file_path);
+    const second = open_database(file_path);
+
+    expect(
+      first.connection.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get(),
+    ).toEqual({ count: 1 });
+    expect(
+      second.connection.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get(),
+    ).toEqual({ count: 1 });
+  });
+
   it("rolls back a failed migration atomically", () => {
     const database = open_database(create_database_path());
     const failing_migration: GatewayMigration = {

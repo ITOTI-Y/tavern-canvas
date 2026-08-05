@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { AssetRepository } from "./asset_repository.js";
 import { open_gateway_database, type GatewayDatabase } from "./database.js";
-import { JobRepository } from "./job_repository.js";
+import { JobRepository, JobStateConflictError } from "./job_repository.js";
 
 const JOB_ID = "11111111-1111-4111-8111-111111111111";
 const OTHER_JOB_ID = "22222222-2222-4222-8222-222222222222";
@@ -112,6 +112,61 @@ describe("JobRepository", () => {
     ).toThrow("synthetic event insert failure");
     expect(jobs.get_by_id(JOB_ID)?.state).toBe("running");
     expect(jobs.list_events(JOB_ID)).toHaveLength(2);
+  });
+
+  it("allows exactly one queued claim across repository connections", () => {
+    create_job();
+    const contender_database = open_gateway_database({ file_path });
+    const contender = new JobRepository(contender_database.connection);
+
+    try {
+      const first_claim = jobs.transition_if_current({
+        job_id: JOB_ID,
+        expected_state: "queued",
+        state: "preparing",
+        event_type: "claimed",
+        event: { state: "preparing" },
+        created_at: "2026-08-05T12:00:01.000Z",
+      });
+      const second_claim = contender.transition_if_current({
+        job_id: JOB_ID,
+        expected_state: "queued",
+        state: "preparing",
+        event_type: "claimed",
+        event: { state: "preparing" },
+        created_at: "2026-08-05T12:00:02.000Z",
+      });
+
+      expect(first_claim).toBeDefined();
+      expect(second_claim).toBeUndefined();
+      expect(jobs.get_by_id(JOB_ID)?.state).toBe("preparing");
+      expect(jobs.list_events(JOB_ID)).toHaveLength(1);
+    } finally {
+      contender_database.close();
+    }
+  });
+
+  it("rejects a late transition after a job reaches a terminal state", () => {
+    create_job();
+    jobs.transition_with_event({
+      job_id: JOB_ID,
+      state: "cancelled",
+      event_type: "cancelled",
+      event: { state: "cancelled" },
+      created_at: "2026-08-05T12:00:01.000Z",
+    });
+
+    expect(() =>
+      jobs.transition_with_event({
+        job_id: JOB_ID,
+        state: "completed",
+        event_type: "completed",
+        event: { state: "completed" },
+        created_at: "2026-08-05T12:00:02.000Z",
+      }),
+    ).toThrow(JobStateConflictError);
+    expect(jobs.get_by_id(JOB_ID)?.state).toBe("cancelled");
+    expect(jobs.list_events(JOB_ID)).toHaveLength(1);
   });
 
   it("deleting a job removes references without deleting the asset", () => {

@@ -1,10 +1,17 @@
 import { isIP } from "node:net";
 
-import { AssetIdSchema, ProviderIdSchema } from "@tavern-canvas/contracts";
+import { ProviderIdSchema, type ProviderId } from "@tavern-canvas/contracts";
+import {
+  ComfyUiAdapter,
+  GoogleImageAdapter,
+  NovelAiAdapter,
+  OpenAiImageAdapter,
+  SdWebuiAdapter,
+  type ProviderProfile,
+} from "@tavern-canvas/providers";
 import { z } from "zod";
 
 const TOKEN_HASH_PATTERN = /^[a-f0-9]{64}$/u;
-const MEDIA_TYPE_SCHEMA = z.enum(["image/png", "image/jpeg", "image/webp", "video/mp4"]);
 
 export class SecretValue {
   readonly #value: string;
@@ -50,16 +57,6 @@ const HttpOriginSchema = z
   })
   .transform((value) => normalize_http_origin(value) ?? value);
 
-const HttpsOriginSchema = HttpOriginSchema.check((context) => {
-  if (!context.value.startsWith("https://")) {
-    context.issues.push({
-      code: "custom",
-      input: context.value,
-      message: "Expected an HTTPS origin",
-    });
-  }
-});
-
 const ProviderBaseUrlSchema = HttpOriginSchema.check((context) => {
   const url = new URL(context.value);
   if (url.protocol === "http:" && !is_loopback_hostname(url.hostname)) {
@@ -71,39 +68,99 @@ const ProviderBaseUrlSchema = HttpOriginSchema.check((context) => {
   }
 });
 
-const ProfileStringSchema = z.string().trim().min(1).max(128);
+const PROVIDER_ADAPTERS: Record<
+  ProviderId,
+  { readonly validate_profile: (profile: unknown) => ProviderProfile }
+> = {
+  sd_webui: new SdWebuiAdapter(),
+  novelai: new NovelAiAdapter(),
+  comfyui: new ComfyUiAdapter({
+    workflow_store: { load: () => Promise.resolve({}) },
+  }),
+  openai_image: new OpenAiImageAdapter(),
+  google_image: new GoogleImageAdapter(),
+};
 
-const CommonProviderProfileSchema = z
-  .strictObject({
-    profile_id: ProfileStringSchema,
-    provider_id: ProviderIdSchema,
-    model_allowlist: z.array(ProfileStringSchema).min(1).max(128),
-    vae_allowlist: z.array(ProfileStringSchema).max(128).optional(),
-    adetailer_model_allowlist: z.array(ProfileStringSchema).max(128).optional(),
-    controlnet_model_allowlist: z.array(ProfileStringSchema).max(128).optional(),
-    output_mime_type_allowlist: z.array(MEDIA_TYPE_SCHEMA).min(1).max(4),
-    remote_asset_origin_allowlist: z.array(HttpsOriginSchema).max(32).optional(),
-    workflow_allowlist: z.array(AssetIdSchema).min(1).max(256).optional(),
-    max_response_bytes: z.number().int().positive().max(100_000_000).optional(),
-    max_input_asset_bytes: z.number().int().positive().max(100_000_000).optional(),
-    max_archive_entries: z.number().int().min(1).max(32).optional(),
-  })
+const GatewayProviderProfileSchema = z
+  .record(z.string(), z.unknown())
   .check((context) => {
-    const allowlists = [
-      ["model_allowlist", context.value.model_allowlist],
-      ["vae_allowlist", context.value.vae_allowlist],
-      ["adetailer_model_allowlist", context.value.adetailer_model_allowlist],
-      ["controlnet_model_allowlist", context.value.controlnet_model_allowlist],
-      ["output_mime_type_allowlist", context.value.output_mime_type_allowlist],
-      ["remote_asset_origin_allowlist", context.value.remote_asset_origin_allowlist],
-      ["workflow_allowlist", context.value.workflow_allowlist],
-    ] as const;
-    for (const [path, values] of allowlists) {
-      if (values !== undefined) {
-        check_unique(context, path, values);
-      }
+    const provider_id = ProviderIdSchema.safeParse(context.value.provider_id);
+    if (!provider_id.success) {
+      context.issues.push({
+        code: "custom",
+        input: "[REDACTED]",
+        message: "Provider profile ID is invalid",
+        path: ["provider_id"],
+      });
+      return;
     }
+    const normalized_profile = normalize_provider_profile_input(context.value, provider_id.data);
+    try {
+      PROVIDER_ADAPTERS[provider_id.data].validate_profile(normalized_profile);
+    } catch {
+      context.issues.push({
+        code: "custom",
+        input: "[REDACTED]",
+        message: "Provider profile does not satisfy its adapter schema",
+        path: ["profile"],
+      });
+    }
+    if (provider_id.data === "openai_image") {
+      check_openai_remote_origins(context, normalized_profile);
+    }
+  })
+  .transform((profile) => {
+    const provider_id = ProviderIdSchema.parse(profile.provider_id);
+    const normalized_profile = normalize_provider_profile_input(profile, provider_id);
+    return PROVIDER_ADAPTERS[provider_id].validate_profile(normalized_profile);
   });
+
+function is_unknown_array(value: unknown): value is readonly unknown[] {
+  return Array.isArray(value);
+}
+
+function normalize_provider_profile_input(
+  profile: Record<string, unknown>,
+  provider_id: ProviderId,
+): Record<string, unknown> {
+  if (provider_id !== "openai_image") {
+    return profile;
+  }
+  const origins = profile.remote_asset_origin_allowlist;
+  if (!is_unknown_array(origins)) {
+    return profile;
+  }
+  return {
+    ...profile,
+    remote_asset_origin_allowlist: origins.map((origin) =>
+      typeof origin === "string" ? (normalize_http_origin(origin) ?? origin) : origin,
+    ),
+  };
+}
+
+function check_openai_remote_origins(
+  context: { issues: z.core.$ZodRawIssue[] },
+  profile: Record<string, unknown>,
+): void {
+  const origins = profile.remote_asset_origin_allowlist;
+  if (!is_unknown_array(origins)) {
+    return;
+  }
+  const normalized_origins = origins.map((origin) =>
+    typeof origin === "string" ? normalize_http_origin(origin) : null,
+  );
+  if (
+    normalized_origins.some((origin) => origin === null) ||
+    new Set(normalized_origins).size !== normalized_origins.length
+  ) {
+    context.issues.push({
+      code: "custom",
+      input: "[REDACTED]",
+      message: "Remote asset origins must be unique exact HTTP origins",
+      path: ["remote_asset_origin_allowlist"],
+    });
+  }
+}
 
 export const GatewayProviderConfigSchema = z
   .strictObject({
@@ -116,7 +173,7 @@ export const GatewayProviderConfigSchema = z
       .refine((value) => value.trim().length > 0, "Provider credential must not be blank")
       .transform((value) => new SecretValue(value))
       .optional(),
-    profile: CommonProviderProfileSchema,
+    profile: GatewayProviderProfileSchema,
   })
   .check((context) => {
     if (context.value.profile.provider_id !== context.value.provider_id) {
@@ -166,6 +223,11 @@ export const GatewayConfigSchema = z
       context,
       "provider_profiles",
       context.value.provider_profiles.map((provider) => provider.profile.profile_id),
+    );
+    check_unique(
+      context,
+      "provider_ids",
+      context.value.provider_profiles.map((provider) => provider.provider_id),
     );
   });
 

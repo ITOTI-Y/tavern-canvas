@@ -76,27 +76,26 @@ export function apply_migrations(
 ): void {
   validate_migrations(migrations);
   const known_versions = new Set(migrations.map((migration) => migration.version));
-  const applied_versions = read_applied_versions(connection);
-  for (const version of applied_versions) {
-    if (!known_versions.has(version)) {
-      throw new GatewaySchemaVersionError(version);
-    }
-  }
+  connection
+    .transaction(() => {
+      const applied_versions = read_applied_versions(connection);
+      for (const version of applied_versions) {
+        if (!known_versions.has(version)) {
+          throw new GatewaySchemaVersionError(version);
+        }
+      }
 
-  for (const migration of migrations) {
-    if (applied_versions.has(migration.version)) {
-      continue;
-    }
-    connection
-      .transaction(() => {
+      for (const migration of migrations) {
+        if (applied_versions.has(migration.version)) {
+          continue;
+        }
         migration.apply(connection);
         connection
           .prepare("INSERT INTO schema_migrations (version, applied_at) VALUES (?, ?)")
           .run(migration.version, now());
-      })
-      .immediate();
-    applied_versions.add(migration.version);
-  }
+      }
+    })
+    .immediate();
 }
 
 function read_applied_versions(connection: Database.Database): Set<number> {

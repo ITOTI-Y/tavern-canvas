@@ -27,6 +27,22 @@ const RECOVERABLE_STATES = [
   "running",
 ] as const satisfies readonly GenerationState[];
 
+type TerminalGenerationState = Extract<
+  GenerationState,
+  "completed" | "failed" | "cancelled" | "attached" | "orphaned"
+>;
+const TERMINAL_STATES: Record<TerminalGenerationState, true> = {
+  completed: true,
+  failed: true,
+  cancelled: true,
+  attached: true,
+  orphaned: true,
+};
+
+function is_terminal_state(state: GenerationState): boolean {
+  return Object.hasOwn(TERMINAL_STATES, state);
+}
+
 interface JobRow {
   readonly job_id: string;
   readonly request_id: string;
@@ -88,6 +104,17 @@ export interface JobTransitionInput {
   readonly created_at: string;
 }
 
+export interface ConditionalJobTransitionInput extends JobTransitionInput {
+  readonly expected_state: GenerationState;
+}
+
+export class JobStateConflictError extends Error {
+  constructor() {
+    super("Gateway job state precondition failed");
+    this.name = "JobStateConflictError";
+  }
+}
+
 export class JobRepository {
   readonly #connection: Database.Database;
   readonly #insert_job: Database.Statement;
@@ -96,10 +123,14 @@ export class JobRepository {
   readonly #select_events: Database.Statement;
   readonly #select_next_sequence: Database.Statement;
   readonly #update_job: Database.Statement;
+  readonly #update_job_if_state: Database.Statement;
   readonly #insert_event: Database.Statement;
   readonly #delete_job: Database.Statement;
   readonly #create_or_get_transaction: (input: CreateJobInput) => CreateJobResult;
   readonly #transition_transaction: (input: JobTransitionInput) => StoredJobEvent;
+  readonly #conditional_transition_transaction: (
+    input: ConditionalJobTransitionInput,
+  ) => StoredJobEvent | undefined;
 
   constructor(connection: Database.Database) {
     this.#connection = connection;
@@ -132,6 +163,14 @@ export class JobRepository {
         updated_at = @updated_at
       WHERE job_id = @job_id
     `);
+    this.#update_job_if_state = connection.prepare(`
+      UPDATE jobs SET
+        state = @state,
+        submission_json = @submission_json,
+        error_code = @error_code,
+        updated_at = @updated_at
+      WHERE job_id = @job_id AND state = @expected_state
+    `);
     this.#insert_event = connection.prepare(`
       INSERT INTO job_events (
         job_id, sequence, event_type, event_json, created_at
@@ -148,6 +187,11 @@ export class JobRepository {
       this.#transition(input),
     );
     this.#transition_transaction = (input) => transition_transaction.immediate(input);
+    const conditional_transition_transaction = connection.transaction(
+      (input: ConditionalJobTransitionInput) => this.#transition_if_current(input),
+    );
+    this.#conditional_transition_transaction = (input) =>
+      conditional_transition_transaction.immediate(input);
   }
 
   create_or_get(input: CreateJobInput): CreateJobResult {
@@ -186,6 +230,10 @@ export class JobRepository {
     return this.#transition_transaction(input);
   }
 
+  transition_if_current(input: ConditionalJobTransitionInput): StoredJobEvent | undefined {
+    return this.#conditional_transition_transaction(input);
+  }
+
   delete(job_id: JobId): boolean {
     JobIdSchema.parse(job_id);
     return this.#delete_job.run(job_id).changes === 1;
@@ -211,6 +259,22 @@ export class JobRepository {
   }
 
   #transition(input: JobTransitionInput): StoredJobEvent {
+    const event = this.#apply_transition(input);
+    if (event === undefined) {
+      throw new JobStateConflictError();
+    }
+    return event;
+  }
+
+  #transition_if_current(input: ConditionalJobTransitionInput): StoredJobEvent | undefined {
+    const expected_state = GenerationStateSchema.parse(input.expected_state);
+    return this.#apply_transition(input, expected_state);
+  }
+
+  #apply_transition(
+    input: JobTransitionInput,
+    expected_state?: GenerationState,
+  ): StoredJobEvent | undefined {
     const job_id = JobIdSchema.parse(input.job_id);
     const state = GenerationStateSchema.parse(input.state);
     const event_type = EventTypeSchema.parse(input.event_type);
@@ -218,6 +282,12 @@ export class JobRepository {
     const current = this.get_by_id(job_id);
     if (current === undefined) {
       throw new Error(`Unknown Gateway job: ${job_id}`);
+    }
+    if (is_terminal_state(current.state)) {
+      throw new JobStateConflictError();
+    }
+    if (expected_state !== undefined && current.state !== expected_state) {
+      return undefined;
     }
     const submission = input.submission === undefined ? current.submission : input.submission;
     const error_code = input.error_code === undefined ? current.error_code : input.error_code;
@@ -231,15 +301,22 @@ export class JobRepository {
       throw new Error("Job event sequence exceeded the safe integer range");
     }
 
-    const updated = this.#update_job.run({
+    const update_parameters = {
       job_id,
       state,
       submission_json,
       error_code: normalized_error,
       updated_at: created_at,
-    });
+    };
+    const updated =
+      expected_state === undefined
+        ? this.#update_job.run(update_parameters)
+        : this.#update_job_if_state.run({ ...update_parameters, expected_state });
     if (updated.changes !== 1) {
-      throw new Error(`Unknown Gateway job: ${job_id}`);
+      if (expected_state === undefined) {
+        throw new Error(`Unknown Gateway job: ${job_id}`);
+      }
+      return undefined;
     }
     this.#insert_event.run({
       job_id,
