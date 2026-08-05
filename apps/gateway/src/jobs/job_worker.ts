@@ -60,10 +60,13 @@ interface ActiveJob {
   readonly adapter: GatewayAdapter;
   readonly provider: GatewayProviderConfig;
   readonly transport: ProviderTransport;
+  shutdown_requested: boolean;
+  cancel_requested: boolean;
 }
 
 const DEFAULT_POLL_DELAY_MS = 250;
 const MAX_POLL_DELAY_MS = 60_000;
+const CANCEL_TIMEOUT_MS = 5_000;
 const EMPTY_SUBMISSION = null;
 
 export class JobWorker {
@@ -116,6 +119,7 @@ export class JobWorker {
     this.#started = false;
     this.#queued.clear();
     for (const active of this.#active.values()) {
+      active.shutdown_requested = true;
       active.controller.abort();
     }
     while (this.#active.size > 0) {
@@ -126,7 +130,7 @@ export class JobWorker {
   }
 
   enqueue(job_id: string): void {
-    if (!this.#started) {
+    if (!this.#started || this.#active.has(job_id)) {
       return;
     }
     const job = this.#service.get_stored_job(job_id);
@@ -139,20 +143,31 @@ export class JobWorker {
 
   cancel_active(job_id: string): void {
     const active = this.#active.get(job_id);
-    if (active === undefined) {
+    if (active === undefined || active.cancel_requested) {
       return;
     }
+    active.cancel_requested = true;
     active.controller.abort();
     const job = this.#service.get_stored_job(job_id);
-    if (job?.submission !== null && is_queryable_submission(job?.submission)) {
-      const context = this.#execution_context(active, active.controller.signal);
-      void active.adapter.cancel(context, job.submission).catch((error: unknown) => {
+    if (job === undefined || !is_queryable_submission(job.submission)) {
+      return;
+    }
+    const cancellation_controller = new AbortController();
+    const cancellation_timer = setTimeout(() => {
+      cancellation_controller.abort();
+    }, CANCEL_TIMEOUT_MS);
+    const context = this.#execution_context(active, cancellation_controller.signal);
+    void active.adapter
+      .cancel(context, job.submission)
+      .catch((error: unknown) => {
         this.#logger.warn(
           { provider_id: job.provider_id, job_id, error },
           "Provider cancellation failed",
         );
+      })
+      .finally(() => {
+        clearTimeout(cancellation_timer);
       });
-    }
   }
 
   #service_recoverable_jobs(): StoredJob[] {
@@ -250,11 +265,21 @@ export class JobWorker {
     }
     const controller = new AbortController();
     const transport = this.#transport_factory.create(provider);
-    const active: ActiveJob = { controller, adapter, provider, transport };
+    const active: ActiveJob = {
+      controller,
+      adapter,
+      provider,
+      transport,
+      shutdown_requested: false,
+      cancel_requested: false,
+    };
     this.#active.set(job_id, active);
     try {
       await this.#execute_job(job, active);
     } catch (error) {
+      if (active.shutdown_requested) {
+        return;
+      }
       const normalized = normalize_provider_failure(error, controller.signal);
       if (normalized.provider_error.code === "cancelled") {
         this.#service.cancel_job(job_id);
@@ -270,14 +295,18 @@ export class JobWorker {
       return;
     }
     if (current.state === "queued") {
-      this.#transition_state(current, "preparing", "preparing");
+      if (!this.#transition_state(current, "preparing", "preparing")) {
+        return;
+      }
       current = this.#service.get_stored_job(job.job_id);
       if (current === undefined) {
         return;
       }
     }
     if (current.state === "preparing") {
-      this.#transition_state(current, "submitting", "submitting");
+      if (!this.#transition_state(current, "submitting", "submitting")) {
+        return;
+      }
       current = this.#service.get_stored_job(job.job_id);
       if (current === undefined) {
         return;
@@ -344,10 +373,16 @@ export class JobWorker {
         Math.min(Math.max(0, next_delay), MAX_POLL_DELAY_MS),
         active.controller.signal,
       );
+      if (active.shutdown_requested) {
+        return;
+      }
       const result = await active.adapter.poll(
         this.#execution_context(active, active.controller.signal),
         submission,
       );
+      if (!this.#started) {
+        return;
+      }
       if (result.state === "pending") {
         next_delay = result.poll_after_ms ?? DEFAULT_POLL_DELAY_MS;
         continue;
@@ -407,16 +442,18 @@ export class JobWorker {
     });
   }
 
-  #transition_state(job: StoredJob, state: GenerationState, event_type: string): void {
+  #transition_state(job: StoredJob, state: GenerationState, event_type: string): boolean {
     const parsed_state = GenerationStateSchema.parse(state);
-    this.#service.transition_if_current({
-      job_id: job.job_id,
-      expected_state: job.state,
-      state: parsed_state,
-      event_type,
-      event: { state: parsed_state },
-      created_at: this.#clock(),
-    });
+    return (
+      this.#service.transition_if_current({
+        job_id: job.job_id,
+        expected_state: job.state,
+        state: parsed_state,
+        event_type,
+        event: { state: parsed_state },
+        created_at: this.#clock(),
+      }) !== undefined
+    );
   }
 
   #fail_job(job: StoredJob, error: ProviderError): void {

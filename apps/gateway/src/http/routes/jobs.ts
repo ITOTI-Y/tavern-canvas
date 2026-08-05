@@ -20,7 +20,9 @@ export function create_jobs_router(options: JobsRouteOptions): Router {
         readonly request: unknown;
       },
     );
-    options.worker.enqueue(result.job.job_id);
+    if (result.created) {
+      options.worker.enqueue(result.job.job_id);
+    }
     response.status(202).setHeader("location", `/v1/jobs/${result.job.job_id}`).json(result.job);
   });
 

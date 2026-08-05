@@ -33,6 +33,8 @@ export interface GatewayRuntimeOptions {
   readonly clock?: () => string;
   readonly fetcher?: typeof fetch;
   readonly transport_factory?: ProviderTransportFactory;
+  readonly database_ready?: () => boolean;
+  readonly auto_start_worker?: boolean;
 }
 
 export interface GatewayRuntime {
@@ -49,6 +51,16 @@ export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): Gat
   const database = open_gateway_database({
     file_path: path.join(config.data_directory, "tavern_canvas.sqlite"),
   });
+  const database_ready =
+    options.database_ready ??
+    (() => {
+      try {
+        database.connection.prepare("SELECT 1").get();
+        return true;
+      } catch {
+        return false;
+      }
+    });
   const job_repository = new JobRepository(database.connection);
   const asset_repository = new AssetRepository(database.connection);
   const asset_store = new AssetStore({
@@ -91,7 +103,11 @@ export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): Gat
     logger,
     worker,
     service,
+    database_ready,
     ...(options.clock === undefined ? {} : { clock: options.clock }),
+    ...(options.auto_start_worker === undefined
+      ? {}
+      : { auto_start_worker: options.auto_start_worker }),
   });
   let server: Server | undefined;
   let stopped = false;

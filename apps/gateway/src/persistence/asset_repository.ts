@@ -83,14 +83,14 @@ export class AssetRepository {
     this.#attach_asset = connection.prepare(`
       INSERT INTO job_assets (job_id, asset_id, position)
       VALUES (@job_id, @asset_id, @position)
-      ON CONFLICT(job_id, asset_id) DO UPDATE SET position = excluded.position
+      ON CONFLICT(job_id, position) DO UPDATE SET asset_id = excluded.asset_id
     `);
     this.#select_for_job = connection.prepare(`
       SELECT assets.*, job_assets.position
       FROM job_assets
       JOIN assets ON assets.asset_id = job_assets.asset_id
       WHERE job_assets.job_id = ?
-      ORDER BY job_assets.position, assets.asset_id
+      ORDER BY job_assets.position
     `);
     const create_or_get_transaction = connection.transaction((input: CreateAssetInput) =>
       this.#create_or_get(input),

@@ -13,7 +13,7 @@ import { create_bearer_authentication } from "./authentication.js";
 import { create_gateway_error_handler, GatewayHttpError } from "./error_handler.js";
 import { create_assets_router } from "./routes/assets.js";
 import { create_capabilities_router } from "./routes/capabilities.js";
-import { create_job_events_router } from "./routes/job_events.js";
+import { create_job_events_router, SseConnectionController } from "./routes/job_events.js";
 import { create_jobs_router } from "./routes/jobs.js";
 import { JobService } from "../jobs/job_service.js";
 import { JobWorker, type GatewayAdapter } from "../jobs/job_worker.js";
@@ -46,6 +46,7 @@ export interface GatewayAppHandle {
   readonly worker: JobWorker;
   readonly asset_store: AssetStore;
   readonly logger: GatewayLogger;
+  readonly sse_connections: SseConnectionController;
   readonly ready: Promise<void>;
   stop(): Promise<void>;
 }
@@ -77,12 +78,18 @@ export function create_app(options: GatewayAppOptions): GatewayApplication {
       ...(options.clock === undefined ? {} : { clock: options.clock }),
     });
   const application = express();
+  const sse_connections = new SseConnectionController();
   application.disable("x-powered-by");
   application.use(helmet());
   application.use(create_correlation_middleware());
   application.use(create_exact_cors_middleware(options.config.cors_origins));
   application.get("/healthz", (_request, response) => {
-    const database_ready = options.database_ready?.() ?? true;
+    let database_ready: boolean;
+    try {
+      database_ready = options.database_ready?.() ?? true;
+    } catch {
+      database_ready = false;
+    }
     const ready = database_ready;
     response.status(ready ? 200 : 503).json({
       status: ready ? "ok" : "not_ready",
@@ -130,7 +137,7 @@ export function create_app(options: GatewayAppOptions): GatewayApplication {
       ...(options.clock === undefined ? {} : { clock: options.clock }),
     }),
   );
-  application.use("/v1", create_job_events_router({ service }));
+  application.use("/v1", create_job_events_router({ service, controller: sse_connections }));
   application.use("/v1", create_jobs_router({ service, worker }));
   application.use((_request, _response, next) => {
     next(new GatewayHttpError(404, "not_found"));
@@ -149,8 +156,10 @@ export function create_app(options: GatewayAppOptions): GatewayApplication {
     worker,
     asset_store: options.asset_store,
     logger,
+    sse_connections,
     ready,
     stop: async () => {
+      sse_connections.close_all();
       await worker.stop();
       logger.flush();
     },

@@ -87,9 +87,11 @@ function map_asset_error(error: unknown): GatewayHttpError {
         return new GatewayHttpError(404, "asset_not_found");
       case "asset_content_unavailable":
         return new GatewayHttpError(404, "asset_content_unavailable");
+      case "asset_storage_unavailable":
+        return new GatewayHttpError(503, "internal_error", { retryable: true });
       case "invalid_asset":
         return new GatewayHttpError(400, "invalid_asset");
     }
   }
-  return new GatewayHttpError(400, "invalid_asset");
+  return new GatewayHttpError(500, "internal_error");
 }

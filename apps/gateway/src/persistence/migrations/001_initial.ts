@@ -43,7 +43,7 @@ export const INITIAL_MIGRATION = {
         job_id TEXT NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
         asset_id TEXT NOT NULL REFERENCES assets(asset_id),
         position INTEGER NOT NULL,
-        PRIMARY KEY (job_id, asset_id)
+        PRIMARY KEY (job_id, position)
       );
     `);
   },

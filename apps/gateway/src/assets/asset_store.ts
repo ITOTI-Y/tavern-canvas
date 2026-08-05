@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { access, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { AssetId, GeneratedAsset, Sha256 } from "@tavern-canvas/contracts";
@@ -19,7 +19,10 @@ export interface AssetStoreLimits {
 export interface AssetStoreOptions extends AssetStoreLimits {
   readonly data_directory: string;
   readonly asset_repository: AssetRepository;
+  readonly write_file?: AssetStoreWriteFile;
 }
+
+export type AssetStoreWriteFile = (file_path: string, bytes: Uint8Array) => Promise<void>;
 
 export interface IngestedAsset {
   readonly asset: StoredAsset;
@@ -42,16 +45,24 @@ export class AssetStore {
   readonly #asset_directory: string;
   readonly #asset_repository: AssetRepository;
   readonly #limits: AssetStoreLimits;
+  readonly #write_file: AssetStoreWriteFile;
 
   constructor(options: AssetStoreOptions) {
     this.#data_directory = path.resolve(options.data_directory);
     this.#asset_directory = path.resolve(this.#data_directory, "assets");
     this.#asset_repository = options.asset_repository;
     this.#limits = options;
+    this.#write_file =
+      options.write_file ??
+      ((file_path, bytes) => writeFile(file_path, bytes, { flag: "wx", mode: 0o600 }));
   }
 
   async initialize(): Promise<void> {
-    await mkdir(this.#asset_directory, { recursive: true });
+    try {
+      await mkdir(this.#asset_directory, { recursive: true });
+    } catch {
+      throw new AssetStoreError("asset_storage_unavailable");
+    }
   }
 
   async ingest_reference_image(
@@ -172,8 +183,11 @@ export class AssetStore {
     let bytes: Buffer;
     try {
       bytes = await readFile(file_path);
-    } catch {
-      throw new AssetStoreError("asset_content_unavailable");
+    } catch (error) {
+      if (is_missing_file_error(error)) {
+        throw new AssetStoreError("asset_content_unavailable");
+      }
+      throw new AssetStoreError("asset_storage_unavailable");
     }
     if (sha256_hex(bytes) !== asset.sha256 || bytes.byteLength !== asset.byte_length) {
       throw new AssetStoreError("asset_content_unavailable");
@@ -214,41 +228,51 @@ export class AssetStore {
   async #ensure_asset_bytes(asset: StoredAsset, bytes: Uint8Array): Promise<void> {
     await this.initialize();
     const target = this.#safe_asset_path(asset);
-    try {
-      await access(target);
+    if (await this.#has_valid_asset_bytes(asset, target)) {
       return;
-    } catch {
-      // The generated server path is absent; create it atomically below.
     }
+
     const temporary = path.join(this.#asset_directory, `.${randomUUID()}.tmp`);
     try {
-      await writeFile(temporary, bytes, { flag: "wx", mode: 0o600 });
+      await this.#write_file(temporary, bytes);
       try {
         await rename(temporary, target);
       } catch {
-        try {
-          await access(target);
-          await unlink(temporary);
-        } catch {
-          throw new AssetStoreError("asset_content_unavailable");
+        if (await this.#has_valid_asset_bytes(asset, target)) {
+          await unlink(temporary).catch(() => undefined);
+          return;
         }
+        throw new AssetStoreError("asset_storage_unavailable");
       }
     } catch (error) {
-      try {
-        await unlink(temporary);
-      } catch {
-        // Best-effort cleanup only.
-      }
+      await unlink(temporary).catch(() => undefined);
       if (error instanceof AssetStoreError) {
         throw error;
       }
-      throw new AssetStoreError("asset_content_unavailable");
+      throw new AssetStoreError("asset_storage_unavailable");
     }
   }
+
+  async #has_valid_asset_bytes(asset: StoredAsset, target: string): Promise<boolean> {
+    let existing: Buffer;
+    try {
+      existing = await readFile(target);
+    } catch (error) {
+      if (is_missing_file_error(error)) {
+        return false;
+      }
+      throw new AssetStoreError("asset_storage_unavailable");
+    }
+    return existing.byteLength === asset.byte_length && sha256_hex(existing) === asset.sha256;
+  }
+}
+function is_missing_file_error(error: unknown): boolean {
+  return error !== null && typeof error === "object" && "code" in error && error.code === "ENOENT";
 }
 
 export class AssetStoreError extends Error {
-  readonly code: "invalid_asset" | "asset_not_found" | "asset_content_unavailable";
+  readonly code:
+    "invalid_asset" | "asset_not_found" | "asset_content_unavailable" | "asset_storage_unavailable";
 
   constructor(code: AssetStoreError["code"]) {
     super(code);
@@ -321,13 +345,99 @@ function assert_png_container(body: Uint8Array): void {
 }
 
 function assert_jpeg_container(body: Uint8Array): void {
-  if (
-    body.byteLength < 4 ||
-    body[body.byteLength - 2] !== 0xff ||
-    body[body.byteLength - 1] !== 0xd9
-  ) {
+  const length = body.byteLength;
+  if (length < 4 || body[0] !== 0xff || body[1] !== 0xd8) {
     throw new AssetStoreError("invalid_asset");
   }
+
+  let offset = 2;
+  let saw_scan = false;
+  while (offset < length) {
+    if (body[offset] !== 0xff) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    while (offset < length && body[offset] === 0xff) {
+      offset += 1;
+    }
+    if (offset >= length) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    const marker = body[offset];
+    offset += 1;
+    if (marker === undefined || marker === 0x00 || marker === 0xd8) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    if (marker === 0xd9) {
+      if (!saw_scan || offset !== length) {
+        throw new AssetStoreError("invalid_asset");
+      }
+      return;
+    }
+    if (marker === 0xda) {
+      saw_scan = true;
+      offset = read_jpeg_segment_end(body, offset);
+      const scan = consume_jpeg_scan(body, offset);
+      offset = scan.offset;
+      if (scan.eoi) {
+        if (offset !== length) {
+          throw new AssetStoreError("invalid_asset");
+        }
+        return;
+      }
+      continue;
+    }
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+      continue;
+    }
+    offset = read_jpeg_segment_end(body, offset);
+  }
+  throw new AssetStoreError("invalid_asset");
+}
+
+function read_jpeg_segment_end(body: Uint8Array, offset: number): number {
+  if (offset + 2 > body.byteLength) {
+    throw new AssetStoreError("invalid_asset");
+  }
+  const high_byte = body[offset];
+  const low_byte = body[offset + 1];
+  if (high_byte === undefined || low_byte === undefined) {
+    throw new AssetStoreError("invalid_asset");
+  }
+  const segment_length = (high_byte << 8) | low_byte;
+  if (segment_length < 2 || segment_length > body.byteLength - offset) {
+    throw new AssetStoreError("invalid_asset");
+  }
+  return offset + segment_length;
+}
+
+function consume_jpeg_scan(
+  body: Uint8Array,
+  offset: number,
+): { readonly offset: number; readonly eoi: boolean } {
+  while (offset < body.byteLength) {
+    if (body[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    const marker_start = offset;
+    offset += 1;
+    while (offset < body.byteLength && body[offset] === 0xff) {
+      offset += 1;
+    }
+    if (offset >= body.byteLength) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    const marker = body[offset];
+    offset += 1;
+    if (marker === undefined) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    if (marker === 0x00 || (marker >= 0xd0 && marker <= 0xd7)) {
+      continue;
+    }
+    return marker === 0xd9 ? { offset, eoi: true } : { offset: marker_start, eoi: false };
+  }
+  throw new AssetStoreError("invalid_asset");
 }
 
 function assert_webp_container(body: Uint8Array): void {

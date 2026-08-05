@@ -6,6 +6,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { describe, expect, it } from "vitest";
+import type { ProviderPollResult, ProviderSubmission } from "@tavern-canvas/providers";
 
 import { AssetStore } from "../assets/asset_store.js";
 import { load_gateway_config } from "../config/load_config.js";
@@ -28,7 +29,7 @@ const silent_logger: GatewayLogger = {
   flush: () => undefined,
 };
 
-function create_config(directory: string) {
+function create_config(directory: string, concurrency = "1") {
   return load_gateway_config({
     cwd: directory,
     env: {
@@ -39,7 +40,7 @@ function create_config(directory: string) {
         createHash("sha256").update(TOKEN).digest("hex"),
       ]),
       TAVERN_CANVAS_DATA_DIR: directory,
-      TAVERN_CANVAS_CONCURRENCY: "1",
+      TAVERN_CANVAS_CONCURRENCY: concurrency,
       TAVERN_CANVAS_MAX_REQUEST_BYTES: "2000000",
       TAVERN_CANVAS_MAX_IMAGE_BYTES: "20000000",
       TAVERN_CANVAS_MAX_IMAGE_PIXELS: "40000000",
@@ -81,6 +82,27 @@ function request(request_id: string) {
   };
 }
 
+function deferred<T>(): {
+  readonly promise: Promise<T>;
+  readonly resolve: (value: T) => void;
+} {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((resolve_promise) => {
+    resolve = resolve_promise;
+  });
+  return { promise, resolve };
+}
+
+async function wait_for(predicate: () => boolean): Promise<void> {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (predicate()) {
+      return;
+    }
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  }
+  throw new Error("Condition did not become true");
+}
+
 function make_adapter(): GatewayAdapter {
   return {
     provider_id: "openai_image",
@@ -99,9 +121,14 @@ function make_adapter(): GatewayAdapter {
   } as unknown as GatewayAdapter;
 }
 
-async function create_worker_fixture() {
+async function create_worker_fixture(
+  options: {
+    readonly concurrency?: string;
+    readonly adapter?: GatewayAdapter;
+  } = {},
+) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "tavern-gateway-recovery-"));
-  const config = create_config(directory);
+  const config = create_config(directory, options.concurrency ?? "1");
   const database = open_gateway_database({
     file_path: path.join(directory, "tavern_canvas.sqlite"),
   });
@@ -122,7 +149,7 @@ async function create_worker_fixture() {
     service,
     asset_store,
     config,
-    adapters: new Map([["openai_image", make_adapter()]]),
+    adapters: new Map([["openai_image", options.adapter ?? make_adapter()]]),
     logger: silent_logger,
     clock: () => CREATED_AT,
     sleep: async () => undefined,
@@ -212,6 +239,233 @@ describe("JobWorker restart recovery", () => {
       expect(fixture.service.get_stored_job(created.job.job_id)?.state).toBe("failed");
       await fixture.worker.stop();
     } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("leaves terminal jobs unchanged without submitting or polling", async () => {
+    let submit_calls = 0;
+    let poll_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      submit: async () => {
+        submit_calls += 1;
+        return {
+          state: "pending" as const,
+          submission_id: "unexpected-terminal-submit",
+        };
+      },
+      poll: async () => {
+        poll_calls += 1;
+        return {
+          state: "failed" as const,
+          error: { code: "provider_unavailable" as const, retryable: true },
+        };
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    const terminal_cases = [
+      ["completed", "66666666-6666-4666-8666-666666666660"],
+      ["failed", "66666666-6666-4666-8666-666666666661"],
+      ["cancelled", "66666666-6666-4666-8666-666666666662"],
+      ["attached", "66666666-6666-4666-8666-666666666663"],
+      ["orphaned", "66666666-6666-4666-8666-666666666664"],
+    ] as const;
+    try {
+      const jobs = terminal_cases.map(([state, request_id]) => {
+        const created = fixture.service.create_job({
+          protocol_version: "1.0",
+          request: request(request_id),
+        });
+        fixture.job_repository.transition_with_event({
+          job_id: created.job.job_id,
+          state,
+          event_type: state,
+          event: { state },
+          created_at: CREATED_AT,
+        });
+        return { job_id: created.job.job_id, state };
+      });
+
+      await fixture.worker.start();
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
+      expect(jobs.map(({ job_id }) => fixture.service.get_stored_job(job_id)?.state)).toEqual(
+        jobs.map(({ state }) => state),
+      );
+      expect(submit_calls).toBe(0);
+      expect(poll_calls).toBe(0);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("does not re-submit an active job when an idempotent enqueue is replayed", async () => {
+    const blocked_submission = deferred<ProviderSubmission>();
+    let submit_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      submit: async () => {
+        submit_calls += 1;
+        return blocked_submission.promise;
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ concurrency: "2", adapter });
+    try {
+      await fixture.worker.start();
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("44444444-4444-4444-8444-444444444444"),
+      });
+      fixture.worker.enqueue(created.job.job_id);
+      await wait_for(() => submit_calls === 1);
+
+      const replay = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("44444444-4444-4444-8444-444444444444"),
+      });
+      expect(replay.created).toBe(false);
+      fixture.worker.enqueue(replay.job.job_id);
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(submit_calls).toBe(1);
+    } finally {
+      blocked_submission.resolve({
+        state: "pending",
+        submission_id: "upstream-duplicate-1",
+        poll_after_ms: 0,
+      });
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("preserves a running submission across stop and resumes polling after restart", async () => {
+    const blocked_poll = deferred<ProviderPollResult>();
+    let poll_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      poll: async () => {
+        poll_calls += 1;
+        return blocked_poll.promise;
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    let restarted: JobWorker | undefined;
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("55555555-5555-4555-8555-555555555555"),
+      });
+      fixture.job_repository.transition_with_event({
+        job_id: created.job.job_id,
+        state: "running",
+        event_type: "running",
+        event: { state: "running" },
+        submission: { state: "pending", submission_id: "upstream-stop-1" },
+        created_at: CREATED_AT,
+      });
+      await fixture.worker.start();
+      await wait_for(() => poll_calls === 1);
+
+      const stopping = fixture.worker.stop();
+      expect(fixture.service.get_stored_job(created.job.job_id)?.state).toBe("running");
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await stopping;
+      expect(fixture.service.get_stored_job(created.job.job_id)?.state).toBe("running");
+
+      let resumed_poll_calls = 0;
+      const restarted_adapter = {
+        ...make_adapter(),
+        poll: async () => {
+          resumed_poll_calls += 1;
+          return {
+            state: "failed" as const,
+            error: { code: "provider_unavailable" as const, retryable: true },
+          };
+        },
+      } as GatewayAdapter;
+      restarted = new JobWorker({
+        service: fixture.service,
+        asset_store: fixture.asset_store,
+        config: create_config(fixture.directory),
+        adapters: new Map([["openai_image", restarted_adapter]]),
+        logger: silent_logger,
+        clock: () => CREATED_AT,
+        sleep: async () => undefined,
+      });
+      await restarted.start();
+      await wait_for_state(fixture.service, created.job.job_id, "failed");
+      expect(resumed_poll_calls).toBe(1);
+    } finally {
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await fixture.worker.stop();
+      await restarted?.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("calls upstream cancellation once with a fresh signal", async () => {
+    const blocked_poll = deferred<ProviderPollResult>();
+    let poll_calls = 0;
+    let cancel_calls = 0;
+    let cancel_signal_aborted: boolean | undefined;
+    const adapter = {
+      ...make_adapter(),
+      poll: async () => {
+        poll_calls += 1;
+        return blocked_poll.promise;
+      },
+      cancel: async (context: { readonly signal: AbortSignal }) => {
+        cancel_calls += 1;
+        cancel_signal_aborted = context.signal.aborted;
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("66666666-6666-4666-8666-666666666666"),
+      });
+      fixture.job_repository.transition_with_event({
+        job_id: created.job.job_id,
+        state: "running",
+        event_type: "running",
+        event: { state: "running" },
+        submission: { state: "pending", submission_id: "upstream-cancel-1" },
+        created_at: CREATED_AT,
+      });
+      await fixture.worker.start();
+      await wait_for(() => poll_calls === 1);
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      expect(cancel_calls).toBe(1);
+      expect(cancel_signal_aborted).toBe(false);
+
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await fixture.worker.stop();
+    } finally {
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
       await fixture.worker.stop();
       fixture.database.close();
       await rm(fixture.directory, { recursive: true, force: true });
