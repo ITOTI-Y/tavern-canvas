@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  BaseImageGenerationRequestSchema,
   CapabilityMatrixSchema,
+  CapabilityStatusSchema,
   GatewayCapabilitiesResponseSchema,
   GatewayCreateJobRequestSchema,
   GatewayJobEventSchema,
   GatewayJobResponseSchema,
+  GatewayLimitsSchema,
+  GatewayProviderCapabilitiesSchema,
+  GatewaySettingsSchema,
   GenerationStateSchema,
   ImageGenerationRequestSchema,
   PROTOCOL_VERSION,
@@ -89,6 +94,50 @@ describe("RequestImageArgumentsSchema", () => {
       });
     },
   );
+  it("accepts the minimal payload with optional counts omitted", () => {
+    const value = RequestImageArgumentsSchema.parse({
+      generation_anchor,
+      scene_description: "A rainy alley at night",
+    });
+
+    expect(value).toEqual({
+      generation_anchor,
+      scene_description: "A rainy alley at night",
+    });
+  });
+
+  it.each([
+    ["context_turns", 0.5],
+    ["image_count", 1.5],
+  ])("rejects non-integer optional field %s", (field, value) => {
+    expect(
+      RequestImageArgumentsSchema.safeParse({
+        generation_anchor,
+        scene_description: "A rainy alley at night",
+        [field]: value,
+      }).success,
+    ).toBe(false);
+  });
+
+  it("accepts a lowercase style preset UUID", () => {
+    expect(
+      RequestImageArgumentsSchema.parse({
+        generation_anchor,
+        scene_description: "A rainy alley at night",
+        style_preset_id: request_id,
+      }).style_preset_id,
+    ).toBe(request_id);
+  });
+
+  it("rejects an uppercase style preset UUID", () => {
+    expect(
+      RequestImageArgumentsSchema.safeParse({
+        generation_anchor,
+        scene_description: "A rainy alley at night",
+        style_preset_id: request_id.toUpperCase(),
+      }).success,
+    ).toBe(false);
+  });
 
   it.each([
     ["context_turns", -1],
@@ -412,5 +461,152 @@ describe("initial settings and capability contracts", () => {
         generation_events: { available: true, probe: "private" },
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("strict public object boundaries", () => {
+  const request_image_arguments = {
+    generation_anchor,
+    scene_description: "A rainy alley at night",
+  };
+  const message_metadata = {
+    schema_version: 1 as const,
+    generation_anchor,
+    source_anchor,
+    request_ids: [request_id],
+    image_ids: [image_id],
+  };
+  const provider_error = {
+    code: "provider_unavailable" as const,
+    retryable: true,
+  };
+  const gateway_create_request = {
+    protocol_version: "1.0" as const,
+    request: provider_request,
+  };
+  const gateway_event = {
+    protocol_version: "1.0" as const,
+    job_id,
+    sequence: 1,
+    state: "running" as const,
+    occurred_at,
+  };
+  const gateway_provider_capabilities = {
+    provider_id: "sd_webui" as const,
+    capabilities: ["text_to_image", "progress"] as const,
+  };
+  const gateway_limits = {
+    max_concurrency: 4,
+    max_image_count: 4,
+    max_request_bytes: 1_000_000,
+  };
+  const gateway_capabilities = {
+    protocol_version: "1.0" as const,
+    providers: [gateway_provider_capabilities],
+    limits: gateway_limits,
+  };
+  const gateway_settings = {
+    endpoint: "http://192.168.1.10:8080",
+    http_acknowledgments: {
+      "http://192.168.1.10:8080": occurred_at,
+    },
+  };
+  const tavern_canvas_settings = {
+    schema_version: 1 as const,
+    locale: "auto" as const,
+    global_concurrency: 4,
+    gateway: gateway_settings,
+  };
+
+  it.each([
+    ["CapabilityStatusSchema", CapabilityStatusSchema, { available: true }],
+    [
+      "RequestImageArgumentsSchema",
+      RequestImageArgumentsSchema,
+      request_image_arguments,
+    ],
+    [
+      "TavernCanvasMessageMetadataSchema",
+      TavernCanvasMessageMetadataSchema,
+      message_metadata,
+    ],
+    ["ProviderErrorSchema", ProviderErrorSchema, provider_error],
+    [
+      "BaseImageGenerationRequestSchema",
+      BaseImageGenerationRequestSchema,
+      provider_request,
+    ],
+    [
+      "ImageGenerationRequestSchema",
+      ImageGenerationRequestSchema,
+      provider_request,
+    ],
+    [
+      "GatewayCreateJobRequestSchema",
+      GatewayCreateJobRequestSchema,
+      gateway_create_request,
+    ],
+    ["GatewayJobResponseSchema", GatewayJobResponseSchema, job_response],
+    ["GatewayJobEventSchema", GatewayJobEventSchema, gateway_event],
+    [
+      "GatewayProviderCapabilitiesSchema",
+      GatewayProviderCapabilitiesSchema,
+      gateway_provider_capabilities,
+    ],
+    ["GatewayLimitsSchema", GatewayLimitsSchema, gateway_limits],
+    [
+      "GatewayCapabilitiesResponseSchema",
+      GatewayCapabilitiesResponseSchema,
+      gateway_capabilities,
+    ],
+    ["GatewaySettingsSchema", GatewaySettingsSchema, gateway_settings],
+    [
+      "TavernCanvasSettingsSchema",
+      TavernCanvasSettingsSchema,
+      tavern_canvas_settings,
+    ],
+  ])("%s rejects an unknown top-level key", (_name, schema, value) => {
+    expect(schema.safeParse(value).success).toBe(true);
+
+    const result = schema.safeParse({ ...value, unexpected_field: true });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues).toContainEqual(
+        expect.objectContaining({ code: "unrecognized_keys" }),
+      );
+    }
+  });
+
+  it.each([
+    [
+      "providers[]",
+      {
+        ...gateway_capabilities,
+        providers: [
+          { ...gateway_provider_capabilities, unexpected_field: true },
+        ],
+      },
+    ],
+    [
+      "limits",
+      {
+        ...gateway_capabilities,
+        limits: { ...gateway_limits, unexpected_field: true },
+      },
+    ],
+  ])("Gateway capabilities reject an unknown key in %s", (_path, value) => {
+    expect(GatewayCapabilitiesResponseSchema.safeParse(gateway_capabilities).success).toBe(
+      true,
+    );
+
+    const result = GatewayCapabilitiesResponseSchema.safeParse(value);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues).toContainEqual(
+        expect.objectContaining({ code: "unrecognized_keys" }),
+      );
+    }
   });
 });
