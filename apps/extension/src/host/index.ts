@@ -38,3 +38,21 @@ export {
 } from "./tavern_helper_host.js";
 
 export { SillyTavernHost } from "./sillytavern_host.js";
+
+export {
+  create_tauritavern_host,
+  TauriTavernHost,
+} from "./tauritavern_host.js";
+export type {
+  HostWorldInfoActivationBatch,
+  HostWorldInfoActivationEntry,
+  HostWorldInfoActivationHandler,
+  TauriChatSurfaceDetachedContext,
+  TauriChatSurfaceDisposer,
+  TauriChatSurfaceMountedContext,
+  TauriChatSurfaceParticipant,
+  TauriChatSurfaceRegistration,
+  TauriChatSurfaceRuntimeClaims,
+  TauriChatSurfaceRuntimeContext,
+  TauriWorldInfoActivationPosition,
+} from "./tauritavern_host.js";
