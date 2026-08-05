@@ -6,6 +6,7 @@ import {
   provider_error_from_status,
 } from "./provider_error.js";
 import {
+  execute_non_idempotent_with_retry,
   execute_with_retry,
   parse_retry_after,
   SystemRetryClock,
@@ -75,6 +76,55 @@ describe("execute_with_retry", () => {
     expect(result).toBe("complete");
     expect(attempts).toBe(3);
     expect(clock.delays).toEqual([250, 500]);
+  });
+
+  it("does not retry an ambiguous non-idempotent network failure", async () => {
+    let attempts = 0;
+
+    await expect(
+      execute_non_idempotent_with_retry(
+        request,
+        () => {
+          attempts += 1;
+          throw new ProviderNetworkError();
+        },
+        {
+          signal: new AbortController().signal,
+          clock: new RecordingClock(),
+          random: new FixedRandomSource([0.5]),
+        },
+      ),
+    ).rejects.toMatchObject({
+      provider_error: { code: "provider_unavailable", retryable: false },
+    });
+    expect(attempts).toBe(1);
+  });
+
+  it("retries a response-confirmed non-idempotent rate limit", async () => {
+    let attempts = 0;
+
+    await expect(
+      execute_non_idempotent_with_retry(
+        request,
+        () => {
+          attempts += 1;
+          if (attempts === 1) {
+            throw new ProviderAdapterError({
+              code: "rate_limited",
+              retryable: true,
+              status_code: 429,
+            });
+          }
+          return Promise.resolve("complete");
+        },
+        {
+          signal: new AbortController().signal,
+          clock: new RecordingClock(),
+          random: new FixedRandomSource([0.5]),
+        },
+      ),
+    ).resolves.toBe("complete");
+    expect(attempts).toBe(2);
   });
 
   it("retries transport timeout errors as timed_out", async () => {

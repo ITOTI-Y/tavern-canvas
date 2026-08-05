@@ -18,7 +18,7 @@ import type {
 import { ProviderAdapterError, provider_error_from_status } from "../provider_error.js";
 import { redact_provider_log } from "../redaction.js";
 import {
-  execute_with_retry,
+  execute_non_idempotent_with_retry,
   parse_retry_after,
   SystemRetryClock,
   type RetryClock,
@@ -94,7 +94,7 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
     }
     const assets = await load_assets(context, validated_request, profile.max_input_asset_bytes);
 
-    const response = await execute_with_retry(
+    const response = await execute_non_idempotent_with_retry(
       validated_request,
       async (attempt_request, attempt) => {
         const payload = map_novelai_request(attempt_request, assets);
@@ -105,6 +105,7 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
           body: new TextEncoder().encode(JSON.stringify(payload)),
           content_type: "application/json",
           accept: "application/json, application/zip, multipart/mixed",
+          max_response_bytes: profile.max_response_bytes,
           signal: context.signal,
         });
         context.log.write(

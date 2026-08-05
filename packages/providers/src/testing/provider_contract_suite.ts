@@ -125,6 +125,7 @@ function pending_submission(
   return {
     state: "pending",
     submission_id: submission.submission_id,
+    ...(submission.continuation === undefined ? {} : { continuation: submission.continuation }),
     ...(poll_result.poll_after_ms === undefined
       ? {}
       : { poll_after_ms: poll_result.poll_after_ms }),

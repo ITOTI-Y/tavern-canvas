@@ -1,0 +1,17 @@
+{
+  "route": "/v1/images/edits",
+  "fields": {
+    "model": "gpt-image-2",
+    "prompt": "fixture edit prompt",
+    "n": "1",
+    "size": "1024x1024",
+    "quality": "high",
+    "background": "transparent",
+    "output_format": "webp",
+    "output_compression": "80"
+  },
+  "files": [
+    { "field": "image[]", "filename": "input_0.png", "content_type": "image/png" },
+    { "field": "mask", "filename": "mask.png", "content_type": "image/png" }
+  ]
+}

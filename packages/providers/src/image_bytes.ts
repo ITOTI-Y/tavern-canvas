@@ -84,8 +84,8 @@ export function detect_image_media_type(bytes: Uint8Array): ImageMediaType | und
 
 export function create_generated_asset(
   bytes: Uint8Array,
-  width: number,
-  height: number,
+  width: number | undefined,
+  height: number | undefined,
   allowed_media_types: readonly GeneratedAsset["media_type"][],
 ): GeneratedAsset {
   const media_type = detect_image_media_type(bytes);
@@ -108,8 +108,8 @@ export function create_generated_asset(
     media_type,
     byte_length: bytes.byteLength,
     sha256: sha256_hex,
-    width,
-    height,
+    ...(width === undefined ? {} : { width }),
+    ...(height === undefined ? {} : { height }),
   };
 }
 

@@ -1,0 +1,10 @@
+{
+  "id": "interaction_fixture",
+  "model": "gemini-3.1-flash-image",
+  "status": "failed",
+  "error": {
+    "code": "SAFETY",
+    "message": "synthetic safety rejection"
+  },
+  "steps": []
+}

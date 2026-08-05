@@ -48,6 +48,7 @@ export type ProviderSubmission =
       readonly state: "pending";
       readonly submission_id: string;
       readonly poll_after_ms?: number;
+      readonly continuation?: Readonly<Record<string, unknown>>;
     };
 
 export type ProviderPollResult =

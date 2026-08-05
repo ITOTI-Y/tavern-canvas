@@ -6,6 +6,15 @@ export interface ProviderTransportOperation {
   readonly body?: Uint8Array;
   readonly content_type?: string;
   readonly accept?: string;
+  /** Enforced while reading and decompressing the response body. */
+  readonly max_response_bytes: number;
+  readonly signal: AbortSignal;
+}
+
+export interface ProviderRemoteAssetOperation {
+  readonly url: string;
+  readonly allowed_origins: readonly string[];
+  readonly max_bytes: number;
   readonly signal: AbortSignal;
 }
 
@@ -17,6 +26,7 @@ export interface ProviderTransportResponse {
 
 export interface ProviderTransport {
   execute(operation: ProviderTransportOperation): Promise<ProviderTransportResponse>;
+  fetch_remote_asset?(operation: ProviderRemoteAssetOperation): Promise<ProviderTransportResponse>;
 }
 
 export function assert_provider_route(route: string): asserts route is `/${string}` {

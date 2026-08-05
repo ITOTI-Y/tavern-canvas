@@ -1,4 +1,8 @@
-import { ProviderAdapterError, normalize_provider_failure } from "./provider_error.js";
+import {
+  normalize_provider_failure,
+  ProviderAdapterError,
+  ProviderNetworkError,
+} from "./provider_error.js";
 
 const DEFAULT_MAX_RETRIES = 2;
 const DEFAULT_BASE_DELAY_MS = 250;
@@ -69,6 +73,33 @@ export function parse_retry_after(value: string | null, now_ms: number): number 
     return undefined;
   }
   return Math.max(0, retry_at_ms - now_ms);
+}
+
+export function execute_non_idempotent_with_retry<TRequest, TResult>(
+  source_request: TRequest,
+  operation: (request: TRequest, attempt: number) => Promise<TResult>,
+  options: RetryOptions,
+): Promise<TResult> {
+  return execute_with_retry(
+    source_request,
+    async (request, attempt) => {
+      try {
+        return await operation(request, attempt);
+      } catch (error) {
+        if (error instanceof ProviderNetworkError) {
+          throw new ProviderAdapterError({
+            code: "provider_unavailable",
+            retryable: false,
+          });
+        }
+        if (error instanceof DOMException && error.name === "TimeoutError") {
+          throw new ProviderAdapterError({ code: "timed_out", retryable: false });
+        }
+        throw error;
+      }
+    },
+    options,
+  );
 }
 
 export async function execute_with_retry<TRequest, TResult>(

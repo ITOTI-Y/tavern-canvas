@@ -1,0 +1,37 @@
+{
+  "events": [
+    {
+      "type": "progress",
+      "data": {
+        "prompt_id": "44444444-4444-4444-8444-444444444444",
+        "node": "3",
+        "value": 10,
+        "max": 20
+      }
+    },
+    {
+      "type": "executed",
+      "data": {
+        "prompt_id": "44444444-4444-4444-8444-444444444444",
+        "node": "9",
+        "output": {
+          "images": [
+            {
+              "filename": "fixture_00001_.png",
+              "subfolder": "",
+              "type": "output"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "execution_error",
+      "data": {
+        "prompt_id": "44444444-4444-4444-8444-444444444444",
+        "node_id": "3",
+        "exception_type": "RuntimeError"
+      }
+    }
+  ]
+}

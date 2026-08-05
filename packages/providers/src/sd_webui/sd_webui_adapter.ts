@@ -18,7 +18,7 @@ import type {
 import { ProviderAdapterError, provider_error_from_status } from "../provider_error.js";
 import { redact_provider_log } from "../redaction.js";
 import {
-  execute_with_retry,
+  execute_non_idempotent_with_retry,
   parse_retry_after,
   SystemRetryClock,
   type RetryClock,
@@ -102,7 +102,7 @@ export class SdWebuiAdapter implements ProviderAdapter<SdWebuiRequest> {
     assert_profile_allows_request(profile, validated_request);
     const assets = await load_assets(context, validated_request, profile.max_input_asset_bytes);
 
-    const response = await execute_with_retry(
+    const response = await execute_non_idempotent_with_retry(
       validated_request,
       async (attempt_request, attempt) => {
         const payload = map_sd_webui_request(attempt_request, assets);
@@ -115,6 +115,7 @@ export class SdWebuiAdapter implements ProviderAdapter<SdWebuiRequest> {
           body: new TextEncoder().encode(JSON.stringify(payload)),
           content_type: "application/json",
           accept: "application/json",
+          max_response_bytes: profile.max_response_bytes,
           signal: context.signal,
         });
         context.log.write(
@@ -177,10 +178,12 @@ export class SdWebuiAdapter implements ProviderAdapter<SdWebuiRequest> {
     if (submission.state !== "pending") {
       return;
     }
+    const profile = parse_profile(context.profile);
     const response = await context.transport.execute({
       route: "/sdapi/v1/interrupt",
       method: "POST",
       signal: context.signal,
+      max_response_bytes: profile.max_response_bytes,
     });
     if (response.status < 200 || response.status >= 300) {
       throw new ProviderAdapterError(provider_error_from_status(response.status));

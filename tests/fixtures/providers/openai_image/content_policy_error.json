@@ -1,0 +1,7 @@
+{
+  "error": {
+    "message": "synthetic policy rejection",
+    "type": "image_generation_user_error",
+    "code": "content_policy_violation"
+  }
+}

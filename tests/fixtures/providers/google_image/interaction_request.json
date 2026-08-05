@@ -1,0 +1,17 @@
+{
+  "model": "gemini-3.1-flash-image",
+  "input": [
+    { "type": "text", "text": "fixture prompt" },
+    {
+      "type": "image",
+      "mime_type": "image/png",
+      "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+    }
+  ],
+  "response_format": {
+    "type": "image",
+    "mime_type": "image/png",
+    "aspect_ratio": "1:1",
+    "image_size": "2K"
+  }
+}
