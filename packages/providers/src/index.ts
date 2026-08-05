@@ -51,6 +51,8 @@ export {
 } from "./retry_policy.js";
 export {
   assert_provider_route,
+  derive_provider_request_limit,
+  MAX_PROVIDER_REQUEST_BYTES,
   type ProviderHttpMethod,
   type ProviderTransport,
   type ProviderTransportOperation,

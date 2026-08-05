@@ -1,4 +1,5 @@
 import {
+  MAX_PROVIDER_REQUEST_BYTES,
   ProviderNetworkError,
   assert_provider_route,
   type ProviderRemoteAssetOperation,
@@ -30,6 +31,18 @@ export class ProviderHttpTransport implements ProviderTransport {
 
   async execute(operation: ProviderTransportOperation): Promise<ProviderTransportResponse> {
     assert_provider_route(operation.route);
+    if (operation.body !== undefined) {
+      if (
+        !Number.isSafeInteger(operation.max_request_bytes) ||
+        operation.max_request_bytes <= 0 ||
+        operation.max_request_bytes > MAX_PROVIDER_REQUEST_BYTES
+      ) {
+        throw new TypeError("Provider request body limit is invalid");
+      }
+      if (operation.body.byteLength > operation.max_request_bytes) {
+        throw new TypeError("Provider request body exceeds its byte limit");
+      }
+    }
     const url = new URL(operation.route, `${this.#provider.base_url}/`);
     const headers = new Headers();
     if (operation.content_type !== undefined) {

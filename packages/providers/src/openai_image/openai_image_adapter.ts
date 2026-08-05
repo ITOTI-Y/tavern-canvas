@@ -31,7 +31,10 @@ import {
   type RetryClock,
   type RetryRandomSource,
 } from "../retry_policy.js";
-import type { ProviderTransportResponse } from "../provider_transport.js";
+import {
+  derive_provider_request_limit,
+  type ProviderTransportResponse,
+} from "../provider_transport.js";
 
 const OpenAiImageProfileSchema = z
   .strictObject({
@@ -113,20 +116,25 @@ export class OpenAiImageAdapter implements ProviderAdapter<OpenAiImageRequest> {
       !profile.model_allowlist.includes(validated_request.model_id) ||
       !profile.output_mime_type_allowlist.includes(
         media_type_for_output_format(validated_request.output_format),
-      ) ||
-      validated_request.negative_prompt !== undefined
+      )
     ) {
       throw invalid_request();
     }
-
+    const max_request_bytes = derive_provider_request_limit(profile.max_input_asset_bytes);
     const operation =
       validated_request.mode === "generate"
-        ? build_generation_operation(validated_request, context.signal, profile.max_response_bytes)
+        ? build_generation_operation(
+            validated_request,
+            context.signal,
+            profile.max_response_bytes,
+            max_request_bytes,
+          )
         : await build_edit_operation(
             context,
             validated_request,
             profile.max_input_asset_bytes,
             profile.max_response_bytes,
+            max_request_bytes,
           );
     const response = await execute_non_idempotent_with_retry(
       validated_request,
@@ -219,7 +227,10 @@ export class OpenAiImageAdapter implements ProviderAdapter<OpenAiImageRequest> {
     return Promise.resolve(submission);
   }
 
-  cancel(): Promise<void> {
+  cancel(
+    _context: ProviderExecutionContext,
+    _submission: ProviderSubmission | undefined,
+  ): Promise<void> {
     return Promise.resolve();
   }
 }
@@ -228,10 +239,11 @@ function build_generation_operation(
   request: OpenAiImageRequest,
   signal: AbortSignal,
   max_response_bytes: number,
+  max_request_bytes: number,
 ) {
   const body = {
     model: request.model_id,
-    prompt: request.prompt,
+    prompt: prompt_for_request(request),
     n: request.output_count,
     size: request.size,
     quality: request.quality,
@@ -243,6 +255,7 @@ function build_generation_operation(
     route: "/v1/images/generations" as const,
     method: "POST" as const,
     body: new TextEncoder().encode(JSON.stringify(body)),
+    max_request_bytes,
     content_type: "application/json",
     accept: "application/json",
     max_response_bytes,
@@ -255,6 +268,7 @@ async function build_edit_operation(
   request: OpenAiImageRequest,
   max_input_asset_bytes: number,
   max_response_bytes: number,
+  max_request_bytes: number,
 ) {
   const files: MultipartFile[] = [];
   let total_bytes = 0;
@@ -263,10 +277,11 @@ async function build_edit_operation(
     if (asset.asset_id !== asset_id) {
       throw invalid_request();
     }
-    total_bytes += asset.bytes.byteLength;
-    if (total_bytes > max_input_asset_bytes) {
+    const asset_bytes = asset.bytes.byteLength;
+    if (asset_bytes > max_input_asset_bytes || asset_bytes > max_input_asset_bytes - total_bytes) {
       throw invalid_request();
     }
+    total_bytes += asset_bytes;
     files.push({
       field_name: "image[]",
       file_name: `input_${String(asset_index)}.${extension_for_media_type(asset.media_type)}`,
@@ -279,8 +294,8 @@ async function build_edit_operation(
     if (mask.asset_id !== request.mask_asset_id) {
       throw invalid_request();
     }
-    total_bytes += mask.bytes.byteLength;
-    if (total_bytes > max_input_asset_bytes) {
+    const mask_bytes = mask.bytes.byteLength;
+    if (mask_bytes > max_input_asset_bytes || mask_bytes > max_input_asset_bytes - total_bytes) {
       throw invalid_request();
     }
     files.push({
@@ -294,7 +309,7 @@ async function build_edit_operation(
   const multipart = encode_multipart(
     {
       model: request.model_id,
-      prompt: request.prompt,
+      prompt: prompt_for_request(request),
       n: String(request.output_count),
       size: request.size,
       quality: request.quality,
@@ -310,11 +325,18 @@ async function build_edit_operation(
     route: "/v1/images/edits" as const,
     method: "POST" as const,
     body: multipart.body,
+    max_request_bytes,
     content_type: multipart.content_type,
     accept: "application/json",
     max_response_bytes,
     signal: context.signal,
   };
+}
+
+function prompt_for_request(request: OpenAiImageRequest): string {
+  return request.negative_prompt === undefined
+    ? request.prompt
+    : `${request.prompt}\n\nAvoid: ${request.negative_prompt}`;
 }
 
 async function fetch_remote_image(

@@ -38,9 +38,10 @@ import {
   type RetryClock,
   type RetryRandomSource,
 } from "../retry_policy.js";
-import type {
-  ProviderTransportOperation,
-  ProviderTransportResponse,
+import {
+  derive_provider_request_limit,
+  type ProviderTransportOperation,
+  type ProviderTransportResponse,
 } from "../provider_transport.js";
 import {
   render_comfyui_workflow,
@@ -113,6 +114,7 @@ export interface ComfyUiAdapterOptions {
 
 const DEFAULT_RANDOM: RetryRandomSource = { next: Math.random };
 const RETRYABLE_STATUS_CODES = new Set([500, 502, 503, 504]);
+const MAX_COMFYUI_PROMPT_REQUEST_BYTES = 3_000_000;
 
 export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
   readonly provider_id = "comfyui" as const;
@@ -177,6 +179,10 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
       this.#random,
     );
     const workflow = render_request_workflow(stored, validated_request, input_asset_names);
+    const prompt_body = new TextEncoder().encode(JSON.stringify({ prompt: workflow }));
+    if (prompt_body.byteLength > MAX_COMFYUI_PROMPT_REQUEST_BYTES) {
+      throw invalid_request();
+    }
 
     const response = await execute_comfyui_operation(
       context,
@@ -184,7 +190,8 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
       {
         route: "/prompt",
         method: "POST",
-        body: new TextEncoder().encode(JSON.stringify({ prompt: workflow })),
+        body: prompt_body,
+        max_request_bytes: MAX_COMFYUI_PROMPT_REQUEST_BYTES,
         content_type: "application/json",
         accept: "application/json",
         max_response_bytes: profile.max_response_bytes,
@@ -342,7 +349,13 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
     };
   }
 
-  async cancel(context: ProviderExecutionContext, submission: ProviderSubmission): Promise<void> {
+  async cancel(
+    context: ProviderExecutionContext,
+    submission: ProviderSubmission | undefined,
+  ): Promise<void> {
+    if (submission === undefined) {
+      throw invalid_request();
+    }
     if (submission.state !== "pending") {
       return;
     }
@@ -393,6 +406,7 @@ export class ComfyUiAdapter implements ProviderAdapter<ComfyUiRequest> {
           route: "/queue",
           method: "POST",
           body: new TextEncoder().encode(JSON.stringify({ delete: [submission.submission_id] })),
+          max_request_bytes: derive_provider_request_limit(profile.max_input_asset_bytes),
           content_type: "application/json",
           max_response_bytes: profile.max_response_bytes,
           signal: context.signal,
@@ -419,12 +433,18 @@ async function upload_input_assets(
   let total_bytes = 0;
   for (const [binding_name, asset_id] of Object.entries(request.input_asset_bindings)) {
     const asset = await context.assets.read(asset_id, context.signal);
-    total_bytes += asset.bytes.byteLength;
-    if (asset.asset_id !== asset_id || total_bytes > profile.max_input_asset_bytes) {
+    const asset_bytes = asset.bytes.byteLength;
+    if (
+      asset.asset_id !== asset_id ||
+      asset_bytes > profile.max_input_asset_bytes ||
+      asset_bytes > profile.max_input_asset_bytes - total_bytes
+    ) {
       throw invalid_request();
     }
+    total_bytes += asset_bytes;
     loaded_assets.push({ binding_name, asset });
   }
+  const max_request_bytes = derive_provider_request_limit(profile.max_input_asset_bytes);
 
   const uploaded: Record<string, string> = {};
   for (const { binding_name, asset } of loaded_assets) {
@@ -443,6 +463,7 @@ async function upload_input_assets(
         route: "/upload/image",
         method: "POST",
         body: multipart.body,
+        max_request_bytes,
         content_type: multipart.content_type,
         accept: "application/json",
         max_response_bytes: profile.max_response_bytes,

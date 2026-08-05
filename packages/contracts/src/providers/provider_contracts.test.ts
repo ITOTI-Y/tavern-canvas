@@ -207,6 +207,26 @@ describe("provider request contracts", () => {
     ).toBe(false);
     expect(SdWebuiRequestSchema.safeParse(sd_request({ script_args: [] })).success).toBe(false);
   });
+  it("rejects img2img Hires fix with a hires_fix issue", () => {
+    const result = SdWebuiRequestSchema.safeParse(
+      sd_request({
+        mode: "img2img",
+        input_asset_id: ASSET_ID,
+        denoise_strength: 0.55,
+        hires_fix: {
+          scale: 2,
+          upscaler_id: "R-ESRGAN 4x+",
+          steps: 12,
+          denoise_strength: 0.35,
+        },
+      }),
+    );
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues).toContainEqual(expect.objectContaining({ path: ["hires_fix"] }));
+    }
+  });
 
   it("bounds NovelAI dimensions, steps, scale, seed, vibes, and characters", () => {
     expect(
@@ -256,6 +276,25 @@ describe("provider request contracts", () => {
     ]) {
       expect(NovelAiRequestSchema.safeParse(novelai_request(overrides)).success).toBe(false);
     }
+  });
+
+  it("rejects per-character NovelAI negative prompts while preserving the top-level field", () => {
+    const character_negative_prompt = {
+      asset_id: ASSET_ID,
+      prompt: "character",
+      negative_prompt: "watermark",
+      strength: 1,
+    };
+
+    expect(
+      NovelAiRequestSchema.safeParse(
+        novelai_request({ character_references: [character_negative_prompt] }),
+      ).success,
+    ).toBe(false);
+    expect(
+      NovelAiRequestSchema.safeParse(novelai_request({ negative_prompt: "avoid watermark" }))
+        .success,
+    ).toBe(true);
   });
 
   it("allows only typed stored ComfyUI workflow bindings", () => {

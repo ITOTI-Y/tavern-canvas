@@ -36,7 +36,10 @@ export interface GatewayAdapter {
     context: ProviderExecutionContext,
     submission: ProviderSubmission,
   ): Promise<ProviderPollResult>;
-  cancel(context: ProviderExecutionContext, submission: ProviderSubmission): Promise<void>;
+  cancel(
+    context: ProviderExecutionContext,
+    submission: ProviderSubmission | undefined,
+  ): Promise<void>;
 }
 type QueryableProviderSubmission = Extract<ProviderSubmission, { readonly state: "pending" }>;
 
@@ -60,6 +63,7 @@ interface ActiveJob {
   readonly adapter: GatewayAdapter;
   readonly provider: GatewayProviderConfig;
   readonly transport: ProviderTransport;
+  submit_in_flight: boolean;
   shutdown_requested: boolean;
   cancel_requested: boolean;
 }
@@ -80,6 +84,7 @@ export class JobWorker {
   readonly #sleep: (milliseconds: number, signal: AbortSignal) => Promise<void>;
   readonly #queued = new Set<string>();
   readonly #active = new Map<string, ActiveJob>();
+  readonly #cancellations = new Set<Promise<void>>();
   #started = false;
   #pump_scheduled = false;
 
@@ -122,10 +127,11 @@ export class JobWorker {
       active.shutdown_requested = true;
       active.controller.abort();
     }
-    while (this.#active.size > 0) {
-      await Promise.allSettled(
-        [...this.#active.keys()].map((job_id) => this.#wait_for_job(job_id)),
-      );
+    while (this.#active.size > 0 || this.#cancellations.size > 0) {
+      await Promise.allSettled([
+        ...[...this.#active.keys()].map((job_id) => this.#wait_for_job(job_id)),
+        ...this.#cancellations,
+      ]);
     }
   }
 
@@ -148,26 +154,49 @@ export class JobWorker {
     }
     active.cancel_requested = true;
     active.controller.abort();
+    if (!active.adapter.capabilities.has("cancel")) {
+      return;
+    }
     const job = this.#service.get_stored_job(job_id);
-    if (job === undefined || !is_queryable_submission(job.submission)) {
+    const submission =
+      job !== undefined && is_queryable_submission(job.submission) ? job.submission : undefined;
+    if (submission === undefined && !active.submit_in_flight) {
       return;
     }
     const cancellation_controller = new AbortController();
+    const cancellation_deadline = new Promise<never>((_, reject) => {
+      cancellation_controller.signal.addEventListener(
+        "abort",
+        () => {
+          reject(new Error("Provider cancellation timed out"));
+        },
+        { once: true },
+      );
+    });
     const cancellation_timer = setTimeout(() => {
       cancellation_controller.abort();
     }, CANCEL_TIMEOUT_MS);
     const context = this.#execution_context(active, cancellation_controller.signal);
-    void active.adapter
-      .cancel(context, job.submission)
-      .catch((error: unknown) => {
-        this.#logger.warn(
-          { provider_id: job.provider_id, job_id, error },
-          "Provider cancellation failed",
-        );
-      })
+    const cancellation = Promise.race([
+      Promise.resolve().then(() => active.adapter.cancel(context, submission)),
+      cancellation_deadline,
+    ]).catch((error: unknown) => {
+      this.#logger.warn(
+        {
+          provider_id: job?.provider_id ?? active.adapter.provider_id,
+          job_id,
+          error,
+        },
+        "Provider cancellation failed",
+      );
+    });
+    this.#cancellations.add(cancellation);
+    void cancellation
       .finally(() => {
         clearTimeout(cancellation_timer);
-      });
+        this.#cancellations.delete(cancellation);
+      })
+      .catch(() => undefined);
   }
 
   #service_recoverable_jobs(): StoredJob[] {
@@ -270,6 +299,7 @@ export class JobWorker {
       adapter,
       provider,
       transport,
+      submit_in_flight: false,
       shutdown_requested: false,
       cancel_requested: false,
     };
@@ -313,10 +343,16 @@ export class JobWorker {
       }
     }
     if (current.state === "submitting" && !is_queryable_submission(current.submission)) {
-      const submission = await active.adapter.submit(
-        this.#execution_context(active, active.controller.signal),
-        current.request,
-      );
+      let submission: ProviderSubmission;
+      active.submit_in_flight = true;
+      try {
+        submission = await active.adapter.submit(
+          this.#execution_context(active, active.controller.signal),
+          current.request,
+        );
+      } finally {
+        active.submit_in_flight = false;
+      }
       if (submission.state === "completed") {
         await this.#complete_job(current, submission.result, submission.output_assets);
         return;

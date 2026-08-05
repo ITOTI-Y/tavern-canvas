@@ -73,6 +73,36 @@ class StaticWorkflowStore implements ComfyUiWorkflowStore {
       : Promise.reject(new Error("Missing workflow"));
   }
 }
+class InMemoryWorkflowStore implements ComfyUiWorkflowStore {
+  constructor(private readonly value: unknown) {}
+
+  load(_workflow_id: AssetId): Promise<unknown> {
+    return Promise.resolve(this.value);
+  }
+}
+
+interface MutableWorkflowFixture {
+  readonly workflow: Record<string, { readonly inputs: Record<string, unknown> }>;
+}
+
+function near_limit_workflow(): unknown {
+  const large = structuredClone(stored_workflow) as MutableWorkflowFixture;
+  const node = large.workflow["3"];
+  if (node === undefined) {
+    throw new Error("Fixture workflow is missing node 3");
+  }
+  node.inputs.padding = "";
+  const serialized = JSON.stringify(large.workflow);
+  if (serialized === undefined) {
+    throw new Error("Fixture workflow could not be serialized");
+  }
+  const serialized_bytes = new TextEncoder().encode(serialized).byteLength;
+  if (serialized_bytes > 1_000_000) {
+    throw new Error("Fixture workflow is already over the renderer limit");
+  }
+  node.inputs.padding = "x".repeat(1_000_000 - serialized_bytes);
+  return large;
+}
 
 class ImmediateClock implements RetryClock {
   now(): number {
@@ -244,6 +274,31 @@ function contract_case(scenario: ProviderContractScenario) {
 define_provider_contract_suite("ComfyUI", contract_case);
 
 describe("ComfyUiAdapter", () => {
+  it("uses a dedicated prompt body cap separate from the raw asset budget", async () => {
+    const transport = new ScriptedTransport([json_response(200, prompt_response)]);
+    const adapter = new ComfyUiAdapter({
+      workflow_store: new InMemoryWorkflowStore(near_limit_workflow()),
+      clock: new ImmediateClock(),
+      random: new FixedRandom(),
+    });
+    const context = {
+      profile: adapter.validate_profile({ ...profile, max_input_asset_bytes: 1 }),
+      transport,
+      assets: new StaticAssetReader(),
+      signal: new AbortController().signal,
+      log: new RecordingLog(),
+    };
+
+    await expect(adapter.submit(context, request)).resolves.toMatchObject({ state: "pending" });
+    const operation = transport.operations[0];
+    if (operation === undefined || operation.body === undefined) {
+      throw new Error("Expected ComfyUI prompt operation body");
+    }
+    expect(operation.max_request_bytes).toBe(3_000_000);
+    expect(operation.body.byteLength).toBeGreaterThan(1_000_004);
+    expect(operation.body.byteLength).toBeLessThanOrEqual(3_000_000);
+  });
+
   it("queues a rendered stored workflow and reads multiple output nodes", async () => {
     const transport = new ScriptedTransport([
       json_response(200, prompt_response),
@@ -535,6 +590,22 @@ describe("ComfyUiAdapter", () => {
       "/queue",
       "/interrupt",
     ]);
+  });
+  it("rejects cancellation without a pending submission", async () => {
+    const adapter = new ComfyUiAdapter({ workflow_store: new StaticWorkflowStore() });
+    const transport = new ScriptedTransport([]);
+    const context = {
+      profile: adapter.validate_profile(profile),
+      transport,
+      assets: new StaticAssetReader(),
+      signal: new AbortController().signal,
+      log: new RecordingLog(),
+    };
+
+    await expect(adapter.cancel(context, undefined)).rejects.toMatchObject({
+      provider_error: { code: "invalid_request" },
+    });
+    expect(transport.operations).toHaveLength(0);
   });
 });
 

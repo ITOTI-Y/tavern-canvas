@@ -1,4 +1,5 @@
 import {
+  MAX_PROVIDER_REQUEST_BYTES,
   assert_provider_route,
   type ProviderRemoteAssetOperation,
   type ProviderTransport,
@@ -63,11 +64,32 @@ export function validate_provider_operation(operation: unknown): ProviderTranspo
     if (!is_plain_record(operation)) {
       throw invalid_operation("Provider operation is invalid");
     }
-    const { route, method, body, content_type, accept, max_response_bytes, signal } = operation;
+    const {
+      route,
+      method,
+      body,
+      max_request_bytes,
+      content_type,
+      accept,
+      max_response_bytes,
+      signal,
+    } = operation;
+    const valid_request_limit =
+      body === undefined
+        ? max_request_bytes === undefined
+        : typeof max_request_bytes === "number" &&
+          Number.isSafeInteger(max_request_bytes) &&
+          max_request_bytes > 0 &&
+          max_request_bytes <= MAX_PROVIDER_REQUEST_BYTES;
     if (
       typeof route !== "string" ||
       (method !== "GET" && method !== "POST" && method !== "DELETE") ||
       (body !== undefined && !(body instanceof Uint8Array)) ||
+      (body !== undefined &&
+        body instanceof Uint8Array &&
+        typeof max_request_bytes === "number" &&
+        body.byteLength > max_request_bytes) ||
+      !valid_request_limit ||
       !is_optional_header_value(content_type) ||
       !is_optional_header_value(accept) ||
       typeof max_response_bytes !== "number" ||
@@ -79,10 +101,24 @@ export function validate_provider_operation(operation: unknown): ProviderTranspo
       throw invalid_operation("Provider operation is invalid");
     }
     assert_provider_route(route);
+    if (body === undefined) {
+      return {
+        route,
+        method,
+        ...(content_type === undefined ? {} : { content_type }),
+        ...(accept === undefined ? {} : { accept }),
+        max_response_bytes,
+        signal,
+      };
+    }
+    if (!(body instanceof Uint8Array) || typeof max_request_bytes !== "number") {
+      throw invalid_operation("Provider operation is invalid");
+    }
     return {
       route,
       method,
-      ...(body === undefined ? {} : { body }),
+      body,
+      max_request_bytes,
       ...(content_type === undefined ? {} : { content_type }),
       ...(accept === undefined ? {} : { accept }),
       max_response_bytes,

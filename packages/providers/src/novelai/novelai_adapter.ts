@@ -17,6 +17,7 @@ import type {
 } from "../provider_adapter.js";
 import { ProviderAdapterError, provider_error_from_status } from "../provider_error.js";
 import { redact_provider_log } from "../redaction.js";
+import { derive_provider_request_limit } from "../provider_transport.js";
 import {
   execute_non_idempotent_with_retry,
   parse_retry_after,
@@ -93,6 +94,7 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
       throw invalid_request();
     }
     const assets = await load_assets(context, validated_request, profile.max_input_asset_bytes);
+    const max_request_bytes = derive_provider_request_limit(profile.max_input_asset_bytes);
 
     const response = await execute_non_idempotent_with_retry(
       validated_request,
@@ -103,6 +105,7 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
           route: "/ai/generate-image",
           method: "POST",
           body: new TextEncoder().encode(JSON.stringify(payload)),
+          max_request_bytes,
           content_type: "application/json",
           accept: "application/json, application/zip, multipart/mixed",
           max_response_bytes: profile.max_response_bytes,
@@ -167,7 +170,10 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
     return Promise.reject(invalid_request());
   }
 
-  cancel(_context: ProviderExecutionContext, _submission: ProviderSubmission): Promise<void> {
+  cancel(
+    _context: ProviderExecutionContext,
+    _submission: ProviderSubmission | undefined,
+  ): Promise<void> {
     return Promise.reject(invalid_request());
   }
 }
@@ -202,11 +208,18 @@ async function load_assets(
   }
 
   const assets = new Map<AssetId, ProviderSourceAsset>();
+  let total_bytes = 0;
   for (const asset_id of asset_ids) {
     const asset = await context.assets.read(asset_id, context.signal);
-    if (asset.asset_id !== asset_id || asset.bytes.byteLength > max_input_asset_bytes) {
+    const asset_bytes = asset.bytes.byteLength;
+    if (
+      asset.asset_id !== asset_id ||
+      asset_bytes > max_input_asset_bytes ||
+      asset_bytes > max_input_asset_bytes - total_bytes
+    ) {
       throw invalid_request();
     }
+    total_bytes += asset_bytes;
     assets.set(asset_id, asset);
   }
   return assets;

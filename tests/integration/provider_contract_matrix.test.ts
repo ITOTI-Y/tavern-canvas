@@ -260,10 +260,11 @@ class ScriptedProviderTransport implements ProviderTransport {
 
   execute(operation: ProviderTransportOperation): Promise<ProviderTransportResponse> {
     const index = this.operations.length;
-    this.operations.push({
-      ...operation,
-      ...(operation.body === undefined ? {} : { body: new Uint8Array(operation.body) }),
-    });
+    if (operation.body === undefined) {
+      this.operations.push(operation);
+    } else {
+      this.operations.push({ ...operation, body: new Uint8Array(operation.body) });
+    }
     const validator = this.#validators.shift();
     if (validator === undefined) {
       throw new Error(`Unexpected provider operation at index ${String(index)}`);

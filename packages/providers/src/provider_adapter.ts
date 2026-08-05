@@ -81,5 +81,8 @@ export interface ProviderAdapter<TRequest extends ImageGenerationRequest> {
     context: ProviderExecutionContext,
     submission: ProviderSubmission,
   ): Promise<ProviderPollResult>;
-  cancel(context: ProviderExecutionContext, submission: ProviderSubmission): Promise<void>;
+  cancel(
+    context: ProviderExecutionContext,
+    submission: ProviderSubmission | undefined,
+  ): Promise<void>;
 }

@@ -94,19 +94,56 @@ export function map_sd_webui_request(
     steps: request.steps,
     cfg_scale: request.cfg_scale,
     ...(request.seed === undefined ? {} : { seed: request.seed }),
-    ...map_img2img_fields(request, assets),
+    ...map_mode_fields(request, assets),
     override_settings,
     override_settings_restore_afterwards: true,
-    ...(request.hires_fix === undefined
-      ? {}
-      : {
-          enable_hr: true,
-          hr_scale: request.hires_fix.scale,
-          hr_upscaler: request.hires_fix.upscaler_id,
-          hr_second_pass_steps: request.hires_fix.steps,
-          denoising_strength: request.hires_fix.denoise_strength,
-        }),
     ...(Object.keys(alwayson_scripts).length === 0 ? {} : { alwayson_scripts }),
+  };
+}
+
+function map_mode_fields(
+  request: SdWebuiRequest,
+  assets: ReadonlyMap<AssetId, ProviderSourceAsset>,
+):
+  | {
+      readonly init_images: readonly string[];
+      readonly denoising_strength: number;
+    }
+  | {
+      readonly enable_hr?: true;
+      readonly hr_scale?: number;
+      readonly hr_upscaler?: string;
+      readonly hr_second_pass_steps?: number;
+      readonly denoising_strength?: number;
+    }
+  | object {
+  if (request.mode === "img2img") {
+    return map_img2img_fields(request, assets);
+  }
+  return map_txt2img_hires_fields(request);
+}
+
+function map_txt2img_hires_fields(request: SdWebuiRequest):
+  | {
+      readonly enable_hr: true;
+      readonly hr_scale: number;
+      readonly hr_upscaler: string;
+      readonly hr_second_pass_steps: number;
+      readonly denoising_strength: number;
+    }
+  | object {
+  if (request.mode !== "txt2img") {
+    throw invalid_request();
+  }
+  if (request.hires_fix === undefined) {
+    return {};
+  }
+  return {
+    enable_hr: true,
+    hr_scale: request.hires_fix.scale,
+    hr_upscaler: request.hires_fix.upscaler_id,
+    hr_second_pass_steps: request.hires_fix.steps,
+    denoising_strength: request.hires_fix.denoise_strength,
   };
 }
 
@@ -116,6 +153,9 @@ function map_img2img_fields(
 ): { readonly init_images: readonly string[]; readonly denoising_strength: number } | object {
   if (request.mode !== "img2img") {
     return {};
+  }
+  if (request.hires_fix !== undefined) {
+    throw invalid_request();
   }
   if (request.denoise_strength === undefined) {
     throw invalid_request();

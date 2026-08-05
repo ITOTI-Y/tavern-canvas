@@ -6,12 +6,19 @@ import os from "node:os";
 import path from "node:path";
 
 import { describe, expect, it, vi } from "vitest";
-import type { ProviderPollResult, ProviderSubmission } from "@tavern-canvas/providers";
-
+import type { ProviderId } from "@tavern-canvas/contracts";
+import {
+  SdWebuiAdapter,
+  type ProviderPollResult,
+  type ProviderSubmission,
+  type ProviderTransport,
+  type ProviderTransportOperation,
+  type ProviderTransportResponse,
+} from "@tavern-canvas/providers";
 import { AssetStore } from "../assets/asset_store.js";
 import { load_gateway_config } from "../config/load_config.js";
 import { JobService } from "./job_service.js";
-import { JobWorker, type GatewayAdapter } from "./job_worker.js";
+import { JobWorker, type GatewayAdapter, type ProviderTransportFactory } from "./job_worker.js";
 import { type GatewayLogger } from "../logging/logger.js";
 import { AssetRepository } from "../persistence/asset_repository.js";
 import { open_gateway_database } from "../persistence/database.js";
@@ -46,7 +53,39 @@ const silent_logger: GatewayLogger = {
   flush: () => undefined,
 };
 
-function create_config(directory: string, concurrency = "1") {
+const DEFAULT_PROVIDER_CONFIG = {
+  provider_id: "openai_image",
+  base_url: "https://api.example.com",
+  credential: "provider-secret",
+  profile: {
+    profile_id: "openai-test",
+    provider_id: "openai_image",
+    model_allowlist: ["gpt-image-1"],
+    output_mime_type_allowlist: ["image/png"],
+    remote_asset_origin_allowlist: [],
+    max_response_bytes: 20_000_000,
+    max_input_asset_bytes: 20_000_000,
+  },
+} as const;
+
+const SD_PROVIDER_CONFIG = {
+  provider_id: "sd_webui",
+  base_url: "https://sd.example.com",
+  profile: {
+    profile_id: "sd-test",
+    provider_id: "sd_webui",
+    model_allowlist: ["sdxl-base"],
+    output_mime_type_allowlist: ["image/png"],
+    max_response_bytes: 2_000_000,
+  },
+} as const;
+
+function create_config(
+  directory: string,
+  concurrency = "1",
+  provider_config:
+    typeof DEFAULT_PROVIDER_CONFIG | typeof SD_PROVIDER_CONFIG = DEFAULT_PROVIDER_CONFIG,
+) {
   return load_gateway_config({
     cwd: directory,
     env: {
@@ -62,22 +101,7 @@ function create_config(directory: string, concurrency = "1") {
       TAVERN_CANVAS_MAX_IMAGE_BYTES: "20000000",
       TAVERN_CANVAS_MAX_IMAGE_PIXELS: "40000000",
       TAVERN_CANVAS_MAX_IMAGE_DIMENSION: "8192",
-      TAVERN_CANVAS_PROVIDER_PROFILES: JSON.stringify([
-        {
-          provider_id: "openai_image",
-          base_url: "https://api.example.com",
-          credential: "provider-secret",
-          profile: {
-            profile_id: "openai-test",
-            provider_id: "openai_image",
-            model_allowlist: ["gpt-image-1"],
-            output_mime_type_allowlist: ["image/png"],
-            remote_asset_origin_allowlist: [],
-            max_response_bytes: 20_000_000,
-            max_input_asset_bytes: 20_000_000,
-          },
-        },
-      ]),
+      TAVERN_CANVAS_PROVIDER_PROFILES: JSON.stringify([provider_config]),
     },
   });
 }
@@ -96,6 +120,24 @@ function request(request_id: string) {
     background: "opaque" as const,
     output_format: "png" as const,
     input_asset_ids: [],
+  };
+}
+
+function sd_request(request_id: string) {
+  return {
+    provider_id: "sd_webui" as const,
+    request_id,
+    generation_anchor: "d".repeat(64),
+    prompt: "worker cancellation test",
+    output_count: 1,
+    mode: "txt2img" as const,
+    model_id: "sdxl-base",
+    sampler: "Euler a",
+    scheduler: "Automatic",
+    width: 512,
+    height: 512,
+    steps: 1,
+    cfg_scale: 7,
   };
 }
 
@@ -128,6 +170,75 @@ async function wait_for_real_time(predicate: () => boolean): Promise<void> {
     await new Promise<void>((resolve) => setTimeout(resolve, 1));
   }
   throw new Error("Condition did not become true");
+}
+
+class BlockingSdTransport implements ProviderTransport {
+  readonly operations: ProviderTransportOperation[] = [];
+
+  execute(operation: ProviderTransportOperation): Promise<ProviderTransportResponse> {
+    this.operations.push(operation);
+    if (operation.route === "/sdapi/v1/interrupt") {
+      return Promise.resolve({
+        status: 200,
+        headers: {},
+        body: new Uint8Array(),
+      });
+    }
+    return new Promise<ProviderTransportResponse>((_resolve, reject) => {
+      const abort = () => reject(new DOMException("Aborted", "AbortError"));
+      if (operation.signal.aborted) {
+        abort();
+        return;
+      }
+      operation.signal.addEventListener("abort", abort, { once: true });
+    });
+  }
+}
+
+class CompletedThenBlockingSdTransport implements ProviderTransport {
+  readonly operations: ProviderTransportOperation[] = [];
+  readonly second_submit_started = deferred<void>();
+  readonly second_submit_signal = deferred<AbortSignal>();
+
+  execute(operation: ProviderTransportOperation): Promise<ProviderTransportResponse> {
+    this.operations.push(operation);
+    if (operation.route === "/sdapi/v1/interrupt") {
+      return Promise.resolve({
+        status: 200,
+        headers: {},
+        body: new Uint8Array(),
+      });
+    }
+    if (operation.route !== "/sdapi/v1/txt2img") {
+      return Promise.reject(new Error(`Unexpected SD route ${operation.route}`));
+    }
+    const submit_count = this.operations.filter(
+      ({ route }) => route === "/sdapi/v1/txt2img",
+    ).length;
+    if (submit_count === 1) {
+      return Promise.resolve({
+        status: 200,
+        headers: { "content-type": "application/json" },
+        body: new TextEncoder().encode(
+          JSON.stringify({
+            images: [PNG_BYTES.toString("base64")],
+            parameters: {},
+            info: '{"seed":42,"all_seeds":[42]}',
+          }),
+        ),
+      });
+    }
+    this.second_submit_started.resolve(undefined);
+    return new Promise<ProviderTransportResponse>((_resolve, reject) => {
+      const abort = () => reject(new DOMException("Aborted", "AbortError"));
+      this.second_submit_signal.resolve(operation.signal);
+      if (operation.signal.aborted) {
+        abort();
+        return;
+      }
+      operation.signal.addEventListener("abort", abort, { once: true });
+    });
+  }
 }
 
 function make_adapter(): GatewayAdapter {
@@ -176,11 +287,15 @@ async function create_worker_fixture(
   options: {
     readonly concurrency?: string;
     readonly adapter?: GatewayAdapter;
+    readonly provider_config?: typeof DEFAULT_PROVIDER_CONFIG | typeof SD_PROVIDER_CONFIG;
+    readonly transport_factory?: ProviderTransportFactory;
     readonly use_default_sleep?: boolean;
   } = {},
 ) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "tavern-gateway-recovery-"));
-  const config = create_config(directory, options.concurrency ?? "1");
+  const provider_config = options.provider_config ?? DEFAULT_PROVIDER_CONFIG;
+  const provider_id = provider_config.provider_id as ProviderId;
+  const config = create_config(directory, options.concurrency ?? "1", provider_config);
   const database = open_gateway_database({
     file_path: path.join(directory, "tavern_canvas.sqlite"),
   });
@@ -201,9 +316,12 @@ async function create_worker_fixture(
     service,
     asset_store,
     config,
-    adapters: new Map([["openai_image", options.adapter ?? make_adapter()]]),
+    adapters: new Map([[provider_id, options.adapter ?? make_adapter()]]),
     logger: silent_logger,
     clock: () => CREATED_AT,
+    ...(options.transport_factory === undefined
+      ? {}
+      : { transport_factory: options.transport_factory }),
     ...(options.use_default_sleep ? {} : { sleep: async () => undefined }),
   });
   return { directory, database, job_repository, asset_repository, asset_store, service, worker };
@@ -475,11 +593,19 @@ describe("JobWorker restart recovery", () => {
     let cancel_signal_aborted: boolean | undefined;
     const adapter = {
       ...make_adapter(),
+      capabilities: new Set(["text_to_image", "cancel"] as const),
       poll: async () => {
         poll_calls += 1;
         return blocked_poll.promise;
       },
-      cancel: async (context: { readonly signal: AbortSignal }) => {
+      cancel: async (
+        context: { readonly signal: AbortSignal },
+        submission: ProviderSubmission | undefined,
+      ) => {
+        expect(submission).toEqual({
+          state: "pending",
+          submission_id: "upstream-cancel-1",
+        });
         cancel_calls += 1;
         cancel_signal_aborted = context.signal.aborted;
       },
@@ -505,7 +631,7 @@ describe("JobWorker restart recovery", () => {
       fixture.worker.cancel_active(created.job.job_id);
       fixture.service.cancel_job(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
-      expect(cancel_calls).toBe(1);
+      await wait_for(() => cancel_calls === 1);
       expect(cancel_signal_aborted).toBe(false);
 
       blocked_poll.resolve({
@@ -598,9 +724,15 @@ describe("JobWorker restart recovery", () => {
   });
   it("does not attach staged output when cancellation wins completion", async () => {
     const request_id = "99999999-9999-4999-8999-999999999991";
-    const fixture = await create_worker_fixture({
-      adapter: make_completed_adapter(request_id),
-    });
+    let cancel_calls = 0;
+    const adapter = {
+      ...make_completed_adapter(request_id),
+      capabilities: new Set(["text_to_image", "cancel"] as const),
+      cancel: async () => {
+        cancel_calls += 1;
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
     const stage_started = deferred<void>();
     const release_stage = deferred<void>();
     const register_generated_asset = fixture.asset_store.register_generated_asset.bind(
@@ -622,6 +754,7 @@ describe("JobWorker restart recovery", () => {
 
       fixture.service.cancel_job(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
+      expect(cancel_calls).toBe(0);
       release_stage.resolve(undefined);
       await wait_for(
         () => fixture.service.get_stored_job(created.job.job_id)?.state === "cancelled",
@@ -761,6 +894,283 @@ describe("JobWorker restart recovery", () => {
       await rm(fixture.directory, { recursive: true, force: true });
       add_listener.mockRestore();
       remove_listener.mockRestore();
+    }
+  });
+  it("does not invoke upstream cancellation without the cancel capability", async () => {
+    const blocked_poll = deferred<ProviderPollResult>();
+    let poll_calls = 0;
+    let cancel_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      poll: async () => {
+        poll_calls += 1;
+        return blocked_poll.promise;
+      },
+      cancel: async () => {
+        cancel_calls += 1;
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("99999999-9999-4999-8999-999999999995"),
+      });
+      fixture.job_repository.transition_with_event({
+        job_id: created.job.job_id,
+        state: "running",
+        event_type: "running",
+        event: { state: "running" },
+        submission: { state: "pending", submission_id: "upstream-no-cancel-1" },
+        created_at: CREATED_AT,
+      });
+      await fixture.worker.start();
+      await wait_for(() => poll_calls === 1);
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      expect(cancel_calls).toBe(0);
+
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await fixture.worker.stop();
+    } finally {
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("waits for upstream cancellation to settle before stopping", async () => {
+    const blocked_poll = deferred<ProviderPollResult>();
+    const cancellation = deferred<void>();
+    let poll_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      capabilities: new Set(["text_to_image", "cancel"] as const),
+      poll: async () => {
+        poll_calls += 1;
+        return blocked_poll.promise;
+      },
+      cancel: async (
+        _context: { readonly signal: AbortSignal },
+        submission: ProviderSubmission | undefined,
+      ) => {
+        expect(submission).toEqual({
+          state: "pending",
+          submission_id: "upstream-stop-cancel-1",
+        });
+        await cancellation.promise;
+      },
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("99999999-9999-4999-8999-999999999996"),
+      });
+      fixture.job_repository.transition_with_event({
+        job_id: created.job.job_id,
+        state: "running",
+        event_type: "running",
+        event: { state: "running" },
+        submission: { state: "pending", submission_id: "upstream-stop-cancel-1" },
+        created_at: CREATED_AT,
+      });
+      await fixture.worker.start();
+      await wait_for(() => poll_calls === 1);
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      let stop_finished = false;
+      const stopping = fixture.worker.stop().then(() => {
+        stop_finished = true;
+      });
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await wait_for(() => fixture.worker.active_count === 0);
+      expect(stop_finished).toBe(false);
+
+      cancellation.resolve();
+      await stopping;
+      expect(stop_finished).toBe(true);
+    } finally {
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      cancellation.resolve();
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("stops after the cancellation deadline when the provider ignores the signal", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const blocked_poll = deferred<ProviderPollResult>();
+    let poll_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      capabilities: new Set(["text_to_image", "cancel"] as const),
+      poll: async () => {
+        poll_calls += 1;
+        return blocked_poll.promise;
+      },
+      cancel: async () => new Promise<void>(() => undefined),
+    } as GatewayAdapter;
+    const fixture = await create_worker_fixture({ adapter });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request("99999999-9999-4999-8999-999999999998"),
+      });
+      fixture.job_repository.transition_with_event({
+        job_id: created.job.job_id,
+        state: "running",
+        event_type: "running",
+        event: { state: "running" },
+        submission: { state: "pending", submission_id: "upstream-timeout-1" },
+        created_at: CREATED_AT,
+      });
+      await fixture.worker.start();
+      await wait_for(() => poll_calls === 1);
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      let stop_finished = false;
+      const stopping = fixture.worker.stop().then(() => {
+        stop_finished = true;
+      });
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await wait_for(() => fixture.worker.active_count === 0);
+      await vi.advanceTimersByTimeAsync(4_999);
+      expect(stop_finished).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
+      await stopping;
+      expect(stop_finished).toBe(true);
+    } finally {
+      blocked_poll.resolve({
+        state: "failed",
+        error: { code: "provider_unavailable", retryable: true },
+      });
+      await vi.advanceTimersByTimeAsync(5_000);
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+      vi.useRealTimers();
+    }
+  });
+
+  it("interrupts SD WebUI when cancellation aborts a blocking submit", async () => {
+    const transport = new BlockingSdTransport();
+    const adapter = new SdWebuiAdapter() as unknown as GatewayAdapter;
+    const fixture = await create_worker_fixture({
+      adapter,
+      provider_config: SD_PROVIDER_CONFIG,
+      transport_factory: { create: () => transport },
+    });
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: sd_request("99999999-9999-4999-8999-999999999997"),
+      });
+      await fixture.worker.start();
+      fixture.worker.enqueue(created.job.job_id);
+      await wait_for(() =>
+        transport.operations.some((operation) => operation.route === "/sdapi/v1/txt2img"),
+      );
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      await wait_for(() =>
+        transport.operations.some((operation) => operation.route === "/sdapi/v1/interrupt"),
+      );
+
+      const interrupt = transport.operations.find(
+        (operation) => operation.route === "/sdapi/v1/interrupt",
+      );
+      expect(interrupt?.method).toBe("POST");
+      expect(interrupt?.signal.aborted).toBe(false);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+  it("does not interrupt another SD job after a completed submit enters staging", async () => {
+    const transport = new CompletedThenBlockingSdTransport();
+    const adapter = new SdWebuiAdapter() as unknown as GatewayAdapter;
+    const fixture = await create_worker_fixture({
+      adapter,
+      concurrency: "2",
+      provider_config: SD_PROVIDER_CONFIG,
+      transport_factory: { create: () => transport },
+    });
+    const stage_started = deferred<void>();
+    const release_stage = deferred<void>();
+    const register_generated_asset = fixture.asset_store.register_generated_asset.bind(
+      fixture.asset_store,
+    );
+    let register_calls = 0;
+    fixture.asset_store.register_generated_asset = async (generated, created_at) => {
+      register_calls += 1;
+      if (register_calls === 1) {
+        stage_started.resolve(undefined);
+        await release_stage.promise;
+      }
+      return register_generated_asset(generated, created_at);
+    };
+    let second_job_id: string | undefined;
+    try {
+      const first = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: sd_request("99999999-9999-4999-8999-999999999999"),
+      });
+      const second = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: sd_request("99999999-9999-4999-8999-999999999990"),
+      });
+      second_job_id = second.job.job_id;
+      await fixture.worker.start();
+      fixture.worker.enqueue(first.job.job_id);
+      await stage_started.promise;
+      fixture.worker.enqueue(second.job.job_id);
+      await transport.second_submit_started.promise;
+      const second_submit_signal = await transport.second_submit_signal.promise;
+      expect(second_submit_signal.aborted).toBe(false);
+
+      fixture.service.cancel_job(first.job.job_id);
+      fixture.worker.cancel_active(first.job.job_id);
+      expect(
+        transport.operations.filter((operation) => operation.route === "/sdapi/v1/interrupt"),
+      ).toHaveLength(0);
+      expect(second_submit_signal.aborted).toBe(false);
+
+      release_stage.resolve(undefined);
+      fixture.service.cancel_job(second.job.job_id);
+      fixture.worker.cancel_active(second.job.job_id);
+      await fixture.worker.stop();
+    } finally {
+      release_stage.resolve(undefined);
+      if (second_job_id !== undefined) {
+        fixture.service.cancel_job(second_job_id);
+        fixture.worker.cancel_active(second_job_id);
+      }
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
     }
   });
 });

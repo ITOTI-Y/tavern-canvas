@@ -74,6 +74,14 @@ export const SdWebuiRequestSchema = z
   })
   .check((context) => {
     const is_img2img = context.value.mode === "img2img";
+    if (is_img2img && context.value.hires_fix !== undefined) {
+      context.issues.push({
+        code: "custom",
+        input: context.value.hires_fix,
+        message: "img2img does not accept hires_fix",
+        path: ["hires_fix"],
+      });
+    }
     if (is_img2img && context.value.input_asset_id === undefined) {
       context.issues.push({
         code: "custom",

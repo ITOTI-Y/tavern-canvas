@@ -13,6 +13,7 @@ const operation: ProviderTransportOperation = {
   route: "/v1/images/generations",
   method: "POST",
   body: new TextEncoder().encode("fixture"),
+  max_request_bytes: 1_000_000,
   content_type: "application/json",
   accept: "application/json",
   max_response_bytes: 3,
@@ -34,6 +35,15 @@ describe("host provider transports", () => {
 
     await expect(transport.execute(operation)).resolves.toEqual(response);
     expect(execute).toHaveBeenCalledWith(operation);
+  });
+  it("rejects an oversized outbound body before invoking the host surface", async () => {
+    const execute_provider_request = vi.fn(() => Promise.resolve(response));
+    const transport = new HostProxyTransport({ execute_provider_request });
+
+    await expect(
+      execute_untrusted(transport, { ...operation, max_request_bytes: 1 }),
+    ).rejects.toBeInstanceOf(ProviderTransportBoundaryError);
+    expect(execute_provider_request).not.toHaveBeenCalled();
   });
 
   it("rejects an oversized host proxy response", async () => {
@@ -78,6 +88,12 @@ describe("host provider transports", () => {
     null,
     { ...operation, method: "TRACE" },
     { ...operation, body: "not bytes" },
+    { ...operation, max_request_bytes: 0 },
+    { ...operation, max_request_bytes: Number.POSITIVE_INFINITY },
+    (() => {
+      const { max_request_bytes: _max_request_bytes, ...bodyless } = operation;
+      return bodyless;
+    })(),
     { ...operation, content_type: "text/plain\r\nx-injected: true" },
     { ...operation, signal: null },
   ])("rejects an untrusted outbound operation %#", async (untrusted_operation) => {

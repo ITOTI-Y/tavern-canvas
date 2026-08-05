@@ -18,7 +18,6 @@ export const NovelAiVibeReferenceSchema = z.strictObject({
 export const NovelAiCharacterReferenceSchema = z.strictObject({
   asset_id: AssetIdSchema,
   prompt: z.string().trim().min(1).max(4_000),
-  negative_prompt: z.string().trim().max(4_000).optional(),
   strength: z.number().min(0).max(1),
 });
 

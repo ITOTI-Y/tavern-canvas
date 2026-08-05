@@ -59,7 +59,8 @@ const profile = {
   output_mime_type_allowlist: ["image/png", "image/webp"],
   max_response_bytes: 2_000_000,
   max_archive_entries: 8,
-};
+  max_input_asset_bytes: 20_000_000,
+} as const;
 
 const full_request = NovelAiRequestSchema.parse({
   provider_id: "novelai",
@@ -209,14 +210,94 @@ function contract_case(scenario: ProviderContractScenario) {
 }
 
 define_provider_contract_suite("NovelAI", contract_case);
+describe("NovelAI request bounds", () => {
+  const second_asset_id = AssetIdSchema.parse("33333333-3333-4333-8333-333333333334");
+  const asset_bytes = new Uint8Array(6);
+
+  it("rejects distinct individually legal assets when their aggregate exceeds the profile budget", async () => {
+    const request = NovelAiRequestSchema.parse({
+      ...full_request,
+      vibe_references: [{ asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.8 }],
+      character_references: [
+        { asset_id: second_asset_id, prompt: "fixture character", strength: 0.7 },
+      ],
+    });
+    const transport = new ScriptedTransport([]);
+    const assets: ProviderAssetReader = {
+      read: async (asset_id) => ({
+        asset_id,
+        media_type: "image/png",
+        bytes: asset_bytes,
+      }),
+    };
+    const bounded_profile = { ...profile, max_input_asset_bytes: 10 };
+
+    await expect(
+      new NovelAiAdapter({ clock: new ImmediateClock(), random: new FixedRandom() }).submit(
+        {
+          profile: bounded_profile,
+          transport,
+          assets,
+          signal: new AbortController().signal,
+          log: new RecordingLog(),
+        },
+        request,
+      ),
+    ).rejects.toBeInstanceOf(ProviderAdapterError);
+    expect(transport.operations).toHaveLength(0);
+  });
+
+  it("counts a duplicated asset ID once in the aggregate budget", async () => {
+    const transport = new ScriptedTransport([transport_response(201, response_bytes)]);
+    const assets: ProviderAssetReader = {
+      read: async (asset_id) => ({
+        asset_id,
+        media_type: "image/png",
+        bytes: asset_bytes,
+      }),
+    };
+    const bounded_profile = { ...profile, max_input_asset_bytes: 6 };
+
+    await expect(
+      new NovelAiAdapter({ clock: new ImmediateClock(), random: new FixedRandom() }).submit(
+        {
+          profile: bounded_profile,
+          transport,
+          assets,
+          signal: new AbortController().signal,
+          log: new RecordingLog(),
+        },
+        full_request,
+      ),
+    ).resolves.toMatchObject({ state: "completed" });
+    expect(transport.operations).toHaveLength(1);
+  });
+});
 
 describe("NovelAI mapping", () => {
-  it("maps quality, UC preset, vibe, character references, and deterministic seed", () => {
+  it("maps top-level negative prompt and supported character description fields", () => {
     const assets = new Map<AssetId, ProviderSourceAsset>([
       [ASSET_ID, { asset_id: ASSET_ID, media_type: "image/png", bytes: PNG_BYTES }],
     ]);
 
-    expect(map_novelai_request(full_request, assets)).toEqual(request_fixture);
+    const payload = map_novelai_request(full_request, assets);
+
+    expect(payload).toEqual(request_fixture);
+    expect(payload.parameters.negative_prompt).toBe("fixture negative prompt");
+    expect(payload.parameters.director_reference_descriptions).toEqual([
+      {
+        caption: {
+          base_caption: "character, fixture character",
+          char_captions: [],
+        },
+        legacy_uc: false,
+        use_coords: false,
+        use_order: true,
+      },
+    ]);
+    expect(payload.parameters.director_reference_descriptions?.[0]).not.toHaveProperty(
+      "negative_prompt",
+    );
     expect(full_request.prompt).toBe("fixture prompt");
   });
 

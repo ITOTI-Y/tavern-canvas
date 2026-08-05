@@ -298,19 +298,55 @@ describe("OpenAiImageAdapter", () => {
     expect(content_type).not.toContain(predictable_boundary);
   });
 
-  it("rejects unsupported negative prompts before transport", async () => {
-    const transport = new ScriptedTransport([]);
-    const adapter = new OpenAiImageAdapter();
-    const context = create_context(adapter, transport);
-    const unsupported_request = OpenAiImageRequestSchema.parse({
+  it("maps a negative prompt into the JSON prompt field", async () => {
+    const negative_prompt = "avoid watermark";
+    const request = OpenAiImageRequestSchema.parse({
       ...generation_request,
-      negative_prompt: "watermark",
+      negative_prompt,
     });
+    const transport = new ScriptedTransport([json_response(200, generation_response_fixture)]);
+    const adapter = new OpenAiImageAdapter();
+    const log = new RecordingLog();
+    const context = { ...create_context(adapter, transport), log };
 
-    await expect(adapter.submit(context, unsupported_request)).rejects.toMatchObject({
-      provider_error: { code: "invalid_request" },
+    await expect(adapter.submit(context, request)).resolves.toMatchObject({
+      state: "completed",
+      result: { assets: [{ media_type: "image/png" }] },
     });
-    expect(transport.operations).toHaveLength(0);
+    const body = decode_json(transport.operations[0]?.body);
+    const serialized_body = JSON.stringify(body);
+    expect(body).toMatchObject({ prompt: `fixture prompt\n\nAvoid: ${negative_prompt}` });
+    expect(body).not.toHaveProperty("negative_prompt");
+    expect(serialized_body.match(/avoid watermark/gu)).toHaveLength(1);
+    expect(JSON.stringify(log.records)).not.toContain(negative_prompt);
+  });
+
+  it("maps a negative prompt into one multipart prompt field", async () => {
+    const negative_prompt = "avoid signatures";
+    const request = OpenAiImageRequestSchema.parse({
+      ...generation_request,
+      mode: "edit",
+      prompt: "fixture edit prompt",
+      negative_prompt,
+      input_asset_ids: [ASSET_ID],
+    });
+    const transport = new ScriptedTransport([json_response(200, generation_response_fixture)]);
+    const adapter = new OpenAiImageAdapter();
+    const log = new RecordingLog();
+    const context = { ...create_context(adapter, transport), log };
+
+    await expect(adapter.submit(context, request)).resolves.toMatchObject({
+      state: "completed",
+      result: { assets: [{ media_type: "image/png" }] },
+    });
+    const operation = transport.operations[0];
+    const body_text = new TextDecoder("latin1").decode(operation?.body);
+    const expected_prompt = `fixture edit prompt\n\nAvoid: ${negative_prompt}`;
+    expect(body_text).toContain(`name="prompt"\r\n\r\n${expected_prompt}\r\n`);
+    expect(body_text.match(/name="prompt"/gu)).toHaveLength(1);
+    expect(body_text).not.toContain('name="negative_prompt"');
+    expect(body_text.match(/avoid signatures/gu)).toHaveLength(1);
+    expect(JSON.stringify(log.records)).not.toContain(negative_prompt);
   });
 
   it("requires an edit input when a mask is requested", () => {

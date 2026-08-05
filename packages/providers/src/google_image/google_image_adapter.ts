@@ -30,7 +30,10 @@ import {
   type RetryClock,
   type RetryRandomSource,
 } from "../retry_policy.js";
-import type { ProviderTransportResponse } from "../provider_transport.js";
+import {
+  derive_provider_request_limit,
+  type ProviderTransportResponse,
+} from "../provider_transport.js";
 
 const GoogleImageProfileSchema = z
   .strictObject({
@@ -142,16 +145,21 @@ export class GoogleImageAdapter implements ProviderAdapter<GoogleImageRequest> {
       if (asset.asset_id !== asset_id) {
         throw invalid_request();
       }
-      input_bytes += asset.bytes.byteLength;
-      if (input_bytes > profile.max_input_asset_bytes) {
+      const asset_bytes = asset.bytes.byteLength;
+      if (
+        asset_bytes > profile.max_input_asset_bytes ||
+        asset_bytes > profile.max_input_asset_bytes - input_bytes
+      ) {
         throw invalid_request();
       }
+      input_bytes += asset_bytes;
       input.push({
         type: "image",
         mime_type: asset.media_type,
         data: encode_base64(asset.bytes),
       });
     }
+    const max_request_bytes = derive_provider_request_limit(profile.max_input_asset_bytes);
 
     const body = new TextEncoder().encode(
       JSON.stringify({
@@ -176,6 +184,7 @@ export class GoogleImageAdapter implements ProviderAdapter<GoogleImageRequest> {
             route: "/v1beta/interactions",
             method: "POST",
             body,
+            max_request_bytes,
             content_type: "application/json",
             accept: "application/json",
             max_response_bytes: profile.max_response_bytes - total_bytes,
@@ -276,7 +285,10 @@ export class GoogleImageAdapter implements ProviderAdapter<GoogleImageRequest> {
     return Promise.resolve(submission);
   }
 
-  cancel(): Promise<void> {
+  cancel(
+    _context: ProviderExecutionContext,
+    _submission: ProviderSubmission | undefined,
+  ): Promise<void> {
     return Promise.resolve();
   }
 }
