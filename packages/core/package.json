@@ -1,0 +1,16 @@
+{
+  "name": "@tavern-canvas/core",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. --project packages packages/core",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tavern-canvas/contracts": "workspace:*"
+  }
+}
