@@ -1,7 +1,15 @@
 import { z } from "zod";
 
 import { Sha256Schema } from "./generation.js";
-import { RequestIdSchema } from "./ids.js";
+import { AssetIdSchema, RequestIdSchema } from "./ids.js";
+import { BaseImageGenerationRequestFields, ProviderSeedSchema } from "./providers/common.js";
+import {
+  ComfyUiRequestSchema,
+  GoogleImageRequestSchema,
+  NovelAiRequestSchema,
+  OpenAiImageRequestSchema,
+  SdWebuiRequestSchema,
+} from "./providers/index.js";
 
 export const ProviderIdSchema = z.enum([
   "sd_webui",
@@ -44,40 +52,37 @@ export const ProviderErrorSchema = z.strictObject({
 });
 export type ProviderError = z.infer<typeof ProviderErrorSchema>;
 
-const base_image_generation_request_fields = {
-  request_id: RequestIdSchema,
-  generation_anchor: Sha256Schema,
-  prompt: z.string().trim().min(1).max(12_000),
-  negative_prompt: z.string().trim().max(4_000).optional(),
-  output_count: z.number().int().min(1).max(4),
-};
-
 export const BaseImageGenerationRequestSchema = z.strictObject({
   provider_id: ProviderIdSchema,
-  ...base_image_generation_request_fields,
+  ...BaseImageGenerationRequestFields,
 });
 export type BaseImageGenerationRequest = z.infer<typeof BaseImageGenerationRequestSchema>;
 
 export const ImageGenerationRequestSchema = z.discriminatedUnion("provider_id", [
-  z.strictObject({
-    provider_id: z.literal("sd_webui"),
-    ...base_image_generation_request_fields,
-  }),
-  z.strictObject({
-    provider_id: z.literal("novelai"),
-    ...base_image_generation_request_fields,
-  }),
-  z.strictObject({
-    provider_id: z.literal("comfyui"),
-    ...base_image_generation_request_fields,
-  }),
-  z.strictObject({
-    provider_id: z.literal("openai_image"),
-    ...base_image_generation_request_fields,
-  }),
-  z.strictObject({
-    provider_id: z.literal("google_image"),
-    ...base_image_generation_request_fields,
-  }),
+  SdWebuiRequestSchema,
+  NovelAiRequestSchema,
+  ComfyUiRequestSchema,
+  OpenAiImageRequestSchema,
+  GoogleImageRequestSchema,
 ]);
 export type ImageGenerationRequest = z.infer<typeof ImageGenerationRequestSchema>;
+
+export const GeneratedAssetSchema = z.strictObject({
+  asset_id: AssetIdSchema,
+  media_type: z.enum(["image/png", "image/jpeg", "image/webp", "video/mp4"]),
+  byte_length: z.number().int().positive().max(100_000_000),
+  sha256: Sha256Schema,
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+  duration_ms: z.number().int().positive().optional(),
+  persisted_url: z.url().optional(),
+});
+export type GeneratedAsset = z.infer<typeof GeneratedAssetSchema>;
+
+export const ImageGenerationResultSchema = z.strictObject({
+  request_id: RequestIdSchema,
+  provider_id: ProviderIdSchema,
+  assets: z.array(GeneratedAssetSchema).min(1).max(4),
+  seed: ProviderSeedSchema.optional(),
+});
+export type ImageGenerationResult = z.infer<typeof ImageGenerationResultSchema>;

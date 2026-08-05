@@ -34,13 +34,97 @@ const second_image_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const job_id = "67e55044-10b1-426f-9247-bb680e5fe0c8";
 const occurred_at = "2026-08-05T09:30:00.000Z";
 
-const provider_request = {
+const base_provider_request = {
   provider_id: "sd_webui" as const,
   request_id,
   generation_anchor,
   prompt: "A rainy alley at night",
   output_count: 2,
 };
+
+const provider_request = {
+  ...base_provider_request,
+  mode: "txt2img" as const,
+  model_id: "sdxl-base",
+  sampler: "DPM++ 2M",
+  scheduler: "Karras",
+  width: 1024,
+  height: 1024,
+  steps: 30,
+  cfg_scale: 7,
+};
+
+const provider_requests = [
+  ["sd_webui", provider_request],
+  [
+    "novelai",
+    {
+      provider_id: "novelai",
+      request_id,
+      generation_anchor,
+      prompt: "A rainy alley at night",
+      output_count: 2,
+      model_id: "nai-diffusion-4-full",
+      sampler: "k_euler_ancestral",
+      width: 1024,
+      height: 1024,
+      steps: 28,
+      scale: 5,
+      cfg_rescale: 0,
+      noise_schedule: "native",
+      quality_toggle: true,
+      undesired_content_preset: "heavy",
+      smea: false,
+      dyn: false,
+    },
+  ],
+  [
+    "comfyui",
+    {
+      provider_id: "comfyui",
+      request_id,
+      generation_anchor,
+      prompt: "A rainy alley at night",
+      output_count: 2,
+      workflow_id: image_id,
+      placeholder_values: { cfg: 7 },
+      input_asset_bindings: {},
+      output_node_ids: ["9"],
+    },
+  ],
+  [
+    "openai_image",
+    {
+      provider_id: "openai_image",
+      request_id,
+      generation_anchor,
+      prompt: "A rainy alley at night",
+      output_count: 2,
+      mode: "generate",
+      model_id: "gpt-image-1",
+      size: "1024x1024",
+      quality: "high",
+      background: "opaque",
+      output_format: "png",
+      input_asset_ids: [],
+    },
+  ],
+  [
+    "google_image",
+    {
+      provider_id: "google_image",
+      request_id,
+      generation_anchor,
+      prompt: "A rainy alley at night",
+      output_count: 2,
+      model_id: "gemini-2.5-flash-image",
+      reference_asset_ids: [],
+      aspect_ratio: "1:1",
+      image_size: "1K",
+      output_mime_type: "image/png",
+    },
+  ],
+] as const;
 
 const job_response = {
   protocol_version: "1.0" as const,
@@ -297,15 +381,10 @@ describe("provider boundary", () => {
     ).toBe(false);
   });
 
-  it.each(["sd_webui", "novelai", "comfyui", "openai_image", "google_image"] as const)(
+  it.each(provider_requests)(
     "parses the strict %s request discriminant",
-    (provider_id) => {
-      expect(
-        ImageGenerationRequestSchema.parse({
-          ...provider_request,
-          provider_id,
-        }).provider_id,
-      ).toBe(provider_id);
+    (provider_id, request) => {
+      expect(ImageGenerationRequestSchema.parse(request).provider_id).toBe(provider_id);
     },
   );
 
@@ -514,7 +593,7 @@ describe("strict public object boundaries", () => {
     ["RequestImageArgumentsSchema", RequestImageArgumentsSchema, request_image_arguments],
     ["TavernCanvasMessageMetadataSchema", TavernCanvasMessageMetadataSchema, message_metadata],
     ["ProviderErrorSchema", ProviderErrorSchema, provider_error],
-    ["BaseImageGenerationRequestSchema", BaseImageGenerationRequestSchema, provider_request],
+    ["BaseImageGenerationRequestSchema", BaseImageGenerationRequestSchema, base_provider_request],
     ["ImageGenerationRequestSchema", ImageGenerationRequestSchema, provider_request],
     ["GatewayCreateJobRequestSchema", GatewayCreateJobRequestSchema, gateway_create_request],
     ["GatewayJobResponseSchema", GatewayJobResponseSchema, job_response],

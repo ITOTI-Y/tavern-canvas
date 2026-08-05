@@ -44,7 +44,9 @@ export type { TavernCanvasMessageMetadata } from "./message.js";
 
 export {
   BaseImageGenerationRequestSchema,
+  GeneratedAssetSchema,
   ImageGenerationRequestSchema,
+  ImageGenerationResultSchema,
   ProviderCapabilitySchema,
   ProviderErrorCodeSchema,
   ProviderErrorSchema,
@@ -52,12 +54,36 @@ export {
 } from "./provider.js";
 export type {
   BaseImageGenerationRequest,
+  GeneratedAsset,
   ImageGenerationRequest,
+  ImageGenerationResult,
   ProviderCapability,
   ProviderError,
   ProviderErrorCode,
   ProviderId,
 } from "./provider.js";
+
+export {
+  ComfyUiPlaceholderValueSchema,
+  ComfyUiRequestSchema,
+  GoogleImageRequestSchema,
+  NovelAiCharacterReferenceSchema,
+  NovelAiRequestSchema,
+  NovelAiVibeReferenceSchema,
+  OpenAiImageRequestSchema,
+  SdWebuiAdetailerSchema,
+  SdWebuiControlNetReferenceSchema,
+  SdWebuiHiresFixSchema,
+  SdWebuiLoraTokenSchema,
+  SdWebuiRequestSchema,
+} from "./providers/index.js";
+export type {
+  ComfyUiRequest,
+  GoogleImageRequest,
+  NovelAiRequest,
+  OpenAiImageRequest,
+  SdWebuiRequest,
+} from "./providers/index.js";
 
 export {
   GatewaySettingsSchema,
