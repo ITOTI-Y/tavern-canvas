@@ -1,0 +1,21 @@
+{
+  "name": "@tavern-canvas/storage",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. --project packages packages/storage",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "idb": "8.0.3",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.5"
+  }
+}
