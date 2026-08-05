@@ -108,9 +108,15 @@ importers:
 
   packages/core:
     dependencies:
+      '@noble/hashes':
+        specifier: 2.2.0
+        version: 2.2.0
       '@tavern-canvas/contracts':
         specifier: workspace:*
         version: link:../contracts
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
 
   tools/first_party_check: {}
 
