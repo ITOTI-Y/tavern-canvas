@@ -250,6 +250,34 @@ describe("TauriTavernHost", () => {
       })).toThrowError(/invalid ChatSurface registration/u);
     },
   );
+  it("returns a stable error for a revoked ChatSurface registration", () => {
+    const { proxy, revoke } = Proxy.revocable({ fault: () => undefined }, {});
+    revoke();
+    const tauri = create_tauri_host({ registration_result: proxy });
+
+    expect(() => tauri.host.register_chat_surface({
+      id: "tavern-canvas.messages",
+    })).toThrowError(/invalid ChatSurface registration/u);
+  });
+
+  it("accepts a property-readable ChatSurface registration with a prototype trap", () => {
+    const fault = vi.fn();
+    const registration_result = new Proxy({ fault }, {
+      getPrototypeOf: () => {
+        throw new Error("prototype failed");
+      },
+    });
+    const tauri = create_tauri_host({ registration_result });
+
+    const registration = tauri.host.register_chat_surface({
+      id: "tavern-canvas.messages",
+    });
+    const error = new Error("surface failed");
+    registration.report_fault(error);
+
+    expect(fault).toHaveBeenCalledWith(error);
+  });
+
 
   it.each([
     {},
@@ -272,6 +300,57 @@ describe("TauriTavernHost", () => {
       signal: new AbortController().signal,
     })).toThrowError(/invalid ChatSurface disposer/u);
   });
+  it("returns a stable error for a revoked ChatSurface disposer", () => {
+    const { proxy, revoke } = Proxy.revocable({ dispose: () => undefined }, {});
+    revoke();
+    const tauri = create_tauri_host();
+    tauri.host.register_chat_surface({
+      id: "tavern-canvas.messages",
+      did_mount: () => proxy,
+    });
+    const participant = tauri.get_registered_participant();
+    if (participant === undefined) {
+      throw new Error("participant was not registered");
+    }
+
+    expect(() => participant.didMount?.({
+      mesid: 7,
+      element: document.createElement("article"),
+      content: document.createElement("div"),
+      signal: new AbortController().signal,
+    })).toThrowError(/invalid ChatSurface disposer/u);
+  });
+
+  it("accepts a property-readable ChatSurface disposer with a prototype trap", () => {
+    const dispose = vi.fn();
+    const raw_disposer = new Proxy({ dispose }, {
+      getPrototypeOf: () => {
+        throw new Error("prototype failed");
+      },
+    });
+    const tauri = create_tauri_host();
+    tauri.host.register_chat_surface({
+      id: "tavern-canvas.messages",
+      did_mount: () => raw_disposer,
+    });
+    const participant = tauri.get_registered_participant();
+    if (participant === undefined) {
+      throw new Error("participant was not registered");
+    }
+
+    const normalized_disposer = participant.didMount?.({
+      mesid: 7,
+      element: document.createElement("article"),
+      content: document.createElement("div"),
+      signal: new AbortController().signal,
+    });
+    if (typeof normalized_disposer !== "function") {
+      throw new Error("disposer was not normalized");
+    }
+    normalized_disposer();
+    expect(dispose).toHaveBeenCalledTimes(1);
+  });
+
 
   it.each([
     ["a scalar batch", 7],
@@ -358,6 +437,55 @@ describe("TauriTavernHost", () => {
       tauri.host.get_last_world_info_activation(),
     ).rejects.toThrowError(/invalid WorldInfo activation/u);
   });
+  it.each([
+    ["Date", new Date()],
+    ["Map", new Map()],
+    ["Set", new Set()],
+    ["Error", new Error("host value")],
+  ])("rejects a branded %s activation entry", async (_, entry) => {
+    const tauri = create_tauri_host({
+      last_activation: {
+        timestampMs: 1,
+        trigger: "generation",
+        entries: [entry],
+      },
+    });
+
+    await expect(
+      tauri.host.get_last_world_info_activation(),
+    ).rejects.toThrowError(/invalid WorldInfo activation/u);
+  });
+
+  it("accepts null-prototype activation records", async () => {
+    const entry: Record<string, unknown> = Object.create(null);
+    Object.assign(entry, {
+      world: "Lore",
+      uid: 1,
+      displayName: "Entry",
+      constant: true,
+    });
+    const batch: Record<string, unknown> = Object.create(null);
+    Object.assign(batch, {
+      timestampMs: 1,
+      trigger: "generation",
+      entries: [entry],
+    });
+    const tauri = create_tauri_host({ last_activation: batch });
+
+    await expect(tauri.host.get_last_world_info_activation()).resolves.toEqual({
+      timestamp_ms: 1,
+      trigger: "generation",
+      entries: [
+        {
+          world: "Lore",
+          uid: 1,
+          display_name: "Entry",
+          constant: true,
+        },
+      ],
+    });
+  });
+
 
   it("validates subscribed activation batches before normalization", async () => {
     const tauri = create_tauri_host();
@@ -444,6 +572,48 @@ describe("TauriTavernHost", () => {
       __TAURITAVERN__: { abiVersion: 1, ready: null, api: {} },
     })).resolves.toBeInstanceOf(TauriTavernHost);
   });
+  it("fails closed for a revoked Tauri global", async () => {
+    const { proxy, revoke } = Proxy.revocable({
+      abiVersion: 1,
+      ready: Promise.resolve(),
+      api: {},
+    }, {});
+    revoke();
+
+    await expect(create_tauritavern_host({
+      __TAURITAVERN__: proxy,
+    })).resolves.toBeUndefined();
+  });
+
+  it("accepts a property-readable Tauri global with a prototype trap", async () => {
+    const raw_tauri = new Proxy({
+      abiVersion: 1,
+      ready: Promise.resolve(),
+      api: {},
+    }, {
+      getPrototypeOf: () => {
+        throw new Error("prototype failed");
+      },
+    });
+
+    await expect(create_tauritavern_host({
+      __TAURITAVERN__: raw_tauri,
+    })).resolves.toBeInstanceOf(TauriTavernHost);
+  });
+
+  it("fails closed when the readiness fallback getter throws", async () => {
+    const globals = {
+      __TAURITAVERN__: { abiVersion: 1, ready: null, api: {} },
+    };
+    Object.defineProperty(globals, "__TAURITAVERN_MAIN_READY__", {
+      get: () => {
+        throw new Error("fallback getter failed");
+      },
+    });
+
+    await expect(create_tauritavern_host(globals)).resolves.toBeUndefined();
+  });
+
 
 describe("inspect_tauritavern", () => {
   it("requires ABI 1 and checks enhancement methods independently", () => {
@@ -476,6 +646,71 @@ describe("inspect_tauritavern", () => {
       });
     },
   );
+  it.each([
+    [
+      "root",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return proxy;
+      })(),
+    ],
+    [
+      "api",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return { abiVersion: 1, api: proxy };
+      })(),
+    ],
+    [
+      "ChatSurface",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return { abiVersion: 1, api: { chatSurface: proxy } };
+      })(),
+    ],
+    [
+      "WorldInfo",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return { abiVersion: 1, api: { worldInfo: proxy } };
+      })(),
+    ],
+  ])("fails closed for a revoked %s proxy", (_, value) => {
+    expect(() => inspect_tauritavern(value)).not.toThrow();
+    expect(inspect_tauritavern(value)).toEqual({
+      tauri_chat_surface: false,
+      tauri_world_info_activation: false,
+    });
+  });
+
+  it("does not classify raw Tauri surfaces through their prototypes", () => {
+    const prototype_trap = {
+      getPrototypeOf: () => {
+        throw new Error("prototype failed");
+      },
+    };
+    const chat_surface = new Proxy({
+      protocolVersion: 1,
+      isManagedOwnershipRequired: () => true,
+      registerParticipant: () => ({ fault: () => undefined }),
+    }, prototype_trap);
+    const world_info = new Proxy({
+      getLastActivation: () => Promise.resolve(null),
+      subscribeActivations: () => Promise.resolve(() => undefined),
+    }, prototype_trap);
+    const api = new Proxy({ chatSurface: chat_surface, worldInfo: world_info }, prototype_trap);
+    const tauri = new Proxy({ abiVersion: 1, api }, prototype_trap);
+
+    expect(inspect_tauritavern(tauri)).toEqual({
+      tauri_chat_surface: true,
+      tauri_world_info_activation: true,
+    });
+  });
+
 
   it.each([
     "protocolVersion",

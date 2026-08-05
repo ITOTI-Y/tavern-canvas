@@ -164,16 +164,30 @@ export interface TauriDetectionGlobals {
   readonly __TAURITAVERN_MAIN_READY__?: Promise<void> | undefined;
 }
 
-function is_record(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function is_property_container(value: unknown): value is object {
+  return (
+    (typeof value === "object" && value !== null) || typeof value === "function"
+  );
+}
+
+function is_plain_record(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  try {
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  } catch {
+    return false;
+  }
 }
 
 function read_property(
-  value: Record<string, unknown>,
+  value: object,
   property_name: string,
 ): { readonly ok: true; readonly value: unknown } | { readonly ok: false } {
   try {
-    return { ok: true, value: value[property_name] };
+    return { ok: true, value: Reflect.get(value, property_name) };
   } catch {
     return { ok: false };
   }
@@ -185,19 +199,21 @@ export interface TauriTavernInspection {
 }
 
 function has_function_property(
-  value: Record<string, unknown>,
+  value: object,
   property_name: string,
 ): boolean {
   const property = read_property(value, property_name);
   return property.ok && typeof property.value === "function";
 }
 
-function read_record_property(
-  value: Record<string, unknown>,
+function read_property_container(
+  value: object,
   property_name: string,
-): Record<string, unknown> | undefined {
+): object | undefined {
   const property = read_property(value, property_name);
-  return property.ok && is_record(property.value) ? property.value : undefined;
+  return property.ok && is_property_container(property.value)
+    ? property.value
+    : undefined;
 }
 
 export function inspect_tauritavern(value: unknown): TauriTavernInspection {
@@ -205,24 +221,24 @@ export function inspect_tauritavern(value: unknown): TauriTavernInspection {
     tauri_chat_surface: false,
     tauri_world_info_activation: false,
   };
-  if (!is_record(value)) {
+  if (!is_property_container(value)) {
     return unavailable;
   }
   const abi_version = read_property(value, "abiVersion");
   if (!abi_version.ok || abi_version.value !== 1) {
     return unavailable;
   }
-  const api = read_record_property(value, "api");
+  const api = read_property_container(value, "api");
   if (api === undefined) {
     return unavailable;
   }
 
-  const chat_surface = read_record_property(api, "chatSurface");
+  const chat_surface = read_property_container(api, "chatSurface");
   const chat_protocol =
     chat_surface === undefined
       ? { ok: false as const }
       : read_property(chat_surface, "protocolVersion");
-  const world_info = read_record_property(api, "worldInfo");
+  const world_info = read_property_container(api, "worldInfo");
   return {
     tauri_chat_surface:
       chat_surface !== undefined &&
@@ -248,7 +264,7 @@ function normalize_disposer(
   let dispose: () => void;
   if (typeof disposer === "function") {
     dispose = () => Reflect.apply(disposer, undefined, []);
-  } else if (is_record(disposer)) {
+  } else if (is_property_container(disposer)) {
     const dispose_method = read_property(disposer, "dispose");
     if (!dispose_method.ok || typeof dispose_method.value !== "function") {
       throw new Error("TauriTavern returned an invalid ChatSurface disposer");
@@ -306,7 +322,7 @@ function normalize_activation(batch: unknown): HostWorldInfoActivationBatch {
   } catch {
     return invalid_activation();
   }
-  if (!is_record(clone)) {
+  if (!is_plain_record(clone)) {
     return invalid_activation();
   }
 
@@ -323,7 +339,7 @@ function normalize_activation(batch: unknown): HostWorldInfoActivationBatch {
 
   const normalized_entries: HostWorldInfoActivationEntry[] = [];
   for (const entry of entries) {
-    if (!is_record(entry)) {
+    if (!is_plain_record(entry)) {
       return invalid_activation();
     }
     const { world, uid, displayName, constant, position } = entry;
@@ -418,7 +434,7 @@ export class TauriTavernHost {
           }),
     });
 
-    if (!is_record(registration)) {
+    if (!is_property_container(registration)) {
       throw new Error("TauriTavern returned an invalid ChatSurface registration");
     }
     const fault = read_property(registration, "fault");
@@ -470,15 +486,11 @@ export class TauriTavernHost {
 export async function create_tauritavern_host(
   globals: TauriDetectionGlobals,
 ): Promise<TauriTavernHost | undefined> {
-  let raw_tauri: unknown;
-  try {
-    raw_tauri = globals.__TAURITAVERN__;
-  } catch {
+  const raw_tauri_property = read_property(globals, "__TAURITAVERN__");
+  if (!raw_tauri_property.ok || !is_property_container(raw_tauri_property.value)) {
     return undefined;
   }
-  if (!is_record(raw_tauri)) {
-    return undefined;
-  }
+  const raw_tauri = raw_tauri_property.value;
   const abi_version = read_property(raw_tauri, "abiVersion");
   if (!abi_version.ok || abi_version.value !== 1) {
     return undefined;
@@ -488,6 +500,14 @@ export async function create_tauritavern_host(
   if (!ready.ok) {
     return undefined;
   }
-  await (ready.value ?? globals.__TAURITAVERN_MAIN_READY__);
+  let readiness = ready.value;
+  if (readiness === null || readiness === undefined) {
+    const fallback = read_property(globals, "__TAURITAVERN_MAIN_READY__");
+    if (!fallback.ok) {
+      return undefined;
+    }
+    readiness = fallback.value;
+  }
+  await readiness;
   return new TauriTavernHost(raw_tauri as unknown as TauriTavernGlobalSurface);
 }
