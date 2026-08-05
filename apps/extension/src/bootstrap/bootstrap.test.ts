@@ -26,6 +26,8 @@ function create_host_fixture(version = "4.9.1"): HostFixture {
       GENERATION_STOPPED: "generation_stopped",
       GENERATION_ENDED: "generation_ended",
       STREAM_TOKEN_RECEIVED: "stream_token_received",
+      CHAT_CHANGED: "chat_changed",
+      MESSAGE_SWIPED: "message_swiped",
     },
     registerFunctionTool: register_tool,
     unregisterFunctionTool: vi.fn(),

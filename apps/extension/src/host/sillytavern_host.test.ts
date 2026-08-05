@@ -61,6 +61,8 @@ function create_context(event_source = new FakeEventSource()) {
         GENERATION_STOPPED: "generation_stopped",
         GENERATION_ENDED: "generation_ended",
         STREAM_TOKEN_RECEIVED: "stream_token_received",
+        CHAT_CHANGED: "chat_changed",
+        MESSAGE_SWIPED: "message_swiped",
       },
       registerFunctionTool: register_function_tool,
       unregisterFunctionTool: unregister_function_tool,
@@ -117,6 +119,26 @@ describe("SillyTavernHost", () => {
 
     expect(chunks).toEqual(["first", " second"]);
     expect(context.event_source.removed_events).toEqual(["stream_token_received"]);
+  });
+
+  it("normalizes chat and swipe events with independent cleanup", () => {
+    const context = create_context();
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    const chats: unknown[] = [];
+    const swipes: unknown[] = [];
+    const dispose_chat = host.subscribe_chat_change((event) => chats.push(event));
+    const dispose_swipe = host.subscribe_message_swiped((event) => swipes.push(event));
+
+    context.event_source.emit("chat_changed", "chat-43");
+    context.event_source.emit("chat_changed", "");
+    context.event_source.emit("message_swiped", 9);
+    context.event_source.emit("message_swiped", -1);
+    dispose_chat();
+    dispose_swipe();
+
+    expect(chats).toEqual([{ chat_id: "chat-43" }]);
+    expect(swipes).toEqual([{ message_id: 9 }]);
+    expect(context.event_source.removed_events).toEqual(["chat_changed", "message_swiped"]);
   });
 
   it.each([2, 3])("rolls back listeners when registration %i fails", (registration_number) => {

@@ -264,6 +264,14 @@ function clone_update_metadata(
   }
 }
 
+function clone_update_media(media: MessageUpdateRequest["media"]): MessageUpdateRequest["media"] {
+  try {
+    return structuredClone(media);
+  } catch {
+    throw new Error("TavernHelper message update media could not be cloned");
+  }
+}
+
 function normalize_chat_message(message: TavernHelperChatMessage): HostChatMessageSnapshot {
   return {
     message_id: message.message_id,
@@ -345,6 +353,7 @@ export class TavernHelperHost {
       );
     }
 
+    const media = clone_update_media(request.media);
     const swipes = message.swipes.map((content, swipe_id) =>
       swipe_id === request.swipe_id ? request.content : content,
     );
@@ -357,12 +366,20 @@ export class TavernHelperHost {
         : metadata,
     );
 
+    const swipes_data = message.swipes_data.map((data, swipe_id) => {
+      if (swipe_id !== request.swipe_id) {
+        return data;
+      }
+      const current_extra = is_plain_record(data.extra) ? data.extra : {};
+      return { ...data, extra: { ...current_extra, media } };
+    });
+
     await this.#helper.setChatMessages(
       [
         {
           message_id: message.message_id,
           swipes,
-          swipes_data: message.swipes_data,
+          swipes_data,
           swipes_info,
         },
       ],

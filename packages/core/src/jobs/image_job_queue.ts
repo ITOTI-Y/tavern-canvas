@@ -224,6 +224,27 @@ export class ImageJobQueue {
     return snapshot;
   }
 
+  mark_attached(job_id: string): Promise<GenerationJobSnapshot> {
+    return this.#mark_completed(job_id, "attached");
+  }
+
+  mark_orphaned(job_id: string): Promise<GenerationJobSnapshot> {
+    return this.#mark_completed(job_id, "orphaned");
+  }
+
+  #mark_completed(job_id: string, state: "attached" | "orphaned"): Promise<GenerationJobSnapshot> {
+    const record = this.#records.get(job_id);
+    if (record === undefined) {
+      return Promise.reject(new Error(`Generation job ${job_id} does not exist`));
+    }
+    return this.#serialize(record, async () => {
+      if (record.job.state !== state) {
+        await this.#transition(record, state);
+      }
+      return snapshot_generation_job(record.job);
+    });
+  }
+
   async #create_job(
     request: ValidatedEnqueueRequest,
     digest: string,

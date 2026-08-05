@@ -47,6 +47,15 @@ export type HostGenerationEvent =
 
 export type HostGenerationHandler = (event: HostGenerationEvent) => void;
 export type HostGenerationChunkHandler = (chunk: string) => void;
+export interface HostChatChangeEvent {
+  readonly chat_id: string;
+}
+export type HostChatChangeHandler = (event: HostChatChangeEvent) => void;
+
+export interface HostMessageSwipedEvent {
+  readonly message_id: number;
+}
+export type HostMessageSwipedHandler = (event: HostMessageSwipedEvent) => void;
 
 export interface HostImageTool {
   readonly name: string;
@@ -68,11 +77,17 @@ export interface PrivatePromptRequest {
   readonly max_chat_history?: "all" | number;
 }
 
+export interface HostMessageMedia {
+  readonly image_id: string;
+  readonly [property_name: string]: unknown;
+}
+
 export interface MessageUpdateRequest {
   readonly message_id: number;
   readonly swipe_id: number;
   readonly content: string;
   readonly metadata: TavernCanvasMessageMetadata;
+  readonly media: readonly HostMessageMedia[];
 }
 
 export type HostImageFormat = "jpg" | "png" | "webp";
@@ -94,6 +109,8 @@ export interface HostAdapter {
   get_active_chat(): Promise<HostChatSnapshot>;
   subscribe_generation(handler: HostGenerationHandler): () => void;
   subscribe_generation_chunk(handler: HostGenerationChunkHandler): () => void;
+  subscribe_chat_change(handler: HostChatChangeHandler): () => void;
+  subscribe_message_swiped(handler: HostMessageSwipedHandler): () => void;
   register_image_tool(tool: HostImageTool): () => void;
   generate_private_prompt(request: PrivatePromptRequest): Promise<string>;
   update_message(request: MessageUpdateRequest): Promise<void>;

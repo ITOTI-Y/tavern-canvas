@@ -108,6 +108,14 @@ class RecordingHost implements HostAdapter {
     };
   }
 
+  subscribe_chat_change(): () => void {
+    return () => undefined;
+  }
+
+  subscribe_message_swiped(): () => void {
+    return () => undefined;
+  }
+
   register_image_tool(tool: HostImageTool): () => void {
     this.registered_tools.push(tool);
     return () => {

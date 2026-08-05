@@ -193,6 +193,7 @@ describe("TavernHelperHost", () => {
       swipe_id: 1,
       content: "second with image",
       metadata,
+      media: [{ image_id, path: "/image.png" }],
     });
 
     expect(helper.surface.setChatMessages).toHaveBeenCalledWith(
@@ -202,7 +203,11 @@ describe("TavernHelperHost", () => {
           swipes: ["first", "second with image"],
           swipes_data: [
             { score: 1, nested: { rank: 1 } },
-            { score: 2, nested: { rank: 2 } },
+            {
+              score: 2,
+              nested: { rank: 2 },
+              extra: { media: [{ image_id, path: "/image.png" }] },
+            },
           ],
           swipes_info: [
             { provider: "alpha", nested: { rank: 1 } },
@@ -232,6 +237,7 @@ describe("TavernHelperHost", () => {
         swipe_id: 0,
         content: "missing message",
         metadata,
+        media: [],
       }),
     ).rejects.toThrowError(/message 8/u);
     await expect(
@@ -240,6 +246,7 @@ describe("TavernHelperHost", () => {
         swipe_id: 2,
         content: "missing swipe",
         metadata,
+        media: [],
       }),
     ).rejects.toThrowError(/swipe 2/u);
     expect(helper.surface.setChatMessages).not.toHaveBeenCalled();
@@ -353,6 +360,7 @@ describe("TavernHelperHost", () => {
           request_ids: [],
           image_ids: [],
         },
+        media: [],
       }),
     ).rejects.toThrowError(/TavernHelper returned invalid chat messages/u);
     expect(helper.surface.setChatMessages).not.toHaveBeenCalled();
@@ -404,6 +412,7 @@ describe("TavernHelperHost", () => {
       swipe_id: 1,
       content: "second with image",
       metadata,
+      media: [{ image_id, path: "/image.png" }],
     });
 
     expect(helper.messages[0]).toEqual(create_message());

@@ -54,6 +54,8 @@ function create_fixture(version = "4.9.1"): ProbeFixture {
     GENERATION_STOPPED: "generation_stopped",
     GENERATION_ENDED: "generation_ended",
     STREAM_TOKEN_RECEIVED: "stream_token_received",
+    CHAT_CHANGED: "chat_changed",
+    MESSAGE_SWIPED: "message_swiped",
   };
   const context: Record<string, unknown> = {
     getCurrentLocale: vi.fn(() => "zh-CN"),
@@ -163,8 +165,13 @@ describe("probe_host_capabilities", () => {
     ["context.getCurrentLocale", "context", "getCurrentLocale", ["main_generation_events"]],
     ["context.getCurrentChatId", "context", "getCurrentChatId", ["message_swipe_metadata"]],
     ["context.getRequestHeaders", "context", "getRequestHeaders", ["host_image_upload"]],
-    ["eventSource.on", "event_source", "on", ["main_generation_events"]],
-    ["eventSource.removeListener", "event_source", "removeListener", ["main_generation_events"]],
+    ["eventSource.on", "event_source", "on", ["main_generation_events", "message_swipe_metadata"]],
+    [
+      "eventSource.removeListener",
+      "event_source",
+      "removeListener",
+      ["main_generation_events", "message_swipe_metadata"],
+    ],
     [
       "eventTypes.GENERATION_STARTED",
       "event_types",
@@ -184,6 +191,8 @@ describe("probe_host_capabilities", () => {
       "STREAM_TOKEN_RECEIVED",
       ["main_generation_events"],
     ],
+    ["eventTypes.CHAT_CHANGED", "event_types", "CHAT_CHANGED", ["message_swipe_metadata"]],
+    ["eventTypes.MESSAGE_SWIPED", "event_types", "MESSAGE_SWIPED", ["message_swipe_metadata"]],
   ] as const)(
     "reports the exact capability when %s is missing",
     (_, target_name, property_name, missing_capabilities) => {

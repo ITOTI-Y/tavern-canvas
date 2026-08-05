@@ -1,9 +1,11 @@
 import type {
+  HostChatChangeHandler,
   HostGenerationChunkHandler,
   HostGenerationHandler,
   HostImageTool,
   HostImageUploadRequest,
   HostImageUploadResult,
+  HostMessageSwipedHandler,
 } from "./host_adapter.js";
 
 export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => void;
@@ -32,6 +34,8 @@ export interface SillyTavernContextSurface {
     readonly GENERATION_STOPPED: string;
     readonly GENERATION_ENDED: string;
     readonly STREAM_TOKEN_RECEIVED: string;
+    readonly CHAT_CHANGED: string;
+    readonly MESSAGE_SWIPED: string;
   };
   registerFunctionTool(tool: SillyTavernFunctionTool): void;
   unregisterFunctionTool(name: string): void;
@@ -149,6 +153,31 @@ function has_generation_events(context: object): boolean {
   );
 }
 
+function has_message_events(context: object): boolean {
+  const event_source_property = read_property(context, "eventSource");
+  const event_types_property = read_property(context, "eventTypes");
+  if (
+    !event_source_property.ok ||
+    !is_property_container(event_source_property.value) ||
+    !event_types_property.ok ||
+    !is_property_container(event_types_property.value)
+  ) {
+    return false;
+  }
+  const chat_changed = read_property(event_types_property.value, "CHAT_CHANGED");
+  const message_swiped = read_property(event_types_property.value, "MESSAGE_SWIPED");
+  return (
+    has_function_property(event_source_property.value, "on") &&
+    has_function_property(event_source_property.value, "removeListener") &&
+    chat_changed.ok &&
+    typeof chat_changed.value === "string" &&
+    chat_changed.value.length > 0 &&
+    message_swiped.ok &&
+    typeof message_swiped.value === "string" &&
+    message_swiped.value.length > 0
+  );
+}
+
 function has_valid_request_headers(context: object): boolean {
   const headers = call_method(context, "getRequestHeaders");
   if (!headers.ok) {
@@ -179,7 +208,7 @@ export function inspect_sillytavern(value: unknown, fetch_: unknown): SillyTaver
       has_function_property(context, "registerFunctionTool") &&
       has_function_property(context, "unregisterFunctionTool"),
     main_generation_events: locale_available && has_generation_events(context),
-    message_swipe_metadata: chat_id_available,
+    message_swipe_metadata: chat_id_available && has_message_events(context),
     host_image_upload: typeof fetch_ === "function" && has_valid_request_headers(context),
   };
 }
@@ -334,6 +363,46 @@ export class SillyTavernHost {
       previous_text = text;
       if (chunk.length > 0) {
         handler(chunk);
+      }
+    };
+    this.#context.eventSource.on(event_name, listener);
+
+    let disposed = false;
+    return () => {
+      if (disposed) {
+        return;
+      }
+      disposed = true;
+      this.#context.eventSource.removeListener(event_name, listener);
+    };
+  }
+
+  subscribe_chat_change(handler: HostChatChangeHandler): () => void {
+    const event_name = this.#context.eventTypes.CHAT_CHANGED;
+    const listener: SillyTavernEventListener = (...arguments_) => {
+      const chat_id = arguments_[0];
+      if (typeof chat_id === "string" && chat_id.trim().length > 0) {
+        handler({ chat_id });
+      }
+    };
+    this.#context.eventSource.on(event_name, listener);
+
+    let disposed = false;
+    return () => {
+      if (disposed) {
+        return;
+      }
+      disposed = true;
+      this.#context.eventSource.removeListener(event_name, listener);
+    };
+  }
+
+  subscribe_message_swiped(handler: HostMessageSwipedHandler): () => void {
+    const event_name = this.#context.eventTypes.MESSAGE_SWIPED;
+    const listener: SillyTavernEventListener = (...arguments_) => {
+      const message_id = arguments_[0];
+      if (typeof message_id === "number" && Number.isInteger(message_id) && message_id >= 0) {
+        handler({ message_id });
       }
     };
     this.#context.eventSource.on(event_name, listener);

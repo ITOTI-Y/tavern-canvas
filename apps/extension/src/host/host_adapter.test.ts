@@ -4,10 +4,12 @@ import { HOST_CAPABILITY_IDS } from "./index.js";
 
 import type {
   HostAdapter,
+  HostChatChangeEvent,
   HostChatSnapshot,
   HostGenerationEvent,
   HostImageTool,
   HostImageUploadRequest,
+  HostMessageSwipedEvent,
   HostImageUploadResult,
   MessageUpdateRequest,
   PrivatePromptRequest,
@@ -23,6 +25,8 @@ const adapter: HostAdapter = {
   get_active_chat: async () => ({ chat_id: "chat-1", messages: [] }),
   subscribe_generation: () => () => undefined,
   subscribe_generation_chunk: () => () => undefined,
+  subscribe_chat_change: () => () => undefined,
+  subscribe_message_swiped: () => () => undefined,
   register_image_tool: () => () => undefined,
   generate_private_prompt: async () => "response",
   update_message: async () => undefined,
@@ -44,13 +48,15 @@ describe("HostAdapter boundary", () => {
     ]);
   });
 
-  it("exposes exactly the supported capability property and eight operations", () => {
+  it("exposes exactly the supported capability property and ten operations", () => {
     expect(Object.keys(adapter)).toEqual([
       "capabilities",
       "get_locale",
       "get_active_chat",
       "subscribe_generation",
       "subscribe_generation_chunk",
+      "subscribe_chat_change",
+      "subscribe_message_swiped",
       "register_image_tool",
       "generate_private_prompt",
       "update_message",
@@ -68,6 +74,14 @@ describe("HostAdapter boundary", () => {
       .parameter(0)
       .parameter(0)
       .toEqualTypeOf<string>();
+    expectTypeOf(adapter.subscribe_chat_change)
+      .parameter(0)
+      .parameter(0)
+      .toEqualTypeOf<HostChatChangeEvent>();
+    expectTypeOf(adapter.subscribe_message_swiped)
+      .parameter(0)
+      .parameter(0)
+      .toEqualTypeOf<HostMessageSwipedEvent>();
     expectTypeOf<HostImageTool["stealth"]>().toEqualTypeOf<boolean>();
     expectTypeOf(adapter.register_image_tool).parameter(0).toEqualTypeOf<HostImageTool>();
     expectTypeOf(adapter.generate_private_prompt)

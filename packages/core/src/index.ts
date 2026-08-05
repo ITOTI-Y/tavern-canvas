@@ -67,3 +67,20 @@ export {
   is_terminal_generation_state,
   transition_generation_job,
 } from "./jobs/job_state_machine.js";
+
+export type {
+  ChatChangeEvent,
+  ChatChangeHandler,
+  FinalAssistantHandler,
+  FinalAssistantMessageEvent,
+  MessageAttachmentUpdate,
+  MessageBindingJobPort,
+  MessageCandidateRole,
+  MessageMedia,
+  MessagePort,
+  MessageTarget,
+  MessageTargetQuery,
+  SwipeChangeEvent,
+  SwipeChangeHandler,
+} from "./messages/message_binding.js";
+export { MessageBinder } from "./messages/message_binder.js";
