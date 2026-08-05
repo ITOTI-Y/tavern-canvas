@@ -54,8 +54,31 @@ export interface TavernHelperSurface {
   generateRaw(request: TavernHelperGenerateRawRequest): Promise<unknown>;
 }
 
-function is_record(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function is_property_container(value: unknown): value is object {
+  return (
+    (typeof value === "object" && value !== null) || typeof value === "function"
+  );
+}
+
+function is_plain_record(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  try {
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  } catch {
+    return false;
+  }
+}
+
+function is_dense_array(value: readonly unknown[]): boolean {
+  for (let index = 0; index < value.length; index += 1) {
+    if (!Object.prototype.hasOwnProperty.call(value, index)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export type TavernHelperVersionInspection =
@@ -74,18 +97,18 @@ type SafePropertyRead =
   | { readonly ok: false };
 
 function read_property(
-  value: Record<string, unknown>,
+  value: object,
   property_name: string,
 ): SafePropertyRead {
   try {
-    return { ok: true, value: value[property_name] };
+    return { ok: true, value: Reflect.get(value, property_name) };
   } catch {
     return { ok: false };
   }
 }
 
 function has_function_property(
-  value: Record<string, unknown>,
+  value: object,
   property_name: string,
 ): boolean {
   const property = read_property(value, property_name);
@@ -93,7 +116,7 @@ function has_function_property(
 }
 
 function inspect_helper_version(
-  helper: Record<string, unknown>,
+  helper: object,
 ): TavernHelperVersionInspection {
   const version_method = read_property(helper, "getTavernHelperVersion");
   if (!version_method.ok) {
@@ -123,7 +146,7 @@ export function inspect_tavern_helper(value: unknown): TavernHelperInspection {
       message_swipe_metadata: false,
     };
   }
-  if (!is_record(value)) {
+  if (!is_property_container(value)) {
     return {
       detected: true,
       version: { state: "invalid" },
@@ -151,7 +174,7 @@ function invalid_chat_messages(): never {
 }
 
 function validate_chat_message(value: unknown): TavernHelperChatMessage {
-  if (!is_record(value)) {
+  if (!is_plain_record(value)) {
     return invalid_chat_messages();
   }
 
@@ -176,11 +199,14 @@ function validate_chat_message(value: unknown): TavernHelperChatMessage {
     typeof swipe_id !== "number" ||
     !Array.isArray(swipes) ||
     swipes.length === 0 ||
+    !is_dense_array(swipes) ||
     !swipes.every((content) => typeof content === "string") ||
     !Array.isArray(swipes_data) ||
-    !swipes_data.every(is_record) ||
+    !is_dense_array(swipes_data) ||
+    !swipes_data.every(is_plain_record) ||
     !Array.isArray(swipes_info) ||
-    !swipes_info.every(is_record) ||
+    !is_dense_array(swipes_info) ||
+    !swipes_info.every(is_plain_record) ||
     swipes_data.length !== swipes.length ||
     swipes_info.length !== swipes.length ||
     swipe_id < 0 ||
@@ -211,7 +237,7 @@ function validate_and_clone_chat_messages(
     return invalid_chat_messages();
   }
 
-  if (!Array.isArray(clone)) {
+  if (!Array.isArray(clone) || !is_dense_array(clone)) {
     return invalid_chat_messages();
   }
   return clone.map(validate_chat_message);

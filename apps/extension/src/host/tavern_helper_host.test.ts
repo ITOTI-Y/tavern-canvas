@@ -255,6 +255,17 @@ describe("TavernHelperHost", () => {
     expect(helper.surface.setChatMessages).not.toHaveBeenCalled();
   });
 
+  const sparse_swipes = Object.assign(Array<string>(2), { 0: "first" });
+  const sparse_swipes_data = Object.assign(
+    Array<Record<string, unknown>>(2),
+    { 0: {} },
+  );
+  const sparse_swipes_info = Object.assign(
+    Array<Record<string, unknown>>(2),
+    { 0: {} },
+  );
+  const sparse_messages = Array(1);
+
   it.each([
     ["a non-array result", null],
     ["a non-record message", [null]],
@@ -270,6 +281,21 @@ describe("TavernHelperHost", () => {
     ["non-record swipe metadata", [{ ...create_message(), swipes_info: [{}, null] }]],
     ["misaligned swipe data", [{ ...create_message(), swipes_data: [{}] }]],
     ["misaligned swipe metadata", [{ ...create_message(), swipes_info: [{}, {}, {}] }]],
+    ["a sparse message array", sparse_messages],
+    ["a sparse active swipe", [{ ...create_message(), swipes: sparse_swipes }]],
+    [
+      "sparse swipe data",
+      [{ ...create_message(), swipes_data: sparse_swipes_data }],
+    ],
+    [
+      "sparse swipe metadata",
+      [{ ...create_message(), swipes_info: sparse_swipes_info }],
+    ],
+    ["Date swipe data", [{ ...create_message(), swipes_data: [{}, new Date()] }]],
+    ["Map swipe data", [{ ...create_message(), swipes_data: [{}, new Map()] }]],
+    ["Set swipe metadata", [{ ...create_message(), swipes_info: [{}, new Set()] }]],
+    ["Error swipe metadata", [{ ...create_message(), swipes_info: [{}, new Error()] }]],
+
     [
       "uncloneable nested swipe state",
       [
@@ -288,6 +314,34 @@ describe("TavernHelperHost", () => {
       /TavernHelper returned invalid chat messages/u,
     );
   });
+  it("accepts dense null-prototype swipe records", async () => {
+    const helper = create_helper();
+    const data: Record<string, unknown> = Object.create(null);
+    const metadata: Record<string, unknown> = Object.create(null);
+    data.score = 2;
+    metadata.provider = "beta";
+    helper.surface.getChatMessages.mockReturnValue([
+      {
+        ...create_message(),
+        swipes_data: [{}, data],
+        swipes_info: [{}, metadata],
+      },
+    ]);
+    const host = new TavernHelperHost(helper.surface, () => "chat-42");
+
+    await expect(host.get_active_chat()).resolves.toMatchObject({
+      messages: [
+        {
+          active_swipe_id: 1,
+          swipes: [
+            { data: {}, metadata: {} },
+            { data: { score: 2 }, metadata: { provider: "beta" } },
+          ],
+        },
+      ],
+    });
+  });
+
 
   it("validates chat messages before constructing an update payload", async () => {
     const helper = create_helper();
@@ -396,6 +450,26 @@ describe("inspect_tavern_helper", () => {
       });
     },
   );
+  it("fails closed for a revoked helper proxy", () => {
+    const helper = create_helper();
+    const { proxy, revoke } = Proxy.revocable(
+      {
+        ...helper.surface,
+        getTavernHelperVersion: () => "4.9.1",
+      },
+      {},
+    );
+    revoke();
+
+    expect(() => inspect_tavern_helper(proxy)).not.toThrow();
+    expect(inspect_tavern_helper(proxy)).toEqual({
+      detected: true,
+      version: { state: "threw" },
+      private_prompt_generation: false,
+      message_swipe_metadata: false,
+    });
+  });
+
 
   it.each([
     "getTavernHelperVersion",
