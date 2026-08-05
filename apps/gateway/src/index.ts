@@ -3,7 +3,6 @@ import { createServer, type Server } from "node:http";
 import path from "node:path";
 
 import {
-  ComfyUiAdapter,
   GoogleImageAdapter,
   NovelAiAdapter,
   OpenAiImageAdapter,
@@ -37,6 +36,15 @@ export interface GatewayRuntimeOptions {
   readonly auto_start_worker?: boolean;
 }
 
+export class GatewayRuntimeConfigurationError extends Error {
+  constructor(provider_id: GatewayAdapter["provider_id"], profile_id: string) {
+    super(
+      `Gateway runtime configuration is missing an executable adapter for provider_id=${provider_id}, profile_id=${profile_id}`,
+    );
+    this.name = "GatewayRuntimeConfigurationError";
+  }
+}
+
 export interface GatewayRuntime {
   readonly config: GatewayConfig;
   readonly database: GatewayDatabase;
@@ -48,6 +56,8 @@ export interface GatewayRuntime {
 
 export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): GatewayRuntime {
   const config = options.config ?? load_gateway_config();
+  const adapters = options.adapters ?? create_default_adapters();
+  assert_executable_adapters(config, adapters);
   const database = open_gateway_database({
     file_path: path.join(config.data_directory, "tavern_canvas.sqlite"),
   });
@@ -69,7 +79,6 @@ export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): Gat
     ...config.limits,
   });
   const logger = options.logger ?? create_gateway_logger();
-  const adapters = options.adapters ?? create_default_adapters();
   const transport_factory =
     options.transport_factory ??
     ({
@@ -147,18 +156,22 @@ export async function start_gateway(options: GatewayRuntimeOptions = {}): Promis
   return runtime;
 }
 
+function assert_executable_adapters(
+  config: GatewayConfig,
+  adapters: ReadonlyMap<GatewayAdapter["provider_id"], GatewayAdapter>,
+): void {
+  for (const provider of config.provider_profiles) {
+    const adapter = adapters.get(provider.provider_id);
+    if (adapter === undefined || adapter.provider_id !== provider.provider_id) {
+      throw new GatewayRuntimeConfigurationError(provider.provider_id, provider.profile.profile_id);
+    }
+  }
+}
+
 function create_default_adapters(): ReadonlyMap<GatewayAdapter["provider_id"], GatewayAdapter> {
-  const comfyui = new ComfyUiAdapter({
-    workflow_store: {
-      load: () => {
-        throw new Error("ComfyUI workflow storage is not configured");
-      },
-    },
-  });
   const adapters = new Map<GatewayAdapter["provider_id"], GatewayAdapter>();
   adapters.set("sd_webui", new SdWebuiAdapter());
   adapters.set("novelai", new NovelAiAdapter());
-  adapters.set("comfyui", comfyui);
   adapters.set("openai_image", new OpenAiImageAdapter());
   adapters.set("google_image", new GoogleImageAdapter());
   return adapters;

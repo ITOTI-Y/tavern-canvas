@@ -5,11 +5,13 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
+import { OpenAiImageAdapter } from "@tavern-canvas/providers";
 import { describe, expect, it } from "vitest";
 
 import { load_gateway_config } from "../config/load_config.js";
 import type { GatewayConfig } from "../config/config_schema.js";
 import { create_gateway_runtime, type GatewayRuntime } from "../index.js";
+import type { GatewayAdapter } from "../jobs/job_worker.js";
 import type { JobService } from "../jobs/job_service.js";
 
 const TOKEN = "gateway-lifecycle-test-token";
@@ -63,7 +65,9 @@ async function create_test_runtime(readiness?: () => boolean): Promise<TestRunti
   const directory = await mkdtemp(path.join(os.tmpdir(), "tavern-gateway-lifecycle-"));
   const runtime = create_gateway_runtime({
     config: create_test_config(directory),
-    adapters: new Map(),
+    adapters: new Map<GatewayAdapter["provider_id"], GatewayAdapter>([
+      ["openai_image", new OpenAiImageAdapter()],
+    ]),
     auto_start_worker: false,
     ...(readiness === undefined ? {} : { database_ready: readiness }),
   });

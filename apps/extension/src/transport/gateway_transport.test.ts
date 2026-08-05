@@ -464,16 +464,8 @@ describe("GatewayTransport", () => {
     expect(new URL(fetch.requests[0]?.url ?? "").pathname).toBe(`/v1/jobs/${JOB_ID}/events`);
   });
 
-  it("cancels with DELETE and the caller AbortSignal", async () => {
-    const cancelled: GatewayJobResponse = {
-      ...queued_job,
-      state: "cancelled",
-    };
-    const fetch = new ScriptedFetch([
-      json_response(200, capabilities),
-      json_response(202, queued_job),
-      json_response(200, cancelled),
-    ]);
+  it("cancels with DELETE and returns void for a 204 response", async () => {
+    const fetch = new ScriptedFetch([new Response(null, { status: 204 })]);
     const transport = new GatewayTransport({
       endpoint: "https://gateway.example",
       access_token: "fixture-token",
@@ -481,16 +473,58 @@ describe("GatewayTransport", () => {
       clock: new RecordingClock(),
     });
     const controller = new AbortController();
-    const submitted = await transport.submit(request, new AbortController().signal);
-    expect(submitted.job_id).toBe(JOB_ID);
-    expect(fetch.requests).toHaveLength(2);
 
-    await expect(transport.cancel(submitted.job_id, controller.signal)).resolves.toEqual(cancelled);
-    expect(fetch.requests[2]?.method).toBe("DELETE");
-    const forwarded_signal = fetch.requests[2]?.signal;
+    await expect(transport.cancel(JOB_ID, controller.signal)).resolves.toBeUndefined();
+    expect(fetch.requests).toHaveLength(1);
+    expect(fetch.requests[0]?.method).toBe("DELETE");
+    const forwarded_signal = fetch.requests[0]?.signal;
     expect(forwarded_signal?.aborted).toBe(false);
     controller.abort();
     expect(forwarded_signal?.aborted).toBe(true);
+  });
+
+  it("maps a non-2xx JSON cancellation response to an HTTP transport error", async () => {
+    const fetch = new ScriptedFetch([
+      new Response(JSON.stringify({ error: "job_already_terminal" }), {
+        status: 409,
+        headers: { "content-type": "application/json" },
+      }),
+    ]);
+    const transport = new GatewayTransport({
+      endpoint: "https://gateway.example",
+      access_token: "fixture-token",
+      fetch: fetch.fetch,
+      clock: new RecordingClock(),
+    });
+
+    await expect(transport.cancel(JOB_ID, new AbortController().signal)).rejects.toMatchObject({
+      code: "http_error",
+      status_code: 409,
+    });
+    expect(fetch.requests[0]?.method).toBe("DELETE");
+  });
+
+  it("propagates an aborted cancellation signal", async () => {
+    const controller = new AbortController();
+    const fetch: GatewayFetch = async (_input, init) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener(
+          "abort",
+          () => reject(new DOMException("Aborted", "AbortError")),
+          { once: true },
+        );
+      });
+    const transport = new GatewayTransport({
+      endpoint: "https://gateway.example",
+      access_token: "fixture-token",
+      fetch,
+      clock: new RecordingClock(),
+    });
+
+    const pending = transport.cancel(JOB_ID, controller.signal);
+    controller.abort();
+
+    await expect(pending).rejects.toMatchObject({ code: "cancelled" });
   });
 });
 

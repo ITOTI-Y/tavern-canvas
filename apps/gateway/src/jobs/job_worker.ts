@@ -184,7 +184,7 @@ export class JobWorker {
         event_type: "recovered",
         event: { state: "queued" },
         submission: EMPTY_SUBMISSION,
-        error_code: null,
+        error: null,
         created_at: this.#clock(),
       });
       return event !== undefined;
@@ -210,7 +210,7 @@ export class JobWorker {
       state: "failed",
       event_type: "recovered_without_submission",
       event: { state: "failed", error },
-      error_code: error.code,
+      error,
       created_at: this.#clock(),
     });
     if (event !== undefined) {
@@ -415,29 +415,12 @@ export class JobWorker {
         { asset: generated, bytes: output_asset.bytes },
         this.#clock(),
       );
-      const existing = this.#service.get_recovery_repository().get_by_id(job.job_id);
-      if (existing === undefined) {
-        return;
-      }
-      this.#service.get_asset_repository().attach_to_job({
-        job_id: job.job_id,
-        asset_id: stored.asset_id,
-        position,
-      });
       image_ids.push(stored.asset_id);
     }
-    const current = this.#service.get_stored_job(job.job_id);
-    if (current === undefined || is_terminal_state(current.state)) {
-      return;
-    }
-    this.#service.transition_if_current({
-      job_id: current.job_id,
-      expected_state: current.state,
-      state: "completed",
-      event_type: "completed",
-      event: { state: "completed", image_ids },
-      submission: EMPTY_SUBMISSION,
-      error_code: null,
+    this.#service.complete_with_assets({
+      job_id: job.job_id,
+      expected_state: job.state,
+      asset_ids: image_ids,
       created_at: this.#clock(),
     });
   }
@@ -471,7 +454,7 @@ export class JobWorker {
       state: "failed",
       event_type: "failed",
       event: { state: "failed", error },
-      error_code: error.code,
+      error,
       created_at: this.#clock(),
     });
   }
@@ -527,11 +510,31 @@ async function sleep_with_signal(milliseconds: number, signal: AbortSignal): Pro
     return;
   }
   await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(resolve, milliseconds);
-    const abort = (): void => {
+    let settled = false;
+    const cleanup = (): void => {
       clearTimeout(timer);
+      signal.removeEventListener("abort", abort);
+    };
+    const resolve_timer = (): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
+      resolve();
+    };
+    const abort = (): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      cleanup();
       reject(new DOMException("The operation was aborted", "AbortError"));
     };
+    const timer = setTimeout(resolve_timer, milliseconds);
     signal.addEventListener("abort", abort, { once: true });
+    if (signal.aborted) {
+      abort();
+    }
   });
 }

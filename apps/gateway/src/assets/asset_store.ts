@@ -83,29 +83,7 @@ export class AssetStore {
     }
     assert_image_container(body, expected_media_type);
 
-    let metadata: Metadata;
-    try {
-      metadata = await sharp(body, {
-        failOn: "error",
-        limitInputPixels: this.#limits.max_image_pixels,
-      }).metadata();
-    } catch {
-      throw new AssetStoreError("invalid_asset");
-    }
-    const width = metadata.width;
-    const height = metadata.height;
-    if (
-      !Number.isSafeInteger(width) ||
-      !Number.isSafeInteger(height) ||
-      width <= 0 ||
-      height <= 0 ||
-      width > this.#limits.max_image_dimension ||
-      height > this.#limits.max_image_dimension ||
-      width * height > this.#limits.max_image_pixels ||
-      (metadata.pages !== undefined && metadata.pages > 1)
-    ) {
-      throw new AssetStoreError("invalid_asset");
-    }
+    await read_validated_image_metadata(body, this.#limits);
 
     let canonical_bytes: Buffer;
     try {
@@ -143,18 +121,34 @@ export class AssetStore {
     if (!is_reference_media_type(media_type)) {
       throw new AssetStoreError("invalid_asset");
     }
-    if (!Number.isSafeInteger(asset.byte_length) || asset.byte_length <= 0) {
+    if (
+      !Number.isSafeInteger(asset.byte_length) ||
+      asset.byte_length <= 0 ||
+      asset.byte_length > this.#limits.max_image_bytes
+    ) {
       throw new AssetStoreError("invalid_asset");
     }
-    if (bytes !== undefined) {
-      if (bytes.byteLength !== asset.byte_length || sha256_hex(bytes) !== asset.sha256) {
-        throw new AssetStoreError("invalid_asset");
-      }
-      const detected = await fileTypeFromBuffer(bytes);
-      if (detected?.mime !== media_type) {
-        throw new AssetStoreError("invalid_asset");
-      }
-      assert_image_container(bytes, media_type);
+    if (
+      bytes === undefined ||
+      bytes.byteLength === 0 ||
+      bytes.byteLength > this.#limits.max_image_bytes
+    ) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    if (bytes.byteLength !== asset.byte_length || sha256_hex(bytes) !== asset.sha256) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    const detected = await fileTypeFromBuffer(bytes);
+    if (detected?.mime !== media_type) {
+      throw new AssetStoreError("invalid_asset");
+    }
+    assert_image_container(bytes, media_type);
+    const metadata = await read_validated_image_metadata(bytes, this.#limits);
+    if (
+      (asset.width !== undefined && asset.width !== metadata.width) ||
+      (asset.height !== undefined && asset.height !== metadata.height)
+    ) {
+      throw new AssetStoreError("invalid_asset");
     }
     const stored = this.#asset_repository.create_or_get({
       sha256: asset.sha256,
@@ -162,9 +156,7 @@ export class AssetStore {
       byte_length: asset.byte_length,
       created_at,
     });
-    if (bytes !== undefined) {
-      await this.#ensure_asset_bytes(stored, bytes);
-    }
+    await this.#ensure_asset_bytes(stored, bytes);
     return stored;
   }
 
@@ -291,6 +283,37 @@ function encode_canonical(image: Sharp, media_type: ReferenceImageMediaType): Pr
       return image.webp({ force: true }).toBuffer();
   }
 }
+
+async function read_validated_image_metadata(
+  body: Uint8Array,
+  limits: AssetStoreLimits,
+): Promise<Metadata> {
+  let metadata: Metadata;
+  try {
+    metadata = await sharp(body, {
+      failOn: "error",
+      limitInputPixels: limits.max_image_pixels,
+    }).metadata();
+  } catch {
+    throw new AssetStoreError("invalid_asset");
+  }
+  const width = metadata.width;
+  const height = metadata.height;
+  if (
+    !Number.isSafeInteger(width) ||
+    !Number.isSafeInteger(height) ||
+    width <= 0 ||
+    height <= 0 ||
+    width > limits.max_image_dimension ||
+    height > limits.max_image_dimension ||
+    width * height > limits.max_image_pixels ||
+    (metadata.pages !== undefined && metadata.pages > 1)
+  ) {
+    throw new AssetStoreError("invalid_asset");
+  }
+  return metadata;
+}
+
 function is_reference_media_type(value: string): value is ReferenceImageMediaType {
   return value === "image/png" || value === "image/jpeg" || value === "image/webp";
 }

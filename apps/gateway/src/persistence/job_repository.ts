@@ -1,15 +1,17 @@
 import type Database from "better-sqlite3";
 import {
+  AssetIdSchema,
   GenerationStateSchema,
   ImageGenerationRequestSchema,
   JobIdSchema,
-  ProviderErrorCodeSchema,
+  ProviderErrorSchema,
   ProviderIdSchema,
   RequestIdSchema,
+  type AssetId,
   type GenerationState,
   type ImageGenerationRequest,
   type JobId,
-  type ProviderErrorCode,
+  type ProviderError,
   type ProviderId,
   type RequestId,
 } from "@tavern-canvas/contracts";
@@ -50,7 +52,7 @@ interface JobRow {
   readonly state: string;
   readonly request_json: string;
   readonly submission_json: string | null;
-  readonly error_code: string | null;
+  readonly error_json: string | null;
   readonly created_at: string;
   readonly updated_at: string;
 }
@@ -70,7 +72,7 @@ export interface StoredJob {
   readonly state: GenerationState;
   readonly request: ImageGenerationRequest;
   readonly submission: unknown;
-  readonly error_code: ProviderErrorCode | null;
+  readonly error: ProviderError | null;
   readonly created_at: string;
   readonly updated_at: string;
 }
@@ -100,12 +102,19 @@ export interface JobTransitionInput {
   readonly event_type: string;
   readonly event: unknown;
   readonly submission?: unknown;
-  readonly error_code?: ProviderErrorCode | null;
+  readonly error?: ProviderError | null;
   readonly created_at: string;
 }
 
 export interface ConditionalJobTransitionInput extends JobTransitionInput {
   readonly expected_state: GenerationState;
+}
+
+export interface CompleteJobInput {
+  readonly job_id: JobId;
+  readonly expected_state: GenerationState;
+  readonly asset_ids: readonly AssetId[];
+  readonly created_at: string;
 }
 
 export class JobStateConflictError extends Error {
@@ -124,6 +133,10 @@ export class JobRepository {
   readonly #select_next_sequence: Database.Statement;
   readonly #update_job: Database.Statement;
   readonly #update_job_if_state: Database.Statement;
+  readonly #complete_job_if_state: Database.Statement;
+  readonly #select_asset: Database.Statement;
+  readonly #delete_job_assets: Database.Statement;
+  readonly #insert_job_asset: Database.Statement;
   readonly #insert_event: Database.Statement;
   readonly #delete_job: Database.Statement;
   readonly #create_or_get_transaction: (input: CreateJobInput) => CreateJobResult;
@@ -131,13 +144,14 @@ export class JobRepository {
   readonly #conditional_transition_transaction: (
     input: ConditionalJobTransitionInput,
   ) => StoredJobEvent | undefined;
+  readonly #complete_transaction: (input: CompleteJobInput) => StoredJobEvent | undefined;
 
   constructor(connection: Database.Database) {
     this.#connection = connection;
     this.#insert_job = connection.prepare(`
       INSERT INTO jobs (
         job_id, request_id, provider_id, state, request_json,
-        submission_json, error_code, created_at, updated_at
+        submission_json, error_json, created_at, updated_at
       ) VALUES (
         @job_id, @request_id, @provider_id, 'queued', @request_json,
         NULL, NULL, @created_at, @created_at
@@ -159,7 +173,7 @@ export class JobRepository {
       UPDATE jobs SET
         state = @state,
         submission_json = @submission_json,
-        error_code = @error_code,
+        error_json = @error_json,
         updated_at = @updated_at
       WHERE job_id = @job_id
     `);
@@ -167,9 +181,25 @@ export class JobRepository {
       UPDATE jobs SET
         state = @state,
         submission_json = @submission_json,
-        error_code = @error_code,
+        error_json = @error_json,
         updated_at = @updated_at
       WHERE job_id = @job_id AND state = @expected_state
+    `);
+    this.#complete_job_if_state = connection.prepare(`
+      UPDATE jobs SET
+        state = 'completed',
+        submission_json = NULL,
+        error_json = NULL,
+        updated_at = @updated_at
+      WHERE job_id = @job_id
+        AND state = @expected_state
+        AND state NOT IN ('completed', 'failed', 'cancelled', 'attached', 'orphaned')
+    `);
+    this.#select_asset = connection.prepare("SELECT 1 FROM assets WHERE asset_id = ?");
+    this.#delete_job_assets = connection.prepare("DELETE FROM job_assets WHERE job_id = ?");
+    this.#insert_job_asset = connection.prepare(`
+      INSERT INTO job_assets (job_id, asset_id, position)
+      VALUES (@job_id, @asset_id, @position)
     `);
     this.#insert_event = connection.prepare(`
       INSERT INTO job_events (
@@ -192,6 +222,10 @@ export class JobRepository {
     );
     this.#conditional_transition_transaction = (input) =>
       conditional_transition_transaction.immediate(input);
+    const complete_transaction = connection.transaction((input: CompleteJobInput) =>
+      this.#complete(input),
+    );
+    this.#complete_transaction = (input) => complete_transaction.immediate(input);
   }
 
   create_or_get(input: CreateJobInput): CreateJobResult {
@@ -232,6 +266,10 @@ export class JobRepository {
 
   transition_if_current(input: ConditionalJobTransitionInput): StoredJobEvent | undefined {
     return this.#conditional_transition_transaction(input);
+  }
+
+  complete_with_assets(input: CompleteJobInput): StoredJobEvent | undefined {
+    return this.#complete_transaction(input);
   }
 
   delete(job_id: JobId): boolean {
@@ -290,9 +328,10 @@ export class JobRepository {
       return undefined;
     }
     const submission = input.submission === undefined ? current.submission : input.submission;
-    const error_code = input.error_code === undefined ? current.error_code : input.error_code;
+    const error = input.error === undefined ? current.error : input.error;
     const submission_json = submission === null ? null : stringify_json(submission);
-    const normalized_error = error_code === null ? null : ProviderErrorCodeSchema.parse(error_code);
+    const normalized_error = error === null ? null : ProviderErrorSchema.parse(error);
+    const error_json = normalized_error === null ? null : stringify_json(normalized_error);
     const event_json = stringify_json(input.event);
     const sequence_row = this.#select_next_sequence.get(job_id) as {
       sequence: number;
@@ -305,7 +344,7 @@ export class JobRepository {
       job_id,
       state,
       submission_json,
-      error_code: normalized_error,
+      error_json,
       updated_at: created_at,
     };
     const updated =
@@ -333,6 +372,64 @@ export class JobRepository {
       created_at,
     };
   }
+
+  #complete(input: CompleteJobInput): StoredJobEvent | undefined {
+    const job_id = JobIdSchema.parse(input.job_id);
+    const expected_state = GenerationStateSchema.parse(input.expected_state);
+    const asset_ids = input.asset_ids.map((asset_id) => AssetIdSchema.parse(asset_id));
+    const created_at = OccurredAtSchema.parse(input.created_at);
+    if (is_terminal_state(expected_state)) {
+      return undefined;
+    }
+    const current = this.get_by_id(job_id);
+    if (current === undefined) {
+      throw new Error(`Unknown Gateway job: ${job_id}`);
+    }
+    if (is_terminal_state(current.state)) {
+      return undefined;
+    }
+    if (current.state !== expected_state) {
+      return undefined;
+    }
+    for (const asset_id of asset_ids) {
+      if (this.#select_asset.get(asset_id) === undefined) {
+        throw new Error(`Unknown Gateway asset: ${asset_id}`);
+      }
+    }
+    const updated = this.#complete_job_if_state.run({
+      job_id,
+      expected_state,
+      updated_at: created_at,
+    });
+    if (updated.changes !== 1) {
+      return undefined;
+    }
+    this.#delete_job_assets.run(job_id);
+    for (const [position, asset_id] of asset_ids.entries()) {
+      this.#insert_job_asset.run({ job_id, asset_id, position });
+    }
+    const sequence_row = this.#select_next_sequence.get(job_id) as {
+      sequence: number;
+    };
+    if (!Number.isSafeInteger(sequence_row.sequence)) {
+      throw new Error("Job event sequence exceeded the safe integer range");
+    }
+    const event = { state: "completed", image_ids: asset_ids };
+    this.#insert_event.run({
+      job_id,
+      sequence: sequence_row.sequence,
+      event_type: "completed",
+      event_json: stringify_json(event),
+      created_at,
+    });
+    return {
+      job_id,
+      sequence: sequence_row.sequence,
+      event_type: "completed",
+      event,
+      created_at,
+    };
+  }
 }
 
 function parse_job_row(row: JobRow): StoredJob {
@@ -344,6 +441,8 @@ function parse_job_row(row: JobRow): StoredJob {
   if (request.request_id !== request_id || request.provider_id !== provider_id) {
     throw new Error("Stored Gateway job identity is inconsistent");
   }
+  const error =
+    row.error_json === null ? null : ProviderErrorSchema.parse(parse_json(row.error_json));
   return {
     job_id,
     request_id,
@@ -351,7 +450,7 @@ function parse_job_row(row: JobRow): StoredJob {
     state,
     request,
     submission: row.submission_json === null ? null : parse_json(row.submission_json),
-    error_code: row.error_code === null ? null : ProviderErrorCodeSchema.parse(row.error_code),
+    error,
     created_at: OccurredAtSchema.parse(row.created_at),
     updated_at: OccurredAtSchema.parse(row.updated_at),
   };

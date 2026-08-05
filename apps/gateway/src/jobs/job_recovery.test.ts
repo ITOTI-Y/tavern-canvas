@@ -5,7 +5,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { ProviderPollResult, ProviderSubmission } from "@tavern-canvas/providers";
 
 import { AssetStore } from "../assets/asset_store.js";
@@ -19,6 +19,23 @@ import { JobRepository } from "../persistence/job_repository.js";
 
 const TOKEN = "worker-test-token";
 const CREATED_AT = "2026-08-05T12:00:00.000Z";
+const PNG_BYTES = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  "base64",
+);
+const PNG_SHA256 = createHash("sha256").update(PNG_BYTES).digest("hex");
+const OUTPUT_ASSET_ONE = {
+  asset_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  media_type: "image/png" as const,
+  byte_length: PNG_BYTES.byteLength,
+  sha256: PNG_SHA256,
+};
+const OUTPUT_ASSET_TWO = {
+  asset_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  media_type: "image/png" as const,
+  byte_length: PNG_BYTES.byteLength,
+  sha256: PNG_SHA256,
+};
 
 const silent_logger: GatewayLogger = {
   info: () => undefined,
@@ -103,6 +120,16 @@ async function wait_for(predicate: () => boolean): Promise<void> {
   throw new Error("Condition did not become true");
 }
 
+async function wait_for_real_time(predicate: () => boolean): Promise<void> {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (predicate()) {
+      return;
+    }
+    await new Promise<void>((resolve) => setTimeout(resolve, 1));
+  }
+  throw new Error("Condition did not become true");
+}
+
 function make_adapter(): GatewayAdapter {
   return {
     provider_id: "openai_image",
@@ -121,10 +148,35 @@ function make_adapter(): GatewayAdapter {
   } as unknown as GatewayAdapter;
 }
 
+type OutputAsset = typeof OUTPUT_ASSET_ONE | typeof OUTPUT_ASSET_TWO;
+
+function make_completed_adapter(
+  request_id: string,
+  assets: readonly OutputAsset[] = [OUTPUT_ASSET_ONE],
+): GatewayAdapter {
+  return {
+    provider_id: "openai_image",
+    capabilities: new Set(["text_to_image"]),
+    validate_profile: (profile: unknown) => profile as never,
+    submit: async () => ({
+      state: "completed" as const,
+      result: {
+        request_id,
+        provider_id: "openai_image" as const,
+        assets,
+      },
+      output_assets: assets.map((asset) => ({ asset, bytes: PNG_BYTES })),
+    }),
+    poll: async () => ({ state: "pending" as const }),
+    cancel: async () => undefined,
+  } as unknown as GatewayAdapter;
+}
+
 async function create_worker_fixture(
   options: {
     readonly concurrency?: string;
     readonly adapter?: GatewayAdapter;
+    readonly use_default_sleep?: boolean;
   } = {},
 ) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "tavern-gateway-recovery-"));
@@ -152,7 +204,7 @@ async function create_worker_fixture(
     adapters: new Map([["openai_image", options.adapter ?? make_adapter()]]),
     logger: silent_logger,
     clock: () => CREATED_AT,
-    sleep: async () => undefined,
+    ...(options.use_default_sleep ? {} : { sleep: async () => undefined }),
   });
   return { directory, database, job_repository, asset_repository, asset_store, service, worker };
 }
@@ -162,7 +214,7 @@ async function wait_for_state(service: JobService, job_id: string, state: "faile
     if (service.get_stored_job(job_id)?.state === state) {
       return;
     }
-    await new Promise<void>((resolve) => setImmediate(resolve));
+    await new Promise<void>((resolve) => setTimeout(resolve, 1));
   }
   throw new Error(`Job did not reach ${state}`);
 }
@@ -542,6 +594,173 @@ describe("JobWorker restart recovery", () => {
       await fixture.worker.stop();
       fixture.database.close();
       await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+  it("does not attach staged output when cancellation wins completion", async () => {
+    const request_id = "99999999-9999-4999-8999-999999999991";
+    const fixture = await create_worker_fixture({
+      adapter: make_completed_adapter(request_id),
+    });
+    const stage_started = deferred<void>();
+    const release_stage = deferred<void>();
+    const register_generated_asset = fixture.asset_store.register_generated_asset.bind(
+      fixture.asset_store,
+    );
+    fixture.asset_store.register_generated_asset = async (generated, created_at) => {
+      stage_started.resolve(undefined);
+      await release_stage.promise;
+      return register_generated_asset(generated, created_at);
+    };
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request(request_id),
+      });
+      await fixture.worker.start();
+      fixture.worker.enqueue(created.job.job_id);
+      await stage_started.promise;
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      release_stage.resolve(undefined);
+      await wait_for(
+        () => fixture.service.get_stored_job(created.job.job_id)?.state === "cancelled",
+      );
+
+      expect(fixture.asset_repository.list_for_job(created.job.job_id)).toEqual([]);
+      expect(fixture.service.get_job(created.job.job_id)).not.toHaveProperty("image_ids");
+    } finally {
+      release_stage.resolve(undefined);
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("fails without partial attachments when a later output asset fails staging", async () => {
+    const request_id = "99999999-9999-4999-8999-999999999992";
+    const fixture = await create_worker_fixture({
+      adapter: make_completed_adapter(request_id, [OUTPUT_ASSET_ONE, OUTPUT_ASSET_TWO]),
+    });
+    let register_calls = 0;
+    const register_generated_asset = fixture.asset_store.register_generated_asset.bind(
+      fixture.asset_store,
+    );
+    fixture.asset_store.register_generated_asset = async (generated, created_at) => {
+      register_calls += 1;
+      if (register_calls === 2) {
+        throw new Error("synthetic output staging failure");
+      }
+      return register_generated_asset(generated, created_at);
+    };
+    try {
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request(request_id),
+      });
+      await fixture.worker.start();
+      fixture.worker.enqueue(created.job.job_id);
+      await wait_for_state(fixture.service, created.job.job_id, "failed");
+
+      expect(register_calls).toBe(2);
+      expect(fixture.asset_repository.list_for_job(created.job.job_id)).toEqual([]);
+      expect(fixture.service.get_job(created.job.job_id)).not.toHaveProperty("image_ids");
+      expect(fixture.service.get_job(created.job.job_id)?.error).toEqual({
+        code: "malformed_response",
+        retryable: false,
+      });
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
+
+  it("removes the poll abort listener when a sleep is aborted", async () => {
+    const adapter = {
+      ...make_adapter(),
+      submit: async () => ({
+        state: "pending" as const,
+        submission_id: "upstream-listener-abort-1",
+        poll_after_ms: 10_000,
+      }),
+    } as GatewayAdapter;
+    const add_listener = vi.spyOn(AbortSignal.prototype, "addEventListener");
+    const remove_listener = vi.spyOn(AbortSignal.prototype, "removeEventListener");
+    const fixture = await create_worker_fixture({ adapter, use_default_sleep: true });
+    try {
+      const request_id = "99999999-9999-4999-8999-999999999994";
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request(request_id),
+      });
+      await fixture.worker.start();
+      fixture.worker.enqueue(created.job.job_id);
+      await wait_for(() => add_listener.mock.calls.some(([type]) => type === "abort"));
+
+      fixture.service.cancel_job(created.job.job_id);
+      fixture.worker.cancel_active(created.job.job_id);
+      await wait_for(
+        () => fixture.service.get_stored_job(created.job.job_id)?.state === "cancelled",
+      );
+
+      const added = add_listener.mock.calls.filter(([type]) => type === "abort").length;
+      const removed = remove_listener.mock.calls.filter(([type]) => type === "abort").length;
+      expect(added).toBe(1);
+      expect(removed).toBe(added);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+      add_listener.mockRestore();
+      remove_listener.mockRestore();
+    }
+  });
+
+  it("removes each normal poll abort listener after its timer settles", async () => {
+    let poll_calls = 0;
+    const adapter = {
+      ...make_adapter(),
+      submit: async () => ({
+        state: "pending" as const,
+        submission_id: "upstream-listener-cleanup-1",
+        poll_after_ms: 1,
+      }),
+      poll: async () => {
+        poll_calls += 1;
+        return poll_calls > 24
+          ? {
+              state: "failed" as const,
+              error: { code: "provider_unavailable" as const, retryable: true },
+            }
+          : { state: "pending" as const, poll_after_ms: 1 };
+      },
+    } as GatewayAdapter;
+    const add_listener = vi.spyOn(AbortSignal.prototype, "addEventListener");
+    const remove_listener = vi.spyOn(AbortSignal.prototype, "removeEventListener");
+    const fixture = await create_worker_fixture({ adapter, use_default_sleep: true });
+    try {
+      const request_id = "99999999-9999-4999-8999-999999999993";
+      const created = fixture.service.create_job({
+        protocol_version: "1.0",
+        request: request(request_id),
+      });
+      await fixture.worker.start();
+      fixture.worker.enqueue(created.job.job_id);
+      await wait_for_real_time(
+        () => fixture.service.get_stored_job(created.job.job_id)?.state === "failed",
+      );
+
+      const added = add_listener.mock.calls.filter(([type]) => type === "abort").length;
+      const removed = remove_listener.mock.calls.filter(([type]) => type === "abort").length;
+      expect(added).toBeGreaterThan(20);
+      expect(removed).toBe(added);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+      add_listener.mockRestore();
+      remove_listener.mockRestore();
     }
   });
 });

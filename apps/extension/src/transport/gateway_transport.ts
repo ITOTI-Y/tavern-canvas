@@ -261,17 +261,11 @@ export class GatewayTransport {
     }
   }
 
-  async cancel(job_id: JobId, signal: AbortSignal): Promise<GatewayJobResponse> {
-    const response = parse_job_response(
-      await this.#request_json(`/v1/jobs/${job_id}`, {
-        method: "DELETE",
-        signal,
-      }),
-    );
-    if (response.job_id !== job_id) {
-      throw new GatewayProtocolError("Gateway cancellation response changed job identity");
-    }
-    return response;
+  async cancel(job_id: JobId, signal: AbortSignal): Promise<void> {
+    await this.#request(`/v1/jobs/${job_id}`, {
+      method: "DELETE",
+      signal,
+    });
   }
 
   async *#read_events(

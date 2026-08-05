@@ -15,6 +15,7 @@ const JOB_ID = "11111111-1111-4111-8111-111111111111";
 const OTHER_JOB_ID = "22222222-2222-4222-8222-222222222222";
 const REQUEST_ID = "33333333-3333-4333-8333-333333333333";
 const ASSET_ID = "44444444-4444-4444-8444-444444444444";
+const SECOND_ASSET_ID = "55555555-5555-4555-8555-555555555555";
 const CREATED_AT = "2026-08-05T12:00:00.000Z";
 const request = OpenAiImageRequestSchema.parse({
   request_id: REQUEST_ID,
@@ -106,12 +107,144 @@ describe("JobRepository", () => {
         state: "failed",
         event_type: "failed",
         event: { state: "failed" },
-        error_code: "provider_unavailable",
+        error: { code: "provider_unavailable", retryable: true },
         created_at: "2026-08-05T12:00:03.000Z",
       }),
     ).toThrow("synthetic event insert failure");
     expect(jobs.get_by_id(JOB_ID)?.state).toBe("running");
     expect(jobs.list_events(JOB_ID)).toHaveLength(2);
+  });
+
+  it("round-trips the complete provider error after reopening", () => {
+    create_job();
+    const error = {
+      code: "rate_limited" as const,
+      retryable: false,
+      retry_after_ms: 7_500,
+      status_code: 429,
+    };
+    jobs.transition_with_event({
+      job_id: JOB_ID,
+      state: "failed",
+      event_type: "failed",
+      event: { state: "failed", error },
+      error,
+      created_at: "2026-08-05T12:00:03.000Z",
+    });
+
+    expect(jobs.get_by_id(JOB_ID)?.error).toEqual(error);
+    database.close();
+    database = open_gateway_database({ file_path });
+    jobs = new JobRepository(database.connection);
+
+    expect(jobs.get_by_id(JOB_ID)?.error).toEqual(error);
+  });
+
+  it("completes with ordered attachments and allows only one CAS winner", () => {
+    create_job();
+    const assets = new AssetRepository(database.connection, {
+      uuid_factory: () => ASSET_ID,
+    });
+    const first = assets.create_or_get({
+      sha256: "a".repeat(64),
+      media_type: "image/png",
+      byte_length: 8,
+      created_at: CREATED_AT,
+    });
+    const second_assets = new AssetRepository(database.connection, {
+      uuid_factory: () => SECOND_ASSET_ID,
+    });
+    const second = second_assets.create_or_get({
+      sha256: "b".repeat(64),
+      media_type: "image/png",
+      byte_length: 8,
+      created_at: CREATED_AT,
+    });
+    jobs.transition_with_event({
+      job_id: JOB_ID,
+      state: "running",
+      event_type: "running",
+      event: { state: "running" },
+      created_at: CREATED_AT,
+    });
+
+    const event = jobs.complete_with_assets({
+      job_id: JOB_ID,
+      expected_state: "running",
+      asset_ids: [second.asset_id, first.asset_id],
+      created_at: "2026-08-05T12:00:01.000Z",
+    });
+
+    expect(event).toMatchObject({
+      event_type: "completed",
+      event: { state: "completed", image_ids: [second.asset_id, first.asset_id] },
+    });
+    expect(assets.list_for_job(JOB_ID).map((asset) => asset.asset_id)).toEqual([
+      second.asset_id,
+      first.asset_id,
+    ]);
+    expect(jobs.get_by_id(JOB_ID)?.state).toBe("completed");
+    expect(
+      jobs.complete_with_assets({
+        job_id: JOB_ID,
+        expected_state: "running",
+        asset_ids: [first.asset_id],
+        created_at: "2026-08-05T12:00:02.000Z",
+      }),
+    ).toBeUndefined();
+    expect(assets.list_for_job(JOB_ID).map((asset) => asset.asset_id)).toEqual([
+      second.asset_id,
+      first.asset_id,
+    ]);
+  });
+
+  it("rolls back completion state and attachments when an attachment insert fails", () => {
+    create_job();
+    const assets = new AssetRepository(database.connection, {
+      uuid_factory: () => ASSET_ID,
+    });
+    const first = assets.create_or_get({
+      sha256: "c".repeat(64),
+      media_type: "image/png",
+      byte_length: 8,
+      created_at: CREATED_AT,
+    });
+    const second_assets = new AssetRepository(database.connection, {
+      uuid_factory: () => SECOND_ASSET_ID,
+    });
+    const second = second_assets.create_or_get({
+      sha256: "d".repeat(64),
+      media_type: "image/png",
+      byte_length: 8,
+      created_at: CREATED_AT,
+    });
+    jobs.transition_with_event({
+      job_id: JOB_ID,
+      state: "running",
+      event_type: "running",
+      event: { state: "running" },
+      created_at: CREATED_AT,
+    });
+    database.connection.exec(`
+      CREATE TRIGGER reject_completion_attachment
+      BEFORE INSERT ON job_assets
+      WHEN NEW.job_id = '${JOB_ID}' AND NEW.position = 1
+      BEGIN
+        SELECT RAISE(ABORT, 'synthetic attachment failure');
+      END
+    `);
+
+    expect(() =>
+      jobs.complete_with_assets({
+        job_id: JOB_ID,
+        expected_state: "running",
+        asset_ids: [first.asset_id, second.asset_id],
+        created_at: "2026-08-05T12:00:01.000Z",
+      }),
+    ).toThrow("synthetic attachment failure");
+    expect(jobs.get_by_id(JOB_ID)?.state).toBe("running");
+    expect(assets.list_for_job(JOB_ID)).toEqual([]);
+    expect(jobs.list_events(JOB_ID)).toHaveLength(1);
   });
 
   it("allows exactly one queued claim across repository connections", () => {

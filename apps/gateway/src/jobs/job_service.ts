@@ -12,12 +12,12 @@ import {
   type GenerationState,
   type ImageGenerationRequest,
   type ProviderError,
-  type ProviderErrorCode,
 } from "@tavern-canvas/contracts";
 
 import type { GatewayConfig } from "../config/config_schema.js";
 import { GatewayHttpError } from "../http/error_handler.js";
 import type {
+  CompleteJobInput,
   ConditionalJobTransitionInput,
   JobRepository,
   JobTransitionInput,
@@ -96,10 +96,6 @@ export class JobService {
     return this.#job_repository;
   }
 
-  get_asset_repository(): AssetRepository {
-    return this.#asset_repository;
-  }
-
   list_events(job_id: string, after_sequence = 0): GatewayJobEvent[] {
     const stored_job = this.#job_repository.get_by_id(job_id);
     if (stored_job === undefined) {
@@ -140,6 +136,14 @@ export class JobService {
     return event;
   }
 
+  complete_with_assets(input: CompleteJobInput): StoredJobEvent | undefined {
+    const event = this.#job_repository.complete_with_assets(input);
+    if (event !== undefined) {
+      this.#publish(event);
+    }
+    return event;
+  }
+
   cancel_job(job_id: string): boolean {
     const stored_job = this.#job_repository.get_by_id(job_id);
     if (stored_job === undefined) {
@@ -148,13 +152,14 @@ export class JobService {
     if (is_terminal_state(stored_job.state)) {
       return true;
     }
+    const error: ProviderError = { code: "cancelled", retryable: false };
     const event = this.#job_repository.transition_if_current({
       job_id: stored_job.job_id,
       expected_state: stored_job.state,
       state: "cancelled",
       event_type: "cancelled",
-      event: { state: "cancelled" },
-      error_code: "cancelled",
+      event: { state: "cancelled", error },
+      error,
       created_at: this.#clock(),
     });
     if (event !== undefined) {
@@ -164,10 +169,11 @@ export class JobService {
   }
 
   to_public_job(job: StoredJob): GatewayJobResponse {
-    const image_ids = this.#asset_repository
-      .list_for_job(job.job_id)
-      .map((asset) => asset.asset_id);
-    const error = job.error_code === null ? undefined : provider_error_for_code(job.error_code);
+    const image_ids =
+      job.state === "completed"
+        ? this.#asset_repository.list_for_job(job.job_id).map((asset) => asset.asset_id)
+        : [];
+    const error = job.error === null ? undefined : job.error;
     return GatewayJobResponseSchema.parse({
       protocol_version: "1.0",
       job_id: job.job_id,
@@ -178,7 +184,6 @@ export class JobService {
       ...(error === undefined ? {} : { error }),
     });
   }
-
   to_public_event(event: StoredJobEvent): GatewayJobEvent {
     const event_data = is_record(event.event) ? event.event : {};
     const state = GenerationStateSchema.parse(event_data.state ?? "queued");
@@ -306,13 +311,6 @@ function is_terminal_state(state: GenerationState): boolean {
     state === "attached" ||
     state === "orphaned"
   );
-}
-
-function provider_error_for_code(code: ProviderErrorCode): ProviderError {
-  return ProviderErrorSchema.parse({
-    code,
-    retryable: code === "provider_unavailable" || code === "rate_limited" || code === "timed_out",
-  });
 }
 
 function parse_public_error(value: unknown): ProviderError | undefined {

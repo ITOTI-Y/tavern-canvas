@@ -36,6 +36,9 @@ const UPSTREAM_RESPONSE_MARKER = "UPSTREAM_FULL_RESPONSE_MARKER";
 const PNG_BASE64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
 const PNG_BYTES = Buffer.from(PNG_BASE64, "base64");
+const GENERATED_PNG_BASE64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAA1BMVEUKFB5+TFI6AAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAG0lEQVRYw+3BgQAAAADDoPlT3+AEVQEAAAB8AxBAAAEZszF2AAAAAElFTkSuQmCC";
+const GENERATED_PNG_BYTES = Buffer.from(GENERATED_PNG_BASE64, "base64");
 const CANONICAL_UPLOAD_BASE64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsSAAALEgHS3X78AAAADUlEQVQImWNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==";
 const CANONICAL_UPLOAD_BYTES = Buffer.from(CANONICAL_UPLOAD_BASE64, "base64");
@@ -266,7 +269,7 @@ async function start_scripted_upstream(): Promise<ScriptedUpstream> {
       if (method === "POST" && request_url.pathname === "/sdapi/v1/txt2img") {
         state.sd_submit_count += 1;
         write_json(response, 200, {
-          images: [PNG_BASE64],
+          images: [GENERATED_PNG_BASE64],
           parameters: {},
           info: JSON.stringify({ seed: 42 }),
           full_response_marker: UPSTREAM_RESPONSE_MARKER,
@@ -814,7 +817,7 @@ describe("Gateway integration smoke flow", () => {
       expect(generated_content_response.headers.get("content-length")).toBe(
         String(generated_content.byteLength),
       );
-      expect(generated_content).toEqual(PNG_BYTES);
+      expect(generated_content).toEqual(GENERATED_PNG_BYTES);
       expect(generated_content.byteLength).toBe(generated_metadata.byte_length);
       expect(createHash("sha256").update(generated_content).digest("hex")).toBe(
         generated_metadata.sha256,
