@@ -1,7 +1,4 @@
-import type {
-  CapabilityMatrix,
-  TavernCanvasMessageMetadata,
-} from "@tavern-canvas/contracts";
+import type { CapabilityMatrix, TavernCanvasMessageMetadata } from "@tavern-canvas/contracts";
 
 export const HOST_CAPABILITY_IDS = [
   "native_tool_manager",
@@ -55,9 +52,7 @@ export interface HostImageTool {
   readonly display_name: string;
   readonly description: string;
   readonly parameters: Readonly<Record<string, unknown>>;
-  execute(
-    arguments_: Readonly<Record<string, unknown>>,
-  ): string | Promise<string>;
+  execute(arguments_: Readonly<Record<string, unknown>>): string | Promise<string>;
 }
 
 export interface HostPromptMessage {

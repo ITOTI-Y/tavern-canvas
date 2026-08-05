@@ -168,11 +168,26 @@ describe("probe_host_capabilities", () => {
     ["context.getCurrentChatId", "context", "getCurrentChatId", ["message_swipe_metadata"]],
     ["context.getRequestHeaders", "context", "getRequestHeaders", ["host_image_upload"]],
     ["context.registerFunctionTool", "context", "registerFunctionTool", ["native_tool_manager"]],
-    ["context.unregisterFunctionTool", "context", "unregisterFunctionTool", ["native_tool_manager"]],
+    [
+      "context.unregisterFunctionTool",
+      "context",
+      "unregisterFunctionTool",
+      ["native_tool_manager"],
+    ],
     ["eventSource.on", "event_source", "on", ["main_generation_events"]],
     ["eventSource.removeListener", "event_source", "removeListener", ["main_generation_events"]],
-    ["eventTypes.GENERATION_STARTED", "event_types", "GENERATION_STARTED", ["main_generation_events"]],
-    ["eventTypes.GENERATION_STOPPED", "event_types", "GENERATION_STOPPED", ["main_generation_events"]],
+    [
+      "eventTypes.GENERATION_STARTED",
+      "event_types",
+      "GENERATION_STARTED",
+      ["main_generation_events"],
+    ],
+    [
+      "eventTypes.GENERATION_STOPPED",
+      "event_types",
+      "GENERATION_STOPPED",
+      ["main_generation_events"],
+    ],
     ["eventTypes.GENERATION_ENDED", "event_types", "GENERATION_ENDED", ["main_generation_events"]],
   ] as const)(
     "reports the exact capability when %s is missing",
@@ -277,9 +292,7 @@ describe("probe_host_capabilities", () => {
           },
         },
       };
-      const incompatible_result = probe_host_capabilities(
-        incompatible_fixture.globals,
-      );
+      const incompatible_result = probe_host_capabilities(incompatible_fixture.globals);
       expect(incompatible_result.ready).toBe(true);
       if (incompatible_result.ready) {
         expect(incompatible_result.matrix).toEqual(standard_matrix);
@@ -362,11 +375,14 @@ describe("probe_host_capabilities", () => {
   });
 
   it("preserves missing-helper precedence for a hostile root getter", () => {
-    const hostile_globals = new Proxy({}, {
-      get: () => {
-        throw new Error("getter failed");
+    const hostile_globals = new Proxy(
+      {},
+      {
+        get: () => {
+          throw new Error("getter failed");
+        },
       },
-    });
+    );
 
     expect(probe_host_capabilities(hostile_globals)).toEqual({
       ready: false,
@@ -381,7 +397,6 @@ describe("probe_host_capabilities", () => {
       ],
     });
   });
-
 
   it("fails closed for getter and call exceptions without changing error ordering", () => {
     const fixture = create_fixture();

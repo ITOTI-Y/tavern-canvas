@@ -7,20 +7,14 @@ import {
 } from "./sillytavern_host.js";
 
 class FakeEventSource {
-  readonly #listeners = new Map<
-    string,
-    Set<(...arguments_: readonly unknown[]) => void>
-  >();
+  readonly #listeners = new Map<string, Set<(...arguments_: readonly unknown[]) => void>>();
   remove_count = 0;
   throw_on_registration: number | undefined;
   throw_on_removal: string | undefined;
   on_count = 0;
   removed_events: string[] = [];
 
-  on(
-    event_name: string,
-    listener: (...arguments_: readonly unknown[]) => void,
-  ): void {
+  on(event_name: string, listener: (...arguments_: readonly unknown[]) => void): void {
     const listeners = this.#listeners.get(event_name) ?? new Set();
     this.on_count += 1;
     if (this.on_count === this.throw_on_registration) {
@@ -30,10 +24,7 @@ class FakeEventSource {
     this.#listeners.set(event_name, listeners);
   }
 
-  removeListener(
-    event_name: string,
-    listener: (...arguments_: readonly unknown[]) => void,
-  ): void {
+  removeListener(event_name: string, listener: (...arguments_: readonly unknown[]) => void): void {
     this.remove_count += 1;
     this.removed_events.push(event_name);
     if (event_name === this.throw_on_removal) {
@@ -50,24 +41,14 @@ class FakeEventSource {
 }
 
 function create_context(event_source = new FakeEventSource()) {
-  const get_current_locale = vi.fn<
-    SillyTavernContextSurface["getCurrentLocale"]
-  >(() => "zh-CN");
-  const get_current_chat_id = vi.fn<
-    SillyTavernContextSurface["getCurrentChatId"]
-  >(() => "chat-42");
-  const get_request_headers = vi.fn<
-    SillyTavernContextSurface["getRequestHeaders"]
-  >(() => ({
+  const get_current_locale = vi.fn<SillyTavernContextSurface["getCurrentLocale"]>(() => "zh-CN");
+  const get_current_chat_id = vi.fn<SillyTavernContextSurface["getCurrentChatId"]>(() => "chat-42");
+  const get_request_headers = vi.fn<SillyTavernContextSurface["getRequestHeaders"]>(() => ({
     "Content-Type": "application/json",
     "X-CSRF-TOKEN": "csrf-token",
   }));
-  const register_function_tool = vi.fn<
-    SillyTavernContextSurface["registerFunctionTool"]
-  >();
-  const unregister_function_tool = vi.fn<
-    SillyTavernContextSurface["unregisterFunctionTool"]
-  >();
+  const register_function_tool = vi.fn<SillyTavernContextSurface["registerFunctionTool"]>();
+  const unregister_function_tool = vi.fn<SillyTavernContextSurface["unregisterFunctionTool"]>();
   return {
     event_source,
     surface: {
@@ -119,29 +100,26 @@ describe("SillyTavernHost", () => {
     expect(context.event_source.remove_count).toBe(3);
   });
 
-  it.each([2, 3])(
-    "rolls back listeners when registration %i fails",
-    (registration_number) => {
-      const event_source = new FakeEventSource();
-      event_source.throw_on_registration = registration_number;
-      const context = create_context(event_source);
-      const host = new SillyTavernHost(context.surface, vi.fn());
-      const events: unknown[] = [];
+  it.each([2, 3])("rolls back listeners when registration %i fails", (registration_number) => {
+    const event_source = new FakeEventSource();
+    event_source.throw_on_registration = registration_number;
+    const context = create_context(event_source);
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    const events: unknown[] = [];
 
-      expect(() => host.subscribe_generation((event) => events.push(event))).toThrowError(
-        `registration ${registration_number} failed`,
-      );
-      event_source.emit("generation_started", "normal", {}, false);
-      event_source.emit("generation_stopped");
-      expect(events).toEqual([]);
-      expect(event_source.remove_count).toBe(registration_number - 1);
-      expect(event_source.removed_events).toEqual(
-        registration_number === 2
-          ? ["generation_started"]
-          : ["generation_stopped", "generation_started"],
-      );
-    },
-  );
+    expect(() => host.subscribe_generation((event) => events.push(event))).toThrowError(
+      `registration ${registration_number} failed`,
+    );
+    event_source.emit("generation_started", "normal", {}, false);
+    event_source.emit("generation_stopped");
+    expect(events).toEqual([]);
+    expect(event_source.remove_count).toBe(registration_number - 1);
+    expect(event_source.removed_events).toEqual(
+      registration_number === 2
+        ? ["generation_started"]
+        : ["generation_stopped", "generation_started"],
+    );
+  });
 
   it("attempts every listener removal when one removal throws", () => {
     const event_source = new FakeEventSource();
@@ -181,43 +159,37 @@ describe("SillyTavernHost", () => {
       description: "Queue an image request",
       stealth: true,
     });
-    await expect(
-      registered_tool?.action({ scene_description: "Rainy alley" }),
-    ).resolves.toBe("queued request-1");
+    await expect(registered_tool?.action({ scene_description: "Rainy alley" })).resolves.toBe(
+      "queued request-1",
+    );
     expect(execute).toHaveBeenCalledWith({ scene_description: "Rainy alley" });
 
     dispose();
     dispose();
     expect(context.surface.unregisterFunctionTool).toHaveBeenCalledTimes(1);
-    expect(context.surface.unregisterFunctionTool).toHaveBeenCalledWith(
-      "request_image",
-    );
+    expect(context.surface.unregisterFunctionTool).toHaveBeenCalledWith("request_image");
   });
 
-  it.each([null, [], "invalid"])(
-    "rejects non-record tool arguments %j",
-    async (arguments_) => {
-      const context = create_context();
-      const execute = vi.fn(async () => "queued");
-      const host = new SillyTavernHost(context.surface, vi.fn());
-      host.register_image_tool({
-        name: "request_image",
-        display_name: "Request image",
-        description: "Queue an image request",
-        parameters: { type: "object" },
-        execute,
-      });
-      const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
-      const action = registered_tool?.action as unknown as
-        | ((value: unknown) => string | Promise<string>)
-        | undefined;
+  it.each([null, [], "invalid"])("rejects non-record tool arguments %j", async (arguments_) => {
+    const context = create_context();
+    const execute = vi.fn(async () => "queued");
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    host.register_image_tool({
+      name: "request_image",
+      display_name: "Request image",
+      description: "Queue an image request",
+      parameters: { type: "object" },
+      execute,
+    });
+    const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+    const action = registered_tool?.action as unknown as
+      ((value: unknown) => string | Promise<string>) | undefined;
 
-      await expect(() => action?.(arguments_)).rejects.toThrowError(
-        /Image tool arguments must be a record/u,
-      );
-      expect(execute).not.toHaveBeenCalled();
-    },
-  );
+    await expect(() => action?.(arguments_)).rejects.toThrowError(
+      /Image tool arguments must be a record/u,
+    );
+    expect(execute).not.toHaveBeenCalled();
+  });
   it.each([
     ["Date", new Date()],
     ["Map", new Map()],
@@ -245,11 +217,14 @@ describe("SillyTavernHost", () => {
   it.each([
     [
       "a prototype trap",
-      new Proxy({}, {
-        getPrototypeOf: () => {
-          throw new Error("prototype failed");
+      new Proxy(
+        {},
+        {
+          getPrototypeOf: () => {
+            throw new Error("prototype failed");
+          },
         },
-      }),
+      ),
     ],
     [
       "a revoked proxy",
@@ -297,7 +272,6 @@ describe("SillyTavernHost", () => {
     expect(execute).toHaveBeenCalledWith({ scene_description: "Rainy alley" });
   });
 
-
   it("rejects tool arguments that cannot be cloned", async () => {
     const context = create_context();
     const execute = vi.fn(async () => "queued");
@@ -311,9 +285,9 @@ describe("SillyTavernHost", () => {
     });
     const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
 
-    await expect(
-      registered_tool?.action({ callback: () => undefined }),
-    ).rejects.toThrowError(/Image tool arguments could not be cloned/u);
+    await expect(registered_tool?.action({ callback: () => undefined })).rejects.toThrowError(
+      /Image tool arguments could not be cloned/u,
+    );
     expect(execute).not.toHaveBeenCalled();
   });
 
@@ -484,11 +458,17 @@ describe("SillyTavernHost", () => {
       }),
     ).rejects.toThrowError(/invalid request headers/u);
   });
+  class BrandedRequestHeaders {
+    readonly branded = true;
+    readonly ["X-CSRF-TOKEN"] = "csrf-token";
+  }
+
   it.each([
     ["Date", new Date()],
     ["Map", new Map()],
     ["Set", new Set()],
     ["Error", new Error("host value")],
+    ["custom-prototype object", new BrandedRequestHeaders()],
   ])("rejects branded %s request headers before fetch", async (_, headers) => {
     const context = create_context();
     context.surface.getRequestHeaders.mockReturnValue(headers);
@@ -499,12 +479,14 @@ describe("SillyTavernHost", () => {
     }));
     const host = new SillyTavernHost(context.surface, fetch_);
 
-    await expect(host.upload_image({
-      image_base64: "aW1hZ2U=",
-      character_name: "Character",
-      file_name: "image",
-      format: "png",
-    })).rejects.toThrowError(/invalid request headers/u);
+    await expect(
+      host.upload_image({
+        image_base64: "aW1hZ2U=",
+        character_name: "Character",
+        file_name: "image",
+        format: "png",
+      }),
+    ).rejects.toThrowError(/invalid request headers/u);
     expect(fetch_).not.toHaveBeenCalled();
   });
 
@@ -520,18 +502,19 @@ describe("SillyTavernHost", () => {
     }));
     const host = new SillyTavernHost(context.surface, fetch_);
 
-    await expect(host.upload_image({
-      image_base64: "aW1hZ2U=",
-      character_name: "Character",
-      file_name: "image",
-      format: "png",
-    })).resolves.toEqual({ path: "/user/images/character/image.png" });
+    await expect(
+      host.upload_image({
+        image_base64: "aW1hZ2U=",
+        character_name: "Character",
+        file_name: "image",
+        format: "png",
+      }),
+    ).resolves.toEqual({ path: "/user/images/character/image.png" });
     expect(fetch_).toHaveBeenCalledWith(
       "/api/images/upload",
       expect.objectContaining({ headers: { "X-CSRF-TOKEN": "csrf-token" } }),
     );
   });
-
 });
 
 describe("inspect_sillytavern", () => {
@@ -545,10 +528,7 @@ describe("inspect_sillytavern", () => {
   it("owns getContext and validates every unconditional context result", () => {
     const context = create_context();
 
-    expect(inspect_sillytavern(
-      { getContext: () => context.surface },
-      vi.fn(),
-    )).toEqual({
+    expect(inspect_sillytavern({ getContext: () => context.surface }, vi.fn())).toEqual({
       native_tool_manager: true,
       main_generation_events: true,
       message_swipe_metadata: true,
@@ -595,17 +575,13 @@ describe("inspect_sillytavern", () => {
       },
     });
 
-    expect(inspect_sillytavern(
-      { getContext: () => hostile_context },
-      vi.fn(),
-    )).toEqual({
+    expect(inspect_sillytavern({ getContext: () => hostile_context }, vi.fn())).toEqual({
       native_tool_manager: true,
       main_generation_events: true,
       message_swipe_metadata: true,
       host_image_upload: true,
     });
   });
-
 
   it.each([
     ["throwing getContext getter", Object.create(null)],
@@ -642,10 +618,7 @@ describe("inspect_sillytavern", () => {
       const context = create_context();
       context.surface[method_name].mockReturnValue(null as never);
 
-      const result = inspect_sillytavern(
-        { getContext: () => context.surface },
-        vi.fn(),
-      );
+      const result = inspect_sillytavern({ getContext: () => context.surface }, vi.fn());
 
       expect(result[capability]).toBe(false);
       for (const [name, available] of Object.entries(result)) {
@@ -664,10 +637,9 @@ describe("inspect_sillytavern", () => {
         throw new Error("context method failed");
       });
 
-      expect(() => inspect_sillytavern(
-        { getContext: () => context.surface },
-        vi.fn(),
-      )).not.toThrow();
+      expect(() =>
+        inspect_sillytavern({ getContext: () => context.surface }, vi.fn()),
+      ).not.toThrow();
     },
   );
 });

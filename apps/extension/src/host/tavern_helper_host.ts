@@ -43,10 +43,7 @@ export interface TavernHelperGenerateRawRequest {
 }
 
 export interface TavernHelperSurface {
-  getChatMessages(
-    range: string | number,
-    options: { readonly include_swipes: true },
-  ): unknown;
+  getChatMessages(range: string | number, options: { readonly include_swipes: true }): unknown;
   setChatMessages(
     messages: readonly TavernHelperMessageUpdate[],
     options: { readonly refresh: "affected" },
@@ -55,9 +52,7 @@ export interface TavernHelperSurface {
 }
 
 function is_property_container(value: unknown): value is object {
-  return (
-    (typeof value === "object" && value !== null) || typeof value === "function"
-  );
+  return (typeof value === "object" && value !== null) || typeof value === "function";
 }
 
 function is_plain_record(value: unknown): value is Record<string, unknown> {
@@ -92,14 +87,9 @@ export interface TavernHelperInspection {
   readonly message_swipe_metadata: boolean;
 }
 
-type SafePropertyRead =
-  | { readonly ok: true; readonly value: unknown }
-  | { readonly ok: false };
+type SafePropertyRead = { readonly ok: true; readonly value: unknown } | { readonly ok: false };
 
-function read_property(
-  value: object,
-  property_name: string,
-): SafePropertyRead {
+function read_property(value: object, property_name: string): SafePropertyRead {
   try {
     return { ok: true, value: Reflect.get(value, property_name) };
   } catch {
@@ -107,17 +97,12 @@ function read_property(
   }
 }
 
-function has_function_property(
-  value: object,
-  property_name: string,
-): boolean {
+function has_function_property(value: object, property_name: string): boolean {
   const property = read_property(value, property_name);
   return property.ok && typeof property.value === "function";
 }
 
-function inspect_helper_version(
-  helper: object,
-): TavernHelperVersionInspection {
+function inspect_helper_version(helper: object): TavernHelperVersionInspection {
   const version_method = read_property(helper, "getTavernHelperVersion");
   if (!version_method.ok) {
     return { state: "threw" };
@@ -178,16 +163,7 @@ function validate_chat_message(value: unknown): TavernHelperChatMessage {
     return invalid_chat_messages();
   }
 
-  const {
-    message_id,
-    name,
-    role,
-    is_hidden,
-    swipe_id,
-    swipes,
-    swipes_data,
-    swipes_info,
-  } = value;
+  const { message_id, name, role, is_hidden, swipe_id, swipes, swipes_data, swipes_info } = value;
   if (
     !Number.isInteger(message_id) ||
     typeof message_id !== "number" ||
@@ -227,9 +203,42 @@ function validate_chat_message(value: unknown): TavernHelperChatMessage {
   };
 }
 
-function validate_and_clone_chat_messages(
-  value: unknown,
-): readonly TavernHelperChatMessage[] {
+function has_plain_chat_records(value: unknown): boolean {
+  try {
+    if (!Array.isArray(value) || !is_dense_array(value)) {
+      return false;
+    }
+
+    for (let index = 0; index < value.length; index += 1) {
+      const message = value[index];
+      if (!is_plain_record(message)) {
+        return false;
+      }
+      const swipes_data = read_property(message, "swipes_data");
+      const swipes_info = read_property(message, "swipes_info");
+      if (
+        !swipes_data.ok ||
+        !Array.isArray(swipes_data.value) ||
+        !is_dense_array(swipes_data.value) ||
+        !swipes_data.value.every(is_plain_record) ||
+        !swipes_info.ok ||
+        !Array.isArray(swipes_info.value) ||
+        !is_dense_array(swipes_info.value) ||
+        !swipes_info.value.every(is_plain_record)
+      ) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function validate_and_clone_chat_messages(value: unknown): readonly TavernHelperChatMessage[] {
+  if (!has_plain_chat_records(value)) {
+    return invalid_chat_messages();
+  }
   let clone: unknown;
   try {
     clone = structuredClone(value);
@@ -253,9 +262,7 @@ function clone_update_metadata(
   }
 }
 
-function normalize_chat_message(
-  message: TavernHelperChatMessage,
-): HostChatMessageSnapshot {
+function normalize_chat_message(message: TavernHelperChatMessage): HostChatMessageSnapshot {
   return {
     message_id: message.message_id,
     name: message.name,
@@ -275,10 +282,7 @@ export class TavernHelperHost {
   readonly #helper: TavernHelperSurface;
   readonly #get_active_chat_id: () => string;
 
-  constructor(
-    helper: TavernHelperSurface,
-    get_active_chat_id: () => string,
-  ) {
+  constructor(helper: TavernHelperSurface, get_active_chat_id: () => string) {
     this.#helper = helper;
     this.#get_active_chat_id = get_active_chat_id;
   }
@@ -325,9 +329,7 @@ export class TavernHelperHost {
         include_swipes: true,
       }),
     );
-    const message = messages.find(
-      (candidate) => candidate.message_id === request.message_id,
-    );
+    const message = messages.find((candidate) => candidate.message_id === request.message_id);
     if (message === undefined) {
       throw new Error(`Host message ${request.message_id} no longer exists`);
     }
@@ -348,9 +350,7 @@ export class TavernHelperHost {
       swipe_id === request.swipe_id
         ? {
             ...metadata,
-            [TAVERN_CANVAS_SWIPE_METADATA_KEY]: clone_update_metadata(
-              request.metadata,
-            ),
+            [TAVERN_CANVAS_SWIPE_METADATA_KEY]: clone_update_metadata(request.metadata),
           }
         : metadata,
     );

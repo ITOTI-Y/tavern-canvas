@@ -57,21 +57,17 @@ describe("HostAdapter boundary", () => {
   });
 
   it("uses normalized domain inputs and outputs", () => {
-    expectTypeOf(adapter.get_active_chat).returns.toEqualTypeOf<
-      Promise<HostChatSnapshot>
-    >();
-    expectTypeOf(adapter.subscribe_generation).parameter(0).parameter(0)
+    expectTypeOf(adapter.get_active_chat).returns.toEqualTypeOf<Promise<HostChatSnapshot>>();
+    expectTypeOf(adapter.subscribe_generation)
+      .parameter(0)
+      .parameter(0)
       .toEqualTypeOf<HostGenerationEvent>();
-    expectTypeOf(adapter.register_image_tool).parameter(0)
-      .toEqualTypeOf<HostImageTool>();
-    expectTypeOf(adapter.generate_private_prompt).parameter(0)
+    expectTypeOf(adapter.register_image_tool).parameter(0).toEqualTypeOf<HostImageTool>();
+    expectTypeOf(adapter.generate_private_prompt)
+      .parameter(0)
       .toEqualTypeOf<PrivatePromptRequest>();
-    expectTypeOf(adapter.update_message).parameter(0)
-      .toEqualTypeOf<MessageUpdateRequest>();
-    expectTypeOf(adapter.upload_image).parameter(0)
-      .toEqualTypeOf<HostImageUploadRequest>();
-    expectTypeOf(adapter.upload_image).returns.toEqualTypeOf<
-      Promise<HostImageUploadResult>
-    >();
+    expectTypeOf(adapter.update_message).parameter(0).toEqualTypeOf<MessageUpdateRequest>();
+    expectTypeOf(adapter.upload_image).parameter(0).toEqualTypeOf<HostImageUploadRequest>();
+    expectTypeOf(adapter.upload_image).returns.toEqualTypeOf<Promise<HostImageUploadResult>>();
   });
 });

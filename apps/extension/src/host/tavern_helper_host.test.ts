@@ -32,22 +32,13 @@ function create_message() {
 }
 
 type PrivateGenerationResult =
-  | string
-  | { readonly content: string; readonly tool_calls: readonly unknown[] };
+  string | { readonly content: string; readonly tool_calls: readonly unknown[] };
 
-function create_helper(
-  generation_result: PrivateGenerationResult = "private response",
-) {
+function create_helper(generation_result: PrivateGenerationResult = "private response") {
   const messages = [create_message()];
-  const get_chat_messages = vi.fn<TavernHelperSurface["getChatMessages"]>(
-    () => messages,
-  );
-  const set_chat_messages = vi.fn<TavernHelperSurface["setChatMessages"]>(
-    async () => undefined,
-  );
-  const generate_raw = vi.fn<TavernHelperSurface["generateRaw"]>(
-    async () => generation_result,
-  );
+  const get_chat_messages = vi.fn<TavernHelperSurface["getChatMessages"]>(() => messages);
+  const set_chat_messages = vi.fn<TavernHelperSurface["setChatMessages"]>(async () => undefined);
+  const generate_raw = vi.fn<TavernHelperSurface["generateRaw"]>(async () => generation_result);
   return {
     messages,
     surface: {
@@ -65,10 +56,9 @@ describe("TavernHelperHost", () => {
 
     const snapshot = await host.get_active_chat();
 
-    expect(helper.surface.getChatMessages).toHaveBeenCalledWith(
-      "0-{{lastMessageId}}",
-      { include_swipes: true },
-    );
+    expect(helper.surface.getChatMessages).toHaveBeenCalledWith("0-{{lastMessageId}}", {
+      include_swipes: true,
+    });
     expect(snapshot).toEqual({
       chat_id: "chat-42",
       messages: [
@@ -256,19 +246,21 @@ describe("TavernHelperHost", () => {
   });
 
   const sparse_swipes = Object.assign(Array<string>(2), { 0: "first" });
-  const sparse_swipes_data = Object.assign(
-    Array<Record<string, unknown>>(2),
-    { 0: {} },
-  );
-  const sparse_swipes_info = Object.assign(
-    Array<Record<string, unknown>>(2),
-    { 0: {} },
-  );
+  const sparse_swipes_data = Object.assign(Array<Record<string, unknown>>(2), { 0: {} });
+  const sparse_swipes_info = Object.assign(Array<Record<string, unknown>>(2), { 0: {} });
   const sparse_messages = Array(1);
+  class BrandedRecord {
+    readonly branded = true;
+  }
+  const custom_prototype_message = Object.assign(new BrandedRecord(), create_message());
+  const custom_prototype_record = Object.assign(new BrandedRecord(), {
+    provider: "custom",
+  });
 
   it.each([
     ["a non-array result", null],
     ["a non-record message", [null]],
+    ["a custom-prototype message", [custom_prototype_message]],
     ["a negative message ID", [{ ...create_message(), message_id: -1 }]],
     ["a fractional message ID", [{ ...create_message(), message_id: 1.5 }]],
     ["a non-string name", [{ ...create_message(), name: null }]],
@@ -283,18 +275,20 @@ describe("TavernHelperHost", () => {
     ["misaligned swipe metadata", [{ ...create_message(), swipes_info: [{}, {}, {}] }]],
     ["a sparse message array", sparse_messages],
     ["a sparse active swipe", [{ ...create_message(), swipes: sparse_swipes }]],
-    [
-      "sparse swipe data",
-      [{ ...create_message(), swipes_data: sparse_swipes_data }],
-    ],
-    [
-      "sparse swipe metadata",
-      [{ ...create_message(), swipes_info: sparse_swipes_info }],
-    ],
+    ["sparse swipe data", [{ ...create_message(), swipes_data: sparse_swipes_data }]],
+    ["sparse swipe metadata", [{ ...create_message(), swipes_info: sparse_swipes_info }]],
     ["Date swipe data", [{ ...create_message(), swipes_data: [{}, new Date()] }]],
     ["Map swipe data", [{ ...create_message(), swipes_data: [{}, new Map()] }]],
     ["Set swipe metadata", [{ ...create_message(), swipes_info: [{}, new Set()] }]],
     ["Error swipe metadata", [{ ...create_message(), swipes_info: [{}, new Error()] }]],
+    [
+      "custom-prototype swipe data",
+      [{ ...create_message(), swipes_data: [{}, custom_prototype_record] }],
+    ],
+    [
+      "custom-prototype swipe metadata",
+      [{ ...create_message(), swipes_info: [{}, custom_prototype_record] }],
+    ],
 
     [
       "uncloneable nested swipe state",
@@ -342,12 +336,9 @@ describe("TavernHelperHost", () => {
     });
   });
 
-
   it("validates chat messages before constructing an update payload", async () => {
     const helper = create_helper();
-    helper.surface.getChatMessages.mockReturnValue([
-      { ...create_message(), swipes_info: [{}] },
-    ]);
+    helper.surface.getChatMessages.mockReturnValue([{ ...create_message(), swipes_info: [{}] }]);
     const host = new TavernHelperHost(helper.surface, () => "chat-42");
 
     await expect(
@@ -369,10 +360,7 @@ describe("TavernHelperHost", () => {
 
   it.each(["", null])("rejects an invalid active chat ID %j", async (chat_id) => {
     const helper = create_helper();
-    const host = new TavernHelperHost(
-      helper.surface,
-      () => chat_id as unknown as string,
-    );
+    const host = new TavernHelperHost(helper.surface, () => chat_id as unknown as string);
 
     await expect(host.get_active_chat()).rejects.toThrowError(
       /TavernHelper returned an invalid active chat ID/u,
@@ -427,10 +415,12 @@ describe("inspect_tavern_helper", () => {
   it("owns helper version calls and method grouping", () => {
     const helper = create_helper();
 
-    expect(inspect_tavern_helper({
-      ...helper.surface,
-      getTavernHelperVersion: () => "4.9.1",
-    })).toEqual({
+    expect(
+      inspect_tavern_helper({
+        ...helper.surface,
+        getTavernHelperVersion: () => "4.9.1",
+      }),
+    ).toEqual({
       detected: true,
       version: { state: "available", value: "4.9.1" },
       private_prompt_generation: true,
@@ -438,18 +428,15 @@ describe("inspect_tavern_helper", () => {
     });
   });
 
-  it.each([undefined, null, 7, "helper"])(
-    "fails closed for malformed helper value %j",
-    (value) => {
-      expect(() => inspect_tavern_helper(value)).not.toThrow();
-      expect(inspect_tavern_helper(value)).toEqual({
-        detected: value !== undefined,
-        version: { state: value === undefined ? "missing" : "invalid" },
-        private_prompt_generation: false,
-        message_swipe_metadata: false,
-      });
-    },
-  );
+  it.each([undefined, null, 7, "helper"])("fails closed for malformed helper value %j", (value) => {
+    expect(() => inspect_tavern_helper(value)).not.toThrow();
+    expect(inspect_tavern_helper(value)).toEqual({
+      detected: value !== undefined,
+      version: { state: value === undefined ? "missing" : "invalid" },
+      private_prompt_generation: false,
+      message_swipe_metadata: false,
+    });
+  });
   it("fails closed for a revoked helper proxy", () => {
     const helper = create_helper();
     const { proxy, revoke } = Proxy.revocable(
@@ -470,52 +457,53 @@ describe("inspect_tavern_helper", () => {
     });
   });
 
+  it.each(["getTavernHelperVersion", "generateRaw", "getChatMessages", "setChatMessages"])(
+    "fails closed when the %s getter throws",
+    (property_name) => {
+      const helper = create_helper();
+      const surface: Record<string, unknown> = {
+        ...helper.surface,
+        getTavernHelperVersion: () => "4.9.1",
+      };
+      Object.defineProperty(surface, property_name, {
+        get: () => {
+          throw new Error("getter failed");
+        },
+      });
 
-  it.each([
-    "getTavernHelperVersion",
-    "generateRaw",
-    "getChatMessages",
-    "setChatMessages",
-  ])("fails closed when the %s getter throws", (property_name) => {
-    const helper = create_helper();
-    const surface: Record<string, unknown> = {
-      ...helper.surface,
-      getTavernHelperVersion: () => "4.9.1",
-    };
-    Object.defineProperty(surface, property_name, {
-      get: () => {
-        throw new Error("getter failed");
-      },
-    });
-
-    expect(() => inspect_tavern_helper(surface)).not.toThrow();
-    const result = inspect_tavern_helper(surface);
-    if (property_name === "getTavernHelperVersion") {
-      expect(result.version).toEqual({ state: "threw" });
-    } else if (property_name === "generateRaw") {
-      expect(result.private_prompt_generation).toBe(false);
-    } else {
-      expect(result.message_swipe_metadata).toBe(false);
-    }
-  });
+      expect(() => inspect_tavern_helper(surface)).not.toThrow();
+      const result = inspect_tavern_helper(surface);
+      if (property_name === "getTavernHelperVersion") {
+        expect(result.version).toEqual({ state: "threw" });
+      } else if (property_name === "generateRaw") {
+        expect(result.private_prompt_generation).toBe(false);
+      } else {
+        expect(result.message_swipe_metadata).toBe(false);
+      }
+    },
+  );
 
   it("fails closed when the helper version call throws", () => {
     const helper = create_helper();
 
-    expect(inspect_tavern_helper({
-      ...helper.surface,
-      getTavernHelperVersion: () => {
-        throw new Error("call failed");
-      },
-    }).version).toEqual({ state: "threw" });
+    expect(
+      inspect_tavern_helper({
+        ...helper.surface,
+        getTavernHelperVersion: () => {
+          throw new Error("call failed");
+        },
+      }).version,
+    ).toEqual({ state: "threw" });
   });
 
   it("classifies non-string helper versions as invalid", () => {
     const helper = create_helper();
 
-    expect(inspect_tavern_helper({
-      ...helper.surface,
-      getTavernHelperVersion: () => 491,
-    }).version).toEqual({ state: "invalid" });
+    expect(
+      inspect_tavern_helper({
+        ...helper.surface,
+        getTavernHelperVersion: () => 491,
+      }).version,
+    ).toEqual({ state: "invalid" });
   });
 });

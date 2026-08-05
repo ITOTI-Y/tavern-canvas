@@ -5,9 +5,7 @@ import type {
   HostImageUploadResult,
 } from "./host_adapter.js";
 
-export type SillyTavernEventListener = (
-  ...arguments_: readonly unknown[]
-) => void;
+export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => void;
 
 export interface SillyTavernEventSource {
   on(event_name: string, listener: SillyTavernEventListener): void;
@@ -53,9 +51,7 @@ export type SillyTavernFetch = (
 ) => Promise<SillyTavernUploadResponse>;
 
 function is_property_container(value: unknown): value is object {
-  return (
-    (typeof value === "object" && value !== null) || typeof value === "function"
-  );
+  return (typeof value === "object" && value !== null) || typeof value === "function";
 }
 
 function is_plain_record(value: unknown): value is Record<string, unknown> {
@@ -84,14 +80,9 @@ const SILLYTAVERN_UNAVAILABLE: SillyTavernInspection = {
   host_image_upload: false,
 };
 
-type SafePropertyRead =
-  | { readonly ok: true; readonly value: unknown }
-  | { readonly ok: false };
+type SafePropertyRead = { readonly ok: true; readonly value: unknown } | { readonly ok: false };
 
-function read_property(
-  value: object,
-  property_name: string,
-): SafePropertyRead {
+function read_property(value: object, property_name: string): SafePropertyRead {
   try {
     return { ok: true, value: Reflect.get(value, property_name) };
   } catch {
@@ -99,18 +90,12 @@ function read_property(
   }
 }
 
-function has_function_property(
-  value: object,
-  property_name: string,
-): boolean {
+function has_function_property(value: object, property_name: string): boolean {
   const property = read_property(value, property_name);
   return property.ok && typeof property.value === "function";
 }
 
-function call_method(
-  value: object,
-  method_name: string,
-): SafePropertyRead {
+function call_method(value: object, method_name: string): SafePropertyRead {
   const method = read_property(value, method_name);
   if (!method.ok || typeof method.value !== "function") {
     return { ok: false };
@@ -122,16 +107,9 @@ function call_method(
   }
 }
 
-function calls_with_nonempty_string(
-  context: object,
-  method_name: string,
-): boolean {
+function calls_with_nonempty_string(context: object, method_name: string): boolean {
   const result = call_method(context, method_name);
-  return (
-    result.ok &&
-    typeof result.value === "string" &&
-    result.value.trim().length > 0
-  );
+  return result.ok && typeof result.value === "string" && result.value.trim().length > 0;
 }
 
 function has_generation_events(context: object): boolean {
@@ -178,10 +156,7 @@ function has_valid_request_headers(context: object): boolean {
   }
 }
 
-export function inspect_sillytavern(
-  value: unknown,
-  fetch_: unknown,
-): SillyTavernInspection {
+export function inspect_sillytavern(value: unknown, fetch_: unknown): SillyTavernInspection {
   if (!is_property_container(value)) {
     return { ...SILLYTAVERN_UNAVAILABLE };
   }
@@ -191,14 +166,8 @@ export function inspect_sillytavern(
   }
 
   const context = context_result.value;
-  const locale_available = calls_with_nonempty_string(
-    context,
-    "getCurrentLocale",
-  );
-  const chat_id_available = calls_with_nonempty_string(
-    context,
-    "getCurrentChatId",
-  );
+  const locale_available = calls_with_nonempty_string(context, "getCurrentLocale");
+  const chat_id_available = calls_with_nonempty_string(context, "getCurrentChatId");
   return {
     native_tool_manager:
       locale_available &&
@@ -206,16 +175,14 @@ export function inspect_sillytavern(
       has_function_property(context, "unregisterFunctionTool"),
     main_generation_events: has_generation_events(context),
     message_swipe_metadata: chat_id_available,
-    host_image_upload:
-      typeof fetch_ === "function" && has_valid_request_headers(context),
+    host_image_upload: typeof fetch_ === "function" && has_valid_request_headers(context),
   };
 }
 
 type ListenerRegistration = readonly [string, SillyTavernEventListener];
 
 type RemovalResult =
-  | { readonly failed: false }
-  | { readonly failed: true; readonly error: unknown };
+  { readonly failed: false } | { readonly failed: true; readonly error: unknown };
 
 function remove_listeners(
   event_source: SillyTavernEventSource,
@@ -243,9 +210,7 @@ function read_nonempty_string(value: unknown, error_message: string): string {
   return value;
 }
 
-function clone_tool_arguments(
-  value: unknown,
-): Readonly<Record<string, unknown>> {
+function clone_tool_arguments(value: unknown): Readonly<Record<string, unknown>> {
   if (!is_plain_record(value)) {
     throw new Error("Image tool arguments must be a record");
   }
@@ -263,6 +228,10 @@ function clone_tool_arguments(
 }
 
 function clone_request_headers(value: unknown): Readonly<Record<string, string>> {
+  if (!is_plain_record(value)) {
+    throw new Error("SillyTavern returned invalid request headers");
+  }
+
   let clone: unknown;
   try {
     clone = structuredClone(value);
@@ -368,9 +337,7 @@ export class SillyTavernHost {
     };
   }
 
-  async upload_image(
-    request: HostImageUploadRequest,
-  ): Promise<HostImageUploadResult> {
+  async upload_image(request: HostImageUploadRequest): Promise<HostImageUploadResult> {
     const response = await this.#fetch("/api/images/upload", {
       method: "POST",
       headers: clone_request_headers(this.#context.getRequestHeaders()),
@@ -387,9 +354,7 @@ export class SillyTavernHost {
       payload = await response.json();
     } catch {
       if (!response.ok) {
-        throw new Error(
-          `Host image upload failed with status ${response.status}`,
-        );
+        throw new Error(`Host image upload failed with status ${response.status}`);
       }
       throw new Error("Host image upload returned an invalid response");
     }

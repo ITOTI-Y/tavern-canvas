@@ -1,12 +1,5 @@
 export type TauriWorldInfoActivationPosition =
-  | "before"
-  | "after"
-  | "an_top"
-  | "an_bottom"
-  | "depth"
-  | "em_top"
-  | "em_bottom"
-  | "outlet";
+  "before" | "after" | "an_top" | "an_bottom" | "depth" | "em_top" | "em_bottom" | "outlet";
 
 export interface TauriWorldInfoActivationEntrySurface {
   readonly world: string;
@@ -36,30 +29,23 @@ export interface HostWorldInfoActivationBatch {
   readonly entries: readonly HostWorldInfoActivationEntry[];
 }
 
-export type HostWorldInfoActivationHandler = (
-  batch: HostWorldInfoActivationBatch,
-) => void;
+export type HostWorldInfoActivationHandler = (batch: HostWorldInfoActivationBatch) => void;
 
 export type TauriTavernHostUnsubscribe = () => void | Promise<void>;
 
 export interface TauriTavernWorldInfoSurface {
   getLastActivation(): Promise<unknown>;
-  subscribeActivations(
-    handler: (batch: unknown) => void,
-  ): Promise<unknown>;
+  subscribeActivations(handler: (batch: unknown) => void): Promise<unknown>;
 }
 
-export type TauriChatSurfaceDisposer =
-  | (() => void)
-  | { readonly dispose: () => void };
+export type TauriChatSurfaceDisposer = (() => void) | { readonly dispose: () => void };
 
 export interface TauriChatSurfaceDetachedContext {
   readonly message_id: number;
   readonly content: HTMLElement;
 }
 
-export interface TauriChatSurfaceMountedContext
-  extends TauriChatSurfaceDetachedContext {
+export interface TauriChatSurfaceMountedContext extends TauriChatSurfaceDetachedContext {
   readonly element: HTMLElement;
   readonly signal: AbortSignal;
 }
@@ -75,9 +61,7 @@ export interface TauriChatSurfaceRuntimeContext {
 export interface TauriChatSurfaceRuntimeClaims {
   claim(
     source: Element,
-    activate: (
-      context: TauriChatSurfaceRuntimeContext,
-    ) => TauriChatSurfaceDisposer,
+    activate: (context: TauriChatSurfaceRuntimeContext) => TauriChatSurfaceDisposer,
   ): void;
 }
 
@@ -87,12 +71,8 @@ export interface TauriChatSurfaceParticipant {
     context: TauriChatSurfaceDetachedContext,
     claims: TauriChatSurfaceRuntimeClaims,
   ): void;
-  did_mount?(
-    context: TauriChatSurfaceMountedContext,
-  ): void | TauriChatSurfaceDisposer;
-  did_commit_content?(
-    context: TauriChatSurfaceMountedContext,
-  ): void | TauriChatSurfaceDisposer;
+  did_mount?(context: TauriChatSurfaceMountedContext): void | TauriChatSurfaceDisposer;
+  did_commit_content?(context: TauriChatSurfaceMountedContext): void | TauriChatSurfaceDisposer;
 }
 
 export interface TauriChatSurfaceRegistration {
@@ -104,8 +84,7 @@ export interface TauriTavernChatSurfaceDetachedContextSurface {
   readonly content: HTMLElement;
 }
 
-export interface TauriTavernChatSurfaceMountedContextSurface
-  extends TauriTavernChatSurfaceDetachedContextSurface {
+export interface TauriTavernChatSurfaceMountedContextSurface extends TauriTavernChatSurfaceDetachedContextSurface {
   readonly element: HTMLElement;
   readonly signal: AbortSignal;
 }
@@ -121,9 +100,7 @@ export interface TauriTavernChatSurfaceRuntimeContextSurface {
 export interface TauriTavernChatSurfaceRuntimeClaimsSurface {
   claim(
     source: Element,
-    activate: (
-      context: TauriTavernChatSurfaceRuntimeContextSurface,
-    ) => TauriChatSurfaceDisposer,
+    activate: (context: TauriTavernChatSurfaceRuntimeContextSurface) => TauriChatSurfaceDisposer,
   ): void;
 }
 
@@ -145,9 +122,7 @@ export interface TauriTavernChatSurfaceParticipantSurface {
 export interface TauriTavernChatSurfaceSurface {
   readonly protocolVersion: 1;
   isManagedOwnershipRequired(): boolean;
-  registerParticipant(
-    participant: TauriTavernChatSurfaceParticipantSurface,
-  ): unknown;
+  registerParticipant(participant: TauriTavernChatSurfaceParticipantSurface): unknown;
 }
 
 export interface TauriTavernGlobalSurface {
@@ -165,9 +140,7 @@ export interface TauriDetectionGlobals {
 }
 
 function is_property_container(value: unknown): value is object {
-  return (
-    (typeof value === "object" && value !== null) || typeof value === "function"
-  );
+  return (typeof value === "object" && value !== null) || typeof value === "function";
 }
 
 function is_plain_record(value: unknown): value is Record<string, unknown> {
@@ -198,22 +171,14 @@ export interface TauriTavernInspection {
   readonly tauri_world_info_activation: boolean;
 }
 
-function has_function_property(
-  value: object,
-  property_name: string,
-): boolean {
+function has_function_property(value: object, property_name: string): boolean {
   const property = read_property(value, property_name);
   return property.ok && typeof property.value === "function";
 }
 
-function read_property_container(
-  value: object,
-  property_name: string,
-): object | undefined {
+function read_property_container(value: object, property_name: string): object | undefined {
   const property = read_property(value, property_name);
-  return property.ok && is_property_container(property.value)
-    ? property.value
-    : undefined;
+  return property.ok && is_property_container(property.value) ? property.value : undefined;
 }
 
 export function inspect_tauritavern(value: unknown): TauriTavernInspection {
@@ -253,10 +218,7 @@ export function inspect_tauritavern(value: unknown): TauriTavernInspection {
   };
 }
 
-function normalize_disposer(
-  disposer: unknown,
-  allow_undefined = true,
-): void | (() => void) {
+function normalize_disposer(disposer: unknown, allow_undefined = true): void | (() => void) {
   if (disposer === undefined && allow_undefined) {
     return undefined;
   }
@@ -296,9 +258,7 @@ function normalize_mounted_context(
   };
 }
 
-function is_activation_position(
-  value: unknown,
-): value is TauriWorldInfoActivationPosition {
+function is_activation_position(value: unknown): value is TauriWorldInfoActivationPosition {
   return (
     value === "before" ||
     value === "after" ||
@@ -315,7 +275,33 @@ function invalid_activation(): never {
   throw new Error("TauriTavern returned an invalid WorldInfo activation");
 }
 
+function has_plain_activation_records(value: unknown): boolean {
+  if (!is_plain_record(value)) {
+    return false;
+  }
+  const entries = read_property(value, "entries");
+  if (!entries.ok) {
+    return false;
+  }
+  try {
+    if (!Array.isArray(entries.value)) {
+      return false;
+    }
+    for (let index = 0; index < entries.value.length; index += 1) {
+      if (!is_plain_record(entries.value[index])) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function normalize_activation(batch: unknown): HostWorldInfoActivationBatch {
+  if (!has_plain_activation_records(batch)) {
+    return invalid_activation();
+  }
   let clone: unknown;
   try {
     clone = structuredClone(batch);
@@ -345,8 +331,7 @@ function normalize_activation(batch: unknown): HostWorldInfoActivationBatch {
     const { world, uid, displayName, constant, position } = entry;
     if (
       typeof world !== "string" ||
-      (typeof uid !== "string" &&
-        (typeof uid !== "number" || !Number.isFinite(uid))) ||
+      (typeof uid !== "string" && (typeof uid !== "number" || !Number.isFinite(uid))) ||
       typeof displayName !== "string" ||
       typeof constant !== "boolean" ||
       (position !== undefined && !is_activation_position(position))
@@ -376,9 +361,7 @@ export class TauriTavernHost {
     this.#tauri = tauri;
   }
 
-  register_chat_surface(
-    participant: TauriChatSurfaceParticipant,
-  ): TauriChatSurfaceRegistration {
+  register_chat_surface(participant: TauriChatSurfaceParticipant): TauriChatSurfaceRegistration {
     const chat_surface = this.#tauri.api?.chatSurface;
     if (chat_surface === undefined) {
       throw new Error("TauriTavern ChatSurface API is unavailable");
@@ -416,20 +399,15 @@ export class TauriTavernHost {
       ...(participant.did_mount === undefined
         ? {}
         : {
-            didMount: (
-              context: TauriTavernChatSurfaceMountedContextSurface,
-            ) => normalize_disposer(participant.did_mount?.(normalize_mounted_context(context))),
+            didMount: (context: TauriTavernChatSurfaceMountedContextSurface) =>
+              normalize_disposer(participant.did_mount?.(normalize_mounted_context(context))),
           }),
       ...(participant.did_commit_content === undefined
         ? {}
         : {
-            didCommitContent: (
-              context: TauriTavernChatSurfaceMountedContextSurface,
-            ) =>
+            didCommitContent: (context: TauriTavernChatSurfaceMountedContextSurface) =>
               normalize_disposer(
-                participant.did_commit_content?.(
-                  normalize_mounted_context(context),
-                ),
+                participant.did_commit_content?.(normalize_mounted_context(context)),
               ),
           }),
     });

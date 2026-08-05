@@ -2,18 +2,9 @@ import type { CapabilityMatrix, CapabilityStatus } from "@tavern-canvas/contract
 import { gte, valid } from "semver";
 
 import { HOST_CAPABILITY_IDS, type HostCapabilityId } from "./host_adapter.js";
-import {
-  inspect_sillytavern,
-  type SillyTavernInspection,
-} from "./sillytavern_host.js";
-import {
-  inspect_tauritavern,
-  type TauriTavernInspection,
-} from "./tauritavern_host.js";
-import {
-  inspect_tavern_helper,
-  type TavernHelperInspection,
-} from "./tavern_helper_host.js";
+import { inspect_sillytavern, type SillyTavernInspection } from "./sillytavern_host.js";
+import { inspect_tauritavern, type TauriTavernInspection } from "./tauritavern_host.js";
+import { inspect_tavern_helper, type TavernHelperInspection } from "./tavern_helper_host.js";
 
 export const MINIMUM_TAVERN_HELPER_VERSION = "4.9.1";
 
@@ -44,10 +35,7 @@ function available_when(value: boolean, reason: string): CapabilityStatus {
 }
 
 function read_global(value: unknown, property_name: string): unknown {
-  if (
-    (typeof value !== "object" || value === null) &&
-    typeof value !== "function"
-  ) {
+  if ((typeof value !== "object" || value === null) && typeof value !== "function") {
     return undefined;
   }
   try {
@@ -101,22 +89,17 @@ function build_matrix(
 
 function missing_required_capabilities(matrix: CapabilityMatrix): string[] {
   return REQUIRED_CAPABILITY_IDS.filter(
-    (capability_id: HostCapabilityId) =>
-      matrix[capability_id]?.available !== true,
+    (capability_id: HostCapabilityId) => matrix[capability_id]?.available !== true,
   );
 }
 
-export function probe_host_capabilities(
-  globals: unknown,
-): BootstrapProbeResult {
+export function probe_host_capabilities(globals: unknown): BootstrapProbeResult {
   const helper = inspect_tavern_helper(read_global(globals, "TavernHelper"));
   const sillytavern = inspect_sillytavern(
     read_global(globals, "SillyTavern"),
     read_global(globals, "fetch"),
   );
-  const tauri = inspect_tauritavern(
-    read_global(globals, "__TAURITAVERN__"),
-  );
+  const tauri = inspect_tauritavern(read_global(globals, "__TAURITAVERN__"));
   const matrix = build_matrix(helper, sillytavern, tauri);
 
   if (!helper.detected) {
