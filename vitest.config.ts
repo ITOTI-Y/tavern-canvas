@@ -1,6 +1,8 @@
+import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  plugins: [vue()],
   test: {
     projects: [
       {
@@ -15,6 +17,7 @@ export default defineConfig({
           include: ["apps/**/*.test.ts", "apps/**/*.spec.ts"],
           environment: "happy-dom",
         },
+        plugins: [vue()],
       },
       {
         test: {

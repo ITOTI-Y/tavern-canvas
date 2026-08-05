@@ -7,14 +7,27 @@
     ".": "./src/host/index.ts"
   },
   "scripts": {
+    "build": "vite build && node scripts/assert_bundle.mjs",
     "test": "vitest run --root ../.. --project apps apps/extension",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@noble/hashes": "2.2.0",
     "@tavern-canvas/contracts": "workspace:*",
-    "semver": "7.8.5"
+    "@tavern-canvas/core": "workspace:*",
+    "lucide-vue-next": "1.0.0",
+    "reka-ui": "2.10.1",
+    "semver": "7.8.5",
+    "vue": "3.5.40",
+    "vue-i18n": "11.4.8",
+    "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/semver": "7.8.0"
+    "@types/node": "24.13.3",
+    "@types/semver": "7.8.0",
+    "@vitejs/plugin-vue": "6.0.8",
+    "@vue/test-utils": "2.4.11",
+    "vite": "8.2.0",
+    "vue-tsc": "3.3.9"
   }
 }

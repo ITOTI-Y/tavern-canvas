@@ -1,0 +1,17 @@
+{
+  "display_name": "智绘姬",
+  "loading_order": 110,
+  "requires": [],
+  "optional": [],
+  "dependencies": ["JS-Slash-Runner"],
+  "js": "dist/index.js",
+  "css": "dist/index.css",
+  "author": "ITOTI-Y",
+  "version": "3.0.0-alpha.1",
+  "homePage": "https://github.com/ITOTI-Y/tavern-canvas",
+  "auto_update": true,
+  "minimum_client_version": "1.18.0",
+  "i18n": {
+    "en": "i18n/en.json"
+  }
+}

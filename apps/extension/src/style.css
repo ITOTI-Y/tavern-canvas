@@ -1,0 +1,78 @@
+#tavern-canvas-root {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483000;
+}
+
+:host {
+  color: #252931;
+  font-family: Geist, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-synthesis: none;
+  line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.bootstrap-status {
+  width: min(360px, calc(100vw - 32px));
+  padding: 22px 24px 24px;
+  border: 1px solid #dfe3e8;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.bootstrap-status__eyebrow {
+  margin: 0 0 14px;
+  color: #68707c;
+  font-family: "SF Mono", "Geist Mono", monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.bootstrap-status h1 {
+  margin: 0;
+  color: #20242b;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.bootstrap-status p:not(.bootstrap-status__eyebrow) {
+  margin: 10px 0 0;
+  color: #59616d;
+}
+
+.bootstrap-status__action {
+  display: inline-block;
+  margin-top: 18px;
+  border-bottom: 1px solid currentcolor;
+  color: #2859b8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bootstrap-status__action:focus-visible {
+  outline: 2px solid #2859b8;
+  outline-offset: 4px;
+}
+
+@media (max-width: 480px) {
+  #tavern-canvas-root {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .bootstrap-status {
+    width: 100%;
+  }
+}
