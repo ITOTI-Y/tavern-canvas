@@ -210,4 +210,276 @@ describe("ModuleRuntime", () => {
     expect(states_seen_by_module).toEqual(["starting", "stopping"]);
     expect(runtime.state).toBe("stopped");
   });
+
+  it("continues rollback after a middle module fails to stop", async () => {
+    const lifecycle: string[] = [];
+    const capabilities = new CapabilityRegistry();
+    const startup_error = new Error("leaf start failed");
+    const rollback_error = new Error("middle stop failed");
+    const root = new RecordingModule(
+      "root",
+      [],
+      (context) => {
+        lifecycle.push("start:root");
+        context.capabilities.register("cap.root", "root", 1);
+      },
+      () => {
+        lifecycle.push("stop:root");
+      },
+    );
+    const middle = new RecordingModule(
+      "middle",
+      ["root"],
+      (context) => {
+        lifecycle.push("start:middle");
+        context.capabilities.register("cap.middle", "middle", 2);
+      },
+      () => {
+        lifecycle.push("stop:middle");
+        throw rollback_error;
+      },
+    );
+    const upper = new RecordingModule(
+      "upper",
+      ["middle"],
+      (context) => {
+        lifecycle.push("start:upper");
+        context.capabilities.register("cap.upper", "upper", 3);
+      },
+      () => {
+        lifecycle.push("stop:upper");
+      },
+    );
+    const leaf = new RecordingModule("leaf", ["upper"], (context) => {
+      lifecycle.push("start:leaf");
+      context.capabilities.register("cap.leaf", "leaf", 4);
+      throw startup_error;
+    });
+    const runtime = new ModuleRuntime(
+      [leaf, upper, middle, root],
+      capabilities,
+      new DomainEventBus(),
+    );
+
+    let thrown: unknown;
+    try {
+      await runtime.start_all();
+    } catch (error) {
+      thrown = error;
+    }
+
+    expect(thrown).toBeInstanceOf(AggregateError);
+    expect((thrown as AggregateError).errors).toEqual([
+      startup_error,
+      rollback_error,
+    ]);
+    expect((thrown as AggregateError).cause).toBe(startup_error);
+    expect(lifecycle).toEqual([
+      "start:root",
+      "start:middle",
+      "start:upper",
+      "start:leaf",
+      "stop:upper",
+      "stop:middle",
+      "stop:root",
+    ]);
+    expect(capabilities.has("cap.root")).toBe(false);
+    expect(capabilities.has("cap.middle")).toBe(false);
+    expect(capabilities.has("cap.upper")).toBe(false);
+    expect(capabilities.has("cap.leaf")).toBe(false);
+    expect(runtime.state).toBe("failed");
+  });
+
+  it("continues normal shutdown after a middle module fails to stop", async () => {
+    const lifecycle: string[] = [];
+    const capabilities = new CapabilityRegistry();
+    const stop_error = new Error("middle stop failed");
+    const root = new RecordingModule(
+      "root",
+      [],
+      (context) => {
+        lifecycle.push("start:root");
+        context.capabilities.register("cap.root", "root", 1);
+      },
+      () => {
+        lifecycle.push("stop:root");
+      },
+    );
+    const middle = new RecordingModule(
+      "middle",
+      ["root"],
+      (context) => {
+        lifecycle.push("start:middle");
+        context.capabilities.register("cap.middle", "middle", 2);
+      },
+      () => {
+        lifecycle.push("stop:middle");
+        throw stop_error;
+      },
+    );
+    const upper = new RecordingModule(
+      "upper",
+      ["middle"],
+      (context) => {
+        lifecycle.push("start:upper");
+        context.capabilities.register("cap.upper", "upper", 3);
+      },
+      () => {
+        lifecycle.push("stop:upper");
+      },
+    );
+    const runtime = new ModuleRuntime(
+      [upper, middle, root],
+      capabilities,
+      new DomainEventBus(),
+    );
+
+    await runtime.start_all();
+    let thrown: unknown;
+    try {
+      await runtime.stop_all();
+    } catch (error) {
+      thrown = error;
+    }
+
+    expect(thrown).toBeInstanceOf(AggregateError);
+    expect((thrown as AggregateError).errors).toEqual([stop_error]);
+    expect(lifecycle).toEqual([
+      "start:root",
+      "start:middle",
+      "start:upper",
+      "stop:upper",
+      "stop:middle",
+      "stop:root",
+    ]);
+    expect(capabilities.has("cap.root")).toBe(false);
+    expect(capabilities.has("cap.middle")).toBe(false);
+    expect(capabilities.has("cap.upper")).toBe(false);
+    expect(runtime.state).toBe("failed");
+    await expect(runtime.stop_all()).resolves.toBeUndefined();
+  });
+
+  it("rejects duplicate module identifiers before runtime construction", () => {
+    const first = new RecordingModule("duplicate", [], () => undefined);
+    const second = new RecordingModule("duplicate", [], () => undefined);
+
+    expect(() => new ModuleRuntime([first, second])).toThrowError(/duplicate/u);
+  });
+
+  it("does not start already-started modules a second time", async () => {
+    const lifecycle: string[] = [];
+    const module = new RecordingModule("single", [], () => {
+      lifecycle.push("start:single");
+    });
+    const runtime = new ModuleRuntime([module]);
+
+    await runtime.start_all();
+    await runtime.start_all();
+
+    expect(lifecycle).toEqual(["start:single"]);
+    expect(runtime.state).toBe("started");
+  });
+
+  it("keeps failed and stopped runtimes terminal across repeated calls", async () => {
+    const startup_error = new Error("cannot start");
+    const failed_runtime = new ModuleRuntime([
+      new RecordingModule("broken", [], () => {
+        throw startup_error;
+      }),
+    ]);
+
+    await expect(failed_runtime.start_all()).rejects.toBe(startup_error);
+    await expect(failed_runtime.start_all()).rejects.toThrowError(/failed/u);
+    await expect(failed_runtime.stop_all()).resolves.toBeUndefined();
+    await expect(failed_runtime.stop_all()).resolves.toBeUndefined();
+    expect(failed_runtime.state).toBe("failed");
+
+    const stopped_runtime = new ModuleRuntime([]);
+    await stopped_runtime.stop_all();
+    await stopped_runtime.stop_all();
+    expect(stopped_runtime.state).toBe("stopped");
+    await expect(stopped_runtime.start_all()).rejects.toThrowError(/stopped/u);
+  });
+
+  it("rejects lifecycle reentry while start and stop transitions are pending", async () => {
+    const { promise: start_gate, resolve: release_start } =
+      Promise.withResolvers<void>();
+    const starting_runtime = new ModuleRuntime([
+      new RecordingModule("slow-start", [], async () => {
+        await start_gate;
+      }),
+    ]);
+
+    const starting = starting_runtime.start_all();
+    expect(starting_runtime.state).toBe("starting");
+    await expect(starting_runtime.start_all()).rejects.toThrowError(/starting/u);
+    await expect(starting_runtime.stop_all()).rejects.toThrowError(/starting/u);
+    release_start();
+    await starting;
+
+    const { promise: stop_gate, resolve: release_stop } =
+      Promise.withResolvers<void>();
+    const stopping_runtime = new ModuleRuntime([
+      new RecordingModule(
+        "slow-stop",
+        [],
+        () => undefined,
+        async () => {
+          await stop_gate;
+        },
+      ),
+    ]);
+    await stopping_runtime.start_all();
+
+    const stopping = stopping_runtime.stop_all();
+    expect(stopping_runtime.state).toBe("stopping");
+    await expect(stopping_runtime.start_all()).rejects.toThrowError(/stopping/u);
+    await expect(stopping_runtime.stop_all()).rejects.toThrowError(/stopping/u);
+    release_stop();
+    await stopping;
+    expect(stopping_runtime.state).toBe("stopped");
+
+    await starting_runtime.stop_all();
+  });
+
+  it("awaits dependency registration before sharing its capability", async () => {
+    const lifecycle: string[] = [];
+    const { promise: dependency_gate, resolve: release_dependency } =
+      Promise.withResolvers<void>();
+    const dependency = new RecordingModule(
+      "dependency",
+      [],
+      async (context) => {
+        lifecycle.push("dependency:starting");
+        await dependency_gate;
+        context.capabilities.register("shared.value", "dependency", {
+          value: 42,
+        });
+        lifecycle.push("dependency:ready");
+      },
+    );
+    const dependent = new RecordingModule(
+      "dependent",
+      ["dependency"],
+      (context) => {
+        lifecycle.push(
+          `dependent:${context.capabilities.require<{ value: number }>("shared.value").value}`,
+        );
+      },
+    );
+    const runtime = new ModuleRuntime([dependent, dependency]);
+
+    const starting = runtime.start_all();
+    await Promise.resolve();
+    expect(lifecycle).toEqual(["dependency:starting"]);
+    release_dependency();
+    await starting;
+
+    expect(lifecycle).toEqual([
+      "dependency:starting",
+      "dependency:ready",
+      "dependent:42",
+    ]);
+    await runtime.stop_all();
+  });
 });
