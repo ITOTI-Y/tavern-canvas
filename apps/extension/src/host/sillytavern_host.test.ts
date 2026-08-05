@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { SillyTavernHost } from "./sillytavern_host.js";
+import {
+  inspect_sillytavern,
+  SillyTavernHost,
+  type SillyTavernContextSurface,
+} from "./sillytavern_host.js";
 
 class FakeEventSource {
   readonly #listeners = new Map<
@@ -8,12 +12,20 @@ class FakeEventSource {
     Set<(...arguments_: readonly unknown[]) => void>
   >();
   remove_count = 0;
+  throw_on_registration: number | undefined;
+  throw_on_removal: string | undefined;
+  on_count = 0;
+  removed_events: string[] = [];
 
   on(
     event_name: string,
     listener: (...arguments_: readonly unknown[]) => void,
   ): void {
     const listeners = this.#listeners.get(event_name) ?? new Set();
+    this.on_count += 1;
+    if (this.on_count === this.throw_on_registration) {
+      throw new Error(`registration ${this.on_count} failed`);
+    }
     listeners.add(listener);
     this.#listeners.set(event_name, listeners);
   }
@@ -23,6 +35,10 @@ class FakeEventSource {
     listener: (...arguments_: readonly unknown[]) => void,
   ): void {
     this.remove_count += 1;
+    this.removed_events.push(event_name);
+    if (event_name === this.throw_on_removal) {
+      throw new Error(`removal ${event_name} failed`);
+    }
     this.#listeners.get(event_name)?.delete(listener);
   }
 
@@ -34,23 +50,38 @@ class FakeEventSource {
 }
 
 function create_context(event_source = new FakeEventSource()) {
+  const get_current_locale = vi.fn<
+    SillyTavernContextSurface["getCurrentLocale"]
+  >(() => "zh-CN");
+  const get_current_chat_id = vi.fn<
+    SillyTavernContextSurface["getCurrentChatId"]
+  >(() => "chat-42");
+  const get_request_headers = vi.fn<
+    SillyTavernContextSurface["getRequestHeaders"]
+  >(() => ({
+    "Content-Type": "application/json",
+    "X-CSRF-TOKEN": "csrf-token",
+  }));
+  const register_function_tool = vi.fn<
+    SillyTavernContextSurface["registerFunctionTool"]
+  >();
+  const unregister_function_tool = vi.fn<
+    SillyTavernContextSurface["unregisterFunctionTool"]
+  >();
   return {
     event_source,
     surface: {
-      getCurrentLocale: vi.fn(() => "zh-CN"),
-      getCurrentChatId: vi.fn(() => "chat-42"),
-      getRequestHeaders: vi.fn(() => ({
-        "Content-Type": "application/json",
-        "X-CSRF-TOKEN": "csrf-token",
-      })),
+      getCurrentLocale: get_current_locale,
+      getCurrentChatId: get_current_chat_id,
+      getRequestHeaders: get_request_headers,
       eventSource: event_source,
       eventTypes: {
         GENERATION_STARTED: "generation_started",
         GENERATION_STOPPED: "generation_stopped",
         GENERATION_ENDED: "generation_ended",
       },
-      registerFunctionTool: vi.fn(),
-      unregisterFunctionTool: vi.fn(),
+      registerFunctionTool: register_function_tool,
+      unregisterFunctionTool: unregister_function_tool,
     },
   };
 }
@@ -88,6 +119,46 @@ describe("SillyTavernHost", () => {
     expect(context.event_source.remove_count).toBe(3);
   });
 
+  it.each([2, 3])(
+    "rolls back listeners when registration %i fails",
+    (registration_number) => {
+      const event_source = new FakeEventSource();
+      event_source.throw_on_registration = registration_number;
+      const context = create_context(event_source);
+      const host = new SillyTavernHost(context.surface, vi.fn());
+      const events: unknown[] = [];
+
+      expect(() => host.subscribe_generation((event) => events.push(event))).toThrowError(
+        `registration ${registration_number} failed`,
+      );
+      event_source.emit("generation_started", "normal", {}, false);
+      event_source.emit("generation_stopped");
+      expect(events).toEqual([]);
+      expect(event_source.remove_count).toBe(registration_number - 1);
+      expect(event_source.removed_events).toEqual(
+        registration_number === 2
+          ? ["generation_started"]
+          : ["generation_stopped", "generation_started"],
+      );
+    },
+  );
+
+  it("attempts every listener removal when one removal throws", () => {
+    const event_source = new FakeEventSource();
+    event_source.throw_on_removal = "generation_stopped";
+    const context = create_context(event_source);
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    const dispose = host.subscribe_generation(() => undefined);
+
+    expect(() => dispose()).toThrowError(/removal generation_stopped failed/u);
+    expect(event_source.removed_events).toEqual([
+      "generation_ended",
+      "generation_stopped",
+      "generation_started",
+    ]);
+    expect(() => dispose()).not.toThrow();
+  });
+
   it("registers and idempotently unregisters an image tool", async () => {
     const context = create_context();
     const host = new SillyTavernHost(context.surface, vi.fn());
@@ -121,6 +192,80 @@ describe("SillyTavernHost", () => {
     expect(context.surface.unregisterFunctionTool).toHaveBeenCalledWith(
       "request_image",
     );
+  });
+
+  it.each([null, [], "invalid"])(
+    "rejects non-record tool arguments %j",
+    async (arguments_) => {
+      const context = create_context();
+      const execute = vi.fn(async () => "queued");
+      const host = new SillyTavernHost(context.surface, vi.fn());
+      host.register_image_tool({
+        name: "request_image",
+        display_name: "Request image",
+        description: "Queue an image request",
+        parameters: { type: "object" },
+        execute,
+      });
+      const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+      const action = registered_tool?.action as unknown as
+        | ((value: unknown) => string | Promise<string>)
+        | undefined;
+
+      await expect(() => action?.(arguments_)).rejects.toThrowError(
+        /Image tool arguments must be a record/u,
+      );
+      expect(execute).not.toHaveBeenCalled();
+    },
+  );
+
+  it("rejects tool arguments that cannot be cloned", async () => {
+    const context = create_context();
+    const execute = vi.fn(async () => "queued");
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    host.register_image_tool({
+      name: "request_image",
+      display_name: "Request image",
+      description: "Queue an image request",
+      parameters: { type: "object" },
+      execute,
+    });
+    const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+
+    await expect(
+      registered_tool?.action({ callback: () => undefined }),
+    ).rejects.toThrowError(/Image tool arguments could not be cloned/u);
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("clones tool arguments before invoking domain code", async () => {
+    const context = create_context();
+    const received: Readonly<Record<string, unknown>>[] = [];
+    const execute = vi.fn(async (arguments_: Readonly<Record<string, unknown>>) => {
+      received.push(arguments_);
+      return "queued";
+    });
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    host.register_image_tool({
+      name: "request_image",
+      display_name: "Request image",
+      description: "Queue an image request",
+      parameters: { type: "object" },
+      execute,
+    });
+    const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+    const raw_arguments = { scene: { description: "Rainy alley" } };
+
+    await registered_tool?.action(raw_arguments);
+    raw_arguments.scene.description = "mutated";
+
+    expect(received).toEqual([{ scene: { description: "Rainy alley" } }]);
+    const received_scene = received[0]?.scene;
+    if (typeof received_scene !== "object" || received_scene === null) {
+      throw new Error("received tool arguments are missing scene data");
+    }
+    Reflect.set(received_scene, "description", "domain mutation");
+    expect(raw_arguments.scene.description).toBe("mutated");
   });
 
   it("uploads an image through the supported host route", async () => {
@@ -192,4 +337,167 @@ describe("SillyTavernHost", () => {
       }),
     ).rejects.toThrowError("Image exceeds host limit");
   });
+
+  it.each(["empty", "invalid JSON"])(
+    "preserves HTTP status for a non-OK %s response body",
+    async () => {
+      const context = create_context();
+      const fetch_ = vi.fn(async () => ({
+        ok: false,
+        status: 502,
+        json: async () => {
+          throw new SyntaxError("body is not JSON");
+        },
+      }));
+      const host = new SillyTavernHost(context.surface, fetch_);
+
+      await expect(
+        host.upload_image({
+          image_base64: "aW1hZ2U=",
+          character_name: "Character",
+          file_name: "image",
+          format: "png",
+        }),
+      ).rejects.toThrowError("Host image upload failed with status 502");
+    },
+  );
+
+  it("keeps invalid-response behavior for a successful non-JSON body", async () => {
+    const context = create_context();
+    const fetch_ = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => {
+        throw new SyntaxError("body is not JSON");
+      },
+    }));
+    const host = new SillyTavernHost(context.surface, fetch_);
+
+    await expect(
+      host.upload_image({
+        image_base64: "aW1hZ2U=",
+        character_name: "Character",
+        file_name: "image",
+        format: "png",
+      }),
+    ).rejects.toThrowError("Host image upload returned an invalid response");
+  });
+
+  it("validates locale, chat ID, and request headers at the boundary", async () => {
+    const context = create_context();
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    context.surface.getCurrentLocale.mockReturnValue("" as string);
+    expect(() => host.get_locale()).toThrowError(/invalid locale/u);
+    context.surface.getCurrentLocale.mockReturnValue("zh-CN");
+    context.surface.getCurrentChatId.mockReturnValue(null as unknown as string);
+    expect(() => host.get_active_chat_id()).toThrowError(/invalid active chat ID/u);
+    context.surface.getCurrentChatId.mockReturnValue("chat-42");
+    context.surface.getRequestHeaders.mockReturnValue({
+      "Content-Type": 7,
+    } as unknown as Record<string, string>);
+
+    await expect(
+      host.upload_image({
+        image_base64: "aW1hZ2U=",
+        character_name: "Character",
+        file_name: "image",
+        format: "png",
+      }),
+    ).rejects.toThrowError(/invalid request headers/u);
+  });
+});
+
+describe("inspect_sillytavern", () => {
+  const unavailable = {
+    native_tool_manager: false,
+    main_generation_events: false,
+    message_swipe_metadata: false,
+    host_image_upload: false,
+  };
+
+  it("owns getContext and validates every unconditional context result", () => {
+    const context = create_context();
+
+    expect(inspect_sillytavern(
+      { getContext: () => context.surface },
+      vi.fn(),
+    )).toEqual({
+      native_tool_manager: true,
+      main_generation_events: true,
+      message_swipe_metadata: true,
+      host_image_upload: true,
+    });
+  });
+
+  it.each([undefined, null, 7, "SillyTavern", {}])(
+    "fails closed for malformed global value %j",
+    (value) => {
+      expect(() => inspect_sillytavern(value, vi.fn())).not.toThrow();
+      expect(inspect_sillytavern(value, vi.fn())).toEqual(unavailable);
+    },
+  );
+
+  it.each([
+    ["throwing getContext getter", Object.create(null)],
+    [
+      "throwing getContext call",
+      {
+        getContext: () => {
+          throw new Error("context failed");
+        },
+      },
+    ],
+    ["null context", { getContext: () => null }],
+    ["scalar context", { getContext: () => 7 }],
+  ])("fails closed for a %s", (_, sillytavern) => {
+    if (Object.getPrototypeOf(sillytavern) === null) {
+      Object.defineProperty(sillytavern, "getContext", {
+        get: () => {
+          throw new Error("getter failed");
+        },
+      });
+    }
+
+    expect(() => inspect_sillytavern(sillytavern, vi.fn())).not.toThrow();
+    expect(inspect_sillytavern(sillytavern, vi.fn())).toEqual(unavailable);
+  });
+
+  it.each([
+    ["getCurrentLocale", "native_tool_manager"],
+    ["getCurrentChatId", "message_swipe_metadata"],
+    ["getRequestHeaders", "host_image_upload"],
+  ] as const)(
+    "fails only the assigned group when %s returns a malformed value",
+    (method_name, capability) => {
+      const context = create_context();
+      context.surface[method_name].mockReturnValue(null as never);
+
+      const result = inspect_sillytavern(
+        { getContext: () => context.surface },
+        vi.fn(),
+      );
+
+      expect(result[capability]).toBe(false);
+      for (const [name, available] of Object.entries(result)) {
+        if (name !== capability) {
+          expect(available).toBe(true);
+        }
+      }
+    },
+  );
+
+  it.each(["getCurrentLocale", "getCurrentChatId", "getRequestHeaders"] as const)(
+    "fails closed when the %s call throws",
+    (method_name) => {
+      const context = create_context();
+      context.surface[method_name].mockImplementation(() => {
+        throw new Error("context method failed");
+      });
+
+      expect(() => inspect_sillytavern(
+        { getContext: () => context.surface },
+        vi.fn(),
+      )).not.toThrow();
+    },
+  );
 });
