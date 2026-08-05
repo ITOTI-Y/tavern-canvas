@@ -29,3 +29,6 @@ export const GenerationStateSchema = z.enum([
 ]);
 
 export type GenerationState = z.infer<typeof GenerationStateSchema>;
+
+export const GenerationTriggerModeSchema = z.enum(["native_tool", "fallback_comment"]);
+export type GenerationTriggerMode = z.infer<typeof GenerationTriggerModeSchema>;

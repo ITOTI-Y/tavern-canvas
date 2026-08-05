@@ -16,3 +16,19 @@ export type { GenerationAnchors, RandomSource, SecureCryptoSource } from "./gene
 export { canonical_json } from "./generation/canonical_json.js";
 export { SourceContextSchema } from "./generation/source_context.js";
 export type { SourceContext } from "./generation/source_context.js";
+export type {
+  GenerationSession,
+  OpenGenerationSessionRequest,
+} from "./generation/generation_session.js";
+export {
+  DEFAULT_SESSION_RETENTION_MS,
+  GenerationSessionError,
+  SessionRegistry,
+} from "./generation/session_registry.js";
+export type { GenerationSessionErrorCode, TimeSource } from "./generation/session_registry.js";
+export { create_trigger_policy } from "./generation/tool_policy.js";
+export type {
+  GenerationTriggerPolicy,
+  HostPromptInjection,
+  PrivatePromptPolicy,
+} from "./generation/tool_policy.js";

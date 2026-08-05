@@ -5,8 +5,18 @@ export {
 } from "./capability.js";
 export type { CapabilityId, CapabilityMatrix, CapabilityStatus } from "./capability.js";
 
-export { GenerationStateSchema, RequestImageArgumentsSchema, Sha256Schema } from "./generation.js";
-export type { GenerationState, RequestImageArguments, Sha256 } from "./generation.js";
+export {
+  GenerationStateSchema,
+  GenerationTriggerModeSchema,
+  RequestImageArgumentsSchema,
+  Sha256Schema,
+} from "./generation.js";
+export type {
+  GenerationState,
+  GenerationTriggerMode,
+  RequestImageArguments,
+  Sha256,
+} from "./generation.js";
 
 export {
   GatewayCapabilitiesResponseSchema,
