@@ -218,6 +218,85 @@ describe("SillyTavernHost", () => {
       expect(execute).not.toHaveBeenCalled();
     },
   );
+  it.each([
+    ["Date", new Date()],
+    ["Map", new Map()],
+    ["Set", new Set()],
+    ["Error", new Error("host value")],
+  ])("rejects branded %s tool arguments before domain invocation", async (_, arguments_) => {
+    const context = create_context();
+    const execute = vi.fn(async () => "queued");
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    host.register_image_tool({
+      name: "request_image",
+      display_name: "Request image",
+      description: "Queue an image request",
+      parameters: { type: "object" },
+      execute,
+    });
+    const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+
+    await expect(registered_tool?.action(arguments_)).rejects.toThrowError(
+      /Image tool arguments must be a record/u,
+    );
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      "a prototype trap",
+      new Proxy({}, {
+        getPrototypeOf: () => {
+          throw new Error("prototype failed");
+        },
+      }),
+    ],
+    [
+      "a revoked proxy",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return proxy;
+      })(),
+    ],
+  ])("rejects tool arguments with %s before domain invocation", async (_, arguments_) => {
+    const context = create_context();
+    const execute = vi.fn(async () => "queued");
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    host.register_image_tool({
+      name: "request_image",
+      display_name: "Request image",
+      description: "Queue an image request",
+      parameters: { type: "object" },
+      execute,
+    });
+    const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+
+    await expect(registered_tool?.action(arguments_)).rejects.toThrowError(
+      /Image tool arguments must be a record/u,
+    );
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it("accepts null-prototype tool argument records", async () => {
+    const context = create_context();
+    const execute = vi.fn(async () => "queued");
+    const host = new SillyTavernHost(context.surface, vi.fn());
+    host.register_image_tool({
+      name: "request_image",
+      display_name: "Request image",
+      description: "Queue an image request",
+      parameters: { type: "object" },
+      execute,
+    });
+    const arguments_: Record<string, unknown> = Object.create(null);
+    arguments_.scene_description = "Rainy alley";
+    const registered_tool = context.surface.registerFunctionTool.mock.calls[0]?.[0];
+
+    await expect(registered_tool?.action(arguments_)).resolves.toBe("queued");
+    expect(execute).toHaveBeenCalledWith({ scene_description: "Rainy alley" });
+  });
+
 
   it("rejects tool arguments that cannot be cloned", async () => {
     const context = create_context();
@@ -405,6 +484,54 @@ describe("SillyTavernHost", () => {
       }),
     ).rejects.toThrowError(/invalid request headers/u);
   });
+  it.each([
+    ["Date", new Date()],
+    ["Map", new Map()],
+    ["Set", new Set()],
+    ["Error", new Error("host value")],
+  ])("rejects branded %s request headers before fetch", async (_, headers) => {
+    const context = create_context();
+    context.surface.getRequestHeaders.mockReturnValue(headers);
+    const fetch_ = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ path: "/user/images/character/image.png" }),
+    }));
+    const host = new SillyTavernHost(context.surface, fetch_);
+
+    await expect(host.upload_image({
+      image_base64: "aW1hZ2U=",
+      character_name: "Character",
+      file_name: "image",
+      format: "png",
+    })).rejects.toThrowError(/invalid request headers/u);
+    expect(fetch_).not.toHaveBeenCalled();
+  });
+
+  it("accepts null-prototype string request headers", async () => {
+    const context = create_context();
+    const headers: Record<string, unknown> = Object.create(null);
+    headers["X-CSRF-TOKEN"] = "csrf-token";
+    context.surface.getRequestHeaders.mockReturnValue(headers);
+    const fetch_ = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ path: "/user/images/character/image.png" }),
+    }));
+    const host = new SillyTavernHost(context.surface, fetch_);
+
+    await expect(host.upload_image({
+      image_base64: "aW1hZ2U=",
+      character_name: "Character",
+      file_name: "image",
+      format: "png",
+    })).resolves.toEqual({ path: "/user/images/character/image.png" });
+    expect(fetch_).toHaveBeenCalledWith(
+      "/api/images/upload",
+      expect.objectContaining({ headers: { "X-CSRF-TOKEN": "csrf-token" } }),
+    );
+  });
+
 });
 
 describe("inspect_sillytavern", () => {
@@ -436,6 +563,49 @@ describe("inspect_sillytavern", () => {
       expect(inspect_sillytavern(value, vi.fn())).toEqual(unavailable);
     },
   );
+  it.each([
+    [
+      "revoked global",
+      (() => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return proxy;
+      })(),
+    ],
+    [
+      "revoked context",
+      {
+        getContext: () => {
+          const { proxy, revoke } = Proxy.revocable({}, {});
+          revoke();
+          return proxy;
+        },
+      },
+    ],
+  ])("fails closed for a %s proxy", (_, sillytavern) => {
+    expect(() => inspect_sillytavern(sillytavern, vi.fn())).not.toThrow();
+    expect(inspect_sillytavern(sillytavern, vi.fn())).toEqual(unavailable);
+  });
+
+  it("does not classify a raw context through its prototype", () => {
+    const context = create_context();
+    const hostile_context = new Proxy(context.surface, {
+      getPrototypeOf: () => {
+        throw new Error("prototype failed");
+      },
+    });
+
+    expect(inspect_sillytavern(
+      { getContext: () => hostile_context },
+      vi.fn(),
+    )).toEqual({
+      native_tool_manager: true,
+      main_generation_events: true,
+      message_swipe_metadata: true,
+      host_image_upload: true,
+    });
+  });
+
 
   it.each([
     ["throwing getContext getter", Object.create(null)],

@@ -52,8 +52,22 @@ export type SillyTavernFetch = (
   },
 ) => Promise<SillyTavernUploadResponse>;
 
-function is_record(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function is_property_container(value: unknown): value is object {
+  return (
+    (typeof value === "object" && value !== null) || typeof value === "function"
+  );
+}
+
+function is_plain_record(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  try {
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === Object.prototype || prototype === null;
+  } catch {
+    return false;
+  }
 }
 
 export interface SillyTavernInspection {
@@ -75,18 +89,18 @@ type SafePropertyRead =
   | { readonly ok: false };
 
 function read_property(
-  value: Record<string, unknown>,
+  value: object,
   property_name: string,
 ): SafePropertyRead {
   try {
-    return { ok: true, value: value[property_name] };
+    return { ok: true, value: Reflect.get(value, property_name) };
   } catch {
     return { ok: false };
   }
 }
 
 function has_function_property(
-  value: Record<string, unknown>,
+  value: object,
   property_name: string,
 ): boolean {
   const property = read_property(value, property_name);
@@ -94,7 +108,7 @@ function has_function_property(
 }
 
 function call_method(
-  value: Record<string, unknown>,
+  value: object,
   method_name: string,
 ): SafePropertyRead {
   const method = read_property(value, method_name);
@@ -109,7 +123,7 @@ function call_method(
 }
 
 function calls_with_nonempty_string(
-  context: Record<string, unknown>,
+  context: object,
   method_name: string,
 ): boolean {
   const result = call_method(context, method_name);
@@ -120,14 +134,14 @@ function calls_with_nonempty_string(
   );
 }
 
-function has_generation_events(context: Record<string, unknown>): boolean {
+function has_generation_events(context: object): boolean {
   const event_source_property = read_property(context, "eventSource");
   const event_types_property = read_property(context, "eventTypes");
   if (
     !event_source_property.ok ||
-    !is_record(event_source_property.value) ||
+    !is_property_container(event_source_property.value) ||
     !event_types_property.ok ||
-    !is_record(event_types_property.value)
+    !is_property_container(event_types_property.value)
   ) {
     return false;
   }
@@ -151,7 +165,7 @@ function has_generation_events(context: Record<string, unknown>): boolean {
   );
 }
 
-function has_valid_request_headers(context: Record<string, unknown>): boolean {
+function has_valid_request_headers(context: object): boolean {
   const headers = call_method(context, "getRequestHeaders");
   if (!headers.ok) {
     return false;
@@ -168,11 +182,11 @@ export function inspect_sillytavern(
   value: unknown,
   fetch_: unknown,
 ): SillyTavernInspection {
-  if (!is_record(value)) {
+  if (!is_property_container(value)) {
     return { ...SILLYTAVERN_UNAVAILABLE };
   }
   const context_result = call_method(value, "getContext");
-  if (!context_result.ok || !is_record(context_result.value)) {
+  if (!context_result.ok || !is_property_container(context_result.value)) {
     return { ...SILLYTAVERN_UNAVAILABLE };
   }
 
@@ -232,7 +246,7 @@ function read_nonempty_string(value: unknown, error_message: string): string {
 function clone_tool_arguments(
   value: unknown,
 ): Readonly<Record<string, unknown>> {
-  if (!is_record(value)) {
+  if (!is_plain_record(value)) {
     throw new Error("Image tool arguments must be a record");
   }
 
@@ -242,7 +256,7 @@ function clone_tool_arguments(
   } catch {
     throw new Error("Image tool arguments could not be cloned");
   }
-  if (!is_record(clone)) {
+  if (!is_plain_record(clone)) {
     throw new Error("Image tool arguments could not be cloned");
   }
   return clone;
@@ -256,7 +270,7 @@ function clone_request_headers(value: unknown): Readonly<Record<string, string>>
     throw new Error("SillyTavern returned invalid request headers");
   }
   if (
-    !is_record(clone) ||
+    !is_plain_record(clone) ||
     !Object.values(clone).every((header) => typeof header === "string")
   ) {
     throw new Error("SillyTavern returned invalid request headers");
@@ -382,7 +396,7 @@ export class SillyTavernHost {
 
     if (!response.ok) {
       if (
-        is_record(payload) &&
+        is_plain_record(payload) &&
         typeof payload.error === "string" &&
         payload.error.trim().length > 0
       ) {
@@ -392,7 +406,7 @@ export class SillyTavernHost {
     }
 
     if (
-      !is_record(payload) ||
+      !is_plain_record(payload) ||
       typeof payload.path !== "string" ||
       payload.path.trim().length === 0
     ) {
