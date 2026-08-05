@@ -62,7 +62,7 @@ export class DomainEventBus<
 
     return () => {
       handlers.delete(stored_handler);
-      if (handlers.size === 0) {
+      if (handlers.size === 0 && this.#handlers.get(event_type) === handlers) {
         this.#handlers.delete(event_type);
       }
     };
