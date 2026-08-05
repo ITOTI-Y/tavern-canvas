@@ -36,3 +36,5 @@ export {
   TAVERN_CANVAS_SWIPE_METADATA_KEY,
   TavernHelperHost,
 } from "./tavern_helper_host.js";
+
+export { SillyTavernHost } from "./sillytavern_host.js";
