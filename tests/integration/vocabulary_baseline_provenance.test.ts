@@ -1,11 +1,14 @@
-// Provenance guard (task-5-brief.md controller pre-ruling #2): the committed
-// vocabulary baseline (apps/extension/public/vocabulary/baseline) must be
-// built exclusively from data/vocabulary/raw_vocabulary_tags_public.jsonl
-// (fact-only, redistributable) and must never carry a `translation` field --
-// that comes only from raw_vocabulary_seed_full.jsonl, which is
-// non-redistributable and never committed. This runs under plain `pnpm
-// test`, independent of the CI-only byte-compare rebuild
-// (tools/vocabulary_builder/scripts/generate_baseline.ts --check), so a
+// Provenance guard (2026-08-06 controller ruling, REVERSING the earlier
+// task-5-brief.md fact-only rule): the user explicitly decided to rebuild
+// the committed vocabulary baseline (apps/extension/public/vocabulary/
+// baseline) from FRESH data ("既然是重构就用新数据，不要以旧数据做分发") and
+// to include zh translations, assuming responsibility for translation
+// licensing himself ("补充中文包（先不考虑上游，如有许可问题由我去解决）").
+// The baseline is now a fixed top-50,000-by-popularity cut of the full
+// bilingual data/vocabulary/raw_vocabulary_tags_public.jsonl (built by
+// tools/vocabulary_builder/scripts/generate_baseline.ts) and MUST carry zh
+// translations end to end. This runs under plain `pnpm test`, independent
+// of the CI-only byte-compare rebuild (generate_baseline.ts --check), so a
 // regression is caught locally too.
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -21,19 +24,46 @@ const BASELINE_DIRECTORY = resolve(
   "../../../apps/extension/public/vocabulary/baseline",
 );
 
+// Mirrors tools/vocabulary_builder/scripts/generate_baseline.ts's
+// BASELINE_RECORD_LIMIT and the controller's adjusted sanity gates.
+const EXPECTED_RECORD_COUNT = 50_000;
+const MINIMUM_TRANSLATION_COVERAGE = 35_000;
+const POPULARITY_FLOOR_PROBE = {
+  tag: "1girl",
+  translation: "一个女孩",
+  minimum_popularity: 8_000_000,
+};
+
 describe("committed vocabulary baseline", () => {
-  it("verifies (hash, size, gzip, MessagePack framing) against its own manifest", async () => {
-    const exit_code = await run_verify(["--package", BASELINE_DIRECTORY]);
-    expect(exit_code).toBe(EXIT_SUCCESS);
+  // The bilingual baseline's alias index (zh translations + aliases) grew
+  // shard count from 2,163 to 2,742 -- re-verifying every shard's hash,
+  // gzip, and MessagePack framing genuinely takes longer than the 5s default.
+  const VERIFY_TIMEOUT_MS = 30_000;
+
+  it(
+    "verifies (hash, size, gzip, MessagePack framing) against its own manifest",
+    async () => {
+      const exit_code = await run_verify(["--package", BASELINE_DIRECTORY]);
+      expect(exit_code).toBe(EXIT_SUCCESS);
+    },
+    VERIFY_TIMEOUT_MS,
+  );
+
+  it("is a fixed top-50,000-record cut of the full bilingual dataset", async () => {
+    const manifest_text = await readFile(resolve(BASELINE_DIRECTORY, "manifest.json"), "utf8");
+    const manifest = VocabularyManifestSchema.parse(JSON.parse(manifest_text));
+    expect(manifest.record_count).toBe(EXPECTED_RECORD_COUNT);
   });
 
-  it("carries zero translation fields across every detail shard", async () => {
+  it("carries zh translations on at least 35,000 records, and 1girl round-trips with fresh popularity", async () => {
     const manifest_text = await readFile(resolve(BASELINE_DIRECTORY, "manifest.json"), "utf8");
     const manifest = VocabularyManifestSchema.parse(JSON.parse(manifest_text));
     const detail_shards = manifest.shards.filter((shard) => shard.kind === "detail");
     expect(detail_shards.length).toBeGreaterThan(0);
 
     let records_checked = 0;
+    let translated_count = 0;
+    let probe_record: VocabularyRecord | undefined;
     for (const shard of detail_shards) {
       const bytes = await readFile(resolve(BASELINE_DIRECTORY, shard.path));
       const { payload } = await decode_shard_bytes(bytes);
@@ -41,10 +71,21 @@ describe("committed vocabulary baseline", () => {
         throw new Error(`shard ${shard.shard_id} declares kind "detail" but decoded otherwise`);
       }
       for (const record of payload.records as readonly VocabularyRecord[]) {
-        expect(record).not.toHaveProperty("translation");
         records_checked += 1;
+        if (record.translation !== undefined) {
+          translated_count += 1;
+        }
+        if (record.tag === POPULARITY_FLOOR_PROBE.tag) {
+          probe_record = record;
+        }
       }
     }
+
     expect(records_checked).toBe(manifest.record_count);
+    expect(translated_count).toBeGreaterThanOrEqual(MINIMUM_TRANSLATION_COVERAGE);
+    expect(probe_record?.translation).toBe(POPULARITY_FLOOR_PROBE.translation);
+    expect(probe_record?.popularity).toBeGreaterThanOrEqual(
+      POPULARITY_FLOOR_PROBE.minimum_popularity,
+    );
   });
 });
