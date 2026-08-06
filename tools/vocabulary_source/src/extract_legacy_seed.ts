@@ -23,6 +23,33 @@ const LegacyDanbooruTagEntrySchema = z.strictObject({
   aliases: z.number().int().nonnegative(),
 });
 
+/**
+ * v2's `color_id` reuses (a subset of) Danbooru's own tag category enum
+ * (0=general, 1=artist, 3=copyright, 4=character, 5=meta — see
+ * `danbooru_client.ts`'s `DANBOORU_TAG_CATEGORY_NAMES`), not a decorative
+ * UI color as the task brief originally assumed. Only `0` and `4` are
+ * observed in the real archive (verified across all 49,857 legacy records).
+ * Controller ruling (follow-up to the SRC report): map these two known
+ * values to real categories; any other value is unrecognized and must fail
+ * loudly with the value and record, never silently default to "general".
+ */
+const LEGACY_COLOR_ID_CATEGORY: Readonly<Record<number, string>> = {
+  0: "general",
+  4: "character",
+};
+
+/** Throws for any `color_id` outside `LEGACY_COLOR_ID_CATEGORY` — never defaults. */
+function map_legacy_color_id_to_category(color_id: number): string {
+  const category = LEGACY_COLOR_ID_CATEGORY[color_id];
+  if (category === undefined) {
+    throw new Error(
+      `unrecognized color_id ${String(color_id)} (only 0=general and 4=character are known; ` +
+        "refusing to default it to a category).",
+    );
+  }
+  return category;
+}
+
 // Loose top-level shape check only (danbooru_tag entries as `unknown[]`).
 // Real per-entry validation happens one entry at a time in parse_legacy_shard
 // so a single corrupt entry can be identified precisely and, if the caller
@@ -117,10 +144,25 @@ export function parse_legacy_shard(
     }
     const entry = entry_result.data;
 
+    let category: string;
+    try {
+      category = map_legacy_color_id_to_category(entry.color_id);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      if (!options.skip_invalid_entries) {
+        throw new Error(
+          `${spec.file_label}: tag ${JSON.stringify(entry.tag)} (id_index ${String(entry.id_index)}) ${reason}`,
+          { cause: error },
+        );
+      }
+      options.on_invalid_entry?.({ file_label: spec.file_label, index, raw_entry, reason });
+      return;
+    }
+
     const mapped: Record<string, unknown> = {
       record_id: entry.id_index,
       tag: entry.tag,
-      category: "general",
+      category,
       popularity: entry.hot,
       is_nsfw: spec.is_nsfw ?? false,
     };

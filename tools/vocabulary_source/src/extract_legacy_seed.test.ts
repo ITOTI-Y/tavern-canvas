@@ -41,6 +41,16 @@ const SHARD_NSFW_CANDIDATE_PAYLOAD =
 // Content is invented for testing.
 const GROUP_TREE_SHAPE_PAYLOAD =
   "U2FsdGVkX1/6TGAwunrgbrgD5qx3Yb8kX30lubl+IgBrdT3BqxN109xfD966zOyMQy9w0TSc/ED1kH9BL2UMk7kaOj4LFg3yrOmWivImmKDih5oSG2lr13RopauXNHosSwlC01G+/9sNYJrFRprXH8swgRIsoARwnCGhIbREgudif77baXrPvUDNU0Z4FR+/";
+// color_id 0 and 4 mixed in one shard, for the category-mapping fix.
+const SHARD_MIXED_CATEGORIES_PAYLOAD =
+  "U2FsdGVkX1/AlUuZI3x+2c47bm+XY9ynGiUiIkQPMKyax84wZg4vHZNNWqrv41Oq6RpovG1z0/IAKxPghcLAn6U0DlpgfiC9Wm0NszOy7Fqi+RSbcJEhyt6buxzu2g5ZUmkAuyNx1xzVqGkHMwMyJ/mSwH+lYMg/g8rLKkDdzis4OWU+sXhIY6pBFqbFIMpUUTXn893FhKDgDNCSoGGLeVnesuVKzMNYC619mD6VufAjVxkX2j6KnheeS+l23YX2r7IphAsv+9R7deoobI4uWsf7xS1IhOUbWqXNbjJQ2IPHvvuz//WrWLAMea8S2FZbp+xC3E7UFOMmdV1d86hOYkmtPSnrDlpu2oMmO4lrolk=";
+// A color_id (7) outside the known {0=general, 4=character} mapping.
+const SHARD_UNKNOWN_COLOR_ID_PAYLOAD =
+  "U2FsdGVkX19DHGoAKYLSXsdU4XmKTCpJhfIMxpV/t1kDb/qaYI0/c2VrsMjQh6C/Qx6P4wvuM7axa5pZJwQcR079AjxkXR4Uw+jPWdn24Y6tddvB1jMMQsj5Wjaj36UqnfVNy4s7bQIZpzcrOetnsGr5plPAGxCrWh13imO4ue6kpHh/++UX00yjrTSASSrG9dbIGJgOpEl2UX6Ba8RHKb9SNXwwkX2IQAuaQFyCSew=";
+// A color_id (9) outside the known mapping, sandwiched with a valid entry —
+// used to prove skip_invalid_entries also covers this failure mode.
+const SHARD_UNKNOWN_COLOR_ID_WITH_GOOD_NEIGHBOR_PAYLOAD =
+  "U2FsdGVkX19c8ZjyH5mHP67dz0GESa1R6aYzpHG5G7hlRW577GMMrPnfcWVkR4vaMkFd+s7ZWhapuIRo+KtYpVZ+r3lE1OJfI/+Sa5c7Jvw41oZoYGrzRzrFpyGCizufAt+T14KvUBCHfqqR/JO4KDELWuXE/4T3OisUsj80XDuPxWxHGHIAZjy7eySxIGWOQVUCYOTbLnXLaMV4nh0QNGrvlK/TlBB/NPKQ+xof84vV8LUwjTBBotC4JGLuRXQ5IFL5qZsJ4rquYT49emAJ5j3ZehgMJjFn/jJr4TNxCs/sTyYK7nwhLaojf1LEOh6lhikGnU1bOM47VD+ILJLK5Frt2PMU/w636eQjhITMrol7AFpPNM7WP7BrJzLQwK6V";
 
 const shard = (label: string, payload: string, is_nsfw?: boolean): LegacyShardSpec => ({
   file_label: label,
@@ -105,6 +115,51 @@ describe("parse_legacy_shard", () => {
 
     expect(nsfw_records.every((record) => record.is_nsfw)).toBe(true);
     expect(general_records.every((record) => !record.is_nsfw)).toBe(true);
+  });
+
+  it("maps color_id 0 to category general and color_id 4 to category character", () => {
+    const records = parse_legacy_shard(
+      shard("shard_mixed_categories.json", SHARD_MIXED_CATEGORIES_PAYLOAD),
+      LEGACY_V2_TAGDATA_PASSPHRASE,
+    );
+
+    expect(records.find((record) => record.tag === "synthetic_general_tag")?.category).toBe(
+      "general",
+    );
+    expect(records.find((record) => record.tag === "synthetic_character_tag")?.category).toBe(
+      "character",
+    );
+  });
+
+  it("throws loudly on an unrecognized color_id, with the value in the message, instead of defaulting it", () => {
+    expect(() =>
+      parse_legacy_shard(
+        shard("shard_unknown_color_id.json", SHARD_UNKNOWN_COLOR_ID_PAYLOAD),
+        LEGACY_V2_TAGDATA_PASSPHRASE,
+      ),
+    ).toThrow(/unrecognized color_id 7/);
+  });
+
+  it("skip_invalid_entries: true also skips an unrecognized-color_id entry and reports it", () => {
+    const skipped: { file_label: string; index: number; raw_entry: unknown; reason: string }[] = [];
+
+    const records = parse_legacy_shard(
+      shard(
+        "shard_unknown_color_id_neighbor.json",
+        SHARD_UNKNOWN_COLOR_ID_WITH_GOOD_NEIGHBOR_PAYLOAD,
+      ),
+      LEGACY_V2_TAGDATA_PASSPHRASE,
+      {
+        skip_invalid_entries: true,
+        on_invalid_entry: (entry) => skipped.push(entry),
+      },
+    );
+
+    expect(records.map((record) => record.tag)).toEqual(["synthetic_good_neighbor"]);
+    expect(skipped).toHaveLength(1);
+    expect(skipped[0]?.index).toBe(1);
+    expect(skipped[0]?.reason).toMatch(/unrecognized color_id 9/);
+    expect(skipped[0]?.raw_entry).toMatchObject({ color_id: 9 });
   });
 
   it("throws for a wrong passphrase (propagates LegacyDecryptionError)", () => {
