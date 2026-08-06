@@ -19,9 +19,11 @@ export interface LruEvictionConfig {
 export interface LruEvictionResult {
   readonly reclaimed_bytes: number;
   readonly evicted_sha256: readonly Sha256[];
+  /** Blobs excluded as foreign/unparseable `image_records` rows this job could not prove safe to evict — see `partition_records`. */
+  readonly excluded_count: number;
 }
 
-const NO_OP_RESULT: LruEvictionResult = { reclaimed_bytes: 0, evicted_sha256: [] };
+const NO_OP_RESULT: LruEvictionResult = { reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 };
 
 interface EvictionCandidate {
   readonly sha256: Sha256;
@@ -148,6 +150,7 @@ export async function run_lru_eviction(
       transaction.objectStore("image_records").getAll(),
     ]);
     const { records_by_sha256, foreign_sha256 } = partition_records(raw_records);
+    const excluded_count = blobs.filter((blob) => foreign_sha256.has(blob.sha256)).length;
 
     const candidates = blobs
       .map((blob) =>
@@ -172,6 +175,6 @@ export async function run_lru_eviction(
       evicted_sha256.push(candidate.sha256);
     }
 
-    return { reclaimed_bytes, evicted_sha256 };
+    return { reclaimed_bytes, evicted_sha256, excluded_count };
   });
 }

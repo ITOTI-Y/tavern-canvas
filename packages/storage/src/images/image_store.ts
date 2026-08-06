@@ -13,6 +13,8 @@ import {
 import {
   detect_image_media_type,
   GalleryImageRecordSchema,
+  ImageRecordUnionSchema,
+  is_gallery_image_record,
   type GalleryImageRecord,
   type ImageMediaType,
   type ImageRecordFields,
@@ -82,6 +84,18 @@ async function to_bytes(data: Blob | ArrayBuffer): Promise<Uint8Array> {
   return new Uint8Array(await data.arrayBuffer());
 }
 
+/**
+ * Counts `image_records` rows currently referencing `sha256_value`, via the
+ * store's `sha256` index. Requires `transaction` to include `image_records`
+ * in its scope.
+ */
+async function count_referencing_image_records(
+  transaction: StorageWriteTransaction,
+  sha256_value: Sha256,
+): Promise<number> {
+  return transaction.objectStore("image_records").index("sha256").count(sha256_value);
+}
+
 export async function put_image_blob(
   transaction: StorageWriteTransaction,
   blobs: ImageBlobRepository,
@@ -96,14 +110,25 @@ export async function put_image_blob(
   const digest = Sha256Schema.parse(bytesToHex(sha256(bytes)));
   const existing = await blobs.get(digest, transaction);
   if (existing === null) {
+    // The blob row can be physically absent while `image_records` rows still
+    // reference this content: LRU eviction (lru_eviction.ts) deletes only the
+    // `image_blobs` row, keeping metadata. `ref_count` must be reconstructed
+    // from that ground truth — not assumed to be 1 — or a later single
+    // `release_image_blob` would delete bytes other records still need. This
+    // call site (`create_image_record`) always adds exactly one new
+    // reference not yet reflected in the index, hence `+ 1`; a future caller
+    // that restores bytes for already-existing records *without* adding a
+    // new one must not reuse this arithmetic as-is.
+    const referencing_count = await count_referencing_image_records(transaction, digest);
+    const ref_count = referencing_count + 1;
     const blob: ImageBlob = {
       sha256: digest,
-      ref_count: 1,
+      ref_count,
       byte_length: bytes.byteLength,
       blob: new Blob([new Uint8Array(bytes)], { type: media_type }),
     };
     await blobs.create(blob, transaction);
-    return { sha256: digest, byte_length: blob.byte_length, media_type, ref_count: 1 };
+    return { sha256: digest, byte_length: blob.byte_length, media_type, ref_count };
   }
 
   const updated: ImageBlob = { ...existing, ref_count: existing.ref_count + 1 };
@@ -194,6 +219,16 @@ export async function delete_image_record_entry(
   return { sha256: existing.sha256, blob_deleted };
 }
 
+/**
+ * A blob's sha256 can be shared by a migrated (base-shape) `image_records`
+ * row and a runtime gallery row alike. `quarantined` only exists on the
+ * gallery shape, so a base-shape match is skipped rather than parsed against
+ * `GalleryImageRecordSchema` — which used to throw a `ZodError` there,
+ * replacing the caller's typed `ImageCorruptionError` and aborting the
+ * quarantine write entirely (Stage 04 review finding I1). A row matching
+ * neither shape is left untouched, mirroring LRU eviction's existing
+ * "cannot prove safe, so don't touch it" treatment of foreign rows.
+ */
 async function quarantine_records_for_sha256(
   transaction: StorageWriteTransaction,
   records: GalleryImageRecordRepository,
@@ -202,7 +237,11 @@ async function quarantine_records_for_sha256(
   const index = transaction.objectStore("image_records").index("sha256");
   const raw_matches = await index.getAll(sha256_value);
   for (const raw of raw_matches) {
-    const record = GalleryImageRecordSchema.parse(raw);
+    const parsed = ImageRecordUnionSchema.safeParse(raw);
+    if (!parsed.success || !is_gallery_image_record(parsed.data)) {
+      continue;
+    }
+    const record = parsed.data;
     if (record.quarantined) {
       continue;
     }

@@ -35,6 +35,23 @@ export type ImageRecordFields = z.infer<typeof ImageRecordFieldsSchema>;
 export const GalleryImageRecordSchema = ImageRecordSchema.extend(ImageRecordFieldsSchema.shape);
 export type GalleryImageRecord = z.infer<typeof GalleryImageRecordSchema>;
 
+/**
+ * `image_records` holds two mutually-incompatible shapes sharing one store:
+ * migrated v2 rows (`ImageRecordSchema`, generic data under `payload`) and
+ * runtime gallery rows (`GalleryImageRecordSchema`, flat domain fields). Both
+ * are `z.strictObject`, so each rejects the other outright. Any reader that
+ * must tolerate a namespace containing both — archive export/import,
+ * blob-corruption quarantine — validates through this union instead of
+ * either shape alone (Stage 04 review finding I1).
+ */
+export const ImageRecordUnionSchema = z.union([ImageRecordSchema, GalleryImageRecordSchema]);
+export type ImageRecordUnion = z.infer<typeof ImageRecordUnionSchema>;
+
+/** `media_type` exists only on the gallery shape — `ImageRecordSchema` is a strictObject that cannot carry it. */
+export function is_gallery_image_record(record: ImageRecordUnion): record is GalleryImageRecord {
+  return "media_type" in record;
+}
+
 const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 const JPEG_SIGNATURE = [0xff, 0xd8, 0xff];
 const WEBP_RIFF_SIGNATURE = [0x52, 0x49, 0x46, 0x46];

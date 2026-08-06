@@ -7,6 +7,7 @@ import {
   ZipReader,
 } from "@zip.js/zip.js";
 import type { IDBPDatabase } from "idb";
+import type { ZodType } from "zod";
 
 import {
   ARCHIVE_RECORD_STORES,
@@ -22,11 +23,15 @@ import {
   RECORD_SCHEMAS,
   type DBSchema,
   type GenerationJob,
-  type ImageRecord,
   type MigrationJournal,
   type NamespacedRecord,
   type VocabularyGroup,
 } from "../database_schema.js";
+import {
+  detect_image_media_type,
+  ImageRecordUnionSchema,
+  type ImageRecordUnion,
+} from "../images/image_schema.js";
 import {
   create_business_repositories,
   type BusinessRepositories,
@@ -222,6 +227,17 @@ function verify_checksum(path: string, bytes: Uint8Array, checksums: ArchiveChec
   }
 }
 
+/**
+ * `image_records` alone validates through `ImageRecordUnionSchema`: the
+ * store holds both migrated (base-shape) and runtime gallery (flat-shape)
+ * rows, and `RECORD_SCHEMAS.image_records` only recognizes the base shape —
+ * an archive containing an exported gallery row would otherwise fail import
+ * with `invalid_record` (Stage 04 review finding I1).
+ */
+function record_schema_for(store: ArchiveRecordStore): ZodType<NamespacedRecord> {
+  return store === "image_records" ? ImageRecordUnionSchema : RECORD_SCHEMAS[store];
+}
+
 function parse_jsonl_records(
   store: ArchiveRecordStore,
   path: string,
@@ -231,7 +247,7 @@ function parse_jsonl_records(
   if (text.length === 0) {
     return [];
   }
-  const schema = RECORD_SCHEMAS[store];
+  const schema = record_schema_for(store);
   return text
     .split("\n")
     .filter((line) => line.length > 0)
@@ -274,11 +290,16 @@ async function write_image_blob(
 ): Promise<void> {
   const existing = await repository.get(sha256_hex);
   if (existing === null) {
+    const media_type = detect_image_media_type(bytes);
+    const blob_bytes = new Uint8Array(bytes);
     await repository.create({
       sha256: sha256_hex,
       ref_count,
       byte_length: bytes.byteLength,
-      blob: new Blob([new Uint8Array(bytes)]),
+      blob:
+        media_type === undefined
+          ? new Blob([blob_bytes])
+          : new Blob([blob_bytes], { type: media_type }),
     });
     blob_deltas.set(sha256_hex, { created: true, delta: ref_count });
   } else {
@@ -425,7 +446,7 @@ export async function import_archive(options: ImportArchiveOptions): Promise<Imp
           }
         }
       } else if (store === "image_records") {
-        for (const record of staged as ImageRecord[]) {
+        for (const record of staged as ImageRecordUnion[]) {
           image_record_ids.add(record.id);
           referenced_asset_hashes.set(
             record.sha256,

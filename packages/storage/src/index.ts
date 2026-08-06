@@ -103,12 +103,15 @@ export {
   IMAGE_MEDIA_TYPES,
   ImageMediaTypeSchema,
   ImageRecordFieldsSchema,
+  ImageRecordUnionSchema,
+  is_gallery_image_record,
   SourceMessageIdentitySchema,
 } from "./images/image_schema.js";
 export type {
   GalleryImageRecord,
   ImageMediaType,
   ImageRecordFields,
+  ImageRecordUnion,
   SourceMessageIdentity,
 } from "./images/image_schema.js";
 

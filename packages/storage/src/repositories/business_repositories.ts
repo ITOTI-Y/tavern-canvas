@@ -8,8 +8,6 @@ import {
   type DBSchema,
   type ImageBlob,
   ImageBlobSchema,
-  type ImageRecord,
-  ImageRecordSchema,
   type KnowledgeEntry,
   KnowledgeEntrySchema,
   type LegacyPreference,
@@ -44,6 +42,7 @@ import {
   RepositoryValidationError,
 } from "../repository.js";
 import { type StorageTransaction, type StorageWriteTransaction } from "../transaction.js";
+import { type ImageRecordUnion, ImageRecordUnionSchema } from "../images/image_schema.js";
 import { GenerationJobRepository } from "./job_repository.js";
 
 export class ProviderProfileRepository extends IndexedDbRepository<
@@ -130,9 +129,21 @@ export class VocabularyShardRepository extends IndexedDbRepository<
   }
 }
 
-export class ImageRecordRepository extends IndexedDbRepository<"image_records", ImageRecord> {
+/**
+ * Validates through `ImageRecordUnionSchema` (base `ImageRecord` shape *or*
+ * flat `GalleryImageRecord` shape): the `image_records` store holds both —
+ * migrated v2 rows (this repository's primary write path, in migration) and
+ * runtime gallery rows written elsewhere via `GalleryImageRecordRepository`.
+ * A single-shape schema here made archive export/import and blob-corruption
+ * quarantine crash on whichever shape they did not expect (Stage 04 review
+ * finding I1).
+ */
+export class ImageRecordRepository extends IndexedDbRepository<
+  "image_records",
+  ImageRecordUnion
+> {
   constructor(database: IDBPDatabase<DBSchema>) {
-    super(database, "image_records", ImageRecordSchema);
+    super(database, "image_records", ImageRecordUnionSchema);
   }
 }
 
