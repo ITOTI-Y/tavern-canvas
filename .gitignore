@@ -27,3 +27,4 @@ data/vocabulary/*.jsonl
 # output/-shipped) full pack (see docs/_dev/DATA.md's
 # processed-vocabulary-baseline-v1 entry).
 !data/vocabulary/raw_vocabulary_tags_public.jsonl
+.claude/
