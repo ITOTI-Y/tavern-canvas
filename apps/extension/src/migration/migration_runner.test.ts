@@ -172,6 +172,52 @@ describe("run_migration: journal-before-write and unknown settings", () => {
   });
 });
 
+describe("run_migration: older v2 installs (I5 regression)", () => {
+  it("does not permanently block migration when fields added after 2.8.1 are entirely absent from settings", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    const older_install = structuredClone(settingsFixture) as Record<string, unknown>;
+    delete older_install.asr;
+    delete older_install.imageGenStats;
+    delete older_install.gestureEnabled;
+    delete older_install.clickTriggerEnabled;
+    delete older_install.gesture1;
+    delete older_install.gesture2;
+    delete older_install.gestureShowRecognition;
+    delete older_install.gestureShowTrail;
+    delete older_install.gestureTrailColor;
+    delete older_install.gestureMatchThreshold;
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: older_install }),
+      }),
+    );
+
+    expect(outcome.status).toBe("completed");
+  });
+
+  it("reports the specific failing field paths (never values) when settings are genuinely invalid", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    const corrupted = { ...settingsFixture, scriptEnabled: "super-secret-token-value" };
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: corrupted }),
+      }),
+    );
+
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("invalid_source");
+    expect(outcome.failure.message).toContain("scriptEnabled");
+    expect(outcome.failure.message).not.toContain("super-secret-token-value");
+  });
+});
+
 describe("run_migration: interruption and resume", () => {
   it("resumes from the last committed batch after an unexpected interruption, without duplicating records", async () => {
     const database = await open_database();
@@ -381,16 +427,15 @@ describe("run_migration: verification failures block the switch", () => {
     expect(final_journal?.state).toBe("failed");
   });
 
-  it("skips secret transfer when a Gateway profile is already configured", async () => {
+  it("skips secret transfer when a Gateway profile is already configured, and preserves it after switch", async () => {
     const database = await open_database();
     const { settings } = create_settings();
-    settings.update_settings({
-      gateway: {
-        endpoint: "https://gateway.example.internal",
-        token_secret_id: "gw-token",
-        http_acknowledgments: {},
-      },
-    });
+    const configured_gateway = {
+      endpoint: "https://gateway.example.internal",
+      token_secret_id: "gw-token",
+      http_acknowledgments: { "https://gateway.example.internal": "2026-08-01T00:00:00Z" },
+    };
+    settings.update_settings({ gateway: configured_gateway });
 
     const outcome = await run_migration(
       await migration_options(database, settings, {
@@ -399,6 +444,11 @@ describe("run_migration: verification failures block the switch", () => {
     );
 
     expect(outcome.status).toBe("completed");
+    // Regression for C1: the post-switch cosmetic settings write must not
+    // clobber a live Gateway configuration with convert_settings' hardcoded
+    // "no Gateway" placeholder — the "secrets" batch just relied on this
+    // exact configuration to skip client-side credential transfer.
+    expect(settings.get_settings().gateway).toEqual(configured_gateway);
   });
 });
 
