@@ -109,6 +109,27 @@ export async function load_legacy_source(port: LegacySourcePort): Promise<Legacy
     return { kind: "unknown_paths", fingerprint, paths: classification.unknown };
   }
 
+  // Plausibility guard: every field in `LegacySettingsSchema` now has a
+  // default (I5), so `{}` — or any object whose own paths are all
+  // `intentionally_obsolete`/`deferred_secret_transfer`, never `mapped` —
+  // would otherwise parse into a fully-defaulted, effectively-empty
+  // settings object and complete migration silently, switching the user to
+  // a blank v3 profile with no error and no signal. A real v2 source always
+  // classifies at least one own path as `mapped` (business data); zero
+  // means this source claims to exist but carries nothing real, and must
+  // fail loudly instead of "completing".
+  const has_mapped_path = classification.classified.some(
+    (entry) => entry.rule.classification === "mapped",
+  );
+  if (!has_mapped_path) {
+    return {
+      kind: "invalid",
+      fingerprint,
+      message:
+        "Legacy settings classify to zero mapped v2 data paths; refusing to treat an effectively-empty object as a real v2 install",
+    };
+  }
+
   const settings_result = LegacySettingsSchema.safeParse(raw_settings);
   if (!settings_result.success) {
     return {

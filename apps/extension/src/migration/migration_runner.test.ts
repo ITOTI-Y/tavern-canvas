@@ -218,6 +218,59 @@ describe("run_migration: older v2 installs (I5 regression)", () => {
   });
 });
 
+describe("run_migration: degenerate source plausibility guard", () => {
+  // I5 gave every LegacySettingsSchema field a default, so a source that
+  // claims to exist but classifies to zero real (`mapped`) v2 data paths
+  // would otherwise parse into a fully-defaulted, effectively-empty
+  // settings object and "complete" migration silently, switching the user
+  // to a blank v3 profile with no error and no signal. Both cases below
+  // must fail loudly instead — this is distinct from `not_required` (no
+  // legacy data at all, covered by the "no legacy data" describe block
+  // above) and from the I5 target case (real mapped data present, some
+  // fields absent, covered by the "older v2 installs" describe block).
+  it("blocks an empty settings object instead of completing against a blank profile", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: {} }),
+      }),
+    );
+
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("invalid_source");
+    expect(settings.get_settings().active_namespace).toBe("primary");
+  });
+
+  it("blocks a non-empty object whose paths are all intentionally_obsolete, never mapped", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    // Both fields exist as real SETTINGS_PATH_RULES entries (not unknown
+    // paths — this must fail via the plausibility guard, not
+    // unknown_setting_path), but both classify as intentionally_obsolete,
+    // so this object carries zero real business data despite being
+    // non-empty and fully classified.
+    const obsolete_only = { lastTab: "main", cacheStorageMigrated: false };
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: obsolete_only }),
+      }),
+    );
+
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("invalid_source");
+    expect(settings.get_settings().active_namespace).toBe("primary");
+  });
+});
+
 describe("run_migration: interruption and resume", () => {
   it("resumes from the last committed batch after an unexpected interruption, without duplicating records", async () => {
     const database = await open_database();
