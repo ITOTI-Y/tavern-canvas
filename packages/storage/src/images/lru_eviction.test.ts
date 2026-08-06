@@ -85,7 +85,7 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 500, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [] });
+    expect(result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 });
     expect(await new ImageBlobRepository(database).list()).toHaveLength(1);
   });
 
@@ -105,7 +105,7 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 950, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [] });
+    expect(result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 });
     expect(await new ImageBlobRepository(database).get(record.sha256)).not.toBeNull();
   });
 
@@ -123,7 +123,7 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 950, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [] });
+    expect(result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 });
     expect(await new ImageBlobRepository(database).get(record.sha256)).not.toBeNull();
   });
 
@@ -142,7 +142,7 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 950, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 600, evicted_sha256: [record.sha256] });
+    expect(result).toEqual({ reclaimed_bytes: 600, evicted_sha256: [record.sha256], excluded_count: 0 });
     expect(await new ImageBlobRepository(database).get(record.sha256)).toBeNull();
 
     const retained = await new GalleryImageRecordRepository(database).get(NAMESPACE, IDS.a);
@@ -206,7 +206,7 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 900, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 500, evicted_sha256: [first.sha256] });
+    expect(result).toEqual({ reclaimed_bytes: 500, evicted_sha256: [first.sha256], excluded_count: 0 });
   });
 
   it("stops cleanup once the target pressure ratio is reached and reports reclaimed bytes", async () => {
@@ -236,7 +236,7 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 1000, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 300, evicted_sha256: [small.sha256, medium.sha256] });
+    expect(result).toEqual({ reclaimed_bytes: 300, evicted_sha256: [small.sha256, medium.sha256], excluded_count: 0 });
     expect(await new ImageBlobRepository(database).get(large.sha256)).not.toBeNull();
   });
 
@@ -281,8 +281,50 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 800, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 400, evicted_sha256: [eligible.sha256] });
+    expect(result).toEqual({ reclaimed_bytes: 400, evicted_sha256: [eligible.sha256], excluded_count: 1 });
     expect(await new ImageBlobRepository(database).get(foreign_sha256)).not.toBeNull();
+  });
+
+  it("reconstructs ref_count from surviving image_records after eviction deletes the blob row, instead of resetting to 1 (I2 regression)", async () => {
+    const database = await open_database();
+    const bytes = png_bytes_of_length(500, 60);
+    const first = await seed_record(database, {
+      id: IDS.a,
+      bytes,
+      last_accessed_at: NOW,
+      persisted_url: "https://cdn.example.com/shared.png",
+    });
+    await seed_record(database, {
+      id: IDS.b,
+      bytes,
+      last_accessed_at: LATER,
+      persisted_url: "https://cdn.example.com/shared.png",
+    });
+    expect((await new ImageBlobRepository(database).get(first.sha256))?.ref_count).toBe(2);
+
+    const eviction = await run_lru_eviction(
+      database,
+      { start_pressure_ratio: 0.8, target_pressure_ratio: 0.5 },
+      () => Promise.resolve({ usage: 900, quota: 1000 }),
+    );
+    expect(eviction).toEqual({ reclaimed_bytes: 500, evicted_sha256: [first.sha256], excluded_count: 0 });
+    expect(await new ImageBlobRepository(database).get(first.sha256)).toBeNull();
+    // Both referencing image_records rows survive eviction — only the blob
+    // row (and its ref_count) is gone.
+    expect(await new GalleryImageRecordRepository(database).get(NAMESPACE, IDS.a)).not.toBeNull();
+    expect(await new GalleryImageRecordRepository(database).get(NAMESPACE, IDS.b)).not.toBeNull();
+
+    // A third reference to the same content re-creates the blob row. On the
+    // pre-fix code this always reset to ref_count 1 regardless of how many
+    // image_records rows already reference the content, arming a later
+    // single `release_image_blob` call to delete bytes `a`/`b` still need.
+    const third = await seed_record(database, {
+      id: IDS.c,
+      bytes,
+      last_accessed_at: LATER,
+      persisted_url: "https://cdn.example.com/shared.png",
+    });
+    expect((await new ImageBlobRepository(database).get(third.sha256))?.ref_count).toBe(3);
   });
 
   it("disables cleanup without deleting anything when the quota estimate is unavailable", async () => {
@@ -298,12 +340,12 @@ describe("lru_eviction", () => {
     const undefined_result = await run_lru_eviction(database, config, () =>
       Promise.resolve(undefined),
     );
-    expect(undefined_result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [] });
+    expect(undefined_result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 });
 
     const rejected_result = await run_lru_eviction(database, config, () =>
       Promise.reject(new Error("storage estimate unavailable")),
     );
-    expect(rejected_result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [] });
+    expect(rejected_result).toEqual({ reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 });
 
     expect(await new ImageBlobRepository(database).get(record.sha256)).not.toBeNull();
   });

@@ -12,6 +12,7 @@ import {
   IDS,
   NAMESPACE,
   business_record,
+  gallery_image_record,
   image_blob,
   image_record,
   make_asset_bytes,
@@ -208,6 +209,56 @@ describe("export_archive", () => {
     const text = await read_entry_text(entries, "records/prompt_presets.jsonl");
     const parsed = JSON.parse(text.trim()) as { payload: { text: string } };
     expect(parsed.payload.text).toBe(cjk_text);
+
+    await zip_reader.close();
+  });
+
+  it("exports a namespace mixing migrated (base-shape) and runtime gallery (flat-shape) image_records rows (I1 regression)", async () => {
+    const database = await open_test_database();
+    const repositories = create_business_repositories(database);
+    const migrated_bytes = make_asset_bytes("migrated-image");
+    const gallery_bytes = make_asset_bytes("gallery-image");
+    const migrated_sha256 = compute_sha256_hex(migrated_bytes);
+    const gallery_sha256 = compute_sha256_hex(gallery_bytes);
+
+    await repositories.image_blobs.create(image_blob(migrated_sha256, migrated_bytes));
+    await repositories.image_blobs.create(image_blob(gallery_sha256, gallery_bytes));
+    // `image_records` holds both shapes at once — a migrated (base-shape) row
+    // and a runtime-attached (flat gallery-shape) row — exactly the mix that
+    // used to make `ImageRecordRepository.list()` throw `RepositoryValidationError`
+    // on whichever shape it did not expect.
+    await repositories.image_records.create(
+      NAMESPACE,
+      image_record(IDS.first, migrated_sha256),
+    );
+    await repositories.image_records.create(
+      NAMESPACE,
+      gallery_image_record(IDS.second, gallery_sha256),
+    );
+
+    const blob = await export_archive({
+      database,
+      namespace: NAMESPACE,
+      extension_version: "3.0.0-alpha.1",
+      created_at: "2026-08-06T00:00:00.000Z",
+    });
+
+    const zip_reader = new ZipReader(new BlobReader(blob));
+    const entries = await zip_reader.getEntries();
+    const manifest_text = await read_entry_text(entries, "manifest.json");
+    const manifest = JSON.parse(manifest_text) as {
+      record_counts: Record<string, number>;
+      asset_count: number;
+    };
+    expect(manifest.record_counts.image_records).toBe(2);
+    expect(manifest.asset_count).toBe(2);
+
+    const image_records_text = await read_entry_text(entries, "records/image_records.jsonl");
+    const exported_ids = image_records_text
+      .trim()
+      .split("\n")
+      .map((line) => (JSON.parse(line) as { id: string }).id);
+    expect(exported_ids.sort()).toEqual([IDS.first, IDS.second].sort());
 
     await zip_reader.close();
   });

@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { DATABASE_NAME, type GenerationJob } from "../database_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
-import { ImageBlobRepository } from "../repositories/business_repositories.js";
+import { ImageBlobRepository, ImageRecordRepository } from "../repositories/business_repositories.js";
 import { with_transaction } from "../transaction.js";
 import { attach_image, detach_image } from "./image_references.js";
 import { type ImageRecordFields } from "./image_schema.js";
@@ -226,6 +226,53 @@ describe("image_store content addressing", () => {
 
     const records = new GalleryImageRecordRepository(database);
     expect((await records.get(NAMESPACE, IDS.first))?.quarantined).toBe(true);
+  });
+
+  it("quarantines the gallery row without crashing when a migrated (base-shape) row shares the same corrupted sha256 (I1 regression)", async () => {
+    const database = await open_database();
+    const bytes = png_bytes(7, 7, 7);
+    const record = await put_image(database, NAMESPACE, put_input({ bytes }));
+
+    // A migrated v2 asset sharing the same content — base shape, no `quarantined`
+    // field at all. Before the fix, quarantine hard-parsed every row sharing this
+    // sha256 against `GalleryImageRecordSchema`, so this row's presence replaced
+    // the caller's typed `ImageCorruptionError` with an uncaught `ZodError` and
+    // aborted the quarantine write entirely.
+    const image_records = new ImageRecordRepository(database);
+    await image_records.create(NAMESPACE, {
+      schema_version: 1,
+      id: IDS.second,
+      namespace: NAMESPACE,
+      record_key: `${NAMESPACE}:${IDS.second}`,
+      created_at: NOW,
+      updated_at: NOW,
+      sha256: record.sha256,
+      last_accessed_at: NOW,
+      pinned: false,
+      payload: { kind: "uploaded_configuration_image", legacy_id: "cfgimg_1" },
+    });
+
+    const blobs = new ImageBlobRepository(database);
+    const stored = await blobs.get(record.sha256);
+    if (stored === null) {
+      throw new Error("expected the freshly stored blob to exist");
+    }
+    const corrupted_bytes = Uint8Array.from(bytes);
+    const last_index = corrupted_bytes.length - 1;
+    corrupted_bytes[last_index] = ((corrupted_bytes[last_index] ?? 0) ^ 0xff) & 0xff;
+    await blobs.put({ ...stored, blob: new Blob([corrupted_bytes], { type: "image/png" }) });
+
+    const caught: unknown = await read_image_bytes(database, record.sha256).catch(
+      (error: unknown) => error,
+    );
+    expect(caught).toBeInstanceOf(ImageCorruptionError);
+
+    const records = new GalleryImageRecordRepository(database);
+    expect((await records.get(NAMESPACE, IDS.first))?.quarantined).toBe(true);
+    // The base-shape row has no `quarantined` field to set and must be left untouched.
+    const migrated_row = await image_records.get(NAMESPACE, IDS.second);
+    expect(migrated_row).not.toBeNull();
+    expect(migrated_row).not.toHaveProperty("quarantined");
   });
 
   it("stores the full gallery metadata shape without leaking secrets", async () => {

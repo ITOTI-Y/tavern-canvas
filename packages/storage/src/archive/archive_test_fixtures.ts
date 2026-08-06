@@ -10,6 +10,7 @@ import {
   type NamespacedRecord,
   type VocabularyGroup,
 } from "../database_schema.js";
+import type { GalleryImageRecord } from "../images/image_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
 
 export const NAMESPACE = "primary";
@@ -64,6 +65,33 @@ export function image_record(
     },
     namespace,
   );
+}
+
+/** A runtime gallery-shape row (flat domain fields) — the shape `image_records` also holds alongside migrated `image_record()` rows. */
+export function gallery_image_record(
+  id: string,
+  sha256_hex: string,
+  namespace = NAMESPACE,
+): GalleryImageRecord {
+  return {
+    schema_version: 1,
+    id,
+    namespace,
+    record_key: `${namespace}:${id}`,
+    created_at: NOW,
+    updated_at: NOW,
+    sha256: sha256_hex,
+    last_accessed_at: NOW,
+    pinned: false,
+    provider_id: "sd_webui",
+    source_message: { chat_id: "chat-1", message_id: "msg-1", swipe_id: 0 },
+    generation_parameters: {
+      generation_anchor: "a".repeat(64),
+      scene_description: "A scene",
+    },
+    media_type: "image/png",
+    quarantined: false,
+  };
 }
 
 export function vocabulary_group_record(

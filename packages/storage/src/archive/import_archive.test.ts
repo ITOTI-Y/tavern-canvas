@@ -14,6 +14,7 @@ import {
   IDS,
   NAMESPACE,
   business_record,
+  gallery_image_record,
   image_blob,
   image_record,
   job_record,
@@ -301,6 +302,59 @@ describe("import_archive", () => {
     const fresh_repositories = create_business_repositories(fresh_database);
     const staged_blob = await fresh_repositories.image_blobs.get(sha256_hex);
     expect(staged_blob?.ref_count).toBe(3);
+  });
+
+  it("round-trips a namespace mixing migrated (base-shape) and runtime gallery (flat-shape) image_records rows (I1 regression)", async () => {
+    const database = await open_test_database();
+    const repositories = create_business_repositories(database);
+    const migrated_bytes = make_asset_bytes("migrated-round-trip");
+    const gallery_bytes = make_asset_bytes("gallery-round-trip");
+    const migrated_sha256 = compute_sha256_hex(migrated_bytes);
+    const gallery_sha256 = compute_sha256_hex(gallery_bytes);
+
+    await repositories.image_blobs.create(image_blob(migrated_sha256, migrated_bytes));
+    await repositories.image_blobs.create(image_blob(gallery_sha256, gallery_bytes));
+    await repositories.image_records.create(NAMESPACE, image_record(IDS.first, migrated_sha256));
+    await repositories.image_records.create(
+      NAMESPACE,
+      gallery_image_record(IDS.second, gallery_sha256),
+    );
+
+    const blob = await export_archive({
+      database,
+      namespace: NAMESPACE,
+      extension_version: "3.0.0-alpha.1",
+    });
+
+    // Pre-fix, `parse_jsonl_records` validated every image_records.jsonl line
+    // against the base-only `RECORD_SCHEMAS.image_records`, so the exported
+    // gallery-shape row failed with `invalid_record` here.
+    const result = await import_archive({ database, archive: blob });
+    expect(result.asset_count).toBe(2);
+    expect(result.manifest.record_counts.image_records).toBe(2);
+
+    const staged = await repositories.image_records.list(result.namespace);
+    expect(staged.map((record) => record.id).sort()).toEqual([IDS.first, IDS.second].sort());
+    const staged_gallery_row = staged.find((record) => record.id === IDS.second);
+    expect(staged_gallery_row).toMatchObject({ media_type: "image/png", quarantined: false });
+  });
+
+  it("restores the blob's MIME type on import instead of leaving it untyped (M2)", async () => {
+    const database = await open_test_database();
+    const seeded = await seed_and_export(database);
+    // A fresh database with no pre-existing blob for this hash: `write_image_blob`
+    // must take its "create" branch, the one this fix touches, rather than merging
+    // into an already-typed blob left over from seeding.
+    await reset_test_database();
+    const fresh_database = await open_test_database();
+
+    const result = await import_archive({ database: fresh_database, archive: seeded.blob });
+
+    const fresh_repositories = create_business_repositories(fresh_database);
+    const staged_blob = await fresh_repositories.image_blobs.get(seeded.sha256);
+    expect(staged_blob?.blob).toBeInstanceOf(Blob);
+    expect((staged_blob?.blob as Blob).type).toBe("image/png");
+    expect(result.asset_count).toBe(1);
   });
 
   it("rejects a vocabulary_groups entry referencing an unknown vocabulary", async () => {
