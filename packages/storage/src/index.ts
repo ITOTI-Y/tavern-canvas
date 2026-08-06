@@ -143,3 +143,30 @@ export type {
   LruEvictionResult,
   StorageEstimate,
 } from "./images/lru_eviction.js";
+
+export {
+  ASSET_DIRECTORY,
+  CHECKSUMS_PATH,
+  FIXED_ENTRY_PATHS,
+  MANIFEST_PATH,
+  MAX_ENTRY_UNCOMPRESSED_BYTES,
+  asset_path,
+  build_manifest,
+  compute_sha256_hex,
+  create_empty_record_counts,
+  detect_asset_extension,
+  is_known_archive_path,
+  parse_asset_path,
+  record_path,
+} from "./archive/archive_manifest.js";
+export type { BuildManifestInput } from "./archive/archive_manifest.js";
+
+export { ArchiveExportError, export_archive } from "./archive/export_archive.js";
+export type { ArchiveExportFailureReason, ExportArchiveOptions } from "./archive/export_archive.js";
+
+export { ArchiveImportError, import_archive } from "./archive/import_archive.js";
+export type {
+  ArchiveImportFailureReason,
+  ImportArchiveOptions,
+  ImportArchiveResult,
+} from "./archive/import_archive.js";

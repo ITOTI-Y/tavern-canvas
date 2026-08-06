@@ -97,3 +97,21 @@ export type {
   TavernCanvasSettings,
   TavernCanvasUiSettings,
 } from "./settings.js";
+export {
+  ARCHIVE_EXCLUDED_SECRET_CATEGORIES,
+  ARCHIVE_FORMAT,
+  ARCHIVE_RECORD_STORES,
+  ARCHIVE_SCHEMA_VERSION,
+  ArchiveChecksumEntrySchema,
+  ArchiveChecksumsSchema,
+  ArchiveExcludedSecretCategorySchema,
+  ArchiveManifestSchema,
+  ArchiveRecordStoreSchema,
+} from "./archive.js";
+export type {
+  ArchiveChecksumEntry,
+  ArchiveChecksums,
+  ArchiveExcludedSecretCategory,
+  ArchiveManifest,
+  ArchiveRecordStore,
+} from "./archive.js";
