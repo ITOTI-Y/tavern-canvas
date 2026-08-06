@@ -5,7 +5,9 @@
     "rootDir": "..",
     "paths": {
       "@tavern-canvas/contracts": ["../packages/contracts/src/index.ts"],
-      "@tavern-canvas/core": ["../packages/core/src/index.ts"]
+      "@tavern-canvas/core": ["../packages/core/src/index.ts"],
+      "@tavern-canvas/storage": ["../packages/storage/src/index.ts"],
+      "@tavern-canvas/v2-migration": ["../tools/v2_migration/src/index.ts"]
     },
     "types": ["node", "vitest/globals"]
   },

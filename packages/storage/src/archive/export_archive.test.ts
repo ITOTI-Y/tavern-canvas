@@ -51,6 +51,10 @@ describe("export_archive", () => {
     await repositories.image_records.create(NAMESPACE, image_record(IDS.first, first_sha256));
     await repositories.image_records.create(NAMESPACE, image_record(IDS.second, second_sha256));
     await repositories.image_records.create(NAMESPACE, image_record(IDS.third, second_sha256));
+    await repositories.legacy_preferences.create(
+      NAMESPACE,
+      business_record(IDS.fourth, { payload: { theme_id: "夜间" } }),
+    );
 
     const blob = await export_archive({
       database,
@@ -76,6 +80,7 @@ describe("export_archive", () => {
       "records/vocabulary_groups.jsonl",
       "records/image_records.jsonl",
       "records/generation_jobs.jsonl",
+      "records/legacy_preferences.jsonl",
       `assets/${sorted_first}.png`,
       `assets/${sorted_second}.png`,
       "manifest.json",
@@ -104,7 +109,17 @@ describe("export_archive", () => {
     expect(manifest.schema_version).toBe(1);
     expect(manifest.record_counts.provider_profiles).toBe(2);
     expect(manifest.record_counts.image_records).toBe(3);
+    expect(manifest.record_counts.legacy_preferences).toBe(1);
     expect(manifest.asset_count).toBe(2);
+
+    const legacy_preferences_text = await read_entry_text(
+      entries,
+      "records/legacy_preferences.jsonl",
+    );
+    const legacy_preferences_payload = (
+      JSON.parse(legacy_preferences_text.trim()) as { payload: { theme_id: string } }
+    ).payload;
+    expect(legacy_preferences_payload.theme_id).toBe("夜间");
     expect(manifest.excluded_secret_categories).toEqual(
       expect.arrayContaining(["gateway_token", "provider_credentials"]),
     );
@@ -150,6 +165,7 @@ describe("export_archive", () => {
         "records/vocabulary_groups.jsonl",
         "records/image_records.jsonl",
         "records/generation_jobs.jsonl",
+        "records/legacy_preferences.jsonl",
       ].sort(),
     );
 

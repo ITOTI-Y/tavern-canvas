@@ -59,6 +59,10 @@ async function seed_and_export(database: IDBPDatabase<DBSchema>): Promise<Seeded
     vocabulary_group_record(IDS.third, IDS.second),
   );
   await repositories.generation_jobs.create(NAMESPACE, job_record(IDS.fourth, [IDS.first]));
+  await repositories.legacy_preferences.create(
+    NAMESPACE,
+    business_record(IDS.fifth, { payload: { theme_id: "夜间" } }, NAMESPACE),
+  );
 
   const blob = await export_archive({
     database,
@@ -121,6 +125,11 @@ describe("import_archive", () => {
 
     const staged_jobs = await repositories.generation_jobs.list(result.namespace);
     expect(staged_jobs[0]?.image_ids).toEqual([seeded.image_id]);
+
+    const staged_legacy_preferences = await repositories.legacy_preferences.list(result.namespace);
+    expect(staged_legacy_preferences).toHaveLength(1);
+    expect(staged_legacy_preferences[0]?.payload).toEqual({ theme_id: "夜间" });
+    expect(result.manifest.record_counts.legacy_preferences).toBe(1);
 
     // image_blobs is global/content-addressed: the pre-existing active-namespace blob's
     // ref_count must be merged with, not replaced by, this import's contribution.

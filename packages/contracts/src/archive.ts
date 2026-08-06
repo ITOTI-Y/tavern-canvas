@@ -15,6 +15,7 @@ export const ARCHIVE_RECORD_STORES = [
   "vocabulary_groups",
   "image_records",
   "generation_jobs",
+  "legacy_preferences",
 ] as const;
 export type ArchiveRecordStore = (typeof ARCHIVE_RECORD_STORES)[number];
 export const ArchiveRecordStoreSchema = z.enum(ARCHIVE_RECORD_STORES);

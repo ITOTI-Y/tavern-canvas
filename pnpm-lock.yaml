@@ -26,12 +26,18 @@ importers:
       eslint-plugin-vue:
         specifier: 10.10.0
         version: 10.10.0(@typescript-eslint/parser@8.66.0(eslint@10.8.0)(typescript@6.0.3))(eslint@10.8.0)(vue-eslint-parser@10.4.1(eslint@10.8.0))
+      fake-indexeddb:
+        specifier: 6.2.5
+        version: 6.2.5
       globals:
         specifier: 17.9.0
         version: 17.9.0
       happy-dom:
         specifier: 20.11.1
         version: 20.11.1
+      idb:
+        specifier: 8.0.3
+        version: 8.0.3
       prettier:
         specifier: 3.9.6
         version: 3.9.6

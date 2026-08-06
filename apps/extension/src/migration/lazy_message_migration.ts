@@ -79,17 +79,31 @@ function is_chat_migration_payload(value: unknown): value is ChatMigrationPayloa
 }
 
 /**
- * A v2 message's image tags lived once per swipe under that swipe's own
- * `extra.images` array (`{tag, regex?, locked?}` entries) — this is the one
- * part of the v2 data model `message_converter` (Task 5) never had to define
- * itself, since it was reconstructed here from `HostChatSnapshot` rather than
- * a standalone fixture. Anything not shaped like a tag entry is skipped
- * rather than rejected, since a host swipe can carry unrelated `extra` data.
+ * A v2 message's image tags lived under `extra.images`, a dictionary keyed by
+ * swipe id whose *values* are the per-swipe `{tag, regex?, locked?}` entry
+ * arrays (confirmed against the archived v2 source: `saveImageGroup` writes
+ * `chat[id].extra.images[swipe_id] = mergedImages`) — never a bare array
+ * itself. This mirrors `message_converter.ts`'s own
+ * `Object.entries(message.extra?.images ?? {})` treatment of the same field;
+ * `extra.images` is reconstructed here from `HostChatSnapshot` rather than a
+ * standalone fixture, since it is the one part of the v2 data model
+ * `message_converter` (Task 5) never had to define itself. Anything not
+ * shaped like a tag entry is skipped rather than rejected, since a host
+ * swipe can carry unrelated `extra` data.
  */
 function extract_legacy_image_entries(
   data: Readonly<Record<string, unknown>>,
+  swipe_id: number,
 ): LegacyMessageImageEntry[] {
-  const raw = data.images;
+  const images_by_swipe = data.images;
+  if (
+    typeof images_by_swipe !== "object" ||
+    images_by_swipe === null ||
+    Array.isArray(images_by_swipe)
+  ) {
+    return [];
+  }
+  const raw = (images_by_swipe as Record<string, unknown>)[String(swipe_id)];
   if (!Array.isArray(raw)) {
     return [];
   }
@@ -113,7 +127,7 @@ function to_legacy_messages(chat: HostChatSnapshot): LegacyMessagesFixture {
     );
     const images: Record<string, LegacyMessageImageEntry[]> = {};
     for (const swipe of message.swipes) {
-      const entries = extract_legacy_image_entries(swipe.data);
+      const entries = extract_legacy_image_entries(swipe.data, swipe.swipe_id);
       if (entries.length > 0) {
         images[String(swipe.swipe_id)] = entries;
       }

@@ -47,19 +47,48 @@ async function safe_estimate(
   }
 }
 
-function group_by_sha256(
-  records: readonly GalleryImageRecord[],
-): Map<Sha256, GalleryImageRecord[]> {
-  const grouped = new Map<Sha256, GalleryImageRecord[]>();
-  for (const record of records) {
-    const existing = grouped.get(record.sha256);
-    if (existing === undefined) {
-      grouped.set(record.sha256, [record]);
-    } else {
-      existing.push(record);
+interface RecordPartition {
+  readonly records_by_sha256: ReadonlyMap<Sha256, readonly GalleryImageRecord[]>;
+  /** sha256 values with at least one `image_records` row this job cannot prove safe to evict. */
+  readonly foreign_sha256: ReadonlySet<Sha256>;
+}
+
+function raw_sha256(raw: unknown): Sha256 | undefined {
+  if (typeof raw !== "object" || raw === null) {
+    return undefined;
+  }
+  const value = (raw as { sha256?: unknown }).sha256;
+  return typeof value === "string" ? value : undefined;
+}
+
+/**
+ * `image_records` is shared with non-gallery writers — migrated v2 assets in
+ * particular carry no `persisted_url`/`pinned` under `GalleryImageRecordSchema`'s
+ * flat fields, so they fail to parse as one. Such a row can never be proven
+ * safe to evict, so its sha256 is excluded from eviction entirely (via
+ * `foreign_sha256`) rather than silently dropped, in case it shares content
+ * with an otherwise-eligible gallery record.
+ */
+function partition_records(raw_records: readonly unknown[]): RecordPartition {
+  const records_by_sha256 = new Map<Sha256, GalleryImageRecord[]>();
+  const foreign_sha256 = new Set<Sha256>();
+  for (const raw of raw_records) {
+    const parsed = GalleryImageRecordSchema.safeParse(raw);
+    if (parsed.success) {
+      const existing = records_by_sha256.get(parsed.data.sha256);
+      if (existing === undefined) {
+        records_by_sha256.set(parsed.data.sha256, [parsed.data]);
+      } else {
+        existing.push(parsed.data);
+      }
+      continue;
+    }
+    const sha256_value = raw_sha256(raw);
+    if (sha256_value !== undefined) {
+      foreign_sha256.add(sha256_value);
     }
   }
-  return grouped;
+  return { records_by_sha256, foreign_sha256 };
 }
 
 /**
@@ -118,12 +147,13 @@ export async function run_lru_eviction(
       blob_store.getAll(),
       transaction.objectStore("image_records").getAll(),
     ]);
-    const records = raw_records.map((raw) => GalleryImageRecordSchema.parse(raw));
-    const records_by_sha256 = group_by_sha256(records);
+    const { records_by_sha256, foreign_sha256 } = partition_records(raw_records);
 
     const candidates = blobs
       .map((blob) =>
-        build_candidate(blob.sha256, blob.byte_length, records_by_sha256.get(blob.sha256) ?? []),
+        foreign_sha256.has(blob.sha256)
+          ? null
+          : build_candidate(blob.sha256, blob.byte_length, records_by_sha256.get(blob.sha256) ?? []),
       )
       .filter((candidate): candidate is EvictionCandidate => candidate !== null)
       .sort((left, right) => (left.last_accessed_at < right.last_accessed_at ? -1 : 1));

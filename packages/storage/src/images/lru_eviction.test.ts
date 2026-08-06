@@ -5,7 +5,10 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { DATABASE_NAME } from "../database_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
-import { ImageBlobRepository } from "../repositories/business_repositories.js";
+import {
+  create_business_repositories,
+  ImageBlobRepository,
+} from "../repositories/business_repositories.js";
 import { run_lru_eviction } from "./lru_eviction.js";
 import { type ImageRecordFields } from "./image_schema.js";
 import { GalleryImageRecordRepository, put_image, type GalleryImageRecord } from "./image_store.js";
@@ -235,6 +238,51 @@ describe("lru_eviction", () => {
 
     expect(result).toEqual({ reclaimed_bytes: 300, evicted_sha256: [small.sha256, medium.sha256] });
     expect(await new ImageBlobRepository(database).get(large.sha256)).not.toBeNull();
+  });
+
+  it("skips an image_records row from a different domain instead of crashing on it", async () => {
+    // `image_records` is shared with non-gallery writers (e.g. a migrated v2
+    // asset), whose rows do not carry `provider_id`/`source_message`/
+    // `generation_parameters`/`media_type` and so fail `GalleryImageRecordSchema`.
+    // Such a row must never crash cleanup, and its blob must never be evicted
+    // since eligibility (pinned, persisted_url) cannot be determined for it.
+    const database = await open_database();
+    const repositories = create_business_repositories(database);
+    const foreign_bytes = png_bytes_of_length(400, 50);
+    const foreign_sha256 = "5".repeat(64);
+    await repositories.image_blobs.create({
+      sha256: foreign_sha256,
+      ref_count: 1,
+      byte_length: foreign_bytes.byteLength,
+      blob: new Blob([new Uint8Array(foreign_bytes)]),
+    });
+    await repositories.image_records.create(NAMESPACE, {
+      schema_version: 1,
+      id: IDS.a,
+      namespace: NAMESPACE,
+      record_key: `${NAMESPACE}:${IDS.a}`,
+      created_at: NOW,
+      updated_at: NOW,
+      sha256: foreign_sha256,
+      last_accessed_at: NOW,
+      pinned: false,
+      payload: { kind: "uploaded_configuration_image", legacy_id: "cfgimg_1" },
+    });
+    const eligible = await seed_record(database, {
+      id: IDS.b,
+      bytes: png_bytes_of_length(400, 51),
+      last_accessed_at: NOW,
+      persisted_url: "https://cdn.example.com/b.png",
+    });
+
+    const result = await run_lru_eviction(
+      database,
+      { start_pressure_ratio: 0.5, target_pressure_ratio: 0.0 },
+      () => Promise.resolve({ usage: 800, quota: 1000 }),
+    );
+
+    expect(result).toEqual({ reclaimed_bytes: 400, evicted_sha256: [eligible.sha256] });
+    expect(await new ImageBlobRepository(database).get(foreign_sha256)).not.toBeNull();
   });
 
   it("disables cleanup without deleting anything when the quota estimate is unavailable", async () => {
