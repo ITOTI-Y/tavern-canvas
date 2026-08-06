@@ -36,6 +36,43 @@ describe("fixtures", () => {
   });
 });
 
+describe("LegacySettingsSchema: older-install defaults (I5 regression)", () => {
+  it("parses successfully when fields added after 2.8.1 are entirely absent, instead of permanently blocking migration", () => {
+    const older_install = { ...settingsFixture } as Record<string, unknown>;
+    // `asr`, `imageGenStats`, and the gesture fields are cited by the review
+    // as fields that "did not always exist" on older v2 installs.
+    delete older_install.asr;
+    delete older_install.imageGenStats;
+    delete older_install.gestureEnabled;
+    delete older_install.clickTriggerEnabled;
+    delete older_install.gesture1;
+    delete older_install.gesture2;
+    delete older_install.gestureShowRecognition;
+    delete older_install.gestureShowTrail;
+    delete older_install.gestureTrailColor;
+    delete older_install.gestureMatchThreshold;
+
+    const result = LegacySettingsSchema.safeParse(older_install);
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw new Error("unreachable");
+    }
+    expect(result.data.asr.enabled).toBe(false);
+    expect(result.data.imageGenStats.total).toEqual({ success: 0, fail: 0 });
+    expect(result.data.gestureEnabled).toBe(false);
+    expect(result.data.gesture1).toEqual([]);
+  });
+
+  it("still rejects a field of the wrong type instead of silently defaulting it", () => {
+    const corrupted = { ...settingsFixture, scriptEnabled: "not-a-boolean" };
+
+    const result = LegacySettingsSchema.safeParse(corrupted);
+
+    expect(result.success).toBe(false);
+  });
+});
+
 describe("classify_settings_paths", () => {
   it("classifies every own path in the fully populated settings fixture", () => {
     const result = classify_settings_paths(legacy_settings);
@@ -116,6 +153,32 @@ describe("classify_settings_paths", () => {
       ]),
     );
   });
+
+  it("classifies a credential as deferred_secret_transfer even when its profile name contains a dot (C2 regression)", () => {
+    // A dot-joined path representation re-splits "v4.5 anime" into extra
+    // segments, shifting `novelai_profiles.*.novelaiApi` (3 pattern segments)
+    // out of alignment with the resulting 4-segment path, so it falls back to
+    // the recursive `novelai_profiles.**` rule and gets classified `mapped`
+    // instead of `deferred_secret_transfer` — silently defeating redaction.
+    const dotted_profile = legacy_settings.novelai_profiles.默认;
+    if (dotted_profile === undefined) {
+      throw new Error("unreachable");
+    }
+    const polluted = {
+      ...legacy_settings,
+      novelai_profiles: {
+        ...legacy_settings.novelai_profiles,
+        "v4.5 anime": { ...dotted_profile, novelaiApi: "synthetic-dotted-profile-token" },
+      },
+    };
+
+    const { classified } = classify_settings_paths(polluted);
+    const rule = classified.find(
+      (entry) => entry.path === "novelai_profiles.v4.5 anime.novelaiApi",
+    )?.rule;
+
+    expect(rule?.classification).toBe("deferred_secret_transfer");
+  });
 });
 
 describe("converter registry", () => {
@@ -176,6 +239,29 @@ describe("provider_converter", () => {
     const result = convert_provider(legacy_settings, context);
 
     expect(result.records.some((record) => record.provider_id === "openai_image")).toBe(true);
+  });
+
+  it("never leaks a credential from a dot-containing v2 profile name (C2 regression)", () => {
+    const dotted_profile = legacy_settings.novelai_profiles.默认;
+    if (dotted_profile === undefined) {
+      throw new Error("unreachable");
+    }
+    const polluted = {
+      ...legacy_settings,
+      novelai_profiles: {
+        ...legacy_settings.novelai_profiles,
+        "v4.5 anime": { ...dotted_profile, novelaiApi: "synthetic-dotted-profile-token" },
+      },
+    };
+
+    const result = convert_provider(polluted, context);
+    const serialized = JSON.stringify(result.records);
+
+    expect(serialized).not.toContain("synthetic-dotted-profile-token");
+    const by_path = new Map(result.secret_transfers.map((op) => [op.source_path, op]));
+    expect(by_path.get("novelai_profiles.v4.5 anime.novelaiApi")?.plaintext_value).toBe(
+      "synthetic-dotted-profile-token",
+    );
   });
 });
 
