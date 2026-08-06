@@ -100,7 +100,7 @@ describe("plan_vocabulary_query", () => {
 
 describe("resolve_trigram_candidates", () => {
   function trigram_shard(
-    entries: readonly (readonly [string, readonly number[]])[],
+    entries: VocabularyTrigramShardPayload["entries"],
   ): VocabularyTrigramShardPayload {
     return { kind: "trigram", entries };
   }

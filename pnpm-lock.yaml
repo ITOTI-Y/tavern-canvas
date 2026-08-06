@@ -99,6 +99,9 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
     devDependencies:
+      '@tavern-canvas/vocabulary-builder':
+        specifier: workspace:*
+        version: link:../../tools/vocabulary_builder
       '@types/node':
         specifier: 24.13.3
         version: 24.13.3

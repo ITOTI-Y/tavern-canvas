@@ -16,6 +16,18 @@ function to_code_points(text: string): readonly string[] {
   return Array.from(text);
 }
 
+/**
+ * First `code_point_count` Unicode code points of `text`, as a shard
+ * grouping key -- matches the builder's `shard_group_key` exactly (same
+ * code-point-aware slicing via `Array.from`, so astral characters group
+ * identically on both the encode and decode sides). Used both for the
+ * query's own prefix/alias group_key (below) and, by the Worker, to group
+ * each individual trigram for trigram shard lookup.
+ */
+export function code_point_group_key(text: string, code_point_count: number): string {
+  return Array.from(text).slice(0, code_point_count).join("");
+}
+
 function build_trigrams(code_points: readonly string[]): readonly string[] {
   if (code_points.length < 3) {
     return [];
@@ -45,7 +57,7 @@ export function normalize_vocabulary_query(raw: string): NormalizedVocabularyQue
     raw,
     normalized,
     is_empty: normalized.length === 0,
-    group_key: code_points.length >= 2 ? code_points.slice(0, 2).join("") : null,
+    group_key: code_points.length >= 2 ? code_point_group_key(normalized, 2) : null,
     trigrams: build_trigrams(code_points),
   };
 }

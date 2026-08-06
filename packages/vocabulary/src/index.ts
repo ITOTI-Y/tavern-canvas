@@ -37,6 +37,7 @@ export type {
 } from "./package_updater.js";
 
 export {
+  code_point_group_key,
   normalize_vocabulary_query,
   type NormalizedVocabularyQuery,
 } from "./search/query_normalizer.js";
@@ -65,9 +66,11 @@ export {
 export { decode_shard_bytes, encode_shard_bytes, type DecodedShard } from "./search/shard_codec.js";
 export type {
   ShardByteSource,
+  VocabularyAliasShardPayload,
   VocabularyDetailShardPayload,
   VocabularyHotShardPayload,
   VocabularyPrefixOrAliasShardPayload,
+  VocabularyPrefixShardPayload,
   VocabularyShardPayload,
   VocabularyTrigramShardPayload,
 } from "./search/vocabulary_shard_payloads.js";

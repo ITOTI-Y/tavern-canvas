@@ -27,6 +27,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@tavern-canvas/vocabulary-builder": "workspace:*",
     "@types/node": "24.13.3",
     "@types/semver": "7.8.0",
     "@vitejs/plugin-vue": "6.0.8",

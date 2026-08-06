@@ -69,13 +69,11 @@ async function build_fixture(): Promise<Fixture> {
     kind: "alias",
     entries: [["夕焼け", 4, 2]],
   };
-  const trigram_s: VocabularyTrigramShardPayload = {
-    kind: "trigram",
-    entries: [
-      ["sun", [4]],
-      ["uns", [4]],
-    ],
-  };
+  // Trigram shards group by the first two code points of the trigram
+  // itself (tools/vocabulary_builder/src/build_trigram_index.ts), so "sun"
+  // (group "su") and "uns" (group "un") land in different shard files.
+  const trigram_su: VocabularyTrigramShardPayload = { kind: "trigram", entries: [["sun", [4]]] };
+  const trigram_un: VocabularyTrigramShardPayload = { kind: "trigram", entries: [["uns", [4]]] };
   const hot_shard: VocabularyHotShardPayload = { kind: "hot", global: [0, 2, 4], by_category: {} };
 
   const payloads: Record<string, unknown> = {
@@ -83,7 +81,8 @@ async function build_fixture(): Promise<Fixture> {
     "prefix:ca": prefix_ca,
     "prefix:do": prefix_do,
     "alias:夕焼": alias_su,
-    "trigram:s": trigram_s,
+    "trigram:su": trigram_su,
+    "trigram:un": trigram_un,
     "hot:global": hot_shard,
   };
 
@@ -108,7 +107,8 @@ async function build_fixture(): Promise<Fixture> {
       shard_entry("prefix:ca", "prefix", bytes.get("prefix:ca")?.byteLength ?? 0),
       shard_entry("prefix:do", "prefix", bytes.get("prefix:do")?.byteLength ?? 0),
       shard_entry("alias:夕焼", "alias", bytes.get("alias:夕焼")?.byteLength ?? 0),
-      shard_entry("trigram:s", "trigram", bytes.get("trigram:s")?.byteLength ?? 0),
+      shard_entry("trigram:su", "trigram", bytes.get("trigram:su")?.byteLength ?? 0),
+      shard_entry("trigram:un", "trigram", bytes.get("trigram:un")?.byteLength ?? 0),
       shard_entry("hot:global", "hot", bytes.get("hot:global")?.byteLength ?? 0),
     ],
   };
@@ -255,7 +255,7 @@ describe("VocabularyWorkerEngine", () => {
     const engine = new VocabularyWorkerEngine(fixture.byte_source, { memory_mode: "desktop" });
     await initialize(engine);
 
-    const paused = fixture.pause_on("trigram:s");
+    const paused = fixture.pause_on("trigram:su");
     const responses: VocabularyWorkerResponse[] = [];
     const request_id = "00000000-0000-4000-8000-000000000006";
 

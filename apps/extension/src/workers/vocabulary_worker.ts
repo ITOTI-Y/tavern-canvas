@@ -1,4 +1,5 @@
 import {
+  VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
   VocabularyWorkerRequestSchema,
   type VocabularyInitializeRequest,
   type VocabularyManifest,
@@ -10,6 +11,7 @@ import {
   type VocabularyWorkerResponse,
 } from "@tavern-canvas/contracts";
 import {
+  code_point_group_key,
   decode_shard_bytes,
   normalize_vocabulary_query,
   plan_vocabulary_query,
@@ -36,7 +38,11 @@ import {
 // not exported there -- kept in lockstep by the shared VocabularySearchResultSchema
 // max(50) bound both files are checked against).
 const RESULT_PAGE_SIZE = 50;
-const DETAIL_SHARD_RECORD_CAPACITY = 4096;
+// Trigram shards group by the first two code points of the trigram itself
+// (tools/vocabulary_builder/src/build_trigram_index.ts), the same width as
+// prefix/alias grouping -- not one code point, which an earlier version of
+// this file assumed before the builder landed.
+const TRIGRAM_GROUP_CODE_POINT_COUNT = 2;
 const MANIFEST_CACHE_KEY = "__manifest__";
 
 class VocabularySearchCancelledError extends Error {
@@ -50,8 +56,16 @@ function error_message(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+// record_ids are dense, sequential, and 0-indexed (assign_record_ids in the
+// builder), and detail shards chunk them contiguously in
+// VOCABULARY_DETAIL_SHARD_MAX_RECORDS-sized blocks starting at 0
+// (build_detail_shards.ts), so a record's shard start_id is always this
+// floor -- verified directly by the builder-package integration test.
 function detail_partition_start(record_id: number): number {
-  return Math.floor(record_id / DETAIL_SHARD_RECORD_CAPACITY) * DETAIL_SHARD_RECORD_CAPACITY;
+  return (
+    Math.floor(record_id / VOCABULARY_DETAIL_SHARD_MAX_RECORDS) *
+    VOCABULARY_DETAIL_SHARD_MAX_RECORDS
+  );
 }
 
 function find_record(
@@ -79,14 +93,16 @@ function find_record(
 }
 
 /**
- * Locates the shard file for a group/record. ASSUMED convention --
- * `${kind}:${partition}` shard_id -- since VocabularyManifestSchema
- * (packages/contracts/src/vocabulary.ts) carries no group/partition field
- * and payload-contract.md does not specify how a consumer addresses the
- * shard for a given prefix/alias group, trigram, or detail record range.
- * Flagged as a NEEDS_CONTEXT concern for the controller to reconcile
- * against Task 2's actual builder output; isolated here so fixing the
- * naming touches nothing else in the Worker.
+ * Locates the shard file for a group/record by `shard_id`, matching Task 2's
+ * builder exactly (tools/vocabulary_builder/src/build_{prefix,alias,trigram,
+ * detail,hot}_index.ts): `prefix:${group_key}` / `alias:${group_key}` where
+ * group_key is the first two normalized code points; `trigram:${group_key}`
+ * where group_key is the first two code points of the trigram itself (not
+ * the query); `detail:${start_id}` where start_id is the record's shard's
+ * first record_id (record_ids are dense/sequential/0-indexed, so this is a
+ * pure floor-division computation, no manifest lookup table needed); and the
+ * single fixed `hot:global`. Reconciled against the real builder output in
+ * builder_package_integration.test.ts.
  */
 class ManifestShardIndex {
   readonly #by_shard_id = new Map<string, VocabularyShardEntry>();
@@ -113,8 +129,8 @@ class ManifestShardIndex {
     return this.#by_shard_id.get(`detail:${String(detail_partition_start(record_id))}`) ?? null;
   }
 
-  trigram(first_code_point: string): VocabularyShardEntry | null {
-    return this.#by_shard_id.get(`trigram:${first_code_point}`) ?? null;
+  trigram(group_key: string): VocabularyShardEntry | null {
+    return this.#by_shard_id.get(`trigram:${group_key}`) ?? null;
   }
 }
 
@@ -429,13 +445,17 @@ export class VocabularyWorkerEngine {
     if (normalized.trigrams.length === 0) {
       return [];
     }
-    const first_code_points = Array.from(
-      new Set(normalized.trigrams.map((trigram) => Array.from(trigram)[0] ?? "")),
+    const group_keys = Array.from(
+      new Set(
+        normalized.trigrams.map((trigram) =>
+          code_point_group_key(trigram, TRIGRAM_GROUP_CODE_POINT_COUNT),
+        ),
+      ),
     );
     const shards: VocabularyTrigramShardPayload[] = [];
-    for (const code_point of first_code_points) {
+    for (const group_key of group_keys) {
       this.#check_cancelled(request_id);
-      const entry = this.#shard_index?.trigram(code_point) ?? null;
+      const entry = this.#shard_index?.trigram(group_key) ?? null;
       if (entry === null) {
         continue;
       }
