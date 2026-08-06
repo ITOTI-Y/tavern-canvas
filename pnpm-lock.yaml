@@ -204,6 +204,24 @@ importers:
 
   tools/first_party_check: {}
 
+  tools/v2_migration:
+    dependencies:
+      '@noble/hashes':
+        specifier: 2.2.0
+        version: 2.2.0
+      '@tavern-canvas/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@tavern-canvas/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@tavern-canvas/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
 packages:
 
   '@babel/helper-string-parser@7.29.7':
