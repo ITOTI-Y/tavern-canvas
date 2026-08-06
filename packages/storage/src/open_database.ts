@@ -30,8 +30,9 @@ function attach_lifecycle(database: IDBPDatabase<DBSchema>): StorageDatabase {
     }
   };
 
-  const dispose = async (): Promise<void> => {
+  const dispose = (): Promise<void> => {
     invalidate();
+    return Promise.resolve();
   };
 
   const storage_database = database as StorageDatabase;

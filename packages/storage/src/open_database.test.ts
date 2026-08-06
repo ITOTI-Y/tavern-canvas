@@ -15,7 +15,6 @@ import { dispose_database, open_database } from "./open_database.js";
 
 const store_names = Object.keys(STORE_DEFINITIONS) as StoreName[];
 
-
 async function close_test_database(): Promise<void> {
   await dispose_database();
   await deleteDB(DATABASE_NAME);
@@ -54,7 +53,7 @@ describe("tavern_canvas_v3 schema", () => {
           throw new Error("intentional upgrade failure");
         },
       }),
-    ).rejects.toThrow();
+    ).rejects.toThrowError(Error);
 
     const database = await openDB<DBSchema>(name);
     expect([...database.objectStoreNames]).toHaveLength(0);
@@ -80,7 +79,8 @@ describe("tavern_canvas_v3 schema", () => {
     const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION + 1);
     const request_complete = new Promise<void>((resolve, reject) => {
       request.onupgradeneeded = () => resolve();
-      request.onerror = () => reject(request.error);
+      request.onerror = () =>
+        reject(request.error instanceof Error ? request.error : new Error("versionchange failed"));
       request.onblocked = () => reject(new Error("versionchange remained blocked"));
     });
 

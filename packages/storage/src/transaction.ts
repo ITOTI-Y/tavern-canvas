@@ -24,8 +24,7 @@ export function with_transaction<T>(
 export async function with_transaction<T>(
   database_or_store_names: IDBPDatabase<DBSchema> | readonly StoreName[],
   store_names_or_callback:
-    | readonly StoreName[]
-    | ((transaction: StorageWriteTransaction) => Promise<T> | T),
+    readonly StoreName[] | ((transaction: StorageWriteTransaction) => Promise<T> | T),
   maybe_callback?: (transaction: StorageWriteTransaction) => Promise<T> | T,
 ): Promise<T> {
   const database = (
@@ -36,8 +35,7 @@ export async function with_transaction<T>(
   if (Array.isArray(database_or_store_names)) {
     store_names = database_or_store_names;
     callback = store_names_or_callback as
-      | ((transaction: StorageWriteTransaction) => Promise<T> | T)
-      | undefined;
+      ((transaction: StorageWriteTransaction) => Promise<T> | T) | undefined;
   } else {
     store_names = store_names_or_callback as readonly StoreName[];
     callback = maybe_callback;

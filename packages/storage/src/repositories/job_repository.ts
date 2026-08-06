@@ -1,10 +1,6 @@
 import type { IDBPDatabase } from "idb";
 
-import {
-  type DBSchema,
-  type GenerationJob,
-  GenerationJobSchema,
-} from "../database_schema.js";
+import { type DBSchema, type GenerationJob, GenerationJobSchema } from "../database_schema.js";
 import { IndexedDbRepository } from "../repository.js";
 
 export class GenerationJobRepository extends IndexedDbRepository<"generation_jobs", GenerationJob> {

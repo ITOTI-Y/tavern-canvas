@@ -79,11 +79,9 @@ function assert_write_transaction(transaction: StorageTransaction): void {
 }
 
 export class IndexedDbRepository<
-    TStoreName extends NamespacedStoreName,
-    TRecord extends NamespacedRecord,
-  >
-  implements Repository<TRecord>
-{
+  TStoreName extends NamespacedStoreName,
+  TRecord extends NamespacedRecord,
+> implements Repository<TRecord> {
   private readonly schema: NamespacedSchema;
   private readonly rejects_provider_secrets: boolean;
 
@@ -160,22 +158,14 @@ export class IndexedDbRepository<
     });
   }
 
-  async put(
-    namespace: string,
-    record: TRecord,
-    transaction?: StorageTransaction,
-  ): Promise<void> {
+  async put(namespace: string, record: TRecord, transaction?: StorageTransaction): Promise<void> {
     const valid_record = this.prepare_record(namespace, record);
     await this.run_write(transaction, async (active_transaction) => {
       await this.store(active_transaction).put(valid_record);
     });
   }
 
-  async delete(
-    namespace: string,
-    id: string,
-    transaction?: StorageTransaction,
-  ): Promise<void> {
+  async delete(namespace: string, id: string, transaction?: StorageTransaction): Promise<void> {
     const record_key = this.record_key(namespace, id);
     await this.run_write(transaction, async (active_transaction) => {
       await this.store(active_transaction).delete(record_key);
@@ -185,11 +175,7 @@ export class IndexedDbRepository<
     transaction: StorageTransaction | StorageWriteTransaction,
   ): IDBPObjectStore<DBSchema, ArrayLike<StoreName>, TStoreName, "readwrite"> {
     return (
-      transaction as unknown as IDBPTransaction<
-        DBSchema,
-        StoreName[],
-        "readwrite"
-      >
+      transaction as unknown as IDBPTransaction<DBSchema, StoreName[], "readwrite">
     ).objectStore(this.store_name);
   }
   private record_key(namespace: string, id: string): string {
@@ -272,7 +258,10 @@ export class IndexedDbRepository<
     }
     const parsed = this.schema.safeParse(candidate);
     if (!parsed.success) {
-      throw new RepositoryValidationError("Stored record failed schema validation", parsed.error.issues);
+      throw new RepositoryValidationError(
+        "Stored record failed schema validation",
+        parsed.error.issues,
+      );
     }
     try {
       validate_record_key(parsed.data.namespace, parsed.data.id, parsed.data.record_key);
@@ -287,7 +276,6 @@ export class IndexedDbRepository<
     return clone_boundary(parsed.data) as TRecord;
   }
 
-
   private async run_read<T>(
     transaction: StorageTransaction | undefined,
     callback: (active_transaction: StorageTransaction) => Promise<T>,
@@ -297,7 +285,7 @@ export class IndexedDbRepository<
     }
     const created_transaction = this.database.transaction(this.store_name, "readonly");
     try {
-      const result = await callback(created_transaction as StorageTransaction);
+      const result = await callback(created_transaction);
       await created_transaction.done;
       return result;
     } catch (error) {
@@ -320,7 +308,7 @@ export class IndexedDbRepository<
     }
     const created_transaction = this.database.transaction(this.store_name, "readwrite");
     try {
-      const result = await callback(created_transaction as StorageWriteTransaction);
+      const result = await callback(created_transaction);
       await created_transaction.done;
       return result;
     } catch (error) {

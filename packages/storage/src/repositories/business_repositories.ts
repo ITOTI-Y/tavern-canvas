@@ -1,5 +1,4 @@
 import type { IDBPDatabase } from "idb";
-import { z } from "zod";
 
 import {
   type CharacterProfile,
@@ -162,7 +161,7 @@ async function run_read<T>(
   }
   const created_transaction = database.transaction(store_name, "readonly");
   try {
-    const result = await callback(created_transaction as StorageTransaction);
+    const result = await callback(created_transaction);
     await created_transaction.done;
     return result;
   } catch (error) {
@@ -189,7 +188,7 @@ async function run_write<T>(
   }
   const created_transaction = database.transaction(store_name, "readwrite");
   try {
-    const result = await callback(created_transaction as StorageWriteTransaction);
+    const result = await callback(created_transaction);
     await created_transaction.done;
     return result;
   } catch (error) {
@@ -224,9 +223,11 @@ export class ImageBlobRepository {
   async list(transaction?: StorageTransaction): Promise<ImageBlob[]> {
     return run_read(this.database, "image_blobs", transaction, async (active_transaction) => {
       const raw_records = await active_transaction.objectStore("image_blobs").getAll();
-      return raw_records.map((raw) => this.validate(raw)).sort((left, right) =>
-        left.sha256 < right.sha256 ? -1 : left.sha256 > right.sha256 ? 1 : 0,
-      );
+      return raw_records
+        .map((raw) => this.validate(raw))
+        .sort((left, right) =>
+          left.sha256 < right.sha256 ? -1 : left.sha256 > right.sha256 ? 1 : 0,
+        );
     });
   }
 
@@ -273,12 +274,13 @@ export class ImageBlobRepository {
     const cloned = clone_boundary(record);
     const parsed = ImageBlobSchema.safeParse(cloned);
     if (!parsed.success) {
-      throw new RepositoryValidationError("Image blob failed schema validation", parsed.error.issues);
+      throw new RepositoryValidationError(
+        "Image blob failed schema validation",
+        parsed.error.issues,
+      );
     }
     const actual_byte_length =
-      parsed.data.blob instanceof Blob
-        ? parsed.data.blob.size
-        : parsed.data.blob.byteLength;
+      parsed.data.blob instanceof Blob ? parsed.data.blob.size : parsed.data.blob.byteLength;
     if (actual_byte_length !== parsed.data.byte_length) {
       throw new RepositoryValidationError("Image blob byte_length does not match blob data");
     }
@@ -295,9 +297,7 @@ export class ImageBlobRepository {
       );
     }
     const actual_byte_length =
-      parsed.data.blob instanceof Blob
-        ? parsed.data.blob.size
-        : parsed.data.blob.byteLength;
+      parsed.data.blob instanceof Blob ? parsed.data.blob.size : parsed.data.blob.byteLength;
     if (actual_byte_length !== parsed.data.byte_length) {
       throw new RepositoryValidationError("Stored image blob byte_length does not match blob data");
     }
@@ -323,21 +323,18 @@ export class MigrationJournalRepository {
   }
 
   async list(transaction?: StorageTransaction): Promise<MigrationJournal[]> {
-    return run_read(
-      this.database,
-      "migration_journal",
-      transaction,
-      async (active_transaction) => {
-        const raw_records = await active_transaction.objectStore("migration_journal").getAll();
-        return raw_records.map((raw) => this.validate(raw)).sort((left, right) =>
+    return run_read(this.database, "migration_journal", transaction, async (active_transaction) => {
+      const raw_records = await active_transaction.objectStore("migration_journal").getAll();
+      return raw_records
+        .map((raw) => this.validate(raw))
+        .sort((left, right) =>
           left.migration_id < right.migration_id
             ? -1
             : left.migration_id > right.migration_id
               ? 1
               : 0,
         );
-      },
-    );
+    });
   }
 
   async create(record: MigrationJournal, transaction?: StorageTransaction): Promise<void> {
@@ -382,7 +379,10 @@ export class MigrationJournalRepository {
   private key(migration_id: string): string {
     const parsed = MigrationJournalSchema.shape.migration_id.safeParse(migration_id);
     if (!parsed.success) {
-      throw new RepositoryValidationError("migration_id must be a nonempty bounded string", parsed.error.issues);
+      throw new RepositoryValidationError(
+        "migration_id must be a nonempty bounded string",
+        parsed.error.issues,
+      );
     }
     return parsed.data;
   }
@@ -420,7 +420,9 @@ export class MigrationJournalRepository {
         parse_json_value(cloned.payload);
       } catch (error) {
         throw new RepositoryValidationError(
-          error instanceof Error ? error.message : "Stored migration payload must be serializable JSON",
+          error instanceof Error
+            ? error.message
+            : "Stored migration payload must be serializable JSON",
         );
       }
     }

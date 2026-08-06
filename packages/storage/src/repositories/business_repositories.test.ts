@@ -47,11 +47,15 @@ function business_record<T extends Record<string, unknown>>(
 }
 
 function image_record(id: string, namespace = NAMESPACE): ImageRecord {
-  return business_record(id, {
-    sha256: "a".repeat(64),
-    last_accessed_at: NOW,
-    pinned: false,
-  }, namespace) as ImageRecord;
+  return business_record(
+    id,
+    {
+      sha256: "a".repeat(64),
+      last_accessed_at: NOW,
+      pinned: false,
+    },
+    namespace,
+  ) as ImageRecord;
 }
 
 function job_record(id = IDS.first, namespace = NAMESPACE): GenerationJobRecord {
@@ -135,7 +139,10 @@ describe("business repositories", () => {
     await expect(repositories.provider_profiles.create(NAMESPACE, record)).rejects.toThrow();
     await expect(repositories.provider_profiles.update(NAMESPACE, record)).resolves.toBeUndefined();
     await expect(
-      repositories.provider_profiles.update(NAMESPACE, business_record(IDS.second, { provider_id: "sd_webui" })),
+      repositories.provider_profiles.update(
+        NAMESPACE,
+        business_record(IDS.second, { provider_id: "sd_webui" }),
+      ),
     ).rejects.toThrow();
   });
 
@@ -184,7 +191,6 @@ describe("business repositories", () => {
     expect(await repositories.provider_profiles.get(NAMESPACE, IDS.first)).toBeNull();
   });
 
-
   it("does not leak mutable caller or stored objects", async () => {
     const { repositories } = await make_repositories();
     const record = business_record(IDS.first, { provider_id: "sd_webui" });
@@ -209,15 +215,11 @@ describe("business repositories", () => {
     const image = image_record(IDS.second);
 
     await expect(
-      with_transaction(
-        database,
-        ["provider_profiles", "image_records"],
-        async (transaction) => {
-          await repositories.provider_profiles.create(NAMESPACE, provider, transaction);
-          await repositories.image_records.create(NAMESPACE, image, transaction);
-          throw new Error("rollback");
-        },
-      ),
+      with_transaction(database, ["provider_profiles", "image_records"], async (transaction) => {
+        await repositories.provider_profiles.create(NAMESPACE, provider, transaction);
+        await repositories.image_records.create(NAMESPACE, image, transaction);
+        throw new Error("rollback");
+      }),
     ).rejects.toThrow("rollback");
 
     expect(await repositories.provider_profiles.get(NAMESPACE, IDS.first)).toBeNull();

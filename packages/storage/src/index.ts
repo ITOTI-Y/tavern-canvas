@@ -89,4 +89,7 @@ export type {
   BusinessRepositories,
 } from "./repositories/business_repositories.js";
 
-export { create_generation_job_repository, GenerationJobRepository } from "./repositories/job_repository.js";
+export {
+  create_generation_job_repository,
+  GenerationJobRepository,
+} from "./repositories/job_repository.js";

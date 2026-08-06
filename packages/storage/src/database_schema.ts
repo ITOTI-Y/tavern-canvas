@@ -1,8 +1,4 @@
-import type {
-  DBSchema as IdbDBSchema,
-  IDBPDatabase,
-  IDBPTransaction,
-} from "idb";
+import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb";
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
@@ -73,10 +69,7 @@ export const STORE_DEFINITIONS = {
 } as const;
 
 export type StoreName = keyof typeof STORE_DEFINITIONS;
-export type NamespacedStoreName = Exclude<
-  StoreName,
-  "image_blobs" | "migration_journal"
->;
+export type NamespacedStoreName = Exclude<StoreName, "image_blobs" | "migration_journal">;
 export type BusinessStoreName = Exclude<NamespacedStoreName, "generation_jobs">;
 
 export type JsonPrimitive = string | number | boolean | null;
@@ -85,7 +78,7 @@ export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue
 const json_value_schema: z.ZodType<JsonValue> = z.lazy(() =>
   z.union([
     z.string(),
-    z.number().finite(),
+    z.number(),
     z.boolean(),
     z.null(),
     z.array(json_value_schema),
@@ -93,8 +86,7 @@ const json_value_schema: z.ZodType<JsonValue> = z.lazy(() =>
   ]),
 );
 
-const uuid_pattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
+const uuid_pattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 export const UuidSchema = z.string().regex(uuid_pattern);
 export type Uuid = z.infer<typeof UuidSchema>;
 
@@ -460,7 +452,11 @@ export const MIGRATION_JOURNAL_SCHEMA: z.ZodType<MigrationJournal> = MigrationJo
 const secret_key_pattern =
   /(credential|secret|token|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
 
-function assert_json_value(value: unknown, path: string, seen: WeakSet<object>): asserts value is JsonValue {
+function assert_json_value(
+  value: unknown,
+  path: string,
+  seen: WeakSet<object>,
+): asserts value is JsonValue {
   if (value === null || typeof value === "string" || typeof value === "boolean") {
     return;
   }
@@ -488,10 +484,13 @@ function assert_json_value(value: unknown, path: string, seen: WeakSet<object>):
   seen.add(value);
   if (Array.isArray(value)) {
     for (const [index, item] of value.entries()) {
-      assert_json_value(item, `${path}[${index}]`, seen);
+      assert_json_value(item, `${path}[${String(index)}]`, seen);
     }
   } else {
-    if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) {
+    if (
+      Object.getPrototypeOf(value) !== Object.prototype &&
+      Object.getPrototypeOf(value) !== null
+    ) {
       throw new TypeError(`${path} must contain plain objects`);
     }
     for (const key of Reflect.ownKeys(value)) {
@@ -513,7 +512,9 @@ export function assert_safe_provider_payload(payload: unknown): void {
   const checked = parse_json_value(payload);
   const visit = (value: JsonValue, path: string): void => {
     if (Array.isArray(value)) {
-      value.forEach((item, index) => visit(item, `${path}[${index}]`));
+      value.forEach((item, index) => {
+        visit(item, `${path}[${String(index)}]`);
+      });
       return;
     }
     if (value !== null && typeof value === "object") {
