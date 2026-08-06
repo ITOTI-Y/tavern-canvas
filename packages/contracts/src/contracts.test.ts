@@ -467,13 +467,24 @@ describe("Gateway protocol schemas", () => {
 describe("initial settings and capability contracts", () => {
   const settings = {
     schema_version: 1 as const,
+    active_namespace: "primary",
     locale: "auto" as const,
+    active_provider_profile_id: null,
     global_concurrency: 4,
+    auto_generation_enabled: true,
+    fallback_generation_enabled: true,
     gateway: {
       endpoint: "http://192.168.1.10:8080",
+      token_secret_id: null,
       http_acknowledgments: {
         "http://192.168.1.10:8080": occurred_at,
       },
+    },
+    ui: {
+      color_mode: "system" as const,
+      inspector_width: 320,
+      inspector_collapsed: false,
+      optional_entry_enabled: false,
     },
   };
 
@@ -577,15 +588,26 @@ describe("strict public object boundaries", () => {
   };
   const gateway_settings = {
     endpoint: "http://192.168.1.10:8080",
+    token_secret_id: null,
     http_acknowledgments: {
       "http://192.168.1.10:8080": occurred_at,
     },
   };
   const tavern_canvas_settings = {
     schema_version: 1 as const,
+    active_namespace: "primary",
     locale: "auto" as const,
+    active_provider_profile_id: null,
     global_concurrency: 4,
+    auto_generation_enabled: true,
+    fallback_generation_enabled: true,
     gateway: gateway_settings,
+    ui: {
+      color_mode: "system" as const,
+      inspector_width: 320,
+      inspector_collapsed: false,
+      optional_entry_enabled: false,
+    },
   };
 
   it.each([
