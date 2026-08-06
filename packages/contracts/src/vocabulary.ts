@@ -23,7 +23,7 @@ export type VocabularyIndexKind = z.infer<typeof VocabularyIndexKindSchema>;
  * and trim. Never mutates the user-visible original tag/alias/translation —
  * callers index the normalized key alongside the untouched source field.
  */
-export function normalizeVocabularySearchKey(text: string): string {
+export function normalize_vocabulary_search_key(text: string): string {
   return text.normalize("NFKC").replace(/_/gu, " ").toLowerCase().replace(/\s+/gu, " ").trim();
 }
 
@@ -53,7 +53,7 @@ export const VocabularyRecordCollectionSchema = z.array(VocabularyRecordSchema).
     }
     seen_record_ids.add(record.record_id);
 
-    const normalized_tag = normalizeVocabularySearchKey(record.tag);
+    const normalized_tag = normalize_vocabulary_search_key(record.tag);
     if (seen_normalized_tags.has(normalized_tag)) {
       context.issues.push({
         code: "custom",

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  normalizeVocabularySearchKey,
+  normalize_vocabulary_search_key,
   VocabularyIndexKindSchema,
   VocabularyManifestSchema,
   VocabularyRecordCollectionSchema,
@@ -116,33 +116,37 @@ describe("VocabularyRecordSchema", () => {
   });
 });
 
-describe("normalizeVocabularySearchKey", () => {
+describe("normalize_vocabulary_search_key", () => {
   it("lowercases and folds underscores to spaces", () => {
-    expect(normalizeVocabularySearchKey("Cat_Ears")).toBe("cat ears");
+    expect(normalize_vocabulary_search_key("Cat_Ears")).toBe("cat ears");
   });
 
   it("collapses repeated whitespace and trims", () => {
-    expect(normalizeVocabularySearchKey("  cat   ears  ")).toBe("cat ears");
+    expect(normalize_vocabulary_search_key("  cat   ears  ")).toBe("cat ears");
   });
 
   it("treats underscore and space forms as equivalent", () => {
-    expect(normalizeVocabularySearchKey("cat_ears")).toBe(normalizeVocabularySearchKey("cat ears"));
+    expect(normalize_vocabulary_search_key("cat_ears")).toBe(
+      normalize_vocabulary_search_key("cat ears"),
+    );
   });
 
   it("is stable under repeated normalization", () => {
-    const once = normalizeVocabularySearchKey("Cat_Ears  Neko");
-    expect(normalizeVocabularySearchKey(once)).toBe(once);
+    const once = normalize_vocabulary_search_key("Cat_Ears  Neko");
+    expect(normalize_vocabulary_search_key(once)).toBe(once);
   });
 
   it("applies NFKC so composed and decomposed accent forms match", () => {
     const composed = "Caf\u00e9"; // single precomposed code point for e-acute
     const decomposed = "Cafe\u0301"; // e followed by a combining acute accent
-    expect(normalizeVocabularySearchKey(composed)).toBe(normalizeVocabularySearchKey(decomposed));
-    expect(normalizeVocabularySearchKey(composed)).toBe("caf\u00e9");
+    expect(normalize_vocabulary_search_key(composed)).toBe(
+      normalize_vocabulary_search_key(decomposed),
+    );
+    expect(normalize_vocabulary_search_key(composed)).toBe("caf\u00e9");
   });
 
   it("applies NFKC compatibility folding for fullwidth characters", () => {
-    expect(normalizeVocabularySearchKey("\uff21\uff22\uff23")).toBe("abc");
+    expect(normalize_vocabulary_search_key("\uff21\uff22\uff23")).toBe("abc");
   });
 });
 

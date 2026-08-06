@@ -117,7 +117,7 @@ export type {
 } from "./archive.js";
 
 export {
-  normalizeVocabularySearchKey,
+  normalize_vocabulary_search_key,
   VOCABULARY_SCHEMA_VERSION,
   VocabularyCategorySchema,
   VocabularyIndexKindSchema,
