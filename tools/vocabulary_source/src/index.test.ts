@@ -31,6 +31,10 @@ describe("run_cli: argument validation", () => {
   it("rejects merge missing required flags", async () => {
     await expect(run_cli(["merge"])).rejects.toThrow(/--seed/);
   });
+
+  it("rejects import-hf-tags missing required flags", async () => {
+    await expect(run_cli(["import-hf-tags"])).rejects.toThrow(/--input/);
+  });
 });
 
 describe("run_cli: extract-seed + merge end-to-end smoke test", () => {
@@ -64,22 +68,13 @@ describe("run_cli: extract-seed + merge end-to-end smoke test", () => {
       "合成标签阿尔法",
     );
 
-    const out_full_path = join(temp_dir, "full.jsonl");
-    const out_public_path = join(temp_dir, "public.jsonl");
-    await run_cli([
-      "merge",
-      "--seed",
-      seed_path,
-      "--out-full",
-      out_full_path,
-      "--out-public",
-      out_public_path,
-    ]);
+    const out_path = join(temp_dir, "out.jsonl");
+    await run_cli(["merge", "--seed", seed_path, "--out", out_path]);
 
-    const full_records = await read_jsonl(out_full_path, VocabularyRecordSchema);
-    const public_records = await read_jsonl(out_public_path, VocabularyRecordSchema);
-    expect(full_records).toHaveLength(3);
-    expect(public_records).toHaveLength(3);
-    expect(public_records.every((record) => record.translation === undefined)).toBe(true);
+    const records = await read_jsonl(out_path, VocabularyRecordSchema);
+    expect(records).toHaveLength(3);
+    expect(records.find((record) => record.tag === "synthetic_tag_alpha")?.translation).toBe(
+      "合成标签阿尔法",
+    );
   });
 });

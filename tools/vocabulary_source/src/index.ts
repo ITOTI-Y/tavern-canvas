@@ -12,14 +12,17 @@ import {
   LEGACY_V2_TAGDATA_PASSPHRASE,
 } from "./extract_legacy_seed.js";
 import { run_fetch_danbooru_cli } from "./fetch_danbooru.js";
+import { run_import_hf_tags_cli } from "./import_hf_tags.js";
 import { write_jsonl } from "./jsonl_io.js";
 import { run_merge_cli } from "./merge_sources.js";
 
 export * from "./danbooru_client.js";
 export * from "./extract_legacy_seed.js";
 export * from "./fetch_danbooru.js";
+export * from "./import_hf_tags.js";
 export * from "./jsonl_io.js";
 export * from "./merge_sources.js";
+export * from "./select_baseline_subset.js";
 export * from "./vocabulary_record_schema.js";
 export { decrypt_legacy_openssl_payload, LegacyDecryptionError } from "./decrypt_legacy_tagdata.js";
 
@@ -101,41 +104,60 @@ async function run_fetch_danbooru(args: readonly string[]): Promise<void> {
   console.error(`fetch-danbooru: wrote ${String(records.length)} records to ${out_path}`);
 }
 
+async function run_import_hf_tags(args: readonly string[]): Promise<void> {
+  const { values } = parseArgs({
+    args,
+    options: {
+      input: { type: "string" },
+      out: { type: "string" },
+    },
+  });
+
+  const input_path = values.input;
+  const out_path = values.out;
+  if (input_path === undefined || out_path === undefined) {
+    throw new Error("import-hf-tags requires --input <path> and --out <path>.");
+  }
+
+  const records = await run_import_hf_tags_cli({ input_path, out_path });
+  console.error(`import-hf-tags: wrote ${String(records.length)} records to ${out_path}`);
+}
+
 async function run_merge(args: readonly string[]): Promise<void> {
   const { values } = parseArgs({
     args,
     options: {
       seed: { type: "string" },
-      "danbooru-facts": { type: "string" },
-      "out-full": { type: "string" },
-      "out-public": { type: "string" },
+      facts: { type: "string" },
+      "popularity-overlay": { type: "string" },
+      out: { type: "string" },
     },
   });
 
   const seed_path = values.seed;
-  const out_full_path = values["out-full"];
-  const out_public_path = values["out-public"];
-  if (seed_path === undefined || out_full_path === undefined || out_public_path === undefined) {
-    throw new Error("merge requires --seed <path>, --out-full <path>, and --out-public <path>.");
+  const out_path = values.out;
+  if (seed_path === undefined || out_path === undefined) {
+    throw new Error("merge requires --seed <path> and --out <path>.");
   }
 
   const result = await run_merge_cli({
     seed_path,
-    ...(values["danbooru-facts"] !== undefined
-      ? { danbooru_facts_path: values["danbooru-facts"] }
+    ...(values.facts !== undefined ? { fact_path: values.facts } : {}),
+    ...(values["popularity-overlay"] !== undefined
+      ? { popularity_overlay_path: values["popularity-overlay"] }
       : {}),
-    out_full_path,
-    out_public_path,
+    out_path,
     on_stale_fact_source: () => {
       console.error(
-        "merge: no --danbooru-facts supplied; using the seed's own (vintage ~2023) facts. " +
+        "merge: no --facts supplied; using the seed's own (vintage ~2023) facts. " +
           "Popularity counts are stale (e.g. 1girl 5,975,112 in the seed vs 8,243,826 live on 2026-08-06).",
       );
     },
   });
   console.error(
-    `merge: wrote ${String(result.full.length)} records to ${out_full_path} and ` +
-      `${String(result.public_records.length)} records to ${out_public_path}`,
+    `merge: wrote ${String(result.records.length)} records to ${out_path} ` +
+      `(popularity_overlay_hits=${String(result.popularity_overlay_hit_count)}, ` +
+      `translation_hits=${String(result.translation_hit_count)})`,
   );
 }
 
@@ -148,12 +170,16 @@ export async function run_cli(argv: readonly string[]): Promise<void> {
     case "fetch-danbooru":
       await run_fetch_danbooru(rest);
       return;
+    case "import-hf-tags":
+      await run_import_hf_tags(rest);
+      return;
     case "merge":
       await run_merge(rest);
       return;
     default:
       throw new Error(
-        `Unknown command ${JSON.stringify(command)}. Expected one of: extract-seed, fetch-danbooru, merge.`,
+        `Unknown command ${JSON.stringify(command)}. Expected one of: extract-seed, ` +
+          "fetch-danbooru, import-hf-tags, merge.",
       );
   }
 }

@@ -34,9 +34,9 @@ describe("merge_sources", () => {
     ];
     const seed = [fact({ record_id: 900, tag: "SYNTHETIC_TAG", translation: "合成翻译占位" })];
 
-    const { full, public_records } = merge_sources(facts, seed);
+    const { records } = merge_sources(facts, seed);
 
-    expect(full[0]).toEqual({
+    expect(records[0]).toEqual({
       record_id: 1,
       tag: "synthetic_tag",
       category: "general",
@@ -44,11 +44,9 @@ describe("merge_sources", () => {
       aliases: [],
       translation: "合成翻译占位",
     });
-    expect(public_records[0]?.translation).toBeUndefined();
-    expect(public_records[0]).not.toHaveProperty("translation");
   });
 
-  it("keeps record_id/category/popularity/aliases from the fact stream, never the seed", () => {
+  it("keeps record_id/category/aliases from the fact stream, never the seed", () => {
     const facts = [
       fact({ record_id: 1, tag: "synthetic_tag", category: "general", popularity: 1_000 }),
     ];
@@ -62,54 +60,98 @@ describe("merge_sources", () => {
       }),
     ];
 
-    const { full } = merge_sources(facts, seed);
+    const { records } = merge_sources(facts, seed);
 
-    expect(full[0]?.record_id).toBe(1);
-    expect(full[0]?.category).toBe("general");
-    expect(full[0]?.popularity).toBe(1_000);
+    expect(records[0]?.record_id).toBe(1);
+    expect(records[0]?.category).toBe("general");
+    expect(records[0]?.popularity).toBe(1_000);
   });
 
   it("leaves a fact record without a seed match untranslated (no error)", () => {
     const facts = [fact({ record_id: 1, tag: "brand_new_tag" })];
 
-    const { full } = merge_sources(facts, []);
+    const { records } = merge_sources(facts, []);
 
-    expect(full[0]?.translation).toBeUndefined();
+    expect(records[0]?.translation).toBeUndefined();
   });
 
   it("silently ignores a seed translation with no matching fact record", () => {
     const facts = [fact({ record_id: 1, tag: "synthetic_tag" })];
     const seed = [fact({ record_id: 2, tag: "unmatched_tag", translation: "未匹配占位" })];
 
-    const { full } = merge_sources(facts, seed);
+    const { records } = merge_sources(facts, seed);
 
-    expect(full).toHaveLength(1);
-    expect(full[0]?.tag).toBe("synthetic_tag");
+    expect(records).toHaveLength(1);
+    expect(records[0]?.tag).toBe("synthetic_tag");
   });
 
-  it("orders both outputs by popularity desc, then tag asc", () => {
+  it("orders records by popularity desc, then tag asc", () => {
     const facts = [
       fact({ record_id: 1, tag: "b_tag", popularity: 10 }),
       fact({ record_id: 2, tag: "a_tag", popularity: 20 }),
       fact({ record_id: 3, tag: "c_tag", popularity: 10 }),
     ];
 
-    const { full, public_records } = merge_sources(facts, []);
+    const { records } = merge_sources(facts, []);
 
-    expect(full.map((record) => record.tag)).toEqual(["a_tag", "b_tag", "c_tag"]);
-    expect(public_records.map((record) => record.tag)).toEqual(["a_tag", "b_tag", "c_tag"]);
+    expect(records.map((record) => record.tag)).toEqual(["a_tag", "b_tag", "c_tag"]);
   });
 
-  it("public output has exactly as many records as full output", () => {
+  it("overlays fresh popularity onto a fact record by exact tag name match", () => {
+    const facts = [fact({ record_id: 1, tag: "1girl", popularity: 6_858_776 })];
+    const popularity_overlay = new Map([["1girl", 8_243_826]]);
+
+    const { records } = merge_sources(facts, [], popularity_overlay);
+
+    expect(records[0]?.popularity).toBe(8_243_826);
+  });
+
+  it("keeps a fact record's original popularity when the overlay has no entry for it", () => {
+    const facts = [fact({ record_id: 1, tag: "no_overlay_tag", popularity: 42 })];
+    const popularity_overlay = new Map([["some_other_tag", 999]]);
+
+    const { records } = merge_sources(facts, [], popularity_overlay);
+
+    expect(records[0]?.popularity).toBe(42);
+  });
+
+  it("matches the popularity overlay by exact tag name, not normalized key", () => {
+    const facts = [fact({ record_id: 1, tag: "1girl", popularity: 1 })];
+    // Overlay key differs only by case -- an exact-match miss, unlike translation overlay.
+    const popularity_overlay = new Map([["1GIRL", 999]]);
+
+    const { records } = merge_sources(facts, [], popularity_overlay);
+
+    expect(records[0]?.popularity).toBe(1);
+  });
+
+  it("reports popularity_overlay_hit_count and translation_hit_count", () => {
     const facts = [
-      fact({ record_id: 1, tag: "synthetic_tag" }),
-      fact({ record_id: 2, tag: "other_tag" }),
+      fact({ record_id: 1, tag: "1girl", popularity: 1 }),
+      fact({ record_id: 2, tag: "solo", popularity: 1 }),
     ];
-    const seed = [fact({ record_id: 900, tag: "synthetic_tag", translation: "合成翻译占位" })];
+    const seed = [fact({ record_id: 900, tag: "1girl", translation: "一个女孩" })];
+    const popularity_overlay = new Map([["1girl", 8_000_000]]);
 
-    const { full, public_records } = merge_sources(facts, seed);
+    const { popularity_overlay_hit_count, translation_hit_count } = merge_sources(
+      facts,
+      seed,
+      popularity_overlay,
+    );
 
-    expect(public_records).toHaveLength(full.length);
+    expect(popularity_overlay_hit_count).toBe(1);
+    expect(translation_hit_count).toBe(1);
+  });
+
+  it("applies both overlays to the same record independently", () => {
+    const facts = [fact({ record_id: 1, tag: "1girl", popularity: 1 })];
+    const seed = [fact({ record_id: 900, tag: "1girl", translation: "一个女孩" })];
+    const popularity_overlay = new Map([["1girl", 8_243_826]]);
+
+    const { records } = merge_sources(facts, seed, popularity_overlay);
+
+    expect(records[0]?.popularity).toBe(8_243_826);
+    expect(records[0]?.translation).toBe("一个女孩");
   });
 });
 
@@ -124,7 +166,7 @@ describe("run_merge_cli", () => {
     await rm(temp_dir, { recursive: true, force: true });
   });
 
-  it("uses the seed's own facts when no danbooru fact file is supplied, and warns via on_stale_fact_source", async () => {
+  it("uses the seed's own facts when no fact file is supplied, and warns via on_stale_fact_source", async () => {
     // "1girl" and the two popularity figures below mirror the brief's
     // documented staleness example (factual public Danbooru data, safe to
     // reproduce); the translation text is an invented placeholder.
@@ -142,59 +184,71 @@ describe("run_merge_cli", () => {
 
     const result = await run_merge_cli({
       seed_path,
-      out_full_path: join(temp_dir, "full.jsonl"),
-      out_public_path: join(temp_dir, "public.jsonl"),
+      out_path: join(temp_dir, "out.jsonl"),
       on_stale_fact_source: () => {
         warned = true;
       },
     });
 
     expect(warned).toBe(true);
-    expect(result.full[0]?.translation).toBe("合成翻译占位");
-    expect(result.full[0]?.popularity).toBe(5_975_112);
-    expect(result.public_records[0]?.translation).toBeUndefined();
+    expect(result.records[0]?.translation).toBe("合成翻译占位");
+    expect(result.records[0]?.popularity).toBe(5_975_112);
   });
 
-  it("prefers a supplied danbooru fact file over the seed's own facts, without warning", async () => {
+  it("prefers a supplied fact file over the seed's own facts, without warning", async () => {
     const seed_path = join(temp_dir, "seed.jsonl");
-    const danbooru_path = join(temp_dir, "danbooru.jsonl");
+    const fact_path = join(temp_dir, "facts.jsonl");
     await write_jsonl(seed_path, [
       fact({ record_id: 900, tag: "1girl", popularity: 5_975_112, translation: "合成翻译占位" }),
     ]);
-    await write_jsonl(danbooru_path, [fact({ record_id: 1, tag: "1girl", popularity: 8_243_826 })]);
+    await write_jsonl(fact_path, [fact({ record_id: 1, tag: "1girl", popularity: 8_243_826 })]);
     let warned = false;
 
     const result = await run_merge_cli({
       seed_path,
-      danbooru_facts_path: danbooru_path,
-      out_full_path: join(temp_dir, "full.jsonl"),
-      out_public_path: join(temp_dir, "public.jsonl"),
+      fact_path,
+      out_path: join(temp_dir, "out.jsonl"),
       on_stale_fact_source: () => {
         warned = true;
       },
     });
 
     expect(warned).toBe(false);
-    expect(result.full[0]?.record_id).toBe(1);
-    expect(result.full[0]?.popularity).toBe(8_243_826);
-    expect(result.full[0]?.translation).toBe("合成翻译占位");
+    expect(result.records[0]?.record_id).toBe(1);
+    expect(result.records[0]?.popularity).toBe(8_243_826);
+    expect(result.records[0]?.translation).toBe("合成翻译占位");
   });
 
-  it("writes both output files to disk", async () => {
+  it("applies a popularity overlay file when supplied", async () => {
+    const seed_path = join(temp_dir, "seed.jsonl");
+    const fact_path = join(temp_dir, "facts.jsonl");
+    const overlay_path = join(temp_dir, "overlay.jsonl");
+    await write_jsonl(seed_path, []);
+    await write_jsonl(fact_path, [fact({ record_id: 1, tag: "1girl", popularity: 6_858_776 })]);
+    await write_jsonl(overlay_path, [{ tag: "1girl", post_count: 8_243_826 }]);
+
+    const result = await run_merge_cli({
+      seed_path,
+      fact_path,
+      popularity_overlay_path: overlay_path,
+      out_path: join(temp_dir, "out.jsonl"),
+    });
+
+    expect(result.records[0]?.popularity).toBe(8_243_826);
+  });
+
+  it("writes the merged output file to disk", async () => {
     const seed_path = join(temp_dir, "seed.jsonl");
     await write_jsonl(seed_path, [
       fact({ record_id: 1, tag: "synthetic_tag", translation: "合成翻译占位" }),
     ]);
-    const out_full_path = join(temp_dir, "full.jsonl");
-    const out_public_path = join(temp_dir, "public.jsonl");
+    const out_path = join(temp_dir, "out.jsonl");
 
-    await run_merge_cli({ seed_path, out_full_path, out_public_path });
+    await run_merge_cli({ seed_path, out_path });
 
-    const full_from_disk = await read_jsonl(out_full_path, VocabularyRecordSchema);
-    const public_from_disk = await read_jsonl(out_public_path, VocabularyRecordSchema);
+    const records_from_disk = await read_jsonl(out_path, VocabularyRecordSchema);
 
-    expect(full_from_disk).toHaveLength(1);
-    expect(public_from_disk).toHaveLength(1);
-    expect(public_from_disk[0]).not.toHaveProperty("translation");
+    expect(records_from_disk).toHaveLength(1);
+    expect(records_from_disk[0]?.translation).toBe("合成翻译占位");
   });
 });
