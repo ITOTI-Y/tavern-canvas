@@ -77,6 +77,9 @@ importers:
       '@tavern-canvas/v2-migration':
         specifier: workspace:*
         version: link:../../tools/v2_migration
+      '@tavern-canvas/vocabulary':
+        specifier: workspace:*
+        version: link:../../packages/vocabulary
       lucide-vue-next:
         specifier: 1.0.0
         version: 1.0.0(vue@3.5.40(typescript@6.0.3))
@@ -238,6 +241,9 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
     devDependencies:
+      '@types/node':
+        specifier: 24.13.3
+        version: 24.13.3
       fake-indexeddb:
         specifier: 6.2.5
         version: 6.2.5

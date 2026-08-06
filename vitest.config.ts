@@ -11,6 +11,9 @@ const workspace_alias = {
   "@tavern-canvas/storage": fileURLToPath(
     new URL("./packages/storage/src/index.ts", import.meta.url),
   ),
+  "@tavern-canvas/vocabulary": fileURLToPath(
+    new URL("./packages/vocabulary/src/index.ts", import.meta.url),
+  ),
   "@tavern-canvas/v2-migration": fileURLToPath(
     new URL("./tools/v2_migration/src/index.ts", import.meta.url),
   ),

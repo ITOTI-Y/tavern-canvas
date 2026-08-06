@@ -17,6 +17,7 @@
     "@tavern-canvas/core": "workspace:*",
     "@tavern-canvas/providers": "workspace:*",
     "@tavern-canvas/storage": "workspace:*",
+    "@tavern-canvas/vocabulary": "workspace:*",
     "@tavern-canvas/v2-migration": "workspace:*",
     "lucide-vue-next": "1.0.0",
     "reka-ui": "2.10.1",
