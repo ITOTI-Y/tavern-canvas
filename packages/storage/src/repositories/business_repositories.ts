@@ -12,6 +12,8 @@ import {
   ImageRecordSchema,
   type KnowledgeEntry,
   KnowledgeEntrySchema,
+  type LegacyPreference,
+  LegacyPreferenceSchema,
   type MigrationJournal,
   MigrationJournalSchema,
   type NovelAiVibe,
@@ -131,6 +133,15 @@ export class VocabularyShardRepository extends IndexedDbRepository<
 export class ImageRecordRepository extends IndexedDbRepository<"image_records", ImageRecord> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "image_records", ImageRecordSchema);
+  }
+}
+
+export class LegacyPreferenceRepository extends IndexedDbRepository<
+  "legacy_preferences",
+  LegacyPreference
+> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "legacy_preferences", LegacyPreferenceSchema);
   }
 }
 
@@ -453,6 +464,7 @@ export interface BusinessRepositories {
   image_blobs: ImageBlobRepository;
   migration_journal: MigrationJournalRepository;
   generation_jobs: GenerationJobRepository;
+  legacy_preferences: LegacyPreferenceRepository;
 }
 
 export function create_business_repositories(
@@ -474,6 +486,7 @@ export function create_business_repositories(
     image_blobs: new ImageBlobRepository(database),
     migration_journal: new MigrationJournalRepository(database),
     generation_jobs: new GenerationJobRepository(database),
+    legacy_preferences: new LegacyPreferenceRepository(database),
   };
 }
 

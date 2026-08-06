@@ -2,69 +2,93 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 1 as const;
+export const DATABASE_VERSION = 2 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
+// `since_version` pins the database version that first creates a store, so
+// `upgrade_database` can derive both a fresh install (every store at once)
+// and an incremental upgrade (only stores newer than `old_version`) from one
+// table instead of duplicating store/index definitions per version.
 export const STORE_DEFINITIONS = {
   provider_profiles: {
     key_path: "record_key",
     indexes: ["namespace", "provider_id", "updated_at"],
+    since_version: 1,
   },
   prompt_presets: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
+    since_version: 1,
   },
   comfy_workflows: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
+    since_version: 1,
   },
   novelai_vibes: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
+    since_version: 1,
   },
   character_profiles: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
+    since_version: 1,
   },
   regex_rules: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
+    since_version: 1,
   },
   knowledge_entries: {
     key_path: "record_key",
     indexes: ["namespace", "source_type", "updated_at"],
+    since_version: 1,
   },
   vocabularies: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
+    since_version: 1,
   },
   vocabulary_groups: {
     key_path: "record_key",
     indexes: ["namespace", "vocabulary_id"],
+    since_version: 1,
   },
   vocabulary_packages: {
     key_path: "record_key",
     indexes: ["namespace", "data_version", "state"],
+    since_version: 1,
   },
   vocabulary_shards: {
     key_path: "record_key",
     indexes: ["namespace", "data_version", "kind"],
+    since_version: 1,
   },
   image_records: {
     key_path: "record_key",
     indexes: ["namespace", "sha256", "created_at", "last_accessed_at", "pinned"],
+    since_version: 1,
   },
   image_blobs: {
     key_path: "sha256",
     indexes: ["ref_count", "byte_length"],
+    since_version: 1,
   },
   generation_jobs: {
     key_path: "record_key",
     indexes: ["namespace", "request_id", "request_digest", "state", "updated_at"],
+    since_version: 1,
   },
   migration_journal: {
     key_path: "migration_id",
     indexes: ["source_version", "state", "updated_at"],
+    since_version: 1,
+  },
+  legacy_preferences: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 2,
   },
 } as const;
 
@@ -166,6 +190,13 @@ export const VocabularyShardSchema = namespaced_schema({
   kind: kind_schema,
 });
 export type VocabularyShard = z.infer<typeof VocabularyShardSchema>;
+
+// Structurally the bare `namespaced_schema({})` shape, added in database
+// version 2 to give v2's cosmetic theme/gesture/FAB preferences (no strict
+// v3 settings equivalent) a store of their own; see `legacy_preferences` in
+// `STORE_DEFINITIONS`.
+export const LegacyPreferenceSchema = namespaced_schema({});
+export type LegacyPreference = z.infer<typeof LegacyPreferenceSchema>;
 
 export const ImageRecordSchema = namespaced_schema({
   sha256: Sha256Schema,
@@ -270,7 +301,8 @@ export type BusinessRecord =
   | VocabularyGroup
   | VocabularyPackage
   | VocabularyShard
-  | ImageRecord;
+  | ImageRecord
+  | LegacyPreference;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -292,6 +324,7 @@ export type RecordByStore = {
   image_blobs: ImageBlob;
   generation_jobs: GenerationJob;
   migration_journal: MigrationJournal;
+  legacy_preferences: LegacyPreference;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -426,6 +459,14 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  legacy_preferences: {
+    key: string;
+    value: LegacyPreference;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -444,13 +485,20 @@ export const RECORD_SCHEMAS: {
   vocabulary_shards: VocabularyShardSchema,
   image_records: ImageRecordSchema,
   generation_jobs: GenerationJobSchema,
+  legacy_preferences: LegacyPreferenceSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;
 export const MIGRATION_JOURNAL_SCHEMA: z.ZodType<MigrationJournal> = MigrationJournalSchema;
 
+// `token(?!s)` (not the plain `token` alternative it replaces) excludes the
+// plural "...tokens" quantity fields legitimate provider payloads carry
+// (e.g. an LLM profile's `max_tokens`), while still matching every singular
+// credential-shaped compound this pattern targets ("apiToken" -> "apitoken",
+// "access_token" -> "accesstoken", ...) and the explicit "refreshtoken"
+// alternative, which is unaffected.
 const secret_key_pattern =
-  /(credential|secret|token|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
+  /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
 
 function assert_json_value(
   value: unknown,
@@ -552,6 +600,9 @@ export function upgrade_database(
     StoreName,
     (typeof STORE_DEFINITIONS)[StoreName],
   ][]) {
+    if (definition.since_version <= old_version) {
+      continue;
+    }
     const store = database.createObjectStore(store_name, { keyPath: definition.key_path });
     for (const index_name of definition.indexes) {
       store.createIndex(index_name as never, index_name);

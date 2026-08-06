@@ -25,7 +25,7 @@ afterEach(async () => {
 });
 
 describe("tavern_canvas_v3 schema", () => {
-  it("creates exactly the v1 stores and indexes", async () => {
+  it("creates exactly the current-version stores and indexes", async () => {
     const database = await open_database();
 
     expect(database.name).toBe(DATABASE_NAME);
@@ -42,7 +42,53 @@ describe("tavern_canvas_v3 schema", () => {
     }
   });
 
-  it("rolls back a v1 upgrade when the upgrade callback throws", async () => {
+  it("upgrades a v1 database to v2 with the same schema as a fresh v2 install", async () => {
+    const upgraded_name = "tavern_canvas_v3_upgrade_v1_to_v2";
+    const fresh_name = "tavern_canvas_v3_fresh_v2_install";
+    const v1_store_names = store_names.filter(
+      (store_name) => STORE_DEFINITIONS[store_name].since_version === 1,
+    );
+
+    const v1_database = await openDB(upgraded_name, 1, {
+      upgrade(database) {
+        for (const store_name of v1_store_names) {
+          const definition = STORE_DEFINITIONS[store_name];
+          const store = database.createObjectStore(store_name, { keyPath: definition.key_path });
+          for (const index_name of definition.indexes) {
+            store.createIndex(index_name, index_name);
+          }
+        }
+      },
+    });
+    v1_database.close();
+
+    const upgraded = await openDB<DBSchema>(upgraded_name, DATABASE_VERSION, {
+      upgrade: upgrade_database,
+    });
+    const fresh = await openDB<DBSchema>(fresh_name, DATABASE_VERSION, {
+      upgrade: upgrade_database,
+    });
+
+    expect([...upgraded.objectStoreNames].sort()).toEqual([...store_names].sort());
+    expect([...upgraded.objectStoreNames].sort()).toEqual([...fresh.objectStoreNames].sort());
+
+    for (const store_name of store_names) {
+      const definition = STORE_DEFINITIONS[store_name];
+      for (const database of [upgraded, fresh]) {
+        const transaction = database.transaction(store_name, "readonly");
+        expect(transaction.store.keyPath).toBe(definition.key_path);
+        expect([...transaction.store.indexNames].sort()).toEqual([...definition.indexes].sort());
+        await transaction.done;
+      }
+    }
+
+    upgraded.close();
+    fresh.close();
+    await deleteDB(upgraded_name);
+    await deleteDB(fresh_name);
+  });
+
+  it("rolls back an upgrade when the upgrade callback throws", async () => {
     const name = "tavern_canvas_v3_atomic_upgrade";
 
     await expect(

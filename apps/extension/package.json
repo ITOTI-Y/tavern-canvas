@@ -16,6 +16,8 @@
     "@tavern-canvas/contracts": "workspace:*",
     "@tavern-canvas/core": "workspace:*",
     "@tavern-canvas/providers": "workspace:*",
+    "@tavern-canvas/storage": "workspace:*",
+    "@tavern-canvas/v2-migration": "workspace:*",
     "lucide-vue-next": "1.0.0",
     "reka-ui": "2.10.1",
     "semver": "7.8.5",
@@ -28,6 +30,8 @@
     "@types/semver": "7.8.0",
     "@vitejs/plugin-vue": "6.0.8",
     "@vue/test-utils": "2.4.11",
+    "fake-indexeddb": "6.2.5",
+    "idb": "8.0.3",
     "vite": "8.2.0",
     "vue-tsc": "3.3.9"
   }

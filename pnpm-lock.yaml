@@ -65,6 +65,12 @@ importers:
       '@tavern-canvas/providers':
         specifier: workspace:*
         version: link:../../packages/providers
+      '@tavern-canvas/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      '@tavern-canvas/v2-migration':
+        specifier: workspace:*
+        version: link:../../tools/v2_migration
       lucide-vue-next:
         specifier: 1.0.0
         version: 1.0.0(vue@3.5.40(typescript@6.0.3))
@@ -96,6 +102,12 @@ importers:
       '@vue/test-utils':
         specifier: 2.4.11
         version: 2.4.11(@vue/compiler-dom@3.5.40)(@vue/server-renderer@3.5.40)(vue@3.5.40(typescript@6.0.3))
+      fake-indexeddb:
+        specifier: 6.2.5
+        version: 6.2.5
+      idb:
+        specifier: 8.0.3
+        version: 8.0.3
       vite:
         specifier: 8.2.0
         version: 8.2.0(@types/node@24.13.3)
