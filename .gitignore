@@ -8,6 +8,10 @@ coverage/
 playwright-report/
 test-results/
 output/
+# Stage 05 Task 6: 500,000-record benchmark package staged into the
+# harness's Vite publicDir by tests/harness/prepare_benchmark_site.mjs --
+# regenerated on every benchmark run, never committed.
+tests/harness/.benchmark_public/
 .env
 .env.*
 !.env.example

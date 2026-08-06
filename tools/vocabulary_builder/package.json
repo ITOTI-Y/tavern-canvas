@@ -13,6 +13,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "generate-baseline": "tsx scripts/generate_baseline.ts",
+    "generate-benchmark": "tsx src/generate_benchmark_fixture.ts",
+    "build-package": "tsx src/index.ts build",
+    "verify-package": "tsx src/index.ts verify",
     "test": "vitest run --root ../.. --project tools tools/vocabulary_builder",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p scripts/tsconfig.json"
   },

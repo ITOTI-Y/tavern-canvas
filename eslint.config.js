@@ -80,6 +80,7 @@ export default typescriptEslint.config(
       "apps/extension/scripts/**/*.{cjs,js,mjs,ts}",
       "apps/gateway/**/*.{cjs,js,mjs,ts}",
       "tools/**/*.{cjs,js,mjs,ts}",
+      "tests/harness/**/*.{cjs,js,mjs}",
     ],
     languageOptions: {
       globals: globals.node,

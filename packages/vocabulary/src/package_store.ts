@@ -182,6 +182,24 @@ function to_stored_package(record: VocabularyPackage): StoredVocabularyPackage {
 export class VocabularyPackageStore {
   private readonly packages: VocabularyPackageRepository;
   private readonly shards: VocabularyShardRepository;
+  // Lazily-built index over every shard record in this namespace, keyed by
+  // "<package_record_id>:<path>". Without it, shard_bytes() -- the Worker's
+  // per-shard-cache-miss hot path -- re-ran shards.list(namespace) (an
+  // IndexedDB getAll() across every shard row, each carrying its own
+  // base64-encoded payload, plus a structuredClone + zod parse per row) on
+  // every single call. Harmless at the small fixtures every prior task
+  // tested against, but at a real 500,000-record / ~2,900-shard package
+  // this made ordinary queries take seconds instead of milliseconds
+  // (measured directly: a single "hot" query took ~4.6s) -- found while
+  // proving Stage 05 Task 6's browser-Worker latency budgets, not a
+  // hypothetical. A store instance is constructed once per Worker and
+  // lives for the Worker's whole lifetime (vocabulary_worker.ts's
+  // PackageStoreShardByteSource), so caching here is exactly the right
+  // lifetime: built once on first read, invalidated on every write.
+  private shard_index_cache: Map<
+    string,
+    { readonly record: VocabularyShard; readonly payload: StoredShardPayload }
+  > | null = null;
 
   constructor(
     private readonly database: IDBPDatabase<DBSchema>,
@@ -369,6 +387,7 @@ export class VocabularyPackageStore {
         await this.packages.delete(this.namespace, package_record_id, transaction);
       },
     );
+    this.invalidate_shard_index_cache();
   }
 
   /** Removes unpinned superseded/failed packages and their shards — never active/confirmed/staging/ready. */
@@ -398,6 +417,7 @@ export class VocabularyPackageStore {
         }
       },
     );
+    this.invalidate_shard_index_cache();
 
     return { deleted_package_ids: [...deletable_ids] };
   }
@@ -467,6 +487,7 @@ export class VocabularyPackageStore {
       }),
     };
     await this.shards.create(this.namespace, record);
+    this.invalidate_shard_index_cache();
   }
 
   private async list_owned_shards(package_record_id: string): Promise<VocabularyShard[]> {
@@ -476,18 +497,34 @@ export class VocabularyPackageStore {
     );
   }
 
+  private async get_shard_index(): Promise<
+    ReadonlyMap<string, { readonly record: VocabularyShard; readonly payload: StoredShardPayload }>
+  > {
+    if (this.shard_index_cache === null) {
+      const records = await this.shards.list(this.namespace);
+      const index = new Map<
+        string,
+        { readonly record: VocabularyShard; readonly payload: StoredShardPayload }
+      >();
+      for (const record of records) {
+        const payload = parse_shard_payload(record.payload);
+        index.set(`${payload.package_record_id}:${payload.path}`, { record, payload });
+      }
+      this.shard_index_cache = index;
+    }
+    return this.shard_index_cache;
+  }
+
+  private invalidate_shard_index_cache(): void {
+    this.shard_index_cache = null;
+  }
+
   private async find_shard_record(
     package_record_id: string,
     path: string,
   ): Promise<{ record: VocabularyShard; payload: StoredShardPayload } | null> {
-    const records = await this.shards.list(this.namespace);
-    for (const record of records) {
-      const payload = parse_shard_payload(record.payload);
-      if (payload.package_record_id === package_record_id && payload.path === path) {
-        return { record, payload };
-      }
-    }
-    return null;
+    const index = await this.get_shard_index();
+    return index.get(`${package_record_id}:${path}`) ?? null;
   }
 
   private async require_record(

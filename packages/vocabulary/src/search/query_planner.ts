@@ -39,11 +39,25 @@ function plan_hot_candidates(input: VocabularyPlannerInput): readonly Vocabulary
     input.category !== undefined && input.category !== ""
       ? input.hot_by_category
       : input.hot_global;
-  return ids.map((record_id) => ({
+  // The hot shard stores only record ids, already sorted popularity-descending
+  // by the builder (tools/vocabulary_builder/src/build_hot_index.ts) -- no
+  // per-id popularity value travels with them. Without a synthetic value here,
+  // every hot candidate's source_popularity is indistinguishable (null), so
+  // select_hydration_targets' pre-hydration 200-record cap (result_ranker.ts)
+  // falls through its comparator to a record_id tie-break and silently drops
+  // the shard's real most-popular entries whenever a corpus has more than 200
+  // hot candidates -- reproduced directly at 500,000-record scale (Stage 05
+  // Task 6): an empty query's top result was record_id-smallest, not the
+  // actual global-max-popularity record. Threading the array position through
+  // as a descending synthetic value preserves the builder-guaranteed order
+  // across the cap; the final rank still scores by real hydrated popularity
+  // (result_ranker.ts's `record.popularity`), so this only affects which 200
+  // candidates get hydrated, never the resulting order among them.
+  return ids.map((record_id, index) => ({
     record_id,
     match_kind: "hot",
     matched_key: null,
-    source_popularity: null,
+    source_popularity: ids.length - index,
     trigram_overlap: 0,
   }));
 }

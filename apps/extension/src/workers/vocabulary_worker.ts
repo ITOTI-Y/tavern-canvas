@@ -183,6 +183,16 @@ export class VocabularyWorkerEngine {
     });
   }
 
+  // Benchmark/ops introspection only (Stage 05 Task 6's browser LRU
+  // high-water-mark proof) -- never part of the postMessage protocol, and
+  // never influences search behavior. #lru already self-enforces its
+  // configured budget synchronously inside put()/unpin() (shard_lru.ts), so
+  // this getter only ever reports a value external callers could not
+  // otherwise observe without reimplementing cache accounting.
+  get resident_shard_bytes(): number {
+    return this.#lru.resident_bytes;
+  }
+
   async handle(
     request: VocabularyWorkerRequest,
     emit: (response: VocabularyWorkerResponse) => void,
@@ -775,10 +785,19 @@ export function with_activation_lifecycle(
 
 declare const self: WorkerScopeLike | undefined;
 
+// Benchmark/ops introspection only (Stage 05 Task 6) -- a debug global
+// exposing the running engine so an external harness (Playwright's
+// `Worker.evaluate`) can read `resident_shard_bytes` for the LRU high-water
+// mark without any protocol change. Never read by production code.
+interface VocabularyWorkerDebugGlobal {
+  __vocabulary_worker_engine_debug__?: VocabularyWorkerEngine;
+}
+
 // Purely synchronous: constructing PackageStoreShardByteSource and calling
 // start_vocabulary_worker only registers a message listener. No IndexedDB
 // or network access happens until a real message arrives.
 if (typeof self !== "undefined" && typeof self.postMessage === "function") {
   const byte_source = new PackageStoreShardByteSource(self);
-  start_vocabulary_worker(byte_source, with_activation_lifecycle(self, byte_source));
+  const engine = start_vocabulary_worker(byte_source, with_activation_lifecycle(self, byte_source));
+  (globalThis as VocabularyWorkerDebugGlobal).__vocabulary_worker_engine_debug__ = engine;
 }
