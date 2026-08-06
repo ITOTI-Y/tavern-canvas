@@ -3,6 +3,8 @@ import { fileURLToPath, URL } from "node:url";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vitest/config";
 
+import package_metadata from "./package.json" with { type: "json" };
+
 const workspace_alias = {
   "@tavern-canvas/contracts": fileURLToPath(
     new URL("./packages/contracts/src/index.ts", import.meta.url),
@@ -27,6 +29,13 @@ export default defineConfig({
   resolve: {
     alias: workspace_alias,
   },
+  // Mirrors apps/extension/vite.config.ts's build-time define so code that
+  // references this global (e.g. apps/extension/src/index.ts, the
+  // vocabulary Worker's production bootstrap) evaluates identically under
+  // test.
+  define: {
+    __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
+  },
   test: {
     projects: [
       {
@@ -36,6 +45,9 @@ export default defineConfig({
         },
       },
       {
+        define: {
+          __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
+        },
         test: {
           name: "apps",
           include: ["apps/**/*.test.ts", "apps/**/*.spec.ts"],

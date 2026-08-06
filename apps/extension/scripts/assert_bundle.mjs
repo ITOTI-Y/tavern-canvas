@@ -21,3 +21,24 @@ await Promise.all(required_paths.map((path) => access(path)));
 for (const path of required_paths) {
   console.log(`bundle_file=${path.slice(repository_root.length + 1)}`);
 }
+
+// The vocabulary baseline (apps/extension/public/vocabulary/baseline) ships
+// via Vite's publicDir copy, not the module graph -- verify every shard the
+// manifest lists actually reached dist/, since a future Vite upgrade
+// silently changing the copyPublicDir default would otherwise fail only at
+// runtime, in the Worker, far from this build step.
+const vocabulary_baseline_manifest_path = resolve(
+  repository_root,
+  "dist/vocabulary/baseline/manifest.json",
+);
+const vocabulary_manifest = JSON.parse(await readFile(vocabulary_baseline_manifest_path, "utf8"));
+const vocabulary_shard_paths = vocabulary_manifest.shards.map((shard) =>
+  resolve(repository_root, "dist/vocabulary/baseline", shard.path),
+);
+await Promise.all(
+  [vocabulary_baseline_manifest_path, ...vocabulary_shard_paths].map((path) => access(path)),
+);
+console.log(
+  `bundle_file=dist/vocabulary/baseline/manifest.json ` +
+    `(record_count=${vocabulary_manifest.record_count}, shards=${vocabulary_shard_paths.length})`,
+);

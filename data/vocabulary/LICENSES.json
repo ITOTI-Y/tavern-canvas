@@ -36,7 +36,8 @@
         "decision": "redistributable",
         "reason": "Factual data via a public API; committed baseline for the public artifact is fact-only (tag/category/popularity/aliases), per controller ruling.",
         "caveat": "Not yet fetched live in this environment (danbooru.donmai.us is Cloudflare-blocked from this sandbox's network). The current data/vocabulary/raw_vocabulary_tags_public.jsonl was produced by merge_sources falling back to the legacy seed's own (vintage ~2023) facts, not a fresh Danbooru fetch. Example staleness: 1girl popularity 5,975,112 in the vintage-2023 seed vs 8,243,826 on live Danbooru as of 2026-08-06. A live `fetch-danbooru` + `merge --danbooru-facts` run (documented user/CI step, outside this sandbox) should supersede this before the public artifact is treated as current."
-      }
+      },
+      "notes": "Task 5 (2026-08-06) committed data/vocabulary/raw_vocabulary_tags_public.jsonl itself (single .gitignore exception, see .gitignore) and built apps/extension/public/vocabulary/baseline exclusively from it via tools/vocabulary_builder/scripts/generate_baseline.ts -- verified zero translation fields present (tests/integration/vocabulary_baseline_provenance.test.ts) and CI-reproducible byte-for-byte (.github/workflows/ci.yml). The staleness caveat above still applies: refreshing requires a real fetch-danbooru run outside this sandbox, followed by re-running generate_baseline.ts."
     },
     {
       "id": "e621-db-export",

@@ -74,3 +74,31 @@ export type {
   VocabularyShardPayload,
   VocabularyTrigramShardPayload,
 } from "./search/vocabulary_shard_payloads.js";
+
+export {
+  IMPORT_SOURCE_ADAPTERS,
+  ImportedRecordDraftSchema,
+  ImportSourceFormatError,
+  legacy_v2_adapter,
+  tavern_canvas_jsonl_adapter,
+} from "./import/import_source.js";
+export type {
+  ImportBatchParseResult,
+  ImportedRecordDraft,
+  ImportSourceAdapter,
+  MalformedImportRecord,
+} from "./import/import_source.js";
+export {
+  DEFAULT_MAX_BATCH_PAYLOAD_LENGTH,
+  DEFAULT_MAX_TOTAL_RECORDS,
+  ImportBuilder,
+  ImportBuilderError,
+  ImportCancelledError,
+  ImportSizeLimitError,
+} from "./import/import_builder.js";
+export type {
+  ImportBatchOutcome,
+  ImportBatchRequest,
+  ImportBuilderOptions,
+  ImportProgress,
+} from "./import/import_builder.js";

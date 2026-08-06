@@ -19,6 +19,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@tavern-canvas/vocabulary-builder": "workspace:*",
     "@types/node": "24.13.3",
     "fake-indexeddb": "6.2.5"
   }

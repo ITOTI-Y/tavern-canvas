@@ -12,8 +12,9 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "generate-baseline": "tsx scripts/generate_baseline.ts",
     "test": "vitest run --root ../.. --project tools tools/vocabulary_builder",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p scripts/tsconfig.json"
   },
   "dependencies": {
     "@msgpack/msgpack": "3.1.3",

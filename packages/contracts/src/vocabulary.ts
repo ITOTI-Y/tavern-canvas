@@ -96,7 +96,15 @@ export const VocabularyShardPathSchema = z
 export type VocabularyShardPath = z.infer<typeof VocabularyShardPathSchema>;
 
 export const VocabularyShardEntrySchema = z.strictObject({
-  shard_id: z.string().trim().min(1).max(128),
+  // No .trim(): shard_id embeds the raw group-key text a builder grouped
+  // records under (tools/vocabulary_builder/src/build_prefix_index.ts and
+  // friends), which can legitimately end in a space -- e.g. the tag
+  // "v_arms" normalizes to "v arms", whose first-two-code-point group key
+  // is "v " (trailing space), a real, distinct group from the one-character
+  // tag "v" itself. Trimming here silently collided the two into the same
+  // shard_id once real Danbooru-scale data (49,856 records) was built,
+  // caught by Stage 05 Task 5's real baseline build.
+  shard_id: z.string().min(1).max(128),
   package_id: VocabularyPackageIdSchema,
   kind: VocabularyIndexKindSchema,
   path: VocabularyShardPathSchema,

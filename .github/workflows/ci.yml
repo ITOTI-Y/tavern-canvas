@@ -59,3 +59,10 @@ jobs:
 
       - name: Check first-party source policy
         run: node tools/first_party_check/dist/index.js apps packages
+
+      # Byte-compares a fresh rebuild of the committed vocabulary baseline
+      # (apps/extension/public/vocabulary/baseline) against the committed
+      # data/vocabulary/raw_vocabulary_tags_public.jsonl source, catching any
+      # hand-edited or stale generated shard (task-5-brief.md Step 3).
+      - name: Verify vocabulary baseline reproducibility
+        run: pnpm exec tsx tools/vocabulary_builder/scripts/generate_baseline.ts --check

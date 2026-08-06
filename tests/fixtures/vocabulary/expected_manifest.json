@@ -280,7 +280,7 @@
       "byte_length": 52
     },
     {
-      "shard_id": "trigram:g",
+      "shard_id": "trigram:g ",
       "package_id": "baseline",
       "kind": "trigram",
       "path": "trigram/6720.msgpack.gz",
@@ -440,7 +440,7 @@
       "byte_length": 51
     },
     {
-      "shard_id": "trigram:t",
+      "shard_id": "trigram:t ",
       "package_id": "baseline",
       "kind": "trigram",
       "path": "trigram/7420.msgpack.gz",

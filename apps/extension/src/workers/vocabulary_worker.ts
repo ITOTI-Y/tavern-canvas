@@ -7,19 +7,24 @@ import {
   type VocabularyQueryRequest,
   type VocabularyRecord,
   type VocabularyShardEntry,
+  type VocabularyShardPath,
   type VocabularyWorkerRequest,
   type VocabularyWorkerResponse,
 } from "@tavern-canvas/contracts";
+import { open_database } from "@tavern-canvas/storage";
 import {
   code_point_group_key,
+  create_package_client,
   decode_shard_bytes,
   normalize_vocabulary_query,
+  PackageUpdater,
   plan_vocabulary_query,
   rank_vocabulary_candidates,
   resolve_shard_lru_budget_bytes,
   resolve_trigram_candidates,
   select_hydration_targets,
   ShardLru,
+  VocabularyPackageStore,
   type NormalizedVocabularyQuery,
   type ShardByteSource,
   type ShardMemoryMode,
@@ -597,33 +602,106 @@ export class VocabularyWorkerEngine {
   }
 }
 
-// A ShardByteSource that has not been wired to real storage yet: Task 3
-// owns the IndexedDB-backed implementation (packages/vocabulary/src/package_store.ts),
-// which this file must not import (ownership boundary). Rejecting loudly at
-// use time -- rather than being silently inert -- keeps a standalone build
-// of this Worker script diagnosable until the controller wires the real
-// source in at merge.
-class UnwiredShardByteSource implements ShardByteSource {
-  manifest(): Promise<VocabularyManifest> {
-    return Promise.reject(
-      new Error(
-        "vocabulary_worker: no ShardByteSource wired -- Task 3's package store must be injected at integration",
-      ),
+// Vocabulary data is shared reference content, not scoped to a profile/
+// character the way other stores are (packages/storage's `namespace`
+// generally means that) -- a fixed namespace is the correct model here, not
+// an omission. Flagged for stage review alongside the rest of this
+// production wiring.
+const VOCABULARY_NAMESPACE = "vocabulary";
+
+interface ReadyPackageAccess {
+  readonly store: VocabularyPackageStore;
+  readonly updater: PackageUpdater;
+}
+
+// The bundled baseline (apps/extension/public/vocabulary/baseline) is
+// copied verbatim to dist/vocabulary/baseline (vite.config.ts,
+// copyPublicDir), while this Worker script is pinned to dist/workers/*.js
+// (vite.config.ts's worker.rolldownOptions.output) -- so from the Worker's
+// own self.location, the baseline is always exactly one directory up.
+export function resolve_bundled_baseline_base_url(scope: WorkerScopeLike): string {
+  const { location } = scope;
+  if (location === undefined) {
+    throw new Error(
+      "vocabulary_worker: self.location is unavailable, cannot resolve the bundled baseline URL",
     );
   }
+  return new URL("../vocabulary/baseline/", location.href).href;
+}
 
-  shard_bytes(): Promise<Uint8Array> {
-    return Promise.reject(
-      new Error(
-        "vocabulary_worker: no ShardByteSource wired -- Task 3's package store must be injected at integration",
-      ),
-    );
+declare const __TAVERN_CANVAS_VERSION__: string;
+
+/**
+ * The real ShardByteSource for production: reads through
+ * VocabularyPackageStore (IndexedDB). Nothing async runs at construction --
+ * opening the database, and bootstrapping from the extension's bundled
+ * baseline via PackageUpdater if no package has ever been activated yet,
+ * both happen lazily on first use (the first inbound Worker message).
+ * Constructing this class at module-evaluation time (as the production
+ * entry point below does) must never itself touch IndexedDB or the
+ * network -- merely importing this module (as every test here does) must
+ * stay side-effect-free.
+ */
+export class PackageStoreShardByteSource implements ShardByteSource {
+  readonly #scope: WorkerScopeLike;
+  #ready_promise: Promise<ReadyPackageAccess> | null = null;
+
+  constructor(scope: WorkerScopeLike) {
+    this.#scope = scope;
+  }
+
+  async manifest(): Promise<VocabularyManifest> {
+    const { store } = await this.#ensure_ready();
+    return store.manifest();
+  }
+
+  async shard_bytes(path: VocabularyShardPath): Promise<Uint8Array> {
+    const { store } = await this.#ensure_ready();
+    return store.shard_bytes(path);
+  }
+
+  async report_query_success(): Promise<void> {
+    const { updater } = await this.#ensure_ready();
+    await updater.report_query_success();
+  }
+
+  async report_query_failure(): Promise<void> {
+    const { updater } = await this.#ensure_ready();
+    await updater.report_query_failure();
+  }
+
+  #ensure_ready(): Promise<ReadyPackageAccess> {
+    this.#ready_promise ??= this.#initialize();
+    return this.#ready_promise;
+  }
+
+  async #initialize(): Promise<ReadyPackageAccess> {
+    const database = await open_database();
+    const store = new VocabularyPackageStore(database, VOCABULARY_NAMESPACE);
+    const client = create_package_client({
+      kind: "bundled",
+      base_url: resolve_bundled_baseline_base_url(this.#scope),
+    });
+    const updater = new PackageUpdater({
+      database,
+      namespace: VOCABULARY_NAMESPACE,
+      client,
+      current_extension_version: __TAVERN_CANVAS_VERSION__,
+    });
+    const active = await store.find_active_or_confirmed();
+    if (active === null) {
+      await updater.update();
+    }
+    return { store, updater };
   }
 }
 
 export interface WorkerScopeLike {
   postMessage(message: unknown): void;
   addEventListener(type: "message", handler: (event: { data: unknown }) => void): void;
+  // Only the real production entry point (below) reads this; test fakes
+  // never need to supply it.
+  readonly location?: { readonly href: string };
 }
 
 /**
@@ -651,7 +729,56 @@ export function start_vocabulary_worker(
   return engine;
 }
 
+// Error codes that indicate the *package itself* is unusable (a corrupt
+// shard, a manifest that never loaded) rather than a protocol/caller
+// mistake ("invalid_request", "not_ready") or a benign supersession
+// ("cancelled") -- only these justify reselecting the prior confirmed
+// version. Implementer-chosen heuristic, flagged for stage review.
+const PACKAGE_HEALTH_ERROR_CODES: ReadonlySet<string> = new Set([
+  "package_unavailable",
+  "internal_error",
+]);
+
+/**
+ * Implements "old version remains until the new version completes one
+ * successful Worker query" (plan Task 3) at the one place that can observe
+ * every response the engine emits, without changing start_vocabulary_worker
+ * or VocabularyWorkerEngine themselves: any "complete" response confirms
+ * the active package; a package-health error reselects the prior confirmed
+ * one. Both calls are idempotent no-ops once already confirmed/reselected.
+ */
+export function with_activation_lifecycle(
+  scope: WorkerScopeLike,
+  byte_source: PackageStoreShardByteSource,
+): WorkerScopeLike {
+  return {
+    postMessage(message) {
+      if (message !== null && typeof message === "object" && "type" in message) {
+        const response = message as { readonly type: unknown; readonly code?: unknown };
+        if (response.type === "complete") {
+          void byte_source.report_query_success();
+        } else if (
+          response.type === "error" &&
+          typeof response.code === "string" &&
+          PACKAGE_HEALTH_ERROR_CODES.has(response.code)
+        ) {
+          void byte_source.report_query_failure();
+        }
+      }
+      scope.postMessage(message);
+    },
+    addEventListener(type, handler) {
+      scope.addEventListener(type, handler);
+    },
+  };
+}
+
 declare const self: WorkerScopeLike | undefined;
+
+// Purely synchronous: constructing PackageStoreShardByteSource and calling
+// start_vocabulary_worker only registers a message listener. No IndexedDB
+// or network access happens until a real message arrives.
 if (typeof self !== "undefined" && typeof self.postMessage === "function") {
-  start_vocabulary_worker(new UnwiredShardByteSource(), self);
+  const byte_source = new PackageStoreShardByteSource(self);
+  start_vocabulary_worker(byte_source, with_activation_lifecycle(self, byte_source));
 }
