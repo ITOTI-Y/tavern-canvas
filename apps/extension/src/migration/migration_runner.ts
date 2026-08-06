@@ -40,6 +40,7 @@ import {
   load_legacy_source,
   resolve_jiuguan_images,
   type LegacyImageResolverPort,
+  type LegacyInventory,
   type LegacySourcePort,
 } from "./legacy_sources.js";
 import {
@@ -75,8 +76,6 @@ export type MigrationOutcome =
       readonly namespace: string | null;
       readonly failure: MigrationFailureInfo;
     };
-
-const MISSING_BYTES_WARNING_MARKER = "no resolved bytes";
 
 class ExpectedMigrationFailure extends Error {
   readonly reason: MigrationFailureReason;
@@ -416,11 +415,18 @@ type CountedStore =
  * every distinct image blob actually written. This is independent of the
  * per-batch write itself, so it catches a write that silently dropped
  * records or a blob whose stored bytes drifted from its key.
+ *
+ * The image-record counts are additionally cross-checked against
+ * `inventory` — counted directly from the raw v2 source, independent of any
+ * converter — so a converter that silently drops a record (most commonly:
+ * an image whose bytes never resolved) fails here even though both `plan`
+ * and the store agree with each other.
  */
 async function verify(
   database: StorageDatabase,
   namespace: string,
   plan: MigrationPlan,
+  inventory: LegacyInventory,
 ): Promise<readonly string[]> {
   const repositories = create_business_repositories(database);
   const expected_counts: Readonly<Record<CountedStore, number>> = {
@@ -450,10 +456,19 @@ async function verify(
     }
   }
 
-  if (plan.warnings.some((warning) => warning.message.includes(MISSING_BYTES_WARNING_MARKER))) {
+  if (plan.asset_image_records.length !== inventory.config_image_count) {
+    throw new ExpectedMigrationFailure(
+      "count_mismatch",
+      `Expected ${String(inventory.config_image_count)} config image record(s) per source inventory, converter produced ${String(plan.asset_image_records.length)}`,
+      "verifying",
+    );
+  }
+  const expected_gallery_image_count =
+    inventory.jiuguan_image_count + inventory.gallery_image_count;
+  if (plan.gallery_image_records.length !== expected_gallery_image_count) {
     throw new ExpectedMigrationFailure(
       "missing_blob",
-      "One or more legacy images had no resolved bytes and could not be migrated",
+      `Expected ${String(expected_gallery_image_count)} gallery image record(s) per source inventory (jiuguan ${String(inventory.jiuguan_image_count)} + gallery ${String(inventory.gallery_image_count)}), converter produced ${String(plan.gallery_image_records.length)}; some legacy images likely had no resolved bytes`,
       "verifying",
     );
   }
@@ -645,7 +660,7 @@ export async function run_migration(options: RunMigrationOptions): Promise<Migra
     }
 
     await save_progress("verifying");
-    image_hashes = await verify(database, namespace, plan);
+    image_hashes = await verify(database, namespace, plan, source.inventory);
     await save_progress("ready_to_switch");
 
     try {
@@ -659,9 +674,16 @@ export async function run_migration(options: RunMigrationOptions): Promise<Migra
     }
 
     try {
+      // `gateway` is excluded: v2 has no Gateway concept, so
+      // `convert_settings` always produces an unconfigured placeholder for it
+      // (settings_converter.ts) — applying it here would wipe a live,
+      // user-configured Gateway (endpoint/token_secret_id/acknowledgments),
+      // including the exact configuration the "secrets" batch just relied on
+      // to skip client-side credential transfer.
       const {
         schema_version: _schema_version,
         active_namespace: _active_namespace,
+        gateway: _gateway,
         ...cosmetic
       } = plan.settings;
       settings.update_settings(cosmetic);
