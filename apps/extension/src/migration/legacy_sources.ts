@@ -7,6 +7,19 @@ import {
   type LegacyGalleryDatabaseFixture,
   type LegacySettings,
 } from "@tavern-canvas/v2-migration";
+import type { ZodError } from "zod";
+
+const MAX_REPORTED_ISSUE_PATHS = 10;
+
+/** Field paths only — never values, so a validation failure can never leak a credential into diagnostics. */
+function describe_zod_issue_paths(error: ZodError): string {
+  const paths = [
+    ...new Set(
+      error.issues.map((issue) => (issue.path.length > 0 ? issue.path.join(".") : "(root)")),
+    ),
+  ];
+  return paths.slice(0, MAX_REPORTED_ISSUE_PATHS).join(", ");
+}
 
 /**
  * Injection seam for the v2 data this migration reads. `read_settings`
@@ -98,7 +111,11 @@ export async function load_legacy_source(port: LegacySourcePort): Promise<Legacy
 
   const settings_result = LegacySettingsSchema.safeParse(raw_settings);
   if (!settings_result.success) {
-    return { kind: "invalid", fingerprint, message: "Legacy settings failed schema validation" };
+    return {
+      kind: "invalid",
+      fingerprint,
+      message: `Legacy settings failed schema validation: ${describe_zod_issue_paths(settings_result.error)}`,
+    };
   }
 
   let gallery: LegacyGalleryDatabaseFixture | undefined;
@@ -108,7 +125,7 @@ export async function load_legacy_source(port: LegacySourcePort): Promise<Legacy
       return {
         kind: "invalid",
         fingerprint,
-        message: "Legacy gallery database failed schema validation",
+        message: `Legacy gallery database failed schema validation: ${describe_zod_issue_paths(gallery_result.error)}`,
       };
     }
     gallery = gallery_result.data;
