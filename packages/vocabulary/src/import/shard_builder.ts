@@ -3,9 +3,11 @@ import { bytesToHex } from "@noble/hashes/utils.js";
 
 import {
   normalize_vocabulary_search_key,
+  VOCABULARY_ALIAS_SHARD_GROUP_CODE_POINTS,
   VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
   VOCABULARY_HOT_SHARD_CATEGORY_CAP,
   VOCABULARY_HOT_SHARD_GLOBAL_CAP,
+  vocabulary_alias_shard_partition,
   type VocabularyRecord,
   type VocabularyShardEntry,
 } from "@tavern-canvas/contracts";
@@ -79,17 +81,18 @@ function sort_key_entries(entries: PrefixOrAliasEntry[]): void {
 }
 
 function build_grouped_key_shards(
-  entries_by_group: Map<string, PrefixOrAliasEntry[]>,
+  entries_by_partition: Map<string, PrefixOrAliasEntry[]>,
   kind: "prefix" | "alias",
+  path_segment: (partition: string) => string,
 ): DraftShard[] {
-  return [...entries_by_group.entries()]
+  return [...entries_by_partition.entries()]
     .sort(([left], [right]) => compare_by_code_point(left, right))
-    .map(([group_key, entries]) => {
+    .map(([partition, entries]) => {
       sort_key_entries(entries);
       return {
-        shard_id: `${kind}:${group_key}`,
+        shard_id: `${kind}:${partition}`,
         kind,
-        path: `${kind}/${encode_group_key_segment(group_key)}.msgpack.gz`,
+        path: `${kind}/${path_segment(partition)}.msgpack.gz`,
         payload: { kind, entries },
       };
     });
@@ -104,7 +107,7 @@ export function build_prefix_shards(records: readonly VocabularyRecord[]): Draft
     entries.push([normalized_tag, record.record_id, record.popularity]);
     entries_by_group.set(group_key, entries);
   }
-  return build_grouped_key_shards(entries_by_group, "prefix");
+  return build_grouped_key_shards(entries_by_group, "prefix", encode_group_key_segment);
 }
 
 function alias_search_texts(record: VocabularyRecord): string[] {
@@ -113,9 +116,12 @@ function alias_search_texts(record: VocabularyRecord): string[] {
     : [...record.aliases, record.translation];
 }
 
+// Alias keys bucket by a hash of their two-code-point group (payload
+// contract addendum v2), unlike prefix shards which keep one file per
+// group -- see packages/contracts/src/vocabulary_shards.ts for why.
 export function build_alias_shards(records: readonly VocabularyRecord[]): DraftShard[] {
   const seen_ids_by_key = new Map<string, Set<number>>();
-  const entries_by_group = new Map<string, PrefixOrAliasEntry[]>();
+  const entries_by_partition = new Map<string, PrefixOrAliasEntry[]>();
 
   for (const record of records) {
     for (const text of alias_search_texts(record)) {
@@ -127,14 +133,16 @@ export function build_alias_shards(records: readonly VocabularyRecord[]): DraftS
       }
       seen_ids.add(record.record_id);
 
-      const group_key = code_point_group_key(normalized_key, GROUP_CODE_POINT_COUNT);
-      const entries = entries_by_group.get(group_key) ?? [];
+      const partition = vocabulary_alias_shard_partition(
+        code_point_group_key(normalized_key, VOCABULARY_ALIAS_SHARD_GROUP_CODE_POINTS),
+      );
+      const entries = entries_by_partition.get(partition) ?? [];
       entries.push([normalized_key, record.record_id, record.popularity]);
-      entries_by_group.set(group_key, entries);
+      entries_by_partition.set(partition, entries);
     }
   }
 
-  return build_grouped_key_shards(entries_by_group, "alias");
+  return build_grouped_key_shards(entries_by_partition, "alias", (partition) => partition);
 }
 
 function extract_trigrams(text: string): string[] {

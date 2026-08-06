@@ -7,12 +7,14 @@ import { gunzipSync } from "node:zlib";
 import { decode } from "@msgpack/msgpack";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
-import type {
-  VocabularyAliasShardPayload,
-  VocabularyIndexKind,
-  VocabularyManifest,
-  VocabularyPrefixShardPayload,
-  VocabularyTrigramShardPayload,
+import {
+  VOCABULARY_ALIAS_SHARD_BUCKET_COUNT,
+  vocabulary_alias_shard_partition,
+  type VocabularyAliasShardPayload,
+  type VocabularyIndexKind,
+  type VocabularyManifest,
+  type VocabularyPrefixShardPayload,
+  type VocabularyTrigramShardPayload,
 } from "@tavern-canvas/contracts";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -246,6 +248,40 @@ describe("index builders", () => {
     ).record_id;
     expect(entries).toContainEqual(["one boy", one_boy_id, 300]);
     expect(entries).toContainEqual(["一个女孩", one_girl_id, 500]);
+  });
+
+  it("buckets alias shards by the hashed group key the Worker computes for a query", async () => {
+    const records = assign_record_ids(
+      merge_duplicate_records(await read_vocabulary_source(FIXTURE_PATH)),
+    );
+    const shards = build_alias_shards(records);
+
+    for (const shard of shards) {
+      expect(shard.shard_id).toMatch(/^alias:h\d{3}$/u);
+      expect(shard.path).toBe(`alias/${shard.shard_id.slice("alias:".length)}.msgpack.gz`);
+      for (const [key] of (shard.payload as VocabularyAliasShardPayload).entries) {
+        const group_key = Array.from(key).slice(0, 2).join("");
+        expect(`alias:${vocabulary_alias_shard_partition(group_key)}`).toBe(shard.shard_id);
+      }
+    }
+  });
+
+  it("bounds alias shard count at 512 however many distinct groups the corpus has", () => {
+    // 3,000 distinct CJK two-character groups -- the code-point-pair layout
+    // this replaced would have emitted one shard per group.
+    const records = Array.from({ length: 3_000 }, (_, index) => ({
+      record_id: index,
+      tag: `tag_${String(index)}`,
+      translation: String.fromCodePoint(0x4e00 + index, 0x4e00 + ((index * 7) % 3_000), 0x611b),
+      aliases: [],
+      popularity: index,
+    }));
+    const shards = build_alias_shards(records);
+    expect(shards.length).toBeLessThanOrEqual(VOCABULARY_ALIAS_SHARD_BUCKET_COUNT);
+    expect(shards.length).toBeGreaterThan(400);
+    expect(
+      shards.flatMap((shard) => (shard.payload as VocabularyAliasShardPayload).entries),
+    ).toHaveLength(3_000);
   });
 
   it("trigram index returns the expected record id via delta-decoding", async () => {

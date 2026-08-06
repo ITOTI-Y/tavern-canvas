@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  fnv1a_32,
+  VOCABULARY_ALIAS_SHARD_BUCKET_COUNT,
   VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
   VOCABULARY_HOT_SHARD_CATEGORY_CAP,
   VOCABULARY_HOT_SHARD_GLOBAL_CAP,
+  vocabulary_alias_shard_partition,
   VocabularyAliasShardPayloadSchema,
   VocabularyDetailShardPayloadSchema,
   VocabularyHotShardPayloadSchema,
@@ -116,6 +119,54 @@ describe("VocabularyHotShardPayloadSchema", () => {
     );
     const payload = { kind: "hot", global: [], by_category: { general: category_ids } };
     expect(VocabularyHotShardPayloadSchema.safeParse(payload).success).toBe(false);
+  });
+});
+
+describe("fnv1a_32", () => {
+  // The canonical FNV-1a 32-bit test vectors, independent of this
+  // implementation -- the encoder/decoder agreement the addendum demands is
+  // only meaningful against an externally fixed reference.
+  it.each([
+    ["", 0x811c9dc5],
+    ["a", 0xe40c292c],
+    ["foobar", 0xbf9cf968],
+  ])("matches the reference digest for %j", (text, expected) => {
+    expect(fnv1a_32(text)).toBe(expected);
+  });
+
+  it("hashes UTF-8 bytes, not UTF-16 code units", () => {
+    expect(fnv1a_32("夕焼")).toBe(0x49aa2e84);
+  });
+
+  it("stays inside the unsigned 32-bit range", () => {
+    for (const text of ["", "a", "夕焼", "a very long alias key that wraps many times over"]) {
+      const hash = fnv1a_32(text);
+      expect(Number.isInteger(hash)).toBe(true);
+      expect(hash).toBeGreaterThanOrEqual(0);
+      expect(hash).toBeLessThanOrEqual(0xffffffff);
+    }
+  });
+});
+
+describe("vocabulary_alias_shard_partition", () => {
+  it("formats the bucket as three zero-padded decimal digits", () => {
+    expect(vocabulary_alias_shard_partition("桜花")).toBe("h041");
+    expect(vocabulary_alias_shard_partition("su")).toBe("h469");
+  });
+
+  it("never leaves the h000..h511 range", () => {
+    const seen = new Set<string>();
+    for (let index = 0; index < 20_000; index += 1) {
+      const partition = vocabulary_alias_shard_partition(String.fromCodePoint(0x4e00 + index));
+      expect(partition).toMatch(/^h\d{3}$/u);
+      expect(Number.parseInt(partition.slice(1), 10)).toBeLessThan(
+        VOCABULARY_ALIAS_SHARD_BUCKET_COUNT,
+      );
+      seen.add(partition);
+    }
+    // 20,000 distinct CJK keys must not collapse onto a handful of buckets;
+    // this is the property that bounds shard COUNT without unbounding shard SIZE.
+    expect(seen.size).toBe(VOCABULARY_ALIAS_SHARD_BUCKET_COUNT);
   });
 });
 

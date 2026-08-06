@@ -7,7 +7,11 @@ import { join } from "node:path";
 import { deleteDB } from "idb";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { VocabularyManifestSchema, type VocabularyRecord } from "@tavern-canvas/contracts";
+import {
+  vocabulary_alias_shard_partition,
+  VocabularyManifestSchema,
+  type VocabularyRecord,
+} from "@tavern-canvas/contracts";
 import {
   DATABASE_NAME,
   dispose_database,
@@ -486,7 +490,10 @@ describe("ImportBuilder -- index correctness", () => {
       ]),
     );
 
-    const alias_pu = await decode_shard(store, "alias:pu");
+    // Alias shards bucket a key's two-code-point group by FNV-1a into one
+    // of 512 partitions (payload contract addendum v2), so "puppy" lands in
+    // the bucket for "pu" rather than in a shard named after it.
+    const alias_pu = await decode_shard(store, `alias:${vocabulary_alias_shard_partition("pu")}`);
     expect(alias_pu.kind).toBe("alias");
     if (alias_pu.kind !== "alias") {
       throw new Error("expected an alias payload");

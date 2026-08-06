@@ -185,9 +185,13 @@ export type {
 } from "./vocabulary_worker.js";
 
 export {
+  fnv1a_32,
+  VOCABULARY_ALIAS_SHARD_BUCKET_COUNT,
+  VOCABULARY_ALIAS_SHARD_GROUP_CODE_POINTS,
   VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
   VOCABULARY_HOT_SHARD_CATEGORY_CAP,
   VOCABULARY_HOT_SHARD_GLOBAL_CAP,
+  vocabulary_alias_shard_partition,
   VocabularyAliasShardPayloadSchema,
   VocabularyDetailShardPayloadSchema,
   VocabularyHotShardPayloadSchema,

@@ -19,6 +19,51 @@ export const VOCABULARY_DETAIL_SHARD_MAX_RECORDS = 4_096 as const;
 export const VOCABULARY_HOT_SHARD_GLOBAL_CAP = 1_000 as const;
 export const VOCABULARY_HOT_SHARD_CATEGORY_CAP = 500 as const;
 
+/**
+ * Alias shard partitioning (payload contract addendum v2). Grouping alias
+ * keys by their first two code points the way prefix shards group tags
+ * explodes for CJK — a bilingual 50,000-record baseline produced 17,313
+ * alias shards at ~2.5 entries each — so alias keys are instead spread over
+ * a fixed number of hash buckets.
+ *
+ * The hashed value is the alias key's two-code-point GROUP key, not the
+ * whole key. That is a deliberate, flagged refinement of the addendum's
+ * literal wording ("hash of the UTF-8 bytes of the normalized alias key"):
+ * the alias index is the only prefix-searchable tier aliases and
+ * translations have — the trigram index deliberately covers primary tag
+ * text only (build_trigram_index.ts) — so hashing whole keys would silently
+ * reduce alias/translation search to exact-match-only, deleting partial
+ * CJK translation search entirely. Hashing the group key bounds the shard
+ * count identically (<= 512), still lets the Worker compute a query's
+ * bucket directly with no manifest scan, and keeps every v1 search
+ * semantic: a bucket is a superset of a v1 group, and the query planner
+ * already filters entries by `startsWith`.
+ */
+export const VOCABULARY_ALIAS_SHARD_BUCKET_COUNT = 512 as const;
+export const VOCABULARY_ALIAS_SHARD_GROUP_CODE_POINTS = 2 as const;
+
+const FNV1A_32_OFFSET_BASIS = 2_166_136_261;
+const FNV1A_32_PRIME = 16_777_619;
+
+/** FNV-1a over the UTF-8 bytes of `text`, as an unsigned 32-bit integer. */
+export function fnv1a_32(text: string): number {
+  let hash = FNV1A_32_OFFSET_BASIS;
+  for (const byte of new TextEncoder().encode(text)) {
+    hash = Math.imul(hash ^ byte, FNV1A_32_PRIME);
+  }
+  return hash >>> 0;
+}
+
+/**
+ * Bucket name for an alias key's group key: `h000`..`h511`. Builder
+ * (encode), the in-browser import builder, and the Worker (lookup) all call
+ * this one implementation, so the two sides cannot drift.
+ */
+export function vocabulary_alias_shard_partition(group_key: string): string {
+  const bucket = fnv1a_32(group_key) % VOCABULARY_ALIAS_SHARD_BUCKET_COUNT;
+  return `h${String(bucket).padStart(3, "0")}`;
+}
+
 // key: normalized tag (prefix shards) or normalized alias/translation (alias
 // shards); record_id always points at the primary record.
 const VocabularyShardKeyEntrySchema = z.tuple([
