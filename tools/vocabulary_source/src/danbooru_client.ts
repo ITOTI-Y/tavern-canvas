@@ -118,12 +118,28 @@ async function fetch_json(
 }
 
 /**
- * Cursor-paginates `/tags.json` in ascending id order:
- * `search[id]=>{cursor}`, `search[order]=id`, `limit`, and
- * `search[post_count]=>={min_post_count}`. Yields one page (array of tags)
- * at a time; stops once a page has fewer than `page_limit` entries (the
- * standard end-of-results signal for this cursor style). Awaits
- * `delay_fn(min_request_delay_ms)` between requests (not before the first).
+ * Cursor-paginates `/tags.json` in ascending id order using Danbooru's
+ * documented sequential-cursor convention, `page=a{cursor}` ("after
+ * {cursor}"), plus `limit` and `search[post_count]=>={min_post_count}`.
+ *
+ * Does NOT use `search[id]=>{cursor}` + `search[order]=id`: Danbooru's
+ * `Tag.search` only recognizes `search[order]` values `name`, `date`,
+ * `count`, `similarity`, and `custom` (see `app/models/tag.rb`); any other
+ * value, including the non-existent `id` token, is silently ignored and
+ * falls back to the default order, `id DESC`. Combined with
+ * `search[id]=>{cursor}` as a bare WHERE filter, that default order made a
+ * full crawl return only the newest `page_limit` tags table-wide, then jump
+ * the cursor to (approximately) the table's maximum id and see nothing
+ * beyond it on the next page — a silent one-page truncation, not an error.
+ * `page=a{cursor}` instead resolves to
+ * `WHERE id > {cursor} ORDER BY id ASC LIMIT {page_limit}` via
+ * `PaginationExtension#paginate_sequential_after`, which applies `reorder`
+ * and so is unaffected by (and needs no) `search[order]`.
+ *
+ * Yields one page (array of tags) at a time; stops once a page has fewer
+ * than `page_limit` entries (the standard end-of-results signal for this
+ * cursor style). Awaits `delay_fn(min_request_delay_ms)` between requests
+ * (not before the first).
  */
 export async function* fetch_danbooru_tags(
   options: DanbooruClientOptions & {
@@ -143,8 +159,7 @@ export async function* fetch_danbooru_tags(
     first_request = false;
 
     const raw = await fetch_json(resolved, "/tags.json", {
-      "search[id]": `>${String(cursor)}`,
-      "search[order]": "id",
+      page: `a${String(cursor)}`,
       limit: String(resolved.page_limit),
       "search[post_count]": `>=${String(min_post_count)}`,
     });
@@ -177,8 +192,7 @@ export async function* fetch_danbooru_tag_aliases(
     first_request = false;
 
     const raw = await fetch_json(resolved, "/tag_aliases.json", {
-      "search[id]": `>${String(cursor)}`,
-      "search[order]": "id",
+      page: `a${String(cursor)}`,
       limit: String(resolved.page_limit),
     });
     const page = z.array(DanbooruTagAliasSchema).parse(raw);

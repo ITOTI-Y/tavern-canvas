@@ -137,7 +137,7 @@ describe("fetch_danbooru_fact_records: resumability", () => {
     });
 
     const first_tags_call = calls.find((url) => new URL(url).pathname === "/tags.json");
-    expect(new URL(first_tags_call ?? "").searchParams.get("search[id]")).toBe(">3");
+    expect(new URL(first_tags_call ?? "").searchParams.get("page")).toBe("a3");
   });
 
   it("writes an updated checkpoint after each page so an interruption resumes past completed work", async () => {
