@@ -262,6 +262,12 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
+  tools/vocabulary_source:
+    dependencies:
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
 packages:
 
   '@babel/helper-string-parser@7.29.7':

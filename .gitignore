@@ -16,3 +16,4 @@ output/
 *.sqlite-wal
 data/_archive/
 docs/_dev/
+data/vocabulary/*.jsonl

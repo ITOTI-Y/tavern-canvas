@@ -1,0 +1,53 @@
+{
+  "$schema_note": "One entry per dataset feeding the TavernCanvas v3 vocabulary package. See tools/vocabulary_source/ for the extraction/fetch/merge tooling that produces the (gitignored) data/vocabulary/*.jsonl artifacts described here.",
+  "updated": "2026-08-06",
+  "datasets": [
+    {
+      "id": "legacy-st-chatu8-v2-8-1-tagdata",
+      "origin": "st-chatu8 v2.8.1 repository, tagData/danbooru_001.json..danbooru_025.json (AES-256-CBC encrypted, decrypted by tools/vocabulary_source). Archived at data/_archive/raw_st_chatu8_v2_8_1_20260804.tar.gz.",
+      "license": "Aladdin Free Public License v9 (non-commercial; not an OSI-approved license). Governs the legacy st-chatu8 repository as a whole, including this bundled tagData.",
+      "attribution": "st-chatu8 v2.8.1 project (legacy, pre-v3 codebase).",
+      "transformation": "Decrypted (OpenSSL-salted AES-256-CBC, EVP_BytesToKey/MD5), parsed, and mapped to VocabularyRecordSchema (record_id <- id_index, tag, translation <- translate, popularity <- hot, category fixed to \"general\" per controller ruling, aliases-count field dropped). 49,857 records, vintage ~2023.",
+      "redistribution": {
+        "decision": "not_redistributed",
+        "reason": "Non-commercial/non-OSI AFPL license. The decrypted archive and the full local seed JSONL (raw_vocabulary_seed_full.jsonl) are never committed; used only as a local, interim input to tools/vocabulary_source (zh translation overlay, and as a stand-in fact source until a live Danbooru fetch is run). See the danbooru-tag-metadata entry below for why the tag/popularity facts themselves are treated separately."
+      },
+      "notes": "The archive also contains tagData/tags.json and tagData/tag_NSFW001.json, which decrypt to a different shape ({ tag_groups, tag_tags }, a zh UI group tree) than the danbooru_tag shard files, not the { danbooru_tag: [...] } shape this dataset entry describes. Both are out of scope for the current extraction; see task-src-report.md."
+    },
+    {
+      "id": "legacy-zh-translations",
+      "origin": "The `translate` field inside the legacy st-chatu8 v2.8.1 tagData shards (community-contributed zh translations of Danbooru tag names, vintage ~2023).",
+      "license": "Unknown / unattributed community origin. No license or attribution trail was found for the translation strings themselves (distinct from the AFPL license on the surrounding repository).",
+      "attribution": "Unknown upstream community contributor(s); not traceable from the archived repository.",
+      "transformation": "Copied verbatim into the `translation` field of VocabularyRecordSchema records during seed extraction and merge.",
+      "redistribution": {
+        "decision": "not_redistributable",
+        "reason": "Unknown-origin content cannot be cleared for redistribution. Excluded from data/vocabulary/raw_vocabulary_tags_public.jsonl (the fact-only output) and from any future committed vocabulary artifact; retained only in the local, gitignored raw_vocabulary_seed_full.jsonl."
+      },
+      "notes": "Binding controller ruling (see .superpowers/sdd/2026-08-04-tavern-canvas-05-vocabulary/progress.md). A first-party or properly licensed zh translation source would need to replace this before any translated public artifact ships."
+    },
+    {
+      "id": "danbooru-tag-metadata",
+      "origin": "Danbooru (danbooru.donmai.us) public tags.json / tag_aliases.json API endpoints.",
+      "license": "Factual data (tag names, post counts, category, alias relationships) obtained via Danbooru's public API. Not creative content; treated as factual/attributable data rather than AFPL-restricted content, independent of which pipeline path (fresh fetch vs. the legacy seed's mirrored facts) currently supplies it.",
+      "attribution": "Danbooru (danbooru.donmai.us).",
+      "transformation": "tools/vocabulary_source/src/danbooru_client.ts + fetch_danbooru.ts: id-cursor paginated fetch (search[id]=>N, search[order]=id, limit=1000, search[post_count]=>=MIN), rate-limited (>=150ms between requests, Danbooru's documented global read limit is 10 req/s), explicit descriptive User-Agent required per Danbooru API etiquette. Mapped to VocabularyRecordSchema (record_id <- tag id, tag <- name, category <- Danbooru category enum name, popularity <- post_count, aliases <- active tag_aliases).",
+      "redistribution": {
+        "decision": "redistributable",
+        "reason": "Factual data via a public API; committed baseline for the public artifact is fact-only (tag/category/popularity/aliases), per controller ruling.",
+        "caveat": "Not yet fetched live in this environment (danbooru.donmai.us is Cloudflare-blocked from this sandbox's network). The current data/vocabulary/raw_vocabulary_tags_public.jsonl was produced by merge_sources falling back to the legacy seed's own (vintage ~2023) facts, not a fresh Danbooru fetch. Example staleness: 1girl popularity 5,975,112 in the vintage-2023 seed vs 8,243,826 on live Danbooru as of 2026-08-06. A live `fetch-danbooru` + `merge --danbooru-facts` run (documented user/CI step, outside this sandbox) should supersede this before the public artifact is treated as current."
+      }
+    },
+    {
+      "id": "e621-db-export",
+      "origin": "e621.net official db_export bulk data dumps.",
+      "license": "Not yet reviewed; not yet used.",
+      "attribution": "e621.net.",
+      "transformation": "None. No data has been pulled from this source.",
+      "redistribution": {
+        "decision": "not_applicable",
+        "reason": "Listed per controller ruling as a candidate future official bulk source (e.g. for NSFW tag coverage), not currently integrated by tools/vocabulary_source. Revisit licensing and redistribution terms if/when adopted."
+      }
+    }
+  ]
+}
