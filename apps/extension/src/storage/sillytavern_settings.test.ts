@@ -49,7 +49,7 @@ function manual_scheduler(): SettingsScheduler & {
   };
 }
 
-function create_host(value: unknown = undefined): {
+function create_host(value?: unknown): {
   extension_settings: ExtensionSettingsHost;
   scheduler: SettingsScheduler & { pending_count(): number; run_pending(): Promise<void> };
   save_settings: () => void;

@@ -89,5 +89,11 @@ export {
   GatewaySettingsSchema,
   NormalizedOriginSchema,
   TavernCanvasSettingsSchema,
+  TavernCanvasUiSettingsSchema,
 } from "./settings.js";
-export type { GatewaySettings, NormalizedOrigin, TavernCanvasSettings } from "./settings.js";
+export type {
+  GatewaySettings,
+  NormalizedOrigin,
+  TavernCanvasSettings,
+  TavernCanvasUiSettings,
+} from "./settings.js";

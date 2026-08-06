@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { UuidSchema } from "./ids.js";
+
 export const NormalizedOriginSchema = z.url().check((context) => {
   if (!URL.canParse(context.value)) {
     return;
@@ -18,14 +20,37 @@ export type NormalizedOrigin = z.infer<typeof NormalizedOriginSchema>;
 
 export const GatewaySettingsSchema = z.strictObject({
   endpoint: NormalizedOriginSchema.nullable(),
+  token_secret_id: z.string().min(1).nullable(),
   http_acknowledgments: z.record(NormalizedOriginSchema, z.iso.datetime({ offset: false })),
 });
 export type GatewaySettings = z.infer<typeof GatewaySettingsSchema>;
 
+const NamespaceIdentifierSchema = z
+  .string()
+  .min(1)
+  .max(128)
+  .refine(
+    (value) => value === value.trim(),
+    "active_namespace must not have surrounding whitespace",
+  );
+
+export const TavernCanvasUiSettingsSchema = z.strictObject({
+  color_mode: z.enum(["system", "light", "dark"]),
+  inspector_width: z.number().int().min(240).max(720),
+  inspector_collapsed: z.boolean(),
+  optional_entry_enabled: z.boolean(),
+});
+export type TavernCanvasUiSettings = z.infer<typeof TavernCanvasUiSettingsSchema>;
+
 export const TavernCanvasSettingsSchema = z.strictObject({
   schema_version: z.literal(1),
+  active_namespace: NamespaceIdentifierSchema,
   locale: z.enum(["auto", "zh-CN", "en"]),
+  active_provider_profile_id: UuidSchema.nullable(),
   global_concurrency: z.number().int().min(1).max(4),
+  auto_generation_enabled: z.boolean(),
+  fallback_generation_enabled: z.boolean(),
   gateway: GatewaySettingsSchema,
+  ui: TavernCanvasUiSettingsSchema,
 });
 export type TavernCanvasSettings = z.infer<typeof TavernCanvasSettingsSchema>;
