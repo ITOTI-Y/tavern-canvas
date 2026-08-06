@@ -34,8 +34,6 @@ const SHARD_MALFORMED_ENTRY_PAYLOAD =
 // real archive's value.
 const SHARD_WITH_ONE_JUNK_ENTRY_PAYLOAD =
   "U2FsdGVkX1+rs5DRGYrz2XOFBTmjizhr6etBbvIbgjSZ1MZiDEB+vds5sAtPETqq1M5khvJNRaRf1A98nW8VSDoupgmYxM649tDvHIJdvgxF0uVIFWC03gebYg2DE5BY4QFaxtv7UrVHNOjjfC7WBVzU8741fTWDtGLZdnNlk/6HrccaI1jkdhvIikuzIM2sZnsNLfpx7QMMKOTkSEo0D+6aQCvGdpNkjUHaLcsZrJG5ApZyVI/JN5VVrdYKI8Bkdg//mjjRRs0QPtUn0bIm9J8tiNNGFqmKWxOTq62o45N+75I7OMm3wcN+1Pzkb5ig4Nph6pKXmym0trnmtOHW7k1PlCUOdvoGULpOPUJvmTgB8+SdEhjxQw/IRz1MVBWaOWXLOqTh6rZdAP/vKcnggCmHvGjt2d9eRDXUiXpmxcvhA/sdBCVQLx3Tc394ILcacMEVYA/FvzP/RjBbu7axkWtjoEAX5UL58drkU1w8sozEY7FZu5Y3Cd8aM3MfK29Y";
-const SHARD_NSFW_CANDIDATE_PAYLOAD =
-  "U2FsdGVkX18Yj66kFhuaJAD61eGPauSTJTW9srWvLTZ0Jy5iDPvFBh179DOnDu0vz/xLMriIcCgMpbFsjiBJODUfteNN9J7jP3AYmjh5l4QMZcmEyWDwCQhpVjKDMVR5UApqS0/fZJfMoPEaBbp6QMk/3su92CZCMnsammAx3fTVvSpBp0cqtFgzgaILOmqXLKzaa5/uwlzTOcDpS78pVQ==";
 // The real tagData/tag_NSFW001.json and tags.json shape, from the actual
 // archive: `{ tag_groups: [...], tag_tags: [...] }`, not `{ danbooru_tag }`.
 // Content is invented for testing.
@@ -52,10 +50,9 @@ const SHARD_UNKNOWN_COLOR_ID_PAYLOAD =
 const SHARD_UNKNOWN_COLOR_ID_WITH_GOOD_NEIGHBOR_PAYLOAD =
   "U2FsdGVkX19c8ZjyH5mHP67dz0GESa1R6aYzpHG5G7hlRW577GMMrPnfcWVkR4vaMkFd+s7ZWhapuIRo+KtYpVZ+r3lE1OJfI/+Sa5c7Jvw41oZoYGrzRzrFpyGCizufAt+T14KvUBCHfqqR/JO4KDELWuXE/4T3OisUsj80XDuPxWxHGHIAZjy7eySxIGWOQVUCYOTbLnXLaMV4nh0QNGrvlK/TlBB/NPKQ+xof84vV8LUwjTBBotC4JGLuRXQ5IFL5qZsJ4rquYT49emAJ5j3ZehgMJjFn/jJr4TNxCs/sTyYK7nwhLaojf1LEOh6lhikGnU1bOM47VD+ILJLK5Frt2PMU/w636eQjhITMrol7AFpPNM7WP7BrJzLQwK6V";
 
-const shard = (label: string, payload: string, is_nsfw?: boolean): LegacyShardSpec => ({
+const shard = (label: string, payload: string): LegacyShardSpec => ({
   file_label: label,
   raw_base64: payload,
-  ...(is_nsfw !== undefined ? { is_nsfw } : {}),
 });
 
 describe("LEGACY_V2_TAGDATA_PASSPHRASE", () => {
@@ -79,7 +76,6 @@ describe("parse_legacy_shard", () => {
       category: "general",
       popularity: 100,
       aliases: [],
-      is_nsfw: false,
     });
   });
 
@@ -101,20 +97,6 @@ describe("parse_legacy_shard", () => {
 
     expect(no_translate?.translation).toBeUndefined();
     expect(no_translate).not.toHaveProperty("translation");
-  });
-
-  it("marks records from a shard flagged is_nsfw, and leaves others false", () => {
-    const nsfw_records = parse_legacy_shard(
-      shard("nsfw_candidate.json", SHARD_NSFW_CANDIDATE_PAYLOAD, true),
-      LEGACY_V2_TAGDATA_PASSPHRASE,
-    );
-    const general_records = parse_legacy_shard(
-      shard("shard_a.json", SHARD_A_PAYLOAD),
-      LEGACY_V2_TAGDATA_PASSPHRASE,
-    );
-
-    expect(nsfw_records.every((record) => record.is_nsfw)).toBe(true);
-    expect(general_records.every((record) => !record.is_nsfw)).toBe(true);
   });
 
   it("maps color_id 0 to category general and color_id 4 to category character", () => {

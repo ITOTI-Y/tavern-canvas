@@ -13,7 +13,6 @@ const fact = (
 ): VocabularyRecord => ({
   aliases: [],
   popularity: 0,
-  is_nsfw: false,
   ...overrides,
 });
 
@@ -44,7 +43,6 @@ describe("merge_sources", () => {
       popularity: 1_000,
       aliases: [],
       translation: "合成翻译占位",
-      is_nsfw: false,
     });
     expect(public_records[0]?.translation).toBeUndefined();
     expect(public_records[0]).not.toHaveProperty("translation");

@@ -285,6 +285,9 @@ importers:
 
   tools/vocabulary_source:
     dependencies:
+      '@tavern-canvas/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       zod:
         specifier: 4.4.3
         version: 4.4.3

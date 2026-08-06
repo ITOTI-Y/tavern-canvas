@@ -61,14 +61,6 @@ const LegacyDanbooruTagFileShapeSchema = z.strictObject({
 export interface LegacyShardSpec {
   readonly file_label: string;
   readonly raw_base64: string;
-  /**
-   * True only for a shard whose decrypted shape matches
-   * `LegacyDanbooruTagFileShapeSchema` but represents NSFW-only content. No
-   * file in the real v2.8.1 archive currently qualifies — see
-   * `extract_legacy_seed_from_files`'s doc comment for why `tag_NSFW001.json`
-   * does not use this path.
-   */
-  readonly is_nsfw?: boolean;
 }
 
 export interface InvalidLegacyEntry {
@@ -164,7 +156,6 @@ export function parse_legacy_shard(
       tag: entry.tag,
       category,
       popularity: entry.hot,
-      is_nsfw: spec.is_nsfw ?? false,
     };
     if (entry.translate.trim().length > 0) {
       mapped.translation = entry.translate;
@@ -228,7 +219,6 @@ export function extract_legacy_seed_records(
 
 export interface LegacyShardFileSpec {
   readonly path: string;
-  readonly is_nsfw?: boolean;
 }
 
 /**
@@ -254,7 +244,6 @@ export async function extract_legacy_seed_from_files(
     files.map(async (file) => ({
       file_label: file.path,
       raw_base64: await readFile(file.path, "utf8"),
-      ...(file.is_nsfw !== undefined ? { is_nsfw: file.is_nsfw } : {}),
     })),
   );
   return extract_legacy_seed_records(shards, passphrase, options);

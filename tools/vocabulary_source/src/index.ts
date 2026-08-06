@@ -37,7 +37,6 @@ async function run_extract_seed(args: readonly string[]): Promise<void> {
       out: { type: "string" },
       passphrase: { type: "string" },
       shard: { type: "string", multiple: true },
-      "nsfw-shard": { type: "string", multiple: true },
       "skip-invalid-entries": { type: "boolean" },
     },
   });
@@ -49,13 +48,9 @@ async function run_extract_seed(args: readonly string[]): Promise<void> {
   }
 
   const shard_names = values.shard ?? DEFAULT_SHARD_NAMES;
-  const nsfw_shard_names = values["nsfw-shard"] ?? [];
   const passphrase = values.passphrase ?? LEGACY_V2_TAGDATA_PASSPHRASE;
 
-  const files = [
-    ...shard_names.map((name) => ({ path: resolve(shard_dir, name), is_nsfw: false })),
-    ...nsfw_shard_names.map((name) => ({ path: resolve(shard_dir, name), is_nsfw: true })),
-  ];
+  const files = shard_names.map((name) => ({ path: resolve(shard_dir, name) }));
 
   const records = await extract_legacy_seed_from_files(files, passphrase, {
     skip_invalid_entries: values["skip-invalid-entries"] ?? false,
