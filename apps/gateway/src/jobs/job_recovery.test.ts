@@ -1138,14 +1138,19 @@ describe("JobWorker restart recovery", () => {
         protocol_version: "1.0",
         request: sd_request("99999999-9999-4999-8999-999999999999"),
       });
+      await fixture.worker.start();
+      fixture.worker.enqueue(first.job.job_id);
+      await stage_started.promise;
+
+      // Created only after `first` is confirmed staged: both jobs share CREATED_AT,
+      // so `list_recoverable()` (ORDER BY created_at, job_id) would tie-break on a
+      // random UUID if `second` existed before `worker.start()` ran its recovery
+      // scan, letting either job win the race to submit first.
       const second = fixture.service.create_job({
         protocol_version: "1.0",
         request: sd_request("99999999-9999-4999-8999-999999999990"),
       });
       second_job_id = second.job.job_id;
-      await fixture.worker.start();
-      fixture.worker.enqueue(first.job.job_id);
-      await stage_started.promise;
       fixture.worker.enqueue(second.job.job_id);
       await transport.second_submit_started.promise;
       const second_submit_signal = await transport.second_submit_signal.promise;
