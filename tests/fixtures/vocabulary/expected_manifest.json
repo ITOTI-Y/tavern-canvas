@@ -1,0 +1,459 @@
+{
+  "package_id": "baseline",
+  "schema_version": 1,
+  "data_version": "1.0.0",
+  "changelog": "initial",
+  "record_count": 10,
+  "compressed_size": 3367,
+  "minimum_extension_version": "3.0.0",
+  "shards": [
+    {
+      "shard_id": "alias:ca",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/6361.msgpack.gz",
+      "sha256": "706eb74171f5fae03f0069ffaa3d67c73ad9890575498fefb812dcb7183fb0b9",
+      "byte_length": 60
+    },
+    {
+      "shard_id": "alias:cr",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/6372.msgpack.gz",
+      "sha256": "478282ab787f08e85800413a13fc36af273019c15fdff33462a8f2d0e68030fb",
+      "byte_length": 54
+    },
+    {
+      "shard_id": "alias:in",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/696e.msgpack.gz",
+      "sha256": "a23e289cab416d9ffc5b4a99d42e1e4f469ec0b70c4577319725bc314bdb4014",
+      "byte_length": 53
+    },
+    {
+      "shard_id": "alias:na",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/6e61.msgpack.gz",
+      "sha256": "fed37244227be1f220922b5e1f1f232f160229607f9f1fe4f191bb264c78c124",
+      "byte_length": 58
+    },
+    {
+      "shard_id": "alias:ne",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/6e65.msgpack.gz",
+      "sha256": "a08764f44157959a54d61125c0ef1853097e1b102980c37af1507c21fea0cf3f",
+      "byte_length": 60
+    },
+    {
+      "shard_id": "alias:on",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/6f6e.msgpack.gz",
+      "sha256": "03edd2b20659b80a8096f1edb73c505a494e0e65e22e9cb32e2b94323b71fc15",
+      "byte_length": 67
+    },
+    {
+      "shard_id": "alias:一个",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/e4b880e4b8aa.msgpack.gz",
+      "sha256": "3e5e7a2bf2d7161ce876879c7f53d4e722f59301a44080055361f5447c75da4f",
+      "byte_length": 62
+    },
+    {
+      "shard_id": "alias:猫耳",
+      "package_id": "baseline",
+      "kind": "alias",
+      "path": "alias/e78cabe880b3.msgpack.gz",
+      "sha256": "2d6ec541b0fdc29027b3063176fe9467b62ad602926fb2aa8efa4d34e34059c2",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "detail:0",
+      "package_id": "baseline",
+      "kind": "detail",
+      "path": "detail/0.msgpack.gz",
+      "sha256": "1ca5f850c869d9a6241b9a416dfcfdaa045684efddf44111e5571be7ed1d1e95",
+      "byte_length": 399
+    },
+    {
+      "shard_id": "hot:global",
+      "package_id": "baseline",
+      "kind": "hot",
+      "path": "hot/global.msgpack.gz",
+      "sha256": "15d57e4ef3edf146a608d3d623090bd8410caf22f57a9e4dd92d935f1149ad8b",
+      "byte_length": 108
+    },
+    {
+      "shard_id": "prefix:1b",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/3162.msgpack.gz",
+      "sha256": "fda6fc975efc0666e05bfb7d49c4589779cacff9e692f5a3ca4ac7cfb73d10e6",
+      "byte_length": 53
+    },
+    {
+      "shard_id": "prefix:1g",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/3167.msgpack.gz",
+      "sha256": "ac9b00a30d4dddd0bec2da07693cf335d5059fff5f9c4c30fdbcab6db62161a8",
+      "byte_length": 54
+    },
+    {
+      "shard_id": "prefix:ba",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/6261.msgpack.gz",
+      "sha256": "895c28ae25bd4bf63b749856ea765e7a960f96ccca083f299453c53298dcf0ff",
+      "byte_length": 56
+    },
+    {
+      "shard_id": "prefix:ca",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/6361.msgpack.gz",
+      "sha256": "ddbf72a94313347ffd79385ba2da1f053f635643149a6009ec34e5143c671026",
+      "byte_length": 54
+    },
+    {
+      "shard_id": "prefix:do",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/646f.msgpack.gz",
+      "sha256": "b21658edf910e5d746fc821d85738a4a73fb579a124270f567f7592885f9f760",
+      "byte_length": 54
+    },
+    {
+      "shard_id": "prefix:lo",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/6c6f.msgpack.gz",
+      "sha256": "0b98a5e85a30b36e339ba319b39037e9c0dca3ec1b23622140cf7487353ab5d1",
+      "byte_length": 58
+    },
+    {
+      "shard_id": "prefix:sa",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/7361.msgpack.gz",
+      "sha256": "3992248baae55b0b62dabf2e4bca143a3574fa2dac4e43957525f3c0609e27de",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "prefix:sh",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/7368.msgpack.gz",
+      "sha256": "5c4099da4299ae4a726525a0d77293ce989e1d5f3c1bf66dd7786b33a1478832",
+      "byte_length": 59
+    },
+    {
+      "shard_id": "prefix:sm",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/736d.msgpack.gz",
+      "sha256": "9061e76ebde29d95c334ff4fc36369a5babd103843b3595c1adfcad35f92f898",
+      "byte_length": 54
+    },
+    {
+      "shard_id": "prefix:猫",
+      "package_id": "baseline",
+      "kind": "prefix",
+      "path": "prefix/e78cab.msgpack.gz",
+      "sha256": "bd19e2dcbe4d312dc16607446bca25ff69b764d31a4d698889770adaefb4daf5",
+      "byte_length": 50
+    },
+    {
+      "shard_id": "trigram: e",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/2065.msgpack.gz",
+      "sha256": "756752c50bd3247d92efb4433a52feb0d3628604f82d05689ef52d5a85c9ea58",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "trigram: h",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/2068.msgpack.gz",
+      "sha256": "e6d7a95a7d4185a21bb23e39d9daa62ffeb5d53eb589bca339f072aa87d11d77",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "trigram:1b",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/3162.msgpack.gz",
+      "sha256": "5150a20f1bf7593737427c3eb444ceb79b29954431ae810ff9f3c1b1daa4ef0e",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:1g",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/3167.msgpack.gz",
+      "sha256": "d73f7e3e12b283f8a5d78ecb4964acb597323852d1a02321b48cf8ef760407c1",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ac",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6163.msgpack.gz",
+      "sha256": "3440a8b5188b0ccc8921f2eb233a5e7c10c22c9f7e1353d77ac686d6a6fbbf32",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ai",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6169.msgpack.gz",
+      "sha256": "f2d77edd284eba8902e02db2bcae82d38606a6eb1b0d5a7da192c672c75bba69",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "trigram:ar",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6172.msgpack.gz",
+      "sha256": "d9a7dba2f05fdf4c26efd07eb3190f6df794b688b1f474b7d72b92ac6273c758",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "trigram:at",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6174.msgpack.gz",
+      "sha256": "6327b49bcabefe459b429e38d0f3ef45be9af4aff449389f34305de8e9fe67c4",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ba",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6261.msgpack.gz",
+      "sha256": "54edc593eecff813178fa124108d1a7b811cf50554aa62df2e516106f492d612",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:bo",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/626f.msgpack.gz",
+      "sha256": "ad24a51b00f675126504c08e4f52008830e86824412439c819653216195b0a8c",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ca",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6361.msgpack.gz",
+      "sha256": "16e613cc7ee9d9a35c543389a9f3aae7c44aaec033e9a9ea0750f58199e5b2d2",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ck",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/636b.msgpack.gz",
+      "sha256": "47c7452a95643980d02ade2b0dbcf0bf021fa196e2c01d6f56a734263fc9104e",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:do",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/646f.msgpack.gz",
+      "sha256": "cfe27bc8404869d912721199411ba3889d3ae43cff3635d4d48c8c4fde3db6bc",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ea",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6561.msgpack.gz",
+      "sha256": "f0e01bf0eff82635e1d69389d53883e5f0bf9c9eef863aae4c4a578dbd0b5856",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "trigram:g",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6720.msgpack.gz",
+      "sha256": "be45a8836e3e1b2ebb6b2880a2cf2e4b8f5ea0a43d376f85e488a1b22af22173",
+      "byte_length": 55
+    },
+    {
+      "shard_id": "trigram:gi",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6769.msgpack.gz",
+      "sha256": "3155ee13eb1aa28913a43aab3cd579df16653c4a3a164b0a257b6545dd43163b",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:gr",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6772.msgpack.gz",
+      "sha256": "67d73e5dfada1d0147988efee5a4e022d20390df2f4fd5b9c846a037780fdeff",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ha",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6861.msgpack.gz",
+      "sha256": "811bb08ea618d7672e3e55754c35e18b28ef572db502e9617b66c869ce98a63e",
+      "byte_length": 52
+    },
+    {
+      "shard_id": "trigram:ho",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/686f.msgpack.gz",
+      "sha256": "707960685fc8b74d25ac6849e8fa19ac439dfd9b7945f53b47b5aeadf49d092b",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:il",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/696c.msgpack.gz",
+      "sha256": "52999ec580fdf1373c305fd6925401f902c1df5784760a57623163a9dbd09a10",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ir",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6972.msgpack.gz",
+      "sha256": "4b6e3785bcd885b9d9fc6a64c3c8878f8acff0629287e6212e6df3325aefe640",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:kg",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6b67.msgpack.gz",
+      "sha256": "6fea0ad550b1456f0596961ea250d472684bb2ca42a3b9fde0ba2f1883d4c21f",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:lo",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6c6f.msgpack.gz",
+      "sha256": "ddc81e54a7ce0d98401381e924f11ec81c52be40f365a2d24182cfb4c754f17e",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:mi",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6d69.msgpack.gz",
+      "sha256": "172320a17f2b649408dcb07ea1e07f2a77bd0e0bec00764807695dbbc79a5236",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ng",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6e67.msgpack.gz",
+      "sha256": "b2eda1555f0d3208850cea759d3b4c604f4d7af12c4eaec16ab600bc6d955e02",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:og",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6f67.msgpack.gz",
+      "sha256": "0fe2efa847f4b674f2d4a0c509fe12a9ffcd7348047d2f481cf0a17059a9951b",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:on",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6f6e.msgpack.gz",
+      "sha256": "f0538fdf9b42d3273af0fd1ee9ffc4b205368947745c14b9be6243362ed26e6f",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:or",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6f72.msgpack.gz",
+      "sha256": "608a4a7a4d2e26b6af87355b94a65929a95b64abf41d850916b65a51f49eb8ad",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ou",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/6f75.msgpack.gz",
+      "sha256": "ffc3be44e3c3a55840c603c65855812a441899d6a86dd18929ef4cac428ab483",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:ro",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/726f.msgpack.gz",
+      "sha256": "b53a078524eecc5e442ba4b9cc60f9d2b2e6b2524d91d8e3134eeec8f26895ec",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:rt",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/7274.msgpack.gz",
+      "sha256": "18d14390a6e703bde65907a65721d9e60359a4812c31c0e4e9a986c8162939ea",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:sa",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/7361.msgpack.gz",
+      "sha256": "f7dce933c1b65d18c79e6d13c2002a9f45ee1f88f4e972769e4c8ff24bede4e7",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:sh",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/7368.msgpack.gz",
+      "sha256": "08d6361fbac9af65f434b45d07a70a08345ab5b4e3a8669f3fece3de9f10b7c3",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:sm",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/736d.msgpack.gz",
+      "sha256": "2083eef5d9340ca0f085a375ed5445a9d6da25937aa053014ba231d7dc5d2e7f",
+      "byte_length": 51
+    },
+    {
+      "shard_id": "trigram:t",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/7420.msgpack.gz",
+      "sha256": "74949886247bf79758aae6c10962c4d023ef284e737b65367ee892234c10226b",
+      "byte_length": 55
+    },
+    {
+      "shard_id": "trigram:un",
+      "package_id": "baseline",
+      "kind": "trigram",
+      "path": "trigram/756e.msgpack.gz",
+      "sha256": "c97935fbfe9c511087184529c77c7e0b050ffd5e92e14047fd885fb26003c087",
+      "byte_length": 51
+    }
+  ]
+}

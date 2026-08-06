@@ -183,3 +183,23 @@ export type {
   VocabularyWorkerRequest,
   VocabularyWorkerResponse,
 } from "./vocabulary_worker.js";
+
+export {
+  VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
+  VOCABULARY_HOT_SHARD_CATEGORY_CAP,
+  VOCABULARY_HOT_SHARD_GLOBAL_CAP,
+  VocabularyAliasShardPayloadSchema,
+  VocabularyDetailShardPayloadSchema,
+  VocabularyHotShardPayloadSchema,
+  VocabularyPrefixShardPayloadSchema,
+  VocabularyShardPayloadSchema,
+  VocabularyTrigramShardPayloadSchema,
+} from "./vocabulary_shards.js";
+export type {
+  VocabularyAliasShardPayload,
+  VocabularyDetailShardPayload,
+  VocabularyHotShardPayload,
+  VocabularyPrefixShardPayload,
+  VocabularyShardPayload,
+  VocabularyTrigramShardPayload,
+} from "./vocabulary_shards.js";

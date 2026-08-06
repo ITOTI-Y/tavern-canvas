@@ -1,0 +1,11 @@
+{"tag":"background","popularity":20}
+{"tag":"smile","popularity":900,"category":"expression"}
+{"tag":"1girl","popularity":500,"category":"general","aliases":["one_girl"],"translation":"一个女孩"}
+{"tag":"cat_ears","popularity":120,"category":"body","aliases":["neko_mimi"],"translation":"猫耳"}
+{"tag":"dog_ears","popularity":60,"category":"body","aliases":["inu_mimi"]}
+{"tag":"猫","popularity":45,"category":"animal","aliases":["neko"],"translation":"cat"}
+{"tag":"sad","popularity":400,"category":"expression","aliases":["crying"]}
+{"tag":"cat_ears","popularity":80,"category":"body","aliases":["catears"],"description":"Ears resembling those of a cat."}
+{"tag":"short_hair","popularity":650,"category":"hair"}
+{"tag":"long_hair","popularity":700,"category":"hair","aliases":["nagai_kami"]}
+{"tag":"1boy","popularity":300,"category":"general","aliases":["one_boy"]}
