@@ -93,3 +93,53 @@ export {
   create_generation_job_repository,
   GenerationJobRepository,
 } from "./repositories/job_repository.js";
+
+export {
+  detect_image_media_type,
+  GalleryImageRecordSchema,
+  IMAGE_MEDIA_TYPES,
+  ImageMediaTypeSchema,
+  ImageRecordFieldsSchema,
+  SourceMessageIdentitySchema,
+} from "./images/image_schema.js";
+export type {
+  GalleryImageRecord,
+  ImageMediaType,
+  ImageRecordFields,
+  SourceMessageIdentity,
+} from "./images/image_schema.js";
+
+export {
+  create_image_record,
+  delete_image_record,
+  delete_image_record_entry,
+  GalleryImageRecordRepository,
+  ImageCorruptionError,
+  ImageMediaTypeError,
+  put_image,
+  put_image_blob,
+  read_image_blob,
+  read_image_bytes,
+  release_image_blob,
+  touch_image_record,
+} from "./images/image_store.js";
+export type {
+  PutImageRecordInput,
+  PutImageRecordMetadata,
+  StoredImageBlob,
+} from "./images/image_store.js";
+
+export { attach_image, detach_image } from "./images/image_references.js";
+export type {
+  AttachImageInput,
+  AttachImageResult,
+  DetachImageInput,
+  DetachImageResult,
+} from "./images/image_references.js";
+
+export { run_lru_eviction } from "./images/lru_eviction.js";
+export type {
+  LruEvictionConfig,
+  LruEvictionResult,
+  StorageEstimate,
+} from "./images/lru_eviction.js";

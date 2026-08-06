@@ -182,6 +182,12 @@ importers:
 
   packages/storage:
     dependencies:
+      '@noble/hashes':
+        specifier: 2.2.0
+        version: 2.2.0
+      '@tavern-canvas/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       idb:
         specifier: 8.0.3
         version: 8.0.3

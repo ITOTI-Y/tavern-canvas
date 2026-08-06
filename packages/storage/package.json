@@ -12,6 +12,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@noble/hashes": "2.2.0",
+    "@tavern-canvas/contracts": "workspace:*",
     "idb": "8.0.3",
     "zod": "4.4.3"
   },
