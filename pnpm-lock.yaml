@@ -294,6 +294,9 @@ importers:
       '@tavern-canvas/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@tavern-canvas/vocabulary-source':
+        specifier: workspace:*
+        version: link:../vocabulary_source
       zod:
         specifier: 4.4.3
         version: 4.4.3

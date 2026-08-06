@@ -21,7 +21,9 @@ tests/harness/.benchmark_public/
 data/_archive/
 docs/_dev/
 data/vocabulary/*.jsonl
-# Fact-only, redistributable (data/vocabulary/LICENSES.json): the sole
-# permitted input for the committed apps/extension/public/vocabulary/baseline
-# package (see docs/_dev/DATA.md's processed-vocabulary-baseline-v1 entry).
+# Redistributable per explicit user decision (data/vocabulary/LICENSES.json):
+# facts + zh translations. The sole permitted input for the committed
+# apps/extension/public/vocabulary/baseline package and the (uncommitted,
+# output/-shipped) full pack (see docs/_dev/DATA.md's
+# processed-vocabulary-baseline-v1 entry).
 !data/vocabulary/raw_vocabulary_tags_public.jsonl

@@ -1,133 +1,87 @@
-import { cp, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { gunzipSync } from "node:zlib";
 
-import { decode } from "@msgpack/msgpack";
-
-import { EXIT_SUCCESS, run_build, run_verify } from "../src/index.js";
+import {
+  assert_tag_popularity_at_least,
+  build_pack_into,
+  for_each_detail_record,
+  read_current_extension_version,
+  read_manifest,
+  REPO_ROOT,
+  stage_pack_source,
+} from "./pack_common.js";
 
 // This is the repository's generation script for the committed vocabulary
-// baseline (task-5-brief.md Step 3): it drives the committed builder, then
-// either publishes the verified output into
-// apps/extension/public/vocabulary/baseline (default) or, under --check,
-// rebuilds into a scratch directory and byte-compares every manifest/shard
-// against the committed output without touching it -- the CI gate in
-// .github/workflows/ci.yml runs the latter. Never hand-edit generated shards;
-// re-run this script instead.
-
-const REPO_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
-const DEFAULT_SOURCE_PATH = resolve(REPO_ROOT, "data/vocabulary/raw_vocabulary_tags_public.jsonl");
-const DEFAULT_BASELINE_DIRECTORY = resolve(REPO_ROOT, "apps/extension/public/vocabulary/baseline");
-const PACKAGE_ID = "tavern-canvas-baseline";
-const DATA_VERSION = "1.0.0";
-const CHANGELOG = "initial";
-
-// The package's minimum_extension_version gates whether the (future) Worker
-// bootstrap accepts it (package_verifier.ts's verify_manifest). It must
-// never exceed the repo's own current version -- during 3.0.0-alpha.x
-// development that is lower than the plain "3.0.0" the brief's example
-// command uses literally, and hardcoding "3.0.0" here would make the
-// committed baseline permanently unusable until a real 3.0.0 release.
-// Reading the live version keeps this self-correcting across alpha bumps.
-async function read_current_extension_version(): Promise<string> {
-  const text = await readFile(resolve(REPO_ROOT, "package.json"), "utf8");
-  const parsed = JSON.parse(text) as { readonly version: string };
-  return parsed.version;
-}
+// baseline: it drives the committed builder, then either publishes the
+// verified output into apps/extension/public/vocabulary/baseline (default)
+// or, under --check, rebuilds into a scratch directory and byte-compares
+// every manifest/shard against the committed output without touching it --
+// the CI gate in .github/workflows/ci.yml runs the latter. Never hand-edit
+// generated shards; re-run this script instead.
+//
+// Stage 05 REFRESH (2026-08-06): the bundled baseline is now a fixed
+// top-50,000-by-popularity CUT of the full bilingual source
+// (data/vocabulary/raw_vocabulary_tags_public.jsonl, ~153k records) rather
+// than the whole file -- large packages are no longer force-bundled; the
+// full pack ships separately (see generate_full_pack.ts) and is
+// user-selectable through a future catalog install flow. It also now
+// carries zh translations (see assert_translations_present below),
+// reversing the earlier fact-only provenance ruling per the user's explicit
+// 2026-08-06 decision to assume translation-licensing responsibility.
 
 class GenerateBaselineError extends Error {}
 
-interface ManifestShardEntrySummary {
-  readonly shard_id: string;
-  readonly kind: string;
-  readonly path: string;
-}
+const DEFAULT_SOURCE_PATH = resolve(REPO_ROOT, "data/vocabulary/raw_vocabulary_tags_public.jsonl");
+const DEFAULT_BASELINE_DIRECTORY = resolve(REPO_ROOT, "apps/extension/public/vocabulary/baseline");
+const PACKAGE_ID = "tavern-canvas-baseline";
+const DATA_VERSION = "1.1.0";
+const CHANGELOG =
+  "Rebuilt from fresh data: HF tag-table universe (JayxMay95/qdlabs, apache-2.0) with " +
+  "popularity refreshed via a u-haru/danbooru-tags-20260518 post-level aggregation " +
+  "(supplemented by a live danbooru.donmai.us top-tag fetch), plus zh translations " +
+  "overlaid from the legacy v2 seed. Bundled baseline is a top-50,000-by-popularity " +
+  "cut of the full ~153k-record bilingual dataset -- see generate_full_pack.ts for the " +
+  "unabridged pack.";
+export const BASELINE_RECORD_LIMIT = 50_000;
+const POPULARITY_FLOOR_PROBE_TAG = "1girl";
+const POPULARITY_FLOOR = 8_000_000;
 
-interface ManifestSummary {
-  readonly record_count: number;
-  readonly compressed_size: number;
-  readonly shards: readonly ManifestShardEntrySummary[];
-}
+const TRANSLATION_ROUND_TRIP_PROBE = { tag: "1girl", translation: "一个女孩" } as const;
 
-async function read_manifest(directory: string): Promise<ManifestSummary> {
-  const text = await readFile(join(directory, "manifest.json"), "utf8");
-  return JSON.parse(text) as ManifestSummary;
-}
+// Provenance guard (2026-08-06 controller ruling, reversing the earlier
+// fact-only rule): the committed baseline must now carry zh translations.
+// Rather than re-asserting an exact coverage count here (a moving target as
+// source data is refreshed), this re-checks the built output directly for
+// the one invariant that matters structurally -- a known, always-translated
+// head tag survives the full build round trip -- so a future accidental
+// reversion to the fact-only source (or a broken overlay) fails loudly here
+// instead of shipping silently untranslated.
+async function assert_translations_present(output_directory: string): Promise<void> {
+  let probe_translation: string | undefined;
+  let probe_shard_id: string | undefined;
 
-// The builder's source schema never accepts record_id (it reassigns ids
-// deterministically after merging duplicates -- read_source.ts), but
-// data/vocabulary/raw_vocabulary_tags_public.jsonl carries one (mapped from
-// legacy v2 id_index during extraction, see task-src-report.md). Stripping
-// it here keeps the committed source file's schema self-descriptive without
-// weakening the builder's own "source never supplies an id" invariant.
-async function strip_record_ids(source_path: string, staged_path: string): Promise<void> {
-  const raw_text = await readFile(source_path, "utf8");
-  const lines = raw_text.split(/\r?\n/u).filter((line) => line.trim().length > 0);
-  const stripped_lines = lines.map((line) => {
-    const { record_id: _record_id, ...rest } = JSON.parse(line) as Record<string, unknown>;
-    return JSON.stringify(rest);
+  await for_each_detail_record(output_directory, (record, shard_id) => {
+    if (record.tag === TRANSLATION_ROUND_TRIP_PROBE.tag) {
+      probe_translation = record.translation;
+      probe_shard_id = shard_id;
+    }
   });
-  await writeFile(staged_path, `${stripped_lines.join("\n")}\n`);
-}
 
-async function build_into(
-  output_directory: string,
-  source_path: string,
-  minimum_extension_version: string,
-): Promise<void> {
-  const build_exit_code = await run_build([
-    "--input",
-    source_path,
-    "--output",
-    output_directory,
-    "--package-id",
-    PACKAGE_ID,
-    "--data-version",
-    DATA_VERSION,
-    "--minimum-extension-version",
-    minimum_extension_version,
-    "--changelog",
-    CHANGELOG,
-  ]);
-  if (build_exit_code !== EXIT_SUCCESS) {
+  if (probe_shard_id === undefined) {
     throw new GenerateBaselineError(
-      `vocabulary_builder build failed with exit code ${String(build_exit_code)}`,
+      `provenance guard failed: record "${TRANSLATION_ROUND_TRIP_PROBE.tag}" was not found in any ` +
+        "detail shard -- cannot confirm the translation round trip.",
     );
   }
-  const verify_exit_code = await run_verify(["--package", output_directory]);
-  if (verify_exit_code !== EXIT_SUCCESS) {
+  if (probe_translation !== TRANSLATION_ROUND_TRIP_PROBE.translation) {
     throw new GenerateBaselineError(
-      `vocabulary_builder verify failed with exit code ${String(verify_exit_code)}`,
+      `provenance guard failed: record "${TRANSLATION_ROUND_TRIP_PROBE.tag}" in shard ` +
+        `"${probe_shard_id}" has translation ${JSON.stringify(probe_translation)}, expected ` +
+        `${JSON.stringify(TRANSLATION_ROUND_TRIP_PROBE.translation)} -- the bundled baseline must ` +
+        "carry zh translations end to end (2026-08-06 controller ruling).",
     );
-  }
-}
-
-// Provenance guard (controller pre-ruling #2): the committed baseline must
-// be built exclusively from fact-only, redistributable source data. This
-// re-checks the built output directly -- independent of which source file
-// the caller pointed at -- so a future accidental swap to the full
-// (non-redistributable) seed fails loudly here instead of shipping.
-async function assert_zero_translation_leakage(output_directory: string): Promise<void> {
-  const manifest = await read_manifest(output_directory);
-  for (const shard of manifest.shards) {
-    if (shard.kind !== "detail") {
-      continue;
-    }
-    const bytes = await readFile(join(output_directory, shard.path));
-    const payload = decode(gunzipSync(bytes)) as {
-      readonly records: readonly { readonly tag: string; readonly translation?: string }[];
-    };
-    for (const record of payload.records) {
-      if (record.translation !== undefined) {
-        throw new GenerateBaselineError(
-          `provenance guard failed: record "${record.tag}" in shard "${shard.shard_id}" carries ` +
-            "a translation field -- the committed baseline must be built only from " +
-            "data/vocabulary/raw_vocabulary_tags_public.jsonl (fact-only, redistributable)",
-        );
-      }
-    }
   }
 }
 
@@ -222,13 +176,23 @@ export async function run_generate_baseline(argv: readonly string[]): Promise<vo
   const { check, source_path, baseline_directory } = parse_args(argv);
   const scratch_directory = await mkdtemp(join(tmpdir(), "vocabulary-baseline-"));
   const rebuild_directory = join(scratch_directory, "package");
-  const stripped_source_path = join(scratch_directory, "source.jsonl");
+  const staged_source_path = join(scratch_directory, "source.jsonl");
 
   try {
-    await strip_record_ids(source_path, stripped_source_path);
+    await stage_pack_source(source_path, staged_source_path, BASELINE_RECORD_LIMIT);
     const minimum_extension_version = await read_current_extension_version();
-    await build_into(rebuild_directory, stripped_source_path, minimum_extension_version);
-    await assert_zero_translation_leakage(rebuild_directory);
+    await build_pack_into(rebuild_directory, staged_source_path, {
+      package_id: PACKAGE_ID,
+      data_version: DATA_VERSION,
+      minimum_extension_version,
+      changelog: CHANGELOG,
+    });
+    await assert_translations_present(rebuild_directory);
+    await assert_tag_popularity_at_least(
+      rebuild_directory,
+      POPULARITY_FLOOR_PROBE_TAG,
+      POPULARITY_FLOOR,
+    );
 
     const manifest = await read_manifest(rebuild_directory);
     const shard_counts_by_kind = new Map<string, number>();

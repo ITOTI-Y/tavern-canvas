@@ -1,43 +1,78 @@
 {
-  "$schema_note": "One entry per dataset feeding the TavernCanvas v3 vocabulary package. See tools/vocabulary_source/ for the extraction/fetch/merge tooling that produces the (gitignored) data/vocabulary/*.jsonl artifacts described here.",
+  "$schema_note": "One entry per dataset feeding the TavernCanvas v3 vocabulary package. See tools/vocabulary_source/ for the extraction/fetch/merge/import tooling that produces the (gitignored, except raw_vocabulary_tags_public.jsonl) data/vocabulary/*.jsonl artifacts described here.",
   "updated": "2026-08-06",
   "datasets": [
+    {
+      "id": "hf-tag-table-universe",
+      "origin": "https://huggingface.co/datasets/JayxMay95/danbooru-tags-JayMay/resolve/main/tags.jsonl (194,431 rows fetched 2026-08-06). Row count is identical to https://huggingface.co/datasets/qdlabs/danbooru-tags (Sept 2025) -- the two datasets appear same-origin; both cited here.",
+      "license": "apache-2.0 (both JayxMay95/danbooru-tags-JayMay and qdlabs/danbooru-tags).",
+      "attribution": "JayxMay95 (Hugging Face) / qdlabs (Hugging Face); underlying facts originate from Danbooru (danbooru.donmai.us).",
+      "transformation": "tools/vocabulary_source/src/import_hf_tags.ts: maps name -> tag, post_count -> popularity (see hf-fresh-popularity-overlay below for why this is superseded), category int -> name via a strict Danbooru category enum (0 general, 1 artist, 3 copyright, 4 character, 5 meta; unmapped ints throw). Drops is_deprecated:true rows. Deduped by tag name -- the upstream file carries 33,925 tag names with 2-6 byte-identical duplicate rows (verified: no value conflicts among them, an upstream data-quality artifact); a same-name row with differing values would throw HfTagConflictError instead of silently picking one. 194,431 raw rows -> 153,258 unique tags. 5 category=1 (artist) rows found despite the dataset card's 'no artist' claim; kept as artist per controller ruling.",
+      "redistribution": {
+        "decision": "redistributable",
+        "reason": "apache-2.0, permits redistribution and modification."
+      },
+      "notes": "This dataset's own post_count is stale (~2024-2025 vintage: 1girl 6,858,776 vs live 8,243,826+ on 2026-08-06) -- used only for the tag/category universe, never for popularity."
+    },
+    {
+      "id": "hf-fresh-popularity-overlay",
+      "origin": "https://huggingface.co/datasets/u-haru/danbooru-tags-20260518 (post-level data, 115 parquet shards, ~5 GB, post ids 1-11,403,815, snapshot dated 2026-05-18).",
+      "license": "Not explicitly declared on the dataset card; treated as factual/derived Danbooru post metadata (tag co-occurrence counts), consistent with how the tag-table sources above are treated. Not creative content.",
+      "attribution": "u-haru (Hugging Face); underlying facts originate from Danbooru (danbooru.donmai.us).",
+      "transformation": "tools/vocabulary_source/scripts/aggregate_fresh_popularity.py: polars streaming scan over every parquet shard's `tag_string` (space-separated per-post tags), counting posts per tag where `is_deleted` is false (matching Danbooru's own tag post_count semantics -- deleted posts do not count). Produces a tag/post_count JSONL, overlaid onto the hf-tag-table-universe fact stream by EXACT tag name (tools/vocabulary_source/src/merge_sources.ts's popularity_overlay parameter). 963,262 unique tags aggregated; 150,057 of 153,258 universe tags (98.0%) received a fresh count. The remaining 3,201 universe tags keep the stale hf-tag-table-universe count (no stale_count marker is written into the data itself, per instruction -- see the task report for the exact list method).",
+      "redistribution": {
+        "decision": "redistributable",
+        "reason": "Aggregated factual counts (post-per-tag), not the underlying post content or images; derived from Danbooru's own public post metadata."
+      },
+      "notes": "The 2026-05-18 snapshot alone is still ~2.5 months behind 'today' (2026-08-06): its own 1girl aggregate is 7,477,611, short of the intended freshness gate. Supplemented by live-danbooru-top-tag-supplement below to close that gap for the highest-traffic tags."
+    },
+    {
+      "id": "live-danbooru-top-tag-supplement",
+      "origin": "https://danbooru.donmai.us/tags.json, live fetch performed 2026-08-06, `search[order]=count` pagination cursored on post_count, top 60,000 tags by live popularity.",
+      "license": "Danbooru's public API; factual data (tag name, post_count), same treatment as hf-tag-table-universe.",
+      "attribution": "Danbooru (danbooru.donmai.us).",
+      "transformation": "Ad-hoc, NOT part of the committed tools/vocabulary_source pipeline (no committed script -- see the task report for the exact commands). Overlaid on top of the u-haru aggregation (live value wins on exact tag-name match) before running the committed `merge` CLI's --popularity-overlay step, to genuinely satisfy the 'fresh data' requirement for the highest-visibility tags rather than settling for the 2.5-month-old u-haru snapshot alone. 1girl: 6,858,776 (stale universe) -> 7,477,611 (u-haru 2026-05-18) -> 8,244,995 (live 2026-08-06, the value actually shipped).",
+      "redistribution": {
+        "decision": "redistributable",
+        "reason": "Factual data via Danbooru's public API, same basis as hf-tag-table-universe."
+      },
+      "notes": "IMPORTANT verified finding: danbooru.donmai.us is REACHABLE from this sandbox as of 2026-08-06 (HTTP 200, real JSON), correcting the prior 'Cloudflare-blocked' caveat below (danbooru-tag-metadata entry, retained for history). While validating this, a latent bug was found in the EXISTING tools/vocabulary_source/src/danbooru_client.ts: `search[order]=id` is not a token Danbooru's API recognizes for /tags.json -- it silently falls back to Danbooru's default order (newest-first), so fetch_danbooru_tags's ascending-id cursor (`search[id]=>{max_id}` using each page's own max id) terminates after exactly one page, silently returning only the ~1,000 most recently created tags instead of the full tag table. Confirmed against the live API (2026-08-06); the module's own tests never caught this because they use a mocked fetch_impl that doesn't model Danbooru's real order-token semantics. This live-top-tag-supplement worked around it by using the (verified-working) `search[order]=count` token instead. NOT fixed here -- out of this task's scope (danbooru_client.ts is committed, tested Task 5 code) -- flagged for the controller to open a follow-up fix."
+    },
     {
       "id": "legacy-st-chatu8-v2-8-1-tagdata",
       "origin": "st-chatu8 v2.8.1 repository, tagData/danbooru_001.json..danbooru_025.json (AES-256-CBC encrypted, decrypted by tools/vocabulary_source). Archived at data/_archive/raw_st_chatu8_v2_8_1_20260804.tar.gz.",
       "license": "Aladdin Free Public License v9 (non-commercial; not an OSI-approved license). Governs the legacy st-chatu8 repository as a whole, including this bundled tagData.",
       "attribution": "st-chatu8 v2.8.1 project (legacy, pre-v3 codebase).",
-      "transformation": "Decrypted (OpenSSL-salted AES-256-CBC, EVP_BytesToKey/MD5), parsed, and mapped to VocabularyRecordSchema (record_id <- id_index, tag, translation <- translate, popularity <- hot, category fixed to \"general\" per controller ruling, aliases-count field dropped). 49,857 records, vintage ~2023.",
+      "transformation": "Decrypted (OpenSSL-salted AES-256-CBC, EVP_BytesToKey/MD5), parsed, and mapped to VocabularyRecordSchema (record_id <- id_index, tag, translation <- translate, popularity <- hot, category fixed to \"general\" per controller ruling, aliases-count field dropped). 49,856 records (49,857 minus 1 empty-tag entry skipped), vintage ~2023.",
       "redistribution": {
         "decision": "not_redistributed",
-        "reason": "Non-commercial/non-OSI AFPL license. The decrypted archive and the full local seed JSONL (raw_vocabulary_seed_full.jsonl) are never committed; used only as a local, interim input to tools/vocabulary_source (zh translation overlay, and as a stand-in fact source until a live Danbooru fetch is run). See the danbooru-tag-metadata entry below for why the tag/popularity facts themselves are treated separately."
+        "reason": "Non-commercial/non-OSI AFPL license governs the surrounding repository/JSON structure. The decrypted archive and the full local seed JSONL (raw_vocabulary_seed_full.jsonl) are never committed. As of the 2026-08-06 REFRESH, this source is used ONLY as the zh translation seed (tools/vocabulary_source/src/merge_sources.ts's translation overlay, matched by normalized tag) -- it is no longer used as a fact/popularity source; the hf-tag-table-universe and hf-fresh-popularity-overlay entries above supply facts and popularity."
       },
-      "notes": "The archive also contains tagData/tags.json and tagData/tag_NSFW001.json, which decrypt to a different shape ({ tag_groups, tag_tags }, a zh UI group tree) than the danbooru_tag shard files, not the { danbooru_tag: [...] } shape this dataset entry describes. Both are out of scope for the current extraction; see task-src-report.md."
+      "notes": "The archive also contains tagData/tags.json and tagData/tag_NSFW001.json, which decrypt to a different shape ({ tag_groups, tag_tags }, a zh UI group tree) than the danbooru_tag shard files, not the { danbooru_tag: [...] } shape this dataset entry describes. Both remain out of scope."
     },
     {
       "id": "legacy-zh-translations",
       "origin": "The `translate` field inside the legacy st-chatu8 v2.8.1 tagData shards (community-contributed zh translations of Danbooru tag names, vintage ~2023).",
       "license": "Unknown / unattributed community origin. No license or attribution trail was found for the translation strings themselves (distinct from the AFPL license on the surrounding repository).",
       "attribution": "Unknown upstream community contributor(s); not traceable from the archived repository.",
-      "transformation": "Copied verbatim into the `translation` field of VocabularyRecordSchema records during seed extraction and merge.",
+      "transformation": "Copied verbatim into the `translation` field of VocabularyRecordSchema records during merge (normalized-tag match against the fresh hf-tag-table-universe fact stream). 49,856 seed entries; 43,543 matched into the 2026-08-06 fact universe (the rest are tags the legacy seed carried that no longer exist, or were renamed, in the fresh universe).",
       "redistribution": {
-        "decision": "not_redistributable",
-        "reason": "Unknown-origin content cannot be cleared for redistribution. Excluded from data/vocabulary/raw_vocabulary_tags_public.jsonl (the fact-only output) and from any future committed vocabulary artifact; retained only in the local, gitignored raw_vocabulary_seed_full.jsonl."
+        "decision": "redistributable_by_explicit_user_decision",
+        "reason": "REVERSED 2026-08-06 (was 'not_redistributable'): the user explicitly decided to include zh translations in the distributed baseline and full pack, and explicitly assumed responsibility for resolving any upstream translation-licensing questions himself ('补充中文包（先不考虑上游，如有许可问题由我去解决）', 2026-08-06). Translations are now included in both apps/extension/public/vocabulary/baseline (top 50,000 by popularity, data_version 1.1.0) and the full ~153k-record pack (package_id tavern-canvas-full-zh, not committed to git -- see the task report for the HF dataset upload destination). The upstream authorship/license of the translation strings themselves is still unknown and untraceable; this decision does not constitute a license clearance, only the user's explicit acceptance of the associated risk."
       },
-      "notes": "Binding controller ruling (see .superpowers/sdd/2026-08-04-tavern-canvas-05-vocabulary/progress.md). A first-party or properly licensed zh translation source would need to replace this before any translated public artifact ships."
+      "notes": "Prior controller ruling requiring fact-only distribution (see .superpowers/sdd/2026-08-04-tavern-canvas-05-vocabulary/progress.md) is superseded by the 2026-08-06 user directive for this REFRESH work item. If upstream provenance is ever established (or a complaint is received), this entry and the shipped artifacts should be revisited."
     },
     {
       "id": "danbooru-tag-metadata",
-      "origin": "Danbooru (danbooru.donmai.us) public tags.json / tag_aliases.json API endpoints.",
-      "license": "Factual data (tag names, post counts, category, alias relationships) obtained via Danbooru's public API. Not creative content; treated as factual/attributable data rather than AFPL-restricted content, independent of which pipeline path (fresh fetch vs. the legacy seed's mirrored facts) currently supplies it.",
+      "origin": "Danbooru (danbooru.donmai.us) public tags.json / tag_aliases.json API endpoints, via tools/vocabulary_source/src/danbooru_client.ts + fetch_danbooru.ts (the fetch-danbooru CLI command).",
+      "license": "Factual data (tag names, post counts, category, alias relationships) obtained via Danbooru's public API. Not creative content.",
       "attribution": "Danbooru (danbooru.donmai.us).",
-      "transformation": "tools/vocabulary_source/src/danbooru_client.ts + fetch_danbooru.ts: id-cursor paginated fetch (search[id]=>N, search[order]=id, limit=1000, search[post_count]=>=MIN), rate-limited (>=150ms between requests, Danbooru's documented global read limit is 10 req/s), explicit descriptive User-Agent required per Danbooru API etiquette. Mapped to VocabularyRecordSchema (record_id <- tag id, tag <- name, category <- Danbooru category enum name, popularity <- post_count, aliases <- active tag_aliases).",
+      "transformation": "id-cursor paginated fetch (search[id]=>N, search[order]=id, limit=1000, search[post_count]=>=MIN), rate-limited (>=150ms between requests), explicit descriptive User-Agent required per Danbooru API etiquette. Mapped to VocabularyRecordSchema (record_id <- tag id, tag <- name, category <- Danbooru category enum name, popularity <- post_count, aliases <- active tag_aliases).",
       "redistribution": {
         "decision": "redistributable",
-        "reason": "Factual data via a public API; committed baseline for the public artifact is fact-only (tag/category/popularity/aliases), per controller ruling.",
-        "caveat": "Not yet fetched live in this environment (danbooru.donmai.us is Cloudflare-blocked from this sandbox's network). The current data/vocabulary/raw_vocabulary_tags_public.jsonl was produced by merge_sources falling back to the legacy seed's own (vintage ~2023) facts, not a fresh Danbooru fetch. Example staleness: 1girl popularity 5,975,112 in the vintage-2023 seed vs 8,243,826 on live Danbooru as of 2026-08-06. A live `fetch-danbooru` + `merge --danbooru-facts` run (documented user/CI step, outside this sandbox) should supersede this before the public artifact is treated as current."
+        "reason": "Factual data via a public API."
       },
-      "notes": "Task 5 (2026-08-06) committed data/vocabulary/raw_vocabulary_tags_public.jsonl itself (single .gitignore exception, see .gitignore) and built apps/extension/public/vocabulary/baseline exclusively from it via tools/vocabulary_builder/scripts/generate_baseline.ts -- verified zero translation fields present (tests/integration/vocabulary_baseline_provenance.test.ts) and CI-reproducible byte-for-byte (.github/workflows/ci.yml). The staleness caveat above still applies: refreshing requires a real fetch-danbooru run outside this sandbox, followed by re-running generate_baseline.ts."
+      "notes": "HISTORICAL (Task 5, 2026-08-06 pre-REFRESH): this module's `fetch-danbooru` CLI was not used to build the current data/vocabulary/raw_vocabulary_tags_public.jsonl -- the REFRESH pipeline (hf-tag-table-universe + hf-fresh-popularity-overlay + live-danbooru-top-tag-supplement entries above) supersedes it. The 'danbooru.donmai.us is Cloudflare-blocked from this sandbox' caveat that justified relying on the legacy seed's own facts at Task 5 time did NOT hold on 2026-08-06 (verified reachable, HTTP 200) -- see live-danbooru-top-tag-supplement's notes for the pagination bug this module still has (`search[order]=id` doesn't work against the real API), which was not fixed as part of this task."
     },
     {
       "id": "e621-db-export",
