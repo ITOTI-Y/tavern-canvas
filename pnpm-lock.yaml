@@ -220,6 +220,28 @@ importers:
         specifier: 6.2.5
         version: 6.2.5
 
+  packages/vocabulary:
+    dependencies:
+      '@msgpack/msgpack':
+        specifier: 3.1.3
+        version: 3.1.3
+      '@noble/hashes':
+        specifier: 2.2.0
+        version: 2.2.0
+      '@tavern-canvas/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@tavern-canvas/storage':
+        specifier: workspace:*
+        version: link:../storage
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+    devDependencies:
+      fake-indexeddb:
+        specifier: 6.2.5
+        version: 6.2.5
+
   tools/first_party_check: {}
 
   tools/v2_migration:
@@ -526,6 +548,10 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
+
+  '@msgpack/msgpack@3.1.3':
+    resolution: {integrity: sha512-47XIizs9XZXvuJgoaJUIE2lFoID8ugvc0jzSHP+Ptfk8nTbnR8g788wv48N03Kx0UkAv559HWRQ3yzOgzlRNUA==}
+    engines: {node: '>= 18'}
 
   '@noble/hashes@2.2.0':
     resolution: {integrity: sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==}
@@ -2295,6 +2321,8 @@ snapshots:
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
+
+  '@msgpack/msgpack@3.1.3': {}
 
   '@noble/hashes@2.2.0': {}
 
