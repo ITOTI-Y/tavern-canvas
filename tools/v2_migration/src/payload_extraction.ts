@@ -1,7 +1,12 @@
 import { parse_json_value } from "@tavern-canvas/storage";
 
 import { is_plain_object } from "./inventory.js";
-import { classify_path, type ConverterName, type PathRule } from "./path_rules.js";
+import {
+  classify_path,
+  type ConverterName,
+  type PathRule,
+  type PathSegments,
+} from "./path_rules.js";
 
 /**
  * Top-level v2 settings keys owned (per `SETTINGS_PATH_RULES`) by `owner`.
@@ -40,13 +45,19 @@ export function select_owned_fields(
 }
 
 /**
- * Drops any nested field whose full dot-path classifies as
+ * Drops any nested field whose full path classifies as
  * `deferred_secret_transfer`, so a payload built from a mixed
  * secret/non-secret container (e.g. `banana`) never carries the credential.
+ *
+ * `prefix` carries one real object-property key per element, never a
+ * dot-joined string: a v2 profile name containing "." (e.g. "v4.5 anime")
+ * must stay one segment, or it can shift a `*`-wildcard secret rule out of
+ * alignment and let the credential through unredacted (Stage 04 review
+ * finding C2).
  */
 export function redact_secret_paths(
   value: unknown,
-  prefix: string,
+  prefix: PathSegments,
   rules: readonly PathRule[],
 ): unknown {
   if (!is_plain_object(value)) {
@@ -54,11 +65,11 @@ export function redact_secret_paths(
   }
   const result: Record<string, unknown> = {};
   for (const [key, child] of Object.entries(value)) {
-    const path = prefix.length > 0 ? `${prefix}.${key}` : key;
-    if (classify_path(path, rules)?.classification === "deferred_secret_transfer") {
+    const path_segments = [...prefix, key];
+    if (classify_path(path_segments, rules)?.classification === "deferred_secret_transfer") {
       continue;
     }
-    result[key] = redact_secret_paths(child, path, rules);
+    result[key] = redact_secret_paths(child, path_segments, rules);
   }
   return result;
 }

@@ -45,8 +45,8 @@ export class UnknownLegacyPathError extends Error {
 export function classify_settings_paths(settings: unknown): SettingsClassification {
   const classified: ClassifiedPath[] = [];
   const unknown: string[] = [];
-  for (const path of enumerate_own_property_paths(settings)) {
-    const rule = classify_path(path, SETTINGS_PATH_RULES);
+  for (const { segments, path } of enumerate_own_property_paths(settings)) {
+    const rule = classify_path(segments, SETTINGS_PATH_RULES);
     if (rule === undefined) {
       unknown.push(path);
     } else {
