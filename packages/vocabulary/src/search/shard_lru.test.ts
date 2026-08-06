@@ -49,6 +49,20 @@ describe("ShardLru", () => {
     expect(lru.has("alias-1")).toBe(true);
   });
 
+  it("evicts a stale prefix shard before a freshly used detail shard", () => {
+    // Index shards are read by one query each; detail shards are read by
+    // most of them. Ranking prefix/alias permanently above detail let stale
+    // one-shot index shards crowd every reusable detail shard out of the
+    // budget, so recency -- not kind -- decides between them.
+    const lru = new ShardLru({ budget_bytes: 100 });
+    lru.put("prefix-stale", "prefix", "p", 50);
+    lru.put("detail-hot", "detail", "d", 40);
+    lru.get("detail-hot");
+    lru.put("prefix-new", "prefix", "p2", 40);
+    expect(lru.has("prefix-stale")).toBe(false);
+    expect(lru.has("detail-hot")).toBe(true);
+  });
+
   it("evicts within the same tier by least-recently-used order", () => {
     const lru = new ShardLru({ budget_bytes: 100 });
     lru.put("detail-1", "detail", "d1", 40);

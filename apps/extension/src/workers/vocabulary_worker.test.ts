@@ -1,11 +1,14 @@
-import type {
-  VocabularyManifest,
-  VocabularyShardEntry,
-  VocabularyShardPath,
-  VocabularyWorkerRequest,
-  VocabularyWorkerResponse,
+import {
+  VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
+  type VocabularyManifest,
+  type VocabularySearchResult,
+  type VocabularyShardEntry,
+  type VocabularyShardPath,
+  type VocabularyWorkerRequest,
+  type VocabularyWorkerResponse,
 } from "@tavern-canvas/contracts";
 import {
+  decode_shard_bytes,
   encode_shard_bytes,
   type ShardByteSource,
   type VocabularyDetailShardPayload,
@@ -65,6 +68,9 @@ async function build_fixture(): Promise<Fixture> {
       ["dog", 2, 3],
     ],
   };
+  // Alias shards bucket by a hash of the key's two-code-point group
+  // (payload contract addendum v2): "夕焼け" groups under "夕焼", whose
+  // FNV-1a bucket is h132. The Worker computes that from the query alone.
   const alias_su: VocabularyPrefixOrAliasShardPayload = {
     kind: "alias",
     entries: [["夕焼け", 4, 2]],
@@ -80,7 +86,7 @@ async function build_fixture(): Promise<Fixture> {
     "detail:0": detail_payload,
     "prefix:ca": prefix_ca,
     "prefix:do": prefix_do,
-    "alias:夕焼": alias_su,
+    "alias:h132": alias_su,
     "trigram:su": trigram_su,
     "trigram:un": trigram_un,
     "hot:global": hot_shard,
@@ -106,7 +112,7 @@ async function build_fixture(): Promise<Fixture> {
       shard_entry("detail:0", "detail", bytes.get("detail:0")?.byteLength ?? 0),
       shard_entry("prefix:ca", "prefix", bytes.get("prefix:ca")?.byteLength ?? 0),
       shard_entry("prefix:do", "prefix", bytes.get("prefix:do")?.byteLength ?? 0),
-      shard_entry("alias:夕焼", "alias", bytes.get("alias:夕焼")?.byteLength ?? 0),
+      shard_entry("alias:h132", "alias", bytes.get("alias:h132")?.byteLength ?? 0),
       shard_entry("trigram:su", "trigram", bytes.get("trigram:su")?.byteLength ?? 0),
       shard_entry("trigram:un", "trigram", bytes.get("trigram:un")?.byteLength ?? 0),
       shard_entry("hot:global", "hot", bytes.get("hot:global")?.byteLength ?? 0),
@@ -307,6 +313,155 @@ describe("VocabularyWorkerEngine", () => {
         message: expect.any(String) as unknown as string,
       },
     ]);
+  });
+});
+
+/**
+ * Payload contract addendum v2's narrowed residency rule: a completed
+ * query pins the current page's compact result DTOs, and NOTHING pins the
+ * decoded detail shards those DTOs were extracted from. The fixture sizes
+ * its budget to hold the pinned manifest plus a single detail shard, while
+ * every result page deliberately spans three -- so any residual page pin
+ * shows up immediately as an over-budget high-water mark.
+ */
+describe("VocabularyWorkerEngine -- decoded shard residency", () => {
+  const DETAIL_SHARD_COUNT = 3;
+  const RECORDS_PER_SHARD = 40;
+
+  interface ResidencyFixture {
+    readonly byte_source: ShardByteSource;
+    readonly shard_bytes_calls: VocabularyShardPath[];
+    readonly budget_bytes: number;
+  }
+
+  async function build_residency_fixture(): Promise<ResidencyFixture> {
+    const bytes = new Map<string, Uint8Array>();
+    const shards: VocabularyShardEntry[] = [];
+    const prefix_entries: [string, number, number][] = [];
+
+    for (let shard_index = 0; shard_index < DETAIL_SHARD_COUNT; shard_index += 1) {
+      const start_id = shard_index * VOCABULARY_DETAIL_SHARD_MAX_RECORDS;
+      const records = Array.from({ length: RECORDS_PER_SHARD }, (_unused, offset) => ({
+        record_id: start_id + offset,
+        tag: `tag ${String(start_id + offset)}`,
+        aliases: [],
+        // Interleaved across shards so the top-50 page necessarily spans
+        // every detail shard rather than draining the first one.
+        popularity: 10_000 - (offset * DETAIL_SHARD_COUNT + shard_index),
+      }));
+      for (const record of records) {
+        prefix_entries.push([record.tag, record.record_id, record.popularity]);
+      }
+      const path = `detail:${String(start_id)}`;
+      bytes.set(path, await encode_shard_bytes({ kind: "detail", start_id, records }));
+      shards.push(shard_entry(path, "detail", bytes.get(path)?.byteLength ?? 0));
+    }
+
+    prefix_entries.sort(([, left_id], [, right_id]) => left_id - right_id);
+    bytes.set("prefix:ta", await encode_shard_bytes({ kind: "prefix", entries: prefix_entries }));
+    shards.push(shard_entry("prefix:ta", "prefix", bytes.get("prefix:ta")?.byteLength ?? 0));
+
+    const manifest: VocabularyManifest = {
+      package_id: "baseline",
+      schema_version: 1,
+      data_version: "1.0.0",
+      changelog: "residency fixture",
+      record_count: DETAIL_SHARD_COUNT * RECORDS_PER_SHARD,
+      compressed_size: [...bytes.values()].reduce((total, value) => total + value.byteLength, 0),
+      minimum_extension_version: "3.0.0",
+      shards,
+    };
+
+    const detail_bytes = bytes.get("detail:0");
+    const prefix_bytes = bytes.get("prefix:ta");
+    if (detail_bytes === undefined || prefix_bytes === undefined) {
+      throw new Error("fixture shards were not encoded");
+    }
+    // Room for the pinned manifest, the query's prefix shard, and exactly
+    // one of the three detail shards the page spans.
+    const budget_bytes =
+      JSON.stringify(manifest).length +
+      (await decode_shard_bytes(prefix_bytes)).decoded_byte_size +
+      (await decode_shard_bytes(detail_bytes)).decoded_byte_size;
+
+    const shard_bytes_calls: VocabularyShardPath[] = [];
+    return {
+      shard_bytes_calls,
+      budget_bytes,
+      byte_source: {
+        manifest: () => Promise.resolve(manifest),
+        shard_bytes: (path: VocabularyShardPath) => {
+          shard_bytes_calls.push(path);
+          const found = bytes.get(path);
+          if (found === undefined) {
+            throw new Error(`no fixture bytes for ${path}`);
+          }
+          return Promise.resolve(found);
+        },
+      },
+    };
+  }
+
+  async function query_first_page(
+    engine: VocabularyWorkerEngine,
+    request_id: string,
+  ): Promise<{ readonly results: readonly VocabularySearchResult[]; readonly cursor: string }> {
+    const responses: VocabularyWorkerResponse[] = [];
+    await engine.handle({ type: "query", request_id, query: "tag" }, (response) =>
+      responses.push(response),
+    );
+    const complete = responses.at(-1);
+    if (complete?.type !== "complete" || complete.next_cursor === null) {
+      throw new Error(`expected a paginated complete response, got ${JSON.stringify(responses)}`);
+    }
+    return { results: complete.results, cursor: complete.next_cursor };
+  }
+
+  it("keeps decoded shards inside the LRU budget across a multi-shard result page", async () => {
+    const fixture = await build_residency_fixture();
+    const engine = new VocabularyWorkerEngine(fixture.byte_source, {
+      lru_budget_bytes: fixture.budget_bytes,
+    });
+    await initialize(engine);
+
+    const page = await query_first_page(engine, "00000000-0000-4000-8000-00000000000b");
+    expect(page.results).toHaveLength(50);
+    const covered_shards = new Set(
+      page.results.map((result) =>
+        Math.floor(result.record_id / VOCABULARY_DETAIL_SHARD_MAX_RECORDS),
+      ),
+    );
+    expect(covered_shards.size).toBe(DETAIL_SHARD_COUNT);
+    expect(engine.resident_shard_bytes).toBeLessThanOrEqual(fixture.budget_bytes);
+  });
+
+  it("serves the next page from the session's DTOs without reading any shard", async () => {
+    const fixture = await build_residency_fixture();
+    const engine = new VocabularyWorkerEngine(fixture.byte_source, {
+      lru_budget_bytes: fixture.budget_bytes,
+    });
+    await initialize(engine);
+
+    const first = await query_first_page(engine, "00000000-0000-4000-8000-00000000000c");
+    const calls_before_next_page = fixture.shard_bytes_calls.length;
+
+    const responses: VocabularyWorkerResponse[] = [];
+    await engine.handle(
+      {
+        type: "next_page",
+        request_id: "00000000-0000-4000-8000-00000000000d",
+        cursor: first.cursor,
+      },
+      (response) => responses.push(response),
+    );
+
+    const next_page = responses.at(-1);
+    if (next_page?.type !== "complete") throw new Error("expected complete response");
+    expect(fixture.shard_bytes_calls.length).toBe(calls_before_next_page);
+    expect(next_page.results.length).toBeGreaterThan(0);
+    const first_ids = new Set(first.results.map((result) => result.record_id));
+    expect(next_page.results.some((result) => first_ids.has(result.record_id))).toBe(false);
+    expect(engine.resident_shard_bytes).toBeLessThanOrEqual(fixture.budget_bytes);
   });
 });
 

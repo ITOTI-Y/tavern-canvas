@@ -1,19 +1,23 @@
 import type { VocabularyMatchKind, VocabularyWorkerResponse } from "@tavern-canvas/contracts";
+import { detect_shard_memory_mode } from "@tavern-canvas/vocabulary";
 
-// Stage 05 Task 6 benchmark harness (runs on the page/main thread, bundled
-// by Vite -- see tests/harness/vite.config.ts). Drives two real Web
-// Workers:
+// Stage 05 benchmark harness (runs on the page/main thread, bundled by Vite
+// -- see tests/harness/vite.config.ts). Drives two real Web Workers:
 //
 // - "primary": `new Worker(new URL(".../vocabulary_worker.ts", ...))`
 //   against the REAL, unmodified production entry point. This is both the
-//   benchmark vehicle and the missing end-to-end Worker-to-URL wiring proof
-//   (no `new Worker()` call site existed anywhere in the codebase before
-//   this task -- see task-5-report.md's concern #1). It naturally resolves
-//   to "mobile" LRU mode in this environment (see
-//   vocabulary_benchmark_worker_desktop.ts's comment).
-// - "desktop": a thin entry (vocabulary_benchmark_worker_desktop.ts) that
-//   reuses the same real exported engine with an explicit desktop
-//   memory_mode, proving the 64 MiB budget too.
+//   benchmark vehicle and the end-to-end Worker-to-URL wiring proof (no
+//   `new Worker()` call site existed anywhere in the codebase before Task 6
+//   -- see task-5-report.md's concern #1). It resolves its own LRU budget
+//   from navigator.deviceMemory, exactly as production does.
+// - "secondary": a thin entry (vocabulary_benchmark_worker_{mobile,desktop}.ts)
+//   that reuses the same real exported engine with the memory_mode the
+//   primary did NOT resolve, so the 16 MiB and 64 MiB budgets are BOTH
+//   proven whatever the environment reports. Stage 05 Task 6 assumed
+//   navigator.deviceMemory was unavailable here and therefore that the
+//   primary ran on the mobile budget; it is in fact reported as 16, so that
+//   run measured the desktop budget twice and never exercised the mobile
+//   one. Picking the complement removes the environment dependency.
 //
 // Correctness and timing are measured entirely inside this module so a
 // single trigger call from Playwright captures everything (see
@@ -21,8 +25,8 @@ import type { VocabularyMatchKind, VocabularyWorkerResponse } from "@tavern-canv
 // `page.evaluate()` that itself awaits this whole run is unreliable in
 // some environments, so Playwright fires this off and polls a `window`
 // flag instead of awaiting it directly). Playwright separately polls each
-// Worker's own LRU resident-byte high-water mark via `Worker.evaluate()`
-// while this runs.
+// Worker's own LRU resident-byte high-water mark and configured budget via
+// `Worker.evaluate()` while this runs.
 //
 // `request_id` MUST be a bare UUID (`crypto.randomUUID()`): the frozen
 // protocol's `RequestIdSchema` is `UuidSchema` (packages/contracts/src/ids.ts).
@@ -32,8 +36,7 @@ import type { VocabularyMatchKind, VocabularyWorkerResponse } from "@tavern-canv
 // error, no response, ever. A prefixed id like `bench-<uuid>` reproduces
 // as an indefinite hang with zero Worker responses, which is easy to
 // misdiagnose as a bundler or environment bug (it was, at length, during
-// implementation) rather than a malformed request silently rejected by
-// design.
+// Task 6) rather than a malformed request silently rejected by design.
 
 export interface QueryOracle {
   readonly query: string;
@@ -63,6 +66,7 @@ export interface QueryMeasurement {
 }
 
 export interface WorkerRunResult {
+  readonly label: string;
   readonly package_id: string;
   readonly data_version: string;
   readonly record_count: number;
@@ -81,9 +85,10 @@ export interface LongTaskEntry {
 }
 
 export interface BenchmarkResult {
-  readonly primary_memory_mode_note: string;
+  readonly primary_memory_mode: string;
+  readonly secondary_memory_mode: string;
   readonly primary: WorkerRunResult;
-  readonly desktop: WorkerRunResult;
+  readonly secondary: WorkerRunResult;
   readonly long_tasks: readonly LongTaskEntry[];
 }
 
@@ -224,16 +229,17 @@ async function run_measured_queries(
 }
 
 /**
- * Drives the REAL, unmodified production Worker
- * (apps/extension/src/workers/vocabulary_worker.ts): creates it, runs the
- * full initialize -> warmup -> measured query suite, disposes it.
+ * Drives an already-constructed real Worker through the frozen postMessage
+ * protocol: initialize -> warmup -> the full measured query suite ->
+ * dispose. The Worker itself is constructed by the caller because Vite only
+ * bundles a worker when it sees a literal `new Worker(new URL("./literal",
+ * import.meta.url))` at the call site.
  */
-async function run_primary_worker_suite(config: BenchmarkConfig): Promise<WorkerRunResult> {
-  const worker = new Worker(
-    new URL("../../apps/extension/src/workers/vocabulary_worker.ts", import.meta.url),
-    { type: "module" },
-  );
-
+async function run_worker_suite(
+  label: string,
+  worker: Worker,
+  config: BenchmarkConfig,
+): Promise<WorkerRunResult> {
   const pending = new Map<string, PendingQuery>();
 
   const bootstrap_start = performance.now();
@@ -301,101 +307,7 @@ async function run_primary_worker_suite(config: BenchmarkConfig): Promise<Worker
   worker.terminate();
 
   return {
-    package_id: ready.package_id,
-    data_version: ready.data_version,
-    record_count: ready.record_count,
-    bootstrap_ms,
-    warmup_ms,
-    prefix,
-    content_fuzzy,
-    exact,
-    hot,
-  };
-}
-
-/**
- * Same as `run_primary_worker_suite`, against the thin desktop-mode entry
- * (vocabulary_benchmark_worker_desktop.ts) instead. Duplicated rather than
- * sharing a driver helper: this file's development history included a long
- * detour chasing an apparent "Worker object crossing a function boundary"
- * failure that was actually the request_id bug described above (a
- * factored-out driver was one of the ruled-out variants along the way).
- * With the real cause fixed, factoring this back into one parameterized
- * driver is a reasonable follow-up, deliberately not risked here so close
- * to the end of an already-long investigation.
- */
-async function run_desktop_worker_suite(config: BenchmarkConfig): Promise<WorkerRunResult> {
-  const worker = new Worker(new URL("./vocabulary_benchmark_worker_desktop.ts", import.meta.url), {
-    type: "module",
-  });
-
-  const pending = new Map<string, PendingQuery>();
-
-  const bootstrap_start = performance.now();
-  const ready_promise = new Promise<ReadyInfo>((resolve) => {
-    worker.addEventListener("message", (event: MessageEvent) => {
-      const data: unknown = event.data;
-      if (!is_worker_response(data)) {
-        return;
-      }
-      if (data.type === "ready") {
-        resolve({
-          package_id: data.package_id,
-          data_version: data.data_version,
-          record_count: data.record_count,
-        });
-        return;
-      }
-      const entry = pending.get(data.request_id);
-      if (entry === undefined) {
-        return;
-      }
-      if (data.type === "partial_results") {
-        entry.first_partial_at ??= performance.now();
-        return;
-      }
-      if (data.type === "complete") {
-        pending.delete(data.request_id);
-        entry.resolve({
-          results: data.results,
-          first_partial_ms:
-            entry.first_partial_at === null ? null : entry.first_partial_at - entry.start_time,
-        });
-        return;
-      }
-      if (data.type === "error") {
-        pending.delete(data.request_id);
-        entry.reject(new Error(`${data.code}: ${data.message}`));
-      }
-    });
-    worker.postMessage({ type: "initialize", request_id: crypto.randomUUID() });
-  });
-
-  function send_query(text: string): Promise<QueryPage> {
-    const request_id = crypto.randomUUID();
-    return new Promise<QueryPage>((resolve, reject) => {
-      pending.set(request_id, {
-        resolve,
-        reject,
-        start_time: performance.now(),
-        first_partial_at: null,
-      });
-      worker.postMessage({ type: "query", request_id, query: text });
-    });
-  }
-
-  const ready = await ready_promise;
-  const bootstrap_ms = performance.now() - bootstrap_start;
-
-  const { warmup_ms, prefix, content_fuzzy, exact, hot } = await run_measured_queries(
-    config,
-    send_query,
-  );
-
-  worker.postMessage({ type: "dispose", request_id: crypto.randomUUID() });
-  worker.terminate();
-
-  return {
+    label,
     package_id: ready.package_id,
     data_version: ready.data_version,
     record_count: ready.record_count,
@@ -417,23 +329,39 @@ async function run_full_benchmark(config: BenchmarkConfig): Promise<BenchmarkRes
   });
   observer.observe({ entryTypes: ["longtask"] });
 
-  // Sequenced, not concurrent: the desktop worker's initialize() must run
+  // "unknown" and "mobile" both resolve to the 16 MiB budget
+  // (resolve_shard_lru_budget_bytes), so the complement of either is
+  // "desktop".
+  const primary_memory_mode = detect_shard_memory_mode();
+  const secondary_memory_mode = primary_memory_mode === "desktop" ? "mobile" : "desktop";
+
+  // Sequenced, not concurrent: the secondary worker's initialize() must run
   // after the primary worker's package bootstrap has activated a package in
   // IndexedDB, so it finds an already-active package (PackageStoreShardByteSource
   // skips its own PackageUpdater.update() call in that case) instead of
   // racing a second concurrent bootstrap into the same namespace.
-  const primary = await run_primary_worker_suite(config);
-  const desktop = await run_desktop_worker_suite(config);
+  const primary = await run_worker_suite(
+    `primary (production entry, ${primary_memory_mode})`,
+    new Worker(new URL("../../apps/extension/src/workers/vocabulary_worker.ts", import.meta.url), {
+      type: "module",
+    }),
+    config,
+  );
+  const secondary = await run_worker_suite(
+    `secondary (${secondary_memory_mode})`,
+    secondary_memory_mode === "desktop"
+      ? new Worker(new URL("./vocabulary_benchmark_worker_desktop.ts", import.meta.url), {
+          type: "module",
+        })
+      : new Worker(new URL("./vocabulary_benchmark_worker_mobile.ts", import.meta.url), {
+          type: "module",
+        }),
+    config,
+  );
 
   observer.disconnect();
 
-  return {
-    primary_memory_mode_note:
-      'navigator.deviceMemory is undefined in this environment, so the primary (unmodified production) worker resolves ShardMemoryMode "unknown" -> mobile budget (16 MiB). See vocabulary_benchmark_worker_desktop.ts for the desktop (64 MiB) proof.',
-    primary,
-    desktop,
-    long_tasks,
-  };
+  return { primary_memory_mode, secondary_memory_mode, primary, secondary, long_tasks };
 }
 
 declare global {

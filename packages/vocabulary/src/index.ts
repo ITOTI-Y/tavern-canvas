@@ -57,6 +57,7 @@ export {
 } from "./search/result_ranker.js";
 export {
   DESKTOP_LRU_BUDGET_BYTES,
+  detect_shard_memory_mode,
   MOBILE_LRU_BUDGET_BYTES,
   resolve_shard_lru_budget_bytes,
   ShardLru,

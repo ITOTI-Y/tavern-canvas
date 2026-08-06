@@ -1,5 +1,6 @@
 import {
   VOCABULARY_DETAIL_SHARD_MAX_RECORDS,
+  vocabulary_alias_shard_partition,
   VocabularyWorkerRequestSchema,
   type VocabularyInitializeRequest,
   type VocabularyManifest,
@@ -16,6 +17,7 @@ import {
   code_point_group_key,
   create_package_client,
   decode_shard_bytes,
+  detect_shard_memory_mode,
   normalize_vocabulary_query,
   PackageUpdater,
   plan_vocabulary_query,
@@ -100,14 +102,16 @@ function find_record(
 /**
  * Locates the shard file for a group/record by `shard_id`, matching Task 2's
  * builder exactly (tools/vocabulary_builder/src/build_{prefix,alias,trigram,
- * detail,hot}_index.ts): `prefix:${group_key}` / `alias:${group_key}` where
- * group_key is the first two normalized code points; `trigram:${group_key}`
- * where group_key is the first two code points of the trigram itself (not
- * the query); `detail:${start_id}` where start_id is the record's shard's
- * first record_id (record_ids are dense/sequential/0-indexed, so this is a
- * pure floor-division computation, no manifest lookup table needed); and the
- * single fixed `hot:global`. Reconciled against the real builder output in
- * builder_package_integration.test.ts.
+ * detail,hot}_index.ts): `prefix:${group_key}` where group_key is the first
+ * two normalized code points; `alias:${partition}` where partition is that
+ * same group key hashed into one of 512 fixed buckets (payload contract
+ * addendum v2 — computed directly here, never scanned for in the manifest);
+ * `trigram:${group_key}` where group_key is the first two code points of the
+ * trigram itself (not the query); `detail:${start_id}` where start_id is the
+ * record's shard's first record_id (record_ids are dense/sequential/
+ * 0-indexed, so this is a pure floor-division computation, no manifest lookup
+ * table needed); and the single fixed `hot:global`. Reconciled against the
+ * real builder output in builder_package_integration.test.ts.
  */
 class ManifestShardIndex {
   readonly #by_shard_id = new Map<string, VocabularyShardEntry>();
@@ -127,7 +131,7 @@ class ManifestShardIndex {
   }
 
   alias(group_key: string): VocabularyShardEntry | null {
-    return this.#by_shard_id.get(`alias:${group_key}`) ?? null;
+    return this.#by_shard_id.get(`alias:${vocabulary_alias_shard_partition(group_key)}`) ?? null;
   }
 
   detail_covering(record_id: number): VocabularyShardEntry | null {
@@ -139,23 +143,22 @@ class ManifestShardIndex {
   }
 }
 
+// The payload contract's narrowed residency rule (addendum v2): a live
+// query session pins the current page's COMPACT result DTOs and nothing
+// else. The decoded detail shards those DTOs were extracted from are
+// ordinary LRU citizens the moment extraction finishes.
 interface QuerySession {
   readonly results: readonly VocabularyRankedResult[];
-  readonly record_shard_keys: ReadonlyMap<number, string>;
   offset: number;
-}
-
-function detect_shard_memory_mode(): ShardMemoryMode {
-  const navigator_like = (globalThis as { navigator?: { deviceMemory?: number } }).navigator;
-  const device_memory = navigator_like?.deviceMemory;
-  if (device_memory === undefined) {
-    return "unknown";
-  }
-  return device_memory >= 8 ? "desktop" : "mobile";
 }
 
 export interface VocabularyWorkerEngineOptions {
   readonly memory_mode?: ShardMemoryMode;
+  // Overrides the budget `memory_mode` would resolve. A host that knows its
+  // own memory constraints better than navigator.deviceMemory does can set
+  // it directly; tests use it to exercise eviction without building
+  // multi-megabyte fixtures.
+  readonly lru_budget_bytes?: number;
 }
 
 /**
@@ -172,14 +175,13 @@ export class VocabularyWorkerEngine {
   #disposed = false;
   readonly #cancelled_request_ids = new Set<string>();
   readonly #sessions = new Map<string, QuerySession>();
-  #active_page_shard_keys: ReadonlySet<string> = new Set();
 
   constructor(byte_source: ShardByteSource, options: VocabularyWorkerEngineOptions = {}) {
     this.#byte_source = byte_source;
     this.#lru = new ShardLru({
-      budget_bytes: resolve_shard_lru_budget_bytes(
-        options.memory_mode ?? detect_shard_memory_mode(),
-      ),
+      budget_bytes:
+        options.lru_budget_bytes ??
+        resolve_shard_lru_budget_bytes(options.memory_mode ?? detect_shard_memory_mode()),
     });
   }
 
@@ -191,6 +193,13 @@ export class VocabularyWorkerEngine {
   // otherwise observe without reimplementing cache accounting.
   get resident_shard_bytes(): number {
     return this.#lru.resident_bytes;
+  }
+
+  // Companion to the above: the budget that high-water mark must respect.
+  // Reading it from the live engine is what lets the benchmark gate each
+  // worker against its OWN resolved budget instead of assuming one.
+  get shard_lru_budget_bytes(): number {
+    return this.#lru.budget_bytes;
   }
 
   async handle(
@@ -270,6 +279,10 @@ export class VocabularyWorkerEngine {
     }
 
     const normalized = normalize_vocabulary_query(request.query);
+    // Records hydrated for phase A are reused by the final pass, whose
+    // candidate set is a superset -- otherwise every non-empty query decodes
+    // its detail shards twice.
+    const hydrated = new Map<number, VocabularyRecordLike | null>();
     try {
       const phase_a_candidates = await this.#collect_phase_a_candidates(
         request.request_id,
@@ -284,21 +297,24 @@ export class VocabularyWorkerEngine {
           phase_a_candidates,
           normalized,
           request.category,
+          hydrated,
           emit,
         );
         return;
       }
 
       const phase_a = await this.#hydrate_and_rank(
+        request.request_id,
         phase_a_candidates,
         normalized,
         request.category,
+        hydrated,
       );
       this.#check_cancelled(request.request_id);
       emit({
         type: "partial_results",
         request_id: request.request_id,
-        results: phase_a.ranked.slice(0, RESULT_PAGE_SIZE),
+        results: phase_a.slice(0, RESULT_PAGE_SIZE),
       });
 
       const trigram_candidates = await this.#collect_trigram_candidates(
@@ -312,6 +328,7 @@ export class VocabularyWorkerEngine {
         [...phase_a_candidates, ...trigram_candidates],
         normalized,
         request.category,
+        hydrated,
         emit,
       );
     } catch (error) {
@@ -350,12 +367,9 @@ export class VocabularyWorkerEngine {
       return;
     }
 
+    // Pagination replays already-hydrated result DTOs held by the session,
+    // so it needs no shard access at all.
     const page = session.results.slice(session.offset, session.offset + RESULT_PAGE_SIZE);
-    // Pagination replays already-hydrated VocabularyRankedResult DTOs, so it
-    // needs no new shard fetches; pin management here is a best-effort LRU
-    // hint (a since-evicted shard is simply a no-op pin), never a
-    // correctness dependency for this response.
-    this.#update_page_pins(page, session.record_shard_keys);
     session.offset += page.length;
     const has_more = session.offset < session.results.length;
     emit({
@@ -374,24 +388,25 @@ export class VocabularyWorkerEngine {
     candidates: readonly VocabularyPlannerCandidate[],
     normalized: NormalizedVocabularyQuery,
     category: string | undefined,
+    hydrated: Map<number, VocabularyRecordLike | null>,
     emit: (response: VocabularyWorkerResponse) => void,
   ): Promise<void> {
-    const { ranked, record_shard_keys } = await this.#hydrate_and_rank(
+    const ranked = await this.#hydrate_and_rank(
+      request_id,
       candidates,
       normalized,
       category,
+      hydrated,
     );
     this.#check_cancelled(request_id);
 
     const page = ranked.slice(0, RESULT_PAGE_SIZE);
-    this.#update_page_pins(page, record_shard_keys);
-
     if (ranked.length <= RESULT_PAGE_SIZE) {
       emit({ type: "complete", request_id, results: page, next_cursor: null });
       return;
     }
     const cursor = crypto.randomUUID();
-    this.#sessions.set(cursor, { results: ranked, record_shard_keys, offset: RESULT_PAGE_SIZE });
+    this.#sessions.set(cursor, { results: ranked, offset: RESULT_PAGE_SIZE });
     emit({ type: "complete", request_id, results: page, next_cursor: cursor });
   }
 
@@ -513,53 +528,66 @@ export class VocabularyWorkerEngine {
   }
 
   async #hydrate_and_rank(
+    request_id: string,
     candidates: readonly VocabularyPlannerCandidate[],
     normalized: NormalizedVocabularyQuery,
     category: string | undefined,
-  ): Promise<{
-    ranked: readonly VocabularyRankedResult[];
-    record_shard_keys: ReadonlyMap<number, string>;
-  }> {
+    hydrated: Map<number, VocabularyRecordLike | null>,
+  ): Promise<readonly VocabularyRankedResult[]> {
     const targets = select_hydration_targets(candidates);
-    const records = new Map<number, VocabularyRecordLike>();
-    const record_shard_keys = new Map<number, string>();
-    for (const target of targets) {
-      if (records.has(target.record_id)) {
-        continue;
-      }
-      const resolved = await this.#load_detail_record(target.record_id);
-      if (resolved !== null) {
-        records.set(target.record_id, resolved.record);
-        record_shard_keys.set(target.record_id, resolved.shard_key);
-      }
-    }
-
-    const ranked = rank_vocabulary_candidates({
+    await this.#hydrate_records(
+      request_id,
+      targets.map((target) => target.record_id),
+      hydrated,
+    );
+    return rank_vocabulary_candidates({
       candidates,
       ...(category !== undefined ? { category } : {}),
-      detail_lookup: (record_id) => records.get(record_id),
+      detail_lookup: (record_id) => hydrated.get(record_id) ?? undefined,
       query_normalized: normalized.normalized,
     });
-    return { ranked, record_shard_keys };
   }
 
-  async #load_detail_record(
-    record_id: number,
-  ): Promise<{ record: VocabularyRecordLike; shard_key: string } | null> {
-    const shard_entry_value = this.#shard_index?.detail_covering(record_id) ?? null;
-    if (shard_entry_value === null) {
-      return null;
+  /**
+   * Resolves every not-yet-known record id into `hydrated`, loading each
+   * covering detail shard exactly once per call. `null` records a
+   * confirmed absence so a repeat pass never re-fetches a shard for it.
+   * The decoded shard is handed straight back to the LRU's ordinary
+   * accounting -- nothing here retains it past extraction.
+   */
+  async #hydrate_records(
+    request_id: string,
+    record_ids: readonly number[],
+    hydrated: Map<number, VocabularyRecordLike | null>,
+  ): Promise<void> {
+    const missing_by_shard = new Map<VocabularyShardEntry, number[]>();
+    for (const record_id of record_ids) {
+      if (hydrated.has(record_id)) {
+        continue;
+      }
+      const entry = this.#shard_index?.detail_covering(record_id) ?? null;
+      if (entry === null) {
+        hydrated.set(record_id, null);
+        continue;
+      }
+      const pending = missing_by_shard.get(entry) ?? [];
+      pending.push(record_id);
+      missing_by_shard.set(entry, pending);
     }
-    const payload = await this.#load_shard_payload<VocabularyDetailShardPayload>(
-      shard_entry_value,
-      "detail",
-      null,
-    );
-    if (payload === null) {
-      return null;
+
+    for (const [entry, pending] of missing_by_shard) {
+      const payload = await this.#load_shard_payload<VocabularyDetailShardPayload>(
+        entry,
+        "detail",
+        request_id,
+      );
+      for (const record_id of pending) {
+        hydrated.set(
+          record_id,
+          payload === null ? null : (find_record(payload.records, record_id) ?? null),
+        );
+      }
     }
-    const record = find_record(payload.records, record_id);
-    return record === undefined ? null : { record, shard_key: shard_entry_value.path };
   }
 
   async #load_shard_payload<T>(
@@ -581,28 +609,6 @@ export class VocabularyWorkerEngine {
     const decoded = await decode_shard_bytes(compressed);
     this.#lru.put(entry.path, kind, decoded.payload, decoded.decoded_byte_size);
     return decoded.payload as T;
-  }
-
-  #update_page_pins(
-    page: readonly VocabularyRankedResult[],
-    record_shard_keys: ReadonlyMap<number, string>,
-  ): void {
-    const next_keys = new Set<string>();
-    for (const result of page) {
-      const key = record_shard_keys.get(result.record_id);
-      if (key !== undefined) {
-        next_keys.add(key);
-      }
-    }
-    for (const previous_key of this.#active_page_shard_keys) {
-      if (!next_keys.has(previous_key)) {
-        this.#lru.unpin(previous_key);
-      }
-    }
-    for (const key of next_keys) {
-      this.#lru.pin(key);
-    }
-    this.#active_page_shard_keys = next_keys;
   }
 
   #check_cancelled(request_id: string): void {
@@ -687,7 +693,13 @@ export class PackageStoreShardByteSource implements ShardByteSource {
 
   async #initialize(): Promise<ReadyPackageAccess> {
     const database = await open_database();
-    const store = new VocabularyPackageStore(database, VOCABULARY_NAMESPACE);
+    // This store is a pure reader for the Worker's lifetime -- only the
+    // PackageUpdater below (which owns its own store instance) ever writes
+    // package state, and only from #initialize -- so it may cache the active
+    // package lookup that shard_bytes() would otherwise redo per read.
+    const store = new VocabularyPackageStore(database, VOCABULARY_NAMESPACE, {
+      cache_active_package: true,
+    });
     const client = create_package_client({
       kind: "bundled",
       base_url: resolve_bundled_baseline_base_url(this.#scope),
@@ -701,6 +713,7 @@ export class PackageStoreShardByteSource implements ShardByteSource {
     const active = await store.find_active_or_confirmed();
     if (active === null) {
       await updater.update();
+      store.invalidate_caches(); // The updater wrote through its own store instance.
     }
     return { store, updater };
   }

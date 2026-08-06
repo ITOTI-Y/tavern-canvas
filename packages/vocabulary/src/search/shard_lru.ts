@@ -15,6 +15,22 @@ export function resolve_shard_lru_budget_bytes(mode: ShardMemoryMode): number {
   return mode === "desktop" ? DESKTOP_LRU_BUDGET_BYTES : MOBILE_LRU_BUDGET_BYTES;
 }
 
+/**
+ * Classifies the host from `navigator.deviceMemory` (GiB). Lives beside the
+ * budget table rather than in the Worker so callers that only need to know
+ * which budget a host will get -- the benchmark harness picks the
+ * complementary mode to prove the other one -- can ask without importing
+ * the Worker's side-effecting entry module.
+ */
+export function detect_shard_memory_mode(): ShardMemoryMode {
+  const navigator_like = (globalThis as { navigator?: { deviceMemory?: number } }).navigator;
+  const device_memory = navigator_like?.deviceMemory;
+  if (device_memory === undefined) {
+    return "unknown";
+  }
+  return device_memory >= 8 ? "desktop" : "mobile";
+}
+
 export interface ShardCacheEntry {
   readonly key: string;
   readonly kind: ShardCacheKind;
@@ -22,17 +38,23 @@ export interface ShardCacheEntry {
   readonly pinned: boolean;
 }
 
-// Eviction priority: lower evicts first. Brief: "evict trigram then detail
-// shards before active prefix/alias shards." hot and manifest are grouped
-// with prefix/alias at the top tier -- both are small, always-relevant
-// index data the brief doesn't call out for early eviction.
+// Eviction priority: lower evicts first, least-recently-used first within a
+// tier. Brief: "evict trigram then detail shards before ACTIVE prefix/alias
+// shards" -- trigram entries are the cheapest to rebuild (a few KB each,
+// re-derivable from one small shard) so they get their own bottom tier, and
+// "active" is expressed by recency rather than by a standing rank for the
+// prefix/alias kinds. Ranking those kinds permanently above detail instead
+// let one-shot index shards accumulate: a 500,000-record package's 676
+// prefix shards total ~12 MB, enough to crowd every reusable detail shard
+// out of a 16 MiB budget even though each is read by exactly one query
+// (measured: doing so cost ~30% more detail-shard decodes per query).
 const EVICTION_TIER: Readonly<Record<ShardCacheKind, number>> = {
   trigram: 0,
   detail: 1,
-  prefix: 2,
-  alias: 2,
-  hot: 2,
-  manifest: 2,
+  prefix: 1,
+  alias: 1,
+  hot: 1,
+  manifest: 1,
 };
 
 interface InternalEntry {
@@ -61,6 +83,10 @@ export class ShardLru {
 
   constructor(options: { readonly budget_bytes: number }) {
     this.#budget_bytes = options.budget_bytes;
+  }
+
+  get budget_bytes(): number {
+    return this.#budget_bytes;
   }
 
   get resident_bytes(): number {

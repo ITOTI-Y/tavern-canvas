@@ -36,6 +36,9 @@ export default defineConfig({
       "@tavern-canvas/contracts": fileURLToPath(
         new URL("../../packages/contracts/src/index.ts", import.meta.url),
       ),
+      "@tavern-canvas/vocabulary": fileURLToPath(
+        new URL("../../packages/vocabulary/src/index.ts", import.meta.url),
+      ),
     },
   },
   build: {
