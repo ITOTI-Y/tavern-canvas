@@ -15,6 +15,16 @@
   font-display: swap;
 }
 
+/* The Studio is a full-viewport surface, not an inline page element: create_shadow_root.ts
+   appends the host directly to document.body with no sized wrapping container of its own, so the
+   host must claim its own dimensions. `:host` here (not a class) is the one Shadow DOM-native way
+   to style the host element itself from inside its own shadow tree. */
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: var(--tc-z-host);
+}
+
 *,
 *::before,
 *::after {
@@ -31,6 +41,11 @@
   font-size: inherit;
   line-height: 1.5;
   color: inherit;
+}
+
+[data-shadow-role="app"] {
+  width: 100%;
+  height: 100%;
 }
 
 img,

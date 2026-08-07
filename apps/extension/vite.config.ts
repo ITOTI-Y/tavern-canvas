@@ -11,6 +11,26 @@ export default defineConfig(({ mode }) => ({
     "process.env.NODE_ENV": JSON.stringify("production"),
     __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
   },
+  experimental: {
+    // Default CSS asset URLs are root-absolute (`/geist_variable.woff2`), which is wrong for
+    // this extension: it never runs from the origin root, and its Shadow Root stylesheet is
+    // injected as a plain string (`element.textContent = css`, see runtime_stylesheet.ts), so
+    // even a *relative* url() would resolve against the host page's location, not dist/'s own.
+    // Emitting a `__TAVERN_CANVAS_ASSET_URL__<relative-path>__` marker instead lets
+    // runtime_stylesheet.ts substitute the one correct absolute URL at runtime, computed from
+    // `import.meta.url` (dist/index.js's own real, load-time-known location) the same way
+    // vocabulary_worker.ts already resolves its own bundled-baseline URL from `self.location`.
+    renderBuiltUrl(filename, { hostType }) {
+      // Scoped to first-party CSS-referenced assets only (currently just the Geist font) so this
+      // never touches an unrelated JS-imported asset that expects Vite's normal URL. `hostType`
+      // is "css" for the asset's copy inside the emitted dist/index.css chunk (inert, see the
+      // comment above) and "js" for the copy inside the `?inline` CSS-as-JS-string transform that
+      // actually reaches FIRST_PARTY_STYLESHEET -- both copies need the marker.
+      if ((hostType === "css" || hostType === "js") && filename.endsWith(".woff2")) {
+        return `__TAVERN_CANVAS_ASSET_URL__${filename}__`;
+      }
+    },
+  },
   build: {
     outDir: resolve(import.meta.dirname, "../../dist"),
     emptyOutDir: true,

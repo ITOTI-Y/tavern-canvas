@@ -22,6 +22,14 @@ export type BootstrapProbeResult =
         | "helper_version_unsupported"
         | "helper_api_incomplete";
       missing_capabilities: string[];
+      /**
+       * The detected (but unsupported) TavernHelper version -- only ever populated for
+       * `helper_version_unsupported`, the one blocked variant where a valid, parseable, too-old
+       * version string genuinely exists. The other blocked variants (missing, invalid, API
+       * incomplete) have no reliable version to report here. Threads through to the Studio
+       * shell's blocked-state copy (`app.unsupported_host.description`'s `{current_version}`).
+       */
+      current_version?: string;
     };
 
 const REQUIRED_CAPABILITY_IDS = [
@@ -147,6 +155,7 @@ export function probe_host_capabilities(globals: unknown): BootstrapProbeResult 
       ready: false,
       error_code: "helper_version_unsupported",
       missing_capabilities: ["tavern_helper"],
+      current_version: helper_version,
     };
   }
 

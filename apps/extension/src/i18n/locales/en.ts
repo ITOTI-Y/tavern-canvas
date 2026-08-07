@@ -18,6 +18,11 @@ const app = {
       "Runtime initialization failed. Reload SillyTavern, then check Diagnostics for details.",
     reload_action: "Reload SillyTavern",
   },
+  partial_init: {
+    banner_title: "Running with limited functionality",
+    banner_description:
+      "Some data failed to load. Retry from Diagnostics or continue with what's available.",
+  },
 };
 
 const nav = {
@@ -32,6 +37,7 @@ const nav = {
   inspector_collapse: "Collapse inspector",
   task_strip_expand: "Show running tasks",
   task_strip_collapse: "Hide running tasks",
+  task_strip_count: "{n} task running | {n} tasks running",
 };
 
 const common = {
@@ -68,6 +74,12 @@ const common = {
     created_at: "Created",
     updated_at: "Updated",
   },
+  inspector: {
+    title: "Inspector",
+    empty_title: "Nothing selected",
+    empty_description: "Select a job, image, or asset to see its details here.",
+  },
+  workspace_unavailable: "This workspace isn't available yet.",
 };
 
 const status = {

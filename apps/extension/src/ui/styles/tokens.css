@@ -44,6 +44,11 @@
   --tc-z-inspector-sheet: 20;
   --tc-z-overlay: 30;
   --tc-z-toast: 40;
+  /* Above the shell's own internal scale on purpose: this one positions the Shadow Root's host
+     element itself against the SillyTavern page behind it (base.css's `:host { position: fixed }`
+     rule), not anything inside the shell. Matches the value the pre-Stage-06 bootstrap placeholder
+     already used, safely below the 32-bit signed integer max some browsers start misbehaving at. */
+  --tc-z-host: 2147483000;
 
   color: var(--tc-text);
   background: var(--tc-canvas);

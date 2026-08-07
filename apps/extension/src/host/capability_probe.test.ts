@@ -128,6 +128,7 @@ describe("probe_host_capabilities", () => {
       ready: false,
       error_code: "helper_version_unsupported",
       missing_capabilities: ["tavern_helper"],
+      current_version: "4.9.0",
     });
     for (const version of ["", "4.9", "4.9.1.0", "latest", "4.9.1beta"]) {
       expect(probe_host_capabilities(create_fixture(version).globals)).toEqual({

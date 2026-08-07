@@ -19,6 +19,10 @@ const app = {
     description: "运行时初始化失败，请重新加载 SillyTavern，然后在诊断页查看详情。",
     reload_action: "重新加载 SillyTavern",
   },
+  partial_init: {
+    banner_title: "部分功能不可用",
+    banner_description: "部分数据未能加载，可在诊断页重试，或继续使用当前可用的功能。",
+  },
 };
 
 const nav = {
@@ -33,6 +37,7 @@ const nav = {
   inspector_collapse: "收起检查器",
   task_strip_expand: "展开任务栏",
   task_strip_collapse: "收起任务栏",
+  task_strip_count: "{n} 个任务正在运行 | {n} 个任务正在运行",
 };
 
 const common = {
@@ -69,6 +74,12 @@ const common = {
     created_at: "创建时间",
     updated_at: "更新时间",
   },
+  inspector: {
+    title: "检查器",
+    empty_title: "未选择内容",
+    empty_description: "选择一个任务、图片或资产即可在此查看详情。",
+  },
+  workspace_unavailable: "该工作区暂不可用。",
 };
 
 const status = {

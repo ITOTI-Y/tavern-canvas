@@ -1,0 +1,430 @@
+/*
+ * The Studio application shell: CSS grid for desktop, fixed tracks for mobile. Every band is an
+ * unframed region separated by 1px dividers -- no card wraps the workspace or inspector (plan
+ * rule, taste directive 10). Buttons/nav items reuse utilities.css's `.tc-interactive` for hover
+ * and press feedback so their transition rules stay centrally compliant with the motion contract.
+ */
+
+.shell {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background-color: var(--tc-canvas);
+  color: var(--tc-text);
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+ * Desktop: fixed 56px top bar, fixed 64px icon rail, fluid workspace, an inspector column clamped
+ * between 320px and 400px around its persisted width, and a content-sized (auto) task strip row.
+ * --------------------------------------------------------------------------- */
+
+.shell[data-viewport="desktop"] {
+  grid-template-columns: 64px minmax(0, 1fr) clamp(320px, var(--tc-inspector-width, 320px), 400px);
+  grid-template-rows: 56px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "topbar topbar topbar"
+    "rail workspace inspector"
+    "taskstrip taskstrip taskstrip";
+}
+
+.shell[data-viewport="desktop"][data-inspector-collapsed="true"] {
+  grid-template-columns: 64px minmax(0, 1fr) 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile: one content layer (top bar, workspace, bottom nav) at 100dvh; the inspector becomes a
+ * full-width sheet layered on top instead of a persistent column.
+ * --------------------------------------------------------------------------- */
+
+.shell[data-viewport="mobile"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 56px minmax(0, 1fr) 64px;
+  grid-template-areas:
+    "topbar"
+    "workspace"
+    "bottomnav";
+  height: 100dvh;
+}
+
+.top_bar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding-inline: 12px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.top_bar_start,
+.top_bar_end {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.top_bar_title {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.icon_button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--tc-text-muted);
+  border-radius: var(--tc-radius-field);
+}
+
+.icon_button[data-selected="true"],
+.icon_button[aria-pressed="true"] {
+  color: var(--tc-accent);
+}
+
+.rail {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-block: 12px;
+  border-right: 1px solid var(--tc-divider);
+  overflow-y: auto;
+}
+
+.rail_button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 4px;
+  color: var(--tc-text-muted);
+  border-left: 2px solid transparent;
+  border-radius: var(--tc-radius-field);
+}
+
+.rail_button[data-selected="true"] {
+  color: var(--tc-accent);
+  background-color: var(--tc-surface-raised);
+  border-left-color: var(--tc-accent);
+}
+
+.tooltip_content {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--tc-surface);
+  background-color: var(--tc-text);
+  border-radius: var(--tc-radius-field);
+}
+
+.workspace {
+  grid-area: workspace;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.workspace_placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 240px;
+  padding: 24px;
+}
+
+.workspace_placeholder_title {
+  font-weight: 600;
+}
+
+.workspace_placeholder_description {
+  max-width: 48ch;
+  color: var(--tc-text-muted);
+}
+
+.inspector {
+  grid-area: inspector;
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  border-left: 1px solid var(--tc-divider);
+}
+
+.inspector_resizer {
+  flex: none;
+  width: 4px;
+  cursor: col-resize;
+  background-color: transparent;
+  touch-action: none;
+}
+
+.inspector_resizer:hover,
+.inspector_resizer[data-dragging="true"] {
+  background-color: var(--tc-divider);
+}
+
+.inspector_panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.inspector_header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.inspector_body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 12px;
+  overflow: auto;
+  color: var(--tc-text-muted);
+}
+
+.bottom_nav {
+  grid-area: bottomnav;
+  display: flex;
+  min-height: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid var(--tc-divider);
+}
+
+.bottom_nav_item {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding-block: 6px;
+  color: var(--tc-text-muted);
+}
+
+.bottom_nav_item[data-selected="true"] {
+  color: var(--tc-accent);
+}
+
+.bottom_nav_item_label {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.more_menu_content {
+  min-width: 176px;
+  padding: 4px;
+  background-color: var(--tc-surface-raised);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+}
+
+.more_menu_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  color: var(--tc-text);
+  border-radius: var(--tc-radius-field);
+}
+
+.more_menu_item[data-highlighted] {
+  color: var(--tc-accent);
+  background-color: var(--tc-surface);
+  outline: none;
+}
+
+.sheet_overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--tc-text);
+  opacity: 0.32;
+}
+
+.sheet_content {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 80dvh;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background-color: var(--tc-surface);
+  border-top: 1px solid var(--tc-divider);
+}
+
+.sheet_handle {
+  flex: none;
+  width: 32px;
+  height: 4px;
+  margin: 8px auto;
+  /* Not --tc-divider: this bar is a drag affordance, not a structural separator, so it needs
+     more than a hairline's contrast to read as interactive (T1's WCAG audit flagged dividers
+     doubling as interactive boundaries as needing a separate, higher-contrast treatment). */
+  background-color: var(--tc-text-muted);
+  border-radius: var(--tc-radius-status);
+}
+
+.sheet_header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px 12px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.sheet_body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+  color: var(--tc-text-muted);
+}
+
+.task_strip {
+  grid-area: taskstrip;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.task_strip_header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+}
+
+.task_strip_summary {
+  min-width: 0;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  color: var(--tc-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.task_strip_list {
+  display: flex;
+  gap: 8px;
+  padding: 0 12px 8px;
+  overflow-x: auto;
+}
+
+.task_chip {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  max-width: 220px;
+  padding-inline: 8px;
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-field);
+}
+
+.task_chip_dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--tc-text-muted);
+}
+
+.task_chip_dot[data-status="pending"] {
+  background-color: var(--tc-text-muted);
+}
+
+.task_chip_dot[data-status="success"] {
+  background-color: var(--tc-success);
+}
+
+.task_chip_dot[data-status="error"] {
+  background-color: var(--tc-error);
+}
+
+.task_chip_label {
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.skeleton_block {
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-field);
+}
+
+.partial_banner {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  color: var(--tc-warning);
+  background-color: var(--tc-surface-raised);
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.state_screen {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+  min-height: 100dvh;
+  padding: 32px;
+  background-color: var(--tc-canvas);
+  color: var(--tc-text);
+}
+
+.state_screen_eyebrow {
+  color: var(--tc-text-muted);
+}
+
+.state_screen_title {
+  max-width: 56ch;
+}
+
+.state_screen_action {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 20px;
+  padding: 8px 16px;
+  color: var(--tc-surface);
+  background-color: var(--tc-accent);
+  border-radius: var(--tc-radius-field);
+}
+
+.state_screen_description {
+  max-width: 56ch;
+  color: var(--tc-text-muted);
+}

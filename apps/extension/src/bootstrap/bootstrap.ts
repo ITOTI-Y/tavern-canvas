@@ -2,8 +2,10 @@ import { ModuleRuntime, type RuntimeModule } from "@tavern-canvas/core";
 import { createApp } from "vue";
 
 import { probe_host_capabilities, type BootstrapProbeResult } from "../host/index.js";
-import BootstrapStatus from "../ui/BootstrapStatus.vue";
-import { create_shadow_root, PORTAL_TARGET_KEY } from "../ui/create_shadow_root.js";
+import { create_i18n } from "../i18n/create_i18n.js";
+import AppRoot from "../ui/AppRoot.vue";
+import { create_unavailable_capabilities } from "../ui/controllers/unavailable_capabilities.js";
+import { create_shadow_root } from "../ui/create_shadow_root.js";
 import { startup_failed_status, status_from_probe, type StartupStatus } from "./startup_error.js";
 
 export interface BootstrapOwnedResources {
@@ -52,11 +54,26 @@ export async function bootstrap_tavern_canvas(
   }
 
   const surface = create_shadow_root(document_, options.stylesheet ?? "");
-  const app = createApp(BootstrapStatus, {
+  const locale_runtime = create_i18n();
+  // Fire-and-forget: English ships bundled so the shell always has a working fallback the
+  // instant it mounts, and vue-i18n's reactive locale swaps every already-rendered translated
+  // string over once the lazy zh-CN chunk (if needed) resolves -- startup never blocks on it. No
+  // persisted locale preference exists yet (no settings capability is wired in, see
+  // unavailable_capabilities.ts), so "auto" always follows the host/browser language for now.
+  void locale_runtime.apply_locale(
+    "auto",
+    typeof navigator === "undefined" ? "en" : navigator.language,
+  );
+
+  const app = createApp(AppRoot, {
     status,
+    probe,
     version: options.version ?? "development",
+    portalTarget: surface.portal_element,
+    hostElement: surface.host_element,
+    capabilities: create_unavailable_capabilities(),
   });
-  app.provide(PORTAL_TARGET_KEY, surface.portal_element);
+  app.use(locale_runtime.i18n);
   app.onUnmount(() => {
     surface.remove();
   });
