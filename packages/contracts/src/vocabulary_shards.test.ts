@@ -50,6 +50,20 @@ describe("VocabularyAliasShardPayloadSchema", () => {
     const payload = { kind: "alias", entries: [["neko mimi", 0, 10]] };
     expect(VocabularyAliasShardPayloadSchema.safeParse(payload).success).toBe(true);
   });
+
+  it("accepts an entry key at the 512-character bound a normalized translation can reach", () => {
+    // VocabularyRecordSchema's translation max is 512 (vocabulary.ts); a key
+    // bound below that would make a legitimate long translation unindexable
+    // even though the source record itself validates fine.
+    const long_key = "a".repeat(512);
+    const payload = { kind: "alias", entries: [[long_key, 0, 10]] };
+    expect(VocabularyAliasShardPayloadSchema.safeParse(payload).success).toBe(true);
+  });
+
+  it("rejects an entry key past the 512-character bound", () => {
+    const payload = { kind: "alias", entries: [["a".repeat(513), 0, 10]] };
+    expect(VocabularyAliasShardPayloadSchema.safeParse(payload).success).toBe(false);
+  });
 });
 
 describe("VocabularyTrigramShardPayloadSchema", () => {

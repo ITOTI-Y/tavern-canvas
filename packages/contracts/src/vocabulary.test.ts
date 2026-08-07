@@ -257,6 +257,30 @@ describe("VocabularyManifestSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejects a shard path that is itself an absolute off-origin URL", () => {
+    const result = VocabularyManifestSchema.safeParse({
+      ...valid_manifest,
+      shards: [{ ...valid_shard, path: "https://attacker.example/shard" }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a protocol-relative shard path", () => {
+    const result = VocabularyManifestSchema.safeParse({
+      ...valid_manifest,
+      shards: [{ ...valid_shard, path: "//attacker.example/shard" }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a shard path containing a URL scheme without //", () => {
+    const result = VocabularyManifestSchema.safeParse({
+      ...valid_manifest,
+      shards: [{ ...valid_shard, path: "javascript:alert(1)" }],
+    });
+    expect(result.success).toBe(false);
+  });
+
   it("rejects a shard entry whose package_id does not match the manifest", () => {
     const result = VocabularyManifestSchema.safeParse({
       ...valid_manifest,

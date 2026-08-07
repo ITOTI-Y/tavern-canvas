@@ -39,6 +39,11 @@ export function build_alias_shards(records: readonly VocabularyRecord[]): Vocabu
   for (const record of records) {
     for (const text of alias_search_texts(record)) {
       const normalized_key = normalize_vocabulary_search_key(text);
+      // See build_prefix_index.ts's matching guard: an alias/translation
+      // normalizing to "" cannot be an index key (schema requires min(1)).
+      if (normalized_key.length === 0) {
+        continue;
+      }
       const seen_ids = seen_ids_by_key.get(normalized_key) ?? new Set<number>();
       seen_ids_by_key.set(normalized_key, seen_ids);
       if (seen_ids.has(record.record_id)) {

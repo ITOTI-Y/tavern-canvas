@@ -82,6 +82,15 @@ export const VocabularyPackageIdSchema = z
 export type VocabularyPackageId = z.infer<typeof VocabularyPackageIdSchema>;
 
 const PATH_TRAVERSAL_PATTERN = /\.\./u;
+// Allowlist, not a denylist: every segment is letters/digits/dot/underscore/
+// hyphen, segments are joined by single '/'. This alone already excludes a
+// leading '/' (absolute), '\\' (Windows-style), and a ':' scheme separator
+// (so "https://attacker.example/shard" can never validate) -- a hostile
+// manifest cannot make a shard path resolve off the configured base origin
+// (packages/vocabulary/src/package_client.ts's resolve_relative). The
+// PATH_TRAVERSAL_PATTERN check still runs separately because ".." itself is
+// built entirely from allowed characters and would otherwise pass.
+const SAFE_SHARD_PATH_PATTERN = /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/u;
 
 export const VocabularyShardPathSchema = z
   .string()
@@ -89,9 +98,8 @@ export const VocabularyShardPathSchema = z
   .min(1)
   .max(512)
   .refine(
-    (value) =>
-      !value.startsWith("/") && !value.includes("\\") && !PATH_TRAVERSAL_PATTERN.test(value),
-    "must be a relative path without traversal segments",
+    (value) => !PATH_TRAVERSAL_PATTERN.test(value) && SAFE_SHARD_PATH_PATTERN.test(value),
+    "must be a safe relative path: letters, digits, '.', '_', '-', and '/' segments only, no scheme, no traversal",
   );
 export type VocabularyShardPath = z.infer<typeof VocabularyShardPathSchema>;
 

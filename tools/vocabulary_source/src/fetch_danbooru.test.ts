@@ -178,4 +178,65 @@ describe("run_fetch_danbooru_cli", () => {
     expect(records).toHaveLength(2);
     expect(records.every((record) => record.translation === undefined)).toBe(true);
   });
+
+  it("preserves pre-interruption records when a resumed run only refetches the tail (zero record loss)", async () => {
+    const out_path = join(temp_dir, "raw_danbooru_tags.jsonl");
+    const checkpoint_path = join(temp_dir, "checkpoint.json");
+
+    // First run completes fully: writes both TAGS_PAGE records (ids 1, 4)
+    // and a checkpoint at last_id 4.
+    const { fetch_impl: first_fetch } = make_router_fetch({
+      tags: [TAGS_PAGE, []],
+      aliases: [ALIASES_PAGE, []],
+    });
+    await run_fetch_danbooru_cli({
+      client: {
+        user_agent: "test-bot/1.0",
+        fetch_impl: first_fetch,
+        delay_fn: () => Promise.resolve(),
+      },
+      out_path,
+      checkpoint_path,
+    });
+
+    // Simulate a second crawl interrupted such that the API now only
+    // returns a tag newer than the checkpoint -- the exact shape
+    // fetch_danbooru_fact_records itself produces on resume.
+    const NEW_TAG_PAGE = [{ id: 9, name: "new_tag", category: 0, post_count: 42 }];
+    const { fetch_impl: resumed_fetch } = make_router_fetch({
+      tags: [NEW_TAG_PAGE, []],
+      aliases: [[]],
+    });
+    await run_fetch_danbooru_cli({
+      client: {
+        user_agent: "test-bot/1.0",
+        fetch_impl: resumed_fetch,
+        delay_fn: () => Promise.resolve(),
+      },
+      out_path,
+      checkpoint_path,
+    });
+
+    const records = await read_jsonl(out_path, VocabularyRecordSchema);
+    expect(records.map((record) => record.tag).sort()).toEqual([
+      "1girl",
+      "hatsune_miku",
+      "new_tag",
+    ]);
+  });
+
+  it("refuses to resume when a checkpoint exists but out_path does not (would silently truncate)", async () => {
+    const checkpoint_path = join(temp_dir, "checkpoint.json");
+    const missing_out_path = join(temp_dir, "does-not-exist.jsonl");
+    await write_checkpoint(checkpoint_path, 3);
+    const { fetch_impl } = make_router_fetch({ tags: [TAGS_PAGE, []], aliases: [[]] });
+
+    await expect(
+      run_fetch_danbooru_cli({
+        client: { user_agent: "test-bot/1.0", fetch_impl, delay_fn: () => Promise.resolve() },
+        out_path: missing_out_path,
+        checkpoint_path,
+      }),
+    ).rejects.toThrow(/refusing to resume/u);
+  });
 });

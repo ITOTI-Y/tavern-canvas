@@ -65,9 +65,14 @@ export function vocabulary_alias_shard_partition(group_key: string): string {
 }
 
 // key: normalized tag (prefix shards) or normalized alias/translation (alias
-// shards); record_id always points at the primary record.
+// shards); record_id always points at the primary record. Bound matches
+// VocabularyRecordSchema's translation max (512, vocabulary.ts) rather than
+// its tag/alias max (256) -- NFKC normalization can only shrink or hold text
+// length steady, but a legitimate 512-char translation must still fit its
+// own normalized key, and this schema has no separate per-source-field cap
+// to defer to.
 const VocabularyShardKeyEntrySchema = z.tuple([
-  z.string().trim().min(1).max(256),
+  z.string().trim().min(1).max(512),
   VocabularyRecordIdSchema,
   VocabularyPopularitySchema,
 ]);

@@ -22,6 +22,14 @@ export function build_prefix_shards(records: readonly VocabularyRecord[]): Vocab
 
   for (const record of records) {
     const normalized_tag = normalize_vocabulary_search_key(record.tag);
+    // A tag made entirely of characters normalize_vocabulary_search_key
+    // strips (e.g. "_") normalizes to "" -- VocabularyShardKeyEntrySchema
+    // requires a non-empty key, so indexing it would fail builder
+    // self-verification instead of just leaving that record unreachable by
+    // prefix search (it stays findable by exact tag lookup elsewhere).
+    if (normalized_tag.length === 0) {
+      continue;
+    }
     const group_key = shard_group_key(normalized_tag, GROUP_CODE_POINT_COUNT);
     const entries = entries_by_group.get(group_key) ?? [];
     entries.push([normalized_tag, record.record_id, record.popularity]);

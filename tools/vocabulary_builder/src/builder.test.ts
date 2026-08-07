@@ -230,6 +230,18 @@ describe("index builders", () => {
     expect(entries).toContainEqual(["cat ears", cat_ears_id, 120]);
   });
 
+  it("skips a tag that normalizes to an empty key instead of emitting an unindexable entry", () => {
+    // "_" normalizes (underscore-to-space, then trim) to "" --
+    // VocabularyShardKeyEntrySchema requires a non-empty key, so indexing it
+    // verbatim would fail the builder's own self-verification.
+    const records = [{ record_id: 0, tag: "_", aliases: [], popularity: 1 }];
+    const shards = build_prefix_shards(records);
+    const entries = shards.flatMap(
+      (shard) => (shard.payload as VocabularyPrefixShardPayload).entries,
+    );
+    expect(entries.some(([, record_id]) => record_id === 0)).toBe(false);
+  });
+
   it("alias index returns the expected record id for a normalized alias and translation", async () => {
     const records = assign_record_ids(
       merge_duplicate_records(await read_vocabulary_source(FIXTURE_PATH)),
@@ -248,6 +260,15 @@ describe("index builders", () => {
     ).record_id;
     expect(entries).toContainEqual(["one boy", one_boy_id, 300]);
     expect(entries).toContainEqual(["一个女孩", one_girl_id, 500]);
+  });
+
+  it("skips an alias that normalizes to an empty key instead of emitting an unindexable entry", () => {
+    const records = [{ record_id: 0, tag: "cat", aliases: ["_"], popularity: 1 }];
+    const shards = build_alias_shards(records);
+    const entries = shards.flatMap(
+      (shard) => (shard.payload as VocabularyAliasShardPayload).entries,
+    );
+    expect(entries.some(([, record_id]) => record_id === 0)).toBe(false);
   });
 
   it("buckets alias shards by the hashed group key the Worker computes for a query", async () => {
@@ -435,6 +456,23 @@ describe("vocabulary_builder build", () => {
 
     const after_snapshot = await snapshot_package(output);
     expect_snapshots_equal(baseline_snapshot, after_snapshot);
+  });
+
+  it("builds successfully for a translation at the 512-character bound the record schema allows", async () => {
+    // Previously the alias entry-key bound (256) was narrower than
+    // VocabularyRecordSchema's translation max (512), so a legitimate
+    // maximal-length translation passed record validation but then failed
+    // the builder's own self-verification (EXIT_VERIFICATION_FAILURE).
+    const root = await make_temp_root();
+    const output = join(root, "package");
+    const long_translation = "猫".repeat(512);
+    const source_path = join(root, "long_translation_source.jsonl");
+    await writeFile(
+      source_path,
+      `${JSON.stringify({ tag: "cat", translation: long_translation, aliases: [], popularity: 1 })}\n`,
+    );
+    expect(await run_build(build_args(source_path, output))).toBe(EXIT_SUCCESS);
+    expect(await run_verify(["--package", output])).toBe(EXIT_SUCCESS);
   });
 
   it("rejects conflicting duplicate primary content before writing output", async () => {

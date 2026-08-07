@@ -6,7 +6,7 @@ import {
   write_checkpoint,
   type DanbooruClientOptions,
 } from "./danbooru_client.js";
-import { write_jsonl } from "./jsonl_io.js";
+import { read_jsonl, write_jsonl } from "./jsonl_io.js";
 import { VocabularyRecordSchema, type VocabularyRecord } from "./vocabulary_record_schema.js";
 
 function compare_tag_records(left: VocabularyRecord, right: VocabularyRecord): number {
@@ -79,10 +79,58 @@ export interface RunFetchDanbooruCliOptions extends FetchDanbooruOptions {
   readonly out_path: string;
 }
 
+/**
+ * Loads the records a resumed run must not lose. `fetch_danbooru_fact_records`
+ * only fetches tag pages after `checkpoint.last_id` on resume, so its return
+ * value alone is just the tail of the crawl -- writing that directly over
+ * `out_path` (the pre-fix behavior) silently discarded every record from
+ * before the interruption. Returns `[]` for a fresh run (no checkpoint yet).
+ */
+async function load_pre_checkpoint_records(
+  options: RunFetchDanbooruCliOptions,
+): Promise<VocabularyRecord[]> {
+  if (options.checkpoint_path === undefined) {
+    return [];
+  }
+  const checkpoint = await read_checkpoint(options.checkpoint_path);
+  if (checkpoint === undefined) {
+    return [];
+  }
+  try {
+    return await read_jsonl(options.out_path, VocabularyRecordSchema);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      throw new Error(
+        `Danbooru fetch checkpoint at ${options.checkpoint_path} exists but ${options.out_path} ` +
+          "does not -- refusing to resume into a truncated output. Delete the checkpoint to start " +
+          "a fresh crawl instead.",
+        { cause: error },
+      );
+    }
+    throw error;
+  }
+}
+
+function merge_by_record_id(
+  previous: readonly VocabularyRecord[],
+  fresh: readonly VocabularyRecord[],
+): VocabularyRecord[] {
+  const by_id = new Map<number, VocabularyRecord>();
+  for (const record of previous) {
+    by_id.set(record.record_id, record);
+  }
+  for (const record of fresh) {
+    by_id.set(record.record_id, record);
+  }
+  return [...by_id.values()].sort(compare_tag_records);
+}
+
 export async function run_fetch_danbooru_cli(
   options: RunFetchDanbooruCliOptions,
 ): Promise<VocabularyRecord[]> {
-  const records = await fetch_danbooru_fact_records(options);
+  const previous_records = await load_pre_checkpoint_records(options);
+  const fetched_records = await fetch_danbooru_fact_records(options);
+  const records = merge_by_record_id(previous_records, fetched_records);
   await write_jsonl(options.out_path, records);
   return records;
 }

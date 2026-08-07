@@ -102,6 +102,11 @@ export function build_prefix_shards(records: readonly VocabularyRecord[]): Draft
   const entries_by_group = new Map<string, PrefixOrAliasEntry[]>();
   for (const record of records) {
     const normalized_tag = normalize_vocabulary_search_key(record.tag);
+    // Mirrors tools/vocabulary_builder/src/build_prefix_index.ts: a tag
+    // normalizing to "" cannot be an index key (schema requires min(1)).
+    if (normalized_tag.length === 0) {
+      continue;
+    }
     const group_key = code_point_group_key(normalized_tag, GROUP_CODE_POINT_COUNT);
     const entries = entries_by_group.get(group_key) ?? [];
     entries.push([normalized_tag, record.record_id, record.popularity]);
@@ -126,6 +131,11 @@ export function build_alias_shards(records: readonly VocabularyRecord[]): DraftS
   for (const record of records) {
     for (const text of alias_search_texts(record)) {
       const normalized_key = normalize_vocabulary_search_key(text);
+      // Mirrors build_prefix_shards' guard: an alias/translation
+      // normalizing to "" cannot be an index key (schema requires min(1)).
+      if (normalized_key.length === 0) {
+        continue;
+      }
       const seen_ids = seen_ids_by_key.get(normalized_key) ?? new Set<number>();
       seen_ids_by_key.set(normalized_key, seen_ids);
       if (seen_ids.has(record.record_id)) {
