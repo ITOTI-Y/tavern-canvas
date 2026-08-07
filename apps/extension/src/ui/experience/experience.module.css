@@ -1,0 +1,41 @@
+/*
+ * FloatingEntry.vue's own scoped styles. Tokens only -- radius follows the image tile lock
+ * (--tc-radius-image) since the entry is fundamentally a circular media tile, not a form field.
+ * Registered in ui/styles/runtime_stylesheet.ts's FIRST_PARTY_STYLESHEET list; that file's own
+ * header comment warns any new first-party CSS Module that skips this step never reaches the
+ * Shadow Root at runtime.
+ */
+
+.floatingEntry {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: var(--tc-surface);
+  color: var(--tc-text);
+  cursor: grab;
+  touch-action: none;
+  z-index: var(--tc-z-shell-sticky);
+}
+
+.floatingEntry:hover:not(:disabled) {
+  background-color: var(--tc-surface-raised);
+}
+
+.floatingEntryDragging {
+  cursor: grabbing;
+}
+
+.floatingEntryMedia {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  pointer-events: none;
+}

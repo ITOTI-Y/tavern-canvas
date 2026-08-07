@@ -2,6 +2,7 @@ import tokens_stylesheet from "./tokens.css?inline";
 import base_stylesheet from "./base.css?inline";
 import utilities_stylesheet from "./utilities.css?inline";
 import components_stylesheet from "../components/components.module.css?inline";
+import experience_stylesheet from "../experience/experience.module.css?inline";
 import shell_stylesheet from "../shell/shell.module.css?inline";
 import assets_view_stylesheet from "../views/assets/assets.module.css?inline";
 import diagnostics_view_stylesheet from "../views/diagnostics/diagnostics.module.css?inline";
@@ -65,6 +66,7 @@ export const FIRST_PARTY_STYLESHEET = resolve_asset_urls(
     // most of these controls; fixed here since it blocks meaningful visual verification of any view,
     // not just this task's.
     components_stylesheet,
+    experience_stylesheet,
     shell_stylesheet,
     assets_view_stylesheet,
     gallery_view_stylesheet,

@@ -42,5 +42,8 @@ export type {
   TauriChatSurfaceRegistration,
   TauriChatSurfaceRuntimeClaims,
   TauriChatSurfaceRuntimeContext,
+  TauriDetectionGlobals,
+  TauriTavernChatSurfaceParticipantSurface,
+  TauriTavernGlobalSurface,
   TauriWorldInfoActivationPosition,
 } from "./tauritavern_host.js";
