@@ -29,7 +29,9 @@ const { t } = useI18n();
  * see build_generation_request.ts): each row only renders when the concrete request variant
  * actually has that field.
  */
-const seed = computed(() => (props.request && "seed" in props.request ? props.request.seed : undefined));
+const seed = computed(() =>
+  props.request && "seed" in props.request ? props.request.seed : undefined,
+);
 const steps = computed(() =>
   props.request && "steps" in props.request ? props.request.steps : undefined,
 );
@@ -40,7 +42,9 @@ const model_id = computed(() =>
   props.request && "model_id" in props.request ? props.request.model_id : undefined,
 );
 
-const is_retryable = computed(() => props.job !== null && RETRYABLE_STATES.includes(props.job.state));
+const is_retryable = computed(
+  () => props.job !== null && RETRYABLE_STATES.includes(props.job.state),
+);
 
 async function copy_parameters(): Promise<void> {
   if (!props.job) {

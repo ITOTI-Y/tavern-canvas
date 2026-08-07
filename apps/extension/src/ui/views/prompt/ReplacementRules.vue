@@ -76,7 +76,10 @@ function remove_rule(rule_id: string): void {
       </button>
     </div>
 
-    <StateSurface :status="props.rules.length === 0 ? 'empty' : 'ready'" :empty-message="empty_message">
+    <StateSurface
+      :status="props.rules.length === 0 ? 'empty' : 'ready'"
+      :empty-message="empty_message"
+    >
       <div
         v-for="rule in props.rules"
         :key="rule.id"
@@ -95,7 +98,9 @@ function remove_rule(rule_id: string): void {
               data-testid="replacement-triggers-input"
               :value="triggers_text(rule)"
               :placeholder="t('prompt.replacement_rules.trigger_placeholder')"
-              @change="(event) => update_triggers(rule.id, (event.target as HTMLInputElement).value)"
+              @change="
+                (event) => update_triggers(rule.id, (event.target as HTMLInputElement).value)
+              "
             />
           </template>
         </FieldGroup>
@@ -108,7 +113,9 @@ function remove_rule(rule_id: string): void {
               data-testid="replacement-value-input"
               :value="rule.replacement"
               :placeholder="t('prompt.replacement_rules.replacement_placeholder')"
-              @input="(event) => update_replacement(rule.id, (event.target as HTMLInputElement).value)"
+              @input="
+                (event) => update_replacement(rule.id, (event.target as HTMLInputElement).value)
+              "
             />
           </template>
         </FieldGroup>

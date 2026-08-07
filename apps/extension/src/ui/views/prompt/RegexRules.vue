@@ -96,8 +96,16 @@ function test_result_text(rule_id: string): string | null {
       </button>
     </div>
 
-    <StateSurface :status="props.rules.length === 0 ? 'empty' : 'ready'" :empty-message="empty_message">
-      <div v-for="rule in props.rules" :key="rule.id" :class="styles.rule_row" data-testid="regex-rule-row">
+    <StateSurface
+      :status="props.rules.length === 0 ? 'empty' : 'ready'"
+      :empty-message="empty_message"
+    >
+      <div
+        v-for="rule in props.rules"
+        :key="rule.id"
+        :class="styles.rule_row"
+        data-testid="regex-rule-row"
+      >
         <FieldGroup :label="t('prompt.regex_rules.pattern_label')" :error="pattern_error(rule)">
           <template #default="{ fieldId, describedBy, invalid }">
             <input
@@ -109,7 +117,10 @@ function test_result_text(rule_id: string): string | null {
               :placeholder="t('prompt.regex_rules.pattern_placeholder')"
               :aria-describedby="describedBy"
               :aria-invalid="invalid"
-              @input="(event) => update_rule(rule.id, { pattern: (event.target as HTMLInputElement).value })"
+              @input="
+                (event) =>
+                  update_rule(rule.id, { pattern: (event.target as HTMLInputElement).value })
+              "
             />
           </template>
         </FieldGroup>
@@ -121,7 +132,9 @@ function test_result_text(rule_id: string): string | null {
               :class="styles.text_input_narrow"
               data-testid="regex-flags-input"
               :value="rule.flags"
-              @input="(event) => update_rule(rule.id, { flags: (event.target as HTMLInputElement).value })"
+              @input="
+                (event) => update_rule(rule.id, { flags: (event.target as HTMLInputElement).value })
+              "
             />
           </template>
         </FieldGroup>
@@ -134,7 +147,8 @@ function test_result_text(rule_id: string): string | null {
               data-testid="regex-replacement-input"
               :value="rule.replacement"
               @input="
-                (event) => update_rule(rule.id, { replacement: (event.target as HTMLInputElement).value })
+                (event) =>
+                  update_rule(rule.id, { replacement: (event.target as HTMLInputElement).value })
               "
             />
           </template>

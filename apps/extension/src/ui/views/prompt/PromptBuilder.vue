@@ -35,7 +35,7 @@ const { t } = useI18n();
           :value="props.fixedPositivePrompt"
           :placeholder="t('prompt.fixed_prompts.positive_placeholder')"
           rows="3"
-          @input="emit('update:fixedPositivePrompt', (($event.target) as HTMLTextAreaElement).value)"
+          @input="emit('update:fixedPositivePrompt', ($event.target as HTMLTextAreaElement).value)"
         />
       </template>
     </FieldGroup>
@@ -48,7 +48,7 @@ const { t } = useI18n();
           :value="props.fixedNegativePrompt"
           :placeholder="t('prompt.fixed_prompts.negative_placeholder')"
           rows="3"
-          @input="emit('update:fixedNegativePrompt', (($event.target) as HTMLTextAreaElement).value)"
+          @input="emit('update:fixedNegativePrompt', ($event.target as HTMLTextAreaElement).value)"
         />
       </template>
     </FieldGroup>
@@ -61,7 +61,9 @@ const { t } = useI18n();
       <div :class="styles.context_block">
         <p :class="styles.context_block_title">{{ t("prompt.builder.world_info_label") }}</p>
         <StateSurface
-          :status="props.contextPreview && props.contextPreview.worldInfo.length > 0 ? 'ready' : 'empty'"
+          :status="
+            props.contextPreview && props.contextPreview.worldInfo.length > 0 ? 'ready' : 'empty'
+          "
           min-height="32px"
           :empty-message="t('prompt.builder.world_info_empty_description')"
         >

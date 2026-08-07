@@ -28,7 +28,9 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const is_unavailable = computed(
-  () => props.testCommand.status === "error" && props.testCommand.failure.code === "capability_not_implemented",
+  () =>
+    props.testCommand.status === "error" &&
+    props.testCommand.failure.code === "capability_not_implemented",
 );
 </script>
 
@@ -49,7 +51,7 @@ const is_unavailable = computed(
             :value="props.inputValue"
             :placeholder="t('prompt.test_panel.input_placeholder')"
             rows="3"
-            @input="emit('update:inputValue', (($event.target) as HTMLTextAreaElement).value)"
+            @input="emit('update:inputValue', ($event.target as HTMLTextAreaElement).value)"
           />
         </template>
       </FieldGroup>
@@ -71,7 +73,11 @@ const is_unavailable = computed(
       <p v-else-if="is_unavailable" role="alert" data-testid="test-panel-unavailable">
         {{ t("prompt.test_panel.unavailable_description") }}
       </p>
-      <p v-else-if="props.testCommand.status === 'error'" role="alert" data-testid="test-panel-error">
+      <p
+        v-else-if="props.testCommand.status === 'error'"
+        role="alert"
+        data-testid="test-panel-error"
+      >
         {{ t("errors.unexpected") }}
       </p>
     </div>

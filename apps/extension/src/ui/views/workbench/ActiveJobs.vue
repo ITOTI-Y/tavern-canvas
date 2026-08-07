@@ -46,8 +46,7 @@ const surface_status = computed<"loading" | "empty" | "error" | "ready">(() => {
 });
 
 const empty_message = computed(
-  () =>
-    `${t("workbench.active_jobs.empty_title")} ${t("workbench.active_jobs.empty_description")}`,
+  () => `${t("workbench.active_jobs.empty_title")} ${t("workbench.active_jobs.empty_description")}`,
 );
 
 // "{n} job(s) running" (workbench.active_jobs.active_count) means literally in-flight jobs --

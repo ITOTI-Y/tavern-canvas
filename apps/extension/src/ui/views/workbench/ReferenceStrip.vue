@@ -78,7 +78,9 @@ function move_down(index: number): void {
   <div :class="styles.reference_strip" data-testid="reference-strip">
     <div :class="styles.section_header">
       <span :class="styles.section_title">{{ t("workbench.reference_strip.title") }}</span>
-      <span :class="styles.section_hint">{{ t("workbench.reference_strip.max_reached_hint") }}</span>
+      <span :class="styles.section_hint">{{
+        t("workbench.reference_strip.max_reached_hint")
+      }}</span>
     </div>
 
     <div v-if="props.references.length === 0" :class="styles.reference_empty">
