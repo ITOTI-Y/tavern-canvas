@@ -34,6 +34,12 @@ const SKIPPED_DIRECTORY_NAMES = new Set([
   "test-results",
 ]);
 const ALLOWED_FIXTURE_PATHS = ["tests/fixtures/user_content/", "tools/v2_migration/fixtures/"];
+// Vendored third-party data, not first-party source: pinned and checksummed exactly as
+// downloaded (apps/extension/public/tokenizers/novelai/SOURCE.json records the upstream
+// model/revision/checksums), so it must never be hand-edited to satisfy a source-hygiene rule.
+// tokenizer.json's SentencePiece vocabulary legitimately spans the full Unicode range, including
+// symbols the first-party-emoji rule matches (e.g. U+00AE REGISTERED SIGN).
+const ALLOWED_VENDORED_DATA_PATHS = ["apps/extension/public/tokenizers/novelai/"];
 const SOURCE_RULES: readonly SourceRule[] = [
   {
     rule_id: "remote-script",
@@ -73,7 +79,7 @@ function normalize_path(path: string): string {
 
 function is_allowed_fixture(file_path: string, repository_root: string): boolean {
   const relative_path = normalize_path(relative(repository_root, file_path));
-  return ALLOWED_FIXTURE_PATHS.some(
+  return [...ALLOWED_FIXTURE_PATHS, ...ALLOWED_VENDORED_DATA_PATHS].some(
     (allowed_path) =>
       relative_path.startsWith(allowed_path) || relative_path.includes(`/${allowed_path}`),
   );

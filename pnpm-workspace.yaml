@@ -5,6 +5,14 @@ packages:
 allowBuilds:
   better-sqlite3: true
   esbuild: true
+  # Transitive deps of @huggingface/transformers (apps/extension's lazy NovelAI tokenizer
+  # module, Stage 07 Task 4). Denied: the tokenizer-only usage never touches ONNX model
+  # inference, protobuf, or image resizing, so none of their native postinstall builds are
+  # needed -- confirmed by AutoTokenizer.from_pretrained working end to end with these builds
+  # skipped (apps/extension/src/modules/novelai/tokenizer/tokenizer_service.test.ts).
+  onnxruntime-node: false
+  protobufjs: false
+  sharp: false
   vue-demi: true
 minimumReleaseAgeExclude:
   - express-rate-limit@8.6.2
