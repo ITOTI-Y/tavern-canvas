@@ -138,7 +138,11 @@ watch(
   () => props.state.prompt.save_command,
   (command) => {
     if (command.status === "success") {
-      push_toast({ title: t("common.actions.save"), description: t("status.success"), variant: "success" });
+      push_toast({
+        title: t("common.actions.save"),
+        description: t("status.success"),
+        variant: "success",
+      });
       saved_snapshot.value = null;
     }
   },
@@ -199,9 +203,7 @@ function handle_run_test(input: string): void {
                   :class="styles.text_input"
                   data-testid="preset-name-input"
                   :value="props.state.prompt.draft.display_name"
-                  @input="
-                    update_draft({ display_name: (($event.target) as HTMLInputElement).value })
-                  "
+                  @input="update_draft({ display_name: ($event.target as HTMLInputElement).value })"
                 />
               </template>
             </FieldGroup>
@@ -218,14 +220,15 @@ function handle_run_test(input: string): void {
             :fixed-positive-prompt="props.state.prompt.draft.fixed_positive_prompt"
             :fixed-negative-prompt="props.state.prompt.draft.fixed_negative_prompt"
             :context-preview="props.contextPreview ?? null"
-            @update:fixed-positive-prompt="(value) => update_draft({ fixed_positive_prompt: value })"
-            @update:fixed-negative-prompt="(value) => update_draft({ fixed_negative_prompt: value })"
+            @update:fixed-positive-prompt="
+              (value) => update_draft({ fixed_positive_prompt: value })
+            "
+            @update:fixed-negative-prompt="
+              (value) => update_draft({ fixed_negative_prompt: value })
+            "
           />
 
-          <QualityControls
-            v-model:ucp-enabled="ucp_enabled"
-            v-model:aqt-enabled="aqt_enabled"
-          />
+          <QualityControls v-model:ucp-enabled="ucp_enabled" v-model:aqt-enabled="aqt_enabled" />
 
           <ReplacementRules
             :rules="props.state.prompt.draft.replacement_rules"
@@ -241,7 +244,12 @@ function handle_run_test(input: string): void {
 
           <PromptTestPanel
             :input-value="test_input"
-            :test-command="props.testCommand ?? { status: 'error', failure: { code: 'capability_not_implemented' } }"
+            :test-command="
+              props.testCommand ?? {
+                status: 'error',
+                failure: { code: 'capability_not_implemented' },
+              }
+            "
             @update:input-value="(value) => (test_input = value)"
             @run="handle_run_test"
           />
@@ -262,8 +270,8 @@ function handle_run_test(input: string): void {
 
     <ToastViewport
       :toasts="toasts"
-      :viewport-label="t('common.inspector.title')"
-      :announce-label="t('common.actions.confirm')"
+      :viewport-label="t('common.notifications.viewport_label')"
+      :announce-label="t('common.notifications.announce_label')"
       :close-label="t('common.actions.close')"
       @dismiss="dismiss_toast"
     />

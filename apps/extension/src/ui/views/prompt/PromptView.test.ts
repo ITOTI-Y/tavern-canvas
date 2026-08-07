@@ -1,6 +1,7 @@
 import type { Uuid } from "@tavern-canvas/contracts";
 import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
 import { en_messages } from "../../../i18n/locales/en.js";
@@ -90,7 +91,10 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
 
 function mount_view(
   state: Partial<StudioState> = {},
-  options: { testRegex?: (rule: unknown, sample: string) => Promise<string>; locale?: "en" | "zh-CN" } = {},
+  options: {
+    testRegex?: (rule: unknown, sample: string) => Promise<string>;
+    locale?: "en" | "zh-CN";
+  } = {},
 ) {
   const i18n = createI18n({
     legacy: false,
@@ -177,14 +181,21 @@ describe("PromptView: preset browser search/group/bulk delete", () => {
     expect(loading.find('[data-testid="preset-browser"]').html()).toContain("aria-hidden");
 
     const { wrapper: empty } = mount_view({
-      prompt: { presets: [], selected_preset_id: null, draft: null, save_command: IDLE_COMMAND_STATE },
+      prompt: {
+        presets: [],
+        selected_preset_id: null,
+        draft: null,
+        save_command: IDLE_COMMAND_STATE,
+      },
     });
     expect(empty.text()).toContain("No presets yet");
 
     const { wrapper: errored } = mount_view({
       failures: new Map([["prompt_presets", { code: "capability_load_failed" }]]),
     });
-    expect(errored.find('[data-testid="preset-browser"]').text()).toContain("Presets failed to load.");
+    expect(errored.find('[data-testid="preset-browser"]').text()).toContain(
+      "Presets failed to load.",
+    );
   });
 });
 
@@ -204,14 +215,19 @@ describe("PromptView: fixed prompts, quality controls, draft locality", () => {
     const ucp = wrapper.find('[data-testid="ucp-switch"] [role="switch"]');
     expect(ucp.attributes("aria-checked")).toBe("false");
     await ucp.trigger("click");
-    expect(wrapper.find('[data-testid="ucp-switch"] [role="switch"]').attributes("aria-checked")).toBe(
-      "true",
-    );
+    expect(
+      wrapper.find('[data-testid="ucp-switch"] [role="switch"]').attributes("aria-checked"),
+    ).toBe("true");
   });
 
   it("keeps a new blank draft local (id null) until Save is pressed", async () => {
     const { wrapper } = mount_view({
-      prompt: { presets: [], selected_preset_id: null, draft: null, save_command: IDLE_COMMAND_STATE },
+      prompt: {
+        presets: [],
+        selected_preset_id: null,
+        draft: null,
+        save_command: IDLE_COMMAND_STATE,
+      },
     });
     await wrapper.find('[data-testid="new-preset"]').trigger("click");
     await flushPromises();
@@ -449,5 +465,18 @@ describe("PromptView: bilingual copy", () => {
     expect(wrapper.text()).toContain("预设");
     expect(wrapper.text()).toContain("替换规则");
     expect(wrapper.text()).not.toContain("undefined");
+  });
+});
+
+describe("PromptView: toast notification region", () => {
+  // Regression test for the fix-wave a11y-correctness finding: the toast region was previously
+  // labeled with common.inspector.title ("Inspector") and common.actions.confirm ("Confirm"),
+  // announcing the notification region as something unrelated to notifications.
+  it("names the toast notification region correctly, not Inspector/Confirm", async () => {
+    mount_view();
+    await nextTick();
+    await nextTick();
+    expect(find_in_document('[role="region"][aria-label="Notifications"]').exists()).toBe(true);
+    expect(document.querySelector('[role="region"][aria-label="Inspector"]')).toBeNull();
   });
 });

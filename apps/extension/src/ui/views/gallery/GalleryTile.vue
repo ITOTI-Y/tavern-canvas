@@ -72,7 +72,7 @@ const decoded = ref(false);
       </div>
     </button>
 
-    <span v-if="record.pinned" :class="styles.tilePinnedBadge" :aria-label="pinnedLabel">
+    <span v-if="record.pinned" role="img" :class="styles.tilePinnedBadge" :aria-label="pinnedLabel">
       <Pin :size="12" :stroke-width="1.75" aria-hidden="true" />
     </span>
 

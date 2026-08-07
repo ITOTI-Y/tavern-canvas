@@ -47,7 +47,6 @@ const common = {
     download: "Download",
     search: "Search",
     clear: "Clear",
-    select_all: "Select all",
     deselect_all: "Deselect all",
     back: "Back",
     next: "Next",
@@ -64,6 +63,10 @@ const common = {
     title: "Inspector",
     empty_title: "Nothing selected",
     empty_description: "Select a job, image, or asset to see its details here.",
+  },
+  notifications: {
+    viewport_label: "Notifications",
+    announce_label: "Notification",
   },
 };
 
@@ -154,6 +157,7 @@ const workbench = {
     completed_images_title: "Completed images",
     image_alt: "Generated image {n}",
   },
+  prefilled_from_gallery_notice: "Prompt loaded from the selected image.",
   submit: {
     action: "Generate",
     validation: {
@@ -379,6 +383,8 @@ const gallery = {
     inpaint_action: "Inpaint",
     source_message_action: "Go to source message",
     parameters_unavailable: "No embedded generation parameters were found in this image.",
+    actions_unavailable_hint:
+      "Editing, inpainting, and jumping to the source message are not available in this version yet.",
   },
   selection: {
     selected_count: "{n} image selected | {n} images selected",
@@ -396,6 +402,8 @@ const gallery = {
   pin_action: "Pin",
   unpin_action: "Unpin",
   download_action: "Download",
+  select_image_action: "Select image",
+  open_preview_action: "Open preview",
 };
 
 const diagnostics = {

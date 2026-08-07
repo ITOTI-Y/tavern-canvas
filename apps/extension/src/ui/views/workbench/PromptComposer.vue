@@ -86,8 +86,8 @@ function handle_negative_input(event: Event): void {
           :min="1"
           :max="4"
           :step="1"
-          :increment-label="t('workbench.prompt_composer.image_count_label')"
-          :decrement-label="t('workbench.prompt_composer.image_count_label')"
+          :increment-label="t('common.actions.increase')"
+          :decrement-label="t('common.actions.decrease')"
           data-testid="image-count-stepper"
           @update:model-value="(value) => emit('update:imageCount', value)"
         />
