@@ -4,7 +4,11 @@ import utilities_stylesheet from "./utilities.css?inline";
 import components_stylesheet from "../components/components.module.css?inline";
 import shell_stylesheet from "../shell/shell.module.css?inline";
 import assets_view_stylesheet from "../views/assets/assets.module.css?inline";
+import diagnostics_view_stylesheet from "../views/diagnostics/diagnostics.module.css?inline";
 import gallery_view_stylesheet from "../views/gallery/gallery.module.css?inline";
+import prompt_view_stylesheet from "../views/prompt/prompt.module.css?inline";
+import settings_view_stylesheet from "../views/settings/settings.module.css?inline";
+import workbench_view_stylesheet from "../views/workbench/workbench.module.css?inline";
 
 /**
  * The full first-party stylesheet injected into the Shadow Root's own `<style>` element
@@ -22,6 +26,13 @@ import gallery_view_stylesheet from "../views/gallery/gallery.module.css?inline"
  * its rules will silently never reach the Shadow Root at runtime -- unit tests (happy-dom) cannot
  * catch this, since they never exercise the real Vite build's CSS pipeline; only a real browser
  * build+run (task-2-brief.md's Step 4 harness, Task 8's formal harness) surfaces it.
+ *
+ * Task 8 found this had already happened: prompt.module.css, workbench.module.css,
+ * diagnostics.module.css, and settings.module.css (all four of T5's and T7's own per-view
+ * stylesheets) were never added here, so once Task 8 actually wired real views into every route
+ * (the routing-wiring gap, task-8-report.md) those four views rendered completely unstyled in the
+ * real Shadow Root -- exactly the class of defect this file's own header comment already warned
+ * about. Fixed by adding all four below.
  */
 const ASSET_URL_MARKER_PATTERN = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
 
@@ -57,5 +68,9 @@ export const FIRST_PARTY_STYLESHEET = resolve_asset_urls(
     shell_stylesheet,
     assets_view_stylesheet,
     gallery_view_stylesheet,
+    workbench_view_stylesheet,
+    prompt_view_stylesheet,
+    diagnostics_view_stylesheet,
+    settings_view_stylesheet,
   ].join("\n"),
 );
