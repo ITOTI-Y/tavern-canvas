@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 2 as const;
+export const DATABASE_VERSION = 3 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 // `since_version` pins the database version that first creates a store, so
@@ -89,6 +89,11 @@ export const STORE_DEFINITIONS = {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
     since_version: 2,
+  },
+  llm_connections: {
+    key_path: "record_key",
+    indexes: ["namespace", "provider_kind", "updated_at"],
+    since_version: 3,
   },
 } as const;
 
@@ -198,6 +203,22 @@ export type VocabularyShard = z.infer<typeof VocabularyShardSchema>;
 export const LegacyPreferenceSchema = namespaced_schema({});
 export type LegacyPreference = z.infer<typeof LegacyPreferenceSchema>;
 
+// Text-LLM connections, added in database version 3. `credential_reference` is a top-level
+// column rather than a payload field on purpose: payloads are swept by
+// `assert_safe_provider_payload`, which rejects every credential-shaped key, so the one value
+// that legitimately names a vault entry needs its own typed slot. The `tavern_canvas:` prefix
+// keeps that slot from accepting a raw provider key.
+export const LlmConnectionSchema = namespaced_schema({
+  provider_kind: z.string().min(1).max(64),
+  credential_reference: z
+    .string()
+    .min(1)
+    .max(256)
+    .regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u)
+    .nullable(),
+});
+export type LlmConnection = z.infer<typeof LlmConnectionSchema>;
+
 export const ImageRecordSchema = namespaced_schema({
   sha256: Sha256Schema,
   last_accessed_at: TimestampSchema,
@@ -302,7 +323,8 @@ export type BusinessRecord =
   | VocabularyPackage
   | VocabularyShard
   | ImageRecord
-  | LegacyPreference;
+  | LegacyPreference
+  | LlmConnection;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -325,6 +347,7 @@ export type RecordByStore = {
   generation_jobs: GenerationJob;
   migration_journal: MigrationJournal;
   legacy_preferences: LegacyPreference;
+  llm_connections: LlmConnection;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -467,6 +490,15 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  llm_connections: {
+    key: string;
+    value: LlmConnection;
+    indexes: {
+      namespace: IDBValidKey;
+      provider_kind: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -486,6 +518,7 @@ export const RECORD_SCHEMAS: {
   image_records: ImageRecordSchema,
   generation_jobs: GenerationJobSchema,
   legacy_preferences: LegacyPreferenceSchema,
+  llm_connections: LlmConnectionSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;

@@ -1,5 +1,8 @@
 import type {
   GenerationState,
+  LlmConnectionDraft,
+  LlmConnectionProfile,
+  LlmConnectionTestResult,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -16,6 +19,7 @@ import type {
   GenerationDomainEvent,
   GenerationJobSummary,
   GenerationSubmitCommand,
+  LlmConnectionsDomainEvent,
   MigrationDomainEvent,
   ProfileConnectionTestResult,
   ProfilesDomainEvent,
@@ -40,6 +44,7 @@ import {
   type GalleryViewModel,
   type InspectorSelection,
   type InspectorViewModel,
+  type LlmConnectionsViewModel,
   type PromptViewModel,
   type SettingsViewModel,
   type StudioRoute,
@@ -155,6 +160,23 @@ export interface StudioController {
   // -------------------------------------------------------------------------
   // Gallery (Stage 06 Task 6 addition).
   // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Text-LLM connections (Stage 07 feature-gap addition). Plain pass-throughs for the same reason
+  // the provider-profile commands are: pending state belongs to the row or dialog that triggered
+  // the mutation, not to shared StudioState.
+  // -------------------------------------------------------------------------
+  select_llm_connection(connection_id: Uuid | null): void;
+  save_llm_connection(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
+  remove_llm_connection(connection_id: Uuid): Promise<void>;
+  /** The plaintext argument reaches host secret storage and nothing else; state only ever holds
+   * the reference the capability resolves with. */
+  set_llm_connection_credential(
+    connection_id: Uuid,
+    plaintext_value: string,
+  ): Promise<LlmConnectionProfile>;
+  clear_llm_connection_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
+  test_llm_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
+
   select_gallery_record(record_id: Uuid | null): void;
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array>;
   pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void>;
@@ -283,6 +305,10 @@ function create_initial_state(
       jobs: [],
       submit_command: IDLE_COMMAND_STATE,
     },
+    llm_connections: {
+      connections: [],
+      selected_connection_id: null,
+    },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -371,6 +397,10 @@ class StudioControllerImpl implements StudioController {
       workbench: { ...this.#state.workbench, jobs },
       tasks: jobs_to_tasks(jobs),
     });
+  }
+
+  #patch_llm_connections(patch: Partial<LlmConnectionsViewModel>): void {
+    this.#patch({ llm_connections: { ...this.#state.llm_connections, ...patch } });
   }
 
   #patch_prompt(patch: Partial<PromptViewModel>): void {
@@ -469,6 +499,27 @@ class StudioControllerImpl implements StudioController {
     }
   }
 
+  #apply_llm_connections_event(event: LlmConnectionsDomainEvent): void {
+    if (this.#stopped) {
+      return;
+    }
+    if (event.type === "connection_upserted") {
+      this.#patch_llm_connections({
+        connections: upsert_by_id(
+          this.#state.llm_connections.connections,
+          event.connection,
+          (connection) => connection.id,
+        ),
+      });
+    } else {
+      this.#patch_llm_connections({
+        connections: this.#state.llm_connections.connections.filter(
+          (connection) => connection.id !== event.connection_id,
+        ),
+      });
+    }
+  }
+
   #apply_prompt_presets_event(event: PromptPresetsDomainEvent): void {
     if (this.#stopped) {
       return;
@@ -550,6 +601,9 @@ class StudioControllerImpl implements StudioController {
       this.#capabilities.profiles.subscribe((event) => {
         this.#apply_profiles_event(event);
       }),
+      this.#capabilities.llm_connections.subscribe((event) => {
+        this.#apply_llm_connections_event(event);
+      }),
       this.#capabilities.prompt_presets.subscribe((event) => {
         this.#apply_prompt_presets_event(event);
       }),
@@ -585,6 +639,17 @@ class StudioControllerImpl implements StudioController {
           this.#patch_workbench({
             profiles,
             active_profile_id: this.#state.workbench.active_profile_id ?? profiles[0]?.id ?? null,
+          });
+        },
+      ),
+      this.#load_slice(
+        "llm_connections",
+        () => this.#capabilities.llm_connections.load(),
+        (connections) => {
+          this.#patch_llm_connections({
+            connections,
+            selected_connection_id:
+              this.#state.llm_connections.selected_connection_id ?? connections[0]?.id ?? null,
           });
         },
       ),
@@ -998,6 +1063,74 @@ class StudioControllerImpl implements StudioController {
 
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView> {
     return this.#capabilities.vocabulary.next_page(cursor);
+  }
+
+  select_llm_connection(connection_id: Uuid | null): void {
+    this.#patch_llm_connections({ selected_connection_id: connection_id });
+  }
+
+  async save_llm_connection(draft: LlmConnectionDraft): Promise<LlmConnectionProfile> {
+    const connection = await this.#capabilities.llm_connections.save(draft);
+    if (!this.#stopped) {
+      this.#upsert_llm_connection(connection);
+    }
+    return connection;
+  }
+
+  async remove_llm_connection(connection_id: Uuid): Promise<void> {
+    await this.#capabilities.llm_connections.remove(connection_id);
+    if (this.#stopped) {
+      return;
+    }
+    this.#patch_llm_connections({
+      connections: this.#state.llm_connections.connections.filter(
+        (connection) => connection.id !== connection_id,
+      ),
+      selected_connection_id:
+        this.#state.llm_connections.selected_connection_id === connection_id
+          ? null
+          : this.#state.llm_connections.selected_connection_id,
+    });
+  }
+
+  async set_llm_connection_credential(
+    connection_id: Uuid,
+    plaintext_value: string,
+  ): Promise<LlmConnectionProfile> {
+    const connection = await this.#capabilities.llm_connections.set_credential(
+      connection_id,
+      plaintext_value,
+    );
+    if (!this.#stopped) {
+      this.#upsert_llm_connection(connection);
+    }
+    return connection;
+  }
+
+  async clear_llm_connection_credential(connection_id: Uuid): Promise<LlmConnectionProfile> {
+    const connection = await this.#capabilities.llm_connections.clear_credential(connection_id);
+    if (!this.#stopped) {
+      this.#upsert_llm_connection(connection);
+    }
+    return connection;
+  }
+
+  test_llm_connection(connection_id: Uuid): Promise<LlmConnectionTestResult> {
+    return this.#capabilities.llm_connections.test_connection(connection_id);
+  }
+
+  /** A default is exclusive, so promoting one connection demotes the rest in the same patch. */
+  #upsert_llm_connection(connection: LlmConnectionProfile): void {
+    const merged = upsert_by_id(
+      this.#state.llm_connections.connections,
+      connection,
+      (item) => item.id,
+    );
+    this.#patch_llm_connections({
+      connections: connection.is_default
+        ? merged.map((item) => (item.id === connection.id ? item : { ...item, is_default: false }))
+        : merged,
+    });
   }
 
   select_gallery_record(record_id: Uuid | null): void {

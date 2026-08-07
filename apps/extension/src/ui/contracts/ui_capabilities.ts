@@ -2,6 +2,9 @@ import type {
   CapabilityMatrix,
   GenerationState,
   ImageGenerationRequest,
+  LlmConnectionDraft,
+  LlmConnectionProfile,
+  LlmConnectionTestResult,
   ProviderError,
   ProviderId,
   TavernCanvasSettings,
@@ -84,6 +87,32 @@ export interface ProfilesCapability {
   save(profile: ProviderProfileDraft): Promise<ProviderProfileSummary>;
   remove(profile_id: Uuid): Promise<void>;
   test_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
+}
+
+// ---------------------------------------------------------------------------
+// Text-LLM connections (Stage 07 feature-gap addition)
+//
+// The text counterpart to the image `ProfilesCapability`. It mirrors that port deliberately, with
+// one difference that carries the whole credential design: a credential is never part of the save
+// payload. `LlmConnectionDraft` (packages/contracts) is a strict object with no credential,
+// header, or endpoint field, and `set_credential` is a separate operation whose plaintext argument
+// goes straight to host secret storage. Nothing the UI can send reaches a repository as a secret,
+// and nothing it reads back carries one.
+// ---------------------------------------------------------------------------
+
+export type LlmConnectionsDomainEvent =
+  | { readonly type: "connection_upserted"; readonly connection: LlmConnectionProfile }
+  | { readonly type: "connection_removed"; readonly connection_id: Uuid };
+
+export interface LlmConnectionsCapability {
+  load(): Promise<readonly LlmConnectionProfile[]>;
+  subscribe(handler: (event: LlmConnectionsDomainEvent) => void): Unsubscribe;
+  save(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
+  remove(connection_id: Uuid): Promise<void>;
+  /** Hands a plaintext credential to host secret storage; resolves with the reference-only view. */
+  set_credential(connection_id: Uuid, plaintext_value: string): Promise<LlmConnectionProfile>;
+  clear_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
+  test_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
 }
 
 // ---------------------------------------------------------------------------
@@ -355,6 +384,7 @@ export interface SettingsCapability {
 export interface StudioCapabilities {
   readonly generation: GenerationCapability;
   readonly profiles: ProfilesCapability;
+  readonly llm_connections: LlmConnectionsCapability;
   readonly prompt_presets: PromptPresetsCapability;
   readonly assets: AssetsCapability;
   readonly gallery: GalleryCapability;

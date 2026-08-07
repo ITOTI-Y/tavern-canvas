@@ -465,6 +465,7 @@ const diagnostics = {
 const settings = {
   sections: {
     provider_profiles: "Provider 配置",
+    llm_connections: "文本模型连接",
     gateway: "Gateway",
     automation: "自动化",
     appearance: "外观",
@@ -488,6 +489,43 @@ const settings = {
     set_default_action: "设为默认",
     remove_confirm_title: "移除 {name}？",
     remove_confirm_description: "此操作会将该 provider 配置从智绘姬中断开，已提交的任务不受影响。",
+  },
+  llm_connections: {
+    section_description:
+      "文本模型连接为助手和提示词构建提供语言模型能力。地址来自 Gateway 设置，API 密钥保存在宿主的密钥存储中。",
+    empty_description: "添加一个文本模型连接，助手和提示词构建才能调用语言模型。",
+    add_action: "添加文本模型连接",
+    dialog_add_title: "添加文本模型连接",
+    dialog_edit_title: "编辑文本模型连接",
+    dialog_description: "带 * 的字段为必填项。API 密钥需单独设置。",
+    provider_kind_label: "接口类型",
+    provider_kinds: {
+      openai_compatible: "OpenAI 兼容",
+      anthropic: "Anthropic",
+      google_generative: "Google Generative AI",
+      ollama: "Ollama",
+    },
+    route_label: "请求路径",
+    route_hint: "只能从该接口类型支持的路径中选择，地址由宿主提供。",
+    model_label: "模型",
+    model_hint: "该连接请求的模型标识，例如 gpt-4o-mini。",
+    temperature_label: "温度",
+    temperature_hint: "数值越低回复越稳定，越高变化越多。",
+    max_output_tokens_label: "最大输出 token 数",
+    default_badge: "默认",
+    set_default_action: "设为默认文本模型",
+    connection_test_action: "测试连接",
+    set_credential_action: "设置 API 密钥",
+    clear_credential_action: "移除 API 密钥",
+    credential_set: "API 密钥已存入宿主密钥存储",
+    credential_unset: "尚未设置 API 密钥",
+    credential_dialog_title: "设置 API 密钥",
+    credential_dialog_description:
+      "密钥会直接写入宿主的密钥存储，智绘姬只保留一个引用，不会显示也不会导出密钥本身。",
+    credential_label: "API 密钥",
+    remove_confirm_title: "移除 {name}？",
+    remove_confirm_description:
+      "此操作会将该文本模型从智绘姬中断开。已保存的 API 密钥仍留在宿主密钥存储中，需要你在那里另行删除。",
   },
   gateway: {
     endpoint_label: "Gateway 地址",

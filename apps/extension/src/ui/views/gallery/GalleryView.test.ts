@@ -193,6 +193,7 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
       jobs: [],
       submit_command: IDLE_COMMAND_STATE,
     },
+    llm_connections: { connections: [], selected_connection_id: null },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -269,6 +270,22 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     bulk_remove_prompt_presets: vi.fn(() => Promise.resolve()),
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
     select_provider_profile: vi.fn(),
+    select_llm_connection: vi.fn(),
+    save_llm_connection: vi.fn(
+      () => Promise.resolve({}) as ReturnType<StudioController["save_llm_connection"]>,
+    ),
+    remove_llm_connection: vi.fn(() => Promise.resolve()),
+    set_llm_connection_credential: vi.fn(
+      () =>
+        Promise.resolve({}) as ReturnType<StudioController["set_llm_connection_credential"]>,
+    ),
+    clear_llm_connection_credential: vi.fn(
+      () =>
+        Promise.resolve({}) as ReturnType<StudioController["clear_llm_connection_credential"]>,
+    ),
+    test_llm_connection: vi.fn(
+      () => Promise.resolve({}) as ReturnType<StudioController["test_llm_connection"]>,
+    ),
     save_provider_profile: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["save_provider_profile"]>,
     ),

@@ -1,4 +1,4 @@
-import type { TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
+import type { LlmConnectionProfile, TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
 import { describe, expect, it, vi, type Mock } from "vitest";
 
 import type {
@@ -16,6 +16,8 @@ import type {
   GenerationDomainEvent,
   GenerationJobSummary,
   GenerationSubmitCommand,
+  LlmConnectionsCapability,
+  LlmConnectionsDomainEvent,
   MigrationCapability,
   MigrationDomainEvent,
   MigrationSnapshot,
@@ -155,6 +157,20 @@ function build_mock_studio() {
     test_connection: vi.fn(),
   };
 
+  const llm_connections_harness = harness<
+    readonly LlmConnectionProfile[],
+    LlmConnectionsDomainEvent
+  >();
+  const llm_connections: LlmConnectionsCapability = {
+    load: llm_connections_harness.load,
+    subscribe: llm_connections_harness.sub.subscribe,
+    save: vi.fn(),
+    remove: vi.fn(),
+    set_credential: vi.fn(),
+    clear_credential: vi.fn(),
+    test_connection: vi.fn(),
+  };
+
   const prompt_presets_harness = harness<
     readonly PromptPresetSummary[],
     PromptPresetsDomainEvent
@@ -232,6 +248,7 @@ function build_mock_studio() {
   const capabilities: StudioCapabilities = {
     generation,
     profiles,
+    llm_connections,
     prompt_presets,
     assets,
     gallery,
@@ -245,6 +262,7 @@ function build_mock_studio() {
     capabilities,
     generation: { ...generation_harness, submit, cancel, retry },
     profiles: profiles_harness,
+    llm_connections: llm_connections_harness,
     prompt_presets: prompt_presets_harness,
     assets: assets_harness,
     gallery: gallery_harness,
@@ -264,6 +282,7 @@ type MockStudio = ReturnType<typeof build_mock_studio>;
 function resolve_all_defaults(mock: MockStudio): void {
   mock.generation.deferred_load.resolve([]);
   mock.profiles.deferred_load.resolve([]);
+  mock.llm_connections.deferred_load.resolve([]);
   mock.prompt_presets.deferred_load.resolve([]);
   mock.assets.deferred_load.resolve(EMPTY_ASSET_RECORDS);
   mock.gallery.deferred_load.resolve([]);
@@ -287,6 +306,7 @@ describe("create_studio_controller", () => {
     const start_promise = controller.start();
     mock.generation.deferred_load.resolve([]);
     mock.profiles.deferred_load.resolve([]);
+    mock.llm_connections.deferred_load.resolve([]);
     mock.prompt_presets.deferred_load.resolve([]);
     mock.assets.deferred_load.resolve(EMPTY_ASSET_RECORDS);
     mock.gallery.deferred_load.resolve([]);

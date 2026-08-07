@@ -39,6 +39,26 @@ export type {
 export { AssetIdSchema, ImageIdSchema, JobIdSchema, RequestIdSchema, UuidSchema } from "./ids.js";
 export type { AssetId, ImageId, JobId, RequestId, Uuid } from "./ids.js";
 
+export {
+  LLM_CREDENTIAL_KIND,
+  LLM_ROUTE_CATALOG,
+  LlmConnectionDraftSchema,
+  LlmConnectionProfileSchema,
+  LlmCredentialReferenceSchema,
+  LlmProviderKindSchema,
+  derive_llm_credential_reference,
+  is_allowed_llm_route,
+  llm_completion_routes,
+} from "./llm_connection.js";
+export type {
+  LlmConnectionDraft,
+  LlmConnectionProfile,
+  LlmConnectionTestResult,
+  LlmCredentialReference,
+  LlmProviderKind,
+  LlmRouteCatalogEntry,
+} from "./llm_connection.js";
+
 export { TavernCanvasMessageMetadataSchema } from "./message.js";
 export type { TavernCanvasMessageMetadata } from "./message.js";
 

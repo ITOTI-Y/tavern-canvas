@@ -57,6 +57,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       jobs: [],
       submit_command: IDLE_COMMAND_STATE,
     },
+    llm_connections: { connections: [], selected_connection_id: null },
     prompt: {
       presets: [PRESET_A, PRESET_B, PRESET_UNGROUPED],
       selected_preset_id: PRESET_A.id,

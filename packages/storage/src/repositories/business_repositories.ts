@@ -12,6 +12,8 @@ import {
   KnowledgeEntrySchema,
   type LegacyPreference,
   LegacyPreferenceSchema,
+  type LlmConnection,
+  LlmConnectionSchema,
   type MigrationJournal,
   MigrationJournalSchema,
   type NovelAiVibe,
@@ -150,6 +152,18 @@ export class LegacyPreferenceRepository extends IndexedDbRepository<
 > {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "legacy_preferences", LegacyPreferenceSchema);
+  }
+}
+
+/**
+ * Text-LLM connections. Constructed with provider-secret rejection enabled (the same flag
+ * `ProviderProfileRepository` uses), so a plaintext key smuggled into `payload` fails the write
+ * instead of landing in IndexedDB; the vault handle lives in the typed `credential_reference`
+ * column, which only accepts `tavern_canvas:`-prefixed references.
+ */
+export class LlmConnectionRepository extends IndexedDbRepository<"llm_connections", LlmConnection> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "llm_connections", LlmConnectionSchema, true);
   }
 }
 
@@ -473,6 +487,7 @@ export interface BusinessRepositories {
   migration_journal: MigrationJournalRepository;
   generation_jobs: GenerationJobRepository;
   legacy_preferences: LegacyPreferenceRepository;
+  llm_connections: LlmConnectionRepository;
 }
 
 export function create_business_repositories(
@@ -495,6 +510,7 @@ export function create_business_repositories(
     migration_journal: new MigrationJournalRepository(database),
     generation_jobs: new GenerationJobRepository(database),
     legacy_preferences: new LegacyPreferenceRepository(database),
+    llm_connections: new LlmConnectionRepository(database),
   };
 }
 

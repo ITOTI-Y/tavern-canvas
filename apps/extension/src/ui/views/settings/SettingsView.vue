@@ -7,6 +7,7 @@ import AppearanceSettings from "./AppearanceSettings.vue";
 import AutomationSettings from "./AutomationSettings.vue";
 import DataSettings from "./DataSettings.vue";
 import GatewaySettings from "./GatewaySettings.vue";
+import LlmConnections from "./LlmConnections.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
 import styles from "./settings.module.css";
 
@@ -30,6 +31,12 @@ const { t } = useI18n();
     <h1 class="tc-visually-hidden">{{ t("nav.settings") }}</h1>
 
     <ProviderProfiles :profiles="state.workbench.profiles" :controller="controller" />
+
+    <LlmConnections
+      :connections="state.llm_connections.connections"
+      :loading="state.loading.has('llm_connections')"
+      :controller="controller"
+    />
 
     <GatewaySettings
       :settings="state.settings.settings"
