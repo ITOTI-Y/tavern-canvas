@@ -63,6 +63,17 @@ const common = {
     title: "检查器",
     empty_title: "未选择内容",
     empty_description: "选择一个任务、图片或资产即可在此查看详情。",
+    selection: {
+      id_label: "ID",
+      action_label: "操作",
+      kind_generation_job: "生成任务",
+      kind_gallery_record: "图库图片",
+      kind_asset: "资产",
+      intent_modify_prompt: "修改提示词",
+      intent_regenerate: "重新生成",
+      intent_edit: "编辑",
+      intent_inpaint: "局部重绘",
+    },
   },
   notifications: {
     viewport_label: "通知",

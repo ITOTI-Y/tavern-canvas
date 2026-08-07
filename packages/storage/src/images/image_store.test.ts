@@ -326,6 +326,38 @@ describe("image_store content addressing", () => {
     ).rejects.toThrow(ImageMediaTypeError);
   });
 
+  it("stores a video/mp4 record with duration_ms, poster_image_id, and source_job_id (Stage 07 Task 3)", async () => {
+    const database = await open_database();
+    const poster = await put_image(
+      database,
+      NAMESPACE,
+      put_input({ id: IDS.second, bytes: jpeg_bytes(9), claimed_media_type: "image/jpeg" }),
+    );
+    const mp4_bytes = Uint8Array.from([
+      0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d,
+    ]);
+
+    const video = await put_image(
+      database,
+      NAMESPACE,
+      put_input({
+        bytes: mp4_bytes,
+        claimed_media_type: "video/mp4",
+        metadata: {
+          ...base_metadata(),
+          duration_ms: 4_200,
+          poster_image_id: poster.id,
+          source_job_id: IDS.job,
+        },
+      }),
+    );
+
+    expect(video.media_type).toBe("video/mp4");
+    expect(video.duration_ms).toBe(4_200);
+    expect(video.poster_image_id).toBe(poster.id);
+    expect(video.source_job_id).toBe(IDS.job);
+  });
+
   it("touches last_accessed_at for LRU tracking", async () => {
     const database = await open_database();
     await put_image(database, NAMESPACE, put_input());

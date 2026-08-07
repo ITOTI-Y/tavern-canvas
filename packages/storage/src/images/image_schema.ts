@@ -1,9 +1,9 @@
 import { ProviderIdSchema, RequestImageArgumentsSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
-import { ImageRecordSchema } from "../database_schema.js";
+import { ImageRecordSchema, UuidSchema } from "../database_schema.js";
 
-export const IMAGE_MEDIA_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
+export const IMAGE_MEDIA_TYPES = ["image/png", "image/jpeg", "image/webp", "video/mp4"] as const;
 export const ImageMediaTypeSchema = z.enum(IMAGE_MEDIA_TYPES);
 export type ImageMediaType = z.infer<typeof ImageMediaTypeSchema>;
 
@@ -29,6 +29,14 @@ export const ImageRecordFieldsSchema = z.strictObject({
   height: z.number().int().positive().optional(),
   persisted_url: z.url().max(2048).optional(),
   quarantined: z.boolean().default(false),
+  // Video-only, both optional (Stage 07 Task 3): `duration_ms` is read directly off the decoded
+  // media_type="video/mp4" record. `poster_image_id` links to a plain image/jpeg record created
+  // in the same namespace holding an extracted first-frame poster, rather than a second blob field
+  // on this record -- this reuses put_image/create_image_record unchanged for both the video bytes
+  // and the poster bytes instead of teaching the store a two-blob-per-record shape.
+  duration_ms: z.number().int().positive().optional(),
+  poster_image_id: UuidSchema.optional(),
+  source_job_id: UuidSchema.optional(),
 });
 export type ImageRecordFields = z.infer<typeof ImageRecordFieldsSchema>;
 
@@ -56,6 +64,11 @@ const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
 const JPEG_SIGNATURE = [0xff, 0xd8, 0xff];
 const WEBP_RIFF_SIGNATURE = [0x52, 0x49, 0x46, 0x46];
 const WEBP_MARKER = [0x57, 0x45, 0x42, 0x50];
+// ISO-BMFF/MP4: a 4-byte box-size field (value varies) followed by the 4-character box type. The
+// first top-level box is not always literally "ftyp" (some encoders emit "free"/"skip" first), but
+// every MP4 this app either generates or accepts starts with one, matching this app's own
+// fix_mp4_faststart (video_generation.ts) box-scan assumption.
+const MP4_FTYP_MARKER = [0x66, 0x74, 0x79, 0x70];
 
 function matches_signature(bytes: Uint8Array, signature: readonly number[], offset = 0): boolean {
   if (bytes.length < offset + signature.length) {
@@ -79,6 +92,9 @@ export function detect_image_media_type(bytes: Uint8Array): ImageMediaType | und
   }
   if (matches_signature(bytes, WEBP_RIFF_SIGNATURE) && matches_signature(bytes, WEBP_MARKER, 8)) {
     return "image/webp";
+  }
+  if (matches_signature(bytes, MP4_FTYP_MARKER, 4)) {
+    return "video/mp4";
   }
   return undefined;
 }

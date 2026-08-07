@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import type { InspectorSelection } from "../contracts/view_models.js";
 import styles from "./shell.module.css";
 
 // Matches TavernCanvasUiSettingsSchema's real stored bounds (packages/contracts/src/settings.ts):
@@ -14,6 +15,7 @@ const KEYBOARD_RESIZE_STEP = 16;
 
 const props = defineProps<{
   width: number;
+  selection?: InspectorSelection | null;
 }>();
 
 const emit = defineEmits<{
@@ -22,6 +24,53 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const is_dragging = ref(false);
+
+const selection_kind_label = computed(() => {
+  const selection = props.selection;
+  if (!selection) {
+    return null;
+  }
+  if (selection.kind === "generation_job") {
+    return t("common.inspector.selection.kind_generation_job");
+  }
+  if (selection.kind === "gallery_record") {
+    return t("common.inspector.selection.kind_gallery_record");
+  }
+  return t("common.inspector.selection.kind_asset");
+});
+
+const selection_id = computed(() => {
+  const selection = props.selection;
+  if (!selection) {
+    return null;
+  }
+  if (selection.kind === "generation_job") {
+    return selection.job_id;
+  }
+  if (selection.kind === "gallery_record") {
+    return selection.record_id;
+  }
+  return selection.asset_id;
+});
+
+const selection_intent_label = computed(() => {
+  const selection = props.selection;
+  if (selection?.kind !== "gallery_record") {
+    return null;
+  }
+  switch (selection.intent) {
+    case "modify_prompt":
+      return t("common.inspector.selection.intent_modify_prompt");
+    case "regenerate":
+      return t("common.inspector.selection.intent_regenerate");
+    case "edit":
+      return t("common.inspector.selection.intent_edit");
+    case "inpaint":
+      return t("common.inspector.selection.intent_inpaint");
+    default:
+      return null;
+  }
+});
 
 function clamp_width(value: number): number {
   return Math.min(MAX_STORED_WIDTH, Math.max(MIN_STORED_WIDTH, value));
@@ -90,8 +139,23 @@ function on_key_down(event: KeyboardEvent): void {
         <span>{{ t("common.inspector.title") }}</span>
       </div>
       <div :class="styles.inspector_body">
-        <p>{{ t("common.inspector.empty_title") }}</p>
-        <p>{{ t("common.inspector.empty_description") }}</p>
+        <template v-if="selection">
+          <p :class="styles.inspector_selection_kind">{{ selection_kind_label }}</p>
+          <dl :class="styles.inspector_selection">
+            <div>
+              <dt>{{ t("common.inspector.selection.id_label") }}</dt>
+              <dd class="tc-tabular-nums">{{ selection_id }}</dd>
+            </div>
+            <div v-if="selection_intent_label">
+              <dt>{{ t("common.inspector.selection.action_label") }}</dt>
+              <dd>{{ selection_intent_label }}</dd>
+            </div>
+          </dl>
+        </template>
+        <template v-else>
+          <p>{{ t("common.inspector.empty_title") }}</p>
+          <p>{{ t("common.inspector.empty_description") }}</p>
+        </template>
       </div>
     </div>
   </div>

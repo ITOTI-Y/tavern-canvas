@@ -297,6 +297,30 @@ describe("provider request contracts", () => {
     ).toBe(true);
   });
 
+  it("accepts a NovelAI infill request with image_asset_id, mask_asset_id, and inpaint_strength (Stage 07 Task 3)", () => {
+    const result = NovelAiRequestSchema.safeParse(
+      novelai_request({
+        action: "infill",
+        image_asset_id: ASSET_ID,
+        mask_asset_id: ASSET_ID,
+        inpaint_strength: 0.54,
+      }),
+    );
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects a NovelAI infill request missing either asset, and rejects inpaint-only fields on plain generation", () => {
+    for (const overrides of [
+      { action: "infill", mask_asset_id: ASSET_ID },
+      { action: "infill", image_asset_id: ASSET_ID },
+      { image_asset_id: ASSET_ID },
+      { mask_asset_id: ASSET_ID },
+      { inpaint_strength: 0.5 },
+    ]) {
+      expect(NovelAiRequestSchema.safeParse(novelai_request(overrides)).success).toBe(false);
+    }
+  });
+
   it("allows only typed stored ComfyUI workflow bindings", () => {
     expect(
       ComfyUiRequestSchema.safeParse(

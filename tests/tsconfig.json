@@ -6,6 +6,7 @@
     "paths": {
       "@tavern-canvas/contracts": ["../packages/contracts/src/index.ts"],
       "@tavern-canvas/core": ["../packages/core/src/index.ts"],
+      "@tavern-canvas/providers": ["../packages/providers/src/index.ts"],
       "@tavern-canvas/storage": ["../packages/storage/src/index.ts"],
       "@tavern-canvas/vocabulary": ["../packages/vocabulary/src/index.ts"],
       "@tavern-canvas/vocabulary-builder": ["../tools/vocabulary_builder/src/index.ts"],

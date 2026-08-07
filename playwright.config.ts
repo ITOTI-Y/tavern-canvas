@@ -22,6 +22,13 @@ const VOCABULARY_HARNESS_URL = `http://127.0.0.1:${String(VOCABULARY_HARNESS_POR
 const STUDIO_HARNESS_PORT = 4174;
 const STUDIO_HARNESS_URL = `http://localhost:${String(STUDIO_HARNESS_PORT)}`;
 
+// Stage 07 Task 3: real-Chromium proof that InpaintDialog.vue's Pointer Events (mouse/pen/touch),
+// canvas rendering, and media_command_service.ts's job flows behave correctly outside Node/
+// happy-dom. tests/harness/media_dialogs_host.html mounts these dialogs directly (see that file's
+// own header comment for why it does not reuse studio_host.html).
+const MEDIA_DIALOGS_HARNESS_PORT = 4175;
+const MEDIA_DIALOGS_HARNESS_URL = `http://localhost:${String(MEDIA_DIALOGS_HARNESS_PORT)}`;
+
 // `webServer` is a top-level Playwright option: every entry starts before any test runs,
 // regardless of which spec files were actually requested on the CLI. The two harnesses' startup
 // costs are too asymmetric to always pay both (vocabulary's boots a 500,000-record benchmark
@@ -43,6 +50,8 @@ const wants_vocabulary =
   !explicit_selection || requested_spec_paths.some((path) => path.includes("vocabulary_"));
 const wants_studio =
   !explicit_selection || requested_spec_paths.some((path) => path.includes("studio_"));
+const wants_media_dialogs =
+  !explicit_selection || requested_spec_paths.some((path) => path.includes("media_dialogs_"));
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -70,6 +79,16 @@ export default defineConfig({
       name: "studio",
       testMatch: /studio_.*\.spec\.ts$/u,
       use: { ...devices["Desktop Chrome"], baseURL: STUDIO_HARNESS_URL },
+    },
+    {
+      name: "media_dialogs_desktop",
+      testMatch: /media_dialogs_.*\.spec\.ts$/u,
+      use: { ...devices["Desktop Chrome"], baseURL: MEDIA_DIALOGS_HARNESS_URL },
+    },
+    {
+      name: "media_dialogs_mobile",
+      testMatch: /media_dialogs_.*\.spec\.ts$/u,
+      use: { ...devices["Pixel 7"], baseURL: MEDIA_DIALOGS_HARNESS_URL },
     },
   ],
   webServer: [
@@ -102,6 +121,20 @@ export default defineConfig({
               "pnpm exec vite build --config tests/harness/vite.config.studio.ts && " +
               `pnpm exec vite preview --config tests/harness/vite.config.studio.ts --port ${String(STUDIO_HARNESS_PORT)} --strictPort`,
             url: `${STUDIO_HARNESS_URL}/studio_host.html`,
+            reuseExistingServer: false,
+            timeout: 5 * 60_000,
+            stdout: "pipe" as const,
+            stderr: "pipe" as const,
+          },
+        ]
+      : []),
+    ...(wants_media_dialogs
+      ? [
+          {
+            command:
+              "pnpm exec vite build --config tests/harness/vite.config.media_dialogs.ts && " +
+              `pnpm exec vite preview --config tests/harness/vite.config.media_dialogs.ts --port ${String(MEDIA_DIALOGS_HARNESS_PORT)} --strictPort`,
+            url: `${MEDIA_DIALOGS_HARNESS_URL}/media_dialogs_host.html`,
             reuseExistingServer: false,
             timeout: 5 * 60_000,
             stdout: "pipe" as const,

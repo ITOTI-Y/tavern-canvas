@@ -1,0 +1,179 @@
+/*
+ * Shared styles for apps/extension/src/ui/dialogs -- GenerationParametersDialog, ImageEditDialog,
+ * InpaintDialog. Radii/spacing/motion/color all reference apps/extension/src/ui/styles/tokens.css;
+ * no component here invents its own value (style_contract.test.ts enforces this mechanically for
+ * radius/motion/color-family).
+ */
+
+/* GenerationParametersDialog -------------------------------------------------------------- */
+
+.paramsBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.paramsDimensionRow {
+  display: flex;
+  gap: 12px;
+}
+
+.paramsDimensionRow > * {
+  flex: 1;
+}
+
+.paramsAspectRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.paramsAspectField {
+  flex: 1;
+}
+
+/* ImageEditDialog -------------------------------------------------------------------------- */
+
+.editBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editTextareaWrap {
+  position: relative;
+}
+
+.editHighlightLayer {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 8px 10px;
+  overflow: hidden;
+  color: transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font: inherit;
+  pointer-events: none;
+}
+
+.editHighlightMatch {
+  border-radius: var(--tc-radius-status);
+  background-color: color-mix(in srgb, var(--tc-accent) 22%, transparent);
+}
+
+.editTextarea {
+  position: relative;
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  background-color: transparent;
+  color: var(--tc-text);
+  padding: 8px 10px;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.editTextarea:focus-visible {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: 2px;
+}
+
+.editTagActions {
+  display: flex;
+  gap: 8px;
+}
+
+.editSubmenu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.editFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* InpaintDialog ------------------------------------------------------------------------------ */
+
+/* Overrides components.module.css's .dialogContent 480px cap (right for a form, wrong for an
+   image editor) -- see InpaintDialog.vue's own header comment. The class list order in the
+   template (component_styles.dialogContent first, this second) puts this last in source order,
+   so its `width` wins the cascade at equal specificity without `!important`. */
+.inpaintDialogContent {
+  width: min(90vw, 720px);
+}
+
+.inpaintBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Never resizes on status change: fixed at construction from the loaded bitmap's own aspect
+     ratio (set inline via `--tc-inpaint-aspect`), not recalculated when submit/pending/error
+     state changes. */
+  width: 100%;
+}
+
+.inpaintCanvasFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--tc-inpaint-aspect, 1);
+  overflow: hidden;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-image);
+  background-color: var(--tc-surface-raised);
+  touch-action: none;
+}
+
+.inpaintCanvasFrame canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.inpaintToolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.inpaintToolbarDivider {
+  width: 1px;
+  align-self: stretch;
+  background-color: var(--tc-divider);
+  margin: 0 4px;
+}
+
+.inpaintBrushRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inpaintBrushRow > * {
+  flex: 1;
+}
+
+.inpaintPromptGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inpaintFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.inpaintDimensionError {
+  margin: 0;
+  color: var(--tc-error);
+  font-size: 12px;
+}

@@ -119,6 +119,7 @@ function select_route(route: StudioRoute): void {
     <ContextInspector
       v-if="viewport === 'desktop' && !props.state.inspector.collapsed"
       :width="props.state.inspector.width"
+      :selection="props.state.inspector.selected_record"
       @resize="(width) => emit('resize-inspector', width)"
     />
 
@@ -133,6 +134,7 @@ function select_route(route: StudioRoute): void {
     <InspectorSheet
       v-if="viewport === 'mobile'"
       :open="mobile_inspector_open"
+      :selection="props.state.inspector.selected_record"
       @update:open="(open) => handle_set_inspector_collapsed(!open)"
     />
   </div>

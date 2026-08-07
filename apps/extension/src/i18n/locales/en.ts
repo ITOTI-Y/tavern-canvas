@@ -63,6 +63,17 @@ const common = {
     title: "Inspector",
     empty_title: "Nothing selected",
     empty_description: "Select a job, image, or asset to see its details here.",
+    selection: {
+      id_label: "ID",
+      action_label: "Action",
+      kind_generation_job: "Generation job",
+      kind_gallery_record: "Gallery image",
+      kind_asset: "Asset",
+      intent_modify_prompt: "Modify prompt",
+      intent_regenerate: "Regenerate",
+      intent_edit: "Edit",
+      intent_inpaint: "Inpaint",
+    },
   },
   notifications: {
     viewport_label: "Notifications",
