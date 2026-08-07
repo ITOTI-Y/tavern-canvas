@@ -43,7 +43,6 @@ var e = {
 			download: "下载",
 			search: "搜索",
 			clear: "清空",
-			select_all: "全选",
 			deselect_all: "取消全选",
 			back: "返回",
 			next: "下一步",
@@ -60,6 +59,10 @@ var e = {
 			title: "检查器",
 			empty_title: "未选择内容",
 			empty_description: "选择一个任务、图片或资产即可在此查看详情。"
+		},
+		notifications: {
+			viewport_label: "通知",
+			announce_label: "通知"
 		}
 	},
 	status: {
@@ -146,6 +149,7 @@ var e = {
 			completed_images_title: "已完成的图片",
 			image_alt: "生成的图片 {n}"
 		},
+		prefilled_from_gallery_notice: "已从所选图片加载提示词。",
 		submit: {
 			action: "生成",
 			validation: {
@@ -351,7 +355,8 @@ var e = {
 			edit_action: "编辑图片",
 			inpaint_action: "局部重绘",
 			source_message_action: "跳转到来源消息",
-			parameters_unavailable: "这张图片中没有找到嵌入的生成参数。"
+			parameters_unavailable: "这张图片中没有找到嵌入的生成参数。",
+			actions_unavailable_hint: "编辑图片、局部重绘和跳转到来源消息在当前版本中暂不可用。"
 		},
 		selection: {
 			selected_count: "已选中 {n} 张图片 | 已选中 {n} 张图片",
@@ -365,7 +370,9 @@ var e = {
 		},
 		pin_action: "置顶",
 		unpin_action: "取消置顶",
-		download_action: "下载"
+		download_action: "下载",
+		select_image_action: "选择图片",
+		open_preview_action: "打开预览"
 	},
 	diagnostics: {
 		capability_matrix: {
@@ -561,4 +568,4 @@ var e = {
 //#endregion
 export { e as zh_cn_messages };
 
-//# sourceMappingURL=zh_cn-Ccl5jxbc.js.map
+//# sourceMappingURL=zh_cn-BriIWeKH.js.map
