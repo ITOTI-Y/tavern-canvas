@@ -164,6 +164,22 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     expect(safe_area).toMatch(/env\(safe-area-inset-bottom/u);
   });
 
+  // Regression test: `.task_strip`'s `grid-area: taskstrip` (declared once, shared by both
+  // viewports) silently no-ops when the current viewport's `grid-template-areas` has no
+  // "taskstrip" area -- the item then falls into grid auto-placement, landing in an unplanned
+  // implicit row that breaks the mobile shell's fixed 100dvh layout. Undetectable before the
+  // fix wave that made `state.tasks` non-empty (TaskStrip never rendered on any viewport until
+  // then), caught by an actual browser render (Playwright), not happy-dom.
+  it("mobile grid-template-areas reserves a taskstrip row, so .task_strip's grid-area actually resolves", () => {
+    const areas = declaration('.shell[data-viewport="mobile"]', "grid-template-areas");
+    expect(areas).toMatch(/taskstrip/u);
+    // 4 tracks: 56px topbar, flexible workspace, auto (content-sized) taskstrip, 64px bottomnav --
+    // matched as a whole pattern rather than split on whitespace, since `minmax(0, 1fr)`'s own
+    // internal comma-space would otherwise miscount as two tokens.
+    const rows = declaration('.shell[data-viewport="mobile"]', "grid-template-rows");
+    expect(rows).toMatch(/^56px\s+minmax\(0,\s*1fr\)\s+auto\s+64px$/u);
+  });
+
   it("desktop rail and mobile bottom-nav items declare fixed dimensions with no per-state override", () => {
     // The base rule sets width/height once; no `[data-selected="true"]` (or any other state)
     // block may redeclare either, so a route button never changes size when it becomes selected.

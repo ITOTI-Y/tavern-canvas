@@ -465,6 +465,103 @@ describe("create_studio_controller", () => {
     expect(failure?.code).not.toContain(" ");
     expect(failure?.code).not.toContain("Could not reach");
   });
+
+  it("populates state.tasks from a running job event, so the task strip is not dead code", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    expect(controller.state.tasks).toEqual([]);
+
+    mock.generation.sub.emit({
+      type: "job_updated",
+      job: {
+        job_id: JOB_ID,
+        request_id: JOB_ID,
+        provider_id: "sd_webui",
+        state: "running",
+        image_count: 4,
+        completed_image_ids: [PRESET_ID, PRESET_ID_2],
+        error: null,
+        submitted_at: "2026-01-01T00:00:00Z",
+      },
+    });
+
+    expect(controller.state.tasks).toEqual([
+      { id: JOB_ID, label_code: "status.running", status: "pending", progress: 0.5 },
+    ]);
+    // The job list itself is unaffected -- tasks is a derived projection, not a replacement.
+    expect(controller.state.workbench.jobs).toHaveLength(1);
+  });
+
+  it("derives tasks from the initial job load and drops a job once it reaches a terminal state", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    mock.generation.deferred_load.resolve([
+      {
+        job_id: JOB_ID,
+        request_id: JOB_ID,
+        provider_id: "sd_webui",
+        state: "queued",
+        image_count: 1,
+        completed_image_ids: [],
+        error: null,
+        submitted_at: "2026-01-01T00:00:00Z",
+      },
+    ]);
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    expect(controller.state.tasks).toEqual([
+      { id: JOB_ID, label_code: "status.pending", status: "pending", progress: 0 },
+    ]);
+
+    mock.generation.sub.emit({
+      type: "job_updated",
+      job: {
+        job_id: JOB_ID,
+        request_id: JOB_ID,
+        provider_id: "sd_webui",
+        state: "completed",
+        image_count: 1,
+        completed_image_ids: [JOB_ID],
+        error: null,
+        submitted_at: "2026-01-01T00:00:00Z",
+      },
+    });
+
+    expect(controller.state.tasks).toEqual([]);
+    expect(controller.state.workbench.jobs).toHaveLength(1);
+  });
+
+  it("reflects a failed job in tasks as a status.failed error entry", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    mock.generation.sub.emit({
+      type: "job_updated",
+      job: {
+        job_id: JOB_ID,
+        request_id: JOB_ID,
+        provider_id: "sd_webui",
+        state: "failed",
+        image_count: 1,
+        completed_image_ids: [],
+        error: { code: "timed_out", retryable: true },
+        submitted_at: "2026-01-01T00:00:00Z",
+      },
+    });
+
+    expect(controller.state.tasks).toEqual([
+      { id: JOB_ID, label_code: "status.failed", status: "error", progress: 0 },
+    ]);
+  });
 });
 
 function build_prompt_draft(overrides: Partial<PromptPresetDraft> = {}): PromptPresetDraft {
@@ -562,7 +659,12 @@ describe("create_studio_controller: Task 5 command extensions", () => {
     const start_promise = controller.start();
     mock.prompt_presets.deferred_load.resolve([
       { id: PRESET_ID, display_name: "Preset A", group: null, updated_at: "2026-01-01T00:00:00Z" },
-      { id: PRESET_ID_2, display_name: "Preset B", group: null, updated_at: "2026-01-01T00:00:00Z" },
+      {
+        id: PRESET_ID_2,
+        display_name: "Preset B",
+        group: null,
+        updated_at: "2026-01-01T00:00:00Z",
+      },
     ]);
     resolve_all_defaults(mock);
     await start_promise;

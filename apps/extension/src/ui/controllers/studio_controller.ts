@@ -1,4 +1,5 @@
 import type {
+  GenerationState,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -13,6 +14,7 @@ import type {
   DiagnosticsDomainEvent,
   GalleryDomainEvent,
   GenerationDomainEvent,
+  GenerationJobSummary,
   GenerationSubmitCommand,
   MigrationDomainEvent,
   ProfileConnectionTestResult,
@@ -42,6 +44,7 @@ import {
   type SettingsViewModel,
   type StudioRoute,
   type StudioState,
+  type TaskStripItemViewModel,
   type UiFailure,
   type WorkbenchViewModel,
 } from "../contracts/view_models.js";
@@ -194,6 +197,52 @@ function upsert_by_id<TItem>(
   return next;
 }
 
+/** Generation states the task strip mirrors -- terminal states (completed/cancelled/attached/
+ * orphaned) drop off the strip immediately, since Active jobs (workbench.module.css) and Gallery
+ * already surface finished work; the strip is only for in-flight/just-failed generation. */
+const TASK_STRIP_STATES: ReadonlySet<GenerationState> = new Set([
+  "queued",
+  "preparing",
+  "submitting",
+  "running",
+  "failed",
+]);
+
+/** `TaskStripItemViewModel.status` only has three values (pending/success/error, see
+ * shell.module.css's chip-dot styling) -- every non-failed in-flight state maps to "pending". */
+function job_to_task_status(state: GenerationState): TaskStripItemViewModel["status"] {
+  return state === "failed" ? "error" : "pending";
+}
+
+/** `label_code` must be a literal `TASK_LABEL_RESOLVERS` key (TaskStrip.vue) -- "running" gets its
+ * own code so the strip can distinguish it from merely-queued work; every other tracked state
+ * reads as "pending". */
+function job_to_task_label_code(state: GenerationState): string {
+  if (state === "running") {
+    return "status.running";
+  }
+  if (state === "failed") {
+    return "status.failed";
+  }
+  return "status.pending";
+}
+
+function job_to_task(job: GenerationJobSummary): TaskStripItemViewModel {
+  return {
+    id: job.job_id,
+    label_code: job_to_task_label_code(job.state),
+    status: job_to_task_status(job.state),
+    progress: job.image_count > 0 ? job.completed_image_ids.length / job.image_count : null,
+  };
+}
+
+/** Derives `StudioState.tasks` from `workbench.jobs` -- the task strip is meant to mirror active
+ * generation jobs (task-2-brief.md), so every mutation of `jobs` recomputes `tasks` from the same
+ * list in the same patch instead of leaving the strip's own state to drift out of sync. */
+function jobs_to_tasks(jobs: readonly GenerationJobSummary[]): readonly TaskStripItemViewModel[] {
+  return jobs.filter((job) => TASK_STRIP_STATES.has(job.state)).map(job_to_task);
+}
+
 /**
  * Runs a mutating command with pending/success/error tracking and duplicate-submission
  * prevention. A command already `pending` short-circuits to a resolved no-op instead of
@@ -315,6 +364,15 @@ class StudioControllerImpl implements StudioController {
     this.#patch({ workbench: { ...this.#state.workbench, ...patch } });
   }
 
+  /** Every call site that replaces `workbench.jobs` routes through here so `tasks` (the task
+   * strip's own state) is recomputed from the same list in the same patch -- see `jobs_to_tasks`. */
+  #patch_jobs(jobs: readonly GenerationJobSummary[]): void {
+    this.#patch({
+      workbench: { ...this.#state.workbench, jobs },
+      tasks: jobs_to_tasks(jobs),
+    });
+  }
+
   #patch_prompt(patch: Partial<PromptViewModel>): void {
     this.#patch({ prompt: { ...this.#state.prompt, ...patch } });
   }
@@ -390,13 +448,9 @@ class StudioControllerImpl implements StudioController {
       return;
     }
     if (event.type === "job_updated") {
-      this.#patch_workbench({
-        jobs: upsert_by_id(this.#state.workbench.jobs, event.job, (job) => job.job_id),
-      });
+      this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, event.job, (job) => job.job_id));
     } else {
-      this.#patch_workbench({
-        jobs: this.#state.workbench.jobs.filter((job) => job.job_id !== event.job_id),
-      });
+      this.#patch_jobs(this.#state.workbench.jobs.filter((job) => job.job_id !== event.job_id));
     }
   }
 
@@ -521,7 +575,7 @@ class StudioControllerImpl implements StudioController {
         "generation",
         () => this.#capabilities.generation.load(),
         (jobs) => {
-          this.#patch_workbench({ jobs });
+          this.#patch_jobs(jobs);
         },
       ),
       this.#load_slice(
@@ -636,9 +690,7 @@ class StudioControllerImpl implements StudioController {
       },
       async () => {
         const job = await this.#capabilities.generation.submit(command);
-        this.#patch_workbench({
-          jobs: upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id),
-        });
+        this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
         return job;
       },
     );
@@ -646,16 +698,18 @@ class StudioControllerImpl implements StudioController {
 
   async cancel_generation(job_id: Uuid): Promise<void> {
     const job = await this.#capabilities.generation.cancel(job_id);
-    this.#patch_workbench({
-      jobs: upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id),
-    });
+    if (this.#stopped) {
+      return;
+    }
+    this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
   }
 
   async retry_generation(job_id: Uuid): Promise<void> {
     const job = await this.#capabilities.generation.retry(job_id);
-    this.#patch_workbench({
-      jobs: upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id),
-    });
+    if (this.#stopped) {
+      return;
+    }
+    this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
   }
 
   select_provider_profile(profile_id: Uuid | null): void {
@@ -699,6 +753,9 @@ class StudioControllerImpl implements StudioController {
 
   async remove_prompt_preset(preset_id: Uuid): Promise<void> {
     await this.#capabilities.prompt_presets.remove(preset_id);
+    if (this.#stopped) {
+      return;
+    }
     this.#patch_prompt({
       presets: this.#state.prompt.presets.filter((p) => p.id !== preset_id),
       selected_preset_id:
@@ -711,6 +768,9 @@ class StudioControllerImpl implements StudioController {
 
   async bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void> {
     await this.#capabilities.prompt_presets.bulk_remove(preset_ids);
+    if (this.#stopped) {
+      return;
+    }
     const removed = new Set(preset_ids);
     this.#patch_prompt({
       presets: this.#state.prompt.presets.filter((p) => !removed.has(p.id)),
@@ -891,6 +951,9 @@ class StudioControllerImpl implements StudioController {
     asset: Omit<AssetRecordSummary, "updated_at">,
   ): Promise<void> {
     const saved = await this.#capabilities.assets.save(category, asset);
+    if (this.#stopped) {
+      return;
+    }
     this.#patch_assets({
       records: {
         ...this.#state.assets.records,
@@ -901,6 +964,9 @@ class StudioControllerImpl implements StudioController {
 
   async remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void> {
     await this.#capabilities.assets.remove(category, asset_id);
+    if (this.#stopped) {
+      return;
+    }
     this.#patch_assets({
       records: {
         ...this.#state.assets.records,
@@ -911,6 +977,9 @@ class StudioControllerImpl implements StudioController {
 
   async reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void> {
     await this.#capabilities.assets.reorder(category, ordered_ids);
+    if (this.#stopped) {
+      return;
+    }
     const by_id = new Map(this.#state.assets.records[category].map((a) => [a.id, a] as const));
     const reordered = ordered_ids
       .map((id) => by_id.get(id))
@@ -941,6 +1010,9 @@ class StudioControllerImpl implements StudioController {
 
   async pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void> {
     await this.#capabilities.gallery.pin(record_id, pinned);
+    if (this.#stopped) {
+      return;
+    }
     this.#patch_gallery({
       records: this.#state.gallery.records.map((record) =>
         record.id === record_id ? { ...record, pinned } : record,
@@ -950,6 +1022,9 @@ class StudioControllerImpl implements StudioController {
 
   async detach_gallery_record(record_id: Uuid): Promise<void> {
     await this.#capabilities.gallery.detach_from_message(record_id);
+    if (this.#stopped) {
+      return;
+    }
     // GalleryRecordSummary has no dedicated "detached" flag (see ui_capabilities.ts) -- `quarantined`
     // is the closest existing signal for "no longer attached to a live message" and is what the
     // Gallery view's orphan filter reads (implementer judgment call, ledgered for stage review).
@@ -962,6 +1037,9 @@ class StudioControllerImpl implements StudioController {
 
   async delete_gallery_record(record_id: Uuid): Promise<void> {
     await this.#capabilities.gallery.delete_record(record_id);
+    if (this.#stopped) {
+      return;
+    }
     this.#patch_gallery({
       records: this.#state.gallery.records.filter((record) => record.id !== record_id),
       selected_record_id:

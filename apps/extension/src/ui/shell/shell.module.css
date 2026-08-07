@@ -35,16 +35,21 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Mobile: one content layer (top bar, workspace, bottom nav) at 100dvh; the inspector becomes a
- * full-width sheet layered on top instead of a persistent column.
+ * Mobile: one content layer (top bar, workspace, content-sized task strip, bottom nav) at 100dvh;
+ * the inspector becomes a full-width sheet layered on top instead of a persistent column.
+ * `taskstrip` mirrors desktop's own `auto` row (fix-wave addition) -- omitting it here left
+ * `.task_strip`'s `grid-area: taskstrip` matching no named area on this viewport, so it fell back
+ * to grid auto-placement and landed in an unplanned implicit row that broke the fixed 100dvh
+ * layout; unreachable before this fix wave because `state.tasks` was never non-empty.
  * --------------------------------------------------------------------------- */
 
 .shell[data-viewport="mobile"] {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 56px minmax(0, 1fr) 64px;
+  grid-template-rows: 56px minmax(0, 1fr) auto 64px;
   grid-template-areas:
     "topbar"
     "workspace"
+    "taskstrip"
     "bottomnav";
   height: 100dvh;
 }
