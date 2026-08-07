@@ -144,6 +144,7 @@ function reload(): void {
     <StudioShell
       v-else-if="studio"
       :state="studio.state.value"
+      :controller="studio.controller"
       @select-route="select_route"
       @set-inspector-collapsed="set_inspector_collapsed"
       @resize-inspector="resize_inspector"

@@ -8,6 +8,8 @@ import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
+import { create_studio_controller } from "../controllers/studio_controller.js";
+import { create_unavailable_capabilities } from "../controllers/unavailable_capabilities.js";
 import { IDLE_COMMAND_STATE, type StudioState } from "../contracts/view_models.js";
 import { en_messages } from "../../i18n/locales/en.js";
 import { zh_cn_messages } from "../../i18n/locales/zh_cn.js";
@@ -82,9 +84,16 @@ function mount_shell(options: MountOptions = {}) {
   const host = document.createElement("div");
   document.body.append(host);
 
+  // A real controller (over the same honest "unavailable" capabilities production uses --
+  // unavailable_capabilities.ts) rather than a hand-rolled mock: StudioShell now mounts the
+  // routed view for real (StudioWorkspace.vue), and every wired-through view expects a genuine
+  // `StudioController` instance, not just a same-shaped object.
+  const controller = create_studio_controller({ capabilities: create_unavailable_capabilities() });
+
   const wrapper = mount(StudioShell, {
     props: {
       state: build_state(options.state),
+      controller,
       viewport: options.viewport ?? "desktop",
     },
     global: {
@@ -474,9 +483,9 @@ describe("StudioShell shell-level states", () => {
     expect(wrapper.emitted("select-route")).toEqual([["diagnostics"]]);
   });
 
-  it("renders the normal placeholder once nothing is loading and nothing has failed", () => {
+  it("renders the routed workbench view once nothing is loading and nothing has failed", () => {
     const { wrapper } = mount_shell();
-    expect(wrapper.find('[data-testid="workspace-placeholder"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="workbench-view"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="partial-banner"]').exists()).toBe(false);
   });

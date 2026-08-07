@@ -146,15 +146,6 @@
   padding: 24px;
 }
 
-.workspace_placeholder_title {
-  font-weight: 600;
-}
-
-.workspace_placeholder_description {
-  max-width: 48ch;
-  color: var(--tc-text-muted);
-}
-
 .inspector {
   grid-area: inspector;
   display: flex;

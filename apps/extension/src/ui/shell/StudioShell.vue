@@ -3,18 +3,21 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StudioRoute, StudioState } from "../contracts/view_models.js";
+import type { StudioController } from "../controllers/studio_controller.js";
 import ContextInspector from "./ContextInspector.vue";
 import DesktopIconRail from "./DesktopIconRail.vue";
 import InspectorSheet from "./InspectorSheet.vue";
 import MobileBottomNav from "./MobileBottomNav.vue";
 import { route_label } from "./route_nav.js";
 import styles from "./shell.module.css";
+import StudioWorkspace from "./StudioWorkspace.vue";
 import TaskStrip from "./TaskStrip.vue";
 import TopCommandBar from "./TopCommandBar.vue";
 import { use_shell_viewport, type ShellViewport } from "./use_shell_viewport.js";
 
 const props = defineProps<{
   state: StudioState;
+  controller: StudioController;
   /** Forces desktop/mobile instead of tracking `matchMedia` -- see use_shell_viewport.ts. */
   viewport?: ShellViewport;
 }>();
@@ -35,7 +38,6 @@ const viewport = use_shell_viewport(props.viewport);
 // already failed.
 const is_loading = computed(() => props.state.loading.size > 0);
 const has_failures = computed(() => props.state.failures.size > 0);
-const workspace_title = computed(() => route_label(t, props.state.route));
 const inspector_style = computed(() => ({
   "--tc-inspector-width": `${String(props.state.inspector.width)}px`,
 }));
@@ -111,12 +113,7 @@ function select_route(route: StudioRoute): void {
         <div :class="styles.skeleton_block" style="width: 90%; height: 14px; margin-top: 12px" />
         <div :class="styles.skeleton_block" style="width: 75%; height: 14px; margin-top: 8px" />
       </div>
-      <div v-else :class="styles.workspace_placeholder" data-testid="workspace-placeholder">
-        <p :class="styles.workspace_placeholder_title">{{ workspace_title }}</p>
-        <p :class="styles.workspace_placeholder_description">
-          {{ t("common.workspace_unavailable") }}
-        </p>
-      </div>
+      <StudioWorkspace v-else :state="props.state" :controller="props.controller" />
     </main>
 
     <ContextInspector
