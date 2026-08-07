@@ -142,7 +142,11 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 950, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 600, evicted_sha256: [record.sha256], excluded_count: 0 });
+    expect(result).toEqual({
+      reclaimed_bytes: 600,
+      evicted_sha256: [record.sha256],
+      excluded_count: 0,
+    });
     expect(await new ImageBlobRepository(database).get(record.sha256)).toBeNull();
 
     const retained = await new GalleryImageRecordRepository(database).get(NAMESPACE, IDS.a);
@@ -206,7 +210,11 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 900, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 500, evicted_sha256: [first.sha256], excluded_count: 0 });
+    expect(result).toEqual({
+      reclaimed_bytes: 500,
+      evicted_sha256: [first.sha256],
+      excluded_count: 0,
+    });
   });
 
   it("stops cleanup once the target pressure ratio is reached and reports reclaimed bytes", async () => {
@@ -236,7 +244,11 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 1000, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 300, evicted_sha256: [small.sha256, medium.sha256], excluded_count: 0 });
+    expect(result).toEqual({
+      reclaimed_bytes: 300,
+      evicted_sha256: [small.sha256, medium.sha256],
+      excluded_count: 0,
+    });
     expect(await new ImageBlobRepository(database).get(large.sha256)).not.toBeNull();
   });
 
@@ -281,7 +293,11 @@ describe("lru_eviction", () => {
       () => Promise.resolve({ usage: 800, quota: 1000 }),
     );
 
-    expect(result).toEqual({ reclaimed_bytes: 400, evicted_sha256: [eligible.sha256], excluded_count: 1 });
+    expect(result).toEqual({
+      reclaimed_bytes: 400,
+      evicted_sha256: [eligible.sha256],
+      excluded_count: 1,
+    });
     expect(await new ImageBlobRepository(database).get(foreign_sha256)).not.toBeNull();
   });
 
@@ -307,7 +323,11 @@ describe("lru_eviction", () => {
       { start_pressure_ratio: 0.8, target_pressure_ratio: 0.5 },
       () => Promise.resolve({ usage: 900, quota: 1000 }),
     );
-    expect(eviction).toEqual({ reclaimed_bytes: 500, evicted_sha256: [first.sha256], excluded_count: 0 });
+    expect(eviction).toEqual({
+      reclaimed_bytes: 500,
+      evicted_sha256: [first.sha256],
+      excluded_count: 0,
+    });
     expect(await new ImageBlobRepository(database).get(first.sha256)).toBeNull();
     // Both referencing image_records rows survive eviction — only the blob
     // row (and its ref_count) is gone.

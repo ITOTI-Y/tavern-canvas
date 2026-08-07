@@ -138,10 +138,7 @@ export class VocabularyShardRepository extends IndexedDbRepository<
  * quarantine crash on whichever shape they did not expect (Stage 04 review
  * finding I1).
  */
-export class ImageRecordRepository extends IndexedDbRepository<
-  "image_records",
-  ImageRecordUnion
-> {
+export class ImageRecordRepository extends IndexedDbRepository<"image_records", ImageRecordUnion> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "image_records", ImageRecordUnionSchema);
   }

@@ -90,7 +90,10 @@ export function fake_image_resolver(
 }
 
 export interface FakeSecretDestination extends SecretDestinationPort {
-  readonly write_calls: ReadonlyArray<{ readonly reference: string; readonly plaintext_value: string }>;
+  readonly write_calls: ReadonlyArray<{
+    readonly reference: string;
+    readonly plaintext_value: string;
+  }>;
 }
 
 /** Tracks every `write_secret` call so a scenario can assert a blocked transfer never attempted (and never leaked) a plaintext value. */

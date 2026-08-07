@@ -96,6 +96,24 @@ describe("scan_first_party", () => {
     ]);
   });
 
+  it("does not flag a package's own one-level-up index.js import (a real gateway pattern)", async () => {
+    const findings = await scan_fixture(
+      "apps/gateway/src/http/lifecycle_sse.test.ts",
+      'import { create_gateway_runtime } from "../index.js";',
+    );
+
+    expect(findings).toEqual([]);
+  });
+
+  it("still flags a two-level escape to index.js", async () => {
+    const findings = await scan_fixture(
+      "apps/gateway/src/http/deep/nested.test.ts",
+      'import "../../index.js";',
+    );
+
+    expect(findings.map(({ rule_id }) => rule_id)).toEqual(["legacy-runtime-import"]);
+  });
+
   it("reports a relative file, line, rule ID, and bounded excerpt", async () => {
     const findings = await scan_fixture(
       "apps/extension/src/remote.ts",

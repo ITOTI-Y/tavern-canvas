@@ -227,10 +227,7 @@ describe("export_archive", () => {
     // and a runtime-attached (flat gallery-shape) row — exactly the mix that
     // used to make `ImageRecordRepository.list()` throw `RepositoryValidationError`
     // on whichever shape it did not expect.
-    await repositories.image_records.create(
-      NAMESPACE,
-      image_record(IDS.first, migrated_sha256),
-    );
+    await repositories.image_records.create(NAMESPACE, image_record(IDS.first, migrated_sha256));
     await repositories.image_records.create(
       NAMESPACE,
       gallery_image_record(IDS.second, gallery_sha256),

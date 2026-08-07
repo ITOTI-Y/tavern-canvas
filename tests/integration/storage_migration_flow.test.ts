@@ -402,10 +402,14 @@ describe("scenario 4: a corrupted persisted image blocks the switch", () => {
     }
     // The "failed" payload carries a `failure` field the "verifying" variant's strictObject
     // schema does not accept; drop it along with the state discriminant before rewinding.
-    const { failure: _failure, state: _state, ...in_progress_fields } = journal_after_failure.payload as Record<
-      string,
-      unknown
-    > & { failure?: unknown; state: unknown };
+    const {
+      failure: _failure,
+      state: _state,
+      ...in_progress_fields
+    } = journal_after_failure.payload as Record<string, unknown> & {
+      failure?: unknown;
+      state: unknown;
+    };
     await repositories.migration_journal.update({
       ...journal_after_failure,
       state: "verifying",

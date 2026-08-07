@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  TavernCanvasSettingsSchema,
-  type TavernCanvasSettings,
-} from "@tavern-canvas/contracts";
+import { TavernCanvasSettingsSchema, type TavernCanvasSettings } from "@tavern-canvas/contracts";
 
 import {
   DEFAULT_TAVERN_CANVAS_SETTINGS,
@@ -224,21 +221,18 @@ describe("SillyTavern settings adapter", () => {
     );
   });
 
-  it.each([
-    "profiles",
-    "workflows",
-    "image_data",
-    "vocabulary_data",
-    "logs",
-  ])("rejects the disallowed small-settings category %s", (category) => {
-    const host = create_host({ ...settings(), [category]: { payload: "x" } });
-    const adapter = create_sillytavern_settings(host);
+  it.each(["profiles", "workflows", "image_data", "vocabulary_data", "logs"])(
+    "rejects the disallowed small-settings category %s",
+    (category) => {
+      const host = create_host({ ...settings(), [category]: { payload: "x" } });
+      const adapter = create_sillytavern_settings(host);
 
-    expect(adapter.get_settings()).not.toHaveProperty(category);
-    expect(adapter.diagnostics).toContainEqual(
-      expect.objectContaining({ path: category, code: "disallowed_category" }),
-    );
-  });
+      expect(adapter.get_settings()).not.toHaveProperty(category);
+      expect(adapter.diagnostics).toContainEqual(
+        expect.objectContaining({ path: category, code: "disallowed_category" }),
+      );
+    },
+  );
 
   it("reports a serialized-size violation and keeps the recovered object small", () => {
     const host = create_host({

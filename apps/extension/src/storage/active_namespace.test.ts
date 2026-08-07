@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  create_sillytavern_settings,
-  type SillyTavernSettings,
-} from "./sillytavern_settings.js";
+import { create_sillytavern_settings, type SillyTavernSettings } from "./sillytavern_settings.js";
 import {
   switch_active_namespace,
   type NamespaceMarkerPort,
@@ -64,10 +61,7 @@ describe("active namespace switching", () => {
       const result = await switch_active_namespace(
         settings,
         "imported:one",
-        marker_port(
-          { "imported:one": { namespace: "imported:one", state } },
-          seen_namespaces,
-        ),
+        marker_port({ "imported:one": { namespace: "imported:one", state } }, seen_namespaces),
       );
 
       expect(result).toBe("imported:one");

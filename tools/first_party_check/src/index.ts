@@ -53,8 +53,17 @@ const SOURCE_RULES: readonly SourceRule[] = [
   },
   {
     rule_id: "legacy-runtime-import",
+    // index.js alone is too common a first-party filename (every workspace
+    // package has one) to flag on a single '../' -- that only ever reaches a
+    // sibling module within the SAME package (e.g. a test one directory
+    // below src/ importing its own package's entry point, as
+    // apps/gateway/src/http/lifecycle_sse.test.ts genuinely does). Two or
+    // more '../' segments are required before an import plausibly escapes
+    // the current package toward the legacy v2 runtime's actual root
+    // index.js. settings.html and transformers.min.js are never legitimate
+    // first-party filenames, so any relative escape still flags them.
     pattern:
-      /(?:import\s+(?:[^"']+\s+from\s+)?|import\s*\(|require\s*\()\s*["'](?:(?:\.\.\/)+|\/)(?:index\.js|settings\.html|transformers\.min\.js)["']/u,
+      /(?:import\s+(?:[^"']+\s+from\s+)?|import\s*\(|require\s*\()\s*["'](?:\/(?:index\.js|settings\.html|transformers\.min\.js)|(?:\.\.\/){2,}index\.js|(?:\.\.\/)+(?:settings\.html|transformers\.min\.js))["']/u,
   },
 ];
 

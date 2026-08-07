@@ -12,10 +12,7 @@ import type { LegacySettings } from "../legacy_schema.js";
 import { select_owned_fields, to_json_record } from "../payload_extraction.js";
 import { SETTINGS_PATH_RULES } from "../settings_path_registry.js";
 
-import {
-  TavernCanvasSettingsSchema,
-  type TavernCanvasSettings,
-} from "@tavern-canvas/contracts";
+import { TavernCanvasSettingsSchema, type TavernCanvasSettings } from "@tavern-canvas/contracts";
 
 export { TavernCanvasSettingsSchema };
 export type { TavernCanvasSettings };

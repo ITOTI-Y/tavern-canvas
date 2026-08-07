@@ -23,7 +23,11 @@ export interface LruEvictionResult {
   readonly excluded_count: number;
 }
 
-const NO_OP_RESULT: LruEvictionResult = { reclaimed_bytes: 0, evicted_sha256: [], excluded_count: 0 };
+const NO_OP_RESULT: LruEvictionResult = {
+  reclaimed_bytes: 0,
+  evicted_sha256: [],
+  excluded_count: 0,
+};
 
 interface EvictionCandidate {
   readonly sha256: Sha256;
@@ -156,7 +160,11 @@ export async function run_lru_eviction(
       .map((blob) =>
         foreign_sha256.has(blob.sha256)
           ? null
-          : build_candidate(blob.sha256, blob.byte_length, records_by_sha256.get(blob.sha256) ?? []),
+          : build_candidate(
+              blob.sha256,
+              blob.byte_length,
+              records_by_sha256.get(blob.sha256) ?? [],
+            ),
       )
       .filter((candidate): candidate is EvictionCandidate => candidate !== null)
       .sort((left, right) => (left.last_accessed_at < right.last_accessed_at ? -1 : 1));

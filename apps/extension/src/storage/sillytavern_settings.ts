@@ -49,10 +49,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
 } satisfies TavernCanvasSettings;
 
 export type SettingsDiagnosticCode =
-  | "invalid_value"
-  | "unknown_field"
-  | "disallowed_category"
-  | "serialized_size_exceeded";
+  "invalid_value" | "unknown_field" | "disallowed_category" | "serialized_size_exceeded";
 
 export interface SettingsDiagnostic {
   path: string;

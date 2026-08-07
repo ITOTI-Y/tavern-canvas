@@ -377,23 +377,21 @@ export const LegacySettingsSchema = z.object({
   sm: z.string().default("true"),
   dyn: z.string().default("true"),
   cfg_rescale: z.string().default("0.18"),
-  AQT_sd: z.string().default(
-    "best quality, amazing quality, very aesthetic, absurdres",
-  ),
-  UCP_sd: z.string().default(
-    "bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap",
-  ),
-  AQT_novelai: z.string().default(
-    "best quality, amazing quality, very aesthetic, absurdres",
-  ),
+  AQT_sd: z.string().default("best quality, amazing quality, very aesthetic, absurdres"),
+  UCP_sd: z
+    .string()
+    .default(
+      "bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap",
+    ),
+  AQT_novelai: z.string().default("best quality, amazing quality, very aesthetic, absurdres"),
   UCP_novelai: z.string().default("Heavy"),
   addFurryDataset: legacy_scalar.default("false"),
-  AQT_comfyui: z.string().default(
-    "best quality, amazing quality, very aesthetic, absurdres",
-  ),
-  UCP_comfyui: z.string().default(
-    "bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap",
-  ),
+  AQT_comfyui: z.string().default("best quality, amazing quality, very aesthetic, absurdres"),
+  UCP_comfyui: z
+    .string()
+    .default(
+      "bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap",
+    ),
   sd_csteps: z.string().default("28"),
   sd_cwidth: z.string().default("1024"),
   sd_cheight: z.string().default("1024"),

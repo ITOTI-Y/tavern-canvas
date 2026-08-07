@@ -7,7 +7,10 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { DATABASE_NAME, type GenerationJob } from "../database_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
-import { ImageBlobRepository, ImageRecordRepository } from "../repositories/business_repositories.js";
+import {
+  ImageBlobRepository,
+  ImageRecordRepository,
+} from "../repositories/business_repositories.js";
 import { with_transaction } from "../transaction.js";
 import { attach_image, detach_image } from "./image_references.js";
 import { type ImageRecordFields } from "./image_schema.js";
