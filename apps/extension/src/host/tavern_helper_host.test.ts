@@ -153,7 +153,22 @@ describe("TavernHelperHost", () => {
       should_silence: true,
       should_stream: false,
       max_chat_history: 4,
+      tools: [],
+      tool_choice: "none",
     });
+  });
+
+  it("always sends the no-tools prompt-building policy, even when the caller omits it", async () => {
+    const helper = create_helper();
+    const host = new TavernHelperHost(helper.surface, () => "chat-42");
+
+    await host.generate_private_prompt({
+      generation_id: "private-2",
+      prompts: [{ role: "user", content: "Summarize." }],
+    });
+
+    const [request] = (helper.surface.generateRaw as ReturnType<typeof vi.fn>).mock.calls[0] ?? [];
+    expect(request).toMatchObject({ tools: [], tool_choice: "none" });
   });
 
   it("rejects structured tool-call results from private generation", async () => {

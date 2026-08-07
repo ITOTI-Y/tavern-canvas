@@ -11,7 +11,7 @@
  * rather than inventing a second one.
  */
 
-import type { PrivatePromptPolicy } from "@tavern-canvas/core";
+import { PRIVATE_PROMPT_POLICY } from "@tavern-canvas/core";
 
 import {
   expand_character_placeholders,
@@ -34,10 +34,7 @@ import {
   type WorldInfoEntrySelectionState,
 } from "./world_info_source.js";
 
-export const PRIVATE_PROMPT_POLICY: PrivatePromptPolicy = Object.freeze({
-  tools: Object.freeze([]),
-  tool_choice: "none",
-});
+export { PRIVATE_PROMPT_POLICY };
 
 export interface HostPromptMessageLike {
   readonly role: "system" | "assistant" | "user";

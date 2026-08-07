@@ -39,7 +39,7 @@ export type {
   RequestIdSource,
   RequestImageToolDefinition,
 } from "./generation/request_image_tool.js";
-export { create_trigger_policy } from "./generation/tool_policy.js";
+export { create_trigger_policy, PRIVATE_PROMPT_POLICY } from "./generation/tool_policy.js";
 export type {
   GenerationTriggerPolicy,
   HostPromptInjection,

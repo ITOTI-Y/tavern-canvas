@@ -1,3 +1,5 @@
+import { PRIVATE_PROMPT_POLICY } from "@tavern-canvas/core";
+
 import type {
   HostChatMessageSnapshot,
   HostChatSnapshot,
@@ -40,6 +42,9 @@ export interface TavernHelperGenerateRawRequest {
   readonly should_silence: true;
   readonly should_stream: false;
   readonly max_chat_history?: "all" | number;
+  /** Always present, always empty -- see PrivatePromptRequest's doc comment. */
+  readonly tools: readonly never[];
+  readonly tool_choice: "none";
 }
 
 export interface TavernHelperSurface {
@@ -320,6 +325,10 @@ export class TavernHelperHost {
       ordered_prompts: request.prompts.map((prompt) => ({ ...prompt })),
       should_silence: true,
       should_stream: false,
+      // Emitted from the shared policy rather than from `request`, so the no-tools guarantee holds
+      // for every caller including ones that never set the fields.
+      tools: PRIVATE_PROMPT_POLICY.tools,
+      tool_choice: PRIVATE_PROMPT_POLICY.tool_choice,
       ...(request.max_chat_history === undefined
         ? {}
         : { max_chat_history: request.max_chat_history }),

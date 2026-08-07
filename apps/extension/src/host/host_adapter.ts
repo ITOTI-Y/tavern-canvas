@@ -71,10 +71,20 @@ export interface HostPromptMessage {
   readonly content: string;
 }
 
+/**
+ * Private prompt generation is prompt-building, never a chat turn, so it must never expose tools
+ * to the model (`tools: []` / `tool_choice: "none"` -- @tavern-canvas/core's `PrivatePromptPolicy`,
+ * built by `create_trigger_policy` and mirrored by the prompt module's `PRIVATE_PROMPT_POLICY`).
+ * The fields are typed as the policy's literal shape rather than as free-form values, so a caller
+ * can state the policy but can never widen it; `TavernHelperHost.generate_private_prompt` emits it
+ * unconditionally either way.
+ */
 export interface PrivatePromptRequest {
   readonly generation_id: string;
   readonly prompts: readonly HostPromptMessage[];
   readonly max_chat_history?: "all" | number;
+  readonly tools?: readonly never[];
+  readonly tool_choice?: "none";
 }
 
 export interface HostMessageMedia {
