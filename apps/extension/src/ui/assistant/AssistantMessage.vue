@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Maximize2, Pencil, RefreshCw, SendHorizontal, Volume2 } from "lucide-vue-next";
+import { Maximize2, Pencil, RefreshCw, SendHorizontal } from "lucide-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -11,7 +11,7 @@ import styles from "./assistant.module.css";
 /**
  * Presentational, controller-agnostic (mirrors WorkbenchView.vue's own pattern): receives one
  * `AssistantMessageRecord` and renders it, owning only the derived async Markdown render as local
- * state -- everything else (session mutation, tool dispatch, TTS/ASR) stays in the caller.
+ * state -- everything else (session mutation, tool dispatch) stays in the caller.
  */
 const props = defineProps<{
   readonly message: AssistantMessageRecord;
@@ -24,7 +24,6 @@ const emit = defineEmits<{
   regenerate: [messageId: string];
   "choice-select": [value: string];
   "image-zoom": [imageId: string];
-  speak: [text: string];
 }>();
 
 const { t } = useI18n();
@@ -148,13 +147,6 @@ function submit_edit(): void {
         size="sm"
         :label="t('assistant.message_regenerate_action')"
         @click="emit('regenerate', message.message_id)"
-      />
-      <IconButton
-        v-if="!is_user"
-        :icon="Volume2"
-        size="sm"
-        :label="t('assistant.tts_play_action')"
-        @click="emit('speak', message.content)"
       />
       <IconButton
         v-if="message.images.length > 0"

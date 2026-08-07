@@ -8,7 +8,6 @@ import {
   type AssistantCompletionRequest,
   type AssistantToolDefinition,
 } from "./assistant_context.js";
-import { AsrService } from "./asr_service.js";
 import {
   create_session,
   load_session_safe,
@@ -30,7 +29,6 @@ import {
   read_settings_path,
   search_settings_paths,
 } from "./settings_draft_tools.js";
-import { TtsService } from "./tts_service.js";
 
 export interface AssistantConnectionResult {
   readonly content: string;
@@ -81,8 +79,6 @@ export interface AssistantModuleDependencies {
     readonly display_name: string;
     readonly updated_at: string;
   }[];
-  readonly tts: TtsService;
-  readonly asr: AsrService;
   readonly screen_input: ScreenInputService;
   readonly clock: () => string;
   readonly id_source: () => string;
@@ -140,8 +136,9 @@ function read_string_argument(arguments_: Readonly<Record<string, unknown>>, key
 /**
  * Top-level assistant orchestrator, implementing `RuntimeModule` so it only starts when
  * explicitly enabled/opened (never in the initial `ModuleRuntime` list). Owns session state, the
- * chat send/abort loop, the fixed tool-dispatch allowlist, and disposal of every media/speech/URL
- * resource TTS, ASR, and screen capture might be holding.
+ * chat send/abort loop, the fixed tool-dispatch allowlist, and disposal of every media/URL
+ * resource screen capture might be holding. Voice features (TTS/ASR) were removed entirely per
+ * the user's 2026-08-07 scope ruling; this module never wires speech synthesis or recognition.
  *
  * Authority boundary: `#dispatch_tool` is the *only* code path that executes a model-issued tool
  * call, and its `switch` has no case that persists or executes anything directly -- reads go
@@ -173,8 +170,6 @@ export class AssistantModule implements RuntimeModule {
 
   stop(): Promise<void> {
     this.#abort_controller?.abort();
-    this.#deps.tts.dispose();
-    this.#deps.asr.dispose();
     this.#deps.screen_input.dispose();
     for (const url of this.#object_urls) {
       URL.revokeObjectURL(url);
@@ -189,14 +184,6 @@ export class AssistantModule implements RuntimeModule {
 
   get task_strip(): readonly AssistantTaskStripEntry[] {
     return this.#task_strip;
-  }
-
-  get tts(): TtsService {
-    return this.#deps.tts;
-  }
-
-  get asr(): AsrService {
-    return this.#deps.asr;
   }
 
   get screen_input(): ScreenInputService {

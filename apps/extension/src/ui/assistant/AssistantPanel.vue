@@ -2,13 +2,9 @@
 import {
   Download,
   Loader2,
-  Mic,
-  MicOff,
   MonitorUp,
   Paperclip,
-  Pause,
   Pencil,
-  Play,
   Plus,
   SendHorizontal,
   Square,
@@ -17,7 +13,6 @@ import {
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { AsrState } from "../../modules/assistant/asr_service.js";
 import type { AssistantTaskStripEntry } from "../../modules/assistant/assistant_module.js";
 import type {
   AssistantImageAttachment,
@@ -25,7 +20,6 @@ import type {
   AssistantSession,
 } from "../../modules/assistant/assistant_session.js";
 import type { SettingsDraftDiff } from "../../modules/assistant/settings_draft_tools.js";
-import type { TtsPlaybackState } from "../../modules/assistant/tts_service.js";
 import AppButton from "../components/AppButton.vue";
 import IconButton from "../components/IconButton.vue";
 import StateSurface from "../components/StateSurface.vue";
@@ -46,8 +40,6 @@ const props = defineProps<{
   readonly hasOlderMessages: boolean;
   readonly taskStrip: readonly AssistantTaskStripEntry[];
   readonly pendingDraft: SettingsDraftDiff | null;
-  readonly ttsState: TtsPlaybackState;
-  readonly asrState: AsrState;
   readonly screenCaptureActive: boolean;
   readonly sending: boolean;
 }>();
@@ -66,11 +58,6 @@ const emit = defineEmits<{
   "regenerate-message": [messageId: string];
   "choice-select": [value: string];
   "image-zoom": [imageId: string];
-  speak: [text: string];
-  "tts-pause": [];
-  "tts-resume": [];
-  "tts-stop": [];
-  "mic-toggle": [];
   "attach-image": [];
   "screen-capture-toggle": [];
   "apply-draft": [];
@@ -96,16 +83,6 @@ function handle_input_keydown(event: KeyboardEvent): void {
     handle_send();
   }
 }
-
-const mic_label = () => {
-  if (props.asrState === "unavailable") {
-    return t("assistant.mic_unavailable");
-  }
-  if (props.asrState === "error") {
-    return t("assistant.mic_denied");
-  }
-  return props.asrState === "listening" ? t("assistant.mic_stop_action") : t("assistant.mic_start_action");
-};
 </script>
 
 <template>
@@ -172,7 +149,6 @@ const mic_label = () => {
           @regenerate="(id) => emit('regenerate-message', id)"
           @choice-select="(value) => emit('choice-select', value)"
           @image-zoom="(id) => emit('image-zoom', id)"
-          @speak="(text) => emit('speak', text)"
         />
       </div>
 
@@ -198,35 +174,10 @@ const mic_label = () => {
             @click="emit('attach-image')"
           />
           <IconButton
-            :icon="asrState === 'listening' ? MicOff : Mic"
-            :pressed="asrState === 'listening'"
-            :disabled="asrState === 'unavailable'"
-            :label="mic_label()"
-            @click="emit('mic-toggle')"
-          />
-          <IconButton
             :icon="MonitorUp"
             :pressed="screenCaptureActive"
             :label="screenCaptureActive ? t('assistant.screen_capture_stop_action') : t('assistant.screen_capture_start_action')"
             @click="emit('screen-capture-toggle')"
-          />
-          <IconButton
-            v-if="ttsState === 'playing'"
-            :icon="Pause"
-            :label="t('assistant.tts_pause_action')"
-            @click="emit('tts-pause')"
-          />
-          <IconButton
-            v-if="ttsState === 'paused'"
-            :icon="Play"
-            :label="t('assistant.tts_play_action')"
-            @click="emit('tts-resume')"
-          />
-          <IconButton
-            v-if="ttsState !== 'idle'"
-            :icon="Square"
-            :label="t('assistant.tts_stop_action')"
-            @click="emit('tts-stop')"
           />
           <IconButton
             v-if="!sending"

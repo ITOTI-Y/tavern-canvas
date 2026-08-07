@@ -9,10 +9,8 @@ import {
   type AssistantImageGenerationPort,
   type AssistantModuleDependencies,
 } from "./assistant_module.js";
-import { AsrService, type SpeechRecognitionPortFactory } from "./asr_service.js";
 import type { AssistantSession, AssistantSessionStore } from "./assistant_session.js";
 import { ScreenInputService, type DisplayMediaPort, type FrameCapturePort } from "./screen_input.js";
-import { TtsService, type SpeechSynthesisPort } from "./tts_service.js";
 
 function base_settings(): TavernCanvasSettings {
   return {
@@ -72,22 +70,6 @@ function fake_image_generation(): AssistantImageGenerationPort & { readonly call
   };
 }
 
-function no_op_tts(): TtsService {
-  const port: SpeechSynthesisPort = {
-    list_voices: () => [],
-    speak: (_text, _options, handlers) => handlers.on_end(),
-    pause: () => {},
-    resume: () => {},
-    cancel: () => {},
-  };
-  return new TtsService(port);
-}
-
-function no_op_asr(): AsrService {
-  const factory: SpeechRecognitionPortFactory = () => null;
-  return new AsrService(factory, { request: () => Promise.resolve("denied") });
-}
-
 function fake_screen_input(): ScreenInputService & { readonly stream_tracks: { stopped: boolean }[] } {
   const tracks: { stopped: boolean }[] = [];
   const display_media: DisplayMediaPort = {
@@ -132,8 +114,6 @@ function make_dependencies(
     workflow_metadata_provider: () => [
       { id: "wf-1", display_name: "Portrait pipeline", updated_at: "2026-08-07T00:00:00.000Z" },
     ],
-    tts: no_op_tts(),
-    asr: no_op_asr(),
     screen_input: fake_screen_input(),
     clock: () => "2026-08-07T00:00:00.000Z",
     id_source: () => `id-${(id_counter += 1)}`,
@@ -481,7 +461,7 @@ describe("AssistantModule: lifecycle (RuntimeModule)", () => {
     expect(capabilities.has("assistant")).toBe(true);
   });
 
-  it("stop disposes TTS, ASR, screen capture, and tracked object URLs", async () => {
+  it("stop disposes screen capture and tracked object URLs", async () => {
     const revoke_spy = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const dependencies = make_dependencies();
     const module_instance = new AssistantModule(dependencies);
@@ -491,9 +471,22 @@ describe("AssistantModule: lifecycle (RuntimeModule)", () => {
     await module_instance.stop();
 
     expect(module_instance.screen_input.is_active).toBe(false);
-    expect(dependencies.tts.state).toBe("idle");
-    expect(dependencies.asr.state).toBe("idle");
     expect(revoke_spy).toHaveBeenCalledWith("blob:tracked-1");
     revoke_spy.mockRestore();
+  });
+});
+
+describe("AssistantModule: voice features removed", () => {
+  it("accepts no TTS/ASR dependency and exposes no TTS/ASR getter -- voice removed per the user's 2026-08-07 scope ruling", async () => {
+    const dependencies = make_dependencies();
+    expect("tts" in dependencies).toBe(false);
+    expect("asr" in dependencies).toBe(false);
+
+    const module_instance = new AssistantModule(dependencies);
+    const exposed = module_instance as unknown as Record<string, unknown>;
+    expect(exposed.tts).toBeUndefined();
+    expect(exposed.asr).toBeUndefined();
+
+    await module_instance.stop();
   });
 });
