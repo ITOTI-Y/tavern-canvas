@@ -1,6 +1,11 @@
 import { ImageIdSchema, type ImageId } from "@tavern-canvas/contracts";
 import type { RuntimeModule } from "@tavern-canvas/core";
 
+import type {
+  ChatMediaGesture,
+  ChatMediaGestureSink,
+  ChatMediaSurfaceEvent,
+} from "../media/chat_media_interactions.js";
 import {
   create_tauritavern_host,
   type TauriChatSurfaceMountedContext,
@@ -9,32 +14,17 @@ import {
   type TauriTavernHost,
 } from "../../host/index.js";
 
-export type ChatMediaInteractionAction = "click" | "double_click" | "long_press" | "context";
-
-export interface ChatMediaInteractionEvent {
-  readonly action: ChatMediaInteractionAction;
-  readonly image_id: ImageId;
-  readonly message_id: number;
-}
-
 /**
- * Defined here against task-6-brief.md's own shape description ("click, double-click, long-press,
- * and context actions keyed by TavernCanvas image ID") because Stage 07 Task 3 -- which owns this
- * port's canonical home, apps/extension/src/modules/media/chat_media_interactions.ts -- had not
- * merged at implementation time (that file is still Task 1's `describe.todo` placeholder). Same
- * reconciliation pattern as Stage 05/06: whichever module lands second at stage merge re-points
- * its import to the other's real definition instead of keeping two parallel port shapes. This is a
- * direct transcription of the brief text, not an invented shape.
+ * Re-pointed at Stage 07 Task 3's canonical definitions in
+ * `apps/extension/src/modules/media/chat_media_interactions.ts` -- the reconciliation this file's
+ * previous doc comment described ("whichever module lands second at stage merge re-points its
+ * import to the other's real definition"). These aliases keep the names this module already
+ * published while there is now exactly one port shape in the codebase.
  */
-export interface ChatMediaInteractionPort {
-  handle(event: ChatMediaInteractionEvent): void;
-}
+export type ChatMediaInteractionAction = ChatMediaGesture;
+export type ChatMediaInteractionEvent = ChatMediaSurfaceEvent;
+export type ChatMediaInteractionPort = ChatMediaGestureSink;
 
-/**
- * The DOM contract a rendered chat message must expose for this module to find TavernCanvas-owned
- * image/video elements inside a Tauri ChatSurface `content` root. Also provisional pending T3's
- * real chat_placeholder.ts/chat_media_interactions.ts rendering code -- see the port doc comment.
- */
 export const TAVERN_CANVAS_IMAGE_ID_ATTRIBUTE = "data-tavern-canvas-image-id";
 
 const LONG_PRESS_THRESHOLD_MS = 500;

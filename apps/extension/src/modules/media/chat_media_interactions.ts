@@ -47,6 +47,47 @@ export class StandardHostChatMediaInteractions implements ChatMediaInteractionPo
   }
 }
 
+/**
+ * What a host that *does* own the rendered message DOM pushes into. `ChatMediaInteractionPort`
+ * above is the read side (already-classified gestures out); this is the write side (a host surface
+ * reporting one). `apps/extension/src/modules/tauri/chat_surface_module.ts` measures press duration
+ * and double-click windows against real Pointer Events and calls `handle`.
+ */
+export interface ChatMediaSurfaceEvent {
+  readonly action: ChatMediaGesture;
+  readonly image_id: ImageId;
+  readonly message_id: number;
+}
+
+export interface ChatMediaGestureSink {
+  handle(event: ChatMediaSurfaceEvent): void;
+}
+
+/**
+ * Joins the two halves: a host surface reports gestures into `handle`, and the shared command logic
+ * consumes them through `subscribe`. `message_id` is dropped at this boundary because every command
+ * is keyed by image ID -- the surface needs it to scope its DOM listeners, the commands do not.
+ */
+export class HostSurfaceChatMediaInteractions
+  implements ChatMediaInteractionPort, ChatMediaGestureSink
+{
+  readonly capability: CapabilityStatus = { available: true };
+  readonly #handlers = new Set<ChatMediaInteractionHandler>();
+
+  subscribe(handler: ChatMediaInteractionHandler): () => void {
+    this.#handlers.add(handler);
+    return () => {
+      this.#handlers.delete(handler);
+    };
+  }
+
+  handle(event: ChatMediaSurfaceEvent): void {
+    for (const handler of [...this.#handlers]) {
+      handler({ image_id: event.image_id, gesture: event.action });
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Shared command logic (manual.longpress_edit_open, gallery.click_to_regenerate-equivalent,
 // gallery.click_to_preview-equivalent) -- identical whether triggered by a real gesture (Tauri) or
