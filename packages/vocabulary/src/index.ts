@@ -103,3 +103,26 @@ export type {
   ImportBuilderOptions,
   ImportProgress,
 } from "./import/import_builder.js";
+
+export {
+  CatalogFetchError,
+  CatalogPlanError,
+  CatalogSourceConfigError,
+  CatalogValidationError,
+  create_catalog_client,
+  DEFAULT_CATALOG_URL,
+  plan_catalog_install,
+} from "./catalog/catalog_client.js";
+export type {
+  CatalogClient,
+  CatalogClientOptions,
+  CatalogInstallPlanOptions,
+  FetchCatalogOptions,
+} from "./catalog/catalog_client.js";
+
+export { CatalogInstallError, install_catalog_entry } from "./catalog/catalog_install.js";
+export type {
+  CatalogInstallFailureReason,
+  CatalogInstallOptions,
+  CatalogInstallProgress,
+} from "./catalog/catalog_install.js";

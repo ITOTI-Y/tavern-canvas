@@ -185,6 +185,12 @@ export type {
 } from "./vocabulary_worker.js";
 
 export {
+  VocabularyCatalogDocumentSchema,
+  VocabularyCatalogEntrySchema,
+} from "./vocabulary_catalog.js";
+export type { VocabularyCatalogDocument, VocabularyCatalogEntry } from "./vocabulary_catalog.js";
+
+export {
   fnv1a_32,
   VOCABULARY_ALIAS_SHARD_BUCKET_COUNT,
   VOCABULARY_ALIAS_SHARD_GROUP_CODE_POINTS,
