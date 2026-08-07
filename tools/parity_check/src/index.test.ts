@@ -99,7 +99,27 @@ describe("validate_rows", () => {
     expect(findings).toEqual([]);
   });
 
-  it("covers all twelve approved-removal reasons as valid tags", async () => {
+  it("accepts the decorative-flourish-out-of-scope reason (2026-08-07 lean-scope amendment)", async () => {
+    // Regression guard for the 13th approved-removal category, added per the user's 2026-08-07
+    // plain-language lean-scope ruling on the decorative-mascot/desktop-pet/onboarding-minigame
+    // cluster (docs/plans/2026-08-04-tavern-canvas-v3-architecture-design.md section 15.1 item
+    // 13) -- same pattern as the 12th reason above, again only APPROVED_REMOVAL_REASONS changes.
+    await write_file("apps/extension/src/modules/experience/floating_entry.test.ts");
+    const findings = validate_rows(
+      [
+        row({
+          status: "removed_approved",
+          acceptance_test: "apps/extension/src/modules/experience/floating_entry.test.ts",
+          notes: "[decorative-flourish-out-of-scope] WebGL video mascot removed to keep it lean",
+        }),
+      ],
+      [entry()],
+      temporary_root,
+    );
+    expect(findings).toEqual([]);
+  });
+
+  it("covers all thirteen approved-removal reasons as valid tags", async () => {
     await write_file("placeholder.test.ts");
     for (const reason of APPROVED_REMOVAL_REASONS) {
       const findings = validate_rows(

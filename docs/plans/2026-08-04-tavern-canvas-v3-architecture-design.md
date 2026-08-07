@@ -634,8 +634,9 @@ Stage 07 任务简报（`docs/superpowers/plans/2026-08-04-tavern-canvas-07-pari
 10. 被 SillyTavern `manifest.auto_update` 取代的应用内重复更新器；
 11. 缓存完成标志与过期的一次性迁移标记；
 12. **（2026-08-07 用户批准新增）** 敏感/不可再分发内容不再默认打包，改为用户在词库目录/导入界面中显式选择安装。具体指 v2 默认可安装、无需额外确认的 NSFW 分组词库树，其"默认可用"的打包/自动加载行为本身被移除；用户仍可通过既有词库导入管线（`packages/vocabulary/src/import/`）主动安装同形状的数据，能力并未消失，只是不再默认呈现。批准依据：Stage 05 复审已认定该内容因 AFPL 许可不可再分发（`docs/_dev/reviews/stage05/final-review.md` 条目 8，ACCEPTABLE-DEFER 裁决）；用户于 2026-08-07 就 Stage 07 Task 1 的停靠点裁定明确批准将其列入本清单，替代此前 `vocabulary.nsfw_group_tree_default_load` 单行记录"per reality"的临时处理（`docs/parity/feature_matrix.md` 拆分为 `vocabulary.nsfw_group_tree_user_install`〔`ported`〕与 `vocabulary.nsfw_group_tree_default_load`〔`removed_approved`〕两行）。
+13. **（2026-08-07 用户批准新增，plain-language lean-scope 裁定）** 装饰性 mascot 花活整体移除，保留核心工作台功能与一份朴素的引导说明。具体指：legacy WebGL alpha 通道视频 mascot 渲染器与逐像素透明区域命中测试（`floatingentry.video_mascot_mode`、`floatingentry.alpha_hit_test`）、图文并茂反应视频中超出已交付五态资源解析的更丰富部分（`floatingentry.mascot_reaction_videos`，已交付的朴素五态 `<img>`/`<video>` 切换本身保留为独立行 `floatingentry.media_state_asset_resolution`）、Document Picture-in-Picture "桌面宠物"模式（`floatingentry.desktop_pet_pip_mode`）、在两者之间切换的开关（`floatingentry.video_mode_toggle`，其目标模式已被移除）、以及开场视频与小游戏（`onboarding.opening_video_first_run`、`onboarding.code_generation_minigame`）。朴素的引导/说明流程本身不在移除范围内，若已构建则保留 `ported`（`onboarding.skip_and_greeting_flow` 未受影响）。批准依据：Task 6 实现报告（`.superpowers/sdd/2026-08-04-tavern-canvas-07-parity-release/task-6-report.md`）已按 task-6-brief.md Step 1 的精简范围实现（五态资源解析、无 WebGL 合成器、无 PiP、无引导视频/小游戏），并在报告中明确标记该差距供 stage review 裁决；用户于 2026-08-07 以直白语言("extension must stay lean, no decorative flourishes")裁定这些丰富行为不予恢复。
 
-这些移除均通过范围受限的诊断、类型化 token、host/Gateway 密钥存储、确定性绑定或 host 更新行为保留其用户目标；第 12 项通过用户发起的显式导入保留其用户目标。
+这些移除均通过范围受限的诊断、类型化 token、host/Gateway 密钥存储、确定性绑定或 host 更新行为保留其用户目标；第 12 项通过用户发起的显式导入保留其用户目标；第 13 项通过已交付的精简版悬浮入口（设置开关、拖拽定位、五态图标/视频资源解析、朴素引导）保留其用户目标，不恢复被裁定移除的丰富度。
 
 ## 16. 国际化
 

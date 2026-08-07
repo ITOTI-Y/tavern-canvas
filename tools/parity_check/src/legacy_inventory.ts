@@ -606,6 +606,7 @@ export const LEGACY_INVENTORY: readonly LegacyInventoryEntry[] = [
   { id: "theme.legacy_dom_style_mutation", group: "themes and optional floating entry" },
   { id: "floatingentry.toggle_and_icon_customize", group: "themes and optional floating entry" },
   { id: "floatingentry.video_mascot_mode", group: "themes and optional floating entry" },
+  { id: "floatingentry.media_state_asset_resolution", group: "themes and optional floating entry" },
   { id: "floatingentry.mascot_reaction_videos", group: "themes and optional floating entry" },
   { id: "floatingentry.alpha_hit_test", group: "themes and optional floating entry" },
   { id: "floatingentry.drag_reposition", group: "themes and optional floating entry" },
