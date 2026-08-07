@@ -300,3 +300,251 @@
   justify-content: flex-end;
   gap: 8px;
 }
+
+/* Task tracker: real semantic state only, one dot per row, never decoration. */
+.taskTracker {
+  border-top: 1px solid var(--tc-divider);
+  padding: 8px 16px;
+}
+
+.taskTrackerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--tc-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.taskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.taskRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--tc-divider);
+  font-size: 13px;
+}
+
+.taskRow:last-child {
+  border-bottom: none;
+}
+
+.taskDot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: var(--tc-radius-status);
+  background-color: var(--tc-text-muted);
+}
+
+.taskDot[data-state="running"] {
+  background-color: var(--tc-accent);
+}
+
+.taskDot[data-state="completed"] {
+  background-color: var(--tc-success);
+}
+
+.taskDot[data-state="failed"] {
+  background-color: var(--tc-error);
+}
+
+.taskLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskMeta {
+  flex: none;
+  font-size: 12px;
+  color: var(--tc-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.taskMeta[data-tone="error"] {
+  color: var(--tc-error);
+}
+
+/* Summary manager */
+.summaryToggleRow {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 16px 0;
+}
+
+.summaryPanel {
+  border-top: 1px solid var(--tc-divider);
+  padding: 8px 16px 12px;
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 6px;
+  font-size: 13px;
+}
+
+.summaryTokenEstimate {
+  font-size: 12px;
+  color: var(--tc-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.summaryRowSelected {
+  background-color: var(--tc-surface-raised);
+}
+
+.summaryRowMain {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.summaryRowText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  font-size: 13px;
+}
+
+.summaryRowMeta {
+  font-size: 12px;
+  color: var(--tc-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryRowActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+.summaryDetail {
+  padding: 8px 10px;
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-surface-raised);
+}
+
+.summaryDetailTitle {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.summaryDetailMeta {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--tc-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryDetailText {
+  margin: 0;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.summaryGraphWrapper {
+  overflow-x: auto;
+}
+
+.summaryGraph {
+  display: block;
+  max-width: 100%;
+}
+
+.summaryGraphEdge {
+  stroke: var(--tc-divider);
+  stroke-width: 1;
+}
+
+.summaryGraphNode rect {
+  fill: var(--tc-surface-raised);
+  stroke: var(--tc-divider);
+  stroke-width: 1;
+}
+
+.summaryGraphNode[data-enabled="true"] rect {
+  stroke: var(--tc-accent);
+}
+
+.summaryGraphNode[data-selected="true"] rect {
+  fill: var(--tc-surface);
+  stroke: var(--tc-accent);
+  stroke-width: 2;
+}
+
+.summaryGraphNode text {
+  fill: var(--tc-text);
+  font-size: 11px;
+}
+
+.summaryGraphNode:focus-visible rect {
+  stroke: var(--tc-accent);
+  stroke-width: 2;
+}
+
+/* Session history multi-select */
+.sessionSelectionBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.sessionRenameInput {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: var(--tc-radius-field);
+  border: 1px solid var(--tc-divider);
+  background-color: var(--tc-surface);
+  color: var(--tc-text);
+  font: inherit;
+}

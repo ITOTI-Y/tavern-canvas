@@ -1,30 +1,36 @@
 <script setup lang="ts">
 import {
-  Download,
   Loader2,
   MonitorUp,
   Paperclip,
+  Pause,
   Pencil,
+  Play,
   Plus,
   SendHorizontal,
   Square,
-  Trash2,
 } from "lucide-vue-next";
-import { ref } from "vue";
+import { nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { AssistantTaskStripEntry } from "../../modules/assistant/assistant_module.js";
+import type {
+  AssistantTask,
+  AssistantTaskStripEntry,
+} from "../../modules/assistant/assistant_module.js";
 import type {
   AssistantImageAttachment,
   AssistantMessageRecord,
   AssistantSession,
+  AssistantSummaryRecord,
 } from "../../modules/assistant/assistant_session.js";
 import type { SettingsDraftDiff } from "../../modules/assistant/settings_draft_tools.js";
 import AppButton from "../components/AppButton.vue";
 import IconButton from "../components/IconButton.vue";
-import StateSurface from "../components/StateSurface.vue";
 import AssistantDraftReview from "./AssistantDraftReview.vue";
 import AssistantMessage from "./AssistantMessage.vue";
+import AssistantSessionHistory from "./AssistantSessionHistory.vue";
+import AssistantSummaryPanel from "./AssistantSummaryPanel.vue";
+import AssistantTaskTracker from "./AssistantTaskTracker.vue";
 import styles from "./assistant.module.css";
 
 /**
@@ -39,6 +45,10 @@ const props = defineProps<{
   readonly messages: readonly AssistantMessageRecord[];
   readonly hasOlderMessages: boolean;
   readonly taskStrip: readonly AssistantTaskStripEntry[];
+  readonly tasks: readonly AssistantTask[];
+  readonly summaries: readonly AssistantSummaryRecord[];
+  /** The in-flight assistant reply as it streams. Null once the turn has settled. */
+  readonly streamingText: string | null;
   readonly pendingDraft: SettingsDraftDiff | null;
   readonly screenCaptureActive: boolean;
   readonly sending: boolean;
@@ -49,10 +59,14 @@ const emit = defineEmits<{
   abort: [];
   "new-session": [];
   "switch-session": [id: string];
-  "rename-session": [id: string];
-  "delete-session": [id: string];
-  "export-session": [id: string];
+  "rename-session": [id: string, title: string];
+  "delete-sessions": [ids: readonly string[]];
+  "export-sessions": [ids: readonly string[]];
   "load-older": [];
+  "clear-finished-tasks": [];
+  "set-summary-enabled": [id: string, enabled: boolean];
+  "delete-summary": [id: string];
+  "regenerate-summary": [id: string];
   "edit-message": [messageId: string, newContent: string];
   "resend-message": [messageId: string];
   "regenerate-message": [messageId: string];
@@ -67,6 +81,36 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const draft_input = ref("");
 const draft_review_open = ref(false);
+const message_list = ref<HTMLElement | null>(null);
+const summary_open = ref(false);
+
+/** Paging up is a scroll gesture rather than a button press, with the button kept as the explicit
+ * fallback for keyboard and reduced-motion users. */
+function handle_message_scroll(): void {
+  const element = message_list.value;
+  if (element && props.hasOlderMessages && element.scrollTop <= 48) {
+    emit("load-older");
+  }
+}
+
+/** Keeps the view pinned to the newest turn while a reply streams in, but only when the reader is
+ * already at the bottom, so scrolling back through history is never yanked away. */
+async function scroll_to_latest(): Promise<void> {
+  await nextTick();
+  const element = message_list.value;
+  if (element) {
+    element.scrollTop = element.scrollHeight;
+  }
+}
+
+watch(
+  () => props.streamingText,
+  (value) => {
+    if (value !== null) {
+      void scroll_to_latest();
+    }
+  },
+);
 
 function handle_send(): void {
   const text = draft_input.value.trim();
@@ -87,69 +131,23 @@ function handle_input_keydown(event: KeyboardEvent): void {
 
 <template>
   <div :class="styles.panel" data-testid="assistant-panel">
-    <aside :class="styles.sessionRail">
-      <div :class="styles.sessionRailHeader">
-        <span>{{ t("assistant.panel_title") }}</span>
-        <IconButton
-          :icon="Plus"
-          size="sm"
-          :label="t('assistant.new_chat_action')"
-          @click="emit('new-session')"
-        />
-      </div>
-      <StateSurface
-        :status="sessions.length === 0 ? 'empty' : 'ready'"
-        :empty-message="t('assistant.sessions_empty.description')"
-      >
-        <template #action>
-          <AppButton
-            :label="t('assistant.sessions_empty.action')"
-            variant="primary"
-            @click="emit('new-session')"
-          />
-        </template>
-        <ul :class="styles.sessionList">
-          <li v-for="session in sessions" :key="session.id">
-            <div
-              :class="[
-                styles.sessionItem,
-                session.id === activeSessionId && styles.sessionItemActive,
-              ]"
-              role="button"
-              tabindex="0"
-              @click="emit('switch-session', session.id)"
-              @keydown.enter="emit('switch-session', session.id)"
-            >
-              <span :class="styles.sessionItemTitle">{{ session.title }}</span>
-              <span :class="styles.messageActions">
-                <IconButton
-                  :icon="Pencil"
-                  size="sm"
-                  :label="t('assistant.rename_session_action')"
-                  @click.stop="emit('rename-session', session.id)"
-                />
-                <IconButton
-                  :icon="Download"
-                  size="sm"
-                  :label="t('assistant.export_session_action')"
-                  @click.stop="emit('export-session', session.id)"
-                />
-                <IconButton
-                  :icon="Trash2"
-                  size="sm"
-                  destructive
-                  :label="t('assistant.delete_session_action')"
-                  @click.stop="emit('delete-session', session.id)"
-                />
-              </span>
-            </div>
-          </li>
-        </ul>
-      </StateSurface>
-    </aside>
+    <AssistantSessionHistory
+      :sessions="sessions"
+      :active-session-id="activeSessionId"
+      @new-session="emit('new-session')"
+      @switch-session="(id) => emit('switch-session', id)"
+      @rename-session="(id, title) => emit('rename-session', id, title)"
+      @delete-sessions="(ids) => emit('delete-sessions', ids)"
+      @export-sessions="(ids) => emit('export-sessions', ids)"
+    />
 
     <div :class="styles.conversationColumn">
-      <div :class="styles.messageList">
+      <div
+        ref="message_list"
+        :class="styles.messageList"
+        data-testid="assistant-message-list"
+        @scroll="handle_message_scroll"
+      >
         <AppButton
           v-if="hasOlderMessages"
           :label="t('assistant.load_older_action')"
@@ -165,6 +163,14 @@ function handle_input_keydown(event: KeyboardEvent): void {
           @choice-select="(value) => emit('choice-select', value)"
           @image-zoom="(id) => emit('image-zoom', id)"
         />
+        <p
+          v-if="streamingText !== null"
+          :class="[styles.message, styles.messageAssistant]"
+          aria-live="polite"
+          data-testid="assistant-streaming-message"
+        >
+          <span :class="styles.messageBubble">{{ streamingText }}</span>
+        </p>
       </div>
 
       <div v-if="taskStrip.length > 0" :class="styles.taskStrip" data-testid="assistant-task-strip">
@@ -173,6 +179,29 @@ function handle_input_keydown(event: KeyboardEvent): void {
           {{ t("assistant.task_strip_generating", { prompt: entry.positive_prompt }) }}
         </span>
       </div>
+
+      <AssistantTaskTracker :tasks="tasks" @clear-finished="emit('clear-finished-tasks')" />
+
+      <div :class="styles.summaryToggleRow">
+        <AppButton
+          :label="
+            summary_open
+              ? t('assistant.summaries.hide_action')
+              : t('assistant.summaries.show_action', { n: summaries.length })
+          "
+          variant="secondary"
+          data-testid="assistant-summary-toggle"
+          @click="summary_open = !summary_open"
+        />
+      </div>
+
+      <AssistantSummaryPanel
+        v-if="summary_open"
+        :summaries="summaries"
+        @set-enabled="(id, enabled) => emit('set-summary-enabled', id, enabled)"
+        @delete="(id) => emit('delete-summary', id)"
+        @regenerate="(id) => emit('regenerate-summary', id)"
+      />
 
       <div :class="styles.inputRow">
         <textarea

@@ -1,0 +1,60 @@
+import { computed, ref, type ComputedRef, type Ref } from "vue";
+
+import type { AssistantMessageRecord } from "../../modules/assistant/assistant_session.js";
+
+export interface MessagePagination {
+  /** The visible window, oldest first, ending at the newest message. */
+  readonly visible: ComputedRef<readonly AssistantMessageRecord[]>;
+  readonly has_older: ComputedRef<boolean>;
+  readonly page_size: Ref<number>;
+  load_older(): void;
+  reset(): void;
+  /** True once the container is scrolled near its top, which is the cue to page in older turns. */
+  is_near_top(scroll_top: number): boolean;
+  /** True while the reader is at the bottom, where new messages should keep the view pinned. */
+  is_at_bottom(scroll_top: number, scroll_height: number, client_height: number): boolean;
+}
+
+const DEFAULT_PAGE_SIZE = 30;
+const TOP_THRESHOLD_PX = 48;
+const BOTTOM_THRESHOLD_PX = 64;
+
+/**
+ * Windowed message rendering for the chat scroller. A long history renders its tail only, growing
+ * by one page whenever the reader reaches the top, which is what turns the panel's explicit "load
+ * older" button into an ordinary infinite scroll without loading thousands of nodes up front.
+ */
+export function use_message_pagination(
+  messages: () => readonly AssistantMessageRecord[],
+  page_size = DEFAULT_PAGE_SIZE,
+): MessagePagination {
+  const limit = ref(page_size);
+  const size = ref(page_size);
+
+  const visible = computed(() => {
+    const all = messages();
+    return all.slice(Math.max(0, all.length - limit.value));
+  });
+
+  const has_older = computed(() => messages().length > visible.value.length);
+
+  return {
+    visible,
+    has_older,
+    page_size: size,
+    load_older(): void {
+      if (has_older.value) {
+        limit.value += size.value;
+      }
+    },
+    reset(): void {
+      limit.value = size.value;
+    },
+    is_near_top(scroll_top: number): boolean {
+      return scroll_top <= TOP_THRESHOLD_PX;
+    },
+    is_at_bottom(scroll_top: number, scroll_height: number, client_height: number): boolean {
+      return scroll_height - (scroll_top + client_height) <= BOTTOM_THRESHOLD_PX;
+    },
+  };
+}

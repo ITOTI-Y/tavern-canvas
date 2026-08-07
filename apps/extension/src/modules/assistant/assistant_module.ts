@@ -10,7 +10,10 @@ import {
 } from "./assistant_context.js";
 import {
   create_session,
+  delete_sessions,
+  export_sessions_json,
   load_session_safe,
+  rename_session,
   type AssistantImageAttachment,
   type AssistantMessageRecord,
   type AssistantSession,
@@ -32,7 +35,10 @@ import {
 
 export interface AssistantConnectionResult {
   readonly content: string;
-  readonly tool_calls: readonly { readonly name: string; readonly arguments: Readonly<Record<string, unknown>> }[];
+  readonly tool_calls: readonly {
+    readonly name: string;
+    readonly arguments: Readonly<Record<string, unknown>>;
+  }[];
 }
 
 /** Injected so `AssistantModule` never builds a URL/header/credential itself -- the real
@@ -67,6 +73,40 @@ export interface AssistantTaskStripEntry {
   readonly created_at: string;
 }
 
+export type AssistantTaskKind = "tool_call" | "image_generation" | "summary";
+export type AssistantTaskState = "running" | "completed" | "failed";
+
+/**
+ * One tracked unit of assistant work. Every model-issued tool call opens one, so the user can see
+ * what the assistant is doing and why a turn is taking time, instead of only image generation
+ * surfacing anywhere. `task_strip` stays the narrow image-generation projection it always was.
+ */
+export interface AssistantTask {
+  readonly task_id: string;
+  readonly kind: AssistantTaskKind;
+  /** The tool name, or the prompt for an image generation. Never a credential or a full payload. */
+  readonly label: string;
+  readonly state: AssistantTaskState;
+  readonly created_at: string;
+  readonly updated_at: string;
+  readonly job_id: string | null;
+  readonly profile_id: string | null;
+  readonly error_code: string | null;
+}
+
+/**
+ * Incremental render feed. The connection port has always handed chunks to `send`; this is how
+ * they reach a caller, so a message can render as it arrives instead of appearing whole once the
+ * request resolves. `done` fires exactly once per turn, including when nothing streamed at all.
+ */
+export interface AssistantStreamEvent {
+  readonly session_id: string;
+  readonly message_id: string;
+  readonly delta: string;
+  readonly accumulated: string;
+  readonly done: boolean;
+}
+
 export interface AssistantModuleDependencies {
   readonly connection: AssistantConnectionPort;
   readonly session_store: AssistantSessionStore;
@@ -82,10 +122,22 @@ export interface AssistantModuleDependencies {
   readonly screen_input: ScreenInputService;
   readonly clock: () => string;
   readonly id_source: () => string;
+  /**
+   * How many model turns one `send` may run. `1` (the default) keeps the historical single-round
+   * behaviour: dispatch the tool calls and return. Anything higher feeds each round's tool results
+   * back as a fresh turn until the model stops requesting tools or the cap is reached, which is
+   * what lets the assistant answer a question that needs two or three lookups without the user
+   * prompting again. The cap is a hard stop, never a heuristic.
+   */
+  readonly auto_query_max_iterations?: number;
 }
 
 const ASSISTANT_TOOLS: readonly AssistantToolDefinition[] = [
-  { name: "browse_settings_schema", description: "List browsable settings paths with help text.", parameters: {} },
+  {
+    name: "browse_settings_schema",
+    description: "List browsable settings paths with help text.",
+    parameters: {},
+  },
   {
     name: "search_settings",
     description: "Search settings paths by keyword.",
@@ -99,15 +151,31 @@ const ASSISTANT_TOOLS: readonly AssistantToolDefinition[] = [
   {
     name: "create_settings_draft",
     description: "Propose settings changes as a draft the user must explicitly review and apply.",
-    parameters: { type: "object", properties: { changes: { type: "object" } }, required: ["changes"] },
+    parameters: {
+      type: "object",
+      properties: { changes: { type: "object" } },
+      required: ["changes"],
+    },
   },
-  { name: "list_diagnostics_codes", description: "List recent diagnostic error codes.", parameters: {} },
-  { name: "list_provider_capabilities", description: "List host/provider capability availability.", parameters: {} },
+  {
+    name: "list_diagnostics_codes",
+    description: "List recent diagnostic error codes.",
+    parameters: {},
+  },
+  {
+    name: "list_provider_capabilities",
+    description: "List host/provider capability availability.",
+    parameters: {},
+  },
   { name: "list_workflow_metadata", description: "List saved workflow names.", parameters: {} },
   {
     name: "highlight_ui_section",
     description: "Highlight one known Studio section for the user.",
-    parameters: { type: "object", properties: { action: { type: "string" } }, required: ["action"] },
+    parameters: {
+      type: "object",
+      properties: { action: { type: "string" } },
+      required: ["action"],
+    },
   },
   {
     name: "generate_image",
@@ -153,8 +221,10 @@ export class AssistantModule implements RuntimeModule {
   readonly #deps: AssistantModuleDependencies;
   #sessions: readonly AssistantSession[] = [];
   #abort_controller: AbortController | null = null;
-  #task_strip: readonly AssistantTaskStripEntry[] = [];
+  #tasks: readonly AssistantTask[] = [];
   readonly #object_urls = new Set<string>();
+  readonly #stream_listeners = new Set<(event: AssistantStreamEvent) => void>();
+  readonly #task_listeners = new Set<(tasks: readonly AssistantTask[]) => void>();
 
   constructor(dependencies: AssistantModuleDependencies) {
     this.#deps = dependencies;
@@ -182,8 +252,47 @@ export class AssistantModule implements RuntimeModule {
     return this.#sessions;
   }
 
+  get tasks(): readonly AssistantTask[] {
+    return this.#tasks;
+  }
+
+  /** The image-generation projection of `tasks`, kept in its original shape for the task strip. */
   get task_strip(): readonly AssistantTaskStripEntry[] {
-    return this.#task_strip;
+    return this.#tasks
+      .filter((task) => task.kind === "image_generation" && task.job_id !== null)
+      .map((task) => ({
+        job_id: task.job_id ?? "",
+        profile_id: task.profile_id ?? "",
+        positive_prompt: task.label,
+        created_at: task.created_at,
+      }));
+  }
+
+  subscribe_stream(handler: (event: AssistantStreamEvent) => void): () => void {
+    this.#stream_listeners.add(handler);
+    return () => {
+      this.#stream_listeners.delete(handler);
+    };
+  }
+
+  subscribe_tasks(handler: (tasks: readonly AssistantTask[]) => void): () => void {
+    this.#task_listeners.add(handler);
+    return () => {
+      this.#task_listeners.delete(handler);
+    };
+  }
+
+  complete_task(task_id: string): void {
+    this.#settle_task(task_id, "completed", null);
+  }
+
+  fail_task(task_id: string, error_code: string): void {
+    this.#settle_task(task_id, "failed", error_code);
+  }
+
+  /** Drops completed and failed tasks, leaving running work visible. */
+  clear_finished_tasks(): void {
+    this.#set_tasks(this.#tasks.filter((task) => task.state === "running"));
   }
 
   get screen_input(): ScreenInputService {
@@ -243,33 +352,62 @@ export class AssistantModule implements RuntimeModule {
     this.#append_message(session_id, user_message);
 
     const settings = this.#deps.settings_provider();
-    const history = this.#require_session(session_id).messages;
-    const request = build_chat_completion_request(this.#to_connection_messages(history), ASSISTANT_TOOLS);
+    const assistant_message_id = this.#deps.id_source();
+    const max_iterations = Math.max(1, this.#deps.auto_query_max_iterations ?? 1);
 
     this.#abort_controller = new AbortController();
-    let streamed_content = "";
-    const result = await this.#deps.connection.send(
-      request,
-      (delta) => {
-        streamed_content += delta;
-      },
-      this.#abort_controller.signal,
-    );
-
+    const conversation = [
+      ...this.#to_connection_messages(this.#require_session(session_id).messages),
+    ];
     const tool_call_records: AssistantToolCallRecord[] = [];
-    for (const call of result.tool_calls) {
-      const dispatched = await this.#dispatch_tool(call.name, call.arguments, settings);
-      tool_call_records.push({
-        tool_name: call.name,
-        arguments: call.arguments,
-        result: JSON.stringify(dispatched),
-      });
+    let accumulated = "";
+    let final_content = "";
+
+    for (let iteration = 0; iteration < max_iterations; iteration += 1) {
+      const request = build_chat_completion_request(conversation, ASSISTANT_TOOLS);
+      const result = await this.#deps.connection.send(
+        request,
+        (delta) => {
+          accumulated += delta;
+          this.#emit_stream({
+            session_id,
+            message_id: assistant_message_id,
+            delta,
+            accumulated,
+            done: false,
+          });
+        },
+        this.#abort_controller.signal,
+      );
+      if (result.content.length > 0) {
+        final_content = result.content;
+      }
+      if (result.tool_calls.length === 0) {
+        break;
+      }
+
+      for (const call of result.tool_calls) {
+        const record = await this.#run_tool_call(call.name, call.arguments, settings);
+        tool_call_records.push(record);
+        // The tool result becomes the next turn's context, which is what makes another
+        // iteration worth running at all.
+        conversation.push({ role: "assistant", content: `${call.name} -> ${record.result}` });
+      }
     }
 
+    const content = final_content.length > 0 ? final_content : accumulated;
+    this.#emit_stream({
+      session_id,
+      message_id: assistant_message_id,
+      delta: "",
+      accumulated: content,
+      done: true,
+    });
+
     const assistant_message: AssistantMessageRecord = {
-      message_id: this.#deps.id_source(),
+      message_id: assistant_message_id,
       role: "assistant",
-      content: result.content.length > 0 ? result.content : streamed_content,
+      content,
       thinking: null,
       images: [],
       tool_calls: tool_call_records,
@@ -277,6 +415,114 @@ export class AssistantModule implements RuntimeModule {
     };
     this.#append_message(session_id, assistant_message);
     return assistant_message;
+  }
+
+  /** Hydrates in-memory sessions from the store, for a panel opening on an existing history. */
+  async load_sessions(): Promise<readonly AssistantSession[]> {
+    this.#sessions = await this.#deps.session_store.list();
+    return this.#sessions;
+  }
+
+  async rename_session(session_id: string, title: string): Promise<AssistantSession | null> {
+    const renamed = await rename_session(
+      this.#deps.session_store,
+      session_id,
+      title,
+      this.#deps.clock(),
+    );
+    if (renamed !== null) {
+      this.#sessions = this.#sessions.map((session) =>
+        session.id === renamed.id ? renamed : session,
+      );
+    }
+    return renamed;
+  }
+
+  /** One confirmed multi-select delete; unknown ids are ignored rather than aborting the batch. */
+  async delete_sessions(session_ids: readonly string[]): Promise<void> {
+    await delete_sessions(this.#deps.session_store, session_ids);
+    const removed = new Set(session_ids);
+    this.#sessions = this.#sessions.filter((session) => !removed.has(session.id));
+  }
+
+  export_sessions(session_ids: readonly string[]): string {
+    const selected = new Set(session_ids);
+    return export_sessions_json(
+      this.#sessions.filter((session) => selected.has(session.id)),
+      this.#deps.clock(),
+    );
+  }
+
+  #emit_stream(event: AssistantStreamEvent): void {
+    for (const listener of this.#stream_listeners) {
+      listener(event);
+    }
+  }
+
+  #set_tasks(tasks: readonly AssistantTask[]): void {
+    this.#tasks = tasks;
+    for (const listener of this.#task_listeners) {
+      listener(tasks);
+    }
+  }
+
+  #open_task(kind: AssistantTaskKind, label: string): string {
+    const now = this.#deps.clock();
+    const task_id = this.#deps.id_source();
+    this.#set_tasks([
+      ...this.#tasks,
+      {
+        task_id,
+        kind,
+        label,
+        state: "running",
+        created_at: now,
+        updated_at: now,
+        job_id: null,
+        profile_id: null,
+        error_code: null,
+      },
+    ]);
+    return task_id;
+  }
+
+  #settle_task(
+    task_id: string,
+    state: AssistantTaskState,
+    error_code: string | null,
+    patch: Partial<Pick<AssistantTask, "kind" | "label" | "job_id" | "profile_id">> = {},
+  ): void {
+    this.#set_tasks(
+      this.#tasks.map((task) =>
+        task.task_id === task_id
+          ? { ...task, ...patch, state, error_code, updated_at: this.#deps.clock() }
+          : task,
+      ),
+    );
+  }
+
+  /** Dispatches one tool call inside a tracked task, so a stuck or rejected call is visible. */
+  async #run_tool_call(
+    name: string,
+    arguments_: Readonly<Record<string, unknown>>,
+    settings: TavernCanvasSettings,
+  ): Promise<AssistantToolCallRecord> {
+    const task_id = this.#open_task("tool_call", name);
+    const dispatched = await this.#dispatch_tool(name, arguments_, settings);
+    if (dispatched.status === "rejected") {
+      this.#settle_task(task_id, "failed", dispatched.reason);
+    } else if (name === "generate_image") {
+      const job = dispatched.result as AssistantImageGenerationJob;
+      this.#settle_task(task_id, "completed", null, {
+        kind: "image_generation",
+        label: read_string_argument(arguments_, "positive_prompt"),
+        job_id: job.job_id,
+        profile_id: read_string_argument(arguments_, "profile_id"),
+      });
+    } else {
+      this.#settle_task(task_id, "completed", null);
+    }
+    return { tool_name: name, arguments: arguments_, result: JSON.stringify(dispatched) };
   }
 
   /** Edit-and-resend / "continue from here": truncates history at `message_id` (inclusive) and
@@ -355,7 +601,9 @@ export class AssistantModule implements RuntimeModule {
   }
 
   #update_session(id: string, updater: (session: AssistantSession) => AssistantSession): void {
-    this.#sessions = this.#sessions.map((session) => (session.id === id ? updater(session) : session));
+    this.#sessions = this.#sessions.map((session) =>
+      session.id === id ? updater(session) : session,
+    );
     const updated = this.#sessions.find((session) => session.id === id);
     if (updated !== undefined) {
       void this.#deps.session_store.put(updated);
@@ -371,9 +619,15 @@ export class AssistantModule implements RuntimeModule {
       case "browse_settings_schema":
         return { status: "ok", result: list_settings_schema() };
       case "search_settings":
-        return { status: "ok", result: search_settings_paths(read_string_argument(arguments_, "query")) };
+        return {
+          status: "ok",
+          result: search_settings_paths(read_string_argument(arguments_, "query")),
+        };
       case "read_settings_path":
-        return { status: "ok", result: read_settings_path(settings, read_string_argument(arguments_, "path")) };
+        return {
+          status: "ok",
+          result: read_settings_path(settings, read_string_argument(arguments_, "path")),
+        };
       case "create_settings_draft": {
         const changes = is_record(arguments_.changes) ? arguments_.changes : {};
         return { status: "ok", result: create_settings_draft(settings, changes) };
@@ -383,7 +637,10 @@ export class AssistantModule implements RuntimeModule {
       case "list_provider_capabilities":
         return { status: "ok", result: this.#deps.capability_matrix_provider() };
       case "list_workflow_metadata":
-        return { status: "ok", result: list_workflow_metadata(this.#deps.workflow_metadata_provider()) };
+        return {
+          status: "ok",
+          result: list_workflow_metadata(this.#deps.workflow_metadata_provider()),
+        };
       case "highlight_ui_section": {
         const action = read_string_argument(arguments_, "action");
         return is_known_ui_action(action)
@@ -397,10 +654,6 @@ export class AssistantModule implements RuntimeModule {
           return { status: "rejected", reason: "invalid_arguments" };
         }
         const job = await this.#deps.image_generation.submit({ profile_id, positive_prompt });
-        this.#task_strip = [
-          ...this.#task_strip,
-          { job_id: job.job_id, profile_id, positive_prompt, created_at: this.#deps.clock() },
-        ];
         return { status: "ok", result: job };
       }
       default:
