@@ -33,7 +33,15 @@ export function use_generation_preview_urls(
     controller
       .read_gallery_bytes(image_id)
       .then((bytes) => {
-        const url = URL.createObjectURL(new Blob([new Uint8Array(bytes)]));
+        // GalleryView.download_record passes `record.media_type` for the same reason: an
+        // untyped Blob leaves decoding to browser content-sniffing, which is not spec-guaranteed
+        // (works in Chromium, per the stage review). The completion-preview tile only has the
+        // image id, not the record itself, so this looks the record up in gallery state -- its
+        // own doc comment above already establishes both share one id space -- and falls back to
+        // untyped only if the record has not loaded into that slice yet.
+        const media_type = get_state().gallery.records.find((r) => r.id === image_id)?.media_type;
+        const blob = new Blob([new Uint8Array(bytes)], media_type ? { type: media_type } : {});
+        const url = URL.createObjectURL(blob);
         urls.value = { ...urls.value, [image_id]: url };
       })
       .catch(() => {
