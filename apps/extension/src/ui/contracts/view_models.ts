@@ -1,5 +1,7 @@
 import type {
+  KnowledgeRecord,
   LlmConnectionProfile,
+  PersonaProfile,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -68,6 +70,12 @@ export interface AssetsViewModel {
   readonly records: Readonly<Record<AssetCategory, readonly AssetRecordSummary[]>>;
   readonly vocabulary_catalog: readonly VocabularyCatalogEntry[];
   readonly vocabulary_install_command: CommandState<void>;
+}
+
+export interface LibraryViewModel {
+  readonly personas: readonly PersonaProfile[];
+  readonly knowledge: readonly KnowledgeRecord[];
+  readonly selected_knowledge_ids: readonly Uuid[];
 }
 
 export interface GalleryViewModel {
@@ -149,6 +157,7 @@ export interface StudioState {
   llm_connections: LlmConnectionsViewModel;
   prompt: PromptViewModel;
   assets: AssetsViewModel;
+  library: LibraryViewModel;
   gallery: GalleryViewModel;
   diagnostics: DiagnosticsViewModel;
   settings: SettingsViewModel;

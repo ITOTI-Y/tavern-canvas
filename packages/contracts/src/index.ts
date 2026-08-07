@@ -40,6 +40,23 @@ export { AssetIdSchema, ImageIdSchema, JobIdSchema, RequestIdSchema, UuidSchema 
 export type { AssetId, ImageId, JobId, RequestId, Uuid } from "./ids.js";
 
 export {
+  KnowledgeRecordDraftSchema,
+  KnowledgeRecordSchema,
+  KnowledgeSourceTypeSchema,
+  PersonaProfileDraftSchema,
+  PersonaProfileSchema,
+  PersonaRoleSchema,
+} from "./library.js";
+export type {
+  KnowledgeRecord,
+  KnowledgeRecordDraft,
+  KnowledgeSourceType,
+  PersonaProfile,
+  PersonaProfileDraft,
+  PersonaRole,
+} from "./library.js";
+
+export {
   LLM_CREDENTIAL_KIND,
   LLM_ROUTE_CATALOG,
   LlmConnectionDraftSchema,

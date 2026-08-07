@@ -1,4 +1,10 @@
-import type { LlmConnectionProfile, TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
+import type {
+  KnowledgeRecord,
+  LlmConnectionProfile,
+  PersonaProfile,
+  TavernCanvasSettings,
+  Uuid,
+} from "@tavern-canvas/contracts";
 import { describe, expect, it, vi, type Mock } from "vitest";
 
 import type {
@@ -16,9 +22,13 @@ import type {
   GenerationDomainEvent,
   GenerationJobSummary,
   GenerationSubmitCommand,
+  KnowledgeCapability,
+  KnowledgeDomainEvent,
   LlmConnectionsCapability,
   LlmConnectionsDomainEvent,
   MigrationCapability,
+  PersonasCapability,
+  PersonasDomainEvent,
   MigrationDomainEvent,
   MigrationSnapshot,
   ProfilesCapability,
@@ -197,6 +207,24 @@ function build_mock_studio() {
     reorder: vi.fn(),
   };
 
+  const personas_harness = harness<readonly PersonaProfile[], PersonasDomainEvent>();
+  const personas: PersonasCapability = {
+    load: personas_harness.load,
+    subscribe: personas_harness.sub.subscribe,
+    save: vi.fn(),
+    remove: vi.fn(),
+  };
+
+  const knowledge_harness = harness<readonly KnowledgeRecord[], KnowledgeDomainEvent>();
+  const knowledge: KnowledgeCapability = {
+    load: knowledge_harness.load,
+    subscribe: knowledge_harness.sub.subscribe,
+    save: vi.fn(),
+    set_enabled: vi.fn(),
+    remove: vi.fn(),
+    bulk_remove: vi.fn(),
+  };
+
   const gallery_harness = harness<readonly GalleryRecordSummary[], GalleryDomainEvent>();
   const gallery: GalleryCapability = {
     load: gallery_harness.load,
@@ -251,6 +279,8 @@ function build_mock_studio() {
     llm_connections,
     prompt_presets,
     assets,
+    personas,
+    knowledge,
     gallery,
     vocabulary,
     diagnostics,
@@ -265,6 +295,8 @@ function build_mock_studio() {
     llm_connections: llm_connections_harness,
     prompt_presets: prompt_presets_harness,
     assets: assets_harness,
+    personas: personas_harness,
+    knowledge: knowledge_harness,
     gallery: gallery_harness,
     diagnostics: diagnostics_harness,
     migration: migration_harness,
@@ -285,6 +317,8 @@ function resolve_all_defaults(mock: MockStudio): void {
   mock.llm_connections.deferred_load.resolve([]);
   mock.prompt_presets.deferred_load.resolve([]);
   mock.assets.deferred_load.resolve(EMPTY_ASSET_RECORDS);
+  mock.personas.deferred_load.resolve([]);
+  mock.knowledge.deferred_load.resolve([]);
   mock.gallery.deferred_load.resolve([]);
   mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
   mock.migration.deferred_load.resolve(NOT_REQUIRED_MIGRATION_SNAPSHOT);
@@ -309,6 +343,8 @@ describe("create_studio_controller", () => {
     mock.llm_connections.deferred_load.resolve([]);
     mock.prompt_presets.deferred_load.resolve([]);
     mock.assets.deferred_load.resolve(EMPTY_ASSET_RECORDS);
+    mock.personas.deferred_load.resolve([]);
+    mock.knowledge.deferred_load.resolve([]);
     mock.gallery.deferred_load.resolve([]);
     mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
     mock.migration.deferred_load.resolve(NOT_REQUIRED_MIGRATION_SNAPSHOT);

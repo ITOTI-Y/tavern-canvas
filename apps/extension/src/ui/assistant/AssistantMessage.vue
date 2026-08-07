@@ -78,7 +78,11 @@ function submit_edit(): void {
 
     <div v-if="editing" :class="styles.messageBubble">
       <textarea v-model="draft_content" :class="styles.inputTextarea" rows="3" />
-      <IconButton :icon="SendHorizontal" :label="t('assistant.message_resend_action')" @click="submit_edit" />
+      <IconButton
+        :icon="SendHorizontal"
+        :label="t('assistant.message_resend_action')"
+        @click="submit_edit"
+      />
     </div>
     <!-- rendered_html is DOMPurify output from render_assistant_markdown, restricted to a text/code/list/link allowlist (assistant_markdown.test.ts's attack-fixture coverage) -->
     <!-- eslint-disable-next-line vue/no-v-html -->

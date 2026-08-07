@@ -2,9 +2,13 @@ import type {
   CapabilityMatrix,
   GenerationState,
   ImageGenerationRequest,
+  KnowledgeRecord,
+  KnowledgeRecordDraft,
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
+  PersonaProfile,
+  PersonaProfileDraft,
   ProviderError,
   ProviderId,
   TavernCanvasSettings,
@@ -199,6 +203,39 @@ export interface AssetsCapability {
 }
 
 // ---------------------------------------------------------------------------
+// Personas and knowledge (Stage 07 feature-gap addition)
+//
+// Stage 06 shipped only read paths for these two. They are separate ports rather than extra
+// `AssetCategory` members because a persona and a knowledge entry both carry typed, validated
+// fields, while `AssetRecordSummary` is deliberately an opaque payload the storage layer never
+// types.
+// ---------------------------------------------------------------------------
+
+export type PersonasDomainEvent =
+  | { readonly type: "persona_upserted"; readonly persona: PersonaProfile }
+  | { readonly type: "persona_removed"; readonly persona_id: Uuid };
+
+export interface PersonasCapability {
+  load(): Promise<readonly PersonaProfile[]>;
+  subscribe(handler: (event: PersonasDomainEvent) => void): Unsubscribe;
+  save(draft: PersonaProfileDraft): Promise<PersonaProfile>;
+  remove(persona_id: Uuid): Promise<void>;
+}
+
+export type KnowledgeDomainEvent =
+  | { readonly type: "entry_upserted"; readonly entry: KnowledgeRecord }
+  | { readonly type: "entry_removed"; readonly entry_id: Uuid };
+
+export interface KnowledgeCapability {
+  load(): Promise<readonly KnowledgeRecord[]>;
+  subscribe(handler: (event: KnowledgeDomainEvent) => void): Unsubscribe;
+  save(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord>;
+  set_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord>;
+  remove(entry_id: Uuid): Promise<void>;
+  bulk_remove(entry_ids: readonly Uuid[]): Promise<void>;
+}
+
+// ---------------------------------------------------------------------------
 // Gallery
 // ---------------------------------------------------------------------------
 
@@ -387,6 +424,8 @@ export interface StudioCapabilities {
   readonly llm_connections: LlmConnectionsCapability;
   readonly prompt_presets: PromptPresetsCapability;
   readonly assets: AssetsCapability;
+  readonly personas: PersonasCapability;
+  readonly knowledge: KnowledgeCapability;
   readonly gallery: GalleryCapability;
   readonly vocabulary: VocabularyCapability;
   readonly diagnostics: DiagnosticsCapability;

@@ -91,6 +91,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
+    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [],
       selected_preset_id: null,

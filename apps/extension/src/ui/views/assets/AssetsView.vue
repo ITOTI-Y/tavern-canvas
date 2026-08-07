@@ -8,7 +8,9 @@ import type { StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./assets.module.css";
 import CharacterPanel from "./CharacterPanel.vue";
+import KnowledgePanel from "./KnowledgePanel.vue";
 import LoraPanel from "./LoraPanel.vue";
+import PersonaPanel from "./PersonaPanel.vue";
 import OutfitPanel from "./OutfitPanel.vue";
 import ReferencePanel from "./ReferencePanel.vue";
 import VibePanel from "./VibePanel.vue";
@@ -28,7 +30,18 @@ const props = defineProps<{
 
 const { t, locale } = useI18n();
 
-type AssetsTab = "vocabulary" | AssetCategory;
+/** Personas and knowledge are their own capability slices, not `AssetCategory` members, so they
+ * ride alongside the category tabs without widening that union. */
+type AssetsTab = "vocabulary" | "persona" | "knowledge" | AssetCategory;
+
+const ASSET_CATEGORY_TABS: ReadonlySet<string> = new Set([
+  "character",
+  "outfit",
+  "lora",
+  "vibe",
+  "reference",
+  "workflow",
+]);
 
 // Starts on whichever category the controller already considers active (StudioState.assets
 // .active_category, "character" per create_initial_state) instead of hard-coding "vocabulary" --
@@ -38,12 +51,14 @@ const active_tab = ref<AssetsTab>(props.state.assets.active_category);
 
 function select_tab(value: string): void {
   active_tab.value = value as AssetsTab;
-  if (value !== "vocabulary") {
+  if (ASSET_CATEGORY_TABS.has(value)) {
     props.controller.set_active_asset_category(value as AssetCategory);
   }
 }
 
 const assets_loading = computed(() => props.state.loading.has("assets"));
+const personas_loading = computed(() => props.state.loading.has("personas"));
+const knowledge_loading = computed(() => props.state.loading.has("knowledge"));
 const vocabulary_loading = computed(() => props.state.loading.has("vocabulary"));
 const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN" ? "zh-CN" : "en"));
 </script>
@@ -54,6 +69,12 @@ const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN"
       <TabsList :class="styles.tabsList" :aria-label="t('nav.assets')">
         <TabsTrigger value="vocabulary" :class="styles.tabsTrigger">
           {{ t("assets.tabs.vocabulary") }}
+        </TabsTrigger>
+        <TabsTrigger value="persona" :class="styles.tabsTrigger">
+          {{ t("assets.tabs.personas") }}
+        </TabsTrigger>
+        <TabsTrigger value="knowledge" :class="styles.tabsTrigger">
+          {{ t("assets.tabs.knowledge") }}
         </TabsTrigger>
         <TabsTrigger value="character" :class="styles.tabsTrigger">
           {{ t("assets.tabs.characters") }}
@@ -82,6 +103,21 @@ const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN"
           :loading="vocabulary_loading"
           :controller="controller"
           :locale="resolved_locale"
+        />
+      </TabsContent>
+      <TabsContent value="persona" :class="styles.tabsContent">
+        <PersonaPanel
+          :personas="state.library.personas"
+          :loading="personas_loading"
+          :controller="controller"
+        />
+      </TabsContent>
+      <TabsContent value="knowledge" :class="styles.tabsContent">
+        <KnowledgePanel
+          :entries="state.library.knowledge"
+          :selected-ids="state.library.selected_knowledge_ids"
+          :loading="knowledge_loading"
+          :controller="controller"
         />
       </TabsContent>
       <TabsContent value="character" :class="styles.tabsContent">

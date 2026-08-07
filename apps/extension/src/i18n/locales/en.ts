@@ -268,6 +268,8 @@ const prompt = {
 const assets = {
   tabs: {
     vocabulary: "Vocabulary",
+    personas: "Personas",
+    knowledge: "Knowledge",
     characters: "Characters",
     outfits: "Outfits",
     lora: "LoRA",
@@ -291,6 +293,50 @@ const assets = {
     nsfw_disclosure_label: "Show packages that may include adult content",
     nsfw_disclosure_hint:
       "These packages are never installed automatically. Review them before installing.",
+  },
+  personas: {
+    empty_description:
+      "Add a persona to give the chat a speaker identity, either your own or the assistant's.",
+    add_action: "Add persona",
+    role_label: "Speaks as",
+    roles: {
+      assistant: "Assistant",
+      user: "You",
+    },
+    description_label: "Description",
+    description_hint: "How this persona speaks and behaves. Sent as part of the system prompt.",
+    greeting_label: "Opening line",
+    greeting_hint: "Shown at the start of a new chat. Leave empty to skip it.",
+    active_badge: "Active",
+    active_toggle_label: "Active",
+    delete_confirm_description:
+      "This deletes the persona and its description. Chats that already used it keep their messages.",
+  },
+  knowledge: {
+    empty_description:
+      "Add a knowledge entry to feed background facts into prompts when its keywords appear.",
+    add_action: "Add knowledge entry",
+    title_label: "Title",
+    source_type_label: "Source",
+    source_types: {
+      manual: "Written here",
+      imported: "Imported",
+      character: "From a character",
+    },
+    content_label: "Content",
+    content_hint: "The text injected into the prompt when this entry is triggered.",
+    keywords_label: "Keywords",
+    keywords_hint: "Separate keywords with commas. Leave empty to keep the entry always available.",
+    priority_label: "Priority",
+    priority_hint: "Higher priority entries survive when the context budget runs short.",
+    priority_summary: "Priority {priority}",
+    enabled_label: "Enabled",
+    select_label: "Select {title}",
+    select_all_label: "Select all",
+    bulk_delete_action: "Delete {count} selected",
+    bulk_delete_confirm_title: "Delete {count} knowledge entries?",
+    delete_confirm_description:
+      "This removes the entry and its content. Prompts stop including it immediately.",
   },
   characters: {
     empty_title: "No characters saved yet",

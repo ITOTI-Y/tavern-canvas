@@ -8,8 +8,10 @@ import type {
   DiagnosticsSnapshot,
   GalleryCapability,
   GenerationCapability,
+  KnowledgeCapability,
   LlmConnectionsCapability,
   MigrationCapability,
+  PersonasCapability,
   MigrationSnapshot,
   ProfilesCapability,
   PromptPresetsCapability,
@@ -141,6 +143,22 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     reorder: unavailable_command,
   };
 
+  const personas: PersonasCapability = {
+    load: () => Promise.resolve([]),
+    subscribe: no_subscription,
+    save: unavailable_command,
+    remove: unavailable_command,
+  };
+
+  const knowledge: KnowledgeCapability = {
+    load: () => Promise.resolve([]),
+    subscribe: no_subscription,
+    save: unavailable_command,
+    set_enabled: unavailable_command,
+    remove: unavailable_command,
+    bulk_remove: unavailable_command,
+  };
+
   const gallery: GalleryCapability = {
     load: () => Promise.resolve([]),
     subscribe: no_subscription,
@@ -194,6 +212,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     llm_connections,
     prompt_presets,
     assets,
+    personas,
+    knowledge,
     gallery,
     vocabulary,
     diagnostics,

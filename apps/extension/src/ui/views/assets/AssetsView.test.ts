@@ -23,6 +23,7 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
       submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
+    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -96,17 +97,26 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
     select_provider_profile: vi.fn(),
     select_llm_connection: vi.fn(),
+    save_persona: vi.fn(() => Promise.resolve({}) as ReturnType<StudioController["save_persona"]>),
+    remove_persona: vi.fn(() => Promise.resolve()),
+    save_knowledge_entry: vi.fn(
+      () => Promise.resolve({}) as ReturnType<StudioController["save_knowledge_entry"]>,
+    ),
+    set_knowledge_entry_enabled: vi.fn(
+      () => Promise.resolve({}) as ReturnType<StudioController["set_knowledge_entry_enabled"]>,
+    ),
+    remove_knowledge_entry: vi.fn(() => Promise.resolve()),
+    set_knowledge_selection: vi.fn(),
+    bulk_remove_knowledge_entries: vi.fn(() => Promise.resolve()),
     save_llm_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["save_llm_connection"]>,
     ),
     remove_llm_connection: vi.fn(() => Promise.resolve()),
     set_llm_connection_credential: vi.fn(
-      () =>
-        Promise.resolve({}) as ReturnType<StudioController["set_llm_connection_credential"]>,
+      () => Promise.resolve({}) as ReturnType<StudioController["set_llm_connection_credential"]>,
     ),
     clear_llm_connection_credential: vi.fn(
-      () =>
-        Promise.resolve({}) as ReturnType<StudioController["clear_llm_connection_credential"]>,
+      () => Promise.resolve({}) as ReturnType<StudioController["clear_llm_connection_credential"]>,
     ),
     test_llm_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["test_llm_connection"]>,

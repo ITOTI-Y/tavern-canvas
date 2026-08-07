@@ -90,16 +90,31 @@ function handle_input_keydown(event: KeyboardEvent): void {
     <aside :class="styles.sessionRail">
       <div :class="styles.sessionRailHeader">
         <span>{{ t("assistant.panel_title") }}</span>
-        <IconButton :icon="Plus" size="sm" :label="t('assistant.new_chat_action')" @click="emit('new-session')" />
+        <IconButton
+          :icon="Plus"
+          size="sm"
+          :label="t('assistant.new_chat_action')"
+          @click="emit('new-session')"
+        />
       </div>
-      <StateSurface :status="sessions.length === 0 ? 'empty' : 'ready'" :empty-message="t('assistant.sessions_empty.description')">
+      <StateSurface
+        :status="sessions.length === 0 ? 'empty' : 'ready'"
+        :empty-message="t('assistant.sessions_empty.description')"
+      >
         <template #action>
-          <AppButton :label="t('assistant.sessions_empty.action')" variant="primary" @click="emit('new-session')" />
+          <AppButton
+            :label="t('assistant.sessions_empty.action')"
+            variant="primary"
+            @click="emit('new-session')"
+          />
         </template>
         <ul :class="styles.sessionList">
           <li v-for="session in sessions" :key="session.id">
             <div
-              :class="[styles.sessionItem, session.id === activeSessionId && styles.sessionItemActive]"
+              :class="[
+                styles.sessionItem,
+                session.id === activeSessionId && styles.sessionItemActive,
+              ]"
               role="button"
               tabindex="0"
               @click="emit('switch-session', session.id)"
@@ -176,7 +191,11 @@ function handle_input_keydown(event: KeyboardEvent): void {
           <IconButton
             :icon="MonitorUp"
             :pressed="screenCaptureActive"
-            :label="screenCaptureActive ? t('assistant.screen_capture_stop_action') : t('assistant.screen_capture_start_action')"
+            :label="
+              screenCaptureActive
+                ? t('assistant.screen_capture_stop_action')
+                : t('assistant.screen_capture_start_action')
+            "
             @click="emit('screen-capture-toggle')"
           />
           <IconButton
@@ -185,7 +204,12 @@ function handle_input_keydown(event: KeyboardEvent): void {
             :label="t('assistant.send_action')"
             @click="handle_send"
           />
-          <IconButton v-else :icon="Square" :label="t('assistant.abort_action')" @click="emit('abort')" />
+          <IconButton
+            v-else
+            :icon="Square"
+            :label="t('assistant.abort_action')"
+            @click="emit('abort')"
+          />
         </div>
       </div>
     </div>

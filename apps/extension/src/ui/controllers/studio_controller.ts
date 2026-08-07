@@ -1,8 +1,12 @@
 import type {
   GenerationState,
+  KnowledgeRecord,
+  KnowledgeRecordDraft,
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
+  PersonaProfile,
+  PersonaProfileDraft,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -19,8 +23,10 @@ import type {
   GenerationDomainEvent,
   GenerationJobSummary,
   GenerationSubmitCommand,
+  KnowledgeDomainEvent,
   LlmConnectionsDomainEvent,
   MigrationDomainEvent,
+  PersonasDomainEvent,
   ProfileConnectionTestResult,
   ProfilesDomainEvent,
   ProviderProfileDraft,
@@ -44,6 +50,7 @@ import {
   type GalleryViewModel,
   type InspectorSelection,
   type InspectorViewModel,
+  type LibraryViewModel,
   type LlmConnectionsViewModel,
   type PromptViewModel,
   type SettingsViewModel,
@@ -143,6 +150,19 @@ export interface StudioController {
   save_asset(category: AssetCategory, asset: Omit<AssetRecordSummary, "updated_at">): Promise<void>;
   remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void>;
   reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void>;
+
+  // -------------------------------------------------------------------------
+  // Personas and knowledge (Stage 07 feature-gap addition). Stage 06 shipped read paths only;
+  // these are the create/update/delete surface behind the Assets view's two new panels.
+  // -------------------------------------------------------------------------
+  save_persona(draft: PersonaProfileDraft): Promise<PersonaProfile>;
+  remove_persona(persona_id: Uuid): Promise<void>;
+  save_knowledge_entry(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord>;
+  set_knowledge_entry_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord>;
+  remove_knowledge_entry(entry_id: Uuid): Promise<void>;
+  /** Local multi-select state for the knowledge panel's batch actions; no capability call. */
+  set_knowledge_selection(entry_ids: readonly Uuid[]): void;
+  bulk_remove_knowledge_entries(entry_ids: readonly Uuid[]): Promise<void>;
 
   // -------------------------------------------------------------------------
   // Vocabulary search (Stage 06 Task 6 addition). Plain request/response
@@ -321,6 +341,11 @@ function create_initial_state(
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
+    library: {
+      personas: [],
+      knowledge: [],
+      selected_knowledge_ids: [],
+    },
     gallery: {
       records: [],
       selected_record_id: null,
@@ -409,6 +434,10 @@ class StudioControllerImpl implements StudioController {
 
   #patch_assets(patch: Partial<AssetsViewModel>): void {
     this.#patch({ assets: { ...this.#state.assets, ...patch } });
+  }
+
+  #patch_library(patch: Partial<LibraryViewModel>): void {
+    this.#patch({ library: { ...this.#state.library, ...patch } });
   }
 
   #patch_gallery(patch: Partial<GalleryViewModel>): void {
@@ -557,6 +586,39 @@ class StudioControllerImpl implements StudioController {
     }
   }
 
+  #apply_personas_event(event: PersonasDomainEvent): void {
+    if (this.#stopped) {
+      return;
+    }
+    if (event.type === "persona_upserted") {
+      this.#patch_library({
+        personas: this.#merge_persona(event.persona),
+      });
+    } else {
+      this.#patch_library({
+        personas: this.#state.library.personas.filter((persona) => persona.id !== event.persona_id),
+      });
+    }
+  }
+
+  #apply_knowledge_event(event: KnowledgeDomainEvent): void {
+    if (this.#stopped) {
+      return;
+    }
+    if (event.type === "entry_upserted") {
+      this.#patch_library({
+        knowledge: upsert_by_id(this.#state.library.knowledge, event.entry, (item) => item.id),
+      });
+    } else {
+      this.#patch_library({
+        knowledge: this.#state.library.knowledge.filter((item) => item.id !== event.entry_id),
+        selected_knowledge_ids: this.#state.library.selected_knowledge_ids.filter(
+          (id) => id !== event.entry_id,
+        ),
+      });
+    }
+  }
+
   #apply_gallery_event(event: GalleryDomainEvent): void {
     if (this.#stopped) {
       return;
@@ -609,6 +671,12 @@ class StudioControllerImpl implements StudioController {
       }),
       this.#capabilities.assets.subscribe((event) => {
         this.#apply_assets_event(event);
+      }),
+      this.#capabilities.personas.subscribe((event) => {
+        this.#apply_personas_event(event);
+      }),
+      this.#capabilities.knowledge.subscribe((event) => {
+        this.#apply_knowledge_event(event);
       }),
       this.#capabilities.gallery.subscribe((event) => {
         this.#apply_gallery_event(event);
@@ -665,6 +733,20 @@ class StudioControllerImpl implements StudioController {
         () => this.#capabilities.assets.load(),
         (records) => {
           this.#patch_assets({ records });
+        },
+      ),
+      this.#load_slice(
+        "personas",
+        () => this.#capabilities.personas.load(),
+        (personas) => {
+          this.#patch_library({ personas });
+        },
+      ),
+      this.#load_slice(
+        "knowledge",
+        () => this.#capabilities.knowledge.load(),
+        (knowledge) => {
+          this.#patch_library({ knowledge });
         },
       ),
       this.#load_slice(
@@ -1063,6 +1145,83 @@ class StudioControllerImpl implements StudioController {
 
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView> {
     return this.#capabilities.vocabulary.next_page(cursor);
+  }
+
+  async save_persona(draft: PersonaProfileDraft): Promise<PersonaProfile> {
+    const persona = await this.#capabilities.personas.save(draft);
+    if (!this.#stopped) {
+      this.#patch_library({ personas: this.#merge_persona(persona) });
+    }
+    return persona;
+  }
+
+  async remove_persona(persona_id: Uuid): Promise<void> {
+    await this.#capabilities.personas.remove(persona_id);
+    if (!this.#stopped) {
+      this.#patch_library({
+        personas: this.#state.library.personas.filter((persona) => persona.id !== persona_id),
+      });
+    }
+  }
+
+  /** Activation is exclusive per role, so promoting one persona demotes its same-role siblings in
+   * the same patch rather than leaving two assistants briefly both active. */
+  #merge_persona(persona: PersonaProfile): readonly PersonaProfile[] {
+    const merged = upsert_by_id(this.#state.library.personas, persona, (item) => item.id);
+    if (!persona.is_active) {
+      return merged;
+    }
+    return merged.map((item) =>
+      item.id === persona.id || item.role !== persona.role ? item : { ...item, is_active: false },
+    );
+  }
+
+  async save_knowledge_entry(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord> {
+    const entry = await this.#capabilities.knowledge.save(draft);
+    if (!this.#stopped) {
+      this.#patch_library({
+        knowledge: upsert_by_id(this.#state.library.knowledge, entry, (item) => item.id),
+      });
+    }
+    return entry;
+  }
+
+  async set_knowledge_entry_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord> {
+    const entry = await this.#capabilities.knowledge.set_enabled(entry_id, enabled);
+    if (!this.#stopped) {
+      this.#patch_library({
+        knowledge: upsert_by_id(this.#state.library.knowledge, entry, (item) => item.id),
+      });
+    }
+    return entry;
+  }
+
+  async remove_knowledge_entry(entry_id: Uuid): Promise<void> {
+    await this.#capabilities.knowledge.remove(entry_id);
+    if (!this.#stopped) {
+      this.#drop_knowledge_entries([entry_id]);
+    }
+  }
+
+  set_knowledge_selection(entry_ids: readonly Uuid[]): void {
+    this.#patch_library({ selected_knowledge_ids: [...entry_ids] });
+  }
+
+  async bulk_remove_knowledge_entries(entry_ids: readonly Uuid[]): Promise<void> {
+    await this.#capabilities.knowledge.bulk_remove(entry_ids);
+    if (!this.#stopped) {
+      this.#drop_knowledge_entries(entry_ids);
+    }
+  }
+
+  #drop_knowledge_entries(entry_ids: readonly Uuid[]): void {
+    const removed = new Set(entry_ids);
+    this.#patch_library({
+      knowledge: this.#state.library.knowledge.filter((item) => !removed.has(item.id)),
+      selected_knowledge_ids: this.#state.library.selected_knowledge_ids.filter(
+        (id) => !removed.has(id),
+      ),
+    });
   }
 
   select_llm_connection(connection_id: Uuid | null): void {

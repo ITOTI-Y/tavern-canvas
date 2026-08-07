@@ -1,7 +1,9 @@
 import type {
   CapabilityMatrix,
+  KnowledgeRecord,
   LlmConnectionProfile,
   LlmConnectionTestResult,
+  PersonaProfile,
   ProviderId,
   TavernCanvasSettings,
   Uuid,
@@ -22,9 +24,11 @@ import type {
   GenerationDomainEvent,
   GenerationJobSummary,
   GenerationSubmitCommand,
+  KnowledgeCapability,
   LlmConnectionsCapability,
   MigrationCapability,
   MigrationSnapshot,
+  PersonasCapability,
   ProfileConnectionTestResult,
   ProfilesCapability,
   ProviderProfileDraft,
@@ -784,6 +788,125 @@ function create_assets_capability(
   };
 }
 
+const PERSONA_ASSISTANT: PersonaProfile = {
+  id: uuid(30),
+  display_name: "Mock persona: Narrator",
+  role: "assistant",
+  description: "Calm, precise, keeps scenes moving. Mock fixture data only.",
+  greeting: "Where would you like to begin?",
+  avatar_image_id: null,
+  is_active: true,
+  created_at: "2026-07-06T09:00:00.000Z",
+  updated_at: "2026-07-06T09:00:00.000Z",
+};
+
+const PERSONA_USER: PersonaProfile = {
+  id: uuid(31),
+  display_name: "Mock persona: 玩家角色，名称较长用于验证省略号截断效果",
+  role: "user",
+  description: "Mock fixture data only.",
+  greeting: "",
+  avatar_image_id: null,
+  is_active: true,
+  created_at: "2026-07-06T09:05:00.000Z",
+  updated_at: "2026-07-06T09:05:00.000Z",
+};
+
+const KNOWLEDGE_HARBOR: KnowledgeRecord = {
+  id: uuid(40),
+  title: "Mock knowledge: Harbor district",
+  source_type: "manual",
+  content: "The harbor district floods at every spring tide. Mock fixture data only.",
+  keywords: ["harbor", "tide"],
+  priority: 40,
+  enabled: true,
+  created_at: "2026-07-07T09:00:00.000Z",
+  updated_at: "2026-07-07T09:00:00.000Z",
+};
+
+const KNOWLEDGE_OLD_TOWN: KnowledgeRecord = {
+  id: uuid(41),
+  title: "Mock knowledge: 旧城区",
+  source_type: "imported",
+  content: "旧城区的石板路在雨天很滑。仅为示例数据。",
+  keywords: ["旧城", "石板路"],
+  priority: 15,
+  enabled: false,
+  created_at: "2026-07-07T09:05:00.000Z",
+  updated_at: "2026-07-07T09:05:00.000Z",
+};
+
+function create_personas_capability(initial: PersonaProfile[]): PersonasCapability {
+  const personas = new Map(initial.map((persona) => [persona.id, persona]));
+  return {
+    load: () => Promise.resolve([...personas.values()]),
+    subscribe: () => () => {},
+    save: async (draft) => {
+      await delay(80);
+      const existing = personas.get(draft.id);
+      const saved: PersonaProfile = {
+        ...draft,
+        created_at: existing?.created_at ?? new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      personas.set(saved.id, saved);
+      if (saved.is_active) {
+        for (const [id, other] of personas) {
+          if (id !== saved.id && other.role === saved.role && other.is_active) {
+            personas.set(id, { ...other, is_active: false });
+          }
+        }
+      }
+      return saved;
+    },
+    remove: async (persona_id) => {
+      await delay(80);
+      personas.delete(persona_id);
+    },
+  };
+}
+
+function create_knowledge_capability(initial: KnowledgeRecord[]): KnowledgeCapability {
+  const entries = new Map(initial.map((entry) => [entry.id, entry]));
+  const sorted = (): KnowledgeRecord[] =>
+    [...entries.values()].sort((left, right) => right.priority - left.priority);
+  return {
+    load: () => Promise.resolve(sorted()),
+    subscribe: () => () => {},
+    save: async (draft) => {
+      await delay(80);
+      const existing = entries.get(draft.id);
+      const saved: KnowledgeRecord = {
+        ...draft,
+        created_at: existing?.created_at ?? new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      entries.set(saved.id, saved);
+      return saved;
+    },
+    set_enabled: async (entry_id, enabled) => {
+      await delay(60);
+      const existing = entries.get(entry_id);
+      if (!existing) {
+        throw new Error("mock: unknown_knowledge_entry");
+      }
+      const updated: KnowledgeRecord = { ...existing, enabled };
+      entries.set(entry_id, updated);
+      return updated;
+    },
+    remove: async (entry_id) => {
+      await delay(80);
+      entries.delete(entry_id);
+    },
+    bulk_remove: async (entry_ids) => {
+      await delay(120);
+      for (const entry_id of entry_ids) {
+        entries.delete(entry_id);
+      }
+    },
+  };
+}
+
 function create_vocabulary_capability(): VocabularyCapability {
   return {
     load: () => Promise.resolve(VOCABULARY_CATALOG),
@@ -887,6 +1010,8 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       llm_connections: { ...create_llm_connections_capability([]), load: forever_pending },
       prompt_presets: { ...create_prompt_presets_capability([], new Map()), load: forever_pending },
       assets: { ...create_assets_capability(EMPTY_ASSET_RECORDS), load: forever_pending },
+      personas: { ...create_personas_capability([]), load: forever_pending },
+      knowledge: { ...create_knowledge_capability([]), load: forever_pending },
       gallery: { ...create_gallery_capability([]), load: forever_pending },
       vocabulary: { ...create_vocabulary_capability(), load: forever_pending },
       diagnostics: { ...create_diagnostics_capability(), load: forever_pending },
@@ -916,6 +1041,14 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       assets: {
         ...create_assets_capability(EMPTY_ASSET_RECORDS),
         load: () => always_rejects("assets_unavailable"),
+      },
+      personas: {
+        ...create_personas_capability([]),
+        load: () => always_rejects("personas_unavailable"),
+      },
+      knowledge: {
+        ...create_knowledge_capability([]),
+        load: () => always_rejects("knowledge_unavailable"),
       },
       gallery: {
         ...create_gallery_capability([]),
@@ -947,6 +1080,8 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       llm_connections: create_llm_connections_capability([]),
       prompt_presets: create_prompt_presets_capability([], new Map()),
       assets: create_assets_capability(EMPTY_ASSET_RECORDS),
+      personas: create_personas_capability([]),
+      knowledge: create_knowledge_capability([]),
       gallery: create_gallery_capability([]),
       vocabulary: create_vocabulary_capability(),
       diagnostics: create_diagnostics_capability(),
@@ -968,6 +1103,8 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
         PRESET_DRAFTS,
       ),
       assets: create_assets_capability(ASSET_RECORDS),
+      personas: create_personas_capability([PERSONA_ASSISTANT, PERSONA_USER]),
+      knowledge: create_knowledge_capability([KNOWLEDGE_HARBOR, KNOWLEDGE_OLD_TOWN]),
       gallery: {
         ...create_gallery_capability(GALLERY_RECORDS),
         load: () => always_rejects("gallery_unavailable"),
@@ -998,6 +1135,8 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       PRESET_DRAFTS,
     ),
     assets: create_assets_capability(ASSET_RECORDS),
+    personas: create_personas_capability([PERSONA_ASSISTANT, PERSONA_USER]),
+    knowledge: create_knowledge_capability([KNOWLEDGE_HARBOR, KNOWLEDGE_OLD_TOWN]),
     gallery: create_gallery_capability(GALLERY_RECORDS),
     vocabulary: create_vocabulary_capability(),
     diagnostics: create_diagnostics_capability(),
