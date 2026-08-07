@@ -1,0 +1,288 @@
+/*
+ * Prompt workspace: preset browser column plus a stacked editor column (fixed prompts, context
+ * preview, quality controls, replacement/regex rules, private test panel). Unframed sections
+ * separated by 1px dividers, no card wrapping a whole section (taste directive: cockpit density).
+ */
+
+.prompt_view {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 0;
+  min-height: 100%;
+}
+
+.browser_column {
+  border-right: 1px solid var(--tc-divider);
+}
+
+.editor_column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-bottom: 24px;
+}
+
+/* Below use_shell_viewport.ts's DESKTOP_BREAKPOINT_PX (960px, the same constant the shell itself
+   switches desktop/mobile layout at): the preset browser column has no room beside the editor, so
+   it moves above the editor in normal document flow instead of staying side-by-side and forcing
+   horizontal scroll/overflow. */
+@media (max-width: 959px) {
+  .prompt_view {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .browser_column {
+    border-right: none;
+    border-bottom: 1px solid var(--tc-divider);
+  }
+}
+
+.section_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px 4px;
+}
+
+.section_title {
+  font-weight: 600;
+}
+
+.icon_text_button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--tc-accent);
+}
+
+.text_input {
+  width: 100%;
+  padding: 6px 8px;
+  color: var(--tc-text);
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.text_input_narrow {
+  width: 64px;
+  padding: 6px 8px;
+  color: var(--tc-text);
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.text_input:focus-visible,
+.text_input_narrow:focus-visible {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: 1px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 10px;
+  color: var(--tc-text);
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.textarea:focus-visible {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: 1px;
+}
+
+/* --------------------------------------------------------------------- Preset browser */
+
+.preset_browser {
+  display: flex;
+  flex-direction: column;
+}
+
+.search_input {
+  margin: 0 16px 8px;
+  padding: 6px 8px;
+  color: var(--tc-text);
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  font-size: 13px;
+}
+
+.bulk_delete_button {
+  margin: 0 16px 8px;
+  padding: 6px 10px;
+  color: var(--tc-error);
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-field);
+  font-size: 12px;
+}
+
+.group_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 16px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.preset_list {
+  display: flex;
+  flex-direction: column;
+}
+
+.preset_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px;
+}
+
+.preset_row_selected {
+  background-color: var(--tc-surface-raised);
+}
+
+.preset_name_button {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------- Editor shared */
+
+.name_row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.name_row > :first-child {
+  flex: 1 1 auto;
+}
+
+/* --------------------------------------------------------------------- Prompt builder */
+
+.prompt_builder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.context_preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
+.context_block_title {
+  margin-bottom: 4px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.context_list {
+  margin: 0;
+  padding-left: 16px;
+}
+
+/* --------------------------------------------------------------------- Quality controls */
+
+.quality_controls {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.switch_list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 16px 8px;
+}
+
+/* --------------------------------------------------------------------- Rules (replacement/regex) */
+
+.replacement_rules,
+.regex_rules {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.rule_row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.rule_row > *:not(.rule_row_action) {
+  flex: 1 1 140px;
+}
+
+/* The trailing "test"/"remove" controls are fixed-size actions, not text fields -- excluded from
+   the generic 140px flex-grow above so they don't stretch and leave a large gap after wrapping. */
+.rule_row_action {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.test_result {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--tc-success);
+  font-size: 12px;
+}
+
+.test_result_error {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--tc-error);
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------- Test panel */
+
+.test_panel {
+  display: flex;
+  flex-direction: column;
+}
+
+/* .section_header (shared across every section in this view) already carries its own 16px
+   horizontal padding -- this wraps everything below the title instead of padding .test_panel
+   itself, so the title lines up with every other section instead of getting double-indented. */
+.test_panel_body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.tools_disabled_note {
+  margin: 0;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}

@@ -22,9 +22,11 @@ import type {
   ProfilesCapability,
   ProfilesDomainEvent,
   ProviderProfileSummary,
+  PromptPresetDraft,
   PromptPresetSummary,
   PromptPresetsCapability,
   PromptPresetsDomainEvent,
+  PromptRegexRule,
   SettingsCapability,
   SettingsDomainEvent,
   SettingsSnapshot,
@@ -36,6 +38,8 @@ import { create_studio_controller } from "./studio_controller.js";
 const PROFILE_ID = "11111111-1111-4111-8111-111111111111" as Uuid;
 const JOB_ID = "22222222-2222-4222-8222-222222222222" as Uuid;
 const RECORD_ID = "33333333-3333-4333-8333-333333333333" as Uuid;
+const PRESET_ID = "44444444-4444-4444-8444-444444444444" as Uuid;
+const PRESET_ID_2 = "55555555-5555-4555-8555-555555555555" as Uuid;
 
 function deferred<T>(): {
   readonly promise: Promise<T>;
@@ -460,5 +464,129 @@ describe("create_studio_controller", () => {
     expect(failure?.code).toMatch(/^[a-z][a-z0-9_]*$/);
     expect(failure?.code).not.toContain(" ");
     expect(failure?.code).not.toContain("Could not reach");
+  });
+});
+
+function build_prompt_draft(overrides: Partial<PromptPresetDraft> = {}): PromptPresetDraft {
+  return {
+    id: PRESET_ID,
+    display_name: "Preset A",
+    group: null,
+    fixed_positive_prompt: "",
+    fixed_negative_prompt: "",
+    replacement_rules: [],
+    regex_rules: [],
+    ...overrides,
+  };
+}
+
+describe("create_studio_controller: Task 5 command extensions", () => {
+  it("sets the Workbench active provider profile as local state (no capability call)", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    controller.select_provider_profile(PROFILE_ID);
+    expect(controller.state.workbench.active_profile_id).toBe(PROFILE_ID);
+
+    controller.select_provider_profile(null);
+    expect(controller.state.workbench.active_profile_id).toBeNull();
+  });
+
+  it("selects a prompt preset by loading its draft, then keeps edits local until save", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    vi.mocked(mock.capabilities.prompt_presets.load_draft).mockResolvedValue(
+      build_prompt_draft({ display_name: "Loaded preset" }),
+    );
+
+    await controller.select_prompt_preset(PRESET_ID);
+
+    expect(mock.capabilities.prompt_presets.load_draft).toHaveBeenCalledWith(PRESET_ID);
+    expect(controller.state.prompt.selected_preset_id).toBe(PRESET_ID);
+    expect(controller.state.prompt.draft?.display_name).toBe("Loaded preset");
+
+    controller.update_prompt_draft({ display_name: "Edited locally" });
+    expect(controller.state.prompt.draft?.display_name).toBe("Edited locally");
+    expect(mock.capabilities.prompt_presets.save_draft).not.toHaveBeenCalled();
+  });
+
+  it("starts a blank new preset draft with a null id and no current selection", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    controller.start_new_prompt_preset();
+
+    expect(controller.state.prompt.selected_preset_id).toBeNull();
+    expect(controller.state.prompt.draft).toMatchObject({
+      id: null,
+      display_name: "",
+      replacement_rules: [],
+      regex_rules: [],
+    });
+  });
+
+  it("removes a single preset and clears the draft when the removed preset was selected", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    mock.prompt_presets.deferred_load.resolve([
+      { id: PRESET_ID, display_name: "Preset A", group: null, updated_at: "2026-01-01T00:00:00Z" },
+    ]);
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    vi.mocked(mock.capabilities.prompt_presets.load_draft).mockResolvedValue(build_prompt_draft());
+    await controller.select_prompt_preset(PRESET_ID);
+    vi.mocked(mock.capabilities.prompt_presets.remove).mockResolvedValue(undefined);
+
+    await controller.remove_prompt_preset(PRESET_ID);
+
+    expect(controller.state.prompt.presets).toEqual([]);
+    expect(controller.state.prompt.selected_preset_id).toBeNull();
+    expect(controller.state.prompt.draft).toBeNull();
+  });
+
+  it("bulk removes presets and clears the selection only if it was among the removed ids", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    mock.prompt_presets.deferred_load.resolve([
+      { id: PRESET_ID, display_name: "Preset A", group: null, updated_at: "2026-01-01T00:00:00Z" },
+      { id: PRESET_ID_2, display_name: "Preset B", group: null, updated_at: "2026-01-01T00:00:00Z" },
+    ]);
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    vi.mocked(mock.capabilities.prompt_presets.bulk_remove).mockResolvedValue(undefined);
+    await controller.bulk_remove_prompt_presets([PRESET_ID]);
+
+    expect(controller.state.prompt.presets).toHaveLength(1);
+    expect(controller.state.prompt.presets[0]?.id).toBe(PRESET_ID_2);
+  });
+
+  it("delegates regex testing to the capability and returns its result without mutating state", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    const rule: PromptRegexRule = { id: "r1", pattern: "foo", flags: "g", replacement: "bar" };
+    vi.mocked(mock.capabilities.prompt_presets.test_regex).mockResolvedValue("bar baz");
+
+    const result = await controller.test_prompt_regex(rule, "foo baz");
+
+    expect(mock.capabilities.prompt_presets.test_regex).toHaveBeenCalledWith(rule, "foo baz");
+    expect(result).toBe("bar baz");
   });
 });

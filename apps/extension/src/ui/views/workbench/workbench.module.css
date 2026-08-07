@@ -1,0 +1,340 @@
+/*
+ * Dense editor layout: prompt central, reference strip below, command controls adjacent, provider
+ * parameters in a side "contextual inspector" column (taste directive: cockpit density -- unframed
+ * sections separated by 1px dividers, no card wrapping a whole section; cards stay reserved for
+ * image tiles / draggable items / modals, per plan rule).
+ */
+
+.workbench_view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 0;
+  min-height: 100%;
+}
+
+.main_column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--tc-divider);
+}
+
+.side_column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Below use_shell_viewport.ts's DESKTOP_BREAKPOINT_PX (960px, the same constant the shell itself
+   switches desktop/mobile layout at): the inspector column has no room beside the composer, so it
+   moves into normal document flow below the main column instead of staying side-by-side and
+   forcing horizontal scroll/overflow. */
+@media (max-width: 959px) {
+  .workbench_view {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main_column {
+    border-right: none;
+    border-bottom: 1px solid var(--tc-divider);
+  }
+}
+
+.section_header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px 4px;
+}
+
+.section_title {
+  font-weight: 600;
+}
+
+.section_hint {
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.inline_error {
+  margin: 4px 16px 0;
+  color: var(--tc-error);
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------- Prompt composer */
+
+.prompt_composer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.prompt_textarea {
+  width: 100%;
+  min-height: 64px;
+  padding: 8px 10px;
+  color: var(--tc-text);
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.prompt_textarea:focus-visible {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: 1px;
+}
+
+/* --------------------------------------------------------------------- Reference strip */
+
+.reference_strip {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.reference_empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.reference_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px 0;
+}
+
+.reference_tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 132px;
+  padding: 8px;
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-image);
+}
+
+.reference_tile_thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+  color: var(--tc-text-muted);
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-image);
+}
+
+.reference_tile_name {
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.reference_tile_actions {
+  display: flex;
+  gap: 2px;
+}
+
+.reference_tile_add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 132px;
+}
+
+.reference_add_button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  color: var(--tc-accent);
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-field);
+}
+
+.picker_list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.picker_item {
+  width: 100%;
+  padding: 8px 10px;
+  text-align: left;
+  color: var(--tc-text);
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-field);
+}
+
+/* --------------------------------------------------------------------- Submit row */
+
+.submit_row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+/* --------------------------------------------------------------------- Provider summary */
+
+.provider_summary {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.text_action_button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--tc-accent);
+}
+
+/* --------------------------------------------------------------------- Active jobs */
+
+.active_jobs {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-bottom: 16px;
+}
+
+.job_list {
+  display: flex;
+  flex-direction: column;
+}
+
+.job_row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.job_row_selected {
+  background-color: var(--tc-surface-raised);
+}
+
+.job_row_main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+}
+
+.job_status_dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--tc-success);
+}
+
+.job_provider {
+  font-weight: 600;
+}
+
+.job_state {
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.job_progress {
+  margin-left: auto;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.job_error {
+  margin: 0;
+  color: var(--tc-error);
+  font-size: 12px;
+}
+
+.job_row_actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* --------------------------------------------------------------------- Generation inspector */
+
+.generation_inspector {
+  padding-bottom: 16px;
+}
+
+.inspector_field_list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 4px 16px;
+}
+
+.inspector_field {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.inspector_field dt {
+  color: var(--tc-text-muted);
+}
+
+.inspector_field dd {
+  margin: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector_actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.completion_preview_list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.completion_preview_tile {
+  aspect-ratio: 1;
+  overflow: hidden;
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-image);
+}
+
+.completion_preview_tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.completion_preview_placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--tc-text-muted);
+}

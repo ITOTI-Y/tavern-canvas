@@ -1,0 +1,99 @@
+<script setup lang="ts">
+import { useId } from "vue";
+import { useI18n } from "vue-i18n";
+
+import { drop_undefined } from "../../components/_prop_utils.js";
+import FieldGroup from "../../components/FieldGroup.vue";
+import NumberStepper from "../../components/NumberStepper.vue";
+import styles from "./workbench.module.css";
+
+/**
+ * The dense editor's central panel: positive/negative prompt drafts and the image-count stepper.
+ * Long prompts are expected (brief's browser-smoke step) -- both textareas grow with content
+ * instead of clipping.
+ */
+const props = defineProps<{
+  readonly positivePrompt: string;
+  readonly negativePrompt: string;
+  readonly imageCount: number;
+  readonly positiveError?: string | null;
+  readonly imageCountError?: string | null;
+}>();
+
+const emit = defineEmits<{
+  "update:positivePrompt": [value: string];
+  "update:negativePrompt": [value: string];
+  "update:imageCount": [value: number];
+}>();
+
+const { t } = useI18n();
+const positive_textarea_id = useId();
+const negative_textarea_id = useId();
+
+function handle_positive_input(event: Event): void {
+  emit("update:positivePrompt", (event.target as HTMLTextAreaElement).value);
+}
+
+function handle_negative_input(event: Event): void {
+  emit("update:negativePrompt", (event.target as HTMLTextAreaElement).value);
+}
+</script>
+
+<template>
+  <div :class="styles.prompt_composer" data-testid="prompt-composer">
+    <FieldGroup
+      :label="t('workbench.prompt_composer.positive_label')"
+      :error="props.positiveError ?? null"
+      required
+    >
+      <template #default="{ describedBy, invalid }">
+        <textarea
+          :id="positive_textarea_id"
+          :class="styles.prompt_textarea"
+          data-testid="positive-prompt-input"
+          :value="props.positivePrompt"
+          :placeholder="t('workbench.prompt_composer.positive_placeholder')"
+          :aria-describedby="describedBy"
+          :aria-invalid="invalid"
+          rows="6"
+          @input="handle_positive_input"
+        />
+      </template>
+    </FieldGroup>
+
+    <FieldGroup :label="t('workbench.prompt_composer.negative_label')">
+      <template #default="{ describedBy }">
+        <textarea
+          :id="negative_textarea_id"
+          :class="styles.prompt_textarea"
+          data-testid="negative-prompt-input"
+          :value="props.negativePrompt"
+          :placeholder="t('workbench.prompt_composer.negative_placeholder')"
+          :aria-describedby="describedBy"
+          rows="3"
+          @input="handle_negative_input"
+        />
+      </template>
+    </FieldGroup>
+
+    <FieldGroup
+      :label="t('workbench.prompt_composer.image_count_label')"
+      :error="props.imageCountError ?? null"
+    >
+      <template #default="{ fieldId, describedBy }">
+        <NumberStepper
+          v-bind="drop_undefined({ describedBy })"
+          :id="fieldId"
+          :model-value="props.imageCount"
+          :min="1"
+          :max="4"
+          :step="1"
+          :increment-label="t('workbench.prompt_composer.image_count_label')"
+          :decrement-label="t('workbench.prompt_composer.image_count_label')"
+          data-testid="image-count-stepper"
+          @update:model-value="(value) => emit('update:imageCount', value)"
+        />
+      </template>
+    </FieldGroup>
+  </div>
+</template>

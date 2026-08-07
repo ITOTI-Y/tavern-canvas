@@ -14,6 +14,7 @@ import type {
   ProviderProfileSummary,
   PromptPresetDraft,
   PromptPresetsDomainEvent,
+  PromptRegexRule,
   SettingsDomainEvent,
   StudioCapabilities,
   Unsubscribe,
@@ -56,6 +57,22 @@ export interface StudioController {
   submit_generation(command: GenerationSubmitCommand): Promise<void>;
   cancel_generation(job_id: Uuid): Promise<void>;
   retry_generation(job_id: Uuid): Promise<void>;
+  /** Sets the Workbench's active provider profile selection (local UI state, no capability call). */
+  select_provider_profile(profile_id: Uuid | null): void;
+  /** Loads a preset's editable draft and selects it. The draft then lives only in controller state
+   * (`state.prompt.draft`) until `save_prompt_preset` persists it -- matching the plan's "draft
+   * edits remain local until Save" rule. */
+  select_prompt_preset(preset_id: Uuid): Promise<void>;
+  /** Starts a new, unsaved preset draft (`id: null`) and clears the current selection. */
+  start_new_prompt_preset(): void;
+  /** Clears the current draft/selection without loading a replacement (e.g. after a confirmed
+   * discard). */
+  clear_prompt_draft(): void;
+  /** Patches the in-progress draft locally; never calls `save_draft` itself. */
+  update_prompt_draft(patch: Partial<PromptPresetDraft>): void;
+  remove_prompt_preset(preset_id: Uuid): Promise<void>;
+  bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void>;
+  test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
   save_prompt_preset(draft: PromptPresetDraft): Promise<void>;
   install_vocabulary_package(entry: VocabularyCatalogEntry): Promise<void>;
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void>;
@@ -589,6 +606,79 @@ class StudioControllerImpl implements StudioController {
     this.#patch_workbench({
       jobs: upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id),
     });
+  }
+
+  select_provider_profile(profile_id: Uuid | null): void {
+    this.#patch_workbench({ active_profile_id: profile_id });
+  }
+
+  async select_prompt_preset(preset_id: Uuid): Promise<void> {
+    this.#patch_prompt({ selected_preset_id: preset_id });
+    const draft = await this.#capabilities.prompt_presets.load_draft(preset_id);
+    if (this.#stopped) {
+      return;
+    }
+    this.#patch_prompt({ draft });
+  }
+
+  start_new_prompt_preset(): void {
+    this.#patch_prompt({
+      selected_preset_id: null,
+      draft: {
+        id: null,
+        display_name: "",
+        group: null,
+        fixed_positive_prompt: "",
+        fixed_negative_prompt: "",
+        replacement_rules: [],
+        regex_rules: [],
+      },
+    });
+  }
+
+  clear_prompt_draft(): void {
+    this.#patch_prompt({ selected_preset_id: null, draft: null });
+  }
+
+  update_prompt_draft(patch: Partial<PromptPresetDraft>): void {
+    if (!this.#state.prompt.draft) {
+      return;
+    }
+    this.#patch_prompt({ draft: { ...this.#state.prompt.draft, ...patch } });
+  }
+
+  async remove_prompt_preset(preset_id: Uuid): Promise<void> {
+    await this.#capabilities.prompt_presets.remove(preset_id);
+    this.#patch_prompt({
+      presets: this.#state.prompt.presets.filter((p) => p.id !== preset_id),
+      selected_preset_id:
+        this.#state.prompt.selected_preset_id === preset_id
+          ? null
+          : this.#state.prompt.selected_preset_id,
+      draft: this.#state.prompt.selected_preset_id === preset_id ? null : this.#state.prompt.draft,
+    });
+  }
+
+  async bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void> {
+    await this.#capabilities.prompt_presets.bulk_remove(preset_ids);
+    const removed = new Set(preset_ids);
+    this.#patch_prompt({
+      presets: this.#state.prompt.presets.filter((p) => !removed.has(p.id)),
+      selected_preset_id:
+        this.#state.prompt.selected_preset_id !== null &&
+        removed.has(this.#state.prompt.selected_preset_id)
+          ? null
+          : this.#state.prompt.selected_preset_id,
+      draft:
+        this.#state.prompt.selected_preset_id !== null &&
+        removed.has(this.#state.prompt.selected_preset_id)
+          ? null
+          : this.#state.prompt.draft,
+    });
+  }
+
+  test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<string> {
+    return this.#capabilities.prompt_presets.test_regex(rule, sample_text);
   }
 
   save_prompt_preset(draft: PromptPresetDraft): Promise<void> {
