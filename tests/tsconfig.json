@@ -9,9 +9,20 @@
       "@tavern-canvas/storage": ["../packages/storage/src/index.ts"],
       "@tavern-canvas/vocabulary": ["../packages/vocabulary/src/index.ts"],
       "@tavern-canvas/vocabulary-builder": ["../tools/vocabulary_builder/src/index.ts"],
-      "@tavern-canvas/v2-migration": ["../tools/v2_migration/src/index.ts"]
+      "@tavern-canvas/v2-migration": ["../tools/v2_migration/src/index.ts"],
+      // tests/harness/src/studio_host.ts (Stage 06 Task 8) is the first tests/** file to import
+      // "vue" and a *.vue SFC directly (mounting the real apps/extension/src/ui/AppRoot.vue) --
+      // "tests" is not a pnpm workspace member so it has no node_modules symlink of its own
+      // (same reason the @tavern-canvas/* entries above exist); point straight at
+      // apps/extension's real resolved copy instead of duplicating a dependency here.
+      "vue": ["../apps/extension/node_modules/vue"]
     },
-    "types": ["node", "vitest/globals"]
+    // vite/client supplies the ambient module declarations every Vite-only import specifier
+    // needs (`*.css?inline`, `*.png?url`, ...) -- both this project's own harness files and
+    // apps/extension/src/ui/styles/runtime_stylesheet.ts (pulled in transitively through
+    // studio_host.ts -> AppRoot.vue -> ... ) use them. apps/extension/tsconfig.json already
+    // carries the same "vite/client" entry for the identical reason.
+    "types": ["node", "vitest/globals", "vite/client"]
   },
   "include": ["**/*.ts"]
 }
