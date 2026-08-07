@@ -21,7 +21,9 @@
     "@tavern-canvas/storage": "workspace:*",
     "@tavern-canvas/v2-migration": "workspace:*",
     "@tavern-canvas/vocabulary": "workspace:*",
+    "dompurify": "3.4.13",
     "lucide-vue-next": "1.0.0",
+    "marked": "18.0.9",
     "reka-ui": "2.10.1",
     "semver": "7.8.5",
     "vue": "3.5.40",
@@ -37,6 +39,7 @@
     "@vue/test-utils": "2.4.11",
     "fake-indexeddb": "6.2.5",
     "idb": "8.0.3",
+    "jsdom": "27.4.0",
     "postcss": "8.5.25",
     "vite": "8.2.0",
     "vue-tsc": "3.3.9"

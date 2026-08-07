@@ -559,6 +559,48 @@ const migration = {
   record_count: "{n} 条记录 | {n} 条记录",
 };
 
+const assistant = {
+  panel_title: "助手",
+  new_chat_action: "新建对话",
+  load_older_action: "加载更早的消息",
+  sessions_empty: {
+    description: "还没有对话，新建一个对话即可开始与助手交流。",
+    action: "新建对话",
+  },
+  rename_session_action: "重命名",
+  delete_session_action: "删除",
+  export_session_action: "导出",
+  input_placeholder: "向助手提问……",
+  send_action: "发送",
+  abort_action: "停止",
+  attach_image_action: "添加图片",
+  mic_start_action: "开始语音输入",
+  mic_stop_action: "停止语音输入",
+  mic_unavailable: "当前宿主不支持语音输入。",
+  mic_denied: "麦克风权限被拒绝。",
+  tts_play_action: "朗读",
+  tts_pause_action: "暂停朗读",
+  tts_stop_action: "停止朗读",
+  screen_capture_start_action: "共享屏幕",
+  screen_capture_stop_action: "停止共享",
+  message_edit_action: "编辑",
+  message_resend_action: "重新发送",
+  message_regenerate_action: "重新生成",
+  thinking_toggle: "推理过程",
+  tool_call_toggle: "工具调用",
+  ask_choice_hint: "选择一个选项，或直接输入你自己的回复。",
+  task_strip_generating: "正在生成图片：{prompt}",
+  draft_review: {
+    title: "审核设置变更",
+    description: "以下是助手提出的变更，需你确认后才会生效。",
+    empty: "暂无变更提议。",
+    from_label: "当前值",
+    to_label: "拟改为",
+    apply_action: "应用",
+    discard_action: "放弃",
+  },
+};
+
 const errors = {
   capability_blocked: "此操作需要 {capability}，但当前宿主不支持。",
   validation_required: "此项为必填。",
@@ -601,6 +643,7 @@ export const zh_cn_messages = {
   diagnostics,
   settings,
   migration,
+  assistant,
   errors,
   confirmations,
 } satisfies LocaleMessageSchema;

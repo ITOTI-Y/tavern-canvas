@@ -261,7 +261,9 @@ function clone_tool_arguments(value: unknown): Readonly<Record<string, unknown>>
   return clone;
 }
 
-function clone_request_headers(value: unknown): Readonly<Record<string, string>> {
+/** Exported for `sillytavern_secret_destination.ts`, which authenticates the same
+ * CSRF-header way against SillyTavern's `/api/secrets/*` endpoints. */
+export function clone_request_headers(value: unknown): Readonly<Record<string, string>> {
   if (!is_plain_record(value)) {
     throw new Error("SillyTavern returned invalid request headers");
   }

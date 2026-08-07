@@ -589,6 +589,48 @@ const errors = {
   unexpected: "Something went wrong. Check Diagnostics for details.",
 };
 
+const assistant = {
+  panel_title: "Assistant",
+  new_chat_action: "New chat",
+  load_older_action: "Load older messages",
+  sessions_empty: {
+    description: "No chats yet. Start a new chat to talk with the assistant.",
+    action: "New chat",
+  },
+  rename_session_action: "Rename",
+  delete_session_action: "Delete",
+  export_session_action: "Export",
+  input_placeholder: "Ask the assistant...",
+  send_action: "Send",
+  abort_action: "Stop",
+  attach_image_action: "Attach image",
+  mic_start_action: "Start voice input",
+  mic_stop_action: "Stop voice input",
+  mic_unavailable: "Voice input is not available on this host.",
+  mic_denied: "Microphone access was denied.",
+  tts_play_action: "Read aloud",
+  tts_pause_action: "Pause reading",
+  tts_stop_action: "Stop reading",
+  screen_capture_start_action: "Share screen",
+  screen_capture_stop_action: "Stop sharing",
+  message_edit_action: "Edit",
+  message_resend_action: "Resend",
+  message_regenerate_action: "Regenerate",
+  thinking_toggle: "Reasoning",
+  tool_call_toggle: "Tool calls",
+  ask_choice_hint: "Select an option, or type your own reply.",
+  task_strip_generating: "Generating image: {prompt}",
+  draft_review: {
+    title: "Review settings changes",
+    description: "The assistant proposed these changes. Nothing is applied until you approve it.",
+    empty: "No changes proposed.",
+    from_label: "Current",
+    to_label: "Proposed",
+    apply_action: "Apply",
+    discard_action: "Discard",
+  },
+};
+
 const confirmations = {
   destructive: {
     default_confirm_action: "Delete",
@@ -621,6 +663,7 @@ export const en_messages = {
   diagnostics,
   settings,
   migration,
+  assistant,
   errors,
   confirmations,
 };
