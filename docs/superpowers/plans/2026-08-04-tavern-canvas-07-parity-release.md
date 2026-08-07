@@ -64,7 +64,8 @@ The approved removal list is limited to:
 - World Info tool-control prompt injection;
 - last-message/last-layer attachment fallback;
 - duplicate in-app code updater replaced by SillyTavern `manifest.auto_update`;
-- cache-completion flags and stale one-off migration markers.
+- cache-completion flags and stale one-off migration markers;
+- sensitive/non-redistributable content is not force-bundled, replaced by user-selectable catalog/import install (user directive, Stage 05 catalog decision, confirmed 2026-08-07 -- see `docs/plans/2026-08-04-tavern-canvas-v3-architecture-design.md` section 15.1).
 
 These removals retain their user goal through scoped diagnostics, typed tokens, host/Gateway secret storage, deterministic binding, or host update behavior. Any additional removal requires explicit user approval and an architecture-document revision.
 

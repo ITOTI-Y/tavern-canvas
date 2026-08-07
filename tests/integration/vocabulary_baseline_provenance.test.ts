@@ -88,4 +88,36 @@ describe("committed vocabulary baseline", () => {
       POPULARITY_FLOOR_PROBE.minimum_popularity,
     );
   });
+
+  // Parity ledger guard (docs/parity/feature_matrix.md's
+  // vocabulary.nsfw_group_tree_default_load, removed_approved
+  // [non-redistributable-content-default-bundle]): the legacy v2.8.1
+  // archive's tag_NSFW001.json group tree is non-redistributable
+  // (data/vocabulary/LICENSES.json's legacy-st-chatu8-v2-8-1-tagdata entry
+  // -- "Both remain out of scope") and MUST NOT ship inside the package a
+  // fresh install gets by default. This does not test the removal of a
+  // capability -- packages/vocabulary/src/import/import_builder.test.ts
+  // proves the same NSFW-shaped source still imports via explicit
+  // user-initiated install -- it tests the absence of automatic bundling.
+  it("never auto-bundles NSFW-category records into the default first-run package", async () => {
+    const manifest_text = await readFile(resolve(BASELINE_DIRECTORY, "manifest.json"), "utf8");
+    const manifest = VocabularyManifestSchema.parse(JSON.parse(manifest_text));
+    const detail_shards = manifest.shards.filter((shard) => shard.kind === "detail");
+
+    let nsfw_record_count = 0;
+    for (const shard of detail_shards) {
+      const bytes = await readFile(resolve(BASELINE_DIRECTORY, shard.path));
+      const { payload } = await decode_shard_bytes(bytes);
+      if (payload.kind !== "detail") {
+        throw new Error(`shard ${shard.shard_id} declares kind "detail" but decoded otherwise`);
+      }
+      for (const record of payload.records as readonly VocabularyRecord[]) {
+        if (record.category === "nsfw") {
+          nsfw_record_count += 1;
+        }
+      }
+    }
+
+    expect(nsfw_record_count).toBe(0);
+  });
 });

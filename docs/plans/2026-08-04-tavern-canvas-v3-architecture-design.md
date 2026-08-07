@@ -618,6 +618,25 @@ AI 助手只能修改 draft，用户确认后才提交设置，且不能读取 s
 
 当前捕获整个页面错误的 global collector 删除。诊断只记录 `tavern_canvas` scope 内的错误、任务 timeline 和 capability 结果。
 
+### 15.1 已批准移除清单（权威记录）
+
+Stage 07 任务简报（`docs/superpowers/plans/2026-08-04-tavern-canvas-07-parity-release.md` Step 2）定义了封闭的已批准移除清单：任何不在此列表中的移除都需要用户明确批准并修订本节。清单：
+
+1. 页面级全局错误收集器；
+2. 用作隐藏同步数据库的隐写术；
+3. transformers、zip、msgpack、crypto 的 vendored UMD/全局补丁；
+4. 任意自定义 CSS 注入器与遗留 DOM 样式变更；
+5. 基于 UA 的能力探测；
+6. 客户端直接控制 provider URL、鉴权与任意请求头；
+7. 呈现为密钥保护的可逆本地伪加密；
+8. World Info 工具控制型 prompt 注入；
+9. 最后一条消息/最后一层的附件兜底逻辑；
+10. 被 SillyTavern `manifest.auto_update` 取代的应用内重复更新器；
+11. 缓存完成标志与过期的一次性迁移标记；
+12. **（2026-08-07 用户批准新增）** 敏感/不可再分发内容不再默认打包，改为用户在词库目录/导入界面中显式选择安装。具体指 v2 默认可安装、无需额外确认的 NSFW 分组词库树，其"默认可用"的打包/自动加载行为本身被移除；用户仍可通过既有词库导入管线（`packages/vocabulary/src/import/`）主动安装同形状的数据，能力并未消失，只是不再默认呈现。批准依据：Stage 05 复审已认定该内容因 AFPL 许可不可再分发（`docs/_dev/reviews/stage05/final-review.md` 条目 8，ACCEPTABLE-DEFER 裁决）；用户于 2026-08-07 就 Stage 07 Task 1 的停靠点裁定明确批准将其列入本清单，替代此前 `vocabulary.nsfw_group_tree_default_load` 单行记录"per reality"的临时处理（`docs/parity/feature_matrix.md` 拆分为 `vocabulary.nsfw_group_tree_user_install`〔`ported`〕与 `vocabulary.nsfw_group_tree_default_load`〔`removed_approved`〕两行）。
+
+这些移除均通过范围受限的诊断、类型化 token、host/Gateway 密钥存储、确定性绑定或 host 更新行为保留其用户目标；第 12 项通过用户发起的显式导入保留其用户目标。
+
 ## 16. 国际化
 
 首发使用 Vue I18n Composition API，支持：

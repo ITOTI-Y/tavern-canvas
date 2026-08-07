@@ -545,6 +545,10 @@ export const LEGACY_INVENTORY: readonly LegacyInventoryEntry[] = [
     group: "vocabulary import, grouping, search, and update",
   },
   {
+    id: "vocabulary.nsfw_group_tree_user_install",
+    group: "vocabulary import, grouping, search, and update",
+  },
+  {
     id: "vocabulary.nsfw_group_tree_default_load",
     group: "vocabulary import, grouping, search, and update",
   },

@@ -34,9 +34,11 @@ const VALID_STATUSES: ReadonlySet<string> = new Set<ParityStatus>(["ported", "re
 const VALID_GROUPS: ReadonlySet<string> = new Set<ParityGroup>(PARITY_GROUPS);
 
 // Every `removed_approved` row must open its Notes cell with one of these bracketed tags, each
-// mapping 1:1 onto a bullet of the closed approved-removal list (task brief Step 2). This is what
+// mapping 1:1 onto a bullet of the closed approved-removal list (task brief Step 2, amended
+// 2026-08-07 -- see docs/plans/2026-08-04-tavern-canvas-v3-architecture-design.md section 15.1
+// for the authoritative record and the user-directive citation for the 12th reason). This is what
 // makes "unapproved removal" a machine check rather than a prose-matching heuristic: a removal
-// whose replacement rationale cannot be classified into one of these eleven reasons is rejected,
+// whose replacement rationale cannot be classified into one of these twelve reasons is rejected,
 // not merely unrecorded. Any additional removal category requires explicit user approval and an
 // architecture-document revision -- not a new entry here.
 export const APPROVED_REMOVAL_REASONS = [
@@ -51,6 +53,7 @@ export const APPROVED_REMOVAL_REASONS = [
   "last-message-attachment-fallback",
   "duplicate-in-app-updater",
   "cache-completion-flags",
+  "non-redistributable-content-default-bundle",
 ] as const;
 
 export type ApprovedRemovalReason = (typeof APPROVED_REMOVAL_REASONS)[number];

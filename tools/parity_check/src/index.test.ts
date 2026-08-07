@@ -77,7 +77,29 @@ describe("validate_rows", () => {
     expect(findings).toEqual([]);
   });
 
-  it("covers all eleven approved-removal reasons as valid tags", async () => {
+  it("accepts the non-redistributable-content-default-bundle reason (2026-08-07 architecture amendment)", async () => {
+    // Regression guard for the 12th approved-removal category, added per the user's 2026-08-07
+    // ruling on vocabulary.nsfw_group_tree_default_load (docs/plans/2026-08-04-tavern-canvas-v3-
+    // architecture-design.md section 15.1): a category can be added to the closed list without
+    // touching validate_rows itself, only APPROVED_REMOVAL_REASONS -- this pins that the constant
+    // is genuinely the single source of truth the rule reads from.
+    await write_file("tests/integration/vocabulary_baseline_provenance.test.ts");
+    const findings = validate_rows(
+      [
+        row({
+          status: "removed_approved",
+          acceptance_test: "tests/integration/vocabulary_baseline_provenance.test.ts",
+          notes:
+            "[non-redistributable-content-default-bundle] NSFW group-tree no longer bundled by default",
+        }),
+      ],
+      [entry()],
+      temporary_root,
+    );
+    expect(findings).toEqual([]);
+  });
+
+  it("covers all twelve approved-removal reasons as valid tags", async () => {
     await write_file("placeholder.test.ts");
     for (const reason of APPROVED_REMOVAL_REASONS) {
       const findings = validate_rows(
