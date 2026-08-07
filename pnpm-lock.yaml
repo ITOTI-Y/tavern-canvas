@@ -276,6 +276,8 @@ importers:
 
   tools/locale_check: {}
 
+  tools/parity_check: {}
+
   tools/v2_migration:
     dependencies:
       '@noble/hashes':
