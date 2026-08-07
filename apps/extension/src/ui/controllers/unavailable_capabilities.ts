@@ -83,11 +83,17 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
 /**
  * Every `load()` resolves to an empty snapshot (so the shell renders a genuinely empty "normal"
  * studio instead of a permanent failure banner), every `subscribe()` is a no-op unsubscribe, and
- * every mutating command rejects with the stable `capability_not_implemented` code. Stage 06 does
- * not wire real generation/storage/vocabulary adapters into the Studio controller (that is
- * unscheduled future work per task-1-report.md); bootstrap.ts's composition root uses this as the
- * production default until a real `StudioCapabilities` implementation replaces it there -- nothing
- * in AppRoot or below needs to change when that happens.
+ * every mutating command rejects with the stable `capability_not_implemented` code -- never a
+ * synchronous throw, so every capability always presents an explicit, typed "unavailable" outcome
+ * a caller can branch on instead of an uncaught exception. Wiring real generation/storage/
+ * vocabulary/provider adapters (SecretDestinationPort and friends) is unscheduled work owned by a
+ * later stage, per task-1-report.md and task-2-report.md -- not partial or in-progress within
+ * Stage 06. This factory IS the finalized Stage 06 production composition root: `bootstrap.ts`
+ * (the only production call site) wires it explicitly as `capabilities: create_unavailable_capabilities()`
+ * when constructing `AppRoot`, and every Studio view (Task 8, task-8-report.md's routing-wiring
+ * gap) now actually mounts and calls through it. A later stage swaps this for a real
+ * implementation by changing only `bootstrap.ts`'s composition root -- `AppRoot` and everything
+ * below it never change.
  */
 export function create_unavailable_capabilities(): StudioCapabilities {
   const generation: GenerationCapability = {
