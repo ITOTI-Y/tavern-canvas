@@ -291,6 +291,56 @@ describe("VocabularyWorkerEngine", () => {
     expect(last).toMatchObject({ type: "error", request_id, code: "cancelled" });
   });
 
+  it("caps orphaned cancel targets instead of leaking one set entry per stale cancel", async () => {
+    const fixture = await build_fixture();
+    const engine = new VocabularyWorkerEngine(fixture.byte_source, { memory_mode: "desktop" });
+    await initialize(engine);
+
+    // Every cancel here targets a request_id that already finished (or
+    // never existed) -- #handle_query's `finally` cleanup never runs for
+    // any of them, so each would previously accumulate forever.
+    for (let index = 0; index < 300; index += 1) {
+      await engine.handle(
+        {
+          type: "cancel",
+          request_id: "00000000-0000-4000-8000-0000000000aa",
+          target_request_id: `orphan-${String(index)}`,
+        },
+        () => {},
+      );
+    }
+
+    expect(engine.pending_cancelled_request_count).toBeLessThanOrEqual(256);
+  });
+
+  it("responds with a typed error for import_source instead of dropping the request", async () => {
+    const fixture = await build_fixture();
+    const engine = new VocabularyWorkerEngine(fixture.byte_source, { memory_mode: "desktop" });
+    await initialize(engine);
+
+    const responses: VocabularyWorkerResponse[] = [];
+    await engine.handle(
+      {
+        type: "import_source",
+        request_id: "00000000-0000-4000-8000-00000000000f",
+        format: "tavern_canvas_jsonl",
+        batch_index: 0,
+        batch_count: 1,
+        payload: "{}",
+      },
+      (response) => responses.push(response),
+    );
+
+    expect(responses).toEqual([
+      {
+        type: "error",
+        request_id: "00000000-0000-4000-8000-00000000000f",
+        code: "invalid_request",
+        message: expect.any(String) as unknown as string,
+      },
+    ]);
+  });
+
   it("rejects requests received after dispose", async () => {
     const fixture = await build_fixture();
     const engine = new VocabularyWorkerEngine(fixture.byte_source, { memory_mode: "desktop" });
@@ -462,6 +512,50 @@ describe("VocabularyWorkerEngine -- decoded shard residency", () => {
     const first_ids = new Set(first.results.map((result) => result.record_id));
     expect(next_page.results.some((result) => first_ids.has(result.record_id))).toBe(false);
     expect(engine.resident_shard_bytes).toBeLessThanOrEqual(fixture.budget_bytes);
+  });
+
+  it("caps pending sessions instead of leaking one per completed multi-page query", async () => {
+    const fixture = await build_residency_fixture();
+    const engine = new VocabularyWorkerEngine(fixture.byte_source, {
+      lru_budget_bytes: fixture.budget_bytes,
+    });
+    await initialize(engine);
+
+    const first = await query_first_page(engine, "00000000-0000-4000-8000-00000000000e");
+    expect(engine.pending_session_count).toBe(1);
+
+    // Neither `cancel` nor any protocol message ever targets a session
+    // cursor directly -- a second completed multi-page query is the only
+    // way an old session would previously have leaked instead of being
+    // reclaimed.
+    const second = await query_first_page(engine, "00000000-0000-4000-8000-00000000000f");
+    expect(engine.pending_session_count).toBe(1);
+
+    // Not just a count assertion: the evicted session's own cursor must be
+    // unreachable (vocabulary_client.ts's supersede semantics mean a caller
+    // can never legitimately hold and page a pre-supersession cursor), while
+    // the retained one still works.
+    const stale_responses: VocabularyWorkerResponse[] = [];
+    await engine.handle(
+      {
+        type: "next_page",
+        request_id: "00000000-0000-4000-8000-000000000010",
+        cursor: first.cursor,
+      },
+      (response) => stale_responses.push(response),
+    );
+    expect(stale_responses.at(-1)).toMatchObject({ type: "error", code: "invalid_request" });
+
+    const current_responses: VocabularyWorkerResponse[] = [];
+    await engine.handle(
+      {
+        type: "next_page",
+        request_id: "00000000-0000-4000-8000-000000000011",
+        cursor: second.cursor,
+      },
+      (response) => current_responses.push(response),
+    );
+    expect(current_responses.at(-1)).toMatchObject({ type: "complete" });
   });
 });
 

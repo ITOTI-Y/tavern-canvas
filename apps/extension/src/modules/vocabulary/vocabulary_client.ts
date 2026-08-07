@@ -54,6 +54,11 @@ interface ActiveCommitment {
   readonly reject: (error: unknown) => void;
 }
 
+interface ReadyWaiter {
+  readonly resolve: () => void;
+  readonly reject: (error: unknown) => void;
+}
+
 function cancelled_error(message: string): VocabularySearchError {
   return new VocabularySearchError("cancelled", message);
 }
@@ -68,11 +73,20 @@ export class VocabularyClient {
   readonly #debounce_ms: number;
   readonly #pending = new Map<string, PendingRequest>();
   #ready = false;
-  #ready_waiters: (() => void)[] = [];
+  #ready_waiters: ReadyWaiter[] = [];
   #disposed = false;
   #debounce_timer: ReturnType<typeof setTimeout> | null = null;
   #active: ActiveCommitment | null = null;
   #generation = 0;
+  readonly #initialize_request_id: string;
+  // Set once the Worker reports that `initialize` itself failed (a corrupt
+  // or missing package) -- distinct from #disposed, which is a client-side
+  // teardown. Without tracking this separately, the constructor's
+  // initialize request_id was never registered anywhere #handle_message
+  // could correlate it to, so the Worker's error response was silently
+  // dropped, `#ready` never became true, and every #ensure_ready() waiter
+  // (every search()/next_page() call) hung forever.
+  #init_error: VocabularySearchError | null = null;
 
   constructor(options: VocabularyClientOptions) {
     this.#debounce_ms = options.debounce_ms ?? DEFAULT_DEBOUNCE_MS;
@@ -80,7 +94,8 @@ export class VocabularyClient {
     this.#worker.addEventListener("message", (event) => {
       this.#handle_message(event.data);
     });
-    this.#post({ type: "initialize", request_id: crypto.randomUUID() });
+    this.#initialize_request_id = crypto.randomUUID();
+    this.#post({ type: "initialize", request_id: this.#initialize_request_id });
   }
 
   search(query: string, options: VocabularySearchOptions = {}): Promise<VocabularySearchPage> {
@@ -134,8 +149,13 @@ export class VocabularyClient {
       this.#active.reject(error); // still debouncing, never made it into #pending
     }
     this.#active = null;
+    // Resolve (not reject) ready-waiters on dispose: each waiter's own
+    // caller re-checks #throw_if_disposed() immediately after the await
+    // (see next_page's comment), so resolving here just lets that check run
+    // and produce the "client disposed" error uniformly, whether dispose()
+    // happened before or during the wait.
     for (const waiter of this.#ready_waiters) {
-      waiter();
+      waiter.resolve();
     }
     this.#ready_waiters = [];
     this.#worker.terminate();
@@ -149,7 +169,21 @@ export class VocabularyClient {
     reject: (error: unknown) => void,
   ): Promise<void> {
     if (!this.#ready) {
-      await this.#ensure_ready();
+      try {
+        await this.#ensure_ready();
+      } catch (error) {
+        // initialize itself failed -- this search can never dispatch.
+        // Reject the caller's promise instead of leaving it (and every
+        // future search()) hanging forever the way an uncaught rejection
+        // here would.
+        if (generation === this.#generation && !this.#disposed) {
+          if (this.#active?.generation === generation) {
+            this.#active = null;
+          }
+          reject(error);
+        }
+        return;
+      }
     }
     if (generation !== this.#generation || this.#disposed) {
       return; // superseded or disposed while awaiting readiness; already settled elsewhere.
@@ -200,8 +234,11 @@ export class VocabularyClient {
     if (this.#ready || this.#disposed) {
       return Promise.resolve();
     }
-    return new Promise<void>((resolve) => {
-      this.#ready_waiters.push(resolve);
+    if (this.#init_error !== null) {
+      return Promise.reject(this.#init_error);
+    }
+    return new Promise<void>((resolve, reject) => {
+      this.#ready_waiters.push({ resolve, reject });
     });
   }
 
@@ -215,6 +252,18 @@ export class VocabularyClient {
     if (response.type === "ready") {
       this.#ready = true;
       this.#flush_ready_waiters();
+      return;
+    }
+
+    if (response.type === "error" && response.request_id === this.#initialize_request_id) {
+      // The Worker's package_unavailable (or similar) response to the
+      // constructor's own `initialize` request -- never registered in
+      // #pending, so without this branch #handle_message's lookup below
+      // would drop it as an unrecognized response and #ready would never
+      // become true (nor false-but-settled): every ensure_ready() waiter
+      // hangs forever.
+      this.#init_error = new VocabularySearchError(response.code, response.message);
+      this.#reject_ready_waiters(this.#init_error);
       return;
     }
 
@@ -251,7 +300,15 @@ export class VocabularyClient {
     const waiters = this.#ready_waiters;
     this.#ready_waiters = [];
     for (const waiter of waiters) {
-      waiter();
+      waiter.resolve();
+    }
+  }
+
+  #reject_ready_waiters(error: unknown): void {
+    const waiters = this.#ready_waiters;
+    this.#ready_waiters = [];
+    for (const waiter of waiters) {
+      waiter.reject(error);
     }
   }
 

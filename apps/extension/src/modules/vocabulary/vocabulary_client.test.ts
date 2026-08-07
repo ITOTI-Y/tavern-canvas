@@ -56,6 +56,16 @@ function last_query_request(
   return request;
 }
 
+function initialize_request(
+  worker: FakeWorker,
+): Extract<VocabularyWorkerRequest, { type: "initialize" }> {
+  const request = worker.posted.find((entry) => entry.type === "initialize");
+  if (request === undefined) {
+    throw new Error("expected an initialize request to have been posted");
+  }
+  return request;
+}
+
 afterEach(() => {
   vi.useRealTimers();
 });
@@ -237,5 +247,60 @@ describe("VocabularyClient", () => {
     client.dispose();
     await expect(client.search("cat")).rejects.toBeInstanceOf(VocabularySearchError);
     expect(worker.posted.filter((request) => request.type === "query")).toHaveLength(0);
+  });
+
+  it("rejects a search debouncing at the time initialize fails, instead of hanging forever", async () => {
+    vi.useFakeTimers();
+    const worker = new FakeWorker();
+    const client = new VocabularyClient({ create_worker: () => worker });
+    const init_request = initialize_request(worker);
+
+    const search = client.search("cat");
+    vi.advanceTimersByTime(120);
+
+    worker.emit({
+      type: "error",
+      request_id: init_request.request_id,
+      code: "package_unavailable",
+      message: "no active package",
+    });
+
+    await expect(search).rejects.toMatchObject({ code: "package_unavailable" });
+    // The failed initialize must never have let a query request through.
+    expect(worker.posted.some((request) => request.type === "query")).toBe(false);
+  });
+
+  it("rejects next_page when initialize fails while it is awaiting readiness", async () => {
+    const worker = new FakeWorker();
+    const client = new VocabularyClient({ create_worker: () => worker });
+    const init_request = initialize_request(worker);
+
+    const page = client.next_page("cursor-1");
+    worker.emit({
+      type: "error",
+      request_id: init_request.request_id,
+      code: "package_unavailable",
+      message: "no active package",
+    });
+
+    await expect(page).rejects.toMatchObject({ code: "package_unavailable" });
+  });
+
+  it("rejects search() called after initialize already failed, without hanging", async () => {
+    vi.useFakeTimers();
+    const worker = new FakeWorker();
+    const client = new VocabularyClient({ create_worker: () => worker });
+    const init_request = initialize_request(worker);
+
+    worker.emit({
+      type: "error",
+      request_id: init_request.request_id,
+      code: "package_unavailable",
+      message: "no active package",
+    });
+
+    const search = client.search("cat");
+    vi.advanceTimersByTime(120);
+    await expect(search).rejects.toMatchObject({ code: "package_unavailable" });
   });
 });

@@ -51,6 +51,21 @@ const RESULT_PAGE_SIZE = 50;
 // this file assumed before the builder landed.
 const TRIGRAM_GROUP_CODE_POINT_COUNT = 2;
 const MANIFEST_CACHE_KEY = "__manifest__";
+// A live query session (>50 ranked DTOs, held for next_page) is retained
+// only until the NEXT one completes: the client's supersede semantics
+// (vocabulary_client.ts's #supersede_active) mean a caller can never
+// legitimately hold and page a cursor from before the most recent
+// completed query, so anything older is unreachable dead weight. Without
+// this cap, every multi-page search leaks ~10-20 KB forever outside all
+// LRU accounting (a session is never touched by cancel, and #handle_query's
+// cleanup only ever removes the CURRENT request_id's cancellation flag).
+const MAX_QUERY_SESSIONS = 1;
+// Same unbounded-leak shape as sessions, on a smaller scale (2 bytes/char
+// UUID): a `cancel` that arrives after its target's `finally` already ran
+// (the complete response was in flight when the user typed) adds an orphan
+// entry #handle_query's cleanup will never remove, since that request_id
+// will never run again.
+const MAX_CANCELLED_REQUEST_IDS = 256;
 
 class VocabularySearchCancelledError extends Error {
   constructor() {
@@ -61,6 +76,22 @@ class VocabularySearchCancelledError extends Error {
 
 function error_message(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+// Both #sessions and #cancelled_request_ids are Maps/Sets, which iterate in
+// insertion order -- the oldest entry is always whatever `.keys().next()`
+// yields, so a plain bounded FIFO needs no extra bookkeeping.
+function evict_oldest_until_within_cap(
+  collection: Map<string, unknown> | Set<string>,
+  max_size: number,
+): void {
+  while (collection.size > max_size) {
+    const oldest = collection.keys().next().value;
+    if (oldest === undefined) {
+      return;
+    }
+    collection.delete(oldest);
+  }
 }
 
 // record_ids are dense, sequential, and 0-indexed (assign_record_ids in the
@@ -202,6 +233,20 @@ export class VocabularyWorkerEngine {
     return this.#lru.budget_bytes;
   }
 
+  // Ops introspection only, mirroring resident_shard_bytes -- proves
+  // #sessions stays bounded at MAX_QUERY_SESSIONS instead of growing
+  // unboundedly across repeated multi-page queries.
+  get pending_session_count(): number {
+    return this.#sessions.size;
+  }
+
+  // Ops introspection only -- proves #cancelled_request_ids stays bounded
+  // at MAX_CANCELLED_REQUEST_IDS instead of accumulating orphaned cancel
+  // targets forever.
+  get pending_cancelled_request_count(): number {
+    return this.#cancelled_request_ids.size;
+  }
+
   async handle(
     request: VocabularyWorkerRequest,
     emit: (response: VocabularyWorkerResponse) => void,
@@ -230,6 +275,21 @@ export class VocabularyWorkerEngine {
         return;
       case "cancel":
         this.#cancelled_request_ids.add(request.target_request_id);
+        evict_oldest_until_within_cap(this.#cancelled_request_ids, MAX_CANCELLED_REQUEST_IDS);
+        return;
+      case "import_source":
+        // The ImportBuilder pipeline (packages/vocabulary/src/import/) is
+        // complete but not wired into this engine -- responding here (rather
+        // than falling through the switch with no case, which drops the
+        // request on the floor) keeps the protocol from ever dead-airing a
+        // schema-valid request. Full in-Worker wiring belongs to whichever
+        // stage ships the import UI (ledgered in progress.md).
+        emit({
+          type: "error",
+          request_id: request.request_id,
+          code: "invalid_request",
+          message: "import_source is not wired in this build",
+        });
         return;
       case "dispose":
         this.#disposed = true;
@@ -407,6 +467,7 @@ export class VocabularyWorkerEngine {
     }
     const cursor = crypto.randomUUID();
     this.#sessions.set(cursor, { results: ranked, offset: RESULT_PAGE_SIZE });
+    evict_oldest_until_within_cap(this.#sessions, MAX_QUERY_SESSIONS);
     emit({ type: "complete", request_id, results: page, next_cursor: cursor });
   }
 
@@ -779,13 +840,17 @@ export function with_activation_lifecycle(
       if (message !== null && typeof message === "object" && "type" in message) {
         const response = message as { readonly type: unknown; readonly code?: unknown };
         if (response.type === "complete") {
-          void byte_source.report_query_success();
+          // Best-effort lifecycle bookkeeping (IndexedDB write) -- its
+          // failure must never surface as an unhandled rejection, since the
+          // response has already been posted back to the caller by the time
+          // this runs.
+          void byte_source.report_query_success().catch(() => undefined);
         } else if (
           response.type === "error" &&
           typeof response.code === "string" &&
           PACKAGE_HEALTH_ERROR_CODES.has(response.code)
         ) {
-          void byte_source.report_query_failure();
+          void byte_source.report_query_failure().catch(() => undefined);
         }
       }
       scope.postMessage(message);

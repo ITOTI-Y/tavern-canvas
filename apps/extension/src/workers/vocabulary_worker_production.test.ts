@@ -275,6 +275,43 @@ describe("with_activation_lifecycle", () => {
     expect(report_query_failure).not.toHaveBeenCalled();
   });
 
+  it("attaches a rejection handler to report_query_success instead of leaving it bare", async () => {
+    // A direct check that `.catch` is actually invoked on the returned
+    // promise, rather than relying on the platform's unhandled-rejection
+    // event -- that event's channel differs between Node (`process`
+    // 'unhandledRejection') and the browser/happy-dom ('unhandledrejection'
+    // on the global), and proved unreliable to observe deterministically
+    // inside this test environment either way.
+    const { scope } = response_scope();
+    const inner_promise = Promise.reject(new Error("indexeddb write failed"));
+    let catch_was_called = false;
+    const tracked_promise = {
+      then: inner_promise.then.bind(inner_promise),
+      catch: (handler: (error: unknown) => void) => {
+        catch_was_called = true;
+        return inner_promise.catch(handler);
+      },
+      finally: inner_promise.finally.bind(inner_promise),
+      [Symbol.toStringTag]: "Promise",
+    } as unknown as Promise<void>;
+    const report_query_success = vi.fn().mockReturnValue(tracked_promise);
+    const byte_source = {
+      report_query_success,
+      report_query_failure: vi.fn(),
+    } as unknown as PackageStoreShardByteSource;
+
+    const wrapped = with_activation_lifecycle(scope, byte_source);
+    wrapped.postMessage({
+      type: "complete",
+      request_id: "00000000-0000-4000-8000-000000000005",
+      results: [],
+      next_cursor: null,
+    } satisfies VocabularyWorkerResponse);
+    await Promise.resolve();
+
+    expect(catch_was_called).toBe(true);
+  });
+
   it("ignores a ready response (no request_id, not a package-health signal)", () => {
     const { scope, forwarded } = response_scope();
     const report_query_success = vi.fn();
