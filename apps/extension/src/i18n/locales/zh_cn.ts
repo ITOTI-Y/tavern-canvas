@@ -2,12 +2,7 @@ import type { LocaleMessageSchema } from "./en.js";
 
 const app = {
   name: "智绘姬",
-  tagline: "面向 SillyTavern 的双语图像生成工作台",
   version_label: "版本 {version}",
-  startup: {
-    loading_title: "正在启动智绘姬",
-    loading_description: "正在连接 JS Slash Runner 并加载工作区。",
-  },
   unsupported_host: {
     title: "需要更新 JS Slash Runner",
     description:
@@ -47,23 +42,16 @@ const common = {
     close: "关闭",
     confirm: "确认",
     delete: "删除",
-    retry: "重试",
     copy: "复制",
     copied: "已复制",
     download: "下载",
     search: "搜索",
-    filter: "筛选",
     clear: "清空",
     select_all: "全选",
     deselect_all: "取消全选",
-    continue: "继续",
     back: "返回",
     next: "下一步",
-    import: "导入",
-    export: "导出",
     edit: "编辑",
-    duplicate: "创建副本",
-    regenerate: "重新生成",
     increase: "增加",
     decrease: "减少",
   },
@@ -71,17 +59,12 @@ const common = {
     name: "名称",
     description: "描述",
     status: "状态",
-    type: "类型",
-    size: "大小",
-    created_at: "创建时间",
-    updated_at: "更新时间",
   },
   inspector: {
     title: "检查器",
     empty_title: "未选择内容",
     empty_description: "选择一个任务、图片或资产即可在此查看详情。",
   },
-  workspace_unavailable: "该工作区暂不可用。",
 };
 
 const status = {
@@ -182,26 +165,8 @@ const workbench = {
 };
 
 const provider = {
-  connection_test: {
-    action: "测试连接",
-    testing: "正在测试连接",
-    success: "连接成功",
-    failed: "连接失败",
-  },
   credentials: {
     not_stored_locally: "Token 保存在宿主的密钥存储中，不会出现在智绘姬界面或导出文件里。",
-  },
-  concurrency_label: "并发请求数",
-  fallback_enabled_label: "失败时自动切换到下一个 provider 配置",
-  errors: {
-    auth_failed: "{provider} 拒绝了当前凭证，请检查 provider 设置中的 token。",
-    rate_limited: "{provider} 正在限流，请稍后重试。",
-    content_blocked: "{provider} 因内容策略拦截了这次请求。",
-    invalid_request: "{provider} 拒绝了请求参数：{message}",
-    provider_unavailable: "{provider} 当前无法访问。",
-    timed_out: "{provider} 未能在规定时间内响应。",
-    cancelled: "对 {provider} 的请求已取消。",
-    malformed_response: "{provider} 返回的响应无法解析。",
   },
 };
 
@@ -438,7 +403,6 @@ const diagnostics = {
   versions: {
     title: "版本信息",
     helper_label: "JS Slash Runner",
-    host_label: "SillyTavern",
     protocol_label: "Gateway 协议",
   },
   connection_tests: {
@@ -449,7 +413,6 @@ const diagnostics = {
   },
   task_timeline: {
     title: "任务时间线",
-    empty_title: "还没有记录任何任务",
     empty_description: "生成、迁移与同步活动会在运行时显示在这里。",
     error_code_label: "错误代码",
     time_label: "时间",
@@ -490,7 +453,6 @@ const settings = {
     data: "数据",
   },
   provider_profiles: {
-    empty_title: "还没有 provider 配置",
     empty_description: "添加一个 provider 配置以连接图像生成后端。",
     add_action: "添加 provider 配置",
     connection_test_action: "测试连接",
@@ -587,21 +549,14 @@ const migration = {
     secret_transfer_blocked: "provider token 未能安全迁移。",
     switch_failed: "复制完成后切换到新命名空间失败。",
   },
-  retry_action: "重试迁移",
-  report_action: "查看报告",
   record_count: "{n} 条记录 | {n} 条记录",
-  never_auto_deletes: "智绘姬不会自动删除你的旧版数据。",
 };
 
 const errors = {
-  network: "智绘姬无法连接到网络。",
   capability_blocked: "此操作需要 {capability}，但当前宿主不支持。",
   validation_required: "此项为必填。",
-  storage_quota_exceeded: "浏览器存储配额已满，请在图库或资产库中释放空间。",
-  locale_load_failed: "简体中文语言包加载失败，已切换回英文界面。",
   gateway_incompatible: "位于 {origin} 的 Gateway 协议版本不兼容。",
   gateway_offline: "无法连接到位于 {origin} 的 Gateway。",
-  image_upload_failed: "上传 {file_name} 到宿主失败。",
   generation_failed: "生成失败：{message}",
   connection_test_failed: "连接测试失败：{code}",
   unexpected: "出现了一个问题，请到诊断页查看详情。",

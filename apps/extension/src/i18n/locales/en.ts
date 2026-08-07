@@ -1,11 +1,6 @@
 const app = {
   name: "TavernCanvas",
-  tagline: "Bilingual image generation workbench for SillyTavern",
   version_label: "Version {version}",
-  startup: {
-    loading_title: "Starting TavernCanvas",
-    loading_description: "Connecting to JS Slash Runner and loading your workspace.",
-  },
   unsupported_host: {
     title: "JS Slash Runner update required",
     description:
@@ -47,23 +42,16 @@ const common = {
     close: "Close",
     confirm: "Confirm",
     delete: "Delete",
-    retry: "Retry",
     copy: "Copy",
     copied: "Copied",
     download: "Download",
     search: "Search",
-    filter: "Filter",
     clear: "Clear",
     select_all: "Select all",
     deselect_all: "Deselect all",
-    continue: "Continue",
     back: "Back",
     next: "Next",
-    import: "Import",
-    export: "Export",
     edit: "Edit",
-    duplicate: "Duplicate",
-    regenerate: "Regenerate",
     increase: "Increase",
     decrease: "Decrease",
   },
@@ -71,17 +59,12 @@ const common = {
     name: "Name",
     description: "Description",
     status: "Status",
-    type: "Type",
-    size: "Size",
-    created_at: "Created",
-    updated_at: "Updated",
   },
   inspector: {
     title: "Inspector",
     empty_title: "Nothing selected",
     empty_description: "Select a job, image, or asset to see its details here.",
   },
-  workspace_unavailable: "This workspace isn't available yet.",
 };
 
 const status = {
@@ -185,27 +168,9 @@ const workbench = {
 };
 
 const provider = {
-  connection_test: {
-    action: "Test connection",
-    testing: "Testing connection",
-    success: "Connection succeeded",
-    failed: "Connection failed",
-  },
   credentials: {
     not_stored_locally:
       "The token is kept in host secret storage and never appears in TavernCanvas UI or exports.",
-  },
-  concurrency_label: "Concurrent requests",
-  fallback_enabled_label: "Fall back to the next provider profile on failure",
-  errors: {
-    auth_failed: "{provider} rejected the credentials. Check the token in provider settings.",
-    rate_limited: "{provider} is rate limiting requests. Retry after a short wait.",
-    content_blocked: "{provider} blocked this request under its content policy.",
-    invalid_request: "{provider} rejected the request parameters: {message}",
-    provider_unavailable: "{provider} is unreachable right now.",
-    timed_out: "{provider} did not respond in time.",
-    cancelled: "The request to {provider} was cancelled.",
-    malformed_response: "{provider} returned a response TavernCanvas could not parse.",
   },
 };
 
@@ -452,7 +417,6 @@ const diagnostics = {
   versions: {
     title: "Versions",
     helper_label: "JS Slash Runner",
-    host_label: "SillyTavern",
     protocol_label: "Gateway protocol",
   },
   connection_tests: {
@@ -463,7 +427,6 @@ const diagnostics = {
   },
   task_timeline: {
     title: "Task timeline",
-    empty_title: "No tasks recorded yet",
     empty_description: "Generation, migration, and sync activity appear here as they run.",
     error_code_label: "Error code",
     time_label: "Time",
@@ -505,7 +468,6 @@ const settings = {
     data: "Data",
   },
   provider_profiles: {
-    empty_title: "No provider profiles yet",
     empty_description: "Add a provider profile to connect an image generation backend.",
     add_action: "Add provider profile",
     connection_test_action: "Test connection",
@@ -605,22 +567,14 @@ const migration = {
     secret_transfer_blocked: "The provider token could not be transferred securely.",
     switch_failed: "Switching to the new namespace failed after copying.",
   },
-  retry_action: "Retry migration",
-  report_action: "View report",
   record_count: "{n} record | {n} records",
-  never_auto_deletes: "TavernCanvas never deletes your legacy data automatically.",
 };
 
 const errors = {
-  network: "TavernCanvas could not reach the network.",
   capability_blocked: "This action needs {capability}, which is unavailable on the current host.",
   validation_required: "This field is required.",
-  storage_quota_exceeded: "The browser storage quota is full. Free space in Gallery or Assets.",
-  locale_load_failed:
-    "The Simplified Chinese language pack failed to load. Showing English instead.",
   gateway_incompatible: "The Gateway at {origin} reports an incompatible protocol version.",
   gateway_offline: "The Gateway at {origin} is not reachable.",
-  image_upload_failed: "Uploading {file_name} to the host failed.",
   generation_failed: "Generation failed: {message}",
   connection_test_failed: "Connection test failed: {code}",
   unexpected: "Something went wrong. Check Diagnostics for details.",
