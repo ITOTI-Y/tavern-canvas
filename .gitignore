@@ -3,15 +3,7 @@ node_modules/
 **/dist/
 !/dist/
 !/dist/**
-# apps/extension's Vite build copies the committed vocabulary baseline
-# (apps/extension/public/vocabulary/baseline, already tracked) verbatim into
-# dist/vocabulary/ via copyPublicDir on every `pnpm build` -- a byte-identical
-# duplicate of already-committed source, not new content (2,742 files / 14 MB
-# at the current baseline size). Committing it too would double repo size and
-# diff noise on every baseline rebuild for zero benefit; a real release still
-# needs a fresh `pnpm build` locally before publishing dist/, same as
-# dist/index.js and dist/index.css.
-/dist/vocabulary/
+# dist/vocabulary/ is intentionally NOT ignored: Stage 07 release commits the full dist/ tree (see plan 07 §release)
 .vite/
 coverage/
 playwright-report/
