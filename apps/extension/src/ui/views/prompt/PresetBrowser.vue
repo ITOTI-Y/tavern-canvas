@@ -156,7 +156,10 @@ function confirm_bulk_delete(): void {
           <li
             v-for="preset in group_presets"
             :key="preset.id"
-            :class="[styles.preset_row, preset.id === props.selectedPresetId && styles.preset_row_selected]"
+            :class="[
+              styles.preset_row,
+              preset.id === props.selectedPresetId && styles.preset_row_selected,
+            ]"
             data-testid="preset-row"
           >
             <input
@@ -164,7 +167,9 @@ function confirm_bulk_delete(): void {
               :checked="bulk_selected.has(preset.id)"
               :aria-label="preset.display_name"
               data-testid="preset-bulk-checkbox"
-              @change="(event) => toggle_bulk(preset.id, (event.target as HTMLInputElement).checked)"
+              @change="
+                (event) => toggle_bulk(preset.id, (event.target as HTMLInputElement).checked)
+              "
             />
             <button
               type="button"
@@ -183,7 +188,11 @@ function confirm_bulk_delete(): void {
     <ConfirmDialog
       :open="bulk_delete_open"
       :title="
-        t('prompt.preset_browser.bulk_delete_confirm_title', { n: bulk_selected.size }, bulk_selected.size)
+        t(
+          'prompt.preset_browser.bulk_delete_confirm_title',
+          { n: bulk_selected.size },
+          bulk_selected.size,
+        )
       "
       :description="t('prompt.preset_browser.bulk_delete_confirm_description')"
       :confirm-label="t('confirmations.destructive.default_confirm_action')"
