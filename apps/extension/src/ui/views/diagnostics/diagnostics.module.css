@@ -1,0 +1,142 @@
+/*
+ * Diagnostics workspace: cockpit density (taste directive 10) -- data regions are unframed bands
+ * separated by 1px dividers, never wrapped in a card. Status color is always a text/icon/border
+ * treatment on a neutral surface (T1's controller ruling), never a solid fill.
+ */
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.section_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.section_title {
+  color: var(--tc-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.row_label {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.row_value {
+  flex: none;
+  color: var(--tc-text);
+}
+
+.status_text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tc-text-muted);
+}
+
+.status_text[data-tone="success"] {
+  color: var(--tc-success);
+}
+
+.status_text[data-tone="warning"] {
+  color: var(--tc-warning);
+}
+
+.status_text[data-tone="error"] {
+  color: var(--tc-error);
+}
+
+.timeline_list {
+  border-top: 1px solid var(--tc-divider);
+}
+
+.timeline_row {
+  display: grid;
+  grid-template-columns: 92px 1fr 1fr minmax(0, 1.4fr);
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--tc-divider);
+  font-size: 12px;
+}
+
+.timeline_cell {
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.timeline_header {
+  color: var(--tc-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.timeline_header .timeline_cell {
+  color: inherit;
+}
+
+.timeline_code {
+  color: var(--tc-text);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+
+.timeline_error {
+  color: var(--tc-error);
+}
+
+.warning_list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0 0;
+}
+
+.warning_item {
+  color: var(--tc-warning);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.actions_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.description {
+  margin: 0;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}

@@ -8,12 +8,16 @@ import type {
   GenerationDomainEvent,
   GenerationSubmitCommand,
   MigrationDomainEvent,
+  ProfileConnectionTestResult,
   ProfilesDomainEvent,
+  ProviderProfileDraft,
+  ProviderProfileSummary,
   PromptPresetDraft,
   PromptPresetsDomainEvent,
   SettingsDomainEvent,
   StudioCapabilities,
   Unsubscribe,
+  VocabularyUpdateChannel,
 } from "../contracts/ui_capabilities.js";
 import {
   IDLE_COMMAND_STATE,
@@ -58,6 +62,38 @@ export interface StudioController {
   test_diagnostics_connection(): Promise<void>;
   export_support_bundle(): Promise<void>;
   retry_migration(): Promise<void>;
+
+  // -------------------------------------------------------------------------
+  // Additive Diagnostics/Settings command surface (Stage 06 Task 7).
+  //
+  // T1's command surface was intentionally partial (task-1-report.md, ledgered concern (a)):
+  // "T5-7 extend via run_command pattern". These are plain async passthroughs rather than
+  // run_command-tracked CommandState slices -- each one is either a collection-item-level
+  // mutation (profile save/remove/test) whose pending/error UI belongs to the row/dialog that
+  // triggered it, not shared StudioState, or a page-level action (archive export/import, legacy
+  // cleanup) with no other view depending on its pending state. None of them add fields to
+  // SettingsViewModel/DiagnosticsViewModel/MigrationSnapshot: every new field would be a required
+  // addition T1/T2's own already-passing test fixtures (studio_controller.test.ts,
+  // StudioShell.test.ts) don't know about, which is outside this task's ownership to edit.
+  // -------------------------------------------------------------------------
+
+  /** Diagnostics' timeline is intentionally not part of the eager `start()` load (a large
+   * historical ring buffer a session may never need) -- the Diagnostics view requests it once
+   * mounted. */
+  load_diagnostics_timeline(): Promise<void>;
+  save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary>;
+  remove_provider_profile(profile_id: Uuid): Promise<void>;
+  test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
+  /** Re-fetches the settings snapshot after acknowledging, so `state.settings.settings.gateway
+   * .http_acknowledgments` reflects the host adapter's own persisted timestamp rather than a
+   * client-guessed one. */
+  acknowledge_http_origin(origin: string): Promise<void>;
+  set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
+  export_settings_archive(): Promise<Blob>;
+  import_settings_archive(archive: Blob): Promise<void>;
+  /** Re-fetches the migration snapshot after cleanup so `state.diagnostics.migration` reflects
+   * the post-cleanup counts. */
+  confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
 }
 
 /** Stable fallback code for a rejection whose error doesn't already carry a snake_case `code`. */
@@ -628,6 +664,79 @@ class StudioControllerImpl implements StudioController {
         return snapshot;
       },
     );
+  }
+
+  async load_diagnostics_timeline(): Promise<void> {
+    const timeline = await this.#capabilities.diagnostics.load_timeline();
+    if (this.#stopped) {
+      return;
+    }
+    this.#patch_diagnostics({ timeline });
+  }
+
+  async save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary> {
+    const profile = await this.#capabilities.profiles.save(draft);
+    if (!this.#stopped) {
+      this.#patch_workbench({
+        profiles: upsert_by_id(this.#state.workbench.profiles, profile, (p) => p.id),
+      });
+    }
+    return profile;
+  }
+
+  async remove_provider_profile(profile_id: Uuid): Promise<void> {
+    await this.#capabilities.profiles.remove(profile_id);
+    if (!this.#stopped) {
+      this.#patch_workbench({
+        profiles: this.#state.workbench.profiles.filter((p) => p.id !== profile_id),
+      });
+    }
+  }
+
+  test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult> {
+    return this.#capabilities.profiles.test_connection(profile_id);
+  }
+
+  acknowledge_http_origin(origin: string): Promise<void> {
+    return this.#capabilities.settings
+      .acknowledge_http_origin(origin)
+      .then(() => this.#capabilities.settings.load())
+      .then((snapshot) => {
+        if (this.#stopped) {
+          return;
+        }
+        this.#patch_settings({
+          settings: snapshot.settings,
+          vocabulary_update_channel: snapshot.vocabulary_update_channel,
+        });
+      });
+  }
+
+  async set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void> {
+    await this.#capabilities.settings.set_vocabulary_update_channel(channel);
+    if (!this.#stopped) {
+      this.#patch_settings({ vocabulary_update_channel: channel });
+    }
+  }
+
+  export_settings_archive(): Promise<Blob> {
+    return this.#capabilities.settings.export_archive();
+  }
+
+  import_settings_archive(archive: Blob): Promise<void> {
+    return this.#capabilities.settings.import_archive(archive);
+  }
+
+  confirm_legacy_cleanup(confirmation_text: string): Promise<void> {
+    return this.#capabilities.migration
+      .confirm_legacy_cleanup(confirmation_text)
+      .then(() => this.#capabilities.migration.load())
+      .then((snapshot) => {
+        if (this.#stopped) {
+          return;
+        }
+        this.#patch_diagnostics({ migration: snapshot });
+      });
   }
 }
 

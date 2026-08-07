@@ -64,6 +64,8 @@ const common = {
     edit: "编辑",
     duplicate: "创建副本",
     regenerate: "重新生成",
+    increase: "增加",
+    decrease: "减少",
   },
   labels: {
     name: "名称",
@@ -354,15 +356,23 @@ const diagnostics = {
     title: "连接测试",
     run_action: "运行测试",
     running: "正在运行连接测试",
+    latency_label: "{ms} 毫秒",
   },
   task_timeline: {
     title: "任务时间线",
     empty_title: "还没有记录任何任务",
     empty_description: "生成、迁移与同步活动会在运行时显示在这里。",
     error_code_label: "错误代码",
+    time_label: "时间",
+    event_label: "事件",
+    module_label: "模块",
+    provider_label: "Provider",
+    count_label: "{n} 条事件 | {n} 条事件",
   },
   migration_status: {
     title: "迁移状态",
+    counts_label: "记录数量",
+    warnings_label: "警告",
   },
   storage_usage: {
     title: "存储",
@@ -371,12 +381,14 @@ const diagnostics = {
     quota_unavailable: "当前宿主无法提供存储估算。",
     quota_high_pressure: "存储占用已接近浏览器配额，请在图库或资产库中释放空间。",
     cache_references_label: "缓存引用数",
+    cache_references_unavailable: "当前宿主无法提供缓存引用数。",
   },
   support_bundle: {
     title: "支持包",
     description:
       "包含版本号、能力矩阵、脱敏后的设置、错误代码与任务时间线，不包含提示词、消息内容、密钥或图片文件名。",
     export_action: "导出支持包",
+    exported_toast: "支持包已导出",
   },
 };
 
@@ -393,6 +405,20 @@ const settings = {
     empty_description: "添加一个 provider 配置以连接图像生成后端。",
     add_action: "添加 provider 配置",
     connection_test_action: "测试连接",
+    dialog_add_title: "添加 provider 配置",
+    dialog_edit_title: "编辑 provider 配置",
+    provider_label: "Provider",
+    provider_types: {
+      sd_webui: "SD WebUI",
+      novelai: "NovelAI",
+      comfyui: "ComfyUI",
+      openai_image: "OpenAI Image",
+      google_image: "Google Image",
+    },
+    default_badge: "默认",
+    set_default_action: "设为默认",
+    remove_confirm_title: "移除 {name}？",
+    remove_confirm_description: "此操作会将该 provider 配置从智绘姬中断开，已提交的任务不受影响。",
   },
   gateway: {
     endpoint_label: "Gateway 地址",
@@ -400,6 +426,8 @@ const settings = {
     detect_action: "检测协议",
     token_secret_label: "Token 密钥引用",
     auto_generate_action: "生成 token",
+    token_not_set: "尚未配置 token",
+    endpoint_hint: "你的 provider 配置将通过这个 Gateway 地址连接。",
   },
   http_risk: {
     warning_title: "此连接未加密",
@@ -443,6 +471,9 @@ const settings = {
       description: "仅在迁移或归档验证通过后可用，此操作永远不会自动执行。",
       record_summary: "{count} 条记录，共 {bytes} | {count} 条记录，共 {bytes}",
       confirm_action: "删除旧版数据",
+      bytes_unavailable: "暂无法估算大小。",
+      unlock_hint: "先完成一次迁移或导出一次归档，即可启用此操作。",
+      confirm_phrase: "DELETE LEGACY DATA",
     },
   },
 };
@@ -483,6 +514,7 @@ const errors = {
   gateway_offline: "无法连接到位于 {origin} 的 Gateway。",
   image_upload_failed: "上传 {file_name} 到宿主失败。",
   generation_failed: "生成失败：{message}",
+  connection_test_failed: "连接测试失败：{code}",
   unexpected: "出现了一个问题，请到诊断页查看详情。",
 };
 

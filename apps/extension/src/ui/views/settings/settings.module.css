@@ -1,0 +1,203 @@
+/*
+ * Settings workspace: same cockpit density as Diagnostics (unframed bands, 1px dividers, no card
+ * wrapping of metric/setting rows). Forms follow label-above-input/error-below-input everywhere
+ * via the shared FieldGroup component; this file only adds section/row/banner layout.
+ */
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.section_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.section_title {
+  color: var(--tc-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.row_label {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.row_value {
+  flex: none;
+  color: var(--tc-text);
+}
+
+.profile_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.profile_identity {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile_name {
+  overflow: hidden;
+  color: var(--tc-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.profile_meta {
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.profile_actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  flex: none;
+  padding: 2px 8px;
+  border: 1px solid var(--tc-accent);
+  border-radius: var(--tc-radius-status);
+  color: var(--tc-accent);
+  font-size: 11px;
+}
+
+.form_grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.status_text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.status_text[data-tone="success"] {
+  color: var(--tc-success);
+}
+
+.status_text[data-tone="warning"] {
+  color: var(--tc-warning);
+}
+
+.status_text[data-tone="error"] {
+  color: var(--tc-error);
+}
+
+.risk_banner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--tc-warning);
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-surface-raised);
+}
+
+.risk_banner[data-severity="error"] {
+  border-color: var(--tc-error);
+}
+
+.risk_banner_title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tc-warning);
+  font-weight: 600;
+}
+
+.risk_banner[data-severity="error"] .risk_banner_title {
+  color: var(--tc-error);
+}
+
+.risk_banner_description {
+  margin: 0;
+  color: var(--tc-text);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.risk_banner_actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.acknowledged_note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tc-success);
+  font-size: 12px;
+}
+
+.description {
+  margin: 0;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.actions_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.typed_confirm_input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-surface);
+  color: var(--tc-text);
+  border-color: var(--tc-divider);
+}
+
+.typed_confirm_input:focus-visible {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: 2px;
+}

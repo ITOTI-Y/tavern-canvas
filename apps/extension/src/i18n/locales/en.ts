@@ -64,6 +64,8 @@ const common = {
     edit: "Edit",
     duplicate: "Duplicate",
     regenerate: "Regenerate",
+    increase: "Increase",
+    decrease: "Decrease",
   },
   labels: {
     name: "Name",
@@ -365,15 +367,23 @@ const diagnostics = {
     title: "Connection tests",
     run_action: "Run tests",
     running: "Running connection tests",
+    latency_label: "{ms} ms",
   },
   task_timeline: {
     title: "Task timeline",
     empty_title: "No tasks recorded yet",
     empty_description: "Generation, migration, and sync activity appear here as they run.",
     error_code_label: "Error code",
+    time_label: "Time",
+    event_label: "Event",
+    module_label: "Module",
+    provider_label: "Provider",
+    count_label: "{n} event | {n} events",
   },
   migration_status: {
     title: "Migration",
+    counts_label: "Record counts",
+    warnings_label: "Warnings",
   },
   storage_usage: {
     title: "Storage",
@@ -383,12 +393,14 @@ const diagnostics = {
     quota_high_pressure:
       "Storage usage is close to the browser quota. Free space in Gallery or Assets.",
     cache_references_label: "Cached references",
+    cache_references_unavailable: "Cache reference count is unavailable on this host.",
   },
   support_bundle: {
     title: "Support bundle",
     description:
       "Includes the version, capability matrix, redacted settings, error codes, and task timeline. It never includes prompts, message content, secrets, or image names.",
     export_action: "Export support bundle",
+    exported_toast: "Support bundle exported",
   },
 };
 
@@ -405,6 +417,21 @@ const settings = {
     empty_description: "Add a provider profile to connect an image generation backend.",
     add_action: "Add provider profile",
     connection_test_action: "Test connection",
+    dialog_add_title: "Add provider profile",
+    dialog_edit_title: "Edit provider profile",
+    provider_label: "Provider",
+    provider_types: {
+      sd_webui: "SD WebUI",
+      novelai: "NovelAI",
+      comfyui: "ComfyUI",
+      openai_image: "OpenAI Image",
+      google_image: "Google Image",
+    },
+    default_badge: "Default",
+    set_default_action: "Set as default",
+    remove_confirm_title: "Remove {name}?",
+    remove_confirm_description:
+      "This disconnects the provider profile from TavernCanvas. Jobs already submitted are not affected.",
   },
   gateway: {
     endpoint_label: "Gateway endpoint",
@@ -412,6 +439,8 @@ const settings = {
     detect_action: "Detect protocol",
     token_secret_label: "Token secret reference",
     auto_generate_action: "Generate token",
+    token_not_set: "No token configured",
+    endpoint_hint: "The Gateway endpoint your provider profiles connect through.",
   },
   http_risk: {
     warning_title: "This connection is not encrypted",
@@ -457,6 +486,9 @@ const settings = {
         "Only available after a verified migration or archive. This never runs automatically.",
       record_summary: "{count} record, {bytes} | {count} records, {bytes}",
       confirm_action: "Delete legacy data",
+      bytes_unavailable: "Size estimate is unavailable.",
+      unlock_hint: "Complete a migration or export an archive first to enable this.",
+      confirm_phrase: "DELETE LEGACY DATA",
     },
   },
 };
@@ -498,6 +530,7 @@ const errors = {
   gateway_offline: "The Gateway at {origin} is not reachable.",
   image_upload_failed: "Uploading {file_name} to the host failed.",
   generation_failed: "Generation failed: {message}",
+  connection_test_failed: "Connection test failed: {code}",
   unexpected: "Something went wrong. Check Diagnostics for details.",
 };
 
