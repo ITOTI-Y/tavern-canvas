@@ -92,6 +92,8 @@ const emit = defineEmits<{
   delete: [];
   "modify-prompt": [parameters: ExtractedGenerationParameters | null];
   regenerate: [parameters: ExtractedGenerationParameters | null];
+  edit: [parameters: ExtractedGenerationParameters | null];
+  inpaint: [parameters: ExtractedGenerationParameters | null];
   copied: [];
 }>();
 
@@ -211,6 +213,8 @@ const portal_props = computed(() => (portal_target ? { to: portal_target } : {})
               :actions-unavailable-hint="actionsUnavailableHint"
               @modify-prompt="(parametersValue) => emit('modify-prompt', parametersValue)"
               @regenerate="(parametersValue) => emit('regenerate', parametersValue)"
+              @edit="(parametersValue) => emit('edit', parametersValue)"
+              @inpaint="(parametersValue) => emit('inpaint', parametersValue)"
               @copied="emit('copied')"
             />
           </div>

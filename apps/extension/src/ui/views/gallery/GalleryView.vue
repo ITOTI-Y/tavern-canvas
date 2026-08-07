@@ -223,7 +223,7 @@ function step_preview(direction: -1 | 1): void {
  * navigates, it just prefills nothing, matching the "no embedded parameters" state shown elsewhere.
  */
 function hand_off_to_workbench(
-  intent: "modify_prompt" | "regenerate",
+  intent: "modify_prompt" | "regenerate" | "edit" | "inpaint",
   parameters: ExtractedGenerationParameters | null,
 ): void {
   if (!preview_record.value) {
@@ -424,6 +424,8 @@ const grid_status = computed(() => {
       @delete="() => void delete_preview()"
       @modify-prompt="(parameters) => hand_off_to_workbench('modify_prompt', parameters)"
       @regenerate="(parameters) => hand_off_to_workbench('regenerate', parameters)"
+      @edit="(parameters) => hand_off_to_workbench('edit', parameters)"
+      @inpaint="(parameters) => hand_off_to_workbench('inpaint', parameters)"
       @copied="push_toast(t('gallery.metadata_inspector.copied_toast'))"
     />
 

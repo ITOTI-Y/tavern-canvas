@@ -394,8 +394,7 @@ const gallery = {
     inpaint_action: "Inpaint",
     source_message_action: "Go to source message",
     parameters_unavailable: "No embedded generation parameters were found in this image.",
-    actions_unavailable_hint:
-      "Editing, inpainting, and jumping to the source message are not available in this version yet.",
+    actions_unavailable_hint: "Jumping to the source message is not available in this version yet.",
   },
   selection: {
     selected_count: "{n} image selected | {n} images selected",

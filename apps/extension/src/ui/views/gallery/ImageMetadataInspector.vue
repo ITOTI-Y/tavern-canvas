@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, Copy, ExternalLink, RefreshCw, Wand2 } from "lucide-vue-next";
+import { Brush, Check, Copy, ExternalLink, Pencil, RefreshCw, Wand2 } from "lucide-vue-next";
 import { ref } from "vue";
 
 import AppButton from "../../components/AppButton.vue";
@@ -14,10 +14,11 @@ import styles from "./gallery.module.css";
  * bug. Modify prompt/regenerate hand off through the select-inspector-record channel
  * (InspectorSelection's `intent`/`prefill`, Stage 06 Task 6 addition, extended in the stage
  * fix-wave) carrying the already-extracted `parameters` prop along so the Workbench can prefill
- * its prompt fields -- there is no other cross-view channel into the Workbench yet. Edit/inpaint/
- * source-message stay disabled: no image-edit, inpaint, or host chat-navigation capability exists
- * yet (fix-wave review finding), so rendering them active would be a live control that silently
- * does nothing -- the banned state -- rather than an honest unavailable one.
+ * its prompt fields -- there is no other cross-view channel into the Workbench yet. Edit and
+ * inpaint hand off the same way, carrying `intent: "edit" | "inpaint"`, which the inspector's
+ * action row consumes and turns into a real media command. Source-message stays disabled: no host
+ * exposes a chat-navigation hook, so rendering it active would be a live control that silently does
+ * nothing -- the banned state -- rather than an honest unavailable one.
  */
 const props = defineProps<{
   readonly record: GalleryRecordSummary;
@@ -43,6 +44,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   "modify-prompt": [parameters: ExtractedGenerationParameters | null];
   regenerate: [parameters: ExtractedGenerationParameters | null];
+  edit: [parameters: ExtractedGenerationParameters | null];
+  inpaint: [parameters: ExtractedGenerationParameters | null];
   copied: [];
 }>();
 
@@ -110,8 +113,18 @@ async function copy_parameters(): Promise<void> {
         variant="secondary"
         @click="emit('regenerate', parameters)"
       />
-      <AppButton :label="editLabel" variant="secondary" disabled />
-      <AppButton :label="inpaintLabel" variant="secondary" disabled />
+      <AppButton
+        :label="editLabel"
+        :icon="Pencil"
+        variant="secondary"
+        @click="emit('edit', parameters)"
+      />
+      <AppButton
+        :label="inpaintLabel"
+        :icon="Brush"
+        variant="secondary"
+        @click="emit('inpaint', parameters)"
+      />
       <AppButton :label="sourceMessageLabel" :icon="ExternalLink" variant="secondary" disabled />
     </div>
     <p :class="styles.metadataActionsHint">{{ actionsUnavailableHint }}</p>

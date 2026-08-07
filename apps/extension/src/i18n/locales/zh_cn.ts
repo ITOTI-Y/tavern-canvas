@@ -382,7 +382,7 @@ const gallery = {
     inpaint_action: "局部重绘",
     source_message_action: "跳转到来源消息",
     parameters_unavailable: "这张图片中没有找到嵌入的生成参数。",
-    actions_unavailable_hint: "编辑图片、局部重绘和跳转到来源消息在当前版本中暂不可用。",
+    actions_unavailable_hint: "跳转到来源消息在当前版本中暂不可用。",
   },
   selection: {
     selected_count: "已选中 {n} 张图片 | 已选中 {n} 张图片",

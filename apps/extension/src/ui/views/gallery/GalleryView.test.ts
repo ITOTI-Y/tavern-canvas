@@ -578,7 +578,7 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     expect(controller.set_route).toHaveBeenCalledWith("workbench");
   });
 
-  it("edit, inpaint, and source message render as disabled controls with an explanatory hint, not live no-ops", async () => {
+  it("edit and inpaint hand off through the inspector selection channel", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
     const { wrapper, controller } = mount_gallery_view({ state });
@@ -587,18 +587,35 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     (controller.select_inspector_record as ReturnType<typeof vi.fn>).mockClear();
     (controller.set_route as ReturnType<typeof vi.fn>).mockClear();
 
-    const edit_button = dom().find('button[aria-label="Edit image"]');
-    const inpaint_button = dom().find('button[aria-label="Inpaint"]');
+    await dom().find('button[aria-label="Edit image"]').trigger("click");
+    expect(controller.select_inspector_record).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "gallery_record", record_id: record.id, intent: "edit" }),
+    );
+    expect(controller.set_route).toHaveBeenCalledWith("workbench");
+
+    open_tile(wrapper, record.id);
+    await flushPromises();
+    await dom().find('button[aria-label="Inpaint"]').trigger("click");
+    expect(controller.select_inspector_record).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "gallery_record", record_id: record.id, intent: "inpaint" }),
+    );
+  });
+
+  it("keeps source-message navigation disabled: no host exposes a chat-navigation hook", async () => {
+    const record = make_record();
+    const state = build_state({ records: [record] });
+    const { wrapper, controller } = mount_gallery_view({ state });
+    open_tile(wrapper, record.id);
+    await flushPromises();
+    (controller.select_inspector_record as ReturnType<typeof vi.fn>).mockClear();
+    (controller.set_route as ReturnType<typeof vi.fn>).mockClear();
+
     const source_message_button = dom().find('button[aria-label="Go to source message"]');
-    expect(edit_button.attributes("disabled")).toBeDefined();
-    expect(inpaint_button.attributes("disabled")).toBeDefined();
     expect(source_message_button.attributes("disabled")).toBeDefined();
     expect(dom().text()).toContain(
-      "Editing, inpainting, and jumping to the source message are not available in this version yet.",
+      "Jumping to the source message is not available in this version yet.",
     );
 
-    await edit_button.trigger("click");
-    await inpaint_button.trigger("click");
     await source_message_button.trigger("click");
     expect(controller.select_inspector_record).not.toHaveBeenCalled();
     expect(controller.set_route).not.toHaveBeenCalled();
