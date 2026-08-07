@@ -1,0 +1,67 @@
+/*
+ * Design tokens for the TavernCanvas Studio. This is the whole token surface: no component adds
+ * a color, radius, or duration outside these custom properties (style_contract.test.ts enforces
+ * the radius/motion/color-family rules mechanically).
+ *
+ * Dark mode is a single override block, never a per-section inversion: the shell (Stage 06 Task 2)
+ * reflects StudioState.color_mode onto the Shadow Root host as data-color-mode="dark" | "light",
+ * and :host([data-color-mode="dark"]) below overrides the same custom properties in one place.
+ */
+
+:host {
+  --tc-canvas: #f4f5f7;
+  --tc-surface: #ffffff;
+  --tc-surface-raised: #f8f9fb;
+  --tc-text: #181a1f;
+  --tc-text-muted: #616773;
+  --tc-divider: #d8dce3;
+  --tc-accent: #2457d6;
+  --tc-accent-hover: #1f49b8;
+  --tc-success: #16815d;
+  --tc-warning: #9a6700;
+  --tc-error: #c23838;
+  /* --tc-success/--tc-warning/--tc-error are calibrated as foreground (text/icon/border) colors
+     against --tc-surface and --tc-surface-raised (WCAG AA, see style_contract.test.ts). On bare
+     --tc-canvas they clear large-text AA but fall just under body-text AA; prefer surface for
+     small status text. In dark mode (below) they do not clear AA as a solid fill with white text
+     -- badges/buttons must use an outline or tinted-background treatment, never a solid status
+     fill with light text, in dark mode. */
+
+  --tc-radius-panel: 0;
+  --tc-radius-field: 6px;
+  --tc-radius-image: 8px;
+  --tc-radius-status: 4px;
+
+  --tc-motion-fast: 140ms;
+  --tc-motion-normal: 180ms;
+  --tc-motion-slow: 220ms;
+
+  /* Stacking scale: every first-party z-index references one of these, never an ad-hoc number.
+     Shell chrome (top bar, rails, bottom nav) sits just above document flow; the mobile inspector
+     sheet sits above shell chrome; Reka dialog/menu/tooltip portals sit above the sheet; toasts
+     always paint on top of everything else. */
+  --tc-z-shell-sticky: 10;
+  --tc-z-inspector-sheet: 20;
+  --tc-z-overlay: 30;
+  --tc-z-toast: 40;
+
+  color: var(--tc-text);
+  background: var(--tc-canvas);
+  font-family: "Geist", system-ui, "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+:host([data-color-mode="dark"]) {
+  --tc-canvas: #111318;
+  --tc-surface: #181b21;
+  --tc-surface-raised: #20242b;
+  --tc-text: #f4f5f7;
+  --tc-text-muted: #aeb4bf;
+  --tc-divider: #343a44;
+  --tc-accent: #6f91ff;
+  --tc-accent-hover: #7d9cff;
+  --tc-success: #45c995;
+  --tc-warning: #e8b44e;
+  --tc-error: #ff7b7b;
+}

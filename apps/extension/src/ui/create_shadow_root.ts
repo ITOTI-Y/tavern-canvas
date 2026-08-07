@@ -1,6 +1,7 @@
-import type { InjectionKey } from "vue";
-
-export const PORTAL_TARGET_KEY: InjectionKey<HTMLElement> = Symbol("tavern-canvas-portal-target");
+// Re-exported for existing call sites (e.g. bootstrap.ts): the canonical definition now lives in
+// contracts/portal_keys.ts so the Shadow Root shell and the components that portal into it always
+// inject the same symbol. Import from contracts/portal_keys.js directly in new code.
+export { PORTAL_TARGET_KEY } from "./contracts/portal_keys.js";
 
 export interface ShadowRootSurface {
   readonly host_element: HTMLElement;

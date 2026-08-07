@@ -1,0 +1,81 @@
+/*
+ * Base element resets and the first-party Geist font. Loaded after tokens.css: relies on the
+ * custom properties tokens.css defines on :host.
+ */
+
+@font-face {
+  font-family: "Geist";
+  /* Vite's `build.lib` mode (apps/extension/vite.config.ts) inlines every url()-referenced asset
+     as a base64 data URI unconditionally, ignoring assetsInlineLimit -- verified against this
+     exact config. The `?no-inline` query is Vite's own escape hatch: it forces the font to emit
+     as a separate physical file instead, which the font ruling requires (no data-URI inflation). */
+  src: url("../assets/fonts/geist_variable.woff2?no-inline") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+[data-shadow-role="app"],
+[data-shadow-role="portal"] {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+}
+
+/* Accessibility escape hatch required by the style contract: disables every nonessential
+   transition/animation instead of merely shortening it, so motion-sensitive users see none. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

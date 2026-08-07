@@ -132,6 +132,9 @@ importers:
       idb:
         specifier: 8.0.3
         version: 8.0.3
+      postcss:
+        specifier: 8.5.25
+        version: 8.5.25
       vite:
         specifier: 8.2.0
         version: 8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(tsx@4.23.9)

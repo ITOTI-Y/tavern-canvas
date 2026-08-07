@@ -1,0 +1,68 @@
+/*
+ * Small, composable utility classes shared across the Studio. Transitions here always use the
+ * `transition` shorthand (never longhand transition-property/-duration split across two
+ * declarations) so style_contract.test.ts can validate every duration/property pair from a
+ * single declaration.
+ */
+
+.tc-tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Standard sr-only pattern: keeps an element in the accessibility tree and focus order while
+   removing it from visual layout, for icon-only controls' accessible names (Task 4). */
+.tc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * Tactile feedback + stable dimensions for interactive controls (buttons, tabs, list rows):
+ * - `border: 1px solid transparent` reserves the border box up front so a later state only ever
+ *   changes border *color* (untransitioned, since border-color is not on the allowed transition
+ *   property list), never border *width* -- the control's box never resizes across states.
+ * - `:active` gets a transform-only press affordance at the fast end of the motion contract.
+ * - `:focus-visible` uses `outline`, which paints outside the box without affecting layout.
+ * A loading affordance (e.g. an inline spinner swapped in for a label) must hide the replaced
+ * content with `visibility`, not `display`, so its reserved space keeps the control's box
+ * dimensions constant while pending.
+ */
+.tc-interactive {
+  border: 1px solid transparent;
+  transition:
+    transform var(--tc-motion-fast) ease-out,
+    background-color var(--tc-motion-fast) ease-out,
+    color var(--tc-motion-fast) ease-out;
+}
+
+.tc-interactive:active {
+  transform: scale(0.97);
+}
+
+.tc-interactive:focus-visible {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: 2px;
+}
+
+.tc-z-shell-sticky {
+  z-index: var(--tc-z-shell-sticky);
+}
+
+.tc-z-inspector-sheet {
+  z-index: var(--tc-z-inspector-sheet);
+}
+
+.tc-z-overlay {
+  z-index: var(--tc-z-overlay);
+}
+
+.tc-z-toast {
+  z-index: var(--tc-z-toast);
+}
