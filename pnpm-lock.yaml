@@ -71,6 +71,9 @@ importers:
       '@noble/hashes':
         specifier: 2.2.0
         version: 2.2.0
+      '@tanstack/vue-virtual':
+        specifier: 3.13.35
+        version: 3.13.35(vue@3.5.40(typescript@6.0.3))
       '@tavern-canvas/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
