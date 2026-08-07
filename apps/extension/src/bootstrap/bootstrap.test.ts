@@ -168,4 +168,89 @@ describe("bootstrap_tavern_canvas", () => {
     expect(sequence).toEqual(["start:host", "stop:host"]);
     expect(document.querySelector("#tavern-canvas-root")).toBeNull();
   });
+
+  it("mounts the studio with real capability resolutions, one per capability", async () => {
+    const fixture = create_host_fixture();
+
+    const handle = await bootstrap_tavern_canvas({
+      globals: fixture.globals,
+      stylesheet: "",
+      version: "3.0.0-alpha.1",
+      composition: {
+        open_storage: () => Promise.reject(new Error("no storage in this environment")),
+        create_vocabulary_worker: null,
+        estimate_storage: () => Promise.resolve(undefined),
+      },
+    });
+
+    expect(handle.state).toBe("ready");
+    expect(handle.resolutions).toHaveLength(9);
+    // A capability that could not be composed degrades; it never prevents the shell from mounting.
+    expect(handle.resolutions.some((entry) => entry.status === "unavailable")).toBe(true);
+    expect(handle.resolutions.every((entry) => entry.capability_id.length > 0)).toBe(true);
+    expect(
+      document
+        .querySelector("#tavern-canvas-root")
+        ?.shadowRoot?.querySelector("[data-shadow-role='app']"),
+    ).not.toBeNull();
+
+    await handle.dispose();
+  });
+
+  it("still reports resolutions when the host probe blocks startup", async () => {
+    const fixture = create_host_fixture("4.9.0");
+
+    const handle = await bootstrap_tavern_canvas({
+      globals: fixture.globals,
+      stylesheet: "",
+      version: "3.0.0-alpha.1",
+      composition: {
+        open_storage: () => Promise.reject(new Error("no storage in this environment")),
+        create_vocabulary_worker: null,
+        estimate_storage: () => Promise.resolve(undefined),
+      },
+    });
+
+    expect(handle.state).toBe("blocked");
+    expect(handle.resolutions).toHaveLength(9);
+    await handle.dispose();
+  });
+
+  it("starts the Tauri chat surface module the composition root contributes", async () => {
+    const fixture = create_host_fixture();
+    const sequence: string[] = [];
+    Reflect.set(fixture.globals, "__TAURITAVERN__", {
+      abiVersion: 1,
+      api: {
+        chatSurface: {
+          protocolVersion: 1,
+          isManagedOwnershipRequired: vi.fn(() => false),
+          registerParticipant: vi.fn(),
+        },
+      },
+    });
+
+    const handle = await bootstrap_tavern_canvas({
+      globals: fixture.globals,
+      modules: [create_module("host", [], sequence)],
+      stylesheet: "",
+      version: "3.0.0-alpha.1",
+      composition: {
+        open_storage: () => Promise.reject(new Error("no storage in this environment")),
+        create_vocabulary_worker: null,
+        estimate_storage: () => Promise.resolve(undefined),
+      },
+    });
+
+    expect(handle.state).toBe("ready");
+    // The caller's own module started, and the composition root's Tauri chat surface module was
+    // started alongside it -- its participant registration is the observable proof.
+    expect(sequence).toEqual(["start:host"]);
+    const chat_surface = Reflect.get(
+      Reflect.get(Reflect.get(fixture.globals, "__TAURITAVERN__") as object, "api") as object,
+      "chatSurface",
+    ) as { registerParticipant: Mock };
+    expect(chat_surface.registerParticipant).toHaveBeenCalledOnce();
+    await handle.dispose();
+  });
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StartupStatus } from "../bootstrap/startup_error.js";
@@ -8,6 +8,7 @@ import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
 import { use_studio_controller } from "./controllers/use_studio_controller.js";
+import FloatingEntry from "./experience/FloatingEntry.vue";
 import PortalProvider from "./shell/PortalProvider.vue";
 import styles from "./shell/shell.module.css";
 import StudioShell from "./shell/StudioShell.vue";
@@ -26,8 +27,9 @@ const props = defineProps<{
   /** The Shadow Root host element (create_shadow_root.ts) -- color_mode is reflected onto it as
    * `data-color-mode`, per tokens.css's single dark-mode override block. */
   hostElement: HTMLElement;
-  /** No real capability adapters exist yet (see unavailable_capabilities.ts); production
-   * bootstrap wiring supplies the placeholder, tests can supply mocks directly. */
+  /** Built by bootstrap's composition root (compose_capabilities.ts) from the real modules; each
+   * capability is either a working implementation or the honest-unavailable one. Omitted only by
+   * tests, which supply their own. */
   capabilities?: StudioCapabilities;
 }>();
 
@@ -93,6 +95,21 @@ function resize_inspector(width: number): void {
 function reload(): void {
   window.location.reload();
 }
+
+/**
+ * `ui.optional_entry_enabled` (Stage 04) turns the Studio into a FAB-launched surface: the shell
+ * stays unmounted until the entry is activated, and the entry toggles it. With the setting off --
+ * the default -- the shell renders directly and no entry exists in the DOM at all.
+ */
+const floating_entry_enabled = computed(
+  () => studio?.state.value.settings.settings?.ui.optional_entry_enabled === true,
+);
+const studio_opened = ref(false);
+const shell_visible = computed(() => !floating_entry_enabled.value || studio_opened.value);
+
+function toggle_studio(): void {
+  studio_opened.value = !studio_opened.value;
+}
 </script>
 
 <template>
@@ -141,13 +158,20 @@ function reload(): void {
       </button>
     </div>
 
-    <StudioShell
-      v-else-if="studio"
-      :state="studio.state.value"
-      :controller="studio.controller"
-      @select-route="select_route"
-      @set-inspector-collapsed="set_inspector_collapsed"
-      @resize-inspector="resize_inspector"
-    />
+    <template v-else-if="studio">
+      <StudioShell
+        v-if="shell_visible"
+        :state="studio.state.value"
+        :controller="studio.controller"
+        @select-route="select_route"
+        @set-inspector-collapsed="set_inspector_collapsed"
+        @resize-inspector="resize_inspector"
+      />
+      <FloatingEntry
+        :enabled="floating_entry_enabled"
+        :open-label="t('app.name')"
+        @open="toggle_studio"
+      />
+    </template>
   </PortalProvider>
 </template>
