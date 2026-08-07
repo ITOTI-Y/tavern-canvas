@@ -119,7 +119,27 @@ describe("validate_rows", () => {
     expect(findings).toEqual([]);
   });
 
-  it("covers all thirteen approved-removal reasons as valid tags", async () => {
+  it("accepts the voice-features-out-of-scope reason (2026-08-07 no-voice ruling)", async () => {
+    // Regression guard for the 14th approved-removal category, added per the user's 2026-08-07
+    // "不需要语音" ruling covering the whole TTS/ASR surface (docs/plans/2026-08-04-tavern-canvas-
+    // v3-architecture-design.md section 15.1 item 14) -- same pattern as the 12th and 13th reasons
+    // above, again only APPROVED_REMOVAL_REASONS changes.
+    await write_file("apps/extension/src/modules/assistant/assistant_module.test.ts");
+    const findings = validate_rows(
+      [
+        row({
+          status: "removed_approved",
+          acceptance_test: "apps/extension/src/modules/assistant/assistant_module.test.ts",
+          notes: "[voice-features-out-of-scope] TTS/ASR removed entirely, extension stays image-focused",
+        }),
+      ],
+      [entry()],
+      temporary_root,
+    );
+    expect(findings).toEqual([]);
+  });
+
+  it("covers all fourteen approved-removal reasons as valid tags", async () => {
     await write_file("placeholder.test.ts");
     for (const reason of APPROVED_REMOVAL_REASONS) {
       const findings = validate_rows(
