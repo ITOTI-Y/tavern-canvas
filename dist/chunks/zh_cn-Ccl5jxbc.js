@@ -1,12 +1,7 @@
 var e = {
 	app: {
 		name: "智绘姬",
-		tagline: "面向 SillyTavern 的双语图像生成工作台",
 		version_label: "版本 {version}",
-		startup: {
-			loading_title: "正在启动智绘姬",
-			loading_description: "正在连接 JS Slash Runner 并加载工作区。"
-		},
 		unsupported_host: {
 			title: "需要更新 JS Slash Runner",
 			description: "智绘姬需要 JS Slash Runner {required_version} 或更高版本，当前安装的版本是 {current_version}。",
@@ -43,39 +38,29 @@ var e = {
 			close: "关闭",
 			confirm: "确认",
 			delete: "删除",
-			retry: "重试",
 			copy: "复制",
 			copied: "已复制",
 			download: "下载",
 			search: "搜索",
-			filter: "筛选",
 			clear: "清空",
 			select_all: "全选",
 			deselect_all: "取消全选",
-			continue: "继续",
 			back: "返回",
 			next: "下一步",
-			import: "导入",
-			export: "导出",
 			edit: "编辑",
-			duplicate: "创建副本",
-			regenerate: "重新生成"
+			increase: "增加",
+			decrease: "减少"
 		},
 		labels: {
 			name: "名称",
 			description: "描述",
-			status: "状态",
-			type: "类型",
-			size: "大小",
-			created_at: "创建时间",
-			updated_at: "更新时间"
+			status: "状态"
 		},
 		inspector: {
 			title: "检查器",
 			empty_title: "未选择内容",
 			empty_description: "选择一个任务、图片或资产即可在此查看详情。"
-		},
-		workspace_unavailable: "该工作区暂不可用。"
+		}
 	},
 	status: {
 		loading: "加载中",
@@ -109,13 +94,22 @@ var e = {
 			empty_title: "还没有参考图",
 			empty_description: "从资产库或本机添加最多 4 张参考图，用于引导生成结果。",
 			add_action: "添加参考图",
-			remove_action: "移除参考图"
+			remove_action: "移除参考图",
+			move_up_action: "上移参考图",
+			move_down_action: "下移参考图",
+			picker_title: "添加参考图",
+			picker_empty_title: "还没有保存的参考图",
+			picker_empty_description: "请先在资产库中保存一张参考图，然后再在这里添加。",
+			picker_error: "参考图列表加载失败。",
+			max_reached_hint: "最多添加 4 张参考图。"
 		},
 		provider_summary: {
 			title: "Provider",
 			no_profile_title: "尚未选择 provider 配置",
 			no_profile_description: "前往设置选择一个 provider 配置以启用生成。",
-			open_settings_action: "打开 provider 设置"
+			open_settings_action: "打开 provider 设置",
+			select_label: "Provider 配置",
+			load_error: "Provider 配置加载失败。"
 		},
 		active_jobs: {
 			title: "进行中的任务",
@@ -124,46 +118,46 @@ var e = {
 			empty_description: "在此提交一次生成请求，即可在这里查看进度。",
 			cancel_action: "取消任务",
 			cancel_confirm_title: "取消这个任务？",
-			cancel_confirm_description: "对 {provider} 的请求将立即停止，且无法恢复。"
+			cancel_confirm_description: "对 {provider} 的请求将立即停止，且无法恢复。",
+			progress_label: "{completed}/{total} 张图片",
+			load_error: "进行中的任务加载失败。",
+			state_labels: {
+				queued: "排队中",
+				preparing: "准备中",
+				submitting: "提交中",
+				running: "运行中",
+				completed: "已完成",
+				failed: "失败",
+				cancelled: "已取消",
+				attached: "已关联",
+				orphaned: "孤立"
+			}
 		},
 		generation_inspector: {
 			title: "生成参数",
 			seed_label: "Seed",
 			steps_label: "Steps",
 			sampler_label: "Sampler",
-			model_label: "模型"
+			model_label: "模型",
+			provider_label: "Provider",
+			submitted_at_label: "提交时间",
+			empty_title: "未选择任务",
+			empty_description: "在进行中的任务里选择一个任务，即可在这里查看其参数。",
+			completed_images_title: "已完成的图片",
+			image_alt: "生成的图片 {n}"
 		},
 		submit: {
 			action: "生成",
 			validation: {
 				profile_required: "生成前请先选择 provider 配置。",
 				prompt_required: "生成前请先填写正向提示词。",
-				image_count_range: "生成张数请选择 1 到 4 之间的数值。"
+				image_count_range: "生成张数请选择 1 到 4 之间的数值。",
+				provider_unsupported: "工作台暂不支持这个 provider 配置，请选择其他配置。"
 			}
 		},
 		retry_action: "重新生成"
 	},
-	provider: {
-		connection_test: {
-			action: "测试连接",
-			testing: "正在测试连接",
-			success: "连接成功",
-			failed: "连接失败"
-		},
-		credentials: { not_stored_locally: "Token 保存在宿主的密钥存储中，不会出现在智绘姬界面或导出文件里。" },
-		concurrency_label: "并发请求数",
-		fallback_enabled_label: "失败时自动切换到下一个 provider 配置",
-		errors: {
-			auth_failed: "{provider} 拒绝了当前凭证，请检查 provider 设置中的 token。",
-			rate_limited: "{provider} 正在限流，请稍后重试。",
-			content_blocked: "{provider} 因内容策略拦截了这次请求。",
-			invalid_request: "{provider} 拒绝了请求参数：{message}",
-			provider_unavailable: "{provider} 当前无法访问。",
-			timed_out: "{provider} 未能在规定时间内响应。",
-			cancelled: "对 {provider} 的请求已取消。",
-			malformed_response: "{provider} 返回的响应无法解析。"
-		}
-	},
+	provider: { credentials: { not_stored_locally: "Token 保存在宿主的密钥存储中，不会出现在智绘姬界面或导出文件里。" } },
 	prompt: {
 		preset_browser: {
 			title: "预设",
@@ -172,44 +166,68 @@ var e = {
 			empty_description: "在提示词构建器中创建一个预设，即可在后续生成中复用。",
 			bulk_delete_action: "删除所选",
 			bulk_delete_confirm_title: "删除 {n} 个预设？ | 删除 {n} 个预设？",
-			bulk_delete_confirm_description: "此操作会永久删除所选预设，且无法撤销。"
+			bulk_delete_confirm_description: "此操作会永久删除所选预设，且无法撤销。",
+			new_preset_action: "新建预设",
+			random_group_action: "从分组中随机选择",
+			ungrouped_label: "未分组",
+			load_error: "预设加载失败。"
 		},
 		fixed_prompts: {
 			positive_label: "固定正向提示词",
-			negative_label: "固定负向提示词"
+			positive_placeholder: "在生成的正向提示词前始终附加的文本",
+			negative_label: "固定负向提示词",
+			negative_placeholder: "在生成的负向提示词前始终附加的文本"
 		},
 		quality_controls: {
+			title: "质量控制",
 			ucp_label: "通用构图提示词（UCP）",
-			aqt_label: "自动质量标签（AQT）"
+			ucp_description: "对该预设生成的每一次结果应用统一的构图提示词。",
+			aqt_label: "自动质量标签（AQT）",
+			aqt_description: "自动附加标准质量标签集合。"
 		},
 		replacement_rules: {
 			title: "替换规则",
 			add_action: "添加规则",
 			trigger_label: "触发词",
+			trigger_placeholder: "以逗号分隔多个触发词",
+			triggers_hint: "多个触发词用逗号分隔。",
 			replacement_label: "替换为",
+			replacement_placeholder: "替换后的文本",
 			empty_title: "还没有替换规则",
 			empty_description: "添加一条规则，在提示词发送给 provider 之前替换匹配到的文本。"
 		},
 		regex_rules: {
 			title: "正则规则",
+			add_action: "添加正则规则",
 			pattern_label: "匹配模式",
+			pattern_placeholder: "正则表达式",
+			flags_label: "标志位",
 			test_input_label: "测试文本",
 			test_action: "测试匹配",
-			invalid_pattern: "这不是一个有效的正则表达式：{message}"
+			test_result_label: "测试结果",
+			invalid_pattern: "这不是一个有效的正则表达式：{message}",
+			empty_title: "还没有正则规则",
+			empty_description: "添加一条规则，在提示词发送给 provider 之前用正则表达式转换文本。"
 		},
 		builder: {
 			title: "提示词构建器",
 			context_preview_title: "上下文预览",
 			world_info_label: "World Info",
+			world_info_empty_description: "当前上下文没有激活的 World Info 条目。",
 			user_persona_label: "用户人设",
-			character_context_label: "角色上下文"
+			user_persona_empty_description: "当前上下文尚未关联用户人设。",
+			character_context_label: "角色上下文",
+			character_context_empty_description: "当前上下文尚未关联角色上下文。"
 		},
 		test_panel: {
 			title: "私有提示词测试",
 			run_action: "运行测试",
 			tools_disabled_note: "本次测试运行已禁用工具调用。",
 			running: "正在通过私有 LLM 通道运行提示词",
-			result_title: "结果"
+			result_title: "结果",
+			input_label: "测试提示词",
+			input_placeholder: "输入要发送给私有 LLM 通道的提示词",
+			unavailable_description: "私有 LLM 通道尚未连接，暂时无法运行此测试。"
 		}
 	},
 	assets: {
@@ -228,17 +246,32 @@ var e = {
 			empty_description: "从更新渠道安装一个词库包，即可搜索并插入标签。",
 			tag_count: "{n} 个标签 | {n} 个标签",
 			update_action: "检查更新",
-			import_action: "导入词库包"
+			import_action: "导入词库包",
+			bundled_label: "内置",
+			progress_verifying_catalog_manifest: "正在校验目录清单",
+			progress_downloading: "正在下载词库包",
+			progress_verifying_package: "正在校验词库包",
+			progress_installing: "正在安装词库包",
+			nsfw_disclosure_label: "显示可能包含成人内容的词库包",
+			nsfw_disclosure_hint: "这些词库包不会自动安装，安装前请自行确认。"
 		},
 		characters: {
 			empty_title: "还没有保存角色",
 			empty_description: "创建一个角色档案，即可在多次生成中复用姓名、外观与上下文。",
-			add_action: "添加角色"
+			add_action: "添加角色",
+			role_label: "角色定位",
+			appearance_label: "外观",
+			context_notes_label: "角色上下文",
+			world_info_reference_label: "World Info 引用",
+			world_info_reference_hint: "标注该角色关联的 World Info 书或条目名称。"
 		},
 		outfits: {
 			empty_title: "还没有保存服装",
 			empty_description: "为某个角色添加服装，即可在生成中复用。",
-			add_action: "添加服装"
+			add_action: "添加服装",
+			description_label: "描述",
+			character_label: "角色",
+			character_placeholder: "选择角色"
 		},
 		lora: {
 			empty_title: "还没有 LoRA 元数据",
@@ -250,22 +283,42 @@ var e = {
 		vibe: {
 			empty_title: "还没有 Vibe 或参考图分组",
 			empty_description: "添加一个 NovelAI Vibe Transfer 分组或 Google 参考图分组，即可在多次请求中复用。",
-			add_action: "添加分组"
+			add_action: "添加分组",
+			provider_label: "来源",
+			provider_novelai: "NovelAI Vibe Transfer",
+			provider_google: "Google 参考图",
+			notes_label: "备注",
+			strength_label: "强度",
+			information_extracted_label: "信息提取度"
 		},
 		reference: {
 			empty_title: "还没有保存参考图",
 			empty_description: "在这里保存一张参考图，即可在多次生成中复用。",
-			add_action: "添加参考图"
+			add_action: "添加参考图",
+			source_url_label: "来源链接",
+			notes_label: "备注"
 		},
 		workflow: {
 			empty_title: "还没有导入 ComfyUI 工作流",
 			empty_description: "导入一个工作流 JSON 文件，将其中的占位符映射到智绘姬的输入。",
 			import_action: "导入工作流",
 			placeholder_scan_action: "扫描占位符",
-			edit_action: "编辑工作流"
+			edit_action: "编辑工作流",
+			json_label: "工作流 JSON",
+			placeholder_unmapped: "未映射",
+			target_positive_prompt: "正向提示词",
+			target_negative_prompt: "负向提示词",
+			target_seed: "Seed",
+			target_width: "宽度",
+			target_height: "高度",
+			target_steps: "Steps"
 		},
 		random_selection_action: "随机选择",
 		reorder_hint: "拖拽以调整顺序",
+		move_up_action: "上移",
+		move_down_action: "下移",
+		drag_handle_label: "拖拽以调整顺序",
+		form_dialog_description: "标有 * 的字段为必填项。",
 		delete_confirm_title: "删除 {name}？",
 		delete_confirm_description: "此操作会将其从资产库中永久删除，且无法撤销。"
 	},
@@ -297,7 +350,8 @@ var e = {
 			regenerate_action: "重新生成",
 			edit_action: "编辑图片",
 			inpaint_action: "局部重绘",
-			source_message_action: "跳转到来源消息"
+			source_message_action: "跳转到来源消息",
+			parameters_unavailable: "这张图片中没有找到嵌入的生成参数。"
 		},
 		selection: {
 			selected_count: "已选中 {n} 张图片 | 已选中 {n} 张图片",
@@ -333,33 +387,43 @@ var e = {
 		versions: {
 			title: "版本信息",
 			helper_label: "JS Slash Runner",
-			host_label: "SillyTavern",
 			protocol_label: "Gateway 协议"
 		},
 		connection_tests: {
 			title: "连接测试",
 			run_action: "运行测试",
-			running: "正在运行连接测试"
+			running: "正在运行连接测试",
+			latency_label: "{ms} 毫秒"
 		},
 		task_timeline: {
 			title: "任务时间线",
-			empty_title: "还没有记录任何任务",
 			empty_description: "生成、迁移与同步活动会在运行时显示在这里。",
-			error_code_label: "错误代码"
+			error_code_label: "错误代码",
+			time_label: "时间",
+			event_label: "事件",
+			module_label: "模块",
+			provider_label: "Provider",
+			count_label: "{n} 条事件 | {n} 条事件"
 		},
-		migration_status: { title: "迁移状态" },
+		migration_status: {
+			title: "迁移状态",
+			counts_label: "记录数量",
+			warnings_label: "警告"
+		},
 		storage_usage: {
 			title: "存储",
 			estimate_label: "估计占用",
 			quota_label: "配额",
 			quota_unavailable: "当前宿主无法提供存储估算。",
 			quota_high_pressure: "存储占用已接近浏览器配额，请在图库或资产库中释放空间。",
-			cache_references_label: "缓存引用数"
+			cache_references_label: "缓存引用数",
+			cache_references_unavailable: "当前宿主无法提供缓存引用数。"
 		},
 		support_bundle: {
 			title: "支持包",
 			description: "包含版本号、能力矩阵、脱敏后的设置、错误代码与任务时间线，不包含提示词、消息内容、密钥或图片文件名。",
-			export_action: "导出支持包"
+			export_action: "导出支持包",
+			exported_toast: "支持包已导出"
 		}
 	},
 	settings: {
@@ -371,17 +435,32 @@ var e = {
 			data: "数据"
 		},
 		provider_profiles: {
-			empty_title: "还没有 provider 配置",
 			empty_description: "添加一个 provider 配置以连接图像生成后端。",
 			add_action: "添加 provider 配置",
-			connection_test_action: "测试连接"
+			connection_test_action: "测试连接",
+			dialog_add_title: "添加 provider 配置",
+			dialog_edit_title: "编辑 provider 配置",
+			provider_label: "Provider",
+			provider_types: {
+				sd_webui: "SD WebUI",
+				novelai: "NovelAI",
+				comfyui: "ComfyUI",
+				openai_image: "OpenAI Image",
+				google_image: "Google Image"
+			},
+			default_badge: "默认",
+			set_default_action: "设为默认",
+			remove_confirm_title: "移除 {name}？",
+			remove_confirm_description: "此操作会将该 provider 配置从智绘姬中断开，已提交的任务不受影响。"
 		},
 		gateway: {
 			endpoint_label: "Gateway 地址",
 			protocol_label: "协议",
 			detect_action: "检测协议",
 			token_secret_label: "Token 密钥引用",
-			auto_generate_action: "生成 token"
+			auto_generate_action: "生成 token",
+			token_not_set: "尚未配置 token",
+			endpoint_hint: "你的 provider 配置将通过这个 Gateway 地址连接。"
 		},
 		http_risk: {
 			warning_title: "此连接未加密",
@@ -422,7 +501,10 @@ var e = {
 				title: "清理旧版 v2 数据",
 				description: "仅在迁移或归档验证通过后可用，此操作永远不会自动执行。",
 				record_summary: "{count} 条记录，共 {bytes} | {count} 条记录，共 {bytes}",
-				confirm_action: "删除旧版数据"
+				confirm_action: "删除旧版数据",
+				bytes_unavailable: "暂无法估算大小。",
+				unlock_hint: "先完成一次迁移或导出一次归档，即可启用此操作。",
+				confirm_phrase: "DELETE LEGACY DATA"
 			}
 		}
 	},
@@ -446,21 +528,15 @@ var e = {
 			secret_transfer_blocked: "provider token 未能安全迁移。",
 			switch_failed: "复制完成后切换到新命名空间失败。"
 		},
-		retry_action: "重试迁移",
-		report_action: "查看报告",
-		record_count: "{n} 条记录 | {n} 条记录",
-		never_auto_deletes: "智绘姬不会自动删除你的旧版数据。"
+		record_count: "{n} 条记录 | {n} 条记录"
 	},
 	errors: {
-		network: "智绘姬无法连接到网络。",
 		capability_blocked: "此操作需要 {capability}，但当前宿主不支持。",
 		validation_required: "此项为必填。",
-		storage_quota_exceeded: "浏览器存储配额已满，请在图库或资产库中释放空间。",
-		locale_load_failed: "简体中文语言包加载失败，已切换回英文界面。",
 		gateway_incompatible: "位于 {origin} 的 Gateway 协议版本不兼容。",
 		gateway_offline: "无法连接到位于 {origin} 的 Gateway。",
-		image_upload_failed: "上传 {file_name} 到宿主失败。",
 		generation_failed: "生成失败：{message}",
+		connection_test_failed: "连接测试失败：{code}",
 		unexpected: "出现了一个问题，请到诊断页查看详情。"
 	},
 	confirmations: {
@@ -485,4 +561,4 @@ var e = {
 //#endregion
 export { e as zh_cn_messages };
 
-//# sourceMappingURL=zh_cn-B6QTc0VG.js.map
+//# sourceMappingURL=zh_cn-Ccl5jxbc.js.map
