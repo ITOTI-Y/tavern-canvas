@@ -271,6 +271,8 @@ importers:
 
   tools/first_party_check: {}
 
+  tools/locale_check: {}
+
   tools/v2_migration:
     dependencies:
       '@noble/hashes':

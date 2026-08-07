@@ -11,6 +11,7 @@
     "build": "pnpm -r build",
     "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm check:first-party",
     "check:first-party": "pnpm --filter @tavern-canvas/first-party-check build && node tools/first_party_check/dist/index.js apps packages",
+    "check:locale": "pnpm --filter @tavern-canvas/locale-check build && node tools/locale_check/dist/index.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
