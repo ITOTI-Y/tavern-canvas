@@ -1,6 +1,13 @@
-import type { TavernCanvasSettings, Uuid, VocabularyCatalogEntry } from "@tavern-canvas/contracts";
+import type {
+  TavernCanvasSettings,
+  Uuid,
+  VocabularyCatalogEntry,
+  VocabularyCategory,
+} from "@tavern-canvas/contracts";
 
 import type {
+  AssetCategory,
+  AssetRecordSummary,
   AssetsDomainEvent,
   CapabilityId,
   DiagnosticsDomainEvent,
@@ -18,6 +25,8 @@ import type {
   SettingsDomainEvent,
   StudioCapabilities,
   Unsubscribe,
+  VocabularyInstallProgressView,
+  VocabularySearchPageView,
   VocabularyUpdateChannel,
 } from "../contracts/ui_capabilities.js";
 import {
@@ -74,7 +83,13 @@ export interface StudioController {
   bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void>;
   test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
   save_prompt_preset(draft: PromptPresetDraft): Promise<void>;
-  install_vocabulary_package(entry: VocabularyCatalogEntry): Promise<void>;
+  /** `on_progress` (Stage 06 Task 6 addition) forwards VocabularyCapability.install's own
+   * progress callback straight through -- see that method's doc comment on the Worker
+   * dispose/recreate handoff the caller must do after this resolves. */
+  install_vocabulary_package(
+    entry: VocabularyCatalogEntry,
+    on_progress?: (progress: VocabularyInstallProgressView) => void,
+  ): Promise<void>;
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void>;
   test_diagnostics_connection(): Promise<void>;
   export_support_bundle(): Promise<void>;
@@ -111,6 +126,41 @@ export interface StudioController {
   /** Re-fetches the migration snapshot after cleanup so `state.diagnostics.migration` reflects
    * the post-cleanup counts. */
   confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
+
+  // -------------------------------------------------------------------------
+  // Assets (Stage 06 Task 6 addition -- T1's command surface intentionally left
+  // these to the view tasks that actually need them; see task-1-report.md).
+  // -------------------------------------------------------------------------
+  set_active_asset_category(category: AssetCategory): void;
+  save_asset(category: AssetCategory, asset: Omit<AssetRecordSummary, "updated_at">): Promise<void>;
+  remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void>;
+  reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void>;
+
+  // -------------------------------------------------------------------------
+  // Vocabulary search (Stage 06 Task 6 addition). Plain request/response
+  // pass-throughs, not run_command-tracked: VocabularyCapability.search/next_page
+  // already mirror VocabularyClient's stateless request/response shape (no
+  // domain event stream), and per-keystroke search pending state is local to
+  // whichever panel is searching, not something the rest of the Studio observes.
+  // -------------------------------------------------------------------------
+  search_vocabulary(
+    query: string,
+    category?: VocabularyCategory,
+  ): Promise<VocabularySearchPageView>;
+  load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView>;
+
+  // -------------------------------------------------------------------------
+  // Gallery (Stage 06 Task 6 addition).
+  // -------------------------------------------------------------------------
+  select_gallery_record(record_id: Uuid | null): void;
+  read_gallery_bytes(record_id: Uuid): Promise<Uint8Array>;
+  pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void>;
+  /** Detaching and deleting are distinct confirmed actions (plan rule) -- this never deletes the
+   * record, only clears its message attachment; `delete_gallery_record` is the separate,
+   * permanent action. */
+  detach_gallery_record(record_id: Uuid): Promise<void>;
+  delete_gallery_record(record_id: Uuid): Promise<void>;
+  bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void>;
 }
 
 /** Stable fallback code for a rejection whose error doesn't already carry a snake_case `code`. */
@@ -698,13 +748,16 @@ class StudioControllerImpl implements StudioController {
     );
   }
 
-  install_vocabulary_package(entry: VocabularyCatalogEntry): Promise<void> {
+  install_vocabulary_package(
+    entry: VocabularyCatalogEntry,
+    on_progress?: (progress: VocabularyInstallProgressView) => void,
+  ): Promise<void> {
     return run_command(
       () => this.#state.assets.vocabulary_install_command,
       (next) => {
         this.#patch_assets({ vocabulary_install_command: next });
       },
-      () => this.#capabilities.vocabulary.install(entry),
+      () => this.#capabilities.vocabulary.install(entry, on_progress),
     );
   }
 
@@ -827,6 +880,116 @@ class StudioControllerImpl implements StudioController {
         }
         this.#patch_diagnostics({ migration: snapshot });
       });
+  }
+
+  set_active_asset_category(category: AssetCategory): void {
+    this.#patch_assets({ active_category: category });
+  }
+
+  async save_asset(
+    category: AssetCategory,
+    asset: Omit<AssetRecordSummary, "updated_at">,
+  ): Promise<void> {
+    const saved = await this.#capabilities.assets.save(category, asset);
+    this.#patch_assets({
+      records: {
+        ...this.#state.assets.records,
+        [category]: upsert_by_id(this.#state.assets.records[category], saved, (a) => a.id),
+      },
+    });
+  }
+
+  async remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void> {
+    await this.#capabilities.assets.remove(category, asset_id);
+    this.#patch_assets({
+      records: {
+        ...this.#state.assets.records,
+        [category]: this.#state.assets.records[category].filter((a) => a.id !== asset_id),
+      },
+    });
+  }
+
+  async reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void> {
+    await this.#capabilities.assets.reorder(category, ordered_ids);
+    const by_id = new Map(this.#state.assets.records[category].map((a) => [a.id, a] as const));
+    const reordered = ordered_ids
+      .map((id) => by_id.get(id))
+      .filter((a): a is AssetRecordSummary => a !== undefined);
+    this.#patch_assets({
+      records: { ...this.#state.assets.records, [category]: reordered },
+    });
+  }
+
+  search_vocabulary(
+    query: string,
+    category?: VocabularyCategory,
+  ): Promise<VocabularySearchPageView> {
+    return this.#capabilities.vocabulary.search(query, category);
+  }
+
+  load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView> {
+    return this.#capabilities.vocabulary.next_page(cursor);
+  }
+
+  select_gallery_record(record_id: Uuid | null): void {
+    this.#patch_gallery({ selected_record_id: record_id });
+  }
+
+  read_gallery_bytes(record_id: Uuid): Promise<Uint8Array> {
+    return this.#capabilities.gallery.read_bytes(record_id);
+  }
+
+  async pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void> {
+    await this.#capabilities.gallery.pin(record_id, pinned);
+    this.#patch_gallery({
+      records: this.#state.gallery.records.map((record) =>
+        record.id === record_id ? { ...record, pinned } : record,
+      ),
+    });
+  }
+
+  async detach_gallery_record(record_id: Uuid): Promise<void> {
+    await this.#capabilities.gallery.detach_from_message(record_id);
+    // GalleryRecordSummary has no dedicated "detached" flag (see ui_capabilities.ts) -- `quarantined`
+    // is the closest existing signal for "no longer attached to a live message" and is what the
+    // Gallery view's orphan filter reads (implementer judgment call, ledgered for stage review).
+    this.#patch_gallery({
+      records: this.#state.gallery.records.map((record) =>
+        record.id === record_id ? { ...record, quarantined: true } : record,
+      ),
+    });
+  }
+
+  async delete_gallery_record(record_id: Uuid): Promise<void> {
+    await this.#capabilities.gallery.delete_record(record_id);
+    this.#patch_gallery({
+      records: this.#state.gallery.records.filter((record) => record.id !== record_id),
+      selected_record_id:
+        this.#state.gallery.selected_record_id === record_id
+          ? null
+          : this.#state.gallery.selected_record_id,
+    });
+  }
+
+  bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void> {
+    return run_command(
+      () => this.#state.gallery.bulk_delete_command,
+      (next) => {
+        this.#patch_gallery({ bulk_delete_command: next });
+      },
+      async () => {
+        await this.#capabilities.gallery.bulk_delete(record_ids);
+        const removed_ids = new Set(record_ids);
+        this.#patch_gallery({
+          records: this.#state.gallery.records.filter((record) => !removed_ids.has(record.id)),
+          selected_record_id:
+            this.#state.gallery.selected_record_id !== null &&
+            removed_ids.has(this.#state.gallery.selected_record_id)
+              ? null
+              : this.#state.gallery.selected_record_id,
+        });
+      },
+    );
   }
 }
 

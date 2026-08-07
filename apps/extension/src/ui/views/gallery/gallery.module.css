@@ -1,0 +1,412 @@
+/*
+ * Scoped styles for the Gallery view (Stage 06 Task 6). Tokens only. Radius: image =
+ * --tc-radius-image for every tile/preview surface, field = --tc-radius-field for inputs/selects,
+ * panel = --tc-radius-panel for the preview dialog surface, status = --tc-radius-status for the
+ * pinned badge and select dot. No card wraps the toolbar or the grid itself (cockpit density
+ * discipline) -- only the tiles (repeated/draggable-equivalent image records) are the plan's
+ * sanctioned card use, and even those are plain fixed boxes here, not nested cards.
+ */
+
+.galleryView {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Filter bar                                                             */
+/* ---------------------------------------------------------------------- */
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--tc-divider);
+  padding-bottom: 12px;
+}
+
+.dateFilterLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.dateInput {
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-surface);
+  color: var(--tc-text);
+  padding: 4px 6px;
+  font-size: 12px;
+}
+
+.cacheOccupancy {
+  margin-left: auto;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.emptyDescription {
+  color: var(--tc-text-muted);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Skeleton grid (loading, before real dimensions are known)              */
+/* ---------------------------------------------------------------------- */
+
+.skeletonGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skeletonTile {
+  width: 176px;
+  height: 176px;
+  border-radius: var(--tc-radius-image);
+  background-color: var(--tc-surface-raised);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Grid / rows / tiles                                                    */
+/* ---------------------------------------------------------------------- */
+
+.gridContainer {
+  flex: 1;
+  min-height: 0;
+}
+
+.gridRow {
+  display: flex;
+}
+
+.tile {
+  position: relative;
+  flex: none;
+  border-radius: var(--tc-radius-image);
+  overflow: hidden;
+  background-color: var(--tc-surface-raised);
+}
+
+.tile[data-selected] {
+  outline: 2px solid var(--tc-accent);
+  outline-offset: -2px;
+}
+
+.tileButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.tileSkeleton {
+  position: absolute;
+  inset: 0;
+  background-color: var(--tc-surface-raised);
+}
+
+.tileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--tc-motion-normal) ease-out;
+}
+
+.tileFallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--tc-text-muted);
+  font-size: 11px;
+  text-align: center;
+  padding: 8px;
+}
+
+.tilePinnedBadge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--tc-radius-status);
+  background-color: var(--tc-surface);
+  color: var(--tc-accent);
+  padding: 3px;
+}
+
+.tileSelectToggle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--tc-radius-status);
+  border: 1px solid var(--tc-surface);
+  background-color: rgb(24 26 31 / 40%);
+  transition: background-color var(--tc-motion-fast) ease-out;
+}
+
+.tileSelectDot {
+  /* A true circle (matches shell.module.css's own status-dot precedent), not the field/status
+     rectangle radius scale: at this size a bordered rounded-square read as ambiguous as the
+     digit "0" in a real-browser check, which a genuine circle does not. */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--tc-surface);
+}
+
+.tileSelectDot[data-checked] {
+  background-color: var(--tc-accent);
+  border-color: var(--tc-accent);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Bulk action bar                                                        */
+/* ---------------------------------------------------------------------- */
+
+.bulkActionBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--tc-divider);
+  padding-top: 12px;
+}
+
+.bulkActionCount {
+  color: var(--tc-text);
+  font-size: 13px;
+}
+
+.bulkActionButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Preview dialog                                                         */
+/* ---------------------------------------------------------------------- */
+
+.previewOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--tc-z-overlay);
+  background-color: rgb(17 19 24 / 72%);
+}
+
+.previewContent {
+  position: fixed;
+  inset: 16px;
+  z-index: var(--tc-z-overlay);
+  display: flex;
+  border-radius: var(--tc-radius-panel);
+  background-color: var(--tc-surface);
+  overflow: hidden;
+}
+
+.previewLayout {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+}
+
+.previewMain {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.previewToolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid var(--tc-divider);
+}
+
+.previewToolbarButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--tc-radius-field);
+  color: var(--tc-text);
+}
+
+.previewToolbarButton:hover {
+  background-color: var(--tc-surface-raised);
+}
+
+.previewToolbarSpacer {
+  flex: 1;
+}
+
+.previewImageArea {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.previewImageFrame {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--tc-radius-image);
+  object-fit: contain;
+  touch-action: auto;
+}
+
+.previewImageFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tc-text-muted);
+  font-size: 13px;
+  padding: 24px;
+}
+
+.previewNavButton {
+  flex: none;
+}
+
+.previewInspector {
+  flex: none;
+  width: 320px;
+  max-width: 40vw;
+  overflow-y: auto;
+  border-left: 1px solid var(--tc-divider);
+  padding: 16px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Metadata inspector                                                     */
+/* ---------------------------------------------------------------------- */
+
+.metadataInspector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metadataTitle {
+  color: var(--tc-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.metadataOrphanNotice {
+  color: var(--tc-warning);
+  font-size: 12px;
+}
+
+.metadataList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metadataRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom: 1px solid var(--tc-divider);
+  padding-bottom: 6px;
+  font-size: 12px;
+}
+
+.metadataRow dt {
+  color: var(--tc-text-muted);
+}
+
+.metadataRow dd {
+  color: var(--tc-text);
+  margin: 0;
+}
+
+.metadataPrompt {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.metadataEmpty {
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.metadataActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile: full screen preview, controls stay reachable above scroll area  */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 959px) {
+  .previewContent {
+    inset: 0;
+    border-radius: 0;
+  }
+
+  .previewLayout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .previewMain {
+    flex: none;
+  }
+
+  .previewToolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--tc-surface);
+  }
+
+  .previewImageArea {
+    min-height: 45vh;
+  }
+
+  .previewInspector {
+    width: 100%;
+    max-width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--tc-divider);
+  }
+}

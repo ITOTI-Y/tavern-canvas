@@ -1,7 +1,10 @@
 import tokens_stylesheet from "./tokens.css?inline";
 import base_stylesheet from "./base.css?inline";
 import utilities_stylesheet from "./utilities.css?inline";
+import components_stylesheet from "../components/components.module.css?inline";
 import shell_stylesheet from "../shell/shell.module.css?inline";
+import assets_view_stylesheet from "../views/assets/assets.module.css?inline";
+import gallery_view_stylesheet from "../views/gallery/gallery.module.css?inline";
 
 /**
  * The full first-party stylesheet injected into the Shadow Root's own `<style>` element
@@ -40,5 +43,19 @@ function resolve_asset_urls(css: string): string {
 }
 
 export const FIRST_PARTY_STYLESHEET = resolve_asset_urls(
-  [tokens_stylesheet, base_stylesheet, utilities_stylesheet, shell_stylesheet].join("\n"),
+  [
+    tokens_stylesheet,
+    base_stylesheet,
+    utilities_stylesheet,
+    // components.module.css (Task 4) was never actually wired in here despite this file's own
+    // header comment already flagging the requirement -- every shared control's real CSS (AppButton,
+    // AppDialog, ConfirmDialog, FieldGroup, NumberStepper, StateSurface, ...) was silently never
+    // reaching the Shadow Root at runtime. Found while browser-smoking Task 6's views, which lean on
+    // most of these controls; fixed here since it blocks meaningful visual verification of any view,
+    // not just this task's.
+    components_stylesheet,
+    shell_stylesheet,
+    assets_view_stylesheet,
+    gallery_view_stylesheet,
+  ].join("\n"),
 );

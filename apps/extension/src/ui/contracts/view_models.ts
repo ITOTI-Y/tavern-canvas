@@ -81,9 +81,21 @@ export interface SettingsViewModel {
   readonly migration_retry_command: CommandState<MigrationSnapshot>;
 }
 
+/**
+ * `intent` on the gallery_record variant (Stage 06 Task 6, additive) records which action handed
+ * the record off to the inspector/Workbench -- "modify_prompt"/"regenerate"/"edit"/"inpaint" all
+ * reuse this same selection channel (there is no other cross-view hand-off primitive yet), so the
+ * discriminant is what lets a future consumer tell them apart instead of collapsing to one
+ * indistinguishable "a gallery record got selected" signal. Optional and defaults to plain
+ * selection ("view") when omitted, so every existing caller stays valid.
+ */
 export type InspectorSelection =
   | { readonly kind: "generation_job"; readonly job_id: Uuid }
-  | { readonly kind: "gallery_record"; readonly record_id: Uuid }
+  | {
+      readonly kind: "gallery_record";
+      readonly record_id: Uuid;
+      readonly intent?: "view" | "modify_prompt" | "regenerate" | "edit" | "inpaint";
+    }
   | { readonly kind: "asset"; readonly category: AssetCategory; readonly asset_id: Uuid };
 
 export interface InspectorViewModel {
