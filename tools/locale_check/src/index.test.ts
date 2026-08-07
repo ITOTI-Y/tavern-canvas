@@ -200,6 +200,43 @@ describe("check_usage", () => {
     expect(rule_ids(findings)).toContain("dynamic-key");
   });
 
+  it("recognizes a static key when prettier wraps the call and parks the literal on a continuation line", () => {
+    // Prettier line-wraps a call whose arguments exceed the print width by moving the first
+    // argument -- the literal key -- onto its own line, e.g. PresetBrowser.vue's
+    // t('prompt.preset_browser.bulk_delete_confirm_title', { n }, count) once reformatted. A
+    // scanner that only looks at the rest of the *same line* after `t(` sees nothing there and
+    // both misreports dynamic-key and (since the key was never recorded as used) unused-key.
+    const files: SourceFile[] = [
+      {
+        path: "apps/extension/src/ui/AppRoot.vue",
+        content: [
+          "const label = t(",
+          "  'app.name',",
+          "  { n: bulk_selected.size },",
+          "  bulk_selected.size,",
+          ");",
+        ].join("\n"),
+      },
+    ];
+
+    const findings = check_usage(files, new Set(["app.name"]));
+
+    expect(findings).toEqual([]);
+  });
+
+  it("still reports dynamic-key when a multi-line call's first argument is a variable, not a literal", () => {
+    const files: SourceFile[] = [
+      {
+        path: "apps/extension/src/ui/AppRoot.vue",
+        content: ["const label = t(", "  dynamicKey,", "  { n: 1 },", ");"].join("\n"),
+      },
+    ];
+
+    const findings = check_usage(files, new Set(["app.name"]));
+
+    expect(rule_ids(findings)).toContain("dynamic-key");
+  });
+
   it("does not flag unrelated identifiers ending in t( as calls", () => {
     const files: SourceFile[] = [
       {

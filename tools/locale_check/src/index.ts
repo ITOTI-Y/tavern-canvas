@@ -208,6 +208,20 @@ export function compare_locales(en_messages: unknown, zh_cn_messages: unknown): 
 const CALL_SITE_PATTERN = /(?<![\w$])(?:\$t|t)\(/gu;
 const TRAILING_ARGUMENT_PATTERN = /^\s*[),]/u;
 const STATIC_KEY_PATTERN = /^[a-zA-Z0-9_.]+$/u;
+// Prettier line-wraps a call whose arguments exceed the print width by moving the first
+// argument -- the literal key -- onto its own continuation line, e.g.
+//   t(
+//     'prompt.preset_browser.bulk_delete_confirm_title',
+//     { n: bulk_selected.size },
+//     bulk_selected.size,
+//   )
+// `extract_static_key` already skips leading whitespace (the `\s` class includes newlines)
+// before looking for the opening quote, so handing it a bounded lookahead window spanning past
+// the call site's own line -- not just the rest of that one line -- is enough to resolve this
+// case. The window stays bounded (not "rest of file") so a genuinely dynamic call -- `t(var)`,
+// `t(\`errors.${code}\`)` -- still fails fast: `extract_static_key` returns `undefined` the
+// instant the first non-whitespace character isn't a quote, regardless of window size.
+const KEY_LOOKAHEAD_WINDOW = 400;
 
 function extract_static_key(after_call: string): string | undefined {
   const leading_whitespace = /^\s*/u.exec(after_call)?.[0].length ?? 0;
@@ -246,6 +260,18 @@ function extract_static_key(after_call: string): string | undefined {
   return key;
 }
 
+/** Locates the 1-based line number and raw text of the line containing `offset`, without
+ * splitting the whole file up front -- only `dynamic-key` findings need this, and a clean
+ * codebase produces none. */
+function line_at_offset(content: string, offset: number): { line: number; text: string } {
+  const before = content.slice(0, offset);
+  const line = (before.match(/\n/gu)?.length ?? 0) + 1;
+  const line_start = before.lastIndexOf("\n") + 1;
+  const next_newline = content.indexOf("\n", offset);
+  const line_end = next_newline === -1 ? content.length : next_newline;
+  return { line, text: content.slice(line_start, line_end) };
+}
+
 export function check_usage(
   files: readonly SourceFile[],
   canonical_keys: ReadonlySet<string>,
@@ -254,21 +280,20 @@ export function check_usage(
   const findings: LocaleFinding[] = [];
 
   for (const file of files) {
-    const lines = file.content.split(/\r?\n/u);
-    for (const [line_index, line] of lines.entries()) {
-      for (const match of line.matchAll(CALL_SITE_PATTERN)) {
-        const after_call = line.slice(match.index + match[0].length);
-        const key = extract_static_key(after_call);
-        if (key === undefined) {
-          findings.push({
-            rule_id: "dynamic-key",
-            path: `${file.path}:${String(line_index + 1)}`,
-            detail: line.trim().slice(0, 160),
-          });
-          continue;
-        }
-        used_keys.add(key);
+    for (const match of file.content.matchAll(CALL_SITE_PATTERN)) {
+      const call_end = match.index + match[0].length;
+      const lookahead = file.content.slice(call_end, call_end + KEY_LOOKAHEAD_WINDOW);
+      const key = extract_static_key(lookahead);
+      if (key === undefined) {
+        const { line, text } = line_at_offset(file.content, match.index);
+        findings.push({
+          rule_id: "dynamic-key",
+          path: `${file.path}:${String(line)}`,
+          detail: text.trim().slice(0, 160),
+        });
+        continue;
       }
+      used_keys.add(key);
     }
   }
 
