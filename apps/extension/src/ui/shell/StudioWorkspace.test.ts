@@ -140,7 +140,10 @@ describe("StudioWorkspace: Workbench intents forward to the controller", () => {
   it("forwards a valid submit to generation.submit", async () => {
     const submit = vi.fn().mockResolvedValue(build_job({ state: "completed" }));
     const capabilities = build_capabilities({
-      profiles: { ...create_unavailable_capabilities().profiles, load: () => Promise.resolve([PROFILE]) },
+      profiles: {
+        ...create_unavailable_capabilities().profiles,
+        load: () => Promise.resolve([PROFILE]),
+      },
       generation: { ...create_unavailable_capabilities().generation, submit },
     });
     const { wrapper } = await mount_at_route("workbench", capabilities);
@@ -157,7 +160,10 @@ describe("StudioWorkspace: Workbench intents forward to the controller", () => {
     const job = build_job();
     const cancel = vi.fn().mockResolvedValue(build_job({ state: "cancelled" }));
     const capabilities = build_capabilities({
-      profiles: { ...create_unavailable_capabilities().profiles, load: () => Promise.resolve([PROFILE]) },
+      profiles: {
+        ...create_unavailable_capabilities().profiles,
+        load: () => Promise.resolve([PROFILE]),
+      },
       generation: {
         ...create_unavailable_capabilities().generation,
         load: () => Promise.resolve([job]),

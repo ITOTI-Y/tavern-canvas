@@ -47,6 +47,7 @@ const global_concurrency = computed(() => props.settings?.global_concurrency);
         }}</span>
         <NumberStepper
           :model-value="global_concurrency"
+          :label="t('settings.automation.global_concurrency_label')"
           :min="1"
           :max="4"
           :increment-label="t('common.actions.increase')"
@@ -61,6 +62,7 @@ const global_concurrency = computed(() => props.settings?.global_concurrency);
         }}</span>
         <NumberStepper
           :model-value="1"
+          :label="t('settings.automation.provider_concurrency_label')"
           :min="1"
           :max="4"
           :increment-label="t('common.actions.increase')"

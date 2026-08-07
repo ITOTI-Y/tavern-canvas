@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useId } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { drop_undefined } from "../../components/_prop_utils.js";
@@ -27,8 +26,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const positive_textarea_id = useId();
-const negative_textarea_id = useId();
 
 function handle_positive_input(event: Event): void {
   emit("update:positivePrompt", (event.target as HTMLTextAreaElement).value);
@@ -46,9 +43,9 @@ function handle_negative_input(event: Event): void {
       :error="props.positiveError ?? null"
       required
     >
-      <template #default="{ describedBy, invalid }">
+      <template #default="{ fieldId, describedBy, invalid }">
         <textarea
-          :id="positive_textarea_id"
+          :id="fieldId"
           :class="styles.prompt_textarea"
           data-testid="positive-prompt-input"
           :value="props.positivePrompt"
@@ -62,9 +59,9 @@ function handle_negative_input(event: Event): void {
     </FieldGroup>
 
     <FieldGroup :label="t('workbench.prompt_composer.negative_label')">
-      <template #default="{ describedBy }">
+      <template #default="{ fieldId, describedBy }">
         <textarea
-          :id="negative_textarea_id"
+          :id="fieldId"
           :class="styles.prompt_textarea"
           data-testid="negative-prompt-input"
           :value="props.negativePrompt"
@@ -85,6 +82,7 @@ function handle_negative_input(event: Event): void {
           v-bind="drop_undefined({ describedBy })"
           :id="fieldId"
           :model-value="props.imageCount"
+          :label="t('workbench.prompt_composer.image_count_label')"
           :min="1"
           :max="4"
           :step="1"

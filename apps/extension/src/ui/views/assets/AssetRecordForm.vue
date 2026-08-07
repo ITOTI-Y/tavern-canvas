@@ -98,6 +98,7 @@ const is_pending = computed(() => props.pending);
           v-else
           :id="fieldId"
           :model-value="typeof values[field.key] === 'number' ? (values[field.key] as number) : 0"
+          :label="field.label"
           :step="field.step ?? 1"
           :decrement-label="decrementLabel"
           :increment-label="incrementLabel"

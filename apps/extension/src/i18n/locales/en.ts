@@ -224,7 +224,8 @@ const prompt = {
     test_result_label: "Test result",
     invalid_pattern: "This is not a valid regular expression: {message}",
     empty_title: "No regex rules yet",
-    empty_description: "Add a rule to transform text with a regular expression before it reaches the provider.",
+    empty_description:
+      "Add a rule to transform text with a regular expression before it reaches the provider.",
   },
   builder: {
     title: "Prompt builder",

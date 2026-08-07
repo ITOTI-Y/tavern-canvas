@@ -367,7 +367,7 @@ describe("AppSwitch", () => {
 describe("NumberStepper", () => {
   it("overrides Reka's hard-coded English Increase/Decrease aria-labels with localized props", () => {
     const wrapper = mount(NumberStepper, {
-      props: { modelValue: 2, incrementLabel: "增加", decrementLabel: "减少" },
+      props: { modelValue: 2, label: "数量", incrementLabel: "增加", decrementLabel: "减少" },
     });
     const labels = wrapper.findAll("button").map((b) => b.attributes("aria-label"));
     expect(labels).toContain("增加");
@@ -378,7 +378,12 @@ describe("NumberStepper", () => {
 
   it("increments and decrements the value via the labeled buttons", async () => {
     const wrapper = mount(NumberStepper, {
-      props: { modelValue: 2, incrementLabel: "Increase", decrementLabel: "Decrease" },
+      props: {
+        modelValue: 2,
+        label: "Count",
+        incrementLabel: "Increase",
+        decrementLabel: "Decrease",
+      },
       attachTo: document.body,
     });
     const [decrement, increment] = wrapper.findAll("button");
@@ -397,6 +402,7 @@ describe("NumberStepper", () => {
     const at_max = mount(NumberStepper, {
       props: {
         modelValue: 4,
+        label: "Count",
         min: 1,
         max: 4,
         incrementLabel: "Increase",
@@ -409,6 +415,7 @@ describe("NumberStepper", () => {
     const at_min = mount(NumberStepper, {
       props: {
         modelValue: 1,
+        label: "Count",
         min: 1,
         max: 4,
         incrementLabel: "Increase",
@@ -423,6 +430,7 @@ describe("NumberStepper", () => {
     const wrapper = mount(NumberStepper, {
       props: {
         modelValue: 1,
+        label: "Count",
         incrementLabel: "Increase",
         decrementLabel: "Decrease",
         describedBy: "error-id",
@@ -433,9 +441,26 @@ describe("NumberStepper", () => {
 
   it("uses tabular figures for the numeric display", () => {
     const wrapper = mount(NumberStepper, {
-      props: { modelValue: 1, incrementLabel: "Increase", decrementLabel: "Decrease" },
+      props: {
+        modelValue: 1,
+        label: "Count",
+        incrementLabel: "Increase",
+        decrementLabel: "Decrease",
+      },
     });
     expect(wrapper.find("input").classes()).toContain("tc-tabular-nums");
+  });
+
+  it("applies the label prop as the spinbutton input's own accessible name", () => {
+    const wrapper = mount(NumberStepper, {
+      props: {
+        modelValue: 1,
+        label: "Image count",
+        incrementLabel: "Increase",
+        decrementLabel: "Decrease",
+      },
+    });
+    expect(wrapper.find("input").attributes("aria-label")).toBe("Image count");
   });
 });
 

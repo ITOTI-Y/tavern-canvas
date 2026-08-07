@@ -80,7 +80,7 @@ const decoded = ref(false);
       type="button"
       :class="styles.tileSelectToggle"
       :aria-pressed="selected"
-      :aria-label="selectLabel"
+      :aria-label="`${selectLabel}: ${record.id}`"
       @click.stop="emit('toggle-select')"
     >
       <span :class="styles.tileSelectDot" :data-checked="selected ? '' : null" />

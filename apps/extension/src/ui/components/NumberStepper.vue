@@ -23,6 +23,13 @@ import styles from "./components.module.css";
 const props = withDefaults(
   defineProps<{
     readonly modelValue: number | undefined;
+    /** The field's own name (e.g. "Image count", "Weight") -- applied as `aria-label` directly
+     * on the actual `role="spinbutton"` input, never left to a `<label for>` association: Reka's
+     * `NumberFieldRoot` renders as a plain wrapper `<div>`, not the labelable form control itself,
+     * so a caller's own `id`/`<label for>` pairing (FieldGroup.vue's pattern) can never reach the
+     * real input this way -- every caller needs this prop regardless of whether it also wraps the
+     * stepper in a FieldGroup. */
+    readonly label: string;
     readonly incrementLabel: string;
     readonly decrementLabel: string;
     readonly min?: number;
@@ -47,7 +54,9 @@ function handle_update(value: number): void {
 }
 
 const root_props = computed(() => drop_undefined({ id: props.id, min: props.min, max: props.max }));
-const input_props = computed(() => drop_undefined({ "aria-describedby": props.describedBy }));
+const input_props = computed(() =>
+  drop_undefined({ "aria-label": props.label, "aria-describedby": props.describedBy }),
+);
 </script>
 
 <template>

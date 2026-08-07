@@ -198,6 +198,7 @@ async function confirm_cleanup(): Promise<void> {
           type="file"
           accept="application/json"
           class="tc-visually-hidden"
+          :aria-label="t('settings.data.archive_import_action')"
           data-testid="archive-import-input"
           @change="handle_import_file"
         />

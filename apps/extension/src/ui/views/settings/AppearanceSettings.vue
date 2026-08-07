@@ -88,6 +88,7 @@ function set_inspector_width(value: number): void {
         <span :class="styles.row_label">{{ t("settings.appearance.inspector_width_label") }}</span>
         <NumberStepper
           :model-value="settings?.ui.inspector_width ?? 320"
+          :label="t('settings.appearance.inspector_width_label')"
           :min="240"
           :max="720"
           :step="8"
