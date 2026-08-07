@@ -187,6 +187,51 @@ describe("StudioWorkspace: Workbench intents forward to the controller", () => {
     await wrapper.find('[data-testid="open-provider-settings"]').trigger("click");
     expect(controller.state.route).toBe("settings");
   });
+
+  it("clears the gallery hand-off selection through consume-inspector-selection once Workbench applies it", async () => {
+    const capabilities = build_capabilities({
+      profiles: {
+        ...create_unavailable_capabilities().profiles,
+        load: () => Promise.resolve([PROFILE]),
+      },
+    });
+    const controller = markRaw(
+      create_studio_controller({ capabilities, initial_route: "workbench" }),
+    );
+    await controller.start();
+    controller.select_inspector_record({
+      kind: "gallery_record",
+      record_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" as Uuid,
+      intent: "modify_prompt",
+      prefill: { positive_prompt: "a fox in a forest", negative_prompt: null },
+    });
+
+    const i18n = createI18n({
+      legacy: false,
+      locale: "en",
+      fallbackLocale: "en",
+      messages: { en: en_messages, "zh-CN": zh_cn_messages },
+    });
+    const portal_target = document.createElement("div");
+    document.body.append(portal_target);
+    const host = document.createElement("div");
+    document.body.append(host);
+
+    const wrapper = mount(StudioWorkspace, {
+      props: { state: controller.state, controller },
+      global: { plugins: [i18n], provide: { [PORTAL_TARGET_KEY]: portal_target } },
+      attachTo: host,
+    });
+    controller.on_change(() => {
+      void wrapper.setProps({ state: controller.state });
+    });
+    await nextTick();
+
+    expect(
+      (wrapper.find('[data-testid="positive-prompt-input"]').element as HTMLTextAreaElement).value,
+    ).toBe("a fox in a forest");
+    expect(controller.state.inspector.selected_record).toBeNull();
+  });
 });
 
 describe("StudioWorkspace: Prompt intents forward to the controller", () => {

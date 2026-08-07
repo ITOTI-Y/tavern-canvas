@@ -89,12 +89,27 @@ export interface SettingsViewModel {
  * indistinguishable "a gallery record got selected" signal. Optional and defaults to plain
  * selection ("view") when omitted, so every existing caller stays valid.
  */
+/**
+ * `prefill` (Stage 06 fix-wave addition) carries the prompt text already extracted client-side
+ * from the record's own image bytes (`image_metadata.ts`'s `extract_generation_parameters`,
+ * computed once by the Gallery preview dialog) -- GalleryRecordSummary itself has no prompt field
+ * (ui_capabilities.ts), so this is how "modify prompt"/"regenerate" hand a real value to the
+ * Workbench without widening that contract. Absent (or all-null) when the image has no recognized
+ * embedded parameters (openai_image/google_image outputs); Workbench then simply does not prefill,
+ * the same honest "nothing to show" case ImageMetadataInspector already renders.
+ */
+export interface InspectorSelectionPrefill {
+  readonly positive_prompt: string | null;
+  readonly negative_prompt: string | null;
+}
+
 export type InspectorSelection =
   | { readonly kind: "generation_job"; readonly job_id: Uuid }
   | {
       readonly kind: "gallery_record";
       readonly record_id: Uuid;
       readonly intent?: "view" | "modify_prompt" | "regenerate" | "edit" | "inpaint";
+      readonly prefill?: InspectorSelectionPrefill;
     }
   | { readonly kind: "asset"; readonly category: AssetCategory; readonly asset_id: Uuid };
 

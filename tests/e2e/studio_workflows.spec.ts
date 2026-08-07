@@ -39,11 +39,9 @@ test.describe("Studio workflow: the full common generation flow", () => {
     await expect(page.locator('[data-testid="reference-item"]')).toHaveCount(1);
 
     // generate four images
-    // PromptComposer.vue's image-count stepper sets both increment-label and decrement-label to
-    // the same "Image count" text (NumberStepper.vue's own accessible-name contract only requires
-    // non-empty, not mutually distinguishable) -- the increment control is the second (last) of
-    // the group's two buttons, decrement/spinbutton/increment in DOM order.
-    const stepper_increase = page.locator('[data-testid="image-count-stepper"] button').last();
+    const stepper_increase = page.locator(
+      '[data-testid="image-count-stepper"] button[aria-label="Increase"]',
+    );
     await stepper_increase.click();
     await stepper_increase.click();
     await stepper_increase.click();
@@ -75,22 +73,23 @@ test.describe("Studio workflow: the full common generation flow", () => {
     const clipboard_text = await page.evaluate(() => navigator.clipboard.readText());
     expect(JSON.parse(clipboard_text)).toMatchObject({ provider_id: "sd_webui" });
 
-    // regenerate (from Gallery's metadata inspector, on the same completed image)
+    // regenerate (from Gallery's metadata inspector, on the same completed image) -- hands off
+    // to the Workbench with the record's extracted prompt prefilled (fix-wave addition); the
+    // "square" fixture carries no embedded PNG parameters, so this run has nothing to prefill,
+    // but the hand-off and navigation are real either way.
     await navigate_to_route(page, "gallery", "en");
-    await page.locator(`button[aria-label="Download: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
+    await page.locator(`button[aria-label="Open preview: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.getByRole("button", { name: "Regenerate" }).click();
     await expect(page.locator('[data-testid="workbench-view"]')).toBeVisible();
 
-    // navigate to source message
+    // "Go to source message": no host/chat-navigation capability exists yet (fix-wave finding) --
+    // rendered disabled with an explanatory hint rather than a live control that silently does
+    // nothing.
     await navigate_to_route(page, "gallery", "en");
-    await page.locator(`button[aria-label="Download: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
+    await page.locator(`button[aria-label="Open preview: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
     await expect(page.getByRole("dialog")).toBeVisible();
-    // ContextInspector.vue does not yet render `state.inspector.selected_record` (an
-    // honest, pre-existing gap outside this task's three named gaps -- ledgered in
-    // task-8-report.md) -- the observable contract today is just "the action completes
-    // without error and the dialog stays interactive", not a visible inspector update.
-    await page.getByRole("button", { name: "Go to source message" }).click();
+    await expect(page.getByRole("button", { name: "Go to source message" })).toBeDisabled();
     await expect(page.getByRole("dialog")).toBeVisible();
   });
 });
@@ -150,8 +149,8 @@ test.describe("Studio workflow: batch gallery actions", () => {
       const host = document.getElementById("tavern-canvas-root");
       return (host?.shadowRoot?.querySelectorAll("[aria-pressed]").length ?? 0) >= 6;
     });
-    await page.locator(`button[aria-label="Select all: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
-    await page.locator(`button[aria-label="Select all: ${DETAILED_GALLERY_RECORD_ID}"]`).click();
+    await page.locator(`button[aria-label="Select image: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
+    await page.locator(`button[aria-label="Select image: ${DETAILED_GALLERY_RECORD_ID}"]`).click();
     await expect(page.getByText("2 images selected", { exact: false })).toBeVisible();
     await page.getByRole("button", { name: "Delete selected" }).click();
     await page.locator('button[aria-label="Delete"]').click();

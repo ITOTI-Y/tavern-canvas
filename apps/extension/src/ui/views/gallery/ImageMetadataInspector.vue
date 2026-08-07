@@ -11,9 +11,13 @@ import styles from "./gallery.module.css";
  * Parameters panel: seed/provider/model/prompt when the PNG carries embedded generation
  * parameters (image_metadata.ts), a composed empty state otherwise -- openai_image/google_image
  * outputs, or any file with no recognized text chunk, are a real "nothing to show" case, not a
- * bug. Modify prompt/regenerate/edit/inpaint all hand off through the same
- * select-inspector-record channel (InspectorSelection's `intent`, Stage 06 Task 6 addition) since
- * there is no other cross-view channel into the Workbench yet.
+ * bug. Modify prompt/regenerate hand off through the select-inspector-record channel
+ * (InspectorSelection's `intent`/`prefill`, Stage 06 Task 6 addition, extended in the stage
+ * fix-wave) carrying the already-extracted `parameters` prop along so the Workbench can prefill
+ * its prompt fields -- there is no other cross-view channel into the Workbench yet. Edit/inpaint/
+ * source-message stay disabled: no image-edit, inpaint, or host chat-navigation capability exists
+ * yet (fix-wave review finding), so rendering them active would be a live control that silently
+ * does nothing -- the banned state -- rather than an honest unavailable one.
  */
 const props = defineProps<{
   readonly record: GalleryRecordSummary;
@@ -33,14 +37,12 @@ const props = defineProps<{
   readonly editLabel: string;
   readonly inpaintLabel: string;
   readonly sourceMessageLabel: string;
+  readonly actionsUnavailableHint: string;
 }>();
 
 const emit = defineEmits<{
-  "modify-prompt": [];
-  regenerate: [];
-  edit: [];
-  inpaint: [];
-  "source-message": [];
+  "modify-prompt": [parameters: ExtractedGenerationParameters | null];
+  regenerate: [parameters: ExtractedGenerationParameters | null];
   copied: [];
 }>();
 
@@ -100,22 +102,18 @@ async function copy_parameters(): Promise<void> {
         :label="modifyPromptLabel"
         :icon="Wand2"
         variant="secondary"
-        @click="emit('modify-prompt')"
+        @click="emit('modify-prompt', parameters)"
       />
       <AppButton
         :label="regenerateLabel"
         :icon="RefreshCw"
         variant="secondary"
-        @click="emit('regenerate')"
+        @click="emit('regenerate', parameters)"
       />
-      <AppButton :label="editLabel" variant="secondary" @click="emit('edit')" />
-      <AppButton :label="inpaintLabel" variant="secondary" @click="emit('inpaint')" />
-      <AppButton
-        :label="sourceMessageLabel"
-        :icon="ExternalLink"
-        variant="secondary"
-        @click="emit('source-message')"
-      />
+      <AppButton :label="editLabel" variant="secondary" disabled />
+      <AppButton :label="inpaintLabel" variant="secondary" disabled />
+      <AppButton :label="sourceMessageLabel" :icon="ExternalLink" variant="secondary" disabled />
     </div>
+    <p :class="styles.metadataActionsHint">{{ actionsUnavailableHint }}</p>
   </div>
 </template>

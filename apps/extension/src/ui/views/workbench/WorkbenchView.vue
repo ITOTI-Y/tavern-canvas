@@ -41,6 +41,10 @@ const emit = defineEmits<{
   "cancel-job": [jobId: Uuid];
   "retry-job": [jobId: Uuid];
   "open-settings": [];
+  /** Fired once a `modify_prompt`/`regenerate` gallery hand-off (`InspectorSelection`) has been
+   * applied to the draft, so the caller clears `state.inspector.selected_record` and a later
+   * unrelated Workbench mount does not re-apply a stale prefill. */
+  "consume-inspector-selection": [];
 }>();
 
 const { t } = useI18n();
@@ -58,15 +62,15 @@ const selected_job_id = ref<Uuid | null>(null);
 const submitted_requests = new Map<Uuid, ImageGenerationRequest>();
 const last_submitted_request = ref<ImageGenerationRequest | null>(null);
 
-const active_profile = computed(() =>
-  props.state.workbench.profiles.find(
-    (profile) => profile.id === props.state.workbench.active_profile_id,
-  ) ?? null,
+const active_profile = computed(
+  () =>
+    props.state.workbench.profiles.find(
+      (profile) => profile.id === props.state.workbench.active_profile_id,
+    ) ?? null,
 );
 
 const validation_errors = computed(() => {
-  const errors: { profile?: string; prompt?: string; image_count?: string; provider?: string } =
-    {};
+  const errors: { profile?: string; prompt?: string; image_count?: string; provider?: string } = {};
   if (!props.state.workbench.active_profile_id) {
     errors.profile = t("workbench.submit.validation.profile_required");
   }
@@ -124,6 +128,35 @@ watch(
   },
 );
 
+// Gallery's "modify prompt"/"regenerate" hand-off (GalleryView.vue's hand_off_to_workbench)
+// selects the record for the inspector *and* routes here in the same tick, so by the time this
+// view mounts the selection is already set -- `immediate: true` picks it up on first render, not
+// only on a later change. Only these two intents carry a prefill; `view`/`edit`/`inpaint` (the
+// latter two never produced by Gallery -- see ImageMetadataInspector.vue) are left alone.
+watch(
+  () => props.state.inspector.selected_record,
+  (selection) => {
+    if (
+      selection?.kind !== "gallery_record" ||
+      (selection.intent !== "modify_prompt" && selection.intent !== "regenerate")
+    ) {
+      return;
+    }
+    const prefill = selection.prefill;
+    if (prefill?.positive_prompt) {
+      draft.positive_prompt = prefill.positive_prompt;
+    }
+    if (prefill?.negative_prompt) {
+      draft.negative_prompt = prefill.negative_prompt;
+    }
+    if (prefill?.positive_prompt) {
+      push_toast({ title: t("workbench.prefilled_from_gallery_notice"), variant: "info" });
+    }
+    emit("consume-inspector-selection");
+  },
+  { immediate: true },
+);
+
 function add_reference(asset_id: ReferenceDraftItem["asset_id"]): void {
   const asset = props.state.assets.records.reference.find((record) => record.id === asset_id);
   if (!asset || draft.references.length >= 4) {
@@ -172,7 +205,9 @@ function handle_inspector_retry(): void {
         v-model:positive-prompt="draft.positive_prompt"
         v-model:negative-prompt="draft.negative_prompt"
         v-model:image-count="draft.image_count"
-        :positive-error="validation_touched && validation_errors.prompt ? validation_errors.prompt : null"
+        :positive-error="
+          validation_touched && validation_errors.prompt ? validation_errors.prompt : null
+        "
         :image-count-error="
           validation_touched && validation_errors.image_count ? validation_errors.image_count : null
         "
@@ -223,7 +258,11 @@ function handle_inspector_retry(): void {
           :class="styles.inline_error"
           data-testid="submit-error"
         >
-          {{ t("errors.generation_failed", { message: props.state.workbench.submit_command.failure.code }) }}
+          {{
+            t("errors.generation_failed", {
+              message: props.state.workbench.submit_command.failure.code,
+            })
+          }}
         </p>
       </div>
 
@@ -250,8 +289,8 @@ function handle_inspector_retry(): void {
 
     <ToastViewport
       :toasts="toasts"
-      :viewport-label="t('common.inspector.title')"
-      :announce-label="t('common.actions.confirm')"
+      :viewport-label="t('common.notifications.viewport_label')"
+      :announce-label="t('common.notifications.announce_label')"
       :close-label="t('common.actions.close')"
       @dismiss="dismiss_toast"
     />

@@ -373,6 +373,11 @@
   gap: 8px;
 }
 
+.metadataActionsHint {
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
 /* ---------------------------------------------------------------------- */
 /* Mobile: full screen preview, controls stay reachable above scroll area  */
 /* ---------------------------------------------------------------------- */

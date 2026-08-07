@@ -79,6 +79,7 @@ const props = defineProps<{
   readonly editLabel: string;
   readonly inpaintLabel: string;
   readonly sourceMessageLabel: string;
+  readonly actionsUnavailableHint: string;
 }>();
 
 const emit = defineEmits<{
@@ -89,11 +90,8 @@ const emit = defineEmits<{
   download: [];
   detach: [];
   delete: [];
-  "modify-prompt": [];
-  regenerate: [];
-  edit: [];
-  inpaint: [];
-  "source-message": [];
+  "modify-prompt": [parameters: ExtractedGenerationParameters | null];
+  regenerate: [parameters: ExtractedGenerationParameters | null];
   copied: [];
 }>();
 
@@ -210,11 +208,9 @@ const portal_props = computed(() => (portal_target ? { to: portal_target } : {})
               :edit-label="editLabel"
               :inpaint-label="inpaintLabel"
               :source-message-label="sourceMessageLabel"
-              @modify-prompt="emit('modify-prompt')"
-              @regenerate="emit('regenerate')"
-              @edit="emit('edit')"
-              @inpaint="emit('inpaint')"
-              @source-message="emit('source-message')"
+              :actions-unavailable-hint="actionsUnavailableHint"
+              @modify-prompt="(parametersValue) => emit('modify-prompt', parametersValue)"
+              @regenerate="(parametersValue) => emit('regenerate', parametersValue)"
               @copied="emit('copied')"
             />
           </div>

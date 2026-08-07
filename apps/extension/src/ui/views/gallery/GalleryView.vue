@@ -17,6 +17,7 @@ import BulkActionBar from "./BulkActionBar.vue";
 import styles from "./gallery.module.css";
 import ImageGrid from "./ImageGrid.vue";
 import ImagePreviewDialog from "./ImagePreviewDialog.vue";
+import type { ExtractedGenerationParameters } from "./image_metadata.js";
 
 /**
  * Gallery: filters, virtualized/masonry grid, multi-select with batch actions, and a full preview
@@ -214,7 +215,17 @@ function step_preview(direction: -1 | 1): void {
   }
 }
 
-function hand_off_to_workbench(intent: "modify_prompt" | "regenerate" | "edit" | "inpaint"): void {
+/**
+ * Modify prompt/regenerate hand off to the Workbench with the record's already-extracted prompt
+ * (ImagePreviewDialog/ImageMetadataInspector's own `parameters` prop, forwarded through the click
+ * event -- see InspectorSelectionPrefill's doc comment) prefilled into the composer. `parameters`
+ * is null when the image carries no recognized embedded generation parameters; the hand-off still
+ * navigates, it just prefills nothing, matching the "no embedded parameters" state shown elsewhere.
+ */
+function hand_off_to_workbench(
+  intent: "modify_prompt" | "regenerate",
+  parameters: ExtractedGenerationParameters | null,
+): void {
   if (!preview_record.value) {
     return;
   }
@@ -222,19 +233,12 @@ function hand_off_to_workbench(intent: "modify_prompt" | "regenerate" | "edit" |
     kind: "gallery_record",
     record_id: preview_record.value.id,
     intent,
+    prefill: {
+      positive_prompt: parameters?.positive_prompt ?? null,
+      negative_prompt: parameters?.negative_prompt ?? null,
+    },
   });
   props.controller.set_route("workbench");
-}
-
-function go_to_source_message(): void {
-  if (!preview_record.value) {
-    return;
-  }
-  props.controller.select_inspector_record({
-    kind: "gallery_record",
-    record_id: preview_record.value.id,
-    intent: "view",
-  });
 }
 
 async function toggle_pin_preview(): Promise<void> {
@@ -349,8 +353,8 @@ const grid_status = computed(() => {
         :read-bytes="read_bytes"
         :thumbnail-failed-label="t('gallery.thumbnail_failed')"
         :pinned-label="t('gallery.pin_action')"
-        :select-label="t('common.actions.select_all')"
-        :open-label="t('gallery.download_action')"
+        :select-label="t('gallery.select_image_action')"
+        :open-label="t('gallery.open_preview_action')"
         :ariaLabel="t('nav.gallery')"
         v-bind="
           drop_undefined({ widthOverride: gridWidthOverride, heightOverride: gridHeightOverride })
@@ -410,6 +414,7 @@ const grid_status = computed(() => {
       :edit-label="t('gallery.metadata_inspector.edit_action')"
       :inpaint-label="t('gallery.metadata_inspector.inpaint_action')"
       :source-message-label="t('gallery.metadata_inspector.source_message_action')"
+      :actions-unavailable-hint="t('gallery.metadata_inspector.actions_unavailable_hint')"
       @update:open="close_preview"
       @previous="step_preview(-1)"
       @next="step_preview(1)"
@@ -417,11 +422,8 @@ const grid_status = computed(() => {
       @download="() => preview_record && void download_record(preview_record)"
       @detach="() => void detach_preview()"
       @delete="() => void delete_preview()"
-      @modify-prompt="hand_off_to_workbench('modify_prompt')"
-      @regenerate="hand_off_to_workbench('regenerate')"
-      @edit="hand_off_to_workbench('edit')"
-      @inpaint="hand_off_to_workbench('inpaint')"
-      @source-message="go_to_source_message"
+      @modify-prompt="(parameters) => hand_off_to_workbench('modify_prompt', parameters)"
+      @regenerate="(parameters) => hand_off_to_workbench('regenerate', parameters)"
       @copied="push_toast(t('gallery.metadata_inspector.copied_toast'))"
     />
 
@@ -454,8 +456,8 @@ const grid_status = computed(() => {
 
     <ToastViewport
       :toasts="toasts"
-      :viewport-label="t('common.actions.copy')"
-      :announce-label="t('gallery.metadata_inspector.copied_toast')"
+      :viewport-label="t('common.notifications.viewport_label')"
+      :announce-label="t('common.notifications.announce_label')"
       :close-label="t('common.actions.close')"
       @dismiss="dismiss_toast"
     />

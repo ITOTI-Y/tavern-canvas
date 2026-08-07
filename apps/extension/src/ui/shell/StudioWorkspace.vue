@@ -42,6 +42,7 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
     @cancel-job="(id) => void props.controller.cancel_generation(id)"
     @retry-job="(id) => void props.controller.retry_generation(id)"
     @open-settings="props.controller.set_route('settings')"
+    @consume-inspector-selection="props.controller.select_inspector_record(null)"
   />
   <PromptView
     v-else-if="props.state.route === 'prompt'"

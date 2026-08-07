@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 
 import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
 import type { Uuid } from "@tavern-canvas/contracts";
@@ -268,7 +269,9 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     bulk_remove_prompt_presets: vi.fn(() => Promise.resolve()),
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
     select_provider_profile: vi.fn(),
-    save_provider_profile: vi.fn(() => Promise.resolve({}) as ReturnType<StudioController["save_provider_profile"]>),
+    save_provider_profile: vi.fn(
+      () => Promise.resolve({}) as ReturnType<StudioController["save_provider_profile"]>,
+    ),
     remove_provider_profile: vi.fn(() => Promise.resolve()),
     test_provider_profile_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["test_provider_profile_connection"]>,
@@ -342,6 +345,21 @@ describe("GalleryView: state surface and data flow into ImageGrid", () => {
     mount_gallery_view();
     expect(dom().text()).toContain("No generated images yet");
     expect(dom().text()).toContain("Generate an image from the Workbench");
+  });
+
+  // Regression test for the fix-wave a11y-correctness finding: each tile's select toggle and
+  // open-preview button were previously wired to `common.actions.select_all` ("Select all") and
+  // `gallery.download_action` ("Download") -- non-empty and unique, so the pre-existing e2e
+  // "accessible names" checks passed, but the announced names were wrong for what the controls
+  // actually do (a single-image toggle, an open-preview action, not "select all"/"download").
+  it("passes the correct select/open-preview accessible-name labels to ImageGrid, not select_all/download", () => {
+    const state = build_state({ records: [make_record()] });
+    const { wrapper } = mount_gallery_view({ state });
+    const grid = wrapper.findComponent(ImageGrid);
+    expect(grid.props("selectLabel")).toBe("Select image");
+    expect(grid.props("openLabel")).toBe("Open preview");
+    expect(grid.props("selectLabel")).not.toBe("Select all");
+    expect(grid.props("openLabel")).not.toBe("Download");
   });
 
   it("passes every loaded record through to ImageGrid once ready", () => {
@@ -502,60 +520,87 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     expect(dom().text()).toContain("Parameters copied");
   });
 
-  it("modify prompt hands off through the inspector with the modify_prompt intent and navigates to Workbench", async () => {
+  it("modify prompt hands off with the extracted prompt prefilled and navigates to Workbench", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
     const { wrapper, controller } = mount_gallery_view({ state });
     open_tile(wrapper, record.id);
+    await flushPromises();
     await flushPromises();
     await dom().find('button[aria-label="Modify prompt"]').trigger("click");
     expect(controller.select_inspector_record).toHaveBeenCalledWith({
       kind: "gallery_record",
       record_id: record.id,
       intent: "modify_prompt",
+      prefill: {
+        positive_prompt: "a detailed mosaic tile study, vivid color blocks, high texture",
+        negative_prompt: "blurry, low detail",
+      },
     });
     expect(controller.set_route).toHaveBeenCalledWith("workbench");
   });
 
-  it("regenerate hands off with the regenerate intent", async () => {
+  it("regenerate hands off with the same prefilled prompt and navigates to Workbench", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
     const { wrapper, controller } = mount_gallery_view({ state });
     open_tile(wrapper, record.id);
+    await flushPromises();
     await flushPromises();
     await dom().find('button[aria-label="Regenerate"]').trigger("click");
     expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({ intent: "regenerate" }),
+      expect.objectContaining({
+        intent: "regenerate",
+        prefill: expect.objectContaining({
+          positive_prompt: "a detailed mosaic tile study, vivid color blocks, high texture",
+        }),
+      }),
     );
+    expect(controller.set_route).toHaveBeenCalledWith("workbench");
   });
 
-  it("edit and inpaint hand off with their own distinct intents", async () => {
+  it("modify prompt still navigates, with no prefill, when the image has no embedded parameters", async () => {
+    const record = make_record();
+    const state = build_state({ records: [record] });
+    const controller = build_controller(state);
+    controller.read_gallery_bytes = vi.fn(() => Promise.resolve(PORTRAIT_PNG));
+    const { wrapper } = mount_gallery_view({ state, controller });
+    open_tile(wrapper, record.id);
+    await flushPromises();
+    await flushPromises();
+    await dom().find('button[aria-label="Modify prompt"]').trigger("click");
+    expect(controller.select_inspector_record).toHaveBeenCalledWith({
+      kind: "gallery_record",
+      record_id: record.id,
+      intent: "modify_prompt",
+      prefill: { positive_prompt: null, negative_prompt: null },
+    });
+    expect(controller.set_route).toHaveBeenCalledWith("workbench");
+  });
+
+  it("edit, inpaint, and source message render as disabled controls with an explanatory hint, not live no-ops", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
     const { wrapper, controller } = mount_gallery_view({ state });
     open_tile(wrapper, record.id);
     await flushPromises();
-    await dom().find('button[aria-label="Edit image"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({ intent: "edit" }),
-    );
-    await dom().find('button[aria-label="Inpaint"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({ intent: "inpaint" }),
-    );
-  });
-
-  it("source message selects the record for the inspector but does not navigate away", async () => {
-    const record = make_record();
-    const state = build_state({ records: [record] });
-    const { wrapper, controller } = mount_gallery_view({ state });
-    open_tile(wrapper, record.id);
-    await flushPromises();
+    (controller.select_inspector_record as ReturnType<typeof vi.fn>).mockClear();
     (controller.set_route as ReturnType<typeof vi.fn>).mockClear();
-    await dom().find('button[aria-label="Go to source message"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({ intent: "view" }),
+
+    const edit_button = dom().find('button[aria-label="Edit image"]');
+    const inpaint_button = dom().find('button[aria-label="Inpaint"]');
+    const source_message_button = dom().find('button[aria-label="Go to source message"]');
+    expect(edit_button.attributes("disabled")).toBeDefined();
+    expect(inpaint_button.attributes("disabled")).toBeDefined();
+    expect(source_message_button.attributes("disabled")).toBeDefined();
+    expect(dom().text()).toContain(
+      "Editing, inpainting, and jumping to the source message are not available in this version yet.",
     );
+
+    await edit_button.trigger("click");
+    await inpaint_button.trigger("click");
+    await source_message_button.trigger("click");
+    expect(controller.select_inspector_record).not.toHaveBeenCalled();
     expect(controller.set_route).not.toHaveBeenCalled();
   });
 
@@ -661,5 +706,18 @@ describe("multi-select and batch actions", () => {
     await flushPromises();
     expect(dom().text()).not.toContain("1 image selected");
     expect(controller.bulk_delete_gallery_records).not.toHaveBeenCalled();
+  });
+});
+
+describe("GalleryView: toast notification region", () => {
+  // Regression test for the fix-wave a11y-correctness finding: the toast region was previously
+  // labeled with common.actions.copy ("Copy") and the "Parameters copied" toast text itself,
+  // announcing the notification region as something unrelated to notifications.
+  it("names the toast notification region correctly, not Copy/copied", async () => {
+    mount_gallery_view();
+    await nextTick();
+    await nextTick();
+    expect(dom().find('[role="region"][aria-label="Notifications"]').exists()).toBe(true);
+    expect(document.querySelector('[role="region"][aria-label="Copy"]')).toBeNull();
   });
 });

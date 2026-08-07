@@ -69,7 +69,12 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       jobs: [],
       submit_command: IDLE_COMMAND_STATE,
     },
-    prompt: { presets: [], selected_preset_id: null, draft: null, save_command: IDLE_COMMAND_STATE },
+    prompt: {
+      presets: [],
+      selected_preset_id: null,
+      draft: null,
+      save_command: IDLE_COMMAND_STATE,
+    },
     assets: {
       active_category: "character",
       records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
@@ -160,7 +165,12 @@ describe("WorkbenchView: provider-profile selection", () => {
 
   it("shows a composed empty state and Open provider settings action when no profiles exist", () => {
     const { wrapper } = mount_view({
-      workbench: { profiles: [], active_profile_id: null, jobs: [], submit_command: IDLE_COMMAND_STATE },
+      workbench: {
+        profiles: [],
+        active_profile_id: null,
+        jobs: [],
+        submit_command: IDLE_COMMAND_STATE,
+      },
     });
 
     expect(wrapper.text()).toContain("No provider profile selected");
@@ -196,6 +206,18 @@ describe("WorkbenchView: prompt drafts and image count", () => {
 
     expect((positive.element as HTMLTextAreaElement).value).toBe(long_prompt);
     expect((negative.element as HTMLTextAreaElement).value).toBe("no watermark");
+  });
+
+  // Regression test for the fix-wave a11y-correctness finding: both buttons previously shared
+  // the single "Image count" label as both increment-label and decrement-label (indistinguishable
+  // to assistive tech), while every other NumberStepper call site correctly used
+  // common.actions.increase/decrease.
+  it("gives the image-count stepper's increment/decrement buttons distinct accessible names", () => {
+    const { wrapper } = mount_view();
+    const stepper = wrapper.find('[data-testid="image-count-stepper"]');
+    expect(stepper.find('button[aria-label="Increase"]').exists()).toBe(true);
+    expect(stepper.find('button[aria-label="Decrease"]').exists()).toBe(true);
+    expect(stepper.find('button[aria-label="Image count"]').exists()).toBe(false);
   });
 
   it("supports image counts from 1 through 4 and rejects submission outside that range", async () => {
@@ -294,7 +316,9 @@ describe("WorkbenchView: reference images", () => {
   });
 
   it("shows a picker error state when the assets slice failed to load", async () => {
-    const { wrapper } = mount_view({ failures: new Map([["assets", { code: "capability_load_failed" }]]) });
+    const { wrapper } = mount_view({
+      failures: new Map([["assets", { code: "capability_load_failed" }]]),
+    });
     await wrapper.find('[data-testid="reference-add"]').trigger("click");
     await flushPromises();
     expect(document.body.textContent).toContain("The reference image list failed to load.");
@@ -326,7 +350,12 @@ describe("WorkbenchView: generation submission and validation", () => {
 
   it("blocks submission and shows an inline error when no profile is selected", async () => {
     const { wrapper } = mount_view({
-      workbench: { profiles: [], active_profile_id: null, jobs: [], submit_command: IDLE_COMMAND_STATE },
+      workbench: {
+        profiles: [],
+        active_profile_id: null,
+        jobs: [],
+        submit_command: IDLE_COMMAND_STATE,
+      },
     });
     await wrapper.find('[data-testid="positive-prompt-input"]').setValue("a fox");
     await wrapper.find('[data-testid="submit-generation"]').trigger("click");
@@ -587,6 +616,109 @@ describe("WorkbenchView: completion preview and inspector", () => {
 
     expect(write_text).toHaveBeenCalled();
     expect(document.body.textContent).toContain("Copied");
+  });
+
+  // Regression test for the fix-wave a11y-correctness finding: the toast region was previously
+  // labeled with common.inspector.title ("Inspector") and common.actions.confirm ("Confirm"),
+  // announcing the notification region as something unrelated to notifications.
+  it("names the toast notification region correctly, not Inspector/Confirm", async () => {
+    mount_view();
+    await nextTick();
+    await nextTick();
+    expect(find_in_document('[role="region"][aria-label="Notifications"]').exists()).toBe(true);
+    expect(document.querySelector('[role="region"][aria-label="Inspector"]')).toBeNull();
+  });
+});
+
+describe("WorkbenchView: gallery modify-prompt/regenerate hand-off", () => {
+  it("prefills the prompt fields from a modify_prompt selection already set on mount, then consumes it", async () => {
+    const { wrapper } = mount_view({
+      inspector: {
+        collapsed: false,
+        width: 320,
+        selected_record: {
+          kind: "gallery_record",
+          record_id: "66666666-6666-4666-8666-666666666666" as Uuid,
+          intent: "modify_prompt",
+          prefill: { positive_prompt: "a fox in a forest", negative_prompt: "blurry" },
+        },
+      },
+    });
+    await nextTick();
+
+    expect(
+      (wrapper.find('[data-testid="positive-prompt-input"]').element as HTMLTextAreaElement).value,
+    ).toBe("a fox in a forest");
+    expect(
+      (wrapper.find('[data-testid="negative-prompt-input"]').element as HTMLTextAreaElement).value,
+    ).toBe("blurry");
+    expect(wrapper.emitted("consume-inspector-selection")).toHaveLength(1);
+    expect(document.body.textContent).toContain("Prompt loaded from the selected image");
+  });
+
+  it("prefills from a later regenerate selection (reactive change, not just on mount)", async () => {
+    const { wrapper } = mount_view();
+    expect(wrapper.emitted("consume-inspector-selection")).toBeUndefined();
+
+    await wrapper.setProps({
+      state: build_state({
+        inspector: {
+          collapsed: false,
+          width: 320,
+          selected_record: {
+            kind: "gallery_record",
+            record_id: "77777777-7777-4777-8777-777777777777" as Uuid,
+            intent: "regenerate",
+            prefill: { positive_prompt: "a river at dawn", negative_prompt: null },
+          },
+        },
+      }),
+    });
+    await nextTick();
+
+    expect(
+      (wrapper.find('[data-testid="positive-prompt-input"]').element as HTMLTextAreaElement).value,
+    ).toBe("a river at dawn");
+    expect(wrapper.emitted("consume-inspector-selection")).toHaveLength(1);
+  });
+
+  it("navigates without prefilling or toasting when the selection carries no prompt", async () => {
+    const { wrapper } = mount_view({
+      inspector: {
+        collapsed: false,
+        width: 320,
+        selected_record: {
+          kind: "gallery_record",
+          record_id: "88888888-8888-4888-8888-888888888888" as Uuid,
+          intent: "modify_prompt",
+          prefill: { positive_prompt: null, negative_prompt: null },
+        },
+      },
+    });
+    await nextTick();
+
+    expect(
+      (wrapper.find('[data-testid="positive-prompt-input"]').element as HTMLTextAreaElement).value,
+    ).toBe("");
+    expect(wrapper.emitted("consume-inspector-selection")).toHaveLength(1);
+    expect(document.body.textContent).not.toContain("Prompt loaded from the selected image");
+  });
+
+  it("leaves the draft and the selection alone for a plain view selection", async () => {
+    const { wrapper } = mount_view({
+      inspector: {
+        collapsed: false,
+        width: 320,
+        selected_record: {
+          kind: "gallery_record",
+          record_id: "99999999-9999-4999-8999-999999999999" as Uuid,
+          intent: "view",
+        },
+      },
+    });
+    await nextTick();
+
+    expect(wrapper.emitted("consume-inspector-selection")).toBeUndefined();
   });
 });
 
