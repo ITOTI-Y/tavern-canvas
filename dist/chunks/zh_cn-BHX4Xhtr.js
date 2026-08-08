@@ -58,7 +58,18 @@ var e = {
 		inspector: {
 			title: "检查器",
 			empty_title: "未选择内容",
-			empty_description: "选择一个任务、图片或资产即可在此查看详情。"
+			empty_description: "选择一个任务、图片或资产即可在此查看详情。",
+			selection: {
+				id_label: "ID",
+				action_label: "操作",
+				kind_generation_job: "生成任务",
+				kind_gallery_record: "图库图片",
+				kind_asset: "资产",
+				intent_modify_prompt: "修改提示词",
+				intent_regenerate: "重新生成",
+				intent_edit: "编辑",
+				intent_inpaint: "局部重绘"
+			}
 		},
 		notifications: {
 			viewport_label: "通知",
@@ -237,6 +248,8 @@ var e = {
 	assets: {
 		tabs: {
 			vocabulary: "词库",
+			personas: "身份",
+			knowledge: "知识库",
 			characters: "角色",
 			outfits: "服装",
 			lora: "LoRA",
@@ -258,6 +271,46 @@ var e = {
 			progress_installing: "正在安装词库包",
 			nsfw_disclosure_label: "显示可能包含成人内容的词库包",
 			nsfw_disclosure_hint: "这些词库包不会自动安装，安装前请自行确认。"
+		},
+		personas: {
+			empty_description: "添加一个身份，为对话指定说话人，可以是你自己，也可以是助手。",
+			add_action: "添加身份",
+			role_label: "说话人",
+			roles: {
+				assistant: "助手",
+				user: "你"
+			},
+			description_label: "描述",
+			description_hint: "该身份的说话方式与行为特征，会作为系统提示的一部分发送。",
+			greeting_label: "开场白",
+			greeting_hint: "新对话开始时展示，留空则不展示。",
+			active_badge: "启用中",
+			active_toggle_label: "启用",
+			delete_confirm_description: "此操作会删除该身份及其描述，已产生的对话消息不受影响。"
+		},
+		knowledge: {
+			empty_description: "添加知识条目，当其关键词出现时，相关背景信息会自动注入提示词。",
+			add_action: "添加知识条目",
+			title_label: "标题",
+			source_type_label: "来源",
+			source_types: {
+				manual: "手动录入",
+				imported: "导入",
+				character: "来自角色"
+			},
+			content_label: "内容",
+			content_hint: "该条目被触发时注入提示词的正文。",
+			keywords_label: "关键词",
+			keywords_hint: "多个关键词用逗号分隔，留空则该条目始终可用。",
+			priority_label: "优先级",
+			priority_hint: "上下文长度不够时，优先级高的条目会被保留。",
+			priority_summary: "优先级 {priority}",
+			enabled_label: "启用",
+			select_label: "选择 {title}",
+			select_all_label: "全选",
+			bulk_delete_action: "删除选中的 {count} 条",
+			bulk_delete_confirm_title: "删除 {count} 条知识条目？",
+			delete_confirm_description: "此操作会删除该条目及其内容，提示词将立即不再包含它。"
 		},
 		characters: {
 			empty_title: "还没有保存角色",
@@ -356,7 +409,7 @@ var e = {
 			inpaint_action: "局部重绘",
 			source_message_action: "跳转到来源消息",
 			parameters_unavailable: "这张图片中没有找到嵌入的生成参数。",
-			actions_unavailable_hint: "编辑图片、局部重绘和跳转到来源消息在当前版本中暂不可用。"
+			actions_unavailable_hint: "跳转到来源消息在当前版本中暂不可用。"
 		},
 		selection: {
 			selected_count: "已选中 {n} 张图片 | 已选中 {n} 张图片",
@@ -436,6 +489,7 @@ var e = {
 	settings: {
 		sections: {
 			provider_profiles: "Provider 配置",
+			llm_connections: "文本模型连接",
 			gateway: "Gateway",
 			automation: "自动化",
 			appearance: "外观",
@@ -459,6 +513,40 @@ var e = {
 			set_default_action: "设为默认",
 			remove_confirm_title: "移除 {name}？",
 			remove_confirm_description: "此操作会将该 provider 配置从智绘姬中断开，已提交的任务不受影响。"
+		},
+		llm_connections: {
+			section_description: "文本模型连接为助手和提示词构建提供语言模型能力。地址来自 Gateway 设置，API 密钥保存在宿主的密钥存储中。",
+			empty_description: "添加一个文本模型连接，助手和提示词构建才能调用语言模型。",
+			add_action: "添加文本模型连接",
+			dialog_add_title: "添加文本模型连接",
+			dialog_edit_title: "编辑文本模型连接",
+			dialog_description: "带 * 的字段为必填项。API 密钥需单独设置。",
+			provider_kind_label: "接口类型",
+			provider_kinds: {
+				openai_compatible: "OpenAI 兼容",
+				anthropic: "Anthropic",
+				google_generative: "Google Generative AI",
+				ollama: "Ollama"
+			},
+			route_label: "请求路径",
+			route_hint: "只能从该接口类型支持的路径中选择，地址由宿主提供。",
+			model_label: "模型",
+			model_hint: "该连接请求的模型标识，例如 gpt-4o-mini。",
+			temperature_label: "温度",
+			temperature_hint: "数值越低回复越稳定，越高变化越多。",
+			max_output_tokens_label: "最大输出 token 数",
+			default_badge: "默认",
+			set_default_action: "设为默认文本模型",
+			connection_test_action: "测试连接",
+			set_credential_action: "设置 API 密钥",
+			clear_credential_action: "移除 API 密钥",
+			credential_set: "API 密钥已存入宿主密钥存储",
+			credential_unset: "尚未设置 API 密钥",
+			credential_dialog_title: "设置 API 密钥",
+			credential_dialog_description: "密钥会直接写入宿主的密钥存储，智绘姬只保留一个引用，不会显示也不会导出密钥本身。",
+			credential_label: "API 密钥",
+			remove_confirm_title: "移除 {name}？",
+			remove_confirm_description: "此操作会将该文本模型从智绘姬中断开。已保存的 API 密钥仍留在宿主密钥存储中，需要你在那里另行删除。"
 		},
 		gateway: {
 			endpoint_label: "Gateway 地址",
@@ -537,6 +625,72 @@ var e = {
 		},
 		record_count: "{n} 条记录 | {n} 条记录"
 	},
+	assistant: {
+		panel_title: "助手",
+		new_chat_action: "新建对话",
+		load_older_action: "加载更早的消息",
+		sessions_empty: {
+			description: "还没有对话，新建一个对话即可开始与助手交流。",
+			action: "新建对话"
+		},
+		rename_session_action: "重命名",
+		delete_session_action: "删除",
+		export_session_action: "导出",
+		input_placeholder: "向助手提问……",
+		send_action: "发送",
+		abort_action: "停止",
+		attach_image_action: "添加图片",
+		screen_capture_start_action: "共享屏幕",
+		screen_capture_stop_action: "停止共享",
+		message_edit_action: "编辑",
+		message_resend_action: "重新发送",
+		message_regenerate_action: "重新生成",
+		thinking_toggle: "推理过程",
+		tool_call_toggle: "工具调用",
+		ask_choice_hint: "选择一个选项，或直接输入你自己的回复。",
+		task_strip_generating: "正在生成图片：{prompt}",
+		tasks: {
+			panel_title: "助手任务",
+			running_count: "当前没有任务 | 正在执行 {n} 个任务 | 正在执行 {n} 个任务",
+			clear_finished_action: "清除已结束",
+			kind_tool_call: "工具调用",
+			kind_image_generation: "图片",
+			kind_summary: "摘要",
+			error_code: "失败：{code}"
+		},
+		summaries: {
+			panel_title: "摘要",
+			show_action: "显示摘要（{n}）",
+			hide_action: "隐藏摘要",
+			empty_description: "还没有摘要。对长对话的一段生成摘要，可以保留上下文而不必重发全部消息。",
+			untitled: "空摘要",
+			detail_title: "摘要详情",
+			covers_label: "覆盖 {n} 条消息",
+			token_estimate: "约 {n} tokens",
+			enabled_label: "计入上下文",
+			regenerate_action: "重新生成",
+			graph_label: "摘要层级关系",
+			delete_confirm_title: "删除这条摘要？",
+			delete_confirm_description: "对话中的消息全部保留，仅删除该摘要及其在层级中的位置。"
+		},
+		sessions: {
+			select_label: "选择 {title}",
+			select_all_label: "全选对话",
+			export_selected_action: "导出选中的 {count} 个",
+			delete_selected_action: "删除选中的 {count} 个",
+			delete_confirm_title: "删除 {count} 个对话？",
+			delete_confirm_description: "选中的对话及其消息将被永久删除。"
+		},
+		draft_review: {
+			title: "审核设置变更",
+			description: "以下是助手提出的变更，需你确认后才会生效。",
+			empty: "暂无变更提议。",
+			from_label: "当前值",
+			to_label: "拟改为",
+			apply_action: "应用",
+			discard_action: "放弃"
+		}
+	},
 	errors: {
 		capability_blocked: "此操作需要 {capability}，但当前宿主不支持。",
 		validation_required: "此项为必填。",
@@ -568,4 +722,4 @@ var e = {
 //#endregion
 export { e as zh_cn_messages };
 
-//# sourceMappingURL=zh_cn-BriIWeKH.js.map
+//# sourceMappingURL=zh_cn-BHX4Xhtr.js.map
