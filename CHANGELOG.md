@@ -65,7 +65,11 @@ archive into the active namespace and never deletes existing data.
   [docs/vocabulary-packages.md](docs/vocabulary-packages.md).
 - A self hosted Gateway service with bearer token authentication, exact origin CORS, per token rate
   limiting, SQLite persistence, canonical image re-encoding, Server Sent Events job streaming, and
-  restart recovery for in flight jobs. See [docs/gateway.md](docs/gateway.md).
+  restart recovery for in flight jobs, plus the extension side executor that submits jobs to it,
+  follows them over SSE with a polling fallback, downloads the finished images, and cancels remote
+  work when a job is cancelled locally. Configuring a Gateway endpoint and access token routes all
+  generation through it, so no provider credential reaches the browser. See
+  [docs/gateway.md](docs/gateway.md).
 - Archive export and import, and a redacted, locally generated diagnostics support bundle.
 - A startup capability gate that blocks with an actionable message when JS Slash Runner is missing or
   older than 4.9.1.
@@ -90,10 +94,8 @@ archive into the active namespace and never deletes existing data.
 
 ### Known limitations
 
-- **A configured Gateway endpoint disables generation.** The Gateway service and the extension's
-  Gateway client both exist, but the extension's job executor cannot yet drive the Gateway transport,
-  and a configured Gateway endpoint outranks every other transport. Leave the Gateway endpoint unset
-  in 3.0.0.
+- Routing generation through the Gateway needs both a Gateway endpoint and a stored Gateway access
+  token. With an endpoint but no token, generation reports that reason rather than running.
 - Direct cloud generation requires `allowKeysExposure: true` in SillyTavern's `config.yaml`. Without
   it, cloud calls fail closed with an actionable message. Loopback providers are unaffected.
 - The Studio renders as a full viewport overlay when the optional floating entry point is disabled,

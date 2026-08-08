@@ -149,10 +149,15 @@ here as failing rather than skipped, because a skipped gate reads as a passing o
 9. **The standalone Gateway works over LAN HTTP and warns explicitly about cleartext on first
    connection.** `tests/e2e/full_gateway.spec.ts`, describe block "criterion 9", against a real
    Express server on a real loopback port; `tests/e2e/security_boundaries.spec.ts`, describe block
-   "cleartext HTTP disclosure is per origin and non-blocking".
+   "cleartext HTTP disclosure is per origin and non-blocking";
+   `tests/integration/gateway_generation_flow.test.ts` -- "names the unacknowledged cleartext origin
+   as the generation capability's reason".
 10. **No provider secret is handed down from the Gateway, and a client request can never override
     the upstream URL.** `tests/e2e/full_gateway.spec.ts`, describe block "criterion 10";
-    `tests/e2e/security_boundaries.spec.ts`, describe block "provider destination control".
+    `tests/e2e/security_boundaries.spec.ts`, describe block "provider destination control";
+    `tests/integration/gateway_generation_flow.test.ts` -- "carries a submitted job through the real
+    Gateway and back into the image store" asserts every client request stays on the Gateway origin
+    while the upstream sees the provider call.
 11. **v2 settings, presets, workflows, vocabulary and image data switch over only after
     verification; no failure overwrites v2 data or writes a success flag.**
     `tests/e2e/migration_and_update.spec.ts`, describe block "criterion 11";
@@ -182,6 +187,15 @@ here as failing rather than skipped, because a skipped gate reads as a passing o
     budget passes.** `tools/bundle_budget/src/index.test.ts` and the `pnpm check:bundle` gate;
     `tools/release_audit/src/index.test.ts` and the `pnpm check:release` gate. **BLOCKED**:
     `initial_js_gzip_bytes` currently exceeds the 184,320-byte budget.
+20. **A configured Gateway endpoint carries generation instead of disabling it, and an endpoint the
+    client cannot authenticate against says exactly why.**
+    `tests/integration/gateway_generation_flow.test.ts`, against a real Express Gateway and a real
+    provider upstream, covering the available capability, a job carried to `completed` and into the
+    image store, and the missing-token and unacknowledged-cleartext reasons;
+    `tests/e2e/full_gateway.spec.ts` -- "a generation job runs end to end through the real client
+    executor", driving the real `GatewayJobExecutor` from Chromium across a real cross-origin
+    boundary; `apps/extension/src/transport/gateway_job_executor.test.ts` for submission, provider
+    error mapping, remote cancellation, and credential handling.
 
 ## startup and update
 

@@ -6,8 +6,8 @@ in the browser alongside the message that anchored them.
 
 The extension ships as a Vue application mounted in a Shadow Root, with a workbench, a prompt
 builder, an asset library, a gallery, a diagnostics view, and settings. A separate self hosted
-Gateway service is included in this repository; see [Providers and transports](#providers-and-transports)
-for what it does and does not do in this release.
+Gateway service is included in this repository, and generation can be routed through it so provider
+credentials never reach the browser; see [Providers and transports](#providers-and-transports).
 
 ## Requirements
 
@@ -58,7 +58,8 @@ Five image providers have adapters:
 | `openai_image` | OpenAI Image | Cloud vendor              |
 | `google_image` | Google Image | Cloud vendor              |
 
-A profile's provider and endpoint decide which transport carries the request.
+A configured Gateway endpoint carries every request; without one, the profile's provider and
+endpoint decide which transport does.
 
 **Loopback providers.** `sd_webui` and `comfyui` are reached over a direct browser call to the
 `base_url` on the active profile. That URL must be a loopback address; a non loopback endpoint is
@@ -86,16 +87,34 @@ SillyTavern session read your stored API keys in plaintext, not only this extens
 acceptable, use a loopback provider instead. Storing a credential and checking whether one exists do
 not need the flag; only reading it back does.
 
-### Gateway status in 3.0.0
+### Routing generation through the Gateway
 
-The Gateway service in `apps/gateway` is complete and tested as a server, and the extension has a
-Gateway client and settings screen. The two are not connected in this release: the extension's job
-executor cannot yet drive the Gateway transport.
+The Gateway is the alternative to letting the browser hold provider credentials at all. Configuring
+an endpoint in Settings is the opt in: a configured Gateway outranks every other transport, so all
+image generation goes through it and the vendor credentials stay on the Gateway host.
 
-Because a configured Gateway endpoint outranks every other transport, **setting a Gateway endpoint in
-settings makes the generation capability unavailable** rather than routing generation through the
-Gateway. Leave the Gateway endpoint unset in 3.0.0. See [docs/gateway.md](docs/gateway.md) for the
-service's own configuration, security model, and operational procedures.
+Two settings make it work, both under **Settings > Gateway**:
+
+1. The **Gateway endpoint**, an `http://` or `https://` origin.
+2. The **Gateway access token**, the bearer token the Gateway was configured with. The plaintext
+   goes straight to SillyTavern's secret store; settings keep only a reference to it, and it is
+   never shown, exported, or written to a support bundle.
+
+Both are required. If an endpoint is set with no token stored, generation reports
+`A Gateway endpoint is configured but no Gateway access token is stored` in Diagnostics rather than
+failing silently, and an unacknowledged `http://` origin reports
+`Cleartext Gateway origin has not been acknowledged` until you acknowledge it. Clearing the endpoint
+returns generation to the direct transports.
+
+In this mode the extension never names a provider URL and never holds a provider credential: it
+submits one job, follows it over Server Sent Events with a polling fallback, downloads the finished
+image from the Gateway, and stores it exactly as a directly generated image is stored. Cancelling a
+job cancels it on the Gateway too. `allowKeysExposure` is still needed to read the Gateway token
+back out of SillyTavern's secret store, but no provider key ever has to be stored in the browser
+session at all.
+
+See [docs/gateway.md](docs/gateway.md) for the service's own configuration, security model, and
+operational procedures.
 
 ## Your data stays local
 
@@ -108,7 +127,8 @@ The extension stores no credentials, only references to secrets held by SillyTav
 payloads are checked for credential shaped keys and rejected if any are found.
 
 There is no telemetry and no analytics. The only requests the extension makes are to the provider
-endpoints you configure, plus the vocabulary catalog if you open the vocabulary panel; see
+endpoints you configure or to the Gateway endpoint if one is set, plus the vocabulary catalog if you
+open the vocabulary panel; see
 [docs/vocabulary-packages.md](docs/vocabulary-packages.md). The support bundle in Diagnostics is
 generated locally, redacts settings, and is downloaded as a file rather than uploaded.
 
