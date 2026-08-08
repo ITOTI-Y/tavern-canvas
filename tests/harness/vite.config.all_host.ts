@@ -33,6 +33,14 @@ export default defineConfig({
       "@tavern-canvas/core": fileURLToPath(
         new URL("../../packages/core/src/index.ts", import.meta.url),
       ),
+      // Subpath entries first: an object alias replaces the matched prefix, so a barrel entry
+      // would otherwise rewrite "@tavern-canvas/providers/adapters" to ".../src/index.ts/adapters".
+      "@tavern-canvas/providers/adapters": fileURLToPath(
+        new URL("../../packages/providers/src/adapters.ts", import.meta.url),
+      ),
+      "@tavern-canvas/storage/archive": fileURLToPath(
+        new URL("../../packages/storage/src/archive.ts", import.meta.url),
+      ),
       "@tavern-canvas/providers": fileURLToPath(
         new URL("../../packages/providers/src/index.ts", import.meta.url),
       ),

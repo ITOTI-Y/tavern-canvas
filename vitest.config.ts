@@ -10,6 +10,11 @@ const workspace_alias = {
     new URL("./packages/contracts/src/index.ts", import.meta.url),
   ),
   "@tavern-canvas/core": fileURLToPath(new URL("./packages/core/src/index.ts", import.meta.url)),
+  // Subpath entries first: an object alias replaces the matched prefix, so the barrel entry would
+  // otherwise rewrite "@tavern-canvas/storage/archive" to ".../src/index.ts/archive".
+  "@tavern-canvas/storage/archive": fileURLToPath(
+    new URL("./packages/storage/src/archive.ts", import.meta.url),
+  ),
   "@tavern-canvas/storage": fileURLToPath(
     new URL("./packages/storage/src/index.ts", import.meta.url),
   ),

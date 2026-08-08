@@ -423,13 +423,20 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         chat_messages.splice(index, 1);
       }
     },
+    // TauriTavern 2.2.0's real activation batch shape: `TauriWorldInfoActivationBatchSurface`
+    // (apps/extension/src/host/tauritavern_host.ts). Emitting a partial batch went unnoticed while
+    // nothing in the extension subscribed; a subscribed module validates it and rejects.
     emit_world_info_activation(entries) {
       for (const handler of [...world_info_handlers]) {
         handler({
+          timestampMs: 1_780_000_000_000,
+          trigger: "generation",
           entries: entries.map((entry) => ({
             uid: entry.uid,
             world: entry.world,
-            position: "before_char",
+            displayName: entry.uid,
+            constant: false,
+            position: "before",
           })),
         });
       }

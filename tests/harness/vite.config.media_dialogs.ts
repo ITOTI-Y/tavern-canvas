@@ -31,6 +31,9 @@ export default defineConfig({
       "@tavern-canvas/core": fileURLToPath(
         new URL("../../packages/core/src/index.ts", import.meta.url),
       ),
+      "@tavern-canvas/providers/adapters": fileURLToPath(
+        new URL("../../packages/providers/src/adapters.ts", import.meta.url),
+      ),
       "@tavern-canvas/providers": fileURLToPath(
         new URL("../../packages/providers/src/index.ts", import.meta.url),
       ),
