@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+import { VaultReferenceSchema } from "./ids.js";
 import {
   LLM_ROUTE_CATALOG,
   LlmConnectionDraftSchema,
   LlmConnectionProfileSchema,
-  LlmCredentialReferenceSchema,
   LlmProviderKindSchema,
   derive_llm_credential_reference,
   is_allowed_llm_route,
@@ -113,10 +113,10 @@ describe("LlmConnectionDraftSchema", () => {
   });
 });
 
-describe("LlmCredentialReferenceSchema", () => {
+describe("VaultReferenceSchema", () => {
   it("accepts a derived reference", () => {
     const reference = derive_llm_credential_reference("default", CONNECTION_ID);
-    expect(LlmCredentialReferenceSchema.safeParse(reference).success).toBe(true);
+    expect(VaultReferenceSchema.safeParse(reference).success).toBe(true);
   });
 
   it("derives a stable, namespaced reference that carries no secret material", () => {
@@ -126,9 +126,9 @@ describe("LlmCredentialReferenceSchema", () => {
   });
 
   it("rejects anything shaped like a raw provider key", () => {
-    expect(LlmCredentialReferenceSchema.safeParse("sk-abc123").success).toBe(false);
-    expect(LlmCredentialReferenceSchema.safeParse("Bearer abc123").success).toBe(false);
-    expect(LlmCredentialReferenceSchema.safeParse("").success).toBe(false);
+    expect(VaultReferenceSchema.safeParse("sk-abc123").success).toBe(false);
+    expect(VaultReferenceSchema.safeParse("Bearer abc123").success).toBe(false);
+    expect(VaultReferenceSchema.safeParse("").success).toBe(false);
   });
 });
 

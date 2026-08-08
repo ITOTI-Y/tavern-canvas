@@ -36,8 +36,15 @@ export type {
   GatewayProviderCapabilities,
 } from "./gateway.js";
 
-export { AssetIdSchema, ImageIdSchema, JobIdSchema, RequestIdSchema, UuidSchema } from "./ids.js";
-export type { AssetId, ImageId, JobId, RequestId, Uuid } from "./ids.js";
+export {
+  AssetIdSchema,
+  ImageIdSchema,
+  JobIdSchema,
+  RequestIdSchema,
+  UuidSchema,
+  VaultReferenceSchema,
+} from "./ids.js";
+export type { AssetId, ImageId, JobId, RequestId, Uuid, VaultReference } from "./ids.js";
 
 export {
   KnowledgeRecordDraftSchema,
@@ -71,7 +78,6 @@ export {
   LLM_ROUTE_CATALOG,
   LlmConnectionDraftSchema,
   LlmConnectionProfileSchema,
-  LlmCredentialReferenceSchema,
   LlmProviderKindSchema,
   derive_llm_credential_reference,
   is_allowed_llm_route,
@@ -81,7 +87,6 @@ export type {
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
-  LlmCredentialReference,
   LlmProviderKind,
   LlmRouteCatalogEntry,
 } from "./llm_connection.js";
@@ -133,10 +138,12 @@ export type {
 } from "./providers/index.js";
 
 export {
+  GATEWAY_CREDENTIAL_KIND,
   GatewaySettingsSchema,
   NormalizedOriginSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
+  derive_gateway_credential_reference,
 } from "./settings.js";
 export type {
   GatewaySettings,

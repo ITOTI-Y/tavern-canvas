@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { UuidSchema } from "./ids.js";
+import { UuidSchema, VaultReferenceSchema } from "./ids.js";
 
 export const NormalizedOriginSchema = z.url().check((context) => {
   if (!URL.canParse(context.value)) {
@@ -24,6 +24,16 @@ export const GatewaySettingsSchema = z.strictObject({
   http_acknowledgments: z.record(NormalizedOriginSchema, z.iso.datetime({ offset: false })),
 });
 export type GatewaySettings = z.infer<typeof GatewaySettingsSchema>;
+
+export const GATEWAY_CREDENTIAL_KIND = "gateway_access_token" as const;
+
+/**
+ * One Gateway bearer token per namespace. Settings hold this string; the token itself only ever
+ * exists in host secret storage and in the outgoing `Authorization` header of a live request.
+ */
+export function derive_gateway_credential_reference(namespace: string): string {
+  return VaultReferenceSchema.parse(`tavern_canvas:${namespace}:${GATEWAY_CREDENTIAL_KIND}`);
+}
 
 const NamespaceIdentifierSchema = z
   .string()

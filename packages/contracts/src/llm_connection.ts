@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { UuidSchema } from "./ids.js";
+import { UuidSchema, VaultReferenceSchema } from "./ids.js";
 
 /**
  * Text-LLM connection profiles, the text-generation counterpart to the image `ProviderProfile`
@@ -72,19 +72,6 @@ export function is_allowed_llm_route(kind: LlmProviderKind, route: string): bool
   );
 }
 
-/**
- * A handle into the host secret vault, never the secret itself. The `tavern_canvas:` prefix is
- * what makes "someone pasted a raw provider key into this field" a schema failure rather than a
- * silent plaintext write, and it matches `derive_secret_reference`'s migration-side format so
- * both paths address the same vault entries.
- */
-export const LlmCredentialReferenceSchema = z
-  .string()
-  .min(1)
-  .max(256)
-  .regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u);
-export type LlmCredentialReference = z.infer<typeof LlmCredentialReferenceSchema>;
-
 export const LLM_CREDENTIAL_KIND = "llm_profile_api_key" as const;
 
 export function derive_llm_credential_reference(namespace: string, connection_id: string): string {
@@ -128,7 +115,7 @@ export type LlmConnectionDraft = z.infer<typeof LlmConnectionDraftSchema>;
 export const LlmConnectionProfileSchema = z
   .strictObject({
     ...llm_connection_fields,
-    credential_reference: LlmCredentialReferenceSchema.nullable(),
+    credential_reference: VaultReferenceSchema.nullable(),
     created_at: z.iso.datetime({ offset: true }),
     updated_at: z.iso.datetime({ offset: true }),
   })

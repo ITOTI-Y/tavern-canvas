@@ -1,4 +1,4 @@
-import { LlmCredentialReferenceSchema } from "@tavern-canvas/contracts";
+import { VaultReferenceSchema } from "@tavern-canvas/contracts";
 
 import { clone_request_headers, type SillyTavernFetch } from "./sillytavern_host.js";
 import type { SillyTavernSecretContext } from "./sillytavern_secret_destination.js";
@@ -52,7 +52,7 @@ export class SillyTavernSecretResolver implements SecretResolverPort {
   }
 
   async resolve_secret(reference: string): Promise<string> {
-    if (!LlmCredentialReferenceSchema.safeParse(reference).success) {
+    if (!VaultReferenceSchema.safeParse(reference).success) {
       throw new SecretResolutionError(
         "invalid_reference",
         "A provider credential must be named by a tavern_canvas: vault reference",
