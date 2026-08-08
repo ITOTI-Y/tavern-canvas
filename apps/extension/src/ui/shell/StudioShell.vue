@@ -43,7 +43,17 @@ const viewport = use_shell_viewport(props.viewport);
 // still resolving its first load, failures.size > 0 once at least one slice has settled with an
 // error. The two are not mutually exclusive: some slices can still be loading while others have
 // already failed.
-const is_loading = computed(() => props.state.loading.size > 0);
+/**
+ * The startup skeleton stands in for the whole workspace, so it must never be raised by a load the
+ * workspace itself started: swapping the routed view out for a skeleton unmounts it, and the view
+ * comes back having lost every piece of local state, including which tab was open. The vocabulary
+ * catalog is the one slice loaded on demand from inside a view (VocabularyPanel), so it drives that
+ * panel's own surface and nothing above it.
+ */
+const ON_DEMAND_SLICES: ReadonlySet<string> = new Set(["vocabulary"]);
+const is_loading = computed(() =>
+  [...props.state.loading].some((capability_id) => !ON_DEMAND_SLICES.has(capability_id)),
+);
 const has_failures = computed(() => props.state.failures.size > 0);
 const inspector_style = computed(() => ({
   "--tc-inspector-width": `${String(props.state.inspector.width)}px`,

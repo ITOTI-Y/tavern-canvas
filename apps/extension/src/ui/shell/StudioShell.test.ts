@@ -77,7 +77,6 @@ beforeAll(async () => {
     import("./DesktopIconRail.vue"),
     import("./InspectorSheet.vue"),
     import("./MobileBottomNav.vue"),
-    import("./RailTooltip.vue"),
   ]);
 });
 
@@ -282,10 +281,6 @@ describe("StudioShell desktop navigation", () => {
 
   it("tooltips portal into the injected Shadow-Root portal element, never document.body", async () => {
     const { wrapper, portal_target } = await mount_shell();
-    // The rail carries no tooltip machinery until the pointer or focus enters it (DesktopIconRail),
-    // so the first entry is what loads Reka's Tooltip primitives.
-    await wrapper.get("nav").trigger("focusin");
-    await flushPromises();
     const first_rail_button = wrapper.findAll("nav > button")[0];
     await first_rail_button?.trigger("focus");
     // Reka's Tooltip opens on focus without the provider's hover delay.
@@ -502,7 +497,9 @@ describe("StudioShell task strip", () => {
 
 describe("StudioShell shell-level states", () => {
   it("shows a skeleton matching the final layout while capabilities are still loading, not a spinner", async () => {
-    const { wrapper } = await mount_shell({ state: { loading: new Set(["generation", "settings"]) } });
+    const { wrapper } = await mount_shell({
+      state: { loading: new Set(["generation", "settings"]) },
+    });
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-placeholder"]').exists()).toBe(false);
     // No spinner element or animated keyframe class -- skeleton-over-spinner (taste directive 1).

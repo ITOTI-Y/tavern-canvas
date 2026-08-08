@@ -18,7 +18,6 @@ beforeAll(async () => {
     import("./shell/DesktopIconRail.vue"),
     import("./shell/InspectorSheet.vue"),
     import("./shell/MobileBottomNav.vue"),
-    import("./shell/RailTooltip.vue"),
   ]);
 });
 
@@ -188,9 +187,6 @@ describe("AppRoot portal wiring", () => {
     });
     await flushPromises();
 
-    // The rail loads its tooltip primitives on first entry (DesktopIconRail).
-    await wrapper.get("nav").trigger("focusin");
-    await flushPromises();
     const first_rail_button = wrapper.findAll("nav > button")[0];
     await first_rail_button?.trigger("focus");
     await nextTick();
