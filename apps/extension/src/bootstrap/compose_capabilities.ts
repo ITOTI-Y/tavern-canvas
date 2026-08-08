@@ -526,6 +526,12 @@ export async function compose_studio_capabilities(
       diagnostics,
       migration,
       settings,
+      // Stage 07 feature-gap work landed these three after this composition root was written;
+      // their services depend on database version 3 stores whose upgrade path is not yet
+      // exercised here, so they resolve to the honest-unavailable fallback until wired.
+      llm_connections: fallback.llm_connections,
+      personas: fallback.personas,
+      knowledge: fallback.knowledge,
     },
     resolutions,
     host,

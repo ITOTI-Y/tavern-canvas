@@ -9,13 +9,11 @@ import {
   type AssistantStreamEvent,
 } from "./assistant_module.js";
 import type { AssistantSession, AssistantSessionStore } from "./assistant_session.js";
-import { AsrService, type SpeechRecognitionPortFactory } from "./asr_service.js";
 import {
   ScreenInputService,
   type DisplayMediaPort,
   type FrameCapturePort,
 } from "./screen_input.js";
-import { TtsService, type SpeechSynthesisPort } from "./tts_service.js";
 
 const NOW = "2026-08-07T00:00:00.000Z";
 
@@ -76,22 +74,6 @@ function streaming_connection(
   };
 }
 
-function no_op_tts(): TtsService {
-  const port: SpeechSynthesisPort = {
-    list_voices: () => [],
-    speak: (_text, _options, handlers) => handlers.on_end(),
-    pause: () => {},
-    resume: () => {},
-    cancel: () => {},
-  };
-  return new TtsService(port);
-}
-
-function no_op_asr(): AsrService {
-  const factory: SpeechRecognitionPortFactory = () => null;
-  return new AsrService(factory, { request: () => Promise.resolve("denied") });
-}
-
 function no_op_screen_input(): ScreenInputService {
   const display_media: DisplayMediaPort = {
     get_display_media: () => Promise.reject(new Error("not used")),
@@ -114,8 +96,6 @@ function make_dependencies(
     diagnostics_provider: () => [],
     capability_matrix_provider: (): CapabilityMatrix => ({}),
     workflow_metadata_provider: () => [],
-    tts: no_op_tts(),
-    asr: no_op_asr(),
     screen_input: no_op_screen_input(),
     clock: () => NOW,
     id_source: () => `id-${(id_counter += 1)}`,

@@ -3,10 +3,6 @@ import {
   Loader2,
   MonitorUp,
   Paperclip,
-  Pause,
-  Pencil,
-  Play,
-  Plus,
   SendHorizontal,
   Square,
 } from "lucide-vue-next";
