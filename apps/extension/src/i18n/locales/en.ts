@@ -596,9 +596,13 @@ const settings = {
     protocol_label: "Protocol",
     detect_action: "Detect protocol",
     token_secret_label: "Token secret reference",
-    auto_generate_action: "Generate token",
     token_not_set: "No token configured",
     endpoint_hint: "The Gateway endpoint your provider profiles connect through.",
+    token_label: "Gateway access token",
+    token_hint:
+      "The bearer token this Gateway was configured with. It goes straight to host secret storage; TavernCanvas keeps only a reference and never shows or exports the value.",
+    token_save_action: "Save token",
+    token_clear_action: "Clear token",
   },
   http_risk: {
     warning_title: "This connection is not encrypted",

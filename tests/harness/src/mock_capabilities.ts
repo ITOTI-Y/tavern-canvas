@@ -986,6 +986,17 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       };
       return Promise.resolve();
     },
+    set_gateway_token: () => {
+      current = {
+        ...current,
+        gateway: { ...current.gateway, token_secret_id: "mock-secret-reference" },
+      };
+      return Promise.resolve();
+    },
+    clear_gateway_token: () => {
+      current = { ...current, gateway: { ...current.gateway, token_secret_id: null } };
+      return Promise.resolve();
+    },
     set_vocabulary_update_channel: () => Promise.resolve(),
     export_archive: () => Promise.resolve(new Blob(["{}"], { type: "application/json" })),
     import_archive: () => Promise.resolve(),

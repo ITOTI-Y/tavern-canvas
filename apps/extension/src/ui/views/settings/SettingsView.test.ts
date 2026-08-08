@@ -420,6 +420,46 @@ describe("SettingsView gateway settings", () => {
     expect(wrapper.find('[data-testid="http-risk-banner"]').exists()).toBe(false);
   });
 
+  it("hands a typed Gateway token to secret storage and renders only the returned reference", async () => {
+    const capabilities = create_unavailable_capabilities();
+    const stored: string[] = [];
+    let token_secret_id: string | null = null;
+    const settings: SettingsCapability = {
+      ...capabilities.settings,
+      load: (): Promise<SettingsSnapshot> =>
+        Promise.resolve({
+          settings: {
+            ...DEFAULT_SETTINGS,
+            gateway: { ...DEFAULT_SETTINGS.gateway, token_secret_id },
+          },
+          vocabulary_update_channel: "bundled",
+        }),
+      set_gateway_token: (plaintext_value) => {
+        stored.push(plaintext_value);
+        token_secret_id = "tavern_canvas:default:gateway_access_token";
+        return Promise.resolve();
+      },
+    };
+    const controller = build_controller({ ...capabilities, settings });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+
+    const input = wrapper.get('[data-testid="gateway-token-input"]');
+    expect(input.attributes("type")).toBe("password");
+    await input.setValue(SECRET_TOKEN_VALUE);
+    await wrapper.get('[data-testid="gateway-token-save"]').trigger("click");
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(stored).toEqual([SECRET_TOKEN_VALUE]);
+    expect(wrapper.get('[data-testid="gateway-token-reference"]').text()).toBe(
+      "tavern_canvas:default:gateway_access_token",
+    );
+    expect(wrapper.html()).not.toContain(SECRET_TOKEN_VALUE);
+    expect((wrapper.get('[data-testid="gateway-token-input"]').element as HTMLInputElement).value) //
+      .toBe("");
+  });
+
   it("acknowledges an HTTP origin, persists it per normalized origin, and keeps a nonblocking status visible", async () => {
     const acknowledged: string[] = [];
     const capabilities = create_unavailable_capabilities();
@@ -445,6 +485,8 @@ describe("SettingsView gateway settings", () => {
         acknowledgments = { ...acknowledgments, [origin]: "2026-08-07T00:00:00.000Z" };
         return Promise.resolve();
       },
+      set_gateway_token: capabilities.settings.set_gateway_token,
+      clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
       export_archive: capabilities.settings.export_archive,
       import_archive: capabilities.settings.import_archive,
@@ -482,6 +524,8 @@ describe("SettingsView automation settings", () => {
         return Promise.resolve({ ...DEFAULT_SETTINGS, ...partial });
       },
       acknowledge_http_origin: capabilities.settings.acknowledge_http_origin,
+      set_gateway_token: capabilities.settings.set_gateway_token,
+      clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
       export_archive: capabilities.settings.export_archive,
       import_archive: capabilities.settings.import_archive,
@@ -537,6 +581,8 @@ describe("SettingsView appearance settings", () => {
         return Promise.resolve({ ...DEFAULT_SETTINGS, ...partial });
       },
       acknowledge_http_origin: capabilities.settings.acknowledge_http_origin,
+      set_gateway_token: capabilities.settings.set_gateway_token,
+      clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
       export_archive: capabilities.settings.export_archive,
       import_archive: capabilities.settings.import_archive,

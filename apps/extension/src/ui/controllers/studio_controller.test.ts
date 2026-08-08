@@ -268,6 +268,8 @@ function build_mock_studio() {
     subscribe: settings_harness.sub.subscribe,
     update: vi.fn(),
     acknowledge_http_origin: vi.fn(),
+    set_gateway_token: vi.fn(),
+    clear_gateway_token: vi.fn(),
     set_vocabulary_update_channel: vi.fn(),
     export_archive: vi.fn(),
     import_archive: vi.fn(),

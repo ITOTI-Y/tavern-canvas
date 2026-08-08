@@ -138,6 +138,10 @@ export interface StudioController {
    * .http_acknowledgments` reflects the host adapter's own persisted timestamp rather than a
    * client-guessed one. */
   acknowledge_http_origin(origin: string): Promise<void>;
+  /** Stores the Gateway bearer token in host secret storage and refreshes the settings snapshot
+   * so the view renders the persisted reference rather than a client-guessed one. */
+  set_gateway_token(plaintext_value: string): Promise<void>;
+  clear_gateway_token(): Promise<void>;
   set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
   export_settings_archive(): Promise<Blob>;
   import_settings_archive(archive: Blob): Promise<void>;
@@ -1060,18 +1064,27 @@ class StudioControllerImpl implements StudioController {
   }
 
   acknowledge_http_origin(origin: string): Promise<void> {
-    return this.#capabilities.settings
-      .acknowledge_http_origin(origin)
-      .then(() => this.#capabilities.settings.load())
-      .then((snapshot) => {
-        if (this.#stopped) {
-          return;
-        }
-        this.#patch_settings({
-          settings: snapshot.settings,
-          vocabulary_update_channel: snapshot.vocabulary_update_channel,
-        });
-      });
+    return this.#reload_settings(this.#capabilities.settings.acknowledge_http_origin(origin));
+  }
+
+  set_gateway_token(plaintext_value: string): Promise<void> {
+    return this.#reload_settings(this.#capabilities.settings.set_gateway_token(plaintext_value));
+  }
+
+  clear_gateway_token(): Promise<void> {
+    return this.#reload_settings(this.#capabilities.settings.clear_gateway_token());
+  }
+
+  async #reload_settings(pending: Promise<void>): Promise<void> {
+    await pending;
+    const snapshot = await this.#capabilities.settings.load();
+    if (this.#stopped) {
+      return;
+    }
+    this.#patch_settings({
+      settings: snapshot.settings,
+      vocabulary_update_channel: snapshot.vocabulary_update_channel,
+    });
   }
 
   async set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void> {

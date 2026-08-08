@@ -574,9 +574,13 @@ const settings = {
     protocol_label: "协议",
     detect_action: "检测协议",
     token_secret_label: "Token 密钥引用",
-    auto_generate_action: "生成 token",
     token_not_set: "尚未配置 token",
     endpoint_hint: "你的 provider 配置将通过这个 Gateway 地址连接。",
+    token_label: "Gateway 访问 token",
+    token_hint:
+      "该 Gateway 配置的 bearer token。它会直接写入宿主密钥存储，TavernCanvas 只保留一个引用，绝不显示或导出其值。",
+    token_save_action: "保存 token",
+    token_clear_action: "清除 token",
   },
   http_risk: {
     warning_title: "此连接未加密",

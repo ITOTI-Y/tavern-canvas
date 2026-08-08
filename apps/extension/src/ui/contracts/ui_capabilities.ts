@@ -409,6 +409,9 @@ export interface SettingsCapability {
   update(partial: Partial<TavernCanvasSettings>): Promise<TavernCanvasSettings>;
   /** Records disclosure acknowledgment for one normalized origin's plaintext HTTP risk. */
   acknowledge_http_origin(origin: string): Promise<void>;
+  /** Hands the Gateway bearer token to host secret storage; settings keep only its reference. */
+  set_gateway_token(plaintext_value: string): Promise<void>;
+  clear_gateway_token(): Promise<void>;
   set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
   export_archive(): Promise<Blob>;
   import_archive(archive: Blob): Promise<void>;

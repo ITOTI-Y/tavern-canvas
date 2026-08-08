@@ -201,6 +201,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     subscribe: no_subscription,
     update: unavailable_command,
     acknowledge_http_origin: unavailable_command,
+    set_gateway_token: unavailable_command,
+    clear_gateway_token: unavailable_command,
     set_vocabulary_update_channel: unavailable_command,
     export_archive: unavailable_command,
     import_archive: unavailable_command,

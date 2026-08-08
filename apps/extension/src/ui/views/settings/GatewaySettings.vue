@@ -39,6 +39,9 @@ const endpoint_draft = ref(props.settings?.gateway.endpoint ?? "");
 const endpoint_error = ref<string | null>(null);
 const save_pending = ref(false);
 const acknowledge_pending = ref(false);
+const token_draft = ref("");
+const token_pending = ref(false);
+const token_error = ref<string | null>(null);
 
 watch(
   () => props.settings?.gateway.endpoint ?? "",
@@ -116,6 +119,37 @@ async function acknowledge(): Promise<void> {
     await props.controller.acknowledge_http_origin(current.origin);
   } finally {
     acknowledge_pending.value = false;
+  }
+}
+
+/** The plaintext never lands in settings: the controller hands it to host secret storage and only
+ * the returned reference is rendered. The draft is cleared as soon as the write resolves. */
+async function save_token(): Promise<void> {
+  const value = token_draft.value.trim();
+  token_error.value = null;
+  if (value.length === 0 || token_pending.value) {
+    return;
+  }
+  token_pending.value = true;
+  try {
+    await props.controller.set_gateway_token(value);
+    token_draft.value = "";
+  } catch {
+    token_error.value = t("errors.validation_required");
+  } finally {
+    token_pending.value = false;
+  }
+}
+
+async function clear_token(): Promise<void> {
+  if (token_pending.value) {
+    return;
+  }
+  token_pending.value = true;
+  try {
+    await props.controller.clear_gateway_token();
+  } finally {
+    token_pending.value = false;
   }
 }
 
@@ -204,13 +238,42 @@ const is_detecting = computed(() => props.connectionTestCommand.status === "pend
           </span>
         </template>
       </FieldGroup>
-      <p :class="styles.description">
-        {{
-          t("errors.capability_blocked", {
-            capability: t("settings.gateway.auto_generate_action"),
-          })
-        }}
-      </p>
+
+      <FieldGroup
+        :label="t('settings.gateway.token_label')"
+        :hint="t('settings.gateway.token_hint')"
+        :error="token_error"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <input
+            :id="fieldId"
+            v-model="token_draft"
+            type="password"
+            autocomplete="off"
+            :aria-describedby="describedBy"
+            :class="styles.typed_confirm_input"
+            data-testid="gateway-token-input"
+          />
+        </template>
+      </FieldGroup>
+
+      <div :class="styles.row">
+        <AppButton
+          :label="t('settings.gateway.token_save_action')"
+          :pending="token_pending"
+          :disabled="token_draft.trim().length === 0"
+          data-testid="gateway-token-save"
+          @click="save_token"
+        />
+        <AppButton
+          v-if="settings?.gateway.token_secret_id"
+          :label="t('settings.gateway.token_clear_action')"
+          variant="secondary"
+          :pending="token_pending"
+          data-testid="gateway-token-clear"
+          @click="clear_token"
+        />
+      </div>
     </div>
   </div>
 </template>

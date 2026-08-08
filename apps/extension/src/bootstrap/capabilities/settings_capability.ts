@@ -1,6 +1,10 @@
-import type { TavernCanvasSettings } from "@tavern-canvas/contracts";
+import {
+  derive_gateway_credential_reference,
+  type TavernCanvasSettings,
+} from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
 
+import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
 import type { SillyTavernSettings } from "../../storage/sillytavern_settings.js";
 import { acknowledge_http_origin } from "../../transport/http_acknowledgment.js";
 import type {
@@ -36,7 +40,11 @@ export interface SettingsCapabilityDeps {
   readonly database: StorageDatabase | null;
   readonly extension_version: string;
   readonly vocabulary_channel: VocabularyChannelState;
+  readonly secrets: SecretDestinationPort | null;
 }
+
+const SECRET_DESTINATION_UNAVAILABLE =
+  "This host exposes no secret vault, so a Gateway token cannot be stored anywhere but the page";
 
 function require_database(database: StorageDatabase | null): StorageDatabase {
   if (database === null) {
@@ -79,6 +87,27 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
           ),
         },
       });
+      return deps.settings.flush();
+    },
+    /**
+     * The plaintext token goes straight to host secret storage; settings keep only the reference,
+     * mirroring how an LLM connection's API key is set. There is no read path back through this
+     * capability, so nothing the UI or a support bundle can reach ever holds the value.
+     */
+    async set_gateway_token(plaintext_value) {
+      if (deps.secrets === null) {
+        throw capability_unavailable_error(SECRET_DESTINATION_UNAVAILABLE);
+      }
+      const current = deps.settings.get_settings();
+      const reference = derive_gateway_credential_reference(current.active_namespace);
+      await deps.secrets.write_secret(reference, plaintext_value);
+      apply({ gateway: { ...current.gateway, token_secret_id: reference } });
+      return deps.settings.flush();
+    },
+    /** Drops the reference only: the host vault owns the value and its own removal. */
+    clear_gateway_token() {
+      const current = deps.settings.get_settings();
+      apply({ gateway: { ...current.gateway, token_secret_id: null } });
       return deps.settings.flush();
     },
     set_vocabulary_update_channel(channel) {

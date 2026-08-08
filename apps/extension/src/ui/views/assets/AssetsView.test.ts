@@ -130,6 +130,8 @@ function build_controller(state: StudioState): StudioController & { state: Studi
       () => Promise.resolve({}) as ReturnType<StudioController["test_provider_profile_connection"]>,
     ),
     acknowledge_http_origin: vi.fn(() => Promise.resolve()),
+    set_gateway_token: vi.fn(() => Promise.resolve()),
+    clear_gateway_token: vi.fn(() => Promise.resolve()),
     set_vocabulary_update_channel: vi.fn(() => Promise.resolve()),
     export_settings_archive: vi.fn(() => Promise.resolve(new Blob())),
     import_settings_archive: vi.fn(() => Promise.resolve()),
