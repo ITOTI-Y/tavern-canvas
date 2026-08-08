@@ -1,4 +1,4 @@
-import { n as e } from "./src-BPUc1ma2.js";
+import { n as e } from "./src-CpgRWEjb.js";
 //#region src/modules/vocabulary/vocabulary_client.ts
 var t = 120, n = class extends Error {
 	code;

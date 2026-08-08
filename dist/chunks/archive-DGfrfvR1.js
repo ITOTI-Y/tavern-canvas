@@ -1,6 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
-import { d as n, f as r, l as i, p as a, u as o } from "./src-BPUc1ma2.js";
-import { a as s, l as c, m as l, u, y as d } from "./business_repositories-CBdwxJT1.js";
+import { d as n, f as r, l as i, p as a, u as o } from "./src-CpgRWEjb.js";
+import { b as s } from "./job_repository-CcjjS_PI.js";
+import { a as c, c as l, d as u, l as d } from "./business_repositories-CDvcbNGU.js";
 //#region ../../packages/storage/src/archive/archive_manifest.ts
 var f = "manifest.json", p = "checksums.json", m = "assets", h = /^assets\/([a-f0-9]{64})\.([a-z0-9]{1,8})$/u;
 function g(e) {
@@ -118,7 +119,7 @@ async function M(e) {
 	return typeof Blob < "u" && e instanceof Blob ? new Uint8Array(await e.arrayBuffer()) : new Uint8Array(e);
 }
 async function N(e) {
-	let { database: t, namespace: r, extension_version: i, signal: a } = e, o = e.created_at ?? (/* @__PURE__ */ new Date()).toISOString(), c = s(t), l = new TextEncoder(), u = await O(), d = new u.ZipWriter(new u.BlobWriter("application/zip"), {
+	let { database: t, namespace: r, extension_version: i, signal: a } = e, o = e.created_at ?? (/* @__PURE__ */ new Date()).toISOString(), s = c(t), l = new TextEncoder(), u = await O(), d = new u.ZipWriter(new u.BlobWriter("application/zip"), {
 		level: 9,
 		...a === void 0 ? {} : { signal: a }
 	});
@@ -126,16 +127,16 @@ async function N(e) {
 		let e = T(), t = {};
 		for (let i of n) {
 			j(a);
-			let n = await c[i].list(r), o = n.map((e) => JSON.stringify(e)).join("\n"), s = l.encode(n.length === 0 ? "" : `${o}\n`), f = g(i);
-			await d.add(f, new u.Uint8ArrayReader(s)), t[f] = {
-				sha256: w(s),
-				byte_length: s.byteLength
+			let n = await s[i].list(r), o = n.map((e) => JSON.stringify(e)).join("\n"), c = l.encode(n.length === 0 ? "" : `${o}\n`), f = g(i);
+			await d.add(f, new u.Uint8ArrayReader(c)), t[f] = {
+				sha256: w(c),
+				byte_length: c.byteLength
 			}, e[i] = n.length;
 		}
-		let s = await c.image_records.list(r), m = [...new Set(s.map((e) => e.sha256))].sort();
+		let c = await s.image_records.list(r), m = [...new Set(c.map((e) => e.sha256))].sort();
 		for (let e of m) {
 			j(a);
-			let n = await c.image_blobs.get(e);
+			let n = await s.image_blobs.get(e);
 			if (n === null) throw new k("missing_asset_blob", `image_blobs is missing content referenced by image_records: ${e}`);
 			let r = await M(n.blob), i = y(e, C(r));
 			await d.add(i, new u.Uint8ArrayReader(r)), t[i] = {
@@ -233,7 +234,7 @@ function W(e, t, n) {
 	if (t.byteLength !== r.byte_length || w(t) !== r.sha256) throw new P("checksum_mismatch", `Checksum mismatch for ${e}`);
 }
 function G(e) {
-	return e === "image_records" ? c : d[e];
+	return e === "image_records" ? l : s[e];
 }
 function K(e, t, n) {
 	let r = new TextDecoder().decode(n);
@@ -261,7 +262,7 @@ function q(e, t) {
 async function J(e, t, n, r, i) {
 	let a = await e.get(t);
 	if (a === null) {
-		let a = u(n), o = new Uint8Array(n);
+		let a = d(n), o = new Uint8Array(n);
 		await e.create({
 			sha256: t,
 			ref_count: r,
@@ -282,7 +283,7 @@ async function J(e, t, n, r, i) {
 async function Y(e, t, r) {
 	for (let i of n) {
 		let n = await t[i].list(r);
-		n.length !== 0 && await l(e, [i], async (e) => {
+		n.length !== 0 && await u(e, [i], async (e) => {
 			for (let a of n) await t[i].delete(r, a.id, e);
 		});
 	}
@@ -301,34 +302,34 @@ async function X(e, t) {
 	}
 }
 async function Z(e) {
-	let { database: t, signal: r } = e, i = await O(), a = await L(e.archive), o = new i.ZipReader(a, r === void 0 ? {} : { signal: r }), c;
+	let { database: t, signal: r } = e, i = await O(), a = await L(e.archive), o = new i.ZipReader(a, r === void 0 ? {} : { signal: r }), s;
 	try {
-		c = await o.getEntries();
+		s = await o.getEntries();
 	} catch (e) {
 		throw await R(o), F(e) || r?.aborted === !0 ? new P("cancelled", "Import was cancelled") : new P("invalid_input", `Archive could not be read: ${e instanceof Error ? e.message : String(e)}`);
 	}
-	let u = /* @__PURE__ */ new Map();
-	for (let e of c) {
+	let l = /* @__PURE__ */ new Map();
+	for (let e of s) {
 		if (e.directory) throw await R(o), new P("unexpected_path", `Unexpected directory entry: ${e.filename}`);
-		if (u.has(e.filename)) throw await R(o), new P("duplicate_path", `Duplicate path in archive: ${e.filename}`);
+		if (l.has(e.filename)) throw await R(o), new P("duplicate_path", `Duplicate path in archive: ${e.filename}`);
 		if (!v(e.filename)) throw await R(o), new P("unexpected_path", `Unexpected path in archive: ${e.filename}`);
-		u.set(e.filename, e);
+		l.set(e.filename, e);
 	}
-	let d = `import:${crypto.randomUUID()}`, p = s(t), m = /* @__PURE__ */ new Map();
+	let d = `import:${crypto.randomUUID()}`, p = c(t), m = /* @__PURE__ */ new Map();
 	try {
-		let e = await V(u, r), i = await H(u, r);
-		U(u, i), W(f, e.bytes, i);
+		let e = await V(l, r), i = await H(l, r);
+		U(l, i), W(f, e.bytes, i);
 		let a = e.manifest, s = T(), c = /* @__PURE__ */ new Set(), h = /* @__PURE__ */ new Set(), _ = /* @__PURE__ */ new Map();
 		for (let e of n) {
 			I(r);
-			let n = g(e), a = u.get(n);
+			let n = g(e), a = l.get(n);
 			if (a === void 0) throw new P("missing_file", `Archive is missing ${n}`);
 			let o = await z(a, r);
 			W(n, o, i);
 			let f = K(e, n, o);
 			s[e] = f.length;
 			let m = f.map((e) => q(e, d));
-			if (await l(t, [e], async (t) => {
+			if (await u(t, [e], async (t) => {
 				for (let n of m) await p[e].create(d, n, t);
 			}), e === "vocabularies") for (let e of m) c.add(e.id);
 			else if (e === "vocabulary_groups") {
@@ -339,7 +340,7 @@ async function Z(e) {
 			}
 		}
 		let v = 0, y = /* @__PURE__ */ new Set();
-		for (let [e, t] of u) {
+		for (let [e, t] of l) {
 			let n = b(e);
 			if (n === null) continue;
 			I(r);
