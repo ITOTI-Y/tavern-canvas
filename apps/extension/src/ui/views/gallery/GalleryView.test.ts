@@ -247,6 +247,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     retry_generation: vi.fn(() => Promise.resolve()),
     save_prompt_preset: vi.fn(() => Promise.resolve()),
     install_vocabulary_package: vi.fn(() => Promise.resolve()),
+    load_vocabulary_catalog: vi.fn(() => Promise.resolve()),
     update_settings: vi.fn(() => Promise.resolve()),
     test_diagnostics_connection: vi.fn(() => Promise.resolve()),
     export_support_bundle: vi.fn(() => Promise.resolve()),

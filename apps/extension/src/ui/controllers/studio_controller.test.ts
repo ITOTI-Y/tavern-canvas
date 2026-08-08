@@ -290,6 +290,7 @@ function build_mock_studio() {
 
   return {
     capabilities,
+    vocabulary_load,
     generation: { ...generation_harness, submit, cancel, retry },
     profiles: profiles_harness,
     llm_connections: llm_connections_harness,
@@ -333,6 +334,34 @@ function build_submit_command(): GenerationSubmitCommand {
 }
 
 describe("create_studio_controller", () => {
+  it("never touches the remote vocabulary catalog while starting", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    expect(
+      mock.vocabulary_load,
+      "opening the studio must not reach any origin the user did not ask it to",
+    ).not.toHaveBeenCalled();
+    expect(controller.state.assets.vocabulary_catalog).toEqual([]);
+  });
+
+  it("loads the vocabulary catalog when the panel asks for it", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    await controller.load_vocabulary_catalog();
+
+    expect(mock.vocabulary_load).toHaveBeenCalledTimes(1);
+    expect(controller.state.loading.has("vocabulary")).toBe(false);
+  });
+
   it("resolves each capability's initial load independently, not gated on the slowest one", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });

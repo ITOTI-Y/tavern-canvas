@@ -302,10 +302,15 @@ test.describe("the page stays inert", () => {
     page,
   }) => {
     const foreign: string[] = [];
+    const catalog: string[] = [];
     await page.route("**/*", async (route) => {
-      const url = new URL(route.request().url());
+      const request_url = route.request().url();
+      const url = new URL(request_url);
       if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
-        foreign.push(route.request().url());
+        foreign.push(request_url);
+      }
+      if (request_url.includes("catalog.json")) {
+        catalog.push(request_url);
       }
       await route.continue();
     });
@@ -319,6 +324,13 @@ test.describe("the page stays inert", () => {
     expect(
       foreign,
       "loading the extension must not reach any origin the user did not ask it to",
+    ).toEqual([]);
+    // Named separately from the origin check: this is the exact request a previously eager
+    // `studio_controller.start()` made, and it would still be wrong if the catalog ever moved to
+    // an origin the loop above happens to allow.
+    expect(
+      catalog,
+      "the vocabulary catalog is fetched when the vocabulary panel opens, never during bootstrap",
     ).toEqual([]);
   });
 

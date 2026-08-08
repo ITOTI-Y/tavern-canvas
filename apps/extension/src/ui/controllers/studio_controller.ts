@@ -105,6 +105,9 @@ export interface StudioController {
     entry: VocabularyCatalogEntry,
     on_progress?: (progress: VocabularyInstallProgressView) => void,
   ): Promise<void>;
+  /** Fetches the remote catalog on demand. Never called during bootstrap -- see the implementation
+   * for why the studio must open without touching the network. */
+  load_vocabulary_catalog(): Promise<void>;
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void>;
   test_diagnostics_connection(): Promise<void>;
   export_support_bundle(): Promise<void>;
@@ -655,6 +658,22 @@ class StudioControllerImpl implements StudioController {
     this.#patch_settings({ settings: event.settings });
   }
 
+  /**
+   * Deliberately absent from `start()`: the vocabulary catalog lives on a remote host, and loading
+   * it eagerly turned opening the studio into an unsolicited third-party request disclosing the
+   * user's IP and extension version on every chat session. Called when the vocabulary panel is
+   * opened or the user asks for updates -- both genuine user actions.
+   */
+  load_vocabulary_catalog(): Promise<void> {
+    return this.#load_slice(
+      "vocabulary",
+      () => this.#capabilities.vocabulary.load(),
+      (vocabulary_catalog) => {
+        this.#patch_assets({ vocabulary_catalog });
+      },
+    );
+  }
+
   async start(): Promise<void> {
     this.#unsubscribes = [
       this.#capabilities.generation.subscribe((event) => {
@@ -754,13 +773,6 @@ class StudioControllerImpl implements StudioController {
         () => this.#capabilities.gallery.load(),
         (records) => {
           this.#patch_gallery({ records });
-        },
-      ),
-      this.#load_slice(
-        "vocabulary",
-        () => this.#capabilities.vocabulary.load(),
-        (vocabulary_catalog) => {
-          this.#patch_assets({ vocabulary_catalog });
         },
       ),
       this.#load_slice(

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, Copy, Download } from "lucide-vue-next";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { VocabularyCatalogEntry, VocabularySearchResult } from "@tavern-canvas/contracts";
 
@@ -33,6 +33,12 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+
+// The catalog is fetched from a remote host, so it is loaded here rather than at bootstrap:
+// opening this panel is the user asking for it. See StudioController.load_vocabulary_catalog.
+onMounted(() => {
+  void props.controller.load_vocabulary_catalog();
+});
 
 const NSFW_PATTERN = /nsfw|adult|explicit/iu;
 
