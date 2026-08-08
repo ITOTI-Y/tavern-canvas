@@ -287,6 +287,28 @@ describe("compose_studio_capabilities", () => {
     await composition.dispose();
   });
 
+  it("registers the Tauri WorldInfo activation module only when the host advertises it", async () => {
+    const standard = await compose();
+    expect(standard.modules.map((module) => module.module_id)).not.toContain(
+      "tauri_world_info_activation",
+    );
+    await standard.dispose();
+
+    const tauri = await compose({
+      probe: {
+        ...READY_PROBE,
+        matrix: {
+          ...(READY_PROBE.ready ? READY_PROBE.matrix : {}),
+          tauri_world_info_activation: { available: true },
+        },
+      } as BootstrapProbeResult,
+    });
+    expect(tauri.modules.map((module) => module.module_id)).toEqual([
+      "tauri_world_info_activation",
+    ]);
+    await tauri.dispose();
+  });
+
   it("persists a provider profile through the real repository and reads it back", async () => {
     const composition = await compose();
     const profile_id = "11111111-1111-4111-8111-111111111111";
