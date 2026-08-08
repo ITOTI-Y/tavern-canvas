@@ -73,6 +73,15 @@ export interface GatewayCancelOutcome {
   readonly cancel_error: string | null;
 }
 
+export interface GatewayGenerationOutcome {
+  readonly image_ids: readonly string[];
+  readonly media_types: readonly string[];
+  readonly byte_lengths: readonly number[];
+  readonly marked_running: boolean;
+  readonly token_resolutions: number;
+  readonly error: string | null;
+}
+
 export interface SecurityProbes {
   /** The raw capabilities document the REAL GatewayTransport read over real HTTP. */
   gateway_capabilities(origin: string, token: string): Promise<Record<string, unknown>>;
@@ -91,6 +100,16 @@ export interface SecurityProbes {
     token: string,
     options: GatewayJobOptions,
   ): Promise<GatewayCancelOutcome>;
+  /**
+   * Drives the REAL `GatewayJobExecutor` -- the piece that makes a configured Gateway a working
+   * generation transport rather than a dead one -- across the real cross-origin boundary: submit,
+   * SSE, asset download, and the Stage 04 persistence call the queue's executor contract requires.
+   */
+  gateway_generation(
+    origin: string,
+    token: string,
+    options: GatewayJobOptions,
+  ): Promise<GatewayGenerationOutcome>;
   /**
    * Drives the REAL `VocabularyCatalogClient` against a catalog whose published manifest hash does
    * not match the package it serves, through the class's own documented `catalog_url`/`fetch_impl`
@@ -131,6 +150,8 @@ export async function create_security_probes(
     { VocabularyCatalogClient },
     { VocabularyPackageStore },
     { GatewayTransport },
+    { GatewayJobExecutor },
+    { MediaExecutionPlanRegistry },
   ] = await Promise.all([
     import("../../../apps/extension/src/bootstrap/compose_capabilities.js"),
     import("../../../apps/extension/src/host/index.js"),
@@ -143,6 +164,8 @@ export async function create_security_probes(
     import("../../../apps/extension/src/modules/vocabulary/vocabulary_catalog_client.js"),
     import("@tavern-canvas/vocabulary"),
     import("../../../apps/extension/src/transport/gateway_transport.js"),
+    import("../../../apps/extension/src/transport/gateway_job_executor.js"),
+    import("../../../apps/extension/src/modules/media/media_command_service.js"),
   ]);
 
   /**
@@ -252,6 +275,84 @@ export async function create_security_probes(
         return { state: finished.state, polled: instrumented.poll_count() > 0, error: null };
       } catch (thrown) {
         return { state: "threw", polled: instrumented.poll_count() > 0, error: String(thrown) };
+      }
+    },
+
+    async gateway_generation(origin, token, job_options) {
+      const plans = new MediaExecutionPlanRegistry();
+      plans.register(job_options.request_id, {
+        kind: "adapter",
+        request: gateway_request(job_options.request_id) as never,
+      });
+      const stored: { id: string; bytes: Uint8Array; claimed_media_type: string }[] = [];
+      let token_resolutions = 0;
+      let marked_running = false;
+      const executor = new GatewayJobExecutor({
+        endpoint: origin,
+        http_acknowledgments: { [new URL(origin).origin]: "2026-08-08T00:00:00.000Z" },
+        access_token: () => {
+          token_resolutions += 1;
+          return Promise.resolve(token);
+        },
+        plans,
+        store: {
+          put_image: (input) => {
+            stored.push(input);
+            return Promise.resolve({ id: input.id });
+          },
+          read_image: () => Promise.resolve(null),
+        },
+        ids: { next: () => crypto.randomUUID() },
+        clock: { now: () => new Date().toISOString() },
+        resolve_source_message: (job) => ({
+          chat_id: job.chat_id,
+          message_id: String(job.requested_swipe_id),
+          swipe_id: job.requested_swipe_id,
+        }),
+      });
+
+      const job = {
+        job_id: crypto.randomUUID(),
+        request_id: job_options.request_id,
+        request_digest: "c".repeat(64),
+        generation_anchor: "b".repeat(64),
+        source_anchor: "d".repeat(64),
+        chat_id: "chat-a",
+        requested_swipe_id: 0,
+        provider_id: "sd_webui",
+        arguments: { generation_anchor: "b".repeat(64), scene_description: "gateway e2e prompt" },
+        state: "submitting",
+        created_at: "2026-08-08T00:00:00.000Z",
+        updated_at: "2026-08-08T00:00:00.000Z",
+        error: null,
+        image_ids: [],
+      } as const;
+
+      try {
+        const result = await executor.execute(job, {
+          signal: new AbortController().signal,
+          mark_running: () => {
+            marked_running = true;
+            return Promise.resolve();
+          },
+        });
+        return {
+          image_ids: [...result.image_ids],
+          media_types: stored.map((entry) => entry.claimed_media_type),
+          byte_lengths: stored.map((entry) => entry.bytes.byteLength),
+          marked_running,
+          token_resolutions,
+          error: null,
+        };
+      } catch (thrown) {
+        return {
+          image_ids: [],
+          media_types: [],
+          byte_lengths: [],
+          marked_running,
+          token_resolutions,
+          error: String(thrown),
+        };
       }
     },
 

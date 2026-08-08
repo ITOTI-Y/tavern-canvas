@@ -210,6 +210,27 @@ test.describe("criterion 10: no provider secret reaches the client and the clien
     expect(serialized.toLowerCase()).not.toContain("base_url");
   });
 
+  test("a generation job runs end to end through the real client executor", async ({ page }) => {
+    await open_gateway_client(page);
+
+    const outcome = await page.evaluate(
+      async ([origin, token]) =>
+        window.__TAVERN_CANVAS_E2E__.probes.gateway_generation(String(origin), String(token), {
+          request_id: "77777777-7777-4777-8777-777777777775",
+        }),
+      [gateway.origin, GATEWAY_TOKEN],
+    );
+
+    expect(outcome.error).toBeNull();
+    expect(outcome.image_ids).toHaveLength(1);
+    expect(outcome.media_types).toEqual(["image/png"]);
+    expect(outcome.byte_lengths[0]).toBeGreaterThan(0);
+    expect(outcome.marked_running).toBe(true);
+    // The token is read from host storage once per job and never cached across jobs.
+    expect(outcome.token_resolutions).toBe(1);
+    expect(upstream_request_paths).toEqual(["/sdapi/v1/txt2img"]);
+  });
+
   test("a submitted job reaches the upstream the Gateway chose, not one the client named", async ({
     page,
   }) => {
