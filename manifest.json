@@ -11,6 +11,7 @@
   "homePage": "https://github.com/ITOTI-Y/tavern-canvas",
   "auto_update": true,
   "minimum_client_version": "1.18.0",
+  "minimum_tavern_helper_version": "4.9.1",
   "i18n": {
     "en": "i18n/en.json"
   }

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "vite build && node scripts/assert_bundle.mjs",
+    "build:debug": "vite build --mode debug && node scripts/assert_bundle.mjs",
     "test": "vitest run --root ../.. --project apps apps/extension",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },

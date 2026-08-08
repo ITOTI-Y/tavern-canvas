@@ -3,6 +3,10 @@ node_modules/
 **/dist/
 !/dist/
 !/dist/**
+# Source maps are built (build.sourcemap: "hidden") so tools/bundle_budget can attribute the
+# initial chunk's modules, but they are neither committed nor packaged: a released extension that
+# ships a map hands out the whole first-party source tree.
+/dist/**/*.map
 # dist/vocabulary/ is intentionally NOT ignored: Stage 07 release commits the full dist/ tree (see plan 07 §release)
 .vite/
 coverage/

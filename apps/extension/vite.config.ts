@@ -39,7 +39,10 @@ export default defineConfig(({ mode }) => ({
     manifest: true,
     assetsDir: "assets",
     cssCodeSplit: false,
-    sourcemap: mode !== "release",
+    // "hidden" emits the maps tools/bundle_budget needs to attribute the initial chunk's modules
+    // but writes no `sourceMappingURL` into the shipped JS, so a released extension neither
+    // carries nor points at the first-party source tree. `--mode debug` opts back in locally.
+    sourcemap: mode === "debug" ? true : "hidden",
     // Explicit rather than relying on Vite's default: the committed
     // vocabulary baseline (public/vocabulary/baseline) must reach dist/ as
     // plain static files, byte-identical, for the extension's bundled
