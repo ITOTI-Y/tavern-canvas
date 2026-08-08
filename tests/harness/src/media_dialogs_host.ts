@@ -119,14 +119,15 @@ function create_deps(
   const plans = new MediaExecutionPlanRegistry();
   const puts: string[] = [];
   const executor = new MediaJobExecutor({
-    adapters,
+    load_adapters: () => Promise.resolve(adapters),
     profiles: {
-      resolve: () => ({
-        profile_id: "p",
-        provider_id: "sd_webui",
-        model_allowlist: [],
-        output_mime_type_allowlist: [],
-      }),
+      resolve: () =>
+        Promise.resolve({
+          profile_id: "p",
+          provider_id: "sd_webui",
+          model_allowlist: [],
+          output_mime_type_allowlist: [],
+        }),
     },
     transport,
     assets: { read: () => Promise.reject(new Error("unused")) },

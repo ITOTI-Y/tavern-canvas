@@ -7,7 +7,7 @@ import {
   NOT_REQUIRED_MIGRATION_ID,
   type MigrationJournalState,
 } from "../../migration/migration_journal.js";
-import { run_migration } from "../../migration/migration_runner.js";
+import type { LegacyImageResolverPort } from "../../migration/legacy_sources.js";
 import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
 import type { SillyTavernSettings } from "../../storage/sillytavern_settings.js";
 import type {
@@ -30,7 +30,7 @@ export interface MigrationCapabilityDeps {
   readonly database: StorageDatabase;
   readonly settings: SillyTavernSettings;
   readonly legacy_source: LegacySourcePort;
-  readonly image_resolver: Parameters<typeof run_migration>[0]["image_resolver"];
+  readonly image_resolver: LegacyImageResolverPort;
   readonly secrets: SecretDestinationPort | null;
 }
 
@@ -38,6 +38,9 @@ export interface MigrationCapabilityDeps {
  * Reads the migration journal that `run_migration` itself writes, so the Studio reflects the real
  * resumable state rather than a separately-tracked copy. `run_migration` is idempotent and resumes
  * from the journal, which is why `retry()` simply re-invokes it.
+ *
+ * The runner and its whole v2 converter graph are imported only when a migration actually runs:
+ * every session pays for them otherwise, and almost no session needs them.
  */
 export function create_migration_capability(deps: MigrationCapabilityDeps): MigrationCapability {
   const events = new DomainEventEmitter<MigrationDomainEvent>();
@@ -94,6 +97,7 @@ export function create_migration_capability(deps: MigrationCapabilityDeps): Migr
     load: read_snapshot,
     subscribe: (handler) => events.subscribe(handler),
     async retry() {
+      const { run_migration } = await import("../../migration/migration_runner.js");
       await run_migration({
         database: deps.database,
         settings: deps.settings,

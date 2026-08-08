@@ -144,11 +144,11 @@ export interface SourceMessageIdentity {
 const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
 export interface ProviderProfileResolver {
-  resolve(provider_id: ProviderId): ProviderProfile;
+  resolve(provider_id: ProviderId): Promise<ProviderProfile>;
 }
 
 export interface MediaJobExecutorDeps {
-  readonly adapters: Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>;
+  readonly load_adapters: () => Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>>;
   readonly profiles: ProviderProfileResolver;
   readonly transport: ProviderTransport;
   readonly assets: ProviderAssetReader;
@@ -202,12 +202,12 @@ export class MediaJobExecutor implements JobExecutor {
     request: ImageGenerationRequest,
     control: JobExecutionControl,
   ): Promise<readonly ProviderOutputAsset[]> {
-    const adapter = this.#deps.adapters[request.provider_id];
+    const adapter = (await this.#deps.load_adapters())[request.provider_id];
     if (adapter === undefined) {
       throw new JobExecutorFailure({ code: "provider_unavailable", retryable: false });
     }
     const context: ProviderExecutionContext = {
-      profile: this.#deps.profiles.resolve(request.provider_id),
+      profile: await this.#deps.profiles.resolve(request.provider_id),
       transport: this.#deps.transport,
       assets: this.#deps.assets,
       signal: control.signal,

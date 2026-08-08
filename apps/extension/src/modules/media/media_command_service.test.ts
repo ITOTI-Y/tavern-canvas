@@ -240,7 +240,7 @@ function create_harness(): Harness {
   const store = new MemoryImageStore();
   const plans = new MediaExecutionPlanRegistry();
   const profiles: ProviderProfileResolver = {
-    resolve: () => ({
+    resolve: () => Promise.resolve({
       profile_id: "profile-1",
       provider_id: "sd_webui",
       model_allowlist: ["sdxl-base"],
@@ -257,13 +257,14 @@ function create_harness(): Harness {
   const log: ProviderLogSink = { write: vi.fn() };
 
   const executor = new MediaJobExecutor({
-    adapters: {
-      sd_webui: adapter,
-      comfyui: adapter,
-      novelai: adapter,
-      openai_image: adapter,
-      google_image: adapter,
-    },
+    load_adapters: () =>
+      Promise.resolve({
+        sd_webui: adapter,
+        comfyui: adapter,
+        novelai: adapter,
+        openai_image: adapter,
+        google_image: adapter,
+      }),
     profiles,
     transport,
     assets,
@@ -474,14 +475,15 @@ describe("supported video generation", () => {
       fetch_remote_asset: vi.fn(async () => ({ status: 200, headers: {}, body: mp4_bytes })),
     };
     const executor = new MediaJobExecutor({
-      adapters: {},
+      load_adapters: () => Promise.resolve({}),
       profiles: {
-        resolve: () => ({
-          profile_id: "p",
-          provider_id: "google_image",
-          model_allowlist: [],
-          output_mime_type_allowlist: [],
-        }),
+        resolve: () =>
+          Promise.resolve({
+            profile_id: "p",
+            provider_id: "google_image",
+            model_allowlist: [],
+            output_mime_type_allowlist: [],
+          }),
       },
       transport,
       assets: { read: vi.fn() },
@@ -585,14 +587,15 @@ describe("failed upload / failed submission", () => {
       cancel: () => Promise.resolve(),
     };
     const executor = new MediaJobExecutor({
-      adapters: { sd_webui: failing_adapter },
+      load_adapters: () => Promise.resolve({ sd_webui: failing_adapter }),
       profiles: {
-        resolve: () => ({
-          profile_id: "p",
-          provider_id: "sd_webui",
-          model_allowlist: [],
-          output_mime_type_allowlist: [],
-        }),
+        resolve: () =>
+          Promise.resolve({
+            profile_id: "p",
+            provider_id: "sd_webui",
+            model_allowlist: [],
+            output_mime_type_allowlist: [],
+          }),
       },
       transport: { execute: vi.fn() },
       assets: { read: vi.fn() },

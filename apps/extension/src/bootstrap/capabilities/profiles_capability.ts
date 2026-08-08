@@ -1,7 +1,6 @@
 import type { ImageGenerationRequest, ProviderId, Uuid } from "@tavern-canvas/contracts";
 import { ProviderIdSchema } from "@tavern-canvas/contracts";
-import type { ProviderAdapter } from "@tavern-canvas/providers";
-import { ProviderAdapterError } from "@tavern-canvas/providers";
+import { ProviderAdapterError, type ProviderAdapter } from "@tavern-canvas/providers";
 import type { ProviderProfile, ProviderProfileRepository } from "@tavern-canvas/storage";
 
 import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
@@ -38,7 +37,9 @@ const ADAPTER_PROFILE_FIELD = "provider_profile";
 export interface ProfilesCapabilityDeps {
   readonly repository: ProviderProfileRepository;
   readonly namespace: () => string;
-  readonly adapters: Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>;
+  /** Resolved on demand: the five concrete adapters are a sixth of the initial bundle and are
+   * needed only by a connection test or a running job. */
+  readonly load_adapters: () => Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>>;
   readonly secrets: SecretDestinationPort | null;
   readonly now: () => string;
 }
@@ -121,7 +122,7 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
       const started_at = Date.now();
       const record = await read(profile_id);
       const provider_id = ProviderIdSchema.parse(record.provider_id);
-      const adapter = deps.adapters[provider_id];
+      const adapter = (await deps.load_adapters())[provider_id];
       if (adapter === undefined) {
         return {
           status: "failed",

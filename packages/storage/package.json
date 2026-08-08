@@ -5,7 +5,8 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./archive": "./src/archive.ts"
   },
   "scripts": {
     "test": "vitest run --root ../.. --project packages packages/storage",

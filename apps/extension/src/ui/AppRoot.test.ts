@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
@@ -9,6 +9,18 @@ import { en_messages } from "../i18n/locales/en.js";
 import { zh_cn_messages } from "../i18n/locales/zh_cn.js";
 import AppRoot from "./AppRoot.vue";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
+
+/** StudioShell reaches its four viewport-exclusive surfaces through `defineAsyncComponent`, so a
+ * mounted AppRoot only carries the rail once those loaders have resolved from the module cache. */
+beforeAll(async () => {
+  await Promise.all([
+    import("./shell/ContextInspector.vue"),
+    import("./shell/DesktopIconRail.vue"),
+    import("./shell/InspectorSheet.vue"),
+    import("./shell/MobileBottomNav.vue"),
+    import("./shell/RailTooltip.vue"),
+  ]);
+});
 
 // AppRoot's own `(prefers-color-scheme: dark)` query and StudioShell's desktop-breakpoint query
 // (use_shell_viewport.ts) both go through `window.matchMedia` -- a query-aware mock keeps these
@@ -139,7 +151,7 @@ describe("AppRoot normal studio state", () => {
       probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
     });
 
-    await nextTick();
+    await flushPromises();
 
     expect(wrapper.find('[data-startup-state="blocked"]').exists()).toBe(false);
     expect(wrapper.find('[data-startup-state="failed"]').exists()).toBe(false);
@@ -174,8 +186,11 @@ describe("AppRoot portal wiring", () => {
       status: { state: "ready", title: "ignored", message: "ignored" },
       probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
     });
-    await nextTick();
+    await flushPromises();
 
+    // The rail loads its tooltip primitives on first entry (DesktopIconRail).
+    await wrapper.get("nav").trigger("focusin");
+    await flushPromises();
     const first_rail_button = wrapper.findAll("nav > button")[0];
     await first_rail_button?.trigger("focus");
     await nextTick();

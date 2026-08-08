@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { DOMWrapper, mount } from "@vue/test-utils";
+import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
 import postcss, { type Rule } from "postcss";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
@@ -62,16 +62,22 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
 }
 
 /**
- * StudioWorkspace.vue reaches every route view through `defineAsyncComponent`. Mounting the shell
- * therefore starts a dynamic import that outlives a synchronous test body, and the load would still
- * be in flight when the environment tears down. Warming the three routes these tests mount keeps
- * every later loader resolving straight from the module cache.
+ * StudioWorkspace.vue reaches every route view through `defineAsyncComponent`, and StudioShell.vue
+ * does the same for its four viewport-exclusive surfaces. Mounting the shell therefore starts
+ * dynamic imports that outlive a synchronous test body, and the load would still be in flight when
+ * the environment tears down. Warming them keeps every later loader resolving straight from the
+ * module cache, which a microtask flush can then await.
  */
 beforeAll(async () => {
   await Promise.all([
     import("../views/workbench/WorkbenchView.vue"),
     import("../views/gallery/GalleryView.vue"),
     import("../views/settings/SettingsView.vue"),
+    import("./ContextInspector.vue"),
+    import("./DesktopIconRail.vue"),
+    import("./InspectorSheet.vue"),
+    import("./MobileBottomNav.vue"),
+    import("./RailTooltip.vue"),
   ]);
 });
 
@@ -82,7 +88,7 @@ interface MountOptions {
   readonly messages?: Record<string, unknown>;
 }
 
-function mount_shell(options: MountOptions = {}) {
+async function mount_shell(options: MountOptions = {}) {
   const i18n = createI18n({
     legacy: false,
     locale: options.locale ?? "en",
@@ -119,6 +125,9 @@ function mount_shell(options: MountOptions = {}) {
     attachTo: host,
   });
 
+  // The viewport-exclusive shell surfaces are async components (StudioShell.vue), so a mounted
+  // shell is only complete once their chunks resolve.
+  await flushPromises();
   return { wrapper, portal_target, host };
 }
 
@@ -232,8 +241,8 @@ describe("StudioShell layout contract (shell.module.css)", () => {
 // ---------------------------------------------------------------------------
 
 describe("StudioShell desktop navigation", () => {
-  it("exposes all six routes directly in the rail with a visible selected state", () => {
-    const { wrapper } = mount_shell({ state: { route: "gallery" } });
+  it("exposes all six routes directly in the rail with a visible selected state", async () => {
+    const { wrapper } = await mount_shell({ state: { route: "gallery" } });
     const buttons = wrapper.findAll("nav button[aria-current], nav button:not([aria-current])");
     const rail_buttons = wrapper.findAll("nav > button");
     expect(rail_buttons).toHaveLength(6);
@@ -245,7 +254,7 @@ describe("StudioShell desktop navigation", () => {
   });
 
   it("activates a route on click and reports it through select-route", async () => {
-    const { wrapper } = mount_shell({ state: { route: "workbench" } });
+    const { wrapper } = await mount_shell({ state: { route: "workbench" } });
     const rail_buttons = wrapper.findAll("nav > button");
     const gallery_button = rail_buttons.find(
       (button) => button.attributes("aria-label") === "Gallery",
@@ -257,22 +266,26 @@ describe("StudioShell desktop navigation", () => {
     expect(wrapper.emitted("select-route")).toEqual([["gallery"]]);
   });
 
-  it("rail buttons are real <button> elements (native Enter/Space activation, no negative tabindex)", () => {
-    const { wrapper } = mount_shell();
+  it("rail buttons are real <button> elements (native Enter/Space activation, no negative tabindex)", async () => {
+    const { wrapper } = await mount_shell();
     for (const button of wrapper.findAll("nav > button")) {
       expect(button.element.tagName).toBe("BUTTON");
       expect(button.attributes("tabindex")).not.toBe("-1");
     }
   });
 
-  it("does not render the mobile bottom nav or inspector sheet on desktop", () => {
-    const { wrapper } = mount_shell({ viewport: "desktop" });
+  it("does not render the mobile bottom nav or inspector sheet on desktop", async () => {
+    const { wrapper } = await mount_shell({ viewport: "desktop" });
     expect(wrapper.find('[data-testid="mobile-more-trigger"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="inspector-sheet"]').exists()).toBe(false);
   });
 
   it("tooltips portal into the injected Shadow-Root portal element, never document.body", async () => {
-    const { wrapper, portal_target } = mount_shell();
+    const { wrapper, portal_target } = await mount_shell();
+    // The rail carries no tooltip machinery until the pointer or focus enters it (DesktopIconRail),
+    // so the first entry is what loads Reka's Tooltip primitives.
+    await wrapper.get("nav").trigger("focusin");
+    await flushPromises();
     const first_rail_button = wrapper.findAll("nav > button")[0];
     await first_rail_button?.trigger("focus");
     // Reka's Tooltip opens on focus without the provider's hover delay.
@@ -291,22 +304,22 @@ describe("StudioShell desktop navigation", () => {
 // ---------------------------------------------------------------------------
 
 describe("StudioShell mobile navigation", () => {
-  it("shows exactly five stable bottom-nav items: four routes plus More", () => {
-    const { wrapper } = mount_shell({ viewport: "mobile" });
+  it("shows exactly five stable bottom-nav items: four routes plus More", async () => {
+    const { wrapper } = await mount_shell({ viewport: "mobile" });
     const nav = wrapper.find("nav");
     const items = nav.findAll("button");
     expect(items).toHaveLength(5);
     expect(wrapper.find('[data-testid="mobile-more-trigger"]').exists()).toBe(true);
   });
 
-  it("does not render the desktop rail or the persistent inspector column", () => {
-    const { wrapper } = mount_shell({ viewport: "mobile" });
+  it("does not render the desktop rail or the persistent inspector column", async () => {
+    const { wrapper } = await mount_shell({ viewport: "mobile" });
     expect(wrapper.find(".rail, nav.rail").exists()).toBe(false);
     expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(true); // stays in the top bar
   });
 
   it("More opens Diagnostics and Settings, portaled to the Shadow-Root portal element", async () => {
-    const { wrapper, portal_target } = mount_shell({ viewport: "mobile" });
+    const { wrapper, portal_target } = await mount_shell({ viewport: "mobile" });
     const more_trigger = wrapper.get('[data-testid="mobile-more-trigger"]');
     await more_trigger.trigger("click");
     await nextTick();
@@ -320,7 +333,7 @@ describe("StudioShell mobile navigation", () => {
   });
 
   it("activates a primary route on click", async () => {
-    const { wrapper } = mount_shell({ viewport: "mobile", state: { route: "workbench" } });
+    const { wrapper } = await mount_shell({ viewport: "mobile", state: { route: "workbench" } });
     const nav = wrapper.find("nav");
     const prompt_button = nav.findAll("button").find((button) => button.text().includes("Prompt"));
 
@@ -329,8 +342,8 @@ describe("StudioShell mobile navigation", () => {
     expect(wrapper.emitted("select-route")).toEqual([["prompt"]]);
   });
 
-  it("marks More as selected when the active route lives behind it", () => {
-    const { wrapper } = mount_shell({ viewport: "mobile", state: { route: "settings" } });
+  it("marks More as selected when the active route lives behind it", async () => {
+    const { wrapper } = await mount_shell({ viewport: "mobile", state: { route: "settings" } });
     const more_trigger = wrapper.get('[data-testid="mobile-more-trigger"]');
     expect(more_trigger.attributes("data-selected")).toBe("true");
   });
@@ -342,7 +355,7 @@ describe("StudioShell mobile navigation", () => {
 
 describe("StudioShell inspector", () => {
   it("toggling the top-bar control reports the next collapsed value", async () => {
-    const { wrapper } = mount_shell({
+    const { wrapper } = await mount_shell({
       state: { inspector: { collapsed: false, width: 320, selected_record: null } },
     });
     const toggle = wrapper.get('[data-testid="inspector-toggle"]');
@@ -352,8 +365,8 @@ describe("StudioShell inspector", () => {
     expect(wrapper.emitted("set-inspector-collapsed")).toEqual([[true]]);
   });
 
-  it("hides the inspector column and sets the collapsed grid track when collapsed", () => {
-    const { wrapper } = mount_shell({
+  it("hides the inspector column and sets the collapsed grid track when collapsed", async () => {
+    const { wrapper } = await mount_shell({
       state: { inspector: { collapsed: true, width: 320, selected_record: null } },
     });
     expect(wrapper.find(".inspector, [class*=inspector_panel]").exists()).toBe(false);
@@ -361,7 +374,7 @@ describe("StudioShell inspector", () => {
   });
 
   it("keyboard-resizes the inspector from its separator handle and reports the new width", async () => {
-    const { wrapper } = mount_shell({
+    const { wrapper } = await mount_shell({
       state: { inspector: { collapsed: false, width: 320, selected_record: null } },
     });
     const resizer = wrapper.get('[role="separator"]');
@@ -372,7 +385,7 @@ describe("StudioShell inspector", () => {
   });
 
   it("pointer-drags the inspector resizer and reports a clamped width", async () => {
-    const { wrapper } = mount_shell({
+    const { wrapper } = await mount_shell({
       state: { inspector: { collapsed: false, width: 320, selected_record: null } },
     });
     const resizer = wrapper.get('[role="separator"]');
@@ -387,7 +400,7 @@ describe("StudioShell inspector", () => {
   });
 
   it("renders a full-width sheet on mobile and returns focus to the trigger after it closes", async () => {
-    const { wrapper, portal_target } = mount_shell({
+    const { wrapper, portal_target } = await mount_shell({
       viewport: "mobile",
       state: { inspector: { collapsed: true, width: 320, selected_record: null } },
     });
@@ -433,15 +446,15 @@ describe("StudioShell inspector", () => {
 // ---------------------------------------------------------------------------
 
 describe("StudioShell task strip", () => {
-  it("renders nothing when there are no tasks", () => {
-    const { wrapper } = mount_shell({ state: { tasks: [] } });
+  it("renders nothing when there are no tasks", async () => {
+    const { wrapper } = await mount_shell({ state: { tasks: [] } });
     expect(
       wrapper.find('[aria-label="Show running tasks"], [aria-label="Hide running tasks"]').exists(),
     ).toBe(false);
   });
 
   it("shows a chip per task with a semantic status dot, and can collapse/expand", async () => {
-    const { wrapper } = mount_shell({
+    const { wrapper } = await mount_shell({
       state: {
         tasks: [
           { id: "job-1", label_code: "status.running", status: "pending", progress: 0.5 },
@@ -465,7 +478,7 @@ describe("StudioShell task strip", () => {
   });
 
   it("changing a task's status text does not change the chip count or remove other chips", async () => {
-    const { wrapper } = mount_shell({
+    const { wrapper } = await mount_shell({
       state: {
         tasks: [{ id: "job-1", label_code: "status.pending", status: "pending", progress: null }],
       },
@@ -488,16 +501,16 @@ describe("StudioShell task strip", () => {
 // ---------------------------------------------------------------------------
 
 describe("StudioShell shell-level states", () => {
-  it("shows a skeleton matching the final layout while capabilities are still loading, not a spinner", () => {
-    const { wrapper } = mount_shell({ state: { loading: new Set(["generation", "settings"]) } });
+  it("shows a skeleton matching the final layout while capabilities are still loading, not a spinner", async () => {
+    const { wrapper } = await mount_shell({ state: { loading: new Set(["generation", "settings"]) } });
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-placeholder"]').exists()).toBe(false);
     // No spinner element or animated keyframe class -- skeleton-over-spinner (taste directive 1).
     expect(wrapper.html()).not.toMatch(/spinner/iu);
   });
 
-  it("shows a non-blocking partial-initialization banner without hiding the rest of the shell", () => {
-    const { wrapper } = mount_shell({
+  it("shows a non-blocking partial-initialization banner without hiding the rest of the shell", async () => {
+    const { wrapper } = await mount_shell({
       state: { failures: new Map([["gallery", { code: "capability_load_failed" }]]) },
     });
     const banner = wrapper.find('[data-testid="partial-banner"]');
@@ -508,7 +521,7 @@ describe("StudioShell shell-level states", () => {
   });
 
   it("navigates to Diagnostics from the partial-initialization banner", async () => {
-    const { wrapper } = mount_shell({
+    const { wrapper } = await mount_shell({
       state: { failures: new Map([["gallery", { code: "capability_load_failed" }]]) },
     });
     await wrapper.get('[data-testid="partial-banner-diagnostics"]').trigger("click");
@@ -516,7 +529,7 @@ describe("StudioShell shell-level states", () => {
   });
 
   it("renders the routed workbench view once nothing is loading and nothing has failed", async () => {
-    const { wrapper } = mount_shell();
+    const { wrapper } = await mount_shell();
     // StudioWorkspace.vue reaches every route view through `defineAsyncComponent`, so the workbench
     // view appears only once its own dynamic import settles, not on the mount tick.
     await expect.poll(() => wrapper.find('[data-testid="workbench-view"]').exists()).toBe(true);
@@ -530,21 +543,21 @@ describe("StudioShell shell-level states", () => {
 // ---------------------------------------------------------------------------
 
 describe("StudioShell narrow and long locale labels", () => {
-  it("keeps all six desktop routes and their accessible names when a label is unusually long", () => {
+  it("keeps all six desktop routes and their accessible names when a label is unusually long", async () => {
     const long_label =
       "Workbench for generating and iterating on many concurrent image requests at once";
     const messages = {
       en: { ...en_messages, nav: { ...en_messages.nav, workbench: long_label } },
     };
-    const { wrapper } = mount_shell({ messages });
+    const { wrapper } = await mount_shell({ messages });
 
     const buttons = wrapper.findAll("nav > button");
     expect(buttons).toHaveLength(6);
     expect(buttons.some((button) => button.attributes("aria-label") === long_label)).toBe(true);
   });
 
-  it("renders full zh-CN labels in the mobile bottom nav without dropping any item", () => {
-    const { wrapper } = mount_shell({ viewport: "mobile", locale: "zh-CN" });
+  it("renders full zh-CN labels in the mobile bottom nav without dropping any item", async () => {
+    const { wrapper } = await mount_shell({ viewport: "mobile", locale: "zh-CN" });
     const nav = wrapper.find("nav");
     const items = nav.findAll("button");
     expect(items).toHaveLength(5);

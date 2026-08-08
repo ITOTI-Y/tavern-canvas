@@ -1,5 +1,5 @@
 import type { TavernCanvasSettings } from "@tavern-canvas/contracts";
-import { export_archive, import_archive, type StorageDatabase } from "@tavern-canvas/storage";
+import type { StorageDatabase } from "@tavern-canvas/storage";
 
 import type { SillyTavernSettings } from "../../storage/sillytavern_settings.js";
 import { acknowledge_http_origin } from "../../transport/http_acknowledgment.js";
@@ -85,13 +85,18 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
       deps.vocabulary_channel.set(channel);
       return Promise.resolve();
     },
-    export_archive: () =>
-      export_archive({
+    // Both halves of the archive path, including the zip writer they pull in, load only when the
+    // user actually exports or imports.
+    async export_archive() {
+      const { export_archive } = await import("@tavern-canvas/storage/archive");
+      return export_archive({
         database: require_database(deps.database),
         namespace: deps.settings.get_settings().active_namespace,
         extension_version: deps.extension_version,
-      }),
+      });
+    },
     async import_archive(archive) {
+      const { import_archive } = await import("@tavern-canvas/storage/archive");
       await import_archive({ database: require_database(deps.database), archive });
     },
   };
