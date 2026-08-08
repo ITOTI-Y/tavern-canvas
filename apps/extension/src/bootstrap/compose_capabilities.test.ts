@@ -466,12 +466,8 @@ describe("compose_studio_capabilities", () => {
 describe("create_provider_transport", () => {
   it("builds a direct transport for a loopback provider endpoint", () => {
     const transport = create_provider_transport({
-      gateway_endpoint: null,
-      http_acknowledgments: {},
-      tauri_provider_available: false,
-      sillytavern_available: false,
-      direct_provider_base_url: "http://127.0.0.1:7860",
-      direct_cloud: null,
+      kind: "local_direct",
+      endpoint: "http://127.0.0.1:7860",
     });
 
     expect(transport.execute).toBeTypeOf("function");
@@ -479,27 +475,13 @@ describe("create_provider_transport", () => {
 
   it("refuses a non-loopback direct endpoint", () => {
     expect(() =>
-      create_provider_transport({
-        gateway_endpoint: null,
-        http_acknowledgments: {},
-        tauri_provider_available: false,
-        sillytavern_available: false,
-        direct_provider_base_url: "http://provider.example.com",
-        direct_cloud: null,
-      }),
+      create_provider_transport({ kind: "local_direct", endpoint: "http://provider.example.com" }),
     ).toThrowError(/loopback/u);
   });
 
   it("refuses to drive the job executor from a transport it cannot honor", () => {
-    expect(() =>
-      create_provider_transport({
-        gateway_endpoint: "https://gateway.example.com",
-        http_acknowledgments: {},
-        tauri_provider_available: false,
-        sillytavern_available: false,
-        direct_provider_base_url: null,
-        direct_cloud: null,
-      }),
-    ).toThrowError(/cannot drive the job executor/u);
+    expect(() => create_provider_transport({ kind: "tauri" })).toThrowError(
+      /cannot drive the job executor/u,
+    );
   });
 });

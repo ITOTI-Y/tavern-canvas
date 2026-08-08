@@ -134,6 +134,49 @@ export interface SourceMessageIdentity {
   readonly swipe_id: number;
 }
 
+/** One generated image as any executor produces it, before it becomes a Stage 04 record. */
+export interface GeneratedImageBytes {
+  readonly bytes: Uint8Array;
+  readonly media_type: string;
+}
+
+export interface GeneratedImageStoreDeps {
+  readonly store: ImageStorePort;
+  readonly ids: IdSource;
+  readonly clock: ClockPort;
+  readonly resolve_source_message: (job: GenerationJobSnapshot) => SourceMessageIdentity;
+}
+
+/**
+ * The single place a generated image becomes a persisted Stage 04 record, shared by the adapter
+ * executor and the Gateway executor so both write the same metadata under the same source-message
+ * identity regardless of which side of the network ran the provider.
+ */
+export async function persist_generated_images(
+  deps: GeneratedImageStoreDeps,
+  job: GenerationJobSnapshot,
+  outputs: readonly GeneratedImageBytes[],
+): Promise<readonly ReturnType<typeof ImageIdSchema.parse>[]> {
+  const source_message = deps.resolve_source_message(job);
+  const image_ids: string[] = [];
+  for (const output of outputs) {
+    const id = deps.ids.next();
+    await deps.store.put_image({
+      id,
+      bytes: output.bytes,
+      claimed_media_type: output.media_type,
+      created_at: deps.clock.now(),
+      metadata: {
+        provider_id: job.provider_id,
+        source_message,
+        generation_parameters: job.arguments,
+      },
+    });
+    image_ids.push(id);
+  }
+  return image_ids.map((id) => ImageIdSchema.parse(id));
+}
+
 // ---------------------------------------------------------------------------
 // JobExecutor: routes a queued job to either a real ProviderAdapter (t2i/i2i/edit/ComfyUI-inpaint/
 // NovelAI-inpaint -- all representable in the existing ImageGenerationRequest union) or the
@@ -147,7 +190,7 @@ export interface ProviderProfileResolver {
   resolve(provider_id: ProviderId): Promise<ProviderProfile>;
 }
 
-export interface MediaJobExecutorDeps {
+export interface MediaJobExecutorDeps extends GeneratedImageStoreDeps {
   readonly load_adapters: () => Promise<
     Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
   >;
@@ -156,10 +199,6 @@ export interface MediaJobExecutorDeps {
   readonly assets: ProviderAssetReader;
   readonly log: ProviderLogSink;
   readonly plans: MediaExecutionPlanRegistry;
-  readonly store: ImageStorePort;
-  readonly ids: IdSource;
-  readonly clock: ClockPort;
-  readonly resolve_source_message: (job: GenerationJobSnapshot) => SourceMessageIdentity;
   /** Injectable so tests never wait on a real poll interval. */
   readonly wait?: (milliseconds: number) => Promise<void>;
 }
@@ -236,28 +275,15 @@ export class MediaJobExecutor implements JobExecutor {
     }
   }
 
-  async #persist_outputs(
+  #persist_outputs(
     job: GenerationJobSnapshot,
     outputs: readonly ProviderOutputAsset[],
   ): Promise<readonly ReturnType<typeof ImageIdSchema.parse>[]> {
-    const source_message = this.#deps.resolve_source_message(job);
-    const image_ids: string[] = [];
-    for (const output of outputs) {
-      const id = this.#deps.ids.next();
-      await this.#deps.store.put_image({
-        id,
-        bytes: output.bytes,
-        claimed_media_type: output.asset.media_type,
-        created_at: this.#deps.clock.now(),
-        metadata: {
-          provider_id: job.provider_id,
-          source_message,
-          generation_parameters: job.arguments,
-        },
-      });
-      image_ids.push(id);
-    }
-    return image_ids.map((id) => ImageIdSchema.parse(id));
+    return persist_generated_images(
+      this.#deps,
+      job,
+      outputs.map((output) => ({ bytes: output.bytes, media_type: output.asset.media_type })),
+    );
   }
 }
 

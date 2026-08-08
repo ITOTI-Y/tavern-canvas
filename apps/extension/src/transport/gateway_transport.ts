@@ -3,11 +3,13 @@ import {
   GatewayCreateJobRequestSchema,
   GatewayJobEventSchema,
   GatewayJobResponseSchema,
+  ImageIdSchema,
   PROTOCOL_VERSION,
   type GatewayCapabilitiesResponse,
   type GatewayJobEvent,
   type GatewayJobResponse,
   type ImageGenerationRequest,
+  type ImageId,
   type JobId,
 } from "@tavern-canvas/contracts";
 
@@ -18,6 +20,8 @@ import {
 } from "./http_acknowledgment.js";
 
 const MAX_JSON_RESPONSE_BYTES = 2_000_000;
+/** Matches the Gateway's own `TAVERN_CANVAS_MAX_IMAGE_BYTES` default, the largest asset it stores. */
+const MAX_ASSET_RESPONSE_BYTES = 20_000_000;
 const MAX_SSE_EVENT_BYTES = 64_000;
 const MAX_SSE_RESUME_ATTEMPTS = 1;
 const INITIAL_POLL_DELAY_MS = 250;
@@ -41,6 +45,12 @@ export interface GatewayTransportOptions {
 export interface GatewayRunOptions {
   readonly signal: AbortSignal;
   readonly on_event?: (event: GatewayJobEvent) => void;
+}
+
+/** The bytes of one generated image plus the media type the Gateway stored it under. */
+export interface GatewayAssetContent {
+  readonly media_type: string;
+  readonly bytes: Uint8Array;
 }
 
 export type GatewayTransportErrorCode =
@@ -266,6 +276,24 @@ export class GatewayTransport {
       method: "DELETE",
       signal,
     });
+  }
+
+  /**
+   * Downloads one completed image. The id is re-parsed rather than trusted: it arrives inside a
+   * job response, and a UUID is the only thing that can be interpolated into the path.
+   */
+  async fetch_asset(image_id: ImageId, signal: AbortSignal): Promise<GatewayAssetContent> {
+    const response = await this.#request(`/v1/assets/${ImageIdSchema.parse(image_id)}/content`, {
+      method: "GET",
+      signal,
+    });
+    const media_type = media_type_of(response.headers.get("content-type") ?? "");
+    if (media_type === "") {
+      await cancel_response_body(response);
+      throw new GatewayProtocolError("Gateway asset response declares no media type");
+    }
+    const bytes = await read_bounded_body(response, MAX_ASSET_RESPONSE_BYTES, signal);
+    return { media_type, bytes };
   }
 
   async *#read_events(
@@ -632,8 +660,12 @@ function malformed_gateway_response(cause?: unknown): GatewayTransportError {
   });
 }
 
+function media_type_of(value: string): string {
+  return value.split(";", 1)[0]?.trim().toLowerCase() ?? "";
+}
+
 function has_media_type(value: string, expected: string): boolean {
-  return value.split(";", 1)[0]?.trim().toLowerCase() === expected;
+  return media_type_of(value) === expected;
 }
 
 async function cancel_response_body(response: Response): Promise<void> {

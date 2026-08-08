@@ -12,6 +12,7 @@ import {
   RequestImageTool,
   SessionRegistry,
   SystemJobTimeSource,
+  type JobExecutor,
   type MessagePort,
   type RuntimeModule,
 } from "@tavern-canvas/core";
@@ -42,6 +43,7 @@ import {
   IndexedDbJobPersistence,
   MediaExecutionPlanRegistry,
   MediaJobExecutor,
+  type GeneratedImageStoreDeps,
   type ImageStorePort,
 } from "../modules/media/media_command_service.js";
 import {
@@ -59,7 +61,8 @@ import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js"
 import type { ProviderFetch } from "../transport/browser_fetch.js";
 import { DirectCloudTransport, DirectLlmTransport } from "../transport/direct_cloud_transport.js";
 import { LocalDirectTransport } from "../transport/local_direct_transport.js";
-import { select_transport } from "../transport/transport_selector.js";
+import type { GatewayJobExecutorDeps } from "../transport/gateway_job_executor.js";
+import { select_transport, type TransportSelection } from "../transport/transport_selector.js";
 import type { CapabilityId, StudioCapabilities } from "../ui/contracts/ui_capabilities.js";
 import { create_unavailable_capabilities } from "../ui/controllers/unavailable_capabilities.js";
 import { create_assets_capability } from "./capabilities/assets_capability.js";
@@ -401,6 +404,7 @@ export async function compose_studio_capabilities(
             database,
             extension_version,
             vocabulary_channel,
+            secrets,
           }),
         ),
     fallback.settings,
@@ -559,47 +563,68 @@ export async function compose_studio_capabilities(
       : host === null
         ? unavailable(HOST_UNAVAILABLE)
         : resolve_capability(() => {
-            const transport = create_provider_transport(
-              {
-                gateway_endpoint: settings_adapter?.get_settings().gateway.endpoint ?? null,
-                http_acknowledgments:
-                  settings_adapter?.get_settings().gateway.http_acknowledgments ?? {},
-                tauri_provider_available: false,
-                sillytavern_available: false,
-                direct_provider_base_url,
-                direct_cloud,
-              },
-              {
-                secrets: secret_resolver,
-                ...(options.provider_fetch === undefined ? {} : { fetch: options.provider_fetch }),
-              },
-            );
+            const gateway_settings = settings_adapter?.get_settings().gateway ?? null;
+            const selection = select_transport({
+              gateway_endpoint: gateway_settings?.endpoint ?? null,
+              http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
+              tauri_provider_available: false,
+              sillytavern_available: false,
+              direct_provider_base_url,
+              direct_cloud,
+            });
             const plans = new MediaExecutionPlanRegistry();
-            const queue = new ImageJobQueue({
-              executor: new MediaJobExecutor({
-                load_adapters: load_provider_adapters,
-                profiles: {
-                  resolve: async (provider_id) => {
-                    const adapter = (await load_provider_adapters())[provider_id];
-                    if (adapter === undefined || active_profile_record === null) {
-                      throw new Error(`No stored provider profile is active for ${provider_id}`);
-                    }
-                    return adapter.validate_profile(adapter_profile_of(active_profile_record));
-                  },
-                },
-                transport,
-                assets: create_asset_reader(database, namespace),
-                log: { write: () => {} },
-                plans,
-                store: create_image_store_port(database, namespace),
-                ids: { next: () => crypto.randomUUID() },
-                clock: { now },
-                resolve_source_message: (job) => ({
-                  chat_id: job.chat_id,
-                  message_id: String(job.requested_swipe_id),
-                  swipe_id: job.requested_swipe_id,
-                }),
+            const image_store: GeneratedImageStoreDeps = {
+              store: create_image_store_port(database, namespace),
+              ids: { next: () => crypto.randomUUID() },
+              clock: { now },
+              resolve_source_message: (job) => ({
+                chat_id: job.chat_id,
+                message_id: String(job.requested_swipe_id),
+                swipe_id: job.requested_swipe_id,
               }),
+            };
+            const queue = new ImageJobQueue({
+              executor:
+                selection.kind === "gateway"
+                  ? create_gateway_job_executor({
+                      ...image_store,
+                      endpoint: selection.endpoint,
+                      http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
+                      access_token: require_gateway_token_source(
+                        gateway_settings?.token_secret_id ?? null,
+                        secret_resolver,
+                      ),
+                      plans,
+                      ...(options.provider_fetch === undefined
+                        ? {}
+                        : { fetch: options.provider_fetch }),
+                    })
+                  : new MediaJobExecutor({
+                      ...image_store,
+                      load_adapters: load_provider_adapters,
+                      profiles: {
+                        resolve: async (provider_id) => {
+                          const adapter = (await load_provider_adapters())[provider_id];
+                          if (adapter === undefined || active_profile_record === null) {
+                            throw new Error(
+                              `No stored provider profile is active for ${provider_id}`,
+                            );
+                          }
+                          return adapter.validate_profile(
+                            adapter_profile_of(active_profile_record),
+                          );
+                        },
+                      },
+                      transport: create_provider_transport(selection, {
+                        secrets: secret_resolver,
+                        ...(options.provider_fetch === undefined
+                          ? {}
+                          : { fetch: options.provider_fetch }),
+                      }),
+                      assets: create_asset_reader(database, namespace),
+                      log: { write: () => {} },
+                      plans,
+                    }),
               persistence: new IndexedDbJobPersistence(database, namespace()),
               job_id_source: { next: () => crypto.randomUUID() },
               time_source: new SystemJobTimeSource(),
@@ -747,19 +772,17 @@ export interface ProviderTransportDependencies {
 }
 
 /**
- * Turns `select_transport`'s decision into the transport that drives the job executor.
+ * Turns a `select_transport` decision into the `ProviderTransport` the adapter executor drives.
  *
- * Two of the five selections still cannot: `GatewayTransport` is a job-level client rather than a
- * `ProviderTransport`, and neither TauriTavern's bridge nor a first-party SillyTavern relay is
- * reachable from this build. `direct_cloud` and `local_direct` both are, which is the change the
- * 2026-08-07 decision asked for: a cloud profile with a stored credential now yields a working
- * generation capability instead of an unavailable one.
+ * `gateway` never arrives here: the Gateway runs the provider adapter on its own side, so it is a
+ * job-level client rather than a per-route transport and gets `GatewayJobExecutor` instead. What
+ * remains unreachable from this build is TauriTavern's provider bridge and a first-party
+ * SillyTavern relay; both leave the generation capability unavailable with that reason named.
  */
 export function create_provider_transport(
-  input: Parameters<typeof select_transport>[0],
+  selection: TransportSelection,
   dependencies: ProviderTransportDependencies = { secrets: null },
 ): ProviderTransport {
-  const selection = select_transport(input);
   const fetch_ = dependencies.fetch;
   switch (selection.kind) {
     case "direct_cloud": {
@@ -786,4 +809,43 @@ export function create_provider_transport(
         `The selected ${selection.kind} transport cannot drive the job executor; configure a loopback provider endpoint or a credentialed cloud profile`,
       );
   }
+}
+
+const GATEWAY_TOKEN_MISSING =
+  "A Gateway endpoint is configured but no Gateway access token is stored; set one in Settings > Gateway, or clear the endpoint to generate directly";
+const GATEWAY_TOKEN_UNREADABLE =
+  "This host cannot reveal stored credentials, so the Gateway access token cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml, or clear the Gateway endpoint to generate directly";
+
+/**
+ * Fails composition rather than the first job: an endpoint the client can never authenticate
+ * against is a settings mistake, and naming it as the generation capability's unavailable reason
+ * puts it in Diagnostics and in the shell's banner instead of behind a submit button.
+ */
+function require_gateway_token_source(
+  token_secret_id: string | null,
+  secrets: SecretResolverPort | null,
+): () => Promise<string> {
+  if (token_secret_id === null) {
+    throw new Error(GATEWAY_TOKEN_MISSING);
+  }
+  if (secrets === null) {
+    throw new Error(GATEWAY_TOKEN_UNREADABLE);
+  }
+  return () => secrets.resolve_secret(token_secret_id);
+}
+
+/**
+ * Deferred exactly like the provider adapters: the Gateway client's SSE reader, protocol schemas
+ * and job state machine are dead weight in every session that generates directly, so they load on
+ * the first Gateway job instead of at extension load.
+ */
+function create_gateway_job_executor(deps: GatewayJobExecutorDeps): JobExecutor {
+  let loading: Promise<typeof import("../transport/gateway_job_executor.js")> | null = null;
+  return {
+    async execute(job, control) {
+      const { GatewayJobExecutor } = await (loading ??=
+        import("../transport/gateway_job_executor.js"));
+      return new GatewayJobExecutor(deps).execute(job, control);
+    },
+  };
 }
