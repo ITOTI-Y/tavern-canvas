@@ -808,10 +808,14 @@ describe("release_audit helpers", () => {
     expect(parse_arguments(["release.zip"])).toEqual({
       archive_path: "release.zip",
       repository_root: undefined,
+      history_ref: undefined,
     });
-    expect(parse_arguments(["--repository-root", "/repo", "release.zip"])).toEqual({
+    expect(
+      parse_arguments(["--repository-root", "/repo", "--history-ref", "main", "release.zip"]),
+    ).toEqual({
       archive_path: "release.zip",
       repository_root: "/repo",
+      history_ref: "main",
     });
     expect(() => parse_arguments([])).toThrow(/Usage/u);
   });

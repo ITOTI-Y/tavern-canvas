@@ -1,6 +1,6 @@
 {
   "name": "tavern-canvas",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.20.0",
@@ -16,6 +16,8 @@
     "check:parity": "pnpm --filter @tavern-canvas/parity-check build && node tools/parity_check/dist/index.js docs/parity/feature_matrix.md",
     "check:release": "pnpm --filter @tavern-canvas/release-audit build && node tools/release_audit/dist/index.js",
     "lint": "eslint .",
+    "package:extension": "pnpm --filter @tavern-canvas/package-extension build && node tools/package_extension/dist/index.js",
+    "verify:release": "pnpm check && pnpm test:gateway && pnpm test:e2e && pnpm package:extension && pnpm check:release output/release/tavern-canvas.zip",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r typecheck && tsc --noEmit -p tests/tsconfig.json",

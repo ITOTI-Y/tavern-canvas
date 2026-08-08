@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # Full history: the release audit's legacy-history rule reads the released ref's ancestry,
+      # and a shallow clone would let a legacy path pass unseen simply because its commit is absent.
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      # SillyTavern installs the extension by cloning the repository root and loading the
+      # manifest-relative paths, so the committed dist/ is the runtime users get. These two checks
+      # cover the two ways it can lie: tracked files whose committed bytes no longer match a clean
+      # rebuild, and rebuilt files that appear in the working tree but in no commit.
+      - name: Verify committed dist matches a clean rebuild
+        run: git diff --exit-code -- dist
+
+      - name: Verify the rebuild added no untracked runtime file
+        run: |
+          untracked="$(git status --porcelain --untracked-files=all -- dist)"
+          if [ -n "$untracked" ]; then
+            echo "A clean rebuild changed dist/ outside the committed tree:" >&2
+            echo "$untracked" >&2
+            exit 1
+          fi
+
+      # The packaging tool is the guard for the remaining case: a runtime asset the build emits and
+      # .gitignore hides, which leaves both checks above silent while a clone cannot restore it.
+      - name: Package the extension
+        run: pnpm package:extension
+
+      - name: Audit the release archive
+        run: node tools/release_audit/dist/index.js output/release/tavern-canvas.zip
+
+      - name: Verify the checksum sidecar
+        working-directory: output/release
+        run: sha256sum --check tavern-canvas.zip.sha256
+
+      - name: Upload the release archive
+        uses: actions/upload-artifact@v5
+        with:
+          name: tavern-canvas-release
+          path: |
+            output/release/tavern-canvas.zip
+            output/release/tavern-canvas.zip.sha256
+          if-no-files-found: error

@@ -6400,7 +6400,7 @@ var cc = Ks({
 		tc,
 		ic
 	].join("\n")),
-	version: "3.0.0-alpha.1"
+	version: "3.0.0"
 });
 //#endregion
 export { cc as bootstrap_handle };

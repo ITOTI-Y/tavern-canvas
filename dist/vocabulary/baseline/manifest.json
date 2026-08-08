@@ -5,7 +5,7 @@
   "changelog": "Rebuilt from fresh data: HF tag-table universe (JayxMay95/qdlabs, apache-2.0) with popularity refreshed via a u-haru/danbooru-tags-20260518 post-level aggregation (supplemented by a live danbooru.donmai.us top-tag fetch), plus zh translations overlaid from the legacy v2 seed. Bundled baseline is a top-50,000-by-popularity cut of the full ~153k-record bilingual dataset -- see generate_full_pack.ts for the unabridged pack.",
   "record_count": 50000,
   "compressed_size": 3882215,
-  "minimum_extension_version": "3.0.0-alpha.1",
+  "minimum_extension_version": "3.0.0",
   "shards": [
     {
       "shard_id": "alias:h000",

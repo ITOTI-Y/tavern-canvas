@@ -105,7 +105,19 @@ export interface GitDistPort {
   ignore_rule?(path: string): string | undefined;
 }
 
-export function create_git_dist_port(repository_root: string): GitDistPort {
+/**
+ * The commit whose ancestry the `legacy-history` rule judges. It is the ref being released, not
+ * `--all`: a clone only ever receives the refs the remote publishes, and `git push origin main`
+ * only transfers objects reachable from `main`. Scanning `--all` instead charges the release for
+ * local-only branches that no clone can reach, which is a different question from the one
+ * architecture criterion 18 asks.
+ */
+export const DEFAULT_HISTORY_REF = "HEAD";
+
+export function create_git_dist_port(
+  repository_root: string,
+  history_ref: string = DEFAULT_HISTORY_REF,
+): GitDistPort {
   return {
     tracked_dist_paths(): ReadonlySet<string> {
       const stdout = execFileSync("git", ["ls-files", "-z", "--", "dist"], {
@@ -118,7 +130,7 @@ export function create_git_dist_port(repository_root: string): GitDistPort {
     historical_paths(): ReadonlySet<string> {
       const stdout = execFileSync(
         "git",
-        ["log", "--all", "--diff-filter=A", "--name-only", "--pretty=format:"],
+        ["log", history_ref, "--diff-filter=A", "--name-only", "--pretty=format:"],
         { cwd: repository_root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 },
       );
       return new Set(
@@ -877,7 +889,9 @@ const LEGACY_HISTORY_PATTERNS: readonly ForbiddenPattern[] = [
 /**
  * Architecture criterion 18 requires the published repository to start from a clean orphan root
  * commit, so the old version's source archive is absent from the history as well as from the
- * artifact. A path that any reachable commit ever added stays recoverable from a clone forever.
+ * artifact. A path that any commit in the released ref's ancestry ever added stays recoverable
+ * from a clone forever; see `DEFAULT_HISTORY_REF` for why that ancestry, and not `--all`, is the
+ * subject.
  */
 function check_legacy_history(context: AuditContext, git: GitDistPort): void {
   const paths = [...git.historical_paths()].sort((left, right) => left.localeCompare(right));
@@ -1011,6 +1025,7 @@ const DEFAULT_REPOSITORY_ROOT = resolve(
 
 export interface AuditReleaseOptions {
   readonly repository_root?: string;
+  readonly history_ref?: string;
   readonly git?: GitDistPort;
 }
 
@@ -1023,23 +1038,30 @@ export async function audit_release(
   const entries = await read_archive_entries(archive);
   return audit_entries(entries, archive, {
     expected_helper_version: await read_expected_helper_version(repository_root),
-    git: options.git ?? create_git_dist_port(repository_root),
+    git: options.git ?? create_git_dist_port(repository_root, options.history_ref),
   });
 }
 
 interface CommandLine {
   readonly archive_path: string;
   readonly repository_root: string | undefined;
+  readonly history_ref: string | undefined;
 }
 
 export function parse_arguments(argv: readonly string[]): CommandLine {
   let archive_path: string | undefined;
   let repository_root: string | undefined;
+  let history_ref: string | undefined;
 
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === "--repository-root") {
       repository_root = argv[index + 1];
+      index += 1;
+      continue;
+    }
+    if (argument === "--history-ref") {
+      history_ref = argv[index + 1];
       index += 1;
       continue;
     }
@@ -1050,20 +1072,20 @@ export function parse_arguments(argv: readonly string[]): CommandLine {
 
   if (archive_path === undefined) {
     throw new Error(
-      "Usage: tavern-canvas-release-audit <path-to-release.zip> [--repository-root <dir>]",
+      "Usage: tavern-canvas-release-audit <path-to-release.zip> [--repository-root <dir>] [--history-ref <ref>]",
     );
   }
-  return { archive_path, repository_root };
+  return { archive_path, repository_root, history_ref };
 }
 
 async function run_cli(argv: readonly string[]): Promise<void> {
   const command_line = parse_arguments(argv);
-  const report = await audit_release(
-    command_line.archive_path,
-    command_line.repository_root === undefined
+  const report = await audit_release(command_line.archive_path, {
+    ...(command_line.repository_root === undefined
       ? {}
-      : { repository_root: command_line.repository_root },
-  );
+      : { repository_root: command_line.repository_root }),
+    ...(command_line.history_ref === undefined ? {} : { history_ref: command_line.history_ref }),
+  });
 
   console.log(format_report(report.fields));
   for (const finding of report.findings) {

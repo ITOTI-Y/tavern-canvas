@@ -4,6 +4,15 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
+const repository_root = resolve(import.meta.dirname, "../../..");
+
+// The release ships one version number. Reading it from package.json rather than restating it here
+// makes the two impossible to drift apart, which is the same invariant tools/package_extension
+// enforces before it will build an archive.
+const package_version = z
+  .object({ version: z.string() })
+  .parse(JSON.parse(await readFile(resolve(repository_root, "package.json"), "utf8"))).version;
+
 const expected_manifest = {
   display_name: "智绘姬",
   loading_order: 110,
@@ -13,7 +22,7 @@ const expected_manifest = {
   js: "dist/index.js",
   css: "dist/index.css",
   author: "ITOTI-Y",
-  version: "3.0.0-alpha.1",
+  version: package_version,
   homePage: "https://github.com/ITOTI-Y/tavern-canvas",
   auto_update: true,
   minimum_client_version: "1.18.0",
@@ -28,8 +37,6 @@ const runtime_paths_schema = z.object({
   css: z.string(),
   i18n: z.object({ en: z.string() }),
 });
-
-const repository_root = resolve(import.meta.dirname, "../../..");
 
 describe("extension manifest", () => {
   it("matches the installable root contract exactly", async () => {

@@ -1,0 +1,17 @@
+{
+  "name": "@tavern-canvas/package-extension",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tavern-canvas-package-extension": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --root ../.. --project tools tools/package_extension",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@zip.js/zip.js": "2.8.34"
+  }
+}

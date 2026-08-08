@@ -284,6 +284,12 @@ importers:
 
   tools/locale_check: {}
 
+  tools/package_extension:
+    dependencies:
+      '@zip.js/zip.js':
+        specifier: 2.8.34
+        version: 2.8.34
+
   tools/parity_check: {}
 
   tools/release_audit:

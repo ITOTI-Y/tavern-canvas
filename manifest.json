@@ -7,7 +7,7 @@
   "js": "dist/index.js",
   "css": "dist/index.css",
   "author": "ITOTI-Y",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "homePage": "https://github.com/ITOTI-Y/tavern-canvas",
   "auto_update": true,
   "minimum_client_version": "1.18.0",
