@@ -627,7 +627,7 @@ Stage 07 任务简报（`docs/superpowers/plans/2026-08-04-tavern-canvas-07-pari
 3. transformers、zip、msgpack、crypto 的 vendored UMD/全局补丁；
 4. 任意自定义 CSS 注入器与遗留 DOM 样式变更；
 5. 基于 UA 的能力探测；
-6. 客户端直接控制 provider URL、鉴权与任意请求头；
+6. 客户端直接控制 provider URL、鉴权与任意请求头（**2026-08-07 用户裁定精化，范围见下方 15.2**）；
 7. 呈现为密钥保护的可逆本地伪加密；
 8. World Info 工具控制型 prompt 注入；
 9. 最后一条消息/最后一层的附件兜底逻辑；
@@ -638,6 +638,29 @@ Stage 07 任务简报（`docs/superpowers/plans/2026-08-04-tavern-canvas-07-pari
 14. **（2026-08-07 用户批准新增，"不需要语音"裁定）** 语音功能（文本转语音 TTS 与语音识别 ASR）整体移除，AI 助手本体保留。具体指：`TtsService`/`SpeechSynthesisPort`（引擎与音色目录、分段流式播放、朗读范围与风格、逐条消息朗读与自动播放）与 `AsrService`/`SpeechRecognitionPort`（麦克风输入模式、VAD 与对话模式、麦克风校准测试、结果校验过滤、ASR 设置滑块）的全部实现、其 Vue UI（`AssistantPanel.vue` 的麦克风/朗读按钮、`AssistantMessage.vue` 的逐条朗读按钮）、以及对应的 en/zh-CN 语言包词条（`mic_*`、`tts_*`）一并删除；`docs/parity/feature_matrix.md` 中 `assistant.tts_engine_and_voice_catalog`、`assistant.tts_segmented_streaming_playback`、`assistant.tts_narration_scope_and_style`、`assistant.tts_per_message_and_autoplay`、`assistant.asr_mic_input_modes`、`assistant.asr_vad_and_conversation_mode`、`assistant.asr_mic_calibration_test`、`assistant.asr_result_validation_filter`、`assistant.asr_settings_sliders` 共 9 行由 `ported` 改记为 `removed_approved`。AI 助手的其余能力（会话、工具调用、摘要、屏幕输入等）不受影响，`AssistantModule` 不再接受或暴露 `tts`/`asr` 依赖。批准依据：Task 5 曾实现语音功能（提交 `c4419e57`），当时的停靠点裁定仅因 `[client-controlled-provider-url]` 安全模式移除了 Qwen TTS 后端，保留了基于浏览器 `SpeechSynthesis`/`SpeechRecognition` 的替代实现（见本节修订前 `assistant.tts_engine_and_voice_catalog` 行的历史记录）；用户于 2026-08-07 明确裁定"不需要语音"，在"不要把这个插件搞得花里胡哨的"精简范围裁定之后，取代此前的部分性结论，将语音功能整体排除在范围之外。
 
 这些移除均通过范围受限的诊断、类型化 token、host/Gateway 密钥存储、确定性绑定或 host 更新行为保留其用户目标；第 12 项通过用户发起的显式导入保留其用户目标；第 13 项通过已交付的精简版悬浮入口（设置开关、拖拽定位、五态图标/视频资源解析、朴素引导）保留其用户目标，不恢复被裁定移除的丰富度；第 14 项无替代实现，语音本就不是用户目标的一部分，AI 助手的文字交互与其余能力完整保留。
+
+### 15.2 第 6 项的精化：浏览器直连 provider（2026-08-07 用户裁定）
+
+第 6 项原文"客户端直接控制 provider URL、鉴权与任意请求头"同时覆盖了两件事：**客户端指定目的地**与**浏览器发起请求**。前者是安全红线，后者只是当时为落实红线而选择的实现手段。用户于 2026-08-07 裁定将两者拆开：浏览器直连成为默认路径，Gateway 作为可选的更高安全等级路由保留。本节是该裁定的权威记录，第 6 项按此读取，条目本身不删除。
+
+裁定依据：三家云厂商的 CORS 预检均显式允许来自浏览器 origin 的跨域调用并放行其鉴权头——OpenAI 返回 `access-control-allow-origin: *` 并允许 `authorization`；NovelAI 返回 `*` 并允许 `Authorization`；Google 回显请求 origin 并允许 `x-goog-api-key`。在此之前 `local_direct` 是唯一能产出 `ProviderTransport` 的选择，NovelAI、OpenAI 与 Google 三家在无 Gateway 时完全无法出图。
+
+**仍然禁止**（红线未变，任一条被突破即视为违反第 6 项）：
+
+- 用户输入或远程下发的 provider URL、host、路径或查询串。目的地只能来自代码内固定目录 `packages/contracts/src/direct_catalog.ts` 的 `DIRECT_IMAGE_ROUTE_CATALOG` 与 `DIRECT_LLM_ROUTE_CATALOG`；`resolve_direct_url` 只接受目录内的精确路径匹配，前缀、遍历段、查询串与绝对 URL 一律拒绝，且拒绝时不回显被拒目的地。
+- 客户端追加任意请求头。每次请求的完整头集合由目录条目与适配器的内容协商字段在 `build_headers` 内组装，外部无任何参数可注入键名。
+- settings、profile payload、草稿 schema 或客户端代码中出现明文凭据。profile 只存 `tavern_canvas:` 前缀的 vault 引用（`vault_key`），`assert_safe_provider_payload` 继续拦截凭据形状的 payload 字段。
+- 明文进入日志、错误、诊断 timeline 或支持包。`redact_provider_log` 已补入 `x-goog-api-key`、`x-api-key` 等直连场景的凭据头名；`SecretResolutionError` 与直连传输的 `ProviderNetworkError` 均不携带 `cause` 链，避免宿主响应体被原样转载。
+
+**现已允许**：
+
+- 浏览器直接向目录固定的厂商路由发起请求，即 `TransportSelection` 新增的 `direct_cloud` 分支（`apps/extension/src/transport/direct_cloud_transport.ts`）。
+- 在请求发出的那一刻，把 profile 上的 vault 引用通过宿主密钥存储（SillyTavern `POST /api/secrets/find`，受宿主 `allowKeysExposure` 配置管控）换成明文，写入厂商文档规定的那一个鉴权头，请求派发后即丢弃，不缓存、不持久化。
+- Gateway 保留为可选路由：配置 `gateway.endpoint` 即视为显式选择该路径，它在传输优先级中仍排在最前。
+
+传输优先级（`select_transport`，固定且不可由客户端配置）：`gateway` → `tauri` → `host_proxy` → `direct_cloud` → `local_direct`。
+
+`docs/parity/feature_matrix.md` 中带 `[client-controlled-provider-url]` 标记的行保持 `removed_approved`：被移除的始终是"客户端自选 URL 与自建鉴权头"这一形态，v2 的自定义站点 URL、代理转发的客户端自选 origin、明文密钥可见性开关均未恢复。
 
 ## 16. 国际化
 
