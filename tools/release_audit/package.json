@@ -1,0 +1,17 @@
+{
+  "name": "@tavern-canvas/release-audit",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tavern-canvas-release-audit": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --root ../.. --project tools tools/release_audit",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@zip.js/zip.js": "2.8.34"
+  }
+}

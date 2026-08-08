@@ -95,6 +95,94 @@ diagnostics, migration, import/export, and cleanup                    ported=13 
 TOTAL                                                                 ported=324  removed_approved=33  total=357
 ```
 
+### Architecture acceptance criteria 1-19
+
+The nineteen end-to-end acceptance criteria in
+[`2026-08-04-tavern-canvas-v3-architecture-design.md`](../plans/2026-08-04-tavern-canvas-v3-architecture-design.md)
+section 23 are release gates in their own right, separate from the per-workflow rows below: a
+matrix in which every row is `ported` still says nothing about whether concurrent jobs bind to the
+right swipe or whether the bundle fits its budget. Each criterion below names the exact test or
+audit that decides it. Written as a list rather than a table on purpose -- `tools/parity_check`
+parses every Markdown table row in this file as a six-column parity row, so a second table shape
+here would break the checker.
+
+Criteria marked **BLOCKED** have a real, committed, currently-failing assertion. They are recorded
+here as failing rather than skipped, because a skipped gate reads as a passing one.
+
+1. **Tool-capable model requests 1-4 images; the tool action returns immediately while jobs run
+   concurrently.** `tests/e2e/full_standard_host.spec.ts` -- "a tool-capable host gets the
+   request_image function tool registered for the generation" (**BLOCKED**:
+   `apps/extension/src/bootstrap/compose_capabilities.ts` never constructs
+   `GenerationTriggerModule`, so the shipped bootstrap registers no `request_image` tool);
+   `tests/integration/generation_flow.test.ts` -- "returns three queued native tool results before
+   concurrent providers complete" proves the module itself is correct once wired.
+2. **A non-tool model drives the same request through a hidden comment that never displays and is
+   removed from the final text.** `tests/e2e/full_standard_host.spec.ts` -- "a host without native
+   tools gets the hidden-comment fallback stream parser attached" (**BLOCKED**, same missing
+   wiring); `tests/integration/generation_flow.test.ts` -- "parses every fallback byte split once
+   and removes controls from saved text"; `tests/e2e/security_boundaries.spec.ts` -- "a malformed
+   fallback control comment is discarded without executing or leaking".
+3. **Every image in one reply chain binds only to its own assistant swipe.**
+   `tests/integration/generation_flow.test.ts` -- "reuses the root anchor across recursion and
+   binds only the final assistant"; `packages/core/src/messages/message_binder.test.ts`.
+4. **Switching chat or swipe, or passing through tool/system layers, never changes the binding
+   target.** `tests/integration/generation_flow.test.ts` -- "preserves the original chat target
+   across an image-time chat switch" and "waits for the exact requested swipe to become active
+   again".
+5. **A deleted target sends the result to the gallery marked orphaned.**
+   `tests/integration/generation_flow.test.ts` -- "marks a deleted exact target orphaned without
+   losing its image".
+6. **A standard SillyTavern install with JS Slash Runner 4.9.1 or newer runs core generation,
+   message binding, gallery and settings.** `tests/e2e/full_standard_host.spec.ts`, describe block
+   "criterion 6" -- seven assertions covering the probe, the Shadow-Root mount, every capability
+   resolving to a real implementation, a job carried through provider -> image store -> gallery,
+   swipe metadata round-trip, a settings write reaching `extension_settings`, and first-party-only
+   host requests.
+7. **A missing, disabled or below-minimum JS Slash Runner blocks activation with actionable
+   copy, and running code uses only the public TavernHelper API.**
+   `tests/e2e/full_standard_host.spec.ts`, describe block "criterion 7" -- four assertions
+   including a Proxy that records every property read off `window.TavernHelper`.
+8. **TauriTavern enables the ChatSurface and WorldInfo activation enhancements.**
+   `tests/e2e/full_tauri_host.spec.ts` -- ChatSurface participant registration passes;
+   "WorldInfo activation batches reach a subscribed first-party module" is **BLOCKED**
+   (`compose_capabilities.ts` never constructs `TauriWorldInfoActivationModule`).
+9. **The standalone Gateway works over LAN HTTP and warns explicitly about cleartext on first
+   connection.** `tests/e2e/full_gateway.spec.ts`, describe block "criterion 9", against a real
+   Express server on a real loopback port; `tests/e2e/security_boundaries.spec.ts`, describe block
+   "cleartext HTTP disclosure is per origin and non-blocking".
+10. **No provider secret is handed down from the Gateway, and a client request can never override
+    the upstream URL.** `tests/e2e/full_gateway.spec.ts`, describe block "criterion 10";
+    `tests/e2e/security_boundaries.spec.ts`, describe block "provider destination control".
+11. **v2 settings, presets, workflows, vocabulary and image data switch over only after
+    verification; no failure overwrites v2 data or writes a success flag.**
+    `tests/e2e/migration_and_update.spec.ts`, describe block "criterion 11";
+    `tests/integration/storage_migration_flow.test.ts`.
+12. **The user drives the vocabulary update check and install; an interrupt or hash error keeps the
+    previous version.** `tests/e2e/migration_and_update.spec.ts`, describe block "criterion 12";
+    `packages/vocabulary/src/catalog/catalog_install.test.ts`;
+    `packages/vocabulary/src/package_updater.test.ts`.
+13. **500,000 tags complete prefix and content search inside the mobile budget.**
+    `tests/e2e/vocabulary_performance.spec.ts`.
+14. **Every existing feature has an entry in the new workbench or a recorded approved removal.**
+    This file, checked by `tools/parity_check/src/index.test.ts` and the `pnpm check:parity` gate.
+15. **Simplified Chinese and English key sets are complete and identical.**
+    `tools/locale_check/src/index.test.ts` and the `pnpm check:locale` gate.
+16. **First-party UI uses Lucide icons only and contains no emoji.**
+    `tools/first_party_check/src/index.test.ts` and the `pnpm check:first-party` gate;
+    `tools/release_audit/src/index.test.ts` for the shipped artifact's `first_party_emoji` and
+    `font_awesome_references` fields.
+17. **The four target viewports show no overflow, occlusion or blank hero under real images, long
+    English and Simplified Chinese.** `tests/e2e/studio_visual.spec.ts`;
+    `tests/e2e/studio_overflow.spec.ts`; `tests/e2e/studio_accessibility.spec.ts`.
+18. **The new public repository starts from a clean orphan root commit, and neither the Git history
+    nor the release artifact carries the old-version source archive.**
+    `tools/release_audit/src/index.test.ts` -- the `forbidden-name` rule (old archives) for the
+    artifact and the `legacy-history` rule for the repository history.
+19. **A stable release package is produced only after every automated verification and performance
+    budget passes.** `tools/bundle_budget/src/index.test.ts` and the `pnpm check:bundle` gate;
+    `tools/release_audit/src/index.test.ts` and the `pnpm check:release` gate. **BLOCKED**:
+    `initial_js_gzip_bytes` currently exceeds the 184,320-byte budget.
+
 ## startup and update
 
 | ID                               | V2 Entry                                                                                                                                              | V3 Owner                                                                                                                                                                             | Status           | Acceptance Test                                       | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |

@@ -34,6 +34,9 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: resolve(import.meta.dirname, "../../dist"),
     emptyOutDir: true,
+    // Emits dist/.vite/manifest.json, the input the bundle-budget gate
+    // (tools/bundle_budget) walks to size the initial payload.
+    manifest: true,
     assetsDir: "assets",
     cssCodeSplit: false,
     sourcemap: mode !== "release",

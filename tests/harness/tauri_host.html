@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TavernCanvas TauriTavern Harness</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body data-host="tauri">
+    <p>
+      Stage 07 Task 7 TauriTavern harness: everything the standard host exposes plus
+      `__TAURITAVERN__` ABI 1 with ChatSurface protocol 1 and WorldInfo activation. Driven by
+      tests/e2e/full_tauri_host.spec.ts.
+    </p>
+    <script type="module" src="./src/all_host_boot.ts"></script>
+  </body>
+</html>

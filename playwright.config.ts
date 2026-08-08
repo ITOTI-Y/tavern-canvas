@@ -29,6 +29,14 @@ const STUDIO_HARNESS_URL = `http://localhost:${String(STUDIO_HARNESS_PORT)}`;
 const MEDIA_DIALOGS_HARNESS_PORT = 4175;
 const MEDIA_DIALOGS_HARNESS_URL = `http://localhost:${String(MEDIA_DIALOGS_HARNESS_PORT)}`;
 
+// Stage 07 Task 7: the all-host acceptance harness. tests/harness/sillytavern_host.html and
+// tauri_host.html boot the REAL apps/extension/src/bootstrap/bootstrap.ts (or the same
+// compose_capabilities.ts composition root it calls) against a fake SillyTavern/TavernHelper/
+// TauriTavern global object graph, so the host adapters, capability probe and composition root
+// are all exercised as shipped. One server serves both pages and every spec that drives them.
+const ALL_HOST_HARNESS_PORT = 4176;
+const ALL_HOST_HARNESS_URL = `http://localhost:${String(ALL_HOST_HARNESS_PORT)}`;
+
 // `webServer` is a top-level Playwright option: every entry starts before any test runs,
 // regardless of which spec files were actually requested on the CLI. The two harnesses' startup
 // costs are too asymmetric to always pay both (vocabulary's boots a 500,000-record benchmark
@@ -52,6 +60,18 @@ const wants_studio =
   !explicit_selection || requested_spec_paths.some((path) => path.includes("studio_"));
 const wants_media_dialogs =
   !explicit_selection || requested_spec_paths.some((path) => path.includes("media_dialogs_"));
+const ALL_HOST_SPEC_MARKERS = [
+  "full_standard_host",
+  "full_tauri_host",
+  "full_gateway",
+  "migration_and_update",
+  "security_boundaries",
+];
+const wants_all_host =
+  !explicit_selection ||
+  requested_spec_paths.some((path) =>
+    ALL_HOST_SPEC_MARKERS.some((marker) => path.includes(marker)),
+  );
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -89,6 +109,12 @@ export default defineConfig({
       name: "media_dialogs_mobile",
       testMatch: /media_dialogs_.*\.spec\.ts$/u,
       use: { ...devices["Pixel 7"], baseURL: MEDIA_DIALOGS_HARNESS_URL },
+    },
+    {
+      name: "all_host",
+      testMatch:
+        /(full_standard_host|full_tauri_host|full_gateway|migration_and_update|security_boundaries)\.spec\.ts$/u,
+      use: { ...devices["Desktop Chrome"], baseURL: ALL_HOST_HARNESS_URL },
     },
   ],
   webServer: [
@@ -135,6 +161,20 @@ export default defineConfig({
               "pnpm exec vite build --config tests/harness/vite.config.media_dialogs.ts && " +
               `pnpm exec vite preview --config tests/harness/vite.config.media_dialogs.ts --port ${String(MEDIA_DIALOGS_HARNESS_PORT)} --strictPort`,
             url: `${MEDIA_DIALOGS_HARNESS_URL}/media_dialogs_host.html`,
+            reuseExistingServer: false,
+            timeout: 5 * 60_000,
+            stdout: "pipe" as const,
+            stderr: "pipe" as const,
+          },
+        ]
+      : []),
+    ...(wants_all_host
+      ? [
+          {
+            command:
+              "pnpm exec vite build --config tests/harness/vite.config.all_host.ts && " +
+              `pnpm exec vite preview --config tests/harness/vite.config.all_host.ts --port ${String(ALL_HOST_HARNESS_PORT)} --strictPort`,
+            url: `${ALL_HOST_HARNESS_URL}/sillytavern_host.html`,
             reuseExistingServer: false,
             timeout: 5 * 60_000,
             stdout: "pipe" as const,

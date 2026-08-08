@@ -1,0 +1,14 @@
+{
+  "name": "@tavern-canvas/bundle-budget",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "tavern-canvas-bundle-budget": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --root ../.. --project tools tools/bundle_budget",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}
