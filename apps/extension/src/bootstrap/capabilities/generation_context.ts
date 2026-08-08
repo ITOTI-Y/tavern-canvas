@@ -26,7 +26,7 @@ export interface GenerationOriginSource {
   resolve(): Promise<GenerationOrigin>;
 }
 
-function to_source_context(snapshot: HostChatSnapshot): SourceContext {
+export function to_source_context(snapshot: HostChatSnapshot): SourceContext {
   return SourceContextSchema.parse({
     schema_version: 1,
     chat_id: snapshot.chat_id,

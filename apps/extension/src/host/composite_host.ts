@@ -1,4 +1,5 @@
 import type { CapabilityMatrix } from "@tavern-canvas/contracts";
+import type { HostPromptInjection } from "@tavern-canvas/core";
 
 import type {
   HostAdapter,
@@ -73,6 +74,10 @@ export class CompositeHostAdapter implements HostAdapter {
 
   register_image_tool(tool: HostImageTool): () => void {
     return this.#sillytavern.register_image_tool(tool);
+  }
+
+  set_trigger_injection(injection: HostPromptInjection | null): void {
+    this.#sillytavern.set_trigger_injection(injection);
   }
 
   generate_private_prompt(request: PrivatePromptRequest): Promise<string> {

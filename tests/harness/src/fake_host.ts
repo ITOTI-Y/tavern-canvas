@@ -14,6 +14,7 @@ import type {
   PrivatePromptRequest,
 } from "../../../apps/extension/src/host/index.js";
 import { TAVERN_CANVAS_SWIPE_METADATA_KEY } from "../../../apps/extension/src/host/index.js";
+import type { HostPromptInjection } from "@tavern-canvas/core";
 
 interface MutableSwipe {
   swipe_id: number;
@@ -57,6 +58,7 @@ export class FakeHost implements HostAdapter {
   #active_chat_id: string;
   raw_model_text = "";
   cleaned_model_text = "";
+  trigger_injection: HostPromptInjection | null = null;
 
   constructor(native_tool_available: boolean, initial_chat_id = "chat-a") {
     this.capabilities = {
@@ -105,6 +107,10 @@ export class FakeHost implements HostAdapter {
         this.tools.delete(tool.name);
       }
     };
+  }
+
+  set_trigger_injection(injection: HostPromptInjection | null): void {
+    this.trigger_injection = injection;
   }
 
   generate_private_prompt(_request: PrivatePromptRequest): Promise<string> {

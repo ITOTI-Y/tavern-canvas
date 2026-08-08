@@ -16,6 +16,9 @@ export interface GenerationDraftInput {
   readonly negative_prompt: string;
   readonly image_count: number;
   readonly references: readonly ReferenceDraftItem[];
+  /** Overrides the provider's placeholder model. An automatic request supplies the active
+   * profile's own allowlisted model, which is the only one that profile will accept. */
+  readonly model_id?: string;
 }
 
 export class UnsupportedProviderError extends Error {
@@ -25,6 +28,33 @@ export class UnsupportedProviderError extends Error {
     super(`Workbench cannot build a generation request for provider "${provider_id}" yet.`);
     this.name = "UnsupportedProviderError";
   }
+}
+
+/** `sd_webui` and `novelai` accept any provider identifier, so a profile's model passes straight
+ * through. OpenAI and Google publish closed model enums, so an override is honoured only when the
+ * contract already names it and the documented default stands otherwise. */
+const OPENAI_IMAGE_MODEL_IDS = [
+  "gpt-image-1",
+  "gpt-image-1-mini",
+  "gpt-image-1.5",
+  "gpt-image-2",
+  "gpt-image-2-2026-04-21",
+  "chatgpt-image-latest",
+] as const;
+
+const GOOGLE_IMAGE_MODEL_IDS = [
+  "gemini-2.5-flash-image",
+  "gemini-3-pro-image-preview",
+  "gemini-3-pro-image",
+  "gemini-3.1-flash-image",
+] as const;
+
+function enum_model_id<T extends string>(
+  supported: readonly T[],
+  requested: string | undefined,
+  fallback: T,
+): T {
+  return supported.find((candidate) => candidate === requested) ?? fallback;
 }
 
 const HEX_ALPHABET = "0123456789abcdef";
@@ -68,7 +98,16 @@ export async function build_generation_request(
   input: GenerationDraftInput,
   request_id: Uuid,
 ): Promise<ImageGenerationRequest> {
-  const generation_anchor = await compute_generation_anchor(request_id);
+  return build_provider_request(input, request_id, await compute_generation_anchor(request_id));
+}
+
+/** The same construction against an anchor the caller already owns: an automatic request is
+ * anchored to its live `GenerationSession`, never to a freshly minted placeholder. */
+export function build_provider_request(
+  input: GenerationDraftInput,
+  request_id: Uuid,
+  generation_anchor: string,
+): ImageGenerationRequest {
   const base = {
     request_id,
     generation_anchor,
@@ -83,7 +122,7 @@ export async function build_generation_request(
         provider_id: "sd_webui",
         ...base,
         mode: "txt2img",
-        model_id: "default",
+        model_id: input.model_id ?? "default",
         sampler: "euler_a",
         scheduler: "normal",
         width: 512,
@@ -95,7 +134,7 @@ export async function build_generation_request(
       return {
         provider_id: "novelai",
         ...base,
-        model_id: "nai-diffusion-4-full",
+        model_id: input.model_id ?? "nai-diffusion-4-full",
         sampler: "k_euler",
         width: 832,
         height: 1216,
@@ -123,7 +162,7 @@ export async function build_generation_request(
         provider_id: "openai_image",
         ...base,
         mode: has_references ? "edit" : "generate",
-        model_id: "gpt-image-1",
+        model_id: enum_model_id(OPENAI_IMAGE_MODEL_IDS, input.model_id, "gpt-image-1"),
         size: "auto",
         quality: "auto",
         background: "auto",
@@ -137,7 +176,7 @@ export async function build_generation_request(
       return {
         provider_id: "google_image",
         ...base,
-        model_id: "gemini-2.5-flash-image",
+        model_id: enum_model_id(GOOGLE_IMAGE_MODEL_IDS, input.model_id, "gemini-2.5-flash-image"),
         reference_asset_ids: input.references.slice(0, 14).map((reference) => reference.asset_id),
         aspect_ratio: "1:1",
         image_size: "1K",

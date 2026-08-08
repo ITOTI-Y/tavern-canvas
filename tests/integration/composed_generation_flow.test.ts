@@ -11,6 +11,7 @@ import {
   ProviderProfileRepository,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
+import { ModuleRuntime } from "@tavern-canvas/core";
 import { deleteDB } from "idb";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -68,12 +69,43 @@ const READY_PROBE: BootstrapProbeResult = {
   },
 };
 
-function create_globals(): object {
+interface RegisteredTool {
+  readonly name: string;
+  readonly action: (arguments_: unknown) => string | Promise<string>;
+}
+
+interface HostControl {
+  readonly globals: object;
+  readonly registered_tools: RegisteredTool[];
+  readonly injections: string[];
+  emit(event_name: string, ...arguments_: readonly unknown[]): void;
+}
+
+/**
+ * A SillyTavern + TavernHelper global graph with a real event source and a real
+ * `setExtensionPrompt`, so the composed `GenerationTriggerModule` can be driven exactly the way a
+ * live host drives it: emit `GENERATION_STARTED`, then either invoke the registered function tool
+ * or stream a hidden-comment chunk.
+ */
+function create_host_control(auto_generation_enabled = true): HostControl {
+  const listeners = new Map<string, ((...arguments_: readonly unknown[]) => void)[]>();
+  const registered_tools: RegisteredTool[] = [];
+  const injections: string[] = [];
   const context = {
     getCurrentLocale: () => "en",
     getCurrentChatId: () => "chat-42",
     getRequestHeaders: () => ({ "Content-Type": "application/json" }),
-    eventSource: { on: vi.fn(), removeListener: vi.fn() },
+    eventSource: {
+      on(event_name: string, listener: (...arguments_: readonly unknown[]) => void) {
+        listeners.set(event_name, [...(listeners.get(event_name) ?? []), listener]);
+      },
+      removeListener(event_name: string, listener: (...arguments_: readonly unknown[]) => void) {
+        listeners.set(
+          event_name,
+          (listeners.get(event_name) ?? []).filter((candidate) => candidate !== listener),
+        );
+      },
+    },
     eventTypes: {
       GENERATION_STARTED: "generation_started",
       GENERATION_STOPPED: "generation_stopped",
@@ -82,8 +114,13 @@ function create_globals(): object {
       CHAT_CHANGED: "chat_changed",
       MESSAGE_SWIPED: "message_swiped",
     },
-    registerFunctionTool: vi.fn(),
+    registerFunctionTool(tool: RegisteredTool) {
+      registered_tools.push(tool);
+    },
     unregisterFunctionTool: vi.fn(),
+    setExtensionPrompt(_key: string, value: string) {
+      injections.push(value);
+    },
     extensionSettings: {
       tavern_canvas: {
         schema_version: 1,
@@ -91,8 +128,8 @@ function create_globals(): object {
         locale: "auto",
         active_provider_profile_id: PROFILE_ID,
         global_concurrency: 2,
-        auto_generation_enabled: false,
-        fallback_generation_enabled: false,
+        auto_generation_enabled,
+        fallback_generation_enabled: auto_generation_enabled,
         gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
         ui: {
           color_mode: "system",
@@ -105,15 +142,38 @@ function create_globals(): object {
     saveSettingsDebounced: vi.fn(),
   };
   return {
-    TavernHelper: {
-      getTavernHelperVersion: () => "4.9.1",
-      generateRaw: vi.fn(),
-      getChatMessages: vi.fn(() => []),
-      setChatMessages: vi.fn(),
+    globals: {
+      TavernHelper: {
+        getTavernHelperVersion: () => "4.9.1",
+        generateRaw: vi.fn(),
+        getChatMessages: vi.fn(() => []),
+        setChatMessages: vi.fn(),
+      },
+      SillyTavern: { getContext: () => context },
+      fetch: vi.fn(),
     },
-    SillyTavern: { getContext: () => context },
-    fetch: vi.fn(),
+    registered_tools,
+    injections,
+    emit(event_name, ...arguments_) {
+      for (const listener of [...(listeners.get(event_name) ?? [])]) {
+        listener(...arguments_);
+      }
+    },
   };
+}
+
+function create_globals(): object {
+  return create_host_control(false).globals;
+}
+
+/** The anchor the composition published to the model, read back out of the trigger injection --
+ * the only place a caller can legitimately learn it, and the same place a real model reads it. */
+function published_anchor(control: HostControl): string {
+  const anchor = /"([a-f0-9]{64})"/u.exec(control.injections.at(-1) ?? "")?.[1];
+  if (anchor === undefined) {
+    throw new Error("No generation anchor was published to the main LLM");
+  }
+  return anchor;
 }
 
 async function seed_provider_profile(database: StorageDatabase): Promise<void> {
@@ -166,14 +226,16 @@ interface Harness {
 
 async function create_harness(
   respond: (signal: AbortSignal | undefined) => Promise<Response>,
+  globals: object = create_globals(),
+  probe: BootstrapProbeResult = READY_PROBE,
 ): Promise<Harness> {
   const database = await open_database();
   await seed_provider_profile(database);
   const requests: { url: string; body: string }[] = [];
 
   const composition = await compose_studio_capabilities({
-    probe: READY_PROBE,
-    globals: create_globals(),
+    probe,
+    globals,
     extension_version: "3.0.0-test",
     create_vocabulary_worker: null,
     estimate_storage: () => Promise.resolve(undefined),
@@ -185,6 +247,25 @@ async function create_harness(
   });
 
   return { composition, capabilities: composition.capabilities, database, requests };
+}
+
+/** Composition alone wires nothing: `bootstrap_tavern_canvas` hands `composition.modules` to a
+ * `ModuleRuntime`, and only `start_all()` attaches the trigger to the host. */
+async function start_modules(composition: StudioComposition): Promise<ModuleRuntime> {
+  const runtime = new ModuleRuntime(composition.modules);
+  await runtime.start_all();
+  return runtime;
+}
+
+function probe_without_native_tools(): BootstrapProbeResult {
+  return {
+    ready: true,
+    helper_version: "4.9.1",
+    matrix: {
+      ...(READY_PROBE.ready ? READY_PROBE.matrix : {}),
+      native_tool_manager: { available: false },
+    },
+  };
 }
 
 function request_url(input: RequestInfo | URL): string {
@@ -331,6 +412,119 @@ describe("composed generation flow", () => {
 
     const records = await new GalleryImageRecordRepository(harness.database).list(NAMESPACE);
     expect(records).toEqual([]);
+    await harness.composition.dispose();
+  });
+
+  it("registers request_image with the host and drives a native tool call to a stored image", async () => {
+    const control = create_host_control();
+    const harness = await create_harness(
+      () => Promise.resolve(json_response(SD_RESPONSE)),
+      control.globals,
+    );
+    const runtime = await start_modules(harness.composition);
+    await vi.waitFor(() => expect(control.injections.length).toBeGreaterThan(0));
+
+    control.emit("generation_started", "normal", {}, false);
+    const tool = control.registered_tools.find((candidate) => candidate.name === "request_image");
+    if (tool === undefined) {
+      throw new Error(
+        "the composition root must start GenerationTriggerModule so SillyTavern's ToolManager can " +
+          "reach request_image",
+      );
+    }
+
+    const response: unknown = JSON.parse(
+      await tool.action({
+        generation_anchor: published_anchor(control),
+        scene_description: "a rainy alley at night",
+      }),
+    );
+    expect(response).toMatchObject({ status: "queued" });
+
+    await vi.waitFor(async () =>
+      expect(await harness.capabilities.generation.load()).toMatchObject([{ state: "completed" }]),
+    );
+    expect(harness.requests[0]?.url).toBe(`${PROVIDER_ORIGIN}/sdapi/v1/txt2img`);
+    expect(harness.requests[0]?.body).toContain("a rainy alley at night");
+    await expect(
+      new GalleryImageRecordRepository(harness.database).list(NAMESPACE),
+    ).resolves.toHaveLength(1);
+
+    await runtime.stop_all();
+    await harness.composition.dispose();
+  });
+
+  it("turns a hidden-comment stream from a non-tool model into a completed generation job", async () => {
+    const control = create_host_control();
+    const harness = await create_harness(
+      () => Promise.resolve(json_response(SD_RESPONSE)),
+      control.globals,
+      probe_without_native_tools(),
+    );
+    const runtime = await start_modules(harness.composition);
+    await vi.waitFor(() => expect(control.injections.length).toBeGreaterThan(0));
+
+    control.emit("generation_started", "normal", {}, false);
+    expect(control.registered_tools).toEqual([]);
+
+    const marker = `<!-- tavern-canvas:image ${JSON.stringify({
+      generation_anchor: published_anchor(control),
+      scene_description: "a neon rooftop",
+    })} -->`;
+    control.emit("stream_token_received", `Before ${marker} after`);
+    control.emit("generation_stopped");
+
+    await vi.waitFor(async () =>
+      expect(await harness.capabilities.generation.load()).toMatchObject([{ state: "completed" }]),
+    );
+    expect(harness.requests[0]?.body).toContain("a neon rooftop");
+
+    await runtime.stop_all();
+    await harness.composition.dispose();
+  });
+
+  it("registers no tool and parses no marker while automatic generation is disabled", async () => {
+    const control = create_host_control(false);
+    const harness = await create_harness(
+      () => Promise.resolve(json_response(SD_RESPONSE)),
+      control.globals,
+      probe_without_native_tools(),
+    );
+    const runtime = await start_modules(harness.composition);
+
+    control.emit("generation_started", "normal", {}, false);
+    control.emit(
+      "stream_token_received",
+      `<!-- tavern-canvas:image ${JSON.stringify({
+        generation_anchor: "a".repeat(64),
+        scene_description: "should never run",
+      })} -->`,
+    );
+    control.emit("generation_stopped");
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(control.injections.at(-1) ?? "").toBe("");
+    expect(harness.requests).toEqual([]);
+    await expect(harness.capabilities.generation.load()).resolves.toEqual([]);
+
+    await runtime.stop_all();
+    await harness.composition.dispose();
+  });
+
+  it("detaches the trigger from the host when the runtime stops", async () => {
+    const control = create_host_control();
+    const harness = await create_harness(
+      () => Promise.resolve(json_response(SD_RESPONSE)),
+      control.globals,
+    );
+    const runtime = await start_modules(harness.composition);
+    await vi.waitFor(() => expect(control.injections.length).toBeGreaterThan(0));
+    await runtime.stop_all();
+
+    control.emit("generation_started", "normal", {}, false);
+    expect(control.registered_tools).toEqual([]);
+    expect(control.injections.at(-1)).toBe("");
+
     await harness.composition.dispose();
   });
 

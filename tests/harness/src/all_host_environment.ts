@@ -45,6 +45,9 @@ export interface HostEnvironmentControl {
   readonly registered_tools: readonly SillyTavernFunctionTool[];
   readonly unregistered_tool_names: readonly string[];
   readonly subscribed_events: readonly string[];
+  /** Every value the extension published through SillyTavern's `setExtensionPrompt`. The trigger
+   * injection is how the main LLM learns the generation anchor it must echo back. */
+  readonly trigger_injections: readonly string[];
   readonly upload_requests: readonly RecordedRequest[];
   readonly requests: readonly RecordedRequest[];
   readonly chat_messages: readonly MutableChatMessage[];
@@ -166,6 +169,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
   const registered_tools: SillyTavernFunctionTool[] = [];
   const unregistered_tool_names: string[] = [];
   const subscribed_events: string[] = [];
+  const trigger_injections: string[] = [];
   const upload_requests: RecordedRequest[] = [];
   const requests: RecordedRequest[] = [];
   const provider_requests: RecordedRequest[] = [];
@@ -242,6 +246,9 @@ export function create_host_environment(options: HostEnvironmentOptions): {
     },
     unregisterFunctionTool(name) {
       unregistered_tool_names.push(name);
+    },
+    setExtensionPrompt(_key, value) {
+      trigger_injections.push(value);
     },
     extensionSettings: extension_settings,
     saveSettingsDebounced() {
@@ -370,6 +377,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
     registered_tools,
     unregistered_tool_names,
     subscribed_events,
+    trigger_injections,
     upload_requests,
     requests,
     chat_messages,

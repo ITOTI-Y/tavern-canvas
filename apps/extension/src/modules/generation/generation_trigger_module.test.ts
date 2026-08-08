@@ -123,6 +123,8 @@ class RecordingHost implements HostAdapter {
     };
   }
 
+  set_trigger_injection(): void {}
+
   async generate_private_prompt(): Promise<string> {
     return "";
   }

@@ -18,6 +18,7 @@ export { SourceContextSchema } from "./generation/source_context.js";
 export type { SourceContext } from "./generation/source_context.js";
 export {
   FALLBACK_CANDIDATE_BYTE_LIMIT,
+  FALLBACK_COMMENT_OPENING,
   FallbackStreamParser,
 } from "./generation/fallback_stream_parser.js";
 export type { FallbackParseDelta } from "./generation/fallback_stream_parser.js";

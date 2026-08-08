@@ -9,19 +9,16 @@ import {
   BrowserRequestIdSource,
   ImageJobQueue,
   MessageBinder,
+  RequestImageTool,
+  SessionRegistry,
   SystemJobTimeSource,
   type MessagePort,
   type RuntimeModule,
 } from "@tavern-canvas/core";
-import {
-  ComfyUiAdapter,
-  GoogleImageAdapter,
-  NovelAiAdapter,
-  OpenAiImageAdapter,
-  SdWebuiAdapter,
-  type ProviderAdapter,
-  type ProviderAssetReader,
-  type ProviderTransport,
+import type {
+  ProviderAdapter,
+  ProviderAssetReader,
+  ProviderTransport,
 } from "@tavern-canvas/providers";
 import {
   create_business_repositories,
@@ -47,9 +44,16 @@ import {
   MediaJobExecutor,
   type ImageStorePort,
 } from "../modules/media/media_command_service.js";
+import {
+  AutomaticGenerationSessionModule,
+  AutomaticImageRequestRouter,
+  HostFallbackTextSink,
+  HostGenerationSessionPort,
+} from "../modules/generation/automatic_generation.js";
+import { GenerationTriggerModule } from "../modules/generation/generation_trigger_module.js";
+import { HostMessagePort } from "../modules/generation/message_binding_module.js";
 import { TauriChatSurfaceModule } from "../modules/tauri/chat_surface_module.js";
-import { VocabularyCatalogClient } from "../modules/vocabulary/vocabulary_catalog_client.js";
-import { VocabularyClient } from "../modules/vocabulary/vocabulary_client.js";
+import { TauriWorldInfoActivationModule } from "../modules/tauri/world_info_activation_module.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
 import type { ProviderFetch } from "../transport/browser_fetch.js";
@@ -82,7 +86,7 @@ import {
   create_settings_capability,
   VocabularyChannelState,
 } from "./capabilities/settings_capability.js";
-import { read_optional_string, read_payload } from "./capabilities/_records.js";
+import { as_record, read_array, read_optional_string, read_payload } from "./capabilities/_records.js";
 import { create_vocabulary_capability } from "./capabilities/vocabulary_capability.js";
 import {
   capability_unavailable_error,
@@ -161,9 +165,16 @@ function default_vocabulary_worker_factory(): (() => VocabularyWorkerLike) | nul
     new Worker(new URL("../workers/vocabulary_worker.js", import.meta.url), { type: "module" });
 }
 
-function build_provider_adapters(
+/**
+ * The five concrete adapters, imported only when a job runs or a connection is tested. Loading them
+ * at composition time put every provider's request mapping, response parsing and workflow renderer
+ * into the initial chunk for a session that may never generate anything.
+ */
+async function build_provider_adapters(
   database: StorageDatabase | null,
-): Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>> {
+): Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>> {
+  const { ComfyUiAdapter, GoogleImageAdapter, NovelAiAdapter, OpenAiImageAdapter, SdWebuiAdapter } =
+    await import("@tavern-canvas/providers/adapters");
   const adapters: Record<string, ProviderAdapter<ImageGenerationRequest>> = {
     novelai: new NovelAiAdapter(),
     sd_webui: new SdWebuiAdapter(),
@@ -212,6 +223,14 @@ function create_asset_reader(
  * malformed executor change from reaching IndexedDB as an invalid record. */
 function to_image_metadata(metadata: Readonly<Record<string, unknown>>): PutImageRecordMetadata {
   return ImageRecordFieldsSchema.omit({ media_type: true, quarantined: true }).parse(metadata);
+}
+
+/** The first model the stored profile permits. Automatic requests have no parameter editor behind
+ * them, so this is the only model such a request can legitimately name. */
+function read_first_allowlisted_model(payload: Readonly<Record<string, unknown>>): string | null {
+  const models = read_array(as_record(payload.provider_profile), "model_allowlist");
+  const first_model = models[0];
+  return typeof first_model === "string" && first_model.length > 0 ? first_model : null;
 }
 
 function create_image_store_port(
@@ -294,6 +313,13 @@ export async function compose_studio_capabilities(
       }),
     );
   }
+  /**
+   * Guarded by the probe rather than by the ChatSurface branch above: TauriTavern advertises the two
+   * capabilities independently, and on a standard SillyTavern host neither module exists at all.
+   */
+  if (capability_matrix.tauri_world_info_activation?.available === true) {
+    modules.push(new TauriWorldInfoActivationModule({ globals }));
+  }
 
   let database: StorageDatabase | null = null;
   try {
@@ -312,7 +338,23 @@ export async function compose_studio_capabilities(
   const secret_resolver = read_secret_resolver(globals);
   const repositories = database === null ? null : create_business_repositories(database);
   const timeline = new TaskTimeline();
-  const provider_adapters = build_provider_adapters(database);
+  let provider_adapters: Promise<
+    Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
+  > | null = null;
+  const load_provider_adapters = (): Promise<
+    Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
+  > => (provider_adapters ??= build_provider_adapters(database));
+  const is_auto_generation_enabled = (): boolean =>
+    settings_adapter?.get_settings().auto_generation_enabled ?? false;
+  const trigger_sessions =
+    host === null
+      ? null
+      : new HostGenerationSessionPort({
+          host,
+          sessions: new SessionRegistry(new BrowserRandomSource(globalThis.crypto)),
+          new_root_id: () => crypto.randomUUID(),
+          is_auto_generation_enabled,
+        });
 
   /**
    * A provider's allowlists and its vault reference live on its stored profile -- never in code,
@@ -330,6 +372,7 @@ export async function compose_studio_capabilities(
   const active_profile_payload =
     active_profile_record === null ? {} : read_payload(active_profile_record);
   const direct_provider_base_url = read_optional_string(active_profile_payload, "base_url");
+  const active_profile_model_id = read_first_allowlisted_model(active_profile_payload);
   const active_provider_id =
     active_profile_record === null
       ? null
@@ -366,7 +409,7 @@ export async function compose_studio_capabilities(
           create_profiles_capability({
             repository: repositories.provider_profiles,
             namespace,
-            adapters: provider_adapters,
+            load_adapters: load_provider_adapters,
             secrets,
             now,
           }),
@@ -467,6 +510,43 @@ export async function compose_studio_capabilities(
     fallback.gallery,
   );
 
+  /**
+   * The main-LLM trigger: `request_image` as a native function tool where the host has a
+   * ToolManager, the hidden-comment stream parser where it does not. Wired from inside the
+   * generation capability because it enqueues onto exactly the queue the Workbench submits to --
+   * where there is no working generation capability there is nothing for a trigger to do either.
+   */
+  function wire_generation_trigger(
+    queue: ImageJobQueue,
+    plans: MediaExecutionPlanRegistry,
+    sessions: HostGenerationSessionPort,
+  ): void {
+    if (host === null) {
+      return;
+    }
+    const fallback_text_sink = new HostFallbackTextSink({ host, sessions });
+    modules.push(
+      new AutomaticGenerationSessionModule(sessions, fallback_text_sink),
+      new GenerationTriggerModule({
+        host,
+        request_image_tool: new RequestImageTool(
+          sessions.registry,
+          new BrowserRequestIdSource(),
+          new AutomaticImageRequestRouter({
+            queue,
+            plans,
+            targets: sessions,
+            provider_id: () => active_provider_id,
+            model_id: () => active_profile_model_id,
+          }),
+        ),
+        session_port: sessions,
+        fallback_text_sink,
+        is_auto_generation_enabled,
+      }),
+    );
+  }
+
   const generation = record(
     "generation",
     database === null
@@ -492,10 +572,10 @@ export async function compose_studio_capabilities(
             const plans = new MediaExecutionPlanRegistry();
             const queue = new ImageJobQueue({
               executor: new MediaJobExecutor({
-                adapters: provider_adapters,
+                load_adapters: load_provider_adapters,
                 profiles: {
-                  resolve: (provider_id) => {
-                    const adapter = provider_adapters[provider_id];
+                  resolve: async (provider_id) => {
+                    const adapter = (await load_provider_adapters())[provider_id];
                     if (adapter === undefined || active_profile_record === null) {
                       throw new Error(`No stored provider profile is active for ${provider_id}`);
                     }
@@ -521,12 +601,23 @@ export async function compose_studio_capabilities(
               global_concurrency: settings_adapter?.get_settings().global_concurrency ?? 1,
             });
             teardown.push(timeline.observe_jobs(queue));
-            if (options.message_port != null) {
-              const binder = new MessageBinder(queue, options.message_port);
+            /**
+             * Production now has a real `MessagePort`: without it no automatic image ever reaches
+             * the message it was requested from, because nothing carries a completed job through
+             * `completed -> attached | orphaned`.
+             */
+            const message_port =
+              options.message_port ??
+              (trigger_sessions === null ? null : new HostMessagePort(host, trigger_sessions));
+            if (message_port !== null) {
+              const binder = new MessageBinder(queue, message_port);
               binder.start();
               teardown.push(() => {
                 binder.stop();
               });
+            }
+            if (trigger_sessions !== null) {
+              wire_generation_trigger(queue, plans, trigger_sessions);
             }
             const request_ids = new BrowserRequestIdSource();
             return create_generation_capability({
@@ -556,11 +647,21 @@ export async function compose_studio_capabilities(
         ? unavailable("This host has no Worker constructor, so vocabulary search cannot run")
         : resolve_capability(() =>
             create_vocabulary_capability({
-              catalog: new VocabularyCatalogClient({
-                current_extension_version: extension_version,
-                open_database_impl: () => Promise.resolve(database),
-              }),
-              create_client: () => new VocabularyClient({ create_worker }),
+              async load_catalog() {
+                const { VocabularyCatalogClient } = await import(
+                  "../modules/vocabulary/vocabulary_catalog_client.js"
+                );
+                return new VocabularyCatalogClient({
+                  current_extension_version: extension_version,
+                  open_database_impl: () => Promise.resolve(database),
+                });
+              },
+              async create_client() {
+                const { VocabularyClient } = await import(
+                  "../modules/vocabulary/vocabulary_client.js"
+                );
+                return new VocabularyClient({ create_worker });
+              },
             }),
           ),
     fallback.vocabulary,

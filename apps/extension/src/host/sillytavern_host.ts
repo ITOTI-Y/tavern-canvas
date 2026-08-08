@@ -1,3 +1,5 @@
+import type { HostPromptInjection } from "@tavern-canvas/core";
+
 import type {
   HostChatChangeHandler,
   HostGenerationChunkHandler,
@@ -9,6 +11,14 @@ import type {
 } from "./host_adapter.js";
 
 export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => void;
+
+/** The extension-prompt slot TavernCanvas owns. Namespaced so no other extension's slot collides. */
+export const TRIGGER_INJECTION_KEY = "tavern_canvas_image_trigger";
+
+/** SillyTavern's own `extension_prompt_types` / `extension_prompt_roles` enum values. They are not
+ * reachable through `getContext()`, so the two the trigger injection uses are restated here. */
+const SILLYTAVERN_PROMPT_POSITION = { none: -1, in_chat: 1 } as const;
+const SILLYTAVERN_PROMPT_ROLE = { system: 0 } as const;
 
 export interface SillyTavernEventSource {
   on(event_name: string, listener: SillyTavernEventListener): void;
@@ -39,6 +49,16 @@ export interface SillyTavernContextSurface {
   };
   registerFunctionTool(tool: SillyTavernFunctionTool): void;
   unregisterFunctionTool(name: string): void;
+  /** SillyTavern 1.12+ context member. Optional here so an older or trimmed context degrades to
+   * "no trigger instruction" instead of failing the whole host. */
+  setExtensionPrompt?: (
+    key: string,
+    value: string,
+    position: number,
+    depth: number,
+    scan: boolean,
+    role: number,
+  ) => void;
 }
 
 export interface SillyTavernUploadResponse {
@@ -437,6 +457,21 @@ export class SillyTavernHost {
       disposed = true;
       this.#context.unregisterFunctionTool(tool.name);
     };
+  }
+
+  set_trigger_injection(injection: HostPromptInjection | null): void {
+    const set_extension_prompt = this.#context.setExtensionPrompt;
+    if (set_extension_prompt === undefined) {
+      return;
+    }
+    Reflect.apply(set_extension_prompt, this.#context, [
+      TRIGGER_INJECTION_KEY,
+      injection?.content ?? "",
+      injection === null ? SILLYTAVERN_PROMPT_POSITION.none : SILLYTAVERN_PROMPT_POSITION.in_chat,
+      injection?.depth ?? 0,
+      injection?.scan_world_info ?? false,
+      SILLYTAVERN_PROMPT_ROLE.system,
+    ]);
   }
 
   async upload_image(request: HostImageUploadRequest): Promise<HostImageUploadResult> {

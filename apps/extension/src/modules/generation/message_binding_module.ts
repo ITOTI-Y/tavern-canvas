@@ -65,7 +65,7 @@ function read_metadata(
   return result.success ? result.data : null;
 }
 
-function read_media(swipe: HostMessageSwipeSnapshot): readonly MessageMedia[] {
+export function read_swipe_media(swipe: HostMessageSwipeSnapshot): readonly MessageMedia[] {
   const extra = swipe.data.extra;
   if (!is_record(extra) || !Array.isArray(extra.media)) {
     return [];
@@ -116,7 +116,7 @@ export class HostMessagePort implements MessagePort {
       swipe_id: swipe.swipe_id,
       generation_anchor: metadata?.generation_anchor ?? request.generation_anchor,
       metadata,
-      media: read_media(swipe),
+      media: read_swipe_media(swipe),
     });
   }
 

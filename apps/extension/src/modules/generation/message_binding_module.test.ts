@@ -176,6 +176,8 @@ class RecordingHost implements HostAdapter {
     return () => undefined;
   }
 
+  set_trigger_injection(): void {}
+
   generate_private_prompt(): Promise<string> {
     return Promise.resolve("");
   }

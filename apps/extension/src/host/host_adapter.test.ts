@@ -28,6 +28,7 @@ const adapter: HostAdapter = {
   subscribe_chat_change: () => () => undefined,
   subscribe_message_swiped: () => () => undefined,
   register_image_tool: () => () => undefined,
+  set_trigger_injection: () => undefined,
   generate_private_prompt: async () => "response",
   update_message: async () => undefined,
   upload_image: async () => ({ path: "/user/images/example.png" }),
@@ -48,7 +49,7 @@ describe("HostAdapter boundary", () => {
     ]);
   });
 
-  it("exposes exactly the supported capability property and ten operations", () => {
+  it("exposes exactly the supported capability property and eleven operations", () => {
     expect(Object.keys(adapter)).toEqual([
       "capabilities",
       "get_locale",
@@ -58,6 +59,7 @@ describe("HostAdapter boundary", () => {
       "subscribe_chat_change",
       "subscribe_message_swiped",
       "register_image_tool",
+      "set_trigger_injection",
       "generate_private_prompt",
       "update_message",
       "upload_image",

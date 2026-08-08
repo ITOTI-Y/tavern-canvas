@@ -1,4 +1,5 @@
 import type { CapabilityMatrix, TavernCanvasMessageMetadata } from "@tavern-canvas/contracts";
+import type { HostPromptInjection } from "@tavern-canvas/core";
 
 export const HOST_CAPABILITY_IDS = [
   "native_tool_manager",
@@ -122,6 +123,14 @@ export interface HostAdapter {
   subscribe_chat_change(handler: HostChatChangeHandler): () => void;
   subscribe_message_swiped(handler: HostMessageSwipedHandler): () => void;
   register_image_tool(tool: HostImageTool): () => void;
+  /**
+   * Publishes (or clears, with `null`) the one system instruction that tells the main LLM how to
+   * ask for an image. Without it the model cannot know the generation anchor, and both trigger
+   * paths reject every request it makes: `RequestImageTool` throws `missing` and
+   * `FallbackStreamParser` discards the comment. The descriptor comes from
+   * `create_trigger_policy`, so the wording and the anchor are stated in exactly one place.
+   */
+  set_trigger_injection(injection: HostPromptInjection | null): void;
   generate_private_prompt(request: PrivatePromptRequest): Promise<string>;
   update_message(request: MessageUpdateRequest): Promise<void>;
   upload_image(request: HostImageUploadRequest): Promise<HostImageUploadResult>;
