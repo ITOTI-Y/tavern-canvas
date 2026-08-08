@@ -152,6 +152,62 @@ describe("probe_host_capabilities", () => {
     },
   );
 
+  // The version parsing and >= comparison used to come from the `semver` package; they are now
+  // local to capability_probe.ts (SEMVER_PATTERN / is_at_least), so the grammar's rejections and
+  // the ordering rules it owns are pinned here rather than assumed from a dependency.
+  it.each([
+    "=4.9.1",
+    "04.9.1",
+    "4.09.1",
+    "4.9.01",
+    "4.9.1-",
+    "4.9.1-rc..1",
+    "4.9.1-rc.01",
+    "4.9.1+",
+    "-1.0.0",
+    "4.9.1.2",
+    "4.x.1",
+  ])("rejects malformed helper version %s as invalid", (version) => {
+    expect(probe_host_capabilities(create_fixture(version).globals)).toEqual({
+      ready: false,
+      error_code: "helper_version_invalid",
+      missing_capabilities: ["tavern_helper"],
+    });
+  });
+
+  it.each([
+    ["4.9.1+build.7", "build metadata is accepted and ignored"],
+    ["v4.9.1", "a leading v is tolerated, as semver's own valid() did"],
+    [" 4.9.1 ", "surrounding whitespace is tolerated, as semver's own valid() did"],
+    ["4.10.0", "a numerically larger minor beats a lexically larger one"],
+    ["4.9.10", "a numerically larger patch beats a lexically larger one"],
+    ["5.0.0-rc.1", "a prerelease of a newer core still clears the minimum"],
+    ["100.0.0", "multi-digit majors compare numerically"],
+  ])("accepts helper version %s: %s", (version) => {
+    const result: BootstrapProbeResult = probe_host_capabilities(create_fixture(version).globals);
+
+    expect(result.ready).toBe(true);
+    if (result.ready) {
+      expect(result.helper_version).toBe(version);
+    }
+  });
+
+  it.each([
+    ["4.9.1-rc.1", "a prerelease sorts below its own release"],
+    ["4.9.1-0", "a numeric prerelease identifier is still a prerelease"],
+    ["4.9.0+build.7", "build metadata never raises an otherwise too-old version"],
+    ["4.8.99", "a larger patch does not compensate for a smaller minor"],
+    ["3.99.99", "a larger minor does not compensate for a smaller major"],
+    ["0.0.0", "the zero version is below the minimum"],
+  ])("reports helper version %s as unsupported: %s", (version) => {
+    expect(probe_host_capabilities(create_fixture(version).globals)).toEqual({
+      ready: false,
+      error_code: "helper_version_unsupported",
+      missing_capabilities: ["tavern_helper"],
+      current_version: version,
+    });
+  });
+
   it.each([
     ["TavernHelper.getTavernHelperVersion", "helper", "getTavernHelperVersion", ["tavern_helper"]],
     ["TavernHelper.generateRaw", "helper", "generateRaw", ["private_prompt_generation"]],

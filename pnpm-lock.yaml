@@ -107,9 +107,6 @@ importers:
       reka-ui:
         specifier: 2.10.1
         version: 2.10.1(vue@3.5.40(typescript@6.0.3))
-      semver:
-        specifier: 7.8.5
-        version: 7.8.5
       vue:
         specifier: 3.5.40
         version: 3.5.40(typescript@6.0.3)
@@ -129,9 +126,6 @@ importers:
       '@types/node':
         specifier: 24.13.3
         version: 24.13.3
-      '@types/semver':
-        specifier: 7.8.0
-        version: 7.8.0
       '@vitejs/plugin-vue':
         specifier: 6.0.8
         version: 6.0.8(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(tsx@4.23.9))(vue@3.5.40(typescript@6.0.3))
@@ -284,11 +278,19 @@ importers:
         specifier: 6.2.5
         version: 6.2.5
 
+  tools/bundle_budget: {}
+
   tools/first_party_check: {}
 
   tools/locale_check: {}
 
   tools/parity_check: {}
+
+  tools/release_audit:
+    dependencies:
+      '@zip.js/zip.js':
+        specifier: 2.8.34
+        version: 2.8.34
 
   tools/v2_migration:
     dependencies:
@@ -1202,9 +1204,6 @@ packages:
 
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
-
-  '@types/semver@7.8.0':
-    resolution: {integrity: sha512-1mAINjtQCXXeLkJ9ehXkwOcBpqtLxiVtKhpUf83DdRNdQKV0iXZpaHYqRr7nj+wvxuJzoAmAwXI+sCNMv1CzLQ==}
 
   '@types/send@1.2.1':
     resolution: {integrity: sha512-arsCikDvlU99zl1g69TcAB3mzZPpxgw0UQnaHeC1Nwb015xp8bknZv5rIfri9xTOcMuaVgvabfIRA7PSZVuZIQ==}
@@ -3422,8 +3421,6 @@ snapshots:
   '@types/qs@6.15.1': {}
 
   '@types/range-parser@1.2.7': {}
-
-  '@types/semver@7.8.0': {}
 
   '@types/send@1.2.1':
     dependencies:

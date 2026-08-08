@@ -1,10 +1,10 @@
-import { BlobWriter, Uint8ArrayReader, ZipWriter } from "@zip.js/zip.js";
 import type { IDBPDatabase } from "idb";
 
 import { ARCHIVE_RECORD_STORES, type ArchiveChecksums } from "@tavern-canvas/contracts";
 
 import type { DBSchema } from "../database_schema.js";
 import { create_business_repositories } from "../repositories/business_repositories.js";
+import { load_zip_module } from "./_zip_module.js";
 import {
   CHECKSUMS_PATH,
   MANIFEST_PATH,
@@ -63,8 +63,9 @@ export async function export_archive(options: ExportArchiveOptions): Promise<Blo
   const created_at = options.created_at ?? new Date().toISOString();
   const repositories = create_business_repositories(database);
   const encoder = new TextEncoder();
+  const zip = await load_zip_module();
 
-  const zip_writer = new ZipWriter(new BlobWriter("application/zip"), {
+  const zip_writer = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
     level: 9,
     ...(signal === undefined ? {} : { signal }),
   });
@@ -79,7 +80,7 @@ export async function export_archive(options: ExportArchiveOptions): Promise<Blo
       const jsonl = records.map((record) => JSON.stringify(record)).join("\n");
       const bytes = encoder.encode(records.length === 0 ? "" : `${jsonl}\n`);
       const path = record_path(store);
-      await zip_writer.add(path, new Uint8ArrayReader(bytes));
+      await zip_writer.add(path, new zip.Uint8ArrayReader(bytes));
       checksums[path] = { sha256: compute_sha256_hex(bytes), byte_length: bytes.byteLength };
       record_counts[store] = records.length;
     }
@@ -97,7 +98,7 @@ export async function export_archive(options: ExportArchiveOptions): Promise<Blo
       }
       const bytes = await read_blob_bytes(blob_record.blob);
       const path = asset_path(sha256_hex, detect_asset_extension(bytes));
-      await zip_writer.add(path, new Uint8ArrayReader(bytes));
+      await zip_writer.add(path, new zip.Uint8ArrayReader(bytes));
       checksums[path] = { sha256: compute_sha256_hex(bytes), byte_length: bytes.byteLength };
     }
 
@@ -108,14 +109,14 @@ export async function export_archive(options: ExportArchiveOptions): Promise<Blo
       asset_count: unique_hashes.length,
     });
     const manifest_bytes = encoder.encode(JSON.stringify(manifest));
-    await zip_writer.add(MANIFEST_PATH, new Uint8ArrayReader(manifest_bytes));
+    await zip_writer.add(MANIFEST_PATH, new zip.Uint8ArrayReader(manifest_bytes));
     checksums[MANIFEST_PATH] = {
       sha256: compute_sha256_hex(manifest_bytes),
       byte_length: manifest_bytes.byteLength,
     };
 
     const checksums_bytes = encoder.encode(JSON.stringify(checksums));
-    await zip_writer.add(CHECKSUMS_PATH, new Uint8ArrayReader(checksums_bytes));
+    await zip_writer.add(CHECKSUMS_PATH, new zip.Uint8ArrayReader(checksums_bytes));
 
     return await zip_writer.close();
   } catch (error) {

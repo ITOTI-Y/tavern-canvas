@@ -1,11 +1,4 @@
-import {
-  BlobReader,
-  type Entry,
-  type FileEntry,
-  Uint8ArrayReader,
-  Uint8ArrayWriter,
-  ZipReader,
-} from "@zip.js/zip.js";
+import type { BlobReader, Entry, FileEntry, Uint8ArrayReader, ZipReader } from "@zip.js/zip.js";
 import type { IDBPDatabase } from "idb";
 import type { ZodType } from "zod";
 
@@ -38,6 +31,7 @@ import {
   type ImageBlobRepository,
 } from "../repositories/business_repositories.js";
 import { with_transaction } from "../transaction.js";
+import { load_zip_module } from "./_zip_module.js";
 import {
   CHECKSUMS_PATH,
   MANIFEST_PATH,
@@ -101,11 +95,12 @@ function assert_not_aborted(signal: AbortSignal | undefined): void {
   }
 }
 
-function to_zip_reader(archive: Blob | ArrayBuffer): BlobReader | Uint8ArrayReader {
+async function to_zip_reader(archive: Blob | ArrayBuffer): Promise<BlobReader | Uint8ArrayReader> {
+  const zip = await load_zip_module();
   if (typeof Blob !== "undefined" && archive instanceof Blob) {
-    return new BlobReader(archive);
+    return new zip.BlobReader(archive);
   }
-  return new Uint8ArrayReader(new Uint8Array(archive as ArrayBuffer));
+  return new zip.Uint8ArrayReader(new Uint8Array(archive as ArrayBuffer));
 }
 
 async function close_quietly(zip_reader: ZipReader<unknown>): Promise<void> {
@@ -126,7 +121,8 @@ async function read_entry_bytes(
       `Entry exceeds the maximum allowed uncompressed size: ${entry.filename}`,
     );
   }
-  return entry.getData(new Uint8ArrayWriter(), signal === undefined ? {} : { signal });
+  const zip = await load_zip_module();
+  return entry.getData(new zip.Uint8ArrayWriter(), signal === undefined ? {} : { signal });
 }
 
 function extract_schema_version(value: unknown): number | undefined {
@@ -354,8 +350,9 @@ async function rollback_image_blobs(
  */
 export async function import_archive(options: ImportArchiveOptions): Promise<ImportArchiveResult> {
   const { database, signal } = options;
-  const reader = to_zip_reader(options.archive);
-  const zip_reader = new ZipReader(reader, signal === undefined ? {} : { signal });
+  const zip = await load_zip_module();
+  const reader = await to_zip_reader(options.archive);
+  const zip_reader = new zip.ZipReader(reader, signal === undefined ? {} : { signal });
 
   let entries: Entry[];
   try {

@@ -61,6 +61,20 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
   };
 }
 
+/**
+ * StudioWorkspace.vue reaches every route view through `defineAsyncComponent`. Mounting the shell
+ * therefore starts a dynamic import that outlives a synchronous test body, and the load would still
+ * be in flight when the environment tears down. Warming the three routes these tests mount keeps
+ * every later loader resolving straight from the module cache.
+ */
+beforeAll(async () => {
+  await Promise.all([
+    import("../views/workbench/WorkbenchView.vue"),
+    import("../views/gallery/GalleryView.vue"),
+    import("../views/settings/SettingsView.vue"),
+  ]);
+});
+
 interface MountOptions {
   readonly state?: Partial<StudioState>;
   readonly viewport?: "desktop" | "mobile";
@@ -501,9 +515,11 @@ describe("StudioShell shell-level states", () => {
     expect(wrapper.emitted("select-route")).toEqual([["diagnostics"]]);
   });
 
-  it("renders the routed workbench view once nothing is loading and nothing has failed", () => {
+  it("renders the routed workbench view once nothing is loading and nothing has failed", async () => {
     const { wrapper } = mount_shell();
-    expect(wrapper.find('[data-testid="workbench-view"]').exists()).toBe(true);
+    // StudioWorkspace.vue reaches every route view through `defineAsyncComponent`, so the workbench
+    // view appears only once its own dynamic import settles, not on the mount tick.
+    await expect.poll(() => wrapper.find('[data-testid="workbench-view"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="partial-banner"]').exists()).toBe(false);
   });

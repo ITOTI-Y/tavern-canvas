@@ -1,5 +1,4 @@
 import type { CapabilityMatrix, CapabilityStatus } from "@tavern-canvas/contracts";
-import { gte, valid } from "semver";
 
 import type { HostCapabilityId } from "./host_adapter.js";
 import { inspect_sillytavern, type SillyTavernInspection } from "./sillytavern_host.js";
@@ -7,6 +6,60 @@ import { inspect_tauritavern, type TauriTavernInspection } from "./tauritavern_h
 import { inspect_tavern_helper, type TavernHelperInspection } from "./tavern_helper_host.js";
 
 export const MINIMUM_TAVERN_HELPER_VERSION = "4.9.1";
+
+/**
+ * The semver.org reference grammar, plus the two liberties the `semver` package's own `valid()`
+ * took and hosts may already rely on: surrounding whitespace and a leading `v`. The probe needs
+ * exactly the two checks `valid()` and `gte()` gave it, and pulling that package in for them cost
+ * ~28 KB of the extension's initial chunk, so both live here instead. Build metadata is matched
+ * and then ignored, the same way `valid("1.2.3+build")` accepted it.
+ */
+const SEMVER_PATTERN =
+  /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
+
+interface ParsedVersion {
+  readonly major: number;
+  readonly minor: number;
+  readonly patch: number;
+  readonly prerelease: string | null;
+}
+
+function parse_semver(version: string): ParsedVersion | null {
+  const match = SEMVER_PATTERN.exec(version.trim());
+  if (match === null) {
+    return null;
+  }
+  const [, major, minor, patch, prerelease] = match;
+  return {
+    major: Number(major),
+    minor: Number(minor),
+    patch: Number(patch),
+    prerelease: prerelease ?? null,
+  };
+}
+
+function is_at_least(version: ParsedVersion, minimum: ParsedVersion): boolean {
+  const core_order =
+    version.major - minimum.major || version.minor - minimum.minor || version.patch - minimum.patch;
+  if (core_order !== 0) {
+    return core_order > 0;
+  }
+  // Equal release cores: a prerelease sorts below its own release (semver 11.3), so 4.9.1-rc.1 is
+  // not yet 4.9.1. Ordering two prereleases of the same core against each other is deliberately
+  // not implemented -- `minimum` is only ever MINIMUM_TAVERN_HELPER_VERSION, a plain release.
+  return version.prerelease === null;
+}
+
+type HelperVersionVerdict = "invalid" | "unsupported" | "supported";
+
+function classify_helper_version(version: string): HelperVersionVerdict {
+  const parsed = parse_semver(version);
+  const minimum = parse_semver(MINIMUM_TAVERN_HELPER_VERSION);
+  if (parsed === null || minimum === null) {
+    return "invalid";
+  }
+  return is_at_least(parsed, minimum) ? "supported" : "unsupported";
+}
 
 export type BootstrapProbeResult =
   | {
@@ -142,7 +195,8 @@ export function probe_host_capabilities(globals: unknown): BootstrapProbeResult 
   }
 
   const helper_version = version.value;
-  if (valid(helper_version) === null) {
+  const verdict = classify_helper_version(helper_version);
+  if (verdict === "invalid") {
     return {
       ready: false,
       error_code: "helper_version_invalid",
@@ -150,7 +204,7 @@ export function probe_host_capabilities(globals: unknown): BootstrapProbeResult 
     };
   }
 
-  if (!gte(helper_version, MINIMUM_TAVERN_HELPER_VERSION)) {
+  if (verdict === "unsupported") {
     return {
       ready: false,
       error_code: "helper_version_unsupported",

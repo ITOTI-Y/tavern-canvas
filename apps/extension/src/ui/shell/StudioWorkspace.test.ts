@@ -1,6 +1,6 @@
 import type { Uuid } from "@tavern-canvas/contracts";
-import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { markRaw, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
@@ -68,6 +68,23 @@ function build_capabilities(overrides: Partial<StudioCapabilities> = {}): Studio
 }
 
 /**
+ * StudioWorkspace reaches every route view through `defineAsyncComponent`, so a view renders only
+ * once its own dynamic import settles. Loading those six modules off disk takes far longer than the
+ * flush after `mount()` allows, so they are warmed once here; every loader afterwards resolves from
+ * the module cache, which a single flush does cover.
+ */
+beforeAll(async () => {
+  await Promise.all([
+    import("../views/workbench/WorkbenchView.vue"),
+    import("../views/prompt/PromptView.vue"),
+    import("../views/assets/AssetsView.vue"),
+    import("../views/gallery/GalleryView.vue"),
+    import("../views/diagnostics/DiagnosticsView.vue"),
+    import("../views/settings/SettingsView.vue"),
+  ]);
+});
+
+/**
  * Mounts the real `StudioWorkspace` over a real, running `StudioController` (never a hand-rolled
  * mock) so both halves of the routing gap are exercised together: which view a route renders, and
  * whether that view's emitted intents actually reach the capabilities behind the controller.
@@ -97,6 +114,7 @@ async function mount_at_route(route: StudioRoute, capabilities: StudioCapabiliti
   controller.on_change(() => {
     void wrapper.setProps({ state: controller.state });
   });
+  await flushPromises();
   return { wrapper, host, controller };
 }
 
@@ -225,7 +243,7 @@ describe("StudioWorkspace: Workbench intents forward to the controller", () => {
     controller.on_change(() => {
       void wrapper.setProps({ state: controller.state });
     });
-    await nextTick();
+    await flushPromises();
 
     expect(
       (wrapper.find('[data-testid="positive-prompt-input"]').element as HTMLTextAreaElement).value,

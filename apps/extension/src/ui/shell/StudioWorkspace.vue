@@ -1,14 +1,27 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
+
 import type { PromptRegexRule } from "../contracts/ui_capabilities.js";
 import type { StudioState } from "../contracts/view_models.js";
 import type { StudioController } from "../controllers/studio_controller.js";
-import AssetsView from "../views/assets/AssetsView.vue";
-import DiagnosticsView from "../views/diagnostics/DiagnosticsView.vue";
-import GalleryView from "../views/gallery/GalleryView.vue";
-import PromptView from "../views/prompt/PromptView.vue";
-import SettingsView from "../views/settings/SettingsView.vue";
-import WorkbenchView from "../views/workbench/WorkbenchView.vue";
 import { use_generation_preview_urls } from "./use_generation_preview_urls.js";
+
+/**
+ * One chunk per route, never a static import: this component is the only importer of the six
+ * feature views, so keeping every loader dynamic is what keeps five of the six (and the whole
+ * reka-ui/@vueuse surface only they use) out of the extension's initial payload. `v-if` already
+ * mounts exactly one of them, so the loader for a route the session never opens is never called.
+ * No `loadingComponent`: the chunks resolve within a frame from the host's own origin, and a
+ * flashed placeholder would be a visible regression over the previous synchronous mount.
+ */
+const WorkbenchView = defineAsyncComponent(() => import("../views/workbench/WorkbenchView.vue"));
+const PromptView = defineAsyncComponent(() => import("../views/prompt/PromptView.vue"));
+const AssetsView = defineAsyncComponent(() => import("../views/assets/AssetsView.vue"));
+const GalleryView = defineAsyncComponent(() => import("../views/gallery/GalleryView.vue"));
+const DiagnosticsView = defineAsyncComponent(
+  () => import("../views/diagnostics/DiagnosticsView.vue"),
+);
+const SettingsView = defineAsyncComponent(() => import("../views/settings/SettingsView.vue"));
 
 /**
  * Mounts the active route's feature view under StudioShell.vue's workspace region -- the piece
