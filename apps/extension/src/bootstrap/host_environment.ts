@@ -2,6 +2,10 @@ import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
 import { create_composite_host, type CompositeHostAdapter } from "../host/composite_host.js";
 import { create_sillytavern_secret_destination } from "../host/sillytavern_secret_destination.js";
+import {
+  create_sillytavern_secret_resolver,
+  type SecretResolverPort,
+} from "../host/sillytavern_secret_resolver.js";
 import type { LegacyImageResolverPort, LegacySourcePort } from "../migration/legacy_sources.js";
 import type { SecretDestinationPort } from "../migration/secret_transfer.js";
 import type {
@@ -71,6 +75,16 @@ export function read_secret_destination(globals: unknown): SecretDestinationPort
     read_context(globals),
     read_property(globals, "fetch"),
   );
+}
+
+/**
+ * The read half of host secret storage, needed only by a direct browser-to-vendor call. Separate
+ * from `read_secret_destination` because a host can accept writes while refusing to reveal values
+ * (SillyTavern's `allowKeysExposure`), and that difference decides whether the direct transport is
+ * usable at all.
+ */
+export function read_secret_resolver(globals: unknown): SecretResolverPort | null {
+  return create_sillytavern_secret_resolver(read_context(globals), read_property(globals, "fetch"));
 }
 
 /**

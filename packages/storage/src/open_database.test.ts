@@ -88,6 +88,61 @@ describe("tavern_canvas_v3 schema", () => {
     await deleteDB(fresh_name);
   });
 
+  /**
+   * The three Stage 07 capabilities read `character_profiles` and `knowledge_entries` (version 1)
+   * and `llm_connections` (version 3), so an installed v2 user must both gain the new store and
+   * keep the rows the older ones already hold.
+   */
+  it("adds the version 3 store to an installed v2 database without disturbing its rows", async () => {
+    const name = "tavern_canvas_v3_upgrade_v2_to_v3";
+    const v2_store_names = store_names.filter(
+      (store_name) => STORE_DEFINITIONS[store_name].since_version <= 2,
+    );
+
+    const v2_database = await openDB(name, 2, {
+      upgrade(database) {
+        for (const store_name of v2_store_names) {
+          const definition = STORE_DEFINITIONS[store_name];
+          const store = database.createObjectStore(store_name, { keyPath: definition.key_path });
+          for (const index_name of definition.indexes) {
+            store.createIndex(index_name, index_name);
+          }
+        }
+      },
+    });
+    expect([...v2_database.objectStoreNames]).not.toContain("llm_connections");
+    for (const store_name of ["character_profiles", "knowledge_entries"] as const) {
+      await v2_database.put(store_name, {
+        schema_version: 1,
+        id: "11111111-1111-4111-8111-111111111111",
+        namespace: "primary",
+        record_key: "primary:11111111-1111-4111-8111-111111111111",
+        created_at: "2026-08-05T00:00:00.000Z",
+        updated_at: "2026-08-05T00:00:00.000Z",
+        ...(store_name === "knowledge_entries" ? { source_type: "manual" } : {}),
+        payload: { survived: true },
+      });
+    }
+    v2_database.close();
+
+    const upgraded = await openDB<DBSchema>(name, DATABASE_VERSION, { upgrade: upgrade_database });
+
+    expect(upgraded.version).toBe(3);
+    expect([...upgraded.objectStoreNames].sort()).toEqual([...store_names].sort());
+    expect([...upgraded.transaction("llm_connections").store.indexNames].sort()).toEqual(
+      [...STORE_DEFINITIONS.llm_connections.indexes].sort(),
+    );
+    await expect(upgraded.count("llm_connections")).resolves.toBe(0);
+    for (const store_name of ["character_profiles", "knowledge_entries"] as const) {
+      await expect(
+        upgraded.get(store_name, "primary:11111111-1111-4111-8111-111111111111"),
+      ).resolves.toMatchObject({ payload: { survived: true } });
+    }
+
+    upgraded.close();
+    await deleteDB(name);
+  });
+
   it("rolls back an upgrade when the upgrade callback throws", async () => {
     const name = "tavern_canvas_v3_atomic_upgrade";
 

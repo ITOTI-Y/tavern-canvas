@@ -184,7 +184,7 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("ready");
-    expect(handle.resolutions).toHaveLength(9);
+    expect(handle.resolutions).toHaveLength(12);
     // A capability that could not be composed degrades; it never prevents the shell from mounting.
     expect(handle.resolutions.some((entry) => entry.status === "unavailable")).toBe(true);
     expect(handle.resolutions.every((entry) => entry.capability_id.length > 0)).toBe(true);
@@ -212,7 +212,7 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("blocked");
-    expect(handle.resolutions).toHaveLength(9);
+    expect(handle.resolutions).toHaveLength(12);
     await handle.dispose();
   });
 

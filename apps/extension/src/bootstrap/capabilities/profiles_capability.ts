@@ -26,7 +26,7 @@ import {
  * into IndexedDB (roadmap rule: provider credentials are never client-stored), which is exactly
  * what `assert_safe_provider_payload` guards `provider_profiles` against.
  */
-const VAULT_KEY_FIELD = "vault_key";
+export const VAULT_KEY_FIELD = "vault_key";
 
 /**
  * Every provider adapter validates its profile against its own `strictObject` schema (allowlists,

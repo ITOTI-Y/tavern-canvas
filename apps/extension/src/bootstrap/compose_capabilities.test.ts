@@ -65,8 +65,37 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
       setChatMessages: vi.fn(),
     },
     SillyTavern: { getContext: () => context },
-    fetch: vi.fn(),
+    fetch: create_secrets_fetch(),
   };
+}
+
+/** Answers the two SillyTavern secret-vault routes the composed capabilities actually call. */
+function create_secrets_fetch() {
+  const vault = new Map<string, string>();
+  return vi.fn((route: string, init: { readonly body: string }) => {
+    const request = JSON.parse(init.body) as { key?: string; value?: string };
+    if (route === "/api/secrets/write" && request.key !== undefined) {
+      vault.set(request.key, request.value ?? "");
+      return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ id: "1" }) });
+    }
+    if (route === "/api/secrets/read") {
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve(
+            Object.fromEntries([...vault.keys()].map((key) => [key, [{ active: true }]])),
+          ),
+      });
+    }
+    if (route === "/api/secrets/find") {
+      const value = vault.get(request.key ?? "");
+      return value === undefined
+        ? Promise.resolve({ ok: false, status: 404, json: () => Promise.resolve({}) })
+        : Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ value }) });
+    }
+    return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) });
+  });
 }
 
 function compose(options: Partial<ComposeCapabilitiesOptions> = {}) {
@@ -107,7 +136,10 @@ describe("compose_studio_capabilities", () => {
         "diagnostics",
         "gallery",
         "generation",
+        "knowledge",
+        "llm_connections",
         "migration",
+        "personas",
         "profiles",
         "prompt_presets",
         "settings",
@@ -128,6 +160,9 @@ describe("compose_studio_capabilities", () => {
       "migration",
       "settings",
       "diagnostics",
+      "llm_connections",
+      "personas",
+      "knowledge",
     ] as const) {
       expect(status_of(composition.resolutions, capability_id)).toBe("available");
     }
@@ -149,6 +184,9 @@ describe("compose_studio_capabilities", () => {
       "generation",
       "vocabulary",
       "migration",
+      "llm_connections",
+      "personas",
+      "knowledge",
     ] as const) {
       const row = composition.resolutions.find((entry) => entry.capability_id === capability_id);
       expect(row?.status).toBe("unavailable");
@@ -185,7 +223,7 @@ describe("compose_studio_capabilities", () => {
     });
 
     expect(composition.host).toBeNull();
-    expect(composition.resolutions).toHaveLength(9);
+    expect(composition.resolutions).toHaveLength(12);
     expect(status_of(composition.resolutions, "generation")).toBe("unavailable");
     // Diagnostics stays real so the shell can still explain why everything else is blocked.
     expect(status_of(composition.resolutions, "diagnostics")).toBe("available");
@@ -219,7 +257,7 @@ describe("compose_studio_capabilities", () => {
 
     const bundle = await composition.capabilities.diagnostics.export_support_bundle();
     expect(bundle.version).toBe("3.0.0-test");
-    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(9);
+    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(12);
     expect(JSON.stringify(bundle.redacted_settings)).not.toContain("token_secret_id");
     await composition.dispose();
   });
@@ -294,6 +332,96 @@ describe("compose_studio_capabilities", () => {
     await composition.dispose();
   });
 
+  it("round-trips a persona through the version 1 character_profiles store", async () => {
+    const composition = await compose();
+    const persona_id = "33333333-3333-4333-8333-333333333333";
+
+    await composition.capabilities.personas.save({
+      id: persona_id,
+      display_name: "Ling",
+      role: "user",
+      description: "A cartographer",
+      greeting: "Charts, then tea.",
+      avatar_image_id: null,
+      is_active: true,
+    });
+
+    await expect(composition.capabilities.personas.load()).resolves.toMatchObject([
+      { id: persona_id, display_name: "Ling", role: "user", is_active: true },
+    ]);
+    await composition.dispose();
+  });
+
+  it("round-trips a knowledge entry through the version 1 knowledge_entries store", async () => {
+    const composition = await compose();
+    const entry_id = "44444444-4444-4444-8444-444444444444";
+
+    await composition.capabilities.knowledge.save({
+      id: entry_id,
+      title: "Harbour district",
+      source_type: "manual",
+      content: "Fog rolls in after dusk.",
+      keywords: ["harbour"],
+      priority: 10,
+      enabled: true,
+    });
+    await composition.capabilities.knowledge.set_enabled(entry_id, false);
+
+    await expect(composition.capabilities.knowledge.load()).resolves.toMatchObject([
+      { id: entry_id, title: "Harbour district", enabled: false },
+    ]);
+    await composition.dispose();
+  });
+
+  it("round-trips an LLM connection through the version 3 llm_connections store", async () => {
+    const composition = await compose();
+    const connection_id = "55555555-5555-4555-8555-555555555555";
+
+    const saved = await composition.capabilities.llm_connections.save({
+      id: connection_id,
+      display_name: "GPT",
+      provider_kind: "openai_compatible",
+      route: "/v1/chat/completions",
+      model_id: "gpt-5",
+      temperature: 0.7,
+      max_output_tokens: 2_048,
+      is_default: true,
+    });
+
+    expect(saved.credential_reference).toBeNull();
+    await expect(composition.capabilities.llm_connections.load()).resolves.toMatchObject([
+      { id: connection_id, display_name: "GPT", provider_kind: "openai_compatible" },
+    ]);
+    await composition.dispose();
+  });
+
+  it("stores an LLM credential by reference and never returns the plaintext", async () => {
+    const composition = await compose();
+    const connection_id = "66666666-6666-4666-8666-666666666666";
+    await composition.capabilities.llm_connections.save({
+      id: connection_id,
+      display_name: "GPT",
+      provider_kind: "openai_compatible",
+      route: "/v1/chat/completions",
+      model_id: "gpt-5",
+      temperature: 0.7,
+      max_output_tokens: 2_048,
+      is_default: false,
+    });
+
+    const updated = await composition.capabilities.llm_connections.set_credential(
+      connection_id,
+      "sk-compose-canary",
+    );
+
+    expect(updated.credential_reference).toBe(
+      `tavern_canvas:primary:${connection_id}:llm_profile_api_key`,
+    );
+    const stored = await composition.capabilities.llm_connections.load();
+    expect(JSON.stringify(stored)).not.toContain("sk-compose-canary");
+    await composition.dispose();
+  });
+
   it("rejects asset categories that have no v3 store instead of silently dropping them", async () => {
     const composition = await compose();
 
@@ -321,6 +449,7 @@ describe("create_provider_transport", () => {
       tauri_provider_available: false,
       sillytavern_available: false,
       direct_provider_base_url: "http://127.0.0.1:7860",
+      direct_cloud: null,
     });
 
     expect(transport.execute).toBeTypeOf("function");
@@ -334,6 +463,7 @@ describe("create_provider_transport", () => {
         tauri_provider_available: false,
         sillytavern_available: false,
         direct_provider_base_url: "http://provider.example.com",
+        direct_cloud: null,
       }),
     ).toThrowError(/loopback/u);
   });
@@ -346,6 +476,7 @@ describe("create_provider_transport", () => {
         tauri_provider_available: false,
         sillytavern_available: false,
         direct_provider_base_url: null,
+        direct_cloud: null,
       }),
     ).toThrowError(/cannot drive the job executor/u);
   });

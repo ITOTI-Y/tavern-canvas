@@ -1,4 +1,9 @@
-import type { ImageGenerationRequest, ProviderId } from "@tavern-canvas/contracts";
+import {
+  ProviderIdSchema,
+  direct_image_catalog_entry,
+  type ImageGenerationRequest,
+  type ProviderId,
+} from "@tavern-canvas/contracts";
 import {
   BrowserRandomSource,
   BrowserRequestIdSource,
@@ -46,6 +51,9 @@ import { TauriChatSurfaceModule } from "../modules/tauri/chat_surface_module.js"
 import { VocabularyCatalogClient } from "../modules/vocabulary/vocabulary_catalog_client.js";
 import { VocabularyClient } from "../modules/vocabulary/vocabulary_client.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
+import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
+import type { ProviderFetch } from "../transport/browser_fetch.js";
+import { DirectCloudTransport, DirectLlmTransport } from "../transport/direct_cloud_transport.js";
 import { LocalDirectTransport } from "../transport/local_direct_transport.js";
 import { select_transport } from "../transport/transport_selector.js";
 import type { CapabilityId, StudioCapabilities } from "../ui/contracts/ui_capabilities.js";
@@ -58,8 +66,14 @@ import {
 import { create_gallery_capability } from "./capabilities/gallery_capability.js";
 import { create_generation_capability } from "./capabilities/generation_capability.js";
 import { HostGenerationOriginSource } from "./capabilities/generation_context.js";
+import {
+  create_knowledge_capability,
+  create_llm_connections_capability,
+  create_personas_capability,
+} from "./capabilities/library_capability.js";
 import { create_migration_capability } from "./capabilities/migration_capability.js";
 import {
+  VAULT_KEY_FIELD,
   adapter_profile_of,
   create_profiles_capability,
 } from "./capabilities/profiles_capability.js";
@@ -82,6 +96,7 @@ import {
   create_legacy_source,
   create_host_adapter,
   read_secret_destination,
+  read_secret_resolver,
   read_settings_host,
   UNRESOLVED_LEGACY_IMAGES,
 } from "./host_environment.js";
@@ -96,7 +111,7 @@ export interface ComposeCapabilitiesOptions {
   readonly estimate_storage?: () => Promise<{ usage?: number; quota?: number } | undefined>;
   readonly message_port?: MessagePort | null;
   /** The single network boundary: swapped in tests so the whole job path stays real. */
-  readonly provider_fetch?: ConstructorParameters<typeof LocalDirectTransport>[0]["fetch"];
+  readonly provider_fetch?: ProviderFetch;
 }
 
 export interface VocabularyWorkerLike {
@@ -126,6 +141,8 @@ const STORAGE_UNAVAILABLE =
 const HOST_UNAVAILABLE = "No usable SillyTavern + TavernHelper host pair was detected";
 const SETTINGS_HOST_UNAVAILABLE =
   "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair";
+const SECRET_VAULT_UNAVAILABLE =
+  "This host exposes no secret vault that both stores and reveals a credential, so a text-LLM connection could not be authenticated";
 
 function default_estimate_storage(): Promise<{ usage?: number; quota?: number } | undefined> {
   return navigator.storage.estimate();
@@ -292,15 +309,17 @@ export async function compose_studio_capabilities(
   const namespace = (): string => settings_adapter?.get_settings().active_namespace ?? "primary";
   const now = (): string => new Date().toISOString();
   const secrets = read_secret_destination(globals);
+  const secret_resolver = read_secret_resolver(globals);
   const repositories = database === null ? null : create_business_repositories(database);
   const timeline = new TaskTimeline();
   const provider_adapters = build_provider_adapters(database);
 
   /**
-   * A provider's endpoint and its allowlists live on its stored profile -- never in code, never
-   * supplied remotely. Loaded once here so the job executor's synchronous `profiles.resolve` reads
-   * a real validated profile rather than an invented one; `select_transport` separately requires a
-   * direct endpoint to be a loopback origin before any call leaves the page.
+   * A provider's allowlists and its vault reference live on its stored profile -- never in code,
+   * never supplied remotely. Loaded once here so the job executor's synchronous `profiles.resolve`
+   * reads a real validated profile rather than an invented one. Neither field can name a cloud
+   * destination: `base_url` only ever reaches `LocalDirectTransport`, which requires a loopback
+   * origin, and a cloud provider's origin comes from the code-owned route catalog instead.
    */
   const active_profile_record =
     repositories === null || settings_adapter === null
@@ -311,6 +330,18 @@ export async function compose_studio_capabilities(
   const active_profile_payload =
     active_profile_record === null ? {} : read_payload(active_profile_record);
   const direct_provider_base_url = read_optional_string(active_profile_payload, "base_url");
+  const active_provider_id =
+    active_profile_record === null
+      ? null
+      : (ProviderIdSchema.safeParse(active_profile_record.provider_id).data ?? null);
+  const direct_cloud =
+    active_provider_id === null
+      ? null
+      : {
+          provider_id: active_provider_id,
+          credential_reference: read_optional_string(active_profile_payload, VAULT_KEY_FIELD),
+          secrets_readable: secret_resolver !== null,
+        };
 
   const settings = record(
     "settings",
@@ -341,6 +372,61 @@ export async function compose_studio_capabilities(
           }),
         ),
     fallback.profiles,
+  );
+
+  /**
+   * `llm_connections` needs three things at once, so its unavailable reasons are distinct: the
+   * database version 3 store, a vault that accepts a credential write, and a vault that reveals it
+   * again for the connection test. Personas and knowledge need only storage -- they ride on the
+   * version 1 `character_profiles` and `knowledge_entries` stores.
+   */
+  const llm_connections = record(
+    "llm_connections",
+    repositories === null
+      ? unavailable(STORAGE_UNAVAILABLE)
+      : secrets === null || secret_resolver === null
+        ? unavailable(SECRET_VAULT_UNAVAILABLE)
+        : resolve_capability(() =>
+            create_llm_connections_capability({
+              repository: repositories.llm_connections,
+              namespace: namespace(),
+              secrets,
+              transport: new DirectLlmTransport({
+                secrets: secret_resolver,
+                ...(options.provider_fetch === undefined ? {} : { fetch: options.provider_fetch }),
+              }),
+              clock: now,
+            }),
+          ),
+    fallback.llm_connections,
+  );
+
+  const personas = record(
+    "personas",
+    repositories === null
+      ? unavailable(STORAGE_UNAVAILABLE)
+      : resolve_capability(() =>
+          create_personas_capability({
+            repository: repositories.character_profiles,
+            namespace: namespace(),
+            clock: now,
+          }),
+        ),
+    fallback.personas,
+  );
+
+  const knowledge = record(
+    "knowledge",
+    repositories === null
+      ? unavailable(STORAGE_UNAVAILABLE)
+      : resolve_capability(() =>
+          create_knowledge_capability({
+            repository: repositories.knowledge_entries,
+            namespace: namespace(),
+            clock: now,
+          }),
+        ),
+    fallback.knowledge,
   );
 
   const prompt_presets = record(
@@ -396,8 +482,12 @@ export async function compose_studio_capabilities(
                 tauri_provider_available: false,
                 sillytavern_available: false,
                 direct_provider_base_url,
+                direct_cloud,
               },
-              options.provider_fetch,
+              {
+                secrets: secret_resolver,
+                ...(options.provider_fetch === undefined ? {} : { fetch: options.provider_fetch }),
+              },
             );
             const plans = new MediaExecutionPlanRegistry();
             const queue = new ImageJobQueue({
@@ -526,12 +616,9 @@ export async function compose_studio_capabilities(
       diagnostics,
       migration,
       settings,
-      // Stage 07 feature-gap work landed these three after this composition root was written;
-      // their services depend on database version 3 stores whose upgrade path is not yet
-      // exercised here, so they resolve to the honest-unavailable fallback until wired.
-      llm_connections: fallback.llm_connections,
-      personas: fallback.personas,
-      knowledge: fallback.knowledge,
+      llm_connections,
+      personas,
+      knowledge,
     },
     resolutions,
     host,
@@ -550,25 +637,49 @@ export async function compose_studio_capabilities(
   };
 }
 
+export interface ProviderTransportDependencies {
+  readonly secrets: SecretResolverPort | null;
+  readonly fetch?: ProviderFetch;
+}
+
 /**
- * Transport selection is settings-driven and never client-configurable: `select_transport` decides,
- * and it throws when nothing is available, which the caller turns into an unavailable generation
- * capability. Only `local_direct` yields a `ProviderTransport` here -- `GatewayTransport` is a
- * job-level client rather than a `ProviderTransport`, and standard SillyTavern exposes no
- * first-party provider relay, so neither can drive the job executor.
+ * Turns `select_transport`'s decision into the transport that drives the job executor.
+ *
+ * Two of the five selections still cannot: `GatewayTransport` is a job-level client rather than a
+ * `ProviderTransport`, and neither TauriTavern's bridge nor a first-party SillyTavern relay is
+ * reachable from this build. `direct_cloud` and `local_direct` both are, which is the change the
+ * 2026-08-07 decision asked for: a cloud profile with a stored credential now yields a working
+ * generation capability instead of an unavailable one.
  */
 export function create_provider_transport(
   input: Parameters<typeof select_transport>[0],
-  fetch_?: ConstructorParameters<typeof LocalDirectTransport>[0]["fetch"],
+  dependencies: ProviderTransportDependencies = { secrets: null },
 ): ProviderTransport {
   const selection = select_transport(input);
-  if (selection.kind !== "local_direct") {
-    throw new Error(
-      `The selected ${selection.kind} transport cannot drive the job executor; configure a loopback provider endpoint on the active profile`,
-    );
+  const fetch_ = dependencies.fetch;
+  switch (selection.kind) {
+    case "direct_cloud": {
+      const catalog_entry = direct_image_catalog_entry(selection.provider_id);
+      if (catalog_entry === null || dependencies.secrets === null) {
+        throw new Error(
+          `No direct route catalog entry and host credential resolver pair exists for ${selection.provider_id}`,
+        );
+      }
+      return new DirectCloudTransport({
+        catalog_entry,
+        credential_reference: selection.credential_reference,
+        secrets: dependencies.secrets,
+        ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
+      });
+    }
+    case "local_direct":
+      return new LocalDirectTransport({
+        base_url: selection.endpoint,
+        ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
+      });
+    default:
+      throw new Error(
+        `The selected ${selection.kind} transport cannot drive the job executor; configure a loopback provider endpoint or a credentialed cloud profile`,
+      );
   }
-  return new LocalDirectTransport({
-    base_url: selection.endpoint,
-    ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
-  });
 }
