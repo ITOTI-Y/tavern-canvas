@@ -2,4 +2,7 @@ dist/
 **/dist/
 pnpm-lock.yaml
 apps/extension/public/vocabulary/**/*.msgpack.gz
+# Vendored third-party tokenizer data, shipped byte-identical; reformatting it would rewrite a
+# 2.4 MB runtime asset for no readable gain.
+apps/extension/public/tokenizers/**/*.json
 .superpowers/

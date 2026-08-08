@@ -39,7 +39,9 @@ export interface ProfilesCapabilityDeps {
   readonly namespace: () => string;
   /** Resolved on demand: the five concrete adapters are a sixth of the initial bundle and are
    * needed only by a connection test or a running job. */
-  readonly load_adapters: () => Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>>;
+  readonly load_adapters: () => Promise<
+    Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
+  >;
   readonly secrets: SecretDestinationPort | null;
   readonly now: () => string;
 }

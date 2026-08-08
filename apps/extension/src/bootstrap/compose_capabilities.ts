@@ -86,7 +86,12 @@ import {
   create_settings_capability,
   VocabularyChannelState,
 } from "./capabilities/settings_capability.js";
-import { as_record, read_array, read_optional_string, read_payload } from "./capabilities/_records.js";
+import {
+  as_record,
+  read_array,
+  read_optional_string,
+  read_payload,
+} from "./capabilities/_records.js";
 import { create_vocabulary_capability } from "./capabilities/vocabulary_capability.js";
 import {
   capability_unavailable_error,
@@ -648,18 +653,16 @@ export async function compose_studio_capabilities(
         : resolve_capability(() =>
             create_vocabulary_capability({
               async load_catalog() {
-                const { VocabularyCatalogClient } = await import(
-                  "../modules/vocabulary/vocabulary_catalog_client.js"
-                );
+                const { VocabularyCatalogClient } =
+                  await import("../modules/vocabulary/vocabulary_catalog_client.js");
                 return new VocabularyCatalogClient({
                   current_extension_version: extension_version,
                   open_database_impl: () => Promise.resolve(database),
                 });
               },
               async create_client() {
-                const { VocabularyClient } = await import(
-                  "../modules/vocabulary/vocabulary_client.js"
-                );
+                const { VocabularyClient } =
+                  await import("../modules/vocabulary/vocabulary_client.js");
                 return new VocabularyClient({ create_worker });
               },
             }),

@@ -74,13 +74,17 @@ export function collect_floor_messages(
   messages: readonly FloorSourceMessage[],
   options: FloorCollectionOptions,
 ): readonly FloorSourceMessage[] {
-  const anchor_index = messages.findIndex((message) => message.message_id === options.anchor_message_id);
+  const anchor_index = messages.findIndex(
+    (message) => message.message_id === options.anchor_message_id,
+  );
   if (anchor_index === -1) {
     return [];
   }
   const start = Math.max(0, anchor_index - options.radius);
   const end = Math.min(messages.length, anchor_index + options.radius + 1);
-  const deduped = [...new Map(messages.slice(start, end).map((message) => [message.message_id, message])).values()];
+  const deduped = [
+    ...new Map(messages.slice(start, end).map((message) => [message.message_id, message])).values(),
+  ];
   if (deduped.length <= options.max_messages) {
     return deduped;
   }
@@ -147,7 +151,9 @@ export interface SummaryContextEntry {
 /** Assembles enabled summaries into a "previous conversation summary" prompt block (mirrors
  * legacy `buildSummaryContextBlock`). `null` when nothing is enabled -- callers omit the block
  * entirely rather than inject an empty one. */
-export function build_summary_context_block(summaries: readonly SummaryContextEntry[]): string | null {
+export function build_summary_context_block(
+  summaries: readonly SummaryContextEntry[],
+): string | null {
   const enabled = summaries.filter((summary) => summary.enabled);
   if (enabled.length === 0) {
     return null;

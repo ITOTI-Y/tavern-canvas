@@ -71,7 +71,10 @@ export async function rename_session(
   return renamed;
 }
 
-export async function delete_sessions(store: AssistantSessionStore, ids: readonly string[]): Promise<void> {
+export async function delete_sessions(
+  store: AssistantSessionStore,
+  ids: readonly string[],
+): Promise<void> {
   await store.delete_many(ids);
 }
 
@@ -131,7 +134,10 @@ export interface AssistantSessionExport {
 
 /** Exports selected sessions (images embedded, since `AssistantImageAttachment.data_url` already
  * carries the data URI) to a single downloadable JSON document. */
-export function export_sessions_json(sessions: readonly AssistantSession[], exported_at: string): string {
+export function export_sessions_json(
+  sessions: readonly AssistantSession[],
+  exported_at: string,
+): string {
   const payload: AssistantSessionExport = { exported_at, sessions };
   return JSON.stringify(payload, null, 2);
 }
@@ -175,7 +181,9 @@ export function delete_summary_with_cleanup(
   const reparent_to = target?.parent_id ?? null;
   return summaries
     .filter((summary) => summary.id !== id)
-    .map((summary) => (summary.parent_id === id ? { ...summary, parent_id: reparent_to } : summary));
+    .map((summary) =>
+      summary.parent_id === id ? { ...summary, parent_id: reparent_to } : summary,
+    );
 }
 
 /** Reorders sibling summary cards (same `parent_id`) per `ordered_ids`; every other summary is
@@ -186,7 +194,9 @@ export function reorder_summaries(
   ordered_ids: readonly string[],
 ): readonly AssistantSummaryRecord[] {
   const siblings_by_id = new Map(
-    summaries.filter((summary) => summary.parent_id === parent_id).map((summary) => [summary.id, summary]),
+    summaries
+      .filter((summary) => summary.parent_id === parent_id)
+      .map((summary) => [summary.id, summary]),
   );
   const reordered_siblings = ordered_ids
     .map((id) => siblings_by_id.get(id))

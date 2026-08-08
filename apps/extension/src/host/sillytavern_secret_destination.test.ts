@@ -96,9 +96,9 @@ describe("SillyTavernSecretDestination", () => {
     });
     const destination = new SillyTavernSecretDestination(context(), fetch_);
 
-    await expect(
-      destination.probe_secret("tavern_canvas:ns:profile:novelai_token"),
-    ).resolves.toBe(false);
+    await expect(destination.probe_secret("tavern_canvas:ns:profile:novelai_token")).resolves.toBe(
+      false,
+    );
   });
 
   it("reports false (never throws) when the read endpoint itself fails, so the caller maps it to probe_failed", async () => {
@@ -107,9 +107,9 @@ describe("SillyTavernSecretDestination", () => {
     });
     const destination = new SillyTavernSecretDestination(context(), fetch_);
 
-    await expect(
-      destination.probe_secret("tavern_canvas:ns:profile:novelai_token"),
-    ).resolves.toBe(false);
+    await expect(destination.probe_secret("tavern_canvas:ns:profile:novelai_token")).resolves.toBe(
+      false,
+    );
   });
 
   it("round-trips store -> probe-retrieve through migration's real transfer_secrets contract, with the plaintext never surfacing again", async () => {

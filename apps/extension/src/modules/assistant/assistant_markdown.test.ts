@@ -99,9 +99,7 @@ describe("render_assistant_markdown", () => {
   });
 
   it("strips <script> tags and their content entirely", async () => {
-    const rendered = await render_assistant_markdown(
-      'Hello <script>alert("xss")</script> world',
-    );
+    const rendered = await render_assistant_markdown('Hello <script>alert("xss")</script> world');
 
     expect(rendered.html).not.toContain("<script");
     expect(rendered.html).not.toContain("alert(");

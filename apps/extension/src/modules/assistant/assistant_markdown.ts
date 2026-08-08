@@ -94,7 +94,20 @@ export interface AssistantRenderedMessage {
   readonly ask_choices: readonly string[];
 }
 
-const ALLOWED_TAGS = ["p", "br", "strong", "em", "del", "code", "pre", "ul", "ol", "li", "a", "blockquote"];
+const ALLOWED_TAGS = [
+  "p",
+  "br",
+  "strong",
+  "em",
+  "del",
+  "code",
+  "pre",
+  "ul",
+  "ol",
+  "li",
+  "a",
+  "blockquote",
+];
 const ALLOWED_ATTR = ["href"];
 
 interface AssistantMarkdownRenderer {
@@ -134,7 +147,9 @@ async function load_renderer(): Promise<AssistantMarkdownRenderer> {
  * remainder down to a minimal text/code/list/link subset -- no scripts, event handlers, unsafe
  * URLs, iframes, style tags, or SVG survive `ALLOWED_TAGS`/`ALLOWED_ATTR`.
  */
-export async function render_assistant_markdown(raw_text: string): Promise<AssistantRenderedMessage> {
+export async function render_assistant_markdown(
+  raw_text: string,
+): Promise<AssistantRenderedMessage> {
   const { thinking, visible_text } = split_thinking_content(raw_text);
   const { cleaned_text, options } = extract_ask_choices(visible_text);
   const { marked, purify } = await load_renderer();

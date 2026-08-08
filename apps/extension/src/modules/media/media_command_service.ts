@@ -148,7 +148,9 @@ export interface ProviderProfileResolver {
 }
 
 export interface MediaJobExecutorDeps {
-  readonly load_adapters: () => Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>>;
+  readonly load_adapters: () => Promise<
+    Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
+  >;
   readonly profiles: ProviderProfileResolver;
   readonly transport: ProviderTransport;
   readonly assets: ProviderAssetReader;

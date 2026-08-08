@@ -16,9 +16,24 @@ interface SettingsFieldDescriptor {
  * token_secret_id` is a secret reference -- browsable as a path/help entry, never as a value.
  */
 const SETTINGS_SCHEMA: readonly SettingsFieldDescriptor[] = [
-  { path: "schema_version", help: "Internal settings schema version.", writable: false, secret: false },
-  { path: "active_namespace", help: "Internal storage namespace identifier.", writable: false, secret: false },
-  { path: "locale", help: "UI display language: auto, zh-CN, or en.", writable: true, secret: false },
+  {
+    path: "schema_version",
+    help: "Internal settings schema version.",
+    writable: false,
+    secret: false,
+  },
+  {
+    path: "active_namespace",
+    help: "Internal storage namespace identifier.",
+    writable: false,
+    secret: false,
+  },
+  {
+    path: "locale",
+    help: "UI display language: auto, zh-CN, or en.",
+    writable: true,
+    secret: false,
+  },
   {
     path: "active_provider_profile_id",
     help: "Default provider profile used for new generations.",
@@ -55,7 +70,12 @@ const SETTINGS_SCHEMA: readonly SettingsFieldDescriptor[] = [
     writable: false,
     secret: true,
   },
-  { path: "ui.color_mode", help: "Shell color theme: system, light, or dark.", writable: true, secret: false },
+  {
+    path: "ui.color_mode",
+    help: "Shell color theme: system, light, or dark.",
+    writable: true,
+    secret: false,
+  },
   {
     path: "ui.inspector_width",
     help: "Inspector panel width in pixels (240-720).",
@@ -139,7 +159,11 @@ export function search_settings_paths(query: string): readonly SettingsSchemaEnt
 
 export type SettingsPathReadResult =
   | { readonly status: "ok"; readonly path: string; readonly value: unknown }
-  | { readonly status: "rejected"; readonly path: string; readonly reason: "unknown_path" | "secret_path" };
+  | {
+      readonly status: "rejected";
+      readonly path: string;
+      readonly reason: "unknown_path" | "secret_path";
+    };
 
 /** Reads one path's current value out of an already-redacted `TavernCanvasSettings` snapshot the
  * caller supplies -- this function never reaches into raw browser storage itself. */
@@ -296,7 +320,9 @@ export interface DiagnosticsCodesView {
 export function list_diagnostics_codes(
   timeline: readonly { readonly error_code: string | null }[],
 ): DiagnosticsCodesView {
-  const codes = [...new Set(timeline.map((entry) => entry.error_code).filter((code) => code !== null))];
+  const codes = [
+    ...new Set(timeline.map((entry) => entry.error_code).filter((code) => code !== null)),
+  ];
   return { codes };
 }
 

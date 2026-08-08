@@ -10,7 +10,11 @@ import {
   type AssistantModuleDependencies,
 } from "./assistant_module.js";
 import type { AssistantSession, AssistantSessionStore } from "./assistant_session.js";
-import { ScreenInputService, type DisplayMediaPort, type FrameCapturePort } from "./screen_input.js";
+import {
+  ScreenInputService,
+  type DisplayMediaPort,
+  type FrameCapturePort,
+} from "./screen_input.js";
 
 function base_settings(): TavernCanvasSettings {
   return {
@@ -21,12 +25,23 @@ function base_settings(): TavernCanvasSettings {
     global_concurrency: 2,
     auto_generation_enabled: false,
     fallback_generation_enabled: false,
-    gateway: { endpoint: null, token_secret_id: "tc:ns:secret-should-never-leak", http_acknowledgments: {} },
-    ui: { color_mode: "system", inspector_width: 320, inspector_collapsed: false, optional_entry_enabled: true },
+    gateway: {
+      endpoint: null,
+      token_secret_id: "tc:ns:secret-should-never-leak",
+      http_acknowledgments: {},
+    },
+    ui: {
+      color_mode: "system",
+      inspector_width: 320,
+      inspector_collapsed: false,
+      optional_entry_enabled: true,
+    },
   };
 }
 
-function in_memory_session_store(): AssistantSessionStore & { readonly rows: Map<string, AssistantSession> } {
+function in_memory_session_store(): AssistantSessionStore & {
+  readonly rows: Map<string, AssistantSession>;
+} {
   const rows = new Map<string, AssistantSession>();
   return {
     rows,
@@ -45,7 +60,9 @@ function in_memory_session_store(): AssistantSessionStore & { readonly rows: Map
 
 function fake_connection(
   respond: (request: Parameters<AssistantConnectionPort["send"]>[0]) => AssistantConnectionResult,
-): AssistantConnectionPort & { readonly requests: Parameters<AssistantConnectionPort["send"]>[0][] } {
+): AssistantConnectionPort & {
+  readonly requests: Parameters<AssistantConnectionPort["send"]>[0][];
+} {
   const requests: Parameters<AssistantConnectionPort["send"]>[0][] = [];
   return {
     requests,
@@ -70,7 +87,9 @@ function fake_image_generation(): AssistantImageGenerationPort & { readonly call
   };
 }
 
-function fake_screen_input(): ScreenInputService & { readonly stream_tracks: { stopped: boolean }[] } {
+function fake_screen_input(): ScreenInputService & {
+  readonly stream_tracks: { stopped: boolean }[];
+} {
   const tracks: { stopped: boolean }[] = [];
   const display_media: DisplayMediaPort = {
     get_display_media: () => {
@@ -110,7 +129,9 @@ function make_dependencies(
     image_generation: fake_image_generation(),
     settings_provider: () => base_settings(),
     diagnostics_provider: () => [{ error_code: "provider_timeout" }, { error_code: null }],
-    capability_matrix_provider: (): CapabilityMatrix => ({ gateway_protocol: { available: false } }),
+    capability_matrix_provider: (): CapabilityMatrix => ({
+      gateway_protocol: { available: false },
+    }),
     workflow_metadata_provider: () => [
       { id: "wf-1", display_name: "Portrait pipeline", updated_at: "2026-08-07T00:00:00.000Z" },
     ],
@@ -158,13 +179,17 @@ describe("AssistantModule: authority boundary", () => {
       result: { status: string; draft: { changes: unknown[] } };
     };
     expect(tool_result.result.status).toBe("ok");
-    expect(tool_result.result.draft.changes).toEqual([{ path: "locale", from: "auto", to: "zh-CN" }]);
+    expect(tool_result.result.draft.changes).toEqual([
+      { path: "locale", from: "auto", to: "zh-CN" },
+    ]);
   });
 
   it("rejects an unknown-path settings write attempt rather than silently applying it", async () => {
     const connection = fake_connection(() => ({
       content: "",
-      tool_calls: [{ name: "create_settings_draft", arguments: { changes: { active_namespace: "attacker" } } }],
+      tool_calls: [
+        { name: "create_settings_draft", arguments: { changes: { active_namespace: "attacker" } } },
+      ],
     }));
     const module_instance = new AssistantModule(make_dependencies({ connection }));
     const session = await module_instance.new_session();
@@ -222,7 +247,9 @@ describe("AssistantModule: authority boundary", () => {
 
     expect(JSON.parse(reply.tool_calls[0]?.result ?? "{}")).toEqual({
       status: "ok",
-      result: [{ id: "wf-1", display_name: "Portrait pipeline", updated_at: "2026-08-07T00:00:00.000Z" }],
+      result: [
+        { id: "wf-1", display_name: "Portrait pipeline", updated_at: "2026-08-07T00:00:00.000Z" },
+      ],
     });
   });
 
@@ -310,7 +337,10 @@ describe("AssistantModule: sessions, abort, edit/resend, persistence", () => {
     const session_a = await module_instance.new_session();
     const session_b = await module_instance.new_session();
 
-    expect(module_instance.sessions.map((session) => session.id)).toEqual([session_a.id, session_b.id]);
+    expect(module_instance.sessions.map((session) => session.id)).toEqual([
+      session_a.id,
+      session_b.id,
+    ]);
   });
 
   it("abort() aborts the in-flight connection signal", async () => {
@@ -340,8 +370,13 @@ describe("AssistantModule: sessions, abort, edit/resend, persistence", () => {
 
     await module_instance.edit_and_resend(session.id, first_reply.message_id, "revised question");
 
-    const messages = module_instance.sessions.find((candidate) => candidate.id === session.id)?.messages ?? [];
-    expect(messages.map((message) => message.content)).toEqual(["first question", "revised question", "ok"]);
+    const messages =
+      module_instance.sessions.find((candidate) => candidate.id === session.id)?.messages ?? [];
+    expect(messages.map((message) => message.content)).toEqual([
+      "first question",
+      "revised question",
+      "ok",
+    ]);
   });
 
   it("persists every message to the session store as it is appended", async () => {
@@ -390,7 +425,9 @@ describe("AssistantModule: sessions, abort, edit/resend, persistence", () => {
     void reply_context;
 
     const stored = module_instance.sessions.find((candidate) => candidate.id === session.id);
-    expect(stored?.messages[0]?.images).toEqual([{ image_id: "img-1", data_url: "data:image/png;base64,AAAA" }]);
+    expect(stored?.messages[0]?.images).toEqual([
+      { image_id: "img-1", data_url: "data:image/png;base64,AAAA" },
+    ]);
   });
 });
 
@@ -400,17 +437,27 @@ describe("AssistantModule: image generation stays on the typed Stage 02 command 
     const connection = fake_connection(() => ({
       content: "generating now",
       tool_calls: [
-        { name: "generate_image", arguments: { profile_id: "profile-1", positive_prompt: "a cat" } },
+        {
+          name: "generate_image",
+          arguments: { profile_id: "profile-1", positive_prompt: "a cat" },
+        },
       ],
     }));
-    const module_instance = new AssistantModule(make_dependencies({ connection, image_generation }));
+    const module_instance = new AssistantModule(
+      make_dependencies({ connection, image_generation }),
+    );
     const session = await module_instance.new_session();
 
     await module_instance.send(session.id, "draw me a cat");
 
     expect(image_generation.calls).toEqual([{ profile_id: "profile-1", positive_prompt: "a cat" }]);
     expect(module_instance.task_strip).toEqual([
-      { job_id: "job-1", profile_id: "profile-1", positive_prompt: "a cat", created_at: "2026-08-07T00:00:00.000Z" },
+      {
+        job_id: "job-1",
+        profile_id: "profile-1",
+        positive_prompt: "a cat",
+        created_at: "2026-08-07T00:00:00.000Z",
+      },
     ]);
   });
 
@@ -420,7 +467,9 @@ describe("AssistantModule: image generation stays on the typed Stage 02 command 
       content: "",
       tool_calls: [{ name: "generate_image", arguments: { profile_id: "profile-1" } }],
     }));
-    const module_instance = new AssistantModule(make_dependencies({ connection, image_generation }));
+    const module_instance = new AssistantModule(
+      make_dependencies({ connection, image_generation }),
+    );
     const session = await module_instance.new_session();
 
     await module_instance.send(session.id, "draw something");

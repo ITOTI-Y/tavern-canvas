@@ -240,12 +240,13 @@ function create_harness(): Harness {
   const store = new MemoryImageStore();
   const plans = new MediaExecutionPlanRegistry();
   const profiles: ProviderProfileResolver = {
-    resolve: () => Promise.resolve({
-      profile_id: "profile-1",
-      provider_id: "sd_webui",
-      model_allowlist: ["sdxl-base"],
-      output_mime_type_allowlist: ["image/png"],
-    }),
+    resolve: () =>
+      Promise.resolve({
+        profile_id: "profile-1",
+        provider_id: "sd_webui",
+        model_allowlist: ["sdxl-base"],
+        output_mime_type_allowlist: ["image/png"],
+      }),
   };
   const transport: ProviderTransport = {
     execute: vi.fn(

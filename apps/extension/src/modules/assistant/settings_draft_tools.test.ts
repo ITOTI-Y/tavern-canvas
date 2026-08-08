@@ -88,7 +88,11 @@ describe("read_settings_path", () => {
   it("rejects an unknown path", () => {
     const result = read_settings_path(base_settings(), "gateway.__proto__");
 
-    expect(result).toEqual({ status: "rejected", path: "gateway.__proto__", reason: "unknown_path" });
+    expect(result).toEqual({
+      status: "rejected",
+      path: "gateway.__proto__",
+      reason: "unknown_path",
+    });
   });
 });
 

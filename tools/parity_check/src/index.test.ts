@@ -130,7 +130,8 @@ describe("validate_rows", () => {
         row({
           status: "removed_approved",
           acceptance_test: "apps/extension/src/modules/assistant/assistant_module.test.ts",
-          notes: "[voice-features-out-of-scope] TTS/ASR removed entirely, extension stays image-focused",
+          notes:
+            "[voice-features-out-of-scope] TTS/ASR removed entirely, extension stays image-focused",
         }),
       ],
       [entry()],

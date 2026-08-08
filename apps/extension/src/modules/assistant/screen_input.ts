@@ -78,9 +78,13 @@ export class ScreenInputService {
       this.#stream = stream;
       this.#set_state("capturing");
       for (const track of stream.getVideoTracks()) {
-        const on_ended = (): void => { this.stop_capture(); };
+        const on_ended = (): void => {
+          this.stop_capture();
+        };
         track.addEventListener("ended", on_ended);
-        this.#native_stop_cleanups.push(() => { track.removeEventListener("ended", on_ended); });
+        this.#native_stop_cleanups.push(() => {
+          track.removeEventListener("ended", on_ended);
+        });
       }
     } catch {
       this.#stream = null;
