@@ -14,6 +14,8 @@ import type { LlmConnection, LlmConnectionRepository } from "@tavern-canvas/stor
 import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
 
 export interface LlmTransportOperation {
+  /** Selects the dialect's catalog entry; two dialects can share a route string. */
+  readonly provider_kind: LlmProviderKind;
   /** A catalog route, never a client-supplied URL. */
   readonly route: `/${string}`;
   readonly method: "GET" | "POST";
@@ -238,6 +240,7 @@ export class LlmConnectionService {
     const started_at = Date.now();
     try {
       const response = await this.#deps.transport.execute({
+        provider_kind: profile.provider_kind,
         route: models_route(profile.provider_kind),
         method: "GET",
         credential_reference: profile.credential_reference,

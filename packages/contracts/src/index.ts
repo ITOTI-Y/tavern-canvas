@@ -57,6 +57,16 @@ export type {
 } from "./library.js";
 
 export {
+  DIRECT_IMAGE_ROUTE_CATALOG,
+  DIRECT_LLM_ROUTE_CATALOG,
+  DirectRouteRejectedError,
+  direct_image_catalog_entry,
+  direct_llm_catalog_entry,
+  resolve_direct_url,
+} from "./direct_catalog.js";
+export type { DirectAuthScheme, DirectRouteCatalogEntry } from "./direct_catalog.js";
+
+export {
   LLM_CREDENTIAL_KIND,
   LLM_ROUTE_CATALOG,
   LlmConnectionDraftSchema,

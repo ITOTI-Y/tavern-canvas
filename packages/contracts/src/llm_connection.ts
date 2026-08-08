@@ -34,8 +34,11 @@ export const LLM_ROUTE_CATALOG: Readonly<Record<LlmProviderKind, LlmRouteCatalog
     models_route: "/v1/models",
   },
   google_generative: {
+    // Both routes live on Google's OpenAI-compatibility surface so one Bearer key authenticates
+    // the completion call and the model listing; the native `/v1beta/models` route would need a
+    // second, differently-named auth header for no gain.
     completion_routes: ["/v1beta/openai/chat/completions"],
-    models_route: "/v1beta/models",
+    models_route: "/v1beta/openai/models",
   },
   ollama: {
     completion_routes: ["/api/chat"],
