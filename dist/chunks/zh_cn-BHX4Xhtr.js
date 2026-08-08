@@ -721,5 +721,3 @@ var e = {
 };
 //#endregion
 export { e as zh_cn_messages };
-
-//# sourceMappingURL=zh_cn-BHX4Xhtr.js.map
