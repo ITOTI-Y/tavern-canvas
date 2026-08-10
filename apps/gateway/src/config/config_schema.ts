@@ -207,7 +207,10 @@ export const GatewayConfigSchema = z
       .min(1)
       .max(128),
     data_directory: z.string().min(1).max(4_096),
+    bearer_token_hash_file: z.string().min(1).max(4_096).optional(),
     concurrency: z.number().int().min(1).max(64),
+    max_pending_jobs: z.number().int().min(1).max(100_000),
+    retention_hours: z.number().int().min(1).max(8_760),
     limits: z.strictObject({
       max_request_bytes: z.number().int().min(1_024).max(20_000_000),
       max_image_bytes: z.number().int().min(1_024).max(100_000_000),

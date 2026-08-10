@@ -554,7 +554,12 @@ export const LegacySettingsSchema = z.object({
             size: z.number(),
             thumbnail_size: z.number(),
             genParams: z.record(z.string(), z.unknown()).nullable().optional(),
-            data_base64: z.string().optional(),
+            // v2 used an empty string as the "not embedded" marker; normalize it
+            // to absence so the migration runner invokes its host resolver.
+            data_base64: z.preprocess(
+              (value) => (value === "" ? undefined : value),
+              z.string().min(1).optional(),
+            ),
           }),
         ),
         index: z.number(),

@@ -42,33 +42,37 @@ pnpm --filter @tavern-canvas/gateway build
 pnpm --filter @tavern-canvas/gateway start
 ```
 
-Node 24 or newer. Configuration comes entirely from environment variables read once at startup.
-Nothing loads a `.env` file automatically; export the variables yourself or pass
-`node --env-file=<file>`. A relative `TAVERN_CANVAS_DATA_DIR` resolves against the process working
-directory, so start the service from a stable directory.
-
-`SIGINT` and `SIGTERM` stop the runtime cleanly.
+Node 24 or newer. Configuration comes from environment variables. Nothing loads a `.env` file
+automatically; export the variables yourself or pass `node --env-file=<file>`. A relative
+`TAVERN_CANVAS_DATA_DIR` resolves against the process working directory, so start the service from a
+stable directory. `TAVERN_CANVAS_BEARER_TOKEN_HASHES` is read at startup. An optional
+`TAVERN_CANVAS_BEARER_TOKEN_HASH_FILE` adds newline-delimited SHA-256 digests and is re-read
+atomically after `SIGHUP`; a malformed or unreadable reload leaves the previous set in place.
 
 ## Configuration
 
-| Variable                            | Default          | Notes                                                                    |
-| ----------------------------------- | ---------------- | ------------------------------------------------------------------------ |
-| `TAVERN_CANVAS_BIND_HOST`           | `127.0.0.1`      | Must be an IP literal or `localhost`.                                    |
-| `TAVERN_CANVAS_BIND_PORT`           | `8787`           | 1–65535.                                                                 |
-| `TAVERN_CANVAS_CORS_ORIGINS`        | required         | JSON array of 1–128 exact origins.                                       |
-| `TAVERN_CANVAS_BEARER_TOKEN_HASHES` | required         | JSON array of 1–128 lowercase hex SHA-256 digests.                       |
-| `TAVERN_CANVAS_PROVIDER_PROFILES`   | required         | JSON array of 1–128 profiles with unique `profile_id` and `provider_id`. |
-| `TAVERN_CANVAS_DATA_DIR`            | `output/gateway` | Rejects `..` segments and NUL bytes.                                     |
-| `TAVERN_CANVAS_CONCURRENCY`         | `2`              | 1–64 simultaneously executing jobs.                                      |
-| `TAVERN_CANVAS_MAX_REQUEST_BYTES`   | `2000000`        | JSON body limit, 1_024–20_000_000.                                       |
-| `TAVERN_CANVAS_MAX_IMAGE_BYTES`     | `20000000`       | Image upload limit, 1_024–100_000_000.                                   |
-| `TAVERN_CANVAS_MAX_IMAGE_PIXELS`    | `40000000`       | 1–200_000_000.                                                           |
-| `TAVERN_CANVAS_MAX_IMAGE_DIMENSION` | `8192`           | 1–32_768.                                                                |
+| Variable                               | Default          | Notes                                                                     |
+| -------------------------------------- | ---------------- | ------------------------------------------------------------------------- |
+| `TAVERN_CANVAS_BIND_HOST`              | `127.0.0.1`      | Must be an IP literal or `localhost`.                                     |
+| `TAVERN_CANVAS_BIND_PORT`              | `8787`           | 1–65535.                                                                  |
+| `TAVERN_CANVAS_CORS_ORIGINS`           | required         | JSON array of 1–128 exact origins.                                        |
+| `TAVERN_CANVAS_BEARER_TOKEN_HASHES`    | required         | JSON array of 1–128 lowercase hex SHA-256 digests.                        |
+| `TAVERN_CANVAS_BEARER_TOKEN_HASH_FILE` | unset            | Optional newline-delimited lowercase SHA-256 digests, reloaded by SIGHUP. |
+| `TAVERN_CANVAS_PROVIDER_PROFILES`      | required         | JSON array of 1–128 profiles with unique `profile_id` and `provider_id`.  |
+| `TAVERN_CANVAS_DATA_DIR`               | `output/gateway` | Rejects `..` segments and NUL bytes.                                      |
+| `TAVERN_CANVAS_CONCURRENCY`            | `2`              | 1–64 simultaneously executing jobs.                                       |
+| `TAVERN_CANVAS_MAX_PENDING_JOBS`       | `256`            | Hard cap, 1–100000 pending jobs.                                          |
+| `TAVERN_CANVAS_RETENTION_HOURS`        | `168`            | Terminal job retention, 1–8760 hours.                                     |
+| `TAVERN_CANVAS_MAX_REQUEST_BYTES`      | `2000000`        | JSON body limit, 1_024–20_000_000.                                        |
+| `TAVERN_CANVAS_MAX_IMAGE_BYTES`        | `20000000`       | Image upload limit, 1_024–100_000_000.                                    |
+| `TAVERN_CANVAS_MAX_IMAGE_PIXELS`       | `40000000`       | 1–200_000_000.                                                            |
+| `TAVERN_CANVAS_MAX_IMAGE_DIMENSION`    | `8192`           | 1–32_768.                                                                 |
 
-There are no other configuration variables. A malformed value fails startup with a
-`GatewayConfigError` that names the offending field path and never echoes the value. Token hashes
-and provider credentials are wrapped so that logging, `toString`, `toJSON`, and `util.inspect` all
-yield `[REDACTED]`.
+These are the Gateway configuration variables. A malformed value fails startup with a
+`GatewayConfigError` that names the offending field path and never echoes the value. A malformed
+token hash file during `SIGHUP` is rejected without changing the active set and is logged only as a
+redacted reload error. Token hashes and provider credentials are wrapped so that logging, `toString`,
+`toJSON`, and `util.inspect` all yield `[REDACTED]`.
 
 ### The loopback default
 
@@ -97,31 +101,32 @@ The Gateway stores only digests, never tokens. Generate a token and record its d
 
 ```bash
 token="$(openssl rand -hex 32)"
-printf '%s' "$token" | sha256sum   # the hex digest goes in TAVERN_CANVAS_BEARER_TOKEN_HASHES
+printf '%s' "$token" | sha256sum   # put the digest in the JSON startup list or hash file
 printf '%s\n' "$token"             # give this to the client; the Gateway never sees it again
 ```
 
-There is no CLI or API endpoint that mints, rotates, or revokes tokens.
+There is no CLI or API endpoint that mints tokens.
 
 ### Rotation and revocation
 
-Configuration is read once at startup. There is no reload endpoint and no `SIGHUP` handler, so both
-rotation and revocation mean editing the environment and restarting.
+`TAVERN_CANVAS_BEARER_TOKEN_HASHES` remains the startup set. To manage rotating credentials without
+restarting, set `TAVERN_CANVAS_BEARER_TOKEN_HASH_FILE` to a file containing one lowercase SHA-256
+digest per line, then send `SIGHUP` to the process:
 
-Rotate without downtime for clients by using the fact that up to 128 digests are accepted at once:
+```bash
+printf '%s\n' '<sha256-hex-of-new-token>' > /run/secrets/tavern-canvas-bearer-hashes
+kill -HUP "$(cat /run/tavern-canvas-gateway.pid)"
+```
 
-1. Add the new token's digest alongside the old one and restart. Both tokens now work.
-2. Move clients to the new token.
-3. Remove the old digest and restart.
+The file is parsed completely before the active set is replaced, so adding or removing a file
+digest takes effect atomically after `SIGHUP`. If the file is missing, unreadable, malformed, or
+contains more than 128 combined digests, the previous set remains active and the Gateway records
+only a redacted reload error. The process does not restart. To revoke a digest managed by the
+startup environment list, update the environment and restart; startup hashes are intentionally
+kept as the stable base set.
 
-To revoke immediately, remove the digest and restart.
-
-Two consequences deserve care. Jobs carry no owner: the `jobs` table has no token column, and the
-job routes authorize on `job_id` alone, so any valid token can read or cancel any job, and revoking
-a token does not cancel or orphan the work it created. And because revocation requires a restart,
-in flight jobs are aborted by the shutdown path and then resumed by the recovery path on the next
-boot, regardless of which token created them. If a token is compromised, treat every job and every
-stored asset as exposed.
+Jobs are owned by the bearer-token SHA-256 digest that created them. A valid token can read, cancel,
+or receive events only for its own jobs; revoking a token does not cancel its already running work.
 
 ## CORS
 
@@ -193,22 +198,25 @@ is reachable only through the proxy.
 | Image pixels           | `TAVERN_CANVAS_MAX_IMAGE_PIXELS`, default 40 M         |
 | Image dimension        | `TAVERN_CANVAS_MAX_IMAGE_DIMENSION`, default 8192      |
 | Concurrent jobs        | `TAVERN_CANVAS_CONCURRENCY`, default 2                 |
+| Pending jobs           | `TAVERN_CANVAS_MAX_PENDING_JOBS`, default 256          |
 | Images per job         | 4, fixed by the contract                               |
 | Provider response body | 100 MB, or the profile's `max_response_bytes` if lower |
 
 Exceeding the rate limit returns `429 rate_limited` with `retryable: true`; the limiter is mounted on
 `/v1` only, so `/healthz` is not rate limited. An oversized JSON body returns `413 request_too_large`.
+When the persistent pending-job count reaches `TAVERN_CANVAS_MAX_PENDING_JOBS`, a new job returns
+`429 queue_full` with `retryable: true`. The rejected request does not create a job row, event, or
+asset.
 
 Uploads accept `image/png`, `image/jpeg`, and `image/webp` only. The type is sniffed from the bytes
 rather than trusted from a header, multi page images are rejected, and accepted images are
 re-encoded canonically before storage.
 
-The pending job queue is unbounded. Nothing rejects a client that enqueues faster than
-`TAVERN_CANVAS_CONCURRENCY` drains, so a queue can grow until the process runs out of memory.
-
-**There is no retention or cleanup.** Jobs, job events, and stored image blobs accumulate
-indefinitely; no code path prunes, vacuums, or expires them. Plan disk capacity accordingly and prune
-by hand if needed.
+Terminal jobs, their events, and their job asset links are retained for
+`TAVERN_CANVAS_RETENTION_HOURS` (default 168 hours). Cleanup runs once during startup and every hour
+thereafter. It deletes only `completed`, `failed`, and `cancelled` jobs older than the cutoff, then
+removes unreferenced asset records and their blobs. `queued`, `preparing`, `submitting`, `running`,
+`attached`, and `orphaned` jobs are not deleted by retention cleanup.
 
 ## Data on disk
 
@@ -251,8 +259,8 @@ systemctl --user start tavern-canvas-gateway
 ## Restart recovery
 
 Shutdown aborts every active job without marking it failed, so its persisted state survives for the
-next boot. On startup the worker reloads every job in `queued`, `preparing`, `submitting`, or
-`running` and applies these rules:
+next boot. On startup the worker first removes expired terminal data, then reloads every job in
+`queued`, `preparing`, `submitting`, or `running` and applies these rules:
 
 - `preparing` returns to `queued`, its submission cleared, recorded as a `recovered` event, and runs
   again.
@@ -262,8 +270,8 @@ next boot. On startup the worker reloads every job in `queued`, `preparing`, `su
   `provider_unavailable`, `retryable: true`, recorded as `recovered_without_submission`. It is not
   retried automatically, because the Gateway cannot tell whether the provider already accepted and
   charged for the work.
-- Terminal jobs, comprising `completed`, `failed`, `cancelled`, `attached`, and `orphaned`, are left
-  untouched.
+- `completed`, `failed`, and `cancelled` jobs older than the retention cutoff, their events, and
+  their unreferenced assets are deleted. Active jobs and all other terminal states remain untouched.
 
 Clients reconnecting to a job's event stream can resume from where they stopped using the
 `Last-Event-ID` header or the `?after=` query parameter.

@@ -95,6 +95,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   global_concurrency: 1,
   auto_generation_enabled: false,
   fallback_generation_enabled: false,
+  vocabulary_update_channel: "bundled",
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
@@ -271,6 +272,8 @@ function build_mock_studio() {
     set_gateway_token: vi.fn(),
     clear_gateway_token: vi.fn(),
     set_vocabulary_update_channel: vi.fn(),
+    import_vocabulary_package: vi.fn(),
+    cancel_vocabulary_import: vi.fn(),
     export_archive: vi.fn(),
     import_archive: vi.fn(),
   };

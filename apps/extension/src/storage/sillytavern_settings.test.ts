@@ -261,6 +261,14 @@ describe("SillyTavern settings adapter", () => {
     expect(adapter.get_settings()).toBe(next);
   });
 
+  it("persists the vocabulary update channel through a fresh adapter", () => {
+    const host = create_host();
+    const first = create_sillytavern_settings(host);
+    first.update_settings({ vocabulary_update_channel: "remote" });
+
+    const second = create_sillytavern_settings(host);
+    expect(second.get_settings().vocabulary_update_channel).toBe("remote");
+  });
   it("coalesces multiple same-task changes into one host save", async () => {
     const host = create_host();
     const adapter = create_sillytavern_settings(host);

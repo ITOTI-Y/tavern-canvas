@@ -62,6 +62,13 @@ export default typescriptEslint.config(
     },
   },
   {
+    files: ["tests/harness/src/media_dialogs_host.ts"],
+    rules: {
+      // The browser smoke harness intentionally keeps each selectable panel in one source file.
+      "vue/one-component-per-file": "off",
+    },
+  },
+  {
     files: ["packages/core/src/capability_registry.ts"],
     rules: {
       "@typescript-eslint/no-unnecessary-type-parameters": "off",

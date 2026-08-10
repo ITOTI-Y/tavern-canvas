@@ -24,9 +24,10 @@ function describe_zod_issue_paths(error: ZodError): string {
 /**
  * Injection seam for the v2 data this migration reads. `read_settings`
  * mirrors `extension_settings["st-chatu8"]`; `read_gallery_database` mirrors
- * the "chatu8_gallery"/"tupian" IndexedDB stores. Both return `undefined`
- * when the source is absent (a real host adapter resolves these against the
- * actual v2 storage locations; this module only validates and inventories
+ * the "chatu8_gallery"/"tupian" IndexedDB stores and the
+ * "chatu8_config_images"/"config_images" store. Both return `undefined`
+ * when the source is absent (the production host adapter resolves these against
+ * the actual v2 storage locations; this module only validates and inventories
  * what comes back). Legacy sources are read-only: nothing in this module, or
  * anything that consumes it, may write back to a v2 location.
  */
@@ -94,15 +95,56 @@ function compute_inventory(
  * drop it" guarantee.
  */
 export async function load_legacy_source(port: LegacySourcePort): Promise<LegacySourceResult> {
-  const raw_settings = await port.read_settings();
+  let raw_settings: unknown;
+  try {
+    raw_settings = await port.read_settings();
+  } catch (error) {
+    const detail =
+      error instanceof Error && error.message.length > 0
+        ? error.message.slice(0, 240)
+        : "unknown error";
+    const fingerprint = sha256_hex(JSON.stringify({ source: "settings", error: detail }));
+    return {
+      kind: "invalid",
+      fingerprint,
+      message: `Legacy settings could not be read: ${detail}`,
+    };
+  }
   if (raw_settings === undefined || raw_settings === null) {
     return { kind: "absent" };
   }
 
-  const raw_gallery = await port.read_gallery_database();
-  const fingerprint = sha256_hex(
-    JSON.stringify({ settings: raw_settings, gallery: raw_gallery ?? null }),
-  );
+  let raw_gallery: unknown;
+  try {
+    raw_gallery = await port.read_gallery_database();
+  } catch (error) {
+    const detail =
+      error instanceof Error && error.message.length > 0
+        ? error.message.slice(0, 240)
+        : "unknown error";
+    const fingerprint = sha256_hex(JSON.stringify({ source: "gallery", error: detail }));
+    return {
+      kind: "invalid",
+      fingerprint,
+      message: `Legacy gallery database could not be read: ${detail}`,
+    };
+  }
+  let fingerprint: string;
+  try {
+    fingerprint = sha256_hex(
+      JSON.stringify({ settings: raw_settings, gallery: raw_gallery ?? null }),
+    );
+  } catch (error) {
+    const detail =
+      error instanceof Error && error.message.length > 0
+        ? error.message.slice(0, 240)
+        : "unknown error";
+    return {
+      kind: "invalid",
+      fingerprint: sha256_hex(JSON.stringify({ source: "serialization", error: detail })),
+      message: `Legacy source could not be fingerprinted: ${detail}`,
+    };
+  }
 
   const classification = classify_settings_paths(raw_settings);
   if (classification.unknown.length > 0) {
@@ -184,10 +226,13 @@ export function index_legacy_image_bytes(
 ): ReadonlyMap<string, Uint8Array> {
   const by_sha256 = new Map<string, Uint8Array>();
   const add = (data_base64: string | undefined): void => {
-    if (data_base64 === undefined) {
+    if (typeof data_base64 !== "string" || data_base64.length === 0) {
       return;
     }
     const bytes = base64_to_bytes(data_base64);
+    if (bytes.byteLength === 0) {
+      return;
+    }
     by_sha256.set(sha256_hex_bytes(bytes), bytes);
   };
 
@@ -218,7 +263,7 @@ function bytes_to_base64(bytes: Uint8Array): string {
 /**
  * `jiuguanStorage` entries reference host filesystem paths, not embedded
  * bytes (unlike `tupianhuancun`, whose fixture already carries resolved
- * base64/blob data). Resolves every entry lacking `data_base64` through
+ * bytes). Resolves every entry lacking a non-empty `data_base64` through
  * `resolver` before the converters run, so a missing host file surfaces as
  * `gallery_converter`'s "no resolved bytes" warning — which
  * `migration_runner` escalates to a blocking `missing_blob` failure — instead
@@ -237,11 +282,21 @@ export async function resolve_jiuguan_images(
   for (const [tag_key, group] of entries) {
     const images = await Promise.all(
       group.images.map(async (image) => {
-        if (image.data_base64 !== undefined) {
+        if (typeof image.data_base64 === "string" && image.data_base64.length > 0) {
           return image;
         }
-        const bytes = await resolver.resolve_host_image(image.path);
-        return bytes === null ? image : { ...image, data_base64: bytes_to_base64(bytes) };
+        let bytes: Uint8Array | null;
+        try {
+          bytes = await resolver.resolve_host_image(image.path);
+        } catch {
+          bytes = null;
+        }
+        if (bytes === null || bytes.byteLength === 0) {
+          // Keep this record visible to the converter, which reports the
+          // unresolved image and lets the runner fail with `missing_blob`.
+          return { ...image, data_base64: undefined };
+        }
+        return { ...image, data_base64: bytes_to_base64(bytes) };
       }),
     );
     resolved_storage[tag_key] = { ...group, images };

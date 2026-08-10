@@ -12,11 +12,12 @@ import styles from "./components.module.css";
 const props = withDefaults(
   defineProps<{
     readonly label: string;
-    readonly hint?: string;
+    readonly hint?: string | undefined;
     readonly error?: string | null;
     readonly required?: boolean;
   }>(),
   {
+    hint: undefined,
     error: null,
     required: false,
   },

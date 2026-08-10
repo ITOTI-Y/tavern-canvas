@@ -308,6 +308,8 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_gateway_token: vi.fn(() => Promise.resolve()),
     clear_gateway_token: vi.fn(() => Promise.resolve()),
     set_vocabulary_update_channel: vi.fn(() => Promise.resolve()),
+    import_vocabulary_package: vi.fn(() => Promise.resolve()),
+    cancel_vocabulary_import: vi.fn(),
     export_settings_archive: vi.fn(() => Promise.resolve(new Blob())),
     import_settings_archive: vi.fn(() => Promise.resolve()),
     load_diagnostics_timeline: vi.fn(() => Promise.resolve()),

@@ -95,33 +95,32 @@ diagnostics, migration, import/export, and cleanup                    ported=13 
 TOTAL                                                                 ported=324  removed_approved=33  total=357
 ```
 
-### Architecture acceptance criteria 1-19
+### Architecture acceptance criteria 1-20
 
 The nineteen end-to-end acceptance criteria in
 [`2026-08-04-tavern-canvas-v3-architecture-design.md`](../plans/2026-08-04-tavern-canvas-v3-architecture-design.md)
-section 23 are release gates in their own right, separate from the per-workflow rows below: a
+section 23, plus Gateway routing criterion 20 added below, are release gates in their own right,
+separate from the per-workflow rows below: a
 matrix in which every row is `ported` still says nothing about whether concurrent jobs bind to the
 right swipe or whether the bundle fits its budget. Each criterion below names the exact test or
 audit that decides it. Written as a list rather than a table on purpose -- `tools/parity_check`
 parses every Markdown table row in this file as a six-column parity row, so a second table shape
 here would break the checker.
 
-Criteria marked **BLOCKED** have a real, committed, currently-failing assertion. They are recorded
-here as failing rather than skipped, because a skipped gate reads as a passing one.
+The named tests are behavior gates and run as part of `pnpm verify:release`; the parity checker
+separately verifies the ledger structure and test-file references.
 
 1. **Tool-capable model requests 1-4 images; the tool action returns immediately while jobs run
    concurrently.** `tests/e2e/full_standard_host.spec.ts` -- "a tool-capable host gets the
-   request_image function tool registered for the generation" (**BLOCKED**:
-   `apps/extension/src/bootstrap/compose_capabilities.ts` never constructs
-   `GenerationTriggerModule`, so the shipped bootstrap registers no `request_image` tool);
+   request_image function tool registered for the generation";
    `tests/integration/generation_flow.test.ts` -- "returns three queued native tool results before
-   concurrent providers complete" proves the module itself is correct once wired.
+   concurrent providers complete".
 2. **A non-tool model drives the same request through a hidden comment that never displays and is
    removed from the final text.** `tests/e2e/full_standard_host.spec.ts` -- "a host without native
-   tools gets the hidden-comment fallback stream parser attached" (**BLOCKED**, same missing
-   wiring); `tests/integration/generation_flow.test.ts` -- "parses every fallback byte split once
-   and removes controls from saved text"; `tests/e2e/security_boundaries.spec.ts` -- "a malformed
-   fallback control comment is discarded without executing or leaking".
+   tools gets the hidden-comment fallback stream parser attached";
+   `tests/integration/generation_flow.test.ts` -- "parses every fallback byte split once and removes
+   controls from saved text"; `tests/e2e/security_boundaries.spec.ts` -- "a malformed fallback
+   control comment is discarded without executing or leaking".
 3. **Every image in one reply chain binds only to its own assistant swipe.**
    `tests/integration/generation_flow.test.ts` -- "reuses the root anchor across recursion and
    binds only the final assistant"; `packages/core/src/messages/message_binder.test.ts`.
@@ -143,9 +142,8 @@ here as failing rather than skipped, because a skipped gate reads as a passing o
    `tests/e2e/full_standard_host.spec.ts`, describe block "criterion 7" -- four assertions
    including a Proxy that records every property read off `window.TavernHelper`.
 8. **TauriTavern enables the ChatSurface and WorldInfo activation enhancements.**
-   `tests/e2e/full_tauri_host.spec.ts` -- ChatSurface participant registration passes;
-   "WorldInfo activation batches reach a subscribed first-party module" is **BLOCKED**
-   (`compose_capabilities.ts` never constructs `TauriWorldInfoActivationModule`).
+   `tests/e2e/full_tauri_host.spec.ts` -- ChatSurface participant registration and
+   "WorldInfo activation batches reach a subscribed first-party module".
 9. **The standalone Gateway works over LAN HTTP and warns explicitly about cleartext on first
    connection.** `tests/e2e/full_gateway.spec.ts`, describe block "criterion 9", against a real
    Express server on a real loopback port; `tests/e2e/security_boundaries.spec.ts`, describe block
@@ -185,8 +183,7 @@ here as failing rather than skipped, because a skipped gate reads as a passing o
     artifact and the `legacy-history` rule for the repository history.
 19. **A stable release package is produced only after every automated verification and performance
     budget passes.** `tools/bundle_budget/src/index.test.ts` and the `pnpm check:bundle` gate;
-    `tools/release_audit/src/index.test.ts` and the `pnpm check:release` gate. **BLOCKED**:
-    `initial_js_gzip_bytes` currently exceeds the 184,320-byte budget.
+    `tools/release_audit/src/index.test.ts` and the `pnpm check:release` gate.
 20. **A configured Gateway endpoint carries generation instead of disabling it, and an endpoint the
     client cannot authenticate against says exactly why.**
     `tests/integration/gateway_generation_flow.test.ts`, against a real Express Gateway and a real

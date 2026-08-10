@@ -39,6 +39,7 @@ export interface GatewayAppOptions {
   readonly database_ready?: () => boolean;
   readonly clock?: () => string;
   readonly auto_start_worker?: boolean;
+  readonly token_hashes_provider?: () => readonly string[];
 }
 
 export interface GatewayAppHandle {
@@ -99,6 +100,9 @@ export function create_app(options: GatewayAppOptions): GatewayApplication {
   });
   const authentication = create_bearer_authentication({
     token_hashes: options.config.bearer_token_hashes,
+    ...(options.token_hashes_provider === undefined
+      ? {}
+      : { token_hashes_provider: options.token_hashes_provider }),
   });
   const limiter = rateLimit({
     windowMs: 60_000,

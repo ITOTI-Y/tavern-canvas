@@ -473,6 +473,7 @@ describe("initial settings and capability contracts", () => {
     global_concurrency: 4,
     auto_generation_enabled: true,
     fallback_generation_enabled: true,
+    vocabulary_update_channel: "bundled",
     gateway: {
       endpoint: "http://192.168.1.10:8080",
       token_secret_id: null,
@@ -600,6 +601,7 @@ describe("strict public object boundaries", () => {
     active_provider_profile_id: null,
     global_concurrency: 4,
     auto_generation_enabled: true,
+    vocabulary_update_channel: "bundled",
     fallback_generation_enabled: true,
     gateway: gateway_settings,
     ui: {

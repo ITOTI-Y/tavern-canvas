@@ -35,6 +35,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
   global_concurrency: 4,
   auto_generation_enabled: true,
   fallback_generation_enabled: true,
+  vocabulary_update_channel: "bundled",
   gateway: {
     endpoint: null,
     token_secret_id: null,
@@ -299,6 +300,13 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
       raw.fallback_generation_enabled,
       defaults.fallback_generation_enabled,
       "fallback_generation_enabled",
+      diagnostics,
+    ),
+    vocabulary_update_channel: recover_field(
+      TavernCanvasSettingsSchema.shape.vocabulary_update_channel,
+      raw.vocabulary_update_channel,
+      defaults.vocabulary_update_channel,
+      "vocabulary_update_channel",
       diagnostics,
     ),
     gateway: recover_gateway(raw.gateway, diagnostics),

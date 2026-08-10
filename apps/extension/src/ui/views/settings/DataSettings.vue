@@ -6,6 +6,7 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import type { CommandState } from "../../contracts/view_models.js";
 import type {
   MigrationSnapshot,
+  VocabularyImportProgressView,
   VocabularyUpdateChannel,
 } from "../../contracts/ui_capabilities.js";
 import AppButton from "../../components/AppButton.vue";
@@ -51,6 +52,84 @@ async function set_channel(value: string): Promise<void> {
     channel_pending.value = false;
   }
 }
+
+const vocabulary_import_pending = ref(false);
+const vocabulary_import_success = ref(false);
+const vocabulary_import_error = ref<string | null>(null);
+const vocabulary_import_progress = ref<VocabularyImportProgressView | null>(null);
+const vocabulary_file_input = ref<HTMLInputElement | null>(null);
+
+function trigger_vocabulary_import_picker(): void {
+  vocabulary_file_input.value?.click();
+}
+
+function cancel_vocabulary_import(): void {
+  props.controller.cancel_vocabulary_import();
+}
+
+async function handle_vocabulary_import_file(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file || vocabulary_import_pending.value) {
+    return;
+  }
+  vocabulary_import_pending.value = true;
+  vocabulary_import_success.value = false;
+  vocabulary_import_error.value = null;
+  vocabulary_import_progress.value = null;
+  try {
+    await props.controller.import_vocabulary_package(file, (progress) => {
+      vocabulary_import_progress.value = progress;
+    });
+    vocabulary_import_success.value = true;
+  } catch (error) {
+    const code =
+      error !== null &&
+      typeof error === "object" &&
+      "code" in error &&
+      typeof error.code === "string"
+        ? error.code
+        : "vocabulary_import_failed";
+    vocabulary_import_error.value = t("settings.data.vocabulary_import_error", { code });
+  } finally {
+    vocabulary_import_pending.value = false;
+  }
+}
+
+const vocabulary_import_progress_label = computed(() => {
+  const progress = vocabulary_import_progress.value;
+  if (progress === null) {
+    return null;
+  }
+  switch (progress.phase) {
+    case "reading":
+      return t("settings.data.vocabulary_import.progress_reading", {
+        received: progress.received_bytes,
+        total: progress.total_bytes,
+      });
+    case "batch":
+      return t("settings.data.vocabulary_import.progress_batch", {
+        current: progress.batch_index + 1,
+        total: progress.batch_count,
+      });
+    case "indexing":
+      return t("settings.data.vocabulary_import.progress_indexing");
+    case "staging_shard":
+      return t("settings.data.vocabulary_import.progress_staging", {
+        current: progress.shard_index + 1,
+        total: progress.shard_count,
+      });
+    case "activating":
+      return t("settings.data.vocabulary_import.progress_activating");
+    case "complete":
+      return t("settings.data.vocabulary_import.progress_complete", {
+        count: progress.record_count,
+      });
+    case "cancelled":
+      return t("settings.data.vocabulary_import.progress_cancelled");
+  }
+});
 
 const archive_export_pending = ref(false);
 const archive_exported = ref(false);
@@ -180,6 +259,56 @@ async function confirm_cleanup(): Promise<void> {
           @update:model-value="set_channel"
         />
       </div>
+
+      <div :class="styles.actions_row">
+        <AppButton
+          :label="t('settings.data.vocabulary_import.action')"
+          variant="secondary"
+          :pending="vocabulary_import_pending"
+          @click="trigger_vocabulary_import_picker"
+        />
+        <AppButton
+          v-if="vocabulary_import_pending"
+          :label="t('settings.data.vocabulary_import.cancel_action')"
+          variant="destructive"
+          @click="cancel_vocabulary_import"
+        />
+        <input
+          ref="vocabulary_file_input"
+          type="file"
+          accept=".json,.jsonl,.ndjson,application/json,application/x-ndjson"
+          class="tc-visually-hidden"
+          :aria-label="t('settings.data.vocabulary_import.action')"
+          data-testid="vocabulary-import-input"
+          @change="handle_vocabulary_import_file"
+        />
+      </div>
+      <p :class="styles.description">
+        {{ t("settings.data.vocabulary_import.description") }}
+      </p>
+      <p
+        v-if="vocabulary_import_progress_label"
+        :class="[styles.status_text, styles.description]"
+        data-testid="vocabulary-import-progress"
+      >
+        {{ vocabulary_import_progress_label }}
+      </p>
+      <p
+        v-if="vocabulary_import_success"
+        :class="[styles.status_text, styles.description]"
+        data-tone="success"
+        data-testid="vocabulary-import-success"
+      >
+        {{ t("settings.data.vocabulary_import.success") }}
+      </p>
+      <p
+        v-if="vocabulary_import_error"
+        :class="[styles.status_text, styles.description]"
+        data-tone="error"
+        data-testid="vocabulary-import-error"
+      >
+        {{ vocabulary_import_error }}
+      </p>
 
       <div :class="styles.actions_row">
         <AppButton

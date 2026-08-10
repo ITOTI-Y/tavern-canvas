@@ -13,6 +13,10 @@ import {
 import { AssetStore } from "./assets/asset_store.js";
 import { load_gateway_config, type GatewayConfig } from "./config/load_config.js";
 import { create_app, type GatewayApplication } from "./http/create_app.js";
+import {
+  create_bearer_token_hash_store,
+  type BearerTokenHashStore,
+} from "./http/authentication.js";
 import { JobService } from "./jobs/job_service.js";
 import {
   JobWorker,
@@ -50,6 +54,7 @@ export interface GatewayRuntime {
   readonly database: GatewayDatabase;
   readonly app: GatewayApplication;
   readonly server: Server | undefined;
+  reload_bearer_token_hashes(): boolean;
   start(): Promise<Server>;
   stop(): Promise<void>;
 }
@@ -79,6 +84,18 @@ export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): Gat
     ...config.limits,
   });
   const logger = options.logger ?? create_gateway_logger();
+  const token_hash_store: BearerTokenHashStore = create_bearer_token_hash_store({
+    token_hashes: config.bearer_token_hashes,
+    ...(config.bearer_token_hash_file === undefined
+      ? {}
+      : { token_hash_file: config.bearer_token_hash_file }),
+    on_reload_error: () => {
+      logger.error(
+        { error_code: "bearer_token_hash_reload_failed" },
+        "Gateway bearer token hash file reload failed",
+      );
+    },
+  });
   const transport_factory =
     options.transport_factory ??
     ({
@@ -113,6 +130,7 @@ export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): Gat
     worker,
     service,
     database_ready,
+    token_hashes_provider: () => token_hash_store.token_hashes,
     ...(options.clock === undefined ? {} : { clock: options.clock }),
     ...(options.auto_start_worker === undefined
       ? {}
@@ -126,6 +144,9 @@ export function create_gateway_runtime(options: GatewayRuntimeOptions = {}): Gat
     app: application,
     get server() {
       return server;
+    },
+    reload_bearer_token_hashes(): boolean {
+      return token_hash_store.reload();
     },
     async start(): Promise<Server> {
       if (server !== undefined) {
@@ -214,9 +235,15 @@ async function close_server(server: Server): Promise<void> {
 const entrypoint = process.argv[1];
 if (entrypoint !== undefined && import.meta.url === pathToFileURL(path.resolve(entrypoint)).href) {
   const runtime = await start_gateway();
+
+  const reload_bearer_token_hashes = (): void => {
+    runtime.reload_bearer_token_hashes();
+  };
   const shutdown = (): void => {
+    process.off("SIGHUP", reload_bearer_token_hashes);
     void runtime.stop().finally(() => process.exit(0));
   };
+  process.on("SIGHUP", reload_bearer_token_hashes);
   process.once("SIGINT", shutdown);
   process.once("SIGTERM", shutdown);
 }

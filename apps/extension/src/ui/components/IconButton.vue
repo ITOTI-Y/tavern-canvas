@@ -16,7 +16,7 @@ const props = withDefaults(
     readonly icon: Component;
     /** Accessible name. Also the tooltip text unless `tooltip` overrides it. */
     readonly label: string;
-    readonly tooltip?: string;
+    readonly tooltip?: string | undefined;
     readonly size?: "sm" | "md" | "lg";
     /**
      * `null` (default) renders a plain command button; `true`/`false` renders a toggle
@@ -30,6 +30,7 @@ const props = withDefaults(
     readonly destructive?: boolean;
   }>(),
   {
+    tooltip: undefined,
     size: "md",
     pressed: null,
     disabled: false,

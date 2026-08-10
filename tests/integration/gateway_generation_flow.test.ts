@@ -191,6 +191,7 @@ function create_globals(options: GlobalsOptions): {
         global_concurrency: 1,
         auto_generation_enabled: false,
         fallback_generation_enabled: false,
+        vocabulary_update_channel: "bundled",
         gateway: {
           endpoint: gateway_origin,
           token_secret_id: options.token_secret_id,

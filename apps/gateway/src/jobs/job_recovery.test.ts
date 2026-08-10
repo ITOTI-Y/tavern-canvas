@@ -25,6 +25,7 @@ import { open_gateway_database } from "../persistence/database.js";
 import { JobRepository } from "../persistence/job_repository.js";
 
 const TOKEN = "worker-test-token";
+const OWNER_TOKEN_HASH = createHash("sha256").update(TOKEN).digest("hex");
 const CREATED_AT = "2026-08-05T12:00:00.000Z";
 const PNG_BYTES = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
@@ -324,12 +325,21 @@ async function create_worker_fixture(
       : { transport_factory: options.transport_factory }),
     ...(options.use_default_sleep ? {} : { sleep: async () => undefined }),
   });
-  return { directory, database, job_repository, asset_repository, asset_store, service, worker };
+  return {
+    directory,
+    database,
+    config,
+    job_repository,
+    asset_repository,
+    asset_store,
+    service,
+    worker,
+  };
 }
 
 async function wait_for_state(service: JobService, job_id: string, state: "failed"): Promise<void> {
   for (let attempt = 0; attempt < 100; attempt += 1) {
-    if (service.get_stored_job(job_id)?.state === state) {
+    if (service.get_stored_job_for_worker(job_id)?.state === state) {
       return;
     }
     await new Promise<void>((resolve) => setTimeout(resolve, 1));
@@ -338,14 +348,44 @@ async function wait_for_state(service: JobService, job_id: string, state: "faile
 }
 
 describe("JobWorker restart recovery", () => {
+  it("uses the same retention cutoff for jobs and assets", async () => {
+    const fixture = await create_worker_fixture();
+    let job_cutoff: string | undefined;
+    let asset_cutoff: string | undefined;
+    const delete_expired = fixture.job_repository.delete_expired.bind(fixture.job_repository);
+    fixture.job_repository.delete_expired = (cutoff_at) => {
+      job_cutoff = cutoff_at;
+      return delete_expired(cutoff_at);
+    };
+    const cleanup_orphaned_assets = fixture.asset_store.cleanup_orphaned_assets.bind(
+      fixture.asset_store,
+    );
+    fixture.asset_store.cleanup_orphaned_assets = async (cutoff_at) => {
+      asset_cutoff = cutoff_at;
+      return cleanup_orphaned_assets(cutoff_at);
+    };
+    try {
+      await fixture.worker.start();
+      const expected_cutoff = new Date(
+        Date.parse(CREATED_AT) - fixture.config.retention_hours * 60 * 60 * 1_000,
+      ).toISOString();
+      expect(job_cutoff).toBe(expected_cutoff);
+      expect(asset_cutoff).toBe(expected_cutoff);
+    } finally {
+      await fixture.worker.stop();
+      fixture.database.close();
+      await rm(fixture.directory, { recursive: true, force: true });
+    }
+  });
   it("returns preparing jobs to queued and fails active jobs without a persisted submission", async () => {
     const fixture = await create_worker_fixture();
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("11111111-1111-4111-8111-111111111111"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "preparing",
         event_type: "preparing",
@@ -353,15 +393,18 @@ describe("JobWorker restart recovery", () => {
         created_at: CREATED_AT,
       });
       await fixture.worker.start();
-      expect(fixture.service.list_events(created.job.job_id).map((event) => event.state)).toContain(
-        "queued",
+      expect(fixture.job_repository.list_events_for_worker(created.job.job_id)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ event: expect.objectContaining({ state: "queued" }) }),
+        ]),
       );
 
       const active = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("33333333-3333-4333-8333-333333333333"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: active.job.job_id,
         state: "submitting",
         event_type: "submitting",
@@ -379,8 +422,10 @@ describe("JobWorker restart recovery", () => {
         sleep: async () => undefined,
       });
       await restarted.start();
-      expect(fixture.service.get_stored_job(active.job.job_id)?.state).toBe("failed");
-      expect(fixture.service.get_job(active.job.job_id)?.error?.code).toBe("provider_unavailable");
+      expect(fixture.service.get_stored_job_for_worker(active.job.job_id)?.state).toBe("failed");
+      expect(
+        fixture.service.get_job_for_owner(active.job.job_id, OWNER_TOKEN_HASH)?.error?.code,
+      ).toBe("provider_unavailable");
       await restarted.stop();
     } finally {
       await fixture.worker.stop();
@@ -393,10 +438,11 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture();
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("22222222-2222-4222-8222-222222222222"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "running",
         event_type: "running",
@@ -406,7 +452,7 @@ describe("JobWorker restart recovery", () => {
       });
       await fixture.worker.start();
       await wait_for_state(fixture.service, created.job.job_id, "failed");
-      expect(fixture.service.get_stored_job(created.job.job_id)?.state).toBe("failed");
+      expect(fixture.service.get_stored_job_for_worker(created.job.job_id)?.state).toBe("failed");
       await fixture.worker.stop();
     } finally {
       await fixture.worker.stop();
@@ -446,10 +492,11 @@ describe("JobWorker restart recovery", () => {
     try {
       const jobs = terminal_cases.map(([state, request_id]) => {
         const created = fixture.service.create_job({
+          owner_token_hash: OWNER_TOKEN_HASH,
           protocol_version: "1.0",
           request: request(request_id),
         });
-        fixture.job_repository.transition_with_event({
+        fixture.job_repository.transition_with_event_for_worker({
           job_id: created.job.job_id,
           state,
           event_type: state,
@@ -462,9 +509,9 @@ describe("JobWorker restart recovery", () => {
       await fixture.worker.start();
       await new Promise<void>((resolve) => setImmediate(resolve));
 
-      expect(jobs.map(({ job_id }) => fixture.service.get_stored_job(job_id)?.state)).toEqual(
-        jobs.map(({ state }) => state),
-      );
+      expect(
+        jobs.map(({ job_id }) => fixture.service.get_stored_job_for_worker(job_id)?.state),
+      ).toEqual(jobs.map(({ state }) => state));
       expect(submit_calls).toBe(0);
       expect(poll_calls).toBe(0);
     } finally {
@@ -488,6 +535,7 @@ describe("JobWorker restart recovery", () => {
     try {
       await fixture.worker.start();
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("44444444-4444-4444-8444-444444444444"),
       });
@@ -495,6 +543,7 @@ describe("JobWorker restart recovery", () => {
       await wait_for(() => submit_calls === 1);
 
       const replay = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("44444444-4444-4444-8444-444444444444"),
       });
@@ -528,10 +577,11 @@ describe("JobWorker restart recovery", () => {
     let restarted: JobWorker | undefined;
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("55555555-5555-4555-8555-555555555555"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "running",
         event_type: "running",
@@ -543,13 +593,13 @@ describe("JobWorker restart recovery", () => {
       await wait_for(() => poll_calls === 1);
 
       const stopping = fixture.worker.stop();
-      expect(fixture.service.get_stored_job(created.job.job_id)?.state).toBe("running");
+      expect(fixture.service.get_stored_job_for_worker(created.job.job_id)?.state).toBe("running");
       blocked_poll.resolve({
         state: "failed",
         error: { code: "provider_unavailable", retryable: true },
       });
       await stopping;
-      expect(fixture.service.get_stored_job(created.job.job_id)?.state).toBe("running");
+      expect(fixture.service.get_stored_job_for_worker(created.job.job_id)?.state).toBe("running");
 
       let resumed_poll_calls = 0;
       const restarted_adapter = {
@@ -613,10 +663,11 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture({ adapter });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("66666666-6666-4666-8666-666666666666"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "running",
         event_type: "running",
@@ -627,9 +678,9 @@ describe("JobWorker restart recovery", () => {
       await fixture.worker.start();
       await wait_for(() => poll_calls === 1);
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       await wait_for(() => cancel_calls === 1);
       expect(cancel_signal_aborted).toBe(false);
@@ -665,6 +716,7 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture({ adapter });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("77777777-7777-4777-8777-777777777777"),
       });
@@ -701,10 +753,11 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture({ adapter });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("88888888-8888-4888-8888-888888888888"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "submitting",
         event_type: "submitting",
@@ -738,13 +791,18 @@ describe("JobWorker restart recovery", () => {
     const register_generated_asset = fixture.asset_store.register_generated_asset.bind(
       fixture.asset_store,
     );
-    fixture.asset_store.register_generated_asset = async (generated, created_at) => {
+    fixture.asset_store.register_generated_asset = async (
+      generated,
+      created_at,
+      owner_token_hash,
+    ) => {
       stage_started.resolve(undefined);
       await release_stage.promise;
-      return register_generated_asset(generated, created_at);
+      return register_generated_asset(generated, created_at, owner_token_hash);
     };
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request(request_id),
       });
@@ -752,16 +810,18 @@ describe("JobWorker restart recovery", () => {
       fixture.worker.enqueue(created.job.job_id);
       await stage_started.promise;
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       expect(cancel_calls).toBe(0);
       release_stage.resolve(undefined);
       await wait_for(
-        () => fixture.service.get_stored_job(created.job.job_id)?.state === "cancelled",
+        () => fixture.service.get_stored_job_for_worker(created.job.job_id)?.state === "cancelled",
       );
 
-      expect(fixture.asset_repository.list_for_job(created.job.job_id)).toEqual([]);
-      expect(fixture.service.get_job(created.job.job_id)).not.toHaveProperty("image_ids");
+      expect(fixture.asset_repository.list_for_job_for_worker(created.job.job_id)).toEqual([]);
+      expect(
+        fixture.service.get_job_for_owner(created.job.job_id, OWNER_TOKEN_HASH),
+      ).not.toHaveProperty("image_ids");
     } finally {
       release_stage.resolve(undefined);
       await fixture.worker.stop();
@@ -779,15 +839,20 @@ describe("JobWorker restart recovery", () => {
     const register_generated_asset = fixture.asset_store.register_generated_asset.bind(
       fixture.asset_store,
     );
-    fixture.asset_store.register_generated_asset = async (generated, created_at) => {
+    fixture.asset_store.register_generated_asset = async (
+      generated,
+      created_at,
+      owner_token_hash,
+    ) => {
       register_calls += 1;
       if (register_calls === 2) {
         throw new Error("synthetic output staging failure");
       }
-      return register_generated_asset(generated, created_at);
+      return register_generated_asset(generated, created_at, owner_token_hash);
     };
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request(request_id),
       });
@@ -796,9 +861,13 @@ describe("JobWorker restart recovery", () => {
       await wait_for_state(fixture.service, created.job.job_id, "failed");
 
       expect(register_calls).toBe(2);
-      expect(fixture.asset_repository.list_for_job(created.job.job_id)).toEqual([]);
-      expect(fixture.service.get_job(created.job.job_id)).not.toHaveProperty("image_ids");
-      expect(fixture.service.get_job(created.job.job_id)?.error).toEqual({
+      expect(fixture.asset_repository.list_for_job_for_worker(created.job.job_id)).toEqual([]);
+      expect(
+        fixture.service.get_job_for_owner(created.job.job_id, OWNER_TOKEN_HASH),
+      ).not.toHaveProperty("image_ids");
+      expect(
+        fixture.service.get_job_for_owner(created.job.job_id, OWNER_TOKEN_HASH)?.error,
+      ).toEqual({
         code: "malformed_response",
         retryable: false,
       });
@@ -824,6 +893,7 @@ describe("JobWorker restart recovery", () => {
     try {
       const request_id = "99999999-9999-4999-8999-999999999994";
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request(request_id),
       });
@@ -831,10 +901,10 @@ describe("JobWorker restart recovery", () => {
       fixture.worker.enqueue(created.job.job_id);
       await wait_for(() => add_listener.mock.calls.some(([type]) => type === "abort"));
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       await wait_for(
-        () => fixture.service.get_stored_job(created.job.job_id)?.state === "cancelled",
+        () => fixture.service.get_stored_job_for_worker(created.job.job_id)?.state === "cancelled",
       );
 
       const added = add_listener.mock.calls.filter(([type]) => type === "abort").length;
@@ -875,13 +945,14 @@ describe("JobWorker restart recovery", () => {
     try {
       const request_id = "99999999-9999-4999-8999-999999999993";
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request(request_id),
       });
       await fixture.worker.start();
       fixture.worker.enqueue(created.job.job_id);
       await wait_for_real_time(
-        () => fixture.service.get_stored_job(created.job.job_id)?.state === "failed",
+        () => fixture.service.get_stored_job_for_worker(created.job.job_id)?.state === "failed",
       );
 
       const added = add_listener.mock.calls.filter(([type]) => type === "abort").length;
@@ -913,10 +984,11 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture({ adapter });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("99999999-9999-4999-8999-999999999995"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "running",
         event_type: "running",
@@ -927,7 +999,7 @@ describe("JobWorker restart recovery", () => {
       await fixture.worker.start();
       await wait_for(() => poll_calls === 1);
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       expect(cancel_calls).toBe(0);
 
@@ -972,10 +1044,11 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture({ adapter });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("99999999-9999-4999-8999-999999999996"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "running",
         event_type: "running",
@@ -986,7 +1059,7 @@ describe("JobWorker restart recovery", () => {
       await fixture.worker.start();
       await wait_for(() => poll_calls === 1);
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       let stop_finished = false;
       const stopping = fixture.worker.stop().then(() => {
@@ -1030,10 +1103,11 @@ describe("JobWorker restart recovery", () => {
     const fixture = await create_worker_fixture({ adapter });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: request("99999999-9999-4999-8999-999999999998"),
       });
-      fixture.job_repository.transition_with_event({
+      fixture.job_repository.transition_with_event_for_worker({
         job_id: created.job.job_id,
         state: "running",
         event_type: "running",
@@ -1044,7 +1118,7 @@ describe("JobWorker restart recovery", () => {
       await fixture.worker.start();
       await wait_for(() => poll_calls === 1);
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       let stop_finished = false;
       const stopping = fixture.worker.stop().then(() => {
@@ -1083,6 +1157,7 @@ describe("JobWorker restart recovery", () => {
     });
     try {
       const created = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: sd_request("99999999-9999-4999-8999-999999999997"),
       });
@@ -1092,7 +1167,7 @@ describe("JobWorker restart recovery", () => {
         transport.operations.some((operation) => operation.route === "/sdapi/v1/txt2img"),
       );
 
-      fixture.service.cancel_job(created.job.job_id);
+      fixture.service.cancel_job_for_worker(created.job.job_id);
       fixture.worker.cancel_active(created.job.job_id);
       await wait_for(() =>
         transport.operations.some((operation) => operation.route === "/sdapi/v1/interrupt"),
@@ -1124,17 +1199,22 @@ describe("JobWorker restart recovery", () => {
       fixture.asset_store,
     );
     let register_calls = 0;
-    fixture.asset_store.register_generated_asset = async (generated, created_at) => {
+    fixture.asset_store.register_generated_asset = async (
+      generated,
+      created_at,
+      owner_token_hash,
+    ) => {
       register_calls += 1;
       if (register_calls === 1) {
         stage_started.resolve(undefined);
         await release_stage.promise;
       }
-      return register_generated_asset(generated, created_at);
+      return register_generated_asset(generated, created_at, owner_token_hash);
     };
     let second_job_id: string | undefined;
     try {
       const first = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: sd_request("99999999-9999-4999-8999-999999999999"),
       });
@@ -1143,10 +1223,11 @@ describe("JobWorker restart recovery", () => {
       await stage_started.promise;
 
       // Created only after `first` is confirmed staged: both jobs share CREATED_AT,
-      // so `list_recoverable()` (ORDER BY created_at, job_id) would tie-break on a
+      // so `list_recoverable_for_worker()` (ORDER BY created_at, job_id) would tie-break on a
       // random UUID if `second` existed before `worker.start()` ran its recovery
       // scan, letting either job win the race to submit first.
       const second = fixture.service.create_job({
+        owner_token_hash: OWNER_TOKEN_HASH,
         protocol_version: "1.0",
         request: sd_request("99999999-9999-4999-8999-999999999990"),
       });
@@ -1156,7 +1237,7 @@ describe("JobWorker restart recovery", () => {
       const second_submit_signal = await transport.second_submit_signal.promise;
       expect(second_submit_signal.aborted).toBe(false);
 
-      fixture.service.cancel_job(first.job.job_id);
+      fixture.service.cancel_job_for_worker(first.job.job_id);
       fixture.worker.cancel_active(first.job.job_id);
       expect(
         transport.operations.filter((operation) => operation.route === "/sdapi/v1/interrupt"),
@@ -1164,13 +1245,13 @@ describe("JobWorker restart recovery", () => {
       expect(second_submit_signal.aborted).toBe(false);
 
       release_stage.resolve(undefined);
-      fixture.service.cancel_job(second.job.job_id);
+      fixture.service.cancel_job_for_worker(second.job.job_id);
       fixture.worker.cancel_active(second.job.job_id);
       await fixture.worker.stop();
     } finally {
       release_stage.resolve(undefined);
       if (second_job_id !== undefined) {
-        fixture.service.cancel_job(second_job_id);
+        fixture.service.cancel_job_for_worker(second_job_id);
         fixture.worker.cancel_active(second_job_id);
       }
       await fixture.worker.stop();

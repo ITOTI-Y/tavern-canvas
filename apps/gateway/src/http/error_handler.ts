@@ -16,6 +16,7 @@ export type GatewayErrorCode =
   | "job_not_found"
   | "provider_not_configured"
   | "provider_unavailable"
+  | "queue_full"
   | "rate_limited"
   | "not_found"
   | "internal_error";

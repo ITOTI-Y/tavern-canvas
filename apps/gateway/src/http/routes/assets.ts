@@ -4,6 +4,7 @@ import { AssetIdSchema } from "@tavern-canvas/contracts";
 import type { GatewayConfig } from "../../config/config_schema.js";
 import { AssetStore, AssetStoreError } from "../../assets/asset_store.js";
 import { GatewayHttpError } from "../error_handler.js";
+import { require_request_token_hash } from "../request_context.js";
 
 export interface AssetsRouteOptions {
   readonly config: GatewayConfig;
@@ -29,11 +30,13 @@ export function create_assets_router(options: AssetsRouteOptions): Router {
     if (!Buffer.isBuffer(body) && !(body instanceof Uint8Array)) {
       throw new GatewayHttpError(400, "invalid_asset");
     }
+    const owner_token_hash = require_request_token_hash(request);
     try {
       const result = await options.asset_store.ingest_reference_image(
         body,
         request.header("content-type") ?? "",
         (options.clock ?? (() => new Date().toISOString()))(),
+        owner_token_hash,
       );
       response.status(201).json({
         protocol_version: "1.0",
@@ -49,7 +52,10 @@ export function create_assets_router(options: AssetsRouteOptions): Router {
 
   router.get("/assets/:asset_id", (request, response) => {
     const asset_id = AssetIdSchema.parse(request.params.asset_id);
-    const asset = options.asset_store.get_metadata(asset_id);
+    const asset = options.asset_store.get_metadata_for_owner(
+      asset_id,
+      require_request_token_hash(request),
+    );
     if (asset === undefined) {
       throw new GatewayHttpError(404, "asset_not_found");
     }
@@ -65,8 +71,9 @@ export function create_assets_router(options: AssetsRouteOptions): Router {
 
   router.get("/assets/:asset_id/content", async (request, response) => {
     const asset_id = AssetIdSchema.parse(request.params.asset_id);
+    const owner_token_hash = require_request_token_hash(request);
     try {
-      const result = await options.asset_store.read_bytes(asset_id);
+      const result = await options.asset_store.read_bytes_for_owner(asset_id, owner_token_hash);
       response
         .status(200)
         .setHeader("content-type", result.asset.media_type)

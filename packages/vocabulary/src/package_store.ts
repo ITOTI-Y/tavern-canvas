@@ -1,4 +1,6 @@
 import type { IDBPDatabase } from "idb";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex } from "@noble/hashes/utils.js";
 import { z } from "zod";
 
 import {
@@ -482,14 +484,29 @@ export class VocabularyPackageStore {
     if (active === null) {
       throw new PackageStoreError(`No active vocabulary package in namespace: ${this.namespace}`);
     }
+    const entry = active.manifest.shards.find((shard) => shard.path === path);
+    if (entry === undefined) {
+      throw new PackageStoreError(`No shard manifest entry for path: ${path}`);
+    }
     const found = await this.find_shard_record(active.record_id, path);
     if (found === null) {
       throw new PackageStoreError(`No shard bytes stored for path: ${path}`);
     }
-    const bytes = decode_base64(found.payload.bytes_base64);
-    if (bytes.byteLength !== found.payload.byte_length) {
+    if (found.payload.byte_length !== entry.byte_length || found.payload.sha256 !== entry.sha256) {
       throw new PackageStoreError(
-        `Stored shard bytes for ${path} do not match their recorded byte_length`,
+        `Stored shard metadata for ${path} does not match the active manifest`,
+      );
+    }
+    const bytes = decode_base64(found.payload.bytes_base64);
+    if (bytes.byteLength !== entry.byte_length) {
+      throw new PackageStoreError(
+        `Stored shard bytes for ${path} do not match the manifest byte_length`,
+      );
+    }
+    const actual_sha256 = bytesToHex(sha256(bytes));
+    if (actual_sha256 !== entry.sha256) {
+      throw new PackageStoreError(
+        `Stored shard bytes for ${path} do not match the manifest SHA-256`,
       );
     }
     return bytes;

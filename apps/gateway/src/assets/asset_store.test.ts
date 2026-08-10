@@ -1,7 +1,8 @@
 // @vitest-environment node
 
 import { createHash } from "node:crypto";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { unlinkSync } from "node:fs";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -11,9 +12,12 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { AssetRepository } from "../persistence/asset_repository.js";
 import { open_gateway_database, type GatewayDatabase } from "../persistence/database.js";
-import { AssetStore, type AssetStoreWriteFile } from "./asset_store.js";
+import { AssetStore, type AssetStoreUnlinkFile, type AssetStoreWriteFile } from "./asset_store.js";
 
+const RETENTION_CUTOFF = "2026-08-06T00:00:00.000Z";
 const CREATED_AT = "2026-08-05T12:00:00.000Z";
+const RECENT_CREATED_AT = "2026-08-07T12:00:00.000Z";
+const OWNER_TOKEN_HASH = "a".repeat(64);
 const GENERATED_ASSET_ID = "00000000-0000-4000-8000-000000000001";
 const PNG_BYTES = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
@@ -49,6 +53,7 @@ type ImageFixtureOptions = {
 type CreateStoreOptions = {
   readonly limits?: Partial<typeof limits>;
   readonly write_file?: AssetStoreWriteFile;
+  readonly unlink_file?: AssetStoreUnlinkFile;
 };
 type StoreContext = {
   readonly database: GatewayDatabase;
@@ -70,6 +75,7 @@ async function create_store(options: CreateStoreOptions = {}) {
       ...limits,
       ...(options.limits ?? {}),
       ...(options.write_file === undefined ? {} : { write_file: options.write_file }),
+      ...(options.unlink_file === undefined ? {} : { unlink_file: options.unlink_file }),
     }),
   };
 }
@@ -140,6 +146,16 @@ function asset_row_count(database: GatewayDatabase): number {
   };
   return row.count;
 }
+function deferred<T>(): {
+  readonly promise: Promise<T>;
+  readonly resolve: (value: T) => void;
+} {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((resolve_promise) => {
+    resolve = resolve_promise;
+  });
+  return { promise, resolve };
+}
 
 async function expect_rejected_before_persistence(
   store_context: StoreContext,
@@ -147,7 +163,7 @@ async function expect_rejected_before_persistence(
   write_calls: readonly string[] = [],
 ): Promise<void> {
   await expect(
-    store_context.store.register_generated_asset(generated, CREATED_AT),
+    store_context.store.register_generated_asset(generated, CREATED_AT, OWNER_TOKEN_HASH),
   ).rejects.toMatchObject({ code: "invalid_asset" });
   expect(asset_row_count(store_context.database)).toBe(0);
   expect(write_calls).toHaveLength(0);
@@ -302,9 +318,10 @@ describe("AssetStore generated image validation", () => {
     const stored = await store_context.store.register_generated_asset(
       { asset, bytes: image },
       CREATED_AT,
+      OWNER_TOKEN_HASH,
     );
 
-    const retrieved = await store_context.store.read_bytes(stored.asset_id);
+    const retrieved = await store_context.store.read_bytes_for_worker(stored.asset_id);
     expect(retrieved.bytes).toEqual(image);
     expect(retrieved.asset.sha256).toBe(asset.sha256);
     expect(retrieved.asset.byte_length).toBe(image.byteLength);
@@ -319,7 +336,12 @@ describe("AssetStore reference image validation", () => {
   ])("accepts a complete %s image", async (_label, format, media_type) => {
     const { store } = await create_store();
     const image = await create_image(format);
-    const result = await store.ingest_reference_image(image, media_type, CREATED_AT);
+    const result = await store.ingest_reference_image(
+      image,
+      media_type,
+      CREATED_AT,
+      OWNER_TOKEN_HASH,
+    );
 
     expect(result.asset.media_type).toBe(media_type);
     expect(result.canonical_bytes.byteLength).toBeGreaterThan(0);
@@ -332,7 +354,12 @@ describe("AssetStore reference image validation", () => {
 
     expect(source_metadata.exif).toBeDefined();
 
-    const result = await store.ingest_reference_image(image, "image/jpeg", CREATED_AT);
+    const result = await store.ingest_reference_image(
+      image,
+      "image/jpeg",
+      CREATED_AT,
+      OWNER_TOKEN_HASH,
+    );
     const canonical_metadata = await sharp(result.canonical_bytes).metadata();
 
     expect(canonical_metadata.exif).toBeUndefined();
@@ -343,7 +370,7 @@ describe("AssetStore reference image validation", () => {
     const image = await create_image("png");
 
     await expect(
-      store.ingest_reference_image(image, "image/jpeg", CREATED_AT),
+      store.ingest_reference_image(image, "image/jpeg", CREATED_AT, OWNER_TOKEN_HASH),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 
@@ -362,7 +389,7 @@ describe("AssetStore reference image validation", () => {
     const { store } = await create_store();
 
     await expect(
-      store.ingest_reference_image(bytes, "image/png", CREATED_AT),
+      store.ingest_reference_image(bytes, "image/png", CREATED_AT, OWNER_TOKEN_HASH),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 });
@@ -375,7 +402,7 @@ describe("AssetStore image limits", () => {
     });
 
     await expect(
-      store.ingest_reference_image(image, "image/png", CREATED_AT),
+      store.ingest_reference_image(image, "image/png", CREATED_AT, OWNER_TOKEN_HASH),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 
@@ -386,7 +413,7 @@ describe("AssetStore image limits", () => {
     });
 
     await expect(
-      store.ingest_reference_image(image, "image/png", CREATED_AT),
+      store.ingest_reference_image(image, "image/png", CREATED_AT, OWNER_TOKEN_HASH),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 
@@ -397,7 +424,7 @@ describe("AssetStore image limits", () => {
     });
 
     await expect(
-      store.ingest_reference_image(image, "image/png", CREATED_AT),
+      store.ingest_reference_image(image, "image/png", CREATED_AT, OWNER_TOKEN_HASH),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 });
@@ -406,7 +433,12 @@ describe("AssetStore JPEG container validation", () => {
   it("accepts a complete JPEG container", async () => {
     const { store } = await create_store();
     const jpeg = await create_jpeg();
-    const result = await store.ingest_reference_image(jpeg, "image/jpeg", CREATED_AT);
+    const result = await store.ingest_reference_image(
+      jpeg,
+      "image/jpeg",
+      CREATED_AT,
+      OWNER_TOKEN_HASH,
+    );
 
     expect(result.asset.media_type).toBe("image/jpeg");
     expect(result.canonical_bytes.byteLength).toBeGreaterThan(0);
@@ -425,7 +457,7 @@ describe("AssetStore JPEG container validation", () => {
         : Buffer.concat([jpeg, trailing, Buffer.from([0xff, 0xd9])]);
 
     await expect(
-      store.ingest_reference_image(polyglot, "image/jpeg", CREATED_AT),
+      store.ingest_reference_image(polyglot, "image/jpeg", CREATED_AT, OWNER_TOKEN_HASH),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 
@@ -434,7 +466,12 @@ describe("AssetStore JPEG container validation", () => {
     const jpeg = await create_jpeg();
 
     await expect(
-      store.ingest_reference_image(jpeg.subarray(0, jpeg.byteLength - 2), "image/jpeg", CREATED_AT),
+      store.ingest_reference_image(
+        jpeg.subarray(0, jpeg.byteLength - 2),
+        "image/jpeg",
+        CREATED_AT,
+        OWNER_TOKEN_HASH,
+      ),
     ).rejects.toMatchObject({ code: "invalid_asset" });
   });
 });
@@ -442,11 +479,21 @@ describe("AssetStore JPEG container validation", () => {
 describe("AssetStore file integrity", () => {
   it("repairs a corrupted dedupe target on re-upload", async () => {
     const { directory, store } = await create_store();
-    const first = await store.ingest_reference_image(PNG_BYTES, "image/png", CREATED_AT);
+    const first = await store.ingest_reference_image(
+      PNG_BYTES,
+      "image/png",
+      CREATED_AT,
+      OWNER_TOKEN_HASH,
+    );
     await writeFile(path.resolve(directory, first.asset.relative_path), Buffer.from("corrupted"));
 
-    const replay = await store.ingest_reference_image(PNG_BYTES, "image/png", CREATED_AT);
-    const content = await store.read_bytes(first.asset.asset_id);
+    const replay = await store.ingest_reference_image(
+      PNG_BYTES,
+      "image/png",
+      CREATED_AT,
+      OWNER_TOKEN_HASH,
+    );
+    const content = await store.read_bytes_for_worker(first.asset.asset_id);
 
     expect(replay.asset.asset_id).toBe(first.asset.asset_id);
     expect(content.bytes).toEqual(replay.canonical_bytes);
@@ -460,8 +507,144 @@ describe("AssetStore file integrity", () => {
       },
     });
 
-    await expect(store.ingest_reference_image(PNG_BYTES, "image/png", CREATED_AT)).rejects.toEqual(
-      expect.objectContaining({ code: "asset_storage_unavailable" }),
+    await expect(
+      store.ingest_reference_image(PNG_BYTES, "image/png", CREATED_AT, OWNER_TOKEN_HASH),
+    ).rejects.toEqual(expect.objectContaining({ code: "asset_storage_unavailable" }));
+  });
+});
+
+describe("AssetStore retention cleanup", () => {
+  it("removes an unreferenced generated asset row and blob", async () => {
+    const { directory, database, store } = await create_store();
+    await store.initialize();
+    const repository = new AssetRepository(database.connection);
+    const asset = repository.create_or_get({
+      sha256: "d".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
+      media_type: "image/png",
+      byte_length: 6,
+      created_at: CREATED_AT,
+    });
+    const file_path = path.resolve(directory, asset.relative_path);
+    expect(await store.cleanup_orphaned_assets(RETENTION_CUTOFF)).toBe(1);
+
+    expect(repository.get_by_id_for_worker(asset.asset_id)).toBeUndefined();
+    await expect(readFile(file_path)).rejects.toThrow();
+  });
+  it("retains a new unreferenced asset until it passes the cutoff", async () => {
+    const { directory, database, store } = await create_store();
+    await store.initialize();
+    const repository = new AssetRepository(database.connection);
+    const asset = repository.create_or_get({
+      sha256: "e".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
+      media_type: "image/png",
+      byte_length: 5,
+      created_at: RECENT_CREATED_AT,
+    });
+    const file_path = path.resolve(directory, asset.relative_path);
+    await writeFile(file_path, Buffer.from("fresh"));
+
+    expect(await store.cleanup_orphaned_assets(RETENTION_CUTOFF)).toBe(0);
+    expect(repository.get_by_id_for_worker(asset.asset_id)).toEqual(asset);
+    await expect(readFile(file_path)).resolves.toEqual(Buffer.from("fresh"));
+  });
+
+  it("removes expired unreferenced generated and reference assets", async () => {
+    const { directory, database, store } = await create_store();
+    await store.initialize();
+    const repository = new AssetRepository(database.connection);
+    const assets = [
+      repository.create_or_get({
+        sha256: "f".repeat(64),
+        owner_token_hash: OWNER_TOKEN_HASH,
+        asset_kind: "generated",
+        media_type: "image/png",
+        byte_length: 5,
+        created_at: CREATED_AT,
+      }),
+      repository.create_or_get({
+        sha256: "1".repeat(64),
+        owner_token_hash: OWNER_TOKEN_HASH,
+        asset_kind: "reference",
+        media_type: "image/jpeg",
+        byte_length: 6,
+        created_at: CREATED_AT,
+      }),
+    ];
+    for (const [index, asset] of assets.entries()) {
+      await writeFile(path.resolve(directory, asset.relative_path), Buffer.from(`old-${index}`));
+    }
+
+    expect(await store.cleanup_orphaned_assets(RETENTION_CUTOFF)).toBe(2);
+    for (const asset of assets) {
+      expect(repository.get_by_id_for_worker(asset.asset_id)).toBeUndefined();
+      await expect(readFile(path.resolve(directory, asset.relative_path))).rejects.toThrow();
+    }
+  });
+
+  it("retains metadata and retries a failed unlink", async () => {
+    let fail_unlink = true;
+    let unlink_attempts = 0;
+    const unlink_file: AssetStoreUnlinkFile = (file_path) => {
+      unlink_attempts += 1;
+      if (fail_unlink) {
+        throw new Error("synthetic unlink failure");
+      }
+      unlinkSync(file_path);
+    };
+    const { directory, database, store } = await create_store({ unlink_file });
+    await store.initialize();
+    const repository = new AssetRepository(database.connection);
+    const asset = repository.create_or_get({
+      sha256: "2".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "reference",
+      media_type: "image/png",
+      byte_length: 6,
+      created_at: CREATED_AT,
+    });
+    const file_path = path.resolve(directory, asset.relative_path);
+    await writeFile(file_path, Buffer.from("retry!"));
+
+    expect(await store.cleanup_orphaned_assets(RETENTION_CUTOFF)).toBe(0);
+    expect(repository.get_by_id_for_worker(asset.asset_id)).toEqual(asset);
+    await expect(readFile(file_path)).resolves.toEqual(Buffer.from("retry!"));
+    expect(unlink_attempts).toBe(1);
+
+    fail_unlink = false;
+    expect(await store.cleanup_orphaned_assets(RETENTION_CUTOFF)).toBe(1);
+    expect(repository.get_by_id_for_worker(asset.asset_id)).toBeUndefined();
+    await expect(readFile(file_path)).rejects.toThrow();
+    expect(unlink_attempts).toBe(2);
+  });
+
+  it("does not clean a generated asset while its bytes are staging", async () => {
+    const stage_started = deferred<void>();
+    const release_stage = deferred<void>();
+    const { database, store } = await create_store({
+      write_file: async (file_path, bytes) => {
+        stage_started.resolve(undefined);
+        await release_stage.promise;
+        await writeFile(file_path, bytes);
+      },
+    });
+    const generated = await create_generated_asset(PNG_BYTES, "image/png");
+    const registering = store.register_generated_asset(
+      { asset: generated, bytes: PNG_BYTES },
+      CREATED_AT,
+      OWNER_TOKEN_HASH,
     );
+    const repository = new AssetRepository(database.connection);
+    try {
+      await stage_started.promise;
+      expect(await store.cleanup_orphaned_assets(RETENTION_CUTOFF)).toBe(0);
+      expect(repository.list_orphaned(RETENTION_CUTOFF)).toHaveLength(1);
+    } finally {
+      release_stage.resolve(undefined);
+      await registering;
+    }
   });
 });

@@ -19,13 +19,14 @@ import styles from "./components.module.css";
 const props = withDefaults(
   defineProps<{
     readonly label: string;
-    readonly icon?: Component;
+    readonly icon?: Component | undefined;
     readonly variant?: "primary" | "secondary" | "destructive";
     readonly pending?: boolean;
     readonly disabled?: boolean;
     readonly type?: "button" | "submit";
   }>(),
   {
+    icon: undefined,
     variant: "secondary",
     pending: false,
     disabled: false,

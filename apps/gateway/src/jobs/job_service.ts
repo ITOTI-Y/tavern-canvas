@@ -16,16 +16,18 @@ import {
 
 import type { GatewayConfig } from "../config/config_schema.js";
 import { GatewayHttpError } from "../http/error_handler.js";
-import type {
-  CompleteJobInput,
-  ConditionalJobTransitionInput,
-  JobRepository,
-  JobTransitionInput,
-  StoredJob,
-  StoredJobEvent,
+import {
+  JobQueueFullError,
+  OwnerTokenHashSchema,
+  type CompleteJobInput,
+  type ConditionalJobTransitionInput,
+  type JobRepository,
+  type JobTransitionInput,
+  type OwnerTokenHash,
+  type StoredJob,
+  type StoredJobEvent,
 } from "../persistence/job_repository.js";
 import type { AssetRepository } from "../persistence/asset_repository.js";
-
 export interface JobServiceOptions {
   readonly job_repository: JobRepository;
   readonly asset_repository: AssetRepository;
@@ -37,6 +39,7 @@ export interface JobServiceOptions {
 export interface CreateJobInput {
   readonly protocol_version: unknown;
   readonly request: unknown;
+  readonly owner_token_hash: OwnerTokenHash;
 }
 
 export interface CreateJobResult {
@@ -63,7 +66,11 @@ export class JobService {
   }
 
   create_job(input: CreateJobInput): CreateJobResult {
-    const parsed = GatewayCreateJobRequestSchema.parse(input);
+    const owner_token_hash = OwnerTokenHashSchema.parse(input.owner_token_hash);
+    const parsed = GatewayCreateJobRequestSchema.parse({
+      protocol_version: input.protocol_version,
+      request: input.request,
+    });
     const request = ImageGenerationRequestSchema.parse(parsed.request);
     const provider = this.#config.provider_profiles.find(
       (candidate) => candidate.provider_id === request.provider_id,
@@ -72,41 +79,75 @@ export class JobService {
       throw new GatewayHttpError(400, "provider_not_configured");
     }
     validate_provider_request(provider.profile, request);
-    this.#assert_referenced_assets_exist(request);
-    const created = this.#job_repository.create_or_get({
-      job_id: this.#uuid_factory(),
-      request,
-      created_at: this.#clock(),
-    });
+    this.#assert_referenced_assets_exist(request, owner_token_hash);
+    let created: { readonly job: StoredJob; readonly created: boolean };
+    try {
+      created = this.#job_repository.create_or_get(
+        {
+          job_id: this.#uuid_factory(),
+          owner_token_hash,
+          request,
+          created_at: this.#clock(),
+        },
+        this.#config.max_pending_jobs,
+      );
+    } catch (error) {
+      if (error instanceof JobQueueFullError) {
+        throw new GatewayHttpError(429, "queue_full", { retryable: true });
+      }
+      throw error;
+    }
     return {
       job: this.to_public_job(created.job),
       created: created.created,
     };
   }
 
-  get_job(job_id: string): GatewayJobResponse | undefined {
-    const job = this.#job_repository.get_by_id(job_id);
+  get_job_for_owner(
+    job_id: string,
+    owner_token_hash: OwnerTokenHash,
+  ): GatewayJobResponse | undefined {
+    const job = this.#job_repository.get_by_id_for_owner(job_id, owner_token_hash);
     return job === undefined ? undefined : this.to_public_job(job);
   }
 
-  get_stored_job(job_id: string): StoredJob | undefined {
-    return this.#job_repository.get_by_id(job_id);
+  get_stored_job_for_owner(
+    job_id: string,
+    owner_token_hash: OwnerTokenHash,
+  ): StoredJob | undefined {
+    return this.#job_repository.get_by_id_for_owner(job_id, owner_token_hash);
   }
-  get_recovery_repository(): JobRepository {
+
+  get_stored_job_for_worker(job_id: string): StoredJob | undefined {
+    return this.#job_repository.get_by_id_for_worker(job_id);
+  }
+
+  get_recovery_repository_for_worker(): JobRepository {
     return this.#job_repository;
   }
 
-  list_events(job_id: string, after_sequence = 0): GatewayJobEvent[] {
-    const stored_job = this.#job_repository.get_by_id(job_id);
+  list_events_for_owner(
+    job_id: string,
+    owner_token_hash: OwnerTokenHash,
+    after_sequence = 0,
+  ): GatewayJobEvent[] {
+    const stored_job = this.#job_repository.get_by_id_for_owner(job_id, owner_token_hash);
     if (stored_job === undefined) {
       return [];
     }
     return this.#job_repository
-      .list_events(stored_job.job_id, after_sequence)
+      .list_events_for_owner(stored_job.job_id, owner_token_hash, after_sequence)
       .map((event) => this.to_public_event(event));
   }
 
-  subscribe(job_id: string, listener: JobEventListener): () => void {
+  subscribe_for_owner(
+    job_id: string,
+    owner_token_hash: OwnerTokenHash,
+    listener: JobEventListener,
+  ): () => void {
+    if (this.#job_repository.get_by_id_for_owner(job_id, owner_token_hash) === undefined) {
+      throw new GatewayHttpError(404, "job_not_found");
+    }
     const listeners = this.#listeners.get(job_id) ?? new Set<JobEventListener>();
     listeners.add(listener);
     this.#listeners.set(job_id, listeners);
@@ -122,30 +163,41 @@ export class JobService {
     };
   }
 
-  transition(input: JobTransitionInput): StoredJobEvent {
-    const event = this.#job_repository.transition_with_event(input);
+  transition_for_worker(input: JobTransitionInput): StoredJobEvent {
+    const event = this.#job_repository.transition_with_event_for_worker(input);
     this.#publish(event);
     return event;
   }
 
-  transition_if_current(input: ConditionalJobTransitionInput): StoredJobEvent | undefined {
-    const event = this.#job_repository.transition_if_current(input);
+  transition_if_current_for_worker(
+    input: ConditionalJobTransitionInput,
+  ): StoredJobEvent | undefined {
+    const event = this.#job_repository.transition_if_current_for_worker(input);
     if (event !== undefined) {
       this.#publish(event);
     }
     return event;
   }
 
-  complete_with_assets(input: CompleteJobInput): StoredJobEvent | undefined {
-    const event = this.#job_repository.complete_with_assets(input);
+  complete_with_assets_for_worker(input: CompleteJobInput): StoredJobEvent | undefined {
+    const event = this.#job_repository.complete_with_assets_for_worker(input);
     if (event !== undefined) {
       this.#publish(event);
     }
     return event;
   }
 
-  cancel_job(job_id: string): boolean {
-    const stored_job = this.#job_repository.get_by_id(job_id);
+  cancel_job_for_owner(job_id: string, owner_token_hash: OwnerTokenHash): boolean {
+    return this.#cancel_stored_job(
+      this.#job_repository.get_by_id_for_owner(job_id, owner_token_hash),
+    );
+  }
+
+  cancel_job_for_worker(job_id: string): boolean {
+    return this.#cancel_stored_job(this.#job_repository.get_by_id_for_worker(job_id));
+  }
+
+  #cancel_stored_job(stored_job: StoredJob | undefined): boolean {
     if (stored_job === undefined) {
       return false;
     }
@@ -153,7 +205,7 @@ export class JobService {
       return true;
     }
     const error: ProviderError = { code: "cancelled", retryable: false };
-    const event = this.#job_repository.transition_if_current({
+    const event = this.#job_repository.transition_if_current_for_worker({
       job_id: stored_job.job_id,
       expected_state: stored_job.state,
       state: "cancelled",
@@ -171,7 +223,7 @@ export class JobService {
   to_public_job(job: StoredJob): GatewayJobResponse {
     const image_ids =
       job.state === "completed"
-        ? this.#asset_repository.list_for_job(job.job_id).map((asset) => asset.asset_id)
+        ? this.#asset_repository.list_for_job_for_worker(job.job_id).map((asset) => asset.asset_id)
         : [];
     const error = job.error === null ? undefined : job.error;
     return GatewayJobResponseSchema.parse({
@@ -210,9 +262,12 @@ export class JobService {
     }
   }
 
-  #assert_referenced_assets_exist(request: ImageGenerationRequest): void {
+  #assert_referenced_assets_exist(
+    request: ImageGenerationRequest,
+    owner_token_hash: OwnerTokenHash,
+  ): void {
     for (const asset_id of referenced_asset_ids(request)) {
-      if (this.#asset_repository.get_by_id(asset_id) === undefined) {
+      if (this.#asset_repository.get_by_id_for_owner(asset_id, owner_token_hash) === undefined) {
         throw new GatewayHttpError(400, "invalid_request");
       }
     }

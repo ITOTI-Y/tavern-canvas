@@ -85,10 +85,7 @@ import {
   create_profiles_capability,
 } from "./capabilities/profiles_capability.js";
 import { create_prompt_presets_capability } from "./capabilities/prompt_presets_capability.js";
-import {
-  create_settings_capability,
-  VocabularyChannelState,
-} from "./capabilities/settings_capability.js";
+import { create_settings_capability } from "./capabilities/settings_capability.js";
 import {
   as_record,
   read_array,
@@ -105,12 +102,12 @@ import {
   type CapabilityResolutionRecord,
 } from "./capability_resolution.js";
 import {
+  create_legacy_image_resolver,
   create_legacy_source,
   create_host_adapter,
   read_secret_destination,
   read_secret_resolver,
   read_settings_host,
-  UNRESOLVED_LEGACY_IMAGES,
 } from "./host_environment.js";
 
 export interface ComposeCapabilitiesOptions {
@@ -337,7 +334,6 @@ export async function compose_studio_capabilities(
   }
 
   const settings_host = read_settings_host(globals);
-  const vocabulary_channel = new VocabularyChannelState();
   const settings_adapter =
     settings_host === null ? null : create_sillytavern_settings(settings_host);
   const namespace = (): string => settings_adapter?.get_settings().active_namespace ?? "primary";
@@ -403,7 +399,6 @@ export async function compose_studio_capabilities(
             settings: settings_adapter,
             database,
             extension_version,
-            vocabulary_channel,
             secrets,
           }),
         ),
@@ -706,11 +701,17 @@ export async function compose_studio_capabilities(
             if (legacy_source === null) {
               throw new Error(SETTINGS_HOST_UNAVAILABLE);
             }
+            const image_resolver = create_legacy_image_resolver(globals);
+            if (image_resolver === null) {
+              throw new Error(
+                "This host exposes no same-origin fetch boundary for legacy image migration",
+              );
+            }
             return create_migration_capability({
               database,
               settings: settings_adapter,
               legacy_source,
-              image_resolver: UNRESOLVED_LEGACY_IMAGES,
+              image_resolver,
               secrets,
             });
           }),

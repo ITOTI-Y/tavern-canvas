@@ -7,6 +7,7 @@ import {
   format_finding,
   INITIAL_CSS_GZIP_LIMIT_BYTES,
   INITIAL_JS_GZIP_LIMIT_BYTES,
+  is_generated_rolldown_runtime,
   type ViteManifest,
 } from "./index.js";
 
@@ -206,6 +207,18 @@ describe("classify_forbidden_modules", () => {
         detail: "initial chunk has no sourcemap, so the modules inside it cannot be audited",
       },
     ]);
+  });
+});
+
+describe("is_generated_rolldown_runtime", () => {
+  it("recognizes only the bundler's virtual runtime marker", () => {
+    expect(
+      is_generated_rolldown_runtime(
+        "//#region \\0rolldown/runtime.js\nconst runtime = Object.create;\n",
+      ),
+    ).toBe(true);
+    expect(is_generated_rolldown_runtime("const runtime = Object.create;\n")).toBe(false);
+    expect(is_generated_rolldown_runtime("//#region src/rolldown/runtime.js\n")).toBe(false);
   });
 });
 

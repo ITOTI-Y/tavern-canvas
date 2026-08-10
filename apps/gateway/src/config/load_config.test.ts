@@ -60,6 +60,8 @@ describe("load_gateway_config", () => {
       bearer_token_hashes: [TOKEN_HASH],
       data_directory: "/srv/tavern-canvas/output/gateway",
       concurrency: 2,
+      max_pending_jobs: 256,
+      retention_hours: 168,
       limits: {
         max_request_bytes: 2_000_000,
         max_image_bytes: 20_000_000,
@@ -73,6 +75,32 @@ describe("load_gateway_config", () => {
     expect(provider?.profile.model_allowlist).toEqual(["gpt-image-1"]);
     expect(JSON.stringify(config)).not.toContain(PROVIDER_CREDENTIAL);
     expect(String(provider?.credential)).toBe("[REDACTED]");
+  });
+
+  it.each([
+    ["max_pending_jobs", "1", "100000", "0", "100001"],
+    ["retention_hours", "1", "8760", "0", "8761"],
+  ] as const)("enforces %s bounds", (field, minimum, maximum, below, above) => {
+    const environment_variable =
+      field === "max_pending_jobs"
+        ? "TAVERN_CANVAS_MAX_PENDING_JOBS"
+        : "TAVERN_CANVAS_RETENTION_HOURS";
+
+    const minimum_env = valid_environment();
+    minimum_env[environment_variable] = minimum;
+    expect(() => load_gateway_config({ env: minimum_env, cwd: "/srv/app" })).not.toThrow();
+
+    const maximum_env = valid_environment();
+    maximum_env[environment_variable] = maximum;
+    expect(() => load_gateway_config({ env: maximum_env, cwd: "/srv/app" })).not.toThrow();
+
+    for (const invalid of [below, above]) {
+      const invalid_env = valid_environment();
+      invalid_env[environment_variable] = invalid;
+      expect(() => load_gateway_config({ env: invalid_env, cwd: "/srv/app" })).toThrow(
+        GatewayConfigError,
+      );
+    }
   });
   it("normalizes OpenAI remote asset origins to exact origins", () => {
     const env = valid_environment();

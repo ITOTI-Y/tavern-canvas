@@ -17,6 +17,8 @@ withDefaults(
     readonly errorMessage?: string;
   }>(),
   {
+    emptyMessage: "",
+    errorMessage: "",
     minHeight: "160px",
   },
 );

@@ -3,7 +3,7 @@
 All notable changes to TavernCanvas are documented here. This project follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0] - 2026-08-08
+## [Unreleased]
 
 TavernCanvas 3.0.0 is a complete rewrite. It shares no code and no git history with st-chatu8 2.8.1.
 
@@ -27,17 +27,14 @@ TavernCanvas 3.0.0 is a complete rewrite. It shares no code and no git history w
 ### Migrating from 2.8.1
 
 Open Settings, then Data, and run the migration. It reads 2.x settings from SillyTavern's extension
-settings under the key `st-chatu8`. The run is idempotent and resumable: progress is written to a
-migration journal, so an interrupted migration continues where it stopped rather than duplicating
-records. It reports one of `inventory`, `copying`, `verifying`, `ready_to_switch`, `completed`,
-`failed`, or `not_required`, with a failure reason when it fails, and it can be retried from the
-same screen.
+settings under the key `st-chatu8`, reads the legacy gallery and configuration-image IndexedDB
+stores, and resolves same-origin host image files. The run is idempotent and resumable: progress is
+written to a migration journal, so an interrupted migration continues where it stopped rather than
+duplicating records. It reports one of `inventory`, `copying`, `verifying`, `ready_to_switch`,
+`completed`, `failed`, or `not_required`, with a failure reason when it fails, and it can be retried
+from the same screen. Missing or invalid image bytes fail before the active namespace switches.
 
-Two limits in this release:
-
-- **Legacy images are not migrated.** The 2.x gallery database is not read, so 2.x image bytes stay
-  where they are. Keep the 2.x extension installed if you still need them.
-- **Legacy cleanup is manual.** Remove the 2.x extension yourself once migration completes.
+Legacy cleanup remains manual. Remove the 2.x extension yourself once migration completes.
 
 Before migrating, export a backup from Settings, then Data. The export is a ZIP containing a
 manifest, checksums, one JSONL file per record store, and content addressed image assets.
@@ -71,6 +68,13 @@ archive into the active namespace and never deletes existing data.
   generation through it, so no provider credential reaches the browser. See
   [docs/gateway.md](docs/gateway.md).
 - Archive export and import, and a redacted, locally generated diagnostics support bundle.
+- Production v2 gallery migration covering legacy IndexedDB records, configuration images, and
+  same-origin host image files, with copy-verify-switch protection when bytes are missing or invalid.
+- Local vocabulary JSONL/NDJSON import with progress and cancellation, persistent update-channel
+  settings, and SHA-256 verification when cached shards are read back from IndexedDB.
+- Gateway job and asset ownership scoped to the authenticated bearer token, a bounded pending queue,
+  terminal-data retention, orphan asset cleanup, and optional atomic token-file reload through
+  `SIGHUP`.
 - A startup capability gate that blocks with an actionable message when JS Slash Runner is missing or
   older than 4.9.1.
 - A deterministic release packaging tool writing `tavern-canvas.zip` with a SHA-256 sidecar, and a
@@ -100,10 +104,6 @@ archive into the active namespace and never deletes existing data.
   it, cloud calls fail closed with an actionable message. Loopback providers are unaffected.
 - The Studio renders as a full viewport overlay when the optional floating entry point is disabled,
   which is the default, and offers no dismiss control.
-- Vocabulary package import from a local file is implemented but not wired to any UI.
-- The vocabulary update channel setting is held in memory and does not survive a reload.
-- 2.x image bytes are not migrated, and legacy cleanup is not implemented.
-- Gateway jobs carry no owner, token rotation requires a restart, and there is no retention or
-  cleanup. See [SECURITY.md](SECURITY.md).
-
-[3.0.0]: https://github.com/ITOTI-Y/tavern-canvas/releases/tag/v3.0.0
+- Legacy v2 cleanup is manual.
+- Gateway token hashes supplied through the startup environment still require a restart to change.
+  Token hashes supplied through the optional hash file can be reloaded atomically with `SIGHUP`.

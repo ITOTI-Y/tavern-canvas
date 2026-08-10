@@ -15,10 +15,12 @@ const props = withDefaults(
     readonly itemSize: number;
     readonly height: string;
     readonly overscan?: number;
-    readonly getKey?: (item: TItem, index: number) => string | number;
-    readonly ariaLabel?: string;
+    readonly getKey?: ((item: TItem, index: number) => string | number) | undefined;
+    readonly ariaLabel?: string | undefined;
   }>(),
   {
+    getKey: undefined,
+    ariaLabel: undefined,
     overscan: 6,
   },
 );

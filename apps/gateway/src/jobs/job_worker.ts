@@ -63,6 +63,7 @@ interface ActiveJob {
   readonly adapter: GatewayAdapter;
   readonly provider: GatewayProviderConfig;
   readonly transport: ProviderTransport;
+  readonly owner_token_hash: StoredJob["owner_token_hash"];
   submit_in_flight: boolean;
   shutdown_requested: boolean;
   cancel_requested: boolean;
@@ -71,6 +72,7 @@ interface ActiveJob {
 const DEFAULT_POLL_DELAY_MS = 250;
 const MAX_POLL_DELAY_MS = 60_000;
 const CANCEL_TIMEOUT_MS = 5_000;
+const CLEANUP_INTERVAL_MS = 60 * 60 * 1_000;
 const EMPTY_SUBMISSION = null;
 
 export class JobWorker {
@@ -87,6 +89,8 @@ export class JobWorker {
   readonly #cancellations = new Set<Promise<void>>();
   #started = false;
   #pump_scheduled = false;
+  #cleanup_timer: NodeJS.Timeout | undefined;
+  #cleanup_in_flight: Promise<void> | undefined;
 
   constructor(options: JobWorkerOptions) {
     this.#service = options.service;
@@ -110,18 +114,31 @@ export class JobWorker {
       return;
     }
     this.#started = true;
-    await this.#asset_store.initialize();
-    for (const job of this.#service_recoverable_jobs()) {
-      const recovered = this.#recover_job(job);
-      if (recovered) {
-        this.#queued.add(job.job_id);
+    try {
+      await this.#asset_store.initialize();
+      await this.#run_cleanup();
+      for (const job of this.#service_recoverable_jobs()) {
+        const recovered = this.#recover_job(job);
+        if (recovered) {
+          this.#queued.add(job.job_id);
+        }
       }
+      this.#cleanup_timer = setInterval(() => {
+        void this.#run_cleanup();
+      }, CLEANUP_INTERVAL_MS);
+      this.#schedule_pump();
+    } catch (error) {
+      this.#started = false;
+      throw error;
     }
-    this.#schedule_pump();
   }
 
   async stop(): Promise<void> {
     this.#started = false;
+    if (this.#cleanup_timer !== undefined) {
+      clearInterval(this.#cleanup_timer);
+      this.#cleanup_timer = undefined;
+    }
     this.#queued.clear();
     for (const active of this.#active.values()) {
       active.shutdown_requested = true;
@@ -133,13 +150,16 @@ export class JobWorker {
         ...this.#cancellations,
       ]);
     }
+    if (this.#cleanup_in_flight !== undefined) {
+      await this.#cleanup_in_flight;
+    }
   }
 
   enqueue(job_id: string): void {
     if (!this.#started || this.#active.has(job_id)) {
       return;
     }
-    const job = this.#service.get_stored_job(job_id);
+    const job = this.#service.get_stored_job_for_worker(job_id);
     if (job === undefined || is_terminal_state(job.state)) {
       return;
     }
@@ -157,7 +177,7 @@ export class JobWorker {
     if (!active.adapter.capabilities.has("cancel")) {
       return;
     }
-    const job = this.#service.get_stored_job(job_id);
+    const job = this.#service.get_stored_job_for_worker(job_id);
     const submission =
       job !== undefined && is_queryable_submission(job.submission) ? job.submission : undefined;
     if (submission === undefined && !active.submit_in_flight) {
@@ -200,13 +220,13 @@ export class JobWorker {
   }
 
   #service_recoverable_jobs(): StoredJob[] {
-    const connection = this.#service.get_recovery_repository();
-    return connection.list_recoverable();
+    const connection = this.#service.get_recovery_repository_for_worker();
+    return connection.list_recoverable_for_worker();
   }
 
   #recover_job(job: StoredJob): boolean {
     if (job.state === "preparing") {
-      const event = this.#service.transition_if_current({
+      const event = this.#service.transition_if_current_for_worker({
         job_id: job.job_id,
         expected_state: "preparing",
         state: "queued",
@@ -218,6 +238,7 @@ export class JobWorker {
       });
       return event !== undefined;
     }
+
     if (
       (job.state === "submitting" || job.state === "running") &&
       !is_queryable_submission(job.submission)
@@ -227,13 +248,48 @@ export class JobWorker {
     }
     return !is_terminal_state(job.state);
   }
+  async #run_cleanup(): Promise<void> {
+    const cleanup = this.#cleanup_expired();
+    this.#cleanup_in_flight = cleanup;
+    try {
+      await cleanup;
+    } finally {
+      if (this.#cleanup_in_flight === cleanup) {
+        this.#cleanup_in_flight = undefined;
+      }
+    }
+  }
+
+  async #cleanup_expired(): Promise<void> {
+    try {
+      const now_ms = Date.parse(this.#clock());
+      if (!Number.isFinite(now_ms)) {
+        throw new Error("Gateway cleanup clock returned an invalid timestamp");
+      }
+      const cutoff_at = new Date(
+        now_ms - this.#config.retention_hours * 60 * 60 * 1_000,
+      ).toISOString();
+      const deleted_jobs = this.#service
+        .get_recovery_repository_for_worker()
+        .delete_expired(cutoff_at);
+      const deleted_assets = await this.#asset_store.cleanup_orphaned_assets(cutoff_at);
+      if (deleted_jobs > 0 || deleted_assets > 0) {
+        this.#logger.info({ deleted_jobs, deleted_assets }, "Gateway retention cleanup completed");
+      }
+    } catch {
+      this.#logger.error(
+        { error_code: "retention_cleanup_failed" },
+        "Gateway retention cleanup failed",
+      );
+    }
+  }
 
   #fail_without_submission(job: StoredJob): void {
     const error: ProviderError = {
       code: "provider_unavailable",
       retryable: true,
     };
-    const event = this.#service.transition_if_current({
+    const event = this.#service.transition_if_current_for_worker({
       job_id: job.job_id,
       expected_state: job.state,
       state: "failed",
@@ -280,7 +336,7 @@ export class JobWorker {
   }
 
   async #run_job(job_id: string): Promise<void> {
-    const job = this.#service.get_stored_job(job_id);
+    const job = this.#service.get_stored_job_for_worker(job_id);
     if (job === undefined || is_terminal_state(job.state)) {
       return;
     }
@@ -299,6 +355,7 @@ export class JobWorker {
       adapter,
       provider,
       transport,
+      owner_token_hash: job.owner_token_hash,
       submit_in_flight: false,
       shutdown_requested: false,
       cancel_requested: false,
@@ -312,7 +369,7 @@ export class JobWorker {
       }
       const normalized = normalize_provider_failure(error, controller.signal);
       if (normalized.provider_error.code === "cancelled") {
-        this.#service.cancel_job(job_id);
+        this.#service.cancel_job_for_worker(job_id);
       } else {
         this.#fail_job_by_id(job_id, normalized.provider_error);
       }
@@ -320,7 +377,7 @@ export class JobWorker {
   }
 
   async #execute_job(job: StoredJob, active: ActiveJob): Promise<void> {
-    let current = this.#service.get_stored_job(job.job_id);
+    let current = this.#service.get_stored_job_for_worker(job.job_id);
     if (current === undefined || is_terminal_state(current.state)) {
       return;
     }
@@ -328,7 +385,7 @@ export class JobWorker {
       if (!this.#transition_state(current, "preparing", "preparing")) {
         return;
       }
-      current = this.#service.get_stored_job(job.job_id);
+      current = this.#service.get_stored_job_for_worker(job.job_id);
       if (current === undefined) {
         return;
       }
@@ -337,7 +394,7 @@ export class JobWorker {
       if (!this.#transition_state(current, "submitting", "submitting")) {
         return;
       }
-      current = this.#service.get_stored_job(job.job_id);
+      current = this.#service.get_stored_job_for_worker(job.job_id);
       if (current === undefined) {
         return;
       }
@@ -357,7 +414,7 @@ export class JobWorker {
         await this.#complete_job(current, submission.result, submission.output_assets);
         return;
       }
-      const persisted = this.#service.transition_if_current({
+      const persisted = this.#service.transition_if_current_for_worker({
         job_id: current.job_id,
         expected_state: "submitting",
         state: "running",
@@ -369,7 +426,7 @@ export class JobWorker {
       if (persisted === undefined) {
         return;
       }
-      current = this.#service.get_stored_job(job.job_id);
+      current = this.#service.get_stored_job_for_worker(job.job_id);
       if (current === undefined) {
         return;
       }
@@ -391,7 +448,7 @@ export class JobWorker {
     let next_delay = submission.poll_after_ms ?? DEFAULT_POLL_DELAY_MS;
     while (!active.controller.signal.aborted) {
       if (current.state === "submitting") {
-        const running = this.#service.transition_if_current({
+        const running = this.#service.transition_if_current_for_worker({
           job_id: current.job_id,
           expected_state: "submitting",
           state: "running",
@@ -403,7 +460,7 @@ export class JobWorker {
         if (running === undefined) {
           return;
         }
-        current = this.#service.get_stored_job(current.job_id) ?? current;
+        current = this.#service.get_stored_job_for_worker(current.job_id) ?? current;
       }
       await this.#sleep(
         Math.min(Math.max(0, next_delay), MAX_POLL_DELAY_MS),
@@ -450,10 +507,11 @@ export class JobWorker {
       const stored = await this.#asset_store.register_generated_asset(
         { asset: generated, bytes: output_asset.bytes },
         this.#clock(),
+        job.owner_token_hash,
       );
       image_ids.push(stored.asset_id);
     }
-    this.#service.complete_with_assets({
+    this.#service.complete_with_assets_for_worker({
       job_id: job.job_id,
       expected_state: job.state,
       asset_ids: image_ids,
@@ -464,7 +522,7 @@ export class JobWorker {
   #transition_state(job: StoredJob, state: GenerationState, event_type: string): boolean {
     const parsed_state = GenerationStateSchema.parse(state);
     return (
-      this.#service.transition_if_current({
+      this.#service.transition_if_current_for_worker({
         job_id: job.job_id,
         expected_state: job.state,
         state: parsed_state,
@@ -480,11 +538,11 @@ export class JobWorker {
   }
 
   #fail_job_by_id(job_id: string, error: ProviderError): void {
-    const current = this.#service.get_stored_job(job_id);
+    const current = this.#service.get_stored_job_for_worker(job_id);
     if (current === undefined || is_terminal_state(current.state)) {
       return;
     }
-    this.#service.transition_if_current({
+    this.#service.transition_if_current_for_worker({
       job_id: current.job_id,
       expected_state: current.state,
       state: "failed",
@@ -501,7 +559,7 @@ export class JobWorker {
       transport: active.transport,
       assets: {
         read: (asset_id, asset_signal) =>
-          this.#asset_store.read_provider_asset(asset_id, asset_signal),
+          this.#asset_store.read_provider_asset(asset_id, asset_signal, active.owner_token_hash),
       },
       signal,
       log: {

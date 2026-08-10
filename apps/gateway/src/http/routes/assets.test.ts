@@ -4,7 +4,7 @@ import { mkdtemp, rm, unlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { AssetIdSchema } from "@tavern-canvas/contracts";
+import { AssetIdSchema, OpenAiImageRequestSchema } from "@tavern-canvas/contracts";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -12,6 +12,8 @@ import { AssetStore } from "../../assets/asset_store.js";
 import type { GatewayConfig } from "../../config/config_schema.js";
 import { AssetRepository } from "../../persistence/asset_repository.js";
 import { open_gateway_database, type GatewayDatabase } from "../../persistence/database.js";
+import { JobRepository } from "../../persistence/job_repository.js";
+import { set_request_token_hash } from "../request_context.js";
 import { create_gateway_error_handler } from "../error_handler.js";
 import { create_assets_router } from "./assets.js";
 
@@ -20,6 +22,9 @@ const PNG_BYTES = Buffer.from(
   "base64",
 );
 const CREATED_AT = "2026-08-05T12:00:00.000Z";
+const OWNER_TOKEN_HASH = "a".repeat(64);
+const JOB_ID = "11111111-1111-4111-8111-111111111111";
+const REQUEST_ID = "22222222-2222-4222-8222-222222222222";
 const limits = {
   max_image_bytes: 2_000_000,
   max_image_pixels: 4_000_000,
@@ -43,13 +48,13 @@ afterEach(async () => {
     await rm(directory, { force: true, recursive: true });
   }
 });
-
 async function create_assets_server(write_file?: WriteFile) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "tavern-canvas-assets-route-"));
   temporary_directories.push(directory);
   const database = open_gateway_database({ file_path: path.join(directory, "gateway.sqlite") });
   open_databases.push(database);
   const asset_repository = new AssetRepository(database.connection);
+  const job_repository = new JobRepository(database.connection);
   const asset_store = new AssetStore({
     data_directory: directory,
     asset_repository,
@@ -58,6 +63,10 @@ async function create_assets_server(write_file?: WriteFile) {
   });
   const config = { limits } as GatewayConfig;
   const app = express();
+  app.use((request, _response, next) => {
+    set_request_token_hash(request, OWNER_TOKEN_HASH);
+    next();
+  });
   app.use("/v1", create_assets_router({ config, asset_store, clock: () => CREATED_AT }));
   app.use(create_gateway_error_handler());
   const server = createServer(app);
@@ -73,6 +82,8 @@ async function create_assets_server(write_file?: WriteFile) {
   return {
     base_url: `http://127.0.0.1:${String(address.port)}`,
     asset_store,
+    asset_repository,
+    job_repository,
     directory,
   };
 }
@@ -106,10 +117,36 @@ describe("asset upload routes", () => {
     expect(upload.status).toBe(201);
     const uploaded = (await upload.json()) as { asset_id: string };
     const asset_id = AssetIdSchema.parse(uploaded.asset_id);
-    const metadata = gateway.asset_store.get_metadata(asset_id);
+    const metadata = gateway.asset_store.get_metadata_for_worker(asset_id);
     if (metadata === undefined) {
       throw new Error("Asset upload did not create metadata");
     }
+    const job_request = OpenAiImageRequestSchema.parse({
+      request_id: REQUEST_ID,
+      provider_id: "openai_image",
+      generation_anchor: "c".repeat(64),
+      mode: "generate",
+      model_id: "gpt-image-1",
+      prompt: "asset route test",
+      output_count: 1,
+      input_asset_ids: [],
+      size: "1024x1024",
+      quality: "medium",
+      background: "opaque",
+      output_format: "png",
+    });
+    gateway.job_repository.create_or_get({
+      job_id: JOB_ID,
+      owner_token_hash: OWNER_TOKEN_HASH,
+      request: job_request,
+      created_at: CREATED_AT,
+    });
+    gateway.asset_repository.attach_to_job({
+      job_id: JOB_ID,
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_id,
+      position: 0,
+    });
     await unlink(path.resolve(gateway.directory, metadata.relative_path));
 
     const content = await fetch(`${gateway.base_url}/v1/assets/${uploaded.asset_id}/content`);

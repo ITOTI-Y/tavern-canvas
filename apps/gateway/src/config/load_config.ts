@@ -6,6 +6,8 @@ const DEFAULT_BIND_HOST = "127.0.0.1";
 const DEFAULT_BIND_PORT = 8787;
 const DEFAULT_DATA_DIRECTORY = "output/gateway";
 const DEFAULT_CONCURRENCY = 2;
+const DEFAULT_MAX_PENDING_JOBS = 256;
+const DEFAULT_RETENTION_HOURS = 168;
 const DEFAULT_MAX_REQUEST_BYTES = 2_000_000;
 const DEFAULT_MAX_IMAGE_BYTES = 20_000_000;
 const DEFAULT_MAX_IMAGE_PIXELS = 40_000_000;
@@ -42,11 +44,25 @@ export function load_gateway_config(options: LoadGatewayConfigOptions = {}): Gat
       "TAVERN_CANVAS_BEARER_TOKEN_HASHES",
       env.TAVERN_CANVAS_BEARER_TOKEN_HASHES,
     ),
+    bearer_token_hash_file:
+      env.TAVERN_CANVAS_BEARER_TOKEN_HASH_FILE === undefined
+        ? undefined
+        : resolve_token_hash_file(env.TAVERN_CANVAS_BEARER_TOKEN_HASH_FILE, cwd),
     data_directory,
     concurrency: parse_integer(
       "TAVERN_CANVAS_CONCURRENCY",
       env.TAVERN_CANVAS_CONCURRENCY,
       DEFAULT_CONCURRENCY,
+    ),
+    max_pending_jobs: parse_integer(
+      "TAVERN_CANVAS_MAX_PENDING_JOBS",
+      env.TAVERN_CANVAS_MAX_PENDING_JOBS,
+      DEFAULT_MAX_PENDING_JOBS,
+    ),
+    retention_hours: parse_integer(
+      "TAVERN_CANVAS_RETENTION_HOURS",
+      env.TAVERN_CANVAS_RETENTION_HOURS,
+      DEFAULT_RETENTION_HOURS,
     ),
     limits: {
       max_request_bytes: parse_integer(
@@ -143,6 +159,14 @@ function resolve_data_directory(value: string, cwd: string): string {
     normalized.split(/[\\/]/u).includes("..")
   ) {
     throw new GatewayConfigError("Invalid Gateway configuration fields: data_directory");
+  }
+  return path.resolve(cwd, normalized);
+}
+
+function resolve_token_hash_file(value: string, cwd: string): string {
+  const normalized = value.trim();
+  if (normalized.length === 0 || normalized.includes("\0")) {
+    throw new GatewayConfigError("Invalid Gateway configuration fields: bearer_token_hash_file");
   }
   return path.resolve(cwd, normalized);
 }

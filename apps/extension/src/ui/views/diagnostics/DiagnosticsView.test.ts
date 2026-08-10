@@ -1,3 +1,4 @@
+import type { TavernCanvasSettings } from "@tavern-canvas/contracts";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defineComponent, h, markRaw, nextTick } from "vue";
@@ -125,6 +126,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         global_concurrency: 1,
         auto_generation_enabled: false,
         fallback_generation_enabled: false,
+        vocabulary_update_channel: "bundled" as const,
         gateway: {
           endpoint: "https://gateway.example.test",
           token_secret_id: SECRET_TOKEN_VALUE,
@@ -263,13 +265,14 @@ describe("DiagnosticsView versions", () => {
   });
 });
 
-const SETTINGS_WITH_GATEWAY = {
+const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
   schema_version: 1 as const,
   active_namespace: "default",
   locale: "auto" as const,
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
+  vocabulary_update_channel: "bundled",
   fallback_generation_enabled: false,
   gateway: {
     endpoint: "https://gateway.example.test",
@@ -408,8 +411,8 @@ describe("DiagnosticsView task timeline", () => {
         items: { type: Array as () => readonly TaskTimelineEntry[], required: true },
         itemSize: { type: Number, required: true },
         height: { type: String, required: true },
-        ariaLabel: { type: String, required: false },
-        getKey: { type: Function, required: false },
+        ariaLabel: { type: String, required: false, default: undefined },
+        getKey: { type: Function, required: false, default: undefined },
       },
       setup(props, { slots }) {
         return () =>

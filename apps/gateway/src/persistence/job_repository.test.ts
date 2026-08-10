@@ -9,13 +9,15 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { AssetRepository } from "./asset_repository.js";
 import { open_gateway_database, type GatewayDatabase } from "./database.js";
-import { JobRepository, JobStateConflictError } from "./job_repository.js";
+import { JobQueueFullError, JobRepository, JobStateConflictError } from "./job_repository.js";
 
 const JOB_ID = "11111111-1111-4111-8111-111111111111";
 const OTHER_JOB_ID = "22222222-2222-4222-8222-222222222222";
 const REQUEST_ID = "33333333-3333-4333-8333-333333333333";
 const ASSET_ID = "44444444-4444-4444-8444-444444444444";
 const SECOND_ASSET_ID = "55555555-5555-4555-8555-555555555555";
+const OWNER_TOKEN_HASH = "a".repeat(64);
+const OTHER_OWNER_TOKEN_HASH = "b".repeat(64);
 const CREATED_AT = "2026-08-05T12:00:00.000Z";
 const request = OpenAiImageRequestSchema.parse({
   request_id: REQUEST_ID,
@@ -50,7 +52,12 @@ afterEach(() => {
 });
 
 function create_job(job_id = JOB_ID) {
-  return jobs.create_or_get({ job_id, request, created_at: CREATED_AT });
+  return jobs.create_or_get({
+    job_id,
+    owner_token_hash: OWNER_TOKEN_HASH,
+    request,
+    created_at: CREATED_AT,
+  });
 }
 
 describe("JobRepository", () => {
@@ -64,11 +71,149 @@ describe("JobRepository", () => {
     expect(replay.job.job_id).toBe(JOB_ID);
     expect(replay.job.request).toEqual(request);
   });
+  it("isolates request idempotency by owner", () => {
+    const first = create_job();
+    const other = jobs.create_or_get({
+      job_id: OTHER_JOB_ID,
+      owner_token_hash: OTHER_OWNER_TOKEN_HASH,
+      request,
+      created_at: CREATED_AT,
+    });
+
+    expect(first.created).toBe(true);
+    expect(other.created).toBe(true);
+    expect(other.job.job_id).toBe(OTHER_JOB_ID);
+    expect(jobs.get_by_id_for_owner(first.job.job_id, OTHER_OWNER_TOKEN_HASH)).toBeUndefined();
+    expect(jobs.get_by_id_for_owner(other.job.job_id, OTHER_OWNER_TOKEN_HASH)).toMatchObject({
+      job_id: OTHER_JOB_ID,
+      owner_token_hash: OTHER_OWNER_TOKEN_HASH,
+    });
+  });
+
+  it("rejects a full pending queue without inserting a job row", () => {
+    create_job();
+    const second_request = { ...request, request_id: "66666666-6666-4666-8666-666666666666" };
+
+    expect(() =>
+      jobs.create_or_get(
+        {
+          job_id: OTHER_JOB_ID,
+          owner_token_hash: OWNER_TOKEN_HASH,
+          request: second_request,
+          created_at: CREATED_AT,
+        },
+        1,
+      ),
+    ).toThrow(JobQueueFullError);
+    expect(jobs.get_by_id_for_worker(OTHER_JOB_ID)).toBeUndefined();
+  });
+
+  it("deletes expired jobs in every terminal state", () => {
+    const create_and_transition = (
+      job_id: string,
+      request_id: string,
+      state: "completed" | "failed" | "cancelled" | "attached" | "orphaned" | "running",
+      updated_at: string,
+    ): void => {
+      jobs.create_or_get({
+        job_id,
+        owner_token_hash: OWNER_TOKEN_HASH,
+        request: { ...request, request_id },
+        created_at: updated_at,
+      });
+      jobs.transition_with_event_for_worker({
+        job_id,
+        state,
+        event_type: state,
+        event: { state },
+        created_at: updated_at,
+      });
+    };
+
+    const old_timestamp = "2026-07-01T00:00:00.000Z";
+    create_and_transition(
+      "77777777-7777-4777-8777-777777777777",
+      "77777777-7777-4777-8777-777777777778",
+      "failed",
+      old_timestamp,
+    );
+    create_and_transition(
+      "88888888-8888-4888-8888-888888888888",
+      "88888888-8888-4888-8888-888888888889",
+      "completed",
+      old_timestamp,
+    );
+    create_and_transition(
+      "99999999-9999-4999-8999-999999999999",
+      "99999999-9999-4999-8999-999999999990",
+      "attached",
+      old_timestamp,
+    );
+    create_and_transition(
+      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaab",
+      "orphaned",
+      old_timestamp,
+    );
+    create_and_transition(
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbc",
+      "running",
+      old_timestamp,
+    );
+    create_and_transition(
+      "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "cccccccc-cccc-4ccc-8ccc-cccccccccccd",
+      "failed",
+      "2026-08-05T00:00:00.000Z",
+    );
+
+    expect(jobs.delete_expired("2026-08-03T00:00:00.000Z")).toBe(4);
+    expect(jobs.get_by_id_for_worker("77777777-7777-4777-8777-777777777777")).toBeUndefined();
+    expect(jobs.get_by_id_for_worker("88888888-8888-4888-8888-888888888888")).toBeUndefined();
+    expect(jobs.list_events_for_worker("77777777-7777-4777-8777-777777777777")).toEqual([]);
+    expect(jobs.get_by_id_for_worker("99999999-9999-4999-8999-999999999999")).toBeUndefined();
+    expect(jobs.list_events_for_worker("99999999-9999-4999-8999-999999999999")).toEqual([]);
+    expect(jobs.get_by_id_for_worker("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")).toBeUndefined();
+    expect(jobs.list_events_for_worker("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")).toEqual([]);
+    expect(jobs.get_by_id_for_worker("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb")?.state).toBe(
+      "running",
+    );
+    expect(jobs.get_by_id_for_worker("cccccccc-cccc-4ccc-8ccc-cccccccccccc")?.state).toBe("failed");
+  });
+  it("hides job state and events from another owner", () => {
+    create_job();
+    jobs.transition_with_event_for_worker({
+      job_id: JOB_ID,
+      state: "running",
+      event_type: "running",
+      event: { state: "running" },
+      created_at: CREATED_AT,
+    });
+
+    expect(jobs.get_by_id_for_owner(JOB_ID, OTHER_OWNER_TOKEN_HASH)).toBeUndefined();
+    expect(jobs.list_events_for_owner(JOB_ID, OTHER_OWNER_TOKEN_HASH)).toEqual([]);
+    expect(jobs.delete_for_owner(JOB_ID, OTHER_OWNER_TOKEN_HASH)).toBe(false);
+    expect(jobs.get_by_id_for_owner(JOB_ID, OWNER_TOKEN_HASH)).toMatchObject({
+      job_id: JOB_ID,
+      owner_token_hash: OWNER_TOKEN_HASH,
+      state: "running",
+    });
+
+    database.close();
+    database = open_gateway_database({ file_path });
+    jobs = new JobRepository(database.connection);
+    expect(jobs.get_by_id_for_owner(JOB_ID, OWNER_TOKEN_HASH)).toMatchObject({
+      job_id: JOB_ID,
+      owner_token_hash: OWNER_TOKEN_HASH,
+      state: "running",
+    });
+  });
 
   it("updates state and appends increasing event sequences atomically", () => {
     create_job();
 
-    const first_event = jobs.transition_with_event({
+    const first_event = jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "submitting",
       event_type: "state_changed",
@@ -76,7 +221,7 @@ describe("JobRepository", () => {
       submission: { submission_id: "upstream-1" },
       created_at: "2026-08-05T12:00:01.000Z",
     });
-    const second_event = jobs.transition_with_event({
+    const second_event = jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "running",
       event_type: "progress",
@@ -85,11 +230,11 @@ describe("JobRepository", () => {
     });
 
     expect([first_event.sequence, second_event.sequence]).toEqual([1, 2]);
-    expect(jobs.get_by_id(JOB_ID)).toMatchObject({
+    expect(jobs.get_by_id_for_worker(JOB_ID)).toMatchObject({
       state: "running",
       submission: { submission_id: "upstream-1" },
     });
-    expect(jobs.list_events(JOB_ID)).toMatchObject([
+    expect(jobs.list_events_for_worker(JOB_ID)).toMatchObject([
       { sequence: 1, event_type: "state_changed" },
       { sequence: 2, event_type: "progress" },
     ]);
@@ -102,7 +247,7 @@ describe("JobRepository", () => {
       END
     `);
     expect(() =>
-      jobs.transition_with_event({
+      jobs.transition_with_event_for_worker({
         job_id: JOB_ID,
         state: "failed",
         event_type: "failed",
@@ -111,8 +256,8 @@ describe("JobRepository", () => {
         created_at: "2026-08-05T12:00:03.000Z",
       }),
     ).toThrow("synthetic event insert failure");
-    expect(jobs.get_by_id(JOB_ID)?.state).toBe("running");
-    expect(jobs.list_events(JOB_ID)).toHaveLength(2);
+    expect(jobs.get_by_id_for_worker(JOB_ID)?.state).toBe("running");
+    expect(jobs.list_events_for_worker(JOB_ID)).toHaveLength(2);
   });
 
   it("round-trips the complete provider error after reopening", () => {
@@ -123,7 +268,7 @@ describe("JobRepository", () => {
       retry_after_ms: 7_500,
       status_code: 429,
     };
-    jobs.transition_with_event({
+    jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "failed",
       event_type: "failed",
@@ -132,12 +277,12 @@ describe("JobRepository", () => {
       created_at: "2026-08-05T12:00:03.000Z",
     });
 
-    expect(jobs.get_by_id(JOB_ID)?.error).toEqual(error);
+    expect(jobs.get_by_id_for_worker(JOB_ID)?.error).toEqual(error);
     database.close();
     database = open_gateway_database({ file_path });
     jobs = new JobRepository(database.connection);
 
-    expect(jobs.get_by_id(JOB_ID)?.error).toEqual(error);
+    expect(jobs.get_by_id_for_worker(JOB_ID)?.error).toEqual(error);
   });
 
   it("completes with ordered attachments and allows only one CAS winner", () => {
@@ -147,6 +292,8 @@ describe("JobRepository", () => {
     });
     const first = assets.create_or_get({
       sha256: "a".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
       media_type: "image/png",
       byte_length: 8,
       created_at: CREATED_AT,
@@ -156,11 +303,13 @@ describe("JobRepository", () => {
     });
     const second = second_assets.create_or_get({
       sha256: "b".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
       media_type: "image/png",
       byte_length: 8,
       created_at: CREATED_AT,
     });
-    jobs.transition_with_event({
+    jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "running",
       event_type: "running",
@@ -168,7 +317,7 @@ describe("JobRepository", () => {
       created_at: CREATED_AT,
     });
 
-    const event = jobs.complete_with_assets({
+    const event = jobs.complete_with_assets_for_worker({
       job_id: JOB_ID,
       expected_state: "running",
       asset_ids: [second.asset_id, first.asset_id],
@@ -179,20 +328,20 @@ describe("JobRepository", () => {
       event_type: "completed",
       event: { state: "completed", image_ids: [second.asset_id, first.asset_id] },
     });
-    expect(assets.list_for_job(JOB_ID).map((asset) => asset.asset_id)).toEqual([
+    expect(assets.list_for_job_for_worker(JOB_ID).map((asset) => asset.asset_id)).toEqual([
       second.asset_id,
       first.asset_id,
     ]);
-    expect(jobs.get_by_id(JOB_ID)?.state).toBe("completed");
+    expect(jobs.get_by_id_for_worker(JOB_ID)?.state).toBe("completed");
     expect(
-      jobs.complete_with_assets({
+      jobs.complete_with_assets_for_worker({
         job_id: JOB_ID,
         expected_state: "running",
         asset_ids: [first.asset_id],
         created_at: "2026-08-05T12:00:02.000Z",
       }),
     ).toBeUndefined();
-    expect(assets.list_for_job(JOB_ID).map((asset) => asset.asset_id)).toEqual([
+    expect(assets.list_for_job_for_worker(JOB_ID).map((asset) => asset.asset_id)).toEqual([
       second.asset_id,
       first.asset_id,
     ]);
@@ -205,6 +354,8 @@ describe("JobRepository", () => {
     });
     const first = assets.create_or_get({
       sha256: "c".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
       media_type: "image/png",
       byte_length: 8,
       created_at: CREATED_AT,
@@ -214,11 +365,13 @@ describe("JobRepository", () => {
     });
     const second = second_assets.create_or_get({
       sha256: "d".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
       media_type: "image/png",
       byte_length: 8,
       created_at: CREATED_AT,
     });
-    jobs.transition_with_event({
+    jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "running",
       event_type: "running",
@@ -235,16 +388,16 @@ describe("JobRepository", () => {
     `);
 
     expect(() =>
-      jobs.complete_with_assets({
+      jobs.complete_with_assets_for_worker({
         job_id: JOB_ID,
         expected_state: "running",
         asset_ids: [first.asset_id, second.asset_id],
         created_at: "2026-08-05T12:00:01.000Z",
       }),
     ).toThrow("synthetic attachment failure");
-    expect(jobs.get_by_id(JOB_ID)?.state).toBe("running");
-    expect(assets.list_for_job(JOB_ID)).toEqual([]);
-    expect(jobs.list_events(JOB_ID)).toHaveLength(1);
+    expect(jobs.get_by_id_for_worker(JOB_ID)?.state).toBe("running");
+    expect(assets.list_for_job_for_worker(JOB_ID)).toEqual([]);
+    expect(jobs.list_events_for_worker(JOB_ID)).toHaveLength(1);
   });
 
   it("allows exactly one queued claim across repository connections", () => {
@@ -253,7 +406,7 @@ describe("JobRepository", () => {
     const contender = new JobRepository(contender_database.connection);
 
     try {
-      const first_claim = jobs.transition_if_current({
+      const first_claim = jobs.transition_if_current_for_worker({
         job_id: JOB_ID,
         expected_state: "queued",
         state: "preparing",
@@ -261,7 +414,7 @@ describe("JobRepository", () => {
         event: { state: "preparing" },
         created_at: "2026-08-05T12:00:01.000Z",
       });
-      const second_claim = contender.transition_if_current({
+      const second_claim = contender.transition_if_current_for_worker({
         job_id: JOB_ID,
         expected_state: "queued",
         state: "preparing",
@@ -272,8 +425,8 @@ describe("JobRepository", () => {
 
       expect(first_claim).toBeDefined();
       expect(second_claim).toBeUndefined();
-      expect(jobs.get_by_id(JOB_ID)?.state).toBe("preparing");
-      expect(jobs.list_events(JOB_ID)).toHaveLength(1);
+      expect(jobs.get_by_id_for_worker(JOB_ID)?.state).toBe("preparing");
+      expect(jobs.list_events_for_worker(JOB_ID)).toHaveLength(1);
     } finally {
       contender_database.close();
     }
@@ -281,7 +434,7 @@ describe("JobRepository", () => {
 
   it("rejects a late transition after a job reaches a terminal state", () => {
     create_job();
-    jobs.transition_with_event({
+    jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "cancelled",
       event_type: "cancelled",
@@ -290,7 +443,7 @@ describe("JobRepository", () => {
     });
 
     expect(() =>
-      jobs.transition_with_event({
+      jobs.transition_with_event_for_worker({
         job_id: JOB_ID,
         state: "completed",
         event_type: "completed",
@@ -298,8 +451,8 @@ describe("JobRepository", () => {
         created_at: "2026-08-05T12:00:02.000Z",
       }),
     ).toThrow(JobStateConflictError);
-    expect(jobs.get_by_id(JOB_ID)?.state).toBe("cancelled");
-    expect(jobs.list_events(JOB_ID)).toHaveLength(1);
+    expect(jobs.get_by_id_for_worker(JOB_ID)?.state).toBe("cancelled");
+    expect(jobs.list_events_for_worker(JOB_ID)).toHaveLength(1);
   });
 
   it("deleting a job removes references without deleting the asset", () => {
@@ -309,26 +462,29 @@ describe("JobRepository", () => {
     });
     const asset = assets.create_or_get({
       sha256: "b".repeat(64),
+      owner_token_hash: OWNER_TOKEN_HASH,
+      asset_kind: "generated",
       media_type: "image/png",
       byte_length: 8,
       created_at: CREATED_AT,
     });
     assets.attach_to_job({
       job_id: JOB_ID,
+      owner_token_hash: OWNER_TOKEN_HASH,
       asset_id: asset.asset_id,
       position: 0,
     });
 
-    jobs.delete(JOB_ID);
+    jobs.delete_for_worker(JOB_ID);
 
-    expect(jobs.get_by_id(JOB_ID)).toBeUndefined();
-    expect(assets.get_by_id(asset.asset_id)).toEqual(asset);
-    expect(assets.list_for_job(JOB_ID)).toEqual([]);
+    expect(jobs.get_by_id_for_worker(JOB_ID)).toBeUndefined();
+    expect(assets.get_by_id_for_worker(asset.asset_id)).toEqual(asset);
+    expect(assets.list_for_job_for_worker(JOB_ID)).toEqual([]);
   });
 
   it("recovers queued jobs and existing events after reopen", () => {
     create_job();
-    jobs.transition_with_event({
+    jobs.transition_with_event_for_worker({
       job_id: JOB_ID,
       state: "queued",
       event_type: "queued",
@@ -340,8 +496,8 @@ describe("JobRepository", () => {
     database = open_gateway_database({ file_path });
     jobs = new JobRepository(database.connection);
 
-    expect(jobs.list_recoverable()).toMatchObject([{ job_id: JOB_ID, state: "queued" }]);
-    expect(jobs.list_events(JOB_ID)).toEqual([
+    expect(jobs.list_recoverable_for_worker()).toMatchObject([{ job_id: JOB_ID, state: "queued" }]);
+    expect(jobs.list_events_for_worker(JOB_ID)).toEqual([
       {
         job_id: JOB_ID,
         sequence: 1,

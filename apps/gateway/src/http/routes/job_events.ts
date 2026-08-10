@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { JobIdSchema, type GatewayJobEvent } from "@tavern-canvas/contracts";
 
 import { GatewayHttpError } from "../error_handler.js";
+import { require_request_token_hash } from "../request_context.js";
 import type { JobService } from "../../jobs/job_service.js";
 
 export interface JobEventsRouteOptions {
@@ -54,7 +55,8 @@ export function create_job_events_router(options: JobEventsRouteOptions): Router
 
   router.get("/jobs/:job_id/events", (request, response) => {
     const job_id = JobIdSchema.parse(request.params.job_id);
-    if (options.service.get_stored_job(job_id) === undefined) {
+    const owner_token_hash = require_request_token_hash(request);
+    if (options.service.get_stored_job_for_owner(job_id, owner_token_hash) === undefined) {
       throw new GatewayHttpError(404, "job_not_found");
     }
     const after_sequence = parse_sequence(
@@ -77,9 +79,13 @@ export function create_job_events_router(options: JobEventsRouteOptions): Router
       response.write("event: job\n");
       response.write(`data: ${JSON.stringify(event)}\n\n`);
     };
-    const unsubscribe = options.service.subscribe(job_id, (stored_event) => {
-      send(options.service.to_public_event(stored_event));
-    });
+    const unsubscribe = options.service.subscribe_for_owner(
+      job_id,
+      owner_token_hash,
+      (stored_event) => {
+        send(options.service.to_public_event(stored_event));
+      },
+    );
     const heartbeat = setInterval(() => {
       if (!response.writableEnded) {
         response.write(": keep-alive\n\n");
@@ -89,7 +95,11 @@ export function create_job_events_router(options: JobEventsRouteOptions): Router
       clearInterval(heartbeat);
       unsubscribe();
     });
-    for (const event of options.service.list_events(job_id, after_sequence)) {
+    for (const event of options.service.list_events_for_owner(
+      job_id,
+      owner_token_hash,
+      after_sequence,
+    )) {
       send(event);
     }
   });

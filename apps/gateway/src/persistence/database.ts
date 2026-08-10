@@ -4,6 +4,7 @@ import path from "node:path";
 import Database from "better-sqlite3";
 
 import { INITIAL_MIGRATION } from "./migrations/001_initial.js";
+import { OWNER_ISOLATION_MIGRATION } from "./migrations/002_owner_isolation.js";
 
 const DEFAULT_BUSY_TIMEOUT_MS = 5_000;
 const MAX_BUSY_TIMEOUT_MS = 2_147_483_647;
@@ -61,7 +62,7 @@ export function open_gateway_database(options: OpenGatewayDatabaseOptions): Gate
     connection.pragma("journal_mode = WAL");
     connection.pragma("foreign_keys = ON");
     connection.pragma(`busy_timeout = ${String(busy_timeout_ms)}`);
-    apply_migrations(connection, [INITIAL_MIGRATION]);
+    apply_migrations(connection, [INITIAL_MIGRATION, OWNER_ISOLATION_MIGRATION]);
     return new GatewayDatabase(connection);
   } catch (error) {
     connection.close();

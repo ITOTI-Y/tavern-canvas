@@ -26,6 +26,7 @@ function base_settings(): TavernCanvasSettings {
     global_concurrency: 2,
     auto_generation_enabled: false,
     fallback_generation_enabled: false,
+    vocabulary_update_channel: "bundled",
     gateway: { endpoint: null, token_secret_id: "tc:ns:secret", http_acknowledgments: {} },
     ui: {
       color_mode: "system",

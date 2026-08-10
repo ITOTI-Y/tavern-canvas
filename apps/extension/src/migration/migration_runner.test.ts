@@ -454,6 +454,101 @@ describe("run_migration: verification failures block the switch", () => {
     expect(final_journal?.state).toBe("failed");
   });
 
+  it("treats an empty inline image payload as missing and blocks the namespace switch", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    const settings_with_empty_bytes = structuredClone(settingsFixture) as typeof settingsFixture & {
+      jiuguanStorage: Record<string, { images: { data_base64?: string }[] }>;
+    };
+    let resolver_calls = 0;
+    let image_count = 0;
+    for (const group of Object.values(settings_with_empty_bytes.jiuguanStorage)) {
+      image_count += group.images.length;
+      for (const image of group.images) {
+        image.data_base64 = "";
+      }
+    }
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: settings_with_empty_bytes }),
+        image_resolver: fake_image_resolver(() => {
+          resolver_calls += 1;
+          return null;
+        }),
+      }),
+    );
+
+    expect(resolver_calls).toBe(image_count);
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("missing_blob");
+    expect(settings.get_settings().active_namespace).toBe("primary");
+  });
+
+  it("treats zero-byte resolver results as missing and blocks the namespace switch", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    const settings_with_empty_bytes = structuredClone(settingsFixture) as typeof settingsFixture & {
+      jiuguanStorage: Record<string, { images: { data_base64?: string }[] }>;
+    };
+    for (const group of Object.values(settings_with_empty_bytes.jiuguanStorage)) {
+      for (const image of group.images) {
+        image.data_base64 = "";
+      }
+    }
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: settings_with_empty_bytes }),
+        image_resolver: fake_image_resolver(() => new Uint8Array()),
+      }),
+    );
+
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("missing_blob");
+    expect(settings.get_settings().active_namespace).toBe("primary");
+  });
+
+  it("resolves empty inline image payloads before converting the gallery", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    const settings_with_empty_bytes = structuredClone(settingsFixture) as typeof settingsFixture & {
+      jiuguanStorage: Record<string, { images: { data_base64?: string }[] }>;
+    };
+    const resolved_bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x42]);
+    let resolver_calls = 0;
+    let image_count = 0;
+    for (const group of Object.values(settings_with_empty_bytes.jiuguanStorage)) {
+      image_count += group.images.length;
+      for (const image of group.images) {
+        image.data_base64 = "";
+      }
+    }
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: settings_with_empty_bytes }),
+        image_resolver: fake_image_resolver(() => {
+          resolver_calls += 1;
+          return resolved_bytes;
+        }),
+      }),
+    );
+
+    expect(resolver_calls).toBe(image_count);
+    expect(outcome.status).toBe("completed");
+    if (outcome.status !== "completed") {
+      throw new Error("unreachable");
+    }
+    expect(settings.get_settings().active_namespace).toBe(outcome.namespace);
+  });
+
   it("blocks the switch with secret_transfer_blocked when no destination supports the credential", async () => {
     const database = await open_database();
     const { settings } = create_settings();
@@ -501,6 +596,51 @@ describe("run_migration: verification failures block the switch", () => {
     // clobber a live Gateway configuration with convert_settings' hardcoded
     // "no Gateway" placeholder — the "secrets" batch just relied on this
     // exact configuration to skip client-side credential transfer.
+    expect(settings.get_settings().gateway).toEqual(configured_gateway);
+  });
+
+  it("does not skip v2 secret transfer when a Gateway endpoint has no token reference", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    settings.update_settings({
+      gateway: {
+        endpoint: "https://gateway.example.internal",
+        token_secret_id: null,
+        http_acknowledgments: { "https://gateway.example.internal": "2026-08-01T00:00:00Z" },
+      },
+    });
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        secret_destination: fake_secret_destination(() => false),
+      }),
+    );
+
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("secret_transfer_blocked");
+    expect(settings.get_settings().active_namespace).toBe("primary");
+  });
+
+  it("skips v2 secret transfer when a valid Gateway token reference is present", async () => {
+    const database = await open_database();
+    const { settings } = create_settings();
+    const configured_gateway = {
+      endpoint: null,
+      token_secret_id: "gw-token",
+      http_acknowledgments: {},
+    };
+    settings.update_settings({ gateway: configured_gateway });
+
+    const outcome = await run_migration(
+      await migration_options(database, settings, {
+        secret_destination: fake_secret_destination(() => false),
+      }),
+    );
+
+    expect(outcome.status).toBe("completed");
     expect(settings.get_settings().gateway).toEqual(configured_gateway);
   });
 });

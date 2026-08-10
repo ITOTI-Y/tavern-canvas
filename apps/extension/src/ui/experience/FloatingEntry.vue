@@ -34,12 +34,14 @@ const props = withDefaults(
     readonly mediaState?: MediaState;
     readonly mediaAssets?: MediaStateAssetMap;
     readonly openLabel?: string;
-    readonly positionStore?: FloatingEntryPositionStore;
+    readonly positionStore?: FloatingEntryPositionStore | undefined;
     /** Test/harness seam -- forces a desktop/mobile bucket instead of reading matchMedia, same
      * convention as use_shell_viewport.ts's own override parameter. */
-    readonly viewportOverride?: ViewportBucket;
+    readonly viewportOverride?: ViewportBucket | undefined;
   }>(),
   {
+    positionStore: undefined,
+    viewportOverride: undefined,
     mediaState: "idle",
     mediaAssets: () => ({}),
     openLabel: "Open TavernCanvas Studio",

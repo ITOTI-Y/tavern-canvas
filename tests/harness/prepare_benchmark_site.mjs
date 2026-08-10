@@ -32,8 +32,7 @@ async function main() {
   if (!(await exists(SOURCE_PACKAGE_DIRECTORY))) {
     throw new Error(
       `Benchmark package not found at ${SOURCE_PACKAGE_DIRECTORY}. Run ` +
-        `"pnpm --filter @tavern-canvas/vocabulary-builder generate-benchmark" and ` +
-        `"pnpm --filter @tavern-canvas/vocabulary-builder build-package" first.`,
+        `"pnpm prepare:e2e" first.`,
     );
   }
   await rm(PUBLIC_DIRECTORY, { recursive: true, force: true });

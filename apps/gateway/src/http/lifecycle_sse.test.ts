@@ -16,6 +16,7 @@ import type { JobService } from "../jobs/job_service.js";
 
 const TOKEN = "gateway-lifecycle-test-token";
 const TOKEN_HASH = createHash("sha256").update(TOKEN).digest("hex");
+const OWNER_TOKEN_HASH = TOKEN_HASH;
 const STOP_DEADLINE_MS = 1_000;
 
 type ReadableStreamReader = ReadableStreamDefaultReader<Uint8Array>;
@@ -112,6 +113,7 @@ async function with_deadline<T>(promise: Promise<T>, milliseconds = STOP_DEADLIN
 
 function create_job(service: JobService): string {
   return service.create_job({
+    owner_token_hash: OWNER_TOKEN_HASH,
     protocol_version: "1.0",
     request: {
       provider_id: "openai_image",
@@ -135,7 +137,7 @@ function append_event(
   job_id: string,
   state: "preparing" | "running" | "submitting",
 ): void {
-  service.transition({
+  service.transition_for_worker({
     job_id,
     state,
     event_type: state,

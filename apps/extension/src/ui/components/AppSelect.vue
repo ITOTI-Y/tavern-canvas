@@ -38,11 +38,14 @@ const props = withDefaults(
     readonly options: readonly AppSelectOption[];
     readonly placeholder: string;
     readonly disabled?: boolean;
-    readonly id?: string;
-    readonly describedBy?: string;
-    readonly ariaLabel?: string;
+    readonly id?: string | undefined;
+    readonly describedBy?: string | undefined;
+    readonly ariaLabel?: string | undefined;
   }>(),
   {
+    id: undefined,
+    describedBy: undefined,
+    ariaLabel: undefined,
     disabled: false,
   },
 );

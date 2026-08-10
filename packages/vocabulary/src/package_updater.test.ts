@@ -690,3 +690,63 @@ describe("PackageUpdater concurrency", () => {
     expect(second.outcome).toBe("up_to_date");
   });
 });
+
+describe("VocabularyPackageStore shard integrity", () => {
+  it("rejects a same-length tampered shard and restores the prior confirmed package", async () => {
+    const database = await open_database();
+    const spec: ShardSpec = {
+      shard_id: "prefix-aa",
+      path: "shards/prefix-aa.msgpack.gz",
+      kind: "prefix",
+      value: { kind: "prefix", entries: [["stable", 1, 1]] },
+    };
+    const v1 = await build_package("baseline", "1.0.0", [spec]);
+    const old_active = await seed_confirmed_package(database, v1);
+    const v2 = await build_package("baseline", "1.1.0", [
+      { ...spec, value: { kind: "prefix", entries: [["new", 2, 2]] } },
+    ]);
+    const store = new VocabularyPackageStore(database, NAMESPACE);
+    const staged = await store.create_staging_package(v2.manifest);
+    for (const entry of v2.manifest.shards) {
+      await store.put_shard_content(staged, entry, require_bytes(v2.shard_bytes, entry.path));
+    }
+    await store.mark_ready(staged.record_id);
+    await store.activate(staged.record_id);
+
+    const shards = new VocabularyShardRepository(database);
+    const shard_record = await shards.list(NAMESPACE).then((records) =>
+      records.find((record) => {
+        const payload = record.payload;
+        return (
+          typeof payload === "object" &&
+          payload !== null &&
+          !Array.isArray(payload) &&
+          payload.package_record_id === staged.record_id
+        );
+      }),
+    );
+    if (shard_record === undefined || shard_record.payload === undefined) {
+      throw new Error("missing shard record");
+    }
+    const payload = shard_record.payload;
+    if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+      throw new Error("invalid shard payload");
+    }
+    const bytes_base64 = payload.bytes_base64;
+    if (typeof bytes_base64 !== "string" || bytes_base64.length === 0) {
+      throw new Error("missing encoded shard bytes");
+    }
+    const replacement = bytes_base64[0] === "A" ? "B" : "A";
+    await shards.update(NAMESPACE, {
+      ...shard_record,
+      payload: { ...payload, bytes_base64: `${replacement}${bytes_base64.slice(1)}` },
+    });
+
+    await expect(store.shard_bytes(spec.path)).rejects.toThrow(/SHA-256/u);
+    const restored = await store.reselect_prior_confirmed(staged.record_id);
+    expect(restored?.record_id).toBe(old_active.record_id);
+    await expect(store.shard_bytes(spec.path)).resolves.toEqual(
+      require_bytes(v1.shard_bytes, spec.path),
+    );
+  });
+});

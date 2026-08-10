@@ -60,6 +60,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   global_concurrency: z.number().int().min(1).max(4),
   auto_generation_enabled: z.boolean(),
   fallback_generation_enabled: z.boolean(),
+  vocabulary_update_channel: z.enum(["bundled", "remote"]),
   gateway: GatewaySettingsSchema,
   ui: TavernCanvasUiSettingsSchema,
 });

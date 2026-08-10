@@ -29,7 +29,7 @@ const props = withDefaults(
     readonly widthStepLabel: string;
     readonly heightStepLabel: string;
     readonly aspectRatioLabel: string;
-    readonly aspectRatio?: string;
+    readonly aspectRatio?: string | undefined;
     readonly aspectRatioPlaceholder: string;
     readonly aspectRatioOptions?: readonly { readonly value: string; readonly label: string }[];
     readonly swapLabel: string;
@@ -39,6 +39,7 @@ const props = withDefaults(
     readonly maxDimension?: number;
   }>(),
   {
+    aspectRatio: undefined,
     pending: false,
     minDimension: 64,
     maxDimension: 4096,

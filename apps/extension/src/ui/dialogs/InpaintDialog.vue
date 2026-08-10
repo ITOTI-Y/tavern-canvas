@@ -57,8 +57,8 @@ const props = withDefaults(
     readonly title: string;
     readonly closeLabel: string;
     readonly bitmap: ImageBitmap;
-    readonly maskWidth?: number;
-    readonly maskHeight?: number;
+    readonly maskWidth?: number | undefined;
+    readonly maskHeight?: number | undefined;
     readonly undoLabel: string;
     readonly redoLabel: string;
     readonly eraseLabel: string;
@@ -75,6 +75,8 @@ const props = withDefaults(
     readonly pending?: boolean;
   }>(),
   {
+    maskWidth: undefined,
+    maskHeight: undefined,
     pending: false,
   },
 );

@@ -74,6 +74,7 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
   global_concurrency: 1,
   auto_generation_enabled: false,
   fallback_generation_enabled: false,
+  vocabulary_update_channel: "bundled",
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
@@ -204,6 +205,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     set_gateway_token: unavailable_command,
     clear_gateway_token: unavailable_command,
     set_vocabulary_update_channel: unavailable_command,
+    import_vocabulary_package: unavailable_command,
+    cancel_vocabulary_import: () => {},
     export_archive: unavailable_command,
     import_archive: unavailable_command,
   };

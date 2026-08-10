@@ -42,6 +42,7 @@ import {
   clone_gallery_fixture,
   clone_settings_fixture,
   create_test_settings,
+  fake_image_resolver,
   fake_legacy_source,
   fake_secret_destination,
   migration_options,
@@ -280,6 +281,77 @@ describe("scenario 2: duplicate legacy images collapse into one blob", () => {
     expect(sha256_hex_bytes(source_bytes)).toBe(duplicated_sha256);
     const stored_bytes = new Uint8Array(await (blob?.blob as Blob).arrayBuffer());
     expect(stored_bytes).toEqual(source_bytes);
+  });
+});
+describe("scenario 2b: host-backed legacy images are resolved before conversion", () => {
+  function settings_without_inline_images() {
+    const legacy = clone_settings_fixture();
+    for (const group of Object.values(legacy.jiuguanStorage)) {
+      for (const image of group.images) {
+        Reflect.deleteProperty(image, "data_base64");
+      }
+    }
+    return legacy;
+  }
+
+  it("writes host-backed images to v3 and deduplicates identical resolved bytes", async () => {
+    const legacy = settings_without_inline_images();
+    const [source_tag_key, source_group] = Object.entries(legacy.jiuguanStorage)[0] ?? [];
+    const source_image = source_group?.images[0];
+    if (source_tag_key === undefined || source_group === undefined || source_image === undefined) {
+      throw new Error("fixture must carry at least one host-backed image");
+    }
+    Reflect.set(legacy.jiuguanStorage, "e2e-host-duplicate", {
+      images: [
+        {
+          ...source_image,
+          uuid: "10000000-0000-4000-8000-000000000099",
+          thumbnail_uuid: "10000000-0000-4000-8000-000000000098",
+        },
+      ],
+      index: 0,
+      change: "e2e host duplicate",
+    });
+
+    const host_bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x42]);
+    const database: StorageDatabase = await open_database();
+    const { settings } = create_test_settings();
+    const outcome = await run_migration(
+      migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: legacy }),
+        image_resolver: fake_image_resolver(() => host_bytes),
+      }),
+    );
+    expect_completed(outcome);
+
+    const repositories = create_business_repositories(database);
+    const host_sha256 = sha256_hex_bytes(host_bytes);
+    const host_records = (await repositories.image_records.list(outcome.namespace)).filter(
+      (record) => record.sha256 === host_sha256,
+    );
+    expect(host_records).toHaveLength(2);
+    expect((await repositories.image_blobs.get(host_sha256))?.ref_count).toBe(2);
+    expect(settings.get_settings().active_namespace).toBe(outcome.namespace);
+  });
+
+  it("keeps the primary namespace when a host-backed image cannot be resolved", async () => {
+    const legacy = settings_without_inline_images();
+    const database: StorageDatabase = await open_database();
+    const { settings } = create_test_settings();
+    const outcome = await run_migration(
+      migration_options(database, settings, {
+        legacy_source: fake_legacy_source({ settings: legacy }),
+        image_resolver: fake_image_resolver(),
+      }),
+    );
+
+    expect(outcome.status).toBe("failed");
+    if (outcome.status !== "failed") {
+      throw new Error("unreachable");
+    }
+    expect(outcome.failure.reason).toBe("missing_blob");
+    expect(outcome.failure.message).toContain("image");
+    expect(settings.get_settings().active_namespace).toBe("primary");
   });
 });
 

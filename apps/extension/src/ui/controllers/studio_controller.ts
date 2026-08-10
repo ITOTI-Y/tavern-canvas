@@ -37,6 +37,7 @@ import type {
   SettingsDomainEvent,
   StudioCapabilities,
   Unsubscribe,
+  VocabularyImportProgressView,
   VocabularyInstallProgressView,
   VocabularySearchPageView,
   VocabularyUpdateChannel,
@@ -143,6 +144,11 @@ export interface StudioController {
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
   set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
+  import_vocabulary_package(
+    file: Blob,
+    on_progress?: (progress: VocabularyImportProgressView) => void,
+  ): Promise<void>;
+  cancel_vocabulary_import(): void;
   export_settings_archive(): Promise<Blob>;
   import_settings_archive(archive: Blob): Promise<void>;
   /** Re-fetches the migration snapshot after cleanup so `state.diagnostics.migration` reflects
@@ -1092,6 +1098,17 @@ class StudioControllerImpl implements StudioController {
     if (!this.#stopped) {
       this.#patch_settings({ vocabulary_update_channel: channel });
     }
+  }
+
+  import_vocabulary_package(
+    file: Blob,
+    on_progress?: (progress: VocabularyImportProgressView) => void,
+  ): Promise<void> {
+    return this.#capabilities.settings.import_vocabulary_package(file, on_progress);
+  }
+
+  cancel_vocabulary_import(): void {
+    this.#capabilities.settings.cancel_vocabulary_import();
   }
 
   export_settings_archive(): Promise<Blob> {

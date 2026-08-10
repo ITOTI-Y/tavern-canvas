@@ -14,6 +14,7 @@ import {
   type GatewayMigration,
 } from "./database.js";
 import { INITIAL_MIGRATION } from "./migrations/001_initial.js";
+import { OWNER_ISOLATION_MIGRATION } from "./migrations/002_owner_isolation.js";
 
 const open_databases: GatewayDatabase[] = [];
 const cleanup_directories: string[] = [];
@@ -51,7 +52,7 @@ describe("open_gateway_database", () => {
     expect(database.connection.pragma("busy_timeout", { simple: true })).toBe(2_500);
   });
 
-  it("runs the initial migration idempotently", () => {
+  it("runs all migrations idempotently", () => {
     const file_path = create_database_path();
     const first = open_database(file_path);
     first.close();
@@ -65,7 +66,7 @@ describe("open_gateway_database", () => {
       .prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
       .all() as { name: string }[];
 
-    expect(migration_count.count).toBe(1);
+    expect(migration_count.count).toBe(2);
     expect(tables.map((table) => table.name)).toEqual([
       "assets",
       "job_assets",
@@ -73,6 +74,78 @@ describe("open_gateway_database", () => {
       "jobs",
       "schema_migrations",
     ]);
+  });
+  it("upgrades an applied v1 database while preserving persisted rows", () => {
+    const file_path = create_database_path();
+    const legacy = new Database(file_path);
+    apply_migrations(legacy, [INITIAL_MIGRATION], () => "2026-08-05T12:00:00.000Z");
+    legacy
+      .prepare(
+        `INSERT INTO jobs (
+          job_id, request_id, provider_id, state, request_json, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        "11111111-1111-4111-8111-111111111111",
+        "22222222-2222-4222-8222-222222222222",
+        "openai_image",
+        "queued",
+        "{}",
+        "2026-08-05T12:00:00.000Z",
+        "2026-08-05T12:00:00.000Z",
+      );
+    legacy
+      .prepare(
+        `INSERT INTO assets (
+          asset_id, sha256, media_type, byte_length, relative_path, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        "33333333-3333-4333-8333-333333333333",
+        "a".repeat(64),
+        "image/png",
+        8,
+        "assets/33333333-3333-4333-8333-333333333333.png",
+        "2026-08-05T12:00:00.000Z",
+      );
+    legacy
+      .prepare(
+        `INSERT INTO job_events (
+          job_id, sequence, event_type, event_json, created_at
+        ) VALUES (?, ?, ?, ?, ?)`,
+      )
+      .run(
+        "11111111-1111-4111-8111-111111111111",
+        1,
+        "queued",
+        '{"state":"queued"}',
+        "2026-08-05T12:00:00.000Z",
+      );
+    legacy
+      .prepare("INSERT INTO job_assets (job_id, asset_id, position) VALUES (?, ?, ?)")
+      .run("11111111-1111-4111-8111-111111111111", "33333333-3333-4333-8333-333333333333", 0);
+    legacy.close();
+
+    const migrated = open_database(file_path);
+    const owner_token_hash = "0".repeat(64);
+    expect(
+      migrated.connection
+        .prepare("SELECT version FROM schema_migrations ORDER BY version")
+        .pluck()
+        .all(),
+    ).toEqual([1, 2]);
+    expect(
+      migrated.connection.prepare("SELECT owner_token_hash, request_id FROM jobs").all(),
+    ).toEqual([{ owner_token_hash, request_id: "22222222-2222-4222-8222-222222222222" }]);
+    expect(
+      migrated.connection.prepare("SELECT owner_token_hash, asset_kind FROM assets").all(),
+    ).toEqual([{ owner_token_hash, asset_kind: "generated" }]);
+    expect(
+      migrated.connection.prepare("SELECT owner_token_hash, position FROM job_assets").all(),
+    ).toEqual([{ owner_token_hash, position: 0 }]);
+    expect(migrated.connection.prepare("SELECT COUNT(*) AS count FROM job_events").get()).toEqual({
+      count: 1,
+    });
   });
 
   it("keeps repeated startup decisions idempotent across open connections", () => {
@@ -82,16 +155,16 @@ describe("open_gateway_database", () => {
 
     expect(
       first.connection.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get(),
-    ).toEqual({ count: 1 });
+    ).toEqual({ count: 2 });
     expect(
       second.connection.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get(),
-    ).toEqual({ count: 1 });
+    ).toEqual({ count: 2 });
   });
 
   it("rolls back a failed migration atomically", () => {
     const database = open_database(create_database_path());
     const failing_migration: GatewayMigration = {
-      version: INITIAL_MIGRATION.version + 1,
+      version: OWNER_ISOLATION_MIGRATION.version + 1,
       apply(connection) {
         connection.exec("CREATE TABLE should_rollback (value TEXT NOT NULL)");
         throw new Error("synthetic migration failure");
@@ -99,7 +172,11 @@ describe("open_gateway_database", () => {
     };
 
     expect(() =>
-      apply_migrations(database.connection, [INITIAL_MIGRATION, failing_migration]),
+      apply_migrations(database.connection, [
+        INITIAL_MIGRATION,
+        OWNER_ISOLATION_MIGRATION,
+        failing_migration,
+      ]),
     ).toThrow("synthetic migration failure");
     expect(
       database.connection
@@ -132,7 +209,7 @@ describe("open_gateway_database", () => {
 
     const verify = new Database(file_path, { readonly: true });
     expect(verify.prepare("SELECT value FROM sentinel").pluck().get()).toBe("preserve-me");
-    expect(verify.prepare("SELECT COUNT(*) FROM schema_migrations").pluck().get()).toBe(2);
+    expect(verify.prepare("SELECT COUNT(*) FROM schema_migrations").pluck().get()).toBe(3);
     verify.close();
   });
 });

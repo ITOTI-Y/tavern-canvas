@@ -18,6 +18,7 @@ import { GatewayJobEventSchema, GatewayJobResponseSchema } from "@tavern-canvas/
 import { z } from "zod";
 
 const TOKEN = "gateway-test-token";
+const OWNER_TOKEN_HASH = createHash("sha256").update(TOKEN).digest("hex");
 const SECOND_TOKEN = "gateway-second-test-token";
 const PNG_BYTES = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
@@ -535,7 +536,10 @@ describe("Gateway HTTP API", () => {
     try {
       await gateway.app.gateway.ready;
       await gateway.app.gateway.worker.stop();
-      const created = gateway.app.gateway.service.create_job(create_job_request());
+      const created = gateway.app.gateway.service.create_job({
+        ...create_job_request(),
+        owner_token_hash: OWNER_TOKEN_HASH,
+      });
       const events = await fetch(`${gateway.base_url}/v1/jobs/${created.job.job_id}/events`, {
         headers: headers(),
       });
@@ -544,7 +548,7 @@ describe("Gateway HTTP API", () => {
         throw new Error("SSE response did not expose a body");
       }
       const reader = events.body.getReader();
-      gateway.app.gateway.service.transition({
+      gateway.app.gateway.service.transition_for_worker({
         job_id: created.job.job_id,
         state: "preparing",
         event_type: "preparing",

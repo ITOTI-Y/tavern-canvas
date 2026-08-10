@@ -14,12 +14,15 @@ const props = withDefaults(
   defineProps<{
     readonly modelValue: boolean;
     readonly label: string;
-    readonly description?: string;
+    readonly description?: string | undefined;
     readonly disabled?: boolean;
-    readonly id?: string;
-    readonly describedBy?: string;
+    readonly id?: string | undefined;
+    readonly describedBy?: string | undefined;
   }>(),
   {
+    description: undefined,
+    id: undefined,
+    describedBy: undefined,
     disabled: false,
   },
 );

@@ -20,9 +20,10 @@ withDefaults(
      * icon is `aria-hidden` and purely decorative, which is the default for every icon paired with
      * a labeled control (IconButton, AppButton, menu items).
      */
-    readonly label?: string;
+    readonly label?: string | undefined;
   }>(),
   {
+    label: undefined,
     size: DEFAULT_ICON_SIZE,
   },
 );

@@ -59,6 +59,12 @@ const SETTINGS_SCHEMA: readonly SettingsFieldDescriptor[] = [
     secret: false,
   },
   {
+    path: "vocabulary_update_channel",
+    help: "Vocabulary update channel: bundled or remote.",
+    writable: true,
+    secret: false,
+  },
+  {
     path: "gateway.endpoint",
     help: "Gateway server origin URL, or none for local direct mode.",
     writable: true,
@@ -106,6 +112,7 @@ const FIELD_SCHEMAS: Readonly<Record<string, z.ZodType>> = {
   global_concurrency: ROOT_SHAPE.global_concurrency,
   auto_generation_enabled: ROOT_SHAPE.auto_generation_enabled,
   fallback_generation_enabled: ROOT_SHAPE.fallback_generation_enabled,
+  vocabulary_update_channel: ROOT_SHAPE.vocabulary_update_channel,
   "gateway.endpoint": GATEWAY_SHAPE.endpoint,
   "ui.color_mode": UI_SHAPE.color_mode,
   "ui.inspector_width": UI_SHAPE.inspector_width,

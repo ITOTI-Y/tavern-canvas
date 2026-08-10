@@ -39,6 +39,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   global_concurrency: 2,
   auto_generation_enabled: false,
   fallback_generation_enabled: false,
+  vocabulary_update_channel: "bundled",
   gateway: { endpoint: null, token_secret_id: TOKEN_REFERENCE, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
@@ -488,6 +489,8 @@ describe("SettingsView gateway settings", () => {
       set_gateway_token: capabilities.settings.set_gateway_token,
       clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
+      import_vocabulary_package: capabilities.settings.import_vocabulary_package,
+      cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,
       export_archive: capabilities.settings.export_archive,
       import_archive: capabilities.settings.import_archive,
     };
@@ -527,6 +530,8 @@ describe("SettingsView automation settings", () => {
       set_gateway_token: capabilities.settings.set_gateway_token,
       clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
+      import_vocabulary_package: capabilities.settings.import_vocabulary_package,
+      cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,
       export_archive: capabilities.settings.export_archive,
       import_archive: capabilities.settings.import_archive,
     };
@@ -584,6 +589,8 @@ describe("SettingsView appearance settings", () => {
       set_gateway_token: capabilities.settings.set_gateway_token,
       clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
+      import_vocabulary_package: capabilities.settings.import_vocabulary_package,
+      cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,
       export_archive: capabilities.settings.export_archive,
       import_archive: capabilities.settings.import_archive,
     };
@@ -627,6 +634,72 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     await nextTick();
 
     expect(channels).toEqual(["remote"]);
+  });
+
+  it("imports a local vocabulary file with progress and a success status", async () => {
+    const capabilities = create_unavailable_capabilities();
+    const imported: Blob[] = [];
+    const settings: SettingsCapability = {
+      ...capabilities.settings,
+      load: () =>
+        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+      import_vocabulary_package: (file, on_progress) => {
+        imported.push(file);
+        on_progress?.({ phase: "indexing" });
+        on_progress?.({
+          phase: "complete",
+          data_version: "1.0.0",
+          record_count: 1,
+          package_record_id: "package-1",
+          malformed_records: 0,
+          merge_conflicts: 0,
+        });
+        return Promise.resolve();
+      },
+    };
+    const controller = build_controller({ ...capabilities, settings });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+
+    const file = new File(['{"tag":"smile","aliases":[],"popularity":1}'], "tags.jsonl", {
+      type: "application/x-ndjson",
+    });
+    const input = wrapper.get('[data-testid="vocabulary-import-input"]');
+    Object.defineProperty(input.element, "files", { value: [file] });
+    await input.trigger("change");
+    await nextTick();
+
+    expect(imported).toEqual([file]);
+    expect(wrapper.find('[data-testid="vocabulary-import-success"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain("Imported 1 records successfully");
+  });
+
+  it("cancels a pending local vocabulary import through the controller", async () => {
+    const capabilities = create_unavailable_capabilities();
+    let resolve_import: (() => void) | undefined;
+    const import_promise = new Promise<void>((resolve) => {
+      resolve_import = resolve;
+    });
+    const cancel = vi.fn();
+    const settings: SettingsCapability = {
+      ...capabilities.settings,
+      load: () =>
+        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+      import_vocabulary_package: () => import_promise,
+      cancel_vocabulary_import: cancel,
+    };
+    const controller = build_controller({ ...capabilities, settings });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+
+    const file = new File(['{"tag":"smile","aliases":[],"popularity":1}'], "tags.jsonl");
+    const input = wrapper.get('[data-testid="vocabulary-import-input"]');
+    Object.defineProperty(input.element, "files", { value: [file] });
+    await input.trigger("change");
+    await nextTick();
+    await wrapper.get('button[aria-label="Cancel import"]').trigger("click");
+
+    expect(cancel).toHaveBeenCalledTimes(1);
+    resolve_import?.();
+    await nextTick();
   });
 
   it("exports an archive and never renders its content or secrets in the DOM", async () => {

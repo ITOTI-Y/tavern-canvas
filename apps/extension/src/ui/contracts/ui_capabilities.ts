@@ -285,6 +285,36 @@ export type VocabularyInstallProgressView =
   | { readonly phase: "verifying_package" }
   | { readonly phase: "installing" };
 
+export type VocabularyImportProgressView =
+  | {
+      readonly phase: "reading";
+      readonly received_bytes: number;
+      readonly total_bytes: number;
+    }
+  | {
+      readonly phase: "batch";
+      readonly batch_index: number;
+      readonly batch_count: number;
+      readonly accepted_records: number;
+      readonly malformed_records: number;
+    }
+  | { readonly phase: "indexing" }
+  | {
+      readonly phase: "staging_shard";
+      readonly shard_index: number;
+      readonly shard_count: number;
+    }
+  | { readonly phase: "activating" }
+  | {
+      readonly phase: "complete";
+      readonly data_version: string;
+      readonly record_count: number;
+      readonly package_record_id: string;
+      readonly malformed_records: number;
+      readonly merge_conflicts: number;
+    }
+  | { readonly phase: "cancelled" };
+
 export interface VocabularyCapability {
   load(): Promise<readonly VocabularyCatalogEntry[]>;
   search(query: string, category?: VocabularyCategory): Promise<VocabularySearchPageView>;
@@ -386,8 +416,6 @@ export interface MigrationCapability {
   /** UI never auto-deletes v2 data; this requires an explicit typed confirmation string. */
   confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
 }
-
-// ---------------------------------------------------------------------------
 // Settings
 // ---------------------------------------------------------------------------
 
@@ -413,12 +441,14 @@ export interface SettingsCapability {
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
   set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
+  import_vocabulary_package(
+    file: Blob,
+    on_progress?: (progress: VocabularyImportProgressView) => void,
+  ): Promise<void>;
+  cancel_vocabulary_import(): void;
   export_archive(): Promise<Blob>;
   import_archive(archive: Blob): Promise<void>;
 }
-
-// ---------------------------------------------------------------------------
-// Aggregate
 // ---------------------------------------------------------------------------
 
 export interface StudioCapabilities {

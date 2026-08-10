@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { JobIdSchema } from "@tavern-canvas/contracts";
 
-import { GatewayHttpError } from "../error_handler.js";
 import { JobService } from "../../jobs/job_service.js";
 import { JobWorker } from "../../jobs/job_worker.js";
+import { require_request_token_hash } from "../request_context.js";
+import { GatewayHttpError } from "../error_handler.js";
 
 export interface JobsRouteOptions {
   readonly service: JobService;
@@ -14,12 +15,13 @@ export function create_jobs_router(options: JobsRouteOptions): Router {
   const router = Router();
 
   router.post("/jobs", (request, response) => {
-    const result = options.service.create_job(
-      request.body as {
+    const result = options.service.create_job({
+      ...(request.body as {
         readonly protocol_version: unknown;
         readonly request: unknown;
-      },
-    );
+      }),
+      owner_token_hash: require_request_token_hash(request),
+    });
     if (result.created) {
       options.worker.enqueue(result.job.job_id);
     }
@@ -28,7 +30,7 @@ export function create_jobs_router(options: JobsRouteOptions): Router {
 
   router.get("/jobs/:job_id", (request, response) => {
     const job_id = parse_job_id(request.params.job_id);
-    const job = options.service.get_job(job_id);
+    const job = options.service.get_job_for_owner(job_id, require_request_token_hash(request));
     if (job === undefined) {
       throw new GatewayHttpError(404, "job_not_found");
     }
@@ -37,7 +39,10 @@ export function create_jobs_router(options: JobsRouteOptions): Router {
 
   router.delete("/jobs/:job_id", (request, response) => {
     const job_id = parse_job_id(request.params.job_id);
-    const exists = options.service.cancel_job(job_id);
+    const exists = options.service.cancel_job_for_owner(
+      job_id,
+      require_request_token_hash(request),
+    );
     if (exists) {
       options.worker.cancel_active(job_id);
     }

@@ -289,6 +289,10 @@ function parse_sourcemap_sources(text: string, path: string): readonly string[] 
   return (sources as readonly unknown[]).filter((source) => typeof source === "string");
 }
 
+export function is_generated_rolldown_runtime(source: string): boolean {
+  return source.startsWith("//#region \\0rolldown/runtime.js");
+}
+
 async function measure_asset(
   dist_dir: string,
   file: string,
@@ -343,6 +347,11 @@ export async function measure_bundle(
         file,
         parse_sourcemap_sources(sourcemap_bytes.toString("utf8"), sourcemap_path),
       );
+    } else {
+      const source = await readFile(resolve(dist_dir, file), "utf8");
+      if (is_generated_rolldown_runtime(source)) {
+        sourcemap_sources.set(file, []);
+      }
     }
   }
   for (const file of initial_assets.css_files) {

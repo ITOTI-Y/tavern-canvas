@@ -13,7 +13,7 @@ permissions:
 jobs:
   artifact:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
 
     steps:
       # Full history: the release audit's legacy-history rule reads the released ref's ancestry,
@@ -36,27 +36,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Install Chromium and system dependencies
+        run: pnpm exec playwright install --with-deps chromium
 
-      # SillyTavern installs the extension by cloning the repository root and loading the
-      # manifest-relative paths, so the committed dist/ is the runtime users get. These two checks
-      # cover the two ways it can lie: tracked files whose committed bytes no longer match a clean
-      # rebuild, and rebuilt files that appear in the working tree but in no commit.
-      - name: Verify committed dist matches a clean rebuild
-        run: git diff --exit-code -- dist
+      - name: Run checks
+        run: pnpm check
 
-      - name: Verify the rebuild added no untracked runtime file
-        run: |
-          untracked="$(git status --porcelain --untracked-files=all -- dist)"
-          if [ -n "$untracked" ]; then
-            echo "A clean rebuild changed dist/ outside the committed tree:" >&2
-            echo "$untracked" >&2
-            exit 1
-          fi
+      - name: Run Gateway tests
+        run: pnpm test:gateway
 
-      # The packaging tool is the guard for the remaining case: a runtime asset the build emits and
-      # .gitignore hides, which leaves both checks above silent while a clone cannot restore it.
+      - name: Run E2E tests
+        run: pnpm test:e2e
+
       - name: Package the extension
         run: pnpm package:extension
 
@@ -66,6 +57,18 @@ jobs:
       - name: Verify the checksum sidecar
         working-directory: output/release
         run: sha256sum --check tavern-canvas.zip.sha256
+
+      - name: Verify committed dist matches a clean rebuild
+        run: git diff --exit-code -- dist
+
+      - name: Verify the rebuild added no untracked runtime file
+        run: |
+          untracked="$(git ls-files --others --exclude-standard -- dist)"
+          if [ -n "$untracked" ]; then
+            echo "A clean rebuild changed dist/ outside the committed tree:" >&2
+            echo "$untracked" >&2
+            exit 1
+          fi
 
       - name: Upload the release archive
         uses: actions/upload-artifact@v5

@@ -130,6 +130,7 @@ function create_host_control(auto_generation_enabled = true): HostControl {
         global_concurrency: 2,
         auto_generation_enabled,
         fallback_generation_enabled: auto_generation_enabled,
+        vocabulary_update_channel: "bundled",
         gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
         ui: {
           color_mode: "system",

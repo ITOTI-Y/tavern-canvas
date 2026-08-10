@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { unlinkSync } from "node:fs";
 import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -7,6 +8,7 @@ import { fileTypeFromBuffer } from "file-type";
 import sharp, { type Metadata, type Sharp } from "sharp";
 
 import type { AssetRepository, StoredAsset } from "../persistence/asset_repository.js";
+import type { OwnerTokenHash } from "../persistence/job_repository.js";
 
 export type ReferenceImageMediaType = "image/png" | "image/jpeg" | "image/webp";
 
@@ -15,14 +17,15 @@ export interface AssetStoreLimits {
   readonly max_image_pixels: number;
   readonly max_image_dimension: number;
 }
-
 export interface AssetStoreOptions extends AssetStoreLimits {
   readonly data_directory: string;
   readonly asset_repository: AssetRepository;
   readonly write_file?: AssetStoreWriteFile;
+  readonly unlink_file?: AssetStoreUnlinkFile;
 }
 
 export type AssetStoreWriteFile = (file_path: string, bytes: Uint8Array) => Promise<void>;
+export type AssetStoreUnlinkFile = (file_path: string) => void;
 
 export interface IngestedAsset {
   readonly asset: StoredAsset;
@@ -46,7 +49,8 @@ export class AssetStore {
   readonly #asset_repository: AssetRepository;
   readonly #limits: AssetStoreLimits;
   readonly #write_file: AssetStoreWriteFile;
-
+  readonly #unlink_file: AssetStoreUnlinkFile;
+  readonly #staging_assets = new Map<AssetId, number>();
   constructor(options: AssetStoreOptions) {
     this.#data_directory = path.resolve(options.data_directory);
     this.#asset_directory = path.resolve(this.#data_directory, "assets");
@@ -55,6 +59,7 @@ export class AssetStore {
     this.#write_file =
       options.write_file ??
       ((file_path, bytes) => writeFile(file_path, bytes, { flag: "wx", mode: 0o600 }));
+    this.#unlink_file = options.unlink_file ?? unlinkSync;
   }
 
   async initialize(): Promise<void> {
@@ -65,10 +70,39 @@ export class AssetStore {
     }
   }
 
+  cleanup_orphaned_assets(cutoff_at: string): Promise<number> {
+    const orphaned = this.#asset_repository.list_orphaned(cutoff_at);
+    let deleted = 0;
+    for (const asset of orphaned) {
+      if (this.#staging_assets.has(asset.asset_id)) {
+        continue;
+      }
+      const target = this.#safe_asset_path(asset);
+      try {
+        const removed = this.#asset_repository.delete_orphaned(asset.asset_id, cutoff_at, () => {
+          try {
+            this.#unlink_file(target);
+          } catch (error) {
+            if (!is_missing_file_error(error)) {
+              throw error;
+            }
+          }
+        });
+        if (removed) {
+          deleted += 1;
+        }
+      } catch {
+        // Keep the row when the blob cannot be unlinked so a later cleanup can retry it.
+      }
+    }
+    return Promise.resolve(deleted);
+  }
+
   async ingest_reference_image(
     body: Uint8Array,
     content_type: string,
     created_at: string,
+    owner_token_hash: OwnerTokenHash,
   ): Promise<IngestedAsset> {
     if (body.byteLength === 0 || body.byteLength > this.#limits.max_image_bytes) {
       throw new AssetStoreError("invalid_asset");
@@ -104,17 +138,24 @@ export class AssetStore {
     const sha256 = sha256_hex(canonical_bytes);
     const asset = this.#asset_repository.create_or_get({
       sha256,
+      owner_token_hash,
+      asset_kind: "reference",
       media_type: expected_media_type,
       byte_length: canonical_bytes.byteLength,
       created_at,
     });
-    await this.#ensure_asset_bytes(asset, canonical_bytes);
-    return { asset, canonical_bytes };
+    this.#stage_asset(asset.asset_id);
+    try {
+      await this.#ensure_asset_bytes(asset, canonical_bytes);
+      return { asset, canonical_bytes };
+    } finally {
+      this.#unstage_asset(asset.asset_id);
+    }
   }
-
   async register_generated_asset(
     generated: GeneratedAssetBytes,
     created_at: string,
+    owner_token_hash: OwnerTokenHash,
   ): Promise<StoredAsset> {
     const { asset, bytes } = generated;
     const media_type = asset.media_type;
@@ -152,25 +193,56 @@ export class AssetStore {
     }
     const stored = this.#asset_repository.create_or_get({
       sha256: asset.sha256,
+      owner_token_hash,
+      asset_kind: "generated",
       media_type,
       byte_length: asset.byte_length,
       created_at,
     });
-    await this.#ensure_asset_bytes(stored, bytes);
-    return stored;
+    this.#stage_asset(stored.asset_id);
+    try {
+      await this.#ensure_asset_bytes(stored, bytes);
+      return stored;
+    } finally {
+      this.#unstage_asset(stored.asset_id);
+    }
   }
 
-  get_metadata(asset_id: AssetId): StoredAsset | undefined {
-    return this.#asset_repository.get_by_id(asset_id);
+  get_metadata_for_worker(asset_id: AssetId): StoredAsset | undefined {
+    return this.#asset_repository.get_by_id_for_worker(asset_id);
   }
 
-  async read_bytes(
+  get_metadata_for_owner(
+    asset_id: AssetId,
+    owner_token_hash: OwnerTokenHash,
+  ): StoredAsset | undefined {
+    return this.#asset_repository.get_by_id_for_owner(asset_id, owner_token_hash);
+  }
+
+  async read_bytes_for_worker(
     asset_id: AssetId,
   ): Promise<{ readonly asset: StoredAsset; readonly bytes: Uint8Array }> {
-    const asset = this.#asset_repository.get_by_id(asset_id);
+    const asset = this.#asset_repository.get_by_id_for_worker(asset_id);
     if (asset === undefined) {
       throw new AssetStoreError("asset_not_found");
     }
+    return this.#read_bytes(asset);
+  }
+
+  async read_bytes_for_owner(
+    asset_id: AssetId,
+    owner_token_hash: OwnerTokenHash,
+  ): Promise<{ readonly asset: StoredAsset; readonly bytes: Uint8Array }> {
+    const asset = this.#asset_repository.get_by_id_for_owner(asset_id, owner_token_hash);
+    if (asset === undefined) {
+      throw new AssetStoreError("asset_not_found");
+    }
+    return this.#read_bytes(asset);
+  }
+
+  async #read_bytes(
+    asset: StoredAsset,
+  ): Promise<{ readonly asset: StoredAsset; readonly bytes: Uint8Array }> {
     const file_path = this.#safe_asset_path(asset);
     let bytes: Buffer;
     try {
@@ -190,6 +262,7 @@ export class AssetStore {
   async read_provider_asset(
     asset_id: AssetId,
     signal: AbortSignal,
+    owner_token_hash: OwnerTokenHash,
   ): Promise<{
     readonly asset_id: AssetId;
     readonly media_type: ReferenceImageMediaType;
@@ -198,7 +271,7 @@ export class AssetStore {
     if (signal.aborted) {
       throw new DOMException("The operation was aborted", "AbortError");
     }
-    const result = await this.read_bytes(asset_id);
+    const result = await this.read_bytes_for_owner(asset_id, owner_token_hash);
     if (!REFERENCE_MEDIA_TYPES.has(result.asset.media_type)) {
       throw new AssetStoreError("invalid_asset");
     }
@@ -207,6 +280,18 @@ export class AssetStore {
       media_type: result.asset.media_type,
       bytes: result.bytes,
     };
+  }
+  #stage_asset(asset_id: AssetId): void {
+    this.#staging_assets.set(asset_id, (this.#staging_assets.get(asset_id) ?? 0) + 1);
+  }
+
+  #unstage_asset(asset_id: AssetId): void {
+    const remaining = this.#staging_assets.get(asset_id);
+    if (remaining === undefined || remaining <= 1) {
+      this.#staging_assets.delete(asset_id);
+      return;
+    }
+    this.#staging_assets.set(asset_id, remaining - 1);
   }
 
   #safe_asset_path(asset: StoredAsset): string {

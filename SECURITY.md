@@ -70,10 +70,6 @@ archives deliberately exclude credentials, Gateway tokens, logs, and support bun
 
 These are documented, not fixed, in 3.0.0:
 
-- Gateway jobs carry no owner. Any valid bearer token can read or cancel any job by id.
-- Gateway token rotation and revocation both require a process restart; configuration is read once at
-  startup.
-- The Gateway has no retention or cleanup. Jobs, events, and image blobs accumulate indefinitely, and
-  the pending job queue is unbounded.
-- Vocabulary shard hashes are verified at download time. Reading a shard back from IndexedDB
-  re-checks its byte length but not its hash.
+- The Gateway retains token hashes supplied through the startup environment for the process lifetime.
+  Hashes managed through the optional token hash file can be added or revoked atomically with
+  `SIGHUP`; changing the startup environment list still requires a restart.

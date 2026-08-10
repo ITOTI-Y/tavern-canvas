@@ -144,11 +144,11 @@ anything beyond loopback.
 
 Settings has a Data section with both.
 
-**Migration** imports v2 (`st-chatu8`) settings from SillyTavern's extension settings. It is
-resumable and idempotent, tracked in a migration journal, and reports its state and any failure
-reason. In this release the legacy gallery database is not read, so v2 image bytes are not migrated.
-Legacy data cleanup is also not implemented; remove the v2 extension by hand once migration reports
-completion.
+**Migration** imports v2 (`st-chatu8`) settings, gallery records, configuration images, and
+same-origin host image files. It is resumable and idempotent, tracked in a migration journal, and
+reports its state and any failure reason. Missing or invalid image bytes fail verification before
+the active namespace switches, so the v2 source remains untouched. Legacy data cleanup is not
+implemented; remove the v2 extension by hand once migration reports completion.
 
 **Export** writes a ZIP archive containing a manifest, checksums, one JSONL file per record store,
 and content addressed image assets. Credentials, Gateway tokens, logs, and support bundles are

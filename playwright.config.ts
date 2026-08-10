@@ -1,13 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Stage 05 Task 6: real-Chromium proof that the vocabulary Worker
-// (apps/extension/src/workers/vocabulary_worker.ts) can be bundled and
-// instantiated as an actual Web Worker, and meets the 500,000-record
-// performance/correctness budgets (tests/e2e/vocabulary_performance.spec.ts).
-// The webServer builds tests/harness/vocabulary_benchmark.html with Vite
-// (staging the benchmark package first -- prepare_benchmark_site.mjs) and
-// serves the static output; nothing here touches the extension's own
-// production build or dev server.
+// The public `pnpm test:e2e` command runs tests/harness/prepare_benchmark_package.mjs before
+// invoking the lower-level `pnpm test:e2e:playwright` command. The latter intentionally assumes
+// the deterministic 500,000-record package already exists, so verify:release can prepare it once
+// and then run the browser suite without regenerating the package.
+// This webServer hook only stages that prepared package into Vite's publicDir before each
+// vocabulary harness build; it does not generate or rebuild the package.
 const VOCABULARY_HARNESS_PORT = 4173;
 const VOCABULARY_HARNESS_URL = `http://127.0.0.1:${String(VOCABULARY_HARNESS_PORT)}`;
 

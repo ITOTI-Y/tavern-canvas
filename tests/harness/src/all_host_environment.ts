@@ -189,6 +189,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       global_concurrency: 2,
       auto_generation_enabled: false,
       fallback_generation_enabled: false,
+      vocabulary_update_channel: "bundled",
       gateway: {
         endpoint: options.gateway_endpoint,
         token_secret_id: null,

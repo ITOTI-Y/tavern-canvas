@@ -315,6 +315,7 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
     global_concurrency: 2,
     auto_generation_enabled: false,
     fallback_generation_enabled: true,
+    vocabulary_update_channel: "bundled",
     gateway: {
       endpoint: with_http_warning ? "http://192.168.1.50:7860" : "https://gateway.example.invalid",
       token_secret_id: "mock-secret-reference",
@@ -967,7 +968,11 @@ function create_migration_capability(snapshot: MigrationSnapshot): MigrationCapa
 function create_settings_capability(initial: TavernCanvasSettings): SettingsCapability {
   let current = initial;
   return {
-    load: () => Promise.resolve({ settings: current, vocabulary_update_channel: "bundled" }),
+    load: () =>
+      Promise.resolve({
+        settings: current,
+        vocabulary_update_channel: current.vocabulary_update_channel,
+      }),
     subscribe: () => () => {},
     update: (partial) => {
       current = { ...current, ...partial };
@@ -997,7 +1002,12 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       current = { ...current, gateway: { ...current.gateway, token_secret_id: null } };
       return Promise.resolve();
     },
-    set_vocabulary_update_channel: () => Promise.resolve(),
+    set_vocabulary_update_channel: (channel) => {
+      current = { ...current, vocabulary_update_channel: channel };
+      return Promise.resolve();
+    },
+    import_vocabulary_package: () => Promise.resolve(),
+    cancel_vocabulary_import: () => {},
     export_archive: () => Promise.resolve(new Blob(["{}"], { type: "application/json" })),
     import_archive: () => Promise.resolve(),
   };

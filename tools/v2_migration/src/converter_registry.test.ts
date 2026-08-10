@@ -71,6 +71,23 @@ describe("LegacySettingsSchema: older-install defaults (I5 regression)", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("normalizes an empty jiuguanStorage payload to a missing host image", () => {
+    const source = structuredClone(settingsFixture);
+    const image = Object.values(source.jiuguanStorage)[0]?.images[0];
+    if (image === undefined) {
+      throw new Error("fixture must carry at least one jiuguanStorage image");
+    }
+    image.data_base64 = "";
+
+    const result = LegacySettingsSchema.safeParse(source);
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw new Error("unreachable");
+    }
+    expect(Object.values(result.data.jiuguanStorage)[0]?.images[0]?.data_base64).toBeUndefined();
+  });
 });
 
 describe("classify_settings_paths", () => {

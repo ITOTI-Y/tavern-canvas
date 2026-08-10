@@ -284,9 +284,13 @@ async function run_copy_batch(batch: CopyBatchName, context: CopyBatchContext): 
       });
 
     case "secrets": {
-      // A configured Gateway is itself the supported destination: it holds
-      // provider credentials server-side, so nothing needs to move client-side.
-      if (context.settings.get_settings().gateway.endpoint !== null) {
+      // A Gateway profile only replaces the SillyTavern secret destination once its token
+      // reference is present. An endpoint alone is not a credential and must not discard v2
+      // secrets before they have a usable destination.
+      const gateway = context.settings.get_settings().gateway;
+      const has_gateway_token_reference =
+        typeof gateway.token_secret_id === "string" && gateway.token_secret_id.length > 0;
+      if (has_gateway_token_reference) {
         return 0;
       }
       const summary = await transfer_secrets(

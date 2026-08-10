@@ -66,6 +66,7 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
     },
     SillyTavern: { getContext: () => context },
     fetch: create_secrets_fetch(),
+    location: { href: "https://example.test/", origin: "https://example.test" },
   };
 }
 

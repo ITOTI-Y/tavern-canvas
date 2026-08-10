@@ -32,14 +32,18 @@ const props = withDefaults(
     readonly label: string;
     readonly incrementLabel: string;
     readonly decrementLabel: string;
-    readonly min?: number;
-    readonly max?: number;
+    readonly min?: number | undefined;
+    readonly max?: number | undefined;
     readonly step?: number;
     readonly disabled?: boolean;
-    readonly id?: string;
-    readonly describedBy?: string;
+    readonly id?: string | undefined;
+    readonly describedBy?: string | undefined;
   }>(),
   {
+    min: undefined,
+    max: undefined,
+    id: undefined,
+    describedBy: undefined,
     step: 1,
     disabled: false,
   },

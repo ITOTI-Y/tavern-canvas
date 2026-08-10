@@ -78,6 +78,7 @@ export function convert_settings(
     global_concurrency: 1,
     auto_generation_enabled: to_bool(legacy.autoLLMImageGen),
     fallback_generation_enabled: to_bool(legacy.enablePregen),
+    vocabulary_update_channel: "bundled",
     gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
     ui: {
       color_mode: "system",
