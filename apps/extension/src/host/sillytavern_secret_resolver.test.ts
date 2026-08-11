@@ -16,7 +16,7 @@ function context() {
 
 function fetch_returning(response: () => SillyTavernUploadResponse): SillyTavernFetch {
   return vi.fn(async (route: string) => {
-    if (route !== "/api/secrets/find") {
+    if (route !== "/api/secrets/view") {
       throw new Error(`Unexpected route ${route}`);
     }
     return response();
@@ -36,19 +36,19 @@ function fully_serialize(error: unknown): string {
 }
 
 describe("SillyTavernSecretResolver", () => {
-  it("resolves a reference through POST /api/secrets/find with the host CSRF headers", async () => {
+  it("resolves a reference through POST /api/secrets/view with the host CSRF headers", async () => {
     const fetch_ = fetch_returning(() => ({
       ok: true,
       status: 200,
-      json: async () => ({ value: PLAINTEXT }),
+      json: async () => ({ [REFERENCE]: PLAINTEXT }),
     }));
     const resolver = new SillyTavernSecretResolver(context(), fetch_);
 
     await expect(resolver.resolve_secret(REFERENCE)).resolves.toBe(PLAINTEXT);
-    expect(fetch_).toHaveBeenCalledWith("/api/secrets/find", {
+    expect(fetch_).toHaveBeenCalledWith("/api/secrets/view", {
       method: "POST",
       headers: { "X-CSRF-TOKEN": "csrf-token" },
-      body: JSON.stringify({ key: REFERENCE }),
+      body: JSON.stringify({}),
     });
   });
 
@@ -95,7 +95,12 @@ describe("SillyTavernSecretResolver", () => {
   });
 
   it("treats a blank or non-string value as not_found rather than sending an empty credential", async () => {
-    for (const payload of [{ value: "" }, { value: "   " }, { value: 42 }, {}, null]) {
+    for (const payload of [
+      { [REFERENCE]: "" },
+      { [REFERENCE]: "   " },
+      { [REFERENCE]: 42 },
+      null,
+    ]) {
       await expect(
         new SillyTavernSecretResolver(
           context(),
@@ -145,7 +150,11 @@ describe("create_sillytavern_secret_resolver", () => {
   it("returns a working resolver when the host does expose one", async () => {
     const resolver = create_sillytavern_secret_resolver(
       context(),
-      fetch_returning(() => ({ ok: true, status: 200, json: async () => ({ value: PLAINTEXT }) })),
+      fetch_returning(() => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ [REFERENCE]: PLAINTEXT }),
+      })),
     );
 
     await expect(resolver?.resolve_secret(REFERENCE)).resolves.toBe(PLAINTEXT);

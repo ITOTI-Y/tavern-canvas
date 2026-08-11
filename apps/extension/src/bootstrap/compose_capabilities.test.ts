@@ -41,6 +41,7 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
     getCurrentLocale: () => "en",
     getCurrentChatId: () => "chat-42",
     getRequestHeaders: () => ({ "Content-Type": "application/json" }),
+    isToolCallingSupported: () => true,
     eventSource: { on: vi.fn(), removeListener: vi.fn() },
     eventTypes: {
       GENERATION_STARTED: "generation_started",
@@ -70,7 +71,7 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
   };
 }
 
-/** Answers the two SillyTavern secret-vault routes the composed capabilities actually call. */
+/** Answers the SillyTavern secret-vault routes the composed capabilities actually call. */
 function create_secrets_fetch() {
   const vault = new Map<string, string>();
   return vi.fn((route: string, init: { readonly body: string }) => {
@@ -79,21 +80,15 @@ function create_secrets_fetch() {
       vault.set(request.key, request.value ?? "");
       return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ id: "1" }) });
     }
-    if (route === "/api/secrets/read") {
+    if (route === "/api/secrets/view") {
       return Promise.resolve({
         ok: true,
         status: 200,
         json: () =>
           Promise.resolve(
-            Object.fromEntries([...vault.keys()].map((key) => [key, [{ active: true }]])),
+            Object.fromEntries([...vault.entries()].map(([key, value]) => [key, value])),
           ),
       });
-    }
-    if (route === "/api/secrets/find") {
-      const value = vault.get(request.key ?? "");
-      return value === undefined
-        ? Promise.resolve({ ok: false, status: 404, json: () => Promise.resolve({}) })
-        : Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ value }) });
     }
     return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) });
   });
@@ -318,14 +313,22 @@ describe("compose_studio_capabilities", () => {
       id: profile_id,
       provider_id: "sd_webui",
       display_name: "Local SD",
+      model_id: "sdxl-base",
+      workflow_id: null,
       is_default: true,
       updated_at: "",
       secret_reference: null,
     });
 
-    expect(saved.display_name).toBe("Local SD");
+    expect(saved).toMatchObject({ display_name: "Local SD", model_id: "sdxl-base" });
     await expect(composition.capabilities.profiles.load()).resolves.toMatchObject([
-      { id: profile_id, provider_id: "sd_webui", display_name: "Local SD", is_default: true },
+      {
+        id: profile_id,
+        provider_id: "sd_webui",
+        display_name: "Local SD",
+        model_id: "sdxl-base",
+        is_default: true,
+      },
     ]);
     await composition.dispose();
   });

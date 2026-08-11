@@ -248,6 +248,9 @@ export function create_host_environment(options: HostEnvironmentOptions): {
     unregisterFunctionTool(name) {
       unregistered_tool_names.push(name);
     },
+    isToolCallingSupported() {
+      return true;
+    },
     setExtensionPrompt(_key, value) {
       trigger_injections.push(value);
     },
@@ -290,6 +293,15 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       return Promise.resolve(
         options.secrets_readable
           ? json_response({ value: SEEDED_CREDENTIAL })
+          : json_response({ error: "not exposed" }, 403),
+      );
+    }
+    if (record.url === "/api/secrets/view") {
+      return Promise.resolve(
+        options.secrets_readable
+          ? json_response(
+              Object.fromEntries([...stored_secret_keys].map((key) => [key, SEEDED_CREDENTIAL])),
+            )
           : json_response({ error: "not exposed" }, 403),
       );
     }

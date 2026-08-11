@@ -1,7 +1,11 @@
 import type { SecretCredentialKind } from "@tavern-canvas/v2-migration";
 
 import type { SecretDestinationPort } from "../migration/secret_transfer.js";
-import { clone_request_headers, type SillyTavernFetch } from "./sillytavern_host.js";
+import {
+  bind_sillytavern_fetch,
+  clone_request_headers,
+  type SillyTavernFetch,
+} from "./sillytavern_host.js";
 
 /**
  * The narrow slice of `SillyTavernContextSurface` this adapter needs -- just enough to attach
@@ -16,31 +20,25 @@ function is_record(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * True when `payload[reference]` is SillyTavern's `SecretState[]` shape with at least one
- * `active` entry. Deliberately reads no field but `active`: the sibling `value` field in that
- * response is masked by default and unmasked only if the host's `allowKeysExposure` config is
- * on, but this adapter must never depend on that config either way, so it never looks at
- * `value` at all -- presence-and-active is the entire signal.
+ * True when SillyTavern's `/api/secrets/view` response carries a non-empty active value for the
+ * reference. The route returns a `Record<string, string>` in SillyTavern 1.18. The plaintext is
+ * necessarily present in the response, but this adapter only checks its type and length and never
+ * returns, stores, logs, or includes it in an error.
  */
 function has_active_secret(payload: unknown, reference: string): boolean {
   if (!is_record(payload)) {
     return false;
   }
-  const entries = payload[reference];
-  if (!Array.isArray(entries)) {
-    return false;
-  }
-  return entries.some((entry) => is_record(entry) && entry.active === true);
+  const value = payload[reference];
+  return typeof value === "string" && value.length > 0;
 }
 
 /**
  * Concrete `SecretDestinationPort` targeting SillyTavern's real secret vault
- * (`src/endpoints/secrets.js`, `SecretManager`): `/api/secrets/write` stores a value under an
- * arbitrary string key (deactivating any prior entry for that key, never deleting it), and
- * `/api/secrets/read` returns only presence/active state -- masked values, never plaintext,
- * regardless of the host's `allowKeysExposure` config. `derive_secret_reference`'s namespaced
- * string becomes that key; SillyTavern's own `SECRET_KEYS` enum is just a client-side
- * convenience list, not a server-enforced allowlist, so every v2 credential kind fits.
+ * (`src/endpoints/secrets.js`). SillyTavern accepts arbitrary string keys for writes, but its
+ * presence-only `/api/secrets/read` route enumerates built-in keys only. Custom TavernCanvas
+ * references therefore use `/api/secrets/view`, which is available when `allowKeysExposure` is
+ * enabled; this adapter reduces the returned value to a boolean immediately.
  */
 export class SillyTavernSecretDestination implements SecretDestinationPort {
   readonly #context: SillyTavernSecretContext;
@@ -48,7 +46,7 @@ export class SillyTavernSecretDestination implements SecretDestinationPort {
 
   constructor(context: SillyTavernSecretContext, fetch_: SillyTavernFetch) {
     this.#context = context;
-    this.#fetch = fetch_;
+    this.#fetch = bind_sillytavern_fetch(fetch_);
   }
 
   supports(_credential_kind: SecretCredentialKind): boolean {
@@ -71,7 +69,7 @@ export class SillyTavernSecretDestination implements SecretDestinationPort {
   }
 
   async probe_secret(reference: string): Promise<boolean> {
-    const response = await this.#fetch("/api/secrets/read", {
+    const response = await this.#fetch("/api/secrets/view", {
       method: "POST",
       headers: clone_request_headers(this.#context.getRequestHeaders()),
       body: JSON.stringify({}),

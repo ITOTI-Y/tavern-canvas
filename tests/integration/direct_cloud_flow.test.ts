@@ -74,11 +74,11 @@ function create_globals(options: { readonly reveals_secrets: boolean }): {
   const host_calls: HostFetchCall[] = [];
   const host_fetch = vi.fn((route: string, init: { readonly body: string }) => {
     host_calls.push({ route, body: init.body });
-    if (route === "/api/secrets/find" && options.reveals_secrets) {
+    if (route === "/api/secrets/view" && options.reveals_secrets) {
       return Promise.resolve({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ value: PLAINTEXT_CREDENTIAL }),
+        json: () => Promise.resolve({ [VAULT_REFERENCE]: PLAINTEXT_CREDENTIAL }),
       });
     }
     return Promise.resolve({ ok: false, status: 403, json: () => Promise.resolve({}) });
@@ -87,6 +87,7 @@ function create_globals(options: { readonly reveals_secrets: boolean }): {
     getCurrentLocale: () => "en",
     getCurrentChatId: () => "chat-42",
     getRequestHeaders: () => ({ "X-CSRF-TOKEN": "csrf-token" }),
+    isToolCallingSupported: () => true,
     eventSource: { on: vi.fn(), removeListener: vi.fn() },
     eventTypes: {
       GENERATION_STARTED: "generation_started",
@@ -152,7 +153,7 @@ async function seed_cloud_profile(
       is_default: true,
       ...(options.with_credential ? { vault_key: VAULT_REFERENCE } : {}),
       provider_profile: {
-        model_allowlist: ["nai-diffusion-4-full"],
+        model_allowlist: ["nai-diffusion-4-5-full"],
         output_mime_type_allowlist: ["image/png"],
         max_response_bytes: 2_000_000,
         max_archive_entries: 8,
@@ -170,7 +171,7 @@ function novelai_request() {
     prompt: "a lantern-lit canal at dusk",
     negative_prompt: "lowres",
     output_count: 1,
-    model_id: "nai-diffusion-4-full",
+    model_id: "nai-diffusion-4-5-full",
     sampler: "k_euler_ancestral",
     width: 1024,
     height: 1024,
@@ -307,9 +308,7 @@ describe("direct cloud generation flow", () => {
     expect(harness.requests[0]?.body).toContain("lantern-lit canal");
 
     // The credential came from the host vault, addressed by reference, at call time.
-    expect(harness.host_calls).toEqual([
-      { route: "/api/secrets/find", body: JSON.stringify({ key: VAULT_REFERENCE }) },
-    ]);
+    expect(harness.host_calls).toEqual([{ route: "/api/secrets/view", body: JSON.stringify({}) }]);
 
     const records = await new GalleryImageRecordRepository(harness.database).list(NAMESPACE);
     expect(records).toHaveLength(1);

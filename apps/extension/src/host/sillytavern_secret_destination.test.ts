@@ -55,6 +55,16 @@ describe("SillyTavernSecretDestination", () => {
     });
   });
 
+  it("binds the browser fetch receiver before calling the native API", async () => {
+    const fetch_ = vi.fn<SillyTavernFetch>(function (this: unknown) {
+      expect(this).toBe(globalThis);
+      return Promise.resolve({ ok: true, status: 200, json: async () => ({}) });
+    });
+    const destination = new SillyTavernSecretDestination(context(), fetch_);
+
+    await destination.write_secret("tavern_canvas:ns:gateway_token", "sk-plaintext");
+  });
+
   it("throws when the write endpoint returns a non-OK status, never treating a rejected write as success", async () => {
     const fetch_ = fetch_returning({
       "/api/secrets/write": () => ({ ok: false, status: 400, json: async () => ({}) }),
@@ -66,15 +76,13 @@ describe("SillyTavernSecretDestination", () => {
     ).rejects.toThrowError(/status 400/u);
   });
 
-  it("probes retrievability through the read-state endpoint and never returns the secret value", async () => {
+  it("probes retrievability through the vault view endpoint and never returns the secret value", async () => {
     const fetch_ = fetch_returning({
-      "/api/secrets/read": () => ({
+      "/api/secrets/view": () => ({
         ok: true,
         status: 200,
         json: async () => ({
-          "tavern_canvas:ns:profile:novelai_token": [
-            { id: "secret-uuid", value: "*******642", label: "Unlabeled", active: true },
-          ],
+          "tavern_canvas:ns:profile:novelai_token": "sk-plaintext",
         }),
       }),
     });
@@ -88,7 +96,7 @@ describe("SillyTavernSecretDestination", () => {
 
   it("reports false when no active entry exists for the reference", async () => {
     const fetch_ = fetch_returning({
-      "/api/secrets/read": () => ({
+      "/api/secrets/view": () => ({
         ok: true,
         status: 200,
         json: async () => ({ "tavern_canvas:ns:profile:novelai_token": null }),
@@ -101,9 +109,9 @@ describe("SillyTavernSecretDestination", () => {
     );
   });
 
-  it("reports false (never throws) when the read endpoint itself fails, so the caller maps it to probe_failed", async () => {
+  it("reports false (never throws) when the view endpoint itself fails, so the caller maps it to probe_failed", async () => {
     const fetch_ = fetch_returning({
-      "/api/secrets/read": () => ({ ok: false, status: 500, json: async () => ({}) }),
+      "/api/secrets/view": () => ({ ok: false, status: 500, json: async () => ({}) }),
     });
     const destination = new SillyTavernSecretDestination(context(), fetch_);
 
@@ -113,19 +121,15 @@ describe("SillyTavernSecretDestination", () => {
   });
 
   it("round-trips store -> probe-retrieve through migration's real transfer_secrets contract, with the plaintext never surfacing again", async () => {
-    const store = new Map<string, { active: boolean }[]>();
+    const store = new Map<string, string>();
     const fetch_ = vi.fn<SillyTavernFetch>(async (route, init) => {
       const body = JSON.parse(init.body) as { key?: string; value?: string };
       if (route === "/api/secrets/write" && body.key && body.value) {
-        store.set(body.key, [{ active: true }]);
+        store.set(body.key, body.value);
         return { ok: true, status: 200, json: async () => ({ id: "secret-uuid" }) };
       }
-      if (route === "/api/secrets/read") {
-        const state: Record<string, unknown> = {};
-        for (const [key, entries] of store) {
-          state[key] = entries;
-        }
-        return { ok: true, status: 200, json: async () => state };
+      if (route === "/api/secrets/view") {
+        return { ok: true, status: 200, json: async () => Object.fromEntries(store) };
       }
       throw new Error(`Unexpected call to ${route}`);
     });

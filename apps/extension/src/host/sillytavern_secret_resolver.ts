@@ -1,6 +1,10 @@
 import { VaultReferenceSchema } from "@tavern-canvas/contracts";
 
-import { clone_request_headers, type SillyTavernFetch } from "./sillytavern_host.js";
+import {
+  bind_sillytavern_fetch,
+  clone_request_headers,
+  type SillyTavernFetch,
+} from "./sillytavern_host.js";
 import type { SillyTavernSecretContext } from "./sillytavern_secret_destination.js";
 
 export type SecretResolutionFailure =
@@ -36,11 +40,10 @@ const NOT_EXPOSED_MESSAGE =
   "config.yaml to allow direct provider calls, or route this profile through the Gateway instead.";
 
 /**
- * Concrete `SecretResolverPort` over SillyTavern's `POST /api/secrets/find` (`src/endpoints/
- * secrets.js`), which answers `{ value }` for a key and is gated behind the host's
- * `allowKeysExposure` config. That gate is the host operator's decision about whether the browser
- * may hold provider credentials at all, so a 403 is reported as a distinct, user-actionable
- * outcome rather than folded into a generic failure.
+ * Concrete `SecretResolverPort` over SillyTavern's `POST /api/secrets/view` route. The route is
+ * gated by the host's `allowKeysExposure` setting and returns the active plaintext value for each
+ * custom and built-in key. This resolver extracts only the value named by its requested vault
+ * reference.
  */
 export class SillyTavernSecretResolver implements SecretResolverPort {
   readonly #context: SillyTavernSecretContext;
@@ -48,7 +51,7 @@ export class SillyTavernSecretResolver implements SecretResolverPort {
 
   constructor(context: SillyTavernSecretContext, fetch_: SillyTavernFetch) {
     this.#context = context;
-    this.#fetch = fetch_;
+    this.#fetch = bind_sillytavern_fetch(fetch_);
   }
 
   async resolve_secret(reference: string): Promise<string> {
@@ -61,10 +64,10 @@ export class SillyTavernSecretResolver implements SecretResolverPort {
 
     let response: { readonly ok: boolean; readonly status: number; json(): Promise<unknown> };
     try {
-      response = await this.#fetch("/api/secrets/find", {
+      response = await this.#fetch("/api/secrets/view", {
         method: "POST",
         headers: clone_request_headers(this.#context.getRequestHeaders()),
-        body: JSON.stringify({ key: reference }),
+        body: JSON.stringify({}),
       });
     } catch {
       throw new SecretResolutionError("unavailable", "The host secret vault could not be reached");
@@ -92,10 +95,15 @@ export class SillyTavernSecretResolver implements SecretResolverPort {
         "The host secret vault returned an unreadable response",
       );
     }
-    const value =
-      typeof payload === "object" && payload !== null
-        ? (payload as Record<string, unknown>).value
-        : undefined;
+    let value: unknown;
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      !Array.isArray(payload) &&
+      reference in payload
+    ) {
+      value = Reflect.get(payload, reference);
+    }
     if (typeof value !== "string" || value.trim().length === 0) {
       throw new SecretResolutionError("not_found", "The host vault holds no such credential");
     }

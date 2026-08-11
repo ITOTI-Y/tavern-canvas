@@ -158,11 +158,11 @@ function create_globals(options: GlobalsOptions): {
   const host_calls: string[] = [];
   const host_fetch = vi.fn((route: string, init: { readonly body: string }) => {
     host_calls.push(`${route} ${init.body}`);
-    if (route === "/api/secrets/find" && options.reveals_secrets !== false) {
+    if (route === "/api/secrets/view" && options.reveals_secrets !== false) {
       return Promise.resolve({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ value: GATEWAY_TOKEN }),
+        json: () => Promise.resolve({ [TOKEN_REFERENCE]: GATEWAY_TOKEN }),
       });
     }
     return Promise.resolve({ ok: false, status: 403, json: () => Promise.resolve({}) });
@@ -171,6 +171,7 @@ function create_globals(options: GlobalsOptions): {
     getCurrentLocale: () => "en",
     getCurrentChatId: () => "chat-42",
     getRequestHeaders: () => ({ "X-CSRF-TOKEN": "csrf-token" }),
+    isToolCallingSupported: () => true,
     eventSource: { on: vi.fn(), removeListener: vi.fn() },
     eventTypes: {
       GENERATION_STARTED: "generation_started",
@@ -357,9 +358,7 @@ describe("gateway generation flow", () => {
       expect(new URL(url).origin).toBe(gateway_origin);
     }
     expect(harness.requests.some((url) => url.endsWith("/content"))).toBe(true);
-    expect(harness.host_calls).toContain(
-      `/api/secrets/find ${JSON.stringify({ key: TOKEN_REFERENCE })}`,
-    );
+    expect(harness.host_calls).toContain(`/api/secrets/view ${JSON.stringify({})}`);
     await harness.composition.dispose();
   }, 30_000);
 
