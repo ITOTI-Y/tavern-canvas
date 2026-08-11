@@ -228,11 +228,16 @@
   background-color: var(--tc-surface-raised);
 }
 
+/* `padding: 0` overrides the UA stylesheet's own `1px 6px` on `<button>`, which base.css's reset
+   does not clear. Left unset, this full-width row button indented its own text 6px past the 16px
+   the wrapping .job_row already applies, so job text hung 22px from the panel edge while every
+   other line in the panel sat at 16px. The 1px block padding also squeezed the row to 25px tall. */
 .job_row_main {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
+  padding: 0;
   text-align: left;
 }
 

@@ -13,10 +13,19 @@ withDefaults(
   defineProps<{
     readonly status: "loading" | "empty" | "error" | "ready";
     readonly minHeight?: string;
+    /**
+     * Optional headline above `emptyMessage`. Callers whose locale bundle already splits the state
+     * into a title and a description pass both and get two lines; the eight that used to join them
+     * with a template literal produced a single run-on line, which in Chinese put two complete
+     * sentences side by side separated by one half-width space. Callers with only a description
+     * leave this unset and render exactly as before.
+     */
+    readonly emptyTitle?: string;
     readonly emptyMessage?: string;
     readonly errorMessage?: string;
   }>(),
   {
+    emptyTitle: "",
     emptyMessage: "",
     errorMessage: "",
     minHeight: "160px",
@@ -34,7 +43,10 @@ withDefaults(
       </slot>
     </div>
     <div v-else-if="status === 'empty'" :class="styles.stateSurfaceMessage">
-      <p :class="styles.stateSurfaceMessageText">{{ emptyMessage }}</p>
+      <div :class="styles.stateSurfaceMessageGroup">
+        <p v-if="emptyTitle" :class="styles.stateSurfaceMessageTitle">{{ emptyTitle }}</p>
+        <p v-if="emptyMessage" :class="styles.stateSurfaceMessageText">{{ emptyMessage }}</p>
+      </div>
       <div v-if="$slots.action" :class="styles.stateSurfaceAction">
         <slot name="action" />
       </div>

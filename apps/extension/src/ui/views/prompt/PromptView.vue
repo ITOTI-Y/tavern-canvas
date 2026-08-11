@@ -191,7 +191,8 @@ function handle_run_test(input: string): void {
     <div :class="styles.editor_column">
       <StateSurface
         :status="props.state.prompt.draft ? 'ready' : 'empty'"
-        :empty-message="`${t('prompt.preset_browser.empty_title')} ${t('prompt.preset_browser.empty_description')}`"
+        :empty-title="t('prompt.preset_browser.empty_title')"
+        :empty-message="t('prompt.preset_browser.empty_description')"
       >
         <template v-if="props.state.prompt.draft">
           <div :class="styles.name_row">

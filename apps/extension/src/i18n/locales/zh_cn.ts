@@ -468,6 +468,7 @@ const diagnostics = {
   connection_tests: {
     title: "连接测试",
     run_action: "运行测试",
+    idle: "尚未运行连接测试。测试会向当前 provider 配置发起一次探测请求。",
     running: "正在运行连接测试",
     latency_label: "{ms} 毫秒",
   },

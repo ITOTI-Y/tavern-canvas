@@ -45,10 +45,6 @@ const surface_status = computed<"loading" | "empty" | "error" | "ready">(() => {
   return props.jobs.length === 0 ? "empty" : "ready";
 });
 
-const empty_message = computed(
-  () => `${t("workbench.active_jobs.empty_title")} ${t("workbench.active_jobs.empty_description")}`,
-);
-
 // "{n} job(s) running" (workbench.active_jobs.active_count) means literally in-flight jobs --
 // this list also keeps completed/failed/cancelled rows visible (for completion preview and
 // retry), so the header count must exclude those terminal states rather than count every row.
@@ -120,7 +116,8 @@ const cancel_target_job = computed(() =>
 
     <StateSurface
       :status="surface_status"
-      :empty-message="empty_message"
+      :empty-title="t('workbench.active_jobs.empty_title')"
+      :empty-message="t('workbench.active_jobs.empty_description')"
       :error-message="t('workbench.active_jobs.load_error')"
     >
       <ul :class="styles.job_list" data-testid="job-list">

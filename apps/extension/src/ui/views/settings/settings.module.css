@@ -17,8 +17,12 @@
   min-width: 0;
 }
 
+/* Same content-driven wrap as .profile_row: the action button's label is a full localized phrase
+   ("Add text model connection" / "添加文本模型连接"), which at 390px leaves the title nothing to
+   shrink into. */
 .section_header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -53,8 +57,14 @@
   color: var(--tc-text);
 }
 
+/* Wraps by content, not by breakpoint: an action group here runs from two buttons (a bare provider
+   profile) to five (an LLM connection with a stored API key), so no single viewport threshold
+   separates "fits" from "does not". Without the wrap, the row's nowrap flex line kept the whole
+   action group on one line and collapsed .profile_identity to 0px wide -- the profile name
+   vanished entirely at 390px while the buttons still overflowed the viewport by 164px. */
 .profile_row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -62,8 +72,13 @@
   border-top: 1px solid var(--tc-divider);
 }
 
+/* `flex: 1 1 12rem` (not the default `0 1 auto`) gives the identity column a real basis to shrink
+   from and the grow factor to reclaim the row once the actions wrap away onto their own line. The
+   basis is the point below which the name is not worth truncating any further -- past it the
+   identity takes the full row and the actions wrap beneath. */
 .profile_identity {
   display: flex;
+  flex: 1 1 12rem;
   min-width: 0;
   flex-direction: column;
   gap: 2px;
@@ -84,10 +99,13 @@
   text-overflow: ellipsis;
 }
 
+/* Wrapping inside the group too: five buttons still exceed 390px on their own line. Right-aligned
+   so a wrapped group stays anchored to the row's trailing edge instead of drifting left. */
 .profile_actions {
   display: flex;
-  flex: none;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
 }
 

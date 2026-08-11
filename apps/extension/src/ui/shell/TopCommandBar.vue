@@ -3,8 +3,9 @@ import { PanelRightClose, PanelRightOpen } from "lucide-vue-next";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../components/AppIcon.vue";
 import type { StudioRoute } from "../contracts/view_models.js";
-import { ICON_STROKE_WIDTH, route_label } from "./route_nav.js";
+import { route_label } from "./route_nav.js";
 import styles from "./shell.module.css";
 
 const props = defineProps<{
@@ -44,12 +45,7 @@ function toggle_inspector(): void {
         :aria-pressed="!inspectorCollapsed"
         @click="toggle_inspector"
       >
-        <component
-          :is="toggle_icon"
-          :size="18"
-          :stroke-width="ICON_STROKE_WIDTH"
-          aria-hidden="true"
-        />
+        <AppIcon :icon="toggle_icon" :size="18" />
       </button>
     </div>
   </header>

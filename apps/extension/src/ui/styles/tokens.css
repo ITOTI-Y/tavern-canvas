@@ -17,6 +17,12 @@
   --tc-divider: #d8dce3;
   --tc-accent: #2457d6;
   --tc-accent-hover: #1f49b8;
+  /* Foreground for text/icons sitting ON a solid --tc-accent fill (the primary button). It flips
+     with the theme because --tc-accent itself does: the light accent is dark enough to carry white
+     (6.16:1), the dark-mode accent is a light blue that does not (2.93:1, below AA) and needs dark
+     ink instead (6.34:1). style_contract.test.ts asserts both pairings against accent and
+     accent-hover, so neither accent value can drift without the contract catching it. */
+  --tc-on-accent: #ffffff;
   --tc-success: #16815d;
   --tc-warning: #9a6700;
   --tc-error: #c23838;
@@ -26,6 +32,16 @@
      small status text. In dark mode (below) they do not clear AA as a solid fill with white text
      -- badges/buttons must use an outline or tinted-background treatment, never a solid status
      fill with light text, in dark mode. */
+
+  /* Overlay pair for controls that sit ON TOP of user image content (gallery tile select toggle,
+     pinned badge). Deliberately absent from the dark-mode block below, and deliberately not built
+     from the surface/text tokens: what these controls must stay legible against is the bitmap
+     underneath them, which does not change when the color mode does. Reading them from
+     --tc-surface is what made the gallery tile badges disappear against dark artwork in dark mode
+     -- the border turned near-black and the tile behind it was already near-black. The scrim is
+     opaque enough (62%) to carry white ink at AA over any underlying pixel value. */
+  --tc-media-scrim: rgb(17 19 24 / 62%);
+  --tc-media-ink: #ffffff;
 
   --tc-radius-panel: 0;
   --tc-radius-field: 6px;
@@ -66,6 +82,7 @@
   --tc-divider: #343a44;
   --tc-accent: #6f91ff;
   --tc-accent-hover: #7d9cff;
+  --tc-on-accent: #111318;
   --tc-success: #45c995;
   --tc-warning: #e8b44e;
   --tc-error: #ff7b7b;

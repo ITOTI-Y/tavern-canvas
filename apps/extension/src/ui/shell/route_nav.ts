@@ -3,12 +3,6 @@ import type { Component } from "vue";
 
 import type { StudioRoute } from "../contracts/view_models.js";
 
-/**
- * The one standardized stroke width for every Lucide icon in the Studio (taste directive 11):
- * no component picks its own weight.
- */
-export const ICON_STROKE_WIDTH = 1.75;
-
 export interface RouteNavItem {
   readonly route: StudioRoute;
   readonly icon: Component;

@@ -5,6 +5,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppDialog from "../../components/AppDialog.vue";
+import AppIcon from "../../components/AppIcon.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { ReferenceDraftItem } from "./build_generation_request.js";
@@ -41,12 +42,6 @@ const picker_surface_status = computed<"loading" | "empty" | "error" | "ready">(
   }
   return pickable.value.length === 0 ? "empty" : "ready";
 });
-const picker_empty_message = computed(() => {
-  const title = t("workbench.reference_strip.picker_empty_title");
-  const description = t("workbench.reference_strip.picker_empty_description");
-  return `${title} ${description}`;
-});
-
 function open_picker(): void {
   if (at_max.value) {
     return;
@@ -93,7 +88,7 @@ function move_down(index: number): void {
         data-testid="reference-add"
         @click="open_picker"
       >
-        <Plus :size="16" aria-hidden="true" />
+        <AppIcon :icon="Plus" :size="16" />
         {{ t("workbench.reference_strip.add_action") }}
       </button>
     </div>
@@ -106,7 +101,7 @@ function move_down(index: number): void {
         data-testid="reference-item"
       >
         <span :class="styles.reference_tile_thumb" aria-hidden="true">
-          <ImageOff :size="18" />
+          <AppIcon :icon="ImageOff" :size="18" />
         </span>
         <span :class="styles.reference_tile_name">{{ reference.display_name }}</span>
         <span :class="styles.reference_tile_actions">
@@ -141,7 +136,7 @@ function move_down(index: number): void {
           data-testid="reference-add"
           @click="open_picker"
         >
-          <Plus :size="16" aria-hidden="true" />
+          <AppIcon :icon="Plus" :size="16" />
           {{ t("workbench.reference_strip.add_action") }}
         </button>
       </li>
@@ -155,7 +150,8 @@ function move_down(index: number): void {
     >
       <StateSurface
         :status="picker_surface_status"
-        :empty-message="picker_empty_message"
+        :empty-title="t('workbench.reference_strip.picker_empty_title')"
+        :empty-message="t('workbench.reference_strip.picker_empty_description')"
         :error-message="t('workbench.reference_strip.picker_error')"
       >
         <ul :class="styles.picker_list">

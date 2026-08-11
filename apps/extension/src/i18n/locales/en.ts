@@ -487,6 +487,7 @@ const diagnostics = {
   connection_tests: {
     title: "Connection tests",
     run_action: "Run tests",
+    idle: "No connection test has run yet. A test sends one probe request to the current provider profile.",
     running: "Running connection tests",
     latency_label: "{ms} ms",
   },

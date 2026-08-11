@@ -499,4 +499,27 @@ describe("style contract", () => {
       }
     }
   });
+
+  // --tc-accent is the only token the Studio paints as a solid fill behind text (AppButton's
+  // primary variant). Its foreground therefore cannot be a literal color at the call site: the
+  // light accent carries white at 6.16:1, the dark-mode accent carries it at only 2.93:1. This
+  // pins --tc-on-accent against both the resting and hover fills in both themes, so re-tuning
+  // either accent value fails here rather than shipping unreadable primary buttons.
+  it("meets WCAG AA contrast for the on-accent foreground against every accent fill, both themes", () => {
+    for (const selector of [LIGHT_SELECTOR, DARK_SELECTOR]) {
+      const tokens = collect_tokens_for_selector(decls, selector);
+      const on_accent = tokens.get("--tc-on-accent");
+      expect(on_accent, `${selector} is missing --tc-on-accent`).toBeDefined();
+
+      for (const fill of ACCENT_TOKENS) {
+        const fill_value = tokens.get(fill);
+        expect(fill_value, `${selector} ${fill}`).toBeDefined();
+        const ratio = contrast_ratio(on_accent ?? "", fill_value ?? "");
+        expect(
+          ratio,
+          `${selector} --tc-on-accent on ${fill} = ${ratio.toFixed(2)}`,
+        ).toBeGreaterThanOrEqual(AA_BODY_TEXT_RATIO);
+      }
+    }
+  });
 });

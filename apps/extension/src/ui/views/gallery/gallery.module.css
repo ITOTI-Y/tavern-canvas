@@ -37,12 +37,15 @@
   font-size: 12px;
 }
 
+/* Matches the select trigger sharing this filter bar (components.module.css `.selectTrigger`,
+   6px 8px). At 4px 6px the date text and the native calendar picker button both crowded the
+   border hard enough to read as a different, tighter control class than its own neighbours. */
 .dateInput {
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-field);
   background-color: var(--tc-surface);
   color: var(--tc-text);
-  padding: 4px 6px;
+  padding: 6px 8px;
   font-size: 12px;
 }
 
@@ -134,6 +137,10 @@
   padding: 8px;
 }
 
+/* Both tile overlays read from the --tc-media-* pair (tokens.css), never the surface/text/accent
+   families: they float over user artwork, so their contrast partner is the bitmap below them, not
+   the current color mode. The previous --tc-surface border and fill inverted with the theme and
+   left both controls invisible against dark artwork in dark mode. */
 .tilePinnedBadge {
   position: absolute;
   top: 6px;
@@ -142,8 +149,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--tc-radius-status);
-  background-color: var(--tc-surface);
-  color: var(--tc-accent);
+  background-color: var(--tc-media-scrim);
+  color: var(--tc-media-ink);
   padding: 3px;
 }
 
@@ -157,24 +164,17 @@
   width: 20px;
   height: 20px;
   border-radius: var(--tc-radius-status);
-  border: 1px solid var(--tc-surface);
-  background-color: rgb(24 26 31 / 40%);
+  border: 1px solid var(--tc-media-ink);
+  background-color: var(--tc-media-scrim);
+  color: var(--tc-media-ink);
   transition: background-color var(--tc-motion-fast) ease-out;
 }
 
-.tileSelectDot {
-  /* A true circle (matches shell.module.css's own status-dot precedent), not the field/status
-     rectangle radius scale: at this size a bordered rounded-square read as ambiguous as the
-     digit "0" in a real-browser check, which a genuine circle does not. */
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid var(--tc-surface);
-}
-
-.tileSelectDot[data-checked] {
+/* Checked takes the accent fill every other selected control uses, keeping the --tc-media-ink
+   outline so the box still separates from artwork whose colors sit near the accent. */
+.tileSelectToggle[data-checked] {
   background-color: var(--tc-accent);
-  border-color: var(--tc-accent);
+  color: var(--tc-on-accent);
 }
 
 /* ---------------------------------------------------------------------- */

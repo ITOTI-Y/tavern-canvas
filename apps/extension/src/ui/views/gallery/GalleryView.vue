@@ -335,7 +335,8 @@ const grid_status = computed(() => {
 
     <StateSurface
       :status="grid_status"
-      :empty-message="t('gallery.empty_title')"
+      :empty-title="t('gallery.empty_title')"
+      :empty-message="t('gallery.empty_description')"
       min-height="240px"
     >
       <template #skeleton>

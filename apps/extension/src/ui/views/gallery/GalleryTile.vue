@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ImageOff, Pin } from "lucide-vue-next";
+import { Check, ImageOff, Pin } from "lucide-vue-next";
 import { computed, ref } from "vue";
 
+import AppIcon from "../../components/AppIcon.vue";
 import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
 import styles from "./gallery.module.css";
 import { use_gallery_object_url } from "./use_gallery_object_url.js";
@@ -67,23 +68,27 @@ const decoded = ref(false);
         @error="decoded = false"
       />
       <div v-else-if="status === 'error'" :class="styles.tileFallback">
-        <ImageOff :size="20" :stroke-width="1.75" aria-hidden="true" />
+        <AppIcon :icon="ImageOff" :size="20" />
         <span>{{ thumbnailFailedLabel }}</span>
       </div>
     </button>
 
     <span v-if="record.pinned" role="img" :class="styles.tilePinnedBadge" :aria-label="pinnedLabel">
-      <Pin :size="12" :stroke-width="1.75" aria-hidden="true" />
+      <AppIcon :icon="Pin" :size="12" />
     </span>
 
+    <!-- Checkmark on select, empty box otherwise. The previous ringed dot inside this box read as
+         the digit "0" against artwork: two concentric outlines with nothing filled in. A checkbox
+         that is either empty or ticked has no such second reading. -->
     <button
       type="button"
       :class="styles.tileSelectToggle"
+      :data-checked="selected ? '' : null"
       :aria-pressed="selected"
       :aria-label="`${selectLabel}: ${record.id}`"
       @click.stop="emit('toggle-select')"
     >
-      <span :class="styles.tileSelectDot" :data-checked="selected ? '' : null" />
+      <AppIcon v-if="selected" :icon="Check" :size="14" />
     </button>
   </div>
 </template>

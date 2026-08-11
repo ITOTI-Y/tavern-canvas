@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Plus, X } from "lucide-vue-next";
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../../components/AppIcon.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
@@ -18,12 +18,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-const empty_message = computed(() => {
-  const title = t("prompt.replacement_rules.empty_title");
-  const description = t("prompt.replacement_rules.empty_description");
-  return `${title} ${description}`;
-});
 
 function triggers_text(rule: PromptReplacementRule): string {
   return rule.triggers.join(", ");
@@ -71,14 +65,15 @@ function remove_rule(rule_id: string): void {
         data-testid="add-replacement-rule"
         @click="add_rule"
       >
-        <Plus :size="14" aria-hidden="true" />
+        <AppIcon :icon="Plus" :size="14" />
         {{ t("prompt.replacement_rules.add_action") }}
       </button>
     </div>
 
     <StateSurface
       :status="props.rules.length === 0 ? 'empty' : 'ready'"
-      :empty-message="empty_message"
+      :empty-title="t('prompt.replacement_rules.empty_title')"
+      :empty-message="t('prompt.replacement_rules.empty_description')"
     >
       <div
         v-for="rule in props.rules"

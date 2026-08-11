@@ -4,6 +4,7 @@ import { Copy, ImageOff, RotateCcw } from "lucide-vue-next";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../../components/AppIcon.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { GenerationJobSummary } from "../../contracts/ui_capabilities.js";
@@ -71,7 +72,8 @@ async function copy_parameters(): Promise<void> {
 
     <StateSurface
       :status="props.job ? 'ready' : 'empty'"
-      :empty-message="`${t('workbench.generation_inspector.empty_title')} ${t('workbench.generation_inspector.empty_description')}`"
+      :empty-title="t('workbench.generation_inspector.empty_title')"
+      :empty-message="t('workbench.generation_inspector.empty_description')"
     >
       <dl v-if="props.job" :class="styles.inspector_field_list" data-testid="inspector-fields">
         <div :class="styles.inspector_field">
@@ -108,7 +110,7 @@ async function copy_parameters(): Promise<void> {
           data-testid="copy-parameters"
           @click="copy_parameters"
         >
-          <Copy :size="14" aria-hidden="true" />
+          <AppIcon :icon="Copy" :size="14" />
           {{ t("common.actions.copy") }}
         </button>
         <IconButton
@@ -142,7 +144,7 @@ async function copy_parameters(): Promise<void> {
               role="img"
               :aria-label="t('workbench.generation_inspector.image_alt', { n: index + 1 })"
             >
-              <ImageOff :size="20" />
+              <AppIcon :icon="ImageOff" :size="20" />
             </span>
           </li>
         </ul>

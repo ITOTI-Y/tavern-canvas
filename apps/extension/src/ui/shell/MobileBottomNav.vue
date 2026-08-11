@@ -10,10 +10,10 @@ import {
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../components/AppIcon.vue";
 import type { StudioRoute } from "../contracts/view_models.js";
 import {
   find_route_nav_item,
-  ICON_STROKE_WIDTH,
   MOBILE_MORE_ROUTES,
   MOBILE_PRIMARY_ROUTES,
   route_label,
@@ -66,7 +66,7 @@ function select(route: StudioRoute): void {
       :aria-current="item.route === props.route ? 'page' : undefined"
       @click="select(item.route)"
     >
-      <component :is="item.icon" :size="20" :stroke-width="ICON_STROKE_WIDTH" aria-hidden="true" />
+      <AppIcon :icon="item.icon" :size="20" />
       <span :class="styles.bottom_nav_item_label">{{ item.label }}</span>
     </button>
 
@@ -80,7 +80,7 @@ function select(route: StudioRoute): void {
           :aria-label="more_label"
           data-testid="mobile-more-trigger"
         >
-          <Ellipsis :size="20" :stroke-width="ICON_STROKE_WIDTH" aria-hidden="true" />
+          <AppIcon :icon="Ellipsis" :size="20" />
           <span :class="styles.bottom_nav_item_label">{{ more_label }}</span>
         </button>
       </DropdownMenuTrigger>
@@ -97,12 +97,7 @@ function select(route: StudioRoute): void {
             :class="styles.more_menu_item"
             @select="select(item.route)"
           >
-            <component
-              :is="item.icon"
-              :size="16"
-              :stroke-width="ICON_STROKE_WIDTH"
-              aria-hidden="true"
-            />
+            <AppIcon :icon="item.icon" :size="16" />
             {{ item.label }}
           </DropdownMenuItem>
         </DropdownMenuContent>

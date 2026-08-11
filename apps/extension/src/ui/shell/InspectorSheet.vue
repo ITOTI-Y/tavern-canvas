@@ -12,8 +12,8 @@ import {
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../components/AppIcon.vue";
 import type { InspectorSelection } from "../contracts/view_models.js";
-import { ICON_STROKE_WIDTH } from "./route_nav.js";
 import styles from "./shell.module.css";
 import { use_portal_target } from "./use_portal_target.js";
 
@@ -138,7 +138,7 @@ const selection_intent_label = computed(() => {
             :aria-label="t('common.actions.close')"
             @click="close"
           >
-            <X :size="18" :stroke-width="ICON_STROKE_WIDTH" aria-hidden="true" />
+            <AppIcon :icon="X" :size="18" />
           </button>
         </div>
         <div :class="styles.sheet_body">

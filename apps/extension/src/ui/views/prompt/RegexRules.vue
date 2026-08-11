@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Plus, X } from "lucide-vue-next";
-import { computed, reactive } from "vue";
+import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../../components/AppIcon.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
@@ -22,12 +23,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const sample_text_by_rule = reactive<Record<string, string>>({});
-
-const empty_message = computed(() => {
-  const title = t("prompt.regex_rules.empty_title");
-  const description = t("prompt.regex_rules.empty_description");
-  return `${title} ${description}`;
-});
 
 function pattern_error(rule: PromptRegexRule): string | null {
   if (!rule.pattern) {
@@ -91,14 +86,15 @@ function test_result_text(rule_id: string): string | null {
         data-testid="add-regex-rule"
         @click="add_rule"
       >
-        <Plus :size="14" aria-hidden="true" />
+        <AppIcon :icon="Plus" :size="14" />
         {{ t("prompt.regex_rules.add_action") }}
       </button>
     </div>
 
     <StateSurface
       :status="props.rules.length === 0 ? 'empty' : 'ready'"
-      :empty-message="empty_message"
+      :empty-title="t('prompt.regex_rules.empty_title')"
+      :empty-message="t('prompt.regex_rules.empty_description')"
     >
       <div
         v-for="rule in props.rules"

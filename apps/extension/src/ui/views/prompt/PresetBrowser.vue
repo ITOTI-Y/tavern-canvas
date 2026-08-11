@@ -5,6 +5,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
+import AppIcon from "../../components/AppIcon.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { PromptPresetSummary } from "../../contracts/ui_capabilities.js";
@@ -36,12 +37,6 @@ const surface_status = computed<"loading" | "empty" | "error" | "ready">(() => {
     return "error";
   }
   return props.presets.length === 0 ? "empty" : "ready";
-});
-
-const empty_message = computed(() => {
-  const title = t("prompt.preset_browser.empty_title");
-  const description = t("prompt.preset_browser.empty_description");
-  return `${title} ${description}`;
 });
 
 const filtered = computed(() => {
@@ -135,7 +130,8 @@ function confirm_bulk_delete(): void {
 
     <StateSurface
       :status="surface_status"
-      :empty-message="empty_message"
+      :empty-title="t('prompt.preset_browser.empty_title')"
+      :empty-message="t('prompt.preset_browser.empty_description')"
       :error-message="t('prompt.preset_browser.load_error')"
     >
       <div v-for="[group_key, group_presets] in groups" :key="group_key ?? '__ungrouped__'">
@@ -149,7 +145,7 @@ function confirm_bulk_delete(): void {
             data-testid="random-group"
             @click="pick_random(group_presets)"
           >
-            <Shuffle :size="14" aria-hidden="true" />
+            <AppIcon :icon="Shuffle" :size="14" />
           </button>
         </div>
         <ul :class="styles.preset_list">

@@ -9,8 +9,9 @@ import {
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../components/AppIcon.vue";
 import type { StudioRoute } from "../contracts/view_models.js";
-import { ICON_STROKE_WIDTH, route_label, STUDIO_ROUTES } from "./route_nav.js";
+import { route_label, STUDIO_ROUTES } from "./route_nav.js";
 import styles from "./shell.module.css";
 import { use_portal_target } from "./use_portal_target.js";
 
@@ -47,12 +48,7 @@ const items = computed(() =>
             :aria-label="item.label"
             @click="emit('select', item.route)"
           >
-            <component
-              :is="item.icon"
-              :size="20"
-              :stroke-width="ICON_STROKE_WIDTH"
-              aria-hidden="true"
-            />
+            <AppIcon :icon="item.icon" :size="20" />
           </button>
         </TooltipTrigger>
         <TooltipPortal :to="portal_target">

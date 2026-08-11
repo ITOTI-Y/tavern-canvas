@@ -47,7 +47,7 @@ function failure_message(code: string): string {
       />
     </div>
     <p v-if="command.status === 'idle'" :class="styles.description">
-      {{ t("diagnostics.connection_tests.run_action") }}
+      {{ t("diagnostics.connection_tests.idle") }}
     </p>
     <p v-else-if="is_pending" :class="styles.description">
       {{ t("diagnostics.connection_tests.running") }}

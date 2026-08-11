@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { VocabularyCatalogEntry, VocabularySearchResult } from "@tavern-canvas/contracts";
 
 import AppButton from "../../components/AppButton.vue";
+import AppIcon from "../../components/AppIcon.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { CommandState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
@@ -201,12 +202,10 @@ const search_status = computed(() => {
 
       <StateSurface
         :status="search_status"
-        :empty-message="t('assets.vocabulary.empty_title')"
+        :empty-title="t('assets.vocabulary.empty_title')"
+        :empty-message="t('assets.vocabulary.empty_description')"
         min-height="60px"
       >
-        <template #action>
-          <p :class="styles.emptyDescription">{{ t("assets.vocabulary.empty_description") }}</p>
-        </template>
         <ul v-if="search_results.length > 0" :class="styles.searchResultsList">
           <li
             v-for="result in search_results"
@@ -245,12 +244,10 @@ const search_status = computed(() => {
       <p :class="styles.sectionTitle">{{ t("assets.vocabulary.update_action") }}</p>
       <StateSurface
         :status="catalog_status"
-        :empty-message="t('assets.vocabulary.empty_title')"
+        :empty-title="t('assets.vocabulary.empty_title')"
+        :empty-message="t('assets.vocabulary.empty_description')"
         min-height="80px"
       >
-        <template #action>
-          <p :class="styles.emptyDescription">{{ t("assets.vocabulary.empty_description") }}</p>
-        </template>
         <div :class="styles.catalogList">
           <div
             v-for="entry in standard_entries"
@@ -293,12 +290,7 @@ const search_status = computed(() => {
         :aria-expanded="nsfw_expanded"
         @click="nsfw_expanded = !nsfw_expanded"
       >
-        <component
-          :is="nsfw_expanded ? ChevronUp : ChevronDown"
-          :size="14"
-          :stroke-width="1.75"
-          aria-hidden="true"
-        />
+        <AppIcon :icon="nsfw_expanded ? ChevronUp : ChevronDown" :size="14" />
         {{ t("assets.vocabulary.nsfw_disclosure_label") }}
       </button>
       <p v-if="!nsfw_expanded" :class="styles.nsfwNotice">

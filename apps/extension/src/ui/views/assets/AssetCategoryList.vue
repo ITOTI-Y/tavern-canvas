@@ -5,6 +5,7 @@ import { computed, ref } from "vue";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { Uuid } from "@tavern-canvas/contracts";
 import AppButton from "../../components/AppButton.vue";
+import AppIcon from "../../components/AppIcon.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
@@ -164,7 +165,7 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
 
     <p v-if="records.length > 1" :class="styles.reorderHint">{{ reorderHint }}</p>
 
-    <StateSurface :status="status" :empty-message="emptyTitle" min-height="120px">
+    <StateSurface :status="status" :empty-title="emptyTitle" min-height="120px">
       <template #action>
         <p :class="styles.emptyDescription">{{ emptyDescription }}</p>
         <AppButton :label="addLabel" :icon="Plus" variant="primary" @click="emit('add')" />
@@ -181,7 +182,7 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
           @drop="handle_drop(record.id, $event)"
         >
           <span :class="styles.dragHandle" :aria-label="dragHandleLabel" aria-hidden="true">
-            <GripVertical :size="16" :stroke-width="1.75" />
+            <AppIcon :icon="GripVertical" :size="16" />
           </span>
           <button
             type="button"

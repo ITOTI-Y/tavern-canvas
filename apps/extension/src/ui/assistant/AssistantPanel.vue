@@ -15,6 +15,7 @@ import type {
 } from "../../modules/assistant/assistant_session.js";
 import type { SettingsDraftDiff } from "../../modules/assistant/settings_draft_tools.js";
 import AppButton from "../components/AppButton.vue";
+import AppIcon from "../components/AppIcon.vue";
 import IconButton from "../components/IconButton.vue";
 import AssistantDraftReview from "./AssistantDraftReview.vue";
 import AssistantMessage from "./AssistantMessage.vue";
@@ -165,7 +166,7 @@ function handle_input_keydown(event: KeyboardEvent): void {
 
       <div v-if="taskStrip.length > 0" :class="styles.taskStrip" data-testid="assistant-task-strip">
         <span v-for="entry in taskStrip" :key="entry.job_id" :class="styles.taskChip">
-          <Loader2 :size="12" />
+          <AppIcon :icon="Loader2" :size="12" />
           {{ t("assistant.task_strip_generating", { prompt: entry.positive_prompt }) }}
         </span>
       </div>

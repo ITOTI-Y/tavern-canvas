@@ -32,12 +32,6 @@ const surface_status = computed<"loading" | "empty" | "error" | "ready">(() => {
   return props.profiles.length === 0 ? "empty" : "ready";
 });
 
-const empty_message = computed(() => {
-  const title = t("workbench.provider_summary.no_profile_title");
-  const description = t("workbench.provider_summary.no_profile_description");
-  return `${title} ${description}`;
-});
-
 const options = computed<readonly AppSelectOption[]>(() =>
   props.profiles.map((profile) => ({
     value: profile.id,
@@ -58,7 +52,8 @@ function handle_select(value: string): void {
     <StateSurface
       :status="surface_status"
       min-height="56px"
-      :empty-message="empty_message"
+      :empty-title="t('workbench.provider_summary.no_profile_title')"
+      :empty-message="t('workbench.provider_summary.no_profile_description')"
       :error-message="t('workbench.provider_summary.load_error')"
     >
       <template #action>

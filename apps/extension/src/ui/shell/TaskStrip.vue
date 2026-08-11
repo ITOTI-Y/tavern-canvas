@@ -3,8 +3,8 @@ import { ChevronDown, ChevronUp } from "lucide-vue-next";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../components/AppIcon.vue";
 import type { TaskStripItemViewModel } from "../contracts/view_models.js";
-import { ICON_STROKE_WIDTH } from "./route_nav.js";
 import styles from "./shell.module.css";
 
 const props = defineProps<{
@@ -74,12 +74,7 @@ function toggle(): void {
         :aria-expanded="expanded"
         @click="toggle"
       >
-        <component
-          :is="expanded ? ChevronDown : ChevronUp"
-          :size="16"
-          :stroke-width="ICON_STROKE_WIDTH"
-          aria-hidden="true"
-        />
+        <AppIcon :icon="expanded ? ChevronDown : ChevronUp" :size="16" />
       </button>
     </div>
     <div v-if="expanded" :class="styles.task_strip_list">
