@@ -50,7 +50,7 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
     v-if="props.state.route === 'workbench'"
     :state="props.state"
     :preview-urls="preview_urls"
-    @select-profile="(id) => props.controller.select_provider_profile(id)"
+    @select-profile="(id) => void props.controller.select_provider_profile(id)"
     @submit="(command) => void props.controller.submit_generation(command)"
     @cancel-job="(id) => void props.controller.cancel_generation(id)"
     @retry-job="(id) => void props.controller.retry_generation(id)"

@@ -107,6 +107,14 @@ const floating_entry_enabled = computed(
 const studio_opened = ref(false);
 const shell_visible = computed(() => !floating_entry_enabled.value || studio_opened.value);
 
+watch(
+  shell_visible,
+  (visible) => {
+    host_element.dataset.surfaceMode = visible ? "studio" : "entry";
+  },
+  { immediate: true },
+);
+
 function toggle_studio(): void {
   studio_opened.value = !studio_opened.value;
 }

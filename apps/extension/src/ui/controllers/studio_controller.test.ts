@@ -668,18 +668,57 @@ function build_prompt_draft(overrides: Partial<PromptPresetDraft> = {}): PromptP
 }
 
 describe("create_studio_controller: Task 5 command extensions", () => {
-  it("sets the Workbench active provider profile as local state (no capability call)", async () => {
+  it("persists the Workbench active provider profile selection", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });
     const start_promise = controller.start();
     resolve_all_defaults(mock);
     await start_promise;
 
-    controller.select_provider_profile(PROFILE_ID);
+    await controller.select_provider_profile(PROFILE_ID);
     expect(controller.state.workbench.active_profile_id).toBe(PROFILE_ID);
+    expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
+      active_provider_profile_id: PROFILE_ID,
+    });
 
-    controller.select_provider_profile(null);
+    await controller.select_provider_profile(null);
     expect(controller.state.workbench.active_profile_id).toBeNull();
+    expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
+      active_provider_profile_id: null,
+    });
+  });
+
+  it("selects and persists a newly saved default provider profile", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+    vi.mocked(mock.capabilities.profiles.save).mockResolvedValue({
+      id: PROFILE_ID,
+      provider_id: "novelai",
+      display_name: "NovelAI",
+      model_id: "nai-diffusion-4-5-full",
+      workflow_id: null,
+      is_default: true,
+      updated_at: "2026-08-10T00:00:00Z",
+    });
+
+    await controller.save_provider_profile({
+      id: PROFILE_ID,
+      provider_id: "novelai",
+      display_name: "NovelAI",
+      model_id: "nai-diffusion-4-5-full",
+      workflow_id: null,
+      is_default: true,
+      updated_at: "2026-08-10T00:00:00Z",
+      secret_reference: null,
+    });
+
+    expect(mock.capabilities.settings.update).toHaveBeenCalledWith({
+      active_provider_profile_id: PROFILE_ID,
+    });
+    expect(controller.state.workbench.active_profile_id).toBe(PROFILE_ID);
   });
 
   it("selects a prompt preset by loading its draft, then keeps edits local until save", async () => {

@@ -192,6 +192,7 @@ function on_keydown(event: KeyboardEvent): void {
     :aria-label="openLabel"
     :data-dragging="dragging"
     :data-media-state="resolved_media.state"
+    data-shadow-role="entry"
     @pointerdown="on_pointerdown"
     @click="on_click"
     @keydown="on_keydown"

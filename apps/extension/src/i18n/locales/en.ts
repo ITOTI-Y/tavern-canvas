@@ -30,9 +30,9 @@ const nav = {
   more: "More",
   inspector_expand: "Expand inspector",
   inspector_collapse: "Collapse inspector",
-  task_strip_expand: "Show running tasks",
-  task_strip_collapse: "Hide running tasks",
-  task_strip_count: "{n} task running | {n} tasks running",
+  task_strip_expand: "Show tasks",
+  task_strip_collapse: "Hide tasks",
+  task_strip_count: "{n} task | {n} tasks",
 };
 
 const common = {
@@ -540,6 +540,8 @@ const settings = {
     dialog_add_title: "Add provider profile",
     dialog_edit_title: "Edit provider profile",
     provider_label: "Provider",
+    model_label: "Model",
+    workflow_label: "ComfyUI workflow ID",
     provider_types: {
       sd_webui: "SD WebUI",
       novelai: "NovelAI",

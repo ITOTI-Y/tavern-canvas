@@ -69,11 +69,20 @@ export interface ProviderProfileSummary {
   readonly id: Uuid;
   readonly provider_id: ProviderId;
   readonly display_name: string;
+  readonly model_id?: string | null;
+  readonly workflow_id?: string | null;
   readonly is_default: boolean;
   readonly updated_at: string;
 }
 
-export interface ProviderProfileDraft extends ProviderProfileSummary {
+export interface ProviderProfileDraft {
+  readonly id: Uuid;
+  readonly provider_id: ProviderId;
+  readonly display_name: string;
+  readonly model_id: string;
+  readonly workflow_id: string | null;
+  readonly is_default: boolean;
+  readonly updated_at: string;
   readonly secret_reference: string | null;
 }
 

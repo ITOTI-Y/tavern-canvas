@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ProviderProfileSummary } from "../../contracts/ui_capabilities.js";
-import type { ProviderId, Uuid } from "@tavern-canvas/contracts";
+import { UuidSchema, type ProviderId, type Uuid } from "@tavern-canvas/contracts";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -27,6 +27,8 @@ interface DraftForm {
   readonly is_new: boolean;
   provider_id: ProviderId;
   display_name: string;
+  model_id: string;
+  workflow_id: string;
   secret_reference: string;
   is_default: boolean;
 }
@@ -60,6 +62,7 @@ const provider_id_model = computed<string>({
   set: (value) => {
     if (draft.value) {
       draft.value.provider_id = value as ProviderId;
+      draft.value.workflow_id = "";
     }
   },
 });
@@ -70,6 +73,8 @@ function open_add_dialog(): void {
     is_new: true,
     provider_id: "sd_webui",
     display_name: "",
+    model_id: "",
+    workflow_id: "",
     secret_reference: "",
     is_default: props.profiles.length === 0,
   };
@@ -83,6 +88,8 @@ function open_edit_dialog(profile: ProviderProfileSummary): void {
     is_new: false,
     provider_id: profile.provider_id,
     display_name: profile.display_name,
+    model_id: profile.model_id ?? "",
+    workflow_id: profile.workflow_id ?? "",
     secret_reference: "",
     is_default: profile.is_default,
   };
@@ -101,13 +108,30 @@ async function submit_draft(): Promise<void> {
   if (!current || save_pending.value) {
     return;
   }
+  const display_name = current.display_name.trim();
+  const model_id = current.model_id.trim();
+  const workflow_id =
+    current.provider_id === "comfyui" ? UuidSchema.safeParse(current.workflow_id.trim()) : null;
+  if (
+    display_name.length === 0 ||
+    model_id.length === 0 ||
+    (current.provider_id === "comfyui" && workflow_id?.success !== true)
+  ) {
+    save_error.value = t("errors.validation_required");
+    return;
+  }
   save_pending.value = true;
   save_error.value = null;
   try {
     await props.controller.save_provider_profile({
       id: current.id,
       provider_id: current.provider_id,
-      display_name: current.display_name,
+      display_name,
+      model_id,
+      workflow_id:
+        current.provider_id === "comfyui" && workflow_id?.success === true
+          ? workflow_id.data
+          : null,
       is_default: current.is_default,
       updated_at: new Date().toISOString(),
       secret_reference:
@@ -241,6 +265,34 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               v-model="provider_id_model"
               :options="provider_options"
               :placeholder="t('settings.provider_profiles.provider_label')"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup :label="t('settings.provider_profiles.model_label')" required>
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="draft.model_id"
+              type="text"
+              :aria-describedby="describedBy"
+              :class="styles.typed_confirm_input"
+              data-testid="provider-model-input"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup
+          v-if="draft.provider_id === 'comfyui'"
+          :label="t('settings.provider_profiles.workflow_label')"
+          required
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="draft.workflow_id"
+              type="text"
+              :aria-describedby="describedBy"
+              :class="styles.typed_confirm_input"
+              data-testid="provider-workflow-input"
             />
           </template>
         </FieldGroup>

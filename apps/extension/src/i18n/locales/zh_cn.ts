@@ -32,7 +32,7 @@ const nav = {
   inspector_collapse: "收起检查器",
   task_strip_expand: "展开任务栏",
   task_strip_collapse: "收起任务栏",
-  task_strip_count: "{n} 个任务正在运行 | {n} 个任务正在运行",
+  task_strip_count: "{n} 个任务 | {n} 个任务",
 };
 
 const common = {
@@ -520,6 +520,8 @@ const settings = {
     dialog_add_title: "添加 provider 配置",
     dialog_edit_title: "编辑 provider 配置",
     provider_label: "Provider",
+    model_label: "模型",
+    workflow_label: "ComfyUI 工作流 ID",
     provider_types: {
       sd_webui: "SD WebUI",
       novelai: "NovelAI",

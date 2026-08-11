@@ -25,6 +25,18 @@
   z-index: var(--tc-z-host);
 }
 
+/* In optional-entry mode the full-viewport host remains only as the FAB's positioning plane. It
+   must not paint over or intercept the SillyTavern page behind it; the entry itself opts back into
+   pointer events so it remains draggable and clickable. */
+:host([data-surface-mode="entry"]) {
+  background: transparent;
+  pointer-events: none;
+}
+
+:host([data-surface-mode="entry"]) [data-shadow-role="entry"] {
+  pointer-events: auto;
+}
+
 *,
 *::before,
 *::after {

@@ -8,6 +8,7 @@ import type { StartupStatus } from "../bootstrap/startup_error.js";
 import { en_messages } from "../i18n/locales/en.js";
 import { zh_cn_messages } from "../i18n/locales/zh_cn.js";
 import AppRoot from "./AppRoot.vue";
+import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
 
 /** StudioShell reaches its four viewport-exclusive surfaces through `defineAsyncComponent`, so a
@@ -36,7 +37,11 @@ function mock_matches(dark_color_scheme: boolean): void {
   );
 }
 
-function mount_app_root(props: { status: StartupStatus; probe: BootstrapProbeResult }) {
+function mount_app_root(props: {
+  status: StartupStatus;
+  probe: BootstrapProbeResult;
+  capabilities?: StudioCapabilities;
+}) {
   const i18n = createI18n({
     legacy: false,
     locale: "en",
@@ -58,7 +63,7 @@ function mount_app_root(props: { status: StartupStatus; probe: BootstrapProbeRes
       version: "3.0.0-alpha.1",
       portalTarget: portal_target,
       hostElement: host_element,
-      capabilities: create_unavailable_capabilities(),
+      capabilities: props.capabilities ?? create_unavailable_capabilities(),
     },
     global: { plugins: [i18n] },
     attachTo: mount_point,
@@ -155,6 +160,31 @@ describe("AppRoot normal studio state", () => {
     expect(wrapper.find('[data-startup-state="blocked"]').exists()).toBe(false);
     expect(wrapper.find('[data-startup-state="failed"]').exists()).toBe(false);
     expect(wrapper.findAll("nav > button")).toHaveLength(6); // desktop rail, six routes
+  });
+
+  it("lets the host page receive input while only the optional entry is visible", async () => {
+    mock_matches(false);
+    const capabilities = create_unavailable_capabilities();
+    const snapshot = await capabilities.settings.load();
+    capabilities.settings.load = () =>
+      Promise.resolve({
+        ...snapshot,
+        settings: {
+          ...snapshot.settings,
+          ui: { ...snapshot.settings.ui, optional_entry_enabled: true },
+        },
+      });
+    const { wrapper, host_element } = mount_app_root({
+      status: { state: "ready", title: "ignored", message: "ignored" },
+      probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
+      capabilities,
+    });
+
+    await flushPromises();
+
+    expect(host_element.dataset.surfaceMode).toBe("entry");
+    await wrapper.get('[data-shadow-role="entry"]').trigger("click");
+    expect(host_element.dataset.surfaceMode).toBe("studio");
   });
 
   it("reflects the detected system color scheme onto the Shadow Root host element", () => {

@@ -8,15 +8,18 @@ import type {
   ProfileConnectionTestResult,
   ProfilesCapability,
   ProfilesDomainEvent,
+  ProviderProfileDraft,
   ProviderProfileSummary,
 } from "../../ui/contracts/ui_capabilities.js";
 import { capability_unavailable_error } from "../capability_resolution.js";
 import {
   as_record,
   DomainEventEmitter,
+  read_array,
   read_boolean,
   read_payload,
   read_string,
+  to_json_value,
 } from "./_records.js";
 
 /**
@@ -46,6 +49,50 @@ export interface ProfilesCapabilityDeps {
   readonly now: () => string;
 }
 
+const DEFAULT_MAX_BYTES = 20_000_000;
+
+function first_string(values: readonly unknown[]): string | null {
+  const value = values[0];
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
+}
+
+function build_adapter_profile(
+  draft: ProviderProfileDraft,
+  existing: ProviderProfile | null,
+): Readonly<Record<string, unknown>> {
+  const inherited =
+    existing?.provider_id === draft.provider_id
+      ? as_record(read_payload(existing)[ADAPTER_PROFILE_FIELD])
+      : {};
+  const common = {
+    output_mime_type_allowlist: ["image/png"],
+    max_response_bytes: DEFAULT_MAX_BYTES,
+    max_input_asset_bytes: DEFAULT_MAX_BYTES,
+    ...inherited,
+    model_allowlist: [draft.model_id.trim()],
+  };
+  switch (draft.provider_id) {
+    case "sd_webui":
+      return {
+        vae_allowlist: [],
+        adetailer_model_allowlist: [],
+        controlnet_model_allowlist: [],
+        ...common,
+      };
+    case "novelai":
+      return { max_archive_entries: 8, ...common };
+    case "comfyui":
+      return {
+        ...common,
+        workflow_allowlist: draft.workflow_id === null ? [] : [draft.workflow_id],
+      };
+    case "openai_image":
+      return { remote_asset_origin_allowlist: [], ...common };
+    case "google_image":
+      return common;
+  }
+}
+
 /** The exact object a `ProviderAdapter.validate_profile` expects: adapter-owned fields plus identity. */
 export function adapter_profile_of(record: ProviderProfile): Readonly<Record<string, unknown>> {
   return {
@@ -57,10 +104,13 @@ export function adapter_profile_of(record: ProviderProfile): Readonly<Record<str
 
 function to_summary(record: ProviderProfile): ProviderProfileSummary {
   const payload = read_payload(record);
+  const adapter_profile = as_record(payload[ADAPTER_PROFILE_FIELD]);
   return {
     id: record.id,
     provider_id: ProviderIdSchema.parse(record.provider_id),
     display_name: read_string(payload, "display_name", record.id),
+    model_id: first_string(read_array(adapter_profile, "model_allowlist")),
+    workflow_id: first_string(read_array(adapter_profile, "workflow_allowlist")),
     is_default: read_boolean(payload, "is_default", false),
     updated_at: record.updated_at,
   };
@@ -96,14 +146,18 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
         updated_at: now,
         provider_id: draft.provider_id,
         payload: {
-          // Adapter settings and the endpoint are not part of the UI draft; carry them forward
-          // rather than dropping them on every presentation-level save.
           ...read_payload(existing ?? ({ payload: {} } as ProviderProfile)),
           display_name: draft.display_name,
           is_default: draft.is_default,
+          [ADAPTER_PROFILE_FIELD]: to_json_value(build_adapter_profile(draft, existing)),
           ...(draft.secret_reference === null ? {} : { [VAULT_KEY_FIELD]: draft.secret_reference }),
         },
       };
+      const adapter = (await deps.load_adapters())[draft.provider_id];
+      if (adapter === undefined) {
+        throw capability_unavailable_error(`Provider ${draft.provider_id} is unavailable`);
+      }
+      adapter.validate_profile(adapter_profile_of(record));
       await deps.repository.put(namespace, record);
       const summary = to_summary(record);
       events.emit({ type: "profile_upserted", profile: summary });

@@ -82,8 +82,8 @@ export interface StudioController {
   submit_generation(command: GenerationSubmitCommand): Promise<void>;
   cancel_generation(job_id: Uuid): Promise<void>;
   retry_generation(job_id: Uuid): Promise<void>;
-  /** Sets the Workbench's active provider profile selection (local UI state, no capability call). */
-  select_provider_profile(profile_id: Uuid | null): void;
+  /** Persists and selects the provider profile used for subsequent generation. */
+  select_provider_profile(profile_id: Uuid | null): Promise<void>;
   /** Loads a preset's editable draft and selects it. The draft then lives only in controller state
    * (`state.prompt.draft`) until `save_prompt_preset` persists it -- matching the plan's "draft
    * edits remain local until Save" rule. */
@@ -881,8 +881,11 @@ class StudioControllerImpl implements StudioController {
     this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
   }
 
-  select_provider_profile(profile_id: Uuid | null): void {
-    this.#patch_workbench({ active_profile_id: profile_id });
+  async select_provider_profile(profile_id: Uuid | null): Promise<void> {
+    await this.#capabilities.settings.update({ active_provider_profile_id: profile_id });
+    if (!this.#stopped) {
+      this.#patch_workbench({ active_profile_id: profile_id });
+    }
   }
 
   async select_prompt_preset(preset_id: Uuid): Promise<void> {
@@ -1048,9 +1051,14 @@ class StudioControllerImpl implements StudioController {
 
   async save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary> {
     const profile = await this.#capabilities.profiles.save(draft);
+    const should_select = profile.is_default || this.#state.workbench.active_profile_id === null;
+    if (should_select) {
+      await this.#capabilities.settings.update({ active_provider_profile_id: profile.id });
+    }
     if (!this.#stopped) {
       this.#patch_workbench({
         profiles: upsert_by_id(this.#state.workbench.profiles, profile, (p) => p.id),
+        ...(should_select ? { active_profile_id: profile.id } : {}),
       });
     }
     return profile;

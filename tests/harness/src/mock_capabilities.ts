@@ -584,6 +584,8 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         id: draft.id,
         provider_id: draft.provider_id,
         display_name: draft.display_name,
+        model_id: draft.model_id,
+        workflow_id: draft.workflow_id,
         is_default: draft.is_default,
         updated_at: new Date().toISOString(),
       };

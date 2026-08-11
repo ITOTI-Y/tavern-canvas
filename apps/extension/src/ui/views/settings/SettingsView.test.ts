@@ -10,6 +10,7 @@ import type {
   ProfileConnectionTestResult,
   ProfilesCapability,
   ProviderProfileSummary,
+  ProviderProfileDraft,
   SettingsCapability,
   SettingsSnapshot,
   StudioCapabilities,
@@ -53,6 +54,8 @@ const PROFILE: ProviderProfileSummary = {
   id: PROFILE_ID,
   provider_id: "sd_webui",
   display_name: "Local SD",
+  model_id: "sdxl-base",
+  workflow_id: null,
   is_default: true,
   updated_at: "2026-01-01T00:00:00.000Z",
 };
@@ -204,9 +207,8 @@ describe("SettingsView provider profiles", () => {
     expect(row.text()).toContain("SD WebUI");
     expect(row.text()).toContain("Default");
   });
-
   it("saves a new provider profile through the controller and closes the dialog", async () => {
-    const saved: unknown[] = [];
+    const saved: ProviderProfileDraft[] = [];
     const capabilities = create_unavailable_capabilities();
     const profiles: ProfilesCapability = {
       load: () => Promise.resolve([PROFILE]),
@@ -217,6 +219,8 @@ describe("SettingsView provider profiles", () => {
           id: draft.id,
           provider_id: draft.provider_id,
           display_name: draft.display_name,
+          model_id: draft.model_id,
+          workflow_id: draft.workflow_id,
           is_default: draft.is_default,
           updated_at: "2026-08-07T00:00:00.000Z",
         });
@@ -240,6 +244,12 @@ describe("SettingsView provider profiles", () => {
     name_input.value = "New NovelAI profile";
     name_input.dispatchEvent(new Event("input"));
     await nextTick();
+    const model_input = document.querySelector(
+      '[role="dialog"] [data-testid="provider-model-input"]',
+    ) as HTMLInputElement;
+    model_input.value = "sdxl-base";
+    model_input.dispatchEvent(new Event("input"));
+    await nextTick();
 
     const dialog_buttons = document.querySelectorAll('[role="dialog"] button');
     const save_button = Array.from(dialog_buttons).find((b) => b.textContent === "Save");
@@ -250,7 +260,8 @@ describe("SettingsView provider profiles", () => {
     await nextTick();
 
     expect(saved).toHaveLength(1);
-    expect((saved[0] as { display_name: string }).display_name).toBe("New NovelAI profile");
+    expect(saved[0]?.display_name).toBe("New NovelAI profile");
+    expect(saved[0]?.model_id).toBe("sdxl-base");
     // The save resolved and the controller's profiles subscription upserted it -- the row list
     // now shows two profiles without a page reload.
     expect(wrapper.findAll('[data-testid="provider-profile-row"]').length).toBe(2);

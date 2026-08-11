@@ -443,9 +443,9 @@ describe("StudioShell inspector", () => {
 describe("StudioShell task strip", () => {
   it("renders nothing when there are no tasks", async () => {
     const { wrapper } = await mount_shell({ state: { tasks: [] } });
-    expect(
-      wrapper.find('[aria-label="Show running tasks"], [aria-label="Hide running tasks"]').exists(),
-    ).toBe(false);
+    expect(wrapper.find('[aria-label="Show tasks"], [aria-label="Hide tasks"]').exists()).toBe(
+      false,
+    );
   });
 
   it("shows a chip per task with a semantic status dot, and can collapse/expand", async () => {
@@ -463,13 +463,14 @@ describe("StudioShell task strip", () => {
     expect(dots[0]?.attributes("data-status")).toBe("pending");
     expect(dots[1]?.attributes("data-status")).toBe("success");
 
-    const collapse_button = wrapper.get('[aria-label="Hide running tasks"]');
+    const collapse_button = wrapper.get('[aria-label="Hide tasks"]');
     await collapse_button.trigger("click");
     expect(wrapper.findAll("[data-status]")).toHaveLength(0);
 
-    const expand_button = wrapper.get('[aria-label="Show running tasks"]');
+    const expand_button = wrapper.get('[aria-label="Show tasks"]');
     await expand_button.trigger("click");
     expect(wrapper.findAll("[data-status]")).toHaveLength(2);
+    expect(wrapper.text()).toContain("2 tasks");
   });
 
   it("changing a task's status text does not change the chip count or remove other chips", async () => {
