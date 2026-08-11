@@ -49,10 +49,14 @@
   font-weight: 600;
 }
 
+/* This is the one control whose box came from the UA button padding base.css now resets, so the
+   value moves here rather than disappearing -- an inline accent action needs the horizontal
+   breathing room around its label either way. */
 .icon_text_button {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  padding: 1px 6px;
   color: var(--tc-accent);
 }
 

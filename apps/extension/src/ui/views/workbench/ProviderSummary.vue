@@ -49,7 +49,8 @@ function handle_select(value: string): void {
     <div :class="styles.section_header">
       <span :class="styles.section_title">{{ t("workbench.provider_summary.title") }}</span>
     </div>
-    <StateSurface
+    <div :class="styles.provider_content">
+      <StateSurface
       :status="surface_status"
       min-height="56px"
       :empty-title="t('workbench.provider_summary.no_profile_title')"
@@ -76,5 +77,6 @@ function handle_select(value: string): void {
         @update:model-value="handle_select"
       />
     </StateSurface>
+    </div>
   </div>
 </template>

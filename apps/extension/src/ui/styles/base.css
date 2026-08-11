@@ -74,9 +74,17 @@ textarea {
   color: inherit;
 }
 
+/* `padding: 0` belongs in this reset next to the background/border ones, and its absence was a
+   silent layout bug rather than a cosmetic gap. The UA's `1px 6px` survives on every button that
+   never declares its own padding -- which here is exactly the fixed-size icon and toggle boxes,
+   the ones with no room to give away. Inside a 40x24 `box-sizing: border-box` switch it left a
+   26px content box for a 20px thumb whose checked transform then pushed it 3px past the track's
+   right edge; inside a 28x28 small IconButton it squeezed the 16px icon to 14px wide. Each control
+   below sets whatever padding it actually wants. */
 button {
   background: none;
   border: none;
+  padding: 0;
   cursor: pointer;
 }
 

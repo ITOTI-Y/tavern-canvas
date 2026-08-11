@@ -62,7 +62,7 @@ async function boot(): Promise<void> {
   const [
     { bootstrap_tavern_canvas },
     { compose_studio_capabilities },
-    { FIRST_PARTY_STYLESHEET },
+    { INITIAL_STYLESHEET, bind_shadow_root_stylesheet },
     { probe_host_capabilities },
     { open_database, ProviderProfileRepository },
     { create_host_environment },
@@ -70,7 +70,7 @@ async function boot(): Promise<void> {
   ] = await Promise.all([
     import("../../../apps/extension/src/bootstrap/bootstrap.js"),
     import("../../../apps/extension/src/bootstrap/compose_capabilities.js"),
-    import("../../../apps/extension/src/ui/styles/runtime_stylesheet.js"),
+    import("../../../apps/extension/src/dev/stylesheet_hmr.js"),
     import("../../../apps/extension/src/host/index.js"),
     import("@tavern-canvas/storage"),
     import("./all_host_environment.js"),
@@ -184,13 +184,19 @@ async function boot(): Promise<void> {
     const handle = await bootstrap_tavern_canvas({
       globals: environment.globals,
       document,
-      stylesheet: FIRST_PARTY_STYLESHEET,
+      stylesheet: INITIAL_STYLESHEET,
       version: "3.0.0-e2e",
       composition: composition_options,
     });
     surface.probe = handle.probe;
     surface.resolutions = handle.resolutions;
     surface.state = handle.state;
+    // Dev server only: bootstrap owns the Shadow Root, so the stylesheet binding has to be made
+    // from the outside, against the element it just mounted. Inert in the built harness.
+    const mounted_shadow_root = document.getElementById("tavern-canvas-root")?.shadowRoot;
+    if (mounted_shadow_root) {
+      bind_shadow_root_stylesheet(mounted_shadow_root);
+    }
   }
 
   surface.probes = await create_security_probes({

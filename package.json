@@ -9,6 +9,10 @@
   },
   "scripts": {
     "build": "pnpm -r build",
+    "dev": "pnpm dev:studio",
+    "dev:studio": "vite --config tests/harness/vite.config.studio.ts --host --port 5180 --strictPort",
+    "dev:host": "vite --config tests/harness/vite.config.all_host.ts --host --port 5181 --strictPort",
+    "dev:extension": "vite --config apps/extension/vite.config.dev.ts",
     "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm check:first-party && pnpm check:locale && pnpm check:parity && pnpm check:bundle",
     "check:bundle": "pnpm --filter @tavern-canvas/bundle-budget build && node tools/bundle_budget/dist/index.js",
     "check:first-party": "pnpm --filter @tavern-canvas/first-party-check build && node tools/first_party_check/dist/index.js apps packages",

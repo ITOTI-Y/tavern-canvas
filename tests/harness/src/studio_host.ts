@@ -5,7 +5,10 @@ import type { BootstrapProbeResult } from "../../../apps/extension/src/host/inde
 import { create_i18n } from "../../../apps/extension/src/i18n/create_i18n.js";
 import AppRoot from "../../../apps/extension/src/ui/AppRoot.vue";
 import { create_shadow_root } from "../../../apps/extension/src/ui/create_shadow_root.js";
-import { FIRST_PARTY_STYLESHEET } from "../../../apps/extension/src/ui/styles/runtime_stylesheet.js";
+import {
+  bind_shadow_root_stylesheet,
+  INITIAL_STYLESHEET,
+} from "../../../apps/extension/src/dev/stylesheet_hmr.js";
 import { create_mock_capabilities, type ScenarioName } from "./mock_capabilities.js";
 
 /**
@@ -34,7 +37,10 @@ const scenario = (params.get("scenario") ?? "full") as ScenarioName;
 const locale = params.get("locale") === "zh-CN" ? "zh-CN" : "en";
 
 const document_ = document;
-const surface = create_shadow_root(document_, FIRST_PARTY_STYLESHEET);
+const surface = create_shadow_root(document_, INITIAL_STYLESHEET);
+// Dev server only: a CSS edit rewrites this Shadow Root's <style> in place instead of
+// reloading the page. Inert in the built harness (stylesheet_hmr.ts).
+bind_shadow_root_stylesheet(surface.shadow_root);
 const locale_runtime = create_i18n();
 
 const status: StartupStatus = {

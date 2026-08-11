@@ -170,6 +170,10 @@ pnpm build
 
 `pnpm build` writes the extension runtime into the repository root `dist/`.
 
+Rebuilding after every edit is the wrong loop for development. Three dev servers serve the real,
+unmodified component tree with hot module replacement instead, two of them without SillyTavern
+running at all; see [Development](docs/development.md).
+
 Other useful commands:
 
 ```bash

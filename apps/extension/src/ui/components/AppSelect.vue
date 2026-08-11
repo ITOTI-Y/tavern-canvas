@@ -87,7 +87,7 @@ const root_props = computed(() => drop_undefined({ modelValue: props.modelValue 
             :class="styles.selectItem"
             :value="option.value"
           >
-            <SelectItemText>{{ option.label }}</SelectItemText>
+            <SelectItemText :class="styles.selectItemText">{{ option.label }}</SelectItemText>
             <SelectItemIndicator :class="styles.selectItemIndicator">
               <AppIcon :icon="Check" :size="14" />
             </SelectItemIndicator>

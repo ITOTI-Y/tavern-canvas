@@ -5,6 +5,7 @@ import { h, nextTick } from "vue";
 
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 import AppButton from "./AppButton.vue";
+import AppCheckbox from "./AppCheckbox.vue";
 import AppDialog from "./AppDialog.vue";
 import AppIcon from "./AppIcon.vue";
 import AppSelect from "./AppSelect.vue";
@@ -361,6 +362,78 @@ describe("AppSwitch", () => {
     });
     expect(wrapper.text()).toContain(LONG_EN);
     expect(wrapper.text()).toContain(LONG_CJK);
+  });
+
+  it("keeps the label as the accessible name when hidden, with no visible text", () => {
+    const wrapper = mount(AppSwitch, {
+      props: { modelValue: false, label: "Enabled", labelHidden: true },
+    });
+    expect(wrapper.text()).toBe("");
+    expect(wrapper.find('[role="switch"]').attributes("aria-label")).toBe("Enabled");
+  });
+});
+
+describe("AppCheckbox", () => {
+  it("uses role=checkbox, not role=switch: selection is not a setting", () => {
+    const wrapper = mount(AppCheckbox, { props: { modelValue: false, label: "Select all" } });
+    expect(wrapper.find('[role="switch"]').exists()).toBe(false);
+    expect(wrapper.find('[role="checkbox"]').attributes("aria-checked")).toBe("false");
+  });
+
+  it("reports the partial state as aria-checked=mixed", () => {
+    const wrapper = mount(AppCheckbox, {
+      props: { modelValue: "indeterminate", label: "Select all" },
+    });
+    expect(wrapper.find('[role="checkbox"]').attributes("aria-checked")).toBe("mixed");
+  });
+
+  it("resolves the mixed state to a plain boolean for the caller", async () => {
+    const wrapper = mount(AppCheckbox, {
+      props: { modelValue: "indeterminate", label: "Select all" },
+    });
+    await wrapper.find('[role="checkbox"]').trigger("click");
+    expect(wrapper.emitted("update:modelValue")?.[0]).toEqual([true]);
+  });
+
+  it("emits update:modelValue on click", async () => {
+    const wrapper = mount(AppCheckbox, { props: { modelValue: false, label: "Select all" } });
+    const control = wrapper.find('[role="checkbox"]');
+    expect(control.element.tagName).toBe("BUTTON");
+    await control.trigger("click");
+    expect(wrapper.emitted("update:modelValue")?.[0]).toEqual([true]);
+  });
+
+  it("wraps the control in a label so the label text is a click target too", () => {
+    const wrapper = mount(AppCheckbox, { props: { modelValue: false, label: "Select all" } });
+    expect(wrapper.text()).toContain("Select all");
+    expect(wrapper.find("label").element.contains(wrapper.find('[role="checkbox"]').element)).toBe(
+      true,
+    );
+  });
+
+  it("keeps the label as the accessible name when hidden, with no visible text", () => {
+    const wrapper = mount(AppCheckbox, {
+      props: { modelValue: false, label: "Select Harbor district", labelHidden: true },
+    });
+    expect(wrapper.text()).toBe("");
+    expect(wrapper.find('[role="checkbox"]').attributes("aria-label")).toBe(
+      "Select Harbor district",
+    );
+  });
+
+  it("disables interaction and marks data-disabled for styling", () => {
+    const wrapper = mount(AppCheckbox, {
+      props: { modelValue: false, label: "Select all", disabled: true },
+    });
+    expect(wrapper.find('[role="checkbox"]').attributes("disabled")).toBeDefined();
+    expect(wrapper.find("label").attributes("data-disabled")).toBeDefined();
+  });
+
+  it("does not clip a long English or Chinese label", () => {
+    const en = mount(AppCheckbox, { props: { modelValue: false, label: LONG_EN } });
+    const cjk = mount(AppCheckbox, { props: { modelValue: false, label: LONG_CJK } });
+    expect(en.text()).toContain(LONG_EN);
+    expect(cjk.text()).toContain(LONG_CJK);
   });
 });
 

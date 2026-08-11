@@ -71,13 +71,14 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 12px 0;
 }
 
 .categoryToolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .searchInput {
@@ -112,14 +113,19 @@
   gap: 8px;
 }
 
+/* Wraps rather than overflows. In the 400px docked panel the row's controls can outgrow their
+   track no matter how tight the copy is, and the alternative to wrapping was what shipped: a
+   horizontal scrollbar under the list plus labels broken one character per line. Wrapping puts the
+   action group on its own line instead, still right-aligned under the entry it belongs to. */
 .assetCard {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-field);
   background-color: var(--tc-surface);
-  padding: 4px 8px 4px 4px;
+  padding: 6px 8px;
 }
 
 .assetCard[data-dragging] {
@@ -134,16 +140,20 @@
   padding: 4px;
 }
 
+/* `min-width: 0` is what lets the name actually ellipsize: a flex item's automatic minimum size is
+   its content, so without this the nowrap title sets the column's floor and pushes the actions out
+   of the card. The 160px flex-basis is the width below which the title has no room left to say
+   anything, and the point at which the actions should wrap to their own line instead. */
 .assetCardMain {
   display: flex;
-  flex: 1;
+  flex: 1 1 160px;
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
   border-radius: var(--tc-radius-field);
   background-color: transparent;
-  padding: 6px 8px;
+  padding: 2px 4px;
   text-align: left;
   transition: background-color var(--tc-motion-fast) ease-out;
 }
@@ -178,7 +188,8 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
+  margin-left: auto;
 }
 
 /* ---------------------------------------------------------------------- */

@@ -1,9 +1,9 @@
 /*
- * Scoped styles for the 14 shared controls in this directory. Tokens only (apps/extension/src/ui/styles/tokens.css)
+ * Scoped styles for the 15 shared controls in this directory. Tokens only (apps/extension/src/ui/styles/tokens.css)
  * -- no component invents a color, radius, or duration; radius follows the shape-consistency lock
  * exactly: panel = --tc-radius-panel (dialogs), field = --tc-radius-field (inputs/buttons/switch),
  * image = --tc-radius-image (unused here -- no image tiles in this file), status = --tc-radius-status
- * (small chips: tooltip, toast, select item, skeleton block).
+ * (small chips: tooltip, toast, select item, skeleton block, checkbox).
  *
  * Every interactive element also carries the global `.tc-interactive` utility class
  * (apps/extension/src/ui/styles/utilities.css), which reserves `border: 1px solid transparent` and
@@ -287,6 +287,63 @@
 }
 
 /* ---------------------------------------------------------------------- */
+/* AppCheckbox                                                            */
+/* ---------------------------------------------------------------------- */
+
+.checkboxRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkboxRow[data-disabled] {
+  cursor: not-allowed;
+}
+
+/* A square box against the switch's pill, for the same reason the switch is a pill in the first
+   place: in a list row that carries both controls, the shape is the only thing telling a user which
+   one selects the row and which one turns the row's setting on. --tc-radius-status is the right
+   step of the scale at this size -- the field radius on an 18px box rounds it most of the way to a
+   circle, which is the radio button's shape and the wrong promise entirely.
+   The border steps up from --tc-divider to --tc-text-muted exactly as the switch track does: an
+   unchecked box is --tc-surface on --tc-surface, so the border is the whole control. */
+.checkboxBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--tc-radius-status);
+  border-color: var(--tc-text-muted);
+  background-color: var(--tc-surface);
+  color: var(--tc-on-accent);
+  transition: background-color var(--tc-motion-fast) ease-out;
+}
+
+.checkboxBox[data-state="checked"],
+.checkboxBox[data-state="indeterminate"] {
+  border-color: var(--tc-accent);
+  background-color: var(--tc-accent);
+}
+
+.checkboxBox:disabled {
+  opacity: 0.5;
+}
+
+.checkboxIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkboxLabel {
+  color: var(--tc-text);
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------------------- */
 /* NumberStepper                                                          */
 /* ---------------------------------------------------------------------- */
 
@@ -380,6 +437,8 @@
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-field);
   background-color: var(--tc-surface);
+  width: var(--reka-select-trigger-width);
+  max-width: var(--reka-select-content-available-width);
 }
 
 .selectViewport {
@@ -394,11 +453,18 @@
   padding: 6px 8px;
   border-radius: var(--tc-radius-status);
   color: var(--tc-text);
-  /* Reka moves real DOM focus onto the highlighted option during arrow-key navigation (this is
-     not a virtual aria-activedescendant pattern), so the browser's default UA outline would
-     otherwise render here -- replace it with the same accent ring every other control uses. */
   outline: 2px solid transparent;
   outline-offset: -2px;
+  min-width: 0;
+}
+
+.selectItemText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 
 .selectItem[data-highlighted] {
@@ -417,6 +483,7 @@
 .selectItemIndicator {
   display: inline-flex;
   color: var(--tc-accent);
+  flex-shrink: 0;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -557,6 +624,7 @@
 .stateSurface {
   display: flex;
   flex-direction: column;
+  padding: 4px 0px;
 }
 
 .stateSurfaceSkeleton {
@@ -579,6 +647,7 @@
   align-items: flex-start;
   justify-content: center;
   gap: 12px;
+  padding: 16px;
 }
 
 /* Title and description are one block with a tight 4px gap; the parent's 12px gap then separates

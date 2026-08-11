@@ -304,13 +304,34 @@ describe("KnowledgePanel", () => {
     expect(controller.remove_knowledge_entry).toHaveBeenCalledWith(ENTRY_ID);
   });
 
-  it("tracks a multi-selection through the controller", async () => {
+  it("selects an entry with a checkbox named after it, not a switch", async () => {
     const { controller } = mount_knowledge_panel();
-    const select_switch = dom().findAll('[role="switch"]')[1];
-    await select_switch?.trigger("click");
+    const select_box = dom().find('[aria-label="Select Harbor district"]');
+
+    expect(select_box.attributes("role")).toBe("checkbox");
+    expect(select_box.attributes("aria-checked")).toBe("false");
+
+    await select_box.trigger("click");
     await flushPromises();
 
     expect(controller.set_knowledge_selection).toHaveBeenCalledWith([ENTRY_ID]);
+  });
+
+  it("reports a partial selection as mixed on the select-all box", async () => {
+    const { controller } = mount_knowledge_panel({
+      entries: [ENTRY, { ...ENTRY, id: OTHER_ENTRY_ID, title: "Old town" }],
+      selectedIds: [ENTRY_ID],
+    });
+    const select_all = dom()
+      .findAll('[role="checkbox"]')
+      .find((box) => box.attributes("aria-label") === undefined);
+
+    expect(select_all?.attributes("aria-checked")).toBe("mixed");
+
+    await select_all?.trigger("click");
+    await flushPromises();
+
+    expect(controller.set_knowledge_selection).toHaveBeenCalledWith([ENTRY_ID, OTHER_ENTRY_ID]);
   });
 
   it("requires a destructive confirmation before deleting a multi-selection", async () => {
@@ -339,8 +360,12 @@ describe("KnowledgePanel", () => {
 
   it("toggles an entry without opening the dialog", async () => {
     const { controller } = mount_knowledge_panel();
-    const enabled_switch = dom().findAll('[role="switch"]')[2];
-    await enabled_switch?.trigger("click");
+    const enabled_switches = dom().findAll('[role="switch"]');
+
+    expect(enabled_switches).toHaveLength(1);
+    expect(enabled_switches[0]?.attributes("aria-label")).toBe("Enabled");
+
+    await enabled_switches[0]?.trigger("click");
     await flushPromises();
 
     expect(controller.set_knowledge_entry_enabled).toHaveBeenCalledWith(ENTRY_ID, false);

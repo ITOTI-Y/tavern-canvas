@@ -4,9 +4,11 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
+import AppCheckbox from "../../components/AppCheckbox.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
+import AppTooltip from "../../components/AppTooltip.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
@@ -69,9 +71,15 @@ const source_model = computed<string>({
 });
 
 const selected_set = computed(() => new Set(props.selectedIds));
-const all_selected = computed(
-  () => props.entries.length > 0 && props.selectedIds.length === props.entries.length,
-);
+
+/** Mixed rather than unchecked while a subset is selected, so the box reports what clicking it
+ * will do -- an unchecked "select all" over a half-selected list claims nothing is selected. */
+const select_all_state = computed<boolean | "indeterminate">(() => {
+  if (props.selectedIds.length === 0) {
+    return false;
+  }
+  return props.selectedIds.length === props.entries.length ? true : "indeterminate";
+});
 
 /** Splits on commas and the full-width comma so a Simplified Chinese keyboard needs no switch. */
 function parse_keywords(text: string): string[] {
@@ -206,9 +214,9 @@ async function confirm_bulk_remove(): Promise<void> {
   <div :class="styles.categoryList" data-testid="knowledge-panel">
     <div :class="styles.categoryToolbar">
       <AppButton :label="t('assets.knowledge.add_action')" @click="open_create" />
-      <AppSwitch
+      <AppCheckbox
         v-if="entries.length > 0"
-        :model-value="all_selected"
+        :model-value="select_all_state"
         :label="t('assets.knowledge.select_all_label')"
         @update:model-value="toggle_select_all"
       />
@@ -235,6 +243,12 @@ async function confirm_bulk_remove(): Promise<void> {
           :class="styles.assetCard"
           data-testid="knowledge-card"
         >
+          <AppCheckbox
+            :model-value="selected_set.has(entry.id)"
+            :label="t('assets.knowledge.select_label', { title: entry.title })"
+            label-hidden
+            @update:model-value="(value) => toggle_selection(entry.id, value)"
+          />
           <div :class="styles.assetCardMain">
             <span :class="styles.assetCardName">{{ entry.title }}</span>
             <span :class="styles.assetCardSummary">
@@ -250,18 +264,16 @@ async function confirm_bulk_remove(): Promise<void> {
             </span>
           </div>
           <div :class="styles.assetCardActions">
-            <AppSwitch
-              :model-value="selected_set.has(entry.id)"
-              :label="t('assets.knowledge.select_label', { title: entry.title })"
-              @update:model-value="(value) => toggle_selection(entry.id, value)"
-            />
-            <AppSwitch
-              :model-value="entry.enabled"
-              :label="t('assets.knowledge.enabled_label')"
-              @update:model-value="
-                (value) => controller.set_knowledge_entry_enabled(entry.id, value)
-              "
-            />
+            <AppTooltip :content="t('assets.knowledge.enabled_label')">
+              <AppSwitch
+                :model-value="entry.enabled"
+                :label="t('assets.knowledge.enabled_label')"
+                label-hidden
+                @update:model-value="
+                  (value) => controller.set_knowledge_entry_enabled(entry.id, value)
+                "
+              />
+            </AppTooltip>
             <AppButton
               :label="t('common.actions.edit')"
               variant="secondary"
