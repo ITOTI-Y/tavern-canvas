@@ -9,6 +9,7 @@ import type { StudioRoute } from "./contracts/view_models.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
 import { use_studio_controller } from "./controllers/use_studio_controller.js";
 import FloatingEntry from "./experience/FloatingEntry.vue";
+import FloatingStudioWindow from "./experience/FloatingStudioWindow.vue";
 import PortalProvider from "./shell/PortalProvider.vue";
 import styles from "./shell/shell.module.css";
 import StudioShell from "./shell/StudioShell.vue";
@@ -97,15 +98,23 @@ function reload(): void {
 }
 
 /**
- * `ui.optional_entry_enabled` (Stage 04) turns the Studio into a FAB-launched surface: the shell
- * stays unmounted until the entry is activated, and the entry toggles it. With the setting off --
- * the default -- the shell renders directly and no entry exists in the DOM at all.
+ * The persisted optional-entry setting decides the initial surface. Closing is always available:
+ * it hides the floating workbench and exposes the existing draggable entry, which is the single
+ * reopening path and leaves the SillyTavern page interactive.
  */
 const floating_entry_enabled = computed(
   () => studio?.state.value.settings.settings?.ui.optional_entry_enabled === true,
 );
-const studio_opened = ref(false);
-const shell_visible = computed(() => !floating_entry_enabled.value || studio_opened.value);
+const studio_opened = ref(!floating_entry_enabled.value);
+const shell_visible = computed(() => studio_opened.value);
+
+watch(floating_entry_enabled, (enabled, previously_enabled) => {
+  if (enabled && !previously_enabled) {
+    studio_opened.value = false;
+  } else if (!enabled && previously_enabled) {
+    studio_opened.value = true;
+  }
+});
 
 watch(
   shell_visible,
@@ -115,8 +124,12 @@ watch(
   { immediate: true },
 );
 
-function toggle_studio(): void {
-  studio_opened.value = !studio_opened.value;
+function open_studio(): void {
+  studio_opened.value = true;
+}
+
+function close_studio(): void {
+  studio_opened.value = false;
 }
 </script>
 
@@ -167,19 +180,17 @@ function toggle_studio(): void {
     </div>
 
     <template v-else-if="studio">
-      <StudioShell
-        v-if="shell_visible"
-        :state="studio.state.value"
-        :controller="studio.controller"
-        @select-route="select_route"
-        @set-inspector-collapsed="set_inspector_collapsed"
-        @resize-inspector="resize_inspector"
-      />
-      <FloatingEntry
-        :enabled="floating_entry_enabled"
-        :open-label="t('app.name')"
-        @open="toggle_studio"
-      />
+      <FloatingStudioWindow v-if="shell_visible" :label="t('app.name')">
+        <StudioShell
+          :state="studio.state.value"
+          :controller="studio.controller"
+          @select-route="select_route"
+          @set-inspector-collapsed="set_inspector_collapsed"
+          @resize-inspector="resize_inspector"
+          @close="close_studio"
+        />
+      </FloatingStudioWindow>
+      <FloatingEntry :enabled="!shell_visible" :open-label="t('app.name')" @open="open_studio" />
     </template>
   </PortalProvider>
 </template>

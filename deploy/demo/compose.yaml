@@ -1,0 +1,59 @@
+name: tavern-canvas-demo
+
+services:
+  install_js_slash_runner:
+    image: alpine/git:2.49.1
+    environment:
+      JS_SLASH_RUNNER_REF: ${JS_SLASH_RUNNER_REF:?Set JS_SLASH_RUNNER_REF in .env}
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    command:
+      - |
+        target=/extensions/JS-Slash-Runner
+        if [ ! -d "$$target/.git" ]; then
+          git clone --no-checkout https://github.com/N0VI028/JS-Slash-Runner.git "$$target"
+        fi
+        git config --global --add safe.directory "$$target"
+        git -C "$$target" fetch --depth 1 origin "$$JS_SLASH_RUNNER_REF"
+        git -C "$$target" checkout --detach FETCH_HEAD
+    volumes:
+      - ./.runtime/extensions:/extensions
+    restart: "no"
+
+  sillytavern:
+    image: ghcr.io/sillytavern/sillytavern:${SILLYTAVERN_IMAGE_TAG:-1.18.0}
+    container_name: tavern-canvas-demo
+    hostname: tavern-canvas-demo
+    depends_on:
+      install_js_slash_runner:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      FORCE_COLOR: "1"
+      PUID: ${HOST_UID:-1000}
+      PGID: ${HOST_GID:-1000}
+      SILLYTAVERN_HEARTBEATINTERVAL: "30"
+      SILLYTAVERN_EXTENSIONS_AUTOUPDATE: "false"
+      SILLYTAVERN_LISTEN: "true"
+      SILLYTAVERN_WHITELISTMODE: "false"
+      SILLYTAVERN_PRIVATEADDRESSWHITELIST_ENABLED: "true"
+      SILLYTAVERN_PRIVATEADDRESSWHITELIST_ALLOWEDRANGES: '["127.0.0.0/8","::1/128"]'
+      SILLYTAVERN_BASICAUTHMODE: "true"
+      SILLYTAVERN_BASICAUTHUSER_USERNAME: ${DEMO_USERNAME:?Set DEMO_USERNAME in .env}
+      SILLYTAVERN_BASICAUTHUSER_PASSWORD: ${DEMO_PASSWORD:?Set DEMO_PASSWORD in .env}
+      SILLYTAVERN_BROWSERLAUNCH_ENABLED: "false"
+      SILLYTAVERN_ALLOWKEYSEXPOSURE: "true"
+    ports:
+      - "${DEMO_BIND_ADDRESS:-0.0.0.0}:${DEMO_PORT:-8000}:8000"
+    volumes:
+      - ./.runtime/config:/home/node/app/config
+      - ./.runtime/data:/home/node/app/data
+      - ./.runtime/plugins:/home/node/app/plugins
+      - ./.runtime/extensions:/home/node/app/public/scripts/extensions/third-party
+      - ../..:/home/node/app/public/scripts/extensions/third-party/tavern-canvas:ro
+    healthcheck:
+      test: ["CMD", "node", "src/healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+    restart: unless-stopped

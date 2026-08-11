@@ -15,25 +15,21 @@
   font-display: swap;
 }
 
-/* The Studio is a full-viewport surface, not an inline page element: create_shadow_root.ts
-   appends the host directly to document.body with no sized wrapping container of its own, so the
-   host must claim its own dimensions. `:host` here (not a class) is the one Shadow DOM-native way
-   to style the host element itself from inside its own shadow tree. */
+/* The Shadow Root host is a transparent positioning plane. It spans the viewport so fixed
+   portals and the draggable entry can use viewport coordinates, but never intercepts the
+   SillyTavern page by itself. Only visible TavernCanvas surfaces opt back into pointer events. */
 :host {
   position: fixed;
   inset: 0;
   z-index: var(--tc-z-host);
-}
-
-/* In optional-entry mode the full-viewport host remains only as the FAB's positioning plane. It
-   must not paint over or intercept the SillyTavern page behind it; the entry itself opts back into
-   pointer events so it remains draggable and clickable. */
-:host([data-surface-mode="entry"]) {
   background: transparent;
   pointer-events: none;
 }
 
-:host([data-surface-mode="entry"]) [data-shadow-role="entry"] {
+:host [data-window-role="studio"],
+:host [data-startup-state],
+:host [data-shadow-role="entry"],
+:host [data-shadow-role="portal"] > * {
   pointer-events: auto;
 }
 

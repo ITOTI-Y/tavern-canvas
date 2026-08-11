@@ -22,6 +22,14 @@ for (const path of required_paths) {
   console.log(`bundle_file=${path.slice(repository_root.length + 1)}`);
 }
 
+const stylesheet = await readFile(resolve(repository_root, manifest.css), "utf8");
+if (stylesheet.includes("__TAVERN_CANVAS_ASSET_URL__")) {
+  throw new Error("The linked production stylesheet contains an unresolved asset URL marker");
+}
+if (!/url\(["']?geist_variable\.woff2["']?\)/u.test(stylesheet)) {
+  throw new Error("The linked production stylesheet does not reference its sibling Geist font");
+}
+
 // The vocabulary baseline (apps/extension/public/vocabulary/baseline) ships
 // via Vite's publicDir copy, not the module graph -- verify every shard the
 // manifest lists actually reached dist/, since a future Vite upgrade

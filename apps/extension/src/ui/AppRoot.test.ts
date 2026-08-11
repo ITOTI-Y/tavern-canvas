@@ -162,6 +162,25 @@ describe("AppRoot normal studio state", () => {
     expect(wrapper.findAll("nav > button")).toHaveLength(6); // desktop rail, six routes
   });
 
+  it("closes the floating workbench and reopens it from the draggable entry", async () => {
+    mock_matches(false);
+    const { wrapper, host_element } = mount_app_root({
+      status: { state: "ready", title: "ignored", message: "ignored" },
+      probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(true);
+    await wrapper.get('[data-testid="studio-close"]').trigger("click");
+
+    expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(false);
+    expect(host_element.dataset.surfaceMode).toBe("entry");
+    await wrapper.get('[data-shadow-role="entry"]').trigger("click");
+
+    expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(true);
+    expect(host_element.dataset.surfaceMode).toBe("studio");
+  });
+
   it("lets the host page receive input while only the optional entry is visible", async () => {
     mock_matches(false);
     const capabilities = create_unavailable_capabilities();

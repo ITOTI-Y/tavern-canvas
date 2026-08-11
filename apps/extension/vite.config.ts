@@ -12,21 +12,18 @@ export default defineConfig(({ mode }) => ({
     __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
   },
   experimental: {
-    // Default CSS asset URLs are root-absolute (`/geist_variable.woff2`), which is wrong for
-    // this extension: it never runs from the origin root, and its Shadow Root stylesheet is
-    // injected as a plain string (`element.textContent = css`, see runtime_stylesheet.ts), so
-    // even a *relative* url() would resolve against the host page's location, not dist/'s own.
-    // Emitting a `__TAVERN_CANVAS_ASSET_URL__<relative-path>__` marker instead lets
-    // runtime_stylesheet.ts substitute the one correct absolute URL at runtime, computed from
-    // `import.meta.url` (dist/index.js's own real, load-time-known location) the same way
-    // vocabulary_worker.ts already resolves its own bundled-baseline URL from `self.location`.
+    // The emitted stylesheet is linked by SillyTavern, so its font URL must remain relative to
+    // dist/index.css. The same CSS is also imported as a string for injection into the Shadow
+    // Root; that copy needs a marker which runtime_stylesheet.ts resolves against import.meta.url,
+    // because relative url() values in a plain <style> resolve against the host page instead.
     renderBuiltUrl(filename, { hostType }) {
-      // Scoped to first-party CSS-referenced assets only (currently just the Geist font) so this
-      // never touches an unrelated JS-imported asset that expects Vite's normal URL. `hostType`
-      // is "css" for the asset's copy inside the emitted dist/index.css chunk (inert, see the
-      // comment above) and "js" for the copy inside the `?inline` CSS-as-JS-string transform that
-      // actually reaches FIRST_PARTY_STYLESHEET -- both copies need the marker.
-      if ((hostType === "css" || hostType === "js") && filename.endsWith(".woff2")) {
+      if (!filename.endsWith(".woff2")) {
+        return;
+      }
+      if (hostType === "css") {
+        return filename;
+      }
+      if (hostType === "js") {
         return `__TAVERN_CANVAS_ASSET_URL__${filename}__`;
       }
     },

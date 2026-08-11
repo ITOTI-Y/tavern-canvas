@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PanelRightClose, PanelRightOpen } from "lucide-vue-next";
+import { PanelRightClose, PanelRightOpen, X } from "lucide-vue-next";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -15,6 +15,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   "set-inspector-collapsed": [collapsed: boolean];
+  close: [];
 }>();
 
 const { t } = useI18n();
@@ -31,7 +32,7 @@ function toggle_inspector(): void {
 </script>
 
 <template>
-  <header :class="styles.top_bar">
+  <header :class="styles.top_bar" data-window-drag-handle>
     <div :class="styles.top_bar_start">
       <span :class="styles.top_bar_title">{{ title }}</span>
     </div>
@@ -46,6 +47,17 @@ function toggle_inspector(): void {
         @click="toggle_inspector"
       >
         <AppIcon :icon="toggle_icon" :size="18" />
+      </button>
+      <button
+        type="button"
+        class="tc-interactive"
+        :class="[styles.icon_button, styles.close_button]"
+        data-testid="studio-close"
+        :aria-label="t('common.close')"
+        :title="t('common.close')"
+        @click="emit('close')"
+      >
+        <AppIcon :icon="X" :size="18" />
       </button>
     </div>
   </header>

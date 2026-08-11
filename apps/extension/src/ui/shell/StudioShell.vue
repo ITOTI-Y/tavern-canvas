@@ -33,6 +33,7 @@ const emit = defineEmits<{
   "select-route": [route: StudioRoute];
   "set-inspector-collapsed": [collapsed: boolean];
   "resize-inspector": [width: number];
+  close: [];
 }>();
 
 const { t } = useI18n();
@@ -94,6 +95,7 @@ function select_route(route: StudioRoute): void {
       :route="props.state.route"
       :inspector-collapsed="top_bar_inspector_collapsed"
       @set-inspector-collapsed="handle_set_inspector_collapsed"
+      @close="emit('close')"
     />
 
     <DesktopIconRail
