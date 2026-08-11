@@ -16,7 +16,7 @@ credentials never reach the browser; see [Providers and transports](#providers-a
 | SillyTavern     | 1.18.0 or newer (`minimum_client_version`)                            |
 | JS Slash Runner | 4.9.1 or newer (`minimum_tavern_helper_version`, enforced at startup) |
 
-JS Slash Runner is a hard dependency, declared in `manifest.json` as `dependencies: ["JS-Slash-Runner"]`.
+JS Slash Runner is a hard dependency, declared in `manifest.json` as `dependencies: ["third-party/JS-Slash-Runner"]`.
 At startup the extension probes the host for the capabilities it needs, comprising main generation
 events, private prompt generation, message swipe metadata, host image upload, and the TavernHelper
 API. If the probe fails, the extension renders a blocked screen naming the required version and

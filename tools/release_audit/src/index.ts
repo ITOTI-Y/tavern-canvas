@@ -452,7 +452,7 @@ interface ManifestFacts {
 
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/u;
 const MANIFEST_PATH = "manifest.json";
-const REQUIRED_DEPENDENCY = "JS-Slash-Runner";
+const REQUIRED_DEPENDENCY = "third-party/JS-Slash-Runner";
 const REQUIRED_HOME_PAGE_PREFIX = "https://github.com/";
 
 function is_plain_object(value: unknown): value is Record<string, unknown> {

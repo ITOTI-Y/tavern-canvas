@@ -18,7 +18,7 @@ const expected_manifest = {
   loading_order: 110,
   requires: [],
   optional: [],
-  dependencies: ["JS-Slash-Runner"],
+  dependencies: ["third-party/JS-Slash-Runner"],
   js: "dist/index.js",
   css: "dist/index.css",
   author: "ITOTI-Y",

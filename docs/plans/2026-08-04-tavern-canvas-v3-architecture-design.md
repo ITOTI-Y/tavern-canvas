@@ -114,7 +114,7 @@ i18n/*
 - `minimum_client_version: "1.18.0"`
 - `loading_order: 110`，晚于 JS Slash Runner 的 100
 - `auto_update: true`
-- `dependencies: ["JS-Slash-Runner"]`
+- `dependencies: ["third-party/JS-Slash-Runner"]`
 - `i18n` 映射包含 `en`，简体中文作为基础 manifest 文案
 - `homePage: "https://github.com/ITOTI-Y/tavern-canvas"`
 

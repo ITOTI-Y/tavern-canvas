@@ -61,7 +61,7 @@ const CLEAN_STYLESHEET = [
 const CLEAN_MANIFEST = JSON.stringify(
   {
     display_name: "Tavern Canvas",
-    dependencies: ["JS-Slash-Runner"],
+    dependencies: ["third-party/JS-Slash-Runner"],
     js: "dist/index.js",
     css: "dist/index.css",
     version: "3.0.0-alpha.1",
@@ -199,7 +199,7 @@ describe("release_audit report fields", () => {
 
   it("reports the manifest dependency, helper version, and locale count of a clean archive", async () => {
     const report = await audit_fixture(clean_files());
-    expect(report.fields.manifest_dependency).toBe("JS-Slash-Runner");
+    expect(report.fields.manifest_dependency).toBe("third-party/JS-Slash-Runner");
     expect(report.fields.minimum_tavern_helper_version).toBe(EXPECTED_HELPER_VERSION);
     expect(report.fields.locale_count).toBe(2);
     expect(report.fields.legacy_paths).toBe(0);
@@ -325,7 +325,7 @@ describe("rule 3: manifest schema", () => {
       ...clean_files(),
       "manifest.json": JSON.stringify({
         display_name: "",
-        dependencies: ["JS-Slash-Runner", "Other-Runner"],
+        dependencies: ["third-party/JS-Slash-Runner", "Other-Runner"],
         js: "index.js",
         css: "style.css",
         version: "three",

@@ -509,7 +509,7 @@ The manifest test must parse the real JSON and assert exact fields:
   "loading_order": 110,
   "requires": [],
   "optional": [],
-  "dependencies": ["JS-Slash-Runner"],
+  "dependencies": ["third-party/JS-Slash-Runner"],
   "js": "dist/index.js",
   "css": "dist/index.css",
   "author": "ITOTI-Y",
@@ -675,7 +675,7 @@ Record these exact facts in the execution report:
 - orphan root commit hash;
 - `git merge-base --is-ancestor legacy-upstream/main main` exit code `1`;
 - helper versions `4.9.0` rejected and `4.9.1` accepted by tests;
-- manifest dependency exactly `JS-Slash-Runner`;
+- manifest dependency exactly `third-party/JS-Slash-Runner`;
 - focused test counts;
 - extension bundle output paths;
 - lint, formatting, typecheck, tests, build, and source-policy scanner exit codes.
