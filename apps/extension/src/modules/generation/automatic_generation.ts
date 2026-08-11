@@ -239,10 +239,7 @@ export class HostGenerationSessionPort
       this.#host.set_trigger_injection(null);
       return;
     }
-    const mode =
-      this.#host.capabilities.native_tool_manager?.available === true
-        ? "native_tool"
-        : "fallback_comment";
+    const mode = this.#host.can_use_native_tools() ? "native_tool" : "fallback_comment";
     this.#host.set_trigger_injection(
       create_trigger_policy(mode, session.generation_anchor).host_injection,
     );
@@ -378,10 +375,11 @@ export class HostFallbackTextSink implements FallbackTextSink {
       }
       if (event.phase === "ended") {
         const message_id = event.message_id;
-        // Deferred one microtask so the trigger module's own final `append` for this same event
-        // has already landed in the buffer.
+        const session = this.#sessions.active_session;
+        // Capture the finishing session now. The session port may prepare the next turn before this
+        // microtask runs, but the final append for this event still needs one microtask to land.
         queueMicrotask(() => {
-          void this.#flush(message_id);
+          void this.#flush(message_id, session);
         });
       }
     });
@@ -398,10 +396,9 @@ export class HostFallbackTextSink implements FallbackTextSink {
     this.#buffer += text;
   }
 
-  async #flush(message_id: number): Promise<void> {
+  async #flush(message_id: number, session: GenerationSession | null): Promise<void> {
     const cleaned_text = this.#buffer;
     this.#buffer = "";
-    const session = this.#sessions.active_session;
     if (cleaned_text.length === 0 || session === null) {
       return;
     }

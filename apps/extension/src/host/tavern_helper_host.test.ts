@@ -130,6 +130,17 @@ describe("TavernHelperHost", () => {
     expect(snapshot.messages[0]).not.toHaveProperty("swipes_info");
   });
 
+  it("normalizes JS Slash Runner's omitted hidden flag to false", async () => {
+    const helper = create_helper();
+    const { is_hidden: _is_hidden, ...message } = create_message();
+    helper.surface.getChatMessages.mockReturnValue([message]);
+    const host = new TavernHelperHost(helper.surface, () => "chat-42");
+
+    await expect(host.get_active_chat()).resolves.toMatchObject({
+      messages: [{ message_id: 7, is_hidden: false }],
+    });
+  });
+
   it("uses generateRaw for silent non-streaming private prompts", async () => {
     const helper = create_helper();
     const host = new TavernHelperHost(helper.surface, () => "chat-42");

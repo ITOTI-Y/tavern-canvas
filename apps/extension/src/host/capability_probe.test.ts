@@ -516,20 +516,23 @@ describe("probe_host_capabilities", () => {
   );
 
   it.each([
-    ["helper version", "helper", "getTavernHelperVersion"],
-    ["SillyTavern getContext", "sillytavern", "getContext"],
-    ["locale", "context", "getCurrentLocale"],
-    ["chat ID", "context", "getCurrentChatId"],
-    ["request headers", "context", "getRequestHeaders"],
-  ] as const)("does not throw when the %s call throws", (_, target_name, method_name) => {
-    const fixture = create_fixture();
-    fixture[target_name][method_name] = () => {
-      throw new Error("call failed");
-    };
+    ["helper version", "helper", "getTavernHelperVersion", false],
+    ["SillyTavern getContext", "sillytavern", "getContext", false],
+    ["locale", "context", "getCurrentLocale", false],
+    ["chat ID", "context", "getCurrentChatId", true],
+    ["request headers", "context", "getRequestHeaders", false],
+  ] as const)(
+    "does not throw when the %s call throws",
+    (_, target_name, method_name, expected_ready) => {
+      const fixture = create_fixture();
+      fixture[target_name][method_name] = () => {
+        throw new Error("call failed");
+      };
 
-    expect(() => probe_host_capabilities(fixture.globals)).not.toThrow();
-    expect(probe_host_capabilities(fixture.globals).ready).toBe(false);
-  });
+      expect(() => probe_host_capabilities(fixture.globals)).not.toThrow();
+      expect(probe_host_capabilities(fixture.globals).ready).toBe(expected_ready);
+    },
+  );
 
   it("does not inspect user agent, DOM, or private Tauri globals", () => {
     const fixture = create_fixture();

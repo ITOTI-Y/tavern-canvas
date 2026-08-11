@@ -21,6 +21,7 @@ const capabilities = {
 
 const adapter: HostAdapter = {
   capabilities,
+  can_use_native_tools: () => true,
   get_locale: () => "en",
   get_active_chat: async () => ({ chat_id: "chat-1", messages: [] }),
   subscribe_generation: () => () => undefined,
@@ -49,9 +50,10 @@ describe("HostAdapter boundary", () => {
     ]);
   });
 
-  it("exposes exactly the supported capability property and eleven operations", () => {
+  it("exposes exactly the supported capability property and twelve operations", () => {
     expect(Object.keys(adapter)).toEqual([
       "capabilities",
+      "can_use_native_tools",
       "get_locale",
       "get_active_chat",
       "subscribe_generation",

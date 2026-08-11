@@ -101,7 +101,7 @@ export class GenerationTriggerModule implements RuntimeModule {
     const session = this.#session_port.begin(event);
 
     try {
-      if (this.#host.capabilities.native_tool_manager?.available === true) {
+      if (this.#host.can_use_native_tools()) {
         const definition = this.#request_image_tool.definition;
         const tool: HostImageTool = {
           name: definition.name,

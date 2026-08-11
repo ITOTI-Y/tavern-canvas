@@ -116,6 +116,8 @@ export interface HostImageUploadResult {
 
 export interface HostAdapter {
   readonly capabilities: CapabilityMatrix;
+  /** Returns whether the host can expose native function tools under its current runtime settings. */
+  can_use_native_tools(): boolean;
   get_locale(): string;
   get_active_chat(): Promise<HostChatSnapshot>;
   subscribe_generation(handler: HostGenerationHandler): () => void;

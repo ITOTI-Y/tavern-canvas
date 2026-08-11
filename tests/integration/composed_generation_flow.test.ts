@@ -95,6 +95,7 @@ function create_host_control(auto_generation_enabled = true): HostControl {
     getCurrentLocale: () => "en",
     getCurrentChatId: () => "chat-42",
     getRequestHeaders: () => ({ "Content-Type": "application/json" }),
+    isToolCallingSupported: () => true,
     eventSource: {
       on(event_name: string, listener: (...arguments_: readonly unknown[]) => void) {
         listeners.set(event_name, [...(listeners.get(event_name) ?? []), listener]);

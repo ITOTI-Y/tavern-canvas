@@ -120,6 +120,9 @@ class RecordingHost implements HostAdapter {
   get_locale(): string {
     return "en";
   }
+  can_use_native_tools(): boolean {
+    return false;
+  }
 
   get_active_chat() {
     return Promise.resolve({

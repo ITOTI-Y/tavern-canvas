@@ -48,6 +48,9 @@ export interface SillyTavernContextSurface {
     readonly MESSAGE_SWIPED: string;
   };
   registerFunctionTool(tool: SillyTavernFunctionTool): void;
+  /** SillyTavern 1.18+ runtime check. It includes the current API, model, prompt processing mode,
+   * and the user's function-calling setting. */
+  isToolCallingSupported?(): unknown;
   unregisterFunctionTool(name: string): void;
   /** SillyTavern 1.12+ context member. Optional here so an older or trimmed context degrades to
    * "no trigger instruction" instead of failing the whole host. */
@@ -75,6 +78,10 @@ export type SillyTavernFetch = (
     readonly body: string;
   },
 ) => Promise<SillyTavernUploadResponse>;
+
+export function bind_sillytavern_fetch(fetch_: SillyTavernFetch): SillyTavernFetch {
+  return fetch_.bind(globalThis);
+}
 
 function is_property_container(value: unknown): value is object {
   return (typeof value === "object" && value !== null) || typeof value === "function";
@@ -222,13 +229,13 @@ export function inspect_sillytavern(value: unknown, fetch_: unknown): SillyTaver
 
   const context = context_result.value;
   const locale_available = calls_with_nonempty_string(context, "getCurrentLocale");
-  const chat_id_available = calls_with_nonempty_string(context, "getCurrentChatId");
+  const chat_id_api_available = has_function_property(context, "getCurrentChatId");
   return {
     native_tool_manager:
       has_function_property(context, "registerFunctionTool") &&
       has_function_property(context, "unregisterFunctionTool"),
     main_generation_events: locale_available && has_generation_events(context),
-    message_swipe_metadata: chat_id_available && has_message_events(context),
+    message_swipe_metadata: chat_id_api_available && has_message_events(context),
     host_image_upload: typeof fetch_ === "function" && has_valid_request_headers(context),
   };
 }
@@ -309,9 +316,19 @@ export class SillyTavernHost {
 
   constructor(context: SillyTavernContextSurface, fetch_: SillyTavernFetch) {
     this.#context = context;
-    this.#fetch = fetch_;
+    this.#fetch = bind_sillytavern_fetch(fetch_);
   }
 
+  can_use_native_tools(): boolean {
+    const has_tool_manager =
+      has_function_property(this.#context, "registerFunctionTool") &&
+      has_function_property(this.#context, "unregisterFunctionTool");
+    if (!has_tool_manager) {
+      return false;
+    }
+    const result = call_method(this.#context, "isToolCallingSupported");
+    return result.ok && result.value === true;
+  }
   get_locale(): string {
     return read_nonempty_string(
       this.#context.getCurrentLocale(),
@@ -338,9 +355,14 @@ export class SillyTavernHost {
       handler({ phase: "stopped" });
     };
     const ended: SillyTavernEventListener = (...arguments_) => {
-      const message_id = arguments_[0];
-      if (typeof message_id === "number") {
-        handler({ phase: "ended", message_id });
+      const next_message_id = arguments_[0];
+      // SillyTavern 1.18 emits `chat.length`, which is the next zero-based message ID.
+      if (
+        typeof next_message_id === "number" &&
+        Number.isInteger(next_message_id) &&
+        next_message_id > 0
+      ) {
+        handler({ phase: "ended", message_id: next_message_id - 1 });
       }
     };
     const listeners: readonly ListenerRegistration[] = [

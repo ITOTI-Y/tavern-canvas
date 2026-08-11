@@ -70,6 +70,10 @@ export class FakeHost implements HostAdapter {
     this.#chats.set(initial_chat_id, { chat_id: initial_chat_id, messages: [] });
   }
 
+  can_use_native_tools(): boolean {
+    return this.capabilities.native_tool_manager.available;
+  }
+
   get_locale(): string {
     return "en";
   }

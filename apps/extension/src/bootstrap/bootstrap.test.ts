@@ -20,6 +20,7 @@ function create_host_fixture(version = "4.9.1"): HostFixture {
     getCurrentLocale: vi.fn(() => "en"),
     getCurrentChatId: vi.fn(() => "chat-42"),
     getRequestHeaders: vi.fn(() => ({ "Content-Type": "application/json" })),
+    isToolCallingSupported: vi.fn(() => true),
     eventSource: event_source,
     eventTypes: {
       GENERATION_STARTED: "generation_started",

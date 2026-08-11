@@ -49,6 +49,9 @@ function create_context(event_source = new FakeEventSource()) {
   }));
   const register_function_tool = vi.fn<SillyTavernContextSurface["registerFunctionTool"]>();
   const unregister_function_tool = vi.fn<SillyTavernContextSurface["unregisterFunctionTool"]>();
+  const is_tool_calling_supported = vi.fn<
+    NonNullable<SillyTavernContextSurface["isToolCallingSupported"]>
+  >(() => true);
   return {
     event_source,
     surface: {
@@ -66,6 +69,7 @@ function create_context(event_source = new FakeEventSource()) {
       },
       registerFunctionTool: register_function_tool,
       unregisterFunctionTool: unregister_function_tool,
+      isToolCallingSupported: is_tool_calling_supported,
     },
   };
 }
@@ -79,6 +83,19 @@ describe("SillyTavernHost", () => {
     expect(host.get_active_chat_id()).toBe("chat-42");
   });
 
+  it("uses SillyTavern's live tool-calling support result", () => {
+    const context = create_context();
+    const host = new SillyTavernHost(context.surface, vi.fn());
+
+    expect(host.can_use_native_tools()).toBe(true);
+    context.surface.isToolCallingSupported?.mockReturnValue(false);
+    expect(host.can_use_native_tools()).toBe(false);
+    context.surface.isToolCallingSupported?.mockImplementation(() => {
+      throw new Error("support probe failed");
+    });
+    expect(host.can_use_native_tools()).toBe(false);
+  });
+
   it("normalizes all documented main generation events with symmetric cleanup", () => {
     const context = create_context();
     const host = new SillyTavernHost(context.surface, vi.fn());
@@ -88,11 +105,13 @@ describe("SillyTavernHost", () => {
     context.event_source.emit("generation_started", "normal", {}, false);
     context.event_source.emit("generation_stopped");
     context.event_source.emit("generation_ended", 9);
+    context.event_source.emit("generation_ended", 0);
+    context.event_source.emit("generation_ended", 9.5);
 
     expect(events).toEqual([
       { phase: "started", generation_type: "normal", dry_run: false },
       { phase: "stopped" },
-      { phase: "ended", message_id: 9 },
+      { phase: "ended", message_id: 8 },
     ]);
 
     dispose();
@@ -658,7 +677,6 @@ describe("inspect_sillytavern", () => {
 
   it.each([
     ["getCurrentLocale", "main_generation_events"],
-    ["getCurrentChatId", "message_swipe_metadata"],
     ["getRequestHeaders", "host_image_upload"],
   ] as const)(
     "fails only the assigned group when %s returns a malformed value",
@@ -676,10 +694,25 @@ describe("inspect_sillytavern", () => {
       }
     },
   );
+  it.each([undefined, null, ""])(
+    "keeps message metadata available with no active chat ID (%j)",
+    (chat_id) => {
+      const context = create_context();
+      context.surface.getCurrentChatId.mockReturnValue(chat_id as never);
 
-  it.each(["getCurrentLocale", "getCurrentChatId", "getRequestHeaders"] as const)(
-    "fails closed when the %s call throws",
-    (method_name) => {
+      expect(inspect_sillytavern({ getContext: () => context.surface }, vi.fn())).toMatchObject({
+        message_swipe_metadata: true,
+      });
+    },
+  );
+
+  it.each([
+    ["getCurrentLocale", "main_generation_events", false],
+    ["getCurrentChatId", "message_swipe_metadata", true],
+    ["getRequestHeaders", "host_image_upload", false],
+  ] as const)(
+    "handles a throwing %s call without misclassifying API presence",
+    (method_name, capability, expected_available) => {
       const context = create_context();
       context.surface[method_name].mockImplementation(() => {
         throw new Error("context method failed");
@@ -688,6 +721,9 @@ describe("inspect_sillytavern", () => {
       expect(() =>
         inspect_sillytavern({ getContext: () => context.surface }, vi.fn()),
       ).not.toThrow();
+      expect(inspect_sillytavern({ getContext: () => context.surface }, vi.fn())[capability]).toBe(
+        expected_available,
+      );
     },
   );
 });

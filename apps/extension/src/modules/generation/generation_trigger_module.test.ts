@@ -83,6 +83,9 @@ class RecordingHost implements HostAdapter {
       main_generation_events: { available: true },
     };
   }
+  can_use_native_tools(): boolean {
+    return this.capabilities.native_tool_manager.available;
+  }
 
   get_locale(): string {
     return "en";

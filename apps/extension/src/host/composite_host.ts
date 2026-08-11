@@ -47,6 +47,12 @@ export class CompositeHostAdapter implements HostAdapter {
     this.#helper = helper;
     this.#sillytavern = sillytavern;
   }
+  can_use_native_tools(): boolean {
+    return (
+      this.capabilities.native_tool_manager?.available === true &&
+      this.#sillytavern.can_use_native_tools()
+    );
+  }
 
   get_locale(): string {
     return this.#sillytavern.get_locale();

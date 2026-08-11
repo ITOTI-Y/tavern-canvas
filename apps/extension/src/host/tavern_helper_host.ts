@@ -177,7 +177,7 @@ function validate_chat_message(value: unknown): TavernHelperChatMessage {
     message_id < 0 ||
     typeof name !== "string" ||
     !is_message_role(role) ||
-    typeof is_hidden !== "boolean" ||
+    (is_hidden !== undefined && typeof is_hidden !== "boolean") ||
     !Number.isInteger(swipe_id) ||
     typeof swipe_id !== "number" ||
     !Array.isArray(swipes) ||
@@ -202,7 +202,7 @@ function validate_chat_message(value: unknown): TavernHelperChatMessage {
     message_id,
     name,
     role,
-    is_hidden,
+    is_hidden: is_hidden ?? false,
     swipe_id,
     swipes,
     swipes_data,
