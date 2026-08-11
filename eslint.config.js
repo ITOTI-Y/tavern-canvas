@@ -28,7 +28,7 @@ export default typescriptEslint.config(
         parser: typescriptEslint.parser,
         extraFileExtensions: [".vue"],
         projectService: {
-          allowDefaultProject: ["*.config.ts"],
+          allowDefaultProject: ["*.config.ts", "apps/gateway/vite.config.ts"],
         },
         tsconfigRootDir: import.meta.dirname,
       },

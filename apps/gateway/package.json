@@ -7,7 +7,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "vite build",
     "start": "node dist/index.js",
     "test": "vitest run --root ../.. --project apps apps/gateway",
     "typecheck": "tsc --noEmit -p tsconfig.json"
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@types/better-sqlite3": "9.6.0",
     "@types/express": "5.0.3",
-    "@types/node": "24.13.3"
+    "@types/node": "24.13.3",
+    "vite": "8.2.0"
   }
 }
