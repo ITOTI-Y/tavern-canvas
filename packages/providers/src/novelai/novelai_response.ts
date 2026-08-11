@@ -55,7 +55,9 @@ export async function parse_novelai_response(
       extracted = parse_json_images(body, max_response_bytes);
     } else if (
       normalized_content_type.startsWith("application/zip") ||
-      normalized_content_type.startsWith("application/x-zip-compressed")
+      normalized_content_type.startsWith("application/x-zip-compressed") ||
+      normalized_content_type.startsWith("application/octet-stream") ||
+      normalized_content_type.startsWith("binary/octet-stream")
     ) {
       extracted = {
         images: await extract_zip_images(body, max_response_bytes, max_archive_entries),

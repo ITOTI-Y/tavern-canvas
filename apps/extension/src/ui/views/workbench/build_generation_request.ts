@@ -134,7 +134,7 @@ export function build_provider_request(
       return {
         provider_id: "novelai",
         ...base,
-        model_id: input.model_id ?? "nai-diffusion-4-full",
+        model_id: input.model_id ?? "nai-diffusion-4-5-full",
         sampler: "k_euler",
         width: 832,
         height: 1216,

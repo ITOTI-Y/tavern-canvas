@@ -3,6 +3,15 @@ import type { AssetId, NovelAiRequest } from "@tavern-canvas/contracts";
 import { encode_base64, invalid_request } from "../image_bytes.js";
 import type { ProviderSourceAsset } from "../provider_adapter.js";
 
+export interface NovelAiPromptCondition {
+  readonly caption: {
+    readonly base_caption: string;
+    readonly char_captions: readonly unknown[];
+  };
+  readonly use_coords?: boolean;
+  readonly use_order?: boolean;
+}
+
 export interface NovelAiPayload {
   readonly input: string;
   readonly model: string;
@@ -10,7 +19,7 @@ export interface NovelAiPayload {
   readonly parameters: {
     readonly params_version: 3;
     readonly prompt: string;
-    readonly negative_prompt?: string;
+    readonly uc: string;
     readonly width: number;
     readonly height: number;
     readonly steps: number;
@@ -24,6 +33,8 @@ export interface NovelAiPayload {
     readonly ucPreset: number;
     readonly sm: boolean;
     readonly sm_dyn: boolean;
+    readonly v4_prompt: NovelAiPromptCondition;
+    readonly v4_negative_prompt: NovelAiPromptCondition;
     readonly reference_image_multiple?: readonly string[];
     readonly reference_strength_multiple?: readonly number[];
     readonly reference_information_extracted_multiple?: readonly number[];
@@ -49,9 +60,15 @@ export function map_novelai_request(
     parameters: {
       params_version: 3,
       prompt: request.prompt,
-      ...(request.negative_prompt === undefined
-        ? {}
-        : { negative_prompt: request.negative_prompt }),
+      uc: request.negative_prompt ?? "",
+      v4_prompt: {
+        caption: { base_caption: request.prompt, char_captions: [] },
+        use_coords: false,
+        use_order: true,
+      },
+      v4_negative_prompt: {
+        caption: { base_caption: request.negative_prompt ?? "", char_captions: [] },
+      },
       width: request.width,
       height: request.height,
       steps: request.steps,

@@ -55,7 +55,7 @@ const response_bytes = new TextEncoder().encode(JSON.stringify(response_fixture)
 const profile = {
   profile_id: "novelai-cloud",
   provider_id: "novelai",
-  model_allowlist: ["nai-diffusion-4-full"],
+  model_allowlist: ["nai-diffusion-4-5-full"],
   output_mime_type_allowlist: ["image/png", "image/webp"],
   max_response_bytes: 2_000_000,
   max_archive_entries: 8,
@@ -69,7 +69,7 @@ const full_request = NovelAiRequestSchema.parse({
   prompt: "fixture prompt",
   negative_prompt: "fixture negative prompt",
   output_count: 1,
-  model_id: "nai-diffusion-4-full",
+  model_id: "nai-diffusion-4-5-full",
   sampler: "k_euler_ancestral",
   width: 1024,
   height: 1024,
@@ -275,7 +275,7 @@ describe("NovelAI request bounds", () => {
 });
 
 describe("NovelAI mapping", () => {
-  it("maps top-level negative prompt and supported character description fields", () => {
+  it("maps prompts into NovelAI V4 conditions and supported character description fields", () => {
     const assets = new Map<AssetId, ProviderSourceAsset>([
       [ASSET_ID, { asset_id: ASSET_ID, media_type: "image/png", bytes: PNG_BYTES }],
     ]);
@@ -283,7 +283,15 @@ describe("NovelAI mapping", () => {
     const payload = map_novelai_request(full_request, assets);
 
     expect(payload).toEqual(request_fixture);
-    expect(payload.parameters.negative_prompt).toBe("fixture negative prompt");
+    expect(payload.parameters.uc).toBe("fixture negative prompt");
+    expect(payload.parameters.v4_prompt).toEqual({
+      caption: { base_caption: "fixture prompt", char_captions: [] },
+      use_coords: false,
+      use_order: true,
+    });
+    expect(payload.parameters.v4_negative_prompt).toEqual({
+      caption: { base_caption: "fixture negative prompt", char_captions: [] },
+    });
     expect(payload.parameters.director_reference_descriptions).toEqual([
       {
         caption: {
@@ -299,6 +307,22 @@ describe("NovelAI mapping", () => {
       "negative_prompt",
     );
     expect(full_request.prompt).toBe("fixture prompt");
+  });
+
+  it("sends empty V4 negative conditions when the request has no negative prompt", () => {
+    const request = NovelAiRequestSchema.parse({
+      ...full_request,
+      negative_prompt: undefined,
+      vibe_references: undefined,
+      character_references: undefined,
+    });
+
+    expect(map_novelai_request(request, new Map()).parameters).toMatchObject({
+      uc: "",
+      v4_negative_prompt: {
+        caption: { base_caption: "", char_captions: [] },
+      },
+    });
   });
 
   it.each([
@@ -338,30 +362,33 @@ describe("NovelAI response parsing", () => {
     });
   });
 
-  it("extracts bounded ZIP image entries", async () => {
-    const request = NovelAiRequestSchema.parse({ ...full_request, output_count: 2 });
-    const archive = create_zip(
-      zip_fixture.map((entry) => ({
-        name: entry.filename,
-        bytes: base64_to_bytes(entry.base64),
-      })),
-    );
+  it.each(["application/zip", "application/octet-stream", "binary/octet-stream"])(
+    "extracts bounded ZIP image entries returned as %s",
+    async (content_type) => {
+      const request = NovelAiRequestSchema.parse({ ...full_request, output_count: 2 });
+      const archive = create_zip(
+        zip_fixture.map((entry) => ({
+          name: entry.filename,
+          bytes: base64_to_bytes(entry.base64),
+        })),
+      );
 
-    await expect(
-      parse_novelai_response(
-        archive,
-        "application/zip",
-        request,
-        profile.max_response_bytes,
-        profile.max_archive_entries,
-      ),
-    ).resolves.toMatchObject({
-      result: {
-        seed: 42,
-        assets: [{ media_type: "image/png" }, { media_type: "image/png" }],
-      },
-    });
-  });
+      await expect(
+        parse_novelai_response(
+          archive,
+          content_type,
+          request,
+          profile.max_response_bytes,
+          profile.max_archive_entries,
+        ),
+      ).resolves.toMatchObject({
+        result: {
+          seed: 42,
+          assets: [{ media_type: "image/png" }, { media_type: "image/png" }],
+        },
+      });
+    },
+  );
 
   it("extracts deflated ZIP image entries", async () => {
     const archive = create_zip([{ name: "image_0.png", bytes: PNG_BYTES }], "deflate");

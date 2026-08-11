@@ -260,10 +260,10 @@ describe("build_novelai_inpaint_request", () => {
       strength: 0.5,
       width: 1024,
       height: 1024,
-      model_id: "nai-diffusion-4-full",
+      model_id: "nai-diffusion-4-5-full",
     });
 
     expect(default_request.model_id).toBe(NOVELAI_INPAINT_MODEL_ID);
-    expect(overridden_request.model_id).toBe("nai-diffusion-4-full");
+    expect(overridden_request.model_id).toBe("nai-diffusion-4-5-full");
   });
 });

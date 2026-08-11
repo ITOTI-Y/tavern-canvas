@@ -64,7 +64,7 @@ const provider_requests = [
       generation_anchor,
       prompt: "A rainy alley at night",
       output_count: 2,
-      model_id: "nai-diffusion-4-full",
+      model_id: "nai-diffusion-4-5-full",
       sampler: "k_euler_ancestral",
       width: 1024,
       height: 1024,

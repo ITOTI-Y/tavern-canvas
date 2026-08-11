@@ -1,11 +1,25 @@
 {
   "input": "fixture prompt",
-  "model": "nai-diffusion-4-full",
+  "model": "nai-diffusion-4-5-full",
   "action": "generate",
   "parameters": {
     "params_version": 3,
     "prompt": "fixture prompt",
-    "negative_prompt": "fixture negative prompt",
+    "uc": "fixture negative prompt",
+    "v4_prompt": {
+      "caption": {
+        "base_caption": "fixture prompt",
+        "char_captions": []
+      },
+      "use_coords": false,
+      "use_order": true
+    },
+    "v4_negative_prompt": {
+      "caption": {
+        "base_caption": "fixture negative prompt",
+        "char_captions": []
+      }
+    },
     "width": 1024,
     "height": 1024,
     "steps": 28,

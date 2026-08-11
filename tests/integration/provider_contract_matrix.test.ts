@@ -99,7 +99,7 @@ const SD_PROFILE = {
 const NOVELAI_PROFILE = {
   profile_id: "novelai-cloud",
   provider_id: "novelai",
-  model_allowlist: ["nai-diffusion-4-full"],
+  model_allowlist: ["nai-diffusion-4-5-full"],
   output_mime_type_allowlist: ["image/png", "image/webp"],
   max_response_bytes: 2_000_000,
   max_archive_entries: 8,
@@ -161,7 +161,7 @@ const novelai_request = NovelAiRequestSchema.parse({
   prompt: "matrix fixture prompt",
   negative_prompt: "matrix fixture negative prompt",
   output_count: 1,
-  model_id: "nai-diffusion-4-full",
+  model_id: "nai-diffusion-4-5-full",
   sampler: "k_euler_ancestral",
   width: 1024,
   height: 1024,
@@ -578,7 +578,15 @@ function novelai_operation_validators(
     expect(body.input).toBe(request.prompt);
     expect(body.model).toBe(request.model_id);
     expect(parameters.prompt).toBe(request.prompt);
-    expect(parameters.negative_prompt).toBe(request.negative_prompt);
+    expect(parameters.uc).toBe(request.negative_prompt);
+    expect(parameters.v4_prompt).toEqual({
+      caption: { base_caption: request.prompt, char_captions: [] },
+      use_coords: false,
+      use_order: true,
+    });
+    expect(parameters.v4_negative_prompt).toEqual({
+      caption: { base_caption: request.negative_prompt, char_captions: [] },
+    });
     expect(parameters.n_samples).toBe(request.output_count);
     if (request.vibe_references !== undefined) {
       expect(parameters.reference_image_multiple).toEqual([bytes_to_base64(PNG_BYTES)]);

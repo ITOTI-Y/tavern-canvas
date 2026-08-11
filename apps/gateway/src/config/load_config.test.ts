@@ -305,7 +305,7 @@ describe("load_gateway_config", () => {
         profile: {
           profile_id: "novelai-cloud",
           provider_id: "novelai",
-          model_allowlist: ["nai-diffusion-4-full"],
+          model_allowlist: ["nai-diffusion-4-5-full"],
           output_mime_type_allowlist: ["image/png"],
           max_response_bytes: 2_000_000,
           max_archive_entries: 8,
