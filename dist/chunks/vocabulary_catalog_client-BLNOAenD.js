@@ -1,7 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
-import { ft as n, i as r, o as i, s as a } from "./src-B_6VhXl3.js";
-import { f as o } from "./business_repositories-ChGqmR-L.js";
-import { c as s, i as c, l, n as u, o as ee, r as d, s as te, u as ne } from "./src-CCvigPCl.js";
+import { i as n, o as r, pt as i, s as a } from "./src-CLzfjths.js";
+import { f as o } from "./business_repositories-cGxFpOW9.js";
+import { c as s, i as c, l, n as u, o as ee, r as d, s as te, u as ne } from "./src-DbZ8CsoC.js";
 //#region ../../packages/vocabulary/src/package_client.ts
 var f = class extends TypeError {}, p = class extends Error {
 	path;
@@ -564,7 +564,7 @@ function B(e, t) {
 	}
 	return 0;
 }
-var V = n({ kind: i });
+var V = i({ kind: r });
 function H(e, t) {
 	if (L(e) !== 1) throw new M("unsupported_schema", "Manifest declares an unsupported schema_version");
 	let n = a.safeParse(e);
@@ -764,12 +764,12 @@ async function me(e, t) {
 function he(e = {}) {
 	let t = e.catalog_url ?? "https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/catalog.json";
 	pe(t);
-	let n = e.fetch_impl ?? fetch, i = e.max_bytes ?? de, a = e.ttl_ms ?? 0, o = null;
+	let r = e.fetch_impl ?? fetch, i = e.max_bytes ?? de, a = e.ttl_ms ?? 0, o = null;
 	async function s(e = {}) {
 		if (o !== null && a > 0 && Date.now() - o.fetched_at_ms < a) return o.entries;
-		let s = await n(t, e.signal === void 0 ? {} : { signal: e.signal });
+		let s = await r(t, e.signal === void 0 ? {} : { signal: e.signal });
 		if (!s.ok) throw new Y(`Catalog request failed with status ${String(s.status)}`);
-		let c = await me(s.body, i), l = r.safeParse(c);
+		let c = await me(s.body, i), l = n.safeParse(c);
 		if (!l.success) throw new fe("Catalog response failed schema validation");
 		return a > 0 && (o = {
 			entries: l.data,

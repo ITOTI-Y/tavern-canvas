@@ -1,5 +1,5 @@
 import { A as e, F as t, N as n, U as r, _ as i, ft as a, g as o, h as s, lt as c, m as l, n as u, p as d, st as f, u as p, v as m, x as h, y as g } from "./vue-i18n-D0uIxSJk.js";
-import { n as _ } from "./create_i18n-DcYL_qvF.js";
+import { n as _ } from "./create_i18n-CSEgh0TQ.js";
 import { t as v } from "./check-CnyjdfAU.js";
 import { n as y, t as b } from "./StateSurface-C7mKA32L.js";
 import { t as x } from "./x-BB8D-Lda.js";

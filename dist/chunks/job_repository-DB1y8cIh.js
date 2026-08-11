@@ -1,6 +1,6 @@
-import { St as e, _t as t, at as n, ct as r, dt as i, gt as a, it as o, ot as s, pt as c, st as l, ut as u, vt as d, yt as f } from "./src-B_6VhXl3.js";
+import { Ct as e, _t as t, at as n, bt as r, ct as i, dt as a, ft as o, lt as s, mt as c, ot as l, st as u, vt as d, yt as f } from "./src-CLzfjths.js";
 //#region ../../packages/storage/src/database_schema.ts
-var ee = "tavern_canvas_v3", p = {
+var p = "tavern_canvas_v3", m = {
 	provider_profiles: {
 		key_path: "record_key",
 		indexes: [
@@ -122,55 +122,55 @@ var ee = "tavern_canvas_v3", p = {
 		],
 		since_version: 3
 	}
-}, m = u(() => f([
-	d(),
+}, h = a(() => r([
+	f(),
 	c(),
+	i(),
 	l(),
-	n(),
-	s(m),
-	a(d(), m)
-])), h = d().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), g = d().regex(/^[a-f0-9]{64}$/u), _ = e({ offset: !0 }), v = d().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), y = {
-	schema_version: i(1),
-	id: h,
-	namespace: v,
-	record_key: d().min(1),
-	created_at: _,
-	updated_at: _,
-	payload: m.optional()
+	u(h),
+	t(f(), h)
+])), g = f().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), _ = f().regex(/^[a-f0-9]{64}$/u), v = e({ offset: !0 }), y = f().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), b = {
+	schema_version: o(1),
+	id: g,
+	namespace: y,
+	record_key: f().min(1),
+	created_at: v,
+	updated_at: v,
+	payload: h.optional()
 };
-function b(e) {
-	return t({
-		...y,
+function x(e) {
+	return d({
+		...b,
 		...e
 	});
 }
-var x = d().min(1).max(128), S = f([c().int().nonnegative(), d().min(1).max(128)]), te = d().min(1).max(64), ne = d().min(1).max(128), C = b({ provider_id: x }), w = b({}), T = b({}), E = b({}), D = b({}), O = b({}), k = b({ source_type: d().min(1).max(128) }), A = b({}), j = b({ vocabulary_id: h }), M = b({
-	data_version: S,
-	state: te
-}), N = b({
-	data_version: S,
-	kind: ne
-}), P = b({}), F = b({
-	provider_kind: d().min(1).max(64),
-	credential_reference: d().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
-}), I = b({
-	sha256: g,
-	last_accessed_at: _,
-	pinned: l()
-}), L = r((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), R = t({
-	sha256: g,
+var S = f().min(1).max(128), C = r([c().int().nonnegative(), f().min(1).max(128)]), w = f().min(1).max(64), ee = f().min(1).max(128), T = x({ provider_id: S }), E = x({}), D = x({}), O = x({}), k = x({}), A = x({}), j = x({ source_type: f().min(1).max(128) }), M = x({}), N = x({ vocabulary_id: g }), P = x({
+	data_version: C,
+	state: w
+}), F = x({
+	data_version: C,
+	kind: ee
+}), I = x({}), L = x({
+	provider_kind: f().min(1).max(64),
+	credential_reference: f().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
+}), R = x({
+	sha256: _,
+	last_accessed_at: v,
+	pinned: i()
+}), z = s((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), te = d({
+	sha256: _,
 	ref_count: c().int().nonnegative(),
 	byte_length: c().int().nonnegative(),
-	blob: L
-}), z = t({
-	generation_anchor: g,
-	scene_description: d().trim().min(1).max(12e3),
-	negative_constraints: d().trim().max(4e3).optional(),
+	blob: z
+}), ne = d({
+	generation_anchor: _,
+	scene_description: f().trim().min(1).max(12e3),
+	negative_constraints: f().trim().max(4e3).optional(),
 	context_turns: c().int().min(0).max(12).optional(),
-	style_preset_id: h.optional(),
+	style_preset_id: g.optional(),
 	image_count: c().int().min(1).max(4).optional()
-}), re = t({
-	code: o([
+}), re = d({
+	code: n([
 		"auth_failed",
 		"rate_limited",
 		"content_blocked",
@@ -180,19 +180,19 @@ var x = d().min(1).max(128), S = f([c().int().nonnegative(), d().min(1).max(128)
 		"cancelled",
 		"malformed_response"
 	]),
-	retryable: l(),
+	retryable: i(),
 	retry_after_ms: c().int().nonnegative().optional(),
 	status_code: c().int().min(100).max(599).optional()
-}), B = b({
-	request_id: h,
-	request_digest: g,
-	generation_anchor: g,
-	source_anchor: g,
-	chat_id: d().min(1).max(512),
+}), B = x({
+	request_id: g,
+	request_digest: _,
+	generation_anchor: _,
+	source_anchor: _,
+	chat_id: f().min(1).max(512),
 	requested_swipe_id: c().int().nonnegative(),
-	provider_id: x,
-	arguments: z,
-	state: o([
+	provider_id: S,
+	arguments: ne,
+	state: n([
 		"queued",
 		"preparing",
 		"submitting",
@@ -204,30 +204,30 @@ var x = d().min(1).max(128), S = f([c().int().nonnegative(), d().min(1).max(128)
 		"orphaned"
 	]),
 	error: re.nullable(),
-	image_ids: s(h),
-	automatic: l().optional()
-}), ie = t({
-	migration_id: d().min(1).max(256),
+	image_ids: u(g),
+	automatic: i().optional()
+}), ie = d({
+	migration_id: f().min(1).max(256),
 	source_version: c().int().nonnegative(),
-	state: d().min(1).max(64),
-	updated_at: _,
-	payload: m.optional()
+	state: f().min(1).max(64),
+	updated_at: v,
+	payload: h.optional()
 }), V = {
-	provider_profiles: C,
-	prompt_presets: w,
-	comfy_workflows: T,
-	novelai_vibes: E,
-	character_profiles: D,
-	regex_rules: O,
-	knowledge_entries: k,
-	vocabularies: A,
-	vocabulary_groups: j,
-	vocabulary_packages: M,
-	vocabulary_shards: N,
-	image_records: I,
+	provider_profiles: T,
+	prompt_presets: E,
+	comfy_workflows: D,
+	novelai_vibes: O,
+	character_profiles: k,
+	regex_rules: A,
+	knowledge_entries: j,
+	vocabularies: M,
+	vocabulary_groups: N,
+	vocabulary_packages: P,
+	vocabulary_shards: F,
+	image_records: R,
 	generation_jobs: B,
-	legacy_preferences: P,
-	llm_connections: F
+	legacy_preferences: I,
+	llm_connections: L
 }, H = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
 function U(e, t, n) {
 	if (e !== null && typeof e != "string" && typeof e != "boolean") {
@@ -250,7 +250,7 @@ function U(e, t, n) {
 	}
 }
 function W(e) {
-	return U(e, "payload", /* @__PURE__ */ new WeakSet()), m.parse(e);
+	return U(e, "payload", /* @__PURE__ */ new WeakSet()), h.parse(e);
 }
 function G(e) {
 	let t = W(e), n = (e, t) => {
@@ -269,10 +269,10 @@ function G(e) {
 	n(t, "payload");
 }
 function K(e, t, n) {
-	if (v.parse(e), h.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
+	if (y.parse(e), g.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
 }
 function q(e, t, n, r, i) {
-	if (!(t >= 3)) for (let [n, r] of Object.entries(p)) {
+	if (!(t >= 3)) for (let [n, r] of Object.entries(m)) {
 		if (r.since_version <= t) continue;
 		let i = e.createObjectStore(n, { keyPath: r.key_path });
 		for (let e of r.indexes) i.createIndex(e, e);
@@ -323,7 +323,7 @@ var Q = class {
 		});
 	}
 	async list(e, t) {
-		let n = v.parse(e);
+		let n = y.parse(e);
 		return this.run_read(t, async (e) => {
 			let t = (await this.store(e).index("namespace").getAll(n)).map((e) => this.validate_loaded(e));
 			return t.sort((e, t) => e.id < t.id ? -1 : +(e.id > t.id)), t;
@@ -363,13 +363,13 @@ var Q = class {
 		return e.objectStore(this.store_name);
 	}
 	record_key(e, t) {
-		return `${v.parse(e)}:${h.parse(t)}`;
+		return `${y.parse(e)}:${g.parse(t)}`;
 	}
 	prepare_record(e, t) {
-		let n = v.parse(e), r = Z(t);
+		let n = y.parse(e), r = Z(t);
 		if (r.namespace !== void 0 && r.namespace !== n) throw new J("Record namespace does not match the method namespace");
 		if (typeof r.id != "string") throw new J("Record id must be a UUID");
-		let i = h.safeParse(r.id);
+		let i = g.safeParse(r.id);
 		if (!i.success) throw new J("Record id must be a UUID", i.error.issues);
 		let a = `${n}:${i.data}`;
 		if (r.record_key !== void 0 && r.record_key !== a) throw new J("Record key does not match namespace and id");
@@ -445,4 +445,4 @@ function se(e) {
 	return new $(e);
 }
 //#endregion
-export { q as A, _ as C, A as D, M as E, N as O, g as S, j as T, E as _, X as a, V as b, T as c, I as d, k as f, v as g, ie as h, Y as i, W as k, ee as l, F as m, se as n, J as o, P as p, Q as r, D as s, $ as t, R as u, w as v, h as w, O as x, C as y };
+export { q as A, v as C, M as D, P as E, F as O, _ as S, N as T, O as _, X as a, V as b, D as c, R as d, j as f, y as g, ie as h, Y as i, W as k, p as l, L as m, se as n, J as o, I as p, Q as r, k as s, $ as t, te as u, E as v, g as w, A as x, T as y };

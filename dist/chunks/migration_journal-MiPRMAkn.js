@@ -1,6 +1,6 @@
-import { _t as e, dt as t, gt as n, it as r, lt as i, ot as a, pt as o, vt as s } from "./src-B_6VhXl3.js";
-import { k as c } from "./job_repository-DYNL0zYk.js";
-import { n as l } from "./business_repositories-ChGqmR-L.js";
+import { _t as e, at as t, ft as n, mt as r, st as i, ut as a, vt as o, yt as s } from "./src-CLzfjths.js";
+import { k as c } from "./job_repository-DB1y8cIh.js";
+import { n as l } from "./business_repositories-cGxFpOW9.js";
 //#region src/migration/migration_journal.ts
 var u = "migration:", d = "migration:not_required", f = [
 	"invalid_source",
@@ -11,49 +11,49 @@ var u = "migration:", d = "migration:not_required", f = [
 	"count_mismatch",
 	"secret_transfer_blocked",
 	"switch_failed"
-], p = e({
+], p = o({
 	path: s(),
 	message: s()
-}), m = e({
-	reason: r(f),
+}), m = o({
+	reason: t(f),
 	message: s(),
 	step: s()
 }), h = {
 	source_fingerprint: s().min(1),
 	staging_namespace: s().min(1),
 	started_at: s().min(1),
-	completed_batches: a(s()),
-	counts: n(s(), o().int().nonnegative()),
-	image_hashes: a(s()),
-	warnings: a(p)
-}, g = i("state", [
-	e({
-		state: t("inventory"),
+	completed_batches: i(s()),
+	counts: e(s(), r().int().nonnegative()),
+	image_hashes: i(s()),
+	warnings: i(p)
+}, g = a("state", [
+	o({
+		state: n("inventory"),
 		...h
 	}),
-	e({
-		state: t("copying"),
+	o({
+		state: n("copying"),
 		...h
 	}),
-	e({
-		state: t("verifying"),
+	o({
+		state: n("verifying"),
 		...h
 	}),
-	e({
-		state: t("ready_to_switch"),
+	o({
+		state: n("ready_to_switch"),
 		...h
 	}),
-	e({
-		state: t("completed"),
+	o({
+		state: n("completed"),
 		...h
 	}),
-	e({
-		state: t("failed"),
+	o({
+		state: n("failed"),
 		...h,
 		failure: m
 	}),
-	e({
-		state: t("not_required"),
+	o({
+		state: n("not_required"),
 		checked_at: s().min(1)
 	})
 ]);

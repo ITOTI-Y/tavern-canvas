@@ -1,8 +1,8 @@
 import { n as e, r as t, t as n } from "./sha2-BGNex9vj.js";
-import { _t as r, bt as i, dt as a, gt as o, ht as s, it as c, mt as l, ot as u, pt as d, st as f, vt as p, x as m, yt as h } from "./src-B_6VhXl3.js";
-import { C as g, b as _, d as v, g as ee, k as y, w as te, y as ne } from "./job_repository-DYNL0zYk.js";
-import { a as b, d as x, l as re } from "./business_repositories-ChGqmR-L.js";
-import { i as ie, n as ae, r as oe, t as se } from "./migration_journal-CaHselfx.js";
+import { _t as r, at as i, bt as a, ct as o, ft as s, gt as c, ht as l, mt as u, st as d, vt as f, x as p, xt as m, yt as h } from "./src-CLzfjths.js";
+import { C as g, b as _, d as v, g as ee, k as y, w as te, y as ne } from "./job_repository-DB1y8cIh.js";
+import { a as b, d as x, l as re } from "./business_repositories-cGxFpOW9.js";
+import { i as ie, n as ae, r as oe, t as se } from "./migration_journal-MiPRMAkn.js";
 //#region ../../tools/v2_migration/src/conversion_result.ts
 function S(e, t) {
 	return `${e}:${t}`;
@@ -17,11 +17,11 @@ function C(e, t) {
 		updated_at: e.migrated_at
 	};
 }
-var ce = r({
-	schema_version: a(1),
+var ce = f({
+	schema_version: s(1),
 	id: te,
 	namespace: ee,
-	record_key: p().min(1),
+	record_key: h().min(1),
 	created_at: g,
 	updated_at: g
 });
@@ -440,7 +440,7 @@ function F(e) {
 }
 //#endregion
 //#region ../../tools/v2_migration/src/converters/settings_converter.ts
-var ve = ce.extend({ payload: o(p(), i()) });
+var ve = ce.extend({ payload: r(h(), m()) });
 function ye(e, t) {
 	let n = [
 		{
@@ -467,7 +467,7 @@ function ye(e, t) {
 			path: "ui.inspector_width",
 			message: "v2 has no inspector panel; defaulted to 360."
 		}
-	], r = m.parse({
+	], r = p.parse({
 		schema_version: 1,
 		active_namespace: t.namespace,
 		locale: "auto",
@@ -927,91 +927,91 @@ function De(e) {
 }
 //#endregion
 //#region ../../tools/v2_migration/src/legacy_schema.ts
-var q = h([
-	p(),
-	d(),
-	f()
-]), Oe = r({
-	fixedPrompt: p(),
-	fixedPrompt_end: p(),
-	negativePrompt: p()
-}), ke = r({
-	model: p(),
-	infoExtract: d(),
-	strength: d(),
-	imageId: p().nullable(),
-	vibeDataId: p().nullable()
-}), Ae = r({
-	beforeAfterRegex: p(),
-	textRegex: p()
-}), je = r({
-	textReplacement: p(),
-	aiReplacement: p()
-}), J = r({ text: p() }), Me = r({
-	bgColor: p(),
-	iconColor: p(),
-	opacity: d()
-}), Ne = r({
-	bgColor: p().optional(),
-	textColor: p().optional(),
-	accentColor: p().optional()
-}), Pe = r({
-	novelaiApi: p(),
-	novelaisite: p(),
-	novelaiOtherSite: p(),
-	enableCloudQueue: p(),
-	cloudQueueUrl: p(),
-	cloudQueueGreeting: p(),
-	showQueueGreeting: p(),
-	novelaimode: p(),
-	novelai_sampler: p(),
-	Schedule: p(),
-	nai3Scale: p(),
-	cfg_rescale: p(),
-	AI_use_coords: p(),
-	sm: p(),
-	dyn: p(),
-	nai3Variety: p(),
-	nai3Deceisp: p(),
-	enableVibeGroupTransfer: p(),
-	randomVibeGroup: p(),
-	normalizeRefStrength: p(),
-	novelai_width: p(),
-	novelai_height: p(),
-	novelai_steps: p(),
-	novelai_seed: p()
-}), Fe = r({
-	workerid: p(),
-	worker: p(),
-	editWorkerid: p(),
-	editWorker: p(),
-	comfyuiUrl: p(),
-	MODEL_NAME: p(),
-	comfyuisamplerName: p(),
-	comfyui_vae: p(),
-	comfyui_scheduler: p(),
-	comfyuiCLIPName: p(),
-	comfyui_width: p(),
-	comfyui_height: p(),
-	comfyui_steps: p(),
-	comfyui_seed: p(),
-	cfg_comfyui: p()
-}), Ie = r({
-	api_url: p(),
-	api_key: p(),
-	model: p(),
-	temperature: d(),
-	top_p: d(),
-	max_tokens: d(),
-	stream: f(),
-	bypass_proxy: f()
-}), Y = r({
-	api_profile: p(),
-	context_profile: p()
+var q = a([
+	h(),
+	u(),
+	o()
+]), Oe = f({
+	fixedPrompt: h(),
+	fixedPrompt_end: h(),
+	negativePrompt: h()
+}), ke = f({
+	model: h(),
+	infoExtract: u(),
+	strength: u(),
+	imageId: h().nullable(),
+	vibeDataId: h().nullable()
+}), Ae = f({
+	beforeAfterRegex: h(),
+	textRegex: h()
+}), je = f({
+	textReplacement: h(),
+	aiReplacement: h()
+}), J = f({ text: h() }), Me = f({
+	bgColor: h(),
+	iconColor: h(),
+	opacity: u()
+}), Ne = f({
+	bgColor: h().optional(),
+	textColor: h().optional(),
+	accentColor: h().optional()
+}), Pe = f({
+	novelaiApi: h(),
+	novelaisite: h(),
+	novelaiOtherSite: h(),
+	enableCloudQueue: h(),
+	cloudQueueUrl: h(),
+	cloudQueueGreeting: h(),
+	showQueueGreeting: h(),
+	novelaimode: h(),
+	novelai_sampler: h(),
+	Schedule: h(),
+	nai3Scale: h(),
+	cfg_rescale: h(),
+	AI_use_coords: h(),
+	sm: h(),
+	dyn: h(),
+	nai3Variety: h(),
+	nai3Deceisp: h(),
+	enableVibeGroupTransfer: h(),
+	randomVibeGroup: h(),
+	normalizeRefStrength: h(),
+	novelai_width: h(),
+	novelai_height: h(),
+	novelai_steps: h(),
+	novelai_seed: h()
+}), Fe = f({
+	workerid: h(),
+	worker: h(),
+	editWorkerid: h(),
+	editWorker: h(),
+	comfyuiUrl: h(),
+	MODEL_NAME: h(),
+	comfyuisamplerName: h(),
+	comfyui_vae: h(),
+	comfyui_scheduler: h(),
+	comfyuiCLIPName: h(),
+	comfyui_width: h(),
+	comfyui_height: h(),
+	comfyui_steps: h(),
+	comfyui_seed: h(),
+	cfg_comfyui: h()
+}), Ie = f({
+	api_url: h(),
+	api_key: h(),
+	model: h(),
+	temperature: u(),
+	top_p: u(),
+	max_tokens: u(),
+	stream: o(),
+	bypass_proxy: o()
+}), Y = f({
+	api_profile: h(),
+	context_profile: h()
 }), X = {
 	api_profile: "",
 	context_profile: ""
-}, Z = r({
+}, Z = f({
 	image_gen: Y,
 	char_design: Y,
 	char_display: Y,
@@ -1033,50 +1033,50 @@ var q = h([
 	persona_gen: X,
 	user_persona_gen: X,
 	chat_summary: X
-}, Re = r({
-	id: p(),
-	name: p(),
-	role: c([
+}, Re = f({
+	id: h(),
+	name: h(),
+	role: i([
 		"system",
 		"user",
 		"assistant"
 	]),
-	content: p(),
-	enabled: f(),
-	triggerMode: c(["always", "trigger"]),
-	triggerWords: p(),
-	andTriggerWords: p()
-}), ze = r({ entries: u(Re) }), Q = r({
-	user: r({
-		text: p(),
-		image: p()
+	content: h(),
+	enabled: o(),
+	triggerMode: i(["always", "trigger"]),
+	triggerWords: h(),
+	andTriggerWords: h()
+}), ze = f({ entries: d(Re) }), Q = f({
+	user: f({
+		text: h(),
+		image: h()
 	}),
-	model: r({
-		text: p(),
-		image: p()
+	model: f({
+		text: h(),
+		image: h()
 	})
-}), Be = r({
-	fixedPrompt: p(),
-	postfixPrompt: p(),
-	conversation: u(Q)
-}), Ve = r({
-	triggers: p(),
+}), Be = f({
+	fixedPrompt: h(),
+	postfixPrompt: h(),
+	conversation: d(Q)
+}), Ve = f({
+	triggers: h(),
 	conversation: Q
-}), He = r({
-	apiKey: p(),
-	apiUrl: p(),
-	model: p(),
-	editModel: p(),
-	videoModel: p(),
-	aspectRatio: p(),
-	imageSize: p(),
-	useGrokFormat: p(),
-	conversationPresetId: p(),
-	editPresetId: p(),
-	videoPresetId: p(),
-	conversationPresets: o(p(), Be),
-	prompt_replace: o(p(), J),
-	prompt_replace_id: p()
+}), He = f({
+	apiKey: h(),
+	apiUrl: h(),
+	model: h(),
+	editModel: h(),
+	videoModel: h(),
+	aspectRatio: h(),
+	imageSize: h(),
+	useGrokFormat: h(),
+	conversationPresetId: h(),
+	editPresetId: h(),
+	videoPresetId: h(),
+	conversationPresets: r(h(), Be),
+	prompt_replace: r(h(), J),
+	prompt_replace_id: h()
 }), Ue = {
 	apiKey: "123456",
 	apiUrl: "http://localhost:8008",
@@ -1092,13 +1092,13 @@ var q = h([
 	conversationPresets: {},
 	prompt_replace: {},
 	prompt_replace_id: ""
-}, We = r({
-	api_url: p(),
-	api_key: p(),
-	model: p(),
-	bypass_proxy: f(),
-	stream: f(),
-	system_prompt: p()
+}, We = f({
+	api_url: h(),
+	api_key: h(),
+	model: h(),
+	bypass_proxy: o(),
+	stream: o(),
+	system_prompt: h()
 }), Ge = {
 	api_url: "",
 	api_key: "",
@@ -1106,17 +1106,17 @@ var q = h([
 	bypass_proxy: !1,
 	stream: !0,
 	system_prompt: ""
-}, Ke = r({
-	enabled: f(),
-	asrServerUrl: p(),
-	mode: c(["vad", "ptt"]),
-	silenceTimeout: d(),
-	vadThreshold: d(),
-	maxKeepDuration: d(),
-	language: p(),
-	appendMode: f(),
-	autoSend: f(),
-	conversationMode: f()
+}, Ke = f({
+	enabled: o(),
+	asrServerUrl: h(),
+	mode: i(["vad", "ptt"]),
+	silenceTimeout: u(),
+	vadThreshold: u(),
+	maxKeepDuration: u(),
+	language: h(),
+	appendMode: o(),
+	autoSend: o(),
+	conversationMode: o()
 }), qe = {
 	enabled: !1,
 	asrServerUrl: "https://qwen-qwen3-asr-demo.ms.show",
@@ -1128,45 +1128,45 @@ var q = h([
 	appendMode: !0,
 	autoSend: !0,
 	conversationMode: !1
-}, Je = r({
-	enabled: f(),
-	triggerDepth: d(),
-	worldBookSelections: o(p(), h([f(), a("force")])),
-	worldEntrySelections: o(p(), o(p(), h([f(), a("force")])))
+}, Je = f({
+	enabled: o(),
+	triggerDepth: u(),
+	worldBookSelections: r(h(), a([o(), s("force")])),
+	worldEntrySelections: r(h(), r(h(), a([o(), s("force")])))
 }), Ye = {
 	enabled: !1,
 	triggerDepth: 1,
 	worldBookSelections: {},
 	worldEntrySelections: {}
-}, Xe = r({
-	worldBookSelections: o(p(), h([f(), a("force")])),
-	worldEntrySelections: o(p(), o(p(), h([f(), a("force")])))
-}), Ze = r({
-	backends: r({
-		sd: r({
-			success: d(),
-			fail: d()
+}, Xe = f({
+	worldBookSelections: r(h(), a([o(), s("force")])),
+	worldEntrySelections: r(h(), r(h(), a([o(), s("force")])))
+}), Ze = f({
+	backends: f({
+		sd: f({
+			success: u(),
+			fail: u()
 		}),
-		comfyui: r({
-			success: d(),
-			fail: d()
+		comfyui: f({
+			success: u(),
+			fail: u()
 		}),
-		banana: r({
-			success: d(),
-			fail: d()
+		banana: f({
+			success: u(),
+			fail: u()
 		}),
-		novelai: r({
-			success: d(),
-			fail: d()
+		novelai: f({
+			success: u(),
+			fail: u()
 		})
 	}),
-	total: r({
-		success: d(),
-		fail: d()
+	total: f({
+		success: u(),
+		fail: u()
 	}),
-	firstGenTime: d().nullable(),
-	lastGenTime: d().nullable(),
-	daily: o(p(), i())
+	firstGenTime: u().nullable(),
+	lastGenTime: u().nullable(),
+	daily: r(h(), m())
 }), Qe = {
 	backends: {
 		sd: {
@@ -1193,107 +1193,107 @@ var q = h([
 	firstGenTime: null,
 	lastGenTime: null,
 	daily: {}
-}, $e = r({
-	presets: o(p(), o(p(), i())),
-	currentPresetId: p().optional(),
-	enabled: f().optional(),
-	injectionMode: p().optional(),
-	currentUserPresetId: p().optional(),
-	userEnabled: f().optional(),
-	userInjectionMode: p().optional()
-}), et = r({
-	model: p(),
-	temperature: d(),
-	systemPrompt: p(),
-	lastPrompt: p()
+}, $e = f({
+	presets: r(h(), r(h(), m())),
+	currentPresetId: h().optional(),
+	enabled: o().optional(),
+	injectionMode: h().optional(),
+	currentUserPresetId: h().optional(),
+	userEnabled: o().optional(),
+	userInjectionMode: h().optional()
+}), et = f({
+	model: h(),
+	temperature: u(),
+	systemPrompt: h(),
+	lastPrompt: h()
 }), tt = {
 	model: "mistral",
 	temperature: .8,
 	systemPrompt: "",
 	lastPrompt: ""
 }, nt = l({
-	theme_id: p().default(""),
-	themes: o(p(), Ne).default({}),
-	generate_btn_style: p().default(""),
-	image_frame_style: p().default(""),
-	collapse_style: p().default(""),
-	scriptEnabled: f().default(!1),
+	theme_id: h().default(""),
+	themes: r(h(), Ne).default({}),
+	generate_btn_style: h().default(""),
+	image_frame_style: h().default(""),
+	collapse_style: h().default(""),
+	scriptEnabled: o().default(!1),
 	helpTipsEnabled: q.default("true"),
 	characterAI: et.default(tt),
 	outfitAI: et.default(tt),
 	newlineFixEnabled: q.default("true"),
-	yushe: o(p(), Oe).default({}),
-	yusheid_sd: p().default(""),
-	yusheid_novelai: p().default(""),
-	yusheid_comfyui: p().default(""),
+	yushe: r(h(), Oe).default({}),
+	yusheid_sd: h().default(""),
+	yusheid_novelai: h().default(""),
+	yusheid_comfyui: h().default(""),
 	randomYushe: q.default("false"),
-	aiAutonomousResolution: f().default(!0),
-	prompt_replace: o(p(), J).default({}),
-	prompt_replace_id: p().default(""),
-	vibePresets: o(p(), ke).default({}),
-	vibePresetId: p().default(""),
-	regex_profiles: o(p(), Ae).default({}),
-	current_regex_profile: p().default(""),
-	word_replacement_profiles: o(p(), je).default({}),
-	current_word_replacement_profile: p().default(""),
-	regexTestMode: f().default(!1),
-	mode: p().default("comfyui"),
-	client: p().default("browser"),
-	cache: p().default("1"),
-	sdUrl: p().default("http://localhost:7860"),
-	st_chatu8_sd_auth: p().default(""),
-	comfyuiUrl: p().default("http://localhost:8188"),
-	novelaiApi: p().default("000000"),
-	novelaiApi_id: p().default("000000"),
-	startTag: p().default("image###"),
-	endTag: p().default("###"),
-	nai3Scale: p().default("10"),
-	sdCfgScale: p().default("7"),
-	sm: p().default("true"),
-	dyn: p().default("true"),
-	cfg_rescale: p().default("0.18"),
-	AQT_sd: p().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_sd: p().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
-	AQT_novelai: p().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_novelai: p().default("Heavy"),
+	aiAutonomousResolution: o().default(!0),
+	prompt_replace: r(h(), J).default({}),
+	prompt_replace_id: h().default(""),
+	vibePresets: r(h(), ke).default({}),
+	vibePresetId: h().default(""),
+	regex_profiles: r(h(), Ae).default({}),
+	current_regex_profile: h().default(""),
+	word_replacement_profiles: r(h(), je).default({}),
+	current_word_replacement_profile: h().default(""),
+	regexTestMode: o().default(!1),
+	mode: h().default("comfyui"),
+	client: h().default("browser"),
+	cache: h().default("1"),
+	sdUrl: h().default("http://localhost:7860"),
+	st_chatu8_sd_auth: h().default(""),
+	comfyuiUrl: h().default("http://localhost:8188"),
+	novelaiApi: h().default("000000"),
+	novelaiApi_id: h().default("000000"),
+	startTag: h().default("image###"),
+	endTag: h().default("###"),
+	nai3Scale: h().default("10"),
+	sdCfgScale: h().default("7"),
+	sm: h().default("true"),
+	dyn: h().default("true"),
+	cfg_rescale: h().default("0.18"),
+	AQT_sd: h().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_sd: h().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
+	AQT_novelai: h().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_novelai: h().default("Heavy"),
 	addFurryDataset: q.default("false"),
-	AQT_comfyui: p().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_comfyui: p().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
-	sd_csteps: p().default("28"),
-	sd_cwidth: p().default("1024"),
-	sd_cheight: p().default("1024"),
-	sd_cseed: p().default("-1"),
-	novelai_steps: p().default("28"),
-	novelai_width: p().default("1024"),
-	novelai_height: p().default("1024"),
-	novelai_seed: p().default("0"),
-	comfyui_steps: p().default("28"),
-	comfyui_width: p().default("1024"),
-	comfyui_height: p().default("1024"),
-	comfyui_seed: p().default("0"),
-	inpaint_denoise: p().default("0.75"),
+	AQT_comfyui: h().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_comfyui: h().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
+	sd_csteps: h().default("28"),
+	sd_cwidth: h().default("1024"),
+	sd_cheight: h().default("1024"),
+	sd_cseed: h().default("-1"),
+	novelai_steps: h().default("28"),
+	novelai_width: h().default("1024"),
+	novelai_height: h().default("1024"),
+	novelai_seed: h().default("0"),
+	comfyui_steps: h().default("28"),
+	comfyui_width: h().default("1024"),
+	comfyui_height: h().default("1024"),
+	comfyui_seed: h().default("0"),
+	inpaint_denoise: h().default("0.75"),
 	weilin_lora_fix: q.default("false"),
-	inpaint_brush_size: d().default(30),
-	inpaint_positive_prompt: p().default(""),
-	inpaint_negative_prompt: p().default(""),
-	cfg_comfyui: p().default("6"),
-	sd_cchatu_8_model: p().default(""),
-	sd_cchatu_8_vae: p().default("Automatic"),
-	sd_cchatu_8_scheduler: p().default(""),
-	sd_cchatu_8_upscaler: p().default("Latent"),
-	sd_cupscale_factor: p().default("1"),
-	sd_chires_fix: p().default("false"),
-	sd_chires_steps: p().default("0"),
-	sd_cdenoising_strength: p().default("0.7"),
-	sd_cclip_skip: p().default("2"),
-	sd_cadetailer: p().default("false"),
-	restoreFaces: p().default("false"),
-	sd_cchatu_8_samplerName: p().default("DPM++ 2M"),
-	comfyuisamplerName: p().default(""),
-	comfyuiCLIPName: p().default(""),
-	comfyui_scheduler: p().default(""),
-	comfyui_vae: p().default(""),
-	novelai_sampler: p().default("k_euler"),
+	inpaint_brush_size: u().default(30),
+	inpaint_positive_prompt: h().default(""),
+	inpaint_negative_prompt: h().default(""),
+	cfg_comfyui: h().default("6"),
+	sd_cchatu_8_model: h().default(""),
+	sd_cchatu_8_vae: h().default("Automatic"),
+	sd_cchatu_8_scheduler: h().default(""),
+	sd_cchatu_8_upscaler: h().default("Latent"),
+	sd_cupscale_factor: h().default("1"),
+	sd_chires_fix: h().default("false"),
+	sd_chires_steps: h().default("0"),
+	sd_cdenoising_strength: h().default("0.7"),
+	sd_cclip_skip: h().default("2"),
+	sd_cadetailer: h().default("false"),
+	restoreFaces: h().default("false"),
+	sd_cchatu_8_samplerName: h().default("DPM++ 2M"),
+	comfyuisamplerName: h().default(""),
+	comfyuiCLIPName: h().default(""),
+	comfyui_scheduler: h().default(""),
+	comfyui_vae: h().default(""),
+	novelai_sampler: h().default("k_euler"),
 	zidongdianji: q.default("false"),
 	zidongdianji2: q.default("false"),
 	longPressToEdit: q.default("false"),
@@ -1304,91 +1304,91 @@ var q = h([
 	normalizeRefStrength: q.default("false"),
 	nai3CharRef: q.default("false"),
 	nai3StylePerception: q.default("false"),
-	InformationExtracted: p().default("0.3"),
-	ReferenceStrength: p().default("0.6"),
+	InformationExtracted: h().default("0.3"),
+	ReferenceStrength: h().default("0.6"),
 	nai3Deceisp: q.default("true"),
 	nai3Variety: q.default("true"),
-	Schedule: p().default("karras"),
-	MODEL_NAME: p().default(""),
-	c_fenwei: p().default("0.8"),
-	c_xijie: p().default("0.8"),
-	c_idquanzhong: p().default("1.10"),
-	c_quanzhong: p().default("0.8"),
-	ipa: p().default("STANDARD (medium strength)"),
+	Schedule: h().default("karras"),
+	MODEL_NAME: h().default(""),
+	c_fenwei: h().default("0.8"),
+	c_xijie: h().default("0.8"),
+	c_idquanzhong: h().default("1.10"),
+	c_quanzhong: h().default("0.8"),
+	ipa: h().default("STANDARD (medium strength)"),
 	dbclike: q.default("false"),
 	collapseImage: q.default("false"),
-	workers: o(p(), p()).default({}),
-	workerid: p().default(""),
-	worker: p().default(""),
-	editWorkerid: p().default(""),
-	editWorker: p().default(""),
-	novelaimode: p().default("nai-diffusion-4-5-full"),
-	novelaisite: p().default(""),
-	novelaiOtherSite: p().default("http://localhost:9696/get-new-token"),
+	workers: r(h(), h()).default({}),
+	workerid: h().default(""),
+	worker: h().default(""),
+	editWorkerid: h().default(""),
+	editWorker: h().default(""),
+	novelaimode: h().default("nai-diffusion-4-5-full"),
+	novelaisite: h().default(""),
+	novelaiOtherSite: h().default("http://localhost:9696/get-new-token"),
 	enableCloudQueue: q.default("false"),
-	cloudQueueUrl: p().default("https://st-chatu-novelai-queue.hf.space"),
-	cloudQueueGreeting: p().default(""),
+	cloudQueueUrl: h().default("https://st-chatu-novelai-queue.hf.space"),
+	cloudQueueGreeting: h().default(""),
 	showQueueGreeting: q.default("true"),
-	displayMode: p().default(""),
+	displayMode: h().default(""),
 	heavyFrontendMode: q.default("false"),
 	insertOriginalText: q.default("false"),
 	tagthinkEcho: q.default("false"),
-	historyKeepImageTag: f().default(!1),
+	historyKeepImageTag: o().default(!1),
 	enablePregen: q.default("false"),
 	autoLLMImageGen: q.default("false"),
-	imageAlignment: p().default("center"),
-	imageSizeScale: p().default("100"),
-	imageGenInterval: d().default(100),
-	ai_temperature: d().default(1),
-	ai_top_p: d().default(1),
-	ai_presence_penalty: d().default(0),
-	ai_frequency_penalty: d().default(0),
+	imageAlignment: h().default("center"),
+	imageSizeScale: h().default("100"),
+	imageGenInterval: u().default(100),
+	ai_temperature: u().default(1),
+	ai_top_p: u().default(1),
+	ai_presence_penalty: u().default(0),
+	ai_frequency_penalty: u().default(0),
 	ai_stream: q.default("false"),
 	ai_private: q.default("true"),
-	ai_token: p().default(""),
-	ai_test_system: p().default("You are a helpful assistant."),
-	ai_test_user: p().default("What is the capital of France?"),
-	ai_test_output: p().default(""),
+	ai_token: h().default(""),
+	ai_test_system: h().default("You are a helpful assistant."),
+	ai_test_user: h().default("What is the capital of France?"),
+	ai_test_output: h().default(""),
 	chatu8_ai_assistant: We.default(Ge),
-	chatu8_code: p().default(""),
+	chatu8_code: h().default(""),
 	asr: Ke.default(qe),
 	knowledgeBaseConfig: Je.default(Ye),
-	llm_history_depth: d().default(2),
+	llm_history_depth: u().default(2),
 	imageGenStats: Ze.default(Qe),
-	llm_profiles: o(p(), Ie).default({}),
-	current_llm_profile: p().default(""),
-	llm_request_type_profiles: o(p(), Z).default({}),
-	current_llm_request_type_profile: p().default(""),
+	llm_profiles: r(h(), Ie).default({}),
+	current_llm_profile: h().default(""),
+	llm_request_type_profiles: r(h(), Z).default({}),
+	current_llm_request_type_profile: h().default(""),
 	llm_request_type_configs: Z.default(Le),
-	test_context_profiles: o(p(), ze).default({}),
-	current_test_context_profile: p().default(""),
-	translation_model: p().default("mistral"),
-	translation_system_prompt: p().default(""),
+	test_context_profiles: r(h(), ze).default({}),
+	current_test_context_profile: h().default(""),
+	translation_model: h().default("mistral"),
+	translation_system_prompt: h().default(""),
 	AI_use_coords: q.default("true"),
-	fabThemes: o(p(), Me).default({}),
-	chatu8_fab_theme: p().default(""),
-	enable_chatu8_fab: f().default(!0),
-	enable_chatu8_fab_video: f().default(!1),
-	enable_chatu8_desktop_pet: f().default(!1),
-	chatu8_fab_bg_color: p().default("#ADD8E6"),
-	chatu8_fab_icon_color: p().default("#FFFFFF"),
-	chatu8_fab_icon_image_id: p().default(""),
-	chatu8_fab_opacity: d().default(1),
-	chatu8_fab_size: r({
-		desktop: d(),
-		mobile: d()
+	fabThemes: r(h(), Me).default({}),
+	chatu8_fab_theme: h().default(""),
+	enable_chatu8_fab: o().default(!0),
+	enable_chatu8_fab_video: o().default(!1),
+	enable_chatu8_desktop_pet: o().default(!1),
+	chatu8_fab_bg_color: h().default("#ADD8E6"),
+	chatu8_fab_icon_color: h().default("#FFFFFF"),
+	chatu8_fab_icon_image_id: h().default(""),
+	chatu8_fab_opacity: u().default(1),
+	chatu8_fab_size: f({
+		desktop: u(),
+		mobile: u()
 	}).default({
 		desktop: 50,
 		mobile: 40
 	}),
-	chatu8_fab_position: r({
-		desktop: r({
-			top: p(),
-			left: p()
+	chatu8_fab_position: f({
+		desktop: f({
+			top: h(),
+			left: h()
 		}),
-		mobile: r({
-			top: p(),
-			left: p()
+		mobile: f({
+			top: h(),
+			left: h()
 		})
 	}).default({
 		desktop: {
@@ -1400,117 +1400,117 @@ var q = h([
 			left: "10px"
 		}
 	}),
-	chatu8_fab_video_paths: r({
-		idle: p(),
-		dragging: p()
+	chatu8_fab_video_paths: f({
+		idle: h(),
+		dragging: h()
 	}).default({
 		idle: "",
 		dragging: ""
 	}),
-	lastTab: p().default("main"),
-	cacheStorageMigrated: f().default(!1),
+	lastTab: h().default("main"),
+	cacheStorageMigrated: o().default(!1),
 	worldBookEnabled: q.default("false"),
-	worldBookList: o(p(), r({ content: p() })).default({}),
-	worldBookList_id: p().default(""),
+	worldBookList: r(h(), f({ content: h() })).default({}),
+	worldBookList_id: h().default(""),
 	vocabulary_search_startswith: q.default("false"),
-	vocabulary_search_limit: d().default(100),
-	vocabulary_search_sort: p().default("hot_desc"),
+	vocabulary_search_limit: u().default(100),
+	vocabulary_search_sort: h().default("hot_desc"),
 	jiuguanchucun: q.default("false"),
 	vibeJiuguanchucun: q.default("true"),
 	convertToJpegStorage: q.default("false"),
-	jiuguanStorage: o(p(), r({
-		images: u(r({
-			uuid: p(),
-			path: p(),
-			thumbnail_uuid: p(),
-			thumbnail_path: p(),
-			date: d(),
-			isVideo: f(),
-			originalUrl: p(),
-			size: d(),
-			thumbnail_size: d(),
-			genParams: o(p(), i()).nullable().optional(),
-			data_base64: s((e) => e === "" ? void 0 : e, p().min(1).optional())
+	jiuguanStorage: r(h(), f({
+		images: d(f({
+			uuid: h(),
+			path: h(),
+			thumbnail_uuid: h(),
+			thumbnail_path: h(),
+			date: u(),
+			isVideo: o(),
+			originalUrl: h(),
+			size: u(),
+			thumbnail_size: u(),
+			genParams: r(h(), m()).nullable().optional(),
+			data_base64: c((e) => e === "" ? void 0 : e, h().min(1).optional())
 		})),
-		index: d(),
-		change: p()
+		index: u(),
+		change: h()
 	})).default({}),
 	banana: He.default(Ue),
-	bananaCharacterPresets: o(p(), Ve).default({}),
-	bananaCharacterPresetId: p().default(""),
-	gestureEnabled: f().default(!1),
-	clickTriggerEnabled: f().default(!0),
-	gesture1: u(p()).default([]),
-	gesture2: u(p()).default([]),
-	gestureShowRecognition: f().default(!0),
-	gestureShowTrail: f().default(!0),
-	gestureTrailColor: p().default("#00ff00"),
-	gestureMatchThreshold: d().default(60),
-	defaultCharDemand: p().default(""),
-	defaultImageDemand: p().default(""),
-	novelai_profiles: o(p(), Pe).default({}),
-	novelai_profile_id: p().default(""),
-	comfyui_profiles: o(p(), Fe).default({}),
-	comfyui_profile_id: p().default(""),
+	bananaCharacterPresets: r(h(), Ve).default({}),
+	bananaCharacterPresetId: h().default(""),
+	gestureEnabled: o().default(!1),
+	clickTriggerEnabled: o().default(!0),
+	gesture1: d(h()).default([]),
+	gesture2: d(h()).default([]),
+	gestureShowRecognition: o().default(!0),
+	gestureShowTrail: o().default(!0),
+	gestureTrailColor: h().default("#00ff00"),
+	gestureMatchThreshold: u().default(60),
+	defaultCharDemand: h().default(""),
+	defaultImageDemand: h().default(""),
+	novelai_profiles: r(h(), Pe).default({}),
+	novelai_profile_id: h().default(""),
+	comfyui_profiles: r(h(), Fe).default({}),
+	comfyui_profile_id: h().default(""),
 	worldBookConfig: Xe.optional(),
 	personaProfiles: $e.optional()
-}), rt = r({
-	uuid: p().min(1),
-	path: p().optional(),
-	thumbnail_uuid: p().min(1).optional(),
-	thumbnail_path: p().optional(),
-	date: d().int().nonnegative(),
-	isVideo: f(),
-	originalUrl: p(),
-	size: d().int().nonnegative(),
-	thumbnail_size: d().int().nonnegative(),
-	genParams: o(p(), i()).nullable().optional(),
-	data_base64: p().min(1).optional()
-}), it = r({
-	images: u(rt),
-	index: d().int().nonnegative(),
-	change: p()
-}), at = r({
-	id_index: p().min(1),
-	fileName: p().min(1),
-	name: p().min(1)
-}), ot = r({
-	fileName: p().min(1),
-	name: p().min(1),
-	hot: d().int().optional()
-}), st = r({
-	id: p().min(1),
-	data_base64: p().min(1),
-	date: d().int().nonnegative()
-}), ct = r({
-	tupianhuancun_metadata: o(p(), it),
-	tupianhuancun_blobs: o(p(), p().min(1)),
-	groups: u(at),
-	subgroups: u(at),
-	tags: u(ot),
-	config_images: u(st)
-}), lt = r({
-	tag: p().min(1),
-	regex: p().optional(),
-	locked: f().optional()
-}), ut = r({
-	chat_id: p().min(1),
-	message_id: d().int().nonnegative(),
-	role: c([
+}), rt = f({
+	uuid: h().min(1),
+	path: h().optional(),
+	thumbnail_uuid: h().min(1).optional(),
+	thumbnail_path: h().optional(),
+	date: u().int().nonnegative(),
+	isVideo: o(),
+	originalUrl: h(),
+	size: u().int().nonnegative(),
+	thumbnail_size: u().int().nonnegative(),
+	genParams: r(h(), m()).nullable().optional(),
+	data_base64: h().min(1).optional()
+}), it = f({
+	images: d(rt),
+	index: u().int().nonnegative(),
+	change: h()
+}), at = f({
+	id_index: h().min(1),
+	fileName: h().min(1),
+	name: h().min(1)
+}), ot = f({
+	fileName: h().min(1),
+	name: h().min(1),
+	hot: u().int().optional()
+}), st = f({
+	id: h().min(1),
+	data_base64: h().min(1),
+	date: u().int().nonnegative()
+}), ct = f({
+	tupianhuancun_metadata: r(h(), it),
+	tupianhuancun_blobs: r(h(), h().min(1)),
+	groups: d(at),
+	subgroups: d(at),
+	tags: d(ot),
+	config_images: d(st)
+}), lt = f({
+	tag: h().min(1),
+	regex: h().optional(),
+	locked: o().optional()
+}), ut = f({
+	chat_id: h().min(1),
+	message_id: u().int().nonnegative(),
+	role: i([
 		"user",
 		"assistant",
 		"system"
 	]),
-	mes: p(),
-	swipe_id: d().int().nonnegative().nullable(),
-	extra: r({
-		images: o(p(), u(lt)).optional(),
-		lockedTags: u(p()).optional()
+	mes: h(),
+	swipe_id: u().int().nonnegative().nullable(),
+	extra: f({
+		images: r(h(), d(lt)).optional(),
+		lockedTags: d(h()).optional()
 	}).optional()
 });
-r({ messages: u(ut) }), r({
-	chatu8_uid: p().optional(),
-	migration_flags: o(p(), p())
+f({ messages: d(ut) }), f({
+	chatu8_uid: h().optional(),
+	migration_flags: r(h(), h())
 });
 //#endregion
 //#region src/storage/active_namespace.ts

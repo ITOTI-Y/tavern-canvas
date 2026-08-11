@@ -1,5 +1,5 @@
-import { W as e, Z as t, _t as n, it as r, pt as i, st as a, vt as o, xt as s, yt as ee } from "./src-B_6VhXl3.js";
-import { A as te, D as ne, E as re, O as ie, S as c, T as l, _ as ae, a as u, c as oe, d, f as se, h as f, i as p, k as m, l as ce, m as h, o as g, p as _, r as v, s as le, t as ue, u as y, v as de, w as b, x as fe, y as pe } from "./job_repository-DYNL0zYk.js";
+import { St as e, W as t, Z as n, at as r, bt as i, ct as a, mt as o, vt as s, yt as c } from "./src-CLzfjths.js";
+import { A as ee, D as l, E as te, O as ne, S as u, T as re, _ as ie, a as d, c as ae, d as f, f as oe, h as p, i as m, k as h, l as se, m as ce, o as g, p as _, r as v, s as le, t as ue, u as y, v as de, w as b, x as fe, y as pe } from "./job_repository-DB1y8cIh.js";
 //#region ../../node_modules/.pnpm/idb@8.0.3/node_modules/idb/build/index.js
 var x = (e, t) => t.some((t) => e instanceof t), me, he;
 function ge() {
@@ -171,7 +171,7 @@ function Te(e) {
 	}), e.addEventListener("versionchange", n), i;
 }
 function B() {
-	return R === null ? (z === null && (z = k(ce, 3, { upgrade: te }).then((e) => {
+	return R === null ? (z === null && (z = k(se, 3, { upgrade: ee }).then((e) => {
 		let t = Te(e);
 		return R = t, t;
 	}).finally(() => {
@@ -203,23 +203,23 @@ var De = r([
 	"image/jpeg",
 	"image/webp",
 	"video/mp4"
-]), Oe = n({
-	chat_id: o().trim().min(1).max(512),
-	message_id: o().trim().min(1).max(512),
-	swipe_id: i().int().nonnegative()
-}), V = n({
-	provider_id: e,
+]), Oe = s({
+	chat_id: c().trim().min(1).max(512),
+	message_id: c().trim().min(1).max(512),
+	swipe_id: o().int().nonnegative()
+}), V = s({
+	provider_id: t,
 	source_message: Oe,
-	generation_parameters: t,
+	generation_parameters: n,
 	media_type: De,
-	width: i().int().positive().optional(),
-	height: i().int().positive().optional(),
-	persisted_url: s().max(2048).optional(),
+	width: o().int().positive().optional(),
+	height: o().int().positive().optional(),
+	persisted_url: e().max(2048).optional(),
 	quarantined: a().default(!1),
-	duration_ms: i().int().positive().optional(),
+	duration_ms: o().int().positive().optional(),
 	poster_image_id: b.optional(),
 	source_job_id: b.optional()
-}), H = d.extend(V.shape), U = ee([d, H]);
+}), H = f.extend(V.shape), U = i([f, H]);
 function ke(e) {
 	return "media_type" in e;
 }
@@ -273,11 +273,11 @@ var Ie = class extends v {
 	}
 }, Re = class extends v {
 	constructor(e) {
-		super(e, "comfy_workflows", oe);
+		super(e, "comfy_workflows", ae);
 	}
 }, ze = class extends v {
 	constructor(e) {
-		super(e, "novelai_vibes", ae);
+		super(e, "novelai_vibes", ie);
 	}
 }, Be = class extends v {
 	constructor(e) {
@@ -289,23 +289,23 @@ var Ie = class extends v {
 	}
 }, He = class extends v {
 	constructor(e) {
-		super(e, "knowledge_entries", se);
+		super(e, "knowledge_entries", oe);
 	}
 }, G = class extends v {
 	constructor(e) {
-		super(e, "vocabularies", ne);
+		super(e, "vocabularies", l);
 	}
 }, Ue = class extends v {
 	constructor(e) {
-		super(e, "vocabulary_groups", l);
+		super(e, "vocabulary_groups", re);
 	}
 }, K = class extends v {
 	constructor(e) {
-		super(e, "vocabulary_packages", re);
+		super(e, "vocabulary_packages", te);
 	}
 }, q = class extends v {
 	constructor(e) {
-		super(e, "vocabulary_shards", ie);
+		super(e, "vocabulary_shards", ne);
 	}
 }, We = class extends v {
 	constructor(e) {
@@ -317,7 +317,7 @@ var Ie = class extends v {
 	}
 }, Ke = class extends v {
 	constructor(e) {
-		super(e, "llm_connections", h, !0);
+		super(e, "llm_connections", ce, !0);
 	}
 };
 function J(e) {
@@ -368,7 +368,7 @@ var Q = class {
 		this.database = e;
 	}
 	async get(e, t) {
-		let n = c.parse(e);
+		let n = u.parse(e);
 		return X(this.database, "image_blobs", t, async (e) => {
 			let t = await e.objectStore("image_blobs").get(n);
 			return t === void 0 ? null : this.validate(t);
@@ -383,7 +383,7 @@ var Q = class {
 			try {
 				await e.objectStore("image_blobs").add(n);
 			} catch (e) {
-				throw Y(e) ? new p("image_blobs", n.sha256) : e;
+				throw Y(e) ? new m("image_blobs", n.sha256) : e;
 			}
 		});
 	}
@@ -391,7 +391,7 @@ var Q = class {
 		let n = this.prepare(e);
 		await Z(this.database, "image_blobs", t, async (e) => {
 			let t = e.objectStore("image_blobs");
-			if (await t.get(n.sha256) === void 0) throw new u("image_blobs", n.sha256);
+			if (await t.get(n.sha256) === void 0) throw new d("image_blobs", n.sha256);
 			await t.put(n);
 		});
 	}
@@ -402,7 +402,7 @@ var Q = class {
 		});
 	}
 	async delete(e, t) {
-		let n = c.parse(e);
+		let n = u.parse(e);
 		await Z(this.database, "image_blobs", t, async (e) => {
 			await e.objectStore("image_blobs").delete(n);
 		});
@@ -440,7 +440,7 @@ var Q = class {
 			try {
 				await e.objectStore("migration_journal").add(n);
 			} catch (e) {
-				throw Y(e) ? new p("migration_journal", n.migration_id) : e;
+				throw Y(e) ? new m("migration_journal", n.migration_id) : e;
 			}
 		});
 	}
@@ -448,7 +448,7 @@ var Q = class {
 		let n = this.prepare(e);
 		await Z(this.database, "migration_journal", t, async (e) => {
 			let t = e.objectStore("migration_journal");
-			if (await t.get(n.migration_id) === void 0) throw new u("migration_journal", n.migration_id);
+			if (await t.get(n.migration_id) === void 0) throw new d("migration_journal", n.migration_id);
 			await t.put(n);
 		});
 	}
@@ -465,29 +465,29 @@ var Q = class {
 		});
 	}
 	key(e) {
-		let t = f.shape.migration_id.safeParse(e);
+		let t = p.shape.migration_id.safeParse(e);
 		if (!t.success) throw new g("migration_id must be a nonempty bounded string", t.error.issues);
 		return t.data;
 	}
 	prepare(e) {
 		let t = J(e);
 		if (t.payload !== void 0) try {
-			t.payload = m(t.payload);
+			t.payload = h(t.payload);
 		} catch (e) {
 			throw new g(e instanceof Error ? e.message : "Migration payload must be serializable JSON");
 		}
-		let n = f.safeParse(t);
+		let n = p.safeParse(t);
 		if (!n.success) throw new g("Migration journal failed schema validation", n.error.issues);
 		return J(n.data);
 	}
 	validate(e) {
 		let t = J(e);
 		if (typeof t == "object" && t && "payload" in t && t.payload !== void 0) try {
-			m(t.payload);
+			h(t.payload);
 		} catch (e) {
 			throw new g(e instanceof Error ? e.message : "Stored migration payload must be serializable JSON");
 		}
-		let n = f.safeParse(t);
+		let n = p.safeParse(t);
 		if (!n.success) throw new g("Stored migration journal failed schema validation", n.error.issues);
 		return J(n.data);
 	}

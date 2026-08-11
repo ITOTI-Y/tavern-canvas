@@ -57,7 +57,7 @@ function c(i, a, o) {
 		case "novelai": return {
 			provider_id: "novelai",
 			...s,
-			model_id: i.model_id ?? "nai-diffusion-4-full",
+			model_id: i.model_id ?? "nai-diffusion-4-5-full",
 			sampler: "k_euler",
 			width: 832,
 			height: 1216,

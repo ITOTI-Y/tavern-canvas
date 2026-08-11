@@ -58,9 +58,9 @@ var o = {
 		more: "More",
 		inspector_expand: "Expand inspector",
 		inspector_collapse: "Collapse inspector",
-		task_strip_expand: "Show running tasks",
-		task_strip_collapse: "Hide running tasks",
-		task_strip_count: "{n} task running | {n} tasks running"
+		task_strip_expand: "Show tasks",
+		task_strip_collapse: "Hide tasks",
+		task_strip_count: "{n} task | {n} tasks"
 	},
 	common: {
 		actions: {
@@ -533,6 +533,8 @@ var o = {
 			dialog_add_title: "Add provider profile",
 			dialog_edit_title: "Edit provider profile",
 			provider_label: "Provider",
+			model_label: "Model",
+			workflow_label: "ComfyUI workflow ID",
 			provider_types: {
 				sd_webui: "SD WebUI",
 				novelai: "NovelAI",
@@ -766,7 +768,7 @@ var o = {
 			discard_action: "Discard changes"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DX-e1plH.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-w2p9ffY2.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2
