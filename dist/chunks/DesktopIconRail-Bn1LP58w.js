@@ -1,4 +1,4 @@
-import { t as e } from "./shell.module-BtGMUacP.js";
+import { t as e } from "./shell.module-Bh7Ylo2p.js";
 import { F as t, N as n, W as r, _ as i, ct as a, h as o, m as s, n as c, p as l, pt as u, u as d, ut as f, v as p, x as m, y as h } from "./vue-i18n-DUz2Gjn8.js";
 import { t as g } from "./AppIcon-Cnhzrx9o.js";
 import { a as _, r as v } from "./route_nav-hvhq2rfa.js";

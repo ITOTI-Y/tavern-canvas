@@ -184,7 +184,11 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
   <div :class="styles.section" data-testid="provider-profiles">
     <div :class="styles.section_header">
       <h2 :class="styles.section_title">{{ t("settings.sections.provider_profiles") }}</h2>
-      <AppButton :label="t('settings.provider_profiles.add_action')" @click="open_add_dialog" />
+      <AppButton
+        :label="t('settings.provider_profiles.add_action')"
+        :variant="profiles.length === 0 ? 'primary' : 'secondary'"
+        @click="open_add_dialog"
+      />
     </div>
 
     <StateSurface

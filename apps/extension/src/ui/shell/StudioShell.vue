@@ -68,8 +68,13 @@ const inspector_style = computed(() => ({
 // (keeping the persisted preference in sync for whenever the viewport becomes desktop again).
 const mobile_inspector_open = ref(false);
 
+const context_inspector_available = computed(() => props.state.route !== "workbench");
+const desktop_inspector_collapsed = computed(
+  () => !context_inspector_available.value || props.state.inspector.collapsed,
+);
+
 const top_bar_inspector_collapsed = computed(() =>
-  viewport.value === "mobile" ? !mobile_inspector_open.value : props.state.inspector.collapsed,
+  viewport.value === "mobile" ? !mobile_inspector_open.value : desktop_inspector_collapsed.value,
 );
 
 function handle_set_inspector_collapsed(collapsed: boolean): void {
@@ -88,12 +93,13 @@ function select_route(route: StudioRoute): void {
   <div
     :class="styles.shell"
     :data-viewport="viewport"
-    :data-inspector-collapsed="viewport === 'desktop' ? props.state.inspector.collapsed : null"
+    :data-inspector-collapsed="viewport === 'desktop' ? desktop_inspector_collapsed : null"
     :style="inspector_style"
   >
     <TopCommandBar
       :route="props.state.route"
       :inspector-collapsed="top_bar_inspector_collapsed"
+      :inspector-available="context_inspector_available"
       @set-inspector-collapsed="handle_set_inspector_collapsed"
       @close="emit('close')"
     />
@@ -136,7 +142,9 @@ function select_route(route: StudioRoute): void {
     </main>
 
     <ContextInspector
-      v-if="viewport === 'desktop' && !props.state.inspector.collapsed"
+      v-if="
+        viewport === 'desktop' && context_inspector_available && !props.state.inspector.collapsed
+      "
       :width="props.state.inspector.width"
       :selection="props.state.inspector.selected_record"
       @resize="(width) => emit('resize-inspector', width)"
@@ -151,7 +159,7 @@ function select_route(route: StudioRoute): void {
     />
 
     <InspectorSheet
-      v-if="viewport === 'mobile'"
+      v-if="viewport === 'mobile' && context_inspector_available"
       :open="mobile_inspector_open"
       :selection="props.state.inspector.selected_record"
       @update:open="(open) => handle_set_inspector_collapsed(!open)"

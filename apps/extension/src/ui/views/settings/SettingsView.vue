@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { Cable } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../../components/AppIcon.vue";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import type { StudioState } from "../../contracts/view_models.js";
 import AppearanceSettings from "./AppearanceSettings.vue";
@@ -28,7 +30,29 @@ const { t } = useI18n();
 
 <template>
   <div :class="styles.view" data-testid="settings-view">
-    <h1 class="tc-visually-hidden">{{ t("nav.settings") }}</h1>
+    <h1 v-if="state.workbench.profiles.length > 0" class="tc-visually-hidden">
+      {{ t("nav.settings") }}
+    </h1>
+
+    <section
+      v-else
+      :class="styles.onboarding"
+      data-testid="settings-onboarding"
+      aria-labelledby="settings-onboarding-title"
+    >
+      <div :class="styles.onboarding_icon" aria-hidden="true">
+        <AppIcon :icon="Cable" :size="22" />
+      </div>
+      <div>
+        <p :class="styles.onboarding_label">{{ t("settings.onboarding.label") }}</p>
+        <h1 id="settings-onboarding-title" :class="styles.onboarding_title">
+          {{ t("settings.onboarding.title") }}
+        </h1>
+        <p :class="styles.onboarding_description">
+          {{ t("settings.onboarding.description") }}
+        </p>
+      </div>
+    </section>
 
     <ProviderProfiles :profiles="state.workbench.profiles" :controller="controller" />
 

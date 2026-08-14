@@ -134,6 +134,20 @@ var o = {
 			negative_placeholder: "Describe what to avoid",
 			image_count_label: "Image count"
 		},
+		setup: {
+			label: "Service setup",
+			title: "Connect a generation service before you create",
+			description: "Add a provider profile and verify the connection. The creative workspace unlocks as soon as the service is ready.",
+			action: "Set up service",
+			steps: {
+				profile_title: "Create a provider profile",
+				profile_description: "Choose your image backend and the model you want to use.",
+				credentials_title: "Add endpoint and credentials",
+				credentials_description: "Store connection details and secret references in Settings.",
+				test_title: "Verify the connection",
+				test_description: "Run the provider test, then return to Workbench to generate."
+			}
+		},
 		reference_strip: {
 			title: "Reference images",
 			empty_title: "No reference images yet",
@@ -519,6 +533,11 @@ var o = {
 		}
 	},
 	settings: {
+		onboarding: {
+			label: "First connection",
+			title: "Set up the service that will generate your images",
+			description: "Create a provider profile first. Add a Gateway endpoint only when your provider uses one, then run the connection test."
+		},
 		sections: {
 			provider_profiles: "Provider profiles",
 			llm_connections: "Text model connections",
@@ -769,7 +788,7 @@ var o = {
 			discard_action: "Discard changes"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-B-vTBBZV.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-BVJPl8ON.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

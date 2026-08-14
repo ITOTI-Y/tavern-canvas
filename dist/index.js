@@ -1,9 +1,9 @@
-import { t as e } from "./chunks/shell.module-BtGMUacP.js";
+import { t as e } from "./chunks/shell.module-Bh7Ylo2p.js";
 import { n as t, r as n, t as r } from "./chunks/sha2-BGNex9vj.js";
-import { A as i, C as a, D as o, E as s, F as c, I as l, L as u, M as d, N as f, O as p, P as m, Q as h, S as g, T as _, W as v, X as y, Z as ee, at as te, et as ne, ft as re, ht as ie, it as ae, j as oe, mt as se, nt as ce, st as le, tt as ue, vt as de, w as fe, wt as pe, x as b, y as me, yt as he } from "./chunks/src-CLzfjths.js";
-import { i as ge, n as _e, o as ve, r as ye, s as be, t as xe } from "./chunks/media_command_service-BUvm2_9j.js";
-import { A as Se, F as Ce, I as we, N as x, O as Te, P as Ee, Q as De, V as Oe, W as ke, Z as Ae, _ as S, b as C, ct as w, et as T, ft as je, g as E, h as D, i as Me, k as Ne, m as O, n as Pe, nt as Fe, p as k, pt as A, rt as Ie, u as Le, ut as j, x as M, y as Re } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as ze } from "./chunks/create_i18n-BQDavj7T.js";
+import { A as i, C as a, D as o, E as s, F as c, I as l, L as u, M as d, N as f, O as p, P as m, Q as h, S as g, T as _, W as v, X as y, Z as b, at as ee, et as te, ft as ne, ht as re, it as ie, j as ae, mt as oe, nt as se, st as ce, tt as le, vt as ue, w as de, wt as fe, x, y as pe, yt as me } from "./chunks/src-CLzfjths.js";
+import { i as he, n as ge, o as _e, r as ve, s as ye, t as be } from "./chunks/media_command_service-BUvm2_9j.js";
+import { A as xe, F as Se, I as Ce, N as S, O as we, P as Te, Q as Ee, V as De, W as Oe, Z as ke, _ as C, b as w, ct as T, et as E, ft as Ae, g as D, h as O, i as je, k as Me, m as k, n as Ne, nt as Pe, p as A, pt as j, rt as Fe, u as Ie, ut as M, x as Le, y as Re } from "./chunks/vue-i18n-DUz2Gjn8.js";
+import { t as ze } from "./chunks/create_i18n-ffQURJM2.js";
 import { n as Be, t as Ve } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { a as He } from "./chunks/route_nav-hvhq2rfa.js";
 import { t as Ue } from "./chunks/chevron-down-Tu_8qTxg.js";
@@ -220,22 +220,22 @@ function Ot(e, n) {
 }
 //#endregion
 //#region ../../packages/core/src/generation/source_context.ts
-var kt = de({
-	schema_version: re(1),
-	chat_id: he().min(1).max(512),
-	active_swipes: le(ie({
-		message_id: se().int().nonnegative(),
-		swipe_id: se().int().nonnegative()
+var kt = ue({
+	schema_version: ne(1),
+	chat_id: me().min(1).max(512),
+	active_swipes: ce(re({
+		message_id: oe().int().nonnegative(),
+		swipe_id: oe().int().nonnegative()
 	})),
-	messages: le(ie({
-		message_id: se().int().nonnegative(),
-		role: te([
+	messages: ce(re({
+		message_id: oe().int().nonnegative(),
+		role: ee([
 			"user",
 			"assistant",
 			"system"
 		]),
 		content_sha256: h,
-		swipe_id: se().int().nonnegative().nullable()
+		swipe_id: oe().int().nonnegative().nullable()
 	}))
 }), At = "<!-- tavern-canvas:image ", jt = "-->";
 function Mt(e) {
@@ -325,7 +325,7 @@ var It = class {
 		} catch {
 			return null;
 		}
-		let n = ee.safeParse(t);
+		let n = b.safeParse(t);
 		return !n.success || n.data.generation_anchor !== this.#e ? null : Object.freeze(n.data);
 	}
 	#f() {
@@ -420,9 +420,9 @@ var zt = class {
 		this.#e = e;
 	}
 	next() {
-		return ce.parse(this.#e.randomUUID());
+		return se.parse(this.#e.randomUUID());
 	}
-}, Vt = Object.freeze(pe(ee, { target: "draft-07" })), Ht = class {
+}, Vt = Object.freeze(fe(b, { target: "draft-07" })), Ht = class {
 	definition = Object.freeze({
 		name: "request_image",
 		display_name: "Request image",
@@ -437,7 +437,7 @@ var zt = class {
 		this.#e = e, this.#t = t, this.#n = n;
 	}
 	execute(e, t) {
-		let n = Object.freeze(ee.parse(t)), r = this.#e.require_actionable(e, n.generation_anchor), i = ce.parse(this.#t.next()), a = Object.freeze({
+		let n = Object.freeze(b.parse(t)), r = this.#e.require_actionable(e, n.generation_anchor), i = se.parse(this.#t.next()), a = Object.freeze({
 			request_id: i,
 			host_root_generation_id: e,
 			generation_anchor: r.generation_anchor,
@@ -542,12 +542,12 @@ function Xt(e, t) {
 	return e;
 }
 function Zt(e) {
-	let t = h.parse(e.generation_anchor), n = Object.freeze(ee.parse(e.arguments));
+	let t = h.parse(e.generation_anchor), n = Object.freeze(b.parse(e.arguments));
 	if (n.generation_anchor !== t) throw TypeError("Image job arguments must use the job generation anchor");
 	if (e.chat_id.trim().length === 0) throw TypeError("Image job chat ID must not be empty");
 	if (!Number.isInteger(e.requested_swipe_id) || e.requested_swipe_id < 0) throw RangeError("Image job requested swipe ID must be a non-negative integer");
 	return {
-		request_id: ce.parse(e.request_id),
+		request_id: se.parse(e.request_id),
 		generation_anchor: t,
 		source_anchor: h.parse(e.source_anchor),
 		chat_id: e.chat_id,
@@ -570,7 +570,7 @@ function $t(e) {
 	};
 }
 function en(e) {
-	return e instanceof be ? { ...e.provider_error } : {
+	return e instanceof ye ? { ...e.provider_error } : {
 		code: "provider_unavailable",
 		retryable: !1
 	};
@@ -649,7 +649,7 @@ var tn = class {
 	}
 	async #_(e, t) {
 		let n = this.#r.now().toISOString(), r = {
-			job_id: ue.parse(this.#n.next()),
+			job_id: le.parse(this.#n.next()),
 			request_id: e.request_id,
 			request_digest: t,
 			generation_anchor: e.generation_anchor,
@@ -709,8 +709,8 @@ var tn = class {
 			}
 		};
 		try {
-			let n = (await this.#e.execute(Kt(e.job), t)).image_ids.map((e) => ne.parse(e));
-			if (n.length === 0) throw new be({
+			let n = (await this.#e.execute(Kt(e.job), t)).image_ids.map((e) => te.parse(e));
+			if (n.length === 0) throw new ye({
 				code: "malformed_response",
 				retryable: !1
 			});
@@ -802,7 +802,7 @@ var on = class {
 			swipe_id: e.swipe_id,
 			generation_anchor: h.parse(e.generation_anchor),
 			source_anchor: h.parse(e.source_anchor),
-			request_ids: Object.freeze(nn(e.request_ids.map((e) => ce.parse(e))))
+			request_ids: Object.freeze(nn(e.request_ids.map((e) => se.parse(e))))
 		});
 		this.#n.set(t.generation_anchor, t), this.#s === null && (this.#s = t.chat_id);
 		let n = rn(t.chat_id, t.message_id);
@@ -854,7 +854,7 @@ var on = class {
 						chat_id: t.chat_id,
 						message_id: t.message_id,
 						swipe_id: t.swipe_id,
-						metadata: fe.parse({
+						metadata: de.parse({
 							schema_version: 1,
 							generation_anchor: t.generation_anchor,
 							source_anchor: t.source_anchor,
@@ -1812,7 +1812,7 @@ function Tr(e) {
 function Er(e) {
 	return e.filter((e) => Sr.has(e.state)).map(Tr);
 }
-function H(e, t, n) {
+function Dr(e, t, n) {
 	return e().status === "pending" ? Promise.resolve() : (t({ status: "pending" }), n().then((e) => {
 		t({
 			status: "success",
@@ -1825,7 +1825,7 @@ function H(e, t, n) {
 		});
 	}));
 }
-function Dr(e, t, n) {
+function Or(e, t, n) {
 	return {
 		route: e,
 		color_mode: t,
@@ -1891,14 +1891,14 @@ function Dr(e, t, n) {
 		tasks: []
 	};
 }
-var Or = class {
+var kr = class {
 	#e;
 	#t;
 	#n = /* @__PURE__ */ new Set();
 	#r = [];
 	#i = !1;
 	constructor(e) {
-		this.#e = e.capabilities, this.#t = Dr(e.initial_route ?? "workbench", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
+		this.#e = e.capabilities, this.#t = Or(e.initial_route ?? "workbench", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
 	}
 	get state() {
 		return this.#t;
@@ -2156,7 +2156,7 @@ var Or = class {
 		this.#g({ selected_record: e });
 	}
 	submit_generation(e) {
-		return H(() => this.#t.workbench.submit_command, (e) => {
+		return Dr(() => this.#t.workbench.submit_command, (e) => {
 			this.#s({ submit_command: e });
 		}, async () => {
 			let t = await this.#e.generation.submit(e);
@@ -2225,7 +2225,7 @@ var Or = class {
 		return this.#e.prompt_presets.test_regex(e, t);
 	}
 	save_prompt_preset(e) {
-		return H(() => this.#t.prompt.save_command, (e) => {
+		return Dr(() => this.#t.prompt.save_command, (e) => {
 			this.#u({ save_command: e });
 		}, async () => {
 			let t = await this.#e.prompt_presets.save_draft(e);
@@ -2236,12 +2236,12 @@ var Or = class {
 		});
 	}
 	install_vocabulary_package(e, t) {
-		return H(() => this.#t.assets.vocabulary_install_command, (e) => {
+		return Dr(() => this.#t.assets.vocabulary_install_command, (e) => {
 			this.#d({ vocabulary_install_command: e });
 		}, () => this.#e.vocabulary.install(e, t));
 	}
 	update_settings(e) {
-		return H(() => this.#t.settings.update_command, (e) => {
+		return Dr(() => this.#t.settings.update_command, (e) => {
 			this.#h({ update_command: e });
 		}, async () => {
 			let t = await this.#e.settings.update(e);
@@ -2249,17 +2249,17 @@ var Or = class {
 		});
 	}
 	test_diagnostics_connection() {
-		return H(() => this.#t.diagnostics.connection_test_command, (e) => {
+		return Dr(() => this.#t.diagnostics.connection_test_command, (e) => {
 			this.#m({ connection_test_command: e });
 		}, () => this.#e.diagnostics.test_connection());
 	}
 	export_support_bundle() {
-		return H(() => this.#t.diagnostics.support_bundle_command, (e) => {
+		return Dr(() => this.#t.diagnostics.support_bundle_command, (e) => {
 			this.#m({ support_bundle_command: e });
 		}, () => this.#e.diagnostics.export_support_bundle());
 	}
 	retry_migration() {
-		return H(() => this.#t.settings.migration_retry_command, (e) => {
+		return Dr(() => this.#t.settings.migration_retry_command, (e) => {
 			this.#h({ migration_retry_command: e });
 		}, async () => {
 			let e = await this.#e.migration.retry();
@@ -2444,7 +2444,7 @@ var Or = class {
 		});
 	}
 	bulk_delete_gallery_records(e) {
-		return H(() => this.#t.gallery.bulk_delete_command, (e) => {
+		return Dr(() => this.#t.gallery.bulk_delete_command, (e) => {
 			this.#p({ bulk_delete_command: e });
 		}, async () => {
 			await this.#e.gallery.bulk_delete(e);
@@ -2456,16 +2456,16 @@ var Or = class {
 		});
 	}
 };
-function kr(e) {
-	return new Or(e);
+function Ar(e) {
+	return new kr(e);
 }
 //#endregion
 //#region src/ui/controllers/use_studio_controller.ts
-function Ar(e) {
-	let t = Ae(kr(e)), n = Fe(t.state), r = t.on_change(() => {
+function jr(e) {
+	let t = ke(Ar(e)), n = Pe(t.state), r = t.on_change(() => {
 		n.value = t.state;
 	});
-	return t.start(), De(() => {
+	return t.start(), Ee(() => {
 		r(), t.stop();
 	}), {
 		controller: t,
@@ -2474,7 +2474,7 @@ function Ar(e) {
 }
 //#endregion
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/image.js
-var jr = Be("image", [
+var Mr = Be("image", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2494,7 +2494,7 @@ var jr = Be("image", [
 		d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21",
 		key: "1xmnt7"
 	}]
-]), Mr = Be("panel-right-close", [
+]), Nr = Be("panel-right-close", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2511,7 +2511,7 @@ var jr = Be("image", [
 		d: "m8 9 3 3-3 3",
 		key: "12hl5m"
 	}]
-]), Nr = Be("panel-right-open", [
+]), Pr = Be("panel-right-open", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2528,39 +2528,39 @@ var jr = Be("image", [
 		d: "m10 15-3-3 3-3",
 		key: "1pgupc"
 	}]
-]), Pr = ["image", "video"], Fr = /^(?:blob:|data:image\/|data:video\/)/u, Ir = de({
-	kind: te(Pr),
-	url: he().min(1).refine((e) => Fr.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
+]), Fr = ["image", "video"], Ir = /^(?:blob:|data:image\/|data:video\/)/u, Lr = ue({
+	kind: ee(Fr),
+	url: me().min(1).refine((e) => Ir.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
 });
-function Lr(e) {
-	let t = Ir.safeParse(e);
+function Rr(e) {
+	let t = Lr.safeParse(e);
 	return t.success ? t.data : null;
 }
-function Rr(e, t) {
+function zr(e, t) {
 	let n = e[t];
 	return n === void 0 ? {
 		state: t,
 		asset: null
 	} : {
 		state: t,
-		asset: Lr(n)
+		asset: Rr(n)
 	};
 }
-var zr = 8;
-function Br(e, t) {
-	let n = Math.max(zr, t.width - 56 - zr), r = Math.max(zr, t.height - 56 - zr);
+var Br = 8;
+function Vr(e, t) {
+	let n = Math.max(Br, t.width - 56 - Br), r = Math.max(Br, t.height - 56 - Br);
 	return {
-		x: Math.min(Math.max(e.x, zr), n),
-		y: Math.min(Math.max(e.y, zr), r)
+		x: Math.min(Math.max(e.x, Br), n),
+		y: Math.min(Math.max(e.y, Br), r)
 	};
 }
-function Vr(e) {
-	return Br({
+function Hr(e) {
+	return Vr({
 		x: (e.width - 56) / 2,
 		y: (e.height - 56) / 2
 	}, e);
 }
-var Hr = class {
+var Ur = class {
 	#e = /* @__PURE__ */ new Map();
 	get(e) {
 		return this.#e.get(e) ?? null;
@@ -2569,11 +2569,11 @@ var Hr = class {
 		this.#e.set(e, t);
 	}
 };
-function Ur(e) {
-	let t = Lr(e);
+function Wr(e) {
+	let t = Rr(e);
 	return t !== null && t.kind === "image" ? t : null;
 }
-var Wr = class {
+var Gr = class {
 	#e;
 	#t;
 	#n = !1;
@@ -2591,7 +2591,7 @@ var Wr = class {
 		this.#n = !0, this.#r = this.#t;
 	}
 	drag_to(e) {
-		this.#n && (this.#t = Br(e, this.#e.get_viewport()));
+		this.#n && (this.#t = Vr(e, this.#e.get_viewport()));
 	}
 	end_drag() {
 		let e = this.#n, t = this.#r;
@@ -2600,41 +2600,41 @@ var Wr = class {
 		return { moved: n > 4 || r > 4 };
 	}
 	reset_position() {
-		this.#t = Vr(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
+		this.#t = Hr(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
 	}
 	reflow() {
 		this.#t = this.#i();
 	}
 	#i() {
 		let e = this.#e.position_store.get(this.#e.get_viewport_bucket()), t = this.#e.get_viewport();
-		return e === null ? Vr(t) : Br(e, t);
+		return e === null ? Hr(t) : Vr(e, t);
 	}
-}, Gr = "(min-width: 960px)";
-function Kr() {
-	return typeof window > "u" || typeof window.matchMedia != "function" || window.matchMedia(Gr).matches;
+}, Kr = "(min-width: 960px)";
+function qr() {
+	return typeof window > "u" || typeof window.matchMedia != "function" || window.matchMedia(Kr).matches;
 }
-function qr(e) {
-	if (e !== void 0) return k(() => e);
-	let t = T(Kr());
+function Jr(e) {
+	if (e !== void 0) return A(() => e);
+	let t = E(qr());
 	if (typeof window < "u" && typeof window.matchMedia == "function") {
-		let e = window.matchMedia(Gr), n = (e) => {
+		let e = window.matchMedia(Kr), n = (e) => {
 			t.value = e.matches;
 		};
-		e.addEventListener("change", n), De(() => {
+		e.addEventListener("change", n), Ee(() => {
 			e.removeEventListener("change", n);
 		});
 	}
-	return k(() => t.value ? "desktop" : "mobile");
+	return A(() => t.value ? "desktop" : "mobile");
 }
-var Jr = {
+var Yr = {
 	floatingEntry: "_floatingEntry_1k9dx_9",
 	floatingEntryDragging: "_floatingEntryDragging_1k9dx_31",
 	floatingEntryMedia: "_floatingEntryMedia_1k9dx_35"
-}, Yr = [
+}, Xr = [
 	"aria-label",
 	"data-dragging",
 	"data-media-state"
-], Xr = ["src"], Zr = ["src"], Qr = /* @__PURE__ */ M({
+], Zr = ["src"], Qr = ["src"], $r = /* @__PURE__ */ Le({
 	__name: "FloatingEntry",
 	props: {
 		enabled: { type: Boolean },
@@ -2646,7 +2646,7 @@ var Jr = {
 	},
 	emits: ["open"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, i = qr(n.viewportOverride);
+		let n = e, r = t, i = Jr(n.viewportOverride);
 		function a() {
 			return typeof window > "u" ? {
 				width: 1280,
@@ -2656,31 +2656,31 @@ var Jr = {
 				height: window.innerHeight
 			};
 		}
-		let o = new Wr({
-			position_store: Ie(n.positionStore) ?? Ae(new Hr()),
+		let o = new Gr({
+			position_store: Fe(n.positionStore) ?? ke(new Ur()),
 			get_viewport: a,
 			get_viewport_bucket: () => i.value
-		}), s = T(o.position), c = T(o.dragging);
+		}), s = E(o.position), c = E(o.dragging);
 		function l() {
 			s.value = o.position, c.value = o.dragging;
 		}
-		Oe(i, () => {
+		De(i, () => {
 			o.reflow(), l();
 		});
 		function u() {
 			o.reflow(), l();
 		}
-		Se(() => {
+		xe(() => {
 			window.addEventListener("resize", u);
-		}), Ne(() => {
+		}), Me(() => {
 			window.removeEventListener("resize", u);
 		});
-		let d = k(() => {
+		let d = A(() => {
 			let e = c.value ? "dragging" : n.mediaState;
 			return e === "idle" ? {
 				state: e,
-				asset: Ur(n.mediaAssets.idle)
-			} : Rr(n.mediaAssets, e);
+				asset: Wr(n.mediaAssets.idle)
+			} : zr(n.mediaAssets, e);
 		}), f = !1;
 		function p(e) {
 			let t = e.currentTarget;
@@ -2720,11 +2720,11 @@ var Jr = {
 		function h(e) {
 			(e.key === "Enter" || e.key === " ") && (e.preventDefault(), r("open"));
 		}
-		return (t, n) => e.enabled ? (x(), S("button", {
+		return (t, n) => e.enabled ? (S(), C("button", {
 			key: 0,
 			type: "button",
-			class: j(["tc-interactive", [w(Jr).floatingEntry, c.value && w(Jr).floatingEntryDragging]]),
-			style: je({
+			class: M(["tc-interactive", [T(Yr).floatingEntry, c.value && T(Yr).floatingEntryDragging]]),
+			style: Ae({
 				left: `${s.value.x}px`,
 				top: `${s.value.y}px`
 			}),
@@ -2735,53 +2735,53 @@ var Jr = {
 			onPointerdown: p,
 			onClick: m,
 			onKeydown: h
-		}, [d.value.asset?.kind === "video" ? (x(), S("video", {
+		}, [d.value.asset?.kind === "video" ? (S(), C("video", {
 			key: 0,
-			class: j(w(Jr).floatingEntryMedia),
+			class: M(T(Yr).floatingEntryMedia),
 			src: d.value.asset.url,
 			autoplay: "",
 			muted: "",
 			loop: "",
 			playsinline: ""
-		}, null, 10, Xr)) : d.value.asset?.kind === "image" ? (x(), S("img", {
+		}, null, 10, Zr)) : d.value.asset?.kind === "image" ? (S(), C("img", {
 			key: 1,
-			class: j(w(Jr).floatingEntryMedia),
+			class: M(T(Yr).floatingEntryMedia),
 			src: d.value.asset.url,
 			alt: ""
-		}, null, 10, Zr)) : (x(), D(Ve, {
+		}, null, 10, Qr)) : (S(), O(Ve, {
 			key: 2,
-			icon: w(jr)
-		}, null, 8, ["icon"]))], 46, Yr)) : E("", !0);
+			icon: T(Mr)
+		}, null, 8, ["icon"]))], 46, Xr)) : D("", !0);
 	}
 });
-function $r(e, t, n) {
+function ei(e, t, n) {
 	let r = Math.max(20, t.width - n.width - 20), i = Math.max(20, t.height - n.height - 20);
 	return {
 		x: Math.min(Math.max(e.x, 20), r),
 		y: Math.min(Math.max(e.y, 20), i)
 	};
 }
-function ei(e, t) {
-	return $r({
+function ti(e, t) {
+	return ei({
 		x: e.width - t.width - 20,
 		y: 64
 	}, e, t);
 }
-var ti = {
-	window: "_window_pyefw_1",
-	"floating-window-enter": "_floating-window-enter_pyefw_1"
-}, ni = [
+var ni = {
+	window: "_window_1rdvc_1",
+	"floating-window-enter": "_floating-window-enter_1rdvc_1"
+}, ri = [
 	"aria-label",
 	"data-positioned",
 	"data-dragging"
-], ri = /* @__PURE__ */ M({
+], ii = /* @__PURE__ */ Le({
 	__name: "FloatingStudioWindow",
 	props: { label: {} },
 	setup(e) {
-		let t = e, n = T(null), r = T({
+		let t = e, n = E(null), r = E({
 			x: 0,
 			y: 0
-		}), i = T(!1), a = T(!1);
+		}), i = E(!1), a = E(!1);
 		function o() {
 			return {
 				width: window.innerWidth,
@@ -2799,7 +2799,7 @@ var ti = {
 			let e = n.value;
 			if (e === null || window.innerWidth < 960) return;
 			let t = o(), a = s(e);
-			r.value = i.value ? $r(r.value, t, a) : ei(t, a), i.value = !0;
+			r.value = i.value ? ei(r.value, t, a) : ti(t, a), i.value = !0;
 		}
 		function l(e) {
 			let t = n.value, i = e.target;
@@ -2811,7 +2811,7 @@ var ti = {
 				y: e.clientY
 			}, u = r.value;
 			function d(e) {
-				r.value = $r({
+				r.value = ei({
 					x: u.x + e.clientX - l.x,
 					y: u.y + e.clientY - l.y
 				}, o(), s(c));
@@ -2830,15 +2830,15 @@ var ti = {
 		function u() {
 			c();
 		}
-		return Se(() => {
-			window.addEventListener("resize", u), Te(c);
-		}), Ne(() => {
+		return xe(() => {
+			window.addEventListener("resize", u), we(c);
+		}), Me(() => {
 			window.removeEventListener("resize", u);
-		}), (e, o) => (x(), S("section", {
+		}), (e, o) => (S(), C("section", {
 			ref_key: "window_element",
 			ref: n,
-			class: j(w(ti).window),
-			style: je({
+			class: M(T(ni).window),
+			style: Ae({
 				"--tc-floating-window-x": `${r.value.x}px`,
 				"--tc-floating-window-y": `${r.value.y}px`
 			}),
@@ -2848,21 +2848,21 @@ var ti = {
 			"data-window-role": "studio",
 			role: "dialog",
 			onPointerdown: l
-		}, [we(e.$slots, "default")], 46, ni));
+		}, [Ce(e.$slots, "default")], 46, ri));
 	}
-}), ii = /* @__PURE__ */ M({
+}), ai = /* @__PURE__ */ Le({
 	__name: "PortalProvider",
 	props: { portalTarget: {} },
 	setup(e) {
 		let t = e;
 		if (t.portalTarget === document.body) throw Error("PortalProvider must never receive document.body as the portal target -- pass the Shadow Root's dedicated [data-shadow-role=\"portal\"] element instead.");
-		return Ee(Ke, t.portalTarget), (e, t) => we(e.$slots, "default");
+		return Te(Ke, t.portalTarget), (e, t) => Ce(e.$slots, "default");
 	}
 });
 //#endregion
 //#region src/ui/shell/use_generation_preview_urls.ts
-function ai(e, t) {
-	let n = Fe({}), r = /* @__PURE__ */ new Set(), i = /* @__PURE__ */ new Set();
+function oi(e, t) {
+	let n = Pe({}), r = /* @__PURE__ */ new Set(), i = /* @__PURE__ */ new Set();
 	function a(a) {
 		a in n.value || r.has(a) || i.has(a) || (r.add(a), t.read_gallery_bytes(a).then((t) => {
 			let r = e().gallery.records.find((e) => e.id === a)?.media_type, i = new Blob([new Uint8Array(t)], r ? { type: r } : {}), o = URL.createObjectURL(i);
@@ -2876,36 +2876,36 @@ function ai(e, t) {
 			r.delete(a);
 		}));
 	}
-	return Oe(() => e().workbench.jobs.flatMap((e) => e.completed_image_ids), (e) => {
+	return De(() => e().workbench.jobs.flatMap((e) => e.completed_image_ids), (e) => {
 		for (let t of e) a(t);
-	}, { immediate: !0 }), De(() => {
+	}, { immediate: !0 }), Ee(() => {
 		for (let e of Object.values(n.value)) URL.revokeObjectURL(e);
 	}), n;
 }
 //#endregion
 //#region src/ui/shell/StudioWorkspace.vue
-var oi = /* @__PURE__ */ M({
+var si = /* @__PURE__ */ Le({
 	__name: "StudioWorkspace",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = C(() => import("./chunks/WorkbenchView-CPqZ6L3L.js")), n = C(() => import("./chunks/PromptView-CFcqgRgh.js")), r = C(() => import("./chunks/AssetsView-DTiiaXtm.js")), i = C(() => import("./chunks/GalleryView-Ds8zqPMO.js")), a = C(() => import("./chunks/DiagnosticsView-B3rBYJ7u.js")), o = C(() => import("./chunks/SettingsView-wXllwxjq.js")), s = e, c = ai(() => s.state, s.controller);
+		let t = w(() => import("./chunks/WorkbenchView-tJ2tfGhe.js")), n = w(() => import("./chunks/PromptView-CFcqgRgh.js")), r = w(() => import("./chunks/AssetsView-DTiiaXtm.js")), i = w(() => import("./chunks/GalleryView-B5nh_i00.js")), a = w(() => import("./chunks/DiagnosticsView-DfkGLL4e.js")), o = w(() => import("./chunks/SettingsView-ecE2HTFc.js")), s = e, c = oi(() => s.state, s.controller);
 		function l(e, t) {
 			return s.controller.test_prompt_regex(e, t);
 		}
-		return (e, u) => s.state.route === "workbench" ? (x(), D(w(t), {
+		return (e, u) => s.state.route === "workbench" ? (S(), O(T(t), {
 			key: 0,
 			state: s.state,
-			"preview-urls": w(c),
+			"preview-urls": T(c),
 			onSelectProfile: u[0] ||= (e) => void s.controller.select_provider_profile(e),
 			onSubmit: u[1] ||= (e) => void s.controller.submit_generation(e),
 			onCancelJob: u[2] ||= (e) => void s.controller.cancel_generation(e),
 			onRetryJob: u[3] ||= (e) => void s.controller.retry_generation(e),
 			onOpenSettings: u[4] ||= (e) => s.controller.set_route("settings"),
 			onConsumeInspectorSelection: u[5] ||= (e) => s.controller.select_inspector_record(null)
-		}, null, 8, ["state", "preview-urls"])) : s.state.route === "prompt" ? (x(), D(w(n), {
+		}, null, 8, ["state", "preview-urls"])) : s.state.route === "prompt" ? (S(), O(T(n), {
 			key: 1,
 			state: s.state,
 			"test-regex": l,
@@ -2914,32 +2914,32 @@ var oi = /* @__PURE__ */ M({
 			onBulkDeletePresets: u[8] ||= (e) => void s.controller.bulk_remove_prompt_presets(e),
 			onUpdateDraft: u[9] ||= (e) => s.controller.update_prompt_draft(e),
 			onSave: u[10] ||= (e) => void s.controller.save_prompt_preset(e)
-		}, null, 8, ["state"])) : s.state.route === "assets" ? (x(), D(w(r), {
+		}, null, 8, ["state"])) : s.state.route === "assets" ? (S(), O(T(r), {
 			key: 2,
 			state: s.state,
 			controller: s.controller
-		}, null, 8, ["state", "controller"])) : s.state.route === "gallery" ? (x(), D(w(i), {
+		}, null, 8, ["state", "controller"])) : s.state.route === "gallery" ? (S(), O(T(i), {
 			key: 3,
 			state: s.state,
 			controller: s.controller
-		}, null, 8, ["state", "controller"])) : s.state.route === "diagnostics" ? (x(), D(w(a), {
+		}, null, 8, ["state", "controller"])) : s.state.route === "diagnostics" ? (S(), O(T(a), {
 			key: 4,
 			state: s.state,
 			controller: s.controller
-		}, null, 8, ["state", "controller"])) : (x(), D(w(o), {
+		}, null, 8, ["state", "controller"])) : (S(), O(T(o), {
 			key: 5,
 			state: s.state,
 			controller: s.controller
 		}, null, 8, ["state", "controller"]));
 	}
-}), si = ["aria-label", "aria-expanded"], ci = ["data-status"], li = {
+}), ci = ["aria-label", "aria-expanded"], li = ["data-status"], ui = {
 	key: 0,
 	class: "tc-tabular-nums"
-}, ui = /* @__PURE__ */ M({
+}, di = /* @__PURE__ */ Le({
 	__name: "TaskStrip",
 	props: { tasks: {} },
 	setup(t) {
-		let n = t, { t: r, n: i } = Pe(), a = T(!0), o = {
+		let n = t, { t: r, n: i } = Ne(), a = E(!0), o = {
 			"status.loading": () => r("status.loading"),
 			"status.empty": () => r("status.empty"),
 			"status.partial": () => r("status.partial"),
@@ -2961,55 +2961,64 @@ var oi = /* @__PURE__ */ M({
 		function s(e) {
 			return o[e]?.() ?? e;
 		}
-		let c = k(() => a.value ? r("nav.task_strip_collapse") : r("nav.task_strip_expand"));
+		let c = A(() => a.value ? r("nav.task_strip_collapse") : r("nav.task_strip_expand"));
 		function l() {
 			a.value = !a.value;
 		}
-		return (t, o) => n.tasks.length > 0 ? (x(), S("div", {
+		return (t, o) => n.tasks.length > 0 ? (S(), C("div", {
 			key: 0,
-			class: j(w(e).task_strip)
-		}, [O("div", { class: j(w(e).task_strip_header) }, [O("span", { class: j([w(e).task_strip_summary, "tc-tabular-nums"]) }, A(w(r)("nav.task_strip_count", n.tasks.length)), 3), O("button", {
+			class: M(T(e).task_strip)
+		}, [k("div", { class: M(T(e).task_strip_header) }, [k("span", { class: M([T(e).task_strip_summary, "tc-tabular-nums"]) }, j(T(r)("nav.task_strip_count", n.tasks.length)), 3), k("button", {
 			type: "button",
-			class: j(["tc-interactive", w(e).icon_button]),
+			class: M(["tc-interactive", T(e).icon_button]),
 			"aria-label": c.value,
 			"aria-expanded": a.value,
 			onClick: l
 		}, [Re(Ve, {
-			icon: a.value ? w(Ue) : w(We),
+			icon: a.value ? T(Ue) : T(We),
 			size: 16
-		}, null, 8, ["icon"])], 10, si)], 2), a.value ? (x(), S("div", {
+		}, null, 8, ["icon"])], 10, ci)], 2), a.value ? (S(), C("div", {
 			key: 0,
-			class: j(w(e).task_strip_list)
-		}, [(x(!0), S(Le, null, Ce(n.tasks, (t) => (x(), S("div", {
+			class: M(T(e).task_strip_list)
+		}, [(S(!0), C(Ie, null, Se(n.tasks, (t) => (S(), C("div", {
 			key: t.id,
-			class: j(w(e).task_chip)
+			class: M(T(e).task_chip)
 		}, [
-			O("span", {
-				class: j(w(e).task_chip_dot),
+			k("span", {
+				class: M(T(e).task_chip_dot),
 				"data-status": t.status
-			}, null, 10, ci),
-			O("span", { class: j(w(e).task_chip_label) }, A(s(t.label_code)), 3),
-			t.progress === null ? E("", !0) : (x(), S("span", li, A(w(i)(t.progress, "percent")), 1))
-		], 2))), 128))], 2)) : E("", !0)], 2)) : E("", !0);
+			}, null, 10, li),
+			k("span", { class: M(T(e).task_chip_label) }, j(s(t.label_code)), 3),
+			t.progress === null ? D("", !0) : (S(), C("span", ui, j(T(i)(t.progress, "percent")), 1))
+		], 2))), 128))], 2)) : D("", !0)], 2)) : D("", !0);
 	}
-}), di = ["aria-label", "aria-pressed"], fi = ["aria-label", "title"], pi = /* @__PURE__ */ M({
+}), fi = ["aria-label", "aria-pressed"], pi = ["aria-label", "title"], mi = /* @__PURE__ */ Le({
 	__name: "TopCommandBar",
 	props: {
 		route: {},
-		inspectorCollapsed: { type: Boolean }
+		inspectorCollapsed: { type: Boolean },
+		inspectorAvailable: { type: Boolean }
 	},
 	emits: ["set-inspector-collapsed", "close"],
 	setup(t, { emit: n }) {
-		let r = t, i = n, { t: a } = Pe(), o = k(() => He(a, r.route)), s = k(() => r.inspectorCollapsed ? Nr : Mr), c = k(() => r.inspectorCollapsed ? a("nav.inspector_expand") : a("nav.inspector_collapse"));
+		let r = t, i = n, { t: a } = Ne(), o = A(() => He(a, r.route)), s = A(() => r.inspectorCollapsed ? Pr : Nr), c = A(() => r.inspectorCollapsed ? a("nav.inspector_expand") : a("nav.inspector_collapse"));
 		function l() {
 			i("set-inspector-collapsed", !r.inspectorCollapsed);
 		}
-		return (n, r) => (x(), S("header", {
-			class: j(w(e).top_bar),
+		return (n, r) => (S(), C("header", {
+			class: M(T(e).top_bar),
 			"data-window-drag-handle": ""
-		}, [O("div", { class: j(w(e).top_bar_start) }, [O("span", { class: j(w(e).top_bar_title) }, A(o.value), 3)], 2), O("div", { class: j(w(e).top_bar_end) }, [O("button", {
+		}, [k("div", { class: M(T(e).top_bar_start) }, [
+			k("span", { class: M(T(e).top_bar_brand) }, j(T(a)("app.name")), 3),
+			k("span", {
+				class: M(T(e).top_bar_divider),
+				"aria-hidden": "true"
+			}, "/", 2),
+			k("span", { class: M(T(e).top_bar_title) }, j(o.value), 3)
+		], 2), k("div", { class: M(T(e).top_bar_end) }, [t.inspectorAvailable ? (S(), C("button", {
+			key: 0,
 			type: "button",
-			class: j(["tc-interactive", w(e).icon_button]),
+			class: M(["tc-interactive", T(e).icon_button]),
 			"data-testid": "inspector-toggle",
 			"aria-label": c.value,
 			"aria-pressed": !t.inspectorCollapsed,
@@ -3017,19 +3026,19 @@ var oi = /* @__PURE__ */ M({
 		}, [Re(Ve, {
 			icon: s.value,
 			size: 18
-		}, null, 8, ["icon"])], 10, di), O("button", {
+		}, null, 8, ["icon"])], 10, fi)) : D("", !0), k("button", {
 			type: "button",
-			class: j(["tc-interactive", [w(e).icon_button, w(e).close_button]]),
+			class: M(["tc-interactive", [T(e).icon_button, T(e).close_button]]),
 			"data-testid": "studio-close",
-			"aria-label": w(a)("common.close"),
-			title: w(a)("common.close"),
+			"aria-label": T(a)("common.close"),
+			title: T(a)("common.close"),
 			onClick: r[0] ||= (e) => i("close")
 		}, [Re(Ve, {
-			icon: w(Ge),
+			icon: T(Ge),
 			size: 18
-		}, null, 8, ["icon"])], 10, fi)], 2)], 2));
+		}, null, 8, ["icon"])], 10, pi)], 2)], 2));
 	}
-}), mi = ["data-viewport", "data-inspector-collapsed"], hi = ["aria-label"], gi = /* @__PURE__ */ M({
+}), hi = ["data-viewport", "data-inspector-collapsed"], gi = ["aria-label"], _i = /* @__PURE__ */ Le({
 	__name: "StudioShell",
 	props: {
 		state: {},
@@ -3043,98 +3052,103 @@ var oi = /* @__PURE__ */ M({
 		"close"
 	],
 	setup(t, { emit: n }) {
-		let r = C(() => import("./chunks/ContextInspector-CDqKA2I3.js")), i = C(() => import("./chunks/DesktopIconRail-BJLzrXsN.js")), a = C(() => import("./chunks/InspectorSheet-DTJUkYLo.js")), o = C(() => import("./chunks/MobileBottomNav-s-qBfKWQ.js")), s = t, c = n, { t: l } = Pe(), u = qr(s.viewport), d = /* @__PURE__ */ new Set(["vocabulary"]), f = k(() => [...s.state.loading].some((e) => !d.has(e))), p = k(() => s.state.failures.size > 0), m = k(() => ({ "--tc-inspector-width": `${String(s.state.inspector.width)}px` })), h = T(!1), g = k(() => u.value === "mobile" ? !h.value : s.state.inspector.collapsed);
-		function _(e) {
+		let r = w(() => import("./chunks/ContextInspector-DmGCbgoz.js")), i = w(() => import("./chunks/DesktopIconRail-Bn1LP58w.js")), a = w(() => import("./chunks/InspectorSheet-DwRe5GKr.js")), o = w(() => import("./chunks/MobileBottomNav-DtmpLEpS.js")), s = t, c = n, { t: l } = Ne(), u = Jr(s.viewport), d = /* @__PURE__ */ new Set(["vocabulary"]), f = A(() => [...s.state.loading].some((e) => !d.has(e))), p = A(() => s.state.failures.size > 0), m = A(() => ({ "--tc-inspector-width": `${String(s.state.inspector.width)}px` })), h = E(!1), g = A(() => s.state.route !== "workbench"), _ = A(() => !g.value || s.state.inspector.collapsed), v = A(() => u.value === "mobile" ? !h.value : _.value);
+		function y(e) {
 			u.value === "mobile" && (h.value = !e), c("set-inspector-collapsed", e);
 		}
-		function v(e) {
+		function b(e) {
 			c("select-route", e);
 		}
-		return (t, n) => (x(), S("div", {
-			class: j(w(e).shell),
-			"data-viewport": w(u),
-			"data-inspector-collapsed": w(u) === "desktop" ? s.state.inspector.collapsed : null,
-			style: je(m.value)
+		return (t, n) => (S(), C("div", {
+			class: M(T(e).shell),
+			"data-viewport": T(u),
+			"data-inspector-collapsed": T(u) === "desktop" ? _.value : null,
+			style: Ae(m.value)
 		}, [
-			Re(pi, {
+			Re(mi, {
 				route: s.state.route,
-				"inspector-collapsed": g.value,
-				onSetInspectorCollapsed: _,
+				"inspector-collapsed": v.value,
+				"inspector-available": g.value,
+				onSetInspectorCollapsed: y,
 				onClose: n[0] ||= (e) => c("close")
-			}, null, 8, ["route", "inspector-collapsed"]),
-			w(u) === "desktop" ? (x(), D(w(i), {
+			}, null, 8, [
+				"route",
+				"inspector-collapsed",
+				"inspector-available"
+			]),
+			T(u) === "desktop" ? (S(), O(T(i), {
 				key: 0,
 				route: s.state.route,
-				onSelect: v
-			}, null, 8, ["route"])) : E("", !0),
-			O("main", {
-				class: j(w(e).workspace),
+				onSelect: b
+			}, null, 8, ["route"])) : D("", !0),
+			k("main", {
+				class: M(T(e).workspace),
 				"data-testid": "workspace"
-			}, [p.value ? (x(), S("div", {
+			}, [p.value ? (S(), C("div", {
 				key: 0,
-				class: j(w(e).partial_banner),
+				class: M(T(e).partial_banner),
 				"data-testid": "partial-banner"
-			}, [O("div", null, [O("p", null, A(w(l)("app.partial_init.banner_title")), 1), O("p", null, A(w(l)("app.partial_init.banner_description")), 1)]), O("button", {
+			}, [k("div", null, [k("p", null, j(T(l)("app.partial_init.banner_title")), 1), k("p", null, j(T(l)("app.partial_init.banner_description")), 1)]), k("button", {
 				type: "button",
-				class: j(["tc-interactive", w(e).icon_button]),
+				class: M(["tc-interactive", T(e).icon_button]),
 				"data-testid": "partial-banner-diagnostics",
-				onClick: n[1] ||= (e) => v("diagnostics")
-			}, A(w(He)(w(l), "diagnostics")), 3)], 2)) : E("", !0), f.value ? (x(), S("div", {
+				onClick: n[1] ||= (e) => b("diagnostics")
+			}, j(T(He)(T(l), "diagnostics")), 3)], 2)) : D("", !0), f.value ? (S(), C("div", {
 				key: 1,
-				class: j(w(e).workspace_placeholder),
+				class: M(T(e).workspace_placeholder),
 				"data-testid": "workspace-skeleton",
 				role: "status",
-				"aria-label": w(l)("status.loading")
+				"aria-label": T(l)("status.loading")
 			}, [
-				O("div", {
-					class: j(w(e).skeleton_block),
+				k("div", {
+					class: M(T(e).skeleton_block),
 					style: {
 						width: "40%",
 						height: "20px"
 					}
 				}, null, 2),
-				O("div", {
-					class: j(w(e).skeleton_block),
+				k("div", {
+					class: M(T(e).skeleton_block),
 					style: {
 						width: "90%",
 						height: "14px",
 						"margin-top": "12px"
 					}
 				}, null, 2),
-				O("div", {
-					class: j(w(e).skeleton_block),
+				k("div", {
+					class: M(T(e).skeleton_block),
 					style: {
 						width: "75%",
 						height: "14px",
 						"margin-top": "8px"
 					}
 				}, null, 2)
-			], 10, hi)) : (x(), D(oi, {
+			], 10, gi)) : (S(), O(si, {
 				key: 2,
 				state: s.state,
 				controller: s.controller
 			}, null, 8, ["state", "controller"]))], 2),
-			w(u) === "desktop" && !s.state.inspector.collapsed ? (x(), D(w(r), {
+			T(u) === "desktop" && g.value && !s.state.inspector.collapsed ? (S(), O(T(r), {
 				key: 1,
 				width: s.state.inspector.width,
 				selection: s.state.inspector.selected_record,
 				onResize: n[2] ||= (e) => c("resize-inspector", e)
-			}, null, 8, ["width", "selection"])) : E("", !0),
-			Re(ui, { tasks: s.state.tasks }, null, 8, ["tasks"]),
-			w(u) === "mobile" ? (x(), D(w(o), {
+			}, null, 8, ["width", "selection"])) : D("", !0),
+			Re(di, { tasks: s.state.tasks }, null, 8, ["tasks"]),
+			T(u) === "mobile" ? (S(), O(T(o), {
 				key: 2,
 				route: s.state.route,
-				onSelect: v
-			}, null, 8, ["route"])) : E("", !0),
-			w(u) === "mobile" ? (x(), D(w(a), {
+				onSelect: b
+			}, null, 8, ["route"])) : D("", !0),
+			T(u) === "mobile" && g.value ? (S(), O(T(a), {
 				key: 3,
 				open: h.value,
 				selection: s.state.inspector.selected_record,
-				"onUpdate:open": n[3] ||= (e) => _(!e)
-			}, null, 8, ["open", "selection"])) : E("", !0)
-		], 14, mi));
+				"onUpdate:open": n[3] ||= (e) => y(!e)
+			}, null, 8, ["open", "selection"])) : D("", !0)
+		], 14, hi));
 	}
-}), _i = ["href"], vi = /* @__PURE__ */ M({
+}), vi = ["href"], yi = /* @__PURE__ */ Le({
 	__name: "AppRoot",
 	props: {
 		status: {},
@@ -3145,17 +3159,17 @@ var oi = /* @__PURE__ */ M({
 		capabilities: {}
 	},
 	setup(t) {
-		let n = t, { t: r } = Pe();
+		let n = t, { t: r } = Ne();
 		function i() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
 		let a = n.hostElement, o = i();
 		a.dataset.colorMode = o;
-		let s = k(() => n.probe.ready ? void 0 : n.probe.current_version), c = k(() => `${r("app.name")} ${r("app.version_label", { version: n.version })}`), l = n.status.state === "ready" ? Ar({
+		let s = A(() => n.probe.ready ? void 0 : n.probe.current_version), c = A(() => `${r("app.name")} ${r("app.version_label", { version: n.version })}`), l = n.status.state === "ready" ? jr({
 			capabilities: n.capabilities ?? _r(),
 			initial_color_mode: o
 		}) : null;
-		l && Oe(() => l.state.value.color_mode, (e) => {
+		l && De(() => l.state.value.color_mode, (e) => {
 			a.dataset.colorMode = e;
 		});
 		function u(e) {
@@ -3170,10 +3184,10 @@ var oi = /* @__PURE__ */ M({
 		function p() {
 			window.location.reload();
 		}
-		let m = k(() => l?.state.value.settings.settings?.ui.optional_entry_enabled === !0), h = T(!m.value), g = k(() => h.value);
-		Oe(m, (e, t) => {
+		let m = A(() => l?.state.value.settings.settings?.ui.optional_entry_enabled === !0), h = E(!m.value), g = A(() => h.value);
+		De(m, (e, t) => {
 			e && !t ? h.value = !1 : !e && t && (h.value = !0);
-		}), Oe(g, (e) => {
+		}), De(g, (e) => {
 			a.dataset.surfaceMode = e ? "studio" : "entry";
 		}, { immediate: !0 });
 		function _() {
@@ -3182,62 +3196,62 @@ var oi = /* @__PURE__ */ M({
 		function v() {
 			h.value = !1;
 		}
-		return (n, i) => (x(), D(ii, { "portal-target": t.portalTarget }, {
-			default: ke(() => [t.status.state === "blocked" ? (x(), S("div", {
+		return (n, i) => (S(), O(ai, { "portal-target": t.portalTarget }, {
+			default: Oe(() => [t.status.state === "blocked" ? (S(), C("div", {
 				key: 0,
-				class: j(w(e).state_screen),
+				class: M(T(e).state_screen),
 				"data-startup-state": "blocked"
 			}, [
-				O("p", { class: j(w(e).state_screen_eyebrow) }, A(c.value), 3),
-				O("h1", { class: j(w(e).state_screen_title) }, A(w(r)("app.unsupported_host.title")), 3),
-				O("p", { class: j(w(e).state_screen_description) }, A(w(r)("app.unsupported_host.description", {
-					required_version: w(tr),
-					current_version: s.value ?? w(r)("status.unknown")
+				k("p", { class: M(T(e).state_screen_eyebrow) }, j(c.value), 3),
+				k("h1", { class: M(T(e).state_screen_title) }, j(T(r)("app.unsupported_host.title")), 3),
+				k("p", { class: M(T(e).state_screen_description) }, j(T(r)("app.unsupported_host.description", {
+					required_version: T(tr),
+					current_version: s.value ?? T(r)("status.unknown")
 				})), 3),
-				O("a", {
-					class: j(["tc-interactive", w(e).state_screen_action]),
+				k("a", {
+					class: M(["tc-interactive", T(e).state_screen_action]),
 					href: t.status.update_url,
 					target: "_blank",
 					rel: "noreferrer"
-				}, A(w(r)("app.unsupported_host.update_action")), 11, _i)
-			], 2)) : t.status.state === "failed" ? (x(), S("div", {
+				}, j(T(r)("app.unsupported_host.update_action")), 11, vi)
+			], 2)) : t.status.state === "failed" ? (S(), C("div", {
 				key: 1,
-				class: j(w(e).state_screen),
+				class: M(T(e).state_screen),
 				"data-startup-state": "failed"
 			}, [
-				O("p", { class: j(w(e).state_screen_eyebrow) }, A(c.value), 3),
-				O("h1", { class: j(w(e).state_screen_title) }, A(w(r)("app.fatal_error.title")), 3),
-				O("p", { class: j(w(e).state_screen_description) }, A(w(r)("app.fatal_error.description")), 3),
-				O("button", {
+				k("p", { class: M(T(e).state_screen_eyebrow) }, j(c.value), 3),
+				k("h1", { class: M(T(e).state_screen_title) }, j(T(r)("app.fatal_error.title")), 3),
+				k("p", { class: M(T(e).state_screen_description) }, j(T(r)("app.fatal_error.description")), 3),
+				k("button", {
 					type: "button",
-					class: j(["tc-interactive", w(e).state_screen_action]),
+					class: M(["tc-interactive", T(e).state_screen_action]),
 					onClick: p
-				}, A(w(r)("app.fatal_error.reload_action")), 3)
-			], 2)) : w(l) ? (x(), S(Le, { key: 2 }, [g.value ? (x(), D(ri, {
+				}, j(T(r)("app.fatal_error.reload_action")), 3)
+			], 2)) : T(l) ? (S(), C(Ie, { key: 2 }, [g.value ? (S(), O(ii, {
 				key: 0,
-				label: w(r)("app.name")
+				label: T(r)("app.name")
 			}, {
-				default: ke(() => [Re(gi, {
-					state: w(l).state.value,
-					controller: w(l).controller,
+				default: Oe(() => [Re(_i, {
+					state: T(l).state.value,
+					controller: T(l).controller,
 					onSelectRoute: u,
 					onSetInspectorCollapsed: d,
 					onResizeInspector: f,
 					onClose: v
 				}, null, 8, ["state", "controller"])]),
 				_: 1
-			}, 8, ["label"])) : E("", !0), Re(Qr, {
+			}, 8, ["label"])) : D("", !0), Re($r, {
 				enabled: !g.value,
-				"open-label": w(r)("app.name"),
+				"open-label": T(r)("app.name"),
 				onOpen: _
-			}, null, 8, ["enabled", "open-label"])], 64)) : E("", !0)]),
+			}, null, 8, ["enabled", "open-label"])], 64)) : D("", !0)]),
 			_: 1
 		}, 8, ["portal-target"]));
 	}
 });
 //#endregion
 //#region src/ui/create_shadow_root.ts
-function yi(e, t) {
+function bi(e, t) {
 	e.getElementById("tavern-canvas-root")?.remove();
 	let n = e.createElement("div");
 	n.id = "tavern-canvas-root";
@@ -3258,33 +3272,33 @@ function yi(e, t) {
 }
 //#endregion
 //#region ../../packages/storage/src/images/image_store.ts
-var bi = ["image_records", "image_blobs"], xi = class extends Error {
+var xi = ["image_records", "image_blobs"], Si = class extends Error {
 	code = "image_hash_mismatch";
 	sha256;
 	constructor(e) {
 		super(`Image blob content no longer matches its sha256 key: ${e}`), this.name = "ImageCorruptionError", this.sha256 = e;
 	}
-}, Si = class extends Error {
+}, Ci = class extends Error {
 	constructor(e) {
 		super(`Image bytes do not match the claimed media type: ${e}`), this.name = "ImageMediaTypeError";
 	}
-}, Ci = class extends Ye {
+}, wi = class extends Ye {
 	constructor(e) {
 		super(e, "image_records", tt);
 	}
 };
-async function wi(e) {
+async function Ti(e) {
 	return e instanceof ArrayBuffer ? new Uint8Array(e) : new Uint8Array(await e.arrayBuffer());
 }
-async function Ti(e, t) {
+async function Ei(e, t) {
 	return e.objectStore("image_records").index("sha256").count(t);
 }
-async function Ei(e, n, i, a) {
+async function Di(e, n, i, a) {
 	let o = et(i);
-	if (o === void 0 || o !== a) throw new Si(a);
+	if (o === void 0 || o !== a) throw new Ci(a);
 	let s = qe.parse(t(r(i))), c = await n.get(s, e);
 	if (c === null) {
-		let t = await Ti(e, s) + 1, r = {
+		let t = await Ei(e, s) + 1, r = {
 			sha256: s,
 			ref_count: t,
 			byte_length: i.byteLength,
@@ -3308,22 +3322,22 @@ async function Ei(e, n, i, a) {
 		ref_count: l.ref_count
 	};
 }
-async function Di(e, t, n) {
+async function Oi(e, t, n) {
 	let r = qe.parse(n), i = await t.get(r, e);
 	return i === null ? !1 : i.ref_count <= 1 ? (await t.delete(r, e), !0) : (await t.put({
 		...i,
 		ref_count: i.ref_count - 1
 	}, e), !1);
 }
-async function Oi(e, n, i) {
+async function ki(e, n, i) {
 	let a = qe.parse(i), o = await n.get(a, e);
 	if (o === null) return null;
-	let s = await wi(o.blob);
-	if (t(r(s)) !== a) throw new xi(a);
+	let s = await Ti(o.blob);
+	if (t(r(s)) !== a) throw new Si(a);
 	return s;
 }
-async function ki(e, t, n, r, i) {
-	let a = await Ei(e, n, i.bytes, i.claimed_media_type), o = {
+async function Ai(e, t, n, r, i) {
+	let a = await Di(e, n, i.bytes, i.claimed_media_type), o = {
 		schema_version: 1,
 		id: i.id,
 		namespace: r,
@@ -3339,17 +3353,17 @@ async function ki(e, t, n, r, i) {
 	};
 	return await t.create(r, o, e), o;
 }
-async function Ai(e, t, n, r, i) {
+async function ji(e, t, n, r, i) {
 	let a = await t.get(r, i, e);
 	if (a === null) throw new Je("image_records", `${r}:${i}`);
 	await t.delete(r, i, e);
-	let o = await Di(e, n, a.sha256);
+	let o = await Oi(e, n, a.sha256);
 	return {
 		sha256: a.sha256,
 		blob_deleted: o
 	};
 }
-async function ji(e, t, n) {
+async function Mi(e, t, n) {
 	let r = await e.objectStore("image_records").index("sha256").getAll(n);
 	for (let n of r) {
 		let r = Ze.safeParse(n);
@@ -3361,21 +3375,21 @@ async function ji(e, t, n) {
 		}, e);
 	}
 }
-async function Mi(e, t, n) {
-	let r = new Ci(e), i = new rt(e);
-	return Qe(e, bi, (e) => ki(e, r, i, t, n));
-}
 async function Ni(e, t, n) {
-	let r = new Ci(e), i = new rt(e);
-	return Qe(e, bi, (e) => Ai(e, r, i, t, n));
+	let r = new wi(e), i = new rt(e);
+	return Qe(e, xi, (e) => Ai(e, r, i, t, n));
 }
-async function Pi(e, t) {
-	let n = new Ci(e), r = new rt(e), i = await Qe(e, bi, async (e) => {
+async function Pi(e, t, n) {
+	let r = new wi(e), i = new rt(e);
+	return Qe(e, xi, (e) => ji(e, r, i, t, n));
+}
+async function Fi(e, t) {
+	let n = new wi(e), r = new rt(e), i = await Qe(e, xi, async (e) => {
 		try {
-			return { bytes: await Oi(e, r, t) };
+			return { bytes: await ki(e, r, t) };
 		} catch (t) {
-			if (!(t instanceof xi)) throw t;
-			return await ji(e, n, t.sha256), { error: t };
+			if (!(t instanceof Si)) throw t;
+			return await Mi(e, n, t.sha256), { error: t };
 		}
 	});
 	if ("error" in i) throw i.error;
@@ -3383,18 +3397,18 @@ async function Pi(e, t) {
 }
 //#endregion
 //#region src/modules/media/chat_media_interactions.ts
-function Fi(e) {
+function Ii(e) {
 	return {
 		available: !1,
 		reason: e
 	};
 }
-var Ii = class {
-	capability = Fi("Standard SillyTavern host exposes no message-media gesture hook; use Gallery or the image parameters dialog instead.");
+var Li = class {
+	capability = Ii("Standard SillyTavern host exposes no message-media gesture hook; use Gallery or the image parameters dialog instead.");
 	subscribe(e) {
 		return () => {};
 	}
-}, Li = class {
+}, Ri = class {
 	capability = { available: !0 };
 	#e = /* @__PURE__ */ new Set();
 	subscribe(e) {
@@ -3411,7 +3425,7 @@ var Ii = class {
 };
 //#endregion
 //#region src/bootstrap/capabilities/generation_context.ts
-function Ri(e) {
+function zi(e) {
 	return kt.parse({
 		schema_version: 1,
 		chat_id: e.chat_id,
@@ -3427,14 +3441,14 @@ function Ri(e) {
 		}))
 	});
 }
-var zi = class {
+var Bi = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t;
 	}
 	async resolve() {
-		let e = await this.#e.get_active_chat(), t = Ot(Ri(e), this.#t), n = e.messages.at(-1);
+		let e = await this.#e.get_active_chat(), t = Ot(zi(e), this.#t), n = e.messages.at(-1);
 		return {
 			chat_id: e.chat_id,
 			requested_swipe_id: n?.active_swipe_id ?? 0,
@@ -3445,28 +3459,28 @@ var zi = class {
 };
 //#endregion
 //#region src/modules/generation/message_binding_module.ts
-function Bi(e) {
+function Vi(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function Vi(e, t) {
+function Hi(e, t) {
 	return e.find((e) => e.message_id === t) ?? null;
 }
-function Hi(e, t) {
+function Ui(e, t) {
 	return e.swipes.find((e) => e.swipe_id === t) ?? null;
 }
-function Ui(e) {
+function Wi(e) {
 	let t = e.metadata[Rn];
 	if (t === void 0) return null;
-	let n = fe.safeParse(t);
+	let n = de.safeParse(t);
 	return n.success ? n.data : null;
 }
-function Wi(e) {
+function Gi(e) {
 	let t = e.data.extra;
-	if (!Bi(t) || !Array.isArray(t.media)) return [];
+	if (!Vi(t) || !Array.isArray(t.media)) return [];
 	let n = [];
 	for (let e of t.media) {
-		if (!Bi(e)) continue;
-		let t = ne.safeParse(e.image_id);
+		if (!Vi(e)) continue;
+		let t = te.safeParse(e.image_id);
 		t.success && n.push(Object.freeze({
 			...e,
 			image_id: t.data
@@ -3474,7 +3488,7 @@ function Wi(e) {
 	}
 	return Object.freeze(n);
 }
-var Gi = class {
+var Ki = class {
 	#e;
 	#t;
 	constructor(e, t) {
@@ -3483,32 +3497,32 @@ var Gi = class {
 	async find_target(e) {
 		let t = await this.#e.get_active_chat();
 		if (t.chat_id !== e.chat_id) return null;
-		let n = Vi(t.messages, e.message_id);
+		let n = Hi(t.messages, e.message_id);
 		if (n === null) return null;
-		let r = Hi(n, e.swipe_id);
+		let r = Ui(n, e.swipe_id);
 		if (r === null) return null;
-		let i = Ui(r);
+		let i = Wi(r);
 		return i !== null && i.generation_anchor !== e.generation_anchor ? null : Object.freeze({
 			chat_id: t.chat_id,
 			message_id: n.message_id,
 			swipe_id: r.swipe_id,
 			generation_anchor: i?.generation_anchor ?? e.generation_anchor,
 			metadata: i,
-			media: Wi(r)
+			media: Gi(r)
 		});
 	}
 	async update_target(e) {
 		let t = await this.#e.get_active_chat();
 		if (t.chat_id !== e.chat_id) throw Error(`Host chat ${e.chat_id} is not active`);
-		let n = Vi(t.messages, e.message_id), r = n === null ? null : Hi(n, e.swipe_id);
+		let n = Hi(t.messages, e.message_id), r = n === null ? null : Ui(n, e.swipe_id);
 		if (n === null || r === null) throw Error(`Host message ${String(e.message_id)} swipe ${String(e.swipe_id)} no longer exists`);
-		let i = Ui(r);
+		let i = Wi(r);
 		if (i !== null && i.generation_anchor !== e.metadata.generation_anchor) throw Error("Host message generation anchor changed before attachment");
 		await this.#e.update_message({
 			message_id: n.message_id,
 			swipe_id: r.swipe_id,
 			content: r.content,
-			metadata: fe.parse(e.metadata),
+			metadata: de.parse(e.metadata),
 			media: e.media.map((e) => ({ ...e }))
 		});
 	}
@@ -3518,7 +3532,7 @@ var Gi = class {
 			let r = this.#t.resolve(n.message_id);
 			r !== null && this.#e.get_active_chat().then((i) => {
 				if (!t) return;
-				let a = Vi(i.messages, n.message_id);
+				let a = Hi(i.messages, n.message_id);
 				a !== null && e({
 					chat_id: i.chat_id,
 					message_id: a.message_id,
@@ -3527,7 +3541,7 @@ var Gi = class {
 					is_final: a.role === "assistant" && !a.is_hidden,
 					generation_anchor: h.parse(r.generation_anchor),
 					source_anchor: h.parse(r.source_anchor),
-					request_ids: r.request_ids.map((e) => ce.parse(e))
+					request_ids: r.request_ids.map((e) => se.parse(e))
 				});
 			});
 		});
@@ -3542,7 +3556,7 @@ var Gi = class {
 		let t = !0, n = this.#e.subscribe_message_swiped((n) => {
 			this.#e.get_active_chat().then((r) => {
 				if (!t) return;
-				let i = Vi(r.messages, n.message_id);
+				let i = Hi(r.messages, n.message_id);
 				i !== null && e({
 					chat_id: r.chat_id,
 					message_id: i.message_id,
@@ -3554,11 +3568,11 @@ var Gi = class {
 			t && (t = !1, n());
 		};
 	}
-}, Ki = Object.freeze({
+}, qi = Object.freeze({
 	chat_id: "",
 	messages: Object.freeze([])
 });
-function qi(e, t) {
+function Ji(e, t) {
 	let n = t.messages.at(-1);
 	if (n === void 0) return 0;
 	switch (e) {
@@ -3567,13 +3581,13 @@ function qi(e, t) {
 		default: return 0;
 	}
 }
-var Ji = class {
+var Yi = class {
 	#e;
 	#t;
 	#n;
 	#r;
 	#i = /* @__PURE__ */ new Map();
-	#a = Ki;
+	#a = qi;
 	#o = null;
 	#s = !0;
 	#c = [];
@@ -3599,7 +3613,7 @@ var Ji = class {
 		if (t === null) throw Error("A generation session could not be opened for this turn");
 		return this.#i.set(t.generation_anchor, {
 			chat_id: t.chat_id,
-			requested_swipe_id: qi(e.generation_type, this.#a)
+			requested_swipe_id: Ji(e.generation_type, this.#a)
 		}), t;
 	}
 	complete(e) {
@@ -3610,7 +3624,7 @@ var Ji = class {
 		return t === null ? null : {
 			generation_anchor: h.parse(t.generation_anchor),
 			source_anchor: h.parse(t.source_anchor),
-			request_ids: [...t.request_ids].map((e) => ce.parse(e))
+			request_ids: [...t.request_ids].map((e) => se.parse(e))
 		};
 	}
 	target(e) {
@@ -3650,7 +3664,7 @@ var Ji = class {
 		this.#a.chat_id !== "" && (this.#o = this.#t.open({
 			depth: 0,
 			host_root_generation_id: this.#n(),
-			source_context: Ri(this.#a)
+			source_context: zi(this.#a)
 		}), this.#s = !1, this.#p());
 	}
 	#p() {
@@ -3662,7 +3676,7 @@ var Ji = class {
 		let t = this.#e.can_use_native_tools() ? "native_tool" : "fallback_comment";
 		this.#e.set_trigger_injection(Wt(t, e.generation_anchor).host_injection);
 	}
-}, Yi = class {
+}, Xi = class {
 	module_id = "automatic_generation_session";
 	requires = [];
 	#e;
@@ -3676,7 +3690,7 @@ var Ji = class {
 	stop() {
 		return this.#t.stop(), this.#e.stop(), Promise.resolve();
 	}
-}, Xi = class {
+}, Zi = class {
 	#e;
 	constructor(e) {
 		this.#e = e;
@@ -3710,7 +3724,7 @@ var Ji = class {
 			this.#e.plans.take(e.request_id);
 		});
 	}
-}, Zi = class {
+}, Qi = class {
 	#e;
 	#t;
 	#n = "";
@@ -3750,24 +3764,24 @@ var Ji = class {
 				message_id: e,
 				swipe_id: r.swipe_id,
 				content: n,
-				metadata: fe.parse({
+				metadata: de.parse({
 					schema_version: 1,
 					generation_anchor: t.generation_anchor,
 					source_anchor: t.source_anchor,
 					request_ids: [...t.request_ids],
 					image_ids: []
 				}),
-				media: Wi(r).map((e) => ({ ...e }))
+				media: Gi(r).map((e) => ({ ...e }))
 			});
 		} catch {}
 	}
 };
 //#endregion
 //#region src/modules/generation/generation_trigger_module.ts
-function Qi(e) {
+function $i(e) {
 	if (e.length > 0) throw AggregateError(e, "Generation trigger cleanup failed");
 }
-var $i = class {
+var ea = class {
 	module_id = "generation_trigger";
 	requires = [];
 	#e;
@@ -3797,7 +3811,7 @@ var $i = class {
 		} catch (t) {
 			e.push(t);
 		}
-		return Qi(e), Promise.resolve();
+		return $i(e), Promise.resolve();
 	}
 	#s(e) {
 		if (e.phase === "started") {
@@ -3860,24 +3874,24 @@ var $i = class {
 		} catch (e) {
 			t.push(e);
 		}
-		Qi(t);
+		$i(t);
 	}
-}, ea = "data-tavern-canvas-image-id", ta = 500, na = 8;
-function ra(e) {
-	let t = e.getAttribute(ea);
+}, ta = "data-tavern-canvas-image-id", na = 500, ra = 8;
+function ia(e) {
+	let t = e.getAttribute(ta);
 	if (t === null) return null;
-	let n = ne.safeParse(t);
+	let n = te.safeParse(t);
 	return n.success ? n.data : null;
 }
-function ia(e) {
+function aa(e) {
 	if (!(e instanceof Element)) return null;
-	let t = e.closest(`[${ea}]`);
-	return t === null ? null : ra(t);
+	let t = e.closest(`[${ta}]`);
+	return t === null ? null : ia(t);
 }
-function aa(e, t) {
+function oa(e, t) {
 	return e instanceof Error ? e.message : t;
 }
-var oa = class {
+var sa = class {
 	module_id = "tauri_chat_surface";
 	requires = [];
 	#e;
@@ -3902,7 +3916,7 @@ var oa = class {
 		} catch (e) {
 			this.#i = {
 				tauri_chat_surface_available: !1,
-				reason: aa(e, "TauriTavern connection failed")
+				reason: oa(e, "TauriTavern connection failed")
 			};
 			return;
 		}
@@ -3918,7 +3932,7 @@ var oa = class {
 		} catch (e) {
 			this.#i = {
 				tauri_chat_surface_available: !1,
-				reason: aa(e, "TauriTavern ChatSurface registration failed")
+				reason: oa(e, "TauriTavern ChatSurface registration failed")
 			};
 		}
 	}
@@ -3951,30 +3965,30 @@ var oa = class {
 				s = !1;
 				return;
 			}
-			let t = ia(e.target);
+			let t = aa(e.target);
 			t !== null && l("click", t);
 		}
 		function d(e) {
-			let t = ia(e.target);
+			let t = aa(e.target);
 			t !== null && l("double_click", t);
 		}
 		function f(e) {
-			let t = ia(e.target);
+			let t = aa(e.target);
 			t !== null && (e.preventDefault(), l("context", t));
 		}
 		function p(e) {
-			let t = ia(e.target);
+			let t = aa(e.target);
 			t !== null && (a = {
 				x: e.clientX,
 				y: e.clientY
 			}, o = t, s = !1, i = setTimeout(() => {
 				o !== null && (s = !0, l("long_press", o));
-			}, ta));
+			}, na));
 		}
 		function m(e) {
 			if (a === null) return;
 			let t = Math.abs(e.clientX - a.x), n = Math.abs(e.clientY - a.y);
-			(t > na || n > na) && c();
+			(t > ra || n > ra) && c();
 		}
 		function h() {
 			c();
@@ -3989,10 +4003,10 @@ var oa = class {
 };
 //#endregion
 //#region src/modules/tauri/world_info_activation_module.ts
-function sa(e, t) {
+function ca(e, t) {
 	return e instanceof Error ? e.message : t;
 }
-var ca = class {
+var la = class {
 	module_id = "tauri_world_info_activation";
 	requires = [];
 	#e;
@@ -4032,7 +4046,7 @@ var ca = class {
 		} catch (e) {
 			this.#r = {
 				tauri_world_info_activation_available: !1,
-				reason: sa(e, "TauriTavern connection failed")
+				reason: ca(e, "TauriTavern connection failed")
 			};
 			return;
 		}
@@ -4050,7 +4064,7 @@ var ca = class {
 		} catch (e) {
 			this.#r = {
 				tauri_world_info_activation_available: !1,
-				reason: sa(e, "TauriTavern WorldInfo activation subscription failed")
+				reason: ca(e, "TauriTavern WorldInfo activation subscription failed")
 			};
 		}
 	}
@@ -4069,13 +4083,13 @@ var ca = class {
 			this.#i.delete(e);
 		};
 	}
-}, la = "tavern_canvas", ua = /* @__PURE__ */ new Set([
+}, ua = "tavern_canvas", da = /* @__PURE__ */ new Set([
 	"profiles",
 	"workflows",
 	"image_data",
 	"vocabulary_data",
 	"logs"
-]), da = new Set(Object.keys(b.shape)), fa = new Set(Object.keys(me.shape)), pa = new Set(Object.keys(g.shape)), ma = {
+]), fa = new Set(Object.keys(x.shape)), pa = new Set(Object.keys(pe.shape)), ma = new Set(Object.keys(g.shape)), ha = {
 	schema_version: 1,
 	active_namespace: "primary",
 	locale: "auto",
@@ -4096,46 +4110,46 @@ var ca = class {
 		optional_entry_enabled: !1
 	}
 };
-function ha(e) {
+function ga(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function ga() {
-	return structuredClone(ma);
-}
-function _a(e) {
-	return JSON.stringify(e);
+function _a() {
+	return structuredClone(ha);
 }
 function va(e) {
+	return JSON.stringify(e);
+}
+function ya(e) {
 	try {
-		let t = _a(e);
+		let t = va(e);
 		return t === void 0 ? 0 : new TextEncoder().encode(t).length;
 	} catch {
 		return null;
 	}
 }
-function ya(e, t, n, r) {
+function ba(e, t, n, r) {
 	for (let i of Object.keys(e)) {
 		if (t.has(i)) continue;
-		let e = n === "" ? i : `${n}.${i}`, a = ua.has(i) ? "disallowed_category" : "unknown_field";
+		let e = n === "" ? i : `${n}.${i}`, a = da.has(i) ? "disallowed_category" : "unknown_field";
 		r.push({
 			path: e,
 			code: a
 		});
 	}
 }
-function U(e, t, n, r, i) {
+function H(e, t, n, r, i) {
 	let a = e.safeParse(t);
 	return a.success ? a.data : (i.push({
 		path: r,
 		code: "invalid_value"
 	}), n);
 }
-function ba(e, t, n) {
-	if (!ha(e)) return e !== void 0 && n.push({
+function xa(e, t, n) {
+	if (!ga(e)) return e !== void 0 && n.push({
 		path: t,
 		code: "invalid_value"
 	}), {};
-	let { keyType: r, valueType: i } = me.shape.http_acknowledgments, a = {};
+	let { keyType: r, valueType: i } = pe.shape.http_acknowledgments, a = {};
 	for (let [o, s] of Object.entries(e)) {
 		let e = r.safeParse(o), c = i.safeParse(s);
 		e.success && c.success ? a[e.data] = c.data : n.push({
@@ -4145,58 +4159,58 @@ function ba(e, t, n) {
 	}
 	return a;
 }
-function xa(e, t) {
-	let n = ma.gateway;
-	return ha(e) ? (ya(e, fa, "gateway", t), {
-		endpoint: U(me.shape.endpoint, e.endpoint, n.endpoint, "gateway.endpoint", t),
-		token_secret_id: U(me.shape.token_secret_id, e.token_secret_id, n.token_secret_id, "gateway.token_secret_id", t),
-		http_acknowledgments: ba(e.http_acknowledgments, "gateway.http_acknowledgments", t)
+function Sa(e, t) {
+	let n = ha.gateway;
+	return ga(e) ? (ba(e, pa, "gateway", t), {
+		endpoint: H(pe.shape.endpoint, e.endpoint, n.endpoint, "gateway.endpoint", t),
+		token_secret_id: H(pe.shape.token_secret_id, e.token_secret_id, n.token_secret_id, "gateway.token_secret_id", t),
+		http_acknowledgments: xa(e.http_acknowledgments, "gateway.http_acknowledgments", t)
 	}) : (e !== void 0 && t.push({
 		path: "gateway",
 		code: "invalid_value"
 	}), { ...n });
 }
-function Sa(e, t) {
-	let n = ma.ui;
-	return ha(e) ? (ya(e, pa, "ui", t), {
-		color_mode: U(g.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
-		inspector_width: U(g.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
-		inspector_collapsed: U(g.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
-		optional_entry_enabled: U(g.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
+function Ca(e, t) {
+	let n = ha.ui;
+	return ga(e) ? (ba(e, ma, "ui", t), {
+		color_mode: H(g.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
+		inspector_width: H(g.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
+		inspector_collapsed: H(g.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
+		optional_entry_enabled: H(g.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
 	}) : (e !== void 0 && t.push({
 		path: "ui",
 		code: "invalid_value"
 	}), { ...n });
 }
-function Ca(e, t) {
-	if (e === void 0) return ga();
-	let n = va(e);
+function wa(e, t) {
+	if (e === void 0) return _a();
+	let n = ya(e);
 	if (n === null || n > 65536) return t.push({
-		path: la,
+		path: ua,
 		code: n === null ? "invalid_value" : "serialized_size_exceeded"
-	}), ga();
-	if (!ha(e)) return t.push({
-		path: la,
+	}), _a();
+	if (!ga(e)) return t.push({
+		path: ua,
 		code: "invalid_value"
-	}), ga();
-	ya(e, da, "", t);
-	let r = ma;
+	}), _a();
+	ba(e, fa, "", t);
+	let r = ha;
 	return {
-		schema_version: U(b.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
-		active_namespace: U(b.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
-		locale: U(b.shape.locale, e.locale, r.locale, "locale", t),
-		active_provider_profile_id: U(b.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
-		global_concurrency: U(b.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
-		auto_generation_enabled: U(b.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
-		fallback_generation_enabled: U(b.shape.fallback_generation_enabled, e.fallback_generation_enabled, r.fallback_generation_enabled, "fallback_generation_enabled", t),
-		vocabulary_update_channel: U(b.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
-		gateway: xa(e.gateway, t),
-		ui: Sa(e.ui, t)
+		schema_version: H(x.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
+		active_namespace: H(x.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
+		locale: H(x.shape.locale, e.locale, r.locale, "locale", t),
+		active_provider_profile_id: H(x.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
+		global_concurrency: H(x.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
+		auto_generation_enabled: H(x.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
+		fallback_generation_enabled: H(x.shape.fallback_generation_enabled, e.fallback_generation_enabled, r.fallback_generation_enabled, "fallback_generation_enabled", t),
+		vocabulary_update_channel: H(x.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
+		gateway: Sa(e.gateway, t),
+		ui: Ca(e.ui, t)
 	};
 }
-function wa(e) {
-	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = Ca(t[la], i);
-	t[la] = a;
+function Ta(e) {
+	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = wa(t[ua], i);
+	t[ua] = a;
 	let o = !1, s = !1;
 	async function c() {
 		o && (o = !1, await n());
@@ -4207,7 +4221,7 @@ function wa(e) {
 		}));
 	}
 	function u(e) {
-		return a = e, t[la] = a, o = !0, l(), a;
+		return a = e, t[ua] = a, o = !0, l(), a;
 	}
 	return {
 		diagnostics: i,
@@ -4219,10 +4233,10 @@ function wa(e) {
 				...a,
 				...e
 			};
-			return u(b.parse(t));
+			return u(x.parse(t));
 		},
 		replace_settings(e) {
-			return u(b.parse(e));
+			return u(x.parse(e));
 		},
 		flush: c,
 		async stop() {
@@ -4232,17 +4246,17 @@ function wa(e) {
 }
 //#endregion
 //#region src/transport/host_proxy_transport.ts
-var W = class extends Error {
+var U = class extends Error {
 	code;
 	constructor(e, t, n) {
 		super(t, n), this.name = "ProviderTransportBoundaryError", this.code = e;
 	}
 };
-function Ta(e) {
+function Ea(e) {
 	try {
-		if (!Da(e)) throw ka("Provider operation is invalid");
+		if (!Oa(e)) throw W("Provider operation is invalid");
 		let { route: t, method: n, body: r, max_request_bytes: i, content_type: a, accept: o, max_response_bytes: s, signal: c } = e, l = r === void 0 ? i === void 0 : typeof i == "number" && Number.isSafeInteger(i) && i > 0 && i <= 2e8;
-		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !Oa(a) || !Oa(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw ka("Provider operation is invalid");
+		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !ka(a) || !ka(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw W("Provider operation is invalid");
 		if (ct(t), r === void 0) return {
 			route: t,
 			method: n,
@@ -4251,7 +4265,7 @@ function Ta(e) {
 			max_response_bytes: s,
 			signal: c
 		};
-		if (!(r instanceof Uint8Array) || typeof i != "number") throw ka("Provider operation is invalid");
+		if (!(r instanceof Uint8Array) || typeof i != "number") throw W("Provider operation is invalid");
 		return {
 			route: t,
 			method: n,
@@ -4263,16 +4277,16 @@ function Ta(e) {
 			signal: c
 		};
 	} catch (e) {
-		throw e instanceof W ? e : ka("Provider operation is invalid", e);
+		throw e instanceof U ? e : W("Provider operation is invalid", e);
 	}
 }
-function Ea(e) {
+function Da(e) {
 	try {
-		if (!Da(e)) throw ka("Remote provider asset operation is invalid");
+		if (!Oa(e)) throw W("Remote provider asset operation is invalid");
 		let { url: t, allowed_origins: n, max_bytes: r, signal: i } = e;
-		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw ka("Remote provider asset operation is invalid");
+		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw W("Remote provider asset operation is invalid");
 		let a = new URL(t), o = n.map(ut);
-		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw ka("Remote provider asset URL is not allowlisted");
+		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw W("Remote provider asset URL is not allowlisted");
 		return {
 			url: a.href,
 			allowed_origins: Object.freeze(o),
@@ -4280,10 +4294,10 @@ function Ea(e) {
 			signal: i
 		};
 	} catch (e) {
-		throw e instanceof W ? e : ka("Remote provider asset operation is invalid", e);
+		throw e instanceof U ? e : W("Remote provider asset operation is invalid", e);
 	}
 }
-function Da(e) {
+function Oa(e) {
 	if (typeof e != "object" || !e) return !1;
 	try {
 		let t = Object.getPrototypeOf(e);
@@ -4292,7 +4306,7 @@ function Da(e) {
 		return !1;
 	}
 }
-function Oa(e) {
+function ka(e) {
 	if (e === void 0) return !0;
 	if (typeof e != "string" || e.length === 0 || e.length > 1024) return !1;
 	for (let t of e) {
@@ -4301,8 +4315,8 @@ function Oa(e) {
 	}
 	return !0;
 }
-function ka(e, t) {
-	return new W("configuration", e, t === void 0 ? void 0 : { cause: t });
+function W(e, t) {
+	return new U("configuration", e, t === void 0 ? void 0 : { cause: t });
 }
 //#endregion
 //#region src/transport/browser_fetch.ts
@@ -4323,7 +4337,7 @@ async function Aa(e, t, n, r) {
 		if (i.body !== null) try {
 			await i.body.cancel();
 		} catch {}
-		throw new W("malformed_response", "Provider response exceeds the byte limit");
+		throw new U("malformed_response", "Provider response exceeds the byte limit");
 	}
 	let o = await ja(i.body, r, n.signal);
 	return {
@@ -4343,11 +4357,11 @@ async function ja(e, t, n) {
 				o = !0;
 				break;
 			}
-			if (a += s.byteLength, a > t) throw new W("malformed_response", "Provider response exceeds the byte limit");
+			if (a += s.byteLength, a > t) throw new U("malformed_response", "Provider response exceeds the byte limit");
 			i.push(s);
 		}
 	} catch (e) {
-		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof W ? e : new lt({ cause: e });
+		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof U ? e : new lt({ cause: e });
 	} finally {
 		if (!o) try {
 			await r.cancel();
@@ -4370,7 +4384,7 @@ var Ma = class {
 		this.#e = e.catalog_entry, this.#t = e.credential_reference, this.#n = e.secrets, this.#r = e.fetch ?? globalThis.fetch.bind(globalThis), this.#i = e.log ?? null;
 	}
 	async execute(e) {
-		let t = Ta(e), n = Fa(this.#e, t.route), r = await Ia(this.#e, this.#t, this.#n, {
+		let t = Ea(e), n = Fa(this.#e, t.route), r = await Ia(this.#e, this.#t, this.#n, {
 			...t.content_type === void 0 ? {} : { "content-type": t.content_type },
 			...t.accept === void 0 ? {} : { accept: t.accept }
 		}), i = Date.now(), a = await Pa(Aa(this.#r, n, {
@@ -4389,7 +4403,7 @@ var Ma = class {
 		})), a;
 	}
 	async fetch_remote_asset(e) {
-		let t = Ea(e);
+		let t = Da(e);
 		return Aa(this.#r, t.url, {
 			method: "GET",
 			signal: t.signal
@@ -4403,7 +4417,7 @@ var Ma = class {
 	}
 	async execute(e) {
 		let t = o(e.provider_kind);
-		if (t === null) throw new W("configuration", "This LLM dialect has no direct route catalog entry");
+		if (t === null) throw new U("configuration", "This LLM dialect has no direct route catalog entry");
 		let n = Fa(t, e.route), r = await Ia(t, e.credential_reference, this.#e, e.body === void 0 ? { accept: "application/json" } : {
 			"content-type": "application/json",
 			accept: "application/json"
@@ -4430,7 +4444,7 @@ function Fa(e, t) {
 	try {
 		return p(e, t);
 	} catch (e) {
-		throw e instanceof _ ? new W("configuration", e.message) : e;
+		throw e instanceof _ ? new U("configuration", e.message) : e;
 	}
 }
 async function Ia(e, t, n, r) {
@@ -4439,12 +4453,12 @@ async function Ia(e, t, n, r) {
 		...e.required_headers
 	};
 	if (e.auth.kind === "none") return i;
-	if (t === null) throw new W("configuration", "This provider requires a stored credential; the active profile names no vault reference");
+	if (t === null) throw new U("configuration", "This provider requires a stored credential; the active profile names no vault reference");
 	let a;
 	try {
 		a = await n.resolve_secret(t);
 	} catch (e) {
-		throw new W("configuration", La(e));
+		throw new U("configuration", La(e));
 	}
 	return i[e.auth.header] = e.auth.kind === "bearer" ? `Bearer ${a}` : a, i;
 }
@@ -4461,13 +4475,13 @@ var Ra = class {
 		try {
 			t = ut(e.base_url);
 		} catch (e) {
-			throw new W("configuration", "Direct provider base URL is invalid", { cause: e });
+			throw new U("configuration", "Direct provider base URL is invalid", { cause: e });
 		}
-		if (!dt(t)) throw new W("configuration", "Direct provider base URL must use a loopback address");
+		if (!dt(t)) throw new U("configuration", "Direct provider base URL must use a loopback address");
 		this.#e = t, this.#t = e.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 	execute(e) {
-		let t = Ta(e);
+		let t = Ea(e);
 		return Aa(this.#t, `${this.#e}${t.route}`, {
 			method: t.method,
 			...t.body === void 0 ? {} : { body: new Uint8Array(t.body).buffer },
@@ -4479,7 +4493,7 @@ var Ra = class {
 		}, t.max_response_bytes);
 	}
 	fetch_remote_asset(e) {
-		let t = Ea(e);
+		let t = Da(e);
 		return Aa(this.#t, t.url, {
 			method: "GET",
 			signal: t.signal
@@ -4843,7 +4857,7 @@ function fo(e) {
 		});
 	}
 	async function i(n) {
-		await Ni(e.database, e.namespace(), n), t.emit({
+		await Pi(e.database, e.namespace(), n), t.emit({
 			type: "record_removed",
 			record_id: n
 		});
@@ -4857,7 +4871,7 @@ function fo(e) {
 		},
 		subscribe: (e) => t.subscribe(e),
 		async read_bytes(t) {
-			let r = await n(t), i = await Pi(e.database, r.sha256);
+			let r = await n(t), i = await Fi(e.database, r.sha256);
 			if (i === null) throw q(`Gallery record ${t} has no stored bytes; the blob was evicted`);
 			return i;
 		},
@@ -4919,7 +4933,7 @@ function go(e) {
 		});
 	});
 	async function r(t) {
-		let r = await e.origin.resolve(), i = await ve({
+		let r = await e.origin.resolve(), i = await _e({
 			queue: e.queue,
 			plans: e.plans
 		}, {
@@ -4935,7 +4949,7 @@ function go(e) {
 		subscribe: (e) => t.subscribe(e),
 		submit: (e) => r(e.request),
 		async cancel(t) {
-			return mo(await ge({
+			return mo(await he({
 				queue: e.queue,
 				plans: e.plans
 			}, t));
@@ -5017,7 +5031,7 @@ var Co = class {
 		return (await this.#e.repository.list(this.#e.namespace)).map(So);
 	}
 	async save(e) {
-		let t = oe.parse(e), n = await this.#e.repository.get(this.#e.namespace, t.id), r = this.#e.clock(), i = {
+		let t = ae.parse(e), n = await this.#e.repository.get(this.#e.namespace, t.id), r = this.#e.clock(), i = {
 			...t,
 			credential_reference: n?.credential_reference ?? null,
 			created_at: n?.created_at ?? r,
@@ -6015,7 +6029,7 @@ var Os = class extends Error {
 		this.#e = e, this.#t = un(t);
 	}
 	async resolve_secret(e) {
-		if (!ae.safeParse(e).success) throw new Os("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
+		if (!ie.safeParse(e).success) throw new Os("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
 		let t;
 		try {
 			t = await this.#t("/api/secrets/view", {
@@ -6224,11 +6238,11 @@ async function Zs(e) {
 	return o;
 }
 function Qs(e, t) {
-	let n = new Ci(e);
+	let n = new wi(e);
 	return { async read(r) {
 		let i = await n.get(t(), r);
 		if (i === null) throw Error(`Source asset ${r} is not in the image store`);
-		let a = await Pi(e, i.sha256);
+		let a = await Fi(e, i.sha256);
 		if (a === null) throw Error(`Source asset ${r} has no stored bytes`);
 		if (i.media_type === "video/mp4") throw Error(`Source asset ${r} is a video and cannot be a provider input`);
 		return {
@@ -6251,7 +6265,7 @@ function ec(e) {
 function tc(e, t) {
 	return {
 		async put_image(n) {
-			return { id: (await Mi(e, t(), {
+			return { id: (await Ni(e, t(), {
 				id: n.id,
 				bytes: n.bytes,
 				claimed_media_type: n.claimed_media_type,
@@ -6260,9 +6274,9 @@ function tc(e, t) {
 			})).id };
 		},
 		async read_image(n) {
-			let r = await new Ci(e).get(t(), n);
+			let r = await new wi(e).get(t(), n);
 			if (r === null) return null;
-			let i = await Pi(e, r.sha256);
+			let i = await Fi(e, r.sha256);
 			return i === null ? null : {
 				bytes: i,
 				media_type: r.media_type
@@ -6280,38 +6294,38 @@ async function nc(e) {
 			load: () => Promise.reject(q(r))
 		};
 	}
-	let s = e.probe.ready ? e.probe.matrix : {}, c = Gs(t, s), l = [], u = s.tauri_chat_surface?.available === !0 ? new Li() : new Ii();
-	u instanceof Li && l.push(new oa({
+	let s = e.probe.ready ? e.probe.matrix : {}, c = Gs(t, s), l = [], u = s.tauri_chat_surface?.available === !0 ? new Ri() : new Li();
+	u instanceof Ri && l.push(new sa({
 		globals: t,
 		port: u
-	})), s.tauri_world_info_activation?.available === !0 && l.push(new ca({ globals: t }));
+	})), s.tauri_world_info_activation?.available === !0 && l.push(new la({ globals: t }));
 	let d = null;
 	try {
 		d = await (e.open_storage ?? $e)();
 	} catch {
 		d = null;
 	}
-	let f = Ls(t), p = f === null ? null : wa(f), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Rs(t), _ = zs(t), y = d === null ? null : Xe(d), ee = new oo(), te = null, ne = () => te ??= Zs(d), re = () => p?.get_settings().auto_generation_enabled ?? !1, ie = c === null ? null : new Ji({
+	let f = Ls(t), p = f === null ? null : Ta(f), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Rs(t), _ = zs(t), y = d === null ? null : Xe(d), b = new oo(), ee = null, te = () => ee ??= Zs(d), ne = () => p?.get_settings().auto_generation_enabled ?? !1, re = c === null ? null : new Yi({
 		host: c,
 		sessions: new zt(new Et(globalThis.crypto)),
 		new_root_id: () => crypto.randomUUID(),
-		is_auto_generation_enabled: re
-	}), ae = y === null || p === null ? null : await y.provider_profiles.get(m(), p.get_settings().active_provider_profile_id ?? "").catch(() => null), oe = ae === null ? {} : Y(ae), se = qa(oe, "base_url"), ce = ec(oe), le = ae === null ? null : v.safeParse(ae.provider_id).data ?? null, ue = le === null ? null : {
-		provider_id: le,
-		credential_reference: qa(oe, Bo),
+		is_auto_generation_enabled: ne
+	}), ie = y === null || p === null ? null : await y.provider_profiles.get(m(), p.get_settings().active_provider_profile_id ?? "").catch(() => null), ae = ie === null ? {} : Y(ie), oe = qa(ae, "base_url"), se = ec(ae), ce = ie === null ? null : v.safeParse(ie.provider_id).data ?? null, le = ce === null ? null : {
+		provider_id: ce,
+		credential_reference: qa(ae, Bo),
 		secrets_readable: _ !== null
-	}, de = o("settings", p === null ? G(qs) : K(() => gs({
+	}, ue = o("settings", p === null ? G(qs) : K(() => gs({
 		settings: p,
 		database: d,
 		extension_version: n,
 		secrets: g
-	})), r.settings), fe = o("profiles", y === null ? G($) : K(() => qo({
+	})), r.settings), de = o("profiles", y === null ? G($) : K(() => qo({
 		repository: y.provider_profiles,
 		namespace: m,
-		load_adapters: ne,
+		load_adapters: te,
 		secrets: g,
 		now: h
-	})), r.profiles), pe = o("llm_connections", y === null ? G($) : g === null || _ === null ? G(Js) : K(() => Fo({
+	})), r.profiles), fe = o("llm_connections", y === null ? G($) : g === null || _ === null ? G(Js) : K(() => Fo({
 		repository: y.llm_connections,
 		namespace: m(),
 		secrets: g,
@@ -6320,58 +6334,58 @@ async function nc(e) {
 			...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 		}),
 		clock: h
-	})), r.llm_connections), b = o("personas", y === null ? G($) : K(() => Io({
+	})), r.llm_connections), x = o("personas", y === null ? G($) : K(() => Io({
 		repository: y.character_profiles,
 		namespace: m(),
 		clock: h
-	})), r.personas), me = o("knowledge", y === null ? G($) : K(() => Lo({
+	})), r.personas), pe = o("knowledge", y === null ? G($) : K(() => Lo({
 		repository: y.knowledge_entries,
 		namespace: m(),
 		clock: h
-	})), r.knowledge), he = o("prompt_presets", y === null ? G($) : K(() => $o({
+	})), r.knowledge), me = o("prompt_presets", y === null ? G($) : K(() => $o({
 		repository: y.prompt_presets,
 		namespace: m,
 		now: h,
 		new_id: () => crypto.randomUUID()
-	})), r.prompt_presets), ge = o("assets", y === null ? G($) : K(() => io({
+	})), r.prompt_presets), he = o("assets", y === null ? G($) : K(() => io({
 		repositories: y,
 		namespace: m,
 		now: h
-	})), r.assets), ve = o("gallery", d === null ? G($) : K(() => fo({
+	})), r.assets), _e = o("gallery", d === null ? G($) : K(() => fo({
 		database: d,
-		repository: new Ci(d),
+		repository: new wi(d),
 		namespace: m,
 		now: h
 	})), r.gallery);
-	function be(e, t, n) {
+	function ye(e, t, n) {
 		if (c === null) return;
-		let r = new Zi({
+		let r = new Qi({
 			host: c,
 			sessions: n
 		});
-		l.push(new Yi(n, r), new $i({
+		l.push(new Xi(n, r), new ea({
 			host: c,
-			request_image_tool: new Ht(n.registry, new Bt(), new Xi({
+			request_image_tool: new Ht(n.registry, new Bt(), new Zi({
 				queue: e,
 				plans: t,
 				targets: n,
-				provider_id: () => le,
-				model_id: () => ce
+				provider_id: () => ce,
+				model_id: () => se
 			})),
 			session_port: n,
 			fallback_text_sink: r,
-			is_auto_generation_enabled: re
+			is_auto_generation_enabled: ne
 		}));
 	}
-	let Se = o("generation", d === null ? G($) : c === null ? G(Ks) : K(() => {
+	let xe = o("generation", d === null ? G($) : c === null ? G(Ks) : K(() => {
 		let t = p?.get_settings().gateway ?? null, n = Ba({
 			gateway_endpoint: t?.endpoint ?? null,
 			http_acknowledgments: t?.http_acknowledgments ?? {},
 			tauri_provider_available: !1,
 			sillytavern_available: !1,
-			direct_provider_base_url: se,
-			direct_cloud: ue
-		}), r = new _e(), i = {
+			direct_provider_base_url: oe,
+			direct_cloud: le
+		}), r = new ge(), i = {
 			store: tc(d, m),
 			ids: { next: () => crypto.randomUUID() },
 			clock: { now: h },
@@ -6388,13 +6402,13 @@ async function nc(e) {
 				access_token: oc(t?.token_secret_id ?? null, _),
 				plans: r,
 				...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
-			}) : new ye({
+			}) : new ve({
 				...i,
-				load_adapters: ne,
+				load_adapters: te,
 				profiles: { resolve: async (e) => {
-					let t = (await ne())[e];
-					if (t === void 0 || ae === null) throw Error(`No stored provider profile is active for ${e}`);
-					return t.validate_profile(Go(ae));
+					let t = (await te())[e];
+					if (t === void 0 || ie === null) throw Error(`No stored provider profile is active for ${e}`);
+					return t.validate_profile(Go(ie));
 				} },
 				transport: rc(n, {
 					secrets: _,
@@ -6404,30 +6418,30 @@ async function nc(e) {
 				log: { write: () => {} },
 				plans: r
 			}),
-			persistence: new xe(d, m()),
+			persistence: new be(d, m()),
 			job_id_source: { next: () => crypto.randomUUID() },
 			time_source: new Gt(),
 			global_concurrency: p?.get_settings().global_concurrency ?? 1
 		});
-		a.push(ee.observe_jobs(o));
-		let s = e.message_port ?? (ie === null ? null : new Gi(c, ie));
+		a.push(b.observe_jobs(o));
+		let s = e.message_port ?? (re === null ? null : new Ki(c, re));
 		if (s !== null) {
 			let e = new on(o, s);
 			e.start(), a.push(() => {
 				e.stop();
 			});
 		}
-		ie !== null && be(o, r, ie);
+		re !== null && ye(o, r, re);
 		let l = new Bt();
 		return go({
 			queue: o,
 			plans: r,
 			jobs: Xe(d).generation_jobs,
 			namespace: m,
-			origin: new zi(c, new Et(globalThis.crypto)),
+			origin: new Bi(c, new Et(globalThis.crypto)),
 			new_request_id: () => l.next()
 		});
-	}), r.generation), Ce = e.create_vocabulary_worker === void 0 ? Xs() : e.create_vocabulary_worker, we = o("vocabulary", d === null ? G($) : Ce === null ? G("This host has no Worker constructor, so vocabulary search cannot run") : K(() => vs({
+	}), r.generation), Se = e.create_vocabulary_worker === void 0 ? Xs() : e.create_vocabulary_worker, Ce = o("vocabulary", d === null ? G($) : Se === null ? G("This host has no Worker constructor, so vocabulary search cannot run") : K(() => vs({
 		async load_catalog() {
 			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-BLNOAenD.js");
 			return new e({
@@ -6437,9 +6451,9 @@ async function nc(e) {
 		},
 		async create_client() {
 			let { VocabularyClient: e } = await import("./chunks/vocabulary_client-CjGkhw3W.js");
-			return new e({ create_worker: Ce });
+			return new e({ create_worker: Se });
 		}
-	})), r.vocabulary), x = o("migration", d === null ? G($) : p === null ? G(qs) : K(() => {
+	})), r.vocabulary), S = o("migration", d === null ? G($) : p === null ? G(qs) : K(() => {
 		let e = Bs(t);
 		if (e === null) throw Error(qs);
 		let n = Ws(t);
@@ -6454,27 +6468,27 @@ async function nc(e) {
 	}), r.migration);
 	return {
 		capabilities: {
-			generation: Se,
-			profiles: fe,
-			prompt_presets: he,
-			assets: ge,
-			gallery: ve,
-			vocabulary: we,
+			generation: xe,
+			profiles: de,
+			prompt_presets: me,
+			assets: he,
+			gallery: _e,
+			vocabulary: Ce,
 			diagnostics: o("diagnostics", K(() => co({
 				capability_matrix: s,
 				helper_version: e.probe.ready ? e.probe.helper_version : null,
-				timeline: ee,
+				timeline: b,
 				resolutions: () => i,
 				settings: () => p?.get_settings() ?? null,
 				estimate_storage: e.estimate_storage ?? Ys,
 				extension_version: n,
 				probe_gateway: null
 			})), r.diagnostics),
-			migration: x,
-			settings: de,
-			llm_connections: pe,
-			personas: b,
-			knowledge: me
+			migration: S,
+			settings: ue,
+			llm_connections: fe,
+			personas: x,
+			knowledge: pe
 		},
 		resolutions: i,
 		host: c,
@@ -6587,9 +6601,9 @@ async function dc(e = {}) {
 	} catch {
 		i = "failed", a = uc();
 	}
-	let l = yi(t, e.stylesheet ?? ""), u = ze(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null);
+	let l = bi(t, e.stylesheet ?? ""), u = ze(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null);
 	u.apply_locale(d ?? "auto", typeof navigator > "u" ? "en" : navigator.language);
-	let f = Me(vi, {
+	let f = je(yi, {
 		status: a,
 		probe: r,
 		version: e.version ?? "development",
@@ -6646,7 +6660,7 @@ async function dc(e = {}) {
 }
 //#endregion
 //#region src/ui/styles/tokens.css?inline
-var fc = ":host{--tc-canvas:#f4f5f7;--tc-surface:#fff;--tc-surface-raised:#f8f9fb;--tc-text:#181a1f;--tc-text-muted:#616773;--tc-divider:#d8dce3;--tc-accent:#2457d6;--tc-accent-hover:#1f49b8;--tc-on-accent:#fff;--tc-success:#16815d;--tc-warning:#9a6700;--tc-error:#c23838;--tc-media-scrim:#1113189e;--tc-media-ink:#fff;--tc-radius-panel:0;--tc-radius-field:6px;--tc-radius-image:8px;--tc-radius-status:4px;--tc-motion-fast:.14s;--tc-motion-normal:.18s;--tc-motion-slow:.22s;--tc-z-shell-sticky:10;--tc-z-inspector-sheet:20;--tc-z-overlay:30;--tc-z-toast:40;--tc-z-host:2147480000;color:var(--tc-text);background:var(--tc-canvas);letter-spacing:0;font-family:Geist,system-ui,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:14px}:host([data-color-mode=dark]){--tc-canvas:#111318;--tc-surface:#181b21;--tc-surface-raised:#20242b;--tc-text:#f4f5f7;--tc-text-muted:#aeb4bf;--tc-divider:#343a44;--tc-accent:#6f91ff;--tc-accent-hover:#7d9cff;--tc-on-accent:#111318;--tc-success:#45c995;--tc-warning:#e8b44e;--tc-error:#ff7b7b}", pc = "@font-face{font-family:Geist;src:url(__TAVERN_CANVAS_ASSET_URL__geist_variable.woff2__)format(\"woff2\");font-weight:100 900;font-style:normal;font-display:swap}:host{z-index:var(--tc-z-host);pointer-events:none;background:0 0;position:fixed;inset:0}:host [data-window-role=studio],:host [data-startup-state],:host [data-shadow-role=entry],:host [data-shadow-role=portal]>*{pointer-events:auto}*,:before,:after{box-sizing:border-box}*{margin:0}[data-shadow-role=app],[data-shadow-role=portal]{font-family:inherit;font-size:inherit;color:inherit;line-height:1.5}[data-shadow-role=app]{width:100%;height:100%}img,svg{max-width:100%;display:block}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;background:0 0;border:none;padding:0}button:disabled{cursor:not-allowed}ul,ol{padding:0;list-style:none}a{color:inherit}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}", mc = ".tc-tabular-nums{font-variant-numeric:tabular-nums}.tc-visually-hidden{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.tc-interactive{transition:transform var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out, color var(--tc-motion-fast) ease-out;border:1px solid #0000}.tc-interactive:active{transform:scale(.97)}.tc-interactive:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}.tc-z-shell-sticky{z-index:var(--tc-z-shell-sticky)}.tc-z-inspector-sheet{z-index:var(--tc-z-inspector-sheet)}.tc-z-overlay{z-index:var(--tc-z-overlay)}.tc-z-toast{z-index:var(--tc-z-toast)}", hc = "@keyframes _tc-icon-rotate_1r8sc_1{0%{transform:rotate(0)}to{transform:rotate(360deg)}}._iconButton_1r8sc_32{border-radius:var(--tc-radius-field);color:var(--tc-text);background-color:#0000;flex:none;justify-content:center;align-items:center;display:inline-flex}._iconButtonSm_1r8sc_42{width:28px;height:28px}._iconButtonMd_1r8sc_47{width:32px;height:32px}._iconButtonLg_1r8sc_52{width:40px;height:40px}._iconButton_1r8sc_32:hover:not(:disabled){background-color:var(--tc-surface-raised)}._iconButton_1r8sc_32:disabled{color:var(--tc-text-muted)}._iconButtonDestructive_1r8sc_65{color:var(--tc-error)}._iconButtonDestructive_1r8sc_65:hover:not(:disabled){background-color:var(--tc-surface-raised);border-color:var(--tc-error)}._iconButtonPressed_1r8sc_74{background-color:var(--tc-surface-raised);border-color:var(--tc-accent);color:var(--tc-accent)}._appButton_1r8sc_84{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);justify-content:center;align-items:center;height:36px;padding:0 16px;font-weight:500;display:inline-flex;position:relative}._appButton_1r8sc_84:disabled{opacity:.5}._appButtonContent_1r8sc_100{align-items:center;gap:8px;min-width:0;display:inline-flex}._appButtonContentPending_1r8sc_107{visibility:hidden}._appButtonLabel_1r8sc_111{white-space:nowrap;text-overflow:ellipsis;max-width:240px;overflow:hidden}._appButtonSpinner_1r8sc_118{justify-content:center;align-items:center;display:inline-flex;position:absolute;inset:0}._appButtonSpinner_1r8sc_118 svg{animation:_tc-icon-rotate_1r8sc_1 var(--tc-motion-normal) linear infinite}._appButtonPrimary_1r8sc_136{border-color:var(--tc-accent);background-color:var(--tc-accent);color:var(--tc-on-accent)}._appButtonPrimary_1r8sc_136:hover:not(:disabled){background-color:var(--tc-accent-hover);border-color:var(--tc-accent-hover)}._appButtonSecondary_1r8sc_147{border-color:var(--tc-divider);color:var(--tc-text)}._appButtonSecondary_1r8sc_147:hover:not(:disabled){background-color:var(--tc-surface-raised)}._appButtonDestructive_1r8sc_156{border-color:var(--tc-error);color:var(--tc-error)}._appButtonDestructive_1r8sc_156:hover:not(:disabled){background-color:var(--tc-surface-raised)}._segmentedControl_1r8sc_169{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);gap:2px;padding:2px;display:inline-flex}._segmentedControlItem_1r8sc_178{border-radius:var(--tc-radius-status);height:28px;color:var(--tc-text-muted);background-color:#0000;justify-content:center;align-items:center;padding:0 12px;display:inline-flex}._segmentedControlItem_1r8sc_178:hover:not([data-disabled]){background-color:var(--tc-surface-raised)}._segmentedControlItem_1r8sc_178[data-state=checked]{background-color:var(--tc-surface-raised);border-color:var(--tc-accent);color:var(--tc-accent)}._segmentedControlItemLabel_1r8sc_199{white-space:nowrap;text-overflow:ellipsis;max-width:160px;overflow:hidden}._switchRow_1r8sc_210{cursor:pointer;justify-content:space-between;align-items:center;gap:16px;display:flex}._switchRow_1r8sc_210[data-disabled]{cursor:not-allowed}._switchLabelGroup_1r8sc_222{flex-direction:column;gap:2px;min-width:0;display:flex}._switchLabel_1r8sc_222{color:var(--tc-text);overflow-wrap:anywhere}._switchDescription_1r8sc_234{color:var(--tc-text-muted);overflow-wrap:anywhere;font-size:12px}._switchRoot_1r8sc_247{background-color:var(--tc-surface-raised);border-color:var(--tc-text-muted);border-radius:999px;flex:none;width:40px;height:24px;position:relative}._switchRoot_1r8sc_247[data-state=checked]{background-color:var(--tc-accent);border-color:var(--tc-accent)}._switchRoot_1r8sc_247:disabled{opacity:.5}._switchThumb_1r8sc_266{border:1px solid var(--tc-text-muted);background-color:var(--tc-surface);width:18px;height:18px;transition:transform var(--tc-motion-fast) ease-out;border-radius:50%;display:block;transform:translate(2px)}._switchThumb_1r8sc_266[data-state=checked]{border-color:var(--tc-accent);transform:translate(18px)}._checkboxRow_1r8sc_293{cursor:pointer;align-items:center;gap:8px;display:inline-flex}._checkboxRow_1r8sc_293[data-disabled]{cursor:not-allowed}._checkboxBox_1r8sc_311{border-radius:var(--tc-radius-status);border-color:var(--tc-text-muted);background-color:var(--tc-surface);width:18px;height:18px;color:var(--tc-on-accent);transition:background-color var(--tc-motion-fast) ease-out;flex:none;justify-content:center;align-items:center;display:inline-flex}._checkboxBox_1r8sc_311[data-state=checked],._checkboxBox_1r8sc_311[data-state=indeterminate]{border-color:var(--tc-accent);background-color:var(--tc-accent)}._checkboxBox_1r8sc_311:disabled{opacity:.5}._checkboxIndicator_1r8sc_335{justify-content:center;align-items:center;display:inline-flex}._checkboxLabel_1r8sc_341{color:var(--tc-text);overflow-wrap:anywhere}._numberStepper_1r8sc_355{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);align-self:start;align-items:stretch;height:32px;display:inline-flex;overflow:hidden}._numberStepperButton_1r8sc_365{background-color:var(--tc-surface);width:28px;color:var(--tc-text);border-radius:0;justify-content:center;align-items:center;display:inline-flex}._numberStepperButton_1r8sc_365:hover:not(:disabled){background-color:var(--tc-surface-raised)}._numberStepperButton_1r8sc_365:disabled{color:var(--tc-text-muted)}._numberStepperInput_1r8sc_383{border:none;border-left:1px solid var(--tc-divider);border-right:1px solid var(--tc-divider);background-color:var(--tc-surface);width:56px;color:var(--tc-text);text-align:center}._numberStepperInput_1r8sc_383:focus-visible{outline:2px solid var(--tc-accent);outline-offset:-2px}._selectTrigger_1r8sc_402{border-radius:var(--tc-radius-field);border-color:var(--tc-divider);background-color:var(--tc-surface);min-width:160px;height:32px;color:var(--tc-text);justify-content:space-between;align-items:center;gap:8px;padding:0 10px;display:inline-flex}._selectTrigger_1r8sc_402:hover:not(:disabled){background-color:var(--tc-surface-raised)}._selectTrigger_1r8sc_402[data-placeholder]{color:var(--tc-text-muted)}._selectValue_1r8sc_424{white-space:nowrap;text-overflow:ellipsis;text-align:left;flex:1;min-width:0;overflow:hidden}._selectContent_1r8sc_433{z-index:var(--tc-z-overlay);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);max-height:320px;width:var(--reka-select-trigger-width);max-width:var(--reka-select-content-available-width);overflow:hidden}._selectViewport_1r8sc_444{padding:4px}._selectItem_1r8sc_448{border-radius:var(--tc-radius-status);color:var(--tc-text);outline-offset:-2px;outline:2px solid #0000;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding:6px 8px;display:flex}._selectItemText_1r8sc_461{white-space:nowrap;text-overflow:ellipsis;text-align:left;flex:1;min-width:0;overflow:hidden}._selectItem_1r8sc_448[data-highlighted]{background-color:var(--tc-surface-raised)}._selectItem_1r8sc_448:focus-visible,._selectItem_1r8sc_448:focus{outline-color:var(--tc-accent)}._selectItem_1r8sc_448[data-disabled]{color:var(--tc-text-muted)}._selectItemIndicator_1r8sc_483{color:var(--tc-accent);flex-shrink:0;display:inline-flex}._fieldGroup_1r8sc_493{flex-direction:column;gap:6px;display:flex}._fieldGroupLabel_1r8sc_499{color:var(--tc-text);font-size:13px;font-weight:500}._fieldGroupRequired_1r8sc_505{color:var(--tc-error)}._fieldGroupHint_1r8sc_509{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._fieldGroupError_1r8sc_516{color:var(--tc-error);overflow-wrap:anywhere;margin:0;font-size:12px}._dialogOverlay_1r8sc_527{z-index:var(--tc-z-overlay);background-color:#1113187a;position:fixed;inset:0}._dialogContent_1r8sc_534{z-index:var(--tc-z-overlay);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background-color:var(--tc-surface);flex-direction:column;gap:12px;width:min(480px,100vw - 32px);max-height:calc(100vh - 64px);padding:20px;display:flex;position:fixed;top:50%;left:50%;overflow-y:auto;transform:translate(-50%,-50%)}._confirmDialogContent_1r8sc_552{gap:16px}._dialogHeader_1r8sc_556{justify-content:space-between;align-items:flex-start;gap:12px;display:flex}._dialogTitle_1r8sc_563{color:var(--tc-text);overflow-wrap:anywhere;font-size:16px;font-weight:600}._dialogClose_1r8sc_570{border-radius:var(--tc-radius-field);width:28px;height:28px;color:var(--tc-text-muted);flex:none}._dialogClose_1r8sc_570:hover{background-color:var(--tc-surface-raised);color:var(--tc-text)}._dialogDescription_1r8sc_583{color:var(--tc-text-muted);overflow-wrap:anywhere;font-size:13px}._dialogBody_1r8sc_589{flex-direction:column;gap:12px;display:flex}._confirmDialogActions_1r8sc_595{justify-content:flex-end;gap:8px;display:flex}._tooltipContent_1r8sc_605{z-index:var(--tc-z-overlay);border-radius:var(--tc-radius-status);background-color:var(--tc-text);max-width:240px;color:var(--tc-canvas);overflow-wrap:anywhere;padding:6px 10px;font-size:12px}._tooltipArrow_1r8sc_616{fill:var(--tc-text)}._stateSurface_1r8sc_624{flex-direction:column;padding:4px 0;display:flex}._stateSurfaceSkeleton_1r8sc_630{flex-direction:column;gap:8px;padding:4px 0;display:flex}._skeletonBlock_1r8sc_637{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);height:12px}._stateSurfaceMessage_1r8sc_643{flex-direction:column;flex:1;justify-content:center;align-items:flex-start;gap:12px;padding:16px;display:flex}._stateSurfaceMessageGroup_1r8sc_656{flex-direction:column;gap:4px;display:flex}._stateSurfaceMessageTitle_1r8sc_662{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:13px;font-weight:500}._stateSurfaceMessageText_1r8sc_670{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:13px}._stateSurfaceErrorText_1r8sc_677{color:var(--tc-error)}._stateSurfaceAction_1r8sc_681{display:flex}._toastViewport_1r8sc_689{z-index:var(--tc-z-toast);flex-direction:column;gap:8px;width:320px;max-width:calc(100vw - 32px);margin:0;padding:0;display:flex;position:fixed;bottom:16px;right:16px}._toastRoot_1r8sc_703{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background-color:var(--tc-surface);flex-direction:column;gap:4px;padding:12px 36px 12px 12px;display:flex;position:relative}._toastTitle_1r8sc_714{color:var(--tc-text);overflow-wrap:anywhere;font-size:13px;font-weight:600}._toastDescription_1r8sc_721{color:var(--tc-text-muted);overflow-wrap:anywhere;font-size:12px}._toastClose_1r8sc_727{border-radius:var(--tc-radius-status);width:22px;height:22px;color:var(--tc-text-muted);position:absolute;top:8px;right:8px}._toastClose_1r8sc_727:hover{background-color:var(--tc-surface-raised);color:var(--tc-text)}._toastSuccess_1r8sc_742{border-color:var(--tc-success)}._toastSuccess_1r8sc_742 ._toastTitle_1r8sc_714{color:var(--tc-success)}._toastError_1r8sc_750{border-color:var(--tc-error)}._toastError_1r8sc_750 ._toastTitle_1r8sc_714{color:var(--tc-error)}._virtualList_1r8sc_762{position:relative;overflow-y:auto}._virtualListSizer_1r8sc_767{width:100%;position:relative}._virtualListItem_1r8sc_772{width:100%;position:absolute;top:0;left:0}", gc = "._paramsBody_1gvv4_10{flex-direction:column;gap:16px;display:flex}._paramsDimensionRow_1gvv4_16{gap:12px;display:flex}._paramsDimensionRow_1gvv4_16>*{flex:1}._paramsAspectRow_1gvv4_25{align-items:flex-end;gap:12px;display:flex}._paramsAspectField_1gvv4_31{flex:1}._editBody_1gvv4_37{flex-direction:column;gap:16px;display:flex}._editTextareaWrap_1gvv4_43{position:relative}._editHighlightLayer_1gvv4_47{color:#0000;white-space:pre-wrap;word-break:break-word;font:inherit;pointer-events:none;margin:0;padding:8px 10px;position:absolute;inset:0;overflow:hidden}._editHighlightMatch_1gvv4_60{border-radius:var(--tc-radius-status);background-color:color-mix(in srgb, var(--tc-accent) 22%, transparent)}._editTextarea_1gvv4_43{resize:vertical;border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);width:100%;min-height:96px;color:var(--tc-text);font:inherit;background-color:#0000;padding:8px 10px;line-height:1.5;position:relative}._editTextarea_1gvv4_43:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._editTagActions_1gvv4_84{gap:8px;display:flex}._editSubmenu_1gvv4_89{grid-template-columns:repeat(2,1fr);gap:8px;display:grid}._editFooter_1gvv4_95{justify-content:flex-end;gap:8px;display:flex}._inpaintDialogContent_1gvv4_107{width:min(90vw,720px)}._inpaintBody_1gvv4_111{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_1gvv4_121{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_1gvv4_121 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_1gvv4_139{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_1gvv4_146{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_1gvv4_153{align-items:center;gap:12px;display:flex}._inpaintBrushRow_1gvv4_153>*{flex:1}._inpaintPromptGrid_1gvv4_163{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_1gvv4_169{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_1gvv4_175{color:var(--tc-error);margin:0;font-size:12px}", _c = "._floatingEntry_1k9dx_9{background-color:var(--tc-surface);width:56px;height:56px;color:var(--tc-text);cursor:grab;touch-action:none;z-index:var(--tc-z-shell-sticky);border-radius:50%;justify-content:center;align-items:center;padding:0;display:inline-flex;position:fixed;top:0;left:0}._floatingEntry_1k9dx_9:hover:not(:disabled){background-color:var(--tc-surface-raised)}._floatingEntryDragging_1k9dx_31{cursor:grabbing}._floatingEntryMedia_1k9dx_35{object-fit:cover;pointer-events:none;border-radius:50%;width:100%;height:100%}", vc = "._window_pyefw_1{width:min(960px,100vw - 40px);height:min(720px,100dvh - 96px);min-height:520px;color:var(--tc-text);background-color:var(--tc-canvas);border:1px solid color-mix(in srgb, var(--tc-divider) 88%, var(--tc-text) 12%);transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0);pointer-events:auto;isolation:isolate;border-radius:12px;animation:.18s cubic-bezier(.2,.8,.2,1) _floating-window-enter_pyefw_1;position:fixed;top:0;left:0;overflow:hidden;box-shadow:0 24px 72px #1113183d,0 4px 16px #11131824}._window_pyefw_1[data-positioned=false]{visibility:hidden}._window_pyefw_1[data-dragging=true]{-webkit-user-select:none;user-select:none;transition:none;box-shadow:0 32px 88px #1113184d,0 8px 24px #1113182e}@keyframes _floating-window-enter_pyefw_1{0%{opacity:0;transform:translate3d(var(--tc-floating-window-x,20px), calc(var(--tc-floating-window-y,64px) + 8px), 0) scale(.985)}to{opacity:1;transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0) scale(1)}}@media (width<=959px){._window_pyefw_1{border-radius:10px;width:auto;height:auto;min-height:0;inset:8px;transform:none}._window_pyefw_1[data-positioned=false]{visibility:visible}}@media (prefers-reduced-motion:reduce){._window_pyefw_1{animation:none}}", yc = "._shell_92iee_8{background-color:var(--tc-canvas);width:100%;height:100%;min-height:0;color:var(--tc-text);display:grid;position:relative;overflow:hidden}._shell_92iee_8[data-viewport=desktop]{grid-template-columns:64px minmax(0, 1fr) clamp(320px, var(--tc-inspector-width,320px), 400px);grid-template-rows:56px minmax(0,1fr) auto;grid-template-areas:\"topbar topbar topbar\"\"rail workspace inspector\"\"taskstrip taskstrip taskstrip\"}._shell_92iee_8[data-viewport=desktop][data-inspector-collapsed=true]{grid-template-columns:64px minmax(0,1fr) 0}._shell_92iee_8[data-viewport=mobile]{grid-template:\"topbar\"56px\"workspace\"minmax(0,1fr)\"taskstrip\"\"bottomnav\"64px/minmax(0,1fr);height:100dvh}._top_bar_92iee_57{border-bottom:1px solid var(--tc-divider);cursor:move;touch-action:none;grid-area:topbar;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding-inline:12px;display:flex}._top_bar_start_92iee_70,._top_bar_end_92iee_71{align-items:center;gap:4px;min-width:0;display:flex}._top_bar_title_92iee_78{white-space:nowrap;text-overflow:ellipsis;min-width:0;font-weight:600;overflow:hidden}._icon_button_92iee_86{width:32px;height:32px;color:var(--tc-text-muted);border-radius:var(--tc-radius-field);flex:none;justify-content:center;align-items:center;display:flex}._shell_92iee_8[data-viewport=mobile] ._top_bar_92iee_57{cursor:default;touch-action:auto}._icon_button_92iee_86._close_button_92iee_102:hover{color:var(--tc-on-accent);background-color:var(--tc-error)}._icon_button_92iee_86[data-selected=true],._icon_button_92iee_86[aria-pressed=true]{color:var(--tc-accent)}._rail_92iee_112{border-right:1px solid var(--tc-divider);flex-direction:column;grid-area:rail;align-items:center;gap:4px;padding-block:12px;display:flex;overflow-y:auto}._rail_button_92iee_123{width:48px;height:48px;color:var(--tc-text-muted);border-radius:var(--tc-radius-field);border-left:2px solid #0000;justify-content:center;align-items:center;padding:4px;display:flex;position:relative}._rail_button_92iee_123[data-selected=true]{color:var(--tc-accent);background-color:var(--tc-surface-raised);border-left-color:var(--tc-accent)}._tooltip_content_92iee_142{color:var(--tc-surface);background-color:var(--tc-text);border-radius:var(--tc-radius-field);padding:4px 8px;font-size:12px}._workspace_92iee_150{grid-area:workspace;min-width:0;min-height:0;overflow:auto}._workspace_placeholder_92iee_157{flex-direction:column;justify-content:center;align-items:flex-start;min-height:240px;padding:24px;display:flex}._inspector_92iee_166{border-left:1px solid var(--tc-divider);grid-area:inspector;min-width:0;display:flex;overflow:hidden}._inspector_resizer_92iee_174{cursor:col-resize;touch-action:none;background-color:#0000;flex:none;width:4px}._inspector_resizer_92iee_174:hover,._inspector_resizer_92iee_174[data-dragging=true]{background-color:var(--tc-divider)}._inspector_panel_92iee_187{flex-direction:column;flex:auto;min-width:0;display:flex;overflow:hidden}._inspector_header_92iee_195{border-bottom:1px solid var(--tc-divider);flex:none;justify-content:space-between;align-items:center;padding:12px;display:flex}._inspector_body_92iee_204{min-height:0;color:var(--tc-text-muted);flex:auto;padding:12px;overflow:auto}._inspector_selection_kind_92iee_212{color:var(--tc-text);margin:0 0 8px;font-size:13px;font-weight:600}._inspector_selection_92iee_212{flex-direction:column;gap:8px;margin:0;display:flex}._inspector_selection_92iee_212 dt{color:var(--tc-text-muted);font-size:12px}._inspector_selection_92iee_212 dd{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:13px}._bottom_nav_92iee_238{min-height:0;padding-bottom:env(safe-area-inset-bottom,0px);border-top:1px solid var(--tc-divider);grid-area:bottomnav;display:flex}._bottom_nav_item_92iee_246{min-width:0;color:var(--tc-text-muted);flex-direction:column;flex:1 1 0;justify-content:center;align-items:center;gap:2px;padding-block:6px;display:flex}._bottom_nav_item_92iee_246[data-selected=true]{color:var(--tc-accent)}._bottom_nav_item_label_92iee_262{white-space:nowrap;text-overflow:ellipsis;max-width:100%;font-size:10px;overflow:hidden}._more_menu_content_92iee_270{background-color:var(--tc-surface-raised);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);min-width:176px;padding:4px}._more_menu_item_92iee_278{color:var(--tc-text);border-radius:var(--tc-radius-field);align-items:center;gap:8px;padding:8px 10px;display:flex}._more_menu_item_92iee_278[data-highlighted]{color:var(--tc-accent);background-color:var(--tc-surface);outline:none}._sheet_overlay_92iee_293{background-color:var(--tc-text);opacity:.32;position:fixed;inset:0}._sheet_content_92iee_300{width:100%;max-height:80dvh;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-top:1px solid var(--tc-divider);flex-direction:column;display:flex;position:fixed;bottom:0;left:0;right:0}._sheet_handle_92iee_314{background-color:var(--tc-text-muted);border-radius:var(--tc-radius-status);flex:none;width:32px;height:4px;margin:8px auto}._sheet_header_92iee_326{border-bottom:1px solid var(--tc-divider);flex:none;justify-content:space-between;align-items:center;padding:4px 16px 12px;display:flex}._sheet_body_92iee_335{min-height:0;color:var(--tc-text-muted);flex:auto;padding:16px;overflow:auto}._task_strip_92iee_41{border-top:1px solid var(--tc-divider);flex-direction:column;grid-area:taskstrip;min-width:0;display:flex}._task_strip_header_92iee_351{flex:none;justify-content:space-between;align-items:center;padding:6px 12px;display:flex}._task_strip_summary_92iee_359{font-variant-numeric:tabular-nums;min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._task_strip_list_92iee_368{gap:8px;padding:0 12px 8px;display:flex;overflow-x:auto}._task_chip_92iee_375{background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);flex:none;align-items:center;gap:6px;max-width:220px;height:28px;padding-inline:8px;display:flex}._task_chip_dot_92iee_387{background-color:var(--tc-text-muted);border-radius:50%;flex:none;width:6px;height:6px}._task_chip_dot_92iee_387[data-status=pending]{background-color:var(--tc-text-muted)}._task_chip_dot_92iee_387[data-status=success]{background-color:var(--tc-success)}._task_chip_dot_92iee_387[data-status=error]{background-color:var(--tc-error)}._task_chip_label_92iee_407{white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._skeleton_block_92iee_414{background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field)}._partial_banner_92iee_419{color:var(--tc-warning);background-color:var(--tc-surface-raised);border-bottom:1px solid var(--tc-divider);flex:none;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;display:flex}._state_screen_92iee_431{width:min(560px,100vw - 40px);max-height:calc(100dvh - 40px);color:var(--tc-text);background-color:var(--tc-canvas);border:1px solid var(--tc-divider);border-radius:12px;flex-direction:column;justify-content:center;align-items:flex-start;padding:32px;display:flex;position:fixed;top:20px;right:20px;overflow:auto;box-shadow:0 20px 56px #11131838}._state_screen_eyebrow_92iee_450{color:var(--tc-text-muted)}._state_screen_title_92iee_454{max-width:56ch}._state_screen_action_92iee_458{color:var(--tc-surface);background-color:var(--tc-accent);border-radius:var(--tc-radius-field);align-items:center;margin-top:20px;padding:8px 16px;display:inline-flex}._state_screen_description_92iee_468{max-width:56ch;color:var(--tc-text-muted)}", bc = "._assetsView_s3c58_10{flex-direction:column;gap:16px;height:100%;min-height:0;padding:16px;display:flex}._tabsList_s3c58_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;gap:4px;padding-bottom:0;display:flex}._tabsTrigger_s3c58_31{border-radius:var(--tc-radius-field) var(--tc-radius-field) 0 0;color:var(--tc-text-muted);transition:color var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out;background-color:#0000;border:1px solid #0000;border-bottom-width:2px;padding:8px 14px;font-size:13px;font-weight:500}._tabsTrigger_s3c58_31:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._tabsTrigger_s3c58_31[data-state=active]{color:var(--tc-accent);border-bottom-color:var(--tc-accent)}._tabsContent_s3c58_55{flex:1;min-height:0;overflow-y:auto}._tabsContent_s3c58_55:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._categoryList_s3c58_70{flex-direction:column;gap:12px;padding:12px 0;display:flex}._categoryToolbar_s3c58_77{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._searchInput_s3c58_84{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:160px;color:var(--tc-text);flex:1;padding:8px 12px;font-size:13px}._searchInput_s3c58_84:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reorderHint_s3c58_100{color:var(--tc-text-muted);font-size:12px}._emptyDescription_s3c58_105{color:var(--tc-text-muted);font-size:13px}._cardGrid_s3c58_110{flex-direction:column;gap:8px;display:flex}._assetCard_s3c58_120{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);flex-wrap:wrap;align-items:center;gap:8px;padding:6px 8px;display:flex}._assetCard_s3c58_120[data-dragging]{border-color:var(--tc-accent)}._dragHandle_s3c58_135{color:var(--tc-text-muted);cursor:grab;flex:none;padding:4px;display:inline-flex}._assetCardMain_s3c58_147{border-radius:var(--tc-radius-field);text-align:left;min-width:0;transition:background-color var(--tc-motion-fast) ease-out;background-color:#0000;flex-direction:column;flex:160px;align-items:flex-start;gap:2px;padding:2px 4px;display:flex}._assetCardMain_s3c58_147:hover{background-color:var(--tc-surface-raised)}._assetCardName_s3c58_165{color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;max-width:100%;font-size:13px;font-weight:500;overflow:hidden}._assetCardSummary_s3c58_175{color:var(--tc-text-muted);flex-wrap:wrap;gap:8px;font-size:12px;display:flex}._assetCardSummaryPart_s3c58_183{white-space:nowrap}._assetCardActions_s3c58_187{flex:none;align-items:center;gap:8px;margin-left:auto;display:flex}._form_s3c58_199{flex-direction:column;gap:14px;display:flex}._textInput_s3c58_205,._textArea_s3c58_206{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;color:var(--tc-text);padding:8px 10px;font-family:inherit;font-size:13px}._textArea_s3c58_206{resize:vertical;min-height:72px}._textInput_s3c58_205:focus-visible,._textArea_s3c58_206:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._formActions_s3c58_228{justify-content:flex-end;gap:8px;display:flex}._vocabularyPanel_s3c58_238{flex-direction:column;gap:20px;display:flex}._vocabularySearchRow_s3c58_244{gap:8px;display:flex}._searchResultsList_s3c58_249{flex-direction:column;gap:4px;display:flex}._searchResultRow_s3c58_255{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:baseline;gap:12px;padding:8px 4px;display:flex}._searchResultTag_s3c58_264{color:var(--tc-text);font-size:13px}._searchResultTranslation_s3c58_269{color:var(--tc-text-muted);font-size:12px}._loadMoreRow_s3c58_274{justify-content:center;padding-top:4px;display:flex}._sectionTitle_s3c58_280{color:var(--tc-text);font-size:13px;font-weight:600}._catalogList_s3c58_286{flex-direction:column;gap:8px;display:flex}._catalogEntry_s3c58_292{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;display:flex}._catalogEntryInfo_s3c58_301{flex-direction:column;gap:2px;min-width:0;display:flex}._catalogEntryName_s3c58_308{color:var(--tc-text);font-size:13px;font-weight:500}._catalogEntryMeta_s3c58_314{color:var(--tc-text-muted);font-size:12px}._bundledBadge_s3c58_319{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);color:var(--tc-text-muted);align-items:center;padding:2px 6px;font-size:11px;display:inline-flex}._nsfwSection_s3c58_329{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:8px 12px}._nsfwToggle_s3c58_335{color:var(--tc-text-muted);background:0 0;align-items:center;gap:6px;padding:4px 0;font-size:12px;display:flex}._nsfwNotice_s3c58_345{color:var(--tc-text-muted);padding:8px 0 0;font-size:12px}._installProgress_s3c58_351{color:var(--tc-text-muted);font-size:12px}._workflowToolbarRow_s3c58_360{flex-wrap:wrap;gap:8px;display:flex}._placeholderList_s3c58_366{flex-direction:column;gap:8px;display:flex}._placeholderRow_s3c58_372{align-items:center;gap:8px;display:flex}._placeholderKey_s3c58_378{width:40%;color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;flex:none;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;overflow:hidden}._hiddenFileInput_s3c58_389{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}", xc = "._view_t20r4_7{flex-direction:column;gap:24px;padding:16px;display:flex}._section_t20r4_14{flex-direction:column;min-width:0;display:flex}._section_header_t20r4_20{justify-content:space-between;align-items:center;gap:12px;padding-bottom:8px;display:flex}._section_title_t20r4_28{color:var(--tc-text);font-size:13px;font-weight:600}._row_t20r4_34{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:8px 0;display:flex}._row_label_t20r4_43{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_t20r4_51{color:var(--tc-text);flex:none}._status_text_t20r4_56{color:var(--tc-text-muted);align-items:center;gap:6px;display:inline-flex}._status_text_t20r4_56[data-tone=success]{color:var(--tc-success)}._status_text_t20r4_56[data-tone=warning]{color:var(--tc-warning)}._status_text_t20r4_56[data-tone=error]{color:var(--tc-error)}._timeline_list_t20r4_75{border-top:1px solid var(--tc-divider)}._timeline_row_t20r4_79{border-bottom:1px solid var(--tc-divider);grid-template-columns:92px 1fr 1fr minmax(0,1.4fr);align-items:center;gap:12px;height:100%;padding:0 4px;font-size:12px;display:grid}._timeline_cell_t20r4_90{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._timeline_header_t20r4_97{color:var(--tc-text-muted);text-transform:uppercase;font-size:11px;font-weight:600}._timeline_header_t20r4_97 ._timeline_cell_t20r4_90{color:inherit}._timeline_code_t20r4_108{color:var(--tc-text);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}._timeline_error_t20r4_113{color:var(--tc-error)}._warning_list_t20r4_117{flex-direction:column;gap:4px;padding:8px 0 0;display:flex}._warning_item_t20r4_124{color:var(--tc-warning);overflow-wrap:anywhere;font-size:12px}._actions_row_t20r4_130{align-items:center;gap:12px;padding-top:8px;display:flex}._description_t20r4_137{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}", Sc = "._galleryView_1wzts_10{flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._filterBar_1wzts_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;align-items:center;gap:16px;padding-bottom:12px;display:flex}._dateFilterLabel_1wzts_32{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:flex}._dateInput_1wzts_43{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);color:var(--tc-text);padding:6px 8px;font-size:12px}._cacheOccupancy_1wzts_52{color:var(--tc-text-muted);margin-left:auto;font-size:12px}._emptyDescription_1wzts_58{color:var(--tc-text-muted);font-size:13px}._skeletonGrid_1wzts_67{flex-wrap:wrap;gap:8px;display:flex}._skeletonTile_1wzts_73{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);width:176px;height:176px}._gridContainer_1wzts_84{flex:1;min-height:0}._gridRow_1wzts_89{display:flex}._tile_1wzts_93{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);flex:none;position:relative;overflow:hidden}._tile_1wzts_93[data-selected]{outline:2px solid var(--tc-accent);outline-offset:-2px}._tileButton_1wzts_106{width:100%;height:100%;padding:0;display:block}._tileSkeleton_1wzts_113{background-color:var(--tc-surface-raised);position:absolute;inset:0}._tileImage_1wzts_119{object-fit:cover;width:100%;height:100%;transition:opacity var(--tc-motion-normal) ease-out}._tileFallback_1wzts_126{color:var(--tc-text-muted);text-align:center;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:8px;font-size:11px;display:flex;position:absolute;inset:0}._tilePinnedBadge_1wzts_144{border-radius:var(--tc-radius-status);background-color:var(--tc-media-scrim);color:var(--tc-media-ink);justify-content:center;align-items:center;padding:3px;display:inline-flex;position:absolute;top:6px;left:6px}._tileSelectToggle_1wzts_157{border-radius:var(--tc-radius-status);border:1px solid var(--tc-media-ink);background-color:var(--tc-media-scrim);width:20px;height:20px;color:var(--tc-media-ink);transition:background-color var(--tc-motion-fast) ease-out;justify-content:center;align-items:center;display:inline-flex;position:absolute;top:6px;right:6px}._tileSelectToggle_1wzts_157[data-checked]{background-color:var(--tc-accent);color:var(--tc-on-accent)}._bulkActionBar_1wzts_184{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding-top:12px;display:flex}._bulkActionCount_1wzts_193{color:var(--tc-text);font-size:13px}._bulkActionButtons_1wzts_198{align-items:center;gap:8px;display:flex}._previewOverlay_1wzts_208{z-index:var(--tc-z-overlay);background-color:#111318b8;position:fixed;inset:0}._previewContent_1wzts_215{z-index:var(--tc-z-overlay);border-radius:var(--tc-radius-panel);background-color:var(--tc-surface);display:flex;position:fixed;inset:16px;overflow:hidden}._previewLayout_1wzts_225{width:100%;min-height:0;display:flex}._previewMain_1wzts_231{flex-direction:column;flex:1;min-width:0;display:flex}._previewToolbar_1wzts_238{border-bottom:1px solid var(--tc-divider);align-items:center;gap:4px;padding:8px;display:flex}._previewToolbarButton_1wzts_246{border-radius:var(--tc-radius-field);width:32px;height:32px;color:var(--tc-text);justify-content:center;align-items:center;display:inline-flex}._previewToolbarButton_1wzts_246:hover{background-color:var(--tc-surface-raised)}._previewToolbarSpacer_1wzts_260{flex:1}._previewImageArea_1wzts_264{flex:1;justify-content:center;align-items:center;gap:8px;min-height:0;padding:12px;display:flex;overflow:auto}._previewImageFrame_1wzts_275{flex:1;justify-content:center;align-items:center;height:100%;min-height:0;display:flex;position:relative}._previewImage_1wzts_264{border-radius:var(--tc-radius-image);object-fit:contain;touch-action:auto;max-width:100%;max-height:100%}._previewImageFallback_1wzts_293{color:var(--tc-text-muted);justify-content:center;align-items:center;padding:24px;font-size:13px;display:flex}._previewNavButton_1wzts_302{flex:none}._previewInspector_1wzts_306{border-left:1px solid var(--tc-divider);flex:none;width:320px;max-width:40vw;padding:16px;overflow-y:auto}._metadataInspector_1wzts_319{flex-direction:column;gap:12px;display:flex}._metadataTitle_1wzts_325{color:var(--tc-text);font-size:14px;font-weight:600}._metadataOrphanNotice_1wzts_331{color:var(--tc-warning);font-size:12px}._metadataList_1wzts_336{flex-direction:column;gap:8px;display:flex}._metadataRow_1wzts_342{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding-bottom:6px;font-size:12px;display:flex}._metadataRow_1wzts_342 dt{color:var(--tc-text-muted)}._metadataRow_1wzts_342 dd{color:var(--tc-text);margin:0}._metadataPrompt_1wzts_360{white-space:pre-wrap;overflow-wrap:anywhere}._metadataEmpty_1wzts_365{color:var(--tc-text-muted);font-size:12px}._metadataActions_1wzts_370{flex-wrap:wrap;gap:8px;display:flex}._metadataActionsHint_1wzts_376{color:var(--tc-text-muted);font-size:12px}@media (width<=959px){._previewContent_1wzts_215{border-radius:0;inset:0}._previewLayout_1wzts_225{flex-direction:column;overflow-y:auto}._previewMain_1wzts_231{flex:none}._previewToolbar_1wzts_238{z-index:1;background-color:var(--tc-surface);position:sticky;top:0}._previewImageArea_1wzts_264{min-height:45vh}._previewInspector_1wzts_306{border-left:none;border-top:1px solid var(--tc-divider);width:100%;max-width:100%}}", Cc = "._prompt_view_1d2kr_7{grid-template-columns:minmax(220px,280px) minmax(0,1fr);gap:0;min-height:100%;display:grid}._browser_column_1d2kr_14{border-right:1px solid var(--tc-divider)}._editor_column_1d2kr_18{flex-direction:column;min-width:0;padding-bottom:24px;display:flex}@media (width<=959px){._prompt_view_1d2kr_7{grid-template-columns:minmax(0,1fr)}._browser_column_1d2kr_14{border-right:none;border-bottom:1px solid var(--tc-divider)}}._section_header_1d2kr_40{justify-content:space-between;align-items:center;gap:8px;padding:12px 16px 4px;display:flex}._section_title_1d2kr_48{font-weight:600}._icon_text_button_1d2kr_55{color:var(--tc-accent);align-items:center;gap:4px;padding:1px 6px;display:inline-flex}._text_input_1d2kr_63{width:100%;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:6px 8px;font-family:inherit;font-size:13px}._text_input_narrow_1d2kr_74{width:64px;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:6px 8px;font-family:inherit;font-size:13px}._text_input_1d2kr_63:focus-visible,._text_input_narrow_1d2kr_74:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._textarea_1d2kr_91{width:100%;min-height:56px;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);resize:vertical;padding:8px 10px;font-family:inherit;font-size:14px}._textarea_1d2kr_91:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._preset_browser_1d2kr_111{flex-direction:column;display:flex}._search_input_1d2kr_116{color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);margin:0 16px 8px;padding:6px 8px;font-size:13px}._bulk_delete_button_1d2kr_126{color:var(--tc-error);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);margin:0 16px 8px;padding:6px 10px;font-size:12px}._group_header_1d2kr_135{color:var(--tc-text-muted);border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;padding:6px 16px;font-size:12px;display:flex}._preset_list_1d2kr_145{flex-direction:column;display:flex}._preset_row_1d2kr_150{align-items:center;gap:8px;padding:4px 16px;display:flex}._preset_row_selected_1d2kr_157{background-color:var(--tc-surface-raised)}._preset_name_button_1d2kr_161{text-align:left;text-overflow:ellipsis;white-space:nowrap;flex:auto;min-width:0;padding:4px 0;overflow:hidden}._name_row_1d2kr_173{border-bottom:1px solid var(--tc-divider);align-items:flex-end;gap:12px;padding:12px 16px;display:flex}._name_row_1d2kr_173>:first-child{flex:auto}._prompt_builder_1d2kr_187{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:8px;padding-bottom:8px;display:flex}._context_preview_1d2kr_195{flex-direction:column;gap:8px;padding:0 16px 12px;display:flex}._context_block_title_1d2kr_202{color:var(--tc-text-muted);margin-bottom:4px;font-size:12px}._context_list_1d2kr_208{margin:0;padding-left:16px}._quality_controls_1d2kr_215{border-bottom:1px solid var(--tc-divider);padding-bottom:8px}._switch_list_1d2kr_220{flex-direction:column;gap:4px;padding:0 16px 8px;display:flex}._replacement_rules_1d2kr_229,._regex_rules_1d2kr_230{border-bottom:1px solid var(--tc-divider);padding-bottom:8px}._rule_row_1d2kr_235{border-top:1px solid var(--tc-divider);flex-wrap:wrap;align-items:flex-end;gap:8px;padding:8px 16px;display:flex}._rule_row_1d2kr_235>:not(._rule_row_action_1d2kr_244){flex:140px}._rule_row_action_1d2kr_244{flex:none;align-items:center;gap:8px;display:flex}._test_result_1d2kr_257{color:var(--tc-success);flex-basis:100%;margin:0;font-size:12px}._test_result_error_1d2kr_264{color:var(--tc-error);flex-basis:100%;margin:0;font-size:12px}._test_panel_1d2kr_273{flex-direction:column;display:flex}._test_panel_body_1d2kr_281{flex-direction:column;gap:8px;padding:0 16px 16px;display:flex}._tools_disabled_note_1d2kr_288{color:var(--tc-text-muted);margin:0;font-size:12px}", wc = "._view_88xnb_7{flex-direction:column;gap:24px;padding:16px;display:flex}._section_88xnb_14{flex-direction:column;min-width:0;display:flex}._section_header_88xnb_23{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:8px;display:flex}._section_title_88xnb_32{color:var(--tc-text);font-size:13px;font-weight:600}._row_88xnb_38{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._row_label_88xnb_47{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_88xnb_55{color:var(--tc-text);flex:none}._profile_row_88xnb_20{border-top:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._profile_identity_88xnb_63{flex-direction:column;flex:12rem;gap:2px;min-width:0;display:flex}._profile_name_88xnb_87{color:var(--tc-text);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_88xnb_94{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._profile_actions_88xnb_104{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;display:flex}._badge_88xnb_112{border:1px solid var(--tc-accent);border-radius:var(--tc-radius-status);color:var(--tc-accent);flex:none;padding:2px 8px;font-size:11px}._form_grid_88xnb_121{flex-direction:column;gap:16px;display:flex}._status_text_88xnb_127{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:inline-flex}._status_text_88xnb_127[data-tone=success]{color:var(--tc-success)}._status_text_88xnb_127[data-tone=warning]{color:var(--tc-warning)}._status_text_88xnb_127[data-tone=error]{color:var(--tc-error)}._risk_banner_88xnb_147{border:1px solid var(--tc-warning);border-radius:var(--tc-radius-field);background-color:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._risk_banner_88xnb_147[data-severity=error]{border-color:var(--tc-error)}._risk_banner_title_88xnb_161{color:var(--tc-warning);align-items:center;gap:6px;font-weight:600;display:flex}._risk_banner_88xnb_147[data-severity=error] ._risk_banner_title_88xnb_161{color:var(--tc-error)}._risk_banner_description_88xnb_173{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:12px}._risk_banner_actions_88xnb_180{align-items:center;gap:8px;display:flex}._acknowledged_note_88xnb_186{color:var(--tc-success);align-items:center;gap:6px;font-size:12px;display:flex}._description_88xnb_194{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._actions_row_88xnb_201{align-items:center;gap:12px;padding-top:8px;display:flex}._typed_confirm_input_88xnb_208{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;height:36px;color:var(--tc-text);border-color:var(--tc-divider);padding:0 10px}._typed_confirm_input_88xnb_208:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}", Tc = "._workbench_view_12cu0_8{grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:0;min-height:100%;display:grid}._main_column_12cu0_15{border-right:1px solid var(--tc-divider);flex-direction:column;min-width:0;display:flex}._side_column_12cu0_22{flex-direction:column;min-width:0;display:flex}@media (width<=959px){._workbench_view_12cu0_8{grid-template-columns:minmax(0,1fr)}._main_column_12cu0_15{border-right:none;border-bottom:1px solid var(--tc-divider)}}._section_header_12cu0_43{justify-content:space-between;align-items:baseline;gap:8px;padding:12px 16px 4px;display:flex}._section_title_12cu0_51{font-weight:600}._section_hint_12cu0_55{color:var(--tc-text-muted);font-size:12px}._inline_error_12cu0_60{color:var(--tc-error);margin:4px 16px 0;font-size:12px}._prompt_composer_12cu0_68{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:12px;padding:16px;display:flex}._prompt_textarea_12cu0_76{width:100%;min-height:64px;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);resize:vertical;padding:8px 10px;font-family:inherit;font-size:14px}._prompt_textarea_12cu0_76:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reference_strip_12cu0_96{border-bottom:1px solid var(--tc-divider);padding-bottom:16px}._reference_empty_12cu0_101{flex-direction:column;align-items:flex-start;gap:8px;padding:8px 16px;display:flex}._reference_list_12cu0_109{flex-wrap:wrap;gap:8px;padding:8px 16px 0;display:flex}._reference_tile_12cu0_116{background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);flex-direction:column;gap:6px;width:132px;padding:8px;display:flex}._reference_tile_thumb_12cu0_127{height:72px;color:var(--tc-text-muted);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;display:flex}._reference_tile_name_12cu0_137{white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._reference_tile_actions_12cu0_144{gap:2px;display:flex}._reference_tile_add_12cu0_149{justify-content:center;align-items:center;width:132px;display:flex}._reference_add_button_12cu0_156{color:var(--tc-accent);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);align-items:center;gap:6px;padding:8px 12px;display:flex}._picker_list_12cu0_166{flex-direction:column;gap:4px;display:flex}._picker_item_12cu0_172{text-align:left;width:100%;color:var(--tc-text);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);padding:8px 10px}._submit_row_12cu0_183{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;align-items:center;gap:8px 16px;padding:12px 16px;display:flex}._provider_summary_12cu0_194{border-bottom:1px solid var(--tc-divider);padding-bottom:12px}._provider_content_12cu0_199{padding:0 16px}._text_action_button_12cu0_203{color:var(--tc-accent);align-items:center;gap:4px;display:inline-flex}._active_jobs_12cu0_212{flex:auto;min-height:0;padding-bottom:16px}._job_list_12cu0_218{flex-direction:column;display:flex}._job_row_12cu0_223{border-top:1px solid var(--tc-divider);flex-direction:column;gap:4px;padding:8px 16px;display:flex}._job_row_selected_12cu0_231{background-color:var(--tc-surface-raised)}._job_row_main_12cu0_239{text-align:left;align-items:center;gap:10px;width:100%;padding:0;display:flex}._job_status_dot_12cu0_248{background-color:var(--tc-success);border-radius:50%;flex:none;width:6px;height:6px}._job_provider_12cu0_256{font-weight:600}._job_state_12cu0_260{color:var(--tc-text-muted);font-size:12px}._job_progress_12cu0_265{color:var(--tc-text-muted);margin-left:auto;font-size:12px}._job_error_12cu0_271{color:var(--tc-error);margin:0;font-size:12px}._job_row_actions_12cu0_277{gap:4px;display:flex}._generation_inspector_12cu0_284{padding-bottom:16px}._inspector_field_list_12cu0_288{flex-direction:column;gap:6px;margin:0;padding:4px 16px;display:flex}._inspector_field_12cu0_288{justify-content:space-between;gap:12px;font-size:12px;display:flex}._inspector_field_12cu0_288 dt{color:var(--tc-text-muted)}._inspector_field_12cu0_288 dd{text-align:right;text-overflow:ellipsis;white-space:nowrap;margin:0;overflow:hidden}._inspector_actions_12cu0_315{align-items:center;gap:8px;padding:8px 16px;display:flex}._completion_preview_list_12cu0_322{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 16px;display:grid}._completion_preview_tile_12cu0_329{aspect-ratio:1;background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-image);overflow:hidden}._completion_preview_tile_12cu0_329 img{object-fit:cover;width:100%;height:100%}._completion_preview_placeholder_12cu0_342{width:100%;height:100%;color:var(--tc-text-muted);justify-content:center;align-items:center;display:flex}", Ec = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
+var fc = ":host{--tc-canvas:#edf0f5;--tc-surface:#fff;--tc-surface-raised:#f3f6fa;--tc-text:#141923;--tc-text-muted:#596578;--tc-divider:#ccd4df;--tc-accent:#2f5af5;--tc-accent-hover:#244bd6;--tc-on-accent:#fff;--tc-success:#157b59;--tc-warning:#946100;--tc-error:#c23838;--tc-media-scrim:#1113189e;--tc-media-ink:#fff;--tc-radius-panel:0;--tc-radius-field:6px;--tc-radius-image:8px;--tc-radius-status:4px;--tc-motion-fast:.14s;--tc-motion-normal:.18s;--tc-motion-slow:.22s;--tc-z-shell-sticky:10;--tc-z-inspector-sheet:20;--tc-z-overlay:30;--tc-z-toast:40;--tc-z-host:2147480000;color:var(--tc-text);background:var(--tc-canvas);letter-spacing:0;font-family:Geist,system-ui,Noto Sans CJK SC,Microsoft YaHei,sans-serif;font-size:14px}:host([data-color-mode=dark]){--tc-canvas:#080b10;--tc-surface:#10151c;--tc-surface-raised:#181f29;--tc-text:#f5f7fa;--tc-text-muted:#9ca8b8;--tc-divider:#2b3441;--tc-accent:#7898ff;--tc-accent-hover:#8aa6ff;--tc-on-accent:#080b10;--tc-success:#45c995;--tc-warning:#e8b44e;--tc-error:#ff7b7b}", pc = "@font-face{font-family:Geist;src:url(__TAVERN_CANVAS_ASSET_URL__geist_variable.woff2__)format(\"woff2\");font-weight:100 900;font-style:normal;font-display:swap}:host{z-index:var(--tc-z-host);pointer-events:none;background:0 0;position:fixed;inset:0}:host [data-window-role=studio],:host [data-startup-state],:host [data-shadow-role=entry],:host [data-shadow-role=portal]>*{pointer-events:auto}*,:before,:after{box-sizing:border-box}*{margin:0}[data-shadow-role=app],[data-shadow-role=portal]{font-family:inherit;font-size:inherit;color:inherit;line-height:1.5}[data-shadow-role=app]{width:100%;height:100%}img,svg{max-width:100%;display:block}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;background:0 0;border:none;padding:0}button:disabled{cursor:not-allowed}ul,ol{padding:0;list-style:none}a{color:inherit}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}", mc = ".tc-tabular-nums{font-variant-numeric:tabular-nums}.tc-visually-hidden{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.tc-interactive{transition:transform var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out, color var(--tc-motion-fast) ease-out;border:1px solid #0000}.tc-interactive:active{transform:scale(.97)}.tc-interactive:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}.tc-z-shell-sticky{z-index:var(--tc-z-shell-sticky)}.tc-z-inspector-sheet{z-index:var(--tc-z-inspector-sheet)}.tc-z-overlay{z-index:var(--tc-z-overlay)}.tc-z-toast{z-index:var(--tc-z-toast)}", hc = "@keyframes _tc-icon-rotate_1r8sc_1{0%{transform:rotate(0)}to{transform:rotate(360deg)}}._iconButton_1r8sc_32{border-radius:var(--tc-radius-field);color:var(--tc-text);background-color:#0000;flex:none;justify-content:center;align-items:center;display:inline-flex}._iconButtonSm_1r8sc_42{width:28px;height:28px}._iconButtonMd_1r8sc_47{width:32px;height:32px}._iconButtonLg_1r8sc_52{width:40px;height:40px}._iconButton_1r8sc_32:hover:not(:disabled){background-color:var(--tc-surface-raised)}._iconButton_1r8sc_32:disabled{color:var(--tc-text-muted)}._iconButtonDestructive_1r8sc_65{color:var(--tc-error)}._iconButtonDestructive_1r8sc_65:hover:not(:disabled){background-color:var(--tc-surface-raised);border-color:var(--tc-error)}._iconButtonPressed_1r8sc_74{background-color:var(--tc-surface-raised);border-color:var(--tc-accent);color:var(--tc-accent)}._appButton_1r8sc_84{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);justify-content:center;align-items:center;height:36px;padding:0 16px;font-weight:500;display:inline-flex;position:relative}._appButton_1r8sc_84:disabled{opacity:.5}._appButtonContent_1r8sc_100{align-items:center;gap:8px;min-width:0;display:inline-flex}._appButtonContentPending_1r8sc_107{visibility:hidden}._appButtonLabel_1r8sc_111{white-space:nowrap;text-overflow:ellipsis;max-width:240px;overflow:hidden}._appButtonSpinner_1r8sc_118{justify-content:center;align-items:center;display:inline-flex;position:absolute;inset:0}._appButtonSpinner_1r8sc_118 svg{animation:_tc-icon-rotate_1r8sc_1 var(--tc-motion-normal) linear infinite}._appButtonPrimary_1r8sc_136{border-color:var(--tc-accent);background-color:var(--tc-accent);color:var(--tc-on-accent)}._appButtonPrimary_1r8sc_136:hover:not(:disabled){background-color:var(--tc-accent-hover);border-color:var(--tc-accent-hover)}._appButtonSecondary_1r8sc_147{border-color:var(--tc-divider);color:var(--tc-text)}._appButtonSecondary_1r8sc_147:hover:not(:disabled){background-color:var(--tc-surface-raised)}._appButtonDestructive_1r8sc_156{border-color:var(--tc-error);color:var(--tc-error)}._appButtonDestructive_1r8sc_156:hover:not(:disabled){background-color:var(--tc-surface-raised)}._segmentedControl_1r8sc_169{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);gap:2px;padding:2px;display:inline-flex}._segmentedControlItem_1r8sc_178{border-radius:var(--tc-radius-status);height:28px;color:var(--tc-text-muted);background-color:#0000;justify-content:center;align-items:center;padding:0 12px;display:inline-flex}._segmentedControlItem_1r8sc_178:hover:not([data-disabled]){background-color:var(--tc-surface-raised)}._segmentedControlItem_1r8sc_178[data-state=checked]{background-color:var(--tc-surface-raised);border-color:var(--tc-accent);color:var(--tc-accent)}._segmentedControlItemLabel_1r8sc_199{white-space:nowrap;text-overflow:ellipsis;max-width:160px;overflow:hidden}._switchRow_1r8sc_210{cursor:pointer;justify-content:space-between;align-items:center;gap:16px;display:flex}._switchRow_1r8sc_210[data-disabled]{cursor:not-allowed}._switchLabelGroup_1r8sc_222{flex-direction:column;gap:2px;min-width:0;display:flex}._switchLabel_1r8sc_222{color:var(--tc-text);overflow-wrap:anywhere}._switchDescription_1r8sc_234{color:var(--tc-text-muted);overflow-wrap:anywhere;font-size:12px}._switchRoot_1r8sc_247{background-color:var(--tc-surface-raised);border-color:var(--tc-text-muted);border-radius:999px;flex:none;width:40px;height:24px;position:relative}._switchRoot_1r8sc_247[data-state=checked]{background-color:var(--tc-accent);border-color:var(--tc-accent)}._switchRoot_1r8sc_247:disabled{opacity:.5}._switchThumb_1r8sc_266{border:1px solid var(--tc-text-muted);background-color:var(--tc-surface);width:18px;height:18px;transition:transform var(--tc-motion-fast) ease-out;border-radius:50%;display:block;transform:translate(2px)}._switchThumb_1r8sc_266[data-state=checked]{border-color:var(--tc-accent);transform:translate(18px)}._checkboxRow_1r8sc_293{cursor:pointer;align-items:center;gap:8px;display:inline-flex}._checkboxRow_1r8sc_293[data-disabled]{cursor:not-allowed}._checkboxBox_1r8sc_311{border-radius:var(--tc-radius-status);border-color:var(--tc-text-muted);background-color:var(--tc-surface);width:18px;height:18px;color:var(--tc-on-accent);transition:background-color var(--tc-motion-fast) ease-out;flex:none;justify-content:center;align-items:center;display:inline-flex}._checkboxBox_1r8sc_311[data-state=checked],._checkboxBox_1r8sc_311[data-state=indeterminate]{border-color:var(--tc-accent);background-color:var(--tc-accent)}._checkboxBox_1r8sc_311:disabled{opacity:.5}._checkboxIndicator_1r8sc_335{justify-content:center;align-items:center;display:inline-flex}._checkboxLabel_1r8sc_341{color:var(--tc-text);overflow-wrap:anywhere}._numberStepper_1r8sc_355{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);align-self:start;align-items:stretch;height:32px;display:inline-flex;overflow:hidden}._numberStepperButton_1r8sc_365{background-color:var(--tc-surface);width:28px;color:var(--tc-text);border-radius:0;justify-content:center;align-items:center;display:inline-flex}._numberStepperButton_1r8sc_365:hover:not(:disabled){background-color:var(--tc-surface-raised)}._numberStepperButton_1r8sc_365:disabled{color:var(--tc-text-muted)}._numberStepperInput_1r8sc_383{border:none;border-left:1px solid var(--tc-divider);border-right:1px solid var(--tc-divider);background-color:var(--tc-surface);width:56px;color:var(--tc-text);text-align:center}._numberStepperInput_1r8sc_383:focus-visible{outline:2px solid var(--tc-accent);outline-offset:-2px}._selectTrigger_1r8sc_402{border-radius:var(--tc-radius-field);border-color:var(--tc-divider);background-color:var(--tc-surface);min-width:160px;height:32px;color:var(--tc-text);justify-content:space-between;align-items:center;gap:8px;padding:0 10px;display:inline-flex}._selectTrigger_1r8sc_402:hover:not(:disabled){background-color:var(--tc-surface-raised)}._selectTrigger_1r8sc_402[data-placeholder]{color:var(--tc-text-muted)}._selectValue_1r8sc_424{white-space:nowrap;text-overflow:ellipsis;text-align:left;flex:1;min-width:0;overflow:hidden}._selectContent_1r8sc_433{z-index:var(--tc-z-overlay);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);max-height:320px;width:var(--reka-select-trigger-width);max-width:var(--reka-select-content-available-width);overflow:hidden}._selectViewport_1r8sc_444{padding:4px}._selectItem_1r8sc_448{border-radius:var(--tc-radius-status);color:var(--tc-text);outline-offset:-2px;outline:2px solid #0000;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding:6px 8px;display:flex}._selectItemText_1r8sc_461{white-space:nowrap;text-overflow:ellipsis;text-align:left;flex:1;min-width:0;overflow:hidden}._selectItem_1r8sc_448[data-highlighted]{background-color:var(--tc-surface-raised)}._selectItem_1r8sc_448:focus-visible,._selectItem_1r8sc_448:focus{outline-color:var(--tc-accent)}._selectItem_1r8sc_448[data-disabled]{color:var(--tc-text-muted)}._selectItemIndicator_1r8sc_483{color:var(--tc-accent);flex-shrink:0;display:inline-flex}._fieldGroup_1r8sc_493{flex-direction:column;gap:6px;display:flex}._fieldGroupLabel_1r8sc_499{color:var(--tc-text);font-size:13px;font-weight:500}._fieldGroupRequired_1r8sc_505{color:var(--tc-error)}._fieldGroupHint_1r8sc_509{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._fieldGroupError_1r8sc_516{color:var(--tc-error);overflow-wrap:anywhere;margin:0;font-size:12px}._dialogOverlay_1r8sc_527{z-index:var(--tc-z-overlay);background-color:#1113187a;position:fixed;inset:0}._dialogContent_1r8sc_534{z-index:var(--tc-z-overlay);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background-color:var(--tc-surface);flex-direction:column;gap:12px;width:min(480px,100vw - 32px);max-height:calc(100vh - 64px);padding:20px;display:flex;position:fixed;top:50%;left:50%;overflow-y:auto;transform:translate(-50%,-50%)}._confirmDialogContent_1r8sc_552{gap:16px}._dialogHeader_1r8sc_556{justify-content:space-between;align-items:flex-start;gap:12px;display:flex}._dialogTitle_1r8sc_563{color:var(--tc-text);overflow-wrap:anywhere;font-size:16px;font-weight:600}._dialogClose_1r8sc_570{border-radius:var(--tc-radius-field);width:28px;height:28px;color:var(--tc-text-muted);flex:none}._dialogClose_1r8sc_570:hover{background-color:var(--tc-surface-raised);color:var(--tc-text)}._dialogDescription_1r8sc_583{color:var(--tc-text-muted);overflow-wrap:anywhere;font-size:13px}._dialogBody_1r8sc_589{flex-direction:column;gap:12px;display:flex}._confirmDialogActions_1r8sc_595{justify-content:flex-end;gap:8px;display:flex}._tooltipContent_1r8sc_605{z-index:var(--tc-z-overlay);border-radius:var(--tc-radius-status);background-color:var(--tc-text);max-width:240px;color:var(--tc-canvas);overflow-wrap:anywhere;padding:6px 10px;font-size:12px}._tooltipArrow_1r8sc_616{fill:var(--tc-text)}._stateSurface_1r8sc_624{flex-direction:column;padding:4px 0;display:flex}._stateSurfaceSkeleton_1r8sc_630{flex-direction:column;gap:8px;padding:4px 0;display:flex}._skeletonBlock_1r8sc_637{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);height:12px}._stateSurfaceMessage_1r8sc_643{flex-direction:column;flex:1;justify-content:center;align-items:flex-start;gap:12px;padding:16px;display:flex}._stateSurfaceMessageGroup_1r8sc_656{flex-direction:column;gap:4px;display:flex}._stateSurfaceMessageTitle_1r8sc_662{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:13px;font-weight:500}._stateSurfaceMessageText_1r8sc_670{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:13px}._stateSurfaceErrorText_1r8sc_677{color:var(--tc-error)}._stateSurfaceAction_1r8sc_681{display:flex}._toastViewport_1r8sc_689{z-index:var(--tc-z-toast);flex-direction:column;gap:8px;width:320px;max-width:calc(100vw - 32px);margin:0;padding:0;display:flex;position:fixed;bottom:16px;right:16px}._toastRoot_1r8sc_703{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background-color:var(--tc-surface);flex-direction:column;gap:4px;padding:12px 36px 12px 12px;display:flex;position:relative}._toastTitle_1r8sc_714{color:var(--tc-text);overflow-wrap:anywhere;font-size:13px;font-weight:600}._toastDescription_1r8sc_721{color:var(--tc-text-muted);overflow-wrap:anywhere;font-size:12px}._toastClose_1r8sc_727{border-radius:var(--tc-radius-status);width:22px;height:22px;color:var(--tc-text-muted);position:absolute;top:8px;right:8px}._toastClose_1r8sc_727:hover{background-color:var(--tc-surface-raised);color:var(--tc-text)}._toastSuccess_1r8sc_742{border-color:var(--tc-success)}._toastSuccess_1r8sc_742 ._toastTitle_1r8sc_714{color:var(--tc-success)}._toastError_1r8sc_750{border-color:var(--tc-error)}._toastError_1r8sc_750 ._toastTitle_1r8sc_714{color:var(--tc-error)}._virtualList_1r8sc_762{position:relative;overflow-y:auto}._virtualListSizer_1r8sc_767{width:100%;position:relative}._virtualListItem_1r8sc_772{width:100%;position:absolute;top:0;left:0}", gc = "._paramsBody_1gvv4_10{flex-direction:column;gap:16px;display:flex}._paramsDimensionRow_1gvv4_16{gap:12px;display:flex}._paramsDimensionRow_1gvv4_16>*{flex:1}._paramsAspectRow_1gvv4_25{align-items:flex-end;gap:12px;display:flex}._paramsAspectField_1gvv4_31{flex:1}._editBody_1gvv4_37{flex-direction:column;gap:16px;display:flex}._editTextareaWrap_1gvv4_43{position:relative}._editHighlightLayer_1gvv4_47{color:#0000;white-space:pre-wrap;word-break:break-word;font:inherit;pointer-events:none;margin:0;padding:8px 10px;position:absolute;inset:0;overflow:hidden}._editHighlightMatch_1gvv4_60{border-radius:var(--tc-radius-status);background-color:color-mix(in srgb, var(--tc-accent) 22%, transparent)}._editTextarea_1gvv4_43{resize:vertical;border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);width:100%;min-height:96px;color:var(--tc-text);font:inherit;background-color:#0000;padding:8px 10px;line-height:1.5;position:relative}._editTextarea_1gvv4_43:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._editTagActions_1gvv4_84{gap:8px;display:flex}._editSubmenu_1gvv4_89{grid-template-columns:repeat(2,1fr);gap:8px;display:grid}._editFooter_1gvv4_95{justify-content:flex-end;gap:8px;display:flex}._inpaintDialogContent_1gvv4_107{width:min(90vw,720px)}._inpaintBody_1gvv4_111{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_1gvv4_121{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_1gvv4_121 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_1gvv4_139{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_1gvv4_146{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_1gvv4_153{align-items:center;gap:12px;display:flex}._inpaintBrushRow_1gvv4_153>*{flex:1}._inpaintPromptGrid_1gvv4_163{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_1gvv4_169{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_1gvv4_175{color:var(--tc-error);margin:0;font-size:12px}", _c = "._floatingEntry_1k9dx_9{background-color:var(--tc-surface);width:56px;height:56px;color:var(--tc-text);cursor:grab;touch-action:none;z-index:var(--tc-z-shell-sticky);border-radius:50%;justify-content:center;align-items:center;padding:0;display:inline-flex;position:fixed;top:0;left:0}._floatingEntry_1k9dx_9:hover:not(:disabled){background-color:var(--tc-surface-raised)}._floatingEntryDragging_1k9dx_31{cursor:grabbing}._floatingEntryMedia_1k9dx_35{object-fit:cover;pointer-events:none;border-radius:50%;width:100%;height:100%}", vc = "._window_1rdvc_1{width:min(1180px,100vw - 40px);height:min(780px,100dvh - 80px);min-height:560px;color:var(--tc-text);background-color:var(--tc-canvas);border:1px solid color-mix(in srgb, var(--tc-divider) 78%, var(--tc-text) 22%);transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0);pointer-events:auto;isolation:isolate;border-radius:12px;animation:.18s cubic-bezier(.2,.8,.2,1) _floating-window-enter_1rdvc_1;position:fixed;top:0;left:0;overflow:hidden;box-shadow:0 32px 96px #080b104d,0 8px 28px #080b102e}._window_1rdvc_1[data-positioned=false]{visibility:hidden}._window_1rdvc_1[data-dragging=true]{-webkit-user-select:none;user-select:none;box-shadow:0 40px 112px #080b105c,0 12px 36px #080b1038}@keyframes _floating-window-enter_1rdvc_1{0%{opacity:0;transform:translate3d(var(--tc-floating-window-x,20px), calc(var(--tc-floating-window-y,64px) + 8px), 0) scale(.985)}to{opacity:1;transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0) scale(1)}}@media (width<=959px){._window_1rdvc_1{border-radius:10px;width:auto;height:auto;min-height:0;inset:8px;transform:none}._window_1rdvc_1[data-positioned=false]{visibility:visible}}@media (prefers-reduced-motion:reduce){._window_1rdvc_1{animation:none}}", yc = "._shell_n4gcm_8{background-color:var(--tc-canvas);width:100%;height:100%;min-height:0;color:var(--tc-text);display:grid;position:relative;overflow:hidden}._shell_n4gcm_8[data-viewport=desktop]{grid-template-columns:64px minmax(0, 1fr) clamp(320px, var(--tc-inspector-width,320px), 400px);grid-template-rows:56px minmax(0,1fr) auto;grid-template-areas:\"topbar topbar topbar\"\"rail workspace inspector\"\"taskstrip taskstrip taskstrip\"}._shell_n4gcm_8[data-viewport=desktop][data-inspector-collapsed=true]{grid-template-columns:64px minmax(0,1fr) 0}._shell_n4gcm_8[data-viewport=mobile]{grid-template:\"topbar\"56px\"workspace\"minmax(0,1fr)\"taskstrip\"\"bottomnav\"64px/minmax(0,1fr);height:100dvh}._top_bar_n4gcm_57{background-color:var(--tc-surface);border-bottom:1px solid var(--tc-divider);cursor:move;touch-action:none;grid-area:topbar;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding-inline:16px;display:flex}._top_bar_start_n4gcm_71,._top_bar_end_n4gcm_72{align-items:center;gap:8px;min-width:0;display:flex}._top_bar_brand_n4gcm_79{color:var(--tc-text);flex:none;font-size:13px;font-weight:650}._top_bar_divider_n4gcm_86{color:var(--tc-divider);flex:none}._top_bar_title_n4gcm_91{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;font-weight:500;overflow:hidden}._icon_button_n4gcm_100{width:32px;height:32px;color:var(--tc-text-muted);border-radius:var(--tc-radius-field);flex:none;justify-content:center;align-items:center;display:flex}._shell_n4gcm_8[data-viewport=mobile] ._top_bar_n4gcm_57{cursor:default;touch-action:auto}._icon_button_n4gcm_100._close_button_n4gcm_116:hover{color:var(--tc-on-accent);background-color:var(--tc-error)}._icon_button_n4gcm_100[data-selected=true],._icon_button_n4gcm_100[aria-pressed=true]{color:var(--tc-accent)}._rail_n4gcm_126{background-color:var(--tc-surface);border-right:1px solid var(--tc-divider);flex-direction:column;grid-area:rail;align-items:center;gap:6px;padding:12px 8px;display:flex;overflow-y:auto}._rail_button_n4gcm_138{width:48px;height:48px;color:var(--tc-text-muted);border-radius:var(--tc-radius-field);border-left:2px solid #0000;justify-content:center;align-items:center;padding:4px;display:flex;position:relative}._rail_button_n4gcm_138[data-selected=true]{color:var(--tc-accent);background-color:var(--tc-surface-raised);border-left-color:var(--tc-accent)}._tooltip_content_n4gcm_157{color:var(--tc-surface);background-color:var(--tc-text);border-radius:var(--tc-radius-field);padding:4px 8px;font-size:12px}._workspace_n4gcm_165{background-color:var(--tc-canvas);grid-area:workspace;min-width:0;min-height:0;overflow:auto;container:studio-workspace/inline-size}._workspace_placeholder_n4gcm_175{flex-direction:column;justify-content:center;align-items:flex-start;min-height:240px;padding:24px;display:flex}._inspector_n4gcm_184{background-color:var(--tc-surface);border-left:1px solid var(--tc-divider);grid-area:inspector;min-width:0;display:flex;overflow:hidden}._inspector_resizer_n4gcm_193{cursor:col-resize;touch-action:none;background-color:#0000;flex:none;width:4px}._inspector_resizer_n4gcm_193:hover,._inspector_resizer_n4gcm_193[data-dragging=true]{background-color:var(--tc-divider)}._inspector_panel_n4gcm_206{flex-direction:column;flex:auto;min-width:0;display:flex;overflow:hidden}._inspector_header_n4gcm_214{border-bottom:1px solid var(--tc-divider);flex:none;justify-content:space-between;align-items:center;padding:12px;display:flex}._inspector_body_n4gcm_223{min-height:0;color:var(--tc-text-muted);flex:auto;padding:12px;overflow:auto}._inspector_selection_kind_n4gcm_231{color:var(--tc-text);margin:0 0 8px;font-size:13px;font-weight:600}._inspector_selection_n4gcm_231{flex-direction:column;gap:8px;margin:0;display:flex}._inspector_selection_n4gcm_231 dt{color:var(--tc-text-muted);font-size:12px}._inspector_selection_n4gcm_231 dd{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:13px}._bottom_nav_n4gcm_257{min-height:0;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-top:1px solid var(--tc-divider);grid-area:bottomnav;display:flex}._bottom_nav_item_n4gcm_266{min-width:0;color:var(--tc-text-muted);flex-direction:column;flex:1 1 0;justify-content:center;align-items:center;gap:2px;padding-block:6px;display:flex}._bottom_nav_item_n4gcm_266[data-selected=true]{color:var(--tc-accent)}._bottom_nav_item_label_n4gcm_282{white-space:nowrap;text-overflow:ellipsis;max-width:100%;font-size:10px;overflow:hidden}._more_menu_content_n4gcm_290{background-color:var(--tc-surface-raised);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);min-width:176px;padding:4px}._more_menu_item_n4gcm_298{color:var(--tc-text);border-radius:var(--tc-radius-field);align-items:center;gap:8px;padding:8px 10px;display:flex}._more_menu_item_n4gcm_298[data-highlighted]{color:var(--tc-accent);background-color:var(--tc-surface);outline:none}._sheet_overlay_n4gcm_313{background-color:var(--tc-text);opacity:.32;position:fixed;inset:0}._sheet_content_n4gcm_320{width:100%;max-height:80dvh;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-top:1px solid var(--tc-divider);flex-direction:column;display:flex;position:fixed;bottom:0;left:0;right:0}._sheet_handle_n4gcm_334{background-color:var(--tc-text-muted);border-radius:var(--tc-radius-status);flex:none;width:32px;height:4px;margin:8px auto}._sheet_header_n4gcm_346{border-bottom:1px solid var(--tc-divider);flex:none;justify-content:space-between;align-items:center;padding:4px 16px 12px;display:flex}._sheet_body_n4gcm_355{min-height:0;color:var(--tc-text-muted);flex:auto;padding:16px;overflow:auto}._task_strip_n4gcm_41{background-color:var(--tc-surface);border-top:1px solid var(--tc-divider);flex-direction:column;grid-area:taskstrip;min-width:0;display:flex}._task_strip_header_n4gcm_372{flex:none;justify-content:space-between;align-items:center;padding:6px 12px;display:flex}._task_strip_summary_n4gcm_380{font-variant-numeric:tabular-nums;min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._task_strip_list_n4gcm_389{gap:8px;padding:0 12px 8px;display:flex;overflow-x:auto}._task_chip_n4gcm_396{background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);flex:none;align-items:center;gap:6px;max-width:220px;height:28px;padding-inline:8px;display:flex}._task_chip_dot_n4gcm_408{background-color:var(--tc-text-muted);border-radius:50%;flex:none;width:6px;height:6px}._task_chip_dot_n4gcm_408[data-status=pending]{background-color:var(--tc-text-muted)}._task_chip_dot_n4gcm_408[data-status=success]{background-color:var(--tc-success)}._task_chip_dot_n4gcm_408[data-status=error]{background-color:var(--tc-error)}._task_chip_label_n4gcm_428{white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._skeleton_block_n4gcm_435{background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field)}._partial_banner_n4gcm_440{color:var(--tc-warning);background-color:var(--tc-surface-raised);border-bottom:1px solid var(--tc-divider);flex:none;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;display:flex}._state_screen_n4gcm_452{width:min(560px,100vw - 40px);max-height:calc(100dvh - 40px);color:var(--tc-text);background-color:var(--tc-canvas);border:1px solid var(--tc-divider);border-radius:12px;flex-direction:column;justify-content:center;align-items:flex-start;padding:32px;display:flex;position:fixed;top:20px;right:20px;overflow:auto;box-shadow:0 20px 56px #11131838}._state_screen_eyebrow_n4gcm_471{color:var(--tc-text-muted)}._state_screen_title_n4gcm_475{max-width:56ch}._state_screen_action_n4gcm_479{color:var(--tc-surface);background-color:var(--tc-accent);border-radius:var(--tc-radius-field);align-items:center;margin-top:20px;padding:8px 16px;display:inline-flex}._state_screen_description_n4gcm_489{max-width:56ch;color:var(--tc-text-muted)}", bc = "._assetsView_s3c58_10{flex-direction:column;gap:16px;height:100%;min-height:0;padding:16px;display:flex}._tabsList_s3c58_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;gap:4px;padding-bottom:0;display:flex}._tabsTrigger_s3c58_31{border-radius:var(--tc-radius-field) var(--tc-radius-field) 0 0;color:var(--tc-text-muted);transition:color var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out;background-color:#0000;border:1px solid #0000;border-bottom-width:2px;padding:8px 14px;font-size:13px;font-weight:500}._tabsTrigger_s3c58_31:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._tabsTrigger_s3c58_31[data-state=active]{color:var(--tc-accent);border-bottom-color:var(--tc-accent)}._tabsContent_s3c58_55{flex:1;min-height:0;overflow-y:auto}._tabsContent_s3c58_55:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._categoryList_s3c58_70{flex-direction:column;gap:12px;padding:12px 0;display:flex}._categoryToolbar_s3c58_77{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._searchInput_s3c58_84{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:160px;color:var(--tc-text);flex:1;padding:8px 12px;font-size:13px}._searchInput_s3c58_84:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reorderHint_s3c58_100{color:var(--tc-text-muted);font-size:12px}._emptyDescription_s3c58_105{color:var(--tc-text-muted);font-size:13px}._cardGrid_s3c58_110{flex-direction:column;gap:8px;display:flex}._assetCard_s3c58_120{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);flex-wrap:wrap;align-items:center;gap:8px;padding:6px 8px;display:flex}._assetCard_s3c58_120[data-dragging]{border-color:var(--tc-accent)}._dragHandle_s3c58_135{color:var(--tc-text-muted);cursor:grab;flex:none;padding:4px;display:inline-flex}._assetCardMain_s3c58_147{border-radius:var(--tc-radius-field);text-align:left;min-width:0;transition:background-color var(--tc-motion-fast) ease-out;background-color:#0000;flex-direction:column;flex:160px;align-items:flex-start;gap:2px;padding:2px 4px;display:flex}._assetCardMain_s3c58_147:hover{background-color:var(--tc-surface-raised)}._assetCardName_s3c58_165{color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;max-width:100%;font-size:13px;font-weight:500;overflow:hidden}._assetCardSummary_s3c58_175{color:var(--tc-text-muted);flex-wrap:wrap;gap:8px;font-size:12px;display:flex}._assetCardSummaryPart_s3c58_183{white-space:nowrap}._assetCardActions_s3c58_187{flex:none;align-items:center;gap:8px;margin-left:auto;display:flex}._form_s3c58_199{flex-direction:column;gap:14px;display:flex}._textInput_s3c58_205,._textArea_s3c58_206{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;color:var(--tc-text);padding:8px 10px;font-family:inherit;font-size:13px}._textArea_s3c58_206{resize:vertical;min-height:72px}._textInput_s3c58_205:focus-visible,._textArea_s3c58_206:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._formActions_s3c58_228{justify-content:flex-end;gap:8px;display:flex}._vocabularyPanel_s3c58_238{flex-direction:column;gap:20px;display:flex}._vocabularySearchRow_s3c58_244{gap:8px;display:flex}._searchResultsList_s3c58_249{flex-direction:column;gap:4px;display:flex}._searchResultRow_s3c58_255{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:baseline;gap:12px;padding:8px 4px;display:flex}._searchResultTag_s3c58_264{color:var(--tc-text);font-size:13px}._searchResultTranslation_s3c58_269{color:var(--tc-text-muted);font-size:12px}._loadMoreRow_s3c58_274{justify-content:center;padding-top:4px;display:flex}._sectionTitle_s3c58_280{color:var(--tc-text);font-size:13px;font-weight:600}._catalogList_s3c58_286{flex-direction:column;gap:8px;display:flex}._catalogEntry_s3c58_292{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;display:flex}._catalogEntryInfo_s3c58_301{flex-direction:column;gap:2px;min-width:0;display:flex}._catalogEntryName_s3c58_308{color:var(--tc-text);font-size:13px;font-weight:500}._catalogEntryMeta_s3c58_314{color:var(--tc-text-muted);font-size:12px}._bundledBadge_s3c58_319{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);color:var(--tc-text-muted);align-items:center;padding:2px 6px;font-size:11px;display:inline-flex}._nsfwSection_s3c58_329{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:8px 12px}._nsfwToggle_s3c58_335{color:var(--tc-text-muted);background:0 0;align-items:center;gap:6px;padding:4px 0;font-size:12px;display:flex}._nsfwNotice_s3c58_345{color:var(--tc-text-muted);padding:8px 0 0;font-size:12px}._installProgress_s3c58_351{color:var(--tc-text-muted);font-size:12px}._workflowToolbarRow_s3c58_360{flex-wrap:wrap;gap:8px;display:flex}._placeholderList_s3c58_366{flex-direction:column;gap:8px;display:flex}._placeholderRow_s3c58_372{align-items:center;gap:8px;display:flex}._placeholderKey_s3c58_378{width:40%;color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;flex:none;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;overflow:hidden}._hiddenFileInput_s3c58_389{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}", xc = "._view_t20r4_7{flex-direction:column;gap:24px;padding:16px;display:flex}._section_t20r4_14{flex-direction:column;min-width:0;display:flex}._section_header_t20r4_20{justify-content:space-between;align-items:center;gap:12px;padding-bottom:8px;display:flex}._section_title_t20r4_28{color:var(--tc-text);font-size:13px;font-weight:600}._row_t20r4_34{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:8px 0;display:flex}._row_label_t20r4_43{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_t20r4_51{color:var(--tc-text);flex:none}._status_text_t20r4_56{color:var(--tc-text-muted);align-items:center;gap:6px;display:inline-flex}._status_text_t20r4_56[data-tone=success]{color:var(--tc-success)}._status_text_t20r4_56[data-tone=warning]{color:var(--tc-warning)}._status_text_t20r4_56[data-tone=error]{color:var(--tc-error)}._timeline_list_t20r4_75{border-top:1px solid var(--tc-divider)}._timeline_row_t20r4_79{border-bottom:1px solid var(--tc-divider);grid-template-columns:92px 1fr 1fr minmax(0,1.4fr);align-items:center;gap:12px;height:100%;padding:0 4px;font-size:12px;display:grid}._timeline_cell_t20r4_90{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._timeline_header_t20r4_97{color:var(--tc-text-muted);text-transform:uppercase;font-size:11px;font-weight:600}._timeline_header_t20r4_97 ._timeline_cell_t20r4_90{color:inherit}._timeline_code_t20r4_108{color:var(--tc-text);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}._timeline_error_t20r4_113{color:var(--tc-error)}._warning_list_t20r4_117{flex-direction:column;gap:4px;padding:8px 0 0;display:flex}._warning_item_t20r4_124{color:var(--tc-warning);overflow-wrap:anywhere;font-size:12px}._actions_row_t20r4_130{align-items:center;gap:12px;padding-top:8px;display:flex}._description_t20r4_137{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}", Sc = "._galleryView_1wzts_10{flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._filterBar_1wzts_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;align-items:center;gap:16px;padding-bottom:12px;display:flex}._dateFilterLabel_1wzts_32{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:flex}._dateInput_1wzts_43{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);color:var(--tc-text);padding:6px 8px;font-size:12px}._cacheOccupancy_1wzts_52{color:var(--tc-text-muted);margin-left:auto;font-size:12px}._emptyDescription_1wzts_58{color:var(--tc-text-muted);font-size:13px}._skeletonGrid_1wzts_67{flex-wrap:wrap;gap:8px;display:flex}._skeletonTile_1wzts_73{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);width:176px;height:176px}._gridContainer_1wzts_84{flex:1;min-height:0}._gridRow_1wzts_89{display:flex}._tile_1wzts_93{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);flex:none;position:relative;overflow:hidden}._tile_1wzts_93[data-selected]{outline:2px solid var(--tc-accent);outline-offset:-2px}._tileButton_1wzts_106{width:100%;height:100%;padding:0;display:block}._tileSkeleton_1wzts_113{background-color:var(--tc-surface-raised);position:absolute;inset:0}._tileImage_1wzts_119{object-fit:cover;width:100%;height:100%;transition:opacity var(--tc-motion-normal) ease-out}._tileFallback_1wzts_126{color:var(--tc-text-muted);text-align:center;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:8px;font-size:11px;display:flex;position:absolute;inset:0}._tilePinnedBadge_1wzts_144{border-radius:var(--tc-radius-status);background-color:var(--tc-media-scrim);color:var(--tc-media-ink);justify-content:center;align-items:center;padding:3px;display:inline-flex;position:absolute;top:6px;left:6px}._tileSelectToggle_1wzts_157{border-radius:var(--tc-radius-status);border:1px solid var(--tc-media-ink);background-color:var(--tc-media-scrim);width:20px;height:20px;color:var(--tc-media-ink);transition:background-color var(--tc-motion-fast) ease-out;justify-content:center;align-items:center;display:inline-flex;position:absolute;top:6px;right:6px}._tileSelectToggle_1wzts_157[data-checked]{background-color:var(--tc-accent);color:var(--tc-on-accent)}._bulkActionBar_1wzts_184{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding-top:12px;display:flex}._bulkActionCount_1wzts_193{color:var(--tc-text);font-size:13px}._bulkActionButtons_1wzts_198{align-items:center;gap:8px;display:flex}._previewOverlay_1wzts_208{z-index:var(--tc-z-overlay);background-color:#111318b8;position:fixed;inset:0}._previewContent_1wzts_215{z-index:var(--tc-z-overlay);border-radius:var(--tc-radius-panel);background-color:var(--tc-surface);display:flex;position:fixed;inset:16px;overflow:hidden}._previewLayout_1wzts_225{width:100%;min-height:0;display:flex}._previewMain_1wzts_231{flex-direction:column;flex:1;min-width:0;display:flex}._previewToolbar_1wzts_238{border-bottom:1px solid var(--tc-divider);align-items:center;gap:4px;padding:8px;display:flex}._previewToolbarButton_1wzts_246{border-radius:var(--tc-radius-field);width:32px;height:32px;color:var(--tc-text);justify-content:center;align-items:center;display:inline-flex}._previewToolbarButton_1wzts_246:hover{background-color:var(--tc-surface-raised)}._previewToolbarSpacer_1wzts_260{flex:1}._previewImageArea_1wzts_264{flex:1;justify-content:center;align-items:center;gap:8px;min-height:0;padding:12px;display:flex;overflow:auto}._previewImageFrame_1wzts_275{flex:1;justify-content:center;align-items:center;height:100%;min-height:0;display:flex;position:relative}._previewImage_1wzts_264{border-radius:var(--tc-radius-image);object-fit:contain;touch-action:auto;max-width:100%;max-height:100%}._previewImageFallback_1wzts_293{color:var(--tc-text-muted);justify-content:center;align-items:center;padding:24px;font-size:13px;display:flex}._previewNavButton_1wzts_302{flex:none}._previewInspector_1wzts_306{border-left:1px solid var(--tc-divider);flex:none;width:320px;max-width:40vw;padding:16px;overflow-y:auto}._metadataInspector_1wzts_319{flex-direction:column;gap:12px;display:flex}._metadataTitle_1wzts_325{color:var(--tc-text);font-size:14px;font-weight:600}._metadataOrphanNotice_1wzts_331{color:var(--tc-warning);font-size:12px}._metadataList_1wzts_336{flex-direction:column;gap:8px;display:flex}._metadataRow_1wzts_342{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding-bottom:6px;font-size:12px;display:flex}._metadataRow_1wzts_342 dt{color:var(--tc-text-muted)}._metadataRow_1wzts_342 dd{color:var(--tc-text);margin:0}._metadataPrompt_1wzts_360{white-space:pre-wrap;overflow-wrap:anywhere}._metadataEmpty_1wzts_365{color:var(--tc-text-muted);font-size:12px}._metadataActions_1wzts_370{flex-wrap:wrap;gap:8px;display:flex}._metadataActionsHint_1wzts_376{color:var(--tc-text-muted);font-size:12px}@media (width<=959px){._previewContent_1wzts_215{border-radius:0;inset:0}._previewLayout_1wzts_225{flex-direction:column;overflow-y:auto}._previewMain_1wzts_231{flex:none}._previewToolbar_1wzts_238{z-index:1;background-color:var(--tc-surface);position:sticky;top:0}._previewImageArea_1wzts_264{min-height:45vh}._previewInspector_1wzts_306{border-left:none;border-top:1px solid var(--tc-divider);width:100%;max-width:100%}}", Cc = "._prompt_view_1d2kr_7{grid-template-columns:minmax(220px,280px) minmax(0,1fr);gap:0;min-height:100%;display:grid}._browser_column_1d2kr_14{border-right:1px solid var(--tc-divider)}._editor_column_1d2kr_18{flex-direction:column;min-width:0;padding-bottom:24px;display:flex}@media (width<=959px){._prompt_view_1d2kr_7{grid-template-columns:minmax(0,1fr)}._browser_column_1d2kr_14{border-right:none;border-bottom:1px solid var(--tc-divider)}}._section_header_1d2kr_40{justify-content:space-between;align-items:center;gap:8px;padding:12px 16px 4px;display:flex}._section_title_1d2kr_48{font-weight:600}._icon_text_button_1d2kr_55{color:var(--tc-accent);align-items:center;gap:4px;padding:1px 6px;display:inline-flex}._text_input_1d2kr_63{width:100%;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:6px 8px;font-family:inherit;font-size:13px}._text_input_narrow_1d2kr_74{width:64px;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:6px 8px;font-family:inherit;font-size:13px}._text_input_1d2kr_63:focus-visible,._text_input_narrow_1d2kr_74:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._textarea_1d2kr_91{width:100%;min-height:56px;color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);resize:vertical;padding:8px 10px;font-family:inherit;font-size:14px}._textarea_1d2kr_91:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._preset_browser_1d2kr_111{flex-direction:column;display:flex}._search_input_1d2kr_116{color:var(--tc-text);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);margin:0 16px 8px;padding:6px 8px;font-size:13px}._bulk_delete_button_1d2kr_126{color:var(--tc-error);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);margin:0 16px 8px;padding:6px 10px;font-size:12px}._group_header_1d2kr_135{color:var(--tc-text-muted);border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;padding:6px 16px;font-size:12px;display:flex}._preset_list_1d2kr_145{flex-direction:column;display:flex}._preset_row_1d2kr_150{align-items:center;gap:8px;padding:4px 16px;display:flex}._preset_row_selected_1d2kr_157{background-color:var(--tc-surface-raised)}._preset_name_button_1d2kr_161{text-align:left;text-overflow:ellipsis;white-space:nowrap;flex:auto;min-width:0;padding:4px 0;overflow:hidden}._name_row_1d2kr_173{border-bottom:1px solid var(--tc-divider);align-items:flex-end;gap:12px;padding:12px 16px;display:flex}._name_row_1d2kr_173>:first-child{flex:auto}._prompt_builder_1d2kr_187{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:8px;padding-bottom:8px;display:flex}._context_preview_1d2kr_195{flex-direction:column;gap:8px;padding:0 16px 12px;display:flex}._context_block_title_1d2kr_202{color:var(--tc-text-muted);margin-bottom:4px;font-size:12px}._context_list_1d2kr_208{margin:0;padding-left:16px}._quality_controls_1d2kr_215{border-bottom:1px solid var(--tc-divider);padding-bottom:8px}._switch_list_1d2kr_220{flex-direction:column;gap:4px;padding:0 16px 8px;display:flex}._replacement_rules_1d2kr_229,._regex_rules_1d2kr_230{border-bottom:1px solid var(--tc-divider);padding-bottom:8px}._rule_row_1d2kr_235{border-top:1px solid var(--tc-divider);flex-wrap:wrap;align-items:flex-end;gap:8px;padding:8px 16px;display:flex}._rule_row_1d2kr_235>:not(._rule_row_action_1d2kr_244){flex:140px}._rule_row_action_1d2kr_244{flex:none;align-items:center;gap:8px;display:flex}._test_result_1d2kr_257{color:var(--tc-success);flex-basis:100%;margin:0;font-size:12px}._test_result_error_1d2kr_264{color:var(--tc-error);flex-basis:100%;margin:0;font-size:12px}._test_panel_1d2kr_273{flex-direction:column;display:flex}._test_panel_body_1d2kr_281{flex-direction:column;gap:8px;padding:0 16px 16px;display:flex}._tools_disabled_note_1d2kr_288{color:var(--tc-text-muted);margin:0;font-size:12px}", wc = "._view_1c8kq_7{flex-direction:column;gap:32px;width:min(100%,920px);margin:0 auto;padding:24px;display:flex}._onboarding_1c8kq_16{background-color:var(--tc-surface-raised);border:1px solid var(--tc-divider);grid-template-columns:48px minmax(0,1fr);gap:16px;padding:24px;display:grid}._onboarding_icon_1c8kq_25{width:48px;height:48px;color:var(--tc-accent);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;display:flex}._onboarding_label_1c8kq_37{color:var(--tc-accent);margin-bottom:4px;font-size:12px;font-weight:650}._onboarding_title_1c8kq_44{color:var(--tc-text);font-size:22px;font-weight:680;line-height:1.2}._onboarding_description_1c8kq_51{max-width:62ch;color:var(--tc-text-muted);margin-top:8px;line-height:1.55}@media (width<=639px){._view_1c8kq_7{gap:24px;padding:20px 16px}._onboarding_1c8kq_16{grid-template-columns:minmax(0,1fr);padding:20px}}._section_1c8kq_70{flex-direction:column;min-width:0;display:flex}._section_header_1c8kq_79{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;display:flex}._section_title_1c8kq_89{color:var(--tc-text);font-size:14px;font-weight:650}._row_1c8kq_95{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._row_label_1c8kq_104{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_1c8kq_112{color:var(--tc-text);flex:none}._profile_row_1c8kq_76{border-top:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._profile_identity_1c8kq_120{flex-direction:column;flex:12rem;gap:2px;min-width:0;display:flex}._profile_name_1c8kq_144{color:var(--tc-text);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_1c8kq_151{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._profile_actions_1c8kq_161{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;display:flex}._badge_1c8kq_169{border:1px solid var(--tc-accent);border-radius:var(--tc-radius-status);color:var(--tc-accent);flex:none;padding:2px 8px;font-size:11px}._form_grid_1c8kq_178{flex-direction:column;gap:16px;display:flex}._status_text_1c8kq_184{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:inline-flex}._status_text_1c8kq_184[data-tone=success]{color:var(--tc-success)}._status_text_1c8kq_184[data-tone=warning]{color:var(--tc-warning)}._status_text_1c8kq_184[data-tone=error]{color:var(--tc-error)}._risk_banner_1c8kq_204{border:1px solid var(--tc-warning);border-radius:var(--tc-radius-field);background-color:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._risk_banner_1c8kq_204[data-severity=error]{border-color:var(--tc-error)}._risk_banner_title_1c8kq_218{color:var(--tc-warning);align-items:center;gap:6px;font-weight:600;display:flex}._risk_banner_1c8kq_204[data-severity=error] ._risk_banner_title_1c8kq_218{color:var(--tc-error)}._risk_banner_description_1c8kq_230{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:12px}._risk_banner_actions_1c8kq_237{align-items:center;gap:8px;display:flex}._acknowledged_note_1c8kq_243{color:var(--tc-success);align-items:center;gap:6px;font-size:12px;display:flex}._description_1c8kq_251{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._actions_row_1c8kq_258{align-items:center;gap:12px;padding-top:8px;display:flex}._typed_confirm_input_1c8kq_265{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;height:36px;color:var(--tc-text);border-color:var(--tc-divider);padding:0 10px}._typed_confirm_input_1c8kq_265:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}", Tc = "._workbench_view_10r88_8{background-color:var(--tc-canvas);grid-template-columns:minmax(0,1fr) minmax(260px,320px);gap:0;min-height:100%;display:grid}._workbench_view_setup_10r88_16{grid-template-columns:minmax(0,1fr)}._setup_panel_10r88_20{grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);align-items:center;gap:40px;min-height:100%;padding:48px;display:grid}._setup_intro_10r88_29{flex-direction:column;align-items:flex-start;max-width:560px;display:flex}._setup_icon_10r88_36{width:56px;height:56px;color:var(--tc-accent);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;margin-bottom:24px;display:flex}._setup_label_10r88_49{color:var(--tc-accent);margin-bottom:8px;font-size:12px;font-weight:650}._setup_title_10r88_56{max-width:18ch;color:var(--tc-text);font-size:32px;font-weight:680;line-height:1.12}._setup_description_10r88_64{max-width:52ch;color:var(--tc-text-muted);margin:16px 0 24px;font-size:15px;line-height:1.65}._setup_steps_10r88_72{background-color:var(--tc-surface);border:1px solid var(--tc-divider)}._setup_step_10r88_72{border-top:1px solid var(--tc-divider);grid-template-columns:32px minmax(0,1fr);gap:14px;padding:20px;display:grid}._setup_step_10r88_72:first-child{border-top:none}._setup_step_index_10r88_89{width:28px;height:28px;color:var(--tc-text-muted);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-status);font-variant-numeric:tabular-nums;justify-content:center;align-items:center;font-size:12px;font-weight:650;display:flex}._setup_step_active_10r88_103 ._setup_step_index_10r88_89{color:var(--tc-on-accent);background-color:var(--tc-accent)}._setup_step_title_10r88_108{color:var(--tc-text);font-size:14px;font-weight:600}._setup_step_description_10r88_114{color:var(--tc-text-muted);margin-top:4px;font-size:12px;line-height:1.55}._main_column_10r88_121{background-color:var(--tc-surface);border-right:1px solid var(--tc-divider);flex-direction:column;min-width:0;display:flex}._side_column_10r88_129{background-color:var(--tc-surface);flex-direction:column;min-width:0;display:flex}@container studio-workspace (width<=760px){._workbench_view_10r88_8{grid-template-columns:minmax(0,1fr)}._main_column_10r88_121{border-right:none}._side_column_10r88_129{border-top:1px solid var(--tc-divider)}._setup_panel_10r88_20{grid-template-columns:minmax(0,1fr);align-content:center;gap:28px;padding:32px}}@container studio-workspace (width<=520px){._setup_panel_10r88_20{padding:24px 20px}._setup_title_10r88_56{font-size:28px}._provider_summary_10r88_168{grid-template-columns:minmax(0,1fr);gap:8px}}._section_header_10r88_174{justify-content:space-between;align-items:baseline;gap:12px;padding:16px 20px 6px;display:flex}._section_title_10r88_182{color:var(--tc-text);font-size:13px;font-weight:650}._section_hint_10r88_188{color:var(--tc-text-muted);font-size:12px}._inline_error_10r88_193{color:var(--tc-error);margin:4px 16px 0;font-size:12px}._prompt_composer_10r88_201{background-color:var(--tc-surface);border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:16px;padding:20px;display:flex}._prompt_textarea_10r88_210{width:100%;min-height:80px;color:var(--tc-text);background-color:var(--tc-canvas);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);resize:vertical;padding:10px 12px;font-family:inherit;font-size:14px;line-height:1.55}._prompt_textarea_10r88_210:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reference_strip_10r88_231{background-color:var(--tc-surface);border-bottom:1px solid var(--tc-divider);padding-bottom:20px}._reference_empty_10r88_237{flex-direction:column;align-items:flex-start;gap:8px;padding:8px 16px;display:flex}._reference_list_10r88_245{flex-wrap:wrap;gap:8px;padding:8px 16px 0;display:flex}._reference_tile_10r88_252{background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);flex-direction:column;gap:6px;width:132px;padding:8px;display:flex}._reference_tile_thumb_10r88_263{height:72px;color:var(--tc-text-muted);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;display:flex}._reference_tile_name_10r88_273{white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._reference_tile_actions_10r88_280{gap:2px;display:flex}._reference_tile_add_10r88_285{justify-content:center;align-items:center;width:132px;display:flex}._reference_add_button_10r88_292{color:var(--tc-accent);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);align-items:center;gap:6px;padding:8px 12px;display:flex}._picker_list_10r88_302{flex-direction:column;gap:4px;display:flex}._picker_item_10r88_308{text-align:left;width:100%;color:var(--tc-text);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-field);padding:8px 10px}._submit_row_10r88_319{background-color:var(--tc-surface-raised);border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;align-items:center;gap:8px 16px;padding:14px 20px;display:flex}._provider_summary_10r88_168{background-color:var(--tc-surface-raised);border-bottom:1px solid var(--tc-divider);grid-template-columns:auto minmax(180px,1fr);align-items:center;gap:16px;padding:12px 20px;display:grid}._provider_content_10r88_341{min-width:0;padding:0}._provider_summary_10r88_168 ._section_header_10r88_174{padding:0}._provider_content_10r88_341 [role=combobox]{width:100%}._text_action_button_10r88_354{color:var(--tc-accent);align-items:center;gap:4px;display:inline-flex}._active_jobs_10r88_363{background-color:var(--tc-surface);flex:auto;min-height:0;padding-bottom:20px}._job_list_10r88_370{flex-direction:column;display:flex}._job_row_10r88_375{border-top:1px solid var(--tc-divider);border-left:2px solid #0000;flex-direction:column;gap:6px;padding:10px 20px 10px 18px;display:flex}._job_row_selected_10r88_384{background-color:var(--tc-surface-raised);border-left-color:var(--tc-accent)}._job_row_main_10r88_393{text-align:left;align-items:center;gap:10px;width:100%;padding:0;display:flex}._job_status_dot_10r88_402{background-color:var(--tc-success);border-radius:50%;flex:none;width:6px;height:6px}._job_provider_10r88_410{font-weight:600}._job_state_10r88_414{color:var(--tc-text-muted);font-size:12px}._job_progress_10r88_419{color:var(--tc-text-muted);margin-left:auto;font-size:12px}._job_error_10r88_425{color:var(--tc-error);margin:0;font-size:12px}._job_row_actions_10r88_431{gap:4px;display:flex}._generation_inspector_10r88_438{background-color:var(--tc-surface);min-height:100%;padding-bottom:20px}._inspector_field_list_10r88_444{flex-direction:column;gap:6px;margin:0;padding:4px 16px;display:flex}._inspector_field_10r88_444{justify-content:space-between;gap:12px;font-size:12px;display:flex}._inspector_field_10r88_444 dt{color:var(--tc-text-muted)}._inspector_field_10r88_444 dd{text-align:right;text-overflow:ellipsis;white-space:nowrap;margin:0;overflow:hidden}._inspector_actions_10r88_471{align-items:center;gap:8px;padding:8px 16px;display:flex}._completion_preview_list_10r88_478{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 16px;display:grid}._completion_preview_tile_10r88_485{aspect-ratio:1;background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-image);overflow:hidden}._completion_preview_tile_10r88_485 img{object-fit:cover;width:100%;height:100%}._completion_preview_placeholder_10r88_498{width:100%;height:100%;color:var(--tc-text-muted);justify-content:center;align-items:center;display:flex}", Ec = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
 function Dc(e) {
 	return e.replaceAll(Ec, (e, t) => new URL(t, import.meta.url).href);
 }

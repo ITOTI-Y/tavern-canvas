@@ -308,9 +308,12 @@ describe("StudioShell mobile navigation", () => {
   });
 
   it("does not render the desktop rail or the persistent inspector column", async () => {
-    const { wrapper } = await mount_shell({ viewport: "mobile" });
+    const { wrapper } = await mount_shell({
+      viewport: "mobile",
+      state: { route: "gallery" },
+    });
     expect(wrapper.find(".rail, nav.rail").exists()).toBe(false);
-    expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(true); // stays in the top bar
+    expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(true);
   });
 
   it("More opens Diagnostics and Settings, portaled to the Shadow-Root portal element", async () => {
@@ -349,9 +352,19 @@ describe("StudioShell mobile navigation", () => {
 // ---------------------------------------------------------------------------
 
 describe("StudioShell inspector", () => {
+  it("leaves the global inspector to non-Workbench routes", async () => {
+    const { wrapper } = await mount_shell();
+    expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(false);
+    expect(wrapper.find(".inspector, [class*=inspector_panel]").exists()).toBe(false);
+    expect(wrapper.attributes("data-inspector-collapsed")).toBe("true");
+  });
+
   it("toggling the top-bar control reports the next collapsed value", async () => {
     const { wrapper } = await mount_shell({
-      state: { inspector: { collapsed: false, width: 320, selected_record: null } },
+      state: {
+        route: "gallery",
+        inspector: { collapsed: false, width: 320, selected_record: null },
+      },
     });
     const toggle = wrapper.get('[data-testid="inspector-toggle"]');
 
@@ -362,7 +375,10 @@ describe("StudioShell inspector", () => {
 
   it("hides the inspector column and sets the collapsed grid track when collapsed", async () => {
     const { wrapper } = await mount_shell({
-      state: { inspector: { collapsed: true, width: 320, selected_record: null } },
+      state: {
+        route: "gallery",
+        inspector: { collapsed: true, width: 320, selected_record: null },
+      },
     });
     expect(wrapper.find(".inspector, [class*=inspector_panel]").exists()).toBe(false);
     expect(wrapper.attributes("data-inspector-collapsed")).toBe("true");
@@ -370,7 +386,10 @@ describe("StudioShell inspector", () => {
 
   it("keyboard-resizes the inspector from its separator handle and reports the new width", async () => {
     const { wrapper } = await mount_shell({
-      state: { inspector: { collapsed: false, width: 320, selected_record: null } },
+      state: {
+        route: "gallery",
+        inspector: { collapsed: false, width: 320, selected_record: null },
+      },
     });
     const resizer = wrapper.get('[role="separator"]');
 
@@ -381,7 +400,10 @@ describe("StudioShell inspector", () => {
 
   it("pointer-drags the inspector resizer and reports a clamped width", async () => {
     const { wrapper } = await mount_shell({
-      state: { inspector: { collapsed: false, width: 320, selected_record: null } },
+      state: {
+        route: "gallery",
+        inspector: { collapsed: false, width: 320, selected_record: null },
+      },
     });
     const resizer = wrapper.get('[role="separator"]');
 
@@ -397,7 +419,10 @@ describe("StudioShell inspector", () => {
   it("renders a full-width sheet on mobile and returns focus to the trigger after it closes", async () => {
     const { wrapper, portal_target } = await mount_shell({
       viewport: "mobile",
-      state: { inspector: { collapsed: true, width: 320, selected_record: null } },
+      state: {
+        route: "gallery",
+        inspector: { collapsed: true, width: 320, selected_record: null },
+      },
     });
     const toggle = wrapper.get('[data-testid="inspector-toggle"]');
     (toggle.element as HTMLElement).focus();
@@ -408,7 +433,10 @@ describe("StudioShell inspector", () => {
     // DrawerRoot's `open` is controlled by StudioState.inspector.collapsed -- applying the
     // emitted next value is what AppRoot (via the Studio controller) would do in production.
     await wrapper.setProps({
-      state: build_state({ inspector: { collapsed: false, width: 320, selected_record: null } }),
+      state: build_state({
+        route: "gallery",
+        inspector: { collapsed: false, width: 320, selected_record: null },
+      }),
     });
     await nextTick();
     await nextTick();
@@ -425,7 +453,10 @@ describe("StudioShell inspector", () => {
     const last_event = wrapper.emitted("set-inspector-collapsed")?.at(-1);
     expect(last_event).toEqual([true]);
     await wrapper.setProps({
-      state: build_state({ inspector: { collapsed: true, width: 320, selected_record: null } }),
+      state: build_state({
+        route: "gallery",
+        inspector: { collapsed: true, width: 320, selected_record: null },
+      }),
     });
     await nextTick();
     await nextTick();

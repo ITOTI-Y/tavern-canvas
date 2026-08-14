@@ -195,6 +195,9 @@ describe("SettingsView provider profiles", () => {
     expect(section.text()).toContain(
       "Add a provider profile to connect an image generation backend.",
     );
+    expect(wrapper.get('[data-testid="settings-onboarding"]').text()).toContain(
+      "Set up the service that will generate your images",
+    );
   });
 
   it("lists existing profiles with their provider type and default badge", () => {

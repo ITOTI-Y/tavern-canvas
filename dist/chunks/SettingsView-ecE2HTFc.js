@@ -1,17 +1,18 @@
 import { A as e, rt as t } from "./src-CLzfjths.js";
 import { F as n, G as r, N as i, V as a, W as o, _ as s, a as c, ct as l, et as u, g as d, h as f, m as p, n as m, p as h, pt as g, u as _, ut as v, v as y, x as b, y as x } from "./vue-i18n-DUz2Gjn8.js";
 import { n as S, t as C } from "./AppIcon-Cnhzrx9o.js";
-import { n as w, t as T } from "./StateSurface-Bo_sA18G.js";
-import { n as E, t as D } from "./NumberStepper-zIDhvMwB.js";
-import { t as O } from "./FieldGroup-LDtWeac7.js";
-import { a as k, n as A, o as j, r as M } from "./http_acknowledgment-Bd7iIzs_.js";
-import { t as N } from "./AppSelect-CJ-1Hi5_.js";
-import { n as P } from "./_prop_utils-DtjJGT5O.js";
-import { t as F } from "./AppSwitch-w_KIxpNZ.js";
-import { t as I } from "./SegmentedControl-CR6qvbSJ.js";
-import { t as L } from "./MigrationStatus-BX0VIoDk.js";
+import { t as w } from "./cable-DOLYmQWA.js";
+import { n as T, t as E } from "./StateSurface-Bo_sA18G.js";
+import { n as D, t as O } from "./NumberStepper-zIDhvMwB.js";
+import { t as k } from "./FieldGroup-LDtWeac7.js";
+import { a as A, n as j, o as M, r as N } from "./http_acknowledgment-Bd7iIzs_.js";
+import { t as P } from "./AppSelect-CJ-1Hi5_.js";
+import { n as F } from "./_prop_utils-DtjJGT5O.js";
+import { t as I } from "./AppSwitch-w_KIxpNZ.js";
+import { t as L } from "./SegmentedControl-CR6qvbSJ.js";
+import { t as R } from "./MigrationStatus-BX0VIoDk.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/circle-check.js
-var R = S("circle-check", [["circle", {
+var z = S("circle-check", [["circle", {
 	cx: "12",
 	cy: "12",
 	r: "10",
@@ -19,7 +20,7 @@ var R = S("circle-check", [["circle", {
 }], ["path", {
 	d: "m9 12 2 2 4-4",
 	key: "dzmm74"
-}]]), z = S("triangle-alert", [
+}]]), B = S("triangle-alert", [
 	["path", {
 		d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
 		key: "wmoenq"
@@ -32,31 +33,36 @@ var R = S("circle-check", [["circle", {
 		d: "M12 17h.01",
 		key: "p32p05"
 	}]
-]), B = {
-	view: "_view_88xnb_7",
-	section: "_section_88xnb_14",
-	section_header: "_section_header_88xnb_23",
-	section_title: "_section_title_88xnb_32",
-	row: "_row_88xnb_38",
-	row_label: "_row_label_88xnb_47",
-	row_value: "_row_value_88xnb_55",
-	profile_row: "_profile_row_88xnb_20",
-	profile_identity: "_profile_identity_88xnb_63",
-	profile_name: "_profile_name_88xnb_87",
-	profile_meta: "_profile_meta_88xnb_94",
-	profile_actions: "_profile_actions_88xnb_104",
-	badge: "_badge_88xnb_112",
-	form_grid: "_form_grid_88xnb_121",
-	status_text: "_status_text_88xnb_127",
-	risk_banner: "_risk_banner_88xnb_147",
-	risk_banner_title: "_risk_banner_title_88xnb_161",
-	risk_banner_description: "_risk_banner_description_88xnb_173",
-	risk_banner_actions: "_risk_banner_actions_88xnb_180",
-	acknowledged_note: "_acknowledged_note_88xnb_186",
-	description: "_description_88xnb_194",
-	actions_row: "_actions_row_88xnb_201",
-	typed_confirm_input: "_typed_confirm_input_88xnb_208"
-}, V = /* @__PURE__ */ b({
+]), V = {
+	view: "_view_1c8kq_7",
+	onboarding: "_onboarding_1c8kq_16",
+	onboarding_icon: "_onboarding_icon_1c8kq_25",
+	onboarding_label: "_onboarding_label_1c8kq_37",
+	onboarding_title: "_onboarding_title_1c8kq_44",
+	onboarding_description: "_onboarding_description_1c8kq_51",
+	section: "_section_1c8kq_70",
+	section_header: "_section_header_1c8kq_79",
+	section_title: "_section_title_1c8kq_89",
+	row: "_row_1c8kq_95",
+	row_label: "_row_label_1c8kq_104",
+	row_value: "_row_value_1c8kq_112",
+	profile_row: "_profile_row_1c8kq_76",
+	profile_identity: "_profile_identity_1c8kq_120",
+	profile_name: "_profile_name_1c8kq_144",
+	profile_meta: "_profile_meta_1c8kq_151",
+	profile_actions: "_profile_actions_1c8kq_161",
+	badge: "_badge_1c8kq_169",
+	form_grid: "_form_grid_1c8kq_178",
+	status_text: "_status_text_1c8kq_184",
+	risk_banner: "_risk_banner_1c8kq_204",
+	risk_banner_title: "_risk_banner_title_1c8kq_218",
+	risk_banner_description: "_risk_banner_description_1c8kq_230",
+	risk_banner_actions: "_risk_banner_actions_1c8kq_237",
+	acknowledged_note: "_acknowledged_note_1c8kq_243",
+	description: "_description_1c8kq_251",
+	actions_row: "_actions_row_1c8kq_258",
+	typed_confirm_input: "_typed_confirm_input_1c8kq_265"
+}, H = /* @__PURE__ */ b({
 	__name: "AppearanceSettings",
 	props: {
 		settings: {},
@@ -112,10 +118,10 @@ var R = S("circle-check", [["circle", {
 			t.controller.set_inspector_width(e), a({ inspector_width: e });
 		}
 		return (t, r) => (i(), s("div", {
-			class: v(l(B).section),
+			class: v(l(V).section),
 			"data-testid": "appearance-settings"
-		}, [p("div", { class: v(l(B).section_header) }, [p("h2", { class: v(l(B).section_title) }, g(l(n)("settings.sections.appearance")), 3)], 2), p("div", { class: v(l(B).form_grid) }, [
-			p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.appearance.theme_label")), 3), x(I, {
+		}, [p("div", { class: v(l(V).section_header) }, [p("h2", { class: v(l(V).section_title) }, g(l(n)("settings.sections.appearance")), 3)], 2), p("div", { class: v(l(V).form_grid) }, [
+			p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.appearance.theme_label")), 3), x(L, {
 				"model-value": e.settings?.ui.color_mode ?? "system",
 				options: o.value,
 				label: l(n)("settings.appearance.theme_label"),
@@ -125,7 +131,7 @@ var R = S("circle-check", [["circle", {
 				"options",
 				"label"
 			])], 2),
-			p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.appearance.language_label")), 3), x(I, {
+			p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.appearance.language_label")), 3), x(L, {
 				"model-value": e.settings?.locale ?? "auto",
 				options: c.value,
 				label: l(n)("settings.appearance.language_label"),
@@ -135,7 +141,7 @@ var R = S("circle-check", [["circle", {
 				"options",
 				"label"
 			])], 2),
-			p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.appearance.inspector_width_label")), 3), x(D, {
+			p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.appearance.inspector_width_label")), 3), x(O, {
 				"model-value": e.settings?.ui.inspector_width ?? 320,
 				label: l(n)("settings.appearance.inspector_width_label"),
 				min: 240,
@@ -150,7 +156,7 @@ var R = S("circle-check", [["circle", {
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			x(F, {
+			x(I, {
 				"model-value": e.settings?.ui.optional_entry_enabled ?? !1,
 				label: l(n)("settings.appearance.optional_entry_label"),
 				disabled: !e.settings,
@@ -162,7 +168,7 @@ var R = S("circle-check", [["circle", {
 			])
 		], 2)], 2));
 	}
-}), H = /* @__PURE__ */ b({
+}), U = /* @__PURE__ */ b({
 	__name: "AutomationSettings",
 	props: {
 		settings: {},
@@ -175,10 +181,10 @@ var R = S("circle-check", [["circle", {
 		}
 		let a = h(() => t.settings?.global_concurrency);
 		return (t, o) => (i(), s("div", {
-			class: v(l(B).section),
+			class: v(l(V).section),
 			"data-testid": "automation-settings"
-		}, [p("div", { class: v(l(B).section_header) }, [p("h2", { class: v(l(B).section_title) }, g(l(n)("settings.sections.automation")), 3)], 2), p("div", { class: v(l(B).form_grid) }, [
-			x(F, {
+		}, [p("div", { class: v(l(V).section_header) }, [p("h2", { class: v(l(V).section_title) }, g(l(n)("settings.sections.automation")), 3)], 2), p("div", { class: v(l(V).form_grid) }, [
+			x(I, {
 				"model-value": e.settings?.auto_generation_enabled ?? !1,
 				label: l(n)("settings.automation.auto_generation_label"),
 				disabled: !e.settings,
@@ -188,7 +194,7 @@ var R = S("circle-check", [["circle", {
 				"label",
 				"disabled"
 			]),
-			x(F, {
+			x(I, {
 				"model-value": e.settings?.fallback_generation_enabled ?? !1,
 				label: l(n)("settings.automation.fallback_generation_label"),
 				disabled: !e.settings,
@@ -198,7 +204,7 @@ var R = S("circle-check", [["circle", {
 				"label",
 				"disabled"
 			]),
-			p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.automation.global_concurrency_label")), 3), x(D, {
+			p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.automation.global_concurrency_label")), 3), x(O, {
 				"model-value": a.value,
 				label: l(n)("settings.automation.global_concurrency_label"),
 				min: 1,
@@ -214,7 +220,7 @@ var R = S("circle-check", [["circle", {
 				"decrement-label",
 				"disabled"
 			])], 2),
-			p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.automation.provider_concurrency_label")), 3), x(D, {
+			p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.automation.provider_concurrency_label")), 3), x(O, {
 				"model-value": 1,
 				label: l(n)("settings.automation.provider_concurrency_label"),
 				min: 1,
@@ -228,14 +234,14 @@ var R = S("circle-check", [["circle", {
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			p("p", { class: v(l(B).description) }, g(l(n)("errors.capability_blocked", { capability: l(n)("settings.automation.provider_concurrency_label") })), 3)
+			p("p", { class: v(l(V).description) }, g(l(n)("errors.capability_blocked", { capability: l(n)("settings.automation.provider_concurrency_label") })), 3)
 		], 2)], 2));
 	}
-}), ee = ["aria-label"], U = ["aria-label"], te = [
+}), W = ["aria-label"], ee = ["aria-label"], te = [
 	"id",
 	"aria-describedby",
 	"placeholder"
-], W = /* @__PURE__ */ b({
+], ne = /* @__PURE__ */ b({
 	__name: "DataSettings",
 	props: {
 		vocabularyUpdateChannel: {},
@@ -261,9 +267,9 @@ var R = S("circle-check", [["circle", {
 				}
 			}
 		}
-		let S = u(!1), C = u(!1), T = u(null), D = u(null), k = u(null);
+		let S = u(!1), C = u(!1), w = u(null), E = u(null), O = u(null);
 		function A() {
-			k.value?.click();
+			O.value?.click();
 		}
 		function j() {
 			t.controller.cancel_vocabulary_import();
@@ -271,21 +277,21 @@ var R = S("circle-check", [["circle", {
 		async function M(e) {
 			let r = e.target, i = r.files?.[0];
 			if (r.value = "", !(!i || S.value)) {
-				S.value = !0, C.value = !1, T.value = null, D.value = null;
+				S.value = !0, C.value = !1, w.value = null, E.value = null;
 				try {
 					await t.controller.import_vocabulary_package(i, (e) => {
-						D.value = e;
+						E.value = e;
 					}), C.value = !0;
 				} catch (e) {
 					let t = typeof e == "object" && e && "code" in e && typeof e.code == "string" ? e.code : "vocabulary_import_failed";
-					T.value = n("settings.data.vocabulary_import_error", { code: t });
+					w.value = n("settings.data.vocabulary_import_error", { code: t });
 				} finally {
 					S.value = !1;
 				}
 			}
 		}
 		let N = h(() => {
-			let e = D.value;
+			let e = E.value;
 			if (e === null) return null;
 			switch (e.phase) {
 				case "reading": return n("settings.data.vocabulary_import.progress_reading", {
@@ -305,34 +311,34 @@ var R = S("circle-check", [["circle", {
 				case "complete": return n("settings.data.vocabulary_import.progress_complete", { count: e.record_count });
 				case "cancelled": return n("settings.data.vocabulary_import.progress_cancelled");
 			}
-		}), P = u(!1), F = u(!1), R = u(null);
+		}), P = u(!1), F = u(!1), I = u(null);
 		async function z() {
 			if (!P.value) {
-				P.value = !0, R.value = null;
+				P.value = !0, I.value = null;
 				try {
 					let e = await t.controller.export_settings_archive(), n = URL.createObjectURL(e), r = document.createElement("a");
 					r.href = n, r.download = "tavern-canvas-archive.json", r.click(), URL.revokeObjectURL(n), F.value = !0;
 				} catch {
-					R.value = n("errors.unexpected");
+					I.value = n("errors.unexpected");
 				} finally {
 					P.value = !1;
 				}
 			}
 		}
-		let V = u(!1), H = u(null), W = u(null);
+		let B = u(!1), H = u(null), U = u(null);
 		function ne() {
-			W.value?.click();
+			U.value?.click();
 		}
 		async function G(e) {
 			let r = e.target, i = r.files?.[0];
-			if (r.value = "", !(!i || V.value)) {
-				V.value = !0, H.value = null;
+			if (r.value = "", !(!i || B.value)) {
+				B.value = !0, H.value = null;
 				try {
 					await t.controller.import_settings_archive(i);
 				} catch {
 					H.value = n("errors.unexpected");
 				} finally {
-					V.value = !1;
+					B.value = !1;
 				}
 			}
 		}
@@ -343,10 +349,10 @@ var R = S("circle-check", [["circle", {
 		function re() {
 			q.value = !q.value;
 		}
-		let ie = h(() => Object.values(t.migration?.counts ?? {}).reduce((e, t) => e + t, 0)), ae = h(() => n("settings.data.manual_cleanup.record_summary", ie.value, { named: {
-			count: ie.value,
+		let J = h(() => Object.values(t.migration?.counts ?? {}).reduce((e, t) => e + t, 0)), ie = h(() => n("settings.data.manual_cleanup.record_summary", J.value, { named: {
+			count: J.value,
 			bytes: n("settings.data.manual_cleanup.bytes_unavailable")
-		} })), J = h(() => t.migration?.state === "completed" || F.value), Y = u(!1), X = u(""), Z = u(!1), Q = u(null);
+		} })), ae = h(() => t.migration?.state === "completed" || F.value), Y = u(!1), X = u(""), Z = u(!1), Q = u(null);
 		function oe() {
 			X.value = "", Q.value = null, Y.value = !0;
 		}
@@ -366,12 +372,12 @@ var R = S("circle-check", [["circle", {
 			}
 		}
 		return (t, u) => (i(), s("div", {
-			class: v(l(B).section),
+			class: v(l(V).section),
 			"data-testid": "data-settings"
 		}, [
-			p("div", { class: v(l(B).section_header) }, [p("h2", { class: v(l(B).section_title) }, g(l(n)("settings.sections.data")), 3)], 2),
-			p("div", { class: v(l(B).form_grid) }, [
-				p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.data.vocabulary_channel_label")), 3), x(I, {
+			p("div", { class: v(l(V).section_header) }, [p("h2", { class: v(l(V).section_title) }, g(l(n)("settings.sections.data")), 3)], 2),
+			p("div", { class: v(l(V).form_grid) }, [
+				p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.data.vocabulary_channel_label")), 3), x(L, {
 					"model-value": e.vocabularyUpdateChannel ?? "bundled",
 					options: y,
 					label: l(n)("settings.data.vocabulary_channel_label"),
@@ -382,14 +388,14 @@ var R = S("circle-check", [["circle", {
 					"label",
 					"disabled"
 				])], 2),
-				p("div", { class: v(l(B).actions_row) }, [
-					x(w, {
+				p("div", { class: v(l(V).actions_row) }, [
+					x(T, {
 						label: l(n)("settings.data.vocabulary_import.action"),
 						variant: "secondary",
 						pending: S.value,
 						onClick: A
 					}, null, 8, ["label", "pending"]),
-					S.value ? (i(), f(w, {
+					S.value ? (i(), f(T, {
 						key: 0,
 						label: l(n)("settings.data.vocabulary_import.cancel_action"),
 						variant: "destructive",
@@ -397,109 +403,109 @@ var R = S("circle-check", [["circle", {
 					}, null, 8, ["label"])) : d("", !0),
 					p("input", {
 						ref_key: "vocabulary_file_input",
-						ref: k,
+						ref: O,
 						type: "file",
 						accept: ".json,.jsonl,.ndjson,application/json,application/x-ndjson",
 						class: "tc-visually-hidden",
 						"aria-label": l(n)("settings.data.vocabulary_import.action"),
 						"data-testid": "vocabulary-import-input",
 						onChange: M
-					}, null, 40, ee)
+					}, null, 40, W)
 				], 2),
-				p("p", { class: v(l(B).description) }, g(l(n)("settings.data.vocabulary_import.description")), 3),
+				p("p", { class: v(l(V).description) }, g(l(n)("settings.data.vocabulary_import.description")), 3),
 				N.value ? (i(), s("p", {
 					key: 0,
-					class: v([l(B).status_text, l(B).description]),
+					class: v([l(V).status_text, l(V).description]),
 					"data-testid": "vocabulary-import-progress"
 				}, g(N.value), 3)) : d("", !0),
 				C.value ? (i(), s("p", {
 					key: 1,
-					class: v([l(B).status_text, l(B).description]),
+					class: v([l(V).status_text, l(V).description]),
 					"data-tone": "success",
 					"data-testid": "vocabulary-import-success"
 				}, g(l(n)("settings.data.vocabulary_import.success")), 3)) : d("", !0),
-				T.value ? (i(), s("p", {
+				w.value ? (i(), s("p", {
 					key: 2,
-					class: v([l(B).status_text, l(B).description]),
+					class: v([l(V).status_text, l(V).description]),
 					"data-tone": "error",
 					"data-testid": "vocabulary-import-error"
-				}, g(T.value), 3)) : d("", !0),
-				p("div", { class: v(l(B).actions_row) }, [
-					x(w, {
+				}, g(w.value), 3)) : d("", !0),
+				p("div", { class: v(l(V).actions_row) }, [
+					x(T, {
 						label: l(n)("settings.data.archive_export_action"),
 						pending: P.value,
 						onClick: z
 					}, null, 8, ["label", "pending"]),
-					x(w, {
+					x(T, {
 						label: l(n)("settings.data.archive_import_action"),
 						variant: "secondary",
-						pending: V.value,
+						pending: B.value,
 						onClick: ne
 					}, null, 8, ["label", "pending"]),
 					p("input", {
 						ref_key: "file_input",
-						ref: W,
+						ref: U,
 						type: "file",
 						accept: "application/json",
 						class: "tc-visually-hidden",
 						"aria-label": l(n)("settings.data.archive_import_action"),
 						"data-testid": "archive-import-input",
 						onChange: G
-					}, null, 40, U)
+					}, null, 40, ee)
 				], 2),
-				p("p", { class: v(l(B).description) }, g(l(n)("settings.data.archive_import_description")), 3),
-				R.value ? (i(), s("p", {
+				p("p", { class: v(l(V).description) }, g(l(n)("settings.data.archive_import_description")), 3),
+				I.value ? (i(), s("p", {
 					key: 3,
-					class: v([l(B).status_text, l(B).description]),
+					class: v([l(V).status_text, l(V).description]),
 					"data-tone": "error"
-				}, g(R.value), 3)) : d("", !0),
+				}, g(I.value), 3)) : d("", !0),
 				H.value ? (i(), s("p", {
 					key: 4,
-					class: v([l(B).status_text, l(B).description]),
+					class: v([l(V).status_text, l(V).description]),
 					"data-tone": "error"
 				}, g(H.value), 3)) : d("", !0),
-				p("div", { class: v(l(B).actions_row) }, [x(w, {
+				p("div", { class: v(l(V).actions_row) }, [x(T, {
 					label: l(n)("settings.data.migration_retry_action"),
 					pending: e.migrationRetryCommand.status === "pending",
 					onClick: K
-				}, null, 8, ["label", "pending"]), x(w, {
+				}, null, 8, ["label", "pending"]), x(T, {
 					label: l(n)("settings.data.migration_report_action"),
 					variant: "secondary",
 					onClick: re
 				}, null, 8, ["label"])], 2),
-				q.value ? (i(), f(L, {
+				q.value ? (i(), f(R, {
 					key: 5,
 					snapshot: e.migration
 				}, null, 8, ["snapshot"])) : d("", !0),
 				p("div", {
-					class: v(l(B).section),
+					class: v(l(V).section),
 					"data-testid": "manual-cleanup"
 				}, [
-					p("div", { class: v(l(B).section_header) }, [p("h3", { class: v(l(B).section_title) }, g(l(n)("settings.data.manual_cleanup.title")), 3)], 2),
-					p("p", { class: v(l(B).description) }, g(l(n)("settings.data.manual_cleanup.description")), 3),
-					p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("diagnostics.migration_status.counts_label")), 3), p("span", { class: v(["tc-tabular-nums", l(B).row_value]) }, g(ae.value), 3)], 2),
-					J.value ? d("", !0) : (i(), s("p", {
+					p("div", { class: v(l(V).section_header) }, [p("h3", { class: v(l(V).section_title) }, g(l(n)("settings.data.manual_cleanup.title")), 3)], 2),
+					p("p", { class: v(l(V).description) }, g(l(n)("settings.data.manual_cleanup.description")), 3),
+					p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("diagnostics.migration_status.counts_label")), 3), p("span", { class: v(["tc-tabular-nums", l(V).row_value]) }, g(ie.value), 3)], 2),
+					ae.value ? d("", !0) : (i(), s("p", {
 						key: 0,
-						class: v(l(B).description),
+						class: v(l(V).description),
 						"data-testid": "cleanup-locked"
 					}, g(l(n)("settings.data.manual_cleanup.unlock_hint")), 3)),
-					p("div", { class: v(l(B).actions_row) }, [x(w, {
+					p("div", { class: v(l(V).actions_row) }, [x(T, {
 						label: l(n)("settings.data.manual_cleanup.confirm_action"),
 						variant: "destructive",
-						disabled: !J.value,
+						disabled: !ae.value,
 						"data-testid": "manual-cleanup-action",
 						onClick: oe
 					}, null, 8, ["label", "disabled"])], 2)
 				], 2)
 			], 2),
-			x(E, {
+			x(D, {
 				open: Y.value,
 				title: l(n)("settings.data.manual_cleanup.title"),
 				description: l(n)("confirmations.destructive.irreversible_note"),
 				"close-label": l(n)("common.actions.close"),
 				"onUpdate:open": u[1] ||= (e) => !e && $()
 			}, {
-				default: o(() => [x(O, {
+				default: o(() => [x(k, {
 					label: l(n)("confirmations.typed_confirmation.label", { phrase: a.value }),
 					error: X.value.length > 0 && X.value !== a.value ? l(n)("confirmations.typed_confirmation.mismatch", { phrase: a.value }) : Q.value
 				}, {
@@ -508,12 +514,12 @@ var R = S("circle-check", [["circle", {
 						"onUpdate:modelValue": u[0] ||= (e) => X.value = e,
 						type: "text",
 						"aria-describedby": t,
-						class: v(l(B).typed_confirm_input),
+						class: v(l(V).typed_confirm_input),
 						placeholder: l(n)("confirmations.typed_confirmation.placeholder"),
 						"data-testid": "cleanup-confirm-input"
 					}, null, 10, te), [[c, X.value]])]),
 					_: 1
-				}, 8, ["label", "error"]), p("div", { class: v(l(B).actions_row) }, [x(w, {
+				}, 8, ["label", "error"]), p("div", { class: v(l(V).actions_row) }, [x(T, {
 					label: l(n)("settings.data.manual_cleanup.confirm_action"),
 					variant: "destructive",
 					pending: Z.value,
@@ -523,7 +529,7 @@ var R = S("circle-check", [["circle", {
 					"label",
 					"pending",
 					"disabled"
-				]), x(w, {
+				]), x(T, {
 					label: l(n)("confirmations.destructive.default_cancel_action"),
 					variant: "secondary",
 					onClick: $
@@ -537,7 +543,7 @@ var R = S("circle-check", [["circle", {
 			])
 		], 2));
 	}
-}), ne = ["id", "aria-describedby"], G = ["data-severity"], K = ["id"], q = ["id", "aria-describedby"], re = /* @__PURE__ */ b({
+}), G = ["id", "aria-describedby"], K = ["data-severity"], q = ["id"], re = ["id", "aria-describedby"], J = /* @__PURE__ */ b({
 	__name: "GatewaySettings",
 	props: {
 		settings: {},
@@ -549,7 +555,7 @@ var R = S("circle-check", [["circle", {
 			endpoint: null,
 			token_secret_id: null,
 			http_acknowledgments: {}
-		}, b = u(t.settings?.gateway.endpoint ?? ""), S = u(null), T = u(!1), E = u(!1), D = u(""), N = u(!1), P = u(null);
+		}, b = u(t.settings?.gateway.endpoint ?? ""), S = u(null), w = u(!1), E = u(!1), D = u(""), O = u(!1), P = u(null);
 		a(() => t.settings?.gateway.endpoint ?? "", (e) => {
 			b.value = e;
 		});
@@ -557,8 +563,8 @@ var R = S("circle-check", [["circle", {
 			let e = b.value.trim();
 			if (e.length === 0) return null;
 			try {
-				if (!j(e)) return null;
-				let n = k(e), r = A(n), i = M(t.settings?.gateway.http_acknowledgments ?? {}, n);
+				if (!M(e)) return null;
+				let n = A(e), r = j(n), i = N(t.settings?.gateway.http_acknowledgments ?? {}, n);
 				return {
 					origin: n,
 					severity: r === "public_or_unknown" ? "error" : "warning",
@@ -569,35 +575,35 @@ var R = S("circle-check", [["circle", {
 			}
 		});
 		async function I() {
-			if (T.value) return;
+			if (w.value) return;
 			let e = b.value.trim();
 			if (S.value = null, e.length === 0) {
-				T.value = !0;
+				w.value = !0;
 				try {
 					await t.controller.update_settings({ gateway: {
 						...t.settings?.gateway ?? _,
 						endpoint: null
 					} });
 				} finally {
-					T.value = !1;
+					w.value = !1;
 				}
 				return;
 			}
 			let r;
 			try {
-				r = k(e);
+				r = A(e);
 			} catch {
 				S.value = n("errors.validation_required");
 				return;
 			}
-			T.value = !0;
+			w.value = !0;
 			try {
 				await t.controller.update_settings({ gateway: {
 					...t.settings?.gateway ?? _,
 					endpoint: r
 				} });
 			} finally {
-				T.value = !1;
+				w.value = !1;
 			}
 		}
 		async function L() {
@@ -611,38 +617,38 @@ var R = S("circle-check", [["circle", {
 				}
 			}
 		}
-		async function V() {
+		async function R() {
 			let e = D.value.trim();
-			if (P.value = null, !(e.length === 0 || N.value)) {
-				N.value = !0;
+			if (P.value = null, !(e.length === 0 || O.value)) {
+				O.value = !0;
 				try {
 					await t.controller.set_gateway_token(e), D.value = "";
 				} catch {
 					P.value = n("errors.validation_required");
 				} finally {
-					N.value = !1;
+					O.value = !1;
 				}
 			}
 		}
 		async function H() {
-			if (!N.value) {
-				N.value = !0;
+			if (!O.value) {
+				O.value = !0;
 				try {
 					await t.controller.clear_gateway_token();
 				} finally {
-					N.value = !1;
+					O.value = !1;
 				}
 			}
 		}
-		function ee() {
+		function U() {
 			t.controller.test_diagnostics_connection();
 		}
-		let U = h(() => t.connectionTestCommand.status === "pending");
+		let W = h(() => t.connectionTestCommand.status === "pending");
 		return (t, a) => (i(), s("div", {
-			class: v(l(B).section),
+			class: v(l(V).section),
 			"data-testid": "gateway-settings"
-		}, [p("div", { class: v(l(B).section_header) }, [p("h2", { class: v(l(B).section_title) }, g(l(n)("settings.sections.gateway")), 3)], 2), p("div", { class: v(l(B).form_grid) }, [
-			x(O, {
+		}, [p("div", { class: v(l(V).section_header) }, [p("h2", { class: v(l(V).section_title) }, g(l(n)("settings.sections.gateway")), 3)], 2), p("div", { class: v(l(V).form_grid) }, [
+			x(k, {
 				label: l(n)("settings.gateway.endpoint_label"),
 				hint: l(n)("settings.gateway.endpoint_hint"),
 				error: S.value
@@ -652,10 +658,10 @@ var R = S("circle-check", [["circle", {
 					"onUpdate:modelValue": a[0] ||= (e) => b.value = e,
 					type: "text",
 					"aria-describedby": t,
-					class: v(l(B).typed_confirm_input),
+					class: v(l(V).typed_confirm_input),
 					"data-testid": "gateway-endpoint-input",
 					onBlur: I
-				}, null, 42, ne), [[c, b.value]])]),
+				}, null, 42, G), [[c, b.value]])]),
 				_: 1
 			}, 8, [
 				"label",
@@ -664,45 +670,45 @@ var R = S("circle-check", [["circle", {
 			]),
 			F.value && !F.value.acknowledged ? (i(), s("div", {
 				key: 0,
-				class: v(l(B).risk_banner),
+				class: v(l(V).risk_banner),
 				"data-severity": F.value.severity,
 				"data-testid": "http-risk-banner",
 				role: "alert"
 			}, [
-				p("div", { class: v(l(B).risk_banner_title) }, [x(C, {
-					icon: l(z),
+				p("div", { class: v(l(V).risk_banner_title) }, [x(C, {
+					icon: l(B),
 					size: 16
 				}, null, 8, ["icon"]), y(" " + g(l(n)("settings.http_risk.warning_title")), 1)], 2),
-				p("p", { class: v(l(B).risk_banner_description) }, g(F.value.severity === "error" ? l(n)("settings.http_risk.error_description_public", { origin: F.value.origin }) : l(n)("settings.http_risk.warning_description_local", { origin: F.value.origin })), 3),
-				p("p", { class: v(l(B).risk_banner_description) }, g(l(n)("settings.http_risk.disclosure")), 3),
-				p("div", { class: v(l(B).risk_banner_actions) }, [x(w, {
+				p("p", { class: v(l(V).risk_banner_description) }, g(F.value.severity === "error" ? l(n)("settings.http_risk.error_description_public", { origin: F.value.origin }) : l(n)("settings.http_risk.warning_description_local", { origin: F.value.origin })), 3),
+				p("p", { class: v(l(V).risk_banner_description) }, g(l(n)("settings.http_risk.disclosure")), 3),
+				p("div", { class: v(l(V).risk_banner_actions) }, [x(T, {
 					label: l(n)("settings.http_risk.continue_action"),
 					pending: E.value,
 					onClick: L
 				}, null, 8, ["label", "pending"])], 2)
-			], 10, G)) : F.value && F.value.acknowledged ? (i(), s("div", {
+			], 10, K)) : F.value && F.value.acknowledged ? (i(), s("div", {
 				key: 1,
-				class: v(l(B).acknowledged_note),
+				class: v(l(V).acknowledged_note),
 				"data-testid": "http-risk-acknowledged"
 			}, [x(C, {
-				icon: l(R),
+				icon: l(z),
 				size: 14
 			}, null, 8, ["icon"]), y(" " + g(l(n)("settings.http_risk.acknowledged_label")), 1)], 2)) : d("", !0),
-			p("div", { class: v(l(B).row) }, [p("span", { class: v(l(B).row_label) }, g(l(n)("settings.gateway.protocol_label")), 3), x(w, {
+			p("div", { class: v(l(V).row) }, [p("span", { class: v(l(V).row_label) }, g(l(n)("settings.gateway.protocol_label")), 3), x(T, {
 				label: l(n)("settings.gateway.detect_action"),
 				variant: "secondary",
-				pending: U.value,
-				onClick: ee
+				pending: W.value,
+				onClick: U
 			}, null, 8, ["label", "pending"])], 2),
-			x(O, { label: l(n)("settings.gateway.token_secret_label") }, {
+			x(k, { label: l(n)("settings.gateway.token_secret_label") }, {
 				default: o(({ fieldId: t }) => [p("span", {
 					id: t,
-					class: v(l(B).row_value),
+					class: v(l(V).row_value),
 					"data-testid": "gateway-token-reference"
-				}, g(e.settings?.gateway.token_secret_id ?? l(n)("settings.gateway.token_not_set")), 11, K)]),
+				}, g(e.settings?.gateway.token_secret_id ?? l(n)("settings.gateway.token_not_set")), 11, q)]),
 				_: 1
 			}, 8, ["label"]),
-			x(O, {
+			x(k, {
 				label: l(n)("settings.gateway.token_label"),
 				hint: l(n)("settings.gateway.token_hint"),
 				error: P.value
@@ -713,30 +719,30 @@ var R = S("circle-check", [["circle", {
 					type: "password",
 					autocomplete: "off",
 					"aria-describedby": t,
-					class: v(l(B).typed_confirm_input),
+					class: v(l(V).typed_confirm_input),
 					"data-testid": "gateway-token-input"
-				}, null, 10, q), [[c, D.value]])]),
+				}, null, 10, re), [[c, D.value]])]),
 				_: 1
 			}, 8, [
 				"label",
 				"hint",
 				"error"
 			]),
-			p("div", { class: v(l(B).row) }, [x(w, {
+			p("div", { class: v(l(V).row) }, [x(T, {
 				label: l(n)("settings.gateway.token_save_action"),
-				pending: N.value,
+				pending: O.value,
 				disabled: D.value.trim().length === 0,
 				"data-testid": "gateway-token-save",
-				onClick: V
+				onClick: R
 			}, null, 8, [
 				"label",
 				"pending",
 				"disabled"
-			]), e.settings?.gateway.token_secret_id ? (i(), f(w, {
+			]), e.settings?.gateway.token_secret_id ? (i(), f(T, {
 				key: 0,
 				label: l(n)("settings.gateway.token_clear_action"),
 				variant: "secondary",
-				pending: N.value,
+				pending: O.value,
 				"data-testid": "gateway-token-clear",
 				onClick: H
 			}, null, 8, ["label", "pending"])) : d("", !0)], 2)
@@ -756,12 +762,12 @@ function ae(e, t) {
 		case "ollama": return e("settings.llm_connections.provider_kinds.ollama");
 	}
 }
-function J(t) {
+function Y(t) {
 	return e[t].completion_routes;
 }
 //#endregion
 //#region src/ui/views/settings/LlmConnections.vue?vue&type=script&setup=true&lang.ts
-var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "aria-describedby"], Q = /* @__PURE__ */ b({
+var X = ["id", "aria-describedby"], Z = ["id", "aria-describedby"], Q = ["id", "aria-describedby"], oe = /* @__PURE__ */ b({
 	__name: "LlmConnections",
 	props: {
 		connections: {},
@@ -769,29 +775,29 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 		controller: {}
 	},
 	setup(e) {
-		let t = e, { t: a } = m(), y = u(!1), b = u(null), S = u(!1), C = u(null), k = u(null), A = u(null), j = u(null), M = u(!1), I = u(null), L = u(""), R = u(!1), z = u(null), V = u(/* @__PURE__ */ new Map()), H = h(() => ie.map((e) => ({
+		let t = e, { t: a } = m(), y = u(!1), b = u(null), S = u(!1), C = u(null), w = u(null), A = u(null), j = u(null), M = u(!1), N = u(null), L = u(""), R = u(!1), z = u(null), B = u(/* @__PURE__ */ new Map()), H = h(() => ie.map((e) => ({
 			value: e,
 			label: ae(a, e)
-		}))), ee = h(() => J(b.value?.provider_kind ?? "openai_compatible").map((e) => ({
+		}))), U = h(() => Y(b.value?.provider_kind ?? "openai_compatible").map((e) => ({
 			value: e,
 			label: e
-		}))), U = h({
+		}))), W = h({
 			get: () => b.value?.provider_kind ?? "openai_compatible",
 			set: (e) => {
-				b.value && (b.value.provider_kind = e, b.value.route = J(b.value.provider_kind)[0] ?? "");
+				b.value && (b.value.provider_kind = e, b.value.route = Y(b.value.provider_kind)[0] ?? "");
 			}
-		}), te = h({
+		}), ee = h({
 			get: () => b.value?.route ?? "",
 			set: (e) => {
 				b.value && (b.value.route = e);
 			}
 		});
-		function W() {
+		function te() {
 			b.value = {
 				id: crypto.randomUUID(),
 				is_new: !0,
 				provider_kind: "openai_compatible",
-				route: J("openai_compatible")[0] ?? "",
+				route: Y("openai_compatible")[0] ?? "",
 				display_name: "",
 				model_id: "",
 				temperature: .7,
@@ -813,7 +819,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			}, G(), y.value = !0;
 		}
 		function G() {
-			C.value = null, k.value = null, A.value = null;
+			C.value = null, w.value = null, A.value = null;
 		}
 		function K() {
 			y.value = !1, b.value = null, G();
@@ -823,7 +829,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			if (!e || S.value) return;
 			G();
 			let n = e.display_name.trim(), r = e.model_id.trim();
-			if (n.length === 0 && (C.value = a("errors.validation_required")), r.length === 0 && (k.value = a("errors.validation_required")), !(C.value || k.value)) {
+			if (n.length === 0 && (C.value = a("errors.validation_required")), r.length === 0 && (w.value = a("errors.validation_required")), !(C.value || w.value)) {
 				S.value = !0;
 				try {
 					await t.controller.save_llm_connection({
@@ -846,7 +852,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 		function re(e) {
 			j.value = e;
 		}
-		async function Q() {
+		async function J() {
 			let e = j.value;
 			if (!(!e || M.value)) {
 				M.value = !0;
@@ -858,13 +864,13 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			}
 		}
 		function oe(e) {
-			I.value = e, L.value = "", z.value = null;
+			N.value = e, L.value = "", z.value = null;
 		}
 		function $() {
-			I.value = null, L.value = "", z.value = null;
+			N.value = null, L.value = "", z.value = null;
 		}
 		async function se() {
-			let e = I.value;
+			let e = N.value;
 			if (!(!e || R.value)) {
 				if (L.value.trim().length === 0) {
 					z.value = a("errors.validation_required");
@@ -884,7 +890,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			await t.controller.clear_llm_connection_credential(e.id);
 		}
 		async function le(e) {
-			V.value = new Map(V.value).set(e.id, {
+			B.value = new Map(B.value).set(e.id, {
 				pending: !0,
 				label: null
 			});
@@ -895,76 +901,76 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			} catch {
 				n = a("errors.unexpected");
 			}
-			V.value = new Map(V.value).set(e.id, {
+			B.value = new Map(B.value).set(e.id, {
 				pending: !1,
 				label: n
 			});
 		}
 		return (t, u) => (i(), s("div", {
-			class: v(l(B).section),
+			class: v(l(V).section),
 			"data-testid": "llm-connections"
 		}, [
-			p("div", { class: v(l(B).section_header) }, [p("h2", { class: v(l(B).section_title) }, g(l(a)("settings.sections.llm_connections")), 3), x(w, {
+			p("div", { class: v(l(V).section_header) }, [p("h2", { class: v(l(V).section_title) }, g(l(a)("settings.sections.llm_connections")), 3), x(T, {
 				label: l(a)("settings.llm_connections.add_action"),
-				onClick: W
+				onClick: te
 			}, null, 8, ["label"])], 2),
-			p("p", { class: v(l(B).description) }, g(l(a)("settings.llm_connections.section_description")), 3),
-			x(T, {
+			p("p", { class: v(l(V).description) }, g(l(a)("settings.llm_connections.section_description")), 3),
+			x(E, {
 				status: e.loading ? "loading" : e.connections.length === 0 ? "empty" : "ready",
 				"empty-message": l(a)("settings.llm_connections.empty_description")
 			}, {
-				action: o(() => [x(w, {
+				action: o(() => [x(T, {
 					label: l(a)("settings.llm_connections.add_action"),
-					onClick: W
+					onClick: te
 				}, null, 8, ["label"])]),
 				default: o(() => [p("div", null, [(i(!0), s(_, null, n(e.connections, (e) => (i(), s("div", {
 					key: e.id,
-					class: v(l(B).profile_row),
+					class: v(l(V).profile_row),
 					"data-testid": "llm-connection-row"
-				}, [p("div", { class: v(l(B).profile_identity) }, [
-					p("span", { class: v(l(B).profile_name) }, g(e.display_name), 3),
-					p("span", { class: v(l(B).profile_meta) }, g(l(ae)(l(a), e.provider_kind)) + " · " + g(e.model_id), 3),
+				}, [p("div", { class: v(l(V).profile_identity) }, [
+					p("span", { class: v(l(V).profile_name) }, g(e.display_name), 3),
+					p("span", { class: v(l(V).profile_meta) }, g(l(ae)(l(a), e.provider_kind)) + " · " + g(e.model_id), 3),
 					p("span", {
-						class: v(l(B).profile_meta),
+						class: v(l(V).profile_meta),
 						"data-testid": "llm-connection-credential-state"
 					}, g(e.credential_reference ? l(a)("settings.llm_connections.credential_set") : l(a)("settings.llm_connections.credential_unset")), 3),
-					V.value.get(e.id)?.label ? (i(), s("span", {
+					B.value.get(e.id)?.label ? (i(), s("span", {
 						key: 0,
-						class: v(l(B).profile_meta),
+						class: v(l(V).profile_meta),
 						"data-testid": "llm-connection-test-result"
-					}, g(V.value.get(e.id)?.label), 3)) : d("", !0)
-				], 2), p("div", { class: v(l(B).profile_actions) }, [
+					}, g(B.value.get(e.id)?.label), 3)) : d("", !0)
+				], 2), p("div", { class: v(l(V).profile_actions) }, [
 					e.is_default ? (i(), s("span", {
 						key: 0,
-						class: v(l(B).badge)
+						class: v(l(V).badge)
 					}, g(l(a)("settings.llm_connections.default_badge")), 3)) : d("", !0),
-					x(w, {
+					x(T, {
 						label: l(a)("settings.llm_connections.connection_test_action"),
 						variant: "secondary",
-						pending: V.value.get(e.id)?.pending === !0,
+						pending: B.value.get(e.id)?.pending === !0,
 						onClick: (t) => le(e)
 					}, null, 8, [
 						"label",
 						"pending",
 						"onClick"
 					]),
-					x(w, {
+					x(T, {
 						label: l(a)("settings.llm_connections.set_credential_action"),
 						variant: "secondary",
 						onClick: (t) => oe(e)
 					}, null, 8, ["label", "onClick"]),
-					e.credential_reference ? (i(), f(w, {
+					e.credential_reference ? (i(), f(T, {
 						key: 1,
 						label: l(a)("settings.llm_connections.clear_credential_action"),
 						variant: "secondary",
 						onClick: (t) => ce(e)
 					}, null, 8, ["label", "onClick"])) : d("", !0),
-					x(w, {
+					x(T, {
 						label: l(a)("common.actions.edit"),
 						variant: "secondary",
 						onClick: (t) => ne(e)
 					}, null, 8, ["label", "onClick"]),
-					x(w, {
+					x(T, {
 						label: l(a)("common.actions.delete"),
 						variant: "destructive",
 						onClick: (t) => re(e)
@@ -972,7 +978,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 				], 2)], 2))), 128))])]),
 				_: 1
 			}, 8, ["status", "empty-message"]),
-			x(E, {
+			x(D, {
 				open: y.value,
 				title: b.value?.is_new ? l(a)("settings.llm_connections.dialog_add_title") : l(a)("settings.llm_connections.dialog_edit_title"),
 				description: l(a)("settings.llm_connections.dialog_description"),
@@ -981,9 +987,9 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			}, {
 				default: o(() => [b.value ? (i(), s("div", {
 					key: 0,
-					class: v(l(B).form_grid)
+					class: v(l(V).form_grid)
 				}, [
-					x(O, {
+					x(k, {
 						label: l(a)("common.labels.name"),
 						error: C.value,
 						required: ""
@@ -993,18 +999,18 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 							"onUpdate:modelValue": u[0] ||= (e) => b.value.display_name = e,
 							type: "text",
 							"aria-describedby": t,
-							class: v(l(B).typed_confirm_input)
-						}, null, 10, Y), [[c, b.value.display_name]])]),
+							class: v(l(V).typed_confirm_input)
+						}, null, 10, X), [[c, b.value.display_name]])]),
 						_: 1
 					}, 8, ["label", "error"]),
-					x(O, {
+					x(k, {
 						label: l(a)("settings.llm_connections.provider_kind_label"),
 						required: ""
 					}, {
-						default: o(({ fieldId: e }) => [x(N, {
+						default: o(({ fieldId: e }) => [x(P, {
 							id: e,
-							modelValue: U.value,
-							"onUpdate:modelValue": u[1] ||= (e) => U.value = e,
+							modelValue: W.value,
+							"onUpdate:modelValue": u[1] ||= (e) => W.value = e,
 							options: H.value,
 							placeholder: l(a)("settings.llm_connections.provider_kind_label")
 						}, null, 8, [
@@ -1015,16 +1021,16 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 						])]),
 						_: 1
 					}, 8, ["label"]),
-					x(O, {
+					x(k, {
 						label: l(a)("settings.llm_connections.route_label"),
 						hint: l(a)("settings.llm_connections.route_hint"),
 						required: ""
 					}, {
-						default: o(({ fieldId: e }) => [x(N, {
+						default: o(({ fieldId: e }) => [x(P, {
 							id: e,
-							modelValue: te.value,
-							"onUpdate:modelValue": u[2] ||= (e) => te.value = e,
-							options: ee.value,
+							modelValue: ee.value,
+							"onUpdate:modelValue": u[2] ||= (e) => ee.value = e,
+							options: U.value,
 							placeholder: l(a)("settings.llm_connections.route_label")
 						}, null, 8, [
 							"id",
@@ -1034,10 +1040,10 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 						])]),
 						_: 1
 					}, 8, ["label", "hint"]),
-					x(O, {
+					x(k, {
 						label: l(a)("settings.llm_connections.model_label"),
 						hint: l(a)("settings.llm_connections.model_hint"),
-						error: k.value,
+						error: w.value,
 						required: ""
 					}, {
 						default: o(({ fieldId: e, describedBy: t }) => [r(p("input", {
@@ -1045,19 +1051,19 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 							"onUpdate:modelValue": u[3] ||= (e) => b.value.model_id = e,
 							type: "text",
 							"aria-describedby": t,
-							class: v(l(B).typed_confirm_input)
-						}, null, 10, X), [[c, b.value.model_id]])]),
+							class: v(l(V).typed_confirm_input)
+						}, null, 10, Z), [[c, b.value.model_id]])]),
 						_: 1
 					}, 8, [
 						"label",
 						"hint",
 						"error"
 					]),
-					x(O, {
+					x(k, {
 						label: l(a)("settings.llm_connections.temperature_label"),
 						hint: l(a)("settings.llm_connections.temperature_hint")
 					}, {
-						default: o(() => [x(D, {
+						default: o(() => [x(O, {
 							modelValue: b.value.temperature,
 							"onUpdate:modelValue": u[4] ||= (e) => b.value.temperature = e,
 							label: l(a)("settings.llm_connections.temperature_label"),
@@ -1074,8 +1080,8 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 						])]),
 						_: 1
 					}, 8, ["label", "hint"]),
-					x(O, { label: l(a)("settings.llm_connections.max_output_tokens_label") }, {
-						default: o(() => [x(D, {
+					x(k, { label: l(a)("settings.llm_connections.max_output_tokens_label") }, {
+						default: o(() => [x(O, {
 							modelValue: b.value.max_output_tokens,
 							"onUpdate:modelValue": u[5] ||= (e) => b.value.max_output_tokens = e,
 							label: l(a)("settings.llm_connections.max_output_tokens_label"),
@@ -1092,21 +1098,21 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 						])]),
 						_: 1
 					}, 8, ["label"]),
-					x(F, {
+					x(I, {
 						modelValue: b.value.is_default,
 						"onUpdate:modelValue": u[6] ||= (e) => b.value.is_default = e,
 						label: l(a)("settings.llm_connections.set_default_action")
 					}, null, 8, ["modelValue", "label"]),
 					A.value ? (i(), s("p", {
 						key: 0,
-						class: v([l(B).status_text, l(B).description]),
+						class: v([l(V).status_text, l(V).description]),
 						"data-tone": "error"
 					}, g(A.value), 3)) : d("", !0),
-					p("div", { class: v(l(B).actions_row) }, [x(w, {
+					p("div", { class: v(l(V).actions_row) }, [x(T, {
 						label: l(a)("common.actions.save"),
 						pending: S.value,
 						onClick: q
-					}, null, 8, ["label", "pending"]), x(w, {
+					}, null, 8, ["label", "pending"]), x(T, {
 						label: l(a)("common.actions.cancel"),
 						variant: "secondary",
 						onClick: K
@@ -1119,14 +1125,14 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 				"description",
 				"close-label"
 			]),
-			x(E, {
-				open: I.value !== null,
+			x(D, {
+				open: N.value !== null,
 				title: l(a)("settings.llm_connections.credential_dialog_title"),
 				description: l(a)("settings.llm_connections.credential_dialog_description"),
 				"close-label": l(a)("common.actions.close"),
 				"onUpdate:open": u[9] ||= (e) => !e && $()
 			}, {
-				default: o(() => [p("div", { class: v(l(B).form_grid) }, [x(O, {
+				default: o(() => [p("div", { class: v(l(V).form_grid) }, [x(k, {
 					label: l(a)("settings.llm_connections.credential_label"),
 					hint: l(a)("provider.credentials.not_stored_locally"),
 					error: z.value,
@@ -1138,19 +1144,19 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 						type: "password",
 						autocomplete: "off",
 						"aria-describedby": t,
-						class: v(l(B).typed_confirm_input),
+						class: v(l(V).typed_confirm_input),
 						"data-testid": "llm-credential-input"
-					}, null, 10, Z), [[c, L.value]])]),
+					}, null, 10, Q), [[c, L.value]])]),
 					_: 1
 				}, 8, [
 					"label",
 					"hint",
 					"error"
-				]), p("div", { class: v(l(B).actions_row) }, [x(w, {
+				]), p("div", { class: v(l(V).actions_row) }, [x(T, {
 					label: l(a)("common.actions.save"),
 					pending: R.value,
 					onClick: se
-				}, null, 8, ["label", "pending"]), x(w, {
+				}, null, 8, ["label", "pending"]), x(T, {
 					label: l(a)("common.actions.cancel"),
 					variant: "secondary",
 					onClick: $
@@ -1162,7 +1168,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 				"description",
 				"close-label"
 			]),
-			x(P, {
+			x(F, {
 				open: j.value !== null,
 				title: l(a)("settings.llm_connections.remove_confirm_title", { name: j.value?.display_name ?? "" }),
 				description: l(a)("settings.llm_connections.remove_confirm_description"),
@@ -1170,7 +1176,7 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 				"cancel-label": l(a)("confirmations.destructive.default_cancel_action"),
 				pending: M.value,
 				"onUpdate:open": u[10] ||= (e) => !e && (j.value = null),
-				onConfirm: Q
+				onConfirm: J
 			}, null, 8, [
 				"open",
 				"title",
@@ -1181,14 +1187,14 @@ var Y = ["id", "aria-describedby"], X = ["id", "aria-describedby"], Z = ["id", "
 			])
 		], 2));
 	}
-}), oe = [
+}), $ = [
 	"sd_webui",
 	"novelai",
 	"comfyui",
 	"openai_image",
 	"google_image"
 ];
-function $(e, t) {
+function se(e, t) {
 	switch (t) {
 		case "sd_webui": return e("settings.provider_profiles.provider_types.sd_webui");
 		case "novelai": return e("settings.provider_profiles.provider_types.novelai");
@@ -1199,17 +1205,17 @@ function $(e, t) {
 }
 //#endregion
 //#region src/ui/views/settings/ProviderProfiles.vue?vue&type=script&setup=true&lang.ts
-var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id", "aria-describedby"], ue = ["id", "aria-describedby"], de = /* @__PURE__ */ b({
+var ce = ["id", "aria-describedby"], le = ["id", "aria-describedby"], ue = ["id", "aria-describedby"], de = ["id", "aria-describedby"], fe = /* @__PURE__ */ b({
 	__name: "ProviderProfiles",
 	props: {
 		profiles: {},
 		controller: {}
 	},
 	setup(e) {
-		let a = e, { t: y } = m(), b = u(!1), S = u(null), C = u(!1), D = u(null), k = u(null), A = u(!1), j = u(/* @__PURE__ */ new Map()), M = oe.map((e) => ({
+		let a = e, { t: y } = m(), b = u(!1), S = u(null), C = u(!1), w = u(null), O = u(null), A = u(!1), j = u(/* @__PURE__ */ new Map()), M = $.map((e) => ({
 			value: e,
-			label: $(y, e)
-		})), I = h({
+			label: se(y, e)
+		})), N = h({
 			get: () => S.value?.provider_id ?? "sd_webui",
 			set: (e) => {
 				S.value && (S.value.provider_id = e, S.value.workflow_id = "");
@@ -1225,7 +1231,7 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 				workflow_id: "",
 				secret_reference: "",
 				is_default: a.profiles.length === 0
-			}, D.value = null, b.value = !0;
+			}, w.value = null, b.value = !0;
 		}
 		function R(e) {
 			S.value = {
@@ -1237,20 +1243,20 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 				workflow_id: e.workflow_id ?? "",
 				secret_reference: "",
 				is_default: e.is_default
-			}, D.value = null, b.value = !0;
+			}, w.value = null, b.value = !0;
 		}
 		function z() {
-			b.value = !1, S.value = null, D.value = null;
+			b.value = !1, S.value = null, w.value = null;
 		}
-		async function V() {
+		async function B() {
 			let e = S.value;
 			if (!e || C.value) return;
 			let n = e.display_name.trim(), r = e.model_id.trim(), i = e.provider_id === "comfyui" ? t.safeParse(e.workflow_id.trim()) : null;
 			if (n.length === 0 || r.length === 0 || e.provider_id === "comfyui" && i?.success !== !0) {
-				D.value = y("errors.validation_required");
+				w.value = y("errors.validation_required");
 				return;
 			}
-			C.value = !0, D.value = null;
+			C.value = !0, w.value = null;
 			try {
 				await a.controller.save_provider_profile({
 					id: e.id,
@@ -1263,26 +1269,26 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 					secret_reference: e.secret_reference.trim().length > 0 ? e.secret_reference : null
 				}), z();
 			} catch {
-				D.value = y("errors.unexpected");
+				w.value = y("errors.unexpected");
 			} finally {
 				C.value = !1;
 			}
 		}
 		function H(e) {
-			k.value = e;
+			O.value = e;
 		}
-		async function ee() {
-			let e = k.value;
+		async function U() {
+			let e = O.value;
 			if (!(!e || A.value)) {
 				A.value = !0;
 				try {
-					await a.controller.remove_provider_profile(e.id), k.value = null;
+					await a.controller.remove_provider_profile(e.id), O.value = null;
 				} finally {
 					A.value = !1;
 				}
 			}
 		}
-		async function U(e) {
+		async function W(e) {
 			j.value.set(e.id, {
 				pending: !0,
 				label: null
@@ -1302,50 +1308,51 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 			j.value = new Map(j.value);
 		}
 		return (t, a) => (i(), s("div", {
-			class: v(l(B).section),
+			class: v(l(V).section),
 			"data-testid": "provider-profiles"
 		}, [
-			p("div", { class: v(l(B).section_header) }, [p("h2", { class: v(l(B).section_title) }, g(l(y)("settings.sections.provider_profiles")), 3), x(w, {
+			p("div", { class: v(l(V).section_header) }, [p("h2", { class: v(l(V).section_title) }, g(l(y)("settings.sections.provider_profiles")), 3), x(T, {
 				label: l(y)("settings.provider_profiles.add_action"),
+				variant: e.profiles.length === 0 ? "primary" : "secondary",
 				onClick: L
-			}, null, 8, ["label"])], 2),
-			x(T, {
+			}, null, 8, ["label", "variant"])], 2),
+			x(E, {
 				status: e.profiles.length === 0 ? "empty" : "ready",
 				"empty-message": l(y)("settings.provider_profiles.empty_description")
 			}, {
 				default: o(() => [p("div", null, [(i(!0), s(_, null, n(e.profiles, (e) => (i(), s("div", {
 					key: e.id,
-					class: v(l(B).profile_row),
+					class: v(l(V).profile_row),
 					"data-testid": "provider-profile-row"
-				}, [p("div", { class: v(l(B).profile_identity) }, [
-					p("span", { class: v(l(B).profile_name) }, g(e.display_name), 3),
-					p("span", { class: v(l(B).profile_meta) }, g(l($)(l(y), e.provider_id)), 3),
+				}, [p("div", { class: v(l(V).profile_identity) }, [
+					p("span", { class: v(l(V).profile_name) }, g(e.display_name), 3),
+					p("span", { class: v(l(V).profile_meta) }, g(l(se)(l(y), e.provider_id)), 3),
 					j.value.get(e.id)?.label ? (i(), s("span", {
 						key: 0,
-						class: v(l(B).profile_meta),
+						class: v(l(V).profile_meta),
 						"data-testid": "profile-test-result"
 					}, g(j.value.get(e.id)?.label), 3)) : d("", !0)
-				], 2), p("div", { class: v(l(B).profile_actions) }, [
+				], 2), p("div", { class: v(l(V).profile_actions) }, [
 					e.is_default ? (i(), s("span", {
 						key: 0,
-						class: v(l(B).badge)
+						class: v(l(V).badge)
 					}, g(l(y)("settings.provider_profiles.default_badge")), 3)) : d("", !0),
-					x(w, {
+					x(T, {
 						label: l(y)("settings.provider_profiles.connection_test_action"),
 						variant: "secondary",
 						pending: j.value.get(e.id)?.pending === !0,
-						onClick: (t) => U(e)
+						onClick: (t) => W(e)
 					}, null, 8, [
 						"label",
 						"pending",
 						"onClick"
 					]),
-					x(w, {
+					x(T, {
 						label: l(y)("common.actions.edit"),
 						variant: "secondary",
 						onClick: (t) => R(e)
 					}, null, 8, ["label", "onClick"]),
-					x(w, {
+					x(T, {
 						label: l(y)("common.actions.delete"),
 						variant: "destructive",
 						onClick: (t) => H(e)
@@ -1353,7 +1360,7 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 				], 2)], 2))), 128))])]),
 				_: 1
 			}, 8, ["status", "empty-message"]),
-			x(E, {
+			x(D, {
 				open: b.value,
 				title: S.value?.is_new ? l(y)("settings.provider_profiles.dialog_add_title") : l(y)("settings.provider_profiles.dialog_edit_title"),
 				"close-label": l(y)("common.actions.close"),
@@ -1361,9 +1368,9 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 			}, {
 				default: o(() => [S.value ? (i(), s("div", {
 					key: 0,
-					class: v(l(B).form_grid)
+					class: v(l(V).form_grid)
 				}, [
-					x(O, {
+					x(k, {
 						label: l(y)("common.labels.name"),
 						required: ""
 					}, {
@@ -1372,18 +1379,18 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 							"onUpdate:modelValue": a[0] ||= (e) => S.value.display_name = e,
 							type: "text",
 							"aria-describedby": t,
-							class: v(l(B).typed_confirm_input)
-						}, null, 10, se), [[c, S.value.display_name]])]),
+							class: v(l(V).typed_confirm_input)
+						}, null, 10, ce), [[c, S.value.display_name]])]),
 						_: 1
 					}, 8, ["label"]),
-					x(O, {
+					x(k, {
 						label: l(y)("settings.provider_profiles.provider_label"),
 						required: ""
 					}, {
-						default: o(({ fieldId: e }) => [x(N, {
+						default: o(({ fieldId: e }) => [x(P, {
 							id: e,
-							modelValue: I.value,
-							"onUpdate:modelValue": a[1] ||= (e) => I.value = e,
+							modelValue: N.value,
+							"onUpdate:modelValue": a[1] ||= (e) => N.value = e,
 							options: l(M),
 							placeholder: l(y)("settings.provider_profiles.provider_label")
 						}, null, 8, [
@@ -1394,7 +1401,7 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 						])]),
 						_: 1
 					}, 8, ["label"]),
-					x(O, {
+					x(k, {
 						label: l(y)("settings.provider_profiles.model_label"),
 						required: ""
 					}, {
@@ -1403,12 +1410,12 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 							"onUpdate:modelValue": a[2] ||= (e) => S.value.model_id = e,
 							type: "text",
 							"aria-describedby": t,
-							class: v(l(B).typed_confirm_input),
+							class: v(l(V).typed_confirm_input),
 							"data-testid": "provider-model-input"
-						}, null, 10, ce), [[c, S.value.model_id]])]),
+						}, null, 10, le), [[c, S.value.model_id]])]),
 						_: 1
 					}, 8, ["label"]),
-					S.value.provider_id === "comfyui" ? (i(), f(O, {
+					S.value.provider_id === "comfyui" ? (i(), f(k, {
 						key: 0,
 						label: l(y)("settings.provider_profiles.workflow_label"),
 						required: ""
@@ -1418,12 +1425,12 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 							"onUpdate:modelValue": a[3] ||= (e) => S.value.workflow_id = e,
 							type: "text",
 							"aria-describedby": t,
-							class: v(l(B).typed_confirm_input),
+							class: v(l(V).typed_confirm_input),
 							"data-testid": "provider-workflow-input"
-						}, null, 10, le), [[c, S.value.workflow_id]])]),
+						}, null, 10, ue), [[c, S.value.workflow_id]])]),
 						_: 1
 					}, 8, ["label"])) : d("", !0),
-					x(O, {
+					x(k, {
 						label: l(y)("settings.gateway.token_secret_label"),
 						hint: l(y)("provider.credentials.not_stored_locally")
 					}, {
@@ -1432,25 +1439,25 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 							"onUpdate:modelValue": a[4] ||= (e) => S.value.secret_reference = e,
 							type: "text",
 							"aria-describedby": t,
-							class: v(l(B).typed_confirm_input)
-						}, null, 10, ue), [[c, S.value.secret_reference]])]),
+							class: v(l(V).typed_confirm_input)
+						}, null, 10, de), [[c, S.value.secret_reference]])]),
 						_: 1
 					}, 8, ["label", "hint"]),
-					x(F, {
+					x(I, {
 						modelValue: S.value.is_default,
 						"onUpdate:modelValue": a[5] ||= (e) => S.value.is_default = e,
 						label: l(y)("settings.provider_profiles.set_default_action")
 					}, null, 8, ["modelValue", "label"]),
-					D.value ? (i(), s("p", {
+					w.value ? (i(), s("p", {
 						key: 1,
-						class: v([l(B).status_text, l(B).description]),
+						class: v([l(V).status_text, l(V).description]),
 						"data-tone": "error"
-					}, g(D.value), 3)) : d("", !0),
-					p("div", { class: v(l(B).actions_row) }, [x(w, {
+					}, g(w.value), 3)) : d("", !0),
+					p("div", { class: v(l(V).actions_row) }, [x(T, {
 						label: l(y)("common.actions.save"),
 						pending: C.value,
-						onClick: V
-					}, null, 8, ["label", "pending"]), x(w, {
+						onClick: B
+					}, null, 8, ["label", "pending"]), x(T, {
 						label: l(y)("common.actions.cancel"),
 						variant: "secondary",
 						onClick: z
@@ -1462,15 +1469,15 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 				"title",
 				"close-label"
 			]),
-			x(P, {
-				open: k.value !== null,
-				title: l(y)("settings.provider_profiles.remove_confirm_title", { name: k.value?.display_name ?? "" }),
+			x(F, {
+				open: O.value !== null,
+				title: l(y)("settings.provider_profiles.remove_confirm_title", { name: O.value?.display_name ?? "" }),
 				description: l(y)("settings.provider_profiles.remove_confirm_description"),
 				"confirm-label": l(y)("confirmations.destructive.default_confirm_action"),
 				"cancel-label": l(y)("confirmations.destructive.default_cancel_action"),
 				pending: A.value,
-				"onUpdate:open": a[7] ||= (e) => !e && (k.value = null),
-				onConfirm: ee
+				"onUpdate:open": a[7] ||= (e) => !e && (O.value = null),
+				onConfirm: U
 			}, null, 8, [
 				"open",
 				"title",
@@ -1481,7 +1488,10 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 			])
 		], 2));
 	}
-}), fe = { class: "tc-visually-hidden" }, pe = /* @__PURE__ */ b({
+}), pe = {
+	key: 0,
+	class: "tc-visually-hidden"
+}, me = /* @__PURE__ */ b({
 	__name: "SettingsView",
 	props: {
 		state: {},
@@ -1490,15 +1500,33 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 	setup(e) {
 		let { t } = m();
 		return (n, r) => (i(), s("div", {
-			class: v(l(B).view),
+			class: v(l(V).view),
 			"data-testid": "settings-view"
 		}, [
-			p("h1", fe, g(l(t)("nav.settings")), 1),
-			x(de, {
+			e.state.workbench.profiles.length > 0 ? (i(), s("h1", pe, g(l(t)("nav.settings")), 1)) : (i(), s("section", {
+				key: 1,
+				class: v(l(V).onboarding),
+				"data-testid": "settings-onboarding",
+				"aria-labelledby": "settings-onboarding-title"
+			}, [p("div", {
+				class: v(l(V).onboarding_icon),
+				"aria-hidden": "true"
+			}, [x(C, {
+				icon: l(w),
+				size: 22
+			}, null, 8, ["icon"])], 2), p("div", null, [
+				p("p", { class: v(l(V).onboarding_label) }, g(l(t)("settings.onboarding.label")), 3),
+				p("h1", {
+					id: "settings-onboarding-title",
+					class: v(l(V).onboarding_title)
+				}, g(l(t)("settings.onboarding.title")), 3),
+				p("p", { class: v(l(V).onboarding_description) }, g(l(t)("settings.onboarding.description")), 3)
+			])], 2)),
+			x(fe, {
 				profiles: e.state.workbench.profiles,
 				controller: e.controller
 			}, null, 8, ["profiles", "controller"]),
-			x(Q, {
+			x(oe, {
 				connections: e.state.llm_connections.connections,
 				loading: e.state.loading.has("llm_connections"),
 				controller: e.controller
@@ -1507,7 +1535,7 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 				"loading",
 				"controller"
 			]),
-			x(re, {
+			x(J, {
 				settings: e.state.settings.settings,
 				"connection-test-command": e.state.diagnostics.connection_test_command,
 				controller: e.controller
@@ -1516,15 +1544,15 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 				"connection-test-command",
 				"controller"
 			]),
+			x(U, {
+				settings: e.state.settings.settings,
+				controller: e.controller
+			}, null, 8, ["settings", "controller"]),
 			x(H, {
 				settings: e.state.settings.settings,
 				controller: e.controller
 			}, null, 8, ["settings", "controller"]),
-			x(V, {
-				settings: e.state.settings.settings,
-				controller: e.controller
-			}, null, 8, ["settings", "controller"]),
-			x(W, {
+			x(ne, {
 				"vocabulary-update-channel": e.state.settings.vocabulary_update_channel,
 				migration: e.state.diagnostics.migration,
 				"migration-retry-command": e.state.settings.migration_retry_command,
@@ -1539,4 +1567,4 @@ var se = ["id", "aria-describedby"], ce = ["id", "aria-describedby"], le = ["id"
 	}
 });
 //#endregion
-export { pe as default };
+export { me as default };

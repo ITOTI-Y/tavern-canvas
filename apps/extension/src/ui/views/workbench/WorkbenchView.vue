@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ImageGenerationRequest, Uuid } from "@tavern-canvas/contracts";
+import { Cable, Settings2 } from "lucide-vue-next";
 import { computed, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
+import AppIcon from "../../components/AppIcon.vue";
 import ToastViewport from "../../components/ToastViewport.vue";
 import type { GenerationSubmitCommand } from "../../contracts/ui_capabilities.js";
 import type { StudioState } from "../../contracts/view_models.js";
@@ -67,6 +69,13 @@ const active_profile = computed(
     props.state.workbench.profiles.find(
       (profile) => profile.id === props.state.workbench.active_profile_id,
     ) ?? null,
+);
+
+const setup_required = computed(
+  () =>
+    !props.state.loading.has("profiles") &&
+    !props.state.failures.has("profiles") &&
+    props.state.workbench.profiles.length === 0,
 );
 
 const validation_errors = computed(() => {
@@ -190,102 +199,158 @@ function handle_inspector_retry(): void {
 </script>
 
 <template>
-  <div :class="styles.workbench_view" data-testid="workbench-view">
-    <div :class="styles.main_column">
-      <ProviderSummary
-        :profiles="props.state.workbench.profiles"
-        :active-profile-id="props.state.workbench.active_profile_id"
-        :loading="props.state.loading.has('profiles')"
-        :has-error="props.state.failures.has('profiles')"
-        @select="(id) => emit('select-profile', id)"
-        @open-settings="emit('open-settings')"
-      />
-
-      <PromptComposer
-        v-model:positive-prompt="draft.positive_prompt"
-        v-model:negative-prompt="draft.negative_prompt"
-        v-model:image-count="draft.image_count"
-        :positive-error="
-          validation_touched && validation_errors.prompt ? validation_errors.prompt : null
-        "
-        :image-count-error="
-          validation_touched && validation_errors.image_count ? validation_errors.image_count : null
-        "
-      />
-
-      <ReferenceStrip
-        :references="draft.references"
-        :available="props.state.assets.records.reference"
-        :status="
-          props.state.loading.has('assets')
-            ? 'loading'
-            : props.state.failures.has('assets')
-              ? 'error'
-              : 'ready'
-        "
-        @add="add_reference"
-        @remove="remove_reference"
-        @reorder="reorder_reference"
-      />
-
-      <div :class="styles.submit_row">
+  <div
+    :class="[styles.workbench_view, setup_required && styles.workbench_view_setup]"
+    data-testid="workbench-view"
+  >
+    <section v-if="setup_required" :class="styles.setup_panel" data-testid="provider-setup-panel">
+      <div :class="styles.setup_intro">
+        <div :class="styles.setup_icon" aria-hidden="true">
+          <AppIcon :icon="Cable" :size="26" />
+        </div>
+        <p :class="styles.setup_label">{{ t("workbench.setup.label") }}</p>
+        <h1 :class="styles.setup_title">{{ t("workbench.setup.title") }}</h1>
+        <p :class="styles.setup_description">{{ t("workbench.setup.description") }}</p>
         <AppButton
-          :label="t('workbench.submit.action')"
+          :label="t('workbench.setup.action')"
+          :icon="Settings2"
           variant="primary"
-          :pending="props.state.workbench.submit_command.status === 'pending'"
-          data-testid="submit-generation"
-          @click="handle_submit"
+          data-testid="open-provider-settings"
+          @click="emit('open-settings')"
         />
-        <p
-          v-if="validation_touched && validation_errors.profile"
-          role="alert"
-          :class="styles.inline_error"
-          data-testid="validation-profile"
-        >
-          {{ validation_errors.profile }}
-        </p>
-        <p
-          v-if="validation_touched && validation_errors.provider"
-          role="alert"
-          :class="styles.inline_error"
-          data-testid="validation-provider"
-        >
-          {{ validation_errors.provider }}
-        </p>
-        <p
-          v-if="props.state.workbench.submit_command.status === 'error'"
-          role="alert"
-          :class="styles.inline_error"
-          data-testid="submit-error"
-        >
-          {{
-            t("errors.generation_failed", {
-              message: props.state.workbench.submit_command.failure.code,
-            })
-          }}
-        </p>
       </div>
 
-      <ActiveJobs
-        :jobs="props.state.workbench.jobs"
-        :loading="props.state.loading.has('generation')"
-        :has-error="props.state.failures.has('generation')"
-        :selected-job-id="selected_job_id"
-        @cancel="(id) => emit('cancel-job', id)"
-        @retry="(id) => emit('retry-job', id)"
-        @select="(id) => (selected_job_id = id)"
-      />
-    </div>
+      <ol :class="styles.setup_steps">
+        <li :class="[styles.setup_step, styles.setup_step_active]">
+          <span :class="styles.setup_step_index">1</span>
+          <div>
+            <h2 :class="styles.setup_step_title">{{ t("workbench.setup.steps.profile_title") }}</h2>
+            <p :class="styles.setup_step_description">
+              {{ t("workbench.setup.steps.profile_description") }}
+            </p>
+          </div>
+        </li>
+        <li :class="styles.setup_step">
+          <span :class="styles.setup_step_index">2</span>
+          <div>
+            <h2 :class="styles.setup_step_title">
+              {{ t("workbench.setup.steps.credentials_title") }}
+            </h2>
+            <p :class="styles.setup_step_description">
+              {{ t("workbench.setup.steps.credentials_description") }}
+            </p>
+          </div>
+        </li>
+        <li :class="styles.setup_step">
+          <span :class="styles.setup_step_index">3</span>
+          <div>
+            <h2 :class="styles.setup_step_title">{{ t("workbench.setup.steps.test_title") }}</h2>
+            <p :class="styles.setup_step_description">
+              {{ t("workbench.setup.steps.test_description") }}
+            </p>
+          </div>
+        </li>
+      </ol>
+    </section>
 
-    <div :class="styles.side_column">
-      <GenerationInspector
-        :job="selected_job"
-        :request="selected_job_request"
-        :preview-urls="props.previewUrls ?? {}"
-        @copy-parameters="handle_copy_parameters"
-        @retry="handle_inspector_retry"
-      />
-    </div>
+    <template v-else>
+      <div :class="styles.main_column">
+        <ProviderSummary
+          :profiles="props.state.workbench.profiles"
+          :active-profile-id="props.state.workbench.active_profile_id"
+          :loading="props.state.loading.has('profiles')"
+          :has-error="props.state.failures.has('profiles')"
+          @select="(id) => emit('select-profile', id)"
+          @open-settings="emit('open-settings')"
+        />
+
+        <PromptComposer
+          v-model:positive-prompt="draft.positive_prompt"
+          v-model:negative-prompt="draft.negative_prompt"
+          v-model:image-count="draft.image_count"
+          :positive-error="
+            validation_touched && validation_errors.prompt ? validation_errors.prompt : null
+          "
+          :image-count-error="
+            validation_touched && validation_errors.image_count
+              ? validation_errors.image_count
+              : null
+          "
+        />
+
+        <div :class="styles.submit_row">
+          <AppButton
+            :label="t('workbench.submit.action')"
+            variant="primary"
+            :pending="props.state.workbench.submit_command.status === 'pending'"
+            data-testid="submit-generation"
+            @click="handle_submit"
+          />
+          <p
+            v-if="validation_touched && validation_errors.profile"
+            role="alert"
+            :class="styles.inline_error"
+            data-testid="validation-profile"
+          >
+            {{ validation_errors.profile }}
+          </p>
+          <p
+            v-if="validation_touched && validation_errors.provider"
+            role="alert"
+            :class="styles.inline_error"
+            data-testid="validation-provider"
+          >
+            {{ validation_errors.provider }}
+          </p>
+          <p
+            v-if="props.state.workbench.submit_command.status === 'error'"
+            role="alert"
+            :class="styles.inline_error"
+            data-testid="submit-error"
+          >
+            {{
+              t("errors.generation_failed", {
+                message: props.state.workbench.submit_command.failure.code,
+              })
+            }}
+          </p>
+        </div>
+        <ReferenceStrip
+          :references="draft.references"
+          :available="props.state.assets.records.reference"
+          :status="
+            props.state.loading.has('assets')
+              ? 'loading'
+              : props.state.failures.has('assets')
+                ? 'error'
+                : 'ready'
+          "
+          @add="add_reference"
+          @remove="remove_reference"
+          @reorder="reorder_reference"
+        />
+
+        <ActiveJobs
+          :jobs="props.state.workbench.jobs"
+          :loading="props.state.loading.has('generation')"
+          :has-error="props.state.failures.has('generation')"
+          :selected-job-id="selected_job_id"
+          @cancel="(id) => emit('cancel-job', id)"
+          @retry="(id) => emit('retry-job', id)"
+          @select="(id) => (selected_job_id = id)"
+        />
+      </div>
+
+      <div :class="styles.side_column">
+        <GenerationInspector
+          :job="selected_job"
+          :request="selected_job_request"
+          :preview-urls="props.previewUrls ?? {}"
+          @copy-parameters="handle_copy_parameters"
+          @retry="handle_inspector_retry"
+        />
+      </div>
+    </template>
 
     <ToastViewport
       :toasts="toasts"

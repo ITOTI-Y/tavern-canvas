@@ -11,6 +11,7 @@ import styles from "./shell.module.css";
 const props = defineProps<{
   route: StudioRoute;
   inspectorCollapsed: boolean;
+  inspectorAvailable: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -34,10 +35,13 @@ function toggle_inspector(): void {
 <template>
   <header :class="styles.top_bar" data-window-drag-handle>
     <div :class="styles.top_bar_start">
+      <span :class="styles.top_bar_brand">{{ t("app.name") }}</span>
+      <span :class="styles.top_bar_divider" aria-hidden="true">/</span>
       <span :class="styles.top_bar_title">{{ title }}</span>
     </div>
     <div :class="styles.top_bar_end">
       <button
+        v-if="inspectorAvailable"
         type="button"
         class="tc-interactive"
         :class="styles.icon_button"

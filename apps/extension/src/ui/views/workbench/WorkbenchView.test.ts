@@ -165,7 +165,7 @@ describe("WorkbenchView: provider-profile selection", () => {
     expect(wrapper.emitted("select-profile")?.[0]).toEqual([PROFILE_COMFYUI.id]);
   });
 
-  it("shows a composed empty state and Open provider settings action when no profiles exist", () => {
+  it("shows the embedded service setup panel when no profiles exist", () => {
     const { wrapper } = mount_view({
       workbench: {
         profiles: [],
@@ -175,9 +175,11 @@ describe("WorkbenchView: provider-profile selection", () => {
       },
     });
 
-    expect(wrapper.text()).toContain("No provider profile selected");
-    const action = wrapper.find('[data-testid="open-provider-settings"]');
-    expect(action.exists()).toBe(true);
+    expect(wrapper.get('[data-testid="provider-setup-panel"]').text()).toContain(
+      "Connect a generation service before you create",
+    );
+    expect(wrapper.find('[data-testid="open-provider-settings"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="prompt-composer"]').exists()).toBe(false);
   });
 
   it("shows a load error state for the provider list when the profiles slice failed", () => {
@@ -353,7 +355,7 @@ describe("WorkbenchView: generation submission and validation", () => {
   it("blocks submission and shows an inline error when no profile is selected", async () => {
     const { wrapper } = mount_view({
       workbench: {
-        profiles: [],
+        profiles: [PROFILE_SD],
         active_profile_id: null,
         jobs: [],
         submit_command: IDLE_COMMAND_STATE,

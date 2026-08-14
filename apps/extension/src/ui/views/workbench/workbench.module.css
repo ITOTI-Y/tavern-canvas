@@ -7,15 +7,122 @@
 
 .workbench_view {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
   gap: 0;
   min-height: 100%;
+  background-color: var(--tc-canvas);
+}
+
+.workbench_view_setup {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.setup_panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  align-items: center;
+  gap: 40px;
+  min-height: 100%;
+  padding: 48px;
+}
+
+.setup_intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 560px;
+}
+
+.setup_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 24px;
+  color: var(--tc-accent);
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-image);
+}
+
+.setup_label {
+  margin-bottom: 8px;
+  color: var(--tc-accent);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.setup_title {
+  max-width: 18ch;
+  color: var(--tc-text);
+  font-size: 32px;
+  font-weight: 680;
+  line-height: 1.12;
+}
+
+.setup_description {
+  max-width: 52ch;
+  margin: 16px 0 24px;
+  color: var(--tc-text-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.setup_steps {
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+}
+
+.setup_step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 14px;
+  padding: 20px;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.setup_step:first-child {
+  border-top: none;
+}
+
+.setup_step_index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--tc-text-muted);
+  background-color: var(--tc-surface-raised);
+  border-radius: var(--tc-radius-status);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.setup_step_active .setup_step_index {
+  color: var(--tc-on-accent);
+  background-color: var(--tc-accent);
+}
+
+.setup_step_title {
+  color: var(--tc-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.setup_step_description {
+  margin-top: 4px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .main_column {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  background-color: var(--tc-surface);
   border-right: 1px solid var(--tc-divider);
 }
 
@@ -23,20 +130,44 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  background-color: var(--tc-surface);
 }
 
-/* Below use_shell_viewport.ts's DESKTOP_BREAKPOINT_PX (960px, the same constant the shell itself
-   switches desktop/mobile layout at): the inspector column has no room beside the composer, so it
-   moves into normal document flow below the main column instead of staying side-by-side and
-   forcing horizontal scroll/overflow. */
-@media (max-width: 959px) {
+/* The Studio workspace is a named size container. Workbench therefore responds to the width it
+   actually receives after the global inspector track is allocated, not the browser viewport. */
+@container studio-workspace (max-width: 760px) {
   .workbench_view {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .main_column {
     border-right: none;
-    border-bottom: 1px solid var(--tc-divider);
+  }
+
+  .side_column {
+    border-top: 1px solid var(--tc-divider);
+  }
+
+  .setup_panel {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 28px;
+    padding: 32px;
+  }
+}
+
+@container studio-workspace (max-width: 520px) {
+  .setup_panel {
+    padding: 24px 20px;
+  }
+
+  .setup_title {
+    font-size: 28px;
+  }
+
+  .provider_summary {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
   }
 }
 
@@ -44,12 +175,14 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
-  padding: 12px 16px 4px;
+  gap: 12px;
+  padding: 16px 20px 6px;
 }
 
 .section_title {
-  font-weight: 600;
+  color: var(--tc-text);
+  font-size: 13px;
+  font-weight: 650;
 }
 
 .section_hint {
@@ -68,21 +201,23 @@
 .prompt_composer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  gap: 16px;
+  padding: 20px;
+  background-color: var(--tc-surface);
   border-bottom: 1px solid var(--tc-divider);
 }
 
 .prompt_textarea {
   width: 100%;
-  min-height: 64px;
-  padding: 8px 10px;
+  min-height: 80px;
+  padding: 10px 12px;
   color: var(--tc-text);
-  background-color: var(--tc-surface);
+  background-color: var(--tc-canvas);
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-field);
   font-family: inherit;
   font-size: 14px;
+  line-height: 1.55;
   resize: vertical;
 }
 
@@ -94,7 +229,8 @@
 /* --------------------------------------------------------------------- Reference strip */
 
 .reference_strip {
-  padding-bottom: 16px;
+  padding-bottom: 20px;
+  background-color: var(--tc-surface);
   border-bottom: 1px solid var(--tc-divider);
 }
 
@@ -185,19 +321,34 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
-  padding: 12px 16px;
+  padding: 14px 20px;
+  background-color: var(--tc-surface-raised);
   border-bottom: 1px solid var(--tc-divider);
 }
 
 /* --------------------------------------------------------------------- Provider summary */
 
 .provider_summary {
-  padding-bottom: 12px;
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background-color: var(--tc-surface-raised);
   border-bottom: 1px solid var(--tc-divider);
 }
 
 .provider_content {
-  padding: 0px 16px;
+  min-width: 0;
+  padding: 0;
+}
+
+.provider_summary .section_header {
+  padding: 0;
+}
+
+.provider_content [role="combobox"] {
+  width: 100%;
 }
 
 .text_action_button {
@@ -212,7 +363,8 @@
 .active_jobs {
   flex: 1 1 auto;
   min-height: 0;
-  padding-bottom: 16px;
+  padding-bottom: 20px;
+  background-color: var(--tc-surface);
 }
 
 .job_list {
@@ -223,13 +375,15 @@
 .job_row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 10px 20px 10px 18px;
   border-top: 1px solid var(--tc-divider);
+  border-left: 2px solid transparent;
 }
 
 .job_row_selected {
   background-color: var(--tc-surface-raised);
+  border-left-color: var(--tc-accent);
 }
 
 /* `padding: 0` overrides the UA stylesheet's own `1px 6px` on `<button>`, which base.css's reset
@@ -282,7 +436,9 @@
 /* --------------------------------------------------------------------- Generation inspector */
 
 .generation_inspector {
-  padding-bottom: 16px;
+  min-height: 100%;
+  padding-bottom: 20px;
+  background-color: var(--tc-surface);
 }
 
 .inspector_field_list {

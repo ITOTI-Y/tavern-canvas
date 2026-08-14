@@ -9,22 +9,20 @@
  */
 
 :host {
-  --tc-canvas: #f4f5f7;
+  --tc-canvas: #edf0f5;
   --tc-surface: #ffffff;
-  --tc-surface-raised: #f8f9fb;
-  --tc-text: #181a1f;
-  --tc-text-muted: #616773;
-  --tc-divider: #d8dce3;
-  --tc-accent: #2457d6;
-  --tc-accent-hover: #1f49b8;
-  /* Foreground for text/icons sitting ON a solid --tc-accent fill (the primary button). It flips
-     with the theme because --tc-accent itself does: the light accent is dark enough to carry white
-     (6.16:1), the dark-mode accent is a light blue that does not (2.93:1, below AA) and needs dark
-     ink instead (6.34:1). style_contract.test.ts asserts both pairings against accent and
-     accent-hover, so neither accent value can drift without the contract catching it. */
+  --tc-surface-raised: #f3f6fa;
+  --tc-text: #141923;
+  --tc-text-muted: #596578;
+  --tc-divider: #ccd4df;
+  --tc-accent: #2f5af5;
+  --tc-accent-hover: #244bd6;
+  /* Foreground for text/icons sitting on a solid accent fill. The value changes with the theme
+     because the dark theme uses a lighter accent for visibility against the near-black canvas.
+     style_contract.test.ts checks both foreground pairings against accent and accent-hover. */
   --tc-on-accent: #ffffff;
-  --tc-success: #16815d;
-  --tc-warning: #9a6700;
+  --tc-success: #157b59;
+  --tc-warning: #946100;
   --tc-error: #c23838;
   /* --tc-success/--tc-warning/--tc-error are calibrated as foreground (text/icon/border) colors
      against --tc-surface and --tc-surface-raised (WCAG AA, see style_contract.test.ts). On bare
@@ -74,15 +72,15 @@
 }
 
 :host([data-color-mode="dark"]) {
-  --tc-canvas: #111318;
-  --tc-surface: #181b21;
-  --tc-surface-raised: #20242b;
-  --tc-text: #f4f5f7;
-  --tc-text-muted: #aeb4bf;
-  --tc-divider: #343a44;
-  --tc-accent: #6f91ff;
-  --tc-accent-hover: #7d9cff;
-  --tc-on-accent: #111318;
+  --tc-canvas: #080b10;
+  --tc-surface: #10151c;
+  --tc-surface-raised: #181f29;
+  --tc-text: #f5f7fa;
+  --tc-text-muted: #9ca8b8;
+  --tc-divider: #2b3441;
+  --tc-accent: #7898ff;
+  --tc-accent-hover: #8aa6ff;
+  --tc-on-accent: #080b10;
   --tc-success: #45c995;
   --tc-warning: #e8b44e;
   --tc-error: #ff7b7b;

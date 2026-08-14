@@ -109,6 +109,20 @@ const workbench = {
     negative_placeholder: "描述需要避免出现的内容",
     image_count_label: "生成张数",
   },
+  setup: {
+    label: "服务配置",
+    title: "连接图像生成服务，开始创作",
+    description: "添加 provider 配置并验证连接。服务可用后，工作台会自动显示完整创作界面。",
+    action: "配置生成服务",
+    steps: {
+      profile_title: "创建 provider 配置",
+      profile_description: "选择图像生成后端和要使用的模型。",
+      credentials_title: "填写端点和凭据",
+      credentials_description: "在设置中保存连接信息和密钥引用。",
+      test_title: "验证服务连接",
+      test_description: "运行 provider 连接测试，然后返回工作台开始生成。",
+    },
+  },
   reference_strip: {
     title: "参考图",
     empty_title: "还没有参考图",
@@ -506,6 +520,12 @@ const diagnostics = {
 };
 
 const settings = {
+  onboarding: {
+    label: "首次连接",
+    title: "配置用于生成图片的服务",
+    description:
+      "先创建 provider 配置。仅当 provider 需要 Gateway 时再填写端点，最后运行连接测试。",
+  },
   sections: {
     provider_profiles: "Provider 配置",
     llm_connections: "文本模型连接",

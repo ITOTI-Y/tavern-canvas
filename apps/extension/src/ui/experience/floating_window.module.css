@@ -2,17 +2,17 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: min(960px, calc(100vw - 40px));
-  height: min(720px, calc(100dvh - 96px));
-  min-height: 520px;
+  width: min(1180px, calc(100vw - 40px));
+  height: min(780px, calc(100dvh - 80px));
+  min-height: 560px;
   overflow: hidden;
   color: var(--tc-text);
   background-color: var(--tc-canvas);
-  border: 1px solid color-mix(in srgb, var(--tc-divider) 88%, var(--tc-text) 12%);
+  border: 1px solid color-mix(in srgb, var(--tc-divider) 78%, var(--tc-text) 22%);
   border-radius: 12px;
   box-shadow:
-    0 24px 72px rgb(17 19 24 / 24%),
-    0 4px 16px rgb(17 19 24 / 14%);
+    0 32px 96px rgb(8 11 16 / 30%),
+    0 8px 28px rgb(8 11 16 / 18%);
   transform: translate3d(var(--tc-floating-window-x, 20px), var(--tc-floating-window-y, 64px), 0);
   pointer-events: auto;
   isolation: isolate;
@@ -25,9 +25,8 @@
 
 .window[data-dragging="true"] {
   box-shadow:
-    0 32px 88px rgb(17 19 24 / 30%),
-    0 8px 24px rgb(17 19 24 / 18%);
-  transition: none;
+    0 40px 112px rgb(8 11 16 / 36%),
+    0 12px 36px rgb(8 11 16 / 22%);
   user-select: none;
 }
 
