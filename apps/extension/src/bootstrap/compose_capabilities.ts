@@ -57,7 +57,12 @@ import { HostMessagePort } from "../modules/generation/message_binding_module.js
 import { TauriChatSurfaceModule } from "../modules/tauri/chat_surface_module.js";
 import { TauriWorldInfoActivationModule } from "../modules/tauri/world_info_activation_module.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
+import { SecretBackendRouter } from "../host/secret_backend_router.js";
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
+import {
+  create_browser_secret_vault,
+  type BrowserSecretVaultPort,
+} from "../storage/browser_secret_vault.js";
 import type { ProviderFetch } from "../transport/browser_fetch.js";
 import { DirectCloudTransport, DirectLlmTransport } from "../transport/direct_cloud_transport.js";
 import { LocalDirectTransport } from "../transport/local_direct_transport.js";
@@ -121,6 +126,7 @@ export interface ComposeCapabilitiesOptions {
   readonly message_port?: MessagePort | null;
   /** The single network boundary: swapped in tests so the whole job path stays real. */
   readonly provider_fetch?: ProviderFetch;
+  readonly create_browser_secret_vault?: (globals: unknown) => BrowserSecretVaultPort | null;
 }
 
 export interface VocabularyWorkerLike {
@@ -151,7 +157,7 @@ const HOST_UNAVAILABLE = "No usable SillyTavern + TavernHelper host pair was det
 const SETTINGS_HOST_UNAVAILABLE =
   "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair";
 const SECRET_VAULT_UNAVAILABLE =
-  "This host exposes no secret vault that both stores and reveals a credential, so a text-LLM connection could not be authenticated";
+  "The selected credential storage backend cannot both store and reveal a credential";
 
 function default_estimate_storage(): Promise<{ usage?: number; quota?: number } | undefined> {
   return navigator.storage.estimate();
@@ -338,8 +344,27 @@ export async function compose_studio_capabilities(
     settings_host === null ? null : create_sillytavern_settings(settings_host);
   const namespace = (): string => settings_adapter?.get_settings().active_namespace ?? "primary";
   const now = (): string => new Date().toISOString();
-  const secrets = read_secret_destination(globals);
-  const secret_resolver = read_secret_resolver(globals);
+  const host_secret_destination = read_secret_destination(globals);
+  const host_secret_resolver = read_secret_resolver(globals);
+  let browser_secret_vault: BrowserSecretVaultPort | null;
+  try {
+    browser_secret_vault = (options.create_browser_secret_vault ?? create_browser_secret_vault)(
+      globals,
+    );
+  } catch {
+    browser_secret_vault = null;
+  }
+  if (browser_secret_vault !== null) {
+    teardown.push(() => browser_secret_vault.close());
+  }
+  const secret_router = new SecretBackendRouter({
+    mode: () => settings_adapter?.get_settings().credential_storage_mode ?? "host",
+    host_destination: host_secret_destination,
+    host_resolver: host_secret_resolver,
+    browser_vault: browser_secret_vault,
+  });
+  const secrets = secret_router.has_destination ? secret_router : null;
+  const secret_resolver = secret_router.has_resolver ? secret_router : null;
   const repositories = database === null ? null : create_business_repositories(database);
   const timeline = new TaskTimeline();
   let provider_adapters: Promise<
@@ -400,6 +425,7 @@ export async function compose_studio_capabilities(
             database,
             extension_version,
             secrets,
+            browser_secret_vault,
           }),
         ),
     fallback.settings,

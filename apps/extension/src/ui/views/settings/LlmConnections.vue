@@ -18,8 +18,8 @@ import styles from "./settings.module.css";
 /**
  * Text-LLM connection management. The form has no endpoint, header, or credential field: the
  * origin is host-resolved, the route is chosen from the dialect's own catalog, and the credential
- * travels through a separate action that hands it to host secret storage and keeps only a
- * reference. That is why "save" and "set credential" are two buttons rather than one form.
+ * travels through a separate action to the selected credential backend. Only its reference enters
+ * application state. That is why "save" and "set credential" are separate buttons.
  */
 const props = defineProps<{
   readonly connections: readonly LlmConnectionProfile[];
@@ -223,7 +223,7 @@ async function submit_credential(): Promise<void> {
     await props.controller.set_llm_connection_credential(target.id, credential_value.value);
     close_credential_dialog();
   } catch {
-    credential_error.value = t("errors.unexpected");
+    credential_error.value = t("settings.credential_storage.unlock_required");
   } finally {
     credential_pending.value = false;
     credential_value.value = "";
@@ -231,7 +231,13 @@ async function submit_credential(): Promise<void> {
 }
 
 async function clear_credential(connection: LlmConnectionProfile): Promise<void> {
-  await props.controller.clear_llm_connection_credential(connection.id);
+  try {
+    await props.controller.clear_llm_connection_credential(connection.id);
+  } catch {
+    credential_target.value = connection;
+    credential_value.value = "";
+    credential_error.value = t("settings.credential_storage.unlock_required");
+  }
 }
 
 async function run_connection_test(connection: LlmConnectionProfile): Promise<void> {

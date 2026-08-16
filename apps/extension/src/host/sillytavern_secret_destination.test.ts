@@ -54,6 +54,24 @@ describe("SillyTavernSecretDestination", () => {
       }),
     });
   });
+  it("deletes the active secret through SillyTavern's secret API", async () => {
+    const fetch_ = fetch_returning({
+      "/api/secrets/delete": () => ({
+        ok: true,
+        status: 204,
+        json: async () => ({}),
+      }),
+    });
+    const destination = new SillyTavernSecretDestination(context(), fetch_);
+
+    await destination.delete_secret("tavern_canvas:ns:profile:novelai_token");
+
+    expect(fetch_).toHaveBeenCalledWith("/api/secrets/delete", {
+      method: "POST",
+      headers: { "X-CSRF-TOKEN": "csrf-token" },
+      body: JSON.stringify({ key: "tavern_canvas:ns:profile:novelai_token" }),
+    });
+  });
 
   it("binds the browser fetch receiver before calling the native API", async () => {
     const fetch_ = vi.fn<SillyTavernFetch>(function (this: unknown) {

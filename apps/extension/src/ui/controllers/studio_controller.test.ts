@@ -91,6 +91,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   schema_version: 1,
   active_namespace: "default",
   locale: "auto",
+  credential_storage_mode: "host",
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
@@ -133,6 +134,7 @@ const NOT_REQUIRED_MIGRATION_SNAPSHOT: MigrationSnapshot = {
 const DEFAULT_SETTINGS_SNAPSHOT: SettingsSnapshot = {
   settings: DEFAULT_SETTINGS,
   vocabulary_update_channel: "bundled",
+  browser_secret_vault: { state: "unavailable", secret_count: 0 },
 };
 
 function harness<TLoad, TEvent>(): {
@@ -165,6 +167,8 @@ function build_mock_studio() {
     subscribe: profiles_harness.sub.subscribe,
     save: vi.fn(),
     remove: vi.fn(),
+    set_credential: vi.fn(),
+    clear_credential: vi.fn(),
     test_connection: vi.fn(),
   };
 
@@ -271,6 +275,10 @@ function build_mock_studio() {
     acknowledge_http_origin: vi.fn(),
     set_gateway_token: vi.fn(),
     clear_gateway_token: vi.fn(),
+    initialize_browser_secret_vault: vi.fn(),
+    unlock_browser_secret_vault: vi.fn(),
+    lock_browser_secret_vault: vi.fn(),
+    reset_browser_secret_vault: vi.fn(),
     set_vocabulary_update_channel: vi.fn(),
     import_vocabulary_package: vi.fn(),
     cancel_vocabulary_import: vi.fn(),
@@ -408,6 +416,7 @@ describe("create_studio_controller", () => {
         provider_id: "sd_webui",
         display_name: "Local SD",
         is_default: true,
+        credential_reference: null,
         updated_at: "2026-01-01T00:00:00Z",
       },
     ]);
@@ -439,6 +448,7 @@ describe("create_studio_controller", () => {
         provider_id: "novelai",
         display_name: "NovelAI",
         is_default: false,
+        credential_reference: null,
         updated_at: "2026-01-02T00:00:00Z",
       },
     });
@@ -701,6 +711,7 @@ describe("create_studio_controller: Task 5 command extensions", () => {
       model_id: "nai-diffusion-4-5-full",
       workflow_id: null,
       is_default: true,
+      credential_reference: null,
       updated_at: "2026-08-10T00:00:00Z",
     });
 
@@ -712,13 +723,61 @@ describe("create_studio_controller: Task 5 command extensions", () => {
       workflow_id: null,
       is_default: true,
       updated_at: "2026-08-10T00:00:00Z",
-      secret_reference: null,
     });
 
     expect(mock.capabilities.settings.update).toHaveBeenCalledWith({
       active_provider_profile_id: PROFILE_ID,
     });
     expect(controller.state.workbench.active_profile_id).toBe(PROFILE_ID);
+  });
+  it("keeps a vault passphrase out of state while applying the returned vault status", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+    vi.mocked(mock.capabilities.settings.initialize_browser_secret_vault).mockResolvedValue({
+      state: "unlocked",
+      secret_count: 0,
+    });
+
+    await controller.initialize_browser_secret_vault("correct horse battery staple");
+
+    expect(mock.capabilities.settings.initialize_browser_secret_vault).toHaveBeenCalledWith(
+      "correct horse battery staple",
+    );
+    expect(controller.state.settings.browser_secret_vault).toEqual({
+      state: "unlocked",
+      secret_count: 0,
+    });
+    expect(JSON.stringify(controller.state)).not.toContain("correct horse battery staple");
+  });
+  it("refreshes vault state when the credential storage mode changes", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+
+    const settings = {
+      ...DEFAULT_SETTINGS,
+      credential_storage_mode: "browser_encrypted" as const,
+    };
+    vi.mocked(mock.capabilities.settings.update).mockResolvedValue(settings);
+    vi.mocked(mock.capabilities.settings.load).mockResolvedValue({
+      settings,
+      vocabulary_update_channel: settings.vocabulary_update_channel,
+      browser_secret_vault: { state: "locked", secret_count: 2 },
+    });
+
+    await controller.update_settings({ credential_storage_mode: "browser_encrypted" });
+
+    expect(mock.capabilities.settings.load).toHaveBeenCalledTimes(2);
+    expect(controller.state.settings.settings).toEqual(settings);
+    expect(controller.state.settings.browser_secret_vault).toEqual({
+      state: "locked",
+      secret_count: 2,
+    });
   });
 
   it("selects a prompt preset by loading its draft, then keeps edits local until save", async () => {

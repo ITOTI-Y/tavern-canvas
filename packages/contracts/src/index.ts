@@ -95,6 +95,8 @@ export { TavernCanvasMessageMetadataSchema } from "./message.js";
 export type { TavernCanvasMessageMetadata } from "./message.js";
 
 export {
+  PROVIDER_CREDENTIAL_KIND,
+  derive_provider_credential_reference,
   BaseImageGenerationRequestSchema,
   GeneratedAssetSchema,
   ImageGenerationRequestSchema,
@@ -138,6 +140,7 @@ export type {
 } from "./providers/index.js";
 
 export {
+  CredentialStorageModeSchema,
   GATEWAY_CREDENTIAL_KIND,
   GatewaySettingsSchema,
   NormalizedOriginSchema,
@@ -146,6 +149,7 @@ export {
   derive_gateway_credential_reference,
 } from "./settings.js";
 export type {
+  CredentialStorageMode,
   GatewaySettings,
   NormalizedOrigin,
   TavernCanvasSettings,

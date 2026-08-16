@@ -8,6 +8,7 @@ import type { StudioState } from "../../contracts/view_models.js";
 import AppearanceSettings from "./AppearanceSettings.vue";
 import AutomationSettings from "./AutomationSettings.vue";
 import DataSettings from "./DataSettings.vue";
+import CredentialStorageSettings from "./CredentialStorageSettings.vue";
 import GatewaySettings from "./GatewaySettings.vue";
 import LlmConnections from "./LlmConnections.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
@@ -53,6 +54,12 @@ const { t } = useI18n();
         </p>
       </div>
     </section>
+
+    <CredentialStorageSettings
+      :settings="state.settings.settings"
+      :vault-status="state.settings.browser_secret_vault"
+      :controller="controller"
+    />
 
     <ProviderProfiles :profiles="state.workbench.profiles" :controller="controller" />
 

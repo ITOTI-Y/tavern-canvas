@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { Sha256Schema } from "./generation.js";
-import { AssetIdSchema, RequestIdSchema } from "./ids.js";
+import { AssetIdSchema, RequestIdSchema, VaultReferenceSchema } from "./ids.js";
 import { BaseImageGenerationRequestFields, ProviderSeedSchema } from "./providers/common.js";
 import {
   ComfyUiRequestSchema,
@@ -19,6 +19,16 @@ export const ProviderIdSchema = z.enum([
   "google_image",
 ]);
 export type ProviderId = z.infer<typeof ProviderIdSchema>;
+export const PROVIDER_CREDENTIAL_KIND = "provider_api_key" as const;
+
+export function derive_provider_credential_reference(
+  namespace: string,
+  profile_id: string,
+): string {
+  return VaultReferenceSchema.parse(
+    `tavern_canvas:${namespace}:${profile_id}:${PROVIDER_CREDENTIAL_KIND}`,
+  );
+}
 
 export const ProviderCapabilitySchema = z.enum([
   "text_to_image",

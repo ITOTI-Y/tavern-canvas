@@ -72,7 +72,7 @@ const SETTINGS_SCHEMA: readonly SettingsFieldDescriptor[] = [
   },
   {
     path: "gateway.token_secret_id",
-    help: "Reference to the Gateway auth token in host secret storage.",
+    help: "Reference to the Gateway auth token in the selected credential storage.",
     writable: false,
     secret: true,
   },

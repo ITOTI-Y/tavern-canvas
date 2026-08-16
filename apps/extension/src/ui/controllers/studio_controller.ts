@@ -135,14 +135,23 @@ export interface StudioController {
   save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary>;
   remove_provider_profile(profile_id: Uuid): Promise<void>;
   test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
+  set_provider_profile_credential(
+    profile_id: Uuid,
+    plaintext_value: string,
+  ): Promise<ProviderProfileSummary>;
+  clear_provider_profile_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
   /** Re-fetches the settings snapshot after acknowledging, so `state.settings.settings.gateway
    * .http_acknowledgments` reflects the host adapter's own persisted timestamp rather than a
    * client-guessed one. */
   acknowledge_http_origin(origin: string): Promise<void>;
-  /** Stores the Gateway bearer token in host secret storage and refreshes the settings snapshot
-   * so the view renders the persisted reference rather than a client-guessed one. */
+  /** Stores the Gateway bearer token in the selected credential backend and refreshes settings so
+   * the view renders the persisted reference rather than a client-guessed one. */
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
+  initialize_browser_secret_vault(passphrase: string): Promise<void>;
+  unlock_browser_secret_vault(passphrase: string): Promise<void>;
+  lock_browser_secret_vault(): Promise<void>;
+  reset_browser_secret_vault(): Promise<void>;
   set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
   import_vocabulary_package(
     file: Blob,
@@ -201,8 +210,8 @@ export interface StudioController {
   select_llm_connection(connection_id: Uuid | null): void;
   save_llm_connection(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
   remove_llm_connection(connection_id: Uuid): Promise<void>;
-  /** The plaintext argument reaches host secret storage and nothing else; state only ever holds
-   * the reference the capability resolves with. */
+  /** The plaintext argument reaches the selected credential backend and nothing else; state only
+   * ever holds the reference the capability resolves with. */
   set_llm_connection_credential(
     connection_id: Uuid,
     plaintext_value: string,
@@ -374,6 +383,7 @@ function create_initial_state(
     settings: {
       settings: null,
       vocabulary_update_channel: null,
+      browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
       migration_retry_command: IDLE_COMMAND_STATE,
     },
@@ -806,6 +816,7 @@ class StudioControllerImpl implements StudioController {
           this.#patch_settings({
             settings: snapshot.settings,
             vocabulary_update_channel: snapshot.vocabulary_update_channel,
+            browser_secret_vault: snapshot.browser_secret_vault,
           });
         },
       ),
@@ -1001,8 +1012,17 @@ class StudioControllerImpl implements StudioController {
       },
       async () => {
         const settings = await this.#capabilities.settings.update(partial);
-        this.#patch_settings({ settings });
-        return settings;
+        if (partial.credential_storage_mode === undefined) {
+          this.#patch_settings({ settings });
+          return settings;
+        }
+        const snapshot = await this.#capabilities.settings.load();
+        this.#patch_settings({
+          settings: snapshot.settings,
+          vocabulary_update_channel: snapshot.vocabulary_update_channel,
+          browser_secret_vault: snapshot.browser_secret_vault,
+        });
+        return snapshot.settings;
       },
     );
   }
@@ -1076,6 +1096,28 @@ class StudioControllerImpl implements StudioController {
   test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult> {
     return this.#capabilities.profiles.test_connection(profile_id);
   }
+  async set_provider_profile_credential(
+    profile_id: Uuid,
+    plaintext_value: string,
+  ): Promise<ProviderProfileSummary> {
+    const profile = await this.#capabilities.profiles.set_credential(profile_id, plaintext_value);
+    if (!this.#stopped) {
+      this.#patch_workbench({
+        profiles: upsert_by_id(this.#state.workbench.profiles, profile, (item) => item.id),
+      });
+    }
+    return profile;
+  }
+
+  async clear_provider_profile_credential(profile_id: Uuid): Promise<ProviderProfileSummary> {
+    const profile = await this.#capabilities.profiles.clear_credential(profile_id);
+    if (!this.#stopped) {
+      this.#patch_workbench({
+        profiles: upsert_by_id(this.#state.workbench.profiles, profile, (item) => item.id),
+      });
+    }
+    return profile;
+  }
 
   acknowledge_http_origin(origin: string): Promise<void> {
     return this.#reload_settings(this.#capabilities.settings.acknowledge_http_origin(origin));
@@ -1088,6 +1130,33 @@ class StudioControllerImpl implements StudioController {
   clear_gateway_token(): Promise<void> {
     return this.#reload_settings(this.#capabilities.settings.clear_gateway_token());
   }
+  async initialize_browser_secret_vault(passphrase: string): Promise<void> {
+    const status = await this.#capabilities.settings.initialize_browser_secret_vault(passphrase);
+    if (!this.#stopped) {
+      this.#patch_settings({ browser_secret_vault: status });
+    }
+  }
+
+  async unlock_browser_secret_vault(passphrase: string): Promise<void> {
+    const status = await this.#capabilities.settings.unlock_browser_secret_vault(passphrase);
+    if (!this.#stopped) {
+      this.#patch_settings({ browser_secret_vault: status });
+    }
+  }
+
+  async lock_browser_secret_vault(): Promise<void> {
+    const status = await this.#capabilities.settings.lock_browser_secret_vault();
+    if (!this.#stopped) {
+      this.#patch_settings({ browser_secret_vault: status });
+    }
+  }
+
+  async reset_browser_secret_vault(): Promise<void> {
+    const status = await this.#capabilities.settings.reset_browser_secret_vault();
+    if (!this.#stopped) {
+      this.#patch_settings({ browser_secret_vault: status });
+    }
+  }
 
   async #reload_settings(pending: Promise<void>): Promise<void> {
     await pending;
@@ -1098,6 +1167,7 @@ class StudioControllerImpl implements StudioController {
     this.#patch_settings({
       settings: snapshot.settings,
       vocabulary_update_channel: snapshot.vocabulary_update_channel,
+      browser_secret_vault: snapshot.browser_secret_vault,
     });
   }
 

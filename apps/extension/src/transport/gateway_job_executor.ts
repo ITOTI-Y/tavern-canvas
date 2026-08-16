@@ -27,8 +27,8 @@ export interface GatewayJobExecutorDeps extends GeneratedImageStoreDeps {
   readonly endpoint: string;
   readonly http_acknowledgments: Readonly<Record<string, string>>;
   /**
-   * Resolved from host secret storage once per job. The plaintext token lives no longer than the
-   * `GatewayTransport` that carries it, which is discarded when the job settles.
+   * Resolved from the selected credential storage once per job. The plaintext token lives no
+   * longer than the `GatewayTransport` that carries it, which is discarded when the job settles.
    */
   readonly access_token: () => Promise<string>;
   readonly plans: MediaExecutionPlanRegistry;

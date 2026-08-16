@@ -29,7 +29,6 @@ interface DraftForm {
   display_name: string;
   model_id: string;
   workflow_id: string;
-  secret_reference: string;
   is_default: boolean;
 }
 
@@ -40,6 +39,10 @@ const save_error = ref<string | null>(null);
 
 const remove_target = ref<ProviderProfileSummary | null>(null);
 const remove_pending = ref(false);
+const credential_target = ref<ProviderProfileSummary | null>(null);
+const credential_value = ref("");
+const credential_pending = ref(false);
+const credential_error = ref<string | null>(null);
 
 /** Row-scoped connection-test feedback, keyed by profile id -- deliberately local component
  * state, not shared StudioState (see studio_controller.ts's "additive command surface" note):
@@ -75,7 +78,6 @@ function open_add_dialog(): void {
     display_name: "",
     model_id: "",
     workflow_id: "",
-    secret_reference: "",
     is_default: props.profiles.length === 0,
   };
   save_error.value = null;
@@ -90,7 +92,6 @@ function open_edit_dialog(profile: ProviderProfileSummary): void {
     display_name: profile.display_name,
     model_id: profile.model_id ?? "",
     workflow_id: profile.workflow_id ?? "",
-    secret_reference: "",
     is_default: profile.is_default,
   };
   save_error.value = null;
@@ -134,8 +135,6 @@ async function submit_draft(): Promise<void> {
           : null,
       is_default: current.is_default,
       updated_at: new Date().toISOString(),
-      secret_reference:
-        current.secret_reference.trim().length > 0 ? current.secret_reference : null,
     });
     close_dialog();
   } catch {
@@ -160,6 +159,55 @@ async function confirm_remove(): Promise<void> {
     remove_target.value = null;
   } finally {
     remove_pending.value = false;
+  }
+}
+function provider_requires_credential(provider_id: ProviderId): boolean {
+  return (
+    provider_id === "novelai" || provider_id === "openai_image" || provider_id === "google_image"
+  );
+}
+
+function open_credential_dialog(profile: ProviderProfileSummary): void {
+  credential_target.value = profile;
+  credential_value.value = "";
+  credential_error.value = null;
+}
+
+function close_credential_dialog(): void {
+  credential_target.value = null;
+  credential_value.value = "";
+  credential_error.value = null;
+}
+
+async function submit_credential(): Promise<void> {
+  const target = credential_target.value;
+  if (!target || credential_pending.value) {
+    return;
+  }
+  if (credential_value.value.trim().length === 0) {
+    credential_error.value = t("errors.validation_required");
+    return;
+  }
+  credential_pending.value = true;
+  credential_error.value = null;
+  try {
+    await props.controller.set_provider_profile_credential(target.id, credential_value.value);
+    close_credential_dialog();
+  } catch {
+    credential_error.value = t("settings.credential_storage.unlock_required");
+  } finally {
+    credential_pending.value = false;
+    credential_value.value = "";
+  }
+}
+
+async function clear_credential(profile: ProviderProfileSummary): Promise<void> {
+  try {
+    await props.controller.clear_provider_profile_credential(profile.id);
+  } catch {
+    credential_target.value = profile;
+    credential_value.value = "";
+    credential_error.value = t("settings.credential_storage.unlock_required");
   }
 }
 
@@ -208,6 +256,16 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               provider_type_label(t, profile.provider_id)
             }}</span>
             <span
+              v-if="provider_requires_credential(profile.provider_id)"
+              :class="styles.profile_meta"
+            >
+              {{
+                profile.credential_reference
+                  ? t("settings.provider_profiles.credential_set")
+                  : t("settings.provider_profiles.credential_unset")
+              }}
+            </span>
+            <span
               v-if="test_state.get(profile.id)?.label"
               :class="styles.profile_meta"
               data-testid="profile-test-result"
@@ -224,6 +282,21 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               variant="secondary"
               :pending="test_state.get(profile.id)?.pending === true"
               @click="run_connection_test(profile)"
+            />
+            <AppButton
+              v-if="provider_requires_credential(profile.provider_id)"
+              :label="t('settings.provider_profiles.set_credential_action')"
+              variant="secondary"
+              @click="open_credential_dialog(profile)"
+            />
+            <AppButton
+              v-if="
+                provider_requires_credential(profile.provider_id) &&
+                profile.credential_reference !== null
+              "
+              :label="t('settings.provider_profiles.clear_credential_action')"
+              variant="secondary"
+              @click="clear_credential(profile)"
             />
             <AppButton
               :label="t('common.actions.edit')"
@@ -300,20 +373,6 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
             />
           </template>
         </FieldGroup>
-        <FieldGroup
-          :label="t('settings.gateway.token_secret_label')"
-          :hint="t('provider.credentials.not_stored_locally')"
-        >
-          <template #default="{ fieldId, describedBy }">
-            <input
-              :id="fieldId"
-              v-model="draft.secret_reference"
-              type="text"
-              :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
-            />
-          </template>
-        </FieldGroup>
         <AppSwitch
           v-model="draft.is_default"
           :label="t('settings.provider_profiles.set_default_action')"
@@ -331,6 +390,49 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
             :label="t('common.actions.cancel')"
             variant="secondary"
             @click="close_dialog"
+          />
+        </div>
+      </div>
+    </AppDialog>
+    <AppDialog
+      :open="credential_target !== null"
+      :title="
+        t('settings.provider_profiles.credential_dialog_title', {
+          name: credential_target?.display_name ?? '',
+        })
+      "
+      :description="t('settings.provider_profiles.credential_dialog_description')"
+      :close-label="t('common.actions.close')"
+      @update:open="(open) => !open && close_credential_dialog()"
+    >
+      <div :class="styles.form_grid">
+        <FieldGroup
+          :label="t('settings.provider_profiles.credential_label')"
+          :error="credential_error"
+          required
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="credential_value"
+              type="password"
+              autocomplete="new-password"
+              :aria-describedby="describedBy"
+              :class="styles.typed_confirm_input"
+              data-testid="provider-credential-input"
+            />
+          </template>
+        </FieldGroup>
+        <div :class="styles.actions_row">
+          <AppButton
+            :label="t('common.actions.save')"
+            :pending="credential_pending"
+            @click="submit_credential"
+          />
+          <AppButton
+            :label="t('common.actions.cancel')"
+            variant="secondary"
+            @click="close_credential_dialog"
           />
         </div>
       </div>

@@ -185,6 +185,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       schema_version: 1,
       active_namespace: "primary",
       locale: "auto",
+      credential_storage_mode: "host",
       active_provider_profile_id: options.active_provider_profile_id,
       global_concurrency: 2,
       auto_generation_enabled: false,

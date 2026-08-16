@@ -80,6 +80,10 @@ function create_secrets_fetch() {
       vault.set(request.key, request.value ?? "");
       return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ id: "1" }) });
     }
+    if (route === "/api/secrets/delete" && request.key !== undefined) {
+      vault.delete(request.key);
+      return Promise.resolve({ ok: true, status: 204, json: () => Promise.resolve({}) });
+    }
     if (route === "/api/secrets/view") {
       return Promise.resolve({
         ok: true,
@@ -317,7 +321,6 @@ describe("compose_studio_capabilities", () => {
       workflow_id: null,
       is_default: true,
       updated_at: "",
-      secret_reference: null,
     });
 
     expect(saved).toMatchObject({ display_name: "Local SD", model_id: "sdxl-base" });
@@ -330,6 +333,21 @@ describe("compose_studio_capabilities", () => {
         is_default: true,
       },
     ]);
+    await expect(
+      composition.capabilities.profiles.set_credential(profile_id, "   "),
+    ).rejects.toBeInstanceOf(TypeError);
+    const configured = await composition.capabilities.profiles.set_credential(
+      profile_id,
+      "provider-credential-canary",
+    );
+    expect(configured.credential_reference).toBe(
+      `tavern_canvas:primary:${profile_id}:provider_api_key`,
+    );
+    expect(JSON.stringify(await composition.capabilities.profiles.load())).not.toContain(
+      "provider-credential-canary",
+    );
+    const cleared = await composition.capabilities.profiles.clear_credential(profile_id);
+    expect(cleared.credential_reference).toBeNull();
     await composition.dispose();
   });
 

@@ -188,6 +188,7 @@ function create_globals(options: GlobalsOptions): {
         schema_version: 1,
         active_namespace: NAMESPACE,
         locale: "auto",
+        credential_storage_mode: "host",
         active_provider_profile_id: null,
         global_concurrency: 1,
         auto_generation_enabled: false,

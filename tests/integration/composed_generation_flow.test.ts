@@ -127,6 +127,7 @@ function create_host_control(auto_generation_enabled = true): HostControl {
         schema_version: 1,
         active_namespace: NAMESPACE,
         locale: "auto",
+        credential_storage_mode: "host",
         active_provider_profile_id: PROFILE_ID,
         global_concurrency: 2,
         auto_generation_enabled,

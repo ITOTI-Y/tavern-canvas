@@ -4,6 +4,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
 import { create_sillytavern_settings } from "../../storage/sillytavern_settings.js";
+import type {
+  BrowserSecretVaultPort,
+  BrowserSecretVaultStatus,
+} from "../../storage/browser_secret_vault.js";
 import { CAPABILITY_UNAVAILABLE_CODE } from "../capability_resolution.js";
 import { create_settings_capability } from "./settings_capability.js";
 
@@ -61,6 +65,7 @@ const PLAINTEXT_TOKEN = "gateway-bearer-canary-value";
 
 class RecordingSecrets implements SecretDestinationPort {
   readonly writes: { reference: string; value: string }[] = [];
+  readonly deletes: string[] = [];
 
   supports(): boolean {
     return true;
@@ -68,6 +73,10 @@ class RecordingSecrets implements SecretDestinationPort {
 
   write_secret(reference: string, plaintext_value: string): Promise<void> {
     this.writes.push({ reference, value: plaintext_value });
+    return Promise.resolve();
+  }
+  delete_secret(reference: string): Promise<void> {
+    this.deletes.push(reference);
     return Promise.resolve();
   }
 
@@ -79,6 +88,7 @@ class RecordingSecrets implements SecretDestinationPort {
 function create_capability(
   secrets: SecretDestinationPort | null,
   database: StorageDatabase | null = null,
+  browser_secret_vault: BrowserSecretVaultPort | null = null,
 ) {
   const extension_settings: Record<string, unknown> = {};
   const settings = create_sillytavern_settings({
@@ -97,6 +107,7 @@ function create_capability(
       database,
       extension_version: "3.0.0-test",
       secrets,
+      browser_secret_vault,
     }),
   };
 }
@@ -161,7 +172,7 @@ describe("vocabulary import operation lifecycle", () => {
 });
 
 describe("gateway access token", () => {
-  it("writes the plaintext to host secret storage and keeps only the reference in settings", async () => {
+  it("writes the plaintext to the selected credential backend and keeps only the reference in settings", async () => {
     const secrets = new RecordingSecrets();
     const { capability } = create_capability(secrets);
 
@@ -173,15 +184,26 @@ describe("gateway access token", () => {
     expect(snapshot.settings.gateway.token_secret_id).toBe(reference);
     expect(JSON.stringify(snapshot.settings)).not.toContain(PLAINTEXT_TOKEN);
   });
+  it("rejects a blank token without writing a vault entry", async () => {
+    const secrets = new RecordingSecrets();
+    const { capability } = create_capability(secrets);
 
-  it("clears the reference without touching the vault entry", async () => {
+    await expect(capability.set_gateway_token("   ")).rejects.toBeInstanceOf(TypeError);
+    expect(secrets.writes).toEqual([]);
+  });
+
+  it("deletes the vault entry before clearing its settings reference", async () => {
     const secrets = new RecordingSecrets();
     const { capability } = create_capability(secrets);
 
     await capability.set_gateway_token(PLAINTEXT_TOKEN);
     await capability.clear_gateway_token();
 
-    expect((await capability.load()).settings.gateway.token_secret_id).toBeNull();
+    const snapshot = await capability.load();
+    expect(snapshot.settings.gateway.token_secret_id).toBeNull();
+    expect(secrets.deletes).toEqual([
+      derive_gateway_credential_reference(snapshot.settings.active_namespace),
+    ]);
     expect(secrets.writes).toHaveLength(1);
   });
 
@@ -192,6 +214,39 @@ describe("gateway access token", () => {
       code: CAPABILITY_UNAVAILABLE_CODE,
     });
     expect((await capability.load()).settings.gateway.token_secret_id).toBeNull();
+  });
+});
+
+describe("browser secret vault status", () => {
+  it("loads vault state only when encrypted browser storage is selected", async () => {
+    const status = vi.fn<() => Promise<BrowserSecretVaultStatus>>(() =>
+      Promise.resolve({ state: "locked", secret_count: 2 }),
+    );
+    const browser_secret_vault: BrowserSecretVaultPort = {
+      supports: () => true,
+      write_secret: () => Promise.resolve(),
+      delete_secret: () => Promise.resolve(),
+      probe_secret: () => Promise.resolve(true),
+      resolve_secret: () => Promise.resolve("secret"),
+      status,
+      initialize: () => Promise.resolve({ state: "unlocked", secret_count: 0 }),
+      unlock: () => Promise.resolve({ state: "unlocked", secret_count: 2 }),
+      lock: () => Promise.resolve({ state: "locked", secret_count: 2 }),
+      reset: () => Promise.resolve({ state: "uninitialized", secret_count: 0 }),
+      close: () => Promise.resolve(),
+    };
+    const { capability } = create_capability(null, null, browser_secret_vault);
+
+    await expect(capability.load()).resolves.toMatchObject({
+      browser_secret_vault: { state: "uninitialized", secret_count: 0 },
+    });
+    expect(status).not.toHaveBeenCalled();
+
+    await capability.update({ credential_storage_mode: "browser_encrypted" });
+    await expect(capability.load()).resolves.toMatchObject({
+      browser_secret_vault: { state: "locked", secret_count: 2 },
+    });
+    expect(status).toHaveBeenCalledOnce();
   });
 });
 

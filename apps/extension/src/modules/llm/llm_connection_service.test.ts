@@ -38,15 +38,22 @@ function draft(overrides: Partial<LlmConnectionDraft> = {}): LlmConnectionDraft 
 
 interface RecordingSecrets extends SecretDestinationPort {
   readonly writes: { reference: string; value: string }[];
+  readonly deletes: string[];
 }
 
 function make_secrets(): RecordingSecrets {
   const writes: { reference: string; value: string }[] = [];
+  const deletes: string[] = [];
   return {
     writes,
+    deletes,
     supports: () => true,
     write_secret: (reference, value) => {
       writes.push({ reference, value });
+      return Promise.resolve();
+    },
+    delete_secret: (reference) => {
+      deletes.push(reference);
       return Promise.resolve();
     },
     probe_secret: (reference) =>
@@ -218,6 +225,7 @@ describe("LlmConnectionService: credentials stay references", () => {
   it("does not persist a reference when the vault probe fails", async () => {
     const secrets: RecordingSecrets = {
       writes: [],
+      deletes: [],
       supports: () => true,
       write_secret: () => Promise.resolve(),
       probe_secret: () => Promise.resolve(false),
@@ -239,12 +247,13 @@ describe("LlmConnectionService: credentials stay references", () => {
     expect(secrets.writes).toHaveLength(0);
   });
 
-  it("clears a credential back to no reference", async () => {
-    const { service } = await make_service();
+  it("deletes the vault entry before clearing the credential reference", async () => {
+    const { service, secrets } = await make_service();
     await service.save(draft());
-    await service.set_credential(CONNECTION_ID, "sk-live");
+    const configured = await service.set_credential(CONNECTION_ID, "sk-live");
 
     const cleared = await service.clear_credential(CONNECTION_ID);
+    expect(secrets.deletes).toEqual([configured.credential_reference]);
     expect(cleared.credential_reference).toBe(null);
   });
 });

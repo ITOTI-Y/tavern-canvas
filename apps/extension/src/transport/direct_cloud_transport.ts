@@ -244,5 +244,5 @@ function credential_failure_message(error: unknown): string {
   ) {
     return error.message;
   }
-  return "The stored provider credential could not be resolved from host secret storage";
+  return "The stored provider credential could not be resolved from the selected credential storage";
 }

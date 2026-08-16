@@ -38,6 +38,7 @@ import type {
   PromptPresetSummary,
   PromptRegexRule,
   SettingsCapability,
+  SettingsSnapshot,
   StudioCapabilities,
   SupportBundle,
   TaskTimelineEntry,
@@ -78,6 +79,7 @@ const PROFILE_SD: ProviderProfileSummary = {
   provider_id: "sd_webui",
   display_name: "Local SD WebUI",
   is_default: true,
+  credential_reference: null,
   updated_at: "2026-07-01T09:00:00.000Z",
 };
 
@@ -87,6 +89,7 @@ const PROFILE_NOVELAI: ProviderProfileSummary = {
   display_name:
     "NovelAI production account with an unusually long profile name for truncation testing 测试账号名称非常长用于验证省略号截断效果",
   is_default: false,
+  credential_reference: null,
   updated_at: "2026-07-02T09:00:00.000Z",
 };
 
@@ -95,6 +98,7 @@ const PROFILE_COMFYUI: ProviderProfileSummary = {
   provider_id: "comfyui",
   display_name: "ComfyUI (workflow, unsupported in Workbench yet)",
   is_default: false,
+  credential_reference: null,
   updated_at: "2026-07-03T09:00:00.000Z",
 };
 
@@ -311,6 +315,7 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
     schema_version: 1,
     active_namespace: "default",
     locale: "auto",
+    credential_storage_mode: "host",
     active_provider_profile_id: PROFILE_SD.id,
     global_concurrency: 2,
     auto_generation_enabled: false,
@@ -587,6 +592,7 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         model_id: draft.model_id,
         workflow_id: draft.workflow_id,
         is_default: draft.is_default,
+        credential_reference: null,
         updated_at: new Date().toISOString(),
       };
       profiles.set(summary.id, summary);
@@ -595,6 +601,27 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
     remove: (profile_id) => {
       profiles.delete(profile_id);
       return Promise.resolve();
+    },
+    set_credential: (profile_id) => {
+      const profile = profiles.get(profile_id);
+      if (profile === undefined) {
+        return always_rejects("unknown_provider_profile");
+      }
+      const updated = {
+        ...profile,
+        credential_reference: `tavern_canvas:default:${profile_id}:provider_api_key`,
+      };
+      profiles.set(profile_id, updated);
+      return Promise.resolve(updated);
+    },
+    clear_credential: (profile_id) => {
+      const profile = profiles.get(profile_id);
+      if (profile === undefined) {
+        return always_rejects("unknown_provider_profile");
+      }
+      const updated = { ...profile, credential_reference: null };
+      profiles.set(profile_id, updated);
+      return Promise.resolve(updated);
     },
     test_connection: (profile_id): Promise<ProfileConnectionTestResult> => {
       const profile = profiles.get(profile_id);
@@ -969,11 +996,16 @@ function create_migration_capability(snapshot: MigrationSnapshot): MigrationCapa
 
 function create_settings_capability(initial: TavernCanvasSettings): SettingsCapability {
   let current = initial;
+  let browser_secret_vault: SettingsSnapshot["browser_secret_vault"] = {
+    state: "uninitialized",
+    secret_count: 0,
+  };
   return {
     load: () =>
       Promise.resolve({
         settings: current,
         vocabulary_update_channel: current.vocabulary_update_channel,
+        browser_secret_vault,
       }),
     subscribe: () => () => {},
     update: (partial) => {
@@ -1003,6 +1035,22 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
     clear_gateway_token: () => {
       current = { ...current, gateway: { ...current.gateway, token_secret_id: null } };
       return Promise.resolve();
+    },
+    initialize_browser_secret_vault: () => {
+      browser_secret_vault = { state: "unlocked", secret_count: 0 };
+      return Promise.resolve(browser_secret_vault);
+    },
+    unlock_browser_secret_vault: () => {
+      browser_secret_vault = { ...browser_secret_vault, state: "unlocked" };
+      return Promise.resolve(browser_secret_vault);
+    },
+    lock_browser_secret_vault: () => {
+      browser_secret_vault = { ...browser_secret_vault, state: "locked" };
+      return Promise.resolve(browser_secret_vault);
+    },
+    reset_browser_secret_vault: () => {
+      browser_secret_vault = { state: "uninitialized", secret_count: 0 };
+      return Promise.resolve(browser_secret_vault);
     },
     set_vocabulary_update_channel: (channel) => {
       current = { ...current, vocabulary_update_channel: channel };

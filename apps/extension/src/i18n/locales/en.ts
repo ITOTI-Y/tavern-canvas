@@ -200,7 +200,7 @@ const workbench = {
 const provider = {
   credentials: {
     not_stored_locally:
-      "The token is kept in host secret storage and never appears in TavernCanvas UI or exports.",
+      "The token is kept in the selected credential storage and never appears in TavernCanvas UI or exports.",
   },
 };
 
@@ -548,6 +548,7 @@ const settings = {
       "Create a provider profile first. Add a Gateway endpoint only when your provider uses one, then run the connection test.",
   },
   sections: {
+    credential_storage: "Credential storage",
     provider_profiles: "Provider profiles",
     llm_connections: "Text model connections",
     gateway: "Gateway",
@@ -564,6 +565,14 @@ const settings = {
     provider_label: "Provider",
     model_label: "Model",
     workflow_label: "ComfyUI workflow ID",
+    set_credential_action: "Set API key",
+    clear_credential_action: "Remove API key",
+    credential_set: "API key configured",
+    credential_unset: "No API key configured",
+    credential_dialog_title: "Set API key for {name}",
+    credential_dialog_description:
+      "The key is written to the selected credential storage backend. TavernCanvas keeps only its reference.",
+    credential_label: "API key",
     provider_types: {
       sd_webui: "SD WebUI",
       novelai: "NovelAI",
@@ -577,9 +586,42 @@ const settings = {
     remove_confirm_description:
       "This disconnects the provider profile from TavernCanvas. Jobs already submitted are not affected.",
   },
+  credential_storage: {
+    mode_label: "Storage backend",
+    mode_hint: "Applies to Provider, text-model, and Gateway credentials.",
+    modes: {
+      host: "SillyTavern vault",
+      browser_encrypted: "Encrypted browser",
+    },
+    states: {
+      unavailable: "Unavailable",
+      error: "Vault error",
+      uninitialized: "Not initialized",
+      locked: "Locked · {count} encrypted credential | Locked · {count} encrypted credentials",
+      unlocked: "Unlocked · {count} credential | Unlocked · {count} credentials",
+    },
+    passphrase_label: "Vault passphrase",
+    confirm_passphrase_label: "Confirm passphrase",
+    passphrase_hint:
+      "At least {count} characters. The passphrase is required again after every reload.",
+    unlock_hint: "Unlocks credentials for this browser session.",
+    initialize_action: "Create encrypted vault",
+    unlock_action: "Unlock",
+    lock_action: "Lock",
+    reset_action: "Reset vault",
+    reset_confirm_title: "Reset encrypted browser vault?",
+    reset_confirm_description:
+      "All browser-encrypted credentials will be deleted permanently. Existing profile references will remain.",
+    passphrase_too_short: "Use at least {count} characters.",
+    passphrase_mismatch: "The passphrases do not match.",
+    invalid_passphrase: "The passphrase is incorrect.",
+    unlock_required: "The selected credential storage is unavailable or locked.",
+    unavailable: "Encrypted browser storage is unavailable in this environment.",
+    error: "The encrypted browser vault could not be read.",
+  },
   llm_connections: {
     section_description:
-      "Text model connections power the assistant and prompt building. The endpoint host comes from your Gateway settings, and the API key is kept in host secret storage.",
+      "Text model connections power the assistant and prompt building. API keys use the selected credential storage backend.",
     empty_description:
       "Add a text model connection to let the assistant and prompt builder call a language model.",
     add_action: "Add text model connection",
@@ -605,15 +647,15 @@ const settings = {
     connection_test_action: "Test connection",
     set_credential_action: "Set API key",
     clear_credential_action: "Remove API key",
-    credential_set: "API key stored in host secret storage",
+    credential_set: "API key configured",
     credential_unset: "No API key stored",
     credential_dialog_title: "Set API key",
     credential_dialog_description:
-      "The key goes straight to host secret storage. TavernCanvas keeps only a reference to it and never shows or exports the value.",
+      "The key is written to the selected credential storage backend. TavernCanvas keeps only its reference.",
     credential_label: "API key",
     remove_confirm_title: "Remove {name}?",
     remove_confirm_description:
-      "This disconnects the text model from TavernCanvas. The stored API key stays in host secret storage until you remove it there.",
+      "This disconnects the text model from TavernCanvas. The stored API key remains in its credential backend.",
   },
   gateway: {
     endpoint_label: "Gateway endpoint",
@@ -624,7 +666,7 @@ const settings = {
     endpoint_hint: "The Gateway endpoint your provider profiles connect through.",
     token_label: "Gateway access token",
     token_hint:
-      "The bearer token this Gateway was configured with. It goes straight to host secret storage; TavernCanvas keeps only a reference and never shows or exports the value.",
+      "The bearer token configured for this Gateway. It is written to the selected credential storage backend; TavernCanvas keeps only its reference.",
     token_save_action: "Save token",
     token_clear_action: "Clear token",
   },

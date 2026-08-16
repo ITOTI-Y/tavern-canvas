@@ -1,15 +1,15 @@
 import type { SecretCredentialKind, SecretTransferOperation } from "@tavern-canvas/v2-migration";
 
 /**
- * The only supported places a reversible v2 credential can end up: SillyTavern's
- * own secret storage (referenced by a stable key, never read back as plaintext
- * by this module) or a Gateway profile, which removes the need to hold
- * provider credentials client-side at all. `migration_runner` decides which
- * applies; this module only executes the SillyTavern-secret-storage path.
+ * Narrow credential-storage port shared by v2 migration and live settings. The runtime router
+ * selects either SillyTavern's secret store or the encrypted browser vault; callers receive only
+ * stable references and presence probes, never a plaintext read API.
  */
 export interface SecretDestinationPort {
   supports(credential_kind: SecretCredentialKind): boolean;
   write_secret(reference: string, plaintext_value: string): Promise<void>;
+  /** Removes a credential by reference when the destination exposes deletion. */
+  delete_secret?(reference: string): Promise<void>;
   /** A credential-reference probe: confirms the secret is retrievable by reference, never returns plaintext. */
   probe_secret(reference: string): Promise<boolean>;
 }

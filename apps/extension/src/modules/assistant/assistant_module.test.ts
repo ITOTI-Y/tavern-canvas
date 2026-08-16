@@ -21,6 +21,7 @@ function base_settings(): TavernCanvasSettings {
     schema_version: 1,
     active_namespace: "ns-1",
     locale: "auto",
+    credential_storage_mode: "host",
     active_provider_profile_id: null,
     global_concurrency: 2,
     auto_generation_enabled: false,

@@ -1,6 +1,6 @@
-import { B as e, R as t, V as n, et as r, z as i } from "./src-CLzfjths.js";
-import { a, s as o } from "./media_command_service-BUvm2_9j.js";
-import { a as s, o as c, r as l } from "./http_acknowledgment-Bd7iIzs_.js";
+import { B as e, H as t, V as n, nt as r, z as i } from "./src-B1pCVwkN.js";
+import { a, s as o } from "./media_command_service-sG67r8ea.js";
+import { a as s, o as c, r as l } from "./http_acknowledgment-DLBLdIzO.js";
 //#region src/transport/gateway_transport.ts
 var u = 2e6, d = 2e7, f = 64e3, p = 1, m = 250, h = 5e3, g = /* @__PURE__ */ new Set([
 	"completed",
@@ -52,35 +52,35 @@ var x = class {
 		this.#t = e.access_token, this.#n = e.fetch ?? globalThis.fetch.bind(globalThis), this.#r = e.clock ?? new y();
 	}
 	async get_capabilities(e) {
-		let n = await this.#a("/v1/capabilities", {
+		let t = await this.#a("/v1/capabilities", {
 			method: "GET",
 			signal: e
 		});
-		D(n);
-		let r = t.safeParse(n);
-		if (!r.success) throw P(r.error);
-		return r.data;
+		D(t);
+		let n = i.safeParse(t);
+		if (!n.success) throw P(n.error);
+		return n.data;
 	}
 	async run(e, t) {
 		let n = await this.submit(e, t.signal);
 		return this.observe(n, t);
 	}
-	async submit(e, t) {
-		M(t);
-		let n = await this.get_capabilities(t);
-		if (n.providers.find((t) => t.provider_id === e.provider_id) === void 0 || e.output_count > n.limits.max_image_count) throw new _("configuration", "Gateway does not support the requested provider operation");
-		let r = i.parse({
+	async submit(t, n) {
+		M(n);
+		let r = await this.get_capabilities(n);
+		if (r.providers.find((e) => e.provider_id === t.provider_id) === void 0 || t.output_count > r.limits.max_image_count) throw new _("configuration", "Gateway does not support the requested provider operation");
+		let i = e.parse({
 			protocol_version: "1.0",
-			request: e
-		}), a = new TextEncoder().encode(JSON.stringify(r));
-		if (a.byteLength > n.limits.max_request_bytes) throw new _("configuration", "Gateway request exceeds the advertised byte limit");
+			request: t
+		}), a = new TextEncoder().encode(JSON.stringify(i));
+		if (a.byteLength > r.limits.max_request_bytes) throw new _("configuration", "Gateway request exceeds the advertised byte limit");
 		let o = E(await this.#a("/v1/jobs", {
 			method: "POST",
 			headers: { "content-type": "application/json" },
 			body: a,
-			signal: t
+			signal: n
 		}));
-		if (o.request_id !== e.request_id || o.provider_id !== e.provider_id) throw new v("Gateway job does not match the submitted request");
+		if (o.request_id !== t.request_id || o.provider_id !== t.provider_id) throw new v("Gateway job does not match the submitted request");
 		return o;
 	}
 	async observe(e, t) {
@@ -133,28 +133,28 @@ var x = class {
 			bytes: await T(n, d, t)
 		};
 	}
-	async *#i(t, n, r) {
-		let i = await this.#o(`/v1/jobs/${t}/events`, {
+	async *#i(e, t, r) {
+		let i = await this.#o(`/v1/jobs/${e}/events`, {
 			method: "GET",
-			headers: n === 0 ? { accept: "text/event-stream" } : {
+			headers: t === 0 ? { accept: "text/event-stream" } : {
 				accept: "text/event-stream",
-				"last-event-id": String(n)
+				"last-event-id": String(t)
 			},
 			signal: r
 		});
 		if (!I(i.headers.get("content-type") ?? "", "text/event-stream")) throw await L(i), new v("Gateway event stream has an invalid content type");
 		if (i.body === null) throw new v("Gateway event stream has no body");
-		for await (let n of S(i.body, r)) {
+		for await (let t of S(i.body, r)) {
 			let r;
 			try {
-				r = JSON.parse(n.data);
+				r = JSON.parse(t.data);
 			} catch (e) {
 				throw new v("Gateway event contains invalid JSON", { cause: e });
 			}
 			D(r);
-			let i = e.safeParse(r);
+			let i = n.safeParse(r);
 			if (!i.success) throw new v("Gateway event has an invalid schema", { cause: i.error });
-			if (i.data.job_id !== t || n.id !== String(i.data.sequence)) throw new v("Gateway event identity is invalid");
+			if (i.data.job_id !== e || t.id !== String(i.data.sequence)) throw new v("Gateway event identity is invalid");
 			yield i.data;
 		}
 	}
@@ -294,22 +294,22 @@ async function T(e, t, n) {
 }
 function E(e) {
 	D(e);
-	let t = n.safeParse(e);
-	if (!t.success) throw P(t.error);
-	return t.data;
+	let n = t.safeParse(e);
+	if (!n.success) throw P(n.error);
+	return n.data;
 }
 function D(e) {
 	if (typeof e != "object" || !e || !("protocol_version" in e) || e.protocol_version !== "1.0") throw new v("Gateway protocol must be 1.0");
 }
-function O(e, t) {
-	return n.parse({
+function O(e, n) {
+	return t.parse({
 		protocol_version: "1.0",
 		job_id: e.job_id,
 		request_id: e.request_id,
 		provider_id: e.provider_id,
-		state: t.state,
-		...t.image_ids === void 0 ? {} : { image_ids: t.image_ids },
-		...t.error === void 0 ? {} : { error: t.error }
+		state: n.state,
+		...n.image_ids === void 0 ? {} : { image_ids: n.image_ids },
+		...n.error === void 0 ? {} : { error: n.error }
 	});
 }
 function k(e) {

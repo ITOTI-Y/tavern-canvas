@@ -92,6 +92,22 @@ describe("SillyTavern settings adapter", () => {
     expect(() => adapter.update_settings({ locale: "fr" as never })).toThrow();
     expect(adapter.get_settings()).toBe(prior);
   });
+  it("persists the selected credential storage backend and rejects unknown modes", () => {
+    const host = create_host();
+    const adapter = create_sillytavern_settings(host);
+
+    expect(adapter.get_settings().credential_storage_mode).toBe("host");
+    expect(
+      adapter.update_settings({ credential_storage_mode: "browser_encrypted" })
+        .credential_storage_mode,
+    ).toBe("browser_encrypted");
+    expect(host.extension_settings.tavern_canvas).toMatchObject({
+      credential_storage_mode: "browser_encrypted",
+    });
+    expect(() =>
+      adapter.update_settings({ credential_storage_mode: "plaintext" as never }),
+    ).toThrow();
+  });
 
   it("keeps concurrency bounded from one through four", () => {
     const host = create_host();

@@ -195,7 +195,7 @@ const workbench = {
 
 const provider = {
   credentials: {
-    not_stored_locally: "Token 保存在宿主的密钥存储中，不会出现在智绘姬界面或导出文件里。",
+    not_stored_locally: "Token 保存在当前选择的密钥存储中，不会出现在智绘姬界面或导出文件里。",
   },
 };
 
@@ -527,6 +527,7 @@ const settings = {
       "先创建 provider 配置。仅当 provider 需要 Gateway 时再填写端点，最后运行连接测试。",
   },
   sections: {
+    credential_storage: "密钥存储",
     provider_profiles: "Provider 配置",
     llm_connections: "文本模型连接",
     gateway: "Gateway",
@@ -543,6 +544,13 @@ const settings = {
     provider_label: "Provider",
     model_label: "模型",
     workflow_label: "ComfyUI 工作流 ID",
+    set_credential_action: "设置 API 密钥",
+    clear_credential_action: "移除 API 密钥",
+    credential_set: "已配置 API 密钥",
+    credential_unset: "尚未配置 API 密钥",
+    credential_dialog_title: "设置 {name} 的 API 密钥",
+    credential_dialog_description: "密钥将写入当前选择的密钥存储，智绘姬只保留引用。",
+    credential_label: "API 密钥",
     provider_types: {
       sd_webui: "SD WebUI",
       novelai: "NovelAI",
@@ -555,9 +563,40 @@ const settings = {
     remove_confirm_title: "移除 {name}？",
     remove_confirm_description: "此操作会将该 provider 配置从智绘姬中断开，已提交的任务不受影响。",
   },
+  credential_storage: {
+    mode_label: "存储后端",
+    mode_hint: "应用于 Provider、文本模型和 Gateway 密钥。",
+    modes: {
+      host: "SillyTavern 密钥库",
+      browser_encrypted: "浏览器加密库",
+    },
+    states: {
+      unavailable: "不可用",
+      error: "密钥库错误",
+      uninitialized: "尚未初始化",
+      locked: "已锁定 · {count} 条加密密钥",
+      unlocked: "已解锁 · {count} 条密钥",
+    },
+    passphrase_label: "密钥库口令",
+    confirm_passphrase_label: "确认口令",
+    passphrase_hint: "至少 {count} 个字符。每次刷新后需要重新输入。",
+    unlock_hint: "解锁当前浏览器会话中的密钥。",
+    initialize_action: "创建浏览器加密库",
+    unlock_action: "解锁",
+    lock_action: "锁定",
+    reset_action: "重置密钥库",
+    reset_confirm_title: "重置浏览器加密库？",
+    reset_confirm_description: "所有浏览器加密密钥将被永久删除，已有配置中的密钥引用会保留。",
+    passphrase_too_short: "口令至少需要 {count} 个字符。",
+    passphrase_mismatch: "两次输入的口令不一致。",
+    invalid_passphrase: "口令不正确。",
+    unlock_required: "当前选择的密钥存储不可用或尚未解锁。",
+    unavailable: "当前环境不支持浏览器加密存储。",
+    error: "无法读取浏览器加密库。",
+  },
   llm_connections: {
     section_description:
-      "文本模型连接为助手和提示词构建提供语言模型能力。地址来自 Gateway 设置，API 密钥保存在宿主的密钥存储中。",
+      "文本模型连接为助手和提示词构建提供语言模型能力。API 密钥使用当前选择的密钥存储。",
     empty_description: "添加一个文本模型连接，助手和提示词构建才能调用语言模型。",
     add_action: "添加文本模型连接",
     dialog_add_title: "添加文本模型连接",
@@ -582,15 +621,14 @@ const settings = {
     connection_test_action: "测试连接",
     set_credential_action: "设置 API 密钥",
     clear_credential_action: "移除 API 密钥",
-    credential_set: "API 密钥已存入宿主密钥存储",
+    credential_set: "已配置 API 密钥",
     credential_unset: "尚未设置 API 密钥",
     credential_dialog_title: "设置 API 密钥",
-    credential_dialog_description:
-      "密钥会直接写入宿主的密钥存储，智绘姬只保留一个引用，不会显示也不会导出密钥本身。",
+    credential_dialog_description: "密钥将写入当前选择的密钥存储，智绘姬只保留引用。",
     credential_label: "API 密钥",
     remove_confirm_title: "移除 {name}？",
     remove_confirm_description:
-      "此操作会将该文本模型从智绘姬中断开。已保存的 API 密钥仍留在宿主密钥存储中，需要你在那里另行删除。",
+      "此操作会将该文本模型从智绘姬中断开，已保存的 API 密钥仍留在对应的密钥存储中。",
   },
   gateway: {
     endpoint_label: "Gateway 地址",
@@ -600,8 +638,7 @@ const settings = {
     token_not_set: "尚未配置 token",
     endpoint_hint: "你的 provider 配置将通过这个 Gateway 地址连接。",
     token_label: "Gateway 访问 token",
-    token_hint:
-      "该 Gateway 配置的 bearer token。它会直接写入宿主密钥存储，TavernCanvas 只保留一个引用，绝不显示或导出其值。",
+    token_hint: "该 Gateway 的 bearer token。它会写入当前选择的密钥存储，智绘姬只保留引用。",
     token_save_action: "保存 token",
     token_clear_action: "清除 token",
   },

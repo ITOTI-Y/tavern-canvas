@@ -261,6 +261,39 @@
   gap: 12px;
   padding-top: 8px;
 }
+.vault_mode_row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--tc-divider);
+}
+.vault_mode_row .profile_meta {
+  overflow: visible;
+  line-height: 1.45;
+  white-space: normal;
+  text-overflow: clip;
+}
+
+.vault_controls {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 520px);
+  padding-top: 16px;
+}
+
+.vault_controls > button {
+  width: fit-content;
+}
+
+.vault_unlocked_actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
 
 .typed_confirm_input {
   width: 100%;

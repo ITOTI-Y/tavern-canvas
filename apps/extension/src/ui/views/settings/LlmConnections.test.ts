@@ -135,7 +135,7 @@ describe("LlmConnections: read surface", () => {
     });
     const state = wrapper.find('[data-testid="llm-connection-credential-state"]');
 
-    expect(state.text()).toBe("API key stored in host secret storage");
+    expect(state.text()).toBe("API key configured");
     expect(wrapper.text()).not.toContain("tavern_canvas:default");
   });
 });

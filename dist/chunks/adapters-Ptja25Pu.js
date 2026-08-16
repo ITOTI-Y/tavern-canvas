@@ -1,6 +1,6 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
-import { $ as n, G as r, H as i, J as a, K as o, St as s, Y as c, _t as l, at as u, bt as d, ft as f, ht as p, mt as m, q as h, st as g, vt as _, xt as v, yt as y } from "./src-CLzfjths.js";
-import { a as b, c as x, i as S, o as C, r as w, s as T } from "./provider_transport-Bl2PCz7e.js";
+import { Ct as n, J as r, St as i, U as a, X as o, Y as s, Z as c, _t as l, bt as u, gt as d, lt as f, mt as p, q as m, st as h, tt as g, wt as _, xt as v, yt as y } from "./src-B1pCVwkN.js";
+import { a as b, c as x, i as S, o as C, r as w, s as T } from "./provider_transport-DBy5ZpWN.js";
 //#region ../../packages/providers/src/image_bytes.ts
 function E(e, t) {
 	let n = e.indexOf(","), r = e.startsWith("data:") ? n < 0 ? "" : e.slice(n + 1) : e;
@@ -24,19 +24,19 @@ function O(e) {
 	if (e.length >= 4 && e[0] === 255 && e[1] === 216 && e[2] === 255) return "image/jpeg";
 	if (e.length >= 12 && e[0] === 82 && e[1] === 73 && e[2] === 70 && e[3] === 70 && e[8] === 87 && e[9] === 69 && e[10] === 66 && e[11] === 80) return "image/webp";
 }
-function ee(r, i, a, o) {
-	let s = O(r);
-	if (s === void 0 || !o.includes(s)) throw j();
-	let c = t(r), l = e(c), u = c.slice(0, 16);
-	u[6] = (u[6] ?? 0) & 15 | 80, u[8] = (u[8] ?? 0) & 63 | 128;
-	let d = e(u);
+function ee(n, r, i, a) {
+	let o = O(n);
+	if (o === void 0 || !a.includes(o)) throw j();
+	let s = t(n), c = e(s), l = s.slice(0, 16);
+	l[6] = (l[6] ?? 0) & 15 | 80, l[8] = (l[8] ?? 0) & 63 | 128;
+	let u = e(l);
 	return {
-		asset_id: n.parse(`${d.slice(0, 8)}-${d.slice(8, 12)}-${d.slice(12, 16)}-${d.slice(16, 20)}-${d.slice(20)}`),
-		media_type: s,
-		byte_length: r.byteLength,
-		sha256: l,
-		...i === void 0 ? {} : { width: i },
-		...a === void 0 ? {} : { height: a }
+		asset_id: g.parse(`${u.slice(0, 8)}-${u.slice(8, 12)}-${u.slice(12, 16)}-${u.slice(16, 20)}-${u.slice(20)}`),
+		media_type: o,
+		byte_length: n.byteLength,
+		sha256: c,
+		...r === void 0 ? {} : { width: r },
+		...i === void 0 ? {} : { height: i }
 	};
 }
 function k(e, t, n, r) {
@@ -65,10 +65,10 @@ function M() {
 }
 //#endregion
 //#region ../../packages/providers/src/multipart.ts
-function te(e, t) {
-	for (let t of Object.keys(e)) N(t);
-	for (let e of t) if (N(e.field_name), N(e.file_name), !/^[a-z]+\/[a-z0-9.+-]+$/u.test(e.content_type)) throw M();
-	let n = ne(e, t), r = new TextEncoder(), i = [];
+function N(e, t) {
+	for (let t of Object.keys(e)) P(t);
+	for (let e of t) if (P(e.field_name), P(e.file_name), !/^[a-z]+\/[a-z0-9.+-]+$/u.test(e.content_type)) throw M();
+	let n = te(e, t), r = new TextEncoder(), i = [];
 	for (let [t, a] of Object.entries(e)) i.push(r.encode(`--${n}\r\nContent-Disposition: form-data; name="${t}"\r\n\r\n${a}\r\n`));
 	for (let e of t) i.push(r.encode(`--${n}\r\nContent-Disposition: form-data; name="${e.field_name}"; filename="${e.file_name}"\r\nContent-Type: ${e.content_type}\r\n\r\n`), e.bytes, r.encode("\r\n"));
 	i.push(r.encode(`--${n}--\r\n`));
@@ -79,14 +79,14 @@ function te(e, t) {
 		body: o
 	};
 }
-function ne(e, t) {
+function te(e, t) {
 	for (let n = 0; n < 8; n += 1) {
 		let n = `tavern-canvas-${globalThis.crypto.randomUUID()}`, r = new TextEncoder().encode(n);
-		if (!(Object.entries(e).some(([e, t]) => e.includes(n) || t.includes(n)) || t.some((e) => e.field_name.includes(n) || e.file_name.includes(n) || e.content_type.includes(n) || re(e.bytes, r)))) return n;
+		if (!(Object.entries(e).some(([e, t]) => e.includes(n) || t.includes(n)) || t.some((e) => e.field_name.includes(n) || e.file_name.includes(n) || e.content_type.includes(n) || ne(e.bytes, r)))) return n;
 	}
 	throw M();
 }
-function re(e, t) {
+function ne(e, t) {
 	if (t.byteLength === 0 || e.byteLength < t.byteLength) return !1;
 	let n = e.byteLength - t.byteLength;
 	for (let r = 0; r <= n; r += 1) {
@@ -99,12 +99,12 @@ function re(e, t) {
 	}
 	return !1;
 }
-function N(e) {
+function P(e) {
 	if (e.length === 0 || e.length > 128 || /["\r\n]/u.test(e)) throw M();
 }
 //#endregion
 //#region ../../packages/providers/src/retry_policy.ts
-var ie = 2, ae = 250, oe = 1e4, se = 12e4, P = class {
+var re = 2, ie = 250, ae = 1e4, oe = 12e4, F = class {
 	now() {
 		return Date.now();
 	}
@@ -119,7 +119,7 @@ var ie = 2, ae = 250, oe = 1e4, se = 12e4, P = class {
 		return t.addEventListener("abort", a, { once: !0 }), n;
 	}
 };
-function F(e, t) {
+function I(e, t) {
 	if (e === null) return;
 	let n = e.trim();
 	if (/^\d+$/u.test(n)) {
@@ -129,8 +129,8 @@ function F(e, t) {
 	let r = Date.parse(n);
 	if (Number.isFinite(r)) return Math.max(0, r - t);
 }
-function I(e, t, n) {
-	return L(e, async (e, n) => {
+function L(e, t, n) {
+	return R(e, async (e, n) => {
 		try {
 			return await t(e, n);
 		} catch (e) {
@@ -144,8 +144,8 @@ function I(e, t, n) {
 		}
 	}, n);
 }
-async function L(e, t, n) {
-	let r = le(n.max_retries, ie), i = R(n.base_delay_ms, ae), a = R(n.max_delay_ms, oe), o = R(n.max_retry_after_ms, se);
+async function R(e, t, n) {
+	let r = ce(n.max_retries, re), i = z(n.base_delay_ms, ie), a = z(n.max_delay_ms, ae), o = z(n.max_retry_after_ms, oe);
 	for (let s = 0;; s += 1) {
 		if (n.signal.aborted) throw new b({
 			code: "cancelled",
@@ -156,7 +156,7 @@ async function L(e, t, n) {
 		} catch (e) {
 			let t = T(e, n.signal);
 			if (!t.provider_error.retryable || s >= r) throw t;
-			let c = t.provider_error.retry_after_ms, l = c === void 0 ? ce(s, i, a, n.random) : Math.min(c, o);
+			let c = t.provider_error.retry_after_ms, l = c === void 0 ? se(s, i, a, n.random) : Math.min(c, o);
 			try {
 				await n.clock.sleep(l, n.signal);
 			} catch {
@@ -168,55 +168,55 @@ async function L(e, t, n) {
 		}
 	}
 }
-function ce(e, t, n, r) {
+function se(e, t, n, r) {
 	let i = r.next(), a = .5 + (Number.isFinite(i) ? Math.max(0, Math.min(1, i)) : .5);
 	return Math.min(n, Math.round(t * 2 ** e * a));
 }
-function le(e, t) {
+function ce(e, t) {
 	return e === void 0 || !Number.isInteger(e) || e < 0 ? t : e;
 }
-function R(e, t) {
+function z(e, t) {
 	return e === void 0 || !Number.isFinite(e) || e <= 0 ? t : e;
 }
 //#endregion
 //#region ../../packages/providers/src/comfyui/workflow_renderer.ts
-var ue = 500, de = 16, fe = 1e5, pe = 1e6, me = /* @__PURE__ */ new Set([
+var le = 500, ue = 16, de = 1e5, fe = 1e6, pe = /* @__PURE__ */ new Set([
 	"__proto__",
 	"constructor",
 	"prototype"
-]), z = _({
-	node_id: y().trim().min(1).max(128),
-	property: y().trim().min(1).max(128)
-}), he = z.extend({ value_type: u([
+]), B = u({
+	node_id: v().trim().min(1).max(128),
+	property: v().trim().min(1).max(128)
+}), me = B.extend({ value_type: h([
 	"string",
 	"number",
 	"boolean"
-]) }), ge = _({
-	workflow_id: n,
-	workflow: v(),
-	bindings: _({
-		prompt: z,
-		negative_prompt: z.optional(),
-		seed: z.optional(),
-		output_count: z,
-		placeholders: l(y().trim().min(1).max(128), he).default({}),
-		input_assets: l(y().trim().min(1).max(128), z).default({})
+]) }), he = u({
+	workflow_id: g,
+	workflow: n(),
+	bindings: u({
+		prompt: B,
+		negative_prompt: B.optional(),
+		seed: B.optional(),
+		output_count: B,
+		placeholders: y(v().trim().min(1).max(128), me).default({}),
+		input_assets: y(v().trim().min(1).max(128), B).default({})
 	})
 });
-function _e(e) {
+function ge(e) {
 	try {
-		let t = ge.parse(e);
-		if (!V(t.workflow)) throw M();
+		let t = he.parse(e);
+		if (!H(t.workflow)) throw M();
 		let n = Object.entries(t.workflow);
-		if (n.length === 0 || n.length > ue) throw M();
-		ye(t.workflow);
+		if (n.length === 0 || n.length > le) throw M();
+		ve(t.workflow);
 		let r = JSON.stringify(t.workflow);
-		if (new TextEncoder().encode(r).byteLength > pe) throw M();
+		if (new TextEncoder().encode(r).byteLength > fe) throw M();
 		let i = {};
 		for (let [e, t] of n) {
-			if (!H(e) || !V(t)) throw M();
+			if (!U(e) || !H(t)) throw M();
 			let n = t.class_type, r = t.inputs;
-			if (typeof n != "string" || n.length === 0 || n.length > 256 || !V(r)) throw M();
+			if (typeof n != "string" || n.length === 0 || n.length > 256 || !H(r)) throw M();
 			i[e] = t;
 		}
 		return {
@@ -228,35 +228,35 @@ function _e(e) {
 		throw e instanceof b ? e : M();
 	}
 }
-function ve(e, t) {
+function _e(e, t) {
 	let n = structuredClone(e.workflow);
-	if (B(n, e.bindings.prompt, t.prompt, "string"), B(n, e.bindings.output_count, t.output_count, "number"), t.negative_prompt !== void 0) {
+	if (V(n, e.bindings.prompt, t.prompt, "string"), V(n, e.bindings.output_count, t.output_count, "number"), t.negative_prompt !== void 0) {
 		if (e.bindings.negative_prompt === void 0) throw M();
-		B(n, e.bindings.negative_prompt, t.negative_prompt, "string");
+		V(n, e.bindings.negative_prompt, t.negative_prompt, "string");
 	}
 	if (t.seed !== void 0) {
 		if (e.bindings.seed === void 0) throw M();
-		B(n, e.bindings.seed, t.seed, "number");
+		V(n, e.bindings.seed, t.seed, "number");
 	}
 	for (let [r, i] of Object.entries(t.placeholder_values)) {
 		let t = e.bindings.placeholders[r];
 		if (t === void 0 || typeof i !== t.value_type) throw M();
-		B(n, t, i, t.value_type);
+		V(n, t, i, t.value_type);
 	}
 	for (let [r, i] of Object.entries(t.input_asset_names)) {
 		let t = e.bindings.input_assets[r];
 		if (t === void 0) throw M();
-		B(n, t, i, "string");
+		V(n, t, i, "string");
 	}
 	return n;
 }
-function B(e, t, n, r) {
-	if (!H(t.node_id) || !H(t.property) || typeof n !== r) throw M();
+function V(e, t, n, r) {
+	if (!U(t.node_id) || !U(t.property) || typeof n !== r) throw M();
 	let i = e[t.node_id];
-	if (i === void 0 || !V(i.inputs) || !Object.hasOwn(i.inputs, t.property)) throw M();
+	if (i === void 0 || !H(i.inputs) || !Object.hasOwn(i.inputs, t.property)) throw M();
 	i.inputs[t.property] = n;
 }
-function ye(e) {
+function ve(e) {
 	let t = [{
 		value: e,
 		depth: 0
@@ -264,7 +264,7 @@ function ye(e) {
 	for (; t.length > 0;) {
 		let e = t.pop();
 		if (e === void 0) break;
-		if (n += 1, n > fe || e.depth > de) throw M();
+		if (n += 1, n > de || e.depth > ue) throw M();
 		if (e.value === null) continue;
 		let r = typeof e.value;
 		if (r !== "string" && r !== "boolean") {
@@ -279,9 +279,9 @@ function ye(e) {
 				});
 				continue;
 			}
-			if (!V(e.value)) throw M();
+			if (!H(e.value)) throw M();
 			for (let [n, r] of Object.entries(e.value)) {
-				if (!H(n)) throw M();
+				if (!U(n)) throw M();
 				t.push({
 					value: r,
 					depth: e.depth + 1
@@ -290,28 +290,28 @@ function ye(e) {
 		}
 	}
 }
-function V(e) {
+function H(e) {
 	if (typeof e != "object" || !e || Array.isArray(e)) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function H(e) {
-	return e.length > 0 && e.length <= 256 && !me.has(e);
+function U(e) {
+	return e.length > 0 && e.length <= 256 && !pe.has(e);
 }
 //#endregion
 //#region ../../packages/providers/src/comfyui/comfyui_adapter.ts
-var U = _({
-	profile_id: y().trim().min(1).max(128),
-	provider_id: f("comfyui"),
-	model_allowlist: g(y().trim().min(1).max(128)).min(1).max(32),
-	output_mime_type_allowlist: g(u([
+var W = u({
+	profile_id: v().trim().min(1).max(128),
+	provider_id: p("comfyui"),
+	model_allowlist: f(v().trim().min(1).max(128)).min(1).max(32),
+	output_mime_type_allowlist: f(h([
 		"image/png",
 		"image/jpeg",
 		"image/webp"
 	])).min(1).max(3),
-	workflow_allowlist: g(n).min(1).max(256),
-	max_response_bytes: m().int().positive().max(1e8),
-	max_input_asset_bytes: m().int().positive().max(1e8)
+	workflow_allowlist: f(g).min(1).max(256),
+	max_response_bytes: d().int().positive().max(1e8),
+	max_input_asset_bytes: d().int().positive().max(1e8)
 }).check((e) => {
 	for (let t of [
 		"model_allowlist",
@@ -326,29 +326,29 @@ var U = _({
 			path: [t]
 		});
 	}
-}), be = p({
-	prompt_id: y().trim().min(1).max(128),
-	number: m(),
-	node_errors: l(y(), v())
-}), xe = p({
-	name: y().trim().min(1).max(512),
-	subfolder: y().max(512),
-	type: u([
+}), ye = l({
+	prompt_id: v().trim().min(1).max(128),
+	number: d(),
+	node_errors: y(v(), n())
+}), be = l({
+	name: v().trim().min(1).max(512),
+	subfolder: v().max(512),
+	type: h([
 		"input",
 		"output",
 		"temp"
 	])
-}), Se = _({ request: _({
+}), xe = u({ request: u({
 	request_id: c.shape.request_id,
 	output_count: c.shape.output_count,
 	output_node_ids: c.shape.output_node_ids,
 	seed: c.shape.seed
-}) }), Ce = { next: Math.random }, we = /* @__PURE__ */ new Set([
+}) }), Se = { next: Math.random }, Ce = /* @__PURE__ */ new Set([
 	500,
 	502,
 	503,
 	504
-]), W = 3e6, Te = class {
+]), G = 3e6, we = class {
 	provider_id = "comfyui";
 	capabilities = /* @__PURE__ */ new Set([
 		"text_to_image",
@@ -361,29 +361,29 @@ var U = _({
 	#t;
 	#n;
 	constructor(e) {
-		this.#e = e.workflow_store, this.#t = e.clock ?? new P(), this.#n = e.random ?? Ce;
+		this.#e = e.workflow_store, this.#t = e.clock ?? new F(), this.#n = e.random ?? Se;
 	}
 	validate_profile(e) {
-		return U.parse(e);
+		return W.parse(e);
 	}
 	async submit(e, t) {
-		let n = Ae(t), r = q(e.profile);
+		let n = ke(t), r = J(e.profile);
 		if (!r.workflow_allowlist.includes(n.workflow_id)) throw M();
 		let i;
 		try {
-			i = _e(await this.#e.load(n.workflow_id));
+			i = ge(await this.#e.load(n.workflow_id));
 		} catch {
 			throw M();
 		}
 		if (i.workflow_id !== n.workflow_id) throw M();
-		G(i, n, Object.fromEntries(Object.keys(n.input_asset_bindings).map((e) => [e, "validated-input.png"])));
-		let a = await Ee(e, n, r, this.#t, this.#n), o = G(i, n, a), s = new TextEncoder().encode(JSON.stringify({ prompt: o }));
-		if (s.byteLength > W) throw M();
-		let c = await K(e, n, {
+		K(i, n, Object.fromEntries(Object.keys(n.input_asset_bindings).map((e) => [e, "validated-input.png"])));
+		let a = await Te(e, n, r, this.#t, this.#n), o = K(i, n, a), s = new TextEncoder().encode(JSON.stringify({ prompt: o }));
+		if (s.byteLength > G) throw M();
+		let c = await q(e, n, {
 			route: "/prompt",
 			method: "POST",
 			body: s,
-			max_request_bytes: W,
+			max_request_bytes: G,
 			content_type: "application/json",
 			accept: "application/json",
 			max_response_bytes: r.max_response_bytes,
@@ -392,7 +392,7 @@ var U = _({
 		if (c.body.byteLength > r.max_response_bytes) throw j();
 		let l;
 		try {
-			l = be.parse(J(c.body));
+			l = ye.parse(Y(c.body));
 		} catch {
 			throw j();
 		}
@@ -410,26 +410,26 @@ var U = _({
 	}
 	async poll(e, t) {
 		if (t.state !== "pending") throw M();
-		let n = Se.safeParse(t.continuation);
+		let n = xe.safeParse(t.continuation);
 		if (!n.success) throw M();
-		let r = n.data.request, a = q(e.profile), o = await K(e, r, {
+		let r = n.data.request, i = J(e.profile), o = await q(e, r, {
 			route: `/history/${encodeURIComponent(t.submission_id)}`,
 			method: "GET",
 			accept: "application/json",
-			max_response_bytes: a.max_response_bytes,
+			max_response_bytes: i.max_response_bytes,
 			signal: e.signal
 		}, this.#t, this.#n, !0);
-		if (o.body.byteLength > a.max_response_bytes) throw j();
-		let s = J(o.body);
-		if (!Y(s)) throw j();
+		if (o.body.byteLength > i.max_response_bytes) throw j();
+		let s = Y(o.body);
+		if (!X(s)) throw j();
 		let c = s[t.submission_id];
 		if (c === void 0) return {
 			state: "pending",
 			poll_after_ms: 250
 		};
-		if (!Y(c)) throw j();
+		if (!X(c)) throw j();
 		let l = c.status;
-		if (!Y(l)) throw j();
+		if (!X(l)) throw j();
 		if (l.status_str === "error") return {
 			state: "failed",
 			error: {
@@ -442,27 +442,27 @@ var U = _({
 			poll_after_ms: 250
 		};
 		let u = c.outputs;
-		if (!Y(u)) throw j();
-		let d = De(u, r.output_node_ids, r.output_count);
+		if (!X(u)) throw j();
+		let d = Ee(u, r.output_node_ids, r.output_count);
 		if (d.length !== r.output_count) throw j();
 		let f = [], p = 0;
 		for (let t of d) {
-			let n = await K(e, r, {
+			let n = await q(e, r, {
 				route: `/view?${new URLSearchParams({
 					filename: t.filename,
 					subfolder: t.subfolder,
 					type: t.type
 				}).toString()}`,
 				method: "GET",
-				max_response_bytes: a.max_response_bytes - p,
+				max_response_bytes: i.max_response_bytes - p,
 				signal: e.signal
 			}, this.#t, this.#n, !0);
-			if (p += n.body.byteLength, p > a.max_response_bytes) throw j();
-			f.push(k(n.body, void 0, void 0, a.output_mime_type_allowlist));
+			if (p += n.body.byteLength, p > i.max_response_bytes) throw j();
+			f.push(k(n.body, void 0, void 0, i.output_mime_type_allowlist));
 		}
 		return {
 			state: "completed",
-			result: i.parse(A({
+			result: a.parse(A({
 				request_id: r.request_id,
 				provider_id: "comfyui",
 				assets: f.map(({ asset: e }) => e)
@@ -473,7 +473,7 @@ var U = _({
 	async cancel(e, t) {
 		if (t === void 0) throw M();
 		if (t.state !== "pending") return;
-		let n = q(e.profile), r = { request_id: t.submission_id }, i = await K(e, r, {
+		let n = J(e.profile), r = { request_id: t.submission_id }, i = await q(e, r, {
 			route: "/queue",
 			method: "GET",
 			accept: "application/json",
@@ -481,15 +481,15 @@ var U = _({
 			signal: e.signal
 		}, this.#t, this.#n, !0);
 		if (i.body.byteLength > n.max_response_bytes) throw j();
-		let a = J(i.body);
-		if (!Y(a)) throw j();
-		let o = X(a.queue_running, t.submission_id), s = X(a.queue_pending, t.submission_id);
-		o ? await K(e, r, {
+		let a = Y(i.body);
+		if (!X(a)) throw j();
+		let o = Ae(a.queue_running, t.submission_id), s = Ae(a.queue_pending, t.submission_id);
+		o ? await q(e, r, {
 			route: "/interrupt",
 			method: "POST",
 			max_response_bytes: n.max_response_bytes,
 			signal: e.signal
-		}, this.#t, this.#n, !1) : s && await K(e, r, {
+		}, this.#t, this.#n, !1) : s && await q(e, r, {
 			route: "/queue",
 			method: "POST",
 			body: new TextEncoder().encode(JSON.stringify({ delete: [t.submission_id] })),
@@ -500,7 +500,7 @@ var U = _({
 		}, this.#t, this.#n, !1);
 	}
 };
-async function Ee(e, t, n, r, i) {
+async function Te(e, t, n, r, i) {
 	let a = [], o = 0;
 	for (let [r, i] of Object.entries(t.input_asset_bindings)) {
 		let t = await e.assets.read(i, e.signal), s = t.bytes.byteLength;
@@ -512,7 +512,7 @@ async function Ee(e, t, n, r, i) {
 	}
 	let s = w(n.max_input_asset_bytes), c = {};
 	for (let { binding_name: o, asset: l } of a) {
-		let a = te({
+		let a = N({
 			type: "input",
 			overwrite: "true"
 		}, [{
@@ -520,7 +520,7 @@ async function Ee(e, t, n, r, i) {
 			file_name: `${l.asset_id}.${je(l.media_type)}`,
 			content_type: l.media_type,
 			bytes: l.bytes
-		}]), u = await K(e, t, {
+		}]), u = await q(e, t, {
 			route: "/upload/image",
 			method: "POST",
 			body: a.body,
@@ -533,7 +533,7 @@ async function Ee(e, t, n, r, i) {
 		if (u.body.byteLength > n.max_response_bytes) throw j();
 		let d;
 		try {
-			d = xe.parse(J(u.body));
+			d = be.parse(Y(u.body));
 		} catch {
 			throw j();
 		}
@@ -541,8 +541,8 @@ async function Ee(e, t, n, r, i) {
 	}
 	return c;
 }
-function G(e, t, n) {
-	return ve(e, {
+function K(e, t, n) {
+	return _e(e, {
 		prompt: t.prompt,
 		...t.negative_prompt === void 0 ? {} : { negative_prompt: t.negative_prompt },
 		...t.seed === void 0 ? {} : { seed: t.seed },
@@ -551,13 +551,13 @@ function G(e, t, n) {
 		input_asset_names: n
 	});
 }
-function De(e, t, n) {
+function Ee(e, t, n) {
 	let r = [];
 	for (let i of t) {
 		let t = e[i];
-		if (!Y(t) || !Array.isArray(t.images) || t.images.length > n - r.length) throw j();
+		if (!X(t) || !Array.isArray(t.images) || t.images.length > n - r.length) throw j();
 		for (let e of t.images) {
-			if (!Y(e) || typeof e.filename != "string" || typeof e.subfolder != "string" || typeof e.type != "string" || e.filename.length === 0 || e.filename.length > 512 || e.subfolder.length > 512 || ![
+			if (!X(e) || typeof e.filename != "string" || typeof e.subfolder != "string" || typeof e.type != "string" || e.filename.length === 0 || e.filename.length > 512 || e.subfolder.length > 512 || ![
 				"input",
 				"output",
 				"temp"
@@ -571,12 +571,12 @@ function De(e, t, n) {
 	}
 	return r;
 }
-async function K(e, t, n, r, i, a) {
+async function q(e, t, n, r, i, a) {
 	let o = async (t, i) => {
 		let a = r.now(), o = await e.transport.execute(n);
-		return ke(e, t.request_id, i, o, a, r), Oe(o, r), o;
+		return Oe(e, t.request_id, i, o, a, r), De(o, r), o;
 	};
-	if (a) return (n.method === "GET" ? L : I)(t, o, {
+	if (a) return (n.method === "GET" ? R : L)(t, o, {
 		signal: e.signal,
 		clock: r,
 		random: i
@@ -587,20 +587,20 @@ async function K(e, t, n, r, i, a) {
 		throw T(t, e.signal);
 	}
 }
-function Oe(e, t) {
+function De(e, t) {
 	if (e.status >= 200 && e.status < 300) return;
 	if (e.status === 451) throw new b({
 		code: "content_blocked",
 		retryable: !1,
 		status_code: 451
 	});
-	let n = F(e.headers["retry-after"] ?? null, t.now());
+	let n = I(e.headers["retry-after"] ?? null, t.now());
 	throw new b(x(e.status, {
-		recoverable: we.has(e.status),
+		recoverable: Ce.has(e.status),
 		...n === void 0 ? {} : { retry_after_ms: n }
 	}));
 }
-function ke(e, t, n, r, i, a) {
+function Oe(e, t, n, r, i, a) {
 	e.log.write(S({
 		provider_id: "comfyui",
 		request_id: t,
@@ -610,27 +610,27 @@ function ke(e, t, n, r, i, a) {
 		byte_count: r.body.byteLength
 	}));
 }
-function Ae(e) {
+function ke(e) {
 	let t = c.safeParse(e);
 	if (!t.success) throw M();
 	return t.data;
 }
-function q(e) {
-	let t = U.safeParse(e);
+function J(e) {
+	let t = W.safeParse(e);
 	if (!t.success) throw M();
 	return t.data;
 }
-function J(e) {
+function Y(e) {
 	try {
 		return JSON.parse(new TextDecoder("utf-8", { fatal: !0 }).decode(e));
 	} catch {
 		throw j();
 	}
 }
-function Y(e) {
+function X(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function X(e, t) {
+function Ae(e, t) {
 	return Array.isArray(e) && e.some((e) => Array.isArray(e) && e[1] === t);
 }
 function je(e) {
@@ -638,17 +638,17 @@ function je(e) {
 }
 //#endregion
 //#region ../../packages/providers/src/google_image/google_image_adapter.ts
-var Me = _({
-	profile_id: y().trim().min(1).max(128),
-	provider_id: f("google_image"),
-	model_allowlist: g(a.shape.model_id).min(1).max(32),
-	output_mime_type_allowlist: g(u([
+var Me = u({
+	profile_id: v().trim().min(1).max(128),
+	provider_id: p("google_image"),
+	model_allowlist: f(o.shape.model_id).min(1).max(32),
+	output_mime_type_allowlist: f(h([
 		"image/png",
 		"image/jpeg",
 		"image/webp"
 	])).min(1).max(3),
-	max_response_bytes: m().int().positive().max(1e8),
-	max_input_asset_bytes: m().int().positive().max(1e8)
+	max_response_bytes: d().int().positive().max(1e8),
+	max_input_asset_bytes: d().int().positive().max(1e8)
 }).check((e) => {
 	for (let t of ["model_allowlist", "output_mime_type_allowlist"]) {
 		let n = e.value[t];
@@ -659,24 +659,24 @@ var Me = _({
 			path: [t]
 		});
 	}
-}), Ne = p({
-	id: y().min(1),
-	model: y().min(1),
-	status: u([
+}), Ne = l({
+	id: v().min(1),
+	model: v().min(1),
+	status: h([
 		"completed",
 		"failed",
 		"in_progress"
 	]),
-	error: p({
-		code: y().optional(),
-		message: y().optional()
+	error: l({
+		code: v().optional(),
+		message: v().optional()
 	}).optional(),
-	steps: g(p({
-		type: y(),
-		content: g(p({
-			type: y(),
-			mime_type: y().optional(),
-			data: y().optional()
+	steps: f(l({
+		type: v(),
+		content: f(l({
+			type: v(),
+			mime_type: v().optional(),
+			data: v().optional()
 		})).optional()
 	}))
 }), Pe = { next: Math.random }, Fe = /* @__PURE__ */ new Set([
@@ -690,7 +690,7 @@ var Me = _({
 	#e;
 	#t;
 	constructor(e = {}) {
-		this.#e = e.clock ?? new P(), this.#t = e.random ?? Pe;
+		this.#e = e.clock ?? new F(), this.#t = e.random ?? Pe;
 	}
 	validate_profile(e) {
 		return Me.parse(e);
@@ -698,16 +698,16 @@ var Me = _({
 	async submit(e, t) {
 		let n = ze(t), r = Be(e.profile);
 		if (!r.model_allowlist.includes(n.model_id) || !r.output_mime_type_allowlist.includes(n.output_mime_type)) throw M();
-		let a = [{
+		let i = [{
 			type: "text",
 			text: n.negative_prompt === void 0 ? n.prompt : `${n.prompt}\n\nAvoid: ${n.negative_prompt}`
 		}], o = 0;
 		for (let t of n.reference_asset_ids) {
 			let n = await e.assets.read(t, e.signal);
 			if (n.asset_id !== t) throw M();
-			let i = n.bytes.byteLength;
-			if (i > r.max_input_asset_bytes || i > r.max_input_asset_bytes - o) throw M();
-			o += i, a.push({
+			let a = n.bytes.byteLength;
+			if (a > r.max_input_asset_bytes || a > r.max_input_asset_bytes - o) throw M();
+			o += a, i.push({
 				type: "image",
 				mime_type: n.media_type,
 				data: D(n.bytes)
@@ -715,7 +715,7 @@ var Me = _({
 		}
 		let s = w(r.max_input_asset_bytes), c = new TextEncoder().encode(JSON.stringify({
 			model: n.model_id,
-			input: a,
+			input: i,
 			response_format: {
 				type: "image",
 				mime_type: n.output_mime_type,
@@ -724,7 +724,7 @@ var Me = _({
 			}
 		})), l = [], u = 0;
 		for (let t = 0; t < n.output_count; t += 1) {
-			let t = await I(n, async (t, n) => {
+			let t = await L(n, async (t, n) => {
 				let i = this.#e.now(), a = await e.transport.execute({
 					route: "/v1beta/interactions",
 					method: "POST",
@@ -768,7 +768,7 @@ var Me = _({
 		}
 		return {
 			state: "completed",
-			result: i.parse({
+			result: a.parse({
 				request_id: n.request_id,
 				provider_id: "google_image",
 				assets: l.map(({ asset: e }) => e)
@@ -786,7 +786,7 @@ var Me = _({
 };
 function Le(e, t) {
 	if (e.status >= 200 && e.status < 300) return;
-	let n = F(e.headers["retry-after"] ?? null, t.now());
+	let n = I(e.headers["retry-after"] ?? null, t.now());
 	throw new b(x(e.status, {
 		recoverable: Fe.has(e.status),
 		...n === void 0 ? {} : { retry_after_ms: n }
@@ -803,7 +803,7 @@ function Re(e, t, n, r, i, a) {
 	}));
 }
 function ze(e) {
-	let t = a.safeParse(e);
+	let t = o.safeParse(e);
 	if (!t.success) throw M();
 	return t.data;
 }
@@ -885,23 +885,23 @@ function We(e) {
 }
 //#endregion
 //#region ../../packages/providers/src/novelai/novelai_response.ts
-var Ge = p({ images: g(p({
-	image: y(),
-	index: m().int().nonnegative(),
-	seed: m().int().nonnegative()
+var Ge = l({ images: f(l({
+	image: v(),
+	index: d().int().nonnegative(),
+	seed: d().int().nonnegative()
 })).min(1).max(4) });
-async function Ke(e, t, n, r, a, o = ["image/png", "image/webp"]) {
+async function Ke(e, t, n, r, i, o = ["image/png", "image/webp"]) {
 	try {
 		if (e.byteLength === 0 || e.byteLength > r) throw j();
 		let s = t.toLowerCase(), c;
 		if (s.startsWith("application/json")) c = qe(e, r);
-		else if (s.startsWith("application/zip") || s.startsWith("application/x-zip-compressed") || s.startsWith("application/octet-stream") || s.startsWith("binary/octet-stream")) c = { images: await Je(e, r, a) };
-		else if (s.startsWith("multipart/")) c = { images: Ze(e, t, r, a) };
+		else if (s.startsWith("application/zip") || s.startsWith("application/x-zip-compressed") || s.startsWith("application/octet-stream") || s.startsWith("binary/octet-stream")) c = { images: await Je(e, r, i) };
+		else if (s.startsWith("multipart/")) c = { images: Ze(e, t, r, i) };
 		else throw j();
 		if (c.images.length !== n.output_count) throw j();
 		let l = c.images.map((e) => k(e, n.width, n.height, o));
 		return {
-			result: i.parse(A({
+			result: a.parse(A({
 				request_id: n.request_id,
 				provider_id: "novelai",
 				assets: l.map(({ asset: e }) => e)
@@ -1029,14 +1029,14 @@ function tt(e) {
 }
 //#endregion
 //#region ../../packages/providers/src/novelai/novelai_adapter.ts
-var nt = _({
-	profile_id: y().trim().min(1).max(128),
-	provider_id: f("novelai"),
-	model_allowlist: g(y().trim().min(1).max(128)).min(1).max(32),
-	output_mime_type_allowlist: g(u(["image/png", "image/webp"])).min(1).max(2),
-	max_response_bytes: m().int().positive().max(1e8),
-	max_archive_entries: m().int().min(1).max(32),
-	max_input_asset_bytes: m().int().positive().max(1e8).default(2e7)
+var nt = u({
+	profile_id: v().trim().min(1).max(128),
+	provider_id: p("novelai"),
+	model_allowlist: f(v().trim().min(1).max(128)).min(1).max(32),
+	output_mime_type_allowlist: f(h(["image/png", "image/webp"])).min(1).max(2),
+	max_response_bytes: d().int().positive().max(1e8),
+	max_archive_entries: d().int().min(1).max(32),
+	max_input_asset_bytes: d().int().positive().max(1e8).default(2e7)
 }).check((e) => {
 	for (let t of ["model_allowlist", "output_mime_type_allowlist"]) {
 		let n = e.value[t];
@@ -1062,7 +1062,7 @@ var nt = _({
 	#e;
 	#t;
 	constructor(e = {}) {
-		this.#e = e.clock ?? new P(), this.#t = e.random ?? rt;
+		this.#e = e.clock ?? new F(), this.#t = e.random ?? rt;
 	}
 	validate_profile(e) {
 		return nt.parse(e);
@@ -1070,7 +1070,7 @@ var nt = _({
 	async submit(e, t) {
 		let n = ot(t), r = st(e.profile);
 		if (!r.model_allowlist.includes(n.model_id)) throw M();
-		let i = await ct(e, n, r.max_input_asset_bytes), a = w(r.max_input_asset_bytes), o = await I(n, async (t, n) => {
+		let i = await ct(e, n, r.max_input_asset_bytes), a = w(r.max_input_asset_bytes), o = await L(n, async (t, n) => {
 			let o = He(t, i), s = this.#e.now(), c = await e.transport.execute({
 				route: "/ai/generate-image",
 				method: "POST",
@@ -1094,7 +1094,7 @@ var nt = _({
 				status_code: 451
 			});
 			if (c.status < 200 || c.status >= 300) {
-				let e = F(c.headers["retry-after"] ?? null, this.#e.now());
+				let e = I(c.headers["retry-after"] ?? null, this.#e.now());
 				throw new b(x(c.status, {
 					recoverable: it.has(c.status),
 					...e === void 0 ? {} : { retry_after_ms: e }
@@ -1119,7 +1119,7 @@ var nt = _({
 	}
 };
 function ot(e) {
-	let t = h.safeParse(e);
+	let t = s.safeParse(e);
 	if (!t.success) throw M();
 	return t.data;
 }
@@ -1142,18 +1142,18 @@ async function ct(e, t, n) {
 }
 //#endregion
 //#region ../../packages/providers/src/openai_image/openai_image_adapter.ts
-var lt = _({
-	profile_id: y().trim().min(1).max(128),
-	provider_id: f("openai_image"),
-	model_allowlist: g(o.shape.model_id).min(1).max(32),
-	output_mime_type_allowlist: g(u([
+var lt = u({
+	profile_id: v().trim().min(1).max(128),
+	provider_id: p("openai_image"),
+	model_allowlist: f(r.shape.model_id).min(1).max(32),
+	output_mime_type_allowlist: f(h([
 		"image/png",
 		"image/jpeg",
 		"image/webp"
 	])).min(1).max(3),
-	remote_asset_origin_allowlist: g(s()).max(32),
-	max_response_bytes: m().int().positive().max(1e8),
-	max_input_asset_bytes: m().int().positive().max(1e8)
+	remote_asset_origin_allowlist: f(_()).max(32),
+	max_response_bytes: d().int().positive().max(1e8),
+	max_input_asset_bytes: d().int().positive().max(1e8)
 }).check((e) => {
 	for (let t of [
 		"model_allowlist",
@@ -1168,10 +1168,10 @@ var lt = _({
 			path: [t]
 		});
 	}
-}), ut = _({
-	created: m().int().nonnegative().optional(),
-	data: g(d([_({ b64_json: y().min(1) }), _({ url: s() })])).min(1).max(4),
-	usage: v().optional()
+}), ut = u({
+	created: d().int().nonnegative().optional(),
+	data: f(i([u({ b64_json: v().min(1) }), u({ url: _() })])).min(1).max(4),
+	usage: n().optional()
 }), dt = { next: Math.random }, ft = /* @__PURE__ */ new Set([
 	500,
 	502,
@@ -1183,7 +1183,7 @@ var lt = _({
 	#e;
 	#t;
 	constructor(e = {}) {
-		this.#e = e.clock ?? new P(), this.#t = e.random ?? dt;
+		this.#e = e.clock ?? new F(), this.#t = e.random ?? dt;
 	}
 	validate_profile(e) {
 		return lt.parse(e);
@@ -1191,7 +1191,7 @@ var lt = _({
 	async submit(e, t) {
 		let n = xt(t), r = St(e.profile);
 		if (!r.model_allowlist.includes(n.model_id) || !r.output_mime_type_allowlist.includes(Tt(n.output_format))) throw M();
-		let a = w(r.max_input_asset_bytes), o = n.mode === "generate" ? mt(n, e.signal, r.max_response_bytes, a) : await ht(e, n, r.max_input_asset_bytes, r.max_response_bytes, a), s = await I(n, async (t, n) => {
+		let i = w(r.max_input_asset_bytes), o = n.mode === "generate" ? mt(n, e.signal, r.max_response_bytes, i) : await ht(e, n, r.max_input_asset_bytes, r.max_response_bytes, i), s = await L(n, async (t, n) => {
 			let r = this.#e.now(), i = await e.transport.execute(o);
 			return bt(e, t.request_id, n, i, r, this.#e), vt(i, this.#e), i;
 		}, {
@@ -1217,7 +1217,7 @@ var lt = _({
 		}
 		return {
 			state: "completed",
-			result: i.parse({
+			result: a.parse({
 				request_id: n.request_id,
 				provider_id: "openai_image",
 				assets: u.map(({ asset: e }) => e)
@@ -1281,7 +1281,7 @@ async function ht(e, t, n, r, i) {
 			bytes: r.bytes
 		});
 	}
-	let s = te({
+	let s = N({
 		model: t.model_id,
 		prompt: gt(t),
 		n: String(t.output_count),
@@ -1314,7 +1314,7 @@ async function _t(e, t, n, r, i, a, o) {
 	}
 	let c = n.remote_asset_origin_allowlist.map((e) => new URL(e).origin), l = e.transport.fetch_remote_asset?.bind(e.transport);
 	if (s.protocol !== "https:" || s.username.length > 0 || s.password.length > 0 || s.hash.length > 0 || !c.includes(s.origin) || l === void 0 || r <= 0) throw j();
-	return L(i, async (t, n) => {
+	return R(i, async (t, n) => {
 		let i = o.now(), a = await l({
 			url: s.href,
 			allowed_origins: c,
@@ -1336,7 +1336,7 @@ function vt(e, t) {
 		retryable: !1,
 		status_code: e.status
 	});
-	let n = F(e.headers["retry-after"] ?? null, t.now());
+	let n = I(e.headers["retry-after"] ?? null, t.now());
 	throw new b(x(e.status, {
 		recoverable: ft.has(e.status),
 		...n === void 0 ? {} : { retry_after_ms: n }
@@ -1362,7 +1362,7 @@ function bt(e, t, n, r, i, a) {
 	}));
 }
 function xt(e) {
-	let t = o.safeParse(e);
+	let t = r.safeParse(e);
 	if (!t.success) throw M();
 	return t.data;
 }
@@ -1471,10 +1471,10 @@ function Nt(e) {
 }
 //#endregion
 //#region ../../packages/providers/src/sd_webui/sd_webui_response.ts
-var Pt = p({
-	images: g(y()),
-	info: y()
-}), Ft = p({ seed: m().int().nonnegative().optional() });
+var Pt = l({
+	images: f(v()),
+	info: v()
+}), Ft = l({ seed: d().int().nonnegative().optional() });
 function It(e, t, n, r = [
 	"image/png",
 	"image/jpeg",
@@ -1482,7 +1482,7 @@ function It(e, t, n, r = [
 ]) {
 	try {
 		if (e.byteLength === 0 || e.byteLength > n) throw j();
-		let a = new TextDecoder("utf-8", { fatal: !0 }).decode(e), o = Pt.parse(JSON.parse(a)), { images: s } = o, c = o.info;
+		let i = new TextDecoder("utf-8", { fatal: !0 }).decode(e), o = Pt.parse(JSON.parse(i)), { images: s } = o, c = o.info;
 		if (s.length !== t.output_count) throw j();
 		let l = t.hires_fix === void 0 ? t.width : Math.round(t.width * t.hires_fix.scale), u = t.hires_fix === void 0 ? t.height : Math.round(t.height * t.hires_fix.scale), d = 0, f = s.map((e) => {
 			if (typeof e != "string") throw j();
@@ -1490,7 +1490,7 @@ function It(e, t, n, r = [
 			return d += t.byteLength, k(t, l, u, r);
 		}), p = Lt(c);
 		return {
-			result: i.parse(A({
+			result: a.parse(A({
 				request_id: t.request_id,
 				provider_id: "sd_webui",
 				assets: f.map(({ asset: e }) => e)
@@ -1506,20 +1506,20 @@ function Lt(e) {
 }
 //#endregion
 //#region ../../packages/providers/src/sd_webui/sd_webui_adapter.ts
-var Rt = _({
-	profile_id: y().trim().min(1).max(128),
-	provider_id: f("sd_webui"),
-	model_allowlist: g(y().trim().min(1).max(128)).min(1).max(128),
-	vae_allowlist: g(y().trim().min(1).max(128)).max(128).default([]),
-	adetailer_model_allowlist: g(y().trim().min(1).max(128)).max(128).default([]),
-	controlnet_model_allowlist: g(y().trim().min(1).max(128)).max(128).default([]),
-	output_mime_type_allowlist: g(u([
+var Rt = u({
+	profile_id: v().trim().min(1).max(128),
+	provider_id: p("sd_webui"),
+	model_allowlist: f(v().trim().min(1).max(128)).min(1).max(128),
+	vae_allowlist: f(v().trim().min(1).max(128)).max(128).default([]),
+	adetailer_model_allowlist: f(v().trim().min(1).max(128)).max(128).default([]),
+	controlnet_model_allowlist: f(v().trim().min(1).max(128)).max(128).default([]),
+	output_mime_type_allowlist: f(h([
 		"image/png",
 		"image/jpeg",
 		"image/webp"
 	])).min(1).max(3),
-	max_response_bytes: m().int().positive().max(1e8),
-	max_input_asset_bytes: m().int().positive().max(1e8).default(2e7)
+	max_response_bytes: d().int().positive().max(1e8),
+	max_input_asset_bytes: d().int().positive().max(1e8).default(2e7)
 }).check((e) => {
 	for (let t of [
 		"model_allowlist",
@@ -1553,7 +1553,7 @@ var Rt = _({
 	#e;
 	#t;
 	constructor(e = {}) {
-		this.#e = e.clock ?? new P(), this.#t = e.random ?? zt;
+		this.#e = e.clock ?? new F(), this.#t = e.random ?? zt;
 	}
 	validate_profile(e) {
 		return Rt.parse(e);
@@ -1564,7 +1564,7 @@ var Rt = _({
 		let i = await Gt(e, n, r.max_input_asset_bytes), a = w(r.max_input_asset_bytes);
 		return {
 			state: "completed",
-			...It((await I(n, async (t, n) => {
+			...It((await L(n, async (t, n) => {
 				let o = Dt(t, i), s = t.mode === "txt2img" ? "/sdapi/v1/txt2img" : "/sdapi/v1/img2img", c = this.#e.now(), l = await e.transport.execute({
 					route: s,
 					method: "POST",
@@ -1588,7 +1588,7 @@ var Rt = _({
 					status_code: 451
 				});
 				if (l.status < 200 || l.status >= 300) {
-					let e = F(l.headers["retry-after"] ?? null, this.#e.now());
+					let e = I(l.headers["retry-after"] ?? null, this.#e.now());
 					throw new b(x(l.status, {
 						recoverable: Bt.has(l.status),
 						...e === void 0 ? {} : { retry_after_ms: e }
@@ -1617,7 +1617,7 @@ var Rt = _({
 	}
 };
 function Ht(e) {
-	let t = r.safeParse(e);
+	let t = m.safeParse(e);
 	if (!t.success) throw M();
 	return t.data;
 }
@@ -1644,4 +1644,4 @@ async function Gt(e, t, n) {
 	return i;
 }
 //#endregion
-export { Te as ComfyUiAdapter, Ie as GoogleImageAdapter, at as NovelAiAdapter, pt as OpenAiImageAdapter, Vt as SdWebuiAdapter };
+export { we as ComfyUiAdapter, Ie as GoogleImageAdapter, at as NovelAiAdapter, pt as OpenAiImageAdapter, Vt as SdWebuiAdapter };

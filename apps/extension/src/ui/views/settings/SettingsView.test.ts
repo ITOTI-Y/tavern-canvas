@@ -21,6 +21,7 @@ import {
   type StudioController,
 } from "../../controllers/studio_controller.js";
 import { create_unavailable_capabilities } from "../../controllers/unavailable_capabilities.js";
+import type { BrowserSecretVaultStatus } from "../../../storage/browser_secret_vault.js";
 import { en_messages } from "../../../i18n/locales/en.js";
 import { zh_cn_messages } from "../../../i18n/locales/zh_cn.js";
 import SettingsView from "./SettingsView.vue";
@@ -36,6 +37,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   schema_version: 1,
   active_namespace: "default",
   locale: "auto",
+  credential_storage_mode: "host",
   active_provider_profile_id: null,
   global_concurrency: 2,
   auto_generation_enabled: false,
@@ -57,6 +59,7 @@ const PROFILE: ProviderProfileSummary = {
   model_id: "sdxl-base",
   workflow_id: null,
   is_default: true,
+  credential_reference: null,
   updated_at: "2026-01-01T00:00:00.000Z",
 };
 
@@ -105,6 +108,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     settings: {
       settings: DEFAULT_SETTINGS,
       vocabulary_update_channel: "bundled",
+      browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
       migration_retry_command: IDLE_COMMAND_STATE,
     },
@@ -225,10 +229,13 @@ describe("SettingsView provider profiles", () => {
           model_id: draft.model_id,
           workflow_id: draft.workflow_id,
           is_default: draft.is_default,
+          credential_reference: null,
           updated_at: "2026-08-07T00:00:00.000Z",
         });
       },
       remove: capabilities.profiles.remove,
+      set_credential: capabilities.profiles.set_credential,
+      clear_credential: capabilities.profiles.clear_credential,
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -269,6 +276,55 @@ describe("SettingsView provider profiles", () => {
     // now shows two profiles without a page reload.
     expect(wrapper.findAll('[data-testid="provider-profile-row"]').length).toBe(2);
   });
+  it("stores a provider API key through the credential command without adding it to the profile draft", async () => {
+    const plaintext = "provider-key-canary-value";
+    const writes: { profile_id: Uuid; plaintext_value: string }[] = [];
+    const capabilities = create_unavailable_capabilities();
+    const credential_reference = `tavern_canvas:default:${PROFILE_ID}:provider_api_key`;
+    const credential_profile: ProviderProfileSummary = {
+      ...PROFILE,
+      provider_id: "novelai",
+    };
+    const profiles: ProfilesCapability = {
+      ...capabilities.profiles,
+      load: () => Promise.resolve([credential_profile]),
+      subscribe: () => () => {},
+      set_credential: (profile_id, plaintext_value) => {
+        writes.push({ profile_id, plaintext_value });
+        return Promise.resolve({ ...credential_profile, credential_reference });
+      },
+    };
+    const controller = build_controller({ ...capabilities, profiles });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+
+    const row = wrapper.get('[data-testid="provider-profile-row"]');
+    const set_key_button = row.findAll("button").find((button) => button.text() === "Set API key");
+    await set_key_button?.trigger("click");
+    await nextTick();
+
+    const input = document.querySelector(
+      '[data-testid="provider-credential-input"]',
+    ) as HTMLInputElement;
+    expect(input.type).toBe("password");
+    input.value = plaintext;
+    input.dispatchEvent(new Event("input"));
+    await nextTick();
+    const save_button = Array.from(document.querySelectorAll('[role="dialog"] button')).find(
+      (button) => button.textContent === "Save",
+    ) as HTMLButtonElement;
+    save_button.click();
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(writes).toEqual([{ profile_id: PROFILE_ID, plaintext_value: plaintext }]);
+    expect(
+      (document.querySelector('[data-testid="provider-credential-input"]') as HTMLInputElement)
+        .value,
+    ).toBe("");
+    expect(document.body.innerHTML).not.toContain(plaintext);
+    expect(row.text()).toContain("API key configured");
+  });
 
   it("removes a provider profile after typed destructive confirmation", async () => {
     const removed: Uuid[] = [];
@@ -281,6 +337,8 @@ describe("SettingsView provider profiles", () => {
         removed.push(id);
         return Promise.resolve();
       },
+      set_credential: capabilities.profiles.set_credential,
+      clear_credential: capabilities.profiles.clear_credential,
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -311,6 +369,8 @@ describe("SettingsView provider profiles", () => {
       subscribe: () => () => {},
       save: capabilities.profiles.save,
       remove: capabilities.profiles.remove,
+      set_credential: capabilities.profiles.set_credential,
+      clear_credential: capabilities.profiles.clear_credential,
       test_connection: (): Promise<ProfileConnectionTestResult> =>
         Promise.resolve({ status: "success", latency_ms: 77 }),
     };
@@ -334,6 +394,67 @@ describe("SettingsView provider profiles", () => {
     await wrapper.get('[data-testid="provider-profiles"] button').trigger("click");
     await nextTick();
     expect(wrapper.html()).not.toContain(SECRET_TOKEN_VALUE);
+  });
+});
+describe("SettingsView credential storage", () => {
+  it("initializes the encrypted browser vault and switches the active backend", async () => {
+    const passphrase = "correct horse battery staple";
+    const initialize_calls: string[] = [];
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const capabilities = create_unavailable_capabilities();
+    let current_settings = DEFAULT_SETTINGS;
+    let vault_status: BrowserSecretVaultStatus = { state: "uninitialized", secret_count: 0 };
+    const settings: SettingsCapability = {
+      ...capabilities.settings,
+      load: () =>
+        Promise.resolve({
+          settings: current_settings,
+          vocabulary_update_channel: current_settings.vocabulary_update_channel,
+          browser_secret_vault: vault_status,
+        }),
+      update: (partial) => {
+        updates.push(partial);
+        current_settings = { ...current_settings, ...partial };
+        return Promise.resolve(current_settings);
+      },
+      initialize_browser_secret_vault: (value) => {
+        initialize_calls.push(value);
+        vault_status = { state: "unlocked", secret_count: 0 };
+        return Promise.resolve(vault_status);
+      },
+    };
+    const controller = build_controller({ ...capabilities, settings });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+    const section = wrapper.get('[data-testid="credential-storage-settings"]');
+
+    const browser_option = section
+      .findAll('[role="radio"]')
+      .find((option) => option.text().includes("Encrypted browser"));
+    await browser_option?.trigger("click");
+    await nextTick();
+    await nextTick();
+    expect(updates).toContainEqual({ credential_storage_mode: "browser_encrypted" });
+
+    const password_input = section.get('[data-testid="browser-vault-passphrase"]');
+    const confirmation_input = section.get('[data-testid="browser-vault-passphrase-confirmation"]');
+    await password_input.setValue(passphrase);
+    await confirmation_input.setValue("mismatched passphrase");
+    const initialize_button = section
+      .findAll("button")
+      .find((button) => button.text() === "Create encrypted vault");
+    await initialize_button?.trigger("click");
+    expect(initialize_calls).toEqual([]);
+    expect(section.text()).toContain("The passphrases do not match");
+
+    await confirmation_input.setValue(passphrase);
+    await initialize_button?.trigger("click");
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(initialize_calls).toEqual([passphrase]);
+    expect(section.text()).toContain("Unlocked");
+    expect(document.body.innerHTML).not.toContain(passphrase);
   });
 });
 
@@ -361,6 +482,7 @@ describe("SettingsView gateway settings", () => {
             gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "http://127.0.0.1:8000" },
           },
           vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
           migration_retry_command: IDLE_COMMAND_STATE,
         },
@@ -386,6 +508,7 @@ describe("SettingsView gateway settings", () => {
             gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "http://192.168.1.50:8000" },
           },
           vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
           migration_retry_command: IDLE_COMMAND_STATE,
         },
@@ -406,6 +529,7 @@ describe("SettingsView gateway settings", () => {
             gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "http://gateway.example.com" },
           },
           vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
           migration_retry_command: IDLE_COMMAND_STATE,
         },
@@ -426,6 +550,7 @@ describe("SettingsView gateway settings", () => {
             gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "https://gateway.example.com" },
           },
           vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
           migration_retry_command: IDLE_COMMAND_STATE,
         },
@@ -448,6 +573,7 @@ describe("SettingsView gateway settings", () => {
             gateway: { ...DEFAULT_SETTINGS.gateway, token_secret_id },
           },
           vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       set_gateway_token: (plaintext_value) => {
         stored.push(plaintext_value);
@@ -481,6 +607,7 @@ describe("SettingsView gateway settings", () => {
     const origin_endpoint = "http://gateway.example.com";
     let acknowledgments: Record<string, string> = {};
     const settings: SettingsCapability = {
+      ...capabilities.settings,
       load: (): Promise<SettingsSnapshot> =>
         Promise.resolve({
           settings: {
@@ -492,6 +619,7 @@ describe("SettingsView gateway settings", () => {
             },
           },
           vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
       update: capabilities.settings.update,
@@ -533,8 +661,13 @@ describe("SettingsView automation settings", () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
     const capabilities = create_unavailable_capabilities();
     const settings: SettingsCapability = {
+      ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       subscribe: () => () => {},
       update: (partial) => {
         updates.push(partial);
@@ -592,8 +725,13 @@ describe("SettingsView appearance settings", () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
     const capabilities = create_unavailable_capabilities();
     const settings: SettingsCapability = {
+      ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       subscribe: () => () => {},
       update: (partial) => {
         updates.push(partial);
@@ -631,7 +769,11 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     const settings: SettingsCapability = {
       ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       set_vocabulary_update_channel: (channel) => {
         channels.push(channel);
         return Promise.resolve();
@@ -656,7 +798,11 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     const settings: SettingsCapability = {
       ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       import_vocabulary_package: (file, on_progress) => {
         imported.push(file);
         on_progress?.({ phase: "indexing" });
@@ -697,7 +843,11 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     const settings: SettingsCapability = {
       ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       import_vocabulary_package: () => import_promise,
       cancel_vocabulary_import: cancel,
     };
@@ -724,7 +874,11 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     const settings: SettingsCapability = {
       ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       export_archive: () => Promise.resolve(archive_blob),
     };
     const controller = build_controller({ ...capabilities, settings });
@@ -751,7 +905,11 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     const settings: SettingsCapability = {
       ...capabilities.settings,
       load: () =>
-        Promise.resolve({ settings: DEFAULT_SETTINGS, vocabulary_update_channel: "bundled" }),
+        Promise.resolve({
+          settings: DEFAULT_SETTINGS,
+          vocabulary_update_channel: "bundled",
+          browser_secret_vault: { state: "unavailable", secret_count: 0 },
+        }),
       import_archive: (archive) => {
         imported.push(archive);
         return Promise.resolve();

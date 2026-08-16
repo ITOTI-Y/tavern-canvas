@@ -43,6 +43,8 @@ const NamespaceIdentifierSchema = z
     (value) => value === value.trim(),
     "active_namespace must not have surrounding whitespace",
   );
+export const CredentialStorageModeSchema = z.enum(["host", "browser_encrypted"]);
+export type CredentialStorageMode = z.infer<typeof CredentialStorageModeSchema>;
 
 export const TavernCanvasUiSettingsSchema = z.strictObject({
   color_mode: z.enum(["system", "light", "dark"]),
@@ -56,6 +58,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   schema_version: z.literal(1),
   active_namespace: NamespaceIdentifierSchema,
   locale: z.enum(["auto", "zh-CN", "en"]),
+  credential_storage_mode: CredentialStorageModeSchema,
   active_provider_profile_id: UuidSchema.nullable(),
   global_concurrency: z.number().int().min(1).max(4),
   auto_generation_enabled: z.boolean(),

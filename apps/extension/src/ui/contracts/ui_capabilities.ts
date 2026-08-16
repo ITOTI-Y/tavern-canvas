@@ -17,6 +17,7 @@ import type {
   VocabularyCategory,
   VocabularySearchResult,
 } from "@tavern-canvas/contracts";
+import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
 
 /**
  * The Studio never imports domain modules, storage repositories, or provider adapters directly
@@ -72,6 +73,7 @@ export interface ProviderProfileSummary {
   readonly model_id?: string | null;
   readonly workflow_id?: string | null;
   readonly is_default: boolean;
+  readonly credential_reference: string | null;
   readonly updated_at: string;
 }
 
@@ -83,7 +85,6 @@ export interface ProviderProfileDraft {
   readonly workflow_id: string | null;
   readonly is_default: boolean;
   readonly updated_at: string;
-  readonly secret_reference: string | null;
 }
 
 export type ProfileConnectionTestResult =
@@ -100,6 +101,8 @@ export interface ProfilesCapability {
   save(profile: ProviderProfileDraft): Promise<ProviderProfileSummary>;
   remove(profile_id: Uuid): Promise<void>;
   test_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
+  set_credential(profile_id: Uuid, plaintext_value: string): Promise<ProviderProfileSummary>;
+  clear_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
 }
 
 // ---------------------------------------------------------------------------
@@ -109,8 +112,8 @@ export interface ProfilesCapability {
 // one difference that carries the whole credential design: a credential is never part of the save
 // payload. `LlmConnectionDraft` (packages/contracts) is a strict object with no credential,
 // header, or endpoint field, and `set_credential` is a separate operation whose plaintext argument
-// goes straight to host secret storage. Nothing the UI can send reaches a repository as a secret,
-// and nothing it reads back carries one.
+// goes straight to the selected credential storage. Nothing the UI can send reaches a repository
+// as a secret, and nothing it reads back carries one.
 // ---------------------------------------------------------------------------
 
 export type LlmConnectionsDomainEvent =
@@ -122,7 +125,7 @@ export interface LlmConnectionsCapability {
   subscribe(handler: (event: LlmConnectionsDomainEvent) => void): Unsubscribe;
   save(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
   remove(connection_id: Uuid): Promise<void>;
-  /** Hands a plaintext credential to host secret storage; resolves with the reference-only view. */
+  /** Hands a plaintext credential to the selected backend; resolves with the reference-only view. */
   set_credential(connection_id: Uuid, plaintext_value: string): Promise<LlmConnectionProfile>;
   clear_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
   test_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
@@ -433,6 +436,7 @@ export type VocabularyUpdateChannel = "bundled" | "remote";
 export interface SettingsSnapshot {
   readonly settings: TavernCanvasSettings;
   readonly vocabulary_update_channel: VocabularyUpdateChannel;
+  readonly browser_secret_vault: BrowserSecretVaultStatus;
 }
 
 export type SettingsDomainEvent = {
@@ -446,9 +450,13 @@ export interface SettingsCapability {
   update(partial: Partial<TavernCanvasSettings>): Promise<TavernCanvasSettings>;
   /** Records disclosure acknowledgment for one normalized origin's plaintext HTTP risk. */
   acknowledge_http_origin(origin: string): Promise<void>;
-  /** Hands the Gateway bearer token to host secret storage; settings keep only its reference. */
+  /** Hands the Gateway bearer token to the selected backend; settings keep only its reference. */
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
+  initialize_browser_secret_vault(passphrase: string): Promise<BrowserSecretVaultStatus>;
+  unlock_browser_secret_vault(passphrase: string): Promise<BrowserSecretVaultStatus>;
+  lock_browser_secret_vault(): Promise<BrowserSecretVaultStatus>;
+  reset_browser_secret_vault(): Promise<BrowserSecretVaultStatus>;
   set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
   import_vocabulary_package(
     file: Blob,

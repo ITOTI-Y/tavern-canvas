@@ -70,6 +70,7 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
   schema_version: 1,
   active_namespace: "default",
   locale: "auto",
+  credential_storage_mode: "host",
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
@@ -114,6 +115,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     save: unavailable_command,
     remove: unavailable_command,
     test_connection: unavailable_command,
+    set_credential: unavailable_command,
+    clear_credential: unavailable_command,
   };
 
   const llm_connections: LlmConnectionsCapability = {
@@ -198,12 +201,17 @@ export function create_unavailable_capabilities(): StudioCapabilities {
       Promise.resolve({
         settings: EMPTY_SETTINGS,
         vocabulary_update_channel: "bundled",
+        browser_secret_vault: { state: "unavailable", secret_count: 0 },
       } satisfies SettingsSnapshot),
     subscribe: no_subscription,
     update: unavailable_command,
     acknowledge_http_origin: unavailable_command,
     set_gateway_token: unavailable_command,
     clear_gateway_token: unavailable_command,
+    initialize_browser_secret_vault: unavailable_command,
+    unlock_browser_secret_vault: unavailable_command,
+    lock_browser_secret_vault: unavailable_command,
+    reset_browser_secret_vault: unavailable_command,
     set_vocabulary_update_channel: unavailable_command,
     import_vocabulary_package: unavailable_command,
     cancel_vocabulary_import: () => {},

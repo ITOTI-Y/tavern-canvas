@@ -1,11 +1,11 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
-import { $ as n, U as r, et as i } from "./src-CLzfjths.js";
-import { n as a } from "./job_repository-DB1y8cIh.js";
+import { W as n, nt as r, tt as i } from "./src-B1pCVwkN.js";
+import { n as a } from "./job_repository-Cci2nOvt.js";
 //#region ../../packages/core/src/jobs/job_executor.ts
 var o = class extends Error {
 	provider_error;
 	constructor(e) {
-		super(`Job executor failed: ${e.code}`), this.name = "JobExecutorFailure", this.provider_error = Object.freeze(r.parse(e));
+		super(`Job executor failed: ${e.code}`), this.name = "JobExecutorFailure", this.provider_error = Object.freeze(n.parse(e));
 	}
 }, s = 4, c = [
 	102,
@@ -17,10 +17,10 @@ function l(e) {
 	return e.length < s + c.length ? !1 : c.every((t, n) => e[s + n] === t);
 }
 function u(t) {
-	let r = t.slice(0, 16);
-	r[6] = (r[6] ?? 0) & 15 | 80, r[8] = (r[8] ?? 0) & 63 | 128;
-	let i = e(r);
-	return n.parse(`${i.slice(0, 8)}-${i.slice(8, 12)}-${i.slice(12, 16)}-${i.slice(16, 20)}-${i.slice(20)}`);
+	let n = t.slice(0, 16);
+	n[6] = (n[6] ?? 0) & 15 | 80, n[8] = (n[8] ?? 0) & 63 | 128;
+	let r = e(n);
+	return i.parse(`${r.slice(0, 8)}-${r.slice(8, 12)}-${r.slice(12, 16)}-${r.slice(16, 20)}-${r.slice(20)}`);
 }
 var d = class extends Error {
 	code;
@@ -109,22 +109,22 @@ var v = class {
 	}
 };
 async function b(e, t, n) {
-	let r = e.resolve_source_message(t), a = [];
-	for (let i of n) {
+	let i = e.resolve_source_message(t), a = [];
+	for (let r of n) {
 		let n = e.ids.next();
 		await e.store.put_image({
 			id: n,
-			bytes: i.bytes,
-			claimed_media_type: i.media_type,
+			bytes: r.bytes,
+			claimed_media_type: r.media_type,
 			created_at: e.clock.now(),
 			metadata: {
 				provider_id: t.provider_id,
-				source_message: r,
+				source_message: i,
 				generation_parameters: t.arguments
 			}
 		}), a.push(n);
 	}
-	return a.map((e) => i.parse(e));
+	return a.map((e) => r.parse(e));
 }
 var x = 1e3, S = class {
 	#e;

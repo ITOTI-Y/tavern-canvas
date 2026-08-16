@@ -67,6 +67,16 @@ export class SillyTavernSecretDestination implements SecretDestinationPort {
       throw new Error(`SillyTavern secret write failed with status ${String(response.status)}`);
     }
   }
+  async delete_secret(reference: string): Promise<void> {
+    const response = await this.#fetch("/api/secrets/delete", {
+      method: "POST",
+      headers: clone_request_headers(this.#context.getRequestHeaders()),
+      body: JSON.stringify({ key: reference }),
+    });
+    if (!response.ok) {
+      throw new Error(`SillyTavern secret deletion failed with status ${String(response.status)}`);
+    }
+  }
 
   async probe_secret(reference: string): Promise<boolean> {
     const response = await this.#fetch("/api/secrets/view", {

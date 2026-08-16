@@ -6,6 +6,7 @@ import type {
   Uuid,
   VocabularyCatalogEntry,
 } from "@tavern-canvas/contracts";
+import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
 
 import type {
   AssetCategory,
@@ -95,6 +96,7 @@ export interface DiagnosticsViewModel {
 export interface SettingsViewModel {
   readonly settings: TavernCanvasSettings | null;
   readonly vocabulary_update_channel: VocabularyUpdateChannel | null;
+  readonly browser_secret_vault: BrowserSecretVaultStatus;
   readonly update_command: CommandState<TavernCanvasSettings>;
   readonly migration_retry_command: CommandState<MigrationSnapshot>;
 }

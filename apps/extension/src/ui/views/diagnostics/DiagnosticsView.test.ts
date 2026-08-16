@@ -122,6 +122,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         schema_version: 1,
         active_namespace: "default",
         locale: "auto",
+        credential_storage_mode: "host",
         active_provider_profile_id: null,
         global_concurrency: 1,
         auto_generation_enabled: false,
@@ -140,6 +141,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         },
       },
       vocabulary_update_channel: "bundled",
+      browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
       migration_retry_command: IDLE_COMMAND_STATE,
     },
@@ -269,6 +271,7 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
   schema_version: 1 as const,
   active_namespace: "default",
   locale: "auto" as const,
+  credential_storage_mode: "host",
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
@@ -306,6 +309,7 @@ describe("DiagnosticsView connection test", () => {
           Promise.resolve({
             settings: SETTINGS_WITH_GATEWAY,
             vocabulary_update_channel: "bundled",
+            browser_secret_vault: { state: "unavailable", secret_count: 0 },
           }),
       },
     };
@@ -604,6 +608,7 @@ describe("DiagnosticsView support bundle export", () => {
               gateway: { ...SETTINGS_WITH_GATEWAY.gateway, token_secret_id: SECRET_TOKEN_VALUE },
             },
             vocabulary_update_channel: "bundled" as const,
+            browser_secret_vault: { state: "unavailable" as const, secret_count: 0 },
           }),
       },
     };

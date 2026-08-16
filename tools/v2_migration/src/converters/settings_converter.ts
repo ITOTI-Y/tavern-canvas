@@ -74,6 +74,7 @@ export function convert_settings(
     schema_version: 1,
     active_namespace: context.namespace,
     locale: "auto",
+    credential_storage_mode: "host",
     active_provider_profile_id: null,
     global_concurrency: 1,
     auto_generation_enabled: to_bool(legacy.autoLLMImageGen),

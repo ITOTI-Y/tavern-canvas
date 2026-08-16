@@ -1,5 +1,10 @@
-import type { ImageGenerationRequest, ProviderId, Uuid } from "@tavern-canvas/contracts";
-import { ProviderIdSchema } from "@tavern-canvas/contracts";
+import {
+  ProviderIdSchema,
+  derive_provider_credential_reference,
+  type ImageGenerationRequest,
+  type ProviderId,
+  type Uuid,
+} from "@tavern-canvas/contracts";
 import { ProviderAdapterError, type ProviderAdapter } from "@tavern-canvas/providers";
 import type { ProviderProfile, ProviderProfileRepository } from "@tavern-canvas/storage";
 
@@ -112,6 +117,8 @@ function to_summary(record: ProviderProfile): ProviderProfileSummary {
     model_id: first_string(read_array(adapter_profile, "model_allowlist")),
     workflow_id: first_string(read_array(adapter_profile, "workflow_allowlist")),
     is_default: read_boolean(payload, "is_default", false),
+    credential_reference:
+      typeof payload[VAULT_KEY_FIELD] === "string" ? payload[VAULT_KEY_FIELD] : null,
     updated_at: record.updated_at,
   };
 }
@@ -137,6 +144,15 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
       const namespace = deps.namespace();
       const existing = await deps.repository.get(namespace, draft.id);
       const now = deps.now();
+      const payload = {
+        ...read_payload(existing ?? ({ payload: {} } as ProviderProfile)),
+        display_name: draft.display_name,
+        is_default: draft.is_default,
+        [ADAPTER_PROFILE_FIELD]: to_json_value(build_adapter_profile(draft, existing)),
+      };
+      if (existing !== null && existing.provider_id !== draft.provider_id) {
+        Reflect.deleteProperty(payload, VAULT_KEY_FIELD);
+      }
       const record: ProviderProfile = {
         schema_version: 1,
         id: draft.id,
@@ -145,13 +161,7 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
         created_at: existing?.created_at ?? now,
         updated_at: now,
         provider_id: draft.provider_id,
-        payload: {
-          ...read_payload(existing ?? ({ payload: {} } as ProviderProfile)),
-          display_name: draft.display_name,
-          is_default: draft.is_default,
-          [ADAPTER_PROFILE_FIELD]: to_json_value(build_adapter_profile(draft, existing)),
-          ...(draft.secret_reference === null ? {} : { [VAULT_KEY_FIELD]: draft.secret_reference }),
-        },
+        payload,
       };
       const adapter = (await deps.load_adapters())[draft.provider_id];
       if (adapter === undefined) {
@@ -166,6 +176,46 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
     async remove(profile_id) {
       await deps.repository.delete(deps.namespace(), profile_id);
       events.emit({ type: "profile_removed", profile_id });
+    },
+    async set_credential(profile_id, plaintext_value) {
+      if (plaintext_value.trim().length === 0) {
+        throw new TypeError("A provider credential must not be blank");
+      }
+      if (deps.secrets === null) {
+        throw capability_unavailable_error(
+          "The selected credential storage backend is unavailable",
+        );
+      }
+      const record = await read(profile_id);
+      const reference = derive_provider_credential_reference(record.namespace, profile_id);
+      await deps.secrets.write_secret(reference, plaintext_value);
+      const updated: ProviderProfile = {
+        ...record,
+        updated_at: deps.now(),
+        payload: to_json_value({ ...read_payload(record), [VAULT_KEY_FIELD]: reference }),
+      };
+      await deps.repository.put(record.namespace, updated);
+      const summary = to_summary(updated);
+      events.emit({ type: "profile_upserted", profile: summary });
+      return summary;
+    },
+    async clear_credential(profile_id) {
+      const record = await read(profile_id);
+      const payload = { ...read_payload(record) };
+      const reference = payload[VAULT_KEY_FIELD];
+      Reflect.deleteProperty(payload, VAULT_KEY_FIELD);
+      if (typeof reference === "string") {
+        await deps.secrets?.delete_secret?.(reference);
+      }
+      const updated: ProviderProfile = {
+        ...record,
+        updated_at: deps.now(),
+        payload: to_json_value(payload),
+      };
+      await deps.repository.put(record.namespace, updated);
+      const summary = to_summary(updated);
+      events.emit({ type: "profile_upserted", profile: summary });
+      return summary;
     },
     /**
      * Two real checks, no network round-trip: the stored profile is validated by the provider's own

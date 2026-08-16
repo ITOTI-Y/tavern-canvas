@@ -24,6 +24,7 @@ const PROFILE: ProviderProfileSummary = {
   provider_id: "sd_webui",
   display_name: "Local SD",
   is_default: true,
+  credential_reference: null,
   updated_at: "2026-01-01T00:00:00Z",
 };
 

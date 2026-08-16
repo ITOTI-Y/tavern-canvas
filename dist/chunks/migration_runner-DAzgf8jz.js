@@ -1,8 +1,8 @@
 import { n as e, r as t, t as n } from "./sha2-BGNex9vj.js";
-import { _t as r, at as i, bt as a, ct as o, ft as s, gt as c, ht as l, mt as u, st as d, vt as f, x as p, xt as m, yt as h } from "./src-CLzfjths.js";
-import { C as g, b as _, d as v, g as ee, k as y, w as te, y as ne } from "./job_repository-DB1y8cIh.js";
-import { a as b, d as x, l as re } from "./business_repositories-cGxFpOW9.js";
-import { i as ie, n as ae, r as oe, t as se } from "./migration_journal-MiPRMAkn.js";
+import { Ct as r, S as i, St as a, _t as o, bt as s, gt as c, lt as l, mt as u, st as d, ut as f, vt as p, xt as m, yt as h } from "./src-B1pCVwkN.js";
+import { C as g, b as _, d as v, g as ee, k as y, w as te, y as ne } from "./job_repository-Cci2nOvt.js";
+import { a as b, d as x, l as re } from "./business_repositories-CSXCQSWl.js";
+import { i as ie, n as ae, r as oe, t as se } from "./migration_journal-D7Tj2ayV.js";
 //#region ../../tools/v2_migration/src/conversion_result.ts
 function S(e, t) {
 	return `${e}:${t}`;
@@ -17,11 +17,11 @@ function C(e, t) {
 		updated_at: e.migrated_at
 	};
 }
-var ce = f({
-	schema_version: s(1),
+var ce = s({
+	schema_version: u(1),
 	id: te,
 	namespace: ee,
-	record_key: h().min(1),
+	record_key: m().min(1),
 	created_at: g,
 	updated_at: g
 });
@@ -440,7 +440,7 @@ function F(e) {
 }
 //#endregion
 //#region ../../tools/v2_migration/src/converters/settings_converter.ts
-var ve = ce.extend({ payload: r(h(), m()) });
+var ve = ce.extend({ payload: h(m(), r()) });
 function ye(e, t) {
 	let n = [
 		{
@@ -467,10 +467,11 @@ function ye(e, t) {
 			path: "ui.inspector_width",
 			message: "v2 has no inspector panel; defaulted to 360."
 		}
-	], r = p.parse({
+	], r = i.parse({
 		schema_version: 1,
 		active_namespace: t.namespace,
 		locale: "auto",
+		credential_storage_mode: "host",
 		active_provider_profile_id: null,
 		global_concurrency: 1,
 		auto_generation_enabled: j(e.autoLLMImageGen),
@@ -487,17 +488,17 @@ function ye(e, t) {
 			inspector_collapsed: !1,
 			optional_entry_enabled: e.enable_chatu8_fab
 		}
-	}), i = A(`${t.namespace}:legacy_preferences:settings_converter`), a = F(N(e, D, "settings_converter"));
+	}), a = A(`${t.namespace}:legacy_preferences:settings_converter`), o = F(N(e, D, "settings_converter"));
 	return {
 		settings: r,
 		legacy_preferences: ve.parse({
 			schema_version: 1,
-			id: i,
+			id: a,
 			namespace: t.namespace,
-			record_key: S(t.namespace, i),
+			record_key: S(t.namespace, a),
 			created_at: t.migrated_at,
 			updated_at: t.migrated_at,
-			payload: a
+			payload: o
 		}),
 		warnings: n
 	};
@@ -928,90 +929,90 @@ function De(e) {
 //#endregion
 //#region ../../tools/v2_migration/src/legacy_schema.ts
 var q = a([
-	h(),
-	u(),
-	o()
-]), Oe = f({
-	fixedPrompt: h(),
-	fixedPrompt_end: h(),
-	negativePrompt: h()
-}), ke = f({
-	model: h(),
-	infoExtract: u(),
-	strength: u(),
-	imageId: h().nullable(),
-	vibeDataId: h().nullable()
-}), Ae = f({
-	beforeAfterRegex: h(),
-	textRegex: h()
-}), je = f({
-	textReplacement: h(),
-	aiReplacement: h()
-}), J = f({ text: h() }), Me = f({
-	bgColor: h(),
-	iconColor: h(),
-	opacity: u()
-}), Ne = f({
-	bgColor: h().optional(),
-	textColor: h().optional(),
-	accentColor: h().optional()
-}), Pe = f({
-	novelaiApi: h(),
-	novelaisite: h(),
-	novelaiOtherSite: h(),
-	enableCloudQueue: h(),
-	cloudQueueUrl: h(),
-	cloudQueueGreeting: h(),
-	showQueueGreeting: h(),
-	novelaimode: h(),
-	novelai_sampler: h(),
-	Schedule: h(),
-	nai3Scale: h(),
-	cfg_rescale: h(),
-	AI_use_coords: h(),
-	sm: h(),
-	dyn: h(),
-	nai3Variety: h(),
-	nai3Deceisp: h(),
-	enableVibeGroupTransfer: h(),
-	randomVibeGroup: h(),
-	normalizeRefStrength: h(),
-	novelai_width: h(),
-	novelai_height: h(),
-	novelai_steps: h(),
-	novelai_seed: h()
-}), Fe = f({
-	workerid: h(),
-	worker: h(),
-	editWorkerid: h(),
-	editWorker: h(),
-	comfyuiUrl: h(),
-	MODEL_NAME: h(),
-	comfyuisamplerName: h(),
-	comfyui_vae: h(),
-	comfyui_scheduler: h(),
-	comfyuiCLIPName: h(),
-	comfyui_width: h(),
-	comfyui_height: h(),
-	comfyui_steps: h(),
-	comfyui_seed: h(),
-	cfg_comfyui: h()
-}), Ie = f({
-	api_url: h(),
-	api_key: h(),
-	model: h(),
-	temperature: u(),
-	top_p: u(),
-	max_tokens: u(),
-	stream: o(),
-	bypass_proxy: o()
-}), Y = f({
-	api_profile: h(),
-	context_profile: h()
+	m(),
+	c(),
+	f()
+]), Oe = s({
+	fixedPrompt: m(),
+	fixedPrompt_end: m(),
+	negativePrompt: m()
+}), ke = s({
+	model: m(),
+	infoExtract: c(),
+	strength: c(),
+	imageId: m().nullable(),
+	vibeDataId: m().nullable()
+}), Ae = s({
+	beforeAfterRegex: m(),
+	textRegex: m()
+}), je = s({
+	textReplacement: m(),
+	aiReplacement: m()
+}), J = s({ text: m() }), Me = s({
+	bgColor: m(),
+	iconColor: m(),
+	opacity: c()
+}), Ne = s({
+	bgColor: m().optional(),
+	textColor: m().optional(),
+	accentColor: m().optional()
+}), Pe = s({
+	novelaiApi: m(),
+	novelaisite: m(),
+	novelaiOtherSite: m(),
+	enableCloudQueue: m(),
+	cloudQueueUrl: m(),
+	cloudQueueGreeting: m(),
+	showQueueGreeting: m(),
+	novelaimode: m(),
+	novelai_sampler: m(),
+	Schedule: m(),
+	nai3Scale: m(),
+	cfg_rescale: m(),
+	AI_use_coords: m(),
+	sm: m(),
+	dyn: m(),
+	nai3Variety: m(),
+	nai3Deceisp: m(),
+	enableVibeGroupTransfer: m(),
+	randomVibeGroup: m(),
+	normalizeRefStrength: m(),
+	novelai_width: m(),
+	novelai_height: m(),
+	novelai_steps: m(),
+	novelai_seed: m()
+}), Fe = s({
+	workerid: m(),
+	worker: m(),
+	editWorkerid: m(),
+	editWorker: m(),
+	comfyuiUrl: m(),
+	MODEL_NAME: m(),
+	comfyuisamplerName: m(),
+	comfyui_vae: m(),
+	comfyui_scheduler: m(),
+	comfyuiCLIPName: m(),
+	comfyui_width: m(),
+	comfyui_height: m(),
+	comfyui_steps: m(),
+	comfyui_seed: m(),
+	cfg_comfyui: m()
+}), Ie = s({
+	api_url: m(),
+	api_key: m(),
+	model: m(),
+	temperature: c(),
+	top_p: c(),
+	max_tokens: c(),
+	stream: f(),
+	bypass_proxy: f()
+}), Y = s({
+	api_profile: m(),
+	context_profile: m()
 }), X = {
 	api_profile: "",
 	context_profile: ""
-}, Z = f({
+}, Z = s({
 	image_gen: Y,
 	char_design: Y,
 	char_display: Y,
@@ -1033,50 +1034,50 @@ var q = a([
 	persona_gen: X,
 	user_persona_gen: X,
 	chat_summary: X
-}, Re = f({
-	id: h(),
-	name: h(),
-	role: i([
+}, Re = s({
+	id: m(),
+	name: m(),
+	role: d([
 		"system",
 		"user",
 		"assistant"
 	]),
-	content: h(),
-	enabled: o(),
-	triggerMode: i(["always", "trigger"]),
-	triggerWords: h(),
-	andTriggerWords: h()
-}), ze = f({ entries: d(Re) }), Q = f({
-	user: f({
-		text: h(),
-		image: h()
+	content: m(),
+	enabled: f(),
+	triggerMode: d(["always", "trigger"]),
+	triggerWords: m(),
+	andTriggerWords: m()
+}), ze = s({ entries: l(Re) }), Q = s({
+	user: s({
+		text: m(),
+		image: m()
 	}),
-	model: f({
-		text: h(),
-		image: h()
+	model: s({
+		text: m(),
+		image: m()
 	})
-}), Be = f({
-	fixedPrompt: h(),
-	postfixPrompt: h(),
-	conversation: d(Q)
-}), Ve = f({
-	triggers: h(),
+}), Be = s({
+	fixedPrompt: m(),
+	postfixPrompt: m(),
+	conversation: l(Q)
+}), Ve = s({
+	triggers: m(),
 	conversation: Q
-}), He = f({
-	apiKey: h(),
-	apiUrl: h(),
-	model: h(),
-	editModel: h(),
-	videoModel: h(),
-	aspectRatio: h(),
-	imageSize: h(),
-	useGrokFormat: h(),
-	conversationPresetId: h(),
-	editPresetId: h(),
-	videoPresetId: h(),
-	conversationPresets: r(h(), Be),
-	prompt_replace: r(h(), J),
-	prompt_replace_id: h()
+}), He = s({
+	apiKey: m(),
+	apiUrl: m(),
+	model: m(),
+	editModel: m(),
+	videoModel: m(),
+	aspectRatio: m(),
+	imageSize: m(),
+	useGrokFormat: m(),
+	conversationPresetId: m(),
+	editPresetId: m(),
+	videoPresetId: m(),
+	conversationPresets: h(m(), Be),
+	prompt_replace: h(m(), J),
+	prompt_replace_id: m()
 }), Ue = {
 	apiKey: "123456",
 	apiUrl: "http://localhost:8008",
@@ -1092,13 +1093,13 @@ var q = a([
 	conversationPresets: {},
 	prompt_replace: {},
 	prompt_replace_id: ""
-}, We = f({
-	api_url: h(),
-	api_key: h(),
-	model: h(),
-	bypass_proxy: o(),
-	stream: o(),
-	system_prompt: h()
+}, We = s({
+	api_url: m(),
+	api_key: m(),
+	model: m(),
+	bypass_proxy: f(),
+	stream: f(),
+	system_prompt: m()
 }), Ge = {
 	api_url: "",
 	api_key: "",
@@ -1106,17 +1107,17 @@ var q = a([
 	bypass_proxy: !1,
 	stream: !0,
 	system_prompt: ""
-}, Ke = f({
-	enabled: o(),
-	asrServerUrl: h(),
-	mode: i(["vad", "ptt"]),
-	silenceTimeout: u(),
-	vadThreshold: u(),
-	maxKeepDuration: u(),
-	language: h(),
-	appendMode: o(),
-	autoSend: o(),
-	conversationMode: o()
+}, Ke = s({
+	enabled: f(),
+	asrServerUrl: m(),
+	mode: d(["vad", "ptt"]),
+	silenceTimeout: c(),
+	vadThreshold: c(),
+	maxKeepDuration: c(),
+	language: m(),
+	appendMode: f(),
+	autoSend: f(),
+	conversationMode: f()
 }), qe = {
 	enabled: !1,
 	asrServerUrl: "https://qwen-qwen3-asr-demo.ms.show",
@@ -1128,45 +1129,45 @@ var q = a([
 	appendMode: !0,
 	autoSend: !0,
 	conversationMode: !1
-}, Je = f({
-	enabled: o(),
-	triggerDepth: u(),
-	worldBookSelections: r(h(), a([o(), s("force")])),
-	worldEntrySelections: r(h(), r(h(), a([o(), s("force")])))
+}, Je = s({
+	enabled: f(),
+	triggerDepth: c(),
+	worldBookSelections: h(m(), a([f(), u("force")])),
+	worldEntrySelections: h(m(), h(m(), a([f(), u("force")])))
 }), Ye = {
 	enabled: !1,
 	triggerDepth: 1,
 	worldBookSelections: {},
 	worldEntrySelections: {}
-}, Xe = f({
-	worldBookSelections: r(h(), a([o(), s("force")])),
-	worldEntrySelections: r(h(), r(h(), a([o(), s("force")])))
-}), Ze = f({
-	backends: f({
-		sd: f({
-			success: u(),
-			fail: u()
+}, Xe = s({
+	worldBookSelections: h(m(), a([f(), u("force")])),
+	worldEntrySelections: h(m(), h(m(), a([f(), u("force")])))
+}), Ze = s({
+	backends: s({
+		sd: s({
+			success: c(),
+			fail: c()
 		}),
-		comfyui: f({
-			success: u(),
-			fail: u()
+		comfyui: s({
+			success: c(),
+			fail: c()
 		}),
-		banana: f({
-			success: u(),
-			fail: u()
+		banana: s({
+			success: c(),
+			fail: c()
 		}),
-		novelai: f({
-			success: u(),
-			fail: u()
+		novelai: s({
+			success: c(),
+			fail: c()
 		})
 	}),
-	total: f({
-		success: u(),
-		fail: u()
+	total: s({
+		success: c(),
+		fail: c()
 	}),
-	firstGenTime: u().nullable(),
-	lastGenTime: u().nullable(),
-	daily: r(h(), m())
+	firstGenTime: c().nullable(),
+	lastGenTime: c().nullable(),
+	daily: h(m(), r())
 }), Qe = {
 	backends: {
 		sd: {
@@ -1193,107 +1194,107 @@ var q = a([
 	firstGenTime: null,
 	lastGenTime: null,
 	daily: {}
-}, $e = f({
-	presets: r(h(), r(h(), m())),
-	currentPresetId: h().optional(),
-	enabled: o().optional(),
-	injectionMode: h().optional(),
-	currentUserPresetId: h().optional(),
-	userEnabled: o().optional(),
-	userInjectionMode: h().optional()
-}), et = f({
-	model: h(),
-	temperature: u(),
-	systemPrompt: h(),
-	lastPrompt: h()
+}, $e = s({
+	presets: h(m(), h(m(), r())),
+	currentPresetId: m().optional(),
+	enabled: f().optional(),
+	injectionMode: m().optional(),
+	currentUserPresetId: m().optional(),
+	userEnabled: f().optional(),
+	userInjectionMode: m().optional()
+}), et = s({
+	model: m(),
+	temperature: c(),
+	systemPrompt: m(),
+	lastPrompt: m()
 }), tt = {
 	model: "mistral",
 	temperature: .8,
 	systemPrompt: "",
 	lastPrompt: ""
-}, nt = l({
-	theme_id: h().default(""),
-	themes: r(h(), Ne).default({}),
-	generate_btn_style: h().default(""),
-	image_frame_style: h().default(""),
-	collapse_style: h().default(""),
-	scriptEnabled: o().default(!1),
+}, nt = o({
+	theme_id: m().default(""),
+	themes: h(m(), Ne).default({}),
+	generate_btn_style: m().default(""),
+	image_frame_style: m().default(""),
+	collapse_style: m().default(""),
+	scriptEnabled: f().default(!1),
 	helpTipsEnabled: q.default("true"),
 	characterAI: et.default(tt),
 	outfitAI: et.default(tt),
 	newlineFixEnabled: q.default("true"),
-	yushe: r(h(), Oe).default({}),
-	yusheid_sd: h().default(""),
-	yusheid_novelai: h().default(""),
-	yusheid_comfyui: h().default(""),
+	yushe: h(m(), Oe).default({}),
+	yusheid_sd: m().default(""),
+	yusheid_novelai: m().default(""),
+	yusheid_comfyui: m().default(""),
 	randomYushe: q.default("false"),
-	aiAutonomousResolution: o().default(!0),
-	prompt_replace: r(h(), J).default({}),
-	prompt_replace_id: h().default(""),
-	vibePresets: r(h(), ke).default({}),
-	vibePresetId: h().default(""),
-	regex_profiles: r(h(), Ae).default({}),
-	current_regex_profile: h().default(""),
-	word_replacement_profiles: r(h(), je).default({}),
-	current_word_replacement_profile: h().default(""),
-	regexTestMode: o().default(!1),
-	mode: h().default("comfyui"),
-	client: h().default("browser"),
-	cache: h().default("1"),
-	sdUrl: h().default("http://localhost:7860"),
-	st_chatu8_sd_auth: h().default(""),
-	comfyuiUrl: h().default("http://localhost:8188"),
-	novelaiApi: h().default("000000"),
-	novelaiApi_id: h().default("000000"),
-	startTag: h().default("image###"),
-	endTag: h().default("###"),
-	nai3Scale: h().default("10"),
-	sdCfgScale: h().default("7"),
-	sm: h().default("true"),
-	dyn: h().default("true"),
-	cfg_rescale: h().default("0.18"),
-	AQT_sd: h().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_sd: h().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
-	AQT_novelai: h().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_novelai: h().default("Heavy"),
+	aiAutonomousResolution: f().default(!0),
+	prompt_replace: h(m(), J).default({}),
+	prompt_replace_id: m().default(""),
+	vibePresets: h(m(), ke).default({}),
+	vibePresetId: m().default(""),
+	regex_profiles: h(m(), Ae).default({}),
+	current_regex_profile: m().default(""),
+	word_replacement_profiles: h(m(), je).default({}),
+	current_word_replacement_profile: m().default(""),
+	regexTestMode: f().default(!1),
+	mode: m().default("comfyui"),
+	client: m().default("browser"),
+	cache: m().default("1"),
+	sdUrl: m().default("http://localhost:7860"),
+	st_chatu8_sd_auth: m().default(""),
+	comfyuiUrl: m().default("http://localhost:8188"),
+	novelaiApi: m().default("000000"),
+	novelaiApi_id: m().default("000000"),
+	startTag: m().default("image###"),
+	endTag: m().default("###"),
+	nai3Scale: m().default("10"),
+	sdCfgScale: m().default("7"),
+	sm: m().default("true"),
+	dyn: m().default("true"),
+	cfg_rescale: m().default("0.18"),
+	AQT_sd: m().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_sd: m().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
+	AQT_novelai: m().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_novelai: m().default("Heavy"),
 	addFurryDataset: q.default("false"),
-	AQT_comfyui: h().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_comfyui: h().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
-	sd_csteps: h().default("28"),
-	sd_cwidth: h().default("1024"),
-	sd_cheight: h().default("1024"),
-	sd_cseed: h().default("-1"),
-	novelai_steps: h().default("28"),
-	novelai_width: h().default("1024"),
-	novelai_height: h().default("1024"),
-	novelai_seed: h().default("0"),
-	comfyui_steps: h().default("28"),
-	comfyui_width: h().default("1024"),
-	comfyui_height: h().default("1024"),
-	comfyui_seed: h().default("0"),
-	inpaint_denoise: h().default("0.75"),
+	AQT_comfyui: m().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_comfyui: m().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
+	sd_csteps: m().default("28"),
+	sd_cwidth: m().default("1024"),
+	sd_cheight: m().default("1024"),
+	sd_cseed: m().default("-1"),
+	novelai_steps: m().default("28"),
+	novelai_width: m().default("1024"),
+	novelai_height: m().default("1024"),
+	novelai_seed: m().default("0"),
+	comfyui_steps: m().default("28"),
+	comfyui_width: m().default("1024"),
+	comfyui_height: m().default("1024"),
+	comfyui_seed: m().default("0"),
+	inpaint_denoise: m().default("0.75"),
 	weilin_lora_fix: q.default("false"),
-	inpaint_brush_size: u().default(30),
-	inpaint_positive_prompt: h().default(""),
-	inpaint_negative_prompt: h().default(""),
-	cfg_comfyui: h().default("6"),
-	sd_cchatu_8_model: h().default(""),
-	sd_cchatu_8_vae: h().default("Automatic"),
-	sd_cchatu_8_scheduler: h().default(""),
-	sd_cchatu_8_upscaler: h().default("Latent"),
-	sd_cupscale_factor: h().default("1"),
-	sd_chires_fix: h().default("false"),
-	sd_chires_steps: h().default("0"),
-	sd_cdenoising_strength: h().default("0.7"),
-	sd_cclip_skip: h().default("2"),
-	sd_cadetailer: h().default("false"),
-	restoreFaces: h().default("false"),
-	sd_cchatu_8_samplerName: h().default("DPM++ 2M"),
-	comfyuisamplerName: h().default(""),
-	comfyuiCLIPName: h().default(""),
-	comfyui_scheduler: h().default(""),
-	comfyui_vae: h().default(""),
-	novelai_sampler: h().default("k_euler"),
+	inpaint_brush_size: c().default(30),
+	inpaint_positive_prompt: m().default(""),
+	inpaint_negative_prompt: m().default(""),
+	cfg_comfyui: m().default("6"),
+	sd_cchatu_8_model: m().default(""),
+	sd_cchatu_8_vae: m().default("Automatic"),
+	sd_cchatu_8_scheduler: m().default(""),
+	sd_cchatu_8_upscaler: m().default("Latent"),
+	sd_cupscale_factor: m().default("1"),
+	sd_chires_fix: m().default("false"),
+	sd_chires_steps: m().default("0"),
+	sd_cdenoising_strength: m().default("0.7"),
+	sd_cclip_skip: m().default("2"),
+	sd_cadetailer: m().default("false"),
+	restoreFaces: m().default("false"),
+	sd_cchatu_8_samplerName: m().default("DPM++ 2M"),
+	comfyuisamplerName: m().default(""),
+	comfyuiCLIPName: m().default(""),
+	comfyui_scheduler: m().default(""),
+	comfyui_vae: m().default(""),
+	novelai_sampler: m().default("k_euler"),
 	zidongdianji: q.default("false"),
 	zidongdianji2: q.default("false"),
 	longPressToEdit: q.default("false"),
@@ -1304,91 +1305,91 @@ var q = a([
 	normalizeRefStrength: q.default("false"),
 	nai3CharRef: q.default("false"),
 	nai3StylePerception: q.default("false"),
-	InformationExtracted: h().default("0.3"),
-	ReferenceStrength: h().default("0.6"),
+	InformationExtracted: m().default("0.3"),
+	ReferenceStrength: m().default("0.6"),
 	nai3Deceisp: q.default("true"),
 	nai3Variety: q.default("true"),
-	Schedule: h().default("karras"),
-	MODEL_NAME: h().default(""),
-	c_fenwei: h().default("0.8"),
-	c_xijie: h().default("0.8"),
-	c_idquanzhong: h().default("1.10"),
-	c_quanzhong: h().default("0.8"),
-	ipa: h().default("STANDARD (medium strength)"),
+	Schedule: m().default("karras"),
+	MODEL_NAME: m().default(""),
+	c_fenwei: m().default("0.8"),
+	c_xijie: m().default("0.8"),
+	c_idquanzhong: m().default("1.10"),
+	c_quanzhong: m().default("0.8"),
+	ipa: m().default("STANDARD (medium strength)"),
 	dbclike: q.default("false"),
 	collapseImage: q.default("false"),
-	workers: r(h(), h()).default({}),
-	workerid: h().default(""),
-	worker: h().default(""),
-	editWorkerid: h().default(""),
-	editWorker: h().default(""),
-	novelaimode: h().default("nai-diffusion-4-5-full"),
-	novelaisite: h().default(""),
-	novelaiOtherSite: h().default("http://localhost:9696/get-new-token"),
+	workers: h(m(), m()).default({}),
+	workerid: m().default(""),
+	worker: m().default(""),
+	editWorkerid: m().default(""),
+	editWorker: m().default(""),
+	novelaimode: m().default("nai-diffusion-4-5-full"),
+	novelaisite: m().default(""),
+	novelaiOtherSite: m().default("http://localhost:9696/get-new-token"),
 	enableCloudQueue: q.default("false"),
-	cloudQueueUrl: h().default("https://st-chatu-novelai-queue.hf.space"),
-	cloudQueueGreeting: h().default(""),
+	cloudQueueUrl: m().default("https://st-chatu-novelai-queue.hf.space"),
+	cloudQueueGreeting: m().default(""),
 	showQueueGreeting: q.default("true"),
-	displayMode: h().default(""),
+	displayMode: m().default(""),
 	heavyFrontendMode: q.default("false"),
 	insertOriginalText: q.default("false"),
 	tagthinkEcho: q.default("false"),
-	historyKeepImageTag: o().default(!1),
+	historyKeepImageTag: f().default(!1),
 	enablePregen: q.default("false"),
 	autoLLMImageGen: q.default("false"),
-	imageAlignment: h().default("center"),
-	imageSizeScale: h().default("100"),
-	imageGenInterval: u().default(100),
-	ai_temperature: u().default(1),
-	ai_top_p: u().default(1),
-	ai_presence_penalty: u().default(0),
-	ai_frequency_penalty: u().default(0),
+	imageAlignment: m().default("center"),
+	imageSizeScale: m().default("100"),
+	imageGenInterval: c().default(100),
+	ai_temperature: c().default(1),
+	ai_top_p: c().default(1),
+	ai_presence_penalty: c().default(0),
+	ai_frequency_penalty: c().default(0),
 	ai_stream: q.default("false"),
 	ai_private: q.default("true"),
-	ai_token: h().default(""),
-	ai_test_system: h().default("You are a helpful assistant."),
-	ai_test_user: h().default("What is the capital of France?"),
-	ai_test_output: h().default(""),
+	ai_token: m().default(""),
+	ai_test_system: m().default("You are a helpful assistant."),
+	ai_test_user: m().default("What is the capital of France?"),
+	ai_test_output: m().default(""),
 	chatu8_ai_assistant: We.default(Ge),
-	chatu8_code: h().default(""),
+	chatu8_code: m().default(""),
 	asr: Ke.default(qe),
 	knowledgeBaseConfig: Je.default(Ye),
-	llm_history_depth: u().default(2),
+	llm_history_depth: c().default(2),
 	imageGenStats: Ze.default(Qe),
-	llm_profiles: r(h(), Ie).default({}),
-	current_llm_profile: h().default(""),
-	llm_request_type_profiles: r(h(), Z).default({}),
-	current_llm_request_type_profile: h().default(""),
+	llm_profiles: h(m(), Ie).default({}),
+	current_llm_profile: m().default(""),
+	llm_request_type_profiles: h(m(), Z).default({}),
+	current_llm_request_type_profile: m().default(""),
 	llm_request_type_configs: Z.default(Le),
-	test_context_profiles: r(h(), ze).default({}),
-	current_test_context_profile: h().default(""),
-	translation_model: h().default("mistral"),
-	translation_system_prompt: h().default(""),
+	test_context_profiles: h(m(), ze).default({}),
+	current_test_context_profile: m().default(""),
+	translation_model: m().default("mistral"),
+	translation_system_prompt: m().default(""),
 	AI_use_coords: q.default("true"),
-	fabThemes: r(h(), Me).default({}),
-	chatu8_fab_theme: h().default(""),
-	enable_chatu8_fab: o().default(!0),
-	enable_chatu8_fab_video: o().default(!1),
-	enable_chatu8_desktop_pet: o().default(!1),
-	chatu8_fab_bg_color: h().default("#ADD8E6"),
-	chatu8_fab_icon_color: h().default("#FFFFFF"),
-	chatu8_fab_icon_image_id: h().default(""),
-	chatu8_fab_opacity: u().default(1),
-	chatu8_fab_size: f({
-		desktop: u(),
-		mobile: u()
+	fabThemes: h(m(), Me).default({}),
+	chatu8_fab_theme: m().default(""),
+	enable_chatu8_fab: f().default(!0),
+	enable_chatu8_fab_video: f().default(!1),
+	enable_chatu8_desktop_pet: f().default(!1),
+	chatu8_fab_bg_color: m().default("#ADD8E6"),
+	chatu8_fab_icon_color: m().default("#FFFFFF"),
+	chatu8_fab_icon_image_id: m().default(""),
+	chatu8_fab_opacity: c().default(1),
+	chatu8_fab_size: s({
+		desktop: c(),
+		mobile: c()
 	}).default({
 		desktop: 50,
 		mobile: 40
 	}),
-	chatu8_fab_position: f({
-		desktop: f({
-			top: h(),
-			left: h()
+	chatu8_fab_position: s({
+		desktop: s({
+			top: m(),
+			left: m()
 		}),
-		mobile: f({
-			top: h(),
-			left: h()
+		mobile: s({
+			top: m(),
+			left: m()
 		})
 	}).default({
 		desktop: {
@@ -1400,117 +1401,117 @@ var q = a([
 			left: "10px"
 		}
 	}),
-	chatu8_fab_video_paths: f({
-		idle: h(),
-		dragging: h()
+	chatu8_fab_video_paths: s({
+		idle: m(),
+		dragging: m()
 	}).default({
 		idle: "",
 		dragging: ""
 	}),
-	lastTab: h().default("main"),
-	cacheStorageMigrated: o().default(!1),
+	lastTab: m().default("main"),
+	cacheStorageMigrated: f().default(!1),
 	worldBookEnabled: q.default("false"),
-	worldBookList: r(h(), f({ content: h() })).default({}),
-	worldBookList_id: h().default(""),
+	worldBookList: h(m(), s({ content: m() })).default({}),
+	worldBookList_id: m().default(""),
 	vocabulary_search_startswith: q.default("false"),
-	vocabulary_search_limit: u().default(100),
-	vocabulary_search_sort: h().default("hot_desc"),
+	vocabulary_search_limit: c().default(100),
+	vocabulary_search_sort: m().default("hot_desc"),
 	jiuguanchucun: q.default("false"),
 	vibeJiuguanchucun: q.default("true"),
 	convertToJpegStorage: q.default("false"),
-	jiuguanStorage: r(h(), f({
-		images: d(f({
-			uuid: h(),
-			path: h(),
-			thumbnail_uuid: h(),
-			thumbnail_path: h(),
-			date: u(),
-			isVideo: o(),
-			originalUrl: h(),
-			size: u(),
-			thumbnail_size: u(),
-			genParams: r(h(), m()).nullable().optional(),
-			data_base64: c((e) => e === "" ? void 0 : e, h().min(1).optional())
+	jiuguanStorage: h(m(), s({
+		images: l(s({
+			uuid: m(),
+			path: m(),
+			thumbnail_uuid: m(),
+			thumbnail_path: m(),
+			date: c(),
+			isVideo: f(),
+			originalUrl: m(),
+			size: c(),
+			thumbnail_size: c(),
+			genParams: h(m(), r()).nullable().optional(),
+			data_base64: p((e) => e === "" ? void 0 : e, m().min(1).optional())
 		})),
-		index: u(),
-		change: h()
+		index: c(),
+		change: m()
 	})).default({}),
 	banana: He.default(Ue),
-	bananaCharacterPresets: r(h(), Ve).default({}),
-	bananaCharacterPresetId: h().default(""),
-	gestureEnabled: o().default(!1),
-	clickTriggerEnabled: o().default(!0),
-	gesture1: d(h()).default([]),
-	gesture2: d(h()).default([]),
-	gestureShowRecognition: o().default(!0),
-	gestureShowTrail: o().default(!0),
-	gestureTrailColor: h().default("#00ff00"),
-	gestureMatchThreshold: u().default(60),
-	defaultCharDemand: h().default(""),
-	defaultImageDemand: h().default(""),
-	novelai_profiles: r(h(), Pe).default({}),
-	novelai_profile_id: h().default(""),
-	comfyui_profiles: r(h(), Fe).default({}),
-	comfyui_profile_id: h().default(""),
+	bananaCharacterPresets: h(m(), Ve).default({}),
+	bananaCharacterPresetId: m().default(""),
+	gestureEnabled: f().default(!1),
+	clickTriggerEnabled: f().default(!0),
+	gesture1: l(m()).default([]),
+	gesture2: l(m()).default([]),
+	gestureShowRecognition: f().default(!0),
+	gestureShowTrail: f().default(!0),
+	gestureTrailColor: m().default("#00ff00"),
+	gestureMatchThreshold: c().default(60),
+	defaultCharDemand: m().default(""),
+	defaultImageDemand: m().default(""),
+	novelai_profiles: h(m(), Pe).default({}),
+	novelai_profile_id: m().default(""),
+	comfyui_profiles: h(m(), Fe).default({}),
+	comfyui_profile_id: m().default(""),
 	worldBookConfig: Xe.optional(),
 	personaProfiles: $e.optional()
-}), rt = f({
-	uuid: h().min(1),
-	path: h().optional(),
-	thumbnail_uuid: h().min(1).optional(),
-	thumbnail_path: h().optional(),
-	date: u().int().nonnegative(),
-	isVideo: o(),
-	originalUrl: h(),
-	size: u().int().nonnegative(),
-	thumbnail_size: u().int().nonnegative(),
-	genParams: r(h(), m()).nullable().optional(),
-	data_base64: h().min(1).optional()
-}), it = f({
-	images: d(rt),
-	index: u().int().nonnegative(),
-	change: h()
-}), at = f({
-	id_index: h().min(1),
-	fileName: h().min(1),
-	name: h().min(1)
-}), ot = f({
-	fileName: h().min(1),
-	name: h().min(1),
-	hot: u().int().optional()
-}), st = f({
-	id: h().min(1),
-	data_base64: h().min(1),
-	date: u().int().nonnegative()
-}), ct = f({
-	tupianhuancun_metadata: r(h(), it),
-	tupianhuancun_blobs: r(h(), h().min(1)),
-	groups: d(at),
-	subgroups: d(at),
-	tags: d(ot),
-	config_images: d(st)
-}), lt = f({
-	tag: h().min(1),
-	regex: h().optional(),
-	locked: o().optional()
-}), ut = f({
-	chat_id: h().min(1),
-	message_id: u().int().nonnegative(),
-	role: i([
+}), rt = s({
+	uuid: m().min(1),
+	path: m().optional(),
+	thumbnail_uuid: m().min(1).optional(),
+	thumbnail_path: m().optional(),
+	date: c().int().nonnegative(),
+	isVideo: f(),
+	originalUrl: m(),
+	size: c().int().nonnegative(),
+	thumbnail_size: c().int().nonnegative(),
+	genParams: h(m(), r()).nullable().optional(),
+	data_base64: m().min(1).optional()
+}), it = s({
+	images: l(rt),
+	index: c().int().nonnegative(),
+	change: m()
+}), at = s({
+	id_index: m().min(1),
+	fileName: m().min(1),
+	name: m().min(1)
+}), ot = s({
+	fileName: m().min(1),
+	name: m().min(1),
+	hot: c().int().optional()
+}), st = s({
+	id: m().min(1),
+	data_base64: m().min(1),
+	date: c().int().nonnegative()
+}), ct = s({
+	tupianhuancun_metadata: h(m(), it),
+	tupianhuancun_blobs: h(m(), m().min(1)),
+	groups: l(at),
+	subgroups: l(at),
+	tags: l(ot),
+	config_images: l(st)
+}), lt = s({
+	tag: m().min(1),
+	regex: m().optional(),
+	locked: f().optional()
+}), ut = s({
+	chat_id: m().min(1),
+	message_id: c().int().nonnegative(),
+	role: d([
 		"user",
 		"assistant",
 		"system"
 	]),
-	mes: h(),
-	swipe_id: u().int().nonnegative().nullable(),
-	extra: f({
-		images: r(h(), d(lt)).optional(),
-		lockedTags: d(h()).optional()
+	mes: m(),
+	swipe_id: c().int().nonnegative().nullable(),
+	extra: s({
+		images: h(m(), l(lt)).optional(),
+		lockedTags: l(m()).optional()
 	}).optional()
 });
-f({ messages: d(ut) }), f({
-	chatu8_uid: h().optional(),
-	migration_flags: r(h(), h())
+s({ messages: l(ut) }), s({
+	chatu8_uid: m().optional(),
+	migration_flags: h(m(), m())
 });
 //#endregion
 //#region src/storage/active_namespace.ts

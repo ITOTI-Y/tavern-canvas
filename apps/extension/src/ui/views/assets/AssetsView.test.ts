@@ -48,6 +48,7 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
     settings: {
       settings: null,
       vocabulary_update_channel: null,
+      browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
       migration_retry_command: IDLE_COMMAND_STATE,
     },
@@ -139,6 +140,12 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     import_settings_archive: vi.fn(() => Promise.resolve()),
     load_diagnostics_timeline: vi.fn(() => Promise.resolve()),
     confirm_legacy_cleanup: vi.fn(() => Promise.resolve()),
+    set_provider_profile_credential: vi.fn(() => Promise.reject(new Error("unavailable"))),
+    clear_provider_profile_credential: vi.fn(() => Promise.reject(new Error("unavailable"))),
+    initialize_browser_secret_vault: vi.fn(() => Promise.resolve()),
+    unlock_browser_secret_vault: vi.fn(() => Promise.resolve()),
+    lock_browser_secret_vault: vi.fn(() => Promise.resolve()),
+    reset_browser_secret_vault: vi.fn(() => Promise.resolve()),
   };
 }
 

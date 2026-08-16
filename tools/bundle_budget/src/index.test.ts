@@ -228,10 +228,10 @@ describe("format_finding", () => {
       format_finding({
         rule_id: "js-budget",
         path: "initial_js_gzip_bytes",
-        detail: "403456 gzip bytes exceeds the 184320 byte budget by 219136",
+        detail: "403456 gzip bytes exceeds the 188416 byte budget by 215040",
       }),
     ).toBe(
-      "initial_js_gzip_bytes [js-budget] 403456 gzip bytes exceeds the 184320 byte budget by 219136",
+      "initial_js_gzip_bytes [js-budget] 403456 gzip bytes exceeds the 188416 byte budget by 215040",
     );
   });
 });

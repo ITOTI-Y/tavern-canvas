@@ -10,7 +10,7 @@
 
 1. 安装 SillyTavern 1.18.0 或更高版本，并安装 JS Slash Runner 4.9.1 或更高版本。
 2. 通过 SillyTavern 的扩展安装器安装 TavernCanvas。
-3. 在“设置”中添加图片 provider 配置，并选择直连云端或 Gateway 传输方式。
+3. 在“设置 > 密钥存储”中选择凭据后端，添加图片 provider 配置，并按需配置直连或 Gateway。
 4. 回到“工作台”，选择 provider 配置，填写正向提示词，设置生成张数，然后单击“生成”。
 
 建议新用户先关闭“设置 > 自动化 > 每条消息后自动生成”。该选项默认开启，添加可用的默认 provider 配置后，聊天消息可能触发自动生成。确认手动流程正常后再按需开启自动化。
@@ -103,17 +103,17 @@ TavernCanvas 将“生成参数”和“网络传输”分开处理。工作台�
 
 ### 5.1 当前 provider 支持状态
 
-| Provider     | 工作台手动生成 | 浏览器直连               | Gateway 默认运行时 | 凭据位置                            | 当前限制                                                            |
-| ------------ | -------------- | ------------------------ | ------------------ | ----------------------------------- | ------------------------------------------------------------------- |
-| SD WebUI     | 支持           | 支持，仅允许回环地址     | 支持               | 通常无需云端凭据                    | 新建配置界面没有 `base_url` 输入框，干净安装更适合通过 Gateway 使用 |
-| NovelAI      | 支持           | 支持，地址由内置目录固定 | 支持               | SillyTavern 密钥存储或 Gateway 主机 | 直连需要 `allowKeysExposure: true`                                  |
-| ComfyUI      | 不支持         | 传输适配器支持回环地址   | 不支持默认运行时   | 由本地服务管理                      | 工作台会明确拒绝该配置；Gateway 启动也会因缺少可执行适配器而失败    |
-| OpenAI Image | 支持           | 支持，地址由内置目录固定 | 支持               | SillyTavern 密钥存储或 Gateway 主机 | 直连需要 `allowKeysExposure: true`                                  |
-| Google Image | 支持           | 支持，地址由内置目录固定 | 支持               | SillyTavern 密钥存储或 Gateway 主机 | 直连需要 `allowKeysExposure: true`                                  |
+| Provider     | 工作台手动生成 | 浏览器直连               | Gateway 默认运行时 | 凭据位置                    | 当前限制                                                            |
+| ------------ | -------------- | ------------------------ | ------------------ | --------------------------- | ------------------------------------------------------------------- |
+| SD WebUI     | 支持           | 支持，仅允许回环地址     | 支持               | 通常无需云端凭据            | 新建配置界面没有 `base_url` 输入框，干净安装更适合通过 Gateway 使用 |
+| NovelAI      | 支持           | 支持，地址由内置目录固定 | 支持               | 所选密钥后端或 Gateway 主机 | 使用 SillyTavern 密钥库直连时需要 `allowKeysExposure: true`         |
+| ComfyUI      | 不支持         | 传输适配器支持回环地址   | 不支持默认运行时   | 由本地服务管理              | 工作台会明确拒绝该配置；Gateway 启动也会因缺少可执行适配器而失败    |
+| OpenAI Image | 支持           | 支持，地址由内置目录固定 | 支持               | 所选密钥后端或 Gateway 主机 | 使用 SillyTavern 密钥库直连时需要 `allowKeysExposure: true`         |
+| Google Image | 支持           | 支持，地址由内置目录固定 | 支持               | 所选密钥后端或 Gateway 主机 | 使用 SillyTavern 密钥库直连时需要 `allowKeysExposure: true`         |
 
-当前版本的 provider 配置表单包含名称、Provider、模型、Token 密钥引用和“设为默认”。ComfyUI 还要求填写合法 UUID 格式的工作流 ID。
+provider 配置表单包含名称、Provider、模型和“设为默认”，不接收明文密钥或可手填的密钥引用。ComfyUI 还要求填写合法 UUID 格式的工作流 ID。
 
-“Token 密钥引用”只接受宿主密钥存储中的引用名称。明文 API key 应保存在 SillyTavern 的密钥存储中。当前 provider 配置表单没有用于写入云端 provider 明文 key 的独立按钮；无法预先创建密钥引用时，建议使用 Gateway。
+“设置 > 密钥存储”提供两个后端。默认的“SillyTavern 密钥库”将凭据写入宿主 `secrets.json`，直连时需要开启 `allowKeysExposure`；“浏览器加密库”使用用户口令经 PBKDF2 派生密钥，再以 AES-256-GCM 将凭据加密写入独立 IndexedDB。加密库口令不保存，页面重新加载后必须再次解锁。两种模式下，扩展设置和 provider 记录都只保存稳定引用。
 
 ### 5.2 添加 provider 配置
 
@@ -135,11 +135,12 @@ TavernCanvas 将“生成参数”和“网络传输”分开处理。工作台�
 2. 输入便于识别的名称，例如“NovelAI 主账号”。
 3. 选择 provider 类型。
 4. 输入模型 ID。模型必须与服务端或 Gateway 配置中的允许列表一致。
-5. 直连云端时填写已经存在的密钥引用；通过 Gateway 时可留空 provider 密钥引用，因为厂商凭据位于 Gateway 主机。
-6. 需要作为新任务默认选择时，开启“设为默认”。
-7. 保存后单击“测试连接”。
+5. 需要作为新任务默认选择时，开启“设为默认”。
+6. 保存配置。通过 Gateway 时，厂商凭据应留在 Gateway 主机，无需在该 provider 行设置 API 密钥。
+7. 直连 NovelAI、OpenAI Image 或 Google Image 时，在配置行单击“设置 API 密钥”，输入明文后保存。明文只会传给当前选择的密钥后端。
+8. 单击“测试连接”。
 
-provider 配置行上的“测试连接”只校验配置结构，并在存在密钥引用时检查该引用是否能在宿主密钥存储中找到。该测试不会向图片 provider 发起网络请求，因此成功结果不能证明厂商服务当前可访问。
+provider 配置行上的“测试连接”只校验配置结构，并在存在密钥引用时检查当前密钥后端能否解密或读取该引用。该测试不会向图片 provider 发起网络请求，因此成功结果不能证明厂商服务当前可访问。
 
 ### 5.3 当前工作台的固定生成参数
 
@@ -184,19 +185,19 @@ Gateway 适合需要将厂商凭据留在服务器、通过局域网集中访问
 2. 在 TavernCanvas 中添加对应 provider 类型与模型的配置。模型需包含在 Gateway 该 provider 的 `model_allowlist` 中。
 3. 打开“设置 > Gateway”，输入 `http://` 或 `https://` 的 Gateway origin，例如 `http://127.0.0.1:8787`。输入框失焦时保存。
 4. 使用 `http://` 时阅读风险提示，并单击“仍要继续”。确认按规范化 origin 分别记录；更换地址后需要重新确认。
-5. 在“Gateway 访问 token”中输入明文 bearer token，然后单击“保存 token”。明文会直接写入 SillyTavern 密钥存储，设置中只保留引用。
+5. 在“Gateway 访问 token”中输入明文 bearer token，然后单击“保存 token”。明文会写入当前选择的密钥后端，设置中只保留引用。
 6. 单击“检测协议”。该操作探测 Gateway；诊断页的连接测试使用同一 Gateway 探测能力。
 7. 回到工作台选择 provider 配置并执行一次手动生成。
 
 配置 Gateway 后，Gateway 的优先级高于所有直连方式。清空 Gateway 地址可恢复直连选择逻辑。
 
-SillyTavern 从密钥存储取回 Gateway token 时仍需在 `config.yaml` 中设置：
+仅当“设置 > 密钥存储”选择“SillyTavern 密钥库”时，浏览器读取 Gateway token 需要在 `config.yaml` 中设置：
 
 ```yaml
 allowKeysExposure: true
 ```
 
-修改后重启 SillyTavern。该开关允许同一 SillyTavern 页面中的脚本读取已保存密钥明文。Gateway 模式下浏览器只需读取 Gateway bearer token，厂商 API key 始终留在 Gateway 主机。
+修改后重启 SillyTavern。该开关允许同一 SillyTavern 页面中的脚本读取已保存密钥明文。选择“浏览器加密库”时无需开启该开关，但每次重新加载页面后都需要用口令解锁。无论选择哪个扩展侧后端，Gateway 模式下的厂商 API key 始终留在 Gateway 主机。
 
 回环地址上的明文 HTTP 流量不会离开本机，但仍未加密。局域网或公网部署应使用 HTTPS 反向代理；明文 HTTP 会暴露 token、提示词和图片内容。
 
@@ -396,17 +397,19 @@ tavern-canvas-archive.json
 
 ## 13．数据、隐私与安全
 
-TavernCanvas 的主要本地数据保存在浏览器 IndexedDB 数据库 `tavern_canvas_v3` 中，包括生成图片、提示词预设、角色配置、知识条目、词库包和任务记录。图片按 SHA-256 内容寻址保存。扩展设置保存在 SillyTavern 的 `tavern_canvas` 设置项中。
+TavernCanvas 的主要本地数据保存在浏览器 IndexedDB 数据库 `tavern_canvas_v3` 中，包括生成图片、提示词预设、角色配置、知识条目、词库包和任务记录。图片按 SHA-256 内容寻址保存。扩展设置保存在 SillyTavern 的 `tavern_canvas` 设置项中。选择“浏览器加密库”后，密文凭据单独保存在 `config_tavern_canvas_browser_secrets`，不会进入业务数据库或归档。
 
 使用时应注意以下边界：
 
-- 扩展设置只保存密钥引用，不保存 provider 或 Gateway 明文凭据。
-- 直接云端调用需要 `allowKeysExposure: true`，这会扩大同页脚本读取宿主密钥的权限。
+- 扩展设置、provider 记录和归档只保存密钥引用，不保存 provider 或 Gateway 明文凭据。
+- 浏览器加密库采用 PBKDF2-SHA-256 和 AES-256-GCM，随机 salt 与每条记录独立的 96 bit IV 一并保存。口令和派生密钥只保留在当前页面会话内。
+- 浏览器加密库解锁后，同页脚本仍可通过扩展运行路径使用凭据。它防止 IndexedDB 静态明文泄露，无法防御已经控制页面执行环境的恶意脚本或浏览器扩展。
+- 使用 SillyTavern 密钥库进行直接云端调用时需要 `allowKeysExposure: true`，这会扩大同页脚本读取宿主密钥的权限。
 - SD WebUI 和 ComfyUI 的直连地址必须是回环地址，非回环地址会被拒绝。
 - Gateway 的 `http://` 地址必须按 origin 单独确认。确认只记录风险接受状态，不会加密流量。
 - 除回环地址外，Gateway 应放在 HTTPS 反向代理后。
 - 项目没有遥测或分析。网络请求只会发送到已配置 provider、Gateway 或用户主动打开的词库目录。
-- 清除浏览器站点数据会删除 IndexedDB 中的图片和资产。执行前先导出归档。
+- 清除浏览器站点数据会删除业务 IndexedDB 和浏览器加密库。业务归档不包含加密库密文，执行前应分别确认业务归档与凭据恢复方式。
 
 ## 14．常见故障排查
 
@@ -416,13 +419,15 @@ TavernCanvas 的主要本地数据保存在浏览器 IndexedDB 数据库 `tavern
 | “生成”按钮不可用或提交后提示缺少配置        | 未选择 provider 配置                                | 在设置中添加配置，并在工作台下拉框中选中                                              |
 | 提示正向提示词必填                          | 正向提示词为空                                      | 填写画面主体、场景和风格描述                                                          |
 | ComfyUI 配置无法从工作台生成                | 当前工作台不构建 ComfyUI 请求                       | 改用受支持 provider；等待工作台接入真实工作流选择能力                                 |
-| 直连云端提示 SillyTavern 拒绝显示密钥       | `allowKeysExposure` 未开启                          | 在 `config.yaml` 设置 `allowKeysExposure: true` 并重启，或改用 Gateway                |
+| 使用 SillyTavern 密钥库直连时无法读取密钥   | `allowKeysExposure` 未开启                          | 在 `config.yaml` 设置 `allowKeysExposure: true` 并重启，或改用浏览器加密库或 Gateway  |
+| 提示浏览器加密库已锁定                      | 页面重新加载后派生密钥已从内存清除                  | 打开“设置 > 密钥存储”，输入口令并单击“解锁”                                           |
+| 浏览器加密库口令错误或遗失                  | 输入口令不匹配；口令无法恢复                        | 核对口令；确认无法恢复后重置加密库，并重新录入所有凭据                                |
 | 直连本地 provider 报回环地址错误            | `base_url` 使用了局域网、公网或非法地址             | 使用 `127.0.0.1`、`localhost` 或 `[::1]`；远程访问通过 Gateway                        |
 | 新建 SD WebUI 配置后无法直连                | 当前配置表单没有 `base_url` 输入框                  | 在干净安装中优先通过 Gateway 使用 SD WebUI                                            |
 | Gateway 已配置但任务提示没有 token          | 只填了地址，尚未保存访问 token                      | 在“Gateway 访问 token”输入明文 token 并单击“保存 token”                               |
 | Gateway 提示明文来源未确认                  | 使用了未确认的 `http://` origin                     | 阅读风险提示并单击“仍要继续”，或改用 HTTPS                                            |
 | “检测协议”失败                              | Gateway 不可达、CORS 不匹配、token 错误或协议不兼容 | 检查 `/healthz`、精确 CORS origin、token 和诊断错误码                                 |
-| provider 配置“测试连接”成功，但实际生成失败 | 该测试只校验结构和密钥引用，没有访问 provider       | 在诊断时间线查看 `auth_failed`、`provider_unavailable`、`rate_limited` 或 `timed_out` |
+| provider 配置“测试连接”成功，但实际生成失败 | 该测试只校验结构和当前密钥后端中的引用              | 在诊断时间线查看 `auth_failed`、`provider_unavailable`、`rate_limited` 或 `timed_out` |
 | 添加参考图后生成失败或没有参考效果          | 新建参考图记录只保存链接和备注，没有图片字节        | 清空工作台参考图列表；当前版本不要依赖该入口执行参考图生成                            |
 | 图库没有嵌入参数                            | 图片格式或 provider 没有可识别参数块                | 可手动填写工作台提示词；OpenAI 和 Google 图片出现该状态属正常情况                     |
 | “跳转到来源消息”不可用                      | 当前宿主没有聊天导航能力                            | 在 SillyTavern 中手动定位原消息                                                       |

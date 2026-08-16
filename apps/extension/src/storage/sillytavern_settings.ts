@@ -1,4 +1,5 @@
 import {
+  CredentialStorageModeSchema,
   GatewaySettingsSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
@@ -31,6 +32,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
   schema_version: 1,
   active_namespace: "primary",
   locale: "auto",
+  credential_storage_mode: "host",
   active_provider_profile_id: null,
   global_concurrency: 4,
   auto_generation_enabled: true,
@@ -272,6 +274,13 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
       raw.locale,
       defaults.locale,
       "locale",
+      diagnostics,
+    ),
+    credential_storage_mode: recover_field(
+      CredentialStorageModeSchema,
+      raw.credential_storage_mode,
+      defaults.credential_storage_mode,
+      "credential_storage_mode",
       diagnostics,
     ),
     active_provider_profile_id: recover_field(

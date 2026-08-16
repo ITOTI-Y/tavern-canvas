@@ -122,8 +122,8 @@ async function acknowledge(): Promise<void> {
   }
 }
 
-/** The plaintext never lands in settings: the controller hands it to host secret storage and only
- * the returned reference is rendered. The draft is cleared as soon as the write resolves. */
+/** The plaintext never lands in settings: the controller hands it to the selected credential
+ * backend and only the returned reference is rendered. The draft clears after the write. */
 async function save_token(): Promise<void> {
   const value = token_draft.value.trim();
   token_error.value = null;
@@ -135,7 +135,7 @@ async function save_token(): Promise<void> {
     await props.controller.set_gateway_token(value);
     token_draft.value = "";
   } catch {
-    token_error.value = t("errors.validation_required");
+    token_error.value = t("settings.credential_storage.unlock_required");
   } finally {
     token_pending.value = false;
   }
@@ -146,8 +146,11 @@ async function clear_token(): Promise<void> {
     return;
   }
   token_pending.value = true;
+  token_error.value = null;
   try {
     await props.controller.clear_gateway_token();
+  } catch {
+    token_error.value = t("settings.credential_storage.unlock_required");
   } finally {
     token_pending.value = false;
   }

@@ -226,6 +226,9 @@ export class LlmConnectionService {
 
   async clear_credential(connection_id: string): Promise<LlmConnectionProfile> {
     const profile = await this.#require(connection_id);
+    if (profile.credential_reference !== null) {
+      await this.#deps.secrets.delete_secret?.(profile.credential_reference);
+    }
     const updated: LlmConnectionProfile = {
       ...profile,
       credential_reference: null,
