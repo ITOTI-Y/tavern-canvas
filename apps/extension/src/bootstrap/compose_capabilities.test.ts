@@ -137,6 +137,7 @@ describe("compose_studio_capabilities", () => {
         "knowledge",
         "llm_connections",
         "migration",
+        "novelai",
         "personas",
         "profiles",
         "prompt_presets",
@@ -159,6 +160,7 @@ describe("compose_studio_capabilities", () => {
       "settings",
       "diagnostics",
       "llm_connections",
+      "novelai",
       "personas",
       "knowledge",
     ] as const) {
@@ -183,6 +185,7 @@ describe("compose_studio_capabilities", () => {
       "vocabulary",
       "migration",
       "llm_connections",
+      "novelai",
       "personas",
       "knowledge",
     ] as const) {
@@ -221,7 +224,7 @@ describe("compose_studio_capabilities", () => {
     });
 
     expect(composition.host).toBeNull();
-    expect(composition.resolutions).toHaveLength(12);
+    expect(composition.resolutions).toHaveLength(13);
     expect(status_of(composition.resolutions, "generation")).toBe("unavailable");
     // Diagnostics stays real so the shell can still explain why everything else is blocked.
     expect(status_of(composition.resolutions, "diagnostics")).toBe("available");
@@ -255,7 +258,7 @@ describe("compose_studio_capabilities", () => {
 
     const bundle = await composition.capabilities.diagnostics.export_support_bundle();
     expect(bundle.version).toBe("3.0.0-test");
-    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(12);
+    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(13);
     expect(JSON.stringify(bundle.redacted_settings)).not.toContain("token_secret_id");
     await composition.dispose();
   });

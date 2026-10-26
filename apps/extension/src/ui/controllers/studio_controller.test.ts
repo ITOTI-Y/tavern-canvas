@@ -46,6 +46,7 @@ import type {
   VocabularyCapability,
 } from "../contracts/ui_capabilities.js";
 import { create_studio_controller } from "./studio_controller.js";
+import { create_unavailable_capabilities } from "./unavailable_capabilities.js";
 
 const PROFILE_ID = "11111111-1111-4111-8111-111111111111" as Uuid;
 const JOB_ID = "22222222-2222-4222-8222-222222222222" as Uuid;
@@ -290,6 +291,7 @@ function build_mock_studio() {
     generation,
     profiles,
     llm_connections,
+    novelai: create_unavailable_capabilities().novelai,
     prompt_presets,
     assets,
     personas,

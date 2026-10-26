@@ -42,6 +42,7 @@ function sd_request(overrides: Record<string, unknown> = {}) {
 function novelai_request(overrides: Record<string, unknown> = {}) {
   return {
     provider_id: "novelai",
+    action: "generate",
     ...common_request,
     model_id: "nai-diffusion-4-5-full",
     sampler: "k_euler_ancestral",
@@ -50,11 +51,12 @@ function novelai_request(overrides: Record<string, unknown> = {}) {
     steps: 28,
     scale: 5,
     cfg_rescale: 0,
-    noise_schedule: "native",
-    quality_toggle: true,
+    noise_schedule: "karras",
+    quality_preset: "standard",
     undesired_content_preset: "heavy",
     smea: false,
     dyn: false,
+    variety_plus: false,
     ...overrides,
   };
 }
@@ -228,7 +230,7 @@ describe("provider request contracts", () => {
     }
   });
 
-  it("bounds NovelAI dimensions, steps, scale, seed, vibes, and characters", () => {
+  it("bounds NovelAI dimensions, steps, scale, seed, vibes, characters and references", () => {
     expect(
       NovelAiRequestSchema.safeParse(
         novelai_request({
@@ -237,87 +239,132 @@ describe("provider request contracts", () => {
           steps: 1,
           scale: 0,
           seed: 4_294_967_295,
-          vibe_references: Array.from({ length: 4 }, () => ({
+          characters: Array.from({ length: 32 }, (_, index) => ({
+            prompt: `character ${String(index)}`,
+            center: { x: 0.5, y: 0.5 },
+          })),
+          vibe_references: Array.from({ length: 16 }, () => ({
             asset_id: ASSET_ID,
             strength: 1,
             information_extracted: 1,
           })),
-          character_references: Array.from({ length: 6 }, (_, index) => ({
+          character_references: Array.from({ length: 16 }, () => ({
             asset_id: ASSET_ID,
-            prompt: `character ${String(index)}`,
+            description: "character_and_style",
             strength: 1,
+            fidelity: 1,
+            information_extracted: 1,
           })),
         }),
       ).success,
     ).toBe(true);
     for (const overrides of [
       { width: 65 },
-      { height: 2112 },
+      { width: 2048, height: 2048 },
       { steps: 0 },
       { steps: 51 },
       { scale: -0.1 },
-      { scale: 30.1 },
+      { scale: 10.1 },
       { cfg_rescale: 1.1 },
       { seed: -1 },
+      { characters: Array.from({ length: 33 }, () => ({ prompt: "character" })) },
+      { characters: [{ prompt: "character", center: { x: 1.2, y: 0 } }] },
       {
-        vibe_references: Array.from({ length: 5 }, () => ({
+        vibe_references: Array.from({ length: 17 }, () => ({
           asset_id: ASSET_ID,
           strength: 1,
           information_extracted: 1,
         })),
       },
       {
-        character_references: Array.from({ length: 7 }, () => ({
-          asset_id: ASSET_ID,
-          prompt: "character",
-          strength: 1,
-        })),
+        character_references: [
+          {
+            asset_id: ASSET_ID,
+            description: "pose",
+            strength: 1,
+            fidelity: 1,
+            information_extracted: 1,
+          },
+        ],
       },
     ]) {
       expect(NovelAiRequestSchema.safeParse(novelai_request(overrides)).success).toBe(false);
     }
   });
 
-  it("rejects per-character NovelAI negative prompts while preserving the top-level field", () => {
-    const character_negative_prompt = {
-      asset_id: ASSET_ID,
-      prompt: "character",
-      negative_prompt: "watermark",
-      strength: 1,
-    };
-
+  it("carries per-character negative prompts on character prompts", () => {
     expect(
       NovelAiRequestSchema.safeParse(
-        novelai_request({ character_references: [character_negative_prompt] }),
+        novelai_request({ characters: [{ prompt: "girl", negative_prompt: "watermark" }] }),
       ).success,
-    ).toBe(false);
-    expect(
-      NovelAiRequestSchema.safeParse(novelai_request({ negative_prompt: "avoid watermark" }))
-        .success,
     ).toBe(true);
   });
 
-  it("accepts a NovelAI infill request with image_asset_id, mask_asset_id, and inpaint_strength (Stage 07 Task 3)", () => {
-    const result = NovelAiRequestSchema.safeParse(
-      novelai_request({
-        action: "infill",
-        image_asset_id: ASSET_ID,
-        mask_asset_id: ASSET_ID,
-        inpaint_strength: 0.54,
-      }),
-    );
-    expect(result.success).toBe(true);
+  it("accepts NovelAI img2img and infill requests with their source assets", () => {
+    expect(
+      NovelAiRequestSchema.safeParse(
+        novelai_request({ action: "img2img", image_asset_id: ASSET_ID, strength: 0.6, noise: 0 }),
+      ).success,
+    ).toBe(true);
+    expect(
+      NovelAiRequestSchema.safeParse(
+        novelai_request({
+          action: "infill",
+          image_asset_id: ASSET_ID,
+          mask_asset_id: ASSET_ID,
+          inpaint_strength: 0.54,
+        }),
+      ).success,
+    ).toBe(true);
   });
 
-  it("rejects a NovelAI infill request missing either asset, and rejects inpaint-only fields on plain generation", () => {
+  it("rejects source-asset fields on actions that do not take them", () => {
     for (const overrides of [
-      { action: "infill", mask_asset_id: ASSET_ID },
-      { action: "infill", image_asset_id: ASSET_ID },
+      { action: "infill", mask_asset_id: ASSET_ID, inpaint_strength: 1 },
+      { action: "infill", image_asset_id: ASSET_ID, inpaint_strength: 1 },
+      { action: "img2img", strength: 0.5, noise: 0 },
       { image_asset_id: ASSET_ID },
       { mask_asset_id: ASSET_ID },
       { inpaint_strength: 0.5 },
     ]) {
       expect(NovelAiRequestSchema.safeParse(novelai_request(overrides)).success).toBe(false);
+    }
+  });
+
+  it("accepts upscale and augment requests without diffusion fields", () => {
+    const tool_base = {
+      provider_id: "novelai",
+      ...common_request,
+      output_count: 1,
+      image_asset_id: ASSET_ID,
+    };
+    expect(NovelAiRequestSchema.safeParse({ ...tool_base, action: "upscale" }).success).toBe(true);
+    expect(
+      NovelAiRequestSchema.safeParse({
+        ...tool_base,
+        action: "augment",
+        tool: "colorize",
+        tool_prompt: "red dress",
+        defry: 1,
+        width: 832,
+        height: 1216,
+      }).success,
+    ).toBe(true);
+    for (const overrides of [
+      { tool: "emotion" },
+      { tool: "lineart", emotion: "happy" },
+      { tool: "lineart", tool_prompt: "x" },
+      { tool: "colorize", defry: 6 },
+    ]) {
+      expect(
+        NovelAiRequestSchema.safeParse({
+          ...tool_base,
+          action: "augment",
+          width: 832,
+          height: 1216,
+          ...overrides,
+        }).success,
+      ).toBe(false);
     }
   });
 

@@ -60,6 +60,7 @@ const provider_requests = [
     "novelai",
     {
       provider_id: "novelai",
+      action: "generate",
       request_id,
       generation_anchor,
       prompt: "A rainy alley at night",
@@ -71,11 +72,12 @@ const provider_requests = [
       steps: 28,
       scale: 5,
       cfg_rescale: 0,
-      noise_schedule: "native",
-      quality_toggle: true,
+      noise_schedule: "karras",
+      quality_preset: "standard",
       undesired_content_preset: "heavy",
       smea: false,
       dyn: false,
+      variety_plus: false,
     },
   ],
   [

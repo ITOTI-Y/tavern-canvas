@@ -1,5 +1,10 @@
 import type { AssetId, ImageGenerationRequest, ProviderId, Uuid } from "@tavern-canvas/contracts";
 
+import {
+  DEFAULT_NOVELAI_MODEL_ID,
+  novelai_default_parameters,
+} from "../../../modules/novelai/novelai_request_defaults.js";
+
 export interface ReferenceDraftItem {
   readonly asset_id: AssetId;
   readonly display_name: string;
@@ -102,22 +107,12 @@ export function build_provider_request(
     case "novelai":
       return {
         provider_id: "novelai",
+        action: "generate",
         ...base,
-        model_id: input.model_id ?? "nai-diffusion-4-5-full",
-        sampler: "k_euler",
-        width: 832,
-        height: 1216,
-        steps: 28,
-        scale: 5,
-        cfg_rescale: 0,
-        noise_schedule: "native",
-        quality_toggle: true,
-        undesired_content_preset: "none",
-        smea: false,
-        dyn: false,
+        ...novelai_default_parameters(input.model_id ?? DEFAULT_NOVELAI_MODEL_ID),
         ...(input.references.length > 0
           ? {
-              vibe_references: input.references.slice(0, 4).map((reference) => ({
+              vibe_references: input.references.slice(0, 16).map((reference) => ({
                 asset_id: reference.asset_id,
                 strength: 0.6,
                 information_extracted: 1,

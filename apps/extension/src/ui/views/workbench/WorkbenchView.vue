@@ -102,6 +102,7 @@ async function handle_submit(): Promise<void> {
       negative_prompt: draft.negative_prompt,
       image_count: draft.image_count,
       references: draft.references,
+      ...(profile.model_id === null ? {} : { model_id: profile.model_id }),
     },
     request_id,
   );

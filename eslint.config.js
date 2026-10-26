@@ -8,6 +8,7 @@ export default typescriptEslint.config(
   {
     ignores: [
       "**/dist/**",
+      "docs/_dev/**",
       "output/**",
       "coverage/**",
       "playwright-report/**",

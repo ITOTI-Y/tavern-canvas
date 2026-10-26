@@ -2,7 +2,7 @@ import {
   ImageGenerationResultSchema,
   type GeneratedAsset,
   type ImageGenerationResult,
-  type NovelAiRequest,
+  type RequestId,
 } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
@@ -28,6 +28,14 @@ const NovelAiJsonResponseSchema = z.object({
     .max(4),
 });
 
+export interface NovelAiExpectedOutput {
+  readonly request_id: RequestId;
+  readonly output_count: number;
+  readonly width?: number;
+  readonly height?: number;
+  readonly seed?: number;
+}
+
 interface ExtractedImages {
   readonly images: readonly Uint8Array[];
   readonly seed?: number;
@@ -36,7 +44,7 @@ interface ExtractedImages {
 export async function parse_novelai_response(
   body: Uint8Array,
   content_type: string,
-  request: NovelAiRequest,
+  expected: NovelAiExpectedOutput,
   max_response_bytes: number,
   max_archive_entries: number,
   allowed_media_types: readonly GeneratedAsset["media_type"][] = ["image/png", "image/webp"],
@@ -75,21 +83,21 @@ export async function parse_novelai_response(
       throw malformed_response();
     }
 
-    if (extracted.images.length !== request.output_count) {
+    if (extracted.images.length !== expected.output_count) {
       throw malformed_response();
     }
     const output_assets = extracted.images.map((bytes) =>
-      create_provider_output_asset(bytes, request.width, request.height, allowed_media_types),
+      create_provider_output_asset(bytes, expected.width, expected.height, allowed_media_types),
     );
     return {
       result: ImageGenerationResultSchema.parse(
         result_with_optional_seed(
           {
-            request_id: request.request_id,
+            request_id: expected.request_id,
             provider_id: "novelai",
             assets: output_assets.map(({ asset }) => asset),
           },
-          extracted.seed ?? request.seed,
+          extracted.seed ?? expected.seed,
         ),
       ),
       output_assets,

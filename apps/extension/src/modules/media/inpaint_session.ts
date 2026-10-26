@@ -7,10 +7,14 @@ import {
   type Sha256,
 } from "@tavern-canvas/contracts";
 
+import {
+  DEFAULT_NOVELAI_MODEL_ID,
+  novelai_default_parameters,
+} from "../novelai/novelai_request_defaults.js";
+
 export const MASKED = 255;
 export const UNMASKED = 0;
 export const MAX_MASK_HISTORY = 20;
-export const NOVELAI_INPAINT_MODEL_ID = "nai-diffusion-4-5-curated-inpainting";
 
 export class InpaintDimensionError extends TypeError {
   constructor(message: string) {
@@ -298,28 +302,21 @@ export interface NovelAiInpaintInput {
 }
 
 /** Always a direct API call, bypassing the user's generation-mode setting; uses `action: "infill"` with the dedicated inpaint model. */
-export function build_novelai_inpaint_request(input: NovelAiInpaintInput): NovelAiRequest {
+export function build_novelai_inpaint_request(
+  input: NovelAiInpaintInput,
+): Extract<NovelAiRequest, { readonly action: "infill" }> {
   return {
     provider_id: "novelai",
+    action: "infill",
     request_id: input.request_id,
     generation_anchor: input.generation_anchor,
     prompt: input.positive_prompt,
     ...(input.negative_prompt === undefined ? {} : { negative_prompt: input.negative_prompt }),
     output_count: 1,
-    model_id: input.model_id ?? NOVELAI_INPAINT_MODEL_ID,
-    sampler: "k_euler_ancestral",
+    ...novelai_default_parameters(input.model_id ?? DEFAULT_NOVELAI_MODEL_ID),
     width: input.width,
     height: input.height,
-    steps: 28,
-    scale: 5,
-    cfg_rescale: 0,
-    noise_schedule: "native",
     ...(input.seed === undefined ? {} : { seed: input.seed }),
-    quality_toggle: true,
-    undesired_content_preset: "heavy",
-    smea: false,
-    dyn: false,
-    action: "infill",
     image_asset_id: input.image_asset_id,
     mask_asset_id: input.mask_asset_id,
     inpaint_strength: input.strength,

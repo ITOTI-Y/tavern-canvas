@@ -24,6 +24,8 @@ export interface GenerationCapabilityDeps {
   readonly namespace: () => string;
   readonly origin: GenerationOriginSource;
   readonly new_request_id: () => RequestId;
+  /** Rewrites a request into the form its provider accepts before it is queued. */
+  readonly prepare_request?: (request: ImageGenerationRequest) => Promise<ImageGenerationRequest>;
 }
 
 function image_count(request_arguments: GenerationJobSnapshot["arguments"]): number {
@@ -64,7 +66,9 @@ export function create_generation_capability(deps: GenerationCapabilityDeps): Ge
     events.emit({ type: "job_updated", job: snapshot_to_summary(job) });
   });
 
-  async function submit_request(request: ImageGenerationRequest): Promise<GenerationJobSummary> {
+  async function submit_request(source: ImageGenerationRequest): Promise<GenerationJobSummary> {
+    const request =
+      deps.prepare_request === undefined ? source : await deps.prepare_request(source);
     const origin = await deps.origin.resolve();
     const job = await submit_manual_generation(
       { queue: deps.queue, plans: deps.plans },

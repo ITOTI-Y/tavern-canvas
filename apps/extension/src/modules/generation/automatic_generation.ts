@@ -22,7 +22,6 @@ import type {
   HostGenerationEvent,
   HostMessageSwipeSnapshot,
 } from "../../host/index.js";
-import { build_provider_request } from "../../ui/views/workbench/build_generation_request.js";
 import type { MediaExecutionPlanRegistry } from "../media/media_command_service.js";
 import type {
   FallbackTextSink,
@@ -291,32 +290,34 @@ export class AutomaticImageRequestRouter implements ImageRequestQueuePort {
     }
 
     const model_id = this.#options.model_id();
-    const provider_request = build_provider_request(
-      {
-        provider_id,
-        positive_prompt: request.arguments.scene_description,
-        negative_prompt: request.arguments.negative_constraints ?? "",
-        image_count: request.arguments.image_count ?? 1,
-        references: [],
-        ...(model_id === null ? {} : { model_id }),
-      },
-      request.request_id,
-      request.generation_anchor,
-    );
-    this.#options.plans.register(request.request_id, {
-      kind: "adapter",
-      request: provider_request,
-    });
-    void this.#options.queue
-      .enqueue({
-        request_id: request.request_id,
-        generation_anchor: request.generation_anchor,
-        source_anchor: request.source_anchor,
-        chat_id: target.chat_id,
-        requested_swipe_id: target.requested_swipe_id,
-        provider_id,
-        arguments: request.arguments,
-        automatic: true,
+    void import("../../ui/views/workbench/build_generation_request.js")
+      .then(({ build_provider_request }) => {
+        const provider_request = build_provider_request(
+          {
+            provider_id,
+            positive_prompt: request.arguments.scene_description,
+            negative_prompt: request.arguments.negative_constraints ?? "",
+            image_count: request.arguments.image_count ?? 1,
+            references: [],
+            ...(model_id === null ? {} : { model_id }),
+          },
+          request.request_id,
+          request.generation_anchor,
+        );
+        this.#options.plans.register(request.request_id, {
+          kind: "adapter",
+          request: provider_request,
+        });
+        return this.#options.queue.enqueue({
+          request_id: request.request_id,
+          generation_anchor: request.generation_anchor,
+          source_anchor: request.source_anchor,
+          chat_id: target.chat_id,
+          requested_swipe_id: target.requested_swipe_id,
+          provider_id,
+          arguments: request.arguments,
+          automatic: true,
+        });
       })
       .catch(() => {
         this.#options.plans.take(request.request_id);

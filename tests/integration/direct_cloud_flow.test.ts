@@ -158,6 +158,7 @@ async function seed_cloud_profile(
 function novelai_request() {
   return {
     provider_id: "novelai",
+    action: "generate",
     request_id: REQUEST_ID,
     generation_anchor: ANCHOR,
     prompt: "a lantern-lit canal at dusk",
@@ -170,12 +171,13 @@ function novelai_request() {
     steps: 28,
     scale: 5,
     cfg_rescale: 0,
-    noise_schedule: "native",
+    noise_schedule: "karras",
     seed: 42,
-    quality_toggle: true,
+    quality_preset: "standard",
     undesired_content_preset: "heavy",
     smea: false,
     dyn: false,
+    variety_plus: false,
   } as const;
 }
 

@@ -11,6 +11,7 @@ import {
   SdWebuiRequestSchema,
   type AssetId,
   type ImageGenerationRequest,
+  type NovelAiRequest,
   type ImageGenerationResult,
 } from "@tavern-canvas/contracts";
 import { describe, expect, it } from "vitest";
@@ -154,8 +155,9 @@ const sd_request = SdWebuiRequestSchema.parse({
   seed: 42,
 });
 
-const novelai_request = NovelAiRequestSchema.parse({
+const novelai_request: NovelAiRequest = NovelAiRequestSchema.parse({
   provider_id: "novelai",
+  action: "generate",
   request_id: REQUEST_ID,
   generation_anchor: GENERATION_ANCHOR,
   prompt: "matrix fixture prompt",
@@ -168,12 +170,13 @@ const novelai_request = NovelAiRequestSchema.parse({
   steps: 28,
   scale: 5,
   cfg_rescale: 0,
-  noise_schedule: "native",
+  noise_schedule: "karras",
   seed: 42,
-  quality_toggle: true,
+  quality_preset: "standard",
   undesired_content_preset: "heavy",
   smea: false,
   dyn: false,
+  variety_plus: false,
 });
 
 const comfy_request = ComfyUiRequestSchema.parse({
@@ -575,23 +578,28 @@ function novelai_operation_validators(
     );
     const body = operation_json(operation);
     const parameters = record_value(body.parameters, "NovelAI parameters");
-    expect(body.input).toBe(request.prompt);
-    expect(body.model).toBe(request.model_id);
-    expect(parameters.prompt).toBe(request.prompt);
-    expect(parameters.uc).toBe(request.negative_prompt);
+    const prompt_with_quality = `${request.prompt}, very aesthetic, masterpiece, no text`;
+    expect(body.input).toBe(prompt_with_quality);
+    expect(body.action).toBe(request.action);
+    expect(parameters.negative_prompt).toMatch(
+      new RegExp(`^nsfw, lowres, .*, ${request.negative_prompt ?? ""}$`, "u"),
+    );
     expect(parameters.v4_prompt).toEqual({
-      caption: { base_caption: request.prompt, char_captions: [] },
+      caption: { base_caption: prompt_with_quality, char_captions: [] },
       use_coords: false,
       use_order: true,
     });
-    expect(parameters.v4_negative_prompt).toEqual({
-      caption: { base_caption: request.negative_prompt, char_captions: [] },
-    });
+    expect(parameters.v4_negative_prompt).toMatchObject({ legacy_uc: false });
     expect(parameters.n_samples).toBe(request.output_count);
-    if (request.vibe_references !== undefined) {
-      expect(parameters.reference_image_multiple).toEqual([bytes_to_base64(PNG_BYTES)]);
+    if (request.action === "img2img") {
+      expect(body.model).toBe(request.model_id);
+      expect(parameters.image).toBe(bytes_to_base64(PNG_BYTES));
     }
-    if (request.character_references !== undefined) {
+    if (
+      request.action !== "upscale" &&
+      request.action !== "augment" &&
+      request.character_references !== undefined
+    ) {
       expect(parameters.director_reference_images).toEqual([bytes_to_base64(SECOND_PNG_BYTES)]);
     }
   };
@@ -902,15 +910,22 @@ function create_novelai_harness(
   } else if (scenario === "reference_image") {
     request = NovelAiRequestSchema.parse({
       ...novelai_request,
-      vibe_references: [
-        { asset_id: REFERENCE_ASSET_ID, strength: 0.6, information_extracted: 0.8 },
-      ],
+      action: "img2img",
+      image_asset_id: REFERENCE_ASSET_ID,
+      strength: 0.6,
+      noise: 0,
       character_references: [
-        { asset_id: MASK_ASSET_ID, prompt: "matrix character", strength: 0.7 },
+        {
+          asset_id: MASK_ASSET_ID,
+          description: "character",
+          strength: 0.7,
+          fidelity: 1,
+          information_extracted: 1,
+        },
       ],
     });
   } else if (scenario === "unsupported_capability") {
-    request = NovelAiRequestSchema.parse({ ...novelai_request, model_id: "not-allowed" });
+    request = NovelAiRequestSchema.parse({ ...novelai_request, model_id: "nai-diffusion-3" });
     raw_profile = { ...NOVELAI_PROFILE, model_allowlist: ["other-model"] };
     responses = [];
     expectation = { kind: "error", code: "invalid_request" };

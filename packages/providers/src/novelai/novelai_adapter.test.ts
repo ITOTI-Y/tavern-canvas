@@ -1,7 +1,12 @@
 import { readFile } from "node:fs/promises";
 import { deflateRawSync } from "node:zlib";
 
-import { AssetIdSchema, NovelAiRequestSchema, type AssetId } from "@tavern-canvas/contracts";
+import {
+  AssetIdSchema,
+  NovelAiRequestSchema,
+  type AssetId,
+  type NovelAiRequest,
+} from "@tavern-canvas/contracts";
 import { describe, expect, it } from "vitest";
 
 import type {
@@ -23,7 +28,7 @@ import {
 } from "../testing/provider_contract_suite.js";
 import { NovelAiAdapter } from "./novelai_adapter.js";
 import { map_novelai_request } from "./novelai_mapping.js";
-import { parse_novelai_response } from "./novelai_response.js";
+import { parse_novelai_response, type NovelAiExpectedOutput } from "./novelai_response.js";
 
 const REQUEST_ID = "11111111-1111-4111-8111-111111111111";
 const ASSET_ID = AssetIdSchema.parse("33333333-3333-4333-8333-333333333333");
@@ -64,6 +69,7 @@ const profile = {
 
 const full_request = NovelAiRequestSchema.parse({
   provider_id: "novelai",
+  action: "generate",
   request_id: REQUEST_ID,
   generation_anchor: GENERATION_ANCHOR,
   prompt: "fixture prompt",
@@ -76,15 +82,49 @@ const full_request = NovelAiRequestSchema.parse({
   steps: 28,
   scale: 5,
   cfg_rescale: 0,
-  noise_schedule: "native",
+  noise_schedule: "karras",
   seed: 42,
-  quality_toggle: true,
+  quality_preset: "standard",
   undesired_content_preset: "heavy",
   smea: false,
   dyn: false,
-  vibe_references: [{ asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.8 }],
-  character_references: [{ asset_id: ASSET_ID, prompt: "fixture character", strength: 0.7 }],
+  variety_plus: false,
+  characters: [{ prompt: "fixture character", negative_prompt: "fixture character negative" }],
+  character_references: [
+    {
+      asset_id: ASSET_ID,
+      description: "character",
+      strength: 0.7,
+      fidelity: 0.8,
+      information_extracted: 1,
+    },
+  ],
 });
+
+const expected_full: NovelAiExpectedOutput = {
+  request_id: full_request.request_id,
+  output_count: 1,
+  width: 1024,
+  height: 1024,
+  seed: 42,
+};
+
+function novelai_request(overrides: Record<string, unknown>): NovelAiRequest {
+  return NovelAiRequestSchema.parse({
+    ...full_request,
+    character_references: undefined,
+    ...overrides,
+  });
+}
+
+function parameters_of(
+  request: NovelAiRequest,
+  assets: Map<AssetId, ProviderSourceAsset> = new Map(),
+): Record<string, unknown> {
+  const payload = map_novelai_request(request, assets);
+  expect(payload.route).toBe("/ai/generate-image");
+  return payload.body.parameters as Record<string, unknown>;
+}
 
 class ImmediateClock implements RetryClock {
   now(): number {
@@ -188,7 +228,7 @@ function contract_case(scenario: ProviderContractScenario) {
     responses = [transport_response(201, new TextEncoder().encode("{}"))];
     expectation = { kind: "error", code: "malformed_response" };
   } else if (scenario === "unsupported_capability") {
-    request = NovelAiRequestSchema.parse({ ...full_request, model_id: "not-allowed" });
+    request = NovelAiRequestSchema.parse({ ...full_request, model_id: "nai-diffusion-3" });
     responses = [];
     expectation = { kind: "error", code: "invalid_request" };
   }
@@ -217,9 +257,18 @@ describe("NovelAI request bounds", () => {
   it("rejects distinct individually legal assets when their aggregate exceeds the profile budget", async () => {
     const request = NovelAiRequestSchema.parse({
       ...full_request,
-      vibe_references: [{ asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.8 }],
+      action: "img2img",
+      image_asset_id: ASSET_ID,
+      strength: 0.6,
+      noise: 0,
       character_references: [
-        { asset_id: second_asset_id, prompt: "fixture character", strength: 0.7 },
+        {
+          asset_id: second_asset_id,
+          description: "style",
+          strength: 0.7,
+          fidelity: 1,
+          information_extracted: 1,
+        },
       ],
     });
     const transport = new ScriptedTransport([]);
@@ -275,70 +324,286 @@ describe("NovelAI request bounds", () => {
 });
 
 describe("NovelAI mapping", () => {
-  it("maps prompts into NovelAI V4 conditions and supported character description fields", () => {
-    const assets = new Map<AssetId, ProviderSourceAsset>([
-      [ASSET_ID, { asset_id: ASSET_ID, media_type: "image/png", bytes: PNG_BYTES }],
-    ]);
+  const assets = new Map<AssetId, ProviderSourceAsset>([
+    [ASSET_ID, { asset_id: ASSET_ID, media_type: "image/png", bytes: PNG_BYTES }],
+  ]);
 
-    const payload = map_novelai_request(full_request, assets);
+  it("matches the recorded V4.5 generate payload", () => {
+    expect(map_novelai_request(full_request, assets)).toEqual(request_fixture);
+  });
 
-    expect(payload).toEqual(request_fixture);
-    expect(payload.parameters.uc).toBe("fixture negative prompt");
-    expect(payload.parameters.v4_prompt).toEqual({
-      caption: { base_caption: "fixture prompt", char_captions: [] },
-      use_coords: false,
-      use_order: true,
-    });
-    expect(payload.parameters.v4_negative_prompt).toEqual({
-      caption: { base_caption: "fixture negative prompt", char_captions: [] },
-    });
-    expect(payload.parameters.director_reference_descriptions).toEqual([
-      {
-        caption: {
-          base_caption: "character, fixture character",
-          char_captions: [],
-        },
-        legacy_uc: false,
-        use_coords: false,
-        use_order: true,
-      },
-    ]);
-    expect(payload.parameters.director_reference_descriptions?.[0]).not.toHaveProperty(
-      "negative_prompt",
+  it("appends the model's quality tags and prefixes its undesired-content preset", () => {
+    const parameters = parameters_of(novelai_request({}));
+    const v4_prompt = parameters.v4_prompt as { caption: { base_caption: string } };
+    expect(v4_prompt.caption.base_caption).toBe(
+      "fixture prompt, very aesthetic, masterpiece, no text",
     );
-    expect(full_request.prompt).toBe("fixture prompt");
+    expect(parameters.negative_prompt).toBe(
+      "nsfw, lowres, artistic error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, dithering, halftone, screentone, multiple views, logo, too many watermarks, negative space, blank page, fixture negative prompt",
+    );
   });
 
-  it("sends empty V4 negative conditions when the request has no negative prompt", () => {
-    const request = NovelAiRequestSchema.parse({
-      ...full_request,
-      negative_prompt: undefined,
-      vibe_references: undefined,
-      character_references: undefined,
-    });
+  it("omits the nsfw prefix for curated models and prompts that already mention nsfw", () => {
+    const curated = parameters_of(novelai_request({ model_id: "nai-diffusion-4-5-curated" }));
+    expect(curated.negative_prompt).not.toMatch(/^nsfw/u);
+    const explicit = parameters_of(novelai_request({ prompt: "nsfw, fixture prompt" }));
+    expect(explicit.negative_prompt).not.toMatch(/^nsfw/u);
+  });
 
-    expect(map_novelai_request(request, new Map()).parameters).toMatchObject({
-      uc: "",
-      v4_negative_prompt: {
-        caption: { base_caption: "", char_captions: [] },
+  it("keeps only the user negative prompt on V3 when the preset is none", () => {
+    const parameters = parameters_of(
+      novelai_request({
+        model_id: "nai-diffusion-3",
+        characters: undefined,
+        undesired_content_preset: "none",
+      }),
+    );
+    expect(parameters.negative_prompt).toBe("fixture negative prompt");
+    expect(parameters).not.toHaveProperty("v4_prompt");
+  });
+
+  it("snaps V4.5 character positions to the 5x5 grid and keeps V5 positions free", () => {
+    const characters = [{ prompt: "girl", center: { x: 0.22, y: 0.81 } }];
+    const grid = parameters_of(novelai_request({ characters }));
+    expect(grid.v4_prompt).toMatchObject({
+      caption: { char_captions: [{ char_caption: "girl", centers: [{ x: 0.3, y: 0.9 }] }] },
+      use_coords: true,
+    });
+    const free = parameters_of(novelai_request({ model_id: "nai-diffusion-5-full", characters }));
+    expect(free.v4_prompt).toMatchObject({
+      caption: { char_captions: [{ centers: [{ x: 0.22, y: 0.81 }] }] },
+    });
+  });
+
+  it("forces karras and drops Variety+ on V5", () => {
+    const parameters = parameters_of(
+      novelai_request({
+        model_id: "nai-diffusion-5-curated",
+        noise_schedule: "native",
+        variety_plus: true,
+      }),
+    );
+    expect(parameters.noise_schedule).toBe("karras");
+    expect(parameters).not.toHaveProperty("skip_cfg_above_sigma");
+  });
+
+  it("scales the Variety+ sigma with resolution", () => {
+    const at_reference = parameters_of(
+      novelai_request({ width: 832, height: 1216, variety_plus: true }),
+    );
+    expect(at_reference.skip_cfg_above_sigma).toBeCloseTo(58);
+    const disabled = parameters_of(novelai_request({ variety_plus: false }));
+    expect(disabled.skip_cfg_above_sigma).toBeNull();
+  });
+
+  it("applies the fixed V5 Full Medium settings", () => {
+    const parameters = parameters_of(
+      novelai_request({
+        model_id: "nai-diffusion-5-full-medium",
+        steps: 28,
+        sampler: "k_euler",
+        undesired_content_preset: "none",
+      }),
+    );
+    expect(parameters).toMatchObject({
+      steps: 14,
+      sampler: "k_euler_ancestral",
+      ucPresetId: "heavy",
+    });
+    expect(parameters).not.toHaveProperty("cfg_rescale");
+  });
+
+  it("sends encoded vibes on V4.5 and normalises their strengths", () => {
+    const parameters = parameters_of(
+      novelai_request({
+        vibe_references: [
+          { asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.7, encoding: "AAAA" },
+          { asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.7, encoding: "BBBB" },
+        ],
+      }),
+    );
+    expect(parameters.reference_image_multiple).toEqual(["AAAA", "BBBB"]);
+    expect(parameters.reference_strength_multiple).toEqual([0.5, 0.5]);
+    expect(parameters).not.toHaveProperty("reference_information_extracted_multiple");
+  });
+
+  it("rejects an unencoded vibe on V4.5 and any vibe on V5", () => {
+    const vibe = { asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.7 };
+    expect(() => map_novelai_request(novelai_request({ vibe_references: [vibe] }), assets)).toThrow(
+      ProviderAdapterError,
+    );
+    expect(() =>
+      map_novelai_request(
+        novelai_request({
+          model_id: "nai-diffusion-5-full",
+          vibe_references: [{ ...vibe, encoding: "AAAA" }],
+        }),
+        assets,
+      ),
+    ).toThrow(ProviderAdapterError);
+  });
+
+  it("sends raw vibe images with information extracted on V3", () => {
+    const parameters = parameters_of(
+      novelai_request({
+        model_id: "nai-diffusion-3",
+        characters: undefined,
+        vibe_references: [{ asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.7 }],
+      }),
+      assets,
+    );
+    expect(parameters).toMatchObject({
+      reference_image_multiple: [PNG_BASE64],
+      reference_strength_multiple: [0.6],
+      reference_information_extracted_multiple: [0.7],
+    });
+  });
+
+  it("drops vibes when character references are present", () => {
+    const parameters = parameters_of(
+      NovelAiRequestSchema.parse({
+        ...full_request,
+        vibe_references: [
+          { asset_id: ASSET_ID, strength: 0.6, information_extracted: 0.7, encoding: "AAAA" },
+        ],
+      }),
+      assets,
+    );
+    expect(parameters).not.toHaveProperty("reference_image_multiple");
+    expect(parameters.director_reference_secondary_strength_values).toEqual([1 - 0.8]);
+  });
+
+  it("maps img2img with its strength, noise and derived noise seed", () => {
+    const parameters = parameters_of(
+      novelai_request({ action: "img2img", image_asset_id: ASSET_ID, strength: 0.55, noise: 0.1 }),
+      assets,
+    );
+    expect(parameters).toMatchObject({
+      image: PNG_BASE64,
+      strength: 0.55,
+      noise: 0.1,
+      extra_noise_seed: 41,
+      color_correct: false,
+    });
+  });
+
+  it("routes infill to the model's inpainting variant", () => {
+    const payload = map_novelai_request(
+      novelai_request({
+        model_id: "nai-diffusion-5-curated",
+        action: "infill",
+        image_asset_id: ASSET_ID,
+        mask_asset_id: ASSET_ID,
+        inpaint_strength: 0.8,
+      }),
+      assets,
+    );
+    expect(payload.body.model).toBe("nai-diffusion-4-5-curated-inpainting");
+    expect(payload.body.parameters).toMatchObject({
+      mask: PNG_BASE64,
+      add_original_image: true,
+      inpaintImg2ImgStrength: 0.8,
+      img2img: { strength: 0.8, color_correct: true },
+    });
+  });
+
+  it("restricts unlisted models to text-to-image", () => {
+    expect(() =>
+      map_novelai_request(
+        novelai_request({
+          model_id: "nai-diffusion-5-1-full",
+          action: "img2img",
+          image_asset_id: ASSET_ID,
+          strength: 0.5,
+          noise: 0,
+        }),
+        assets,
+      ),
+    ).toThrow(ProviderAdapterError);
+    expect(parameters_of(novelai_request({ model_id: "nai-diffusion-5-1-full" }))).toMatchObject({
+      noise_schedule: "karras",
+    });
+  });
+
+  it("maps upscale and augment requests to their own routes", () => {
+    const base = {
+      provider_id: "novelai",
+      request_id: REQUEST_ID,
+      generation_anchor: GENERATION_ANCHOR,
+      prompt: "fixture prompt",
+      output_count: 1,
+      image_asset_id: ASSET_ID,
+    };
+    expect(
+      map_novelai_request(NovelAiRequestSchema.parse({ ...base, action: "upscale" }), assets),
+    ).toEqual({
+      route: "/ai/upscale",
+      body: { image: PNG_BASE64, model: "nai-diffusion-5-curated", declared_blur_sigma: 0 },
+    });
+    expect(
+      map_novelai_request(
+        NovelAiRequestSchema.parse({
+          ...base,
+          action: "augment",
+          tool: "emotion",
+          emotion: "happy",
+          tool_prompt: "smiling",
+          defry: 2,
+          width: 832,
+          height: 1216,
+        }),
+        assets,
+      ),
+    ).toEqual({
+      route: "/ai/augment-image",
+      body: {
+        req_type: "emotion",
+        use_new_shared_trial: true,
+        width: 832,
+        height: 1216,
+        image: PNG_BASE64,
+        prompt: "happy;;smiling",
+        defry: 2,
       },
     });
   });
+});
 
-  it.each([
-    ["heavy", 0],
-    ["light", 1],
-    ["human_focus", 2],
-    ["none", 3],
-  ] as const)("maps %s undesired-content preset", (preset, uc_preset) => {
-    const request = NovelAiRequestSchema.parse({
-      ...full_request,
-      vibe_references: undefined,
-      character_references: undefined,
-      undesired_content_preset: preset,
-    });
+describe("NovelAI adapter submission", () => {
+  function context(transport: ProviderTransport) {
+    return {
+      profile,
+      transport,
+      assets: new StaticAssetReader(),
+      signal: new AbortController().signal,
+      log: new RecordingLog(),
+    };
+  }
 
-    expect(map_novelai_request(request, new Map()).parameters.ucPreset).toBe(uc_preset);
+  it("does not retry a server error that may already have been billed", async () => {
+    const transport = new ScriptedTransport([
+      transport_response(503),
+      transport_response(201, response_bytes),
+    ]);
+    await expect(
+      new NovelAiAdapter({ clock: new ImmediateClock(), random: new FixedRandom() }).submit(
+        context(transport),
+        full_request,
+      ),
+    ).rejects.toBeInstanceOf(ProviderAdapterError);
+    expect(transport.operations).toHaveLength(1);
+  });
+
+  it("assigns a seed when the request leaves it to the adapter", async () => {
+    const transport = new ScriptedTransport([transport_response(201, response_bytes)]);
+    await new NovelAiAdapter({ clock: new ImmediateClock(), random: new FixedRandom() }).submit(
+      context(transport),
+      novelai_request({ seed: undefined, characters: undefined }),
+    );
+    const body = JSON.parse(new TextDecoder().decode(transport.operations[0]?.body)) as {
+      parameters: { seed: number };
+    };
+    expect(body.parameters.seed).toBe(Math.floor(0.5 * 4_294_967_295));
   });
 });
 
@@ -348,7 +613,7 @@ describe("NovelAI response parsing", () => {
       parse_novelai_response(
         response_bytes,
         "application/json",
-        full_request,
+        expected_full,
         profile.max_response_bytes,
         profile.max_archive_entries,
       ),
@@ -365,7 +630,7 @@ describe("NovelAI response parsing", () => {
   it.each(["application/zip", "application/octet-stream", "binary/octet-stream"])(
     "extracts bounded ZIP image entries returned as %s",
     async (content_type) => {
-      const request = NovelAiRequestSchema.parse({ ...full_request, output_count: 2 });
+      const expected = { ...expected_full, output_count: 2 };
       const archive = create_zip(
         zip_fixture.map((entry) => ({
           name: entry.filename,
@@ -377,7 +642,7 @@ describe("NovelAI response parsing", () => {
         parse_novelai_response(
           archive,
           content_type,
-          request,
+          expected,
           profile.max_response_bytes,
           profile.max_archive_entries,
         ),
@@ -397,7 +662,7 @@ describe("NovelAI response parsing", () => {
       parse_novelai_response(
         archive,
         "application/zip",
-        full_request,
+        expected_full,
         profile.max_response_bytes,
         profile.max_archive_entries,
       ),
@@ -419,7 +684,7 @@ describe("NovelAI response parsing", () => {
       parse_novelai_response(
         multipart,
         content_type,
-        full_request,
+        expected_full,
         profile.max_response_bytes,
         profile.max_archive_entries,
       ),
@@ -434,10 +699,10 @@ describe("NovelAI response parsing", () => {
       })),
     );
     await expect(
-      parse_novelai_response(excess_entries, "application/zip", full_request, 2_000_000, 8),
+      parse_novelai_response(excess_entries, "application/zip", expected_full, 2_000_000, 8),
     ).rejects.toBeInstanceOf(ProviderAdapterError);
     await expect(
-      parse_novelai_response(response_bytes, "application/json", full_request, 10, 8),
+      parse_novelai_response(response_bytes, "application/json", expected_full, 10, 8),
     ).rejects.toBeInstanceOf(ProviderAdapterError);
     await expect(
       parse_novelai_response(
@@ -450,7 +715,7 @@ describe("NovelAI response parsing", () => {
           }),
         ),
         "application/json",
-        full_request,
+        expected_full,
         2_000_000,
         8,
       ),

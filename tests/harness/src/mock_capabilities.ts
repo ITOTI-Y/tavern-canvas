@@ -1,13 +1,14 @@
-import type {
-  CapabilityMatrix,
-  KnowledgeRecord,
-  LlmConnectionProfile,
-  LlmConnectionTestResult,
-  PersonaProfile,
-  ProviderId,
-  TavernCanvasSettings,
-  Uuid,
-  VocabularyCatalogEntry,
+import {
+  list_novelai_models,
+  type CapabilityMatrix,
+  type KnowledgeRecord,
+  type LlmConnectionProfile,
+  type LlmConnectionTestResult,
+  type PersonaProfile,
+  type ProviderId,
+  type TavernCanvasSettings,
+  type Uuid,
+  type VocabularyCatalogEntry,
 } from "@tavern-canvas/contracts";
 
 import type {
@@ -28,6 +29,7 @@ import type {
   LlmConnectionsCapability,
   MigrationCapability,
   MigrationSnapshot,
+  NovelAiCapability,
   PersonasCapability,
   ProfileConnectionTestResult,
   ProfilesCapability,
@@ -650,6 +652,31 @@ const LLM_CONNECTION_OLLAMA: LlmConnectionProfile = {
   updated_at: "2026-08-05T08:05:00.000Z",
 };
 
+function create_novelai_capability(): NovelAiCapability {
+  return {
+    load: () => Promise.resolve(list_novelai_models()),
+    get_account: () =>
+      Promise.resolve({
+        tier: "opus",
+        tier_level: 3,
+        active: true,
+        expires_at: "2026-11-26T09:01:05.000Z",
+        anlas: 14_327,
+        fixed_anlas: 10_000,
+        purchased_anlas: 4_327,
+        usage: {
+          percent: 97,
+          purchased_percent: 0,
+          is_negative: false,
+          time_until_next_percent: 7_888,
+        },
+      }),
+    refresh_models: () => Promise.resolve(list_novelai_models()),
+    estimate_cost: () =>
+      Promise.resolve({ anlas: 0, opus_free: true, per_image: 26, vibe_encoding: 0 }),
+  };
+}
+
 function create_llm_connections_capability(
   initial: LlmConnectionProfile[],
 ): LlmConnectionsCapability {
@@ -1069,6 +1096,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       vocabulary: { ...create_vocabulary_capability(), load: forever_pending },
       diagnostics: { ...create_diagnostics_capability(), load: forever_pending },
       migration: { ...create_migration_capability(MIGRATION_NOT_REQUIRED), load: forever_pending },
+      novelai: create_novelai_capability(),
       settings: { ...create_settings_capability(build_settings(false)), load: forever_pending },
     };
   }
@@ -1119,6 +1147,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
         ...create_migration_capability(MIGRATION_NOT_REQUIRED),
         load: () => always_rejects("migration_unavailable"),
       },
+      novelai: create_novelai_capability(),
       settings: {
         ...create_settings_capability(build_settings(false)),
         load: () => always_rejects("settings_unavailable"),
@@ -1139,6 +1168,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       vocabulary: create_vocabulary_capability(),
       diagnostics: create_diagnostics_capability(),
       migration: create_migration_capability(MIGRATION_NOT_REQUIRED),
+      novelai: create_novelai_capability(),
       settings: create_settings_capability(build_settings(false)),
     };
   }
@@ -1171,6 +1201,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
         ...create_migration_capability(MIGRATION_SNAPSHOT),
         load: () => always_rejects("migration_unavailable"),
       },
+      novelai: create_novelai_capability(),
       settings: create_settings_capability(build_settings(true)),
     };
   }
@@ -1193,6 +1224,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     vocabulary: create_vocabulary_capability(),
     diagnostics: create_diagnostics_capability(),
     migration: create_migration_capability(MIGRATION_SNAPSHOT),
+    novelai: create_novelai_capability(),
     settings: create_settings_capability(build_settings(true)),
   };
 }

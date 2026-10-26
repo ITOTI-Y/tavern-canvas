@@ -6,7 +6,6 @@ import {
   InpaintDimensionError,
   InpaintMaskSession,
   MASKED,
-  NOVELAI_INPAINT_MODEL_ID,
   UNMASKED,
   validate_mask_dimensions,
 } from "./inpaint_session.js";
@@ -212,7 +211,7 @@ describe("build_comfyui_inpaint_request", () => {
 });
 
 describe("build_novelai_inpaint_request", () => {
-  it("submits asset IDs through the infill action on a dedicated inpainting model", () => {
+  it("submits asset IDs through the infill action on the default model", () => {
     const request = build_novelai_inpaint_request({
       request_id: REQUEST_ID,
       generation_anchor: GENERATION_ANCHOR,
@@ -229,10 +228,10 @@ describe("build_novelai_inpaint_request", () => {
     expect(request.image_asset_id).toBe(ASSET_A);
     expect(request.mask_asset_id).toBe(ASSET_B);
     expect(request.inpaint_strength).toBe(0.54);
-    expect(request.model_id).toBe(NOVELAI_INPAINT_MODEL_ID);
+    expect(request.model_id).toBe("nai-diffusion-5-curated");
   });
 
-  it("allows overriding the model_id while still defaulting to the dedicated inpaint model", () => {
+  it("uses the requested base model, which the adapter maps to its inpainting variant", () => {
     const default_request = build_novelai_inpaint_request({
       request_id: REQUEST_ID,
       generation_anchor: GENERATION_ANCHOR,
@@ -255,7 +254,7 @@ describe("build_novelai_inpaint_request", () => {
       model_id: "nai-diffusion-4-5-full",
     });
 
-    expect(default_request.model_id).toBe(NOVELAI_INPAINT_MODEL_ID);
+    expect(default_request.model_id).toBe("nai-diffusion-5-curated");
     expect(overridden_request.model_id).toBe("nai-diffusion-4-5-full");
   });
 });

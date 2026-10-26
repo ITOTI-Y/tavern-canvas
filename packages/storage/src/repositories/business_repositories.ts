@@ -14,6 +14,10 @@ import {
   LegacyPreferenceSchema,
   type LlmConnection,
   LlmConnectionSchema,
+  type NovelAiVibeEncoding,
+  NovelAiVibeEncodingSchema,
+  type ProviderInputAsset,
+  ProviderInputAssetSchema,
   type MigrationJournal,
   MigrationJournalSchema,
   type NovelAiVibe,
@@ -153,6 +157,24 @@ export class LegacyPreferenceRepository extends IndexedDbRepository<
 export class LlmConnectionRepository extends IndexedDbRepository<"llm_connections", LlmConnection> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "llm_connections", LlmConnectionSchema, true);
+  }
+}
+
+export class NovelAiVibeEncodingRepository extends IndexedDbRepository<
+  "novelai_vibe_encodings",
+  NovelAiVibeEncoding
+> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "novelai_vibe_encodings", NovelAiVibeEncodingSchema);
+  }
+}
+
+export class ProviderInputAssetRepository extends IndexedDbRepository<
+  "provider_input_assets",
+  ProviderInputAsset
+> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "provider_input_assets", ProviderInputAssetSchema);
   }
 }
 
@@ -477,6 +499,8 @@ export interface BusinessRepositories {
   generation_jobs: GenerationJobRepository;
   legacy_preferences: LegacyPreferenceRepository;
   llm_connections: LlmConnectionRepository;
+  novelai_vibe_encodings: NovelAiVibeEncodingRepository;
+  provider_input_assets: ProviderInputAssetRepository;
 }
 
 export function create_business_repositories(
@@ -500,6 +524,8 @@ export function create_business_repositories(
     generation_jobs: new GenerationJobRepository(database),
     legacy_preferences: new LegacyPreferenceRepository(database),
     llm_connections: new LlmConnectionRepository(database),
+    novelai_vibe_encodings: new NovelAiVibeEncodingRepository(database),
+    provider_input_assets: new ProviderInputAssetRepository(database),
   };
 }
 

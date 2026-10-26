@@ -1,59 +1,93 @@
 {
-  "input": "fixture prompt",
-  "model": "nai-diffusion-4-5-full",
-  "action": "generate",
-  "parameters": {
-    "params_version": 3,
-    "prompt": "fixture prompt",
-    "uc": "fixture negative prompt",
-    "v4_prompt": {
-      "caption": {
-        "base_caption": "fixture prompt",
-        "char_captions": []
-      },
-      "use_coords": false,
-      "use_order": true
-    },
-    "v4_negative_prompt": {
-      "caption": {
-        "base_caption": "fixture negative prompt",
-        "char_captions": []
-      }
-    },
-    "width": 1024,
-    "height": 1024,
-    "steps": 28,
-    "scale": 5,
-    "cfg_rescale": 0,
-    "sampler": "k_euler_ancestral",
-    "noise_schedule": "native",
-    "seed": 42,
-    "n_samples": 1,
-    "qualityToggle": true,
-    "ucPreset": 0,
-    "sm": false,
-    "sm_dyn": false,
-    "reference_image_multiple": [
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-    ],
-    "reference_strength_multiple": [0.6],
-    "reference_information_extracted_multiple": [0.8],
-    "director_reference_images": [
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-    ],
-    "director_reference_descriptions": [
-      {
+  "route": "/ai/generate-image",
+  "body": {
+    "input": "fixture prompt, very aesthetic, masterpiece, no text",
+    "model": "nai-diffusion-4-5-full",
+    "action": "generate",
+    "parameters": {
+      "params_version": 4,
+      "width": 1024,
+      "height": 1024,
+      "scale": 5,
+      "sampler": "k_euler_ancestral",
+      "steps": 28,
+      "n_samples": 1,
+      "seed": 42,
+      "ucPresetId": "heavy",
+      "qualityPresetId": "standard",
+      "negative_prompt": "nsfw, lowres, artistic error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, dithering, halftone, screentone, multiple views, logo, too many watermarks, negative space, blank page, fixture negative prompt",
+      "legacy": false,
+      "legacy_v3_extend": false,
+      "add_original_image": true,
+      "image_format": "png",
+      "cfg_rescale": 0,
+      "noise_schedule": "karras",
+      "deliberate_euler_ancestral_bug": false,
+      "prefer_brownian": true,
+      "skip_cfg_above_sigma": null,
+      "dynamic_thresholding": false,
+      "v4_prompt": {
         "caption": {
-          "base_caption": "character, fixture character",
-          "char_captions": []
+          "base_caption": "fixture prompt, very aesthetic, masterpiece, no text",
+          "char_captions": [
+            {
+              "char_caption": "fixture character",
+              "centers": [
+                {
+                  "x": 0.5,
+                  "y": 0.5
+                }
+              ]
+            }
+          ]
         },
-        "legacy_uc": false,
         "use_coords": false,
         "use_order": true
-      }
-    ],
-    "director_reference_strength_values": [0.7],
-    "director_reference_secondary_strength_values": [0.7],
-    "director_reference_information_extracted": [1]
+      },
+      "v4_negative_prompt": {
+        "caption": {
+          "base_caption": "nsfw, lowres, artistic error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, dithering, halftone, screentone, multiple views, logo, too many watermarks, negative space, blank page, fixture negative prompt",
+          "char_captions": [
+            {
+              "char_caption": "fixture character negative",
+              "centers": [
+                {
+                  "x": 0.5,
+                  "y": 0.5
+                }
+              ]
+            }
+          ]
+        },
+        "legacy_uc": false
+      },
+      "characterPrompts": [
+        {
+          "prompt": "fixture character",
+          "uc": "fixture character negative",
+          "center": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "enabled": true
+        }
+      ],
+      "director_reference_images": [
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+      ],
+      "director_reference_descriptions": [
+        {
+          "caption": {
+            "base_caption": "character",
+            "char_captions": []
+          },
+          "legacy_uc": false
+        }
+      ],
+      "director_reference_information_extracted": [1],
+      "director_reference_strength_values": [0.7],
+      "director_reference_secondary_strength_values": [0.19999999999999996]
+    },
+    "use_new_shared_trial": true
   }
 }

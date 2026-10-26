@@ -88,7 +88,7 @@ describe("tavern_canvas_v3 schema", () => {
     await deleteDB(fresh_name);
   });
 
-  it("adds the version 3 store to an installed v2 database without disturbing its rows", async () => {
+  it("adds the stores of later versions to an installed v2 database without disturbing its rows", async () => {
     const name = "tavern_canvas_v3_upgrade_v2_to_v3";
     const v2_store_names = store_names.filter(
       (store_name) => STORE_DEFINITIONS[store_name].since_version <= 2,
@@ -122,8 +122,10 @@ describe("tavern_canvas_v3 schema", () => {
 
     const upgraded = await openDB<DBSchema>(name, DATABASE_VERSION, { upgrade: upgrade_database });
 
-    expect(upgraded.version).toBe(3);
+    expect(upgraded.version).toBe(DATABASE_VERSION);
     expect([...upgraded.objectStoreNames].sort()).toEqual([...store_names].sort());
+    await expect(upgraded.count("novelai_vibe_encodings")).resolves.toBe(0);
+    await expect(upgraded.count("provider_input_assets")).resolves.toBe(0);
     expect([...upgraded.transaction("llm_connections").store.indexNames].sort()).toEqual(
       [...STORE_DEFINITIONS.llm_connections.indexes].sort(),
     );

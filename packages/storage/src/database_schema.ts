@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 3 as const;
+export const DATABASE_VERSION = 4 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 export const STORE_DEFINITIONS = {
@@ -90,6 +90,16 @@ export const STORE_DEFINITIONS = {
     key_path: "record_key",
     indexes: ["namespace", "provider_kind", "updated_at"],
     since_version: 3,
+  },
+  novelai_vibe_encodings: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 4,
+  },
+  provider_input_assets: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 4,
   },
 } as const;
 
@@ -215,6 +225,14 @@ export const LlmConnectionSchema = namespaced_schema({
 });
 export type LlmConnection = z.infer<typeof LlmConnectionSchema>;
 
+export const NovelAiVibeEncodingSchema = namespaced_schema({
+  image_sha256: Sha256Schema,
+  model_id: z.string().min(1).max(128),
+  information_extracted: z.number().min(0).max(1),
+  encoding: z.string().min(1).max(40_000_000),
+});
+export type NovelAiVibeEncoding = z.infer<typeof NovelAiVibeEncodingSchema>;
+
 export const ImageRecordSchema = namespaced_schema({
   sha256: Sha256Schema,
   last_accessed_at: TimestampSchema,
@@ -235,6 +253,15 @@ export const ImageBlobSchema = z.strictObject({
   blob: image_blob_data_schema,
 });
 export type ImageBlob = z.infer<typeof ImageBlobSchema>;
+
+// Provider inputs derived from gallery images (resized, padded or binarised). They live outside
+// `image_records` so they never appear in the gallery and LRU eviction never counts them.
+export const ProviderInputAssetSchema = namespaced_schema({
+  media_type: z.enum(["image/png", "image/jpeg", "image/webp"]),
+  byte_length: z.number().int().positive(),
+  blob: image_blob_data_schema,
+});
+export type ProviderInputAsset = z.infer<typeof ProviderInputAssetSchema>;
 
 const generation_arguments_schema = z.strictObject({
   generation_anchor: Sha256Schema,
@@ -320,7 +347,9 @@ export type BusinessRecord =
   | VocabularyShard
   | ImageRecord
   | LegacyPreference
-  | LlmConnection;
+  | LlmConnection
+  | NovelAiVibeEncoding
+  | ProviderInputAsset;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -344,6 +373,8 @@ export type RecordByStore = {
   migration_journal: MigrationJournal;
   legacy_preferences: LegacyPreference;
   llm_connections: LlmConnection;
+  novelai_vibe_encodings: NovelAiVibeEncoding;
+  provider_input_assets: ProviderInputAsset;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -495,6 +526,22 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  novelai_vibe_encodings: {
+    key: string;
+    value: NovelAiVibeEncoding;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
+  provider_input_assets: {
+    key: string;
+    value: ProviderInputAsset;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -515,6 +562,8 @@ export const RECORD_SCHEMAS: {
   generation_jobs: GenerationJobSchema,
   legacy_preferences: LegacyPreferenceSchema,
   llm_connections: LlmConnectionSchema,
+  novelai_vibe_encodings: NovelAiVibeEncodingSchema,
+  provider_input_assets: ProviderInputAssetSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;

@@ -71,6 +71,29 @@ browser to the vendor's own origin, using a credential stored in SillyTavern's s
 referenced by the profile. The routes and auth headers are fixed by a built in catalog, so a cloud
 profile cannot be pointed at an arbitrary host.
 
+### NovelAI
+
+The NovelAI profile drives NAI Diffusion V3, V4, V4.5 and V5 through `image.novelai.net`:
+text-to-image with multi-character prompts and positions, img2img, inpainting, vibe transfer,
+character references, the Director tools (background removal, line art, sketch, colourise,
+emotion, declutter) and 2× upscaling. Each model only exposes what NovelAI's own client offers for
+it; V5, for example, has no vibe transfer or character references. Quality tags and
+undesired-content presets are added to the prompt exactly as NovelAI's web client adds them.
+
+Vibe images are encoded once per model and `information_extracted` value and cached in the
+browser, because NovelAI bills every encoding (2 Anlas). Source images, masks and references are
+resized or padded to the sizes NovelAI expects before the job is queued.
+
+The account view reads the subscription tier, Anlas balance and the Opus V5 allowance from
+`/user/subscription`, and the cost estimate follows the formula NovelAI's web client shows,
+including the Opus free image (up to 1024×1024 pixels and 28 steps). NovelAI's server remains the
+authority on what is charged.
+
+The model list ships with the extension and is regenerated with
+`pnpm exec tsx packages/contracts/scripts/update_novelai_model_ids.ts`. Refreshing it at runtime
+reads novelai.net through SillyTavern's CORS proxy, which needs `enableCorsProxy: true` in
+`config.yaml`. A model the extension does not know yet is offered for text-to-image only.
+
 ### Direct cloud calls require `allowKeysExposure`
 
 A direct cloud call has to read the stored credential back out of SillyTavern, through

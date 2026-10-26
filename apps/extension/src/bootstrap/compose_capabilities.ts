@@ -53,6 +53,8 @@ import {
   HostGenerationSessionPort,
 } from "../modules/generation/automatic_generation.js";
 import { GenerationTriggerModule } from "../modules/generation/generation_trigger_module.js";
+import { NovelAiServiceUnavailableError } from "../modules/novelai/novelai_errors.js";
+import type { NovelAiRuntime } from "../modules/novelai/novelai_runtime.js";
 import { HostMessagePort } from "../modules/generation/message_binding_module.js";
 import { TauriChatSurfaceModule } from "../modules/tauri/chat_surface_module.js";
 import { TauriWorldInfoActivationModule } from "../modules/tauri/world_info_activation_module.js";
@@ -67,7 +69,11 @@ import type { ProviderFetch } from "../transport/browser_fetch.js";
 import { DirectCloudTransport, DirectLlmTransport } from "../transport/direct_cloud_transport.js";
 import { LocalDirectTransport } from "../transport/local_direct_transport.js";
 import type { GatewayJobExecutorDeps } from "../transport/gateway_job_executor.js";
-import { select_transport, type TransportSelection } from "../transport/transport_selector.js";
+import {
+  select_transport,
+  type DirectCloudCandidate,
+  type TransportSelection,
+} from "../transport/transport_selector.js";
 import type { CapabilityId, StudioCapabilities } from "../ui/contracts/ui_capabilities.js";
 import { create_unavailable_capabilities } from "../ui/controllers/unavailable_capabilities.js";
 import { create_assets_capability } from "./capabilities/assets_capability.js";
@@ -77,6 +83,7 @@ import {
 } from "./capabilities/diagnostics_capability.js";
 import { create_gallery_capability } from "./capabilities/gallery_capability.js";
 import { create_generation_capability } from "./capabilities/generation_capability.js";
+import { create_novelai_capability } from "./capabilities/novelai_capability.js";
 import { HostGenerationOriginSource } from "./capabilities/generation_context.js";
 import {
   create_knowledge_capability,
@@ -371,6 +378,55 @@ export async function compose_studio_capabilities(
           secrets_readable: secret_resolver !== null,
         };
 
+  let novelai_runtime: Promise<NovelAiRuntime> | null = null;
+  const load_novelai_runtime =
+    repositories === null || database === null
+      ? null
+      : (): Promise<NovelAiRuntime> =>
+          (novelai_runtime ??= import("../modules/novelai/novelai_runtime.js").then((runtime) =>
+            runtime.create_novelai_runtime({
+              vibe_encodings: repositories.novelai_vibe_encodings,
+              provider_inputs: repositories.provider_input_assets,
+              namespace,
+              gallery_assets: create_asset_reader(database, namespace),
+              transport: () =>
+                create_novelai_transport(direct_cloud, secret_resolver, options.provider_fetch),
+              fetch: options.provider_fetch ?? globalThis.fetch.bind(globalThis),
+            }),
+          ));
+  const provider_asset_reader: ProviderAssetReader | null =
+    load_novelai_runtime === null || database === null
+      ? null
+      : {
+          async read(asset_id, signal) {
+            try {
+              return await create_asset_reader(database, namespace).read(asset_id, signal);
+            } catch {
+              return (await load_novelai_runtime()).assets.read(asset_id, signal);
+            }
+          },
+        };
+  const prepare_request =
+    load_novelai_runtime === null
+      ? null
+      : async (request: ImageGenerationRequest): Promise<ImageGenerationRequest> =>
+          request.provider_id !== "novelai"
+            ? request
+            : (await load_novelai_runtime()).prepare(
+                request,
+                AbortSignal.timeout(NOVELAI_PREPARATION_TIMEOUT_MS),
+              );
+
+  const novelai = record(
+    "novelai",
+    load_novelai_runtime === null
+      ? unavailable(STORAGE_UNAVAILABLE)
+      : resolve_capability(() =>
+          create_novelai_capability(async () => (await load_novelai_runtime()).service),
+        ),
+    fallback.novelai,
+  );
+
   const settings = record(
     "settings",
     settings_adapter === null
@@ -586,7 +642,7 @@ export async function compose_studio_capabilities(
                           ? {}
                           : { fetch: options.provider_fetch }),
                       }),
-                      assets: create_asset_reader(database, namespace),
+                      assets: provider_asset_reader ?? create_asset_reader(database, namespace),
                       log: { write: () => {} },
                       plans,
                     }),
@@ -620,6 +676,7 @@ export async function compose_studio_capabilities(
                 new BrowserRandomSource(globalThis.crypto),
               ),
               new_request_id: () => request_ids.next(),
+              ...(prepare_request === null ? {} : { prepare_request }),
             });
           }),
     fallback.generation,
@@ -712,6 +769,7 @@ export async function compose_studio_capabilities(
       migration,
       settings,
       llm_connections,
+      novelai,
       personas,
       knowledge,
     },
@@ -768,6 +826,39 @@ export function create_provider_transport(
         `The selected ${selection.kind} transport cannot drive the job executor; configure a loopback provider endpoint or a credentialed cloud profile`,
       );
   }
+}
+
+const NOVELAI_PREPARATION_TIMEOUT_MS = 120_000;
+
+/** Account lookups and vibe encoding always go straight to NovelAI with the active profile's credential. */
+function create_novelai_transport(
+  candidate: DirectCloudCandidate | null,
+  secrets: SecretResolverPort | null,
+  fetch_: ProviderFetch | undefined,
+): ProviderTransport {
+  if (candidate === null || candidate.provider_id !== "novelai") {
+    throw new NovelAiServiceUnavailableError(
+      "The active provider profile is not a NovelAI profile",
+    );
+  }
+  if (candidate.credential_reference === null) {
+    throw new NovelAiServiceUnavailableError(
+      "The active NovelAI profile has no stored token; set one in Settings > Providers",
+    );
+  }
+  if (!candidate.secrets_readable || secrets === null) {
+    throw new NovelAiServiceUnavailableError(
+      "This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml",
+    );
+  }
+  return create_provider_transport(
+    {
+      kind: "direct_cloud",
+      provider_id: "novelai",
+      credential_reference: candidate.credential_reference,
+    },
+    { secrets, ...(fetch_ === undefined ? {} : { fetch: fetch_ }) },
+  );
 }
 
 const GATEWAY_TOKEN_MISSING =

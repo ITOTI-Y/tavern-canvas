@@ -30,7 +30,13 @@ export const DIRECT_IMAGE_ROUTE_CATALOG: Readonly<
   comfyui: null,
   novelai: {
     origin: "https://image.novelai.net",
-    routes: ["/ai/generate-image"],
+    routes: [
+      "/ai/generate-image",
+      "/ai/encode-vibe",
+      "/ai/upscale",
+      "/ai/augment-image",
+      "/user/subscription",
+    ],
     auth: BEARER,
     required_headers: NO_REQUIRED_HEADERS,
   },

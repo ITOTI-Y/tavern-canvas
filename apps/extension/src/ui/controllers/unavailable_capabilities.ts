@@ -13,6 +13,7 @@ import type {
   MigrationCapability,
   PersonasCapability,
   MigrationSnapshot,
+  NovelAiCapability,
   ProfilesCapability,
   PromptPresetsCapability,
   SettingsCapability,
@@ -97,6 +98,13 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     test_connection: unavailable_command,
     set_credential: unavailable_command,
     clear_credential: unavailable_command,
+  };
+
+  const novelai: NovelAiCapability = {
+    get_account: unavailable_command,
+    load: () => Promise.resolve([]),
+    refresh_models: unavailable_command,
+    estimate_cost: unavailable_command,
   };
 
   const llm_connections: LlmConnectionsCapability = {
@@ -203,6 +211,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     generation,
     profiles,
     llm_connections,
+    novelai,
     prompt_presets,
     assets,
     personas,

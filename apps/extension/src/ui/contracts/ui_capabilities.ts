@@ -7,10 +7,14 @@ import type {
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
+  NovelAiAccountStatus,
+  NovelAiCostEstimate,
+  NovelAiRequest,
   PersonaProfile,
   PersonaProfileDraft,
   ProviderError,
   ProviderId,
+  ResolvedNovelAiModel,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -104,6 +108,17 @@ export interface LlmConnectionsCapability {
   set_credential(connection_id: Uuid, plaintext_value: string): Promise<LlmConnectionProfile>;
   clear_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
   test_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
+}
+
+export interface NovelAiCapability {
+  /** Tier, expiry and Anlas balance of the account behind the active NovelAI profile. */
+  get_account(): Promise<NovelAiAccountStatus>;
+  /** The selectable models known without a network request. */
+  load(): Promise<readonly ResolvedNovelAiModel[]>;
+  /** Re-reads the published model list from novelai.net through an available host relay. */
+  refresh_models(): Promise<readonly ResolvedNovelAiModel[]>;
+  /** Uses the balance from the last `get_account` call to decide whether the Opus free image applies. */
+  estimate_cost(request: NovelAiRequest): Promise<NovelAiCostEstimate>;
 }
 
 export interface PromptPresetSummary {
@@ -398,6 +413,7 @@ export interface StudioCapabilities {
   readonly generation: GenerationCapability;
   readonly profiles: ProfilesCapability;
   readonly llm_connections: LlmConnectionsCapability;
+  readonly novelai: NovelAiCapability;
   readonly prompt_presets: PromptPresetsCapability;
   readonly assets: AssetsCapability;
   readonly personas: PersonasCapability;

@@ -1,5 +1,7 @@
 import {
+  MAX_PROVIDER_SEED,
   NovelAiRequestSchema,
+  is_novelai_diffusion_request,
   type AssetId,
   type NovelAiRequest,
   type ProviderCapability,
@@ -25,8 +27,8 @@ import {
   type RetryClock,
   type RetryRandomSource,
 } from "../retry_policy.js";
-import { map_novelai_request } from "./novelai_mapping.js";
-import { parse_novelai_response } from "./novelai_response.js";
+import { map_novelai_request, novelai_request_asset_ids } from "./novelai_mapping.js";
+import { parse_novelai_response, type NovelAiExpectedOutput } from "./novelai_response.js";
 
 const NovelAiProfileSchema = z
   .strictObject({
@@ -63,12 +65,12 @@ export interface NovelAiAdapterOptions {
 }
 
 const DEFAULT_RANDOM: RetryRandomSource = { next: Math.random };
-const RETRYABLE_STATUS_CODES = new Set([500, 502, 503, 504]);
 
 export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
   readonly provider_id = "novelai" as const;
   readonly capabilities: ReadonlySet<ProviderCapability> = new Set([
     "text_to_image",
+    "image_to_image",
     "reference_image",
     "seed",
   ]);
@@ -88,9 +90,12 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
     context: ProviderExecutionContext,
     request: NovelAiRequest,
   ): Promise<ProviderSubmission> {
-    const validated_request = parse_request(request);
+    const validated_request = this.#with_seed(parse_request(request));
     const profile = parse_profile(context.profile);
-    if (!profile.model_allowlist.includes(validated_request.model_id)) {
+    if (
+      is_novelai_diffusion_request(validated_request) &&
+      !profile.model_allowlist.includes(validated_request.model_id)
+    ) {
       throw invalid_request();
     }
     const assets = await load_assets(context, validated_request, profile.max_input_asset_bytes);
@@ -102,9 +107,9 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
         const payload = map_novelai_request(attempt_request, assets);
         const started_at = this.#clock.now();
         const transport_response = await context.transport.execute({
-          route: "/ai/generate-image",
+          route: payload.route,
           method: "POST",
-          body: new TextEncoder().encode(JSON.stringify(payload)),
+          body: new TextEncoder().encode(JSON.stringify(payload.body)),
           max_request_bytes,
           content_type: "application/json",
           accept: "application/json, application/zip, multipart/mixed",
@@ -133,9 +138,10 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
             transport_response.headers["retry-after"] ?? null,
             this.#clock.now(),
           );
+          // A 5xx may arrive after NovelAI has charged Anlas, so only rejections it never billed are retried.
           throw new ProviderAdapterError(
             provider_error_from_status(transport_response.status, {
-              recoverable: RETRYABLE_STATUS_CODES.has(transport_response.status),
+              recoverable: false,
               ...(retry_after_ms === undefined ? {} : { retry_after_ms }),
             }),
           );
@@ -152,7 +158,7 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
     const parsed = await parse_novelai_response(
       response.body,
       response.headers["content-type"] ?? "",
-      validated_request,
+      expected_output(validated_request),
       profile.max_response_bytes,
       profile.max_archive_entries,
       profile.output_mime_type_allowlist,
@@ -161,6 +167,13 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
       state: "completed",
       ...parsed,
     };
+  }
+
+  #with_seed(request: NovelAiRequest): NovelAiRequest {
+    if (!is_novelai_diffusion_request(request) || request.seed !== undefined) {
+      return request;
+    }
+    return { ...request, seed: Math.floor(this.#random.next() * MAX_PROVIDER_SEED) };
   }
 
   poll(
@@ -199,14 +212,7 @@ async function load_assets(
   request: NovelAiRequest,
   max_input_asset_bytes: number,
 ): Promise<ReadonlyMap<AssetId, ProviderSourceAsset>> {
-  const asset_ids = new Set<AssetId>();
-  for (const reference of request.vibe_references ?? []) {
-    asset_ids.add(reference.asset_id);
-  }
-  for (const reference of request.character_references ?? []) {
-    asset_ids.add(reference.asset_id);
-  }
-
+  const asset_ids: readonly AssetId[] = novelai_request_asset_ids(request);
   const assets = new Map<AssetId, ProviderSourceAsset>();
   let total_bytes = 0;
   for (const asset_id of asset_ids) {
@@ -223,4 +229,17 @@ async function load_assets(
     assets.set(asset_id, asset);
   }
   return assets;
+}
+
+function expected_output(request: NovelAiRequest): NovelAiExpectedOutput {
+  if (!is_novelai_diffusion_request(request)) {
+    return { request_id: request.request_id, output_count: 1 };
+  }
+  return {
+    request_id: request.request_id,
+    output_count: request.output_count,
+    width: request.width,
+    height: request.height,
+    ...(request.seed === undefined ? {} : { seed: request.seed }),
+  };
 }

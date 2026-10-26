@@ -13,6 +13,7 @@ import {
   type ImageGenerationRequest,
   type ProviderError,
 } from "@tavern-canvas/contracts";
+import { novelai_request_asset_ids } from "@tavern-canvas/providers/adapters";
 
 import type { GatewayConfig } from "../config/config_schema.js";
 import { GatewayHttpError } from "../http/error_handler.js";
@@ -331,11 +332,8 @@ function referenced_asset_ids(request: ImageGenerationRequest): string[] {
       }
       break;
     case "novelai":
-      for (const reference of request.vibe_references ?? []) {
-        add(reference.asset_id);
-      }
-      for (const reference of request.character_references ?? []) {
-        add(reference.asset_id);
+      for (const asset_id of novelai_request_asset_ids(request)) {
+        add(asset_id);
       }
       break;
     case "comfyui":

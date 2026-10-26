@@ -36,10 +36,11 @@ const REQUEST_ID = "11111111-1111-4111-8111-111111111111";
 function novelai_base(): ProviderRequestBase {
   return {
     provider_id: "novelai",
+    action: "generate",
     request_id: REQUEST_ID,
     generation_anchor: GENERATION_ANCHOR,
     output_count: 1,
-    model_id: "nai-diffusion-4",
+    model_id: "nai-diffusion-4-full",
     sampler: "k_euler",
     width: 832,
     height: 1216,
@@ -47,10 +48,11 @@ function novelai_base(): ProviderRequestBase {
     scale: 5,
     cfg_rescale: 0,
     noise_schedule: "karras",
-    quality_toggle: true,
+    quality_preset: "standard",
     undesired_content_preset: "heavy",
     smea: false,
     dyn: false,
+    variety_plus: false,
   };
 }
 
