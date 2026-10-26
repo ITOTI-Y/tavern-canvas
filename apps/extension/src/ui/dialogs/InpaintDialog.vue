@@ -55,11 +55,17 @@ const props = withDefaults(
     readonly denoiseLabel: string;
     readonly dimensionErrorLabel: string;
     readonly pending?: boolean;
+    readonly initialPositivePrompt?: string;
+    readonly initialNegativePrompt?: string;
+    readonly showUpload?: boolean;
   }>(),
   {
     maskWidth: undefined,
     maskHeight: undefined,
     pending: false,
+    initialPositivePrompt: "",
+    initialNegativePrompt: "",
+    showUpload: true,
   },
 );
 
@@ -94,8 +100,8 @@ const mask_canvas = ref<HTMLCanvasElement | null>(null);
 const brush_size = ref(DEFAULT_BRUSH_SIZE);
 const erase_mode = ref(false);
 const zoom = ref(MIN_ZOOM);
-const positive_prompt = ref("");
-const negative_prompt = ref("");
+const positive_prompt = ref(props.initialPositivePrompt);
+const negative_prompt = ref(props.initialNegativePrompt);
 const denoise_strength = ref(0.75);
 const can_undo = ref(false);
 const can_redo = ref(false);
@@ -307,8 +313,10 @@ function submit(): void {
             <span :class="styles.inpaintToolbarDivider" aria-hidden="true" />
             <IconButton :icon="ZoomOut" :label="zoomOutLabel" @click="zoom_out" />
             <IconButton :icon="ZoomIn" :label="zoomInLabel" @click="zoom_in" />
-            <span :class="styles.inpaintToolbarDivider" aria-hidden="true" />
-            <IconButton :icon="Upload" :label="uploadLabel" @click="emit('upload-reference')" />
+            <template v-if="showUpload">
+              <span :class="styles.inpaintToolbarDivider" aria-hidden="true" />
+              <IconButton :icon="Upload" :label="uploadLabel" @click="emit('upload-reference')" />
+            </template>
           </div>
 
           <div :class="styles.inpaintCanvasFrame" :style="frame_style">

@@ -1,4 +1,9 @@
-import type { IllustrationSlot, SwipeIllustrations } from "@tavern-canvas/contracts";
+import {
+  RequestIdSchema,
+  type IllustrationSlot,
+  type ImageGenerationRequest,
+  type SwipeIllustrations,
+} from "@tavern-canvas/contracts";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { markRaw } from "vue";
@@ -11,6 +16,7 @@ import type { GalleryCapability, NovelAiCapability } from "../contracts/ui_capab
 import ChatLayer from "./ChatLayer.vue";
 
 const IMAGE_ID = "01906f4e-5f1c-7a2a-8d73-cc3a51abf1ed";
+const REQUEST_ID = "550e8400-e29b-41d4-a716-446655440000";
 
 const SLOT: IllustrationSlot = {
   slot_id: "slot_0001",
@@ -75,9 +81,10 @@ function create_host(text_element: HTMLElement): HostAdapter {
   };
 }
 
-function mount_layer() {
+function mount_layer(options: { readonly edits?: boolean } = {}) {
   const text_element = render_chat();
   const host = create_host(text_element);
+  const submit = vi.fn(() => Promise.resolve(RequestIdSchema.parse(REQUEST_ID)));
   const service = new IllustrationService({
     host,
     settings: () => ({
@@ -90,7 +97,10 @@ function mount_layer() {
     auto_generation_enabled: () => false,
     prompt_context: () => Promise.resolve({ preset: null, appearances: [] }),
     build_request: () => Promise.reject(new Error("no provider profile")),
-    submit: () => Promise.reject(new Error("no provider profile")),
+    build_edit_request: (edit) =>
+      Promise.resolve({ provider_id: "sd_webui", prompt: edit.kind } as ImageGenerationRequest),
+    edits_available: () => options.edits ?? false,
+    submit,
     jobs: {
       subscribe: () => () => undefined,
       mark_attached: () => Promise.resolve(),
@@ -108,7 +118,7 @@ function mount_layer() {
     global: { plugins: [i18n] },
     attachTo: document.body,
   });
-  return { wrapper, host, gallery };
+  return { wrapper, host, gallery, submit };
 }
 
 afterEach(() => {
@@ -145,5 +155,29 @@ describe("ChatLayer", () => {
 
     wrapper.unmount();
     expect(document.querySelector("[data-tc-illustrate]")).toBeNull();
+  });
+
+  it("offers quick edits only when the provider supports them and queues an upscale", async () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:slot-image");
+    const without = mount_layer();
+    await flushPromises();
+    expect(document.body.textContent).not.toContain("Upscale");
+    without.wrapper.unmount();
+
+    const { wrapper, submit } = mount_layer({ edits: true });
+    await flushPromises();
+    const upscale = [...document.querySelectorAll("button")].find(
+      (button) => button.textContent?.trim() === "Upscale",
+    );
+    upscale?.click();
+    await flushPromises();
+    const confirm = [...document.querySelectorAll('[role="dialog"] button')].find(
+      (button) => button.textContent?.trim() === "Generate",
+    );
+    (confirm as HTMLButtonElement | undefined)?.click();
+    await flushPromises();
+
+    expect(submit).toHaveBeenCalledWith({ provider_id: "sd_webui", prompt: "upscale" });
+    wrapper.unmount();
   });
 });

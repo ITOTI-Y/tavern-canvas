@@ -121,6 +121,9 @@ function create_service(host: MemoryHost, options: { auto?: boolean } = {}) {
     prompt_context: () => Promise.resolve({ preset: null, appearances: [] }),
     build_request: (input) =>
       Promise.resolve({ prompt: input.positive_prompt } as unknown as ImageGenerationRequest),
+    build_edit_request: (edit) =>
+      Promise.resolve({ prompt: edit.kind } as unknown as ImageGenerationRequest),
+    edits_available: () => true,
     submit,
     jobs,
     new_slot_id: () => "slot_0001",
@@ -225,6 +228,20 @@ describe("IllustrationService image jobs", () => {
     finish("completed");
 
     await vi.waitFor(() => expect(jobs.mark_orphaned).toHaveBeenCalledWith("job-1"));
+  });
+});
+
+describe("IllustrationService quick edits", () => {
+  it("queues an edit of the slot's image and adds the result to the same slot", async () => {
+    const host = new MemoryHost();
+    const { service, submit, finish } = create_service(host);
+    await service.analyze(3);
+
+    await service.edit(LOCATION, "slot_0001", { kind: "upscale", image_id: IMAGE_ID });
+    expect(submit).toHaveBeenCalledWith({ prompt: "upscale" });
+    finish("completed");
+
+    await vi.waitFor(() => expect(service.read(LOCATION)?.slots[0]?.image_ids).toEqual([IMAGE_ID]));
   });
 });
 

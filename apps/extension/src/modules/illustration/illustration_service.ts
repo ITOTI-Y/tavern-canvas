@@ -21,6 +21,7 @@ import {
   build_analysis_input,
   parse_analysis_output,
 } from "./analysis.js";
+import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
 import {
   assemble_slot_prompt,
@@ -51,6 +52,10 @@ export interface IllustrationServiceDeps {
   readonly prompt_context: () => Promise<SlotPromptContext>;
   /** Builds the request the active provider profile would receive for these prompts. */
   readonly build_request: (input: SlotGenerationInput) => Promise<ImageGenerationRequest>;
+  /** Builds a quick-edit request for the active profile; throws when its provider cannot edit. */
+  readonly build_edit_request: (edit: SlotEdit) => Promise<ImageGenerationRequest>;
+  /** Whether the active provider profile supports quick edits. */
+  readonly edits_available: () => boolean;
   /** Queues the request and returns its request id. */
   readonly submit: (request: ImageGenerationRequest) => Promise<RequestId>;
   readonly jobs: IllustrationJobPort;
@@ -283,11 +288,40 @@ export class IllustrationService {
     const slot = this.#require_slot(location, slot_id);
     const positive_prompt = prompt?.positive_prompt ?? slot.positive_prompt;
     const negative_prompt = prompt?.negative_prompt ?? slot.negative_prompt;
+    await this.#submit_for_slot(
+      location,
+      slot_id,
+      () => this.#deps.build_request({ positive_prompt, negative_prompt }),
+      (current) => ({ ...current, positive_prompt, negative_prompt }),
+    );
+  }
+
+  can_edit(): boolean {
+    return this.#deps.edits_available();
+  }
+
+  /** The request a quick edit would submit; an inpaint edit stores its mask, so it is never previewed. */
+  preview_edit(
+    edit: Exclude<SlotEdit, { readonly kind: "inpaint" }>,
+  ): Promise<ImageGenerationRequest> {
+    return this.#deps.build_edit_request(edit);
+  }
+
+  /** Queues a quick edit whose result is added to the same slot. */
+  async edit(location: HostSwipeLocation, slot_id: string, edit: SlotEdit): Promise<void> {
+    this.#require_slot(location, slot_id);
+    await this.#submit_for_slot(location, slot_id, () => this.#deps.build_edit_request(edit));
+  }
+
+  async #submit_for_slot(
+    location: HostSwipeLocation,
+    slot_id: string,
+    build: () => Promise<ImageGenerationRequest>,
+    update: (slot: IllustrationSlot) => IllustrationSlot = (slot) => slot,
+  ): Promise<void> {
     let request_id: RequestId;
     try {
-      request_id = await this.#deps.submit(
-        await this.#deps.build_request({ positive_prompt, negative_prompt }),
-      );
+      request_id = await this.#deps.submit(await build());
     } catch (error) {
       await this.#update_slot(location, slot_id, (current) => ({
         ...current,
@@ -297,9 +331,7 @@ export class IllustrationService {
     }
     this.#pending.set(request_id, { location, slot_id });
     await this.#update_slot(location, slot_id, (current) => ({
-      ...current,
-      positive_prompt,
-      negative_prompt,
+      ...update(current),
       pending_request_ids: [...current.pending_request_ids, request_id],
       last_error: null,
     }));

@@ -1,6 +1,7 @@
 import {
   ProviderIdSchema,
   RequestIdSchema,
+  Sha256Schema,
   direct_image_catalog_entry,
   type ImageGenerationRequest,
   type ProviderId,
@@ -316,6 +317,10 @@ export async function compose_studio_capabilities(
     active_profile_record === null
       ? null
       : (ProviderIdSchema.safeParse(active_profile_record.provider_id).data ?? null);
+  const active_model_id =
+    read_array(as_record(active_profile_payload.provider_profile), "model_allowlist").find(
+      (model): model is string => typeof model === "string",
+    ) ?? null;
   const direct_cloud =
     active_provider_id === null
       ? null
@@ -616,10 +621,6 @@ export async function compose_studio_capabilities(
                   }
                   const { build_generation_request } =
                     await import("../ui/views/workbench/build_generation_request.js");
-                  const model_id = read_array(
-                    as_record(active_profile_payload.provider_profile),
-                    "model_allowlist",
-                  ).find((model): model is string => typeof model === "string");
                   return build_generation_request(
                     {
                       provider_id: active_provider_id,
@@ -627,11 +628,40 @@ export async function compose_studio_capabilities(
                       negative_prompt,
                       image_count: 1,
                       references: [],
-                      ...(model_id === undefined ? {} : { model_id }),
+                      ...(active_model_id === null ? {} : { model_id: active_model_id }),
                     },
                     RequestIdSchema.parse(crypto.randomUUID()),
                   );
                 },
+                async build_edit_request(edit) {
+                  if (active_provider_id !== "novelai" || load_novelai_runtime === null) {
+                    throw new Error("Quick edits need an active NovelAI provider profile");
+                  }
+                  const { build_novelai_edit_request } =
+                    await import("../modules/illustration/slot_edits.js");
+                  const [{ compute_generation_anchor }, { DEFAULT_NOVELAI_MODEL_ID }] =
+                    await Promise.all([
+                      import("../ui/views/workbench/build_generation_request.js"),
+                      import("../modules/novelai/novelai_request_defaults.js"),
+                    ]);
+                  const request_id = RequestIdSchema.parse(crypto.randomUUID());
+                  const context = {
+                    request_id,
+                    generation_anchor: Sha256Schema.parse(
+                      await compute_generation_anchor(request_id),
+                    ),
+                    model_id: active_model_id ?? DEFAULT_NOVELAI_MODEL_ID,
+                  };
+                  if (edit.kind !== "inpaint") {
+                    return build_novelai_edit_request(edit, context);
+                  }
+                  const runtime = await load_novelai_runtime();
+                  return build_novelai_edit_request(edit, {
+                    ...context,
+                    mask_asset_id: await runtime.store_input(edit.mask_png),
+                  });
+                },
+                edits_available: () => active_provider_id === "novelai",
                 async submit(request) {
                   if (active_profile_record === null) {
                     throw new Error("No provider profile is active; choose one in Settings");

@@ -4,6 +4,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import styles from "./chat.module.css";
+import type { QuickEditKind } from "./quick_edit_request.js";
 import { slot_error_label } from "./slot_error_label.js";
 import type { ImageUrlLoader } from "./use_image_urls.js";
 
@@ -12,6 +13,8 @@ const props = defineProps<{
   /** A request id is in flight in this session; ids left over from a reload are not. */
   readonly pending: boolean;
   readonly loadImage: ImageUrlLoader;
+  /** The active provider profile supports quick edits of an existing image. */
+  readonly canEdit: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -19,6 +22,7 @@ const emit = defineEmits<{
   edit: [];
   select: [image_id: Uuid];
   preview: [image_id: Uuid];
+  "quick-edit": [kind: QuickEditKind, image_id: Uuid];
 }>();
 
 const { t } = useI18n();
@@ -53,6 +57,13 @@ watch(
   },
   { immediate: true },
 );
+
+const QUICK_EDITS: readonly { readonly kind: QuickEditKind; readonly label: () => string }[] = [
+  { kind: "img2img", label: () => t("chat.quick_edit.img2img") },
+  { kind: "inpaint", label: () => t("chat.quick_edit.inpaint") },
+  { kind: "upscale", label: () => t("chat.quick_edit.upscale") },
+  { kind: "augment", label: () => t("chat.quick_edit.director") },
+];
 
 function step(offset: number): void {
   const image_id = props.entry.image_ids[active_index.value + offset];
@@ -117,6 +128,20 @@ function step(offset: number): void {
       </button>
       <button type="button" :class="styles.button" @click="emit('edit')">
         {{ t("chat.slot.edit") }}
+      </button>
+    </div>
+    <div v-if="canEdit && entry.active_image_id !== null" :class="styles.toolbar">
+      <button
+        v-for="kind in QUICK_EDITS"
+        :key="kind.kind"
+        type="button"
+        :class="styles.button"
+        :disabled="pending"
+        @click="
+          entry.active_image_id !== null && emit('quick-edit', kind.kind, entry.active_image_id)
+        "
+      >
+        {{ kind.label() }}
       </button>
     </div>
   </div>

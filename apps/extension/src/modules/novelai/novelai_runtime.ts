@@ -1,4 +1,4 @@
-import type { ImageGenerationRequest } from "@tavern-canvas/contracts";
+import type { AssetId, ImageGenerationRequest } from "@tavern-canvas/contracts";
 import type {
   ProviderAssetReader,
   ProviderOutputAsset,
@@ -38,6 +38,8 @@ export interface NovelAiRuntime {
   readonly service: NovelAiService;
   /** Gallery images plus inputs derived for queued NovelAI requests. */
   readonly assets: ProviderAssetReader;
+  /** Keeps derived input bytes, such as an inpaint mask, readable by asset id for a while. */
+  store_input(bytes: Uint8Array): Promise<AssetId>;
   prepare(request: ImageGenerationRequest, signal: AbortSignal): Promise<ImageGenerationRequest>;
   /** Composites NovelAI inpainting results over their source image; other outputs pass through. */
   finish(
@@ -66,6 +68,7 @@ export function create_novelai_runtime(deps: NovelAiRuntimeDeps): NovelAiRuntime
   return {
     service,
     assets,
+    store_input: (bytes) => inputs.put(bytes),
     finish: (request, outputs, signal) =>
       request.provider_id === "novelai" && request.action === "infill"
         ? composite_novelai_infill({ assets, image_operations }, request, outputs, signal)
