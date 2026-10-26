@@ -89,7 +89,8 @@ export default defineConfig({
             command:
               "node tests/harness/prepare_benchmark_site.mjs && " +
               "pnpm exec vite build --config tests/harness/vite.config.ts && " +
-              `STATIC_SERVER_PORT=${String(VOCABULARY_HARNESS_PORT)} node tests/harness/static_server.mjs`,
+              "node tests/harness/static_server.mjs",
+            env: { STATIC_SERVER_PORT: String(VOCABULARY_HARNESS_PORT) },
             // Explicit page path: the server has no index.html at "/", so probing the bare origin would 404 forever.
             url: `${VOCABULARY_HARNESS_URL}/vocabulary_benchmark.html`,
             reuseExistingServer: false,

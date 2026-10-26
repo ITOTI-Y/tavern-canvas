@@ -5,26 +5,23 @@ import {
   goto_studio,
   MOBILE_LARGE,
   navigate_to_route,
+  open_settings_section,
   ROUTES,
   route_label,
 } from "./studio_harness_utils.js";
 
 const ROUTE_MARKERS: Readonly<Record<(typeof ROUTES)[number], string>> = {
-  workbench: '[data-testid="workbench-view"]',
-  prompt: '[data-testid="prompt-view"]',
-  assets: '[role="tablist"]',
   gallery: '[class*="galleryView"]',
-  diagnostics: '[data-testid="diagnostics-view"]',
   settings: '[data-testid="settings-view"]',
 };
 
 test.describe("Studio navigation: desktop rail", () => {
-  test("switches the mounted view for every one of the six routes", async ({ page }) => {
+  test("switches the mounted view for both routes", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
     for (const route of ROUTES) {
       await navigate_to_route(page, route, "en");
       await expect(page.locator(ROUTE_MARKERS[route])).toBeVisible();
-      const selected = page.locator('nav > button[aria-current="page"]');
+      const selected = page.locator('[data-testid="studio-rail"] button[aria-current="page"]');
       await expect(selected).toHaveAttribute("aria-label", route_label(route, "en"));
     }
   });
@@ -40,33 +37,31 @@ test.describe("Studio navigation: desktop rail", () => {
     await expect(page.locator(ROUTE_MARKERS.gallery)).toHaveCount(0);
   });
 
-  test("renders full zh-CN route labels and switches views identically", async ({ page }) => {
+  test("renders zh-CN route labels and switches views identically", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, locale: "zh-CN" });
     for (const route of ROUTES) {
       await navigate_to_route(page, route, "zh-CN");
       await expect(page.locator(ROUTE_MARKERS[route])).toBeVisible();
     }
   });
+
+  test("moves between settings sections inside the Settings route", async ({ page }) => {
+    await goto_studio(page, { viewport: DESKTOP_LARGE });
+    await open_settings_section(page, "Prompt presets");
+    await expect(page.locator('[data-testid="preset-browser"]')).toBeVisible();
+    await open_settings_section(page, "Diagnostics");
+    await expect(page.locator('[data-testid="diagnostics-view"]')).toBeVisible();
+    await expect(page.locator('[data-testid="preset-browser"]')).toHaveCount(0);
+  });
 });
 
 test.describe("Studio navigation: mobile bottom nav", () => {
-  test("switches views through the four primary routes and the More menu's two routes", async ({
-    page,
-  }) => {
+  test("switches views through both routes", async ({ page }) => {
     await goto_studio(page, { viewport: MOBILE_LARGE });
     for (const route of ROUTES) {
       await navigate_to_route(page, route, "en");
       await expect(page.locator(ROUTE_MARKERS[route])).toBeVisible();
     }
-  });
-
-  test("marks More as selected when the active route lives behind it", async ({ page }) => {
-    await goto_studio(page, { viewport: MOBILE_LARGE });
-    await navigate_to_route(page, "diagnostics", "en");
-    await expect(page.locator('[data-testid="mobile-more-trigger"]')).toHaveAttribute(
-      "data-selected",
-      "true",
-    );
   });
 
   test("does not render the desktop rail on a mobile viewport", async ({ page }) => {
@@ -82,7 +77,7 @@ test.describe("Studio navigation: shell-level states", () => {
   }) => {
     await goto_studio(page, { scenario: "loading", viewport: DESKTOP_LARGE });
     await expect(page.locator('[data-testid="workspace-skeleton"]')).toBeVisible();
-    await expect(page.locator(ROUTE_MARKERS.workbench)).toHaveCount(0);
+    await expect(page.locator(ROUTE_MARKERS.settings)).toHaveCount(0);
   });
 
   test("shows the partial-initialization banner without hiding the rest of the shell", async ({
@@ -90,8 +85,8 @@ test.describe("Studio navigation: shell-level states", () => {
   }) => {
     await goto_studio(page, { scenario: "partial", viewport: DESKTOP_LARGE });
     await expect(page.locator('[data-testid="partial-banner"]')).toBeVisible();
-    await expect(page.locator("nav > button")).toHaveCount(6);
+    await expect(page.locator('[data-testid="studio-rail"] button')).toHaveCount(ROUTES.length);
     await page.locator('[data-testid="partial-banner-diagnostics"]').click();
-    await expect(page.locator(ROUTE_MARKERS.diagnostics)).toBeVisible();
+    await expect(page.locator('[data-testid="diagnostics-view"]')).toBeVisible();
   });
 });

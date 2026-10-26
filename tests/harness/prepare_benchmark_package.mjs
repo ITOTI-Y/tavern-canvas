@@ -17,11 +17,16 @@ const BENCHMARK_DATA_VERSION = "1.0.0";
 const BENCHMARK_MINIMUM_EXTENSION_VERSION = "3.0.0";
 const BENCHMARK_CHANGELOG = "benchmark";
 
-const PNPM_COMMAND = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+// Under `pnpm prepare:e2e`, npm_execpath is pnpm's JS entry. Running it through Node avoids
+// spawning pnpm.cmd, which Node refuses on Windows without a shell.
+const PNPM_ENTRY = process.env.npm_execpath;
 
 function run_pnpm(command, args) {
+  const pnpm_args = ["--filter", VOCABULARY_BUILDER, command, ...args];
+  const [executable, executable_args] =
+    PNPM_ENTRY === undefined ? ["pnpm", pnpm_args] : [process.execPath, [PNPM_ENTRY, ...pnpm_args]];
   return new Promise((resolve_promise, reject) => {
-    const child = spawn(PNPM_COMMAND, ["--filter", VOCABULARY_BUILDER, command, ...args], {
+    const child = spawn(executable, executable_args, {
       cwd: REPOSITORY_ROOT,
       stdio: "inherit",
     });

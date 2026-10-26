@@ -1,20 +1,33 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import {
   DESKTOP_LARGE,
   goto_studio,
   MOBILE_LARGE,
   navigate_to_route,
+  open_settings_section,
 } from "./studio_harness_utils.js";
+
+const SQUARE_GALLERY_RECORD_ID = `00000000-0000-4000-8000-${String(202).padStart(12, "0")}`;
+
+async function open_bulk_delete_confirm(page: Page): Promise<Locator> {
+  await navigate_to_route(page, "gallery", "en");
+  await page.locator(`button[aria-label="Select image: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
+  const trigger = page.getByRole("button", { name: "Delete selected" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.locator('[role="alertdialog"]')).toBeVisible();
+  return trigger;
+}
 
 test.describe("Studio accessibility: keyboard access", () => {
   test("every desktop rail button is reachable by Tab and activates with the keyboard", async ({
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    const rail_buttons = page.locator("nav > button");
+    const rail_buttons = page.locator('[data-testid="studio-rail"] button');
     const count = await rail_buttons.count();
-    expect(count).toBe(6);
+    expect(count).toBe(2);
     for (let index = 0; index < count; index += 1) {
       const button = rail_buttons.nth(index);
       await button.focus();
@@ -23,39 +36,24 @@ test.describe("Studio accessibility: keyboard access", () => {
       await expect(page.locator('[data-testid="workspace"]')).toBeVisible();
     }
   });
-
-  test("submits the Workbench form when Generate receives a real keyboard activation", async ({
-    page,
-  }) => {
-    await goto_studio(page, { viewport: DESKTOP_LARGE });
-    await page.locator('[data-testid="positive-prompt-input"]').fill("a mountain lake");
-    const submit = page.locator('[data-testid="submit-generation"]');
-    await submit.focus();
-    await expect(submit).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(page.locator('[data-testid="active-jobs"]')).toContainText("job");
-  });
 });
 
 test.describe("Studio accessibility: focus order and return", () => {
-  test("moves focus through the Workbench form in visual/document order", async ({ page }) => {
+  test("moves focus through the settings sections in visual/document order", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    const positive = page.locator('[data-testid="positive-prompt-input"]');
-    const negative = page.locator('[data-testid="negative-prompt-input"]');
-    await positive.focus();
+    await navigate_to_route(page, "settings", "en");
+    const sections = page.locator('[data-testid="settings-view"] nav button');
+    await sections.nth(0).focus();
     await page.keyboard.press("Tab");
-    await expect(negative).toBeFocused();
+    await expect(sections.nth(1)).toBeFocused();
   });
 
   test("returns focus to the triggering button after a confirm dialog closes", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    const cancel_button = page.locator('[aria-label="Cancel job"]').first();
-    await cancel_button.focus();
-    await cancel_button.press("Enter");
-    const confirm = page.locator('button[aria-label="Confirm"]');
-    await expect(confirm).toBeVisible();
+    const trigger = await open_bulk_delete_confirm(page);
     await page.keyboard.press("Escape");
-    await expect(cancel_button).toBeFocused();
+    await expect(page.locator('[role="alertdialog"]')).toHaveCount(0);
+    await expect(trigger).toBeFocused();
   });
 
   test("returns focus to the inspector toggle after the mobile inspector sheet closes", async ({
@@ -76,9 +74,7 @@ test.describe("Studio accessibility: focus order and return", () => {
 test.describe("Studio accessibility: dialog focus traps", () => {
   test("keeps Tab focus inside the destructive-confirm dialog", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    await page.locator('[aria-label="Cancel job"]').first().click();
-    const dialog = page.locator('[role="alertdialog"]');
-    await expect(dialog).toBeVisible();
+    await open_bulk_delete_confirm(page);
 
     for (let step = 0; step < 8; step += 1) {
       await page.keyboard.press("Tab");
@@ -97,7 +93,7 @@ test.describe("Studio accessibility: dialog focus traps", () => {
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    await navigate_to_route(page, "settings", "en");
+    await open_settings_section(page, "General");
     const open_button = page.locator('[data-testid="manual-cleanup-action"]');
     await open_button.click();
     await expect(page.locator('[data-testid="cleanup-confirm-input"]')).toBeVisible();
@@ -108,12 +104,19 @@ test.describe("Studio accessibility: dialog focus traps", () => {
 });
 
 test.describe("Studio accessibility: accessible names", () => {
-  test("every interactive control in the Workbench and Settings routes has a non-empty accessible name", async ({
+  test("every interactive control in the settings sections has a non-empty accessible name", async ({
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    for (const route of ["workbench", "settings"] as const) {
-      await navigate_to_route(page, route, "en");
+    const sections = [
+      "Illustration",
+      "Image providers",
+      "Translation",
+      "Connections",
+      "General",
+    ] as const;
+    for (const route of sections) {
+      await open_settings_section(page, route);
       const unnamed = await page.evaluate(() => {
         const host = document.getElementById("tavern-canvas-root");
         const root = host?.shadowRoot;

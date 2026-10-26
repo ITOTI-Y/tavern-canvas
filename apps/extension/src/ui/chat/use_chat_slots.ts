@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, shallowRef, type ShallowRef } from "vue";
 
 import type { HostAdapter, HostSwipeLocation } from "../../host/index.js";
 import type { IllustrationService } from "../../modules/illustration/illustration_service.js";
+import { create_host_image_icon } from "../experience/host_image_icon.js";
 
 export interface SlotTarget {
   readonly key: string;
@@ -63,7 +64,8 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
       return;
     }
     const button = text_element.ownerDocument.createElement("div");
-    button.className = "mes_button fa-solid fa-image interactable";
+    button.className = "mes_button interactable";
+    button.append(create_host_image_icon(text_element.ownerDocument));
     button.setAttribute(BUTTON_ATTRIBUTE, "");
     button.setAttribute("role", "button");
     button.tabIndex = 0;

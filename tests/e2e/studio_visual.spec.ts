@@ -25,7 +25,7 @@ for (const viewport of VIEWPORTS) {
   for (const color_mode of COLOR_MODES) {
     for (const locale of LOCALES) {
       test.describe(`Studio visual: ${viewport.name} / ${color_mode} / ${locale}`, () => {
-        test(`shell (Workbench)`, async ({ page }) => {
+        test(`shell (Settings)`, async ({ page }) => {
           await goto_studio(page, { viewport, colorMode: color_mode, locale, scenario: "full" });
           await wait_for_images_settled(page);
           await page.waitForTimeout(150);

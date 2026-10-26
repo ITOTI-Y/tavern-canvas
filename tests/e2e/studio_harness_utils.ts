@@ -3,8 +3,7 @@ import type { Page } from "@playwright/test";
 export type ScenarioName = "full" | "empty" | "loading" | "partial" | "error";
 export type StudioLocale = "en" | "zh-CN";
 export type ColorMode = "light" | "dark";
-export type StudioRoute =
-  "workbench" | "prompt" | "assets" | "gallery" | "diagnostics" | "settings";
+export type StudioRoute = "settings" | "gallery";
 
 export interface Viewport {
   readonly name: string;
@@ -26,35 +25,12 @@ export const VIEWPORTS: readonly Viewport[] = [
 
 export const LOCALES: readonly StudioLocale[] = ["en", "zh-CN"];
 export const COLOR_MODES: readonly ColorMode[] = ["light", "dark"];
-export const ROUTES: readonly StudioRoute[] = [
-  "workbench",
-  "prompt",
-  "assets",
-  "gallery",
-  "diagnostics",
-  "settings",
-];
+export const ROUTES: readonly StudioRoute[] = ["settings", "gallery"];
 
 const ROUTE_LABELS: Readonly<Record<StudioLocale, Readonly<Record<StudioRoute, string>>>> = {
-  en: {
-    workbench: "Workbench",
-    prompt: "Prompt",
-    assets: "Assets",
-    gallery: "Gallery",
-    diagnostics: "Diagnostics",
-    settings: "Settings",
-  },
-  "zh-CN": {
-    workbench: "工作台",
-    prompt: "提示词",
-    assets: "资产",
-    gallery: "图库",
-    diagnostics: "诊断",
-    settings: "设置",
-  },
+  en: { settings: "Settings", gallery: "Gallery" },
+  "zh-CN": { settings: "设置", gallery: "图库" },
 };
-
-const MOBILE_MORE_ROUTES: ReadonlySet<StudioRoute> = new Set(["diagnostics", "settings"]);
 
 export function route_label(route: StudioRoute, locale: StudioLocale): string {
   return ROUTE_LABELS[locale][route];
@@ -109,14 +85,29 @@ export async function navigate_to_route(
   locale: StudioLocale,
 ): Promise<void> {
   const label = route_label(route, locale);
-  const mobile = await is_mobile_layout(page);
-  if (mobile && MOBILE_MORE_ROUTES.has(route)) {
-    await page.locator('[data-testid="mobile-more-trigger"]').click();
-    await page.locator(`[role="menuitem"]:has-text("${label}")`).click();
-  } else if (mobile) {
-    await page.locator("nav > button", { hasText: label }).click();
+  if (await is_mobile_layout(page)) {
+    await page.locator('[data-testid="studio-bottom-nav"] button', { hasText: label }).click();
   } else {
-    await page.locator(`nav > button[aria-label="${label}"]`).click();
+    await page.locator(`[data-testid="studio-rail"] button[aria-label="${label}"]`).click();
   }
   await page.locator('[data-testid="workspace"]').waitFor({ state: "visible" });
+}
+
+export type SettingsSectionLabel =
+  | "Illustration"
+  | "Image providers"
+  | "Translation"
+  | "Prompt presets"
+  | "Library"
+  | "Connections"
+  | "General"
+  | "Diagnostics";
+
+/** Opens Settings and one of its sections by the section's English label. */
+export async function open_settings_section(
+  page: Page,
+  label: SettingsSectionLabel,
+): Promise<void> {
+  await navigate_to_route(page, "settings", "en");
+  await page.locator('[data-testid="settings-view"] nav button', { hasText: label }).click();
 }

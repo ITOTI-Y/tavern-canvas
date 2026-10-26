@@ -1,5 +1,7 @@
 import { onBeforeUnmount, onMounted, ref, type Ref } from "vue";
 
+import { create_host_image_icon } from "./host_image_icon.js";
+
 const ENTRY_ATTRIBUTE = "data-tavern-canvas-menu-entry";
 
 /**
@@ -22,7 +24,8 @@ export function use_extensions_menu_entry(label: () => string, on_open: () => vo
     entry.setAttribute("role", "button");
     entry.tabIndex = 0;
     const icon = document.createElement("div");
-    icon.className = "fa-solid fa-image extensionsMenuExtensionButton";
+    icon.className = "extensionsMenuExtensionButton";
+    icon.append(create_host_image_icon(document));
     const text = document.createElement("span");
     text.textContent = label();
     entry.append(icon, text);

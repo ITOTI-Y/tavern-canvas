@@ -77,21 +77,6 @@ test.describe("Studio overflow: blank/zero-dimension image sweep", () => {
     const findings = await find_blank_or_zero_dimension_images(page);
     expect(findings, JSON.stringify(findings, null, 2)).toEqual([]);
   });
-
-  test("a completed Workbench job's preview tiles decode to real, non-uniform pixels", async ({
-    page,
-  }) => {
-    await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    const completed_row = page
-      .locator('[data-testid="job-row"][data-job-state="completed"]')
-      .first();
-    await completed_row.locator('[data-testid="job-select"]').click();
-    await expect(page.locator('[data-testid="completion-preview"]')).toBeVisible();
-    await wait_for_images_settled(page);
-    await page.waitForTimeout(200);
-    const findings = await find_blank_or_zero_dimension_images(page);
-    expect(findings, JSON.stringify(findings, null, 2)).toEqual([]);
-  });
 });
 
 test.describe("Studio overflow: layout shift after loaders/images resolve", () => {
@@ -108,7 +93,7 @@ test.describe("Studio overflow: layout shift after loaders/images resolve", () =
     expect(shift).toBe(0);
   });
 
-  test("Workbench workspace has zero further layout shift once the loading skeleton resolves", async ({
+  test("Settings workspace has zero further layout shift once the loading skeleton resolves", async ({
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
@@ -121,34 +106,20 @@ test.describe("Studio overflow: layout shift after loaders/images resolve", () =
   });
 });
 
-test.describe("Studio overflow: buttons never change dimensions on hover/loading/status", () => {
-  test("Generate button keeps its box size across hover and the pending state", async ({
+test.describe("Studio overflow: buttons never change dimensions on hover/selection", () => {
+  test("a settings section button keeps its box size across hover and selection", async ({
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    const selector = '[data-testid="submit-generation"]';
+    await navigate_to_route(page, "settings", "en");
+    const selector = '[data-testid="settings-view"] nav button:nth-child(2)';
     const idle_box = await measure_box(page, selector);
 
     await page.locator(selector).hover();
-    const hover_box = await measure_box(page, selector);
-    expect(hover_box).toEqual(idle_box);
+    expect(await measure_box(page, selector)).toEqual(idle_box);
 
-    await page.locator('[data-testid="positive-prompt-input"]').fill("a river at dawn");
-    // The mock's submit() resolves fast; asserting aria-busy concurrently with the click catches the pending render.
-    await Promise.all([
-      page.locator(selector).click(),
-      expect(page.locator(selector)).toHaveAttribute("aria-busy", "true"),
-    ]);
-    const pending_box = await measure_box(page, selector);
-    expect(pending_box).toEqual(idle_box);
-  });
-
-  test("job cancel/retry icon buttons keep their box size across hover", async ({ page }) => {
-    await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    const selector = '[aria-label="Cancel job"]';
-    const idle_box = await measure_box(page, selector);
-    await page.locator(selector).first().hover();
-    const hover_box = await measure_box(page, selector);
-    expect(hover_box).toEqual(idle_box);
+    await page.locator(selector).click();
+    await expect(page.locator(selector)).toHaveAttribute("aria-current", "page");
+    expect(await measure_box(page, selector)).toEqual(idle_box);
   });
 });
