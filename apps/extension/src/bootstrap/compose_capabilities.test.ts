@@ -136,7 +136,6 @@ describe("compose_studio_capabilities", () => {
         "generation",
         "knowledge",
         "llm_connections",
-        "migration",
         "novelai",
         "personas",
         "profiles",
@@ -156,7 +155,6 @@ describe("compose_studio_capabilities", () => {
       "prompt_presets",
       "assets",
       "gallery",
-      "migration",
       "settings",
       "diagnostics",
       "llm_connections",
@@ -183,7 +181,6 @@ describe("compose_studio_capabilities", () => {
       "gallery",
       "generation",
       "vocabulary",
-      "migration",
       "llm_connections",
       "novelai",
       "personas",
@@ -202,7 +199,6 @@ describe("compose_studio_capabilities", () => {
     });
 
     expect(status_of(composition.resolutions, "settings")).toBe("unavailable");
-    expect(status_of(composition.resolutions, "migration")).toBe("unavailable");
     await composition.dispose();
   });
 
@@ -224,7 +220,7 @@ describe("compose_studio_capabilities", () => {
     });
 
     expect(composition.host).toBeNull();
-    expect(composition.resolutions).toHaveLength(13);
+    expect(composition.resolutions).toHaveLength(12);
     expect(status_of(composition.resolutions, "generation")).toBe("unavailable");
     // Diagnostics stays real so the shell can still explain why everything else is blocked.
     expect(status_of(composition.resolutions, "diagnostics")).toBe("available");
@@ -258,7 +254,7 @@ describe("compose_studio_capabilities", () => {
 
     const bundle = await composition.capabilities.diagnostics.export_support_bundle();
     expect(bundle.version).toBe("3.0.0-test");
-    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(13);
+    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(12);
     expect(JSON.stringify(bundle.redacted_settings)).not.toContain("token_secret_id");
     await composition.dispose();
   });

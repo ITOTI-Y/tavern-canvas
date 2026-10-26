@@ -1,5 +1,3 @@
-import legacy_settings_fixture from "../../fixtures/migration/v2_settings_full.json" with { type: "json" };
-
 interface PageListenerRegistration {
   readonly target: "window" | "document";
   readonly type: string;
@@ -56,7 +54,6 @@ async function boot(): Promise<void> {
     native_tool_manager: params.get("tools") !== "none",
     tauri: host_kind === "tauri",
     secrets_readable: params.get("secrets") !== "sealed",
-    legacy_settings: params.get("legacy") === "v2" ? legacy_settings_fixture : undefined,
     active_provider_profile_id: PROFILE_ID,
     gateway_endpoint,
     http_acknowledgments:

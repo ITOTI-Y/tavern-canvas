@@ -5,7 +5,7 @@ import { LlmConnectionService } from "../../modules/llm/llm_connection_service.j
 import type { LlmTransportPort } from "../../modules/llm/llm_connection_service.js";
 import { KnowledgeService } from "../../modules/library/knowledge_service.js";
 import { PersonaService } from "../../modules/library/persona_service.js";
-import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../../host/secret_destination.js";
 import type {
   KnowledgeCapability,
   LlmConnectionsCapability,

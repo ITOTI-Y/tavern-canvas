@@ -29,7 +29,6 @@ describe("create_unavailable_capabilities", () => {
       storage_usage_bytes: null,
       storage_quota_bytes: null,
     });
-    await expect(capabilities.migration.load()).resolves.toMatchObject({ state: "not_required" });
     const settings_snapshot = await capabilities.settings.load();
     expect(settings_snapshot.settings.schema_version).toBe(1);
     expect(settings_snapshot.vocabulary_update_channel).toBe("bundled");
@@ -45,7 +44,6 @@ describe("create_unavailable_capabilities", () => {
       capabilities.assets,
       capabilities.gallery,
       capabilities.diagnostics,
-      capabilities.migration,
       capabilities.settings,
     ]) {
       const unsubscribe = capability.subscribe(() => {
@@ -64,9 +62,6 @@ describe("create_unavailable_capabilities", () => {
       code: CAPABILITY_NOT_IMPLEMENTED_CODE,
     });
     await expect(capabilities.diagnostics.test_connection()).rejects.toMatchObject({
-      code: CAPABILITY_NOT_IMPLEMENTED_CODE,
-    });
-    await expect(capabilities.migration.retry()).rejects.toMatchObject({
       code: CAPABILITY_NOT_IMPLEMENTED_CODE,
     });
   });

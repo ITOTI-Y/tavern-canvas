@@ -1,7 +1,6 @@
 import type { CredentialStorageMode } from "@tavern-canvas/contracts";
 
-import type { SecretCredentialKind } from "@tavern-canvas/v2-migration";
-import type { SecretDestinationPort } from "../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../host/secret_destination.js";
 import type { BrowserSecretVaultPort } from "../storage/browser_secret_vault.js";
 import { SecretResolutionError, type SecretResolverPort } from "./sillytavern_secret_resolver.js";
 
@@ -34,7 +33,7 @@ export class SecretBackendRouter implements SecretDestinationPort, SecretResolve
     return this.#host_resolver !== null || this.#browser_vault !== null;
   }
 
-  supports(credential_kind: SecretCredentialKind): boolean {
+  supports(credential_kind: string): boolean {
     const destination = this.#destination();
     return destination?.supports(credential_kind) ?? false;
   }

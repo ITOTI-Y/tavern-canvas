@@ -15,7 +15,6 @@ import type {
   DiagnosticsSnapshot,
   GalleryRecordSummary,
   GenerationJobSummary,
-  MigrationSnapshot,
   ProviderProfileSummary,
   PromptPresetDraft,
   PromptPresetSummary,
@@ -79,7 +78,6 @@ export interface GalleryViewModel {
 export interface DiagnosticsViewModel {
   readonly snapshot: DiagnosticsSnapshot | null;
   readonly timeline: readonly TaskTimelineEntry[];
-  readonly migration: MigrationSnapshot | null;
   readonly connection_test_command: CommandState<ConnectionTestResult>;
   readonly support_bundle_command: CommandState<SupportBundle>;
 }
@@ -89,7 +87,6 @@ export interface SettingsViewModel {
   readonly vocabulary_update_channel: VocabularyUpdateChannel | null;
   readonly browser_secret_vault: BrowserSecretVaultStatus;
   readonly update_command: CommandState<TavernCanvasSettings>;
-  readonly migration_retry_command: CommandState<MigrationSnapshot>;
 }
 
 export interface InspectorSelectionPrefill {

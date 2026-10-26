@@ -8,7 +8,6 @@ import AppButton from "../../components/AppButton.vue";
 import CapabilityMatrix from "./CapabilityMatrix.vue";
 import ConnectionTests from "./ConnectionTests.vue";
 import styles from "./diagnostics.module.css";
-import MigrationStatus from "./MigrationStatus.vue";
 import StorageUsage from "./StorageUsage.vue";
 import TaskTimeline from "./TaskTimeline.vue";
 
@@ -81,8 +80,6 @@ function download_bundle(): void {
     />
 
     <TaskTimeline :entries="state.diagnostics.timeline" />
-
-    <MigrationStatus :snapshot="state.diagnostics.migration" />
 
     <StorageUsage
       :usage-bytes="snapshot?.storage_usage_bytes ?? null"

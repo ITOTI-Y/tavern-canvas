@@ -3,30 +3,20 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StudioController } from "../../controllers/studio_controller.js";
-import type { CommandState } from "../../contracts/view_models.js";
 import type {
-  MigrationSnapshot,
   VocabularyImportProgressView,
   VocabularyUpdateChannel,
 } from "../../contracts/ui_capabilities.js";
 import AppButton from "../../components/AppButton.vue";
-import AppDialog from "../../components/AppDialog.vue";
-import FieldGroup from "../../components/FieldGroup.vue";
 import SegmentedControl from "../../components/SegmentedControl.vue";
-import MigrationStatus from "../diagnostics/MigrationStatus.vue";
 import styles from "./settings.module.css";
 
-/** Destructive cleanup is offered only after a verified migration or a just-exported archive, and requires the exact typed confirmation phrase. */
 const props = defineProps<{
   readonly vocabularyUpdateChannel: VocabularyUpdateChannel | null;
-  readonly migration: MigrationSnapshot | null;
-  readonly migrationRetryCommand: CommandState<MigrationSnapshot>;
   readonly controller: StudioController;
 }>();
 
 const { t } = useI18n();
-
-const CONFIRM_PHRASE = computed(() => t("settings.data.manual_cleanup.confirm_phrase"));
 
 const channel_pending = ref(false);
 const channel_options = [
@@ -125,7 +115,6 @@ const vocabulary_import_progress_label = computed(() => {
 });
 
 const archive_export_pending = ref(false);
-const archive_exported = ref(false);
 const archive_export_error = ref<string | null>(null);
 
 async function export_archive(): Promise<void> {
@@ -142,7 +131,6 @@ async function export_archive(): Promise<void> {
     anchor.download = "tavern-canvas-archive.json";
     anchor.click();
     URL.revokeObjectURL(url);
-    archive_exported.value = true;
   } catch {
     archive_export_error.value = t("errors.unexpected");
   } finally {
@@ -173,64 +161,6 @@ async function handle_import_file(event: Event): Promise<void> {
     archive_import_error.value = t("errors.unexpected");
   } finally {
     archive_import_pending.value = false;
-  }
-}
-
-function retry_migration(): void {
-  void props.controller.retry_migration();
-}
-
-const show_migration_report = ref(false);
-
-function toggle_migration_report(): void {
-  show_migration_report.value = !show_migration_report.value;
-}
-
-const total_legacy_records = computed(() =>
-  Object.values(props.migration?.counts ?? {}).reduce((sum, count) => sum + count, 0),
-);
-const record_summary_text = computed(() =>
-  t("settings.data.manual_cleanup.record_summary", total_legacy_records.value, {
-    named: {
-      count: total_legacy_records.value,
-      bytes: t("settings.data.manual_cleanup.bytes_unavailable"),
-    },
-  }),
-);
-
-const cleanup_unlocked = computed(
-  () => props.migration?.state === "completed" || archive_exported.value,
-);
-
-const cleanup_dialog_open = ref(false);
-const cleanup_confirm_text = ref("");
-const cleanup_pending = ref(false);
-const cleanup_error = ref<string | null>(null);
-
-function open_cleanup_dialog(): void {
-  cleanup_confirm_text.value = "";
-  cleanup_error.value = null;
-  cleanup_dialog_open.value = true;
-}
-
-function close_cleanup_dialog(): void {
-  cleanup_dialog_open.value = false;
-  cleanup_confirm_text.value = "";
-}
-
-async function confirm_cleanup(): Promise<void> {
-  if (cleanup_confirm_text.value !== CONFIRM_PHRASE.value || cleanup_pending.value) {
-    return;
-  }
-  cleanup_pending.value = true;
-  cleanup_error.value = null;
-  try {
-    await props.controller.confirm_legacy_cleanup(cleanup_confirm_text.value);
-    cleanup_dialog_open.value = false;
-  } catch {
-    cleanup_error.value = t("errors.unexpected");
-  } finally {
-    cleanup_pending.value = false;
   }
 }
 </script>
@@ -340,90 +270,6 @@ async function confirm_cleanup(): Promise<void> {
       >
         {{ archive_import_error }}
       </p>
-
-      <div :class="styles.actions_row">
-        <AppButton
-          :label="t('settings.data.migration_retry_action')"
-          :pending="migrationRetryCommand.status === 'pending'"
-          @click="retry_migration"
-        />
-        <AppButton
-          :label="t('settings.data.migration_report_action')"
-          variant="secondary"
-          @click="toggle_migration_report"
-        />
-      </div>
-      <MigrationStatus v-if="show_migration_report" :snapshot="migration" />
-
-      <div :class="styles.section" data-testid="manual-cleanup">
-        <div :class="styles.section_header">
-          <h3 :class="styles.section_title">{{ t("settings.data.manual_cleanup.title") }}</h3>
-        </div>
-        <p :class="styles.description">{{ t("settings.data.manual_cleanup.description") }}</p>
-        <div :class="styles.row">
-          <span :class="styles.row_label">{{
-            t("diagnostics.migration_status.counts_label")
-          }}</span>
-          <span class="tc-tabular-nums" :class="styles.row_value">
-            {{ record_summary_text }}
-          </span>
-        </div>
-        <p v-if="!cleanup_unlocked" :class="styles.description" data-testid="cleanup-locked">
-          {{ t("settings.data.manual_cleanup.unlock_hint") }}
-        </p>
-        <div :class="styles.actions_row">
-          <AppButton
-            :label="t('settings.data.manual_cleanup.confirm_action')"
-            variant="destructive"
-            :disabled="!cleanup_unlocked"
-            data-testid="manual-cleanup-action"
-            @click="open_cleanup_dialog"
-          />
-        </div>
-      </div>
     </div>
-
-    <AppDialog
-      :open="cleanup_dialog_open"
-      :title="t('settings.data.manual_cleanup.title')"
-      :description="t('confirmations.destructive.irreversible_note')"
-      :close-label="t('common.actions.close')"
-      @update:open="(open) => !open && close_cleanup_dialog()"
-    >
-      <FieldGroup
-        :label="t('confirmations.typed_confirmation.label', { phrase: CONFIRM_PHRASE })"
-        :error="
-          cleanup_confirm_text.length > 0 && cleanup_confirm_text !== CONFIRM_PHRASE
-            ? t('confirmations.typed_confirmation.mismatch', { phrase: CONFIRM_PHRASE })
-            : cleanup_error
-        "
-      >
-        <template #default="{ fieldId, describedBy }">
-          <input
-            :id="fieldId"
-            v-model="cleanup_confirm_text"
-            type="text"
-            :aria-describedby="describedBy"
-            :class="styles.typed_confirm_input"
-            :placeholder="t('confirmations.typed_confirmation.placeholder')"
-            data-testid="cleanup-confirm-input"
-          />
-        </template>
-      </FieldGroup>
-      <div :class="styles.actions_row">
-        <AppButton
-          :label="t('settings.data.manual_cleanup.confirm_action')"
-          variant="destructive"
-          :pending="cleanup_pending"
-          :disabled="cleanup_confirm_text !== CONFIRM_PHRASE"
-          @click="confirm_cleanup"
-        />
-        <AppButton
-          :label="t('confirmations.destructive.default_cancel_action')"
-          variant="secondary"
-          @click="close_cleanup_dialog"
-        />
-      </div>
-    </AppDialog>
   </div>
 </template>

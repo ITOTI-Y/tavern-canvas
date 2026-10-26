@@ -26,11 +26,8 @@ import type {
   KnowledgeDomainEvent,
   LlmConnectionsCapability,
   LlmConnectionsDomainEvent,
-  MigrationCapability,
   PersonasCapability,
   PersonasDomainEvent,
-  MigrationDomainEvent,
-  MigrationSnapshot,
   ProfilesCapability,
   ProfilesDomainEvent,
   ProviderProfileSummary,
@@ -122,14 +119,6 @@ const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
   protocol_version: null,
   storage_usage_bytes: null,
   storage_quota_bytes: null,
-};
-
-const NOT_REQUIRED_MIGRATION_SNAPSHOT: MigrationSnapshot = {
-  state: "not_required",
-  counts: {},
-  warnings: [],
-  failure_reason: null,
-  failure_message: null,
 };
 
 const DEFAULT_SETTINGS_SNAPSHOT: SettingsSnapshot = {
@@ -260,14 +249,6 @@ function build_mock_studio() {
     export_support_bundle: vi.fn(),
   };
 
-  const migration_harness = harness<MigrationSnapshot, MigrationDomainEvent>();
-  const migration: MigrationCapability = {
-    load: migration_harness.load,
-    subscribe: migration_harness.sub.subscribe,
-    retry: vi.fn(),
-    confirm_legacy_cleanup: vi.fn(),
-  };
-
   const settings_harness = harness<SettingsSnapshot, SettingsDomainEvent>();
   const settings: SettingsCapability = {
     load: settings_harness.load,
@@ -299,7 +280,6 @@ function build_mock_studio() {
     gallery,
     vocabulary,
     diagnostics,
-    migration,
     settings,
   };
 
@@ -315,7 +295,6 @@ function build_mock_studio() {
     knowledge: knowledge_harness,
     gallery: gallery_harness,
     diagnostics: diagnostics_harness,
-    migration: migration_harness,
     settings: settings_harness,
   };
 }
@@ -332,7 +311,6 @@ function resolve_all_defaults(mock: MockStudio): void {
   mock.knowledge.deferred_load.resolve([]);
   mock.gallery.deferred_load.resolve([]);
   mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
-  mock.migration.deferred_load.resolve(NOT_REQUIRED_MIGRATION_SNAPSHOT);
   mock.settings.deferred_load.resolve(DEFAULT_SETTINGS_SNAPSHOT);
 }
 
@@ -386,7 +364,6 @@ describe("create_studio_controller", () => {
     mock.knowledge.deferred_load.resolve([]);
     mock.gallery.deferred_load.resolve([]);
     mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
-    mock.migration.deferred_load.resolve(NOT_REQUIRED_MIGRATION_SNAPSHOT);
 
     await vi.waitFor(() => {
       expect(controller.state.loading.has("generation")).toBe(false);
@@ -531,7 +508,6 @@ describe("create_studio_controller", () => {
     expect(mock.assets.sub.unsubscribe).toHaveBeenCalledTimes(1);
     expect(mock.gallery.sub.unsubscribe).toHaveBeenCalledTimes(1);
     expect(mock.diagnostics.sub.unsubscribe).toHaveBeenCalledTimes(1);
-    expect(mock.migration.sub.unsubscribe).toHaveBeenCalledTimes(1);
     expect(mock.settings.sub.unsubscribe).toHaveBeenCalledTimes(1);
 
     submit_deferred.resolve({

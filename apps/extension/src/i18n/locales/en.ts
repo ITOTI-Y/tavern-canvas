@@ -56,8 +56,6 @@ const common = {
   },
   labels: {
     name: "Name",
-    description: "Description",
-    status: "Status",
   },
   inspector: {
     title: "Inspector",
@@ -508,18 +506,13 @@ const diagnostics = {
   },
   task_timeline: {
     title: "Task timeline",
-    empty_description: "Generation, migration, and sync activity appear here as they run.",
+    empty_description: "Generation and sync activity appear here as they run.",
     error_code_label: "Error code",
     time_label: "Time",
     event_label: "Event",
     module_label: "Module",
     provider_label: "Provider",
     count_label: "{n} event | {n} events",
-  },
-  migration_status: {
-    title: "Migration",
-    counts_label: "Record counts",
-    warnings_label: "Warnings",
   },
   storage_usage: {
     title: "Storage",
@@ -720,42 +713,7 @@ const settings = {
     archive_import_action: "Import archive",
     archive_import_description:
       "Importing merges records from the archive into this namespace. It never deletes existing data.",
-    migration_retry_action: "Retry migration",
-    migration_report_action: "View migration report",
-    manual_cleanup: {
-      title: "Remove legacy v2 data",
-      description:
-        "Only available after a verified migration or archive. This never runs automatically.",
-      record_summary: "{count} record, {bytes} | {count} records, {bytes}",
-      confirm_action: "Delete legacy data",
-      bytes_unavailable: "Size estimate is unavailable.",
-      unlock_hint: "Complete a migration or export an archive first to enable this.",
-      confirm_phrase: "DELETE LEGACY DATA",
-    },
   },
-};
-
-const migration = {
-  journal: {
-    inventory: "Scanning legacy data",
-    copying: "Copying records",
-    verifying: "Verifying copied data",
-    ready_to_switch: "Ready to switch to the new namespace",
-    completed: "Migration completed",
-    failed: "Migration failed",
-    not_required: "No migration needed",
-  },
-  failure_reasons: {
-    invalid_source: "The legacy source data is invalid or corrupted.",
-    unknown_setting_path: "A legacy setting path is not recognized.",
-    converter_error: "A record failed to convert: {message}",
-    missing_blob: "An image file referenced by legacy data is missing.",
-    hash_mismatch: "A copied file does not match its expected checksum.",
-    count_mismatch: "The copied record count does not match the source count.",
-    secret_transfer_blocked: "The provider token could not be transferred securely.",
-    switch_failed: "Switching to the new namespace failed after copying.",
-  },
-  record_count: "{n} record | {n} records",
 };
 
 const errors = {
@@ -772,12 +730,6 @@ const confirmations = {
   destructive: {
     default_confirm_action: "Delete",
     default_cancel_action: "Cancel",
-    irreversible_note: "This action cannot be undone.",
-  },
-  typed_confirmation: {
-    label: "Type {phrase} to confirm",
-    placeholder: "Type the confirmation phrase",
-    mismatch: "The typed text does not match {phrase}.",
   },
   discard_unsaved: {
     title: "Discard unsaved changes?",
@@ -799,7 +751,6 @@ export const en_messages = {
   gallery,
   diagnostics,
   settings,
-  migration,
   errors,
   confirmations,
 };

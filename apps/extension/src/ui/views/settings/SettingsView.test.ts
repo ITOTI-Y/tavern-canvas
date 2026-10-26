@@ -6,7 +6,6 @@ import { createI18n } from "vue-i18n";
 
 import { PORTAL_TARGET_KEY } from "../../contracts/portal_keys.js";
 import type {
-  MigrationSnapshot,
   ProfileConnectionTestResult,
   ProfilesCapability,
   ProviderProfileSummary,
@@ -63,14 +62,6 @@ const PROFILE: ProviderProfileSummary = {
   updated_at: "2026-01-01T00:00:00.000Z",
 };
 
-const NOT_REQUIRED_MIGRATION: MigrationSnapshot = {
-  state: "not_required",
-  counts: {},
-  warnings: [],
-  failure_reason: null,
-  failure_message: null,
-};
-
 function build_state(overrides: Partial<StudioState> = {}): StudioState {
   return {
     route: "settings",
@@ -101,7 +92,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     diagnostics: {
       snapshot: null,
       timeline: [],
-      migration: NOT_REQUIRED_MIGRATION,
       connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
@@ -110,7 +100,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       vocabulary_update_channel: "bundled",
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
-      migration_retry_command: IDLE_COMMAND_STATE,
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],
@@ -465,7 +454,6 @@ describe("SettingsView gateway settings", () => {
           vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
-          migration_retry_command: IDLE_COMMAND_STATE,
         },
       }),
       build_controller(create_unavailable_capabilities()),
@@ -490,7 +478,6 @@ describe("SettingsView gateway settings", () => {
           vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
-          migration_retry_command: IDLE_COMMAND_STATE,
         },
       }),
       build_controller(create_unavailable_capabilities()),
@@ -511,7 +498,6 @@ describe("SettingsView gateway settings", () => {
           vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
-          migration_retry_command: IDLE_COMMAND_STATE,
         },
       }),
       build_controller(create_unavailable_capabilities()),
@@ -532,7 +518,6 @@ describe("SettingsView gateway settings", () => {
           vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
           update_command: IDLE_COMMAND_STATE,
-          migration_retry_command: IDLE_COMMAND_STATE,
         },
       }),
       build_controller(create_unavailable_capabilities()),
@@ -897,178 +882,5 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     expect(imported).toHaveLength(1);
     expect(wrapper.text()).toContain("Importing merges records");
     expect(wrapper.text()).toContain("never deletes existing data");
-  });
-});
-
-describe("SettingsView data settings: migration retry/report", () => {
-  it("retries migration through the controller and reflects the resulting state", async () => {
-    const capabilities = create_unavailable_capabilities();
-    let retried = false;
-    const migration = {
-      ...capabilities.migration,
-      load: () => Promise.resolve(NOT_REQUIRED_MIGRATION),
-      retry: () => {
-        retried = true;
-        const snapshot: MigrationSnapshot = {
-          state: "completed",
-          counts: { provider_profiles: 1 },
-          warnings: [],
-          failure_reason: null,
-          failure_message: null,
-        };
-        return Promise.resolve(snapshot);
-      },
-    };
-    const controller = build_controller({ ...capabilities, migration });
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    const section = wrapper.get('[data-testid="data-settings"]');
-    const retry_button = section.findAll("button").find((b) => b.text() === "Retry migration");
-    await retry_button?.trigger("click");
-    await nextTick();
-    await nextTick();
-
-    expect(retried).toBe(true);
-    expect(
-      section.get('[data-testid="manual-cleanup-action"]').attributes("disabled"),
-    ).toBeUndefined();
-  });
-
-  it("toggles a read-only migration report inline", async () => {
-    const { wrapper } = mount_view(
-      build_state(),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const section = wrapper.get('[data-testid="data-settings"]');
-    const report_button = section
-      .findAll("button")
-      .find((b) => b.text() === "View migration report");
-    await report_button?.trigger("click");
-    await nextTick();
-    expect(section.find('[data-testid="migration-status"]').exists()).toBe(true);
-  });
-});
-
-describe("SettingsView manual legacy cleanup", () => {
-  it("is locked until migration is completed, showing record counts and an unavailable byte estimate", () => {
-    const { wrapper } = mount_view(
-      build_state(),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const section = wrapper.get('[data-testid="manual-cleanup"]');
-    expect(
-      section.get('[data-testid="manual-cleanup-action"]').attributes("disabled"),
-    ).toBeDefined();
-    expect(section.find('[data-testid="cleanup-locked"]').exists()).toBe(true);
-    expect(section.text()).toContain("Size estimate is unavailable");
-  });
-
-  it("shows non-fabricated record counts once migration data exists", () => {
-    const snapshot: MigrationSnapshot = {
-      state: "completed",
-      counts: { provider_profiles: 2, gallery_image_records: 5 },
-      warnings: [],
-      failure_reason: null,
-      failure_message: null,
-    };
-    const { wrapper } = mount_view(
-      build_state({
-        diagnostics: {
-          snapshot: null,
-          timeline: [],
-          migration: snapshot,
-          connection_test_command: IDLE_COMMAND_STATE,
-          support_bundle_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const section = wrapper.get('[data-testid="manual-cleanup"]');
-    expect(section.text()).toContain("7 records");
-    expect(
-      section.get('[data-testid="manual-cleanup-action"]').attributes("disabled"),
-    ).toBeUndefined();
-  });
-
-  it("requires the exact typed confirmation phrase before calling the destructive capability", async () => {
-    const capabilities = create_unavailable_capabilities();
-    let cleanup_confirmation: string | null = null;
-    const completed: MigrationSnapshot = {
-      state: "completed",
-      counts: { provider_profiles: 1 },
-      warnings: [],
-      failure_reason: null,
-      failure_message: null,
-    };
-    const migration = {
-      ...capabilities.migration,
-      load: () => Promise.resolve(completed),
-      confirm_legacy_cleanup: (text: string) => {
-        cleanup_confirmation = text;
-        return Promise.resolve();
-      },
-    };
-    const controller = build_controller({ ...capabilities, migration });
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    const section = wrapper.get('[data-testid="manual-cleanup"]');
-    await section.get('[data-testid="manual-cleanup-action"]').trigger("click");
-    await nextTick();
-
-    const confirm_input = document.querySelector(
-      '[data-testid="cleanup-confirm-input"]',
-    ) as HTMLInputElement;
-    expect(confirm_input).not.toBeNull();
-    const confirm_button = document.querySelector(
-      '[role="dialog"] button[aria-label="Delete legacy data"]',
-    ) as HTMLButtonElement;
-    expect(confirm_button).not.toBeNull();
-
-    confirm_input.value = "delete legacy data";
-    confirm_input.dispatchEvent(new Event("input"));
-    await nextTick();
-    expect(confirm_button.disabled).toBe(true);
-    confirm_button.click();
-    await nextTick();
-    await nextTick();
-    expect(cleanup_confirmation).toBeNull();
-
-    confirm_input.value = "DELETE LEGACY DATA";
-    confirm_input.dispatchEvent(new Event("input"));
-    await nextTick();
-    expect(confirm_button.disabled).toBe(false);
-    confirm_button.click();
-    await nextTick();
-    await nextTick();
-    await nextTick();
-
-    expect(cleanup_confirmation).toBe("DELETE LEGACY DATA");
-  });
-
-  it("never renders prompt text, message content, or secrets anywhere in the cleanup flow", async () => {
-    const { wrapper } = mount_view(
-      build_state({
-        diagnostics: {
-          snapshot: null,
-          timeline: [],
-          migration: {
-            state: "completed",
-            counts: { provider_profiles: 1 },
-            warnings: [],
-            failure_reason: null,
-            failure_message: null,
-          },
-          connection_test_command: IDLE_COMMAND_STATE,
-          support_bundle_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    await wrapper.get('[data-testid="manual-cleanup-action"]').trigger("click");
-    await nextTick();
-    const html = wrapper.html();
-    expect(html).not.toContain(SECRET_TOKEN_VALUE);
-    expect(html).not.toContain(SECRET_PROMPT);
-    expect(html).not.toContain(SECRET_MESSAGE_CONTENT);
   });
 });

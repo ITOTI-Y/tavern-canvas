@@ -1,6 +1,4 @@
-import type { SecretCredentialKind } from "@tavern-canvas/v2-migration";
-
-import type { SecretDestinationPort } from "../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../host/secret_destination.js";
 import {
   bind_sillytavern_fetch,
   clone_request_headers,
@@ -34,7 +32,7 @@ export class SillyTavernSecretDestination implements SecretDestinationPort {
     this.#fetch = bind_sillytavern_fetch(fetch_);
   }
 
-  supports(_credential_kind: SecretCredentialKind): boolean {
+  supports(_credential_kind: string): boolean {
     return true;
   }
 

@@ -32,7 +32,7 @@ const ALL_HOST_SPEC_MARKERS = [
   "full_standard_host",
   "full_tauri_host",
   "full_gateway",
-  "migration_and_update",
+  "vocabulary_update",
   "security_boundaries",
 ];
 const wants_all_host =
@@ -78,7 +78,7 @@ export default defineConfig({
     {
       name: "all_host",
       testMatch:
-        /(full_standard_host|full_tauri_host|full_gateway|migration_and_update|security_boundaries)\.spec\.ts$/u,
+        /(full_standard_host|full_tauri_host|full_gateway|vocabulary_update|security_boundaries)\.spec\.ts$/u,
       use: { ...devices["Desktop Chrome"], baseURL: ALL_HOST_HARNESS_URL },
     },
   ],

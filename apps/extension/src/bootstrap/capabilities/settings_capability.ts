@@ -4,7 +4,7 @@ import {
 } from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
 
-import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../../host/secret_destination.js";
 import type { SillyTavernSettings } from "../../storage/sillytavern_settings.js";
 import type {
   BrowserSecretVaultPort,

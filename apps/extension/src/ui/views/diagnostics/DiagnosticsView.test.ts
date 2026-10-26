@@ -8,7 +8,6 @@ import type {
   ConnectionTestResult,
   DiagnosticsCapability,
   DiagnosticsSnapshot,
-  MigrationSnapshot,
   StudioCapabilities,
   SupportBundle,
   TaskTimelineEntry,
@@ -106,7 +105,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     diagnostics: {
       snapshot: SNAPSHOT,
       timeline: [],
-      migration: null,
       connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
@@ -136,7 +134,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       vocabulary_update_channel: "bundled",
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
-      migration_retry_command: IDLE_COMMAND_STATE,
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],
@@ -237,7 +234,6 @@ describe("DiagnosticsView versions", () => {
         diagnostics: {
           snapshot: null,
           timeline: [],
-          migration: null,
           connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
@@ -349,7 +345,6 @@ describe("DiagnosticsView task timeline", () => {
         diagnostics: {
           snapshot: SNAPSHOT,
           timeline: [],
-          migration: null,
           connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
@@ -357,7 +352,7 @@ describe("DiagnosticsView task timeline", () => {
       build_controller(create_unavailable_capabilities()),
     );
     const timeline = wrapper.get('[data-testid="task-timeline"]');
-    expect(timeline.text()).toContain("Generation, migration, and sync activity");
+    expect(timeline.text()).toContain("Generation and sync activity");
     expect(timeline.findAll('[data-testid="timeline-row"]')).toHaveLength(0);
   });
 
@@ -367,7 +362,6 @@ describe("DiagnosticsView task timeline", () => {
         diagnostics: {
           snapshot: SNAPSHOT,
           timeline: build_timeline(1000),
-          migration: null,
           connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
@@ -415,82 +409,6 @@ describe("DiagnosticsView task timeline", () => {
   });
 });
 
-describe("DiagnosticsView migration journal", () => {
-  it("shows the migration state and record counts", () => {
-    const snapshot: MigrationSnapshot = {
-      state: "ready_to_switch",
-      counts: { provider_profiles: 2, gallery_image_records: 40 },
-      warnings: ["A minor field could not be converted and was skipped."],
-      failure_reason: null,
-      failure_message: null,
-    };
-    const { wrapper } = mount_view(
-      build_state({
-        diagnostics: {
-          snapshot: SNAPSHOT,
-          timeline: [],
-          migration: snapshot,
-          connection_test_command: IDLE_COMMAND_STATE,
-          support_bundle_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const section = wrapper.get('[data-testid="migration-status"]');
-    expect(section.text()).toContain("Ready to switch");
-    expect(section.text()).toContain("42");
-    expect(section.text()).toContain("A minor field could not be converted");
-  });
-
-  it("shows the failure reason when migration failed", () => {
-    const snapshot: MigrationSnapshot = {
-      state: "failed",
-      counts: {},
-      warnings: [],
-      failure_reason: "hash_mismatch",
-      failure_message: "checksum did not match",
-    };
-    const { wrapper } = mount_view(
-      build_state({
-        diagnostics: {
-          snapshot: SNAPSHOT,
-          timeline: [],
-          migration: snapshot,
-          connection_test_command: IDLE_COMMAND_STATE,
-          support_bundle_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const section = wrapper.get('[data-testid="migration-status"]');
-    expect(section.text()).toContain("Migration failed");
-    expect(section.text()).toContain("does not match its expected checksum");
-  });
-
-  it("shows a completed migration state", () => {
-    const snapshot: MigrationSnapshot = {
-      state: "completed",
-      counts: { provider_profiles: 1 },
-      warnings: [],
-      failure_reason: null,
-      failure_message: null,
-    };
-    const { wrapper } = mount_view(
-      build_state({
-        diagnostics: {
-          snapshot: SNAPSHOT,
-          timeline: [],
-          migration: snapshot,
-          connection_test_command: IDLE_COMMAND_STATE,
-          support_bundle_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    expect(wrapper.get('[data-testid="migration-status"]').text()).toContain("Migration completed");
-  });
-});
-
 describe("DiagnosticsView storage usage", () => {
   it("shows the usage estimate and quota", () => {
     const { wrapper } = mount_view(
@@ -507,7 +425,6 @@ describe("DiagnosticsView storage usage", () => {
         diagnostics: {
           snapshot: { ...SNAPSHOT, storage_quota_bytes: null },
           timeline: [],
-          migration: null,
           connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
@@ -527,7 +444,6 @@ describe("DiagnosticsView storage usage", () => {
             storage_quota_bytes: 10_000_000,
           },
           timeline: [],
-          migration: null,
           connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },

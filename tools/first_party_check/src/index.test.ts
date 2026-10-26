@@ -140,14 +140,10 @@ describe("scan_first_party", () => {
     );
   });
 
-  it("allows user-content and legacy migration fixtures", async () => {
+  it("allows user-content fixtures", async () => {
     await write_fixture(
       "tests/fixtures/user_content/message.json",
       '{"message":"✅ <script src=\\"https://user.invalid/x.js\\"></script>"}',
-    );
-    await write_fixture(
-      "tools/v2_migration/fixtures/legacy.js",
-      'import "../../../index.js"; const legacy = "✅";',
     );
 
     await expect(

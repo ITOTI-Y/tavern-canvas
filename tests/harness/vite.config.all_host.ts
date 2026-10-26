@@ -38,9 +38,6 @@ export default defineConfig({
       "@tavern-canvas/vocabulary": fileURLToPath(
         new URL("../../packages/vocabulary/src/index.ts", import.meta.url),
       ),
-      "@tavern-canvas/v2-migration": fileURLToPath(
-        new URL("../../tools/v2_migration/src/index.ts", import.meta.url),
-      ),
       vue: fileURLToPath(new URL("../../apps/extension/node_modules/vue", import.meta.url)),
     },
   },

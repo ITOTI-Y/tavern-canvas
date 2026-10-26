@@ -2,7 +2,7 @@ import { derive_gateway_credential_reference } from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../../host/secret_destination.js";
 import { create_sillytavern_settings } from "../../storage/sillytavern_settings.js";
 import type {
   BrowserSecretVaultPort,

@@ -20,7 +20,6 @@ export interface HostEnvironmentOptions {
   /** Whether the host reveals stored credentials (SillyTavern's `allowKeysExposure`). */
   readonly secrets_readable: boolean;
   /** Seeded under `extension_settings["st-chatu8"]` so the migration capability sees a v2 install. */
-  readonly legacy_settings: unknown;
   readonly active_provider_profile_id: string;
   readonly gateway_endpoint: string | null;
   readonly http_acknowledgments: Readonly<Record<string, string>>;
@@ -181,9 +180,6 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       },
     },
   };
-  if (options.legacy_settings !== undefined) {
-    extension_settings["st-chatu8"] = options.legacy_settings;
-  }
 
   function emit(event_name: string, ...arguments_: readonly unknown[]): void {
     for (const listener of [...(listeners.get(event_name) ?? [])]) {

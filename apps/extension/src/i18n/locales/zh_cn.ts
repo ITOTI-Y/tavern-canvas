@@ -56,8 +56,6 @@ const common = {
   },
   labels: {
     name: "名称",
-    description: "描述",
-    status: "状态",
   },
   inspector: {
     title: "检查器",
@@ -488,18 +486,13 @@ const diagnostics = {
   },
   task_timeline: {
     title: "任务时间线",
-    empty_description: "生成、迁移与同步活动会在运行时显示在这里。",
+    empty_description: "生成与同步活动会在运行时显示在这里。",
     error_code_label: "错误代码",
     time_label: "时间",
     event_label: "事件",
     module_label: "模块",
     provider_label: "Provider",
     count_label: "{n} 条事件 | {n} 条事件",
-  },
-  migration_status: {
-    title: "迁移状态",
-    counts_label: "记录数量",
-    warnings_label: "警告",
   },
   storage_usage: {
     title: "存储",
@@ -691,41 +684,7 @@ const settings = {
     archive_export_action: "导出归档",
     archive_import_action: "导入归档",
     archive_import_description: "导入会将归档中的记录合并到当前命名空间，不会删除已有数据。",
-    migration_retry_action: "重试迁移",
-    migration_report_action: "查看迁移报告",
-    manual_cleanup: {
-      title: "清理旧版 v2 数据",
-      description: "仅在迁移或归档验证通过后可用，此操作永远不会自动执行。",
-      record_summary: "{count} 条记录，共 {bytes} | {count} 条记录，共 {bytes}",
-      confirm_action: "删除旧版数据",
-      bytes_unavailable: "暂无法估算大小。",
-      unlock_hint: "先完成一次迁移或导出一次归档，即可启用此操作。",
-      confirm_phrase: "DELETE LEGACY DATA",
-    },
   },
-};
-
-const migration = {
-  journal: {
-    inventory: "正在扫描旧版数据",
-    copying: "正在复制记录",
-    verifying: "正在校验已复制的数据",
-    ready_to_switch: "已准备好切换到新命名空间",
-    completed: "迁移已完成",
-    failed: "迁移失败",
-    not_required: "无需迁移",
-  },
-  failure_reasons: {
-    invalid_source: "旧版源数据无效或已损坏。",
-    unknown_setting_path: "无法识别某个旧版设置路径。",
-    converter_error: "有一条记录转换失败：{message}",
-    missing_blob: "旧版数据引用的某个图片文件缺失。",
-    hash_mismatch: "某个已复制文件与预期校验值不一致。",
-    count_mismatch: "已复制的记录数与源数据不一致。",
-    secret_transfer_blocked: "provider token 未能安全迁移。",
-    switch_failed: "复制完成后切换到新命名空间失败。",
-  },
-  record_count: "{n} 条记录 | {n} 条记录",
 };
 
 const errors = {
@@ -742,12 +701,6 @@ const confirmations = {
   destructive: {
     default_confirm_action: "删除",
     default_cancel_action: "取消",
-    irreversible_note: "此操作无法撤销。",
-  },
-  typed_confirmation: {
-    label: "输入 {phrase} 以确认",
-    placeholder: "输入确认短语",
-    mismatch: "输入的内容与 {phrase} 不一致。",
   },
   discard_unsaved: {
     title: "放弃未保存的修改？",
@@ -769,7 +722,6 @@ export const zh_cn_messages = {
   gallery,
   diagnostics,
   settings,
-  migration,
   errors,
   confirmations,
 } satisfies LocaleMessageSchema;

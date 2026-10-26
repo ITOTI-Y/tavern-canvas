@@ -27,8 +27,6 @@ import type {
   GenerationSubmitCommand,
   KnowledgeCapability,
   LlmConnectionsCapability,
-  MigrationCapability,
-  MigrationSnapshot,
   NovelAiCapability,
   PersonasCapability,
   ProfileConnectionTestResult,
@@ -285,24 +283,6 @@ const TIMELINE: readonly TaskTimelineEntry[] = [
     error_code: "provider_unavailable",
   },
 ];
-
-const MIGRATION_SNAPSHOT: MigrationSnapshot = {
-  state: "completed",
-  counts: { messages: 128, gallery_records: 42, settings: 1 },
-  warnings: [
-    "One legacy provider profile referenced a token that could not be transferred and was skipped.",
-  ],
-  failure_reason: null,
-  failure_message: null,
-};
-
-const MIGRATION_NOT_REQUIRED: MigrationSnapshot = {
-  state: "not_required",
-  counts: {},
-  warnings: [],
-  failure_reason: null,
-  failure_message: null,
-};
 
 function build_settings(with_http_warning: boolean): TavernCanvasSettings {
   return {
@@ -991,19 +971,6 @@ function create_diagnostics_capability(): DiagnosticsCapability {
   };
 }
 
-function create_migration_capability(snapshot: MigrationSnapshot): MigrationCapability {
-  let current = snapshot;
-  return {
-    load: () => Promise.resolve(current),
-    subscribe: () => () => {},
-    retry: () => {
-      current = { ...current, state: "completed", failure_reason: null, failure_message: null };
-      return Promise.resolve(current);
-    },
-    confirm_legacy_cleanup: () => Promise.resolve(),
-  };
-}
-
 function create_settings_capability(initial: TavernCanvasSettings): SettingsCapability {
   let current = initial;
   let browser_secret_vault: SettingsSnapshot["browser_secret_vault"] = {
@@ -1095,7 +1062,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       gallery: { ...create_gallery_capability([]), load: forever_pending },
       vocabulary: { ...create_vocabulary_capability(), load: forever_pending },
       diagnostics: { ...create_diagnostics_capability(), load: forever_pending },
-      migration: { ...create_migration_capability(MIGRATION_NOT_REQUIRED), load: forever_pending },
       novelai: create_novelai_capability(),
       settings: { ...create_settings_capability(build_settings(false)), load: forever_pending },
     };
@@ -1143,10 +1109,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
         ...create_diagnostics_capability(),
         load: () => always_rejects("diagnostics_unavailable"),
       },
-      migration: {
-        ...create_migration_capability(MIGRATION_NOT_REQUIRED),
-        load: () => always_rejects("migration_unavailable"),
-      },
       novelai: create_novelai_capability(),
       settings: {
         ...create_settings_capability(build_settings(false)),
@@ -1167,7 +1129,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       gallery: create_gallery_capability([]),
       vocabulary: create_vocabulary_capability(),
       diagnostics: create_diagnostics_capability(),
-      migration: create_migration_capability(MIGRATION_NOT_REQUIRED),
       novelai: create_novelai_capability(),
       settings: create_settings_capability(build_settings(false)),
     };
@@ -1197,10 +1158,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
         ...create_diagnostics_capability(),
         load: () => always_rejects("diagnostics_unavailable"),
       },
-      migration: {
-        ...create_migration_capability(MIGRATION_SNAPSHOT),
-        load: () => always_rejects("migration_unavailable"),
-      },
       novelai: create_novelai_capability(),
       settings: create_settings_capability(build_settings(true)),
     };
@@ -1223,7 +1180,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     gallery: create_gallery_capability(GALLERY_RECORDS),
     vocabulary: create_vocabulary_capability(),
     diagnostics: create_diagnostics_capability(),
-    migration: create_migration_capability(MIGRATION_SNAPSHOT),
     novelai: create_novelai_capability(),
     settings: create_settings_capability(build_settings(true)),
   };

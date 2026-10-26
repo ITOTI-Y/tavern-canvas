@@ -344,36 +344,6 @@ export interface DiagnosticsCapability {
   export_support_bundle(): Promise<SupportBundle>;
 }
 
-export type MigrationJournalStateView =
-  | "inventory"
-  | "copying"
-  | "verifying"
-  | "ready_to_switch"
-  | "completed"
-  | "failed"
-  | "not_required";
-
-export interface MigrationSnapshot {
-  readonly state: MigrationJournalStateView;
-  readonly counts: Readonly<Record<string, number>>;
-  readonly warnings: readonly string[];
-  readonly failure_reason: string | null;
-  readonly failure_message: string | null;
-}
-
-export type MigrationDomainEvent = {
-  readonly type: "state_changed";
-  readonly snapshot: MigrationSnapshot;
-};
-
-export interface MigrationCapability {
-  load(): Promise<MigrationSnapshot>;
-  subscribe(handler: (event: MigrationDomainEvent) => void): Unsubscribe;
-  retry(): Promise<MigrationSnapshot>;
-  /** UI never auto-deletes v2 data; this requires an explicit typed confirmation string. */
-  confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
-}
-
 export type VocabularyUpdateChannel = "bundled" | "remote";
 
 export interface SettingsSnapshot {
@@ -421,7 +391,6 @@ export interface StudioCapabilities {
   readonly gallery: GalleryCapability;
   readonly vocabulary: VocabularyCapability;
   readonly diagnostics: DiagnosticsCapability;
-  readonly migration: MigrationCapability;
   readonly settings: SettingsCapability;
 }
 

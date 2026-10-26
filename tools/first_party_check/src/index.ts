@@ -33,7 +33,7 @@ const SKIPPED_DIRECTORY_NAMES = new Set([
   "playwright-report",
   "test-results",
 ]);
-const ALLOWED_FIXTURE_PATHS = ["tests/fixtures/user_content/", "tools/v2_migration/fixtures/"];
+const ALLOWED_FIXTURE_PATHS = ["tests/fixtures/user_content/"];
 // Vendored tokenizer data pinned by SOURCE.json checksums; never hand-edit it. Its vocabulary spans
 // the full Unicode range, which the first-party-emoji rule matches.
 const ALLOWED_VENDORED_DATA_PATHS = ["apps/extension/public/tokenizers/novelai/"];

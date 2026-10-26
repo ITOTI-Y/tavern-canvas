@@ -8,7 +8,7 @@ import {
 import { ProviderAdapterError, type ProviderAdapter } from "@tavern-canvas/providers";
 import type { ProviderProfile, ProviderProfileRepository } from "@tavern-canvas/storage";
 
-import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../../host/secret_destination.js";
 import type {
   ProfileConnectionTestResult,
   ProfilesCapability,

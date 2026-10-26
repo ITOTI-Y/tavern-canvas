@@ -74,8 +74,6 @@ const { t } = useI18n();
 
     <DataSettings
       :vocabulary-update-channel="state.settings.vocabulary_update_channel"
-      :migration="state.diagnostics.migration"
-      :migration-retry-command="state.settings.migration_retry_command"
       :controller="controller"
     />
   </div>

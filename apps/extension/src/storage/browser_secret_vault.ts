@@ -1,5 +1,5 @@
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
-import type { SecretDestinationPort } from "../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../host/secret_destination.js";
 
 export const BROWSER_SECRET_DATABASE_NAME = "config_tavern_canvas_browser_secrets" as const;
 export const BROWSER_SECRET_DATABASE_VERSION = 1 as const;

@@ -10,9 +10,7 @@ import type {
   GenerationCapability,
   KnowledgeCapability,
   LlmConnectionsCapability,
-  MigrationCapability,
   PersonasCapability,
-  MigrationSnapshot,
   NovelAiCapability,
   ProfilesCapability,
   PromptPresetsCapability,
@@ -52,14 +50,6 @@ const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
   protocol_version: null,
   storage_usage_bytes: null,
   storage_quota_bytes: null,
-};
-
-const NOT_REQUIRED_MIGRATION_SNAPSHOT: MigrationSnapshot = {
-  state: "not_required",
-  counts: {},
-  warnings: [],
-  failure_reason: null,
-  failure_message: null,
 };
 
 const EMPTY_SETTINGS: TavernCanvasSettings = {
@@ -177,13 +167,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     export_support_bundle: unavailable_command,
   };
 
-  const migration: MigrationCapability = {
-    load: () => Promise.resolve(NOT_REQUIRED_MIGRATION_SNAPSHOT),
-    subscribe: no_subscription,
-    retry: unavailable_command,
-    confirm_legacy_cleanup: unavailable_command,
-  };
-
   const settings: SettingsCapability = {
     load: () =>
       Promise.resolve({
@@ -219,7 +202,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     gallery,
     vocabulary,
     diagnostics,
-    migration,
     settings,
   };
 }

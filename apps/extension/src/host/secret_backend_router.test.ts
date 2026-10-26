@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import type { SecretDestinationPort } from "../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../host/secret_destination.js";
 import type { BrowserSecretVaultPort } from "../storage/browser_secret_vault.js";
 import { SecretBackendRouter } from "./secret_backend_router.js";
 import type { SecretResolverPort } from "./sillytavern_secret_resolver.js";

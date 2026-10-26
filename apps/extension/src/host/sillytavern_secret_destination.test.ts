@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { transfer_secrets } from "../migration/secret_transfer.js";
 import {
   create_sillytavern_secret_destination,
   SillyTavernSecretDestination,
@@ -137,48 +136,6 @@ describe("SillyTavernSecretDestination", () => {
       false,
     );
   });
-
-  it("round-trips store -> probe-retrieve through migration's real transfer_secrets contract, with the plaintext never surfacing again", async () => {
-    const store = new Map<string, string>();
-    const fetch_ = vi.fn<SillyTavernFetch>(async (route, init) => {
-      const body = JSON.parse(init.body) as { key?: string; value?: string };
-      if (route === "/api/secrets/write" && body.key && body.value) {
-        store.set(body.key, body.value);
-        return { ok: true, status: 200, json: async () => ({ id: "secret-uuid" }) };
-      }
-      if (route === "/api/secrets/view") {
-        return { ok: true, status: 200, json: async () => Object.fromEntries(store) };
-      }
-      throw new Error(`Unexpected call to ${route}`);
-    });
-    const destination = new SillyTavernSecretDestination(context(), fetch_);
-
-    const summary = await transfer_secrets(
-      [
-        {
-          operation: "secret_transfer",
-          credential_kind: "novelai_token",
-          source_path: "novelai_profiles.default.novelaiApi",
-          provider_profile_id: "profile-1",
-          plaintext_value: "sk-secret-value",
-        },
-      ],
-      "ns",
-      destination,
-    );
-
-    expect(summary.blocked).toBe(false);
-    expect(summary.records).toEqual([
-      {
-        credential_kind: "novelai_token",
-        provider_profile_id: "profile-1",
-        source_path: "novelai_profiles.default.novelaiApi",
-        status: "transferred",
-        reference: "tavern_canvas:ns:profile-1:novelai_token",
-      },
-    ]);
-    expect(JSON.stringify(summary)).not.toContain("sk-secret-value");
-  });
 });
 
 describe("create_sillytavern_secret_destination", () => {
@@ -186,30 +143,6 @@ describe("create_sillytavern_secret_destination", () => {
     expect(create_sillytavern_secret_destination(undefined, vi.fn())).toBeNull();
     expect(create_sillytavern_secret_destination({}, vi.fn())).toBeNull();
     expect(create_sillytavern_secret_destination(context(), "not a function")).toBeNull();
-  });
-
-  it("blocks migration end-to-end with a user-actionable reason when unsupported", async () => {
-    const destination = create_sillytavern_secret_destination(undefined, vi.fn());
-
-    const summary = await transfer_secrets(
-      [
-        {
-          operation: "secret_transfer",
-          credential_kind: "novelai_token",
-          source_path: "novelai_profiles.default.novelaiApi",
-          provider_profile_id: "profile-1",
-          plaintext_value: "sk-secret-value",
-        },
-      ],
-      "ns",
-      destination,
-    );
-
-    expect(summary.blocked).toBe(true);
-    expect(summary.records[0]).toMatchObject({
-      status: "blocked",
-      reason: "no_supported_destination",
-    });
   });
 
   it("returns a working adapter when the host exposes a usable secrets context", () => {

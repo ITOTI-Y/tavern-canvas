@@ -11,7 +11,7 @@ import {
 } from "@tavern-canvas/contracts";
 import type { LlmConnection, LlmConnectionRepository } from "@tavern-canvas/storage";
 
-import type { SecretDestinationPort } from "../../migration/secret_transfer.js";
+import type { SecretDestinationPort } from "../../host/secret_destination.js";
 
 export interface LlmTransportOperation {
   /** Selects the dialect's catalog entry; two dialects can share a route string. */

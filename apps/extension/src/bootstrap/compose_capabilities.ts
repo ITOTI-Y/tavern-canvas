@@ -90,7 +90,6 @@ import {
   create_llm_connections_capability,
   create_personas_capability,
 } from "./capabilities/library_capability.js";
-import { create_migration_capability } from "./capabilities/migration_capability.js";
 import {
   VAULT_KEY_FIELD,
   adapter_profile_of,
@@ -114,8 +113,6 @@ import {
   type CapabilityResolutionRecord,
 } from "./capability_resolution.js";
 import {
-  create_legacy_image_resolver,
-  create_legacy_source,
   create_host_adapter,
   read_secret_destination,
   read_secret_resolver,
@@ -724,34 +721,6 @@ export async function compose_studio_capabilities(
     fallback.vocabulary,
   );
 
-  const migration = record(
-    "migration",
-    database === null
-      ? unavailable(STORAGE_UNAVAILABLE)
-      : settings_adapter === null
-        ? unavailable(SETTINGS_HOST_UNAVAILABLE)
-        : resolve_capability(() => {
-            const legacy_source = create_legacy_source(globals);
-            if (legacy_source === null) {
-              throw new Error(SETTINGS_HOST_UNAVAILABLE);
-            }
-            const image_resolver = create_legacy_image_resolver(globals);
-            if (image_resolver === null) {
-              throw new Error(
-                "This host exposes no same-origin fetch boundary for legacy image migration",
-              );
-            }
-            return create_migration_capability({
-              database,
-              settings: settings_adapter,
-              legacy_source,
-              image_resolver,
-              secrets,
-            });
-          }),
-    fallback.migration,
-  );
-
   const diagnostics = record(
     "diagnostics",
     resolve_capability(() =>
@@ -778,7 +747,6 @@ export async function compose_studio_capabilities(
       gallery,
       vocabulary,
       diagnostics,
-      migration,
       settings,
       llm_connections,
       novelai,

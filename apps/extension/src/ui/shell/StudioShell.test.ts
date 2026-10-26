@@ -45,7 +45,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     diagnostics: {
       snapshot: null,
       timeline: [],
-      migration: null,
       connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
@@ -54,7 +53,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       vocabulary_update_channel: null,
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
-      migration_retry_command: IDLE_COMMAND_STATE,
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],

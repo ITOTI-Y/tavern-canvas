@@ -7,7 +7,7 @@ export type MediaState = (typeof MEDIA_STATES)[number];
 const MEDIA_ASSET_KINDS = ["image", "video"] as const;
 export type MediaAssetKind = (typeof MEDIA_ASSET_KINDS)[number];
 
-/** Runtime media assets are validated local object/data URIs, never remote addresses or raw `.chatu8` containers (parsed only in `@tavern-canvas/v2-migration`). */
+/** Runtime media assets are validated local object/data URIs, never remote addresses. */
 const SAFE_ASSET_URL_PATTERN = /^(?:blob:|data:image\/|data:video\/)/u;
 
 export const MediaAssetSchema = z.strictObject({

@@ -25,7 +25,6 @@ import type {
   GenerationSubmitCommand,
   KnowledgeDomainEvent,
   LlmConnectionsDomainEvent,
-  MigrationDomainEvent,
   PersonasDomainEvent,
   ProfileConnectionTestResult,
   ProfilesDomainEvent,
@@ -99,7 +98,6 @@ export interface StudioController {
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void>;
   test_diagnostics_connection(): Promise<void>;
   export_support_bundle(): Promise<void>;
-  retry_migration(): Promise<void>;
 
   load_diagnostics_timeline(): Promise<void>;
   save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary>;
@@ -125,7 +123,6 @@ export interface StudioController {
   cancel_vocabulary_import(): void;
   export_settings_archive(): Promise<Blob>;
   import_settings_archive(archive: Blob): Promise<void>;
-  confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
 
   set_active_asset_category(category: AssetCategory): void;
   save_asset(category: AssetCategory, asset: Omit<AssetRecordSummary, "updated_at">): Promise<void>;
@@ -294,7 +291,6 @@ function create_initial_state(
     diagnostics: {
       snapshot: null,
       timeline: [],
-      migration: null,
       connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
@@ -303,7 +299,6 @@ function create_initial_state(
       vocabulary_update_channel: null,
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
-      migration_retry_command: IDLE_COMMAND_STATE,
     },
     inspector: {
       collapsed: false,
@@ -579,13 +574,6 @@ class StudioControllerImpl implements StudioController {
     this.#patch_diagnostics({ timeline: [...this.#state.diagnostics.timeline, event.entry] });
   }
 
-  #apply_migration_event(event: MigrationDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_diagnostics({ migration: event.snapshot });
-  }
-
   #apply_settings_event(event: SettingsDomainEvent): void {
     if (this.#stopped) {
       return;
@@ -632,9 +620,6 @@ class StudioControllerImpl implements StudioController {
       }),
       this.#capabilities.diagnostics.subscribe((event) => {
         this.#apply_diagnostics_event(event);
-      }),
-      this.#capabilities.migration.subscribe((event) => {
-        this.#apply_migration_event(event);
       }),
       this.#capabilities.settings.subscribe((event) => {
         this.#apply_settings_event(event);
@@ -710,13 +695,6 @@ class StudioControllerImpl implements StudioController {
         () => this.#capabilities.diagnostics.load(),
         (snapshot) => {
           this.#patch_diagnostics({ snapshot });
-        },
-      ),
-      this.#load_slice(
-        "migration",
-        () => this.#capabilities.migration.load(),
-        (snapshot) => {
-          this.#patch_diagnostics({ migration: snapshot });
         },
       ),
       this.#load_slice(
@@ -957,20 +935,6 @@ class StudioControllerImpl implements StudioController {
     );
   }
 
-  retry_migration(): Promise<void> {
-    return run_command(
-      () => this.#state.settings.migration_retry_command,
-      (next) => {
-        this.#patch_settings({ migration_retry_command: next });
-      },
-      async () => {
-        const snapshot = await this.#capabilities.migration.retry();
-        this.#patch_diagnostics({ migration: snapshot });
-        return snapshot;
-      },
-    );
-  }
-
   async load_diagnostics_timeline(): Promise<void> {
     const timeline = await this.#capabilities.diagnostics.load_timeline();
     if (this.#stopped) {
@@ -1105,18 +1069,6 @@ class StudioControllerImpl implements StudioController {
 
   import_settings_archive(archive: Blob): Promise<void> {
     return this.#capabilities.settings.import_archive(archive);
-  }
-
-  confirm_legacy_cleanup(confirmation_text: string): Promise<void> {
-    return this.#capabilities.migration
-      .confirm_legacy_cleanup(confirmation_text)
-      .then(() => this.#capabilities.migration.load())
-      .then((snapshot) => {
-        if (this.#stopped) {
-          return;
-        }
-        this.#patch_diagnostics({ migration: snapshot });
-      });
   }
 
   set_active_asset_category(category: AssetCategory): void {

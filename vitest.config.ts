@@ -24,9 +24,6 @@ const workspace_alias = {
   "@tavern-canvas/vocabulary-builder": fileURLToPath(
     new URL("./tools/vocabulary_builder/src/index.ts", import.meta.url),
   ),
-  "@tavern-canvas/v2-migration": fileURLToPath(
-    new URL("./tools/v2_migration/src/index.ts", import.meta.url),
-  ),
 };
 
 export default defineConfig({
