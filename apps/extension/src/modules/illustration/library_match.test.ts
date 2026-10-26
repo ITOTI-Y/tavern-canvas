@@ -4,8 +4,8 @@ import { match_library, mentions, type SlotLibrary } from "./library_match.js";
 
 const LIBRARY: SlotLibrary = {
   characters: [
-    { id: "c1", name: "Ann", appearance: "red hair" },
-    { id: "c2", name: "小雪", appearance: "white hair" },
+    { id: "c1", name: "Ann", appearance: "red hair", excluded_traits: "" },
+    { id: "c2", name: "小雪", appearance: "white hair", excluded_traits: "" },
   ],
   outfits: [
     { id: "o1", name: "School uniform", description: "serafuku", character_id: "c1" },

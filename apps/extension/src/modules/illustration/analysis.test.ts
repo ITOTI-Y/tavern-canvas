@@ -27,7 +27,7 @@ describe("build_analysis_input", () => {
 
   it("names library characters and outfits so the model leaves their looks out", () => {
     const input = build_analysis_input([{ index: 0, text: "Hi.", line: 0 }], 1, {
-      characters: [{ id: "c1", name: "Seraphina", appearance: "pink hair" }],
+      characters: [{ id: "c1", name: "Seraphina", appearance: "pink hair", excluded_traits: "" }],
       outfits: [{ id: "o1", name: "Forest cloak", description: "green cloak", character_id: "c1" }],
     });
 

@@ -255,6 +255,9 @@ const assets = {
     add_action: "Add character",
     role_label: "Role",
     appearance_label: "Appearance",
+    excluded_traits_label: "Excluded traits",
+    excluded_traits_hint:
+      "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",
     context_notes_label: "Character context",
     world_info_reference_label: "World Info reference",
     world_info_reference_hint: "A note naming the World Info book or entry this links to.",

@@ -34,6 +34,7 @@ export async function load_slot_prompt_context(
         id: record.id,
         name: record.display_name,
         appearance: text(record.payload.appearance),
+        excluded_traits: text(record.payload.excluded_traits),
       })),
       outfits: catalog.outfit.map((record) => ({
         id: record.id,

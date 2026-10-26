@@ -99,6 +99,7 @@ interface CharacterDraft {
   readonly name: string;
   readonly subject: Subject | null;
   readonly prompt: string;
+  readonly negative_prompt: string;
 }
 
 function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
@@ -117,6 +118,7 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
       name: entry.character.name,
       subject: appearance.subject ?? own.subject,
       prompt: join_prompt_parts([appearance.rest, entry.outfit?.description, own.rest]),
+      negative_prompt: entry.character.excluded_traits,
     });
   };
   for (const proposed of input.characters) {
@@ -127,7 +129,12 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
     }
     const own = split_subject(proposed.tags);
     if (own.subject !== null || own.rest !== "") {
-      drafts.push({ name: proposed.name, subject: own.subject, prompt: own.rest });
+      drafts.push({
+        name: proposed.name,
+        subject: own.subject,
+        prompt: own.rest,
+        negative_prompt: "",
+      });
     }
   }
   // Library characters the text names but the analysis left out still get their own prompt.
@@ -172,7 +179,9 @@ export function assemble_slot_prompt(input: SlotPromptInput): SlotPrompt {
     negative_prompt,
     character_prompts: drafts.flatMap((draft) => {
       const prompt = apply_preset(join_prompt_parts([draft.subject, draft.prompt]), preset);
-      return prompt === "" ? [] : [{ name: draft.name, prompt, negative_prompt: "" }];
+      return prompt === ""
+        ? []
+        : [{ name: draft.name, prompt, negative_prompt: deduplicate_tags(draft.negative_prompt) }];
     }),
   };
 }

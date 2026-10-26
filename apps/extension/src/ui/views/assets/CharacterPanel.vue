@@ -21,6 +21,12 @@ const { t } = useI18n();
 const FIELDS = computed<readonly AssetFieldSpec[]>(() => [
   { key: "role_label", label: t("assets.characters.role_label"), kind: "text" },
   { key: "appearance", label: t("assets.characters.appearance_label"), kind: "textarea" },
+  {
+    key: "excluded_traits",
+    label: t("assets.characters.excluded_traits_label"),
+    kind: "text",
+    hint: t("assets.characters.excluded_traits_hint"),
+  },
   { key: "context_notes", label: t("assets.characters.context_notes_label"), kind: "textarea" },
   {
     key: "world_info_reference",

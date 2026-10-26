@@ -2,6 +2,8 @@ export interface LibraryCharacter {
   readonly id: string;
   readonly name: string;
   readonly appearance: string;
+  /** Tags kept off this character, sent as its own negative prompt. */
+  readonly excluded_traits: string;
 }
 
 export interface LibraryOutfit {

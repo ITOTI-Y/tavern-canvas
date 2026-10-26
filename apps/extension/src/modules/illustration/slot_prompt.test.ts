@@ -9,7 +9,12 @@ const PRESET: SlotPromptPreset = {
   regex_rules: [{ id: "r1", pattern: "night", flags: "g", replacement: "night sky" }],
 };
 
-const ALICE = { id: "c1", name: "Alice", appearance: "1girl, silver hair, blue eyes" };
+const ALICE = {
+  id: "c1",
+  name: "Alice",
+  appearance: "1girl, silver hair, blue eyes",
+  excluded_traits: "beard, beard",
+};
 const GALA = { id: "o1", name: "Gala", description: "red gown", character_id: "c1" };
 
 describe("assemble_slot_prompt", () => {
@@ -45,7 +50,7 @@ describe("assemble_slot_prompt", () => {
       {
         name: "Alice",
         prompt: "girl, silver hair, blue eyes, red gown, standing, wooden door, smile",
-        negative_prompt: "",
+        negative_prompt: "beard",
       },
     ]);
   });
