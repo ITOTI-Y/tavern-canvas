@@ -63,13 +63,17 @@ async function fetch_published_model_ids(
 export function create_novelai_service(deps: NovelAiServiceDeps): NovelAiService {
   let published_ids: readonly string[] = NOVELAI_PUBLISHED_MODEL_IDS;
   let last_account: NovelAiAccountStatus | null = null;
+  let account_attempted = false;
+
+  async function get_account(signal: AbortSignal): Promise<NovelAiAccountStatus> {
+    account_attempted = true;
+    const { fetch_novelai_account } = await import("@tavern-canvas/providers/adapters");
+    last_account = await fetch_novelai_account(deps.transport(), signal);
+    return last_account;
+  }
 
   return {
-    async get_account(signal) {
-      const { fetch_novelai_account } = await import("@tavern-canvas/providers/adapters");
-      last_account = await fetch_novelai_account(deps.transport(), signal);
-      return last_account;
-    },
+    get_account,
     list_models: () => list_novelai_models(published_ids),
     async refresh_models(signal) {
       const failures: string[] = [];
@@ -92,6 +96,10 @@ export function create_novelai_service(deps: NovelAiServiceDeps): NovelAiService
       );
     },
     async estimate_cost(request, signal) {
+      // Free Opus generations only show once the tier is known; one failed lookup is not retried.
+      if (!account_attempted) {
+        await get_account(signal).catch(() => undefined);
+      }
       const unencoded_vibes = await count_unencoded_vibes(deps.preparation, request, signal);
       let source_pixels: number | undefined;
       if (request.action === "upscale") {

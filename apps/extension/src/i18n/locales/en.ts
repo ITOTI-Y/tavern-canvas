@@ -500,7 +500,7 @@ const settings = {
     title: "NovelAI defaults",
     refresh_account: "Refresh account",
     account_unreachable:
-      "This host blocks NovelAI's account API, so the Anlas balance cannot be shown here. Image generation is not affected.",
+      "NovelAI's account API could not be reached (network failure or a blocked cross-origin request), so the Anlas balance is unknown.",
     account_open_site: "Check it on NovelAI",
     account_summary: "{tier} · {anlas} Anlas · renews {expires}",
     model_label: "Model",

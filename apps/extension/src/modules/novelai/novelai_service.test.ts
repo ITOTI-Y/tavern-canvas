@@ -93,16 +93,27 @@ describe("NovelAI service", () => {
     expect(transport.operations[0]).toMatchObject({ route: "/user/subscription", method: "GET" });
   });
 
-  it("applies the Opus free image only after the account is known", async () => {
-    const { service: novelai } = service();
-    await expect(novelai.estimate_cost(generate, signal)).resolves.toMatchObject({
-      anlas: 26,
-      opus_free: false,
-    });
-    await novelai.get_account(signal);
+  it("loads the account before the first estimate so Opus free images show", async () => {
+    const { service: novelai, transport } = service();
     await expect(novelai.estimate_cost(generate, signal)).resolves.toMatchObject({
       anlas: 0,
       opus_free: true,
+    });
+    await novelai.estimate_cost(generate, signal);
+    expect(
+      transport.operations.filter((operation) => operation.route === "/user/subscription"),
+    ).toHaveLength(1);
+  });
+
+  it("estimates the paid cost once when the account cannot be read", async () => {
+    const { service: novelai } = service({
+      transport: () => {
+        throw new Error("no credential");
+      },
+    });
+    await expect(novelai.estimate_cost(generate, signal)).resolves.toMatchObject({
+      anlas: 26,
+      opus_free: false,
     });
   });
 

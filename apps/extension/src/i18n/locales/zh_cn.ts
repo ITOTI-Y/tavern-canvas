@@ -479,7 +479,8 @@ const settings = {
   novelai: {
     title: "NovelAI 默认参数",
     refresh_account: "刷新账户",
-    account_unreachable: "当前宿主拦截了 NovelAI 账户接口，无法在此显示 Anlas 余额，出图不受影响。",
+    account_unreachable:
+      "无法连接 NovelAI 账户接口（网络故障或跨域请求被拦截），暂时无法显示 Anlas 余额。",
     account_open_site: "在 NovelAI 网站查看",
     account_summary: "{tier} · {anlas} Anlas · {expires} 续期",
     model_label: "模型",

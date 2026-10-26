@@ -60,6 +60,10 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
     if (container === null || container === undefined) {
       return;
     }
+    // Only assistant replies are illustrated.
+    if (message_element?.getAttribute("is_user") === "true") {
+      return;
+    }
     if (container.querySelector(`[${BUTTON_ATTRIBUTE}]`) !== null) {
       return;
     }

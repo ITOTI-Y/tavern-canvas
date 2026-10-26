@@ -99,7 +99,7 @@ const ignored = computed(() => {
 
 const account = ref<NovelAiAccountStatus | null>(null);
 const account_error = ref<string | null>(null);
-/** A network-level failure here is the browser blocking NovelAI's account API (CORS), as in TauriTavern. */
+/** A network-level failure: offline, or the browser refused a cross-origin request. */
 const account_unreachable = ref(false);
 const NOVELAI_ACCOUNT_URL = "https://novelai.net/image";
 const account_pending = ref(false);
