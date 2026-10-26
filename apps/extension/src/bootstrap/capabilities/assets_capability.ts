@@ -114,6 +114,17 @@ export function create_assets_capability(deps: AssetsCapabilityDeps): AssetsCapa
       const namespace = deps.namespace();
       const existing = await repository.get(namespace, asset.id);
       const now = deps.now();
+      // Library order decides defaults such as a character's first outfit, so edits keep it and
+      // new entries go last instead of falling back to id order.
+      const order =
+        existing === null
+          ? Math.max(
+              -1,
+              ...(await repository.list(namespace)).map((record) =>
+                read_number(read_payload(record), "order", -1),
+              ),
+            ) + 1
+          : read_number(read_payload(existing), "order", Number.MAX_SAFE_INTEGER);
       const record: NamespacedRecord = {
         schema_version: 1,
         id: asset.id,
@@ -124,6 +135,7 @@ export function create_assets_capability(deps: AssetsCapabilityDeps): AssetsCapa
         payload: to_json_value({
           ...asset.payload,
           display_name: asset.display_name,
+          ...(order === Number.MAX_SAFE_INTEGER ? {} : { order }),
         }),
       };
       await repository.put(namespace, record);
