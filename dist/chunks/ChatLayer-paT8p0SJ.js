@@ -1091,7 +1091,7 @@ function Be(e) {
 	let { host: n, service: r } = e, i = x([]), a = x([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = [], l = null;
 	function u(t, n) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
-		if (i == null || i.querySelector(`[${Q}]`) !== null) return;
+		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${Q}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
 		a.className = "mes_button interactable", a.append(R(t.ownerDocument)), a.setAttribute(Q, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);

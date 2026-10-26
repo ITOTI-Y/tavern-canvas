@@ -486,7 +486,7 @@ var o = {
 		novelai: {
 			title: "NovelAI defaults",
 			refresh_account: "Refresh account",
-			account_unreachable: "This host blocks NovelAI's account API, so the Anlas balance cannot be shown here. Image generation is not affected.",
+			account_unreachable: "NovelAI's account API could not be reached (network failure or a blocked cross-origin request), so the Anlas balance is unknown.",
 			account_open_site: "Check it on NovelAI",
 			account_summary: "{tier} · {anlas} Anlas · renews {expires}",
 			model_label: "Model",
@@ -808,7 +808,7 @@ var o = {
 			malformed_response: "the provider returned an unreadable response"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DA-5Nfos.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DWCyjmfv.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

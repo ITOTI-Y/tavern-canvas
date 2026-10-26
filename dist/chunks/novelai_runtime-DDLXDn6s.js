@@ -522,12 +522,14 @@ async function ve(e, t) {
 	return o(i);
 }
 function ye(e) {
-	let t = i, n = null;
+	let t = i, n = null, r = !1;
+	async function a(t) {
+		r = !0;
+		let { fetch_novelai_account: i } = await import("./adapters-Dz5kwPco.js");
+		return n = await i(e.transport(), t), n;
+	}
 	return {
-		async get_account(t) {
-			let { fetch_novelai_account: r } = await import("./adapters-Dz5kwPco.js");
-			return n = await r(e.transport(), t), n;
-		},
+		get_account: a,
 		list_models: () => s(t),
 		async refresh_models(n) {
 			let r = [];
@@ -540,16 +542,17 @@ function ye(e) {
 			}
 			throw new c(r.length === 0 ? "No relay can reach novelai.net from this host; the bundled model list stays in use" : `The NovelAI model list could not be refreshed (${r.join("; ")}); the bundled list stays in use`);
 		},
-		async estimate_cost(t, r) {
-			let i = await ge(e.preparation, t, r), a;
+		async estimate_cost(t, i) {
+			r || await a(i).catch(() => void 0);
+			let o = await ge(e.preparation, t, i), s;
 			if (t.action === "upscale") {
-				let n = (await e.preparation.assets.read(t.image_asset_id, r)).bytes, i = await e.image_operations.size(n);
-				a = i.width * i.height;
+				let n = (await e.preparation.assets.read(t.image_asset_id, i)).bytes, r = await e.image_operations.size(n);
+				s = r.width * r.height;
 			}
 			return x(t, {
 				account: n,
-				unencoded_vibes: i,
-				...a === void 0 ? {} : { source_pixels: a }
+				unencoded_vibes: o,
+				...s === void 0 ? {} : { source_pixels: s }
 			});
 		},
 		async encode_vibe(t, n, r, i) {

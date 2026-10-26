@@ -7,7 +7,7 @@ import { a as te, i as x, n as S, o as ne, r as re } from "./chunks/llm_connecti
 import { a as ie, c as ae, d as oe, f as C, i as se, l as w, o as T, r as ce, s as le, t as ue, u as de } from "./chunks/http_acknowledgment-BvXuB_ad.js";
 import { i as fe, n as pe, o as me, r as he, s as ge, t as _e } from "./chunks/media_command_service-DiA8Hw0M.js";
 import { A as ve, F as ye, H as be, I as xe, N as E, O as Se, P as Ce, Q as we, V as Te, W as Ee, Z as De, _ as D, b as O, ct as k, et as A, ft as Oe, g as j, h as M, i as ke, k as Ae, m as N, n as je, nt as Me, p as P, pt as F, rt as Ne, u as Pe, ut as I, x as L, y as Fe } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as Ie } from "./chunks/create_i18n-D3HWOpDA.js";
+import { t as Ie } from "./chunks/create_i18n-CiN-r1sS.js";
 import { n as Le, t as Re } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { t as ze } from "./chunks/chevron-down-Tu_8qTxg.js";
 import { t as Be } from "./chunks/chevron-up-D4TetO-M.js";
@@ -2449,7 +2449,7 @@ var zr = {
 		controller: {}
 	},
 	setup(e) {
-		let t = O(() => import("./chunks/GalleryView-BJNKCt44.js")), n = O(() => import("./chunks/SettingsView-BC31n3Ej.js"));
+		let t = O(() => import("./chunks/GalleryView-uDDQpjpP.js")), n = O(() => import("./chunks/SettingsView-V2nzxlVO.js"));
 		return (r, i) => e.state.route === "gallery" ? (E(), M(k(t), {
 			key: 0,
 			state: e.state,
@@ -2690,7 +2690,7 @@ var zr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = O(() => import("./chunks/ChatLayer-Cv4TeQw9.js")), { t: i } = je();
+		let n = t, r = O(() => import("./chunks/ChatLayer-paT8p0SJ.js")), { t: i } = je();
 		function a() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -5705,7 +5705,7 @@ async function Vs(e) {
 		let e = await C();
 		if (e === null) throw Error("No provider profile is active; choose one in Settings");
 		return e;
-	}, w = null, T = S === null || d === null ? null : () => w ??= import("./chunks/novelai_runtime-d2bzGs5j.js").then((t) => t.create_novelai_runtime({
+	}, w = null, T = S === null || d === null ? null : () => w ??= import("./chunks/novelai_runtime-DDLXDn6s.js").then((t) => t.create_novelai_runtime({
 		vibe_encodings: S.novelai_vibe_encodings,
 		provider_inputs: S.provider_input_assets,
 		namespace: m,
