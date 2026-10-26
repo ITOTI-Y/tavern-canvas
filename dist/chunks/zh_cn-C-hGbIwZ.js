@@ -229,6 +229,8 @@ var e = {
 			add_action: "添加角色",
 			role_label: "角色定位",
 			appearance_label: "外观",
+			excluded_traits_label: "排除特征",
+			excluded_traits_hint: "该角色不应出现的标签，例如其他角色的尖耳；生成时作为该角色自己的负面提示词。",
 			context_notes_label: "角色上下文",
 			world_info_reference_label: "World Info 引用",
 			world_info_reference_hint: "标注该角色关联的 World Info 书或条目名称。"

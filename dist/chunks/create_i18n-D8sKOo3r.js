@@ -260,6 +260,8 @@ var o = {
 			add_action: "Add character",
 			role_label: "Role",
 			appearance_label: "Appearance",
+			excluded_traits_label: "Excluded traits",
+			excluded_traits_hint: "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",
 			context_notes_label: "Character context",
 			world_info_reference_label: "World Info reference",
 			world_info_reference_hint: "A note naming the World Info book or entry this links to."
@@ -810,7 +812,7 @@ var o = {
 			malformed_response: "the provider returned an unreadable response"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-CBwsiAKZ.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-C-hGbIwZ.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

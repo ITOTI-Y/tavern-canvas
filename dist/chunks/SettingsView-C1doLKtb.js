@@ -2544,7 +2544,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = S(() => import("./PromptView-Bgh22nYB.js")), n = S(() => import("./AssetsView-Btd073oF.js")), r = S(() => import("./DiagnosticsView-Bl3pIFI4.js")), i = e, { t: a } = O(), o = [
+		let t = S(() => import("./PromptView-Bgh22nYB.js")), n = S(() => import("./AssetsView-D76DKDWM.js")), r = S(() => import("./DiagnosticsView-BAfh3UHg.js")), i = e, { t: a } = O(), o = [
 			"illustration",
 			"providers",
 			"translation",

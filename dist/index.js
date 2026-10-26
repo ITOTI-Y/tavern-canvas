@@ -6,24 +6,24 @@ import { o as b, s as ee } from "./chunks/provider-Bp1QeoG9.js";
 import { a as te, i as x, n as S, o as ne, r as re } from "./chunks/llm_connection-DZhYUypM.js";
 import { a as ie, c as ae, d as oe, f as se, i as ce, l as C, o as w, r as le, s as ue, t as de, u as fe } from "./chunks/http_acknowledgment-BvXuB_ad.js";
 import { i as pe, n as me, o as he, r as ge, s as _e, t as ve } from "./chunks/media_command_service-DYsZGaEx.js";
-import { A as ye, F as be, H as xe, I as Se, N as T, O as Ce, P as we, Q as Te, V as Ee, W as De, Z as Oe, _ as E, b as ke, ct as D, et as O, ft as Ae, g as k, h as A, i as je, k as Me, m as j, n as Ne, nt as Pe, p as M, pt as N, rt as Fe, u as Ie, ut as P, x as F, y as Le } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as Re } from "./chunks/create_i18n-DhVrBS7s.js";
-import { n as ze, t as Be } from "./chunks/AppIcon-Cnhzrx9o.js";
-import { t as Ve } from "./chunks/chevron-down-Tu_8qTxg.js";
-import { t as He } from "./chunks/chevron-up-D4TetO-M.js";
-import { n as Ue } from "./chunks/route_nav-BrwZiRD4.js";
-import { t as We } from "./chunks/x-CDKrptQJ.js";
-import { a as Ge, i as Ke, n as qe, r as Je, t as Ye } from "./chunks/analysis-D_QhEnPQ.js";
-import { t as Xe } from "./chunks/portal_keys-gQ1cWdMS.js";
-import { a as Ze, r as Qe, w as $e } from "./chunks/job_repository-DWuHDMtL.js";
-import { a as et, c as tt, d as nt, i as rt, l as it, o as at, s as ot, t as st, u as ct } from "./chunks/business_repositories-C3SmXgTK.js";
-import { n as lt, r as ut, t as dt } from "./chunks/tag_normalizer-CEAU4497.js";
-import { t as ft } from "./chunks/novelai_errors-Bve94MgO.js";
-import { i as pt, r as mt } from "./chunks/browser_secret_vault-DhuOFaGV.js";
-import { a as ht, i as gt, n as _t, o as vt } from "./chunks/provider_transport-DxRVhJ6l.js";
-import { t as yt } from "./chunks/_vocabulary_import_error-BOxujgW3.js";
+import { A as ye, F as be, H as xe, I as Se, N as T, O as Ce, P as we, Q as Te, V as Ee, W as De, Z as Oe, _ as E, b as ke, ct as D, et as O, ft as Ae, g as k, h as A, i as je, k as Me, m as j, n as Ne, nt as Pe, p as M, pt as N, rt as Fe, u as Ie, ut as P, x as F, y as I } from "./chunks/vue-i18n-DUz2Gjn8.js";
+import { t as Le } from "./chunks/create_i18n-D8sKOo3r.js";
+import { n as Re, t as ze } from "./chunks/AppIcon-Cnhzrx9o.js";
+import { t as Be } from "./chunks/chevron-down-Tu_8qTxg.js";
+import { t as Ve } from "./chunks/chevron-up-D4TetO-M.js";
+import { n as He } from "./chunks/route_nav-BrwZiRD4.js";
+import { t as Ue } from "./chunks/x-CDKrptQJ.js";
+import { a as We, i as Ge, n as Ke, r as qe, t as Je } from "./chunks/analysis-D_QhEnPQ.js";
+import { t as Ye } from "./chunks/portal_keys-gQ1cWdMS.js";
+import { a as Xe, r as Ze, w as Qe } from "./chunks/job_repository-DWuHDMtL.js";
+import { a as $e, c as et, d as tt, i as nt, l as rt, o as it, s as at, t as ot, u as st } from "./chunks/business_repositories-C3SmXgTK.js";
+import { n as ct, r as L, t as lt } from "./chunks/tag_normalizer-CEAU4497.js";
+import { t as ut } from "./chunks/novelai_errors-Bve94MgO.js";
+import { i as dt, r as ft } from "./chunks/browser_secret_vault-DhuOFaGV.js";
+import { a as pt, i as mt, n as ht, o as gt } from "./chunks/provider_transport-DxRVhJ6l.js";
+import { t as _t } from "./chunks/_vocabulary_import_error-BOxujgW3.js";
 //#region ../../packages/core/src/capability_registry.ts
-var bt = class {
+var vt = class {
 	#e = /* @__PURE__ */ new Map();
 	register(e, t, n) {
 		let r = this.#e.get(e);
@@ -47,7 +47,7 @@ var bt = class {
 	remove_by_owner(e) {
 		for (let [t, n] of this.#e) n.owner_module_id === e && this.#e.delete(t);
 	}
-}, xt = class {
+}, yt = class {
 	#e = /* @__PURE__ */ new Map();
 	subscribe(e, t) {
 		let n = this.#e.get(e);
@@ -73,12 +73,12 @@ var bt = class {
 		}
 		return r;
 	}
-}, St = class {
+}, bt = class {
 	#e = /* @__PURE__ */ new Map();
 	#t;
 	#n = [];
 	#r = "idle";
-	constructor(e, t = new bt(), n = new xt()) {
+	constructor(e, t = new vt(), n = new yt()) {
 		for (let t of e) {
 			if (this.#e.has(t.module_id)) throw Error(`Module "${t.module_id}" is registered more than once`);
 			this.#e.set(t.module_id, t);
@@ -159,49 +159,49 @@ var bt = class {
 		}
 		return this.#n.length = 0, e;
 	}
-}, Ct = "Canonical JSON accepts only JSON data";
-function I() {
-	throw TypeError(Ct);
+}, xt = "Canonical JSON accepts only JSON data";
+function R() {
+	throw TypeError(xt);
 }
-function wt(e) {
-	return typeof e == "number" && !Number.isFinite(e) ? I() : JSON.stringify(e);
+function St(e) {
+	return typeof e == "number" && !Number.isFinite(e) ? R() : JSON.stringify(e);
 }
-function Tt(e, t) {
-	if (e === null || typeof e == "boolean" || typeof e == "number" || typeof e == "string") return wt(e);
-	if (typeof e != "object") return I();
+function Ct(e, t) {
+	if (e === null || typeof e == "boolean" || typeof e == "number" || typeof e == "string") return St(e);
+	if (typeof e != "object") return R();
 	if (t.has(e)) throw TypeError("Canonical JSON cannot encode cyclic data");
 	t.add(e);
 	try {
 		if (Array.isArray(e)) {
-			if (Reflect.ownKeys(e).some((t) => typeof t != "string" || t !== "length" && (!/^\d+$/u.test(t) || Number(t) >= e.length || String(Number(t)) !== t))) return I();
+			if (Reflect.ownKeys(e).some((t) => typeof t != "string" || t !== "length" && (!/^\d+$/u.test(t) || Number(t) >= e.length || String(Number(t)) !== t))) return R();
 			let n = [];
 			for (let r = 0; r < e.length; r += 1) {
-				if (!Object.prototype.hasOwnProperty.call(e, r)) return I();
-				n.push(Tt(e[r], t));
+				if (!Object.prototype.hasOwnProperty.call(e, r)) return R();
+				n.push(Ct(e[r], t));
 			}
 			return `[${n.join(",")}]`;
 		}
 		let n = Object.getPrototypeOf(e);
-		if (n !== Object.prototype && n !== null) return I();
+		if (n !== Object.prototype && n !== null) return R();
 		let r = Reflect.ownKeys(e);
-		if (r.some((e) => typeof e != "string")) return I();
+		if (r.some((e) => typeof e != "string")) return R();
 		let i = r.toSorted(), a = [];
 		for (let n of i) {
 			let r = Object.getOwnPropertyDescriptor(e, n);
-			if (r === void 0 || !r.enumerable || !("value" in r)) return I();
-			a.push(`${wt(n)}:${Tt(r.value, t)}`);
+			if (r === void 0 || !r.enumerable || !("value" in r)) return R();
+			a.push(`${St(n)}:${Ct(r.value, t)}`);
 		}
 		return `{${a.join(",")}}`;
 	} finally {
 		t.delete(e);
 	}
 }
-function Et(e) {
-	return Tt(e, /* @__PURE__ */ new WeakSet());
+function wt(e) {
+	return Ct(e, /* @__PURE__ */ new WeakSet());
 }
 //#endregion
 //#region ../../packages/core/src/generation/anchors.ts
-var Dt = class {
+var Tt = class {
 	#e;
 	constructor(e) {
 		if (e === void 0 || typeof e.getRandomValues != "function") throw Error("Secure random generation is unavailable");
@@ -213,51 +213,51 @@ var Dt = class {
 		return this.#e.getRandomValues(t), t;
 	}
 };
-function Ot(e) {
+function Et(e) {
 	return t(r(n(e)));
 }
-function kt(e, n) {
-	let r = Ot(Et(e)), i = n.bytes(32);
+function Dt(e, n) {
+	let r = Et(wt(e)), i = n.bytes(32);
 	if (i.length !== 32) throw Error("Random source must return exactly 32 bytes");
 	return {
 		source_anchor: r,
-		generation_anchor: Ot(`${r}${t(i)}`)
+		generation_anchor: Et(`${r}${t(i)}`)
 	};
 }
 //#endregion
 //#region ../../packages/contracts/src/library.ts
-var At = h(["user", "assistant"]), jt = {
+var Ot = h(["user", "assistant"]), kt = {
 	id: o,
 	display_name: s().trim().min(1).max(120),
-	role: At,
+	role: Ot,
 	description: s().trim().max(8e3),
 	greeting: s().trim().max(4e3),
 	avatar_image_id: f.nullable(),
 	is_active: g()
-}, Mt = _(jt), Nt = _({
-	...jt,
+}, At = _(kt), jt = _({
+	...kt,
 	created_at: i({ offset: !0 }),
 	updated_at: i({ offset: !0 })
-}), Pt = h([
+}), Mt = h([
 	"manual",
 	"imported",
 	"character"
-]), Ft = {
+]), Nt = {
 	id: o,
 	title: s().trim().min(1).max(200),
-	source_type: Pt,
+	source_type: Mt,
 	content: s().trim().min(1).max(5e4),
 	keywords: u(s().trim().min(1).max(80)).max(64).refine((e) => new Set(e).size === e.length, "keywords must not repeat"),
 	priority: c().int().min(0).max(1e3),
 	enabled: g()
-}, It = _(Ft), Lt = _({
-	...Ft,
+}, Pt = _(Nt), Ft = _({
+	...Nt,
 	created_at: i({ offset: !0 }),
 	updated_at: i({ offset: !0 })
-}), Rt = Object.freeze({}), zt = {
+}), It = Object.freeze({}), Lt = {
 	kind: "bearer",
 	header: "authorization"
-}, Bt = Object.freeze({
+}, Rt = Object.freeze({
 	sd_webui: null,
 	comfyui: null,
 	novelai: {
@@ -269,14 +269,14 @@ var At = h(["user", "assistant"]), jt = {
 			"/ai/augment-image",
 			"/user/subscription"
 		],
-		auth: zt,
-		required_headers: Rt
+		auth: Lt,
+		required_headers: It
 	},
 	openai_image: {
 		origin: "https://api.openai.com",
 		routes: ["/v1/images/generations", "/v1/images/edits"],
-		auth: zt,
-		required_headers: Rt
+		auth: Lt,
+		required_headers: It
 	},
 	google_image: {
 		origin: "https://generativelanguage.googleapis.com",
@@ -285,23 +285,23 @@ var At = h(["user", "assistant"]), jt = {
 			kind: "api_key",
 			header: "x-goog-api-key"
 		},
-		required_headers: Rt
+		required_headers: It
 	}
 });
-function Vt(e) {
+function zt(e) {
 	let t = S[e];
 	return Object.freeze([...t.completion_routes, t.models_route]);
 }
-var Ht = Object.freeze({
+var Bt = Object.freeze({
 	openai_compatible: {
 		origin: "https://api.openai.com",
-		routes: Vt("openai_compatible"),
-		auth: zt,
-		required_headers: Rt
+		routes: zt("openai_compatible"),
+		auth: Lt,
+		required_headers: It
 	},
 	anthropic: {
 		origin: "https://api.anthropic.com",
-		routes: Vt("anthropic"),
+		routes: zt("anthropic"),
 		auth: {
 			kind: "api_key",
 			header: "x-api-key"
@@ -313,55 +313,55 @@ var Ht = Object.freeze({
 	},
 	google_generative: {
 		origin: "https://generativelanguage.googleapis.com",
-		routes: Vt("google_generative"),
-		auth: zt,
-		required_headers: Rt
+		routes: zt("google_generative"),
+		auth: Lt,
+		required_headers: It
 	},
 	ollama: {
 		origin: "http://127.0.0.1:11434",
-		routes: Vt("ollama"),
+		routes: zt("ollama"),
 		auth: { kind: "none" },
-		required_headers: Rt
+		required_headers: It
 	}
-}), Ut = class extends Error {
+}), Vt = class extends Error {
 	code = "direct_route_rejected";
 	constructor() {
 		super("The requested destination is not in the provider route catalog"), this.name = "DirectRouteRejectedError";
 	}
 };
-function Wt(e) {
+function Ht(e) {
+	return Rt[e];
+}
+function Ut(e) {
 	return Bt[e];
 }
-function Gt(e) {
-	return Ht[e];
-}
-function Kt(e, t) {
-	if (!e.routes.includes(t)) throw new Ut();
+function Wt(e, t) {
+	if (!e.routes.includes(t)) throw new Vt();
 	return `${e.origin}${t}`;
 }
 //#endregion
 //#region ../../packages/contracts/src/message.ts
-var qt = s().regex(/^[A-Za-z0-9_-]{8,32}$/u), Jt = _({
+var Gt = s().regex(/^[A-Za-z0-9_-]{8,32}$/u), Kt = _({
 	name: s().trim().min(1).max(120),
 	prompt: s().trim().min(1).max(4e3),
 	negative_prompt: s().max(4e3)
-}), Yt = _({
-	slot_id: qt,
+}), qt = _({
+	slot_id: Gt,
 	paragraph: c().int().min(0),
 	anchor: s().max(400),
 	scene: s().max(2e3),
 	characters: u(s().trim().min(1).max(120)).max(16),
 	positive_prompt: s().max(8e3),
 	negative_prompt: s().max(8e3),
-	character_prompts: u(Jt).max(16),
+	character_prompts: u(Kt).max(16),
 	image_ids: u(f),
 	active_image_id: f.nullable(),
 	pending_request_ids: u(l),
 	last_error: s().max(500).nullable()
-}), Xt = _({
+}), Jt = _({
 	schema_version: d(2),
-	slots: u(Yt).max(16)
-}), Zt = _({
+	slots: u(qt).max(16)
+}), Yt = _({
 	schema_version: d(1),
 	chat_id: s().min(1).max(512),
 	active_swipes: u(a({
@@ -378,12 +378,12 @@ var qt = s().regex(/^[A-Za-z0-9_-]{8,32}$/u), Jt = _({
 		content_sha256: y,
 		swipe_id: c().int().nonnegative().nullable()
 	}))
-}), Qt = class {
+}), Xt = class {
 	now() {
 		return /* @__PURE__ */ new Date();
 	}
 };
-function $t(e) {
+function Zt(e) {
 	let t = e.error === null ? null : Object.freeze({ ...e.error });
 	return Object.freeze({
 		job_id: e.job_id,
@@ -404,7 +404,7 @@ function $t(e) {
 }
 //#endregion
 //#region ../../packages/core/src/jobs/job_state_machine.ts
-var en = {
+var Qt = {
 	queued: ["preparing", "cancelled"],
 	preparing: [
 		"submitting",
@@ -427,7 +427,7 @@ var en = {
 	cancelled: [],
 	attached: [],
 	orphaned: []
-}, tn = class extends Error {
+}, $t = class extends Error {
 	code = "invalid_generation_job_transition";
 	job_id;
 	prior_state;
@@ -436,18 +436,18 @@ var en = {
 		super(`Job ${e} cannot transition from ${t} to ${n}`), this.name = "GenerationJobTransitionError", this.job_id = e, this.prior_state = t, this.attempted_state = n;
 	}
 };
-function nn(e, t, n) {
+function en(e, t, n) {
 	let r = e.state;
 	if (r !== "cancelled" || t !== "cancelled") {
-		if (!en[r].includes(t)) throw new tn(e.job_id, r, t);
+		if (!Qt[r].includes(t)) throw new $t(e.job_id, r, t);
 		e.state = t, e.updated_at = n;
 	}
 }
-function rn(e, t) {
+function tn(e, t) {
 	if (!Number.isInteger(e) || e < 1) throw RangeError(`${t} must be a positive integer`);
 	return e;
 }
-function an(e) {
+function nn(e) {
 	let t = y.parse(e.generation_anchor), n = Object.freeze(v.parse(e.arguments));
 	if (n.generation_anchor !== t) throw TypeError("Image job arguments must use the job generation anchor");
 	if (e.chat_id.trim().length === 0) throw TypeError("Image job chat ID must not be empty");
@@ -463,11 +463,11 @@ function an(e) {
 		automatic: e.automatic
 	};
 }
-function on(e) {
-	let i = `${e.generation_anchor}${Et(e.arguments)}`;
+function rn(e) {
+	let i = `${e.generation_anchor}${wt(e.arguments)}`;
 	return t(r(n(i)));
 }
-function sn(e) {
+function an(e) {
 	return {
 		...e,
 		arguments: { ...e.arguments },
@@ -475,13 +475,13 @@ function sn(e) {
 		image_ids: [...e.image_ids]
 	};
 }
-function cn(e) {
+function on(e) {
 	return e instanceof _e ? { ...e.provider_error } : {
 		code: "provider_unavailable",
 		retryable: !1
 	};
 }
-var ln = class {
+var sn = class {
 	#e;
 	#t;
 	#n;
@@ -499,14 +499,14 @@ var ln = class {
 	#m = 0;
 	#h = !1;
 	constructor(e) {
-		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Qt(), this.#i = rn(e.global_concurrency ?? 4, "Global job concurrency");
+		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Xt(), this.#i = tn(e.global_concurrency ?? 4, "Global job concurrency");
 		for (let t of this.#f) {
-			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : rn(n, `Concurrency for ${t}`);
+			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : tn(n, `Concurrency for ${t}`);
 			this.#a.set(t, r), this.#o.set(t, []), this.#s.set(t, 0);
 		}
 	}
 	enqueue(e) {
-		let t = an(e), n = on(t);
+		let t = nn(e), n = rn(t);
 		if (t.automatic) {
 			let e = this.#l.get(n);
 			if (e !== void 0) {
@@ -526,7 +526,7 @@ var ln = class {
 	}
 	get(e) {
 		let t = this.#c.get(e);
-		return t === void 0 ? null : $t(t.job);
+		return t === void 0 ? null : Zt(t.job);
 	}
 	subscribe(e) {
 		this.#d.add(e);
@@ -538,9 +538,9 @@ var ln = class {
 	async cancel(e) {
 		let t = this.#c.get(e);
 		if (t === void 0) throw Error(`Generation job ${e} does not exist`);
-		if (t.job.state === "cancelled") return $t(t.job);
+		if (t.job.state === "cancelled") return Zt(t.job);
 		t.cancel_requested = !0, t.controller.abort(), t.queued && this.#w(t);
-		let n = await this.#C(t, async () => (t.job.state !== "cancelled" && await this.#S(t, "cancelled"), $t(t.job)));
+		let n = await this.#C(t, async () => (t.job.state !== "cancelled" && await this.#S(t, "cancelled"), Zt(t.job)));
 		return this.#v(), n;
 	}
 	mark_attached(e) {
@@ -551,7 +551,7 @@ var ln = class {
 	}
 	#g(e, t) {
 		let n = this.#c.get(e);
-		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#C(n, async () => (n.job.state !== t && await this.#S(n, t), $t(n.job)));
+		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#C(n, async () => (n.job.state !== t && await this.#S(n, t), Zt(n.job)));
 	}
 	async #_(e, t) {
 		let n = this.#r.now().toISOString(), r = {
@@ -569,7 +569,7 @@ var ln = class {
 			updated_at: n,
 			error: null,
 			image_ids: []
-		}, i = $t(r);
+		}, i = Zt(r);
 		await this.#t.save(i);
 		let a = {
 			job: r,
@@ -615,27 +615,27 @@ var ln = class {
 			}
 		};
 		try {
-			let n = (await this.#e.execute($t(e.job), t)).image_ids.map((e) => f.parse(e));
+			let n = (await this.#e.execute(Zt(e.job), t)).image_ids.map((e) => f.parse(e));
 			if (n.length === 0) throw new _e({
 				code: "malformed_response",
 				retryable: !1
 			});
 			await this.#C(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
-				let t = sn(e.job);
+				let t = an(e.job);
 				t.image_ids = n, await this.#S(e, "completed", t);
 			});
 		} catch (t) {
 			await this.#C(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
-				let n = sn(e.job);
-				n.error = cn(t), await this.#S(e, "failed", n);
+				let n = an(e.job);
+				n.error = on(t), await this.#S(e, "failed", n);
 			});
 		}
 	}
-	async #S(e, t, n = sn(e.job)) {
-		nn(n, t, this.#r.now().toISOString());
-		let r = $t(n);
+	async #S(e, t, n = an(e.job)) {
+		en(n, t, this.#r.now().toISOString());
+		let r = Zt(n);
 		return await this.#t.save(r), e.job = n, this.#T(r), r;
 	}
 	#C(e, t) {
@@ -651,54 +651,54 @@ var ln = class {
 	#T(e) {
 		for (let t of this.#d) t(e);
 	}
-}, un = "tavern_canvas";
-function dn(e) {
+}, cn = "tavern_canvas";
+function ln(e) {
 	return e.bind(globalThis);
 }
-function fn(e) {
+function un(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function pn(e) {
+function dn(e) {
 	if (typeof e != "object" || !e) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function L(e, t) {
+function z(e, t) {
 	try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function mn(e, t) {
-	let n = L(e, t);
+function fn(e, t) {
+	let n = z(e, t);
 	if (typeof n == "function") try {
 		return Reflect.apply(n, e, []);
 	} catch {
 		return;
 	}
 }
-function hn(e, t) {
-	let n = L(e, "eventSource"), r = L(e, "eventTypes");
-	return !fn(n) || !fn(r) ? !1 : typeof L(n, "on") == "function" && typeof L(n, "removeListener") == "function" && t.every((e) => {
-		let t = L(r, e);
+function pn(e, t) {
+	let n = z(e, "eventSource"), r = z(e, "eventTypes");
+	return !un(n) || !un(r) ? !1 : typeof z(n, "on") == "function" && typeof z(n, "removeListener") == "function" && t.every((e) => {
+		let t = z(r, e);
 		return typeof t == "string" && t.length > 0;
 	});
 }
-function gn(e) {
-	let t = fn(e) ? mn(e, "getContext") : void 0;
-	if (!fn(t)) return {
+function mn(e) {
+	let t = un(e) ? fn(e, "getContext") : void 0;
+	if (!un(t)) return {
 		main_generation_events: !1,
 		message_swipe_metadata: !1
 	};
-	let n = mn(t, "getCurrentLocale");
+	let n = fn(t, "getCurrentLocale");
 	return {
-		main_generation_events: typeof n == "string" && n.trim().length > 0 && hn(t, [
+		main_generation_events: typeof n == "string" && n.trim().length > 0 && pn(t, [
 			"GENERATION_STARTED",
 			"GENERATION_STOPPED",
 			"GENERATION_ENDED"
 		]),
-		message_swipe_metadata: typeof L(t, "getCurrentChatId") == "function" && Array.isArray(L(t, "chat")) && typeof L(t, "saveChat") == "function" && hn(t, [
+		message_swipe_metadata: typeof z(t, "getCurrentChatId") == "function" && Array.isArray(z(t, "chat")) && typeof z(t, "saveChat") == "function" && pn(t, [
 			"CHAT_CHANGED",
 			"MESSAGE_SWIPED",
 			"MESSAGE_UPDATED",
@@ -708,28 +708,28 @@ function gn(e) {
 		])
 	};
 }
-function _n(e, t) {
+function hn(e, t) {
 	if (typeof e != "string" || e.trim().length === 0) throw Error(t);
 	return e;
 }
-function vn(e) {
-	if (!pn(e) || !Object.values(e).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
+function gn(e) {
+	if (!dn(e) || !Object.values(e).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
 	return { ...e };
 }
-function yn(e) {
+function _n(e) {
 	return typeof e == "number" && Number.isInteger(e) && e >= 0 ? e : null;
 }
-var bn = class {
+var vn = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t.bind(globalThis);
 	}
 	get_locale() {
-		return _n(this.#e().getCurrentLocale(), "SillyTavern returned an invalid locale");
+		return hn(this.#e().getCurrentLocale(), "SillyTavern returned an invalid locale");
 	}
 	get_active_chat_id() {
-		return _n(this.#e().getCurrentChatId(), "SillyTavern returned an invalid active chat ID");
+		return hn(this.#e().getCurrentChatId(), "SillyTavern returned an invalid active chat ID");
 	}
 	#n(e) {
 		let t = this.#e(), n = e.map(([e, n]) => [t.eventTypes[e], n]);
@@ -755,7 +755,7 @@ var bn = class {
 				e({ phase: "stopped" });
 			}],
 			["GENERATION_ENDED", (t) => {
-				let n = yn(t);
+				let n = _n(t);
 				n !== null && n > 0 && e({
 					phase: "ended",
 					message_id: n - 1
@@ -770,7 +770,7 @@ var bn = class {
 	}
 	subscribe_message_rendered(e) {
 		let t = (t) => {
-			let n = yn(t);
+			let n = _n(t);
 			n !== null && e(n);
 		};
 		return this.#n([
@@ -796,13 +796,13 @@ var bn = class {
 		return i == null ? null : (i.extra === void 0 && t && (i.extra = {}), i.extra ?? null);
 	}
 	read_swipe_record(e) {
-		let t = this.#r(e, !1)?.[un];
+		let t = this.#r(e, !1)?.[cn];
 		return t === void 0 ? null : structuredClone(t);
 	}
 	async translate_deepl(e, t, n) {
 		let r = await this.#t("/api/translate/deepl", {
 			method: "POST",
-			headers: vn(this.#e().getRequestHeaders()),
+			headers: gn(this.#e().getRequestHeaders()),
 			body: JSON.stringify({
 				text: e,
 				lang: t,
@@ -816,9 +816,9 @@ var bn = class {
 	async write_swipe_record(e, t) {
 		let n = this.#r(e, !0);
 		if (n === null) throw Error(`Chat ${e.chat_id} message ${String(e.message_id)} swipe ${String(e.swipe_id)} is not available`);
-		n[un] = structuredClone(t), await this.#e().saveChat();
+		n[cn] = structuredClone(t), await this.#e().saveChat();
 	}
-}, xn = {
+}, yn = {
 	message_swipe_metadata: ["getChatMessages", "setChatMessages"],
 	preset_generation: ["generate", "stopGenerationById"],
 	tavern_regex: [
@@ -827,25 +827,25 @@ var bn = class {
 		"retrieveDisplayedMessage"
 	]
 };
-function Sn(e) {
+function bn(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function Cn(e) {
+function xn(e) {
 	if (typeof e != "object" || !e) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function wn(e, t) {
+function Sn(e, t) {
 	try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Tn(e, t) {
-	return t.every((t) => typeof wn(e, t) == "function");
+function Cn(e, t) {
+	return t.every((t) => typeof Sn(e, t) == "function");
 }
-function En(e) {
+function wn(e) {
 	let t;
 	try {
 		t = Reflect.get(e, "getTavernHelperVersion");
@@ -864,13 +864,13 @@ function En(e) {
 		value: n
 	} : { state: "invalid" };
 }
-function Dn(e) {
-	return Sn(e) ? {
+function Tn(e) {
+	return bn(e) ? {
 		detected: !0,
-		version: En(e),
-		message_swipe_metadata: Tn(e, xn.message_swipe_metadata),
-		preset_generation: Tn(e, xn.preset_generation),
-		tavern_regex: Tn(e, xn.tavern_regex)
+		version: wn(e),
+		message_swipe_metadata: Cn(e, yn.message_swipe_metadata),
+		preset_generation: Cn(e, yn.preset_generation),
+		tavern_regex: Cn(e, yn.tavern_regex)
 	} : {
 		detected: e !== void 0,
 		version: e === void 0 ? { state: "missing" } : { state: "invalid" },
@@ -879,13 +879,13 @@ function Dn(e) {
 		tavern_regex: !1
 	};
 }
-function On(e) {
+function En(e) {
 	return e === "system" || e === "assistant" || e === "user";
 }
-function kn(e) {
-	if (!Cn(e)) throw Error("TavernHelper returned an invalid chat message");
+function Dn(e) {
+	if (!xn(e)) throw Error("TavernHelper returned an invalid chat message");
 	let { message_id: t, name: n, role: r, is_hidden: i, swipe_id: a, swipes: o } = e;
-	if (typeof t != "number" || !Number.isInteger(t) || t < 0 || typeof n != "string" || !On(r) || i !== void 0 && typeof i != "boolean" || typeof a != "number" || !Number.isInteger(a) || !Array.isArray(o) || !o.every((e) => typeof e == "string") || a < 0 || a >= o.length) throw Error(`TavernHelper returned an invalid chat message ${String(t)}`);
+	if (typeof t != "number" || !Number.isInteger(t) || t < 0 || typeof n != "string" || !En(r) || i !== void 0 && typeof i != "boolean" || typeof a != "number" || !Number.isInteger(a) || !Array.isArray(o) || !o.every((e) => typeof e == "string") || a < 0 || a >= o.length) throw Error(`TavernHelper returned an invalid chat message ${String(t)}`);
 	return {
 		message_id: t,
 		name: n,
@@ -895,7 +895,7 @@ function kn(e) {
 		swipes: o
 	};
 }
-function An(e) {
+function On(e) {
 	return {
 		message_id: e.message_id,
 		name: e.name,
@@ -908,18 +908,18 @@ function An(e) {
 		}))
 	};
 }
-function jn(e) {
+function kn(e) {
 	if (typeof e == "string") return {
 		content: e,
 		reasoning: null
 	};
-	if (Cn(e) && typeof e.content == "string") return {
+	if (xn(e) && typeof e.content == "string") return {
 		content: e.content,
 		reasoning: typeof e.reasoning == "string" && e.reasoning.length > 0 ? e.reasoning : null
 	};
 	throw Error("TavernHelper.generate returned neither text nor a detailed result");
 }
-function Mn(e) {
+function An(e) {
 	switch (e.kind) {
 		case "current": return;
 		case "proxy_preset": return e.model === null ? { proxy_preset: e.proxy_preset } : {
@@ -934,7 +934,7 @@ function Mn(e) {
 		};
 	}
 }
-function Nn(e) {
+function jn(e) {
 	return {
 		id: e.id,
 		script_name: e.script_name,
@@ -958,10 +958,10 @@ function Nn(e) {
 		max_depth: null
 	};
 }
-function Pn(e, t) {
+function Mn(e, t) {
 	return e.script_name === t.script_name && e.find_regex === t.find_regex && e.replace_string === t.replace_string && e.source.ai_output === t.source.ai_output && e.source.user_input === t.source.user_input && e.destination.display === t.destination.display && e.destination.prompt === t.destination.prompt && e.run_on_edit === t.run_on_edit;
 }
-var Fn = class {
+var Nn = class {
 	#e;
 	#t;
 	constructor(e, t) {
@@ -970,13 +970,13 @@ var Fn = class {
 	#n(e) {
 		let t = this.#e.getChatMessages(e, { include_swipes: !0 });
 		if (!Array.isArray(t)) throw Error("TavernHelper returned invalid chat messages");
-		return t.map(kn);
+		return t.map(Dn);
 	}
 	get_active_chat() {
 		let e = this.#n("0-{{lastMessageId}}");
 		return Promise.resolve({
 			chat_id: this.#t(),
-			messages: e.map(An)
+			messages: e.map(On)
 		});
 	}
 	async replace_message_text(e, t, n) {
@@ -987,8 +987,8 @@ var Fn = class {
 		}], { refresh: "affected" }), !0);
 	}
 	async generate_with_preset(e) {
-		let t = Mn(e.connection);
-		return jn(await this.#e.generate({
+		let t = An(e.connection);
+		return kn(await this.#e.generate({
 			generation_id: e.generation_id,
 			preset_name: e.preset_name,
 			user_input: e.user_input,
@@ -1007,9 +1007,9 @@ var Fn = class {
 		this.#e.stopGenerationById(e);
 	}
 	async sync_regex_scripts(e) {
-		let t = { type: "global" }, n = this.#e.getTavernRegexes(t), r = e.map(Nn).filter((e) => {
+		let t = { type: "global" }, n = this.#e.getTavernRegexes(t), r = e.map(jn).filter((e) => {
 			let t = n.find((t) => t.id === e.id);
-			return t === void 0 || !Pn(t, e);
+			return t === void 0 || !Mn(t, e);
 		});
 		if (r.length === 0) return !1;
 		let i = n.filter((e) => !r.some((t) => t.id === e.id));
@@ -1018,9 +1018,9 @@ var Fn = class {
 	find_message_element(e) {
 		return this.#e.retrieveDisplayedMessage(e).get(0) ?? null;
 	}
-}, In = "4.11.1", Ln = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
-function Rn(e) {
-	let t = Ln.exec(e.trim());
+}, Pn = "4.11.1", Fn = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
+function In(e) {
+	let t = Fn.exec(e.trim());
 	if (t === null) return null;
 	let [, n, r, i, a] = t;
 	return {
@@ -1030,69 +1030,69 @@ function Rn(e) {
 		prerelease: a ?? null
 	};
 }
-function zn(e, t) {
+function Ln(e, t) {
 	let n = e.major - t.major || e.minor - t.minor || e.patch - t.patch;
 	return n === 0 ? e.prerelease === null : n > 0;
 }
-function Bn(e) {
-	let t = Rn(e), n = Rn(In);
-	return t === null || n === null ? "invalid" : zn(t, n) ? "supported" : "unsupported";
+function Rn(e) {
+	let t = In(e), n = In(Pn);
+	return t === null || n === null ? "invalid" : Ln(t, n) ? "supported" : "unsupported";
 }
-var Vn = [
+var zn = [
 	"main_generation_events",
 	"preset_generation",
 	"message_swipe_metadata",
 	"tavern_regex",
 	"tavern_helper"
 ];
-function Hn(e) {
+function Bn(e) {
 	return {
 		available: !1,
 		reason: e
 	};
 }
-function Un(e, t) {
-	return e ? { available: !0 } : Hn(t);
+function Vn(e, t) {
+	return e ? { available: !0 } : Bn(t);
 }
-function Wn(e, t) {
+function Hn(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Gn(e, t) {
+function Un(e, t) {
 	return {
-		main_generation_events: Un(t.main_generation_events, "SillyTavern generation event API is unavailable"),
-		preset_generation: Un(e.preset_generation, "TavernHelper.generate or stopGenerationById is unavailable"),
-		message_swipe_metadata: Un(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper or SillyTavern chat message API is unavailable"),
-		tavern_regex: Un(e.tavern_regex, "TavernHelper regex or displayed message API is unavailable"),
-		tavern_helper: Un(e.version.state === "available", "TavernHelper version API is unavailable"),
-		gateway_protocol: Hn("Gateway protocol is not connected")
+		main_generation_events: Vn(t.main_generation_events, "SillyTavern generation event API is unavailable"),
+		preset_generation: Vn(e.preset_generation, "TavernHelper.generate or stopGenerationById is unavailable"),
+		message_swipe_metadata: Vn(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper or SillyTavern chat message API is unavailable"),
+		tavern_regex: Vn(e.tavern_regex, "TavernHelper regex or displayed message API is unavailable"),
+		tavern_helper: Vn(e.version.state === "available", "TavernHelper version API is unavailable"),
+		gateway_protocol: Bn("Gateway protocol is not connected")
 	};
 }
-function Kn(e) {
-	return Vn.filter((t) => e[t]?.available !== !0);
+function Wn(e) {
+	return zn.filter((t) => e[t]?.available !== !0);
 }
-function qn(e) {
-	let t = Dn(Wn(e, "TavernHelper")), n = Gn(t, gn(Wn(e, "SillyTavern")));
+function Gn(e) {
+	let t = Tn(Hn(e, "TavernHelper")), n = Un(t, mn(Hn(e, "SillyTavern")));
 	if (!t.detected) return {
 		ready: !1,
 		error_code: "tavern_helper_missing",
-		missing_capabilities: Kn(n)
+		missing_capabilities: Wn(n)
 	};
 	let r = t.version;
 	if (r.state === "missing" || r.state === "threw") return {
 		ready: !1,
 		error_code: "helper_api_incomplete",
-		missing_capabilities: Kn(n)
+		missing_capabilities: Wn(n)
 	};
 	if (r.state === "invalid") return {
 		ready: !1,
 		error_code: "helper_version_invalid",
 		missing_capabilities: ["tavern_helper"]
 	};
-	let i = r.value, a = Bn(i);
+	let i = r.value, a = Rn(i);
 	if (a === "invalid") return {
 		ready: !1,
 		error_code: "helper_version_invalid",
@@ -1104,7 +1104,7 @@ function qn(e) {
 		missing_capabilities: ["tavern_helper"],
 		current_version: i
 	};
-	let o = Kn(n);
+	let o = Wn(n);
 	return o.length > 0 ? {
 		ready: !1,
 		error_code: "helper_api_incomplete",
@@ -1117,28 +1117,28 @@ function qn(e) {
 }
 //#endregion
 //#region src/ui/controllers/unavailable_capabilities.ts
-var Jn = "capability_not_implemented";
-function R() {
+var Kn = "capability_not_implemented";
+function B() {
 	let e = /* @__PURE__ */ Error("This capability is not available in the current host");
-	return Object.defineProperty(e, "code", { value: Jn }), Promise.reject(e);
+	return Object.defineProperty(e, "code", { value: Kn }), Promise.reject(e);
 }
-function z() {
+function V() {
 	return () => {};
 }
-var Yn = {
+var qn = {
 	character: [],
 	outfit: [],
 	lora: [],
 	vibe: [],
 	reference: [],
 	workflow: []
-}, Xn = {
+}, Jn = {
 	capability_matrix: {},
 	helper_version: null,
 	protocol_version: null,
 	storage_usage_bytes: null,
 	storage_quota_bytes: null
-}, Zn = {
+}, Yn = {
 	schema_version: 1,
 	active_namespace: "default",
 	locale: "auto",
@@ -1170,165 +1170,165 @@ var Yn = {
 		optional_entry_enabled: !1
 	}
 };
-function Qn() {
+function Xn() {
 	return {
 		generation: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			submit: R,
-			cancel: R,
-			retry: R
+			subscribe: V,
+			submit: B,
+			cancel: B,
+			retry: B
 		},
 		profiles: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			save: R,
-			remove: R,
-			test_connection: R,
-			set_credential: R,
-			clear_credential: R,
-			save_novelai_defaults: R
+			subscribe: V,
+			save: B,
+			remove: B,
+			test_connection: B,
+			set_credential: B,
+			clear_credential: B,
+			save_novelai_defaults: B
 		},
 		llm_connections: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			save: R,
-			remove: R,
-			set_credential: R,
-			clear_credential: R,
-			test_connection: R
+			subscribe: V,
+			save: B,
+			remove: B,
+			set_credential: B,
+			clear_credential: B,
+			test_connection: B
 		},
 		novelai: {
-			get_account: R,
+			get_account: B,
 			load: () => Promise.resolve([]),
-			refresh_models: R,
-			estimate_cost: R
+			refresh_models: B,
+			estimate_cost: B
 		},
 		prompt_presets: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			load_draft: R,
-			save_draft: R,
-			remove: R,
-			bulk_remove: R,
-			test_regex: R
+			subscribe: V,
+			load_draft: B,
+			save_draft: B,
+			remove: B,
+			bulk_remove: B,
+			test_regex: B
 		},
 		assets: {
-			load: () => Promise.resolve(Yn),
-			subscribe: z,
-			save: R,
-			remove: R,
-			reorder: R
+			load: () => Promise.resolve(qn),
+			subscribe: V,
+			save: B,
+			remove: B,
+			reorder: B
 		},
 		personas: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			save: R,
-			remove: R
+			subscribe: V,
+			save: B,
+			remove: B
 		},
 		knowledge: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			save: R,
-			set_enabled: R,
-			remove: R,
-			bulk_remove: R
+			subscribe: V,
+			save: B,
+			set_enabled: B,
+			remove: B,
+			bulk_remove: B
 		},
 		gallery: {
 			load: () => Promise.resolve([]),
-			subscribe: z,
-			read_bytes: R,
-			pin: R,
-			detach_from_message: R,
-			delete_record: R,
-			reveal_source: R,
-			bulk_delete: R
+			subscribe: V,
+			read_bytes: B,
+			pin: B,
+			detach_from_message: B,
+			delete_record: B,
+			reveal_source: B,
+			bulk_delete: B
 		},
 		vocabulary: {
 			load: () => Promise.resolve([]),
-			search: R,
-			next_page: R,
-			install: R,
+			search: B,
+			next_page: B,
+			install: B,
 			cancel_install: () => {}
 		},
 		diagnostics: {
-			load: () => Promise.resolve(Xn),
-			subscribe: z,
-			test_connection: R,
+			load: () => Promise.resolve(Jn),
+			subscribe: V,
+			test_connection: B,
 			load_timeline: () => Promise.resolve([]),
-			export_support_bundle: R
+			export_support_bundle: B
 		},
 		settings: {
 			load: () => Promise.resolve({
-				settings: Zn,
+				settings: Yn,
 				vocabulary_update_channel: "bundled",
 				browser_secret_vault: {
 					state: "unavailable",
 					secret_count: 0
 				}
 			}),
-			subscribe: z,
-			update: R,
-			acknowledge_http_origin: R,
-			set_gateway_token: R,
-			clear_gateway_token: R,
-			set_analysis_key: R,
-			clear_analysis_key: R,
-			set_deepl_key: R,
-			clear_deepl_key: R,
-			initialize_browser_secret_vault: R,
-			unlock_browser_secret_vault: R,
-			lock_browser_secret_vault: R,
-			reset_browser_secret_vault: R,
-			set_vocabulary_update_channel: R,
-			import_vocabulary_package: R,
+			subscribe: V,
+			update: B,
+			acknowledge_http_origin: B,
+			set_gateway_token: B,
+			clear_gateway_token: B,
+			set_analysis_key: B,
+			clear_analysis_key: B,
+			set_deepl_key: B,
+			clear_deepl_key: B,
+			initialize_browser_secret_vault: B,
+			unlock_browser_secret_vault: B,
+			lock_browser_secret_vault: B,
+			reset_browser_secret_vault: B,
+			set_vocabulary_update_channel: B,
+			import_vocabulary_package: B,
 			cancel_vocabulary_import: () => {},
-			export_archive: R,
-			import_archive: R
+			export_archive: B,
+			import_archive: B
 		}
 	};
 }
 //#endregion
 //#region src/ui/contracts/view_models.ts
-var $n = { status: "idle" }, er = "capability_load_failed", tr = "command_failed", nr = /^[a-z][a-z0-9_]*$/u;
-function rr(e, t) {
+var Zn = { status: "idle" }, Qn = "capability_load_failed", $n = "command_failed", er = /^[a-z][a-z0-9_]*$/u;
+function tr(e, t) {
 	if (e instanceof Error) {
 		let t = e.code;
-		if (typeof t == "string" && nr.test(t)) return { code: t };
+		if (typeof t == "string" && er.test(t)) return { code: t };
 	}
 	return { code: t };
 }
-function B(e, t, n) {
+function H(e, t, n) {
 	let r = n(t), i = e.findIndex((e) => n(e) === r);
 	if (i === -1) return [...e, t];
 	let a = [...e];
 	return a[i] = t, a;
 }
-var ir = /* @__PURE__ */ new Set([
+var nr = /* @__PURE__ */ new Set([
 	"queued",
 	"preparing",
 	"submitting",
 	"running",
 	"failed"
 ]);
-function ar(e) {
+function rr(e) {
 	return e === "failed" ? "error" : "pending";
 }
-function or(e) {
+function ir(e) {
 	return e === "running" ? "status.running" : e === "failed" ? "status.failed" : "status.pending";
 }
-function sr(e) {
+function ar(e) {
 	return {
 		id: e.job_id,
-		label_code: or(e.state),
-		status: ar(e.state),
+		label_code: ir(e.state),
+		status: rr(e.state),
 		progress: e.image_count > 0 ? e.completed_image_ids.length / e.image_count : null
 	};
 }
-function cr(e) {
-	return e.filter((e) => ir.has(e.state)).map(sr);
+function or(e) {
+	return e.filter((e) => nr.has(e.state)).map(ar);
 }
-function lr(e, t, n) {
+function sr(e, t, n) {
 	return e().status === "pending" ? Promise.resolve() : (t({ status: "pending" }), n().then((e) => {
 		t({
 			status: "success",
@@ -1337,11 +1337,11 @@ function lr(e, t, n) {
 	}, (e) => {
 		t({
 			status: "error",
-			failure: rr(e, tr)
+			failure: tr(e, $n)
 		});
 	}));
 }
-function ur(e, t, n) {
+function cr(e, t, n) {
 	return {
 		route: e,
 		settings_section: "illustration",
@@ -1361,7 +1361,7 @@ function ur(e, t, n) {
 			presets: [],
 			selected_preset_id: null,
 			draft: null,
-			save_command: $n
+			save_command: Zn
 		},
 		assets: {
 			active_category: "character",
@@ -1374,7 +1374,7 @@ function ur(e, t, n) {
 				workflow: []
 			},
 			vocabulary_catalog: [],
-			vocabulary_install_command: $n
+			vocabulary_install_command: Zn
 		},
 		library: {
 			personas: [],
@@ -1384,13 +1384,13 @@ function ur(e, t, n) {
 		gallery: {
 			records: [],
 			selected_record_id: null,
-			bulk_delete_command: $n
+			bulk_delete_command: Zn
 		},
 		diagnostics: {
 			snapshot: null,
 			timeline: [],
-			connection_test_command: $n,
-			support_bundle_command: $n
+			connection_test_command: Zn,
+			support_bundle_command: Zn
 		},
 		settings: {
 			settings: null,
@@ -1399,7 +1399,7 @@ function ur(e, t, n) {
 				state: "unavailable",
 				secret_count: 0
 			},
-			update_command: $n
+			update_command: Zn
 		},
 		inspector: {
 			collapsed: !1,
@@ -1409,14 +1409,14 @@ function ur(e, t, n) {
 		tasks: []
 	};
 }
-var dr = class {
+var lr = class {
 	#e;
 	#t;
 	#n = /* @__PURE__ */ new Set();
 	#r = [];
 	#i = !1;
 	constructor(e) {
-		this.#e = e.capabilities, this.#t = ur(e.initial_route ?? "settings", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
+		this.#e = e.capabilities, this.#t = cr(e.initial_route ?? "settings", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
 	}
 	get state() {
 		return this.#t;
@@ -1447,7 +1447,7 @@ var dr = class {
 				...this.#t.generation,
 				jobs: e
 			},
-			tasks: cr(e)
+			tasks: or(e)
 		});
 	}
 	#l(e) {
@@ -1510,28 +1510,28 @@ var dr = class {
 		return this.#_(e, !0), t().then((t) => {
 			this.#i || (n(t), this.#v(e, null));
 		}).catch((t) => {
-			this.#i || this.#v(e, rr(t, er));
+			this.#i || this.#v(e, tr(t, Qn));
 		}).finally(() => {
 			this.#_(e, !1);
 		});
 	}
 	#b(e) {
-		this.#i || (e.type === "job_updated" ? this.#c(B(this.#t.generation.jobs, e.job, (e) => e.job_id)) : this.#c(this.#t.generation.jobs.filter((t) => t.job_id !== e.job_id)));
+		this.#i || (e.type === "job_updated" ? this.#c(H(this.#t.generation.jobs, e.job, (e) => e.job_id)) : this.#c(this.#t.generation.jobs.filter((t) => t.job_id !== e.job_id)));
 	}
 	#x(e) {
-		this.#i || (e.type === "profile_upserted" ? this.#s({ profiles: B(this.#t.generation.profiles, e.profile, (e) => e.id) }) : this.#s({ profiles: this.#t.generation.profiles.filter((t) => t.id !== e.profile_id) }));
+		this.#i || (e.type === "profile_upserted" ? this.#s({ profiles: H(this.#t.generation.profiles, e.profile, (e) => e.id) }) : this.#s({ profiles: this.#t.generation.profiles.filter((t) => t.id !== e.profile_id) }));
 	}
 	#S(e) {
-		this.#i || (e.type === "connection_upserted" ? this.#l({ connections: B(this.#t.llm_connections.connections, e.connection, (e) => e.id) }) : this.#l({ connections: this.#t.llm_connections.connections.filter((t) => t.id !== e.connection_id) }));
+		this.#i || (e.type === "connection_upserted" ? this.#l({ connections: H(this.#t.llm_connections.connections, e.connection, (e) => e.id) }) : this.#l({ connections: this.#t.llm_connections.connections.filter((t) => t.id !== e.connection_id) }));
 	}
 	#C(e) {
-		this.#i || (e.type === "preset_upserted" ? this.#u({ presets: B(this.#t.prompt.presets, e.preset, (e) => e.id) }) : this.#u({ presets: this.#t.prompt.presets.filter((t) => t.id !== e.preset_id) }));
+		this.#i || (e.type === "preset_upserted" ? this.#u({ presets: H(this.#t.prompt.presets, e.preset, (e) => e.id) }) : this.#u({ presets: this.#t.prompt.presets.filter((t) => t.id !== e.preset_id) }));
 	}
 	#w(e) {
 		if (!this.#i) if (e.type === "asset_upserted") {
 			let { category: t } = e.asset, n = {
 				...this.#t.assets.records,
-				[t]: B(this.#t.assets.records[t], e.asset, (e) => e.id)
+				[t]: H(this.#t.assets.records[t], e.asset, (e) => e.id)
 			};
 			this.#d({ records: n });
 		} else {
@@ -1546,13 +1546,13 @@ var dr = class {
 		this.#i || (e.type === "persona_upserted" ? this.#f({ personas: this.#j(e.persona) }) : this.#f({ personas: this.#t.library.personas.filter((t) => t.id !== e.persona_id) }));
 	}
 	#E(e) {
-		this.#i || (e.type === "entry_upserted" ? this.#f({ knowledge: B(this.#t.library.knowledge, e.entry, (e) => e.id) }) : this.#f({
+		this.#i || (e.type === "entry_upserted" ? this.#f({ knowledge: H(this.#t.library.knowledge, e.entry, (e) => e.id) }) : this.#f({
 			knowledge: this.#t.library.knowledge.filter((t) => t.id !== e.entry_id),
 			selected_knowledge_ids: this.#t.library.selected_knowledge_ids.filter((t) => t !== e.entry_id)
 		}));
 	}
 	#D(e) {
-		this.#i || (e.type === "record_upserted" ? this.#p({ records: B(this.#t.gallery.records, e.record, (e) => e.id) }) : this.#p({ records: this.#t.gallery.records.filter((t) => t.id !== e.record_id) }));
+		this.#i || (e.type === "record_upserted" ? this.#p({ records: H(this.#t.gallery.records, e.record, (e) => e.id) }) : this.#p({ records: this.#t.gallery.records.filter((t) => t.id !== e.record_id) }));
 	}
 	#O(e) {
 		this.#i || this.#m({ timeline: [...this.#t.diagnostics.timeline, e.entry] });
@@ -1725,23 +1725,23 @@ var dr = class {
 		return this.#e.prompt_presets.test_regex(e, t);
 	}
 	save_prompt_preset(e) {
-		return lr(() => this.#t.prompt.save_command, (e) => {
+		return sr(() => this.#t.prompt.save_command, (e) => {
 			this.#u({ save_command: e });
 		}, async () => {
 			let t = await this.#e.prompt_presets.save_draft(e);
 			return this.#u({
-				presets: B(this.#t.prompt.presets, t, (e) => e.id),
+				presets: H(this.#t.prompt.presets, t, (e) => e.id),
 				draft: null
 			}), t;
 		});
 	}
 	install_vocabulary_package(e, t) {
-		return lr(() => this.#t.assets.vocabulary_install_command, (e) => {
+		return sr(() => this.#t.assets.vocabulary_install_command, (e) => {
 			this.#d({ vocabulary_install_command: e });
 		}, () => this.#e.vocabulary.install(e, t));
 	}
 	update_settings(e) {
-		return lr(() => this.#t.settings.update_command, (e) => {
+		return sr(() => this.#t.settings.update_command, (e) => {
 			this.#h({ update_command: e });
 		}, async () => {
 			let t = await this.#e.settings.update(e);
@@ -1755,12 +1755,12 @@ var dr = class {
 		});
 	}
 	test_diagnostics_connection() {
-		return lr(() => this.#t.diagnostics.connection_test_command, (e) => {
+		return sr(() => this.#t.diagnostics.connection_test_command, (e) => {
 			this.#m({ connection_test_command: e });
 		}, () => this.#e.diagnostics.test_connection());
 	}
 	export_support_bundle() {
-		return lr(() => this.#t.diagnostics.support_bundle_command, (e) => {
+		return sr(() => this.#t.diagnostics.support_bundle_command, (e) => {
 			this.#m({ support_bundle_command: e });
 		}, () => this.#e.diagnostics.export_support_bundle());
 	}
@@ -1771,7 +1771,7 @@ var dr = class {
 	async save_provider_profile(e) {
 		let t = await this.#e.profiles.save(e), n = t.is_default || this.#t.generation.active_profile_id === null;
 		return n && await this.#e.settings.update({ active_provider_profile_id: t.id }), this.#i || this.#s({
-			profiles: B(this.#t.generation.profiles, t, (e) => e.id),
+			profiles: H(this.#t.generation.profiles, t, (e) => e.id),
 			...n ? { active_profile_id: t.id } : {}
 		}), t;
 	}
@@ -1783,15 +1783,15 @@ var dr = class {
 	}
 	async set_provider_profile_credential(e, t) {
 		let n = await this.#e.profiles.set_credential(e, t);
-		return this.#i || this.#s({ profiles: B(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#s({ profiles: H(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	async clear_provider_profile_credential(e) {
 		let t = await this.#e.profiles.clear_credential(e);
-		return this.#i || this.#s({ profiles: B(this.#t.generation.profiles, t, (e) => e.id) }), t;
+		return this.#i || this.#s({ profiles: H(this.#t.generation.profiles, t, (e) => e.id) }), t;
 	}
 	async save_novelai_defaults(e, t) {
 		let n = await this.#e.profiles.save_novelai_defaults(e, t);
-		return this.#i || this.#s({ profiles: B(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#s({ profiles: H(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	load_novelai_account() {
 		return this.#e.novelai.get_account();
@@ -1867,7 +1867,7 @@ var dr = class {
 		let n = await this.#e.assets.save(e, t);
 		this.#i || this.#d({ records: {
 			...this.#t.assets.records,
-			[e]: B(this.#t.assets.records[e], n, (e) => e.id)
+			[e]: H(this.#t.assets.records[e], n, (e) => e.id)
 		} });
 	}
 	async remove_asset(e, t) {
@@ -1898,7 +1898,7 @@ var dr = class {
 		await this.#e.personas.remove(e), this.#i || this.#f({ personas: this.#t.library.personas.filter((t) => t.id !== e) });
 	}
 	#j(e) {
-		let t = B(this.#t.library.personas, e, (e) => e.id);
+		let t = H(this.#t.library.personas, e, (e) => e.id);
 		return e.is_active ? t.map((t) => t.id === e.id || t.role !== e.role ? t : {
 			...t,
 			is_active: !1
@@ -1906,11 +1906,11 @@ var dr = class {
 	}
 	async save_knowledge_entry(e) {
 		let t = await this.#e.knowledge.save(e);
-		return this.#i || this.#f({ knowledge: B(this.#t.library.knowledge, t, (e) => e.id) }), t;
+		return this.#i || this.#f({ knowledge: H(this.#t.library.knowledge, t, (e) => e.id) }), t;
 	}
 	async set_knowledge_entry_enabled(e, t) {
 		let n = await this.#e.knowledge.set_enabled(e, t);
-		return this.#i || this.#f({ knowledge: B(this.#t.library.knowledge, n, (e) => e.id) }), n;
+		return this.#i || this.#f({ knowledge: H(this.#t.library.knowledge, n, (e) => e.id) }), n;
 	}
 	async remove_knowledge_entry(e) {
 		await this.#e.knowledge.remove(e), this.#i || this.#M([e]);
@@ -1953,7 +1953,7 @@ var dr = class {
 		return this.#e.llm_connections.test_connection(e);
 	}
 	#N(e) {
-		let t = B(this.#t.llm_connections.connections, e, (e) => e.id);
+		let t = H(this.#t.llm_connections.connections, e, (e) => e.id);
 		this.#l({ connections: e.is_default ? t.map((t) => t.id === e.id ? t : {
 			...t,
 			is_default: !1
@@ -1987,7 +1987,7 @@ var dr = class {
 		});
 	}
 	bulk_delete_gallery_records(e) {
-		return lr(() => this.#t.gallery.bulk_delete_command, (e) => {
+		return sr(() => this.#t.gallery.bulk_delete_command, (e) => {
 			this.#p({ bulk_delete_command: e });
 		}, async () => {
 			await this.#e.gallery.bulk_delete(e);
@@ -1999,13 +1999,13 @@ var dr = class {
 		});
 	}
 };
-function fr(e) {
-	return new dr(e);
+function ur(e) {
+	return new lr(e);
 }
 //#endregion
 //#region src/ui/controllers/use_studio_controller.ts
-function pr(e) {
-	let t = Oe(fr(e)), n = Pe(t.state), r = t.on_change(() => {
+function dr(e) {
+	let t = Oe(ur(e)), n = Pe(t.state), r = t.on_change(() => {
 		n.value = t.state;
 	});
 	return t.start(), Te(() => {
@@ -2017,7 +2017,7 @@ function pr(e) {
 }
 //#endregion
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/image.js
-var mr = ze("image", [
+var fr = Re("image", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2037,7 +2037,7 @@ var mr = ze("image", [
 		d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21",
 		key: "1xmnt7"
 	}]
-]), hr = ze("panel-right-close", [
+]), pr = Re("panel-right-close", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2054,7 +2054,7 @@ var mr = ze("image", [
 		d: "m8 9 3 3-3 3",
 		key: "12hl5m"
 	}]
-]), gr = ze("panel-right-open", [
+]), mr = Re("panel-right-open", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2071,39 +2071,39 @@ var mr = ze("image", [
 		d: "m10 15-3-3 3-3",
 		key: "1pgupc"
 	}]
-]), _r = ["image", "video"], vr = /^(?:blob:|data:image\/|data:video\/)/u, yr = _({
-	kind: h(_r),
-	url: s().min(1).refine((e) => vr.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
+]), hr = ["image", "video"], gr = /^(?:blob:|data:image\/|data:video\/)/u, _r = _({
+	kind: h(hr),
+	url: s().min(1).refine((e) => gr.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
 });
-function br(e) {
-	let t = yr.safeParse(e);
+function vr(e) {
+	let t = _r.safeParse(e);
 	return t.success ? t.data : null;
 }
-function xr(e, t) {
+function yr(e, t) {
 	let n = e[t];
 	return n === void 0 ? {
 		state: t,
 		asset: null
 	} : {
 		state: t,
-		asset: br(n)
+		asset: vr(n)
 	};
 }
-var Sr = 8;
-function Cr(e, t) {
-	let n = Math.max(Sr, t.width - 56 - Sr), r = Math.max(Sr, t.height - 56 - Sr);
+var br = 8;
+function xr(e, t) {
+	let n = Math.max(br, t.width - 56 - br), r = Math.max(br, t.height - 56 - br);
 	return {
-		x: Math.min(Math.max(e.x, Sr), n),
-		y: Math.min(Math.max(e.y, Sr), r)
+		x: Math.min(Math.max(e.x, br), n),
+		y: Math.min(Math.max(e.y, br), r)
 	};
 }
-function wr(e) {
-	return Cr({
+function Sr(e) {
+	return xr({
 		x: (e.width - 56) / 2,
 		y: (e.height - 56) / 2
 	}, e);
 }
-var Tr = class {
+var Cr = class {
 	#e = /* @__PURE__ */ new Map();
 	get(e) {
 		return this.#e.get(e) ?? null;
@@ -2112,11 +2112,11 @@ var Tr = class {
 		this.#e.set(e, t);
 	}
 };
-function Er(e) {
-	let t = br(e);
+function wr(e) {
+	let t = vr(e);
 	return t !== null && t.kind === "image" ? t : null;
 }
-var Dr = class {
+var Tr = class {
 	#e;
 	#t;
 	#n = !1;
@@ -2134,7 +2134,7 @@ var Dr = class {
 		this.#n = !0, this.#r = this.#t;
 	}
 	drag_to(e) {
-		this.#n && (this.#t = Cr(e, this.#e.get_viewport()));
+		this.#n && (this.#t = xr(e, this.#e.get_viewport()));
 	}
 	end_drag() {
 		let e = this.#n, t = this.#r;
@@ -2143,24 +2143,24 @@ var Dr = class {
 		return { moved: n > 4 || r > 4 };
 	}
 	reset_position() {
-		this.#t = wr(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
+		this.#t = Sr(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
 	}
 	reflow() {
 		this.#t = this.#i();
 	}
 	#i() {
 		let e = this.#e.position_store.get(this.#e.get_viewport_bucket()), t = this.#e.get_viewport();
-		return e === null ? wr(t) : Cr(e, t);
+		return e === null ? Sr(t) : xr(e, t);
 	}
-}, Or = "(min-width: 960px)";
-function kr() {
-	return typeof window > "u" || typeof window.matchMedia != "function" || window.matchMedia(Or).matches;
+}, Er = "(min-width: 960px)";
+function Dr() {
+	return typeof window > "u" || typeof window.matchMedia != "function" || window.matchMedia(Er).matches;
 }
-function Ar(e) {
+function Or(e) {
 	if (e !== void 0) return M(() => e);
-	let t = O(kr());
+	let t = O(Dr());
 	if (typeof window < "u" && typeof window.matchMedia == "function") {
-		let e = window.matchMedia(Or), n = (e) => {
+		let e = window.matchMedia(Er), n = (e) => {
 			t.value = e.matches;
 		};
 		e.addEventListener("change", n), Te(() => {
@@ -2169,15 +2169,15 @@ function Ar(e) {
 	}
 	return M(() => t.value ? "desktop" : "mobile");
 }
-var jr = {
+var kr = {
 	floatingEntry: "_floatingEntry_1k9dx_9",
 	floatingEntryDragging: "_floatingEntryDragging_1k9dx_31",
 	floatingEntryMedia: "_floatingEntryMedia_1k9dx_35"
-}, Mr = [
+}, Ar = [
 	"aria-label",
 	"data-dragging",
 	"data-media-state"
-], Nr = ["src"], Pr = ["src"], Fr = /* @__PURE__ */ F({
+], jr = ["src"], Mr = ["src"], Nr = /* @__PURE__ */ F({
 	__name: "FloatingEntry",
 	props: {
 		enabled: { type: Boolean },
@@ -2189,7 +2189,7 @@ var jr = {
 	},
 	emits: ["open"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, i = Ar(n.viewportOverride);
+		let n = e, r = t, i = Or(n.viewportOverride);
 		function a() {
 			return typeof window > "u" ? {
 				width: 1280,
@@ -2199,8 +2199,8 @@ var jr = {
 				height: window.innerHeight
 			};
 		}
-		let o = new Dr({
-			position_store: Fe(n.positionStore) ?? Oe(new Tr()),
+		let o = new Tr({
+			position_store: Fe(n.positionStore) ?? Oe(new Cr()),
 			get_viewport: a,
 			get_viewport_bucket: () => i.value
 		}), s = O(o.position), c = O(o.dragging);
@@ -2222,8 +2222,8 @@ var jr = {
 			let e = c.value ? "dragging" : n.mediaState;
 			return e === "idle" ? {
 				state: e,
-				asset: Er(n.mediaAssets.idle)
-			} : xr(n.mediaAssets, e);
+				asset: wr(n.mediaAssets.idle)
+			} : yr(n.mediaAssets, e);
 		}), f = !1;
 		function p(e) {
 			let t = e.currentTarget;
@@ -2266,7 +2266,7 @@ var jr = {
 		return (t, n) => e.enabled ? (T(), E("button", {
 			key: 0,
 			type: "button",
-			class: P(["tc-interactive", [D(jr).floatingEntry, c.value && D(jr).floatingEntryDragging]]),
+			class: P(["tc-interactive", [D(kr).floatingEntry, c.value && D(kr).floatingEntryDragging]]),
 			style: Ae({
 				left: `${s.value.x}px`,
 				top: `${s.value.y}px`
@@ -2281,31 +2281,31 @@ var jr = {
 			onKeydown: h
 		}, [d.value.asset?.kind === "video" ? (T(), E("video", {
 			key: 0,
-			class: P(D(jr).floatingEntryMedia),
+			class: P(D(kr).floatingEntryMedia),
 			src: d.value.asset.url,
 			autoplay: "",
 			muted: "",
 			loop: "",
 			playsinline: ""
-		}, null, 10, Nr)) : d.value.asset?.kind === "image" ? (T(), E("img", {
+		}, null, 10, jr)) : d.value.asset?.kind === "image" ? (T(), E("img", {
 			key: 1,
-			class: P(D(jr).floatingEntryMedia),
+			class: P(D(kr).floatingEntryMedia),
 			src: d.value.asset.url,
 			alt: ""
-		}, null, 10, Pr)) : (T(), A(Be, {
+		}, null, 10, Mr)) : (T(), A(ze, {
 			key: 2,
-			icon: D(mr)
-		}, null, 8, ["icon"]))], 46, Mr)) : k("", !0);
+			icon: D(fr)
+		}, null, 8, ["icon"]))], 46, Ar)) : k("", !0);
 	}
-}), Ir = "data-tavern-canvas-menu-entry";
-function Lr(e, t) {
+}), Pr = "data-tavern-canvas-menu-entry";
+function Fr(e, t) {
 	let n = O(!1), r = null;
 	return ye(() => {
 		let i = document.getElementById("extensionsMenu");
 		if (i === null) return;
-		i.querySelector(`[${Ir}]`)?.remove(), r = document.createElement("div"), r.className = "list-group-item flex-container flexGap5 interactable", r.setAttribute(Ir, ""), r.setAttribute("role", "button"), r.tabIndex = 0;
+		i.querySelector(`[${Pr}]`)?.remove(), r = document.createElement("div"), r.className = "list-group-item flex-container flexGap5 interactable", r.setAttribute(Pr, ""), r.setAttribute("role", "button"), r.tabIndex = 0;
 		let a = document.createElement("div");
-		a.className = "extensionsMenuExtensionButton", a.append(Ge(document));
+		a.className = "extensionsMenuExtensionButton", a.append(We(document));
 		let o = document.createElement("span");
 		xe(() => {
 			o.textContent = e();
@@ -2316,24 +2316,24 @@ function Lr(e, t) {
 }
 //#endregion
 //#region src/ui/experience/use_host_entry_points.ts
-var Rr = "data-tavern-canvas-settings", zr = "inkwell", Br = !1;
-function Vr(e, t) {
-	if (Br) return;
+var Ir = "data-tavern-canvas-settings", Lr = "inkwell", Rr = !1;
+function zr(e, t) {
+	if (Rr) return;
 	let n = globalThis.SillyTavern?.getContext?.(), r = n?.SlashCommand?.fromProps?.({
-		name: zr,
+		name: Lr,
 		helpString: e,
 		returns: "nothing",
 		callback: () => (t(), "")
 	});
-	r !== void 0 && n?.SlashCommandParser?.addCommandObject !== void 0 && (n.SlashCommandParser.addCommandObject(r), Br = !0);
+	r !== void 0 && n?.SlashCommandParser?.addCommandObject !== void 0 && (n.SlashCommandParser.addCommandObject(r), Rr = !0);
 }
-function Hr(e, t) {
+function Br(e, t) {
 	let n = null;
 	ye(() => {
-		Vr(e.description(), t);
+		zr(e.description(), t);
 		let r = document.getElementById("extensions_settings2") ?? document.getElementById("extensions_settings");
 		if (r === null) return;
-		r.querySelector(`[${Rr}]`)?.remove(), n = document.createElement("div"), n.setAttribute(Rr, ""), n.className = "flex-container flexFlowColumn flexGap5";
+		r.querySelector(`[${Ir}]`)?.remove(), n = document.createElement("div"), n.setAttribute(Ir, ""), n.className = "flex-container flexFlowColumn flexGap5";
 		let i = document.createElement("b"), a = document.createElement("small"), o = document.createElement("div");
 		xe(() => {
 			i.textContent = e.name(), a.textContent = e.description(), o.textContent = e.open();
@@ -2344,27 +2344,27 @@ function Hr(e, t) {
 		n?.remove();
 	});
 }
-function Ur(e, t, n) {
+function Vr(e, t, n) {
 	let r = Math.max(20, t.width - n.width - 20), i = Math.max(20, t.height - n.height - 20);
 	return {
 		x: Math.min(Math.max(e.x, 20), r),
 		y: Math.min(Math.max(e.y, 20), i)
 	};
 }
-function Wr(e, t) {
-	return Ur({
+function Hr(e, t) {
+	return Vr({
 		x: e.width - t.width - 20,
 		y: 64
 	}, e, t);
 }
-var Gr = {
+var Ur = {
 	window: "_window_1rdvc_1",
 	"floating-window-enter": "_floating-window-enter_1rdvc_1"
-}, Kr = [
+}, Wr = [
 	"aria-label",
 	"data-positioned",
 	"data-dragging"
-], qr = /* @__PURE__ */ F({
+], Gr = /* @__PURE__ */ F({
 	__name: "FloatingStudioWindow",
 	props: { label: {} },
 	setup(e) {
@@ -2389,7 +2389,7 @@ var Gr = {
 			let e = n.value;
 			if (e === null || window.innerWidth < 960) return;
 			let t = o(), a = s(e);
-			r.value = i.value ? Ur(r.value, t, a) : Wr(t, a), i.value = !0;
+			r.value = i.value ? Vr(r.value, t, a) : Hr(t, a), i.value = !0;
 		}
 		function l(e) {
 			let t = n.value, i = e.target;
@@ -2401,7 +2401,7 @@ var Gr = {
 				y: e.clientY
 			}, u = r.value;
 			function d(e) {
-				r.value = Ur({
+				r.value = Vr({
 					x: u.x + e.clientX - l.x,
 					y: u.y + e.clientY - l.y
 				}, o(), s(c));
@@ -2427,7 +2427,7 @@ var Gr = {
 		}), (e, o) => (T(), E("section", {
 			ref_key: "window_element",
 			ref: n,
-			class: P(D(Gr).window),
+			class: P(D(Ur).window),
 			style: Ae({
 				"--tc-floating-window-x": `${r.value.x}px`,
 				"--tc-floating-window-y": `${r.value.y}px`
@@ -2438,24 +2438,24 @@ var Gr = {
 			"data-window-role": "studio",
 			role: "dialog",
 			onPointerdown: l
-		}, [Se(e.$slots, "default")], 46, Kr));
+		}, [Se(e.$slots, "default")], 46, Wr));
 	}
-}), Jr = /* @__PURE__ */ F({
+}), Kr = /* @__PURE__ */ F({
 	__name: "PortalProvider",
 	props: { portalTarget: {} },
 	setup(e) {
 		let t = e;
 		if (t.portalTarget === document.body) throw Error("PortalProvider must never receive document.body as the portal target -- pass the Shadow Root's dedicated [data-shadow-role=\"portal\"] element instead.");
-		return we(Xe, t.portalTarget), (e, t) => Se(e.$slots, "default");
+		return we(Ye, t.portalTarget), (e, t) => Se(e.$slots, "default");
 	}
-}), Yr = /* @__PURE__ */ F({
+}), qr = /* @__PURE__ */ F({
 	__name: "StudioWorkspace",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = ke(() => import("./chunks/GalleryView-OWcLooxk.js")), n = ke(() => import("./chunks/SettingsView-4XuiP9-R.js"));
+		let t = ke(() => import("./chunks/GalleryView-DBg4uKBM.js")), n = ke(() => import("./chunks/SettingsView-C1doLKtb.js"));
 		return (r, i) => e.state.route === "gallery" ? (T(), A(D(t), {
 			key: 0,
 			state: e.state,
@@ -2466,10 +2466,10 @@ var Gr = {
 			controller: e.controller
 		}, null, 8, ["state", "controller"]));
 	}
-}), Xr = ["aria-label", "aria-expanded"], Zr = ["data-status"], Qr = {
+}), Jr = ["aria-label", "aria-expanded"], Yr = ["data-status"], Xr = {
 	key: 0,
 	class: "tc-tabular-nums"
-}, $r = /* @__PURE__ */ F({
+}, Zr = /* @__PURE__ */ F({
 	__name: "TaskStrip",
 	props: { tasks: {} },
 	setup(t) {
@@ -2508,10 +2508,10 @@ var Gr = {
 			"aria-label": c.value,
 			"aria-expanded": a.value,
 			onClick: l
-		}, [Le(Be, {
-			icon: a.value ? D(Ve) : D(He),
+		}, [I(ze, {
+			icon: a.value ? D(Be) : D(Ve),
 			size: 16
-		}, null, 8, ["icon"])], 10, Xr)], 2), a.value ? (T(), E("div", {
+		}, null, 8, ["icon"])], 10, Jr)], 2), a.value ? (T(), E("div", {
 			key: 0,
 			class: P(D(e).task_strip_list)
 		}, [(T(!0), E(Ie, null, be(n.tasks, (t) => (T(), E("div", {
@@ -2521,12 +2521,12 @@ var Gr = {
 			j("span", {
 				class: P(D(e).task_chip_dot),
 				"data-status": t.status
-			}, null, 10, Zr),
+			}, null, 10, Yr),
 			j("span", { class: P(D(e).task_chip_label) }, N(s(t.label_code)), 3),
-			t.progress === null ? k("", !0) : (T(), E("span", Qr, N(D(i)(t.progress, "percent")), 1))
+			t.progress === null ? k("", !0) : (T(), E("span", Xr, N(D(i)(t.progress, "percent")), 1))
 		], 2))), 128))], 2)) : k("", !0)], 2)) : k("", !0);
 	}
-}), ei = ["aria-label", "aria-pressed"], ti = ["aria-label", "title"], ni = /* @__PURE__ */ F({
+}), Qr = ["aria-label", "aria-pressed"], $r = ["aria-label", "title"], ei = /* @__PURE__ */ F({
 	__name: "TopCommandBar",
 	props: {
 		route: {},
@@ -2535,7 +2535,7 @@ var Gr = {
 	},
 	emits: ["set-inspector-collapsed", "close"],
 	setup(t, { emit: n }) {
-		let r = t, i = n, { t: a } = Ne(), o = M(() => Ue(a, r.route)), s = M(() => r.inspectorCollapsed ? gr : hr), c = M(() => r.inspectorCollapsed ? a("nav.inspector_expand") : a("nav.inspector_collapse"));
+		let r = t, i = n, { t: a } = Ne(), o = M(() => He(a, r.route)), s = M(() => r.inspectorCollapsed ? mr : pr), c = M(() => r.inspectorCollapsed ? a("nav.inspector_expand") : a("nav.inspector_collapse"));
 		function l() {
 			i("set-inspector-collapsed", !r.inspectorCollapsed);
 		}
@@ -2557,22 +2557,22 @@ var Gr = {
 			"aria-label": c.value,
 			"aria-pressed": !t.inspectorCollapsed,
 			onClick: l
-		}, [Le(Be, {
+		}, [I(ze, {
 			icon: s.value,
 			size: 18
-		}, null, 8, ["icon"])], 10, ei)) : k("", !0), j("button", {
+		}, null, 8, ["icon"])], 10, Qr)) : k("", !0), j("button", {
 			type: "button",
 			class: P(["tc-interactive", [D(e).icon_button, D(e).close_button]]),
 			"data-testid": "studio-close",
 			"aria-label": D(a)("common.close"),
 			title: D(a)("common.close"),
 			onClick: r[0] ||= (e) => i("close")
-		}, [Le(Be, {
-			icon: D(We),
+		}, [I(ze, {
+			icon: D(Ue),
 			size: 18
-		}, null, 8, ["icon"])], 10, ti)], 2)], 2));
+		}, null, 8, ["icon"])], 10, $r)], 2)], 2));
 	}
-}), ri = ["data-viewport", "data-inspector-collapsed"], ii = ["aria-label"], ai = /* @__PURE__ */ F({
+}), ti = ["data-viewport", "data-inspector-collapsed"], ni = ["aria-label"], ri = /* @__PURE__ */ F({
 	__name: "StudioShell",
 	props: {
 		state: {},
@@ -2586,7 +2586,7 @@ var Gr = {
 		"close"
 	],
 	setup(t, { emit: n }) {
-		let r = ke(() => import("./chunks/ContextInspector-CjXtAYIf.js")), i = ke(() => import("./chunks/DesktopIconRail-Dgh3ByvL.js")), a = ke(() => import("./chunks/InspectorSheet-CFMo3cq-.js")), o = ke(() => import("./chunks/MobileBottomNav-BUyAs2d3.js")), s = t, c = n, { t: l } = Ne(), u = Ar(s.viewport), d = /* @__PURE__ */ new Set(["vocabulary"]), f = M(() => [...s.state.loading].some((e) => !d.has(e))), p = M(() => s.state.failures.size > 0), m = M(() => ({ "--tc-inspector-width": `${String(s.state.inspector.width)}px` })), h = O(!1), g = M(() => s.state.route === "gallery" || s.state.settings_section === "library"), _ = M(() => !g.value || s.state.inspector.collapsed), v = M(() => u.value === "mobile" ? !h.value : _.value);
+		let r = ke(() => import("./chunks/ContextInspector-CjXtAYIf.js")), i = ke(() => import("./chunks/DesktopIconRail-Dgh3ByvL.js")), a = ke(() => import("./chunks/InspectorSheet-CFMo3cq-.js")), o = ke(() => import("./chunks/MobileBottomNav-BUyAs2d3.js")), s = t, c = n, { t: l } = Ne(), u = Or(s.viewport), d = /* @__PURE__ */ new Set(["vocabulary"]), f = M(() => [...s.state.loading].some((e) => !d.has(e))), p = M(() => s.state.failures.size > 0), m = M(() => ({ "--tc-inspector-width": `${String(s.state.inspector.width)}px` })), h = O(!1), g = M(() => s.state.route === "gallery" || s.state.settings_section === "library"), _ = M(() => !g.value || s.state.inspector.collapsed), v = M(() => u.value === "mobile" ? !h.value : _.value);
 		function y(e) {
 			u.value === "mobile" && (h.value = !e), c("set-inspector-collapsed", e);
 		}
@@ -2599,7 +2599,7 @@ var Gr = {
 			"data-inspector-collapsed": D(u) === "desktop" ? _.value : null,
 			style: Ae(m.value)
 		}, [
-			Le(ni, {
+			I(ei, {
 				route: s.state.route,
 				"inspector-collapsed": v.value,
 				"inspector-available": g.value,
@@ -2657,7 +2657,7 @@ var Gr = {
 						"margin-top": "8px"
 					}
 				}, null, 2)
-			], 10, ii)) : (T(), A(Yr, {
+			], 10, ni)) : (T(), A(qr, {
 				key: 2,
 				state: s.state,
 				controller: s.controller
@@ -2668,7 +2668,7 @@ var Gr = {
 				selection: s.state.inspector.selected_record,
 				onResize: n[2] ||= (e) => c("resize-inspector", e)
 			}, null, 8, ["width", "selection"])) : k("", !0),
-			Le($r, { tasks: s.state.tasks }, null, 8, ["tasks"]),
+			I(Zr, { tasks: s.state.tasks }, null, 8, ["tasks"]),
 			D(u) === "mobile" ? (T(), A(D(o), {
 				key: 2,
 				route: s.state.route,
@@ -2680,9 +2680,9 @@ var Gr = {
 				selection: s.state.inspector.selected_record,
 				"onUpdate:open": n[3] ||= (e) => y(!e)
 			}, null, 8, ["open", "selection"])) : k("", !0)
-		], 14, ri));
+		], 14, ti));
 	}
-}), oi = ["href"], si = /* @__PURE__ */ F({
+}), ii = ["href"], ai = /* @__PURE__ */ F({
 	__name: "AppRoot",
 	props: {
 		status: {},
@@ -2702,8 +2702,8 @@ var Gr = {
 		}
 		let o = n.hostElement, s = a();
 		o.dataset.colorMode = s;
-		let c = M(() => n.probe.ready ? void 0 : n.probe.current_version), l = M(() => `${i("app.name")} ${i("app.version_label", { version: n.version })}`), u = n.status.state === "ready" ? pr({
-			capabilities: n.capabilities ?? Qn(),
+		let c = M(() => n.probe.ready ? void 0 : n.probe.current_version), l = M(() => `${i("app.name")} ${i("app.version_label", { version: n.version })}`), u = n.status.state === "ready" ? dr({
+			capabilities: n.capabilities ?? Xn(),
 			initial_color_mode: s
 		}) : null;
 		u && Ee(() => u.state.value.color_mode, (e) => {
@@ -2721,8 +2721,8 @@ var Gr = {
 		function m() {
 			window.location.reload();
 		}
-		let h = O(!1), g = M(() => h.value), _ = Lr(() => i("app.name"), y);
-		Hr({
+		let h = O(!1), g = M(() => h.value), _ = Fr(() => i("app.name"), y);
+		Br({
 			name: () => i("app.name"),
 			description: () => i("app.entry_description"),
 			open: () => i("app.open_action")
@@ -2737,7 +2737,7 @@ var Gr = {
 		function b() {
 			h.value = !1;
 		}
-		return (n, a) => (T(), A(Jr, { "portal-target": t.portalTarget }, {
+		return (n, a) => (T(), A(Kr, { "portal-target": t.portalTarget }, {
 			default: De(() => [t.status.state === "blocked" ? (T(), E("div", {
 				key: 0,
 				class: P(D(e).state_screen),
@@ -2746,7 +2746,7 @@ var Gr = {
 				j("p", { class: P(D(e).state_screen_eyebrow) }, N(l.value), 3),
 				j("h1", { class: P(D(e).state_screen_title) }, N(D(i)("app.unsupported_host.title")), 3),
 				j("p", { class: P(D(e).state_screen_description) }, N(D(i)("app.unsupported_host.description", {
-					required_version: D(In),
+					required_version: D(Pn),
 					current_version: c.value ?? D(i)("status.unknown")
 				})), 3),
 				j("a", {
@@ -2754,7 +2754,7 @@ var Gr = {
 					href: t.status.update_url,
 					target: "_blank",
 					rel: "noreferrer"
-				}, N(D(i)("app.unsupported_host.update_action")), 11, oi)
+				}, N(D(i)("app.unsupported_host.update_action")), 11, ii)
 			], 2)) : t.status.state === "failed" ? (T(), E("div", {
 				key: 1,
 				class: P(D(e).state_screen),
@@ -2769,11 +2769,11 @@ var Gr = {
 					onClick: m
 				}, N(D(i)("app.fatal_error.reload_action")), 3)
 			], 2)) : D(u) ? (T(), E(Ie, { key: 2 }, [
-				g.value ? (T(), A(qr, {
+				g.value ? (T(), A(Gr, {
 					key: 0,
 					label: D(i)("app.name")
 				}, {
-					default: De(() => [Le(ai, {
+					default: De(() => [I(ri, {
 						state: D(u).state.value,
 						controller: D(u).controller,
 						onSelectRoute: d,
@@ -2783,7 +2783,7 @@ var Gr = {
 					}, null, 8, ["state", "controller"])]),
 					_: 1
 				}, 8, ["label"])) : k("", !0),
-				Le(Fr, {
+				I(Nr, {
 					enabled: v.value && !g.value,
 					"open-label": D(i)("app.name"),
 					onOpen: y
@@ -2806,17 +2806,17 @@ var Gr = {
 			_: 1
 		}, 8, ["portal-target"]));
 	}
-}), ci = "._slot_cjg26_3{max-width:min(100%,512px);color:var(--SmartThemeBodyColor,inherit);font-size:calc(var(--mainFontSize,1rem) * .9);margin:.5em 0}._frame_cjg26_10{border:1px solid var(--SmartThemeBorderColor,#80808066);background:var(--SmartThemeBlurTintColor,#00000026);border-radius:10px;position:relative;overflow:hidden}._image_cjg26_18{cursor:zoom-in;width:100%;height:auto;display:block}._placeholder_cjg26_25{text-align:center;opacity:.85;flex-direction:column;justify-content:center;align-items:center;gap:.5em;min-height:96px;padding:1em;display:flex}._error_cjg26_37{color:var(--SmartThemeQuoteColor,#e06c75)}._toolbar_cjg26_41{flex-wrap:wrap;align-items:center;gap:.25em;margin-top:.35em;display:flex}._counter_cjg26_49{font-variant-numeric:tabular-nums;opacity:.75;margin-inline-end:auto}._button_cjg26_55{border:1px solid var(--SmartThemeBorderColor,#80808066);color:inherit;font:inherit;cursor:pointer;background:0 0;border-radius:6px;align-items:center;gap:.35em;padding:.2em .6em;display:inline-flex}._button_cjg26_55:hover:not(:disabled){background:var(--SmartThemeBlurTintColor,#80808026)}._button_cjg26_55:disabled{cursor:default;opacity:.5}._skeleton_cjg26_77{opacity:.2;background:currentColor;border-radius:4px;width:60%;height:.8em;animation:1.4s ease-in-out infinite _pulse_cjg26_1}._notice_cjg26_86{border-inline-start:3px solid var(--SmartThemeQuoteColor,#e06c75);background:var(--SmartThemeBlurTintColor,#0000001a);font-size:calc(var(--mainFontSize,1rem) * .85);margin:.5em 0;padding:.5em .75em}._excerpt_cjg26_94{white-space:pre-wrap;opacity:.8;max-height:8em;margin:.35em 0 0;font-family:monospace;overflow:auto}@keyframes _pulse_cjg26_1{50%{opacity:.45}}@media (prefers-reduced-motion:reduce){._skeleton_cjg26_77{animation:none}}._lightbox_cjg26_115{z-index:9999;cursor:zoom-out;background:#000c;justify-content:center;align-items:center;padding:2vmin;display:flex;position:fixed;inset:0}._lightbox_cjg26_115 img{object-fit:contain;max-width:100%;max-height:100%}._notice_actions_cjg26_133{gap:.35em;margin-top:.35em;display:flex}", li = "tavern-canvas-chat-style";
-function ui(e) {
-	e.getElementById(li)?.remove();
+}), oi = "._slot_cjg26_3{max-width:min(100%,512px);color:var(--SmartThemeBodyColor,inherit);font-size:calc(var(--mainFontSize,1rem) * .9);margin:.5em 0}._frame_cjg26_10{border:1px solid var(--SmartThemeBorderColor,#80808066);background:var(--SmartThemeBlurTintColor,#00000026);border-radius:10px;position:relative;overflow:hidden}._image_cjg26_18{cursor:zoom-in;width:100%;height:auto;display:block}._placeholder_cjg26_25{text-align:center;opacity:.85;flex-direction:column;justify-content:center;align-items:center;gap:.5em;min-height:96px;padding:1em;display:flex}._error_cjg26_37{color:var(--SmartThemeQuoteColor,#e06c75)}._toolbar_cjg26_41{flex-wrap:wrap;align-items:center;gap:.25em;margin-top:.35em;display:flex}._counter_cjg26_49{font-variant-numeric:tabular-nums;opacity:.75;margin-inline-end:auto}._button_cjg26_55{border:1px solid var(--SmartThemeBorderColor,#80808066);color:inherit;font:inherit;cursor:pointer;background:0 0;border-radius:6px;align-items:center;gap:.35em;padding:.2em .6em;display:inline-flex}._button_cjg26_55:hover:not(:disabled){background:var(--SmartThemeBlurTintColor,#80808026)}._button_cjg26_55:disabled{cursor:default;opacity:.5}._skeleton_cjg26_77{opacity:.2;background:currentColor;border-radius:4px;width:60%;height:.8em;animation:1.4s ease-in-out infinite _pulse_cjg26_1}._notice_cjg26_86{border-inline-start:3px solid var(--SmartThemeQuoteColor,#e06c75);background:var(--SmartThemeBlurTintColor,#0000001a);font-size:calc(var(--mainFontSize,1rem) * .85);margin:.5em 0;padding:.5em .75em}._excerpt_cjg26_94{white-space:pre-wrap;opacity:.8;max-height:8em;margin:.35em 0 0;font-family:monospace;overflow:auto}@keyframes _pulse_cjg26_1{50%{opacity:.45}}@media (prefers-reduced-motion:reduce){._skeleton_cjg26_77{animation:none}}._lightbox_cjg26_115{z-index:9999;cursor:zoom-out;background:#000c;justify-content:center;align-items:center;padding:2vmin;display:flex;position:fixed;inset:0}._lightbox_cjg26_115 img{object-fit:contain;max-width:100%;max-height:100%}._notice_actions_cjg26_133{gap:.35em;margin-top:.35em;display:flex}", si = "tavern-canvas-chat-style";
+function ci(e) {
+	e.getElementById(si)?.remove();
 	let t = e.createElement("style");
-	return t.id = li, t.textContent = ci, e.head.append(t), () => {
+	return t.id = si, t.textContent = oi, e.head.append(t), () => {
 		t.remove();
 	};
 }
 //#endregion
 //#region src/ui/create_shadow_root.ts
-function di(e, t) {
+function li(e, t) {
 	e.getElementById("tavern-canvas-root")?.remove();
 	let n = e.createElement("div");
 	n.id = "tavern-canvas-root";
@@ -2837,33 +2837,33 @@ function di(e, t) {
 }
 //#endregion
 //#region ../../packages/storage/src/images/image_store.ts
-var fi = ["image_records", "image_blobs"], pi = class extends Error {
+var ui = ["image_records", "image_blobs"], di = class extends Error {
 	code = "image_hash_mismatch";
 	sha256;
 	constructor(e) {
 		super(`Image blob content no longer matches its sha256 key: ${e}`), this.name = "ImageCorruptionError", this.sha256 = e;
 	}
-}, mi = class extends Error {
+}, fi = class extends Error {
 	constructor(e) {
 		super(`Image bytes do not match the claimed media type: ${e}`), this.name = "ImageMediaTypeError";
 	}
-}, hi = class extends Qe {
+}, pi = class extends Ze {
 	constructor(e) {
-		super(e, "image_records", et);
+		super(e, "image_records", $e);
 	}
 };
-async function gi(e) {
+async function mi(e) {
 	return e instanceof ArrayBuffer ? new Uint8Array(e) : new Uint8Array(await e.arrayBuffer());
 }
-async function _i(e, t) {
+async function hi(e, t) {
 	return e.objectStore("image_records").index("sha256").count(t);
 }
-async function vi(e, n, i, a) {
-	let o = tt(i);
-	if (o === void 0 || o !== a) throw new mi(a);
-	let s = $e.parse(t(r(i))), c = await n.get(s, e);
+async function gi(e, n, i, a) {
+	let o = et(i);
+	if (o === void 0 || o !== a) throw new fi(a);
+	let s = Qe.parse(t(r(i))), c = await n.get(s, e);
 	if (c === null) {
-		let t = await _i(e, s) + 1, r = {
+		let t = await hi(e, s) + 1, r = {
 			sha256: s,
 			ref_count: t,
 			byte_length: i.byteLength,
@@ -2887,22 +2887,22 @@ async function vi(e, n, i, a) {
 		ref_count: l.ref_count
 	};
 }
-async function yi(e, t, n) {
-	let r = $e.parse(n), i = await t.get(r, e);
+async function _i(e, t, n) {
+	let r = Qe.parse(n), i = await t.get(r, e);
 	return i === null ? !1 : i.ref_count <= 1 ? (await t.delete(r, e), !0) : (await t.put({
 		...i,
 		ref_count: i.ref_count - 1
 	}, e), !1);
 }
-async function bi(e, n, i) {
-	let a = $e.parse(i), o = await n.get(a, e);
+async function vi(e, n, i) {
+	let a = Qe.parse(i), o = await n.get(a, e);
 	if (o === null) return null;
-	let s = await gi(o.blob);
-	if (t(r(s)) !== a) throw new pi(a);
+	let s = await mi(o.blob);
+	if (t(r(s)) !== a) throw new di(a);
 	return s;
 }
-async function xi(e, t, n, r, i) {
-	let a = await vi(e, n, i.bytes, i.claimed_media_type), o = {
+async function yi(e, t, n, r, i) {
+	let a = await gi(e, n, i.bytes, i.claimed_media_type), o = {
 		schema_version: 1,
 		id: i.id,
 		namespace: r,
@@ -2918,21 +2918,21 @@ async function xi(e, t, n, r, i) {
 	};
 	return await t.create(r, o, e), o;
 }
-async function Si(e, t, n, r, i) {
+async function bi(e, t, n, r, i) {
 	let a = await t.get(r, i, e);
-	if (a === null) throw new Ze("image_records", `${r}:${i}`);
+	if (a === null) throw new Xe("image_records", `${r}:${i}`);
 	await t.delete(r, i, e);
-	let o = await yi(e, n, a.sha256);
+	let o = await _i(e, n, a.sha256);
 	return {
 		sha256: a.sha256,
 		blob_deleted: o
 	};
 }
-async function Ci(e, t, n) {
+async function xi(e, t, n) {
 	let r = await e.objectStore("image_records").index("sha256").getAll(n);
 	for (let n of r) {
-		let r = ot.safeParse(n);
-		if (!r.success || !it(r.data)) continue;
+		let r = at.safeParse(n);
+		if (!r.success || !rt(r.data)) continue;
 		let i = r.data;
 		i.quarantined || await t.update(i.namespace, {
 			...i,
@@ -2940,21 +2940,21 @@ async function Ci(e, t, n) {
 		}, e);
 	}
 }
-async function wi(e, t, n) {
-	let r = new hi(e), i = new st(e);
-	return ct(e, fi, (e) => xi(e, r, i, t, n));
+async function Si(e, t, n) {
+	let r = new pi(e), i = new ot(e);
+	return st(e, ui, (e) => yi(e, r, i, t, n));
 }
-async function Ti(e, t, n) {
-	let r = new hi(e), i = new st(e);
-	return ct(e, fi, (e) => Si(e, r, i, t, n));
+async function Ci(e, t, n) {
+	let r = new pi(e), i = new ot(e);
+	return st(e, ui, (e) => bi(e, r, i, t, n));
 }
-async function Ei(e, t) {
-	let n = new hi(e), r = new st(e), i = await ct(e, fi, async (e) => {
+async function wi(e, t) {
+	let n = new pi(e), r = new ot(e), i = await st(e, ui, async (e) => {
 		try {
-			return { bytes: await bi(e, r, t) };
+			return { bytes: await vi(e, r, t) };
 		} catch (t) {
-			if (!(t instanceof pi)) throw t;
-			return await Ci(e, n, t.sha256), { error: t };
+			if (!(t instanceof di)) throw t;
+			return await xi(e, n, t.sha256), { error: t };
 		}
 	});
 	if ("error" in i) throw i.error;
@@ -2962,27 +2962,27 @@ async function Ei(e, t) {
 }
 //#endregion
 //#region src/modules/illustration/slot_markers.ts
-var Di = "[A-Za-z0-9_-]{8,32}", Oi = RegExp(`<!--tc-image:(${Di})-->`, "gu");
-function ki(e) {
+var Ti = "[A-Za-z0-9_-]{8,32}", Ei = RegExp(`<!--tc-image:(${Ti})-->`, "gu");
+function Di(e) {
 	return `<!--tc-image:${e}-->`;
 }
-var Ai = [{
+var Oi = [{
 	id: "tavern-canvas-image-slot-display",
 	script_name: "Inkwell image slot (display)",
-	find_regex: `/<!--tc-image:(${Di})-->/g`,
+	find_regex: `/<!--tc-image:(${Ti})-->/g`,
 	replace_string: "<div class=\"tavern-canvas-slot\" data-tc-slot=\"$1\"></div>",
 	destination: "display"
 }, {
 	id: "tavern-canvas-image-slot-prompt",
 	script_name: "Inkwell image slot (prompt)",
-	find_regex: `/\\n?<!--tc-image:${Di}-->/g`,
+	find_regex: `/\\n?<!--tc-image:${Ti}-->/g`,
 	replace_string: "",
 	destination: "prompt"
 }];
-function ji(e) {
-	return [...e.matchAll(Oi)].map((e) => e[1] ?? "");
+function ki(e) {
+	return [...e.matchAll(Ei)].map((e) => e[1] ?? "");
 }
-function Mi(e) {
+function Ai(e) {
 	let t = [], n = !1;
 	return e.split("\n").forEach((e, r) => {
 		let i = e.trim();
@@ -2990,26 +2990,26 @@ function Mi(e) {
 			n = !n;
 			return;
 		}
-		n || i.length === 0 || ji(i).length > 0 || t.push({
+		n || i.length === 0 || ki(i).length > 0 || t.push({
 			index: t.length,
 			text: i,
 			line: r
 		});
 	}), t;
 }
-function Ni(e, t) {
-	let n = Mi(e), r = /* @__PURE__ */ new Map();
+function ji(e, t) {
+	let n = Ai(e), r = /* @__PURE__ */ new Map();
 	for (let e of t) {
 		let t = n[e.paragraph];
 		if (t === void 0) throw RangeError(`Paragraph ${String(e.paragraph)} does not exist`);
 		let i = r.get(t.line) ?? [];
-		i.push(ki(e.slot_id)), r.set(t.line, i);
+		i.push(Di(e.slot_id)), r.set(t.line, i);
 	}
 	return e.split("\n").flatMap((e, t) => [e, ...r.get(t) ?? []]).join("\n");
 }
 //#endregion
 //#region src/modules/prompt/regex_transform.ts
-function Pi(e, t) {
+function Mi(e, t) {
 	try {
 		let n = new RegExp(t.pattern, t.flags);
 		return {
@@ -3023,10 +3023,10 @@ function Pi(e, t) {
 		};
 	}
 }
-function Fi(e, t) {
+function Ni(e, t) {
 	let n = e, r = [];
 	for (let e of t) {
-		let t = Pi(n, e);
+		let t = Mi(n, e);
 		n = t.text, t.error !== null && r.push({
 			rule_id: e.id,
 			error: t.error
@@ -3037,24 +3037,24 @@ function Fi(e, t) {
 		failures: r
 	};
 }
-function Ii(e, t) {
-	return Pi(t, e).text;
+function Pi(e, t) {
+	return Mi(t, e).text;
 }
 //#endregion
 //#region src/modules/illustration/slot_prompt.ts
-var Li = /^(?:\d+)?(girl|boy|other)s?$/u;
-function Ri(e) {
+var Fi = /^(?:\d+)?(girl|boy|other)s?$/u;
+function Ii(e) {
 	let t = null, n = [];
 	for (let r of e.split(",")) {
-		let e = Li.exec(lt(r).toLowerCase());
+		let e = Fi.exec(ct(r).toLowerCase());
 		e === null ? n.push(r) : t ??= e[1];
 	}
 	return {
 		subject: t,
-		rest: ut(n)
+		rest: L(n)
 	};
 }
-function zi(e) {
+function Li(e) {
 	return [
 		"girl",
 		"boy",
@@ -3064,63 +3064,65 @@ function zi(e) {
 		return n === 0 ? "" : n === 1 ? `1${t}` : `${String(n)}${t}s`;
 	}).filter((e) => e !== "").join(", ");
 }
-function Bi(e, t) {
+function Ri(e, t) {
 	return e.trim().toLowerCase() === t.trim().toLowerCase();
 }
-function Vi(e, t) {
+function zi(e, t) {
 	let n = /* @__PURE__ */ new Map();
-	for (let e of t) for (let t of e.triggers) n.set(lt(t), e.replacement);
-	return ut(e.split(",").map((e) => n.get(lt(e)) ?? e));
+	for (let e of t) for (let t of e.triggers) n.set(ct(t), e.replacement);
+	return L(e.split(",").map((e) => n.get(ct(e)) ?? e));
 }
-function Hi(e, t) {
-	if (t === null) return dt(e);
-	let n = Vi(e, t.replacement_rules);
-	return dt(Fi(n, t.regex_rules).text);
+function Bi(e, t) {
+	if (t === null) return lt(e);
+	let n = zi(e, t.replacement_rules);
+	return lt(Ni(n, t.regex_rules).text);
 }
-function Ui(e, t) {
+function Vi(e, t) {
 	let n = new Set(t.map((e) => e.trim().toLowerCase()));
-	return ut(e.split(",").filter((e) => {
-		let t = lt(e).toLowerCase().replace(/^wearing\s+/u, "");
+	return L(e.split(",").filter((e) => {
+		let t = ct(e).toLowerCase().replace(/^wearing\s+/u, "");
 		return !n.has(t);
 	}));
 }
-function Wi(e) {
+function Hi(e) {
 	let t = e.library.characters, n = [], r = /* @__PURE__ */ new Set(), i = (i, a) => {
 		let o = t[i];
 		if (o === void 0 || r.has(o.character.id)) return;
 		r.add(o.character.id);
-		let s = Ri(o.character.appearance), c = Ri(Ui(a, e.library.outfit_names));
+		let s = Ii(o.character.appearance), c = Ii(Vi(a, e.library.outfit_names));
 		n.push({
 			name: o.character.name,
 			subject: s.subject ?? c.subject,
-			prompt: ut([
+			prompt: L([
 				s.rest,
 				o.outfit?.description,
 				c.rest
-			])
+			]),
+			negative_prompt: o.character.excluded_traits
 		});
 	};
 	for (let r of e.characters) {
-		let e = t.findIndex((e) => Bi(e.character.name, r.name));
+		let e = t.findIndex((e) => Ri(e.character.name, r.name));
 		if (e !== -1) {
 			i(e, r.tags);
 			continue;
 		}
-		let a = Ri(r.tags);
+		let a = Ii(r.tags);
 		(a.subject !== null || a.rest !== "") && n.push({
 			name: r.name,
 			subject: a.subject,
-			prompt: a.rest
+			prompt: a.rest,
+			negative_prompt: ""
 		});
 	}
 	return t.forEach((e, t) => {
 		i(t, "");
 	}), n;
 }
-function Gi(e) {
-	let t = e.preset, n = Wi(e), r = e.library.loose_outfits.map((e) => e.description), i = dt(t?.fixed_negative_prompt ?? "");
+function Ui(e) {
+	let t = e.preset, n = Hi(e), r = e.library.loose_outfits.map((e) => e.description), i = lt(t?.fixed_negative_prompt ?? "");
 	if (n.length === 0) return {
-		positive_prompt: Hi(ut([
+		positive_prompt: Bi(L([
 			t?.fixed_positive_prompt,
 			...r,
 			e.scene_tags
@@ -3130,38 +3132,38 @@ function Gi(e) {
 	};
 	let a = n.flatMap((e) => e.subject === null ? [] : [e.subject]);
 	return {
-		positive_prompt: Hi(ut([
+		positive_prompt: Bi(L([
 			t?.fixed_positive_prompt,
-			zi(a),
+			Li(a),
 			...r,
-			Ri(e.scene_tags).rest
+			Ii(e.scene_tags).rest
 		]), t),
 		negative_prompt: i,
 		character_prompts: n.flatMap((e) => {
-			let n = Hi(ut([e.subject, e.prompt]), t);
+			let n = Bi(L([e.subject, e.prompt]), t);
 			return n === "" ? [] : [{
 				name: e.name,
 				prompt: n,
-				negative_prompt: ""
+				negative_prompt: lt(e.negative_prompt)
 			}];
 		})
 	};
 }
 //#endregion
 //#region src/modules/illustration/library_match.ts
-var Ki = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
-function qi(e) {
+var Wi = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
+function Gi(e) {
 	return e.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 }
-function Ji(e, t) {
+function Ki(e, t) {
 	let n = t.trim();
-	return n === "" ? !1 : Ki.test(n) ? e.toLowerCase().includes(n.toLowerCase()) : RegExp(`(?<![\\p{L}\\p{N}])${qi(n)}(?![\\p{L}\\p{N}])`, "iu").test(e);
+	return n === "" ? !1 : Wi.test(n) ? e.toLowerCase().includes(n.toLowerCase()) : RegExp(`(?<![\\p{L}\\p{N}])${Gi(n)}(?![\\p{L}\\p{N}])`, "iu").test(e);
 }
-function Yi(e, t) {
+function qi(e, t) {
 	return e.trim().toLowerCase() === t.trim().toLowerCase();
 }
-function Xi(e, t, n) {
-	let r = n.outfits.filter((t) => Ji(e, t.name)), i = n.characters.filter((n) => Ji(e, n.name) || t.some((e) => Yi(e, n.name))).map((e) => ({
+function Ji(e, t, n) {
+	let r = n.outfits.filter((t) => Ki(e, t.name)), i = n.characters.filter((n) => Ki(e, n.name) || t.some((e) => qi(e, n.name))).map((e) => ({
 		character: e,
 		outfit: r.find((t) => t.character_id === e.id) ?? n.outfits.find((t) => t.character_id === e.id) ?? null
 	})), a = new Set(i.map((e) => e.outfit?.id));
@@ -3173,17 +3175,17 @@ function Xi(e, t, n) {
 }
 //#endregion
 //#region src/modules/illustration/illustration_service.ts
-var Zi = class extends Error {
+var Yi = class extends Error {
 	constructor(e) {
 		super(`Message ${String(e)} changed while it was being analyzed`), this.name = "MessageChangedError";
 	}
-}, Qi = /* @__PURE__ */ new Set([
+}, Xi = /* @__PURE__ */ new Set([
 	"normal",
 	"swipe",
 	"regenerate",
 	"continue"
 ]);
-async function $i(e, t) {
+async function Zi(e, t) {
 	switch (e.kind) {
 		case "current": return { kind: "current" };
 		case "proxy_preset": return {
@@ -3200,14 +3202,14 @@ async function $i(e, t) {
 		};
 	}
 }
-async function ea(e, t) {
+async function Qi(e, t) {
 	let { attach_character_prompts: n } = await import("./chunks/character_prompts-BRu7L7wm.js");
 	return n(e, t);
 }
-function ta(e) {
+function $i(e) {
 	return (e instanceof Error ? e.message : String(e)).slice(0, 500);
 }
-var na = class {
+var ea = class {
 	#e;
 	#t = /* @__PURE__ */ new Map();
 	#n = /* @__PURE__ */ new Set();
@@ -3233,7 +3235,7 @@ var na = class {
 		};
 	}
 	read(e) {
-		let t = Xt.safeParse(this.#e.host.read_swipe_record(e));
+		let t = Jt.safeParse(this.#e.host.read_swipe_record(e));
 		return t.success ? t.data : null;
 	}
 	is_pending(e) {
@@ -3276,15 +3278,15 @@ var na = class {
 			throw this.#p({
 				type: "analysis_failed",
 				location: r,
-				message: ta(e),
-				excerpt: e instanceof qe ? e.excerpt : null
+				message: $i(e),
+				excerpt: e instanceof Ke ? e.excerpt : null
 			}), e;
 		} finally {
 			this.#r.delete(a);
 		}
 	}
 	async #o(e, t) {
-		let n = Mi(t), r = this.#e.settings(), i = {
+		let n = Ai(t), r = this.#e.settings(), i = {
 			schema_version: 2,
 			slots: []
 		};
@@ -3292,13 +3294,13 @@ var na = class {
 			let e = await this.#e.prompt_context(), t = await this.#e.host.generate_with_preset({
 				generation_id: this.#e.new_generation_id(),
 				preset_name: r.preset_name,
-				user_input: Je(n, r.max_images_per_message, e.library),
+				user_input: qe(n, r.max_images_per_message, e.library),
 				max_chat_history: r.max_chat_history,
-				connection: await $i(r.connection, this.#e.resolve_analysis_key),
-				json_schema: Ye
-			}), a = Ke(t.content, n.length, r.max_images_per_message);
+				connection: await Zi(r.connection, this.#e.resolve_analysis_key),
+				json_schema: Je
+			}), a = Ge(t.content, n.length, r.max_images_per_message);
 			i.slots.push(...a.map((t) => {
-				let r = Xi(`${n[t.paragraph]?.text ?? ""}\n${t.scene}`, t.characters.map((e) => e.name), e.library), i = Gi({
+				let r = Ji(`${n[t.paragraph]?.text ?? ""}\n${t.scene}`, t.characters.map((e) => e.name), e.library), i = Ui({
 					preset: e.preset,
 					library: r,
 					characters: t.characters,
@@ -3321,11 +3323,11 @@ var na = class {
 			}));
 		}
 		if (await this.#e.host.write_swipe_record(e, i), i.slots.length > 0) {
-			let n = Ni(t, i.slots.map((e) => ({
+			let n = ji(t, i.slots.map((e) => ({
 				paragraph: e.paragraph,
 				slot_id: e.slot_id
 			})));
-			if (!await this.#e.host.replace_message_text(e.message_id, t, n)) throw await this.#e.host.write_swipe_record(e, null), new Zi(e.message_id);
+			if (!await this.#e.host.replace_message_text(e.message_id, t, n)) throw await this.#e.host.write_swipe_record(e, null), new Yi(e.message_id);
 		}
 		return i;
 	}
@@ -3334,7 +3336,7 @@ var na = class {
 		return this.#s(n ?? r);
 	}
 	async #s(e) {
-		return ea(await this.#e.build_request(e), e.character_prompts);
+		return Qi(await this.#e.build_request(e), e.character_prompts);
 	}
 	async generate(e, t, n) {
 		let r = this.#l(e, t), i = {
@@ -3361,7 +3363,7 @@ var na = class {
 	}
 	async edit(e, t, n) {
 		let r = this.#l(e, t), i = n.kind === "img2img" || n.kind === "inpaint" ? r.character_prompts : [];
-		await this.#c(e, t, async () => ea(await this.#e.build_edit_request(n), i));
+		await this.#c(e, t, async () => Qi(await this.#e.build_edit_request(n), i));
 	}
 	async #c(e, t, n, r = (e) => e) {
 		let i;
@@ -3370,7 +3372,7 @@ var na = class {
 		} catch (n) {
 			throw await this.#u(e, t, (e) => ({
 				...e,
-				last_error: ta(n)
+				last_error: $i(n)
 			})), n;
 		}
 		this.#t.set(i, {
@@ -3448,18 +3450,18 @@ var na = class {
 			return;
 		}
 		let t = this.#i;
-		this.#i = null, !(t === null || !Qi.has(t) || !this.#e.auto_generation_enabled()) && this.analyze(e.message_id).then(async (t) => {
+		this.#i = null, !(t === null || !Xi.has(t) || !this.#e.auto_generation_enabled()) && this.analyze(e.message_id).then(async (t) => {
 			t.slots.length > 0 && await this.generate_missing(await this.active_location(e.message_id));
 		}).catch(() => {});
 	}
 	#p(e) {
 		for (let t of this.#n) t(e);
 	}
-}, ra = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
-function ia() {
-	return [...crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(12))].map((e) => ra[e % 64] ?? "_").join("");
+}, ta = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
+function na() {
+	return [...crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(12))].map((e) => ta[e % 64] ?? "_").join("");
 }
-async function aa(e, t, n) {
+async function ra(e, t, n) {
 	let [r, i] = await Promise.all([n === null ? null : e.load_draft(n), t.load()]), a = (e) => typeof e == "string" ? e.trim() : "";
 	return {
 		preset: r,
@@ -3467,7 +3469,8 @@ async function aa(e, t, n) {
 			characters: i.character.map((e) => ({
 				id: e.id,
 				name: e.display_name,
-				appearance: a(e.payload.appearance)
+				appearance: a(e.payload.appearance),
+				excluded_traits: a(e.payload.excluded_traits)
 			})),
 			outfits: i.outfit.map((e) => ({
 				id: e.id,
@@ -3478,7 +3481,7 @@ async function aa(e, t, n) {
 		}
 	};
 }
-var oa = class {
+var ia = class {
 	module_id = "illustrations";
 	requires = [];
 	#e;
@@ -3492,7 +3495,7 @@ var oa = class {
 	}
 	async start() {
 		try {
-			await this.#t.sync_regex_scripts(Ai), this.#n = null;
+			await this.#t.sync_regex_scripts(Oi), this.#n = null;
 		} catch (e) {
 			this.#n = e instanceof Error ? e.message : String(e);
 		}
@@ -3501,40 +3504,40 @@ var oa = class {
 	stop() {
 		return this.#e.stop(), Promise.resolve();
 	}
-}, sa = /[぀-ヿ㐀-鿿豈-﫿]/u, ca = /[,，、]/u;
-function la(e) {
-	return e.split(ca).map((e) => e.trim()).filter((e) => e.length > 0);
+}, aa = /[぀-ヿ㐀-鿿豈-﫿]/u, oa = /[,，、]/u;
+function sa(e) {
+	return e.split(oa).map((e) => e.trim()).filter((e) => e.length > 0);
 }
-function ua(e, t) {
+function ca(e, t) {
 	return e.trim().toLowerCase() === t.trim().toLowerCase();
 }
-function da(e) {
+function la(e) {
 	let t = e.trim().replace(/^-?[\d.]+::/u, "").replace(/::$/u, ""), n = /^\((.+):[\d.]+\)$/u.exec(t);
 	for (n?.[1] !== void 0 && (t = n[1]); /^[{[].*[}\]]$/u.test(t);) t = t.slice(1, -1);
 	return t.trim().toLowerCase();
 }
-function fa(e) {
+function ua(e) {
 	return e.trim().replace(/[.。]+$/u, "").toLowerCase();
 }
-async function pa(e, t) {
-	let n = la(e);
+async function da(e, t) {
+	let n = sa(e);
 	return (await Promise.all(n.map(async (e) => {
-		if (!sa.test(e)) return e;
-		let n = t.glossary.find((t) => ua(t.source, e));
-		return n === void 0 ? await t.find_tag(e) ?? fa(await t.deepl(e, "EN-US")) : n.target;
+		if (!aa.test(e)) return e;
+		let n = t.glossary.find((t) => ca(t.source, e));
+		return n === void 0 ? await t.find_tag(e) ?? ua(await t.deepl(e, "EN-US")) : n.target;
 	}))).join(", ");
 }
-async function ma(e, t) {
-	let n = la(e);
+async function fa(e, t) {
+	let n = sa(e);
 	return (await Promise.all(n.map(async (e) => {
-		if (sa.test(e)) return e;
-		let n = da(e), r = t.glossary.find((e) => ua(e.target, n));
+		if (aa.test(e)) return e;
+		let n = la(e), r = t.glossary.find((e) => ca(e.target, n));
 		return r === void 0 ? await t.find_translation(n) ?? (await t.deepl(n, "ZH")).trim() : r.source;
 	}))).join("，");
 }
 //#endregion
 //#region src/modules/translation/prompt_translator.ts
-function ha(e) {
+function pa(e) {
 	async function t(t) {
 		try {
 			return (await e.vocabulary.search(t)).results;
@@ -3556,19 +3559,19 @@ function ha(e) {
 		};
 	}
 	return {
-		to_tags: (e) => pa(e, n()),
-		read_in_chinese: (e) => ma(e, n())
+		to_tags: (e) => da(e, n()),
+		read_in_chinese: (e) => fa(e, n())
 	};
 }
 //#endregion
 //#region src/storage/sillytavern_settings.ts
-var ga = "tavern_canvas", _a = /* @__PURE__ */ new Set([
+var ma = "tavern_canvas", ha = /* @__PURE__ */ new Set([
 	"profiles",
 	"workflows",
 	"image_data",
 	"vocabulary_data",
 	"logs"
-]), va = new Set(Object.keys(C.shape)), ya = new Set(Object.keys(ae.shape)), ba = new Set(Object.keys(fe.shape)), xa = {
+]), ga = new Set(Object.keys(C.shape)), _a = new Set(Object.keys(ae.shape)), va = new Set(Object.keys(fe.shape)), ya = {
 	schema_version: 1,
 	active_namespace: "primary",
 	locale: "auto",
@@ -3600,42 +3603,42 @@ var ga = "tavern_canvas", _a = /* @__PURE__ */ new Set([
 		optional_entry_enabled: !1
 	}
 };
-function Sa(e) {
+function ba(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function Ca() {
-	return structuredClone(xa);
+function xa() {
+	return structuredClone(ya);
 }
-function wa(e) {
+function Sa(e) {
 	return JSON.stringify(e);
 }
-function Ta(e) {
+function Ca(e) {
 	try {
-		let t = wa(e);
+		let t = Sa(e);
 		return t === void 0 ? 0 : new TextEncoder().encode(t).length;
 	} catch {
 		return null;
 	}
 }
-function Ea(e, t, n, r) {
+function wa(e, t, n, r) {
 	for (let i of Object.keys(e)) {
 		if (t.has(i)) continue;
-		let e = n === "" ? i : `${n}.${i}`, a = _a.has(i) ? "disallowed_category" : "unknown_field";
+		let e = n === "" ? i : `${n}.${i}`, a = ha.has(i) ? "disallowed_category" : "unknown_field";
 		r.push({
 			path: e,
 			code: a
 		});
 	}
 }
-function V(e, t, n, r, i) {
+function U(e, t, n, r, i) {
 	let a = e.safeParse(t);
 	return a.success ? a.data : (i.push({
 		path: r,
 		code: "invalid_value"
 	}), n);
 }
-function Da(e, t, n) {
-	if (!Sa(e)) return e !== void 0 && n.push({
+function Ta(e, t, n) {
+	if (!ba(e)) return e !== void 0 && n.push({
 		path: t,
 		code: "invalid_value"
 	}), {};
@@ -3649,60 +3652,60 @@ function Da(e, t, n) {
 	}
 	return a;
 }
-function Oa(e, t) {
-	let n = xa.gateway;
-	return Sa(e) ? (Ea(e, ya, "gateway", t), {
-		endpoint: V(ae.shape.endpoint, e.endpoint, n.endpoint, "gateway.endpoint", t),
-		token_secret_id: V(ae.shape.token_secret_id, e.token_secret_id, n.token_secret_id, "gateway.token_secret_id", t),
-		http_acknowledgments: Da(e.http_acknowledgments, "gateway.http_acknowledgments", t)
+function Ea(e, t) {
+	let n = ya.gateway;
+	return ba(e) ? (wa(e, _a, "gateway", t), {
+		endpoint: U(ae.shape.endpoint, e.endpoint, n.endpoint, "gateway.endpoint", t),
+		token_secret_id: U(ae.shape.token_secret_id, e.token_secret_id, n.token_secret_id, "gateway.token_secret_id", t),
+		http_acknowledgments: Ta(e.http_acknowledgments, "gateway.http_acknowledgments", t)
 	}) : (e !== void 0 && t.push({
 		path: "gateway",
 		code: "invalid_value"
 	}), { ...n });
 }
-function ka(e, t) {
-	let n = xa.ui;
-	return Sa(e) ? (Ea(e, ba, "ui", t), {
-		color_mode: V(fe.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
-		inspector_width: V(fe.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
-		inspector_collapsed: V(fe.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
-		optional_entry_enabled: V(fe.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
+function Da(e, t) {
+	let n = ya.ui;
+	return ba(e) ? (wa(e, va, "ui", t), {
+		color_mode: U(fe.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
+		inspector_width: U(fe.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
+		inspector_collapsed: U(fe.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
+		optional_entry_enabled: U(fe.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
 	}) : (e !== void 0 && t.push({
 		path: "ui",
 		code: "invalid_value"
 	}), { ...n });
 }
-function Aa(e, t) {
-	if (e === void 0) return Ca();
-	let n = Ta(e);
+function Oa(e, t) {
+	if (e === void 0) return xa();
+	let n = Ca(e);
 	if (n === null || n > 65536) return t.push({
-		path: ga,
+		path: ma,
 		code: n === null ? "invalid_value" : "serialized_size_exceeded"
-	}), Ca();
-	if (!Sa(e)) return t.push({
-		path: ga,
+	}), xa();
+	if (!ba(e)) return t.push({
+		path: ma,
 		code: "invalid_value"
-	}), Ca();
-	Ea(e, va, "", t);
-	let r = xa;
+	}), xa();
+	wa(e, ga, "", t);
+	let r = ya;
 	return {
-		schema_version: V(C.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
-		active_namespace: V(C.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
-		locale: V(C.shape.locale, e.locale, r.locale, "locale", t),
-		credential_storage_mode: V(ue, e.credential_storage_mode, r.credential_storage_mode, "credential_storage_mode", t),
-		active_provider_profile_id: V(C.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
-		global_concurrency: V(C.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
-		auto_generation_enabled: V(C.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
-		vocabulary_update_channel: V(C.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
-		illustration: e.illustration === void 0 ? structuredClone(r.illustration) : V(C.shape.illustration, e.illustration, structuredClone(r.illustration), "illustration", t),
-		translation: e.translation === void 0 ? structuredClone(r.translation) : V(C.shape.translation, e.translation, structuredClone(r.translation), "translation", t),
-		gateway: Oa(e.gateway, t),
-		ui: ka(e.ui, t)
+		schema_version: U(C.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
+		active_namespace: U(C.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
+		locale: U(C.shape.locale, e.locale, r.locale, "locale", t),
+		credential_storage_mode: U(ue, e.credential_storage_mode, r.credential_storage_mode, "credential_storage_mode", t),
+		active_provider_profile_id: U(C.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
+		global_concurrency: U(C.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
+		auto_generation_enabled: U(C.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
+		vocabulary_update_channel: U(C.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
+		illustration: e.illustration === void 0 ? structuredClone(r.illustration) : U(C.shape.illustration, e.illustration, structuredClone(r.illustration), "illustration", t),
+		translation: e.translation === void 0 ? structuredClone(r.translation) : U(C.shape.translation, e.translation, structuredClone(r.translation), "translation", t),
+		gateway: Ea(e.gateway, t),
+		ui: Da(e.ui, t)
 	};
 }
-function ja(e) {
-	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = Aa(t[ga], i);
-	t[ga] = a;
+function ka(e) {
+	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = Oa(t[ma], i);
+	t[ma] = a;
 	let o = !1, s = !1;
 	async function c() {
 		o && (o = !1, await n());
@@ -3713,7 +3716,7 @@ function ja(e) {
 		}));
 	}
 	function u(e) {
-		return a = e, t[ga] = a, o = !0, l(), a;
+		return a = e, t[ma] = a, o = !0, l(), a;
 	}
 	return {
 		diagnostics: i,
@@ -3738,50 +3741,50 @@ function ja(e) {
 }
 //#endregion
 //#region src/host/sillytavern_secret_resolver.ts
-var H = class extends Error {
+var W = class extends Error {
 	code;
 	constructor(e, t) {
 		super(t), this.name = "SecretResolutionError", this.code = e;
 	}
-}, Ma = "The host refused to reveal the stored credential. Switch credential storage to This device in Settings > General and enter the key again, or allow key exposure in the host (allowKeysExposure in SillyTavern's config.yaml).", Na = class {
+}, Aa = "The host refused to reveal the stored credential. Switch credential storage to This device in Settings > General and enter the key again, or allow key exposure in the host (allowKeysExposure in SillyTavern's config.yaml).", ja = class {
 	#e;
 	#t;
 	constructor(e, t) {
-		this.#e = e, this.#t = dn(t);
+		this.#e = e, this.#t = ln(t);
 	}
 	async resolve_secret(e) {
-		if (!p.safeParse(e).success) throw new H("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
+		if (!p.safeParse(e).success) throw new W("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
 		let t;
 		try {
 			t = await this.#t("/api/secrets/view", {
 				method: "POST",
-				headers: vn(this.#e.getRequestHeaders()),
+				headers: gn(this.#e.getRequestHeaders()),
 				body: JSON.stringify({})
 			});
 		} catch {
-			throw new H("unavailable", "The host secret vault could not be reached");
+			throw new W("unavailable", "The host secret vault could not be reached");
 		}
-		if (!t.ok) throw t.status === 403 ? new H("not_exposed", Ma) : t.status === 404 ? new H("not_found", "The host vault holds no such credential") : new H("unavailable", `The host secret vault answered with status ${String(t.status)}`);
+		if (!t.ok) throw t.status === 403 ? new W("not_exposed", Aa) : t.status === 404 ? new W("not_found", "The host vault holds no such credential") : new W("unavailable", `The host secret vault answered with status ${String(t.status)}`);
 		let n;
 		try {
 			n = await t.json();
 		} catch {
-			throw new H("unavailable", "The host secret vault returned an unreadable response");
+			throw new W("unavailable", "The host secret vault returned an unreadable response");
 		}
 		let r;
-		if (typeof n == "object" && n && !Array.isArray(n) && e in n && (r = Reflect.get(n, e)), typeof r != "string" || r.trim().length === 0) throw new H("not_found", "The host vault holds no such credential");
+		if (typeof n == "object" && n && !Array.isArray(n) && e in n && (r = Reflect.get(n, e)), typeof r != "string" || r.trim().length === 0) throw new W("not_found", "The host vault holds no such credential");
 		return r;
 	}
 };
-function Pa(e) {
+function Ma(e) {
 	return (typeof e == "object" && !!e || typeof e == "function") && typeof e.getRequestHeaders == "function";
 }
-function Fa(e, t) {
-	return !Pa(e) || typeof t != "function" ? null : new Na(e, t);
+function Na(e, t) {
+	return !Ma(e) || typeof t != "function" ? null : new ja(e, t);
 }
 //#endregion
 //#region src/host/secret_backend_router.ts
-var Ia = class {
+var Pa = class {
 	#e;
 	#t;
 	#n;
@@ -3816,7 +3819,7 @@ var Ia = class {
 	}
 	async resolve_secret(e) {
 		let t = this.#o();
-		if (t === null) throw new H("unsupported_host", `${this.#s()} credential storage cannot reveal credentials`);
+		if (t === null) throw new W("unsupported_host", `${this.#s()} credential storage cannot reveal credentials`);
 		return t.resolve_secret(e);
 	}
 	#a() {
@@ -3840,18 +3843,18 @@ var Ia = class {
 			case "host": return "Host";
 		}
 	}
-}, U = class extends Error {
+}, G = class extends Error {
 	code;
 	constructor(e, t, n) {
 		super(t, n), this.name = "ProviderTransportBoundaryError", this.code = e;
 	}
 };
-function La(e) {
+function Fa(e) {
 	try {
-		if (!za(e)) throw W("Provider operation is invalid");
+		if (!La(e)) throw K("Provider operation is invalid");
 		let { route: t, method: n, body: r, max_request_bytes: i, content_type: a, accept: o, max_response_bytes: s, signal: c } = e, l = r === void 0 ? i === void 0 : typeof i == "number" && Number.isSafeInteger(i) && i > 0 && i <= 2e8;
-		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !Ba(a) || !Ba(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw W("Provider operation is invalid");
-		if (_t(t), r === void 0) return {
+		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !Ra(a) || !Ra(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw K("Provider operation is invalid");
+		if (ht(t), r === void 0) return {
 			route: t,
 			method: n,
 			...a === void 0 ? {} : { content_type: a },
@@ -3859,7 +3862,7 @@ function La(e) {
 			max_response_bytes: s,
 			signal: c
 		};
-		if (!(r instanceof Uint8Array) || typeof i != "number") throw W("Provider operation is invalid");
+		if (!(r instanceof Uint8Array) || typeof i != "number") throw K("Provider operation is invalid");
 		return {
 			route: t,
 			method: n,
@@ -3871,16 +3874,16 @@ function La(e) {
 			signal: c
 		};
 	} catch (e) {
-		throw e instanceof U ? e : W("Provider operation is invalid", e);
+		throw e instanceof G ? e : K("Provider operation is invalid", e);
 	}
 }
-function Ra(e) {
+function Ia(e) {
 	try {
-		if (!za(e)) throw W("Remote provider asset operation is invalid");
+		if (!La(e)) throw K("Remote provider asset operation is invalid");
 		let { url: t, allowed_origins: n, max_bytes: r, signal: i } = e;
-		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw W("Remote provider asset operation is invalid");
+		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw K("Remote provider asset operation is invalid");
 		let a = new URL(t), o = n.map(ie);
-		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw W("Remote provider asset URL is not allowlisted");
+		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw K("Remote provider asset URL is not allowlisted");
 		return {
 			url: a.href,
 			allowed_origins: Object.freeze(o),
@@ -3888,10 +3891,10 @@ function Ra(e) {
 			signal: i
 		};
 	} catch (e) {
-		throw e instanceof U ? e : W("Remote provider asset operation is invalid", e);
+		throw e instanceof G ? e : K("Remote provider asset operation is invalid", e);
 	}
 }
-function za(e) {
+function La(e) {
 	if (typeof e != "object" || !e) return !1;
 	try {
 		let t = Object.getPrototypeOf(e);
@@ -3900,7 +3903,7 @@ function za(e) {
 		return !1;
 	}
 }
-function Ba(e) {
+function Ra(e) {
 	if (e === void 0) return !0;
 	if (typeof e != "string" || e.length === 0 || e.length > 1024) return !1;
 	for (let t of e) {
@@ -3909,12 +3912,12 @@ function Ba(e) {
 	}
 	return !0;
 }
-function W(e, t) {
-	return new U("configuration", e, t === void 0 ? void 0 : { cause: t });
+function K(e, t) {
+	return new G("configuration", e, t === void 0 ? void 0 : { cause: t });
 }
 //#endregion
 //#region src/transport/browser_fetch.ts
-async function Va(e, t, n, r) {
+async function za(e, t, n, r) {
 	let i;
 	try {
 		i = await e(t, {
@@ -3924,23 +3927,23 @@ async function Va(e, t, n, r) {
 			redirect: "error"
 		});
 	} catch (e) {
-		throw n.signal?.aborted ? new DOMException("Provider request was aborted", "AbortError") : new vt({ cause: e });
+		throw n.signal?.aborted ? new DOMException("Provider request was aborted", "AbortError") : new gt({ cause: e });
 	}
 	let a = Number(i.headers.get("content-length"));
 	if (Number.isFinite(a) && a > r) {
 		if (i.body !== null) try {
 			await i.body.cancel();
 		} catch {}
-		throw new U("malformed_response", "Provider response exceeds the byte limit");
+		throw new G("malformed_response", "Provider response exceeds the byte limit");
 	}
-	let o = await Ha(i.body, r, n.signal);
+	let o = await Ba(i.body, r, n.signal);
 	return {
 		status: i.status,
 		headers: Object.fromEntries(i.headers.entries()),
 		body: o
 	};
 }
-async function Ha(e, t, n) {
+async function Ba(e, t, n) {
 	if (e === null) return /* @__PURE__ */ new Uint8Array();
 	let r = e.getReader(), i = [], a = 0, o = !1;
 	try {
@@ -3951,11 +3954,11 @@ async function Ha(e, t, n) {
 				o = !0;
 				break;
 			}
-			if (a += s.byteLength, a > t) throw new U("malformed_response", "Provider response exceeds the byte limit");
+			if (a += s.byteLength, a > t) throw new G("malformed_response", "Provider response exceeds the byte limit");
 			i.push(s);
 		}
 	} catch (e) {
-		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof U ? e : new vt({ cause: e });
+		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof G ? e : new gt({ cause: e });
 	} finally {
 		if (!o) try {
 			await r.cancel();
@@ -3968,7 +3971,7 @@ async function Ha(e, t, n) {
 }
 //#endregion
 //#region src/transport/direct_cloud_transport.ts
-var Ua = class {
+var Va = class {
 	#e;
 	#t;
 	#n;
@@ -3978,16 +3981,16 @@ var Ua = class {
 		this.#e = e.catalog_entry, this.#t = e.credential_reference, this.#n = e.secrets, this.#r = e.fetch ?? globalThis.fetch.bind(globalThis), this.#i = e.log ?? null;
 	}
 	async execute(e) {
-		let t = La(e), n = Ka(this.#e, t.route), r = await qa(this.#e, this.#t, this.#n, {
+		let t = Fa(e), n = Wa(this.#e, t.route), r = await Ga(this.#e, this.#t, this.#n, {
 			...t.content_type === void 0 ? {} : { "content-type": t.content_type },
 			...t.accept === void 0 ? {} : { accept: t.accept }
-		}), i = Date.now(), a = await Ga(Va(this.#r, n, {
+		}), i = Date.now(), a = await Ua(za(this.#r, n, {
 			method: t.method,
 			...t.body === void 0 ? {} : { body: new Uint8Array(t.body).buffer },
 			headers: r,
 			signal: t.signal
 		}, t.max_response_bytes));
-		return this.#i?.write(gt({
+		return this.#i?.write(mt({
 			route: t.route,
 			method: t.method,
 			status_code: a.status,
@@ -3997,25 +4000,25 @@ var Ua = class {
 		})), a;
 	}
 	async fetch_remote_asset(e) {
-		let t = Ra(e);
-		return Va(this.#r, t.url, {
+		let t = Ia(e);
+		return za(this.#r, t.url, {
 			method: "GET",
 			signal: t.signal
 		}, t.max_bytes);
 	}
-}, Wa = class {
+}, Ha = class {
 	#e;
 	#t;
 	constructor(e) {
 		this.#e = e.secrets, this.#t = e.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 	async execute(e) {
-		let t = Gt(e.provider_kind);
-		if (t === null) throw new U("configuration", "This LLM dialect has no direct route catalog entry");
-		let n = Ka(t, e.route), r = await qa(t, e.credential_reference, this.#e, e.body === void 0 ? { accept: "application/json" } : {
+		let t = Ut(e.provider_kind);
+		if (t === null) throw new G("configuration", "This LLM dialect has no direct route catalog entry");
+		let n = Wa(t, e.route), r = await Ga(t, e.credential_reference, this.#e, e.body === void 0 ? { accept: "application/json" } : {
 			"content-type": "application/json",
 			accept: "application/json"
-		}), i = await Ga(Va(this.#t, n, {
+		}), i = await Ua(za(this.#t, n, {
 			method: e.method,
 			...e.body === void 0 ? {} : { body: new Uint8Array(e.body).buffer },
 			headers: r,
@@ -4027,41 +4030,41 @@ var Ua = class {
 		};
 	}
 };
-async function Ga(e) {
+async function Ua(e) {
 	try {
 		return await e;
 	} catch (e) {
-		throw e instanceof vt ? new vt() : e;
+		throw e instanceof gt ? new gt() : e;
 	}
 }
-function Ka(e, t) {
+function Wa(e, t) {
 	try {
-		return Kt(e, t);
+		return Wt(e, t);
 	} catch (e) {
-		throw e instanceof Ut ? new U("configuration", e.message) : e;
+		throw e instanceof Vt ? new G("configuration", e.message) : e;
 	}
 }
-async function qa(e, t, n, r) {
+async function Ga(e, t, n, r) {
 	let i = {
 		...r,
 		...e.required_headers
 	};
 	if (e.auth.kind === "none") return i;
-	if (t === null) throw new U("configuration", "This provider requires a stored credential; the active profile names no vault reference");
+	if (t === null) throw new G("configuration", "This provider requires a stored credential; the active profile names no vault reference");
 	let a;
 	try {
 		a = await n.resolve_secret(t);
 	} catch (e) {
-		throw new U("configuration", Ja(e));
+		throw new G("configuration", Ka(e));
 	}
 	return i[e.auth.header] = e.auth.kind === "bearer" ? `Bearer ${a}` : a, i;
 }
-function Ja(e) {
+function Ka(e) {
 	return e instanceof Error && e.name === "SecretResolutionError" && e.message.trim() !== "" ? e.message : "The stored provider credential could not be resolved from the selected credential storage";
 }
 //#endregion
 //#region src/transport/local_direct_transport.ts
-var Ya = class {
+var qa = class {
 	#e;
 	#t;
 	constructor(e) {
@@ -4069,14 +4072,14 @@ var Ya = class {
 		try {
 			t = ie(e.base_url);
 		} catch (e) {
-			throw new U("configuration", "Direct provider base URL is invalid", { cause: e });
+			throw new G("configuration", "Direct provider base URL is invalid", { cause: e });
 		}
-		if (!ce(t)) throw new U("configuration", "Direct provider base URL must use a loopback address");
+		if (!ce(t)) throw new G("configuration", "Direct provider base URL must use a loopback address");
 		this.#e = t, this.#t = e.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 	execute(e) {
-		let t = La(e);
-		return Va(this.#t, `${this.#e}${t.route}`, {
+		let t = Fa(e);
+		return za(this.#t, `${this.#e}${t.route}`, {
 			method: t.method,
 			...t.body === void 0 ? {} : { body: new Uint8Array(t.body).buffer },
 			headers: {
@@ -4087,21 +4090,21 @@ var Ya = class {
 		}, t.max_response_bytes);
 	}
 	fetch_remote_asset(e) {
-		let t = Ra(e);
-		return Va(this.#t, t.url, {
+		let t = Ia(e);
+		return za(this.#t, t.url, {
 			method: "GET",
 			signal: t.signal
 		}, t.max_bytes);
 	}
-}, Xa = class extends Error {
+}, Ja = class extends Error {
 	constructor(e, t) {
 		super(e, t), this.name = "TransportConfigurationError";
 	}
 };
-function Za(e) {
+function Ya(e) {
 	if (e.gateway_endpoint !== null) {
-		let t = $a(e.gateway_endpoint);
-		if (w(t) && !le(e.http_acknowledgments, t)) throw new Xa("Cleartext Gateway origin has not been acknowledged");
+		let t = Za(e.gateway_endpoint);
+		if (w(t) && !le(e.http_acknowledgments, t)) throw new Ja("Cleartext Gateway origin has not been acknowledged");
 		return {
 			kind: "gateway",
 			endpoint: t
@@ -4109,111 +4112,111 @@ function Za(e) {
 	}
 	if (e.tauri_provider_available) return { kind: "tauri" };
 	if (e.sillytavern_available) return { kind: "host_proxy" };
-	let t = Qa(e.direct_cloud);
+	let t = Xa(e.direct_cloud);
 	if (t !== null) return t;
 	if (e.direct_provider_base_url !== null) {
-		let t = $a(e.direct_provider_base_url);
-		if (!ce(t)) throw new Xa("Direct provider endpoint must use a loopback address");
+		let t = Za(e.direct_provider_base_url);
+		if (!ce(t)) throw new Ja("Direct provider endpoint must use a loopback address");
 		return {
 			kind: "local_direct",
 			endpoint: t
 		};
 	}
-	throw new Xa("No provider transport is available");
+	throw new Ja("No provider transport is available");
 }
-function Qa(e) {
-	if (e === null || Wt(e.provider_id) === null) return null;
-	if (e.credential_reference === null) throw new Xa("This provider needs a stored credential before it can be called directly; set one on the active profile or configure a Gateway");
-	if (!e.secrets_readable) throw new Xa("This host cannot reveal stored credentials, so a direct provider call is impossible; configure a Gateway instead");
+function Xa(e) {
+	if (e === null || Ht(e.provider_id) === null) return null;
+	if (e.credential_reference === null) throw new Ja("This provider needs a stored credential before it can be called directly; set one on the active profile or configure a Gateway");
+	if (!e.secrets_readable) throw new Ja("This host cannot reveal stored credentials, so a direct provider call is impossible; configure a Gateway instead");
 	return {
 		kind: "direct_cloud",
 		provider_id: e.provider_id,
 		credential_reference: e.credential_reference
 	};
 }
-function $a(e) {
+function Za(e) {
 	try {
 		return ie(e);
 	} catch (e) {
-		throw new Xa("Transport endpoint is invalid", { cause: e });
+		throw new Ja("Transport endpoint is invalid", { cause: e });
 	}
 }
 //#endregion
 //#region src/bootstrap/capability_resolution.ts
-function eo(e) {
+function Qa(e) {
 	return {
 		status: "available",
 		value: e
 	};
 }
-function G(e) {
+function q(e) {
 	return {
 		status: "unavailable",
 		reason: e
 	};
 }
-function K(e) {
+function J(e) {
 	try {
-		return eo(e());
+		return Qa(e());
 	} catch (e) {
-		return G(to(e));
+		return q($a(e));
 	}
 }
-function to(e) {
+function $a(e) {
 	return e instanceof Error && e.message.trim() !== "" ? e.message : "Capability construction failed";
 }
-function no(e, t) {
+function eo(e, t) {
 	return {
 		capability_id: e,
 		status: t.status,
 		reason: t.status === "unavailable" ? t.reason : null
 	};
 }
-var ro = "capability_unavailable";
-function q(e) {
+var to = "capability_unavailable";
+function Y(e) {
 	let t = Error(e);
-	return Object.defineProperty(t, "code", { value: ro }), t;
+	return Object.defineProperty(t, "code", { value: to }), t;
 }
 //#endregion
 //#region src/bootstrap/capabilities/_records.ts
-function J(e) {
+function no(e) {
 	return typeof e != "object" || !e || Array.isArray(e) ? {} : e;
 }
-function Y(e) {
-	return J(e.payload);
+function X(e) {
+	return no(e.payload);
 }
-function X(e, t, n) {
+function Z(e, t, n) {
 	let r = e[t];
 	return typeof r == "string" ? r : n;
 }
-function io(e, t) {
+function ro(e, t) {
 	let n = e[t];
 	return typeof n == "string" ? n : null;
 }
-function ao(e, t, n) {
+function io(e, t, n) {
 	let r = e[t];
 	return typeof r == "boolean" ? r : n;
 }
-function oo(e, t, n) {
+function ao(e, t, n) {
 	let r = e[t];
 	return typeof r == "number" && Number.isFinite(r) ? r : n;
 }
-function so(e, t) {
+function oo(e, t) {
 	let n = e[t];
 	return Array.isArray(n) ? n : [];
 }
-function Z(e, t = /* @__PURE__ */ new Set()) {
+function Q(e, t = /* @__PURE__ */ new Set()) {
 	if (e === null || typeof e == "string" || typeof e == "boolean") return e;
 	if (typeof e == "number") return Number.isFinite(e) ? e : null;
 	if (typeof e != "object") return null;
 	if (t.has(e)) throw TypeError("Record payload contains a cycle");
 	let n = new Set(t).add(e);
-	if (Array.isArray(e)) return e.map((e) => Z(e, n));
+	if (Array.isArray(e)) return e.map((e) => Q(e, n));
 	let r = {};
-	for (let [t, i] of Object.entries(e)) i !== void 0 && (r[t] = Z(i, n));
+	for (let [t, i] of Object.entries(e)) i !== void 0 && (r[t] = Q(i, n));
 	return r;
 }
-var co = class {
+var so = class {
 	#e = /* @__PURE__ */ new Set();
 	subscribe(e) {
 		return this.#e.add(e), () => {
@@ -4223,7 +4226,7 @@ var co = class {
 	emit(e) {
 		for (let t of [...this.#e]) t(e);
 	}
-}, lo = "No v3 store exists for this asset category yet; character, outfit, vibe and workflow assets are stored, the rest are not.", uo = [
+}, co = "No v3 store exists for this asset category yet; character, outfit, vibe and workflow assets are stored, the rest are not.", lo = [
 	"character",
 	"outfit",
 	"lora",
@@ -4231,7 +4234,7 @@ var co = class {
 	"reference",
 	"workflow"
 ];
-function fo(e, t) {
+function uo(e, t) {
 	switch (t) {
 		case "character": return e.character_profiles;
 		case "vibe": return e.novelai_vibes;
@@ -4241,54 +4244,54 @@ function fo(e, t) {
 		case "reference": return null;
 	}
 }
-function po(e, t) {
-	let n = Y(e);
+function fo(e, t) {
+	let n = X(e);
 	return {
 		id: e.id,
 		category: t,
 		record_key: e.record_key,
-		display_name: X(n, "display_name", e.id),
+		display_name: Z(n, "display_name", e.id),
 		updated_at: e.updated_at,
 		payload: n
 	};
 }
-function mo(e, t) {
-	let n = oo(Y(e), "order", 2 ** 53 - 1), r = oo(Y(t), "order", 2 ** 53 - 1);
+function po(e, t) {
+	let n = ao(X(e), "order", 2 ** 53 - 1), r = ao(X(t), "order", 2 ** 53 - 1);
 	return n === r ? e.id < t.id ? -1 : +(e.id > t.id) : n - r;
 }
-function ho(e) {
-	let t = new co();
+function mo(e) {
+	let t = new so();
 	function n(t) {
-		let n = fo(e.repositories, t);
-		if (n === null) throw q(lo);
+		let n = uo(e.repositories, t);
+		if (n === null) throw Y(co);
 		return n;
 	}
 	async function r(t) {
-		let n = fo(e.repositories, t);
-		return n === null ? [] : [...await n.list(e.namespace())].sort(mo).map((e) => po(e, t));
+		let n = uo(e.repositories, t);
+		return n === null ? [] : [...await n.list(e.namespace())].sort(po).map((e) => fo(e, t));
 	}
 	return {
 		async load() {
-			let e = await Promise.all(uo.map(async (e) => [e, await r(e)]));
+			let e = await Promise.all(lo.map(async (e) => [e, await r(e)]));
 			return Object.fromEntries(e);
 		},
 		subscribe: (e) => t.subscribe(e),
 		async save(r, i) {
-			let a = n(r), o = e.namespace(), s = await a.get(o, i.id), c = e.now(), l = s === null ? Math.max(-1, ...(await a.list(o)).map((e) => oo(Y(e), "order", -1))) + 1 : oo(Y(s), "order", 2 ** 53 - 1), u = {
+			let a = n(r), o = e.namespace(), s = await a.get(o, i.id), c = e.now(), l = s === null ? Math.max(-1, ...(await a.list(o)).map((e) => ao(X(e), "order", -1))) + 1 : ao(X(s), "order", 2 ** 53 - 1), u = {
 				schema_version: 1,
 				id: i.id,
 				namespace: o,
 				record_key: `${o}:${i.id}`,
 				created_at: s?.created_at ?? c,
 				updated_at: c,
-				payload: Z({
+				payload: Q({
 					...i.payload,
 					display_name: i.display_name,
 					...l === 2 ** 53 - 1 ? {} : { order: l }
 				})
 			};
 			await a.put(o, u);
-			let d = po(u, r);
+			let d = fo(u, r);
 			return t.emit({
 				type: "asset_upserted",
 				asset: d
@@ -4308,8 +4311,8 @@ function ho(e) {
 				n !== null && await i.put(a, {
 					...n,
 					updated_at: o,
-					payload: Z({
-						...Y(n),
+					payload: Q({
+						...X(n),
 						order: e
 					})
 				});
@@ -4319,9 +4322,9 @@ function ho(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/diagnostics_capability.ts
-var go = 500, _o = class {
+var ho = 500, go = class {
 	#e = [];
-	#t = new co();
+	#t = new so();
 	#n = 0;
 	get entries() {
 		return this.#e;
@@ -4336,7 +4339,7 @@ var go = 500, _o = class {
 			event_id: `timeline-${String(this.#n)}`,
 			occurred_at: (/* @__PURE__ */ new Date()).toISOString()
 		};
-		this.#e.push(t), this.#e.length > go && this.#e.shift(), this.#t.emit({
+		this.#e.push(t), this.#e.length > ho && this.#e.shift(), this.#t.emit({
 			type: "timeline_entry_appended",
 			entry: t
 		});
@@ -4355,7 +4358,7 @@ var go = 500, _o = class {
 		});
 	}
 };
-function vo(e) {
+function _o(e) {
 	return e === null ? {} : {
 		schema_version: e.schema_version,
 		locale: e.locale,
@@ -4366,7 +4369,7 @@ function vo(e) {
 		ui: e.ui
 	};
 }
-function yo(e) {
+function vo(e) {
 	async function t() {
 		try {
 			return await e.estimate_storage();
@@ -4399,7 +4402,7 @@ function yo(e) {
 				version: e.extension_version,
 				capability_matrix: e.capability_matrix,
 				redacted_settings: {
-					...vo(e.settings()),
+					..._o(e.settings()),
 					capability_resolutions: e.resolutions()
 				},
 				error_codes: n,
@@ -4410,7 +4413,7 @@ function yo(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/gallery_capability.ts
-function bo(e) {
+function yo(e) {
 	switch (e.media_type) {
 		case "image/png":
 		case "image/jpeg":
@@ -4418,8 +4421,8 @@ function bo(e) {
 		case "video/mp4": return null;
 	}
 }
-function xo(e) {
-	let t = bo(e);
+function bo(e) {
+	let t = yo(e);
 	if (t === null) return null;
 	let n = b.parse(e.provider_id);
 	return {
@@ -4435,23 +4438,23 @@ function xo(e) {
 		created_at: e.created_at
 	};
 }
-function So(e) {
-	let t = new co();
+function xo(e) {
+	let t = new so();
 	async function n(t) {
 		let n = await e.repository.get(e.namespace(), t);
-		if (n === null) throw q(`Gallery record ${t} no longer exists`);
+		if (n === null) throw Y(`Gallery record ${t} no longer exists`);
 		return n;
 	}
 	async function r(n) {
 		await e.repository.put(e.namespace(), n);
-		let r = xo(n);
+		let r = bo(n);
 		r !== null && t.emit({
 			type: "record_upserted",
 			record: r
 		});
 	}
 	async function i(n) {
-		await Ti(e.database, e.namespace(), n), t.emit({
+		await Ci(e.database, e.namespace(), n), t.emit({
 			type: "record_removed",
 			record_id: n
 		});
@@ -4459,14 +4462,14 @@ function So(e) {
 	return {
 		async load() {
 			return (await e.repository.list(e.namespace())).flatMap((e) => {
-				let t = xo(e);
+				let t = bo(e);
 				return t === null ? [] : [t];
 			});
 		},
 		subscribe: (e) => t.subscribe(e),
 		async read_bytes(t) {
-			let r = await n(t), i = await Ei(e.database, r.sha256);
-			if (i === null) throw q(`Gallery record ${t} has no stored bytes; the blob was evicted`);
+			let r = await n(t), i = await wi(e.database, r.sha256);
+			if (i === null) throw Y(`Gallery record ${t} has no stored bytes; the blob was evicted`);
 			return i;
 		},
 		async pin(t, i) {
@@ -4495,22 +4498,22 @@ function So(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/generation_capability.ts
-function Co(e) {
+function So(e) {
 	return e.image_count ?? 1;
 }
-function wo(e) {
+function Co(e) {
 	return {
 		job_id: e.job_id,
 		request_id: e.request_id,
 		provider_id: b.parse(e.provider_id),
 		state: e.state,
-		image_count: Co(e.arguments),
+		image_count: So(e.arguments),
 		completed_image_ids: e.image_ids,
 		error: e.error,
 		submitted_at: e.created_at
 	};
 }
-function To(e) {
+function wo(e) {
 	return {
 		job_id: e.id,
 		request_id: e.request_id,
@@ -4522,12 +4525,12 @@ function To(e) {
 		submitted_at: e.created_at
 	};
 }
-function Eo(e) {
-	let t = new co(), n = /* @__PURE__ */ new Map();
+function To(e) {
+	let t = new so(), n = /* @__PURE__ */ new Map();
 	e.queue.subscribe((e) => {
 		t.emit({
 			type: "job_updated",
-			job: wo(e)
+			job: Co(e)
 		});
 	});
 	async function r(t) {
@@ -4538,23 +4541,23 @@ function Eo(e) {
 			...i,
 			scene_description: r.prompt
 		}, r);
-		return n.set(a.job_id, r), wo(a);
+		return n.set(a.job_id, r), Co(a);
 	}
 	return {
 		async load() {
-			return (await e.jobs.list(e.namespace())).map(To);
+			return (await e.jobs.list(e.namespace())).map(wo);
 		},
 		subscribe: (e) => t.subscribe(e),
 		submit: (e) => r(e.request),
 		async cancel(t) {
-			return wo(await pe({
+			return Co(await pe({
 				queue: e.queue,
 				plans: e.plans
 			}, t));
 		},
 		retry(t) {
 			let i = n.get(t);
-			if (i === void 0) throw q(`Generation job ${t} was not submitted in this session, so its request cannot be replayed`);
+			if (i === void 0) throw Y(`Generation job ${t} was not submitted in this session, so its request cannot be replayed`);
 			return r({
 				...i,
 				request_id: e.new_request_id()
@@ -4564,19 +4567,19 @@ function Eo(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/novelai_capability.ts
-var Do = 3e4, Oo = 12e4, ko = 3e4;
-function Ao(e) {
+var Eo = 3e4, Do = 12e4, Oo = 3e4;
+function ko(e) {
 	return {
 		load: async () => (await e()).list_models(),
-		get_account: async () => (await e()).get_account(AbortSignal.timeout(Do)),
-		refresh_models: async () => (await e()).refresh_models(AbortSignal.timeout(Oo)),
-		estimate_cost: async (t) => (await e()).estimate_cost(t, AbortSignal.timeout(ko))
+		get_account: async () => (await e()).get_account(AbortSignal.timeout(Eo)),
+		refresh_models: async () => (await e()).refresh_models(AbortSignal.timeout(Do)),
+		estimate_cost: async (t) => (await e()).estimate_cost(t, AbortSignal.timeout(Oo))
 	};
 }
 //#endregion
 //#region src/bootstrap/capabilities/generation_context.ts
-function jo(e) {
-	return Zt.parse({
+function Ao(e) {
+	return Yt.parse({
 		schema_version: 1,
 		chat_id: e.chat_id,
 		active_swipes: e.messages.map((e) => ({
@@ -4591,14 +4594,14 @@ function jo(e) {
 		}))
 	});
 }
-var Mo = class {
+var jo = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t;
 	}
 	async resolve() {
-		let e = await this.#e.get_active_chat(), t = kt(jo(e), this.#t), n = e.messages.at(-1);
+		let e = await this.#e.get_active_chat(), t = Dt(Ao(e), this.#t), n = e.messages.at(-1);
 		return {
 			chat_id: e.chat_id,
 			requested_swipe_id: n?.active_swipe_id ?? 0,
@@ -4606,21 +4609,21 @@ var Mo = class {
 			source_anchor: t.source_anchor
 		};
 	}
-}, No = 1e6, Po = class extends Error {
+}, Mo = 1e6, No = class extends Error {
 	code = "unknown_llm_connection";
 	constructor(e) {
 		super(`Unknown LLM connection "${e}"`), this.name = "UnknownLlmConnectionError";
 	}
-}, Fo = class extends Error {
+}, Po = class extends Error {
 	code = "credential_probe_failed";
 	constructor(e) {
 		super(`credential_probe_failed: the vault did not confirm "${e}"`), this.name = "LlmCredentialProbeError";
 	}
 };
-function Io(e) {
+function Fo(e) {
 	return e === 401 || e === 402 || e === 403 ? "auth_failed" : e === 429 ? "rate_limited" : e === 408 ? "timed_out" : e >= 400 && e < 500 ? "invalid_request" : "provider_unavailable";
 }
-function Lo(e, t, n) {
+function Io(e, t, n) {
 	return {
 		schema_version: 1,
 		id: e.id,
@@ -4640,7 +4643,7 @@ function Lo(e, t, n) {
 		}
 	};
 }
-function Ro(e) {
+function Lo(e) {
 	let t = e.payload ?? {};
 	return x.parse({
 		id: e.id,
@@ -4656,7 +4659,7 @@ function Ro(e) {
 		updated_at: e.updated_at
 	});
 }
-var zo = class {
+var Ro = class {
 	#e;
 	#t = /* @__PURE__ */ new Set();
 	constructor(e) {
@@ -4668,7 +4671,7 @@ var zo = class {
 		};
 	}
 	async list() {
-		return (await this.#e.repository.list(this.#e.namespace)).map(Ro);
+		return (await this.#e.repository.list(this.#e.namespace)).map(Lo);
 	}
 	async save(e) {
 		let t = re.parse(e), n = await this.#e.repository.get(this.#e.namespace, t.id), r = this.#e.clock(), i = {
@@ -4690,7 +4693,7 @@ var zo = class {
 		if (t.trim().length === 0) throw TypeError("An LLM connection credential must not be blank");
 		let r = te(this.#e.namespace, e);
 		if (!this.#e.secrets.supports("llm_profile_api_key")) throw TypeError("The host secret vault does not accept LLM connection credentials");
-		if (await this.#e.secrets.write_secret(r, t), !await this.#e.secrets.probe_secret(r).catch(() => !1)) throw new Fo(r);
+		if (await this.#e.secrets.write_secret(r, t), !await this.#e.secrets.probe_secret(r).catch(() => !1)) throw new Po(r);
 		let i = {
 			...n,
 			credential_reference: r,
@@ -4713,15 +4716,15 @@ var zo = class {
 		try {
 			let e = await this.#e.transport.execute({
 				provider_kind: t.provider_kind,
-				route: Bo(t.provider_kind),
+				route: zo(t.provider_kind),
 				method: "GET",
 				credential_reference: t.credential_reference,
-				max_response_bytes: No,
+				max_response_bytes: Mo,
 				signal: AbortSignal.timeout(15e3)
 			});
 			return e.status < 200 || e.status >= 300 ? {
 				status: "failed",
-				code: Io(e.status)
+				code: Fo(e.status)
 			} : {
 				status: "success",
 				latency_ms: Math.max(0, Date.now() - n),
@@ -4736,11 +4739,11 @@ var zo = class {
 	}
 	async #n(e) {
 		let t = await this.#e.repository.get(this.#e.namespace, e);
-		if (t === null) throw new Po(e);
-		return Ro(t);
+		if (t === null) throw new No(e);
+		return Lo(t);
 	}
 	async #r(e, t) {
-		await this.#e.repository.put(this.#e.namespace, Lo(e, this.#e.namespace, t)), this.#a({
+		await this.#e.repository.put(this.#e.namespace, Io(e, this.#e.namespace, t)), this.#a({
 			type: "connection_upserted",
 			connection: e
 		});
@@ -4749,7 +4752,7 @@ var zo = class {
 		let n = await this.#e.repository.list(this.#e.namespace);
 		for (let r of n) {
 			if (r.id === e) continue;
-			let n = Ro(r);
+			let n = Lo(r);
 			n.is_default && await this.#r({
 				...n,
 				is_default: !1,
@@ -4761,18 +4764,18 @@ var zo = class {
 		for (let t of this.#t) t(e);
 	}
 };
-function Bo(e) {
+function zo(e) {
 	return S[e].models_route;
 }
 //#endregion
 //#region src/modules/library/knowledge_service.ts
-var Vo = class extends Error {
+var Bo = class extends Error {
 	code = "unknown_knowledge_entry";
 	constructor(e) {
 		super(`Unknown knowledge entry "${e}"`), this.name = "UnknownKnowledgeEntryError";
 	}
 };
-function Ho(e, t, n) {
+function Vo(e, t, n) {
 	return {
 		schema_version: 1,
 		id: e.id,
@@ -4790,9 +4793,9 @@ function Ho(e, t, n) {
 		}
 	};
 }
-function Uo(e) {
+function Ho(e) {
 	let t = e.payload ?? {};
-	return Lt.parse({
+	return Ft.parse({
 		id: e.id,
 		title: t.title,
 		source_type: e.source_type,
@@ -4804,7 +4807,7 @@ function Uo(e) {
 		updated_at: e.updated_at
 	});
 }
-var Wo = class {
+var Uo = class {
 	#e;
 	#t = /* @__PURE__ */ new Set();
 	constructor(e) {
@@ -4816,10 +4819,10 @@ var Wo = class {
 		};
 	}
 	async list() {
-		return (await this.#e.repository.list(this.#e.namespace)).map(Uo).sort((e, t) => t.priority - e.priority === 0 ? e.title.localeCompare(t.title) : t.priority - e.priority);
+		return (await this.#e.repository.list(this.#e.namespace)).map(Ho).sort((e, t) => t.priority - e.priority === 0 ? e.title.localeCompare(t.title) : t.priority - e.priority);
 	}
 	async save(e) {
-		let t = It.parse(e), n = await this.#e.repository.get(this.#e.namespace, t.id), r = this.#e.clock(), i = {
+		let t = Pt.parse(e), n = await this.#e.repository.get(this.#e.namespace, t.id), r = this.#e.clock(), i = {
 			...t,
 			created_at: n?.created_at ?? r,
 			updated_at: r
@@ -4848,11 +4851,11 @@ var Wo = class {
 	}
 	async #n(e) {
 		let t = await this.#e.repository.get(this.#e.namespace, e);
-		if (t === null) throw new Vo(e);
-		return Uo(t);
+		if (t === null) throw new Bo(e);
+		return Ho(t);
 	}
 	async #r(e, t) {
-		await this.#e.repository.put(this.#e.namespace, Ho(e, this.#e.namespace, t)), this.#i({
+		await this.#e.repository.put(this.#e.namespace, Vo(e, this.#e.namespace, t)), this.#i({
 			type: "entry_upserted",
 			entry: e
 		});
@@ -4860,17 +4863,17 @@ var Wo = class {
 	#i(e) {
 		for (let t of this.#t) t(e);
 	}
-}, Go = "persona", Ko = class extends Error {
+}, Wo = "persona", Go = class extends Error {
 	code = "unknown_persona";
 	constructor(e) {
 		super(`Unknown persona "${e}"`), this.name = "UnknownPersonaError";
 	}
 };
-function qo(e) {
+function Ko(e) {
 	let t = e.payload;
-	return typeof t == "object" && !!t && !Array.isArray(t) && t.record_kind === Go;
+	return typeof t == "object" && !!t && !Array.isArray(t) && t.record_kind === Wo;
 }
-function Jo(e, t, n) {
+function qo(e, t, n) {
 	return {
 		schema_version: 1,
 		id: e.id,
@@ -4879,7 +4882,7 @@ function Jo(e, t, n) {
 		created_at: n,
 		updated_at: e.updated_at,
 		payload: {
-			record_kind: Go,
+			record_kind: Wo,
 			display_name: e.display_name,
 			role: e.role,
 			description: e.description,
@@ -4889,9 +4892,9 @@ function Jo(e, t, n) {
 		}
 	};
 }
-function Yo(e) {
+function Jo(e) {
 	let t = e.payload ?? {};
-	return Nt.parse({
+	return jt.parse({
 		id: e.id,
 		display_name: t.display_name,
 		role: t.role,
@@ -4903,7 +4906,7 @@ function Yo(e) {
 		updated_at: e.updated_at
 	});
 }
-var Xo = class {
+var Yo = class {
 	#e;
 	#t = /* @__PURE__ */ new Set();
 	constructor(e) {
@@ -4915,10 +4918,10 @@ var Xo = class {
 		};
 	}
 	async list() {
-		return (await this.#e.repository.list(this.#e.namespace)).filter(qo).map(Yo);
+		return (await this.#e.repository.list(this.#e.namespace)).filter(Ko).map(Jo);
 	}
 	async save(e) {
-		let t = Mt.parse(e), n = await this.#r(t.id), r = this.#e.clock(), i = {
+		let t = At.parse(e), n = await this.#r(t.id), r = this.#e.clock(), i = {
 			...t,
 			created_at: n?.created_at ?? r,
 			updated_at: r
@@ -4933,15 +4936,15 @@ var Xo = class {
 	}
 	async #n(e) {
 		let t = await this.#r(e);
-		if (t === null) throw new Ko(e);
+		if (t === null) throw new Go(e);
 		return t;
 	}
 	async #r(e) {
 		let t = await this.#e.repository.get(this.#e.namespace, e);
-		return t === null || !qo(t) ? null : Yo(t);
+		return t === null || !Ko(t) ? null : Jo(t);
 	}
 	async #i(e, t) {
-		await this.#e.repository.put(this.#e.namespace, Jo(e, this.#e.namespace, t)), this.#o({
+		await this.#e.repository.put(this.#e.namespace, qo(e, this.#e.namespace, t)), this.#o({
 			type: "persona_upserted",
 			persona: e
 		});
@@ -4959,8 +4962,8 @@ var Xo = class {
 };
 //#endregion
 //#region src/bootstrap/capabilities/library_capability.ts
-function Zo(e) {
-	let t = new zo(e);
+function Xo(e) {
+	let t = new Ro(e);
 	return {
 		load: () => t.list(),
 		subscribe: (e) => t.subscribe(e),
@@ -4971,8 +4974,8 @@ function Zo(e) {
 		test_connection: (e) => t.test_connection(e)
 	};
 }
-function Qo(e) {
-	let t = new Xo(e);
+function Zo(e) {
+	let t = new Yo(e);
 	return {
 		load: () => t.list(),
 		subscribe: (e) => t.subscribe(e),
@@ -4980,8 +4983,8 @@ function Qo(e) {
 		remove: (e) => t.remove(e)
 	};
 }
-function $o(e) {
-	let t = new Wo(e);
+function Qo(e) {
+	let t = new Uo(e);
 	return {
 		load: () => t.list(),
 		subscribe: (e) => t.subscribe(e),
@@ -4993,17 +4996,17 @@ function $o(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/profiles_capability.ts
-var es = "vault_key", ts = "novelai_defaults", ns = "provider_profile", rs = 2e7;
-function is(e) {
+var $o = "vault_key", es = "novelai_defaults", ts = "provider_profile", ns = 2e7;
+function rs(e) {
 	let t = e[0];
 	return typeof t == "string" && t.trim().length > 0 ? t : null;
 }
-function as(e, t) {
+function is(e, t) {
 	let n = {
 		output_mime_type_allowlist: ["image/png"],
-		max_response_bytes: rs,
-		max_input_asset_bytes: rs,
-		...t?.provider_id === e.provider_id ? J(Y(t)[ns]) : {},
+		max_response_bytes: ns,
+		max_input_asset_bytes: ns,
+		...t?.provider_id === e.provider_id ? no(X(t)[ts]) : {},
 		model_allowlist: [e.model_id.trim()]
 	};
 	switch (e.provider_id) {
@@ -5028,43 +5031,43 @@ function as(e, t) {
 		case "google_image": return n;
 	}
 }
-function os(e) {
+function as(e) {
 	return {
-		...J(Y(e)[ns]),
+		...no(X(e)[ts]),
 		profile_id: e.id,
 		provider_id: e.provider_id
 	};
 }
-function ss(e) {
-	let t = Y(e), n = J(t[ns]);
+function os(e) {
+	let t = X(e), n = no(t[ts]);
 	return {
 		id: e.id,
 		provider_id: b.parse(e.provider_id),
-		display_name: X(t, "display_name", e.id),
-		model_id: is(so(n, "model_allowlist")),
-		workflow_id: is(so(n, "workflow_allowlist")),
-		is_default: ao(t, "is_default", !1),
-		credential_reference: typeof t.vault_key == "string" ? t[es] : null,
+		display_name: Z(t, "display_name", e.id),
+		model_id: rs(oo(n, "model_allowlist")),
+		workflow_id: rs(oo(n, "workflow_allowlist")),
+		is_default: io(t, "is_default", !1),
+		credential_reference: typeof t.vault_key == "string" ? t[$o] : null,
 		updated_at: e.updated_at,
-		novelai_defaults: cs(e)
+		novelai_defaults: ss(e)
 	};
 }
-function cs(e) {
-	let t = ne.safeParse(Y(e)[ts]);
+function ss(e) {
+	let t = ne.safeParse(X(e)[es]);
 	return t.success ? t.data : null;
 }
-function ls(e) {
-	let t = new co();
+function cs(e) {
+	let t = new so();
 	async function n(t) {
 		let n = await e.repository.get(e.namespace(), t);
-		if (n === null) throw q(`Provider profile ${t} no longer exists`);
+		if (n === null) throw Y(`Provider profile ${t} no longer exists`);
 		return n;
 	}
 	return {
 		async load() {
 			let t = await e.repository.list(e.namespace());
 			return Promise.all(t.map(async (t) => {
-				let n = ss(t);
+				let n = os(t);
 				return n.credential_reference === null ? n : await e.credential_present(n.credential_reference).catch(() => !1) === !1 ? {
 					...n,
 					credential_reference: null
@@ -5074,12 +5077,12 @@ function ls(e) {
 		subscribe: (e) => t.subscribe(e),
 		async save(n) {
 			let r = e.namespace(), i = await e.repository.get(r, n.id), a = e.now(), o = {
-				...Y(i ?? { payload: {} }),
+				...X(i ?? { payload: {} }),
 				display_name: n.display_name,
 				is_default: n.is_default,
-				[ns]: Z(as(n, i))
+				[ts]: Q(is(n, i))
 			};
-			i !== null && i.provider_id !== n.provider_id && Reflect.deleteProperty(o, es);
+			i !== null && i.provider_id !== n.provider_id && Reflect.deleteProperty(o, $o);
 			let s = {
 				schema_version: 1,
 				id: n.id,
@@ -5090,9 +5093,9 @@ function ls(e) {
 				provider_id: n.provider_id,
 				payload: o
 			}, c = (await e.load_adapters())[n.provider_id];
-			if (c === void 0) throw q(`Provider ${n.provider_id} is unavailable`);
-			c.validate_profile(os(s)), await e.repository.put(r, s);
-			let l = ss(s);
+			if (c === void 0) throw Y(`Provider ${n.provider_id} is unavailable`);
+			c.validate_profile(as(s)), await e.repository.put(r, s);
+			let l = os(s);
 			return t.emit({
 				type: "profile_upserted",
 				profile: l
@@ -5106,19 +5109,19 @@ function ls(e) {
 		},
 		async set_credential(r, i) {
 			if (i.trim().length === 0) throw TypeError("A provider credential must not be blank");
-			if (e.secrets === null) throw q("The selected credential storage backend is unavailable");
+			if (e.secrets === null) throw Y("The selected credential storage backend is unavailable");
 			let a = await n(r), o = ee(a.namespace, r);
 			await e.secrets.write_secret(o, i);
 			let s = {
 				...a,
 				updated_at: e.now(),
-				payload: Z({
-					...Y(a),
-					[es]: o
+				payload: Q({
+					...X(a),
+					[$o]: o
 				})
 			};
 			await e.repository.put(a.namespace, s);
-			let c = ss(s);
+			let c = os(s);
 			return t.emit({
 				type: "profile_upserted",
 				profile: c
@@ -5130,28 +5133,28 @@ function ls(e) {
 			let o = {
 				...a,
 				updated_at: e.now(),
-				payload: Z({
-					...Y(a),
-					[ts]: ne.parse(i)
+				payload: Q({
+					...X(a),
+					[es]: ne.parse(i)
 				})
 			};
 			await e.repository.put(a.namespace, o);
-			let s = ss(o);
+			let s = os(o);
 			return t.emit({
 				type: "profile_upserted",
 				profile: s
 			}), s;
 		},
 		async clear_credential(r) {
-			let i = await n(r), a = { ...Y(i) }, o = a[es];
-			Reflect.deleteProperty(a, es), typeof o == "string" && await e.secrets?.delete_secret?.(o);
+			let i = await n(r), a = { ...X(i) }, o = a[$o];
+			Reflect.deleteProperty(a, $o), typeof o == "string" && await e.secrets?.delete_secret?.(o);
 			let s = {
 				...i,
 				updated_at: e.now(),
-				payload: Z(a)
+				payload: Q(a)
 			};
 			await e.repository.put(i.namespace, s);
-			let c = ss(s);
+			let c = os(s);
 			return t.emit({
 				type: "profile_upserted",
 				profile: c
@@ -5167,17 +5170,17 @@ function ls(e) {
 				}
 			};
 			try {
-				o.validate_profile(os(i));
+				o.validate_profile(as(i));
 			} catch (e) {
 				return {
 					status: "failed",
-					error: e instanceof ht ? e.provider_error : {
+					error: e instanceof pt ? e.provider_error : {
 						code: "invalid_request",
 						retryable: !1
 					}
 				};
 			}
-			let s = Y(i)[es];
+			let s = X(i)[$o];
 			return typeof s == "string" && e.secrets !== null && !await e.secrets.probe_secret(s) ? {
 				status: "failed",
 				error: {
@@ -5193,38 +5196,38 @@ function ls(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/prompt_presets_capability.ts
-function us(e) {
-	let t = Y(e);
+function ls(e) {
+	let t = X(e);
 	return {
 		id: e.id,
-		display_name: X(t, "display_name", e.id),
-		group: io(t, "group"),
+		display_name: Z(t, "display_name", e.id),
+		group: ro(t, "group"),
 		updated_at: e.updated_at
 	};
 }
-function ds(e) {
+function us(e) {
 	return e.flatMap((e) => {
-		let t = J(e), n = io(t, "id");
+		let t = no(e), n = ro(t, "id");
 		return n === null ? [] : [{
 			id: n,
-			triggers: so(t, "triggers").filter((e) => typeof e == "string"),
-			replacement: X(t, "replacement", "")
+			triggers: oo(t, "triggers").filter((e) => typeof e == "string"),
+			replacement: Z(t, "replacement", "")
+		}];
+	});
+}
+function ds(e) {
+	return e.flatMap((e) => {
+		let t = no(e), n = ro(t, "id");
+		return n === null ? [] : [{
+			id: n,
+			pattern: Z(t, "pattern", ""),
+			flags: Z(t, "flags", ""),
+			replacement: Z(t, "replacement", "")
 		}];
 	});
 }
 function fs(e) {
-	return e.flatMap((e) => {
-		let t = J(e), n = io(t, "id");
-		return n === null ? [] : [{
-			id: n,
-			pattern: X(t, "pattern", ""),
-			flags: X(t, "flags", ""),
-			replacement: X(t, "replacement", "")
-		}];
-	});
-}
-function ps(e) {
-	let t = new co();
+	let t = new so();
 	async function n(n) {
 		await e.repository.delete(e.namespace(), n), t.emit({
 			type: "preset_removed",
@@ -5233,21 +5236,21 @@ function ps(e) {
 	}
 	return {
 		async load() {
-			return (await e.repository.list(e.namespace())).map(us);
+			return (await e.repository.list(e.namespace())).map(ls);
 		},
 		subscribe: (e) => t.subscribe(e),
 		async load_draft(t) {
 			let n = await e.repository.get(e.namespace(), t);
-			if (n === null) throw q(`Prompt preset ${t} no longer exists`);
-			let r = Y(n);
+			if (n === null) throw Y(`Prompt preset ${t} no longer exists`);
+			let r = X(n);
 			return {
 				id: n.id,
-				display_name: X(r, "display_name", n.id),
-				group: io(r, "group"),
-				fixed_positive_prompt: X(r, "fixed_positive_prompt", ""),
-				fixed_negative_prompt: X(r, "fixed_negative_prompt", ""),
-				replacement_rules: ds(so(r, "replacement_rules")),
-				regex_rules: fs(so(r, "regex_rules"))
+				display_name: Z(r, "display_name", n.id),
+				group: ro(r, "group"),
+				fixed_positive_prompt: Z(r, "fixed_positive_prompt", ""),
+				fixed_negative_prompt: Z(r, "fixed_negative_prompt", ""),
+				replacement_rules: us(oo(r, "replacement_rules")),
+				regex_rules: ds(oo(r, "regex_rules"))
 			};
 		},
 		async save_draft(n) {
@@ -5258,7 +5261,7 @@ function ps(e) {
 				record_key: `${r}:${i}`,
 				created_at: a?.created_at ?? o,
 				updated_at: o,
-				payload: Z({
+				payload: Q({
 					display_name: n.display_name,
 					group: n.group,
 					fixed_positive_prompt: n.fixed_positive_prompt,
@@ -5268,7 +5271,7 @@ function ps(e) {
 				})
 			};
 			await e.repository.put(r, s);
-			let c = us(s);
+			let c = ls(s);
 			return t.emit({
 				type: "preset_upserted",
 				preset: c
@@ -5278,18 +5281,18 @@ function ps(e) {
 		async bulk_remove(e) {
 			for (let t of e) await n(t);
 		},
-		test_regex: (e, t) => Promise.resolve(Ii(e, t))
+		test_regex: (e, t) => Promise.resolve(Pi(e, t))
 	};
 }
 //#endregion
 //#region src/bootstrap/capabilities/settings_capability.ts
-var ms = "The selected credential storage backend is unavailable", hs = "SillyTavern's secret store is unreachable from this page", gs = "deepl";
-function _s(e) {
-	if (e === null) throw q("Archive import and export need IndexedDB, which is unavailable on this host");
+var ps = "The selected credential storage backend is unavailable", ms = "SillyTavern's secret store is unreachable from this page", hs = "deepl";
+function gs(e) {
+	if (e === null) throw Y("Archive import and export need IndexedDB, which is unavailable on this host");
 	return e;
 }
-function vs(e) {
-	let t = new co(), n = null;
+function _s(e) {
+	let t = new so(), n = null;
 	async function r() {
 		let t = e.settings.get_settings(), n;
 		return n = e.browser_secret_vault === null ? {
@@ -5327,7 +5330,7 @@ function vs(e) {
 		},
 		async set_gateway_token(t) {
 			if (t.trim().length === 0) throw TypeError("A Gateway token must not be blank");
-			if (e.secrets === null) throw q(ms);
+			if (e.secrets === null) throw Y(ps);
 			let n = e.settings.get_settings(), r = se(n.active_namespace);
 			return await e.secrets.write_secret(r, t), i({ gateway: {
 				...n.gateway,
@@ -5336,20 +5339,20 @@ function vs(e) {
 		},
 		async set_analysis_key(t) {
 			if (t.trim().length === 0) throw TypeError("An API key must not be blank");
-			if (e.secrets === null) throw q(ms);
+			if (e.secrets === null) throw Y(ps);
 			await e.secrets.write_secret(oe(e.settings.get_settings().active_namespace), t.trim());
 		},
 		async clear_analysis_key() {
-			if (e.secrets?.delete_secret === void 0) throw q(ms);
+			if (e.secrets?.delete_secret === void 0) throw Y(ps);
 			await e.secrets.delete_secret(oe(e.settings.get_settings().active_namespace));
 		},
 		async set_deepl_key(t) {
-			if (e.host_secrets === null) throw q(hs);
-			await e.host_secrets.write_secret(gs, t.trim());
+			if (e.host_secrets === null) throw Y(ms);
+			await e.host_secrets.write_secret(hs, t.trim());
 		},
 		async clear_deepl_key() {
-			if (e.host_secrets?.delete_secret === void 0) throw q(hs);
-			await e.host_secrets.delete_secret(gs);
+			if (e.host_secrets?.delete_secret === void 0) throw Y(ms);
+			await e.host_secrets.delete_secret(hs);
 		},
 		async clear_gateway_token() {
 			let t = e.settings.get_settings(), n = t.gateway.token_secret_id;
@@ -5359,26 +5362,26 @@ function vs(e) {
 			} }), e.settings.flush();
 		},
 		async initialize_browser_secret_vault(t) {
-			if (e.browser_secret_vault === null) throw q(ms);
+			if (e.browser_secret_vault === null) throw Y(ps);
 			return e.browser_secret_vault.initialize(t);
 		},
 		async unlock_browser_secret_vault(t) {
-			if (e.browser_secret_vault === null) throw q(ms);
+			if (e.browser_secret_vault === null) throw Y(ps);
 			return e.browser_secret_vault.unlock(t);
 		},
 		async lock_browser_secret_vault() {
-			if (e.browser_secret_vault === null) throw q(ms);
+			if (e.browser_secret_vault === null) throw Y(ps);
 			return e.browser_secret_vault.lock();
 		},
 		async reset_browser_secret_vault() {
-			if (e.browser_secret_vault === null) throw q(ms);
+			if (e.browser_secret_vault === null) throw Y(ps);
 			return e.browser_secret_vault.reset();
 		},
 		set_vocabulary_update_channel(t) {
 			return i({ vocabulary_update_channel: t }), e.settings.flush();
 		},
 		async import_vocabulary_package(t, r) {
-			if (n !== null) throw new yt("vocabulary_import_busy", "A vocabulary import is already in progress");
+			if (n !== null) throw new _t("vocabulary_import_busy", "A vocabulary import is already in progress");
 			let i = {
 				cancelled: !1,
 				cancel() {
@@ -5399,7 +5402,7 @@ function vs(e) {
 		async export_archive() {
 			let { export_archive: t } = await import("./chunks/archive-B63rZfJE.js");
 			return t({
-				database: _s(e.database),
+				database: gs(e.database),
 				namespace: e.settings.get_settings().active_namespace,
 				extension_version: e.extension_version
 			});
@@ -5407,7 +5410,7 @@ function vs(e) {
 		async import_archive(t) {
 			let { import_archive: n } = await import("./chunks/archive-B63rZfJE.js");
 			await n({
-				database: _s(e.database),
+				database: gs(e.database),
 				archive: t
 			});
 		}
@@ -5415,7 +5418,7 @@ function vs(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/vocabulary_capability.ts
-function ys(e) {
+function vs(e) {
 	switch (e.phase) {
 		case "verifying_catalog_manifest": return { phase: "verifying_catalog_manifest" };
 		case "downloading": return {
@@ -5428,7 +5431,7 @@ function ys(e) {
 		default: return null;
 	}
 }
-function bs(e) {
+function ys(e) {
 	let t = null, n = null;
 	function r() {
 		return t ??= e.load_catalog();
@@ -5454,7 +5457,7 @@ function bs(e) {
 		},
 		async install(e, t) {
 			await (await r()).install(e, (e) => {
-				let n = ys(e);
+				let n = vs(e);
 				n !== null && t?.(n);
 			}), a();
 		},
@@ -5467,7 +5470,7 @@ function bs(e) {
 }
 //#endregion
 //#region src/host/chat_surface.ts
-var xs = "tavern-canvas/illustration-slots", Ss = class {
+var bs = "tavern-canvas/illustration-slots", xs = class {
 	#e = /* @__PURE__ */ new Map();
 	#t = /* @__PURE__ */ new Set();
 	#n = !1;
@@ -5504,16 +5507,16 @@ var xs = "tavern-canvas/illustration-slots", Ss = class {
 		}
 	}
 };
-function Cs(e) {
+function Ss(e) {
 	let t = e?.__TAURITAVERN__?.api?.chatSurface;
 	if (typeof t != "object" || !t) return null;
 	let n = t;
 	return typeof n.isManagedOwnershipRequired == "function" && typeof n.registerParticipant == "function" ? n : null;
 }
-function ws(e, t) {
-	let n = Cs(e);
+function Cs(e, t) {
+	let n = Ss(e);
 	return n === null || !n.isManagedOwnershipRequired() ? !1 : (n.registerParticipant({
-		id: xs,
+		id: bs,
 		protocolVersion: 1,
 		didCommitContent: ({ mesid: e, element: n, content: r }) => t.commit({
 			mesid: e,
@@ -5522,7 +5525,7 @@ function ws(e, t) {
 		})
 	}), t.activate(), !0);
 }
-var Ts = new Ss(), Es = class {
+var ws = new xs(), Ts = class {
 	capabilities;
 	#e;
 	#t;
@@ -5586,34 +5589,34 @@ var Ts = new Ss(), Es = class {
 		return this.#t.translate_deepl(e, t, n);
 	}
 };
-function Ds(e, t) {
+function Es(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Os(e, t, n) {
-	let r = Ds(e, "TavernHelper"), i = Ds(e, "SillyTavern"), a = Ds(e, "fetch"), o = Dn(r), s = gn(i);
+function Ds(e, t, n) {
+	let r = Es(e, "TavernHelper"), i = Es(e, "SillyTavern"), a = Es(e, "fetch"), o = Tn(r), s = mn(i);
 	if (!o.message_swipe_metadata || !o.preset_generation || !o.tavern_regex || !s.main_generation_events || !s.message_swipe_metadata || typeof a != "function") return null;
-	let c = new bn(() => i.getContext(), a);
-	return new Es(t, new Fn(r, () => c.get_active_chat_id()), c, n);
+	let c = new vn(() => i.getContext(), a);
+	return new Ts(t, new Nn(r, () => c.get_active_chat_id()), c, n);
 }
 //#endregion
 //#region src/host/sillytavern_secret_destination.ts
-function ks(e) {
+function Os(e) {
 	return typeof e == "object" && !!e;
 }
-function As(e, t) {
-	if (!ks(e)) return !1;
+function ks(e, t) {
+	if (!Os(e)) return !1;
 	let n = e[t];
 	return typeof n == "string" && n.length > 0;
 }
-var js = class {
+var As = class {
 	#e;
 	#t;
 	constructor(e, t) {
-		this.#e = e, this.#t = dn(t);
+		this.#e = e, this.#t = ln(t);
 	}
 	supports(e) {
 		return !0;
@@ -5621,7 +5624,7 @@ var js = class {
 	async write_secret(e, t) {
 		let n = await this.#t("/api/secrets/write", {
 			method: "POST",
-			headers: vn(this.#e.getRequestHeaders()),
+			headers: gn(this.#e.getRequestHeaders()),
 			body: JSON.stringify({
 				key: e,
 				value: t,
@@ -5633,7 +5636,7 @@ var js = class {
 	async delete_secret(e) {
 		let t = await this.#t("/api/secrets/delete", {
 			method: "POST",
-			headers: vn(this.#e.getRequestHeaders()),
+			headers: gn(this.#e.getRequestHeaders()),
 			body: JSON.stringify({ key: e })
 		});
 		if (!t.ok) throw Error(`SillyTavern secret deletion failed with status ${String(t.status)}`);
@@ -5641,7 +5644,7 @@ var js = class {
 	async probe_secret(e) {
 		let t = await this.#t("/api/secrets/view", {
 			method: "POST",
-			headers: vn(this.#e.getRequestHeaders()),
+			headers: gn(this.#e.getRequestHeaders()),
 			body: JSON.stringify({})
 		});
 		if (!t.ok) return !1;
@@ -5651,34 +5654,34 @@ var js = class {
 		} catch {
 			return !1;
 		}
-		return As(n, e);
+		return ks(n, e);
 	}
 };
-function Ms(e) {
+function js(e) {
 	return (typeof e == "object" && !!e || typeof e == "function") && typeof e.getRequestHeaders == "function";
 }
-function Ns(e, t) {
-	return !Ms(e) || typeof t != "function" ? null : new js(e, t);
+function Ms(e, t) {
+	return !js(e) || typeof t != "function" ? null : new As(e, t);
 }
 //#endregion
 //#region src/bootstrap/host_environment.ts
-function Ps(e, t) {
+function Ns(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Fs(e) {
-	let t = Ps(e, "SillyTavern"), n = Ps(t, "getContext");
+function Ps(e) {
+	let t = Ns(e, "SillyTavern"), n = Ns(t, "getContext");
 	if (typeof n == "function") try {
 		return Reflect.apply(n, t, []);
 	} catch {
 		return;
 	}
 }
-function Is(e) {
-	let t = Fs(e), n = Ps(t, "extensionSettings"), r = Ps(t, "saveSettingsDebounced");
+function Fs(e) {
+	let t = Ps(e), n = Ns(t, "extensionSettings"), r = Ns(t, "saveSettingsDebounced");
 	return typeof n != "object" || !n || typeof r != "function" ? null : {
 		extension_settings: n,
 		save_settings: () => {
@@ -5691,29 +5694,29 @@ function Is(e) {
 		} }
 	};
 }
+function Is(e) {
+	return Ms(Ps(e), Ns(e, "fetch"));
+}
 function Ls(e) {
-	return Ns(Fs(e), Ps(e, "fetch"));
+	return Na(Ps(e), Ns(e, "fetch"));
 }
-function Rs(e) {
-	return Fa(Fs(e), Ps(e, "fetch"));
-}
-function zs(e, t) {
-	return Os(e, t, Ts.active ? Ts : null);
+function Rs(e, t) {
+	return Ds(e, t, ws.active ? ws : null);
 }
 //#endregion
 //#region src/bootstrap/compose_capabilities.ts
-var Q = "IndexedDB could not be opened, so nothing that persists records can be composed", Bs = "No usable SillyTavern + TavernHelper host pair was detected", Vs = "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair", Hs = "The selected credential storage backend cannot both store and reveal a credential";
-function Us() {
+var $ = "IndexedDB could not be opened, so nothing that persists records can be composed", zs = "No usable SillyTavern + TavernHelper host pair was detected", Bs = "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair", Vs = "The selected credential storage backend cannot both store and reveal a credential";
+function Hs() {
 	return navigator.storage.estimate();
 }
-function Ws() {
+function Us() {
 	return typeof Worker > "u" ? null : () => new Worker(new URL(
 		/* @vite-ignore */
 		"/workers/vocabulary_worker.js",
 		"" + import.meta.url
 	), { type: "module" });
 }
-async function Gs(e) {
+async function Ws(e) {
 	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-Dz5kwPco.js"), o = {
 		novelai: new r(),
 		sd_webui: new a(),
@@ -5721,19 +5724,19 @@ async function Gs(e) {
 		google_image: new n()
 	};
 	if (e !== null) {
-		let n = rt(e);
+		let n = nt(e);
 		o.comfyui = new t({ workflow_store: { async load(e) {
 			return (await n.comfy_workflows.get("primary", e))?.payload;
 		} } });
 	}
 	return o;
 }
-function Ks(e, t) {
-	let n = new hi(e);
+function Gs(e, t) {
+	let n = new pi(e);
 	return { async read(r) {
 		let i = await n.get(t(), r);
 		if (i === null) throw Error(`Source asset ${r} is not in the image store`);
-		let a = await Ei(e, i.sha256);
+		let a = await wi(e, i.sha256);
 		if (a === null) throw Error(`Source asset ${r} has no stored bytes`);
 		if (i.media_type === "video/mp4") throw Error(`Source asset ${r} is a video and cannot be a provider input`);
 		return {
@@ -5743,27 +5746,27 @@ function Ks(e, t) {
 		};
 	} };
 }
-function qs(e) {
-	return at.omit({
+function Ks(e) {
+	return it.omit({
 		media_type: !0,
 		quarantined: !0
 	}).parse(e);
 }
-function Js(e, t) {
+function qs(e, t) {
 	return {
 		async put_image(n) {
-			return { id: (await wi(e, t(), {
+			return { id: (await Si(e, t(), {
 				id: n.id,
 				bytes: n.bytes,
 				claimed_media_type: n.claimed_media_type,
 				created_at: n.created_at,
-				metadata: qs(n.metadata)
+				metadata: Ks(n.metadata)
 			})).id };
 		},
 		async read_image(n) {
-			let r = await new hi(e).get(t(), n);
+			let r = await new pi(e).get(t(), n);
 			if (r === null) return null;
-			let i = await Ei(e, r.sha256);
+			let i = await wi(e, r.sha256);
 			return i === null ? null : {
 				bytes: i,
 				media_type: r.media_type
@@ -5771,40 +5774,40 @@ function Js(e, t) {
 		}
 	};
 }
-async function Ys(e) {
-	let t = e.globals ?? globalThis, n = e.extension_version ?? "development", r = Qn(), i = [], a = [];
+async function Js(e) {
+	let t = e.globals ?? globalThis, n = e.extension_version ?? "development", r = Xn(), i = [], a = [];
 	function o(e, t, n) {
-		if (i.push(no(e, t)), t.status === "available") return t.value;
+		if (i.push(eo(e, t)), t.status === "available") return t.value;
 		let r = t.reason;
 		return {
 			...n,
-			load: () => Promise.reject(q(r))
+			load: () => Promise.reject(Y(r))
 		};
 	}
-	let s = e.probe.ready ? e.probe.matrix : {}, c = zs(t, s), u = [], d = null;
+	let s = e.probe.ready ? e.probe.matrix : {}, c = Rs(t, s), u = [], d = null;
 	try {
-		d = await (e.open_storage ?? nt)();
+		d = await (e.open_storage ?? tt)();
 	} catch {
 		d = null;
 	}
-	let f = Is(t), p = f === null ? null : ja(f), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Ls(t), _ = Rs(t), v;
+	let f = Fs(t), p = f === null ? null : ka(f), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Is(t), _ = Ls(t), v;
 	try {
-		v = (e.create_browser_secret_vault ?? mt)(t);
+		v = (e.create_browser_secret_vault ?? ft)(t);
 	} catch {
 		v = null;
 	}
 	v !== null && a.push(() => v.close());
-	let b = pt(t);
+	let b = dt(t);
 	b !== null && a.push(() => b.close());
-	let ee = new Ia({
+	let ee = new Pa({
 		mode: () => p?.get_settings().credential_storage_mode ?? "host",
 		host_destination: g,
 		host_resolver: _,
 		browser_vault: v,
 		device_vault: b
-	}), te = ee.has_destination ? ee : null, x = ee.has_resolver ? ee : null, S = d === null ? null : rt(d), ne = new _o(), re = null, ie = () => re ??= Gs(d), ae = null, se = async () => {
+	}), te = ee.has_destination ? ee : null, x = ee.has_resolver ? ee : null, S = d === null ? null : nt(d), ne = new go(), re = null, ie = () => re ??= Ws(d), ae = null, se = async () => {
 		if (S === null || p === null) return null;
-		let e = p.get_settings().active_provider_profile_id, t = e === null ? null : await S.provider_profiles.get(m(), e).catch(() => null), n = t === null ? null : $s(t, x !== null);
+		let e = p.get_settings().active_provider_profile_id, t = e === null ? null : await S.provider_profiles.get(m(), e).catch(() => null), n = t === null ? null : Qs(t, x !== null);
 		return ae = n?.provider_id ?? null, n;
 	};
 	await se();
@@ -5816,58 +5819,58 @@ async function Ys(e) {
 		vibe_encodings: S.novelai_vibe_encodings,
 		provider_inputs: S.provider_input_assets,
 		namespace: m,
-		gallery_assets: Ks(d, m),
-		transport: () => ec(async () => tc((await se())?.direct_cloud ?? null, x, e.provider_fetch)),
+		gallery_assets: Gs(d, m),
+		transport: () => $s(async () => ec((await se())?.direct_cloud ?? null, x, e.provider_fetch)),
 		fetch: e.provider_fetch ?? globalThis.fetch.bind(globalThis)
 	})), le = w === null || d === null ? null : { async read(e, t) {
 		try {
-			return await Ks(d, m).read(e, t);
+			return await Gs(d, m).read(e, t);
 		} catch {
 			return (await w()).assets.read(e, t);
 		}
-	} }, ue = w === null ? null : async (e) => e.provider_id === "novelai" ? (await w()).prepare(e, AbortSignal.timeout(Zs)) : e, de = o("novelai", w === null ? G(Q) : K(() => Ao(async () => (await w()).service)), r.novelai), fe = o("settings", p === null ? G(Vs) : K(() => vs({
+	} }, ue = w === null ? null : async (e) => e.provider_id === "novelai" ? (await w()).prepare(e, AbortSignal.timeout(Xs)) : e, de = o("novelai", w === null ? q($) : J(() => ko(async () => (await w()).service)), r.novelai), fe = o("settings", p === null ? q(Bs) : J(() => _s({
 		settings: p,
 		database: d,
 		extension_version: n,
 		secrets: te,
 		browser_secret_vault: v,
 		host_secrets: g
-	})), r.settings), pe = o("profiles", S === null ? G(Q) : K(() => ls({
+	})), r.settings), pe = o("profiles", S === null ? q($) : J(() => cs({
 		repository: S.provider_profiles,
 		namespace: m,
 		load_adapters: ie,
 		secrets: te,
 		credential_present: async (e) => te === null || (p?.get_settings().credential_storage_mode ?? "host") === "host" ? null : te.probe_secret(e),
 		now: h
-	})), r.profiles), he = o("llm_connections", S === null ? G(Q) : te === null || x === null ? G(Hs) : K(() => Zo({
+	})), r.profiles), he = o("llm_connections", S === null ? q($) : te === null || x === null ? q(Vs) : J(() => Xo({
 		repository: S.llm_connections,
 		namespace: m(),
 		secrets: te,
-		transport: new Wa({
+		transport: new Ha({
 			secrets: x,
 			...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 		}),
 		clock: h
-	})), r.llm_connections), _e = o("personas", S === null ? G(Q) : K(() => Qo({
+	})), r.llm_connections), _e = o("personas", S === null ? q($) : J(() => Zo({
 		repository: S.character_profiles,
 		namespace: m(),
 		clock: h
-	})), r.personas), ye = o("knowledge", S === null ? G(Q) : K(() => $o({
+	})), r.personas), ye = o("knowledge", S === null ? q($) : J(() => Qo({
 		repository: S.knowledge_entries,
 		namespace: m(),
 		clock: h
-	})), r.knowledge), be = o("prompt_presets", S === null ? G(Q) : K(() => ps({
+	})), r.knowledge), be = o("prompt_presets", S === null ? q($) : J(() => fs({
 		repository: S.prompt_presets,
 		namespace: m,
 		now: h,
 		new_id: () => crypto.randomUUID()
-	})), r.prompt_presets), xe = o("assets", S === null ? G(Q) : K(() => ho({
+	})), r.prompt_presets), xe = o("assets", S === null ? q($) : J(() => mo({
 		repositories: S,
 		namespace: m,
 		now: h
-	})), r.assets), Se = o("gallery", d === null ? G(Q) : K(() => So({
+	})), r.assets), Se = o("gallery", d === null ? q($) : J(() => xo({
 		database: d,
-		repository: new hi(d),
+		repository: new pi(d),
 		namespace: m,
 		now: h,
 		reveal_message: c === null ? null : (e, t) => {
@@ -5878,8 +5881,8 @@ async function Ys(e) {
 				block: "center"
 			}), "revealed");
 		}
-	})), r.gallery), T = null, Ce = o("generation", d === null ? G(Q) : c === null ? G(Bs) : K(() => {
-		let t = p?.get_settings().gateway ?? null, n = (e) => Za({
+	})), r.gallery), T = null, Ce = o("generation", d === null ? q($) : c === null ? q(zs) : J(() => {
+		let t = p?.get_settings().gateway ?? null, n = (e) => Ya({
 			gateway_endpoint: t?.endpoint ?? null,
 			http_acknowledgments: t?.http_acknowledgments ?? {},
 			tauri_provider_available: !1,
@@ -5887,7 +5890,7 @@ async function Ys(e) {
 			direct_provider_base_url: e?.base_url ?? null,
 			direct_cloud: e?.direct_cloud ?? null
 		}), r = t?.endpoint == null ? null : n(null), i = new me(), o = {
-			store: Js(d, m),
+			store: qs(d, m),
 			ids: { next: () => crypto.randomUUID() },
 			clock: { now: h },
 			resolve_source_message: (e) => {
@@ -5898,12 +5901,12 @@ async function Ys(e) {
 					swipe_id: t.swipe_id
 				};
 			}
-		}, s = new ln({
-			executor: r?.kind === "gateway" ? ac({
+		}, s = new sn({
+			executor: r?.kind === "gateway" ? ic({
 				...o,
 				endpoint: r.endpoint,
 				http_acknowledgments: t?.http_acknowledgments ?? {},
-				access_token: ic(t?.token_secret_id ?? null, x),
+				access_token: rc(t?.token_secret_id ?? null, x),
 				plans: i,
 				...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 			}) : new ge({
@@ -5912,37 +5915,37 @@ async function Ys(e) {
 				profiles: { resolve: async (e) => {
 					let t = (await ie())[e], n = await se();
 					if (t === void 0 || n?.provider_id !== e) throw Error(`No stored provider profile is active for ${e}`);
-					return t.validate_profile(os(n.record));
+					return t.validate_profile(as(n.record));
 				} },
-				transport: ec(async () => Xs(n(await se()), {
+				transport: $s(async () => Ys(n(await se()), {
 					secrets: x,
 					...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 				})),
-				assets: le ?? Ks(d, m),
-				...w === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await w()).finish(e, t, AbortSignal.timeout(Zs)) : t },
+				assets: le ?? Gs(d, m),
+				...w === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await w()).finish(e, t, AbortSignal.timeout(Xs)) : t },
 				log: { write: () => {} },
 				plans: i
 			}),
 			persistence: new ve(d, m()),
 			job_id_source: { next: () => crypto.randomUUID() },
-			time_source: new Qt(),
+			time_source: new Xt(),
 			global_concurrency: p?.get_settings().global_concurrency ?? 1
 		});
 		a.push(ne.observe_jobs(s));
-		let f = Eo({
+		let f = To({
 			queue: s,
 			plans: i,
-			jobs: rt(d).generation_jobs,
+			jobs: nt(d).generation_jobs,
 			namespace: m,
-			origin: new Mo(c, new Dt(globalThis.crypto)),
+			origin: new jo(c, new Tt(globalThis.crypto)),
 			new_request_id: () => l.parse(crypto.randomUUID()),
 			...ue === null ? {} : { prepare_request: ue }
 		});
-		return p !== null && (T = new na({
+		return p !== null && (T = new ea({
 			host: c,
 			settings: () => p.get_settings().illustration,
 			auto_generation_enabled: () => p.get_settings().auto_generation_enabled,
-			prompt_context: () => aa(be, xe, p.get_settings().illustration.prompt_preset_id),
+			prompt_context: () => ra(be, xe, p.get_settings().illustration.prompt_preset_id),
 			async build_request({ positive_prompt: e, negative_prompt: t }) {
 				let n = await ce(), { build_generation_request: r } = await import("./chunks/build_generation_request-CGC_P-3d.js"), i = await r({
 					provider_id: n.provider_id,
@@ -5953,7 +5956,7 @@ async function Ys(e) {
 					...n.model_id === null ? {} : { model_id: n.model_id }
 				}, l.parse(crypto.randomUUID()));
 				if (i.provider_id !== "novelai" || i.action !== "generate" || w === null || S === null) return i;
-				let a = cs(n.record);
+				let a = ss(n.record);
 				if (a === null) return i;
 				let [{ apply_novelai_defaults: o }, { reference_image_bytes: s }, c] = await Promise.all([
 					import("./chunks/novelai_profile_defaults-CKb8rSMX.js"),
@@ -5963,11 +5966,11 @@ async function Ys(e) {
 				return o(i, a, {
 					store_input: (e) => c.store_input(e),
 					async load_vibe(e) {
-						let t = await S.novelai_vibes.get(m(), e), n = t === null ? {} : Y(t);
+						let t = await S.novelai_vibes.get(m(), e), n = t === null ? {} : X(t);
 						return typeof n.image == "string" ? {
 							image_bytes: s(n.image),
-							strength: oo(n, "strength", .6),
-							information_extracted: oo(n, "information_extracted", 1)
+							strength: ao(n, "strength", .6),
+							information_extracted: ao(n, "information_extracted", 1)
 						} : null;
 					}
 				});
@@ -5989,7 +5992,7 @@ async function Ys(e) {
 			},
 			edits_available: () => ae === "novelai",
 			resolve_analysis_key() {
-				if (x === null) throw Error(Qs);
+				if (x === null) throw Error(Zs);
 				return x.resolve_secret(oe(p.get_settings().active_namespace));
 			},
 			async submit(e) {
@@ -6000,10 +6003,10 @@ async function Ys(e) {
 				})).request_id;
 			},
 			jobs: s,
-			new_slot_id: ia,
+			new_slot_id: na,
 			new_generation_id: () => crypto.randomUUID()
-		}), u.push(new oa(T, c))), f;
-	}), r.generation), we = e.create_vocabulary_worker === void 0 ? Ws() : e.create_vocabulary_worker, Te = o("vocabulary", d === null ? G(Q) : we === null ? G("This host has no Worker constructor, so vocabulary search cannot run") : K(() => bs({
+		}), u.push(new ia(T, c))), f;
+	}), r.generation), we = e.create_vocabulary_worker === void 0 ? Us() : e.create_vocabulary_worker, Te = o("vocabulary", d === null ? q($) : we === null ? q("This host has no Worker constructor, so vocabulary search cannot run") : J(() => ys({
 		async load_catalog() {
 			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-Bwz8z5tH.js");
 			return new e({
@@ -6024,13 +6027,13 @@ async function Ys(e) {
 			assets: xe,
 			gallery: Se,
 			vocabulary: Te,
-			diagnostics: o("diagnostics", K(() => yo({
+			diagnostics: o("diagnostics", J(() => vo({
 				capability_matrix: s,
 				helper_version: e.probe.ready ? e.probe.helper_version : null,
 				timeline: ne,
 				resolutions: () => i,
 				settings: () => p?.get_settings() ?? null,
-				estimate_storage: e.estimate_storage ?? Us,
+				estimate_storage: e.estimate_storage ?? Hs,
 				extension_version: n,
 				probe_gateway: null
 			})), r.diagnostics),
@@ -6043,7 +6046,7 @@ async function Ys(e) {
 		resolutions: i,
 		host: c,
 		illustrations: T,
-		translator: c === null || p === null ? null : ha({
+		translator: c === null || p === null ? null : pa({
 			host: c,
 			settings: () => p.get_settings().translation,
 			vocabulary: Te
@@ -6057,44 +6060,44 @@ async function Ys(e) {
 		}
 	};
 }
-function Xs(e, t = { secrets: null }) {
+function Ys(e, t = { secrets: null }) {
 	let n = t.fetch;
 	switch (e.kind) {
 		case "direct_cloud": {
-			let r = Wt(e.provider_id);
+			let r = Ht(e.provider_id);
 			if (r === null || t.secrets === null) throw Error(`No direct route catalog entry and host credential resolver pair exists for ${e.provider_id}`);
-			return new Ua({
+			return new Va({
 				catalog_entry: r,
 				credential_reference: e.credential_reference,
 				secrets: t.secrets,
 				...n === void 0 ? {} : { fetch: n }
 			});
 		}
-		case "local_direct": return new Ya({
+		case "local_direct": return new qa({
 			base_url: e.endpoint,
 			...n === void 0 ? {} : { fetch: n }
 		});
 		default: throw Error(`The selected ${e.kind} transport cannot drive the job executor; configure a loopback provider endpoint or a credentialed cloud profile`);
 	}
 }
-var Zs = 12e4, Qs = "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
-function $s(e, t) {
+var Xs = 12e4, Zs = "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
+function Qs(e, t) {
 	let n = b.safeParse(e.provider_id).data;
 	if (n === void 0) return null;
-	let r = Y(e);
+	let r = X(e);
 	return {
 		record: e,
 		provider_id: n,
-		model_id: so(J(r.provider_profile), "model_allowlist").find((e) => typeof e == "string") ?? null,
-		base_url: io(r, "base_url"),
+		model_id: oo(no(r.provider_profile), "model_allowlist").find((e) => typeof e == "string") ?? null,
+		base_url: ro(r, "base_url"),
 		direct_cloud: {
 			provider_id: n,
-			credential_reference: io(r, es),
+			credential_reference: ro(r, $o),
 			secrets_readable: t
 		}
 	};
 }
-function ec(e) {
+function $s(e) {
 	return {
 		async execute(t) {
 			return (await e()).execute(t);
@@ -6106,11 +6109,11 @@ function ec(e) {
 		}
 	};
 }
-function tc(e, t, n) {
-	if (e === null || e.provider_id !== "novelai") throw new ft("The active provider profile is not a NovelAI profile");
-	if (e.credential_reference === null) throw new ft("The active NovelAI profile has no stored token; set one in Settings > Providers");
-	if (!e.secrets_readable || t === null) throw new ft("This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml");
-	return Xs({
+function ec(e, t, n) {
+	if (e === null || e.provider_id !== "novelai") throw new ut("The active provider profile is not a NovelAI profile");
+	if (e.credential_reference === null) throw new ut("The active NovelAI profile has no stored token; set one in Settings > Providers");
+	if (!e.secrets_readable || t === null) throw new ut("This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml");
+	return Ys({
 		kind: "direct_cloud",
 		provider_id: "novelai",
 		credential_reference: e.credential_reference
@@ -6119,13 +6122,13 @@ function tc(e, t, n) {
 		...n === void 0 ? {} : { fetch: n }
 	});
 }
-var nc = "A Gateway endpoint is configured but no Gateway access token is stored; set one in Settings > Gateway, or clear the endpoint to generate directly", rc = "This host cannot reveal stored credentials, so the Gateway access token cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml, or clear the Gateway endpoint to generate directly";
-function ic(e, t) {
-	if (e === null) throw Error(nc);
-	if (t === null) throw Error(rc);
+var tc = "A Gateway endpoint is configured but no Gateway access token is stored; set one in Settings > Gateway, or clear the endpoint to generate directly", nc = "This host cannot reveal stored credentials, so the Gateway access token cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml, or clear the Gateway endpoint to generate directly";
+function rc(e, t) {
+	if (e === null) throw Error(tc);
+	if (t === null) throw Error(nc);
 	return () => t.resolve_secret(e);
 }
-function ac(e) {
+function ic(e) {
 	let t = null;
 	return { async execute(n, r) {
 		let { GatewayJobExecutor: i } = await (t ??= import("./chunks/gateway_job_executor-B0b8KcOB.js"));
@@ -6134,42 +6137,42 @@ function ac(e) {
 }
 //#endregion
 //#region src/bootstrap/startup_error.ts
-var oc = "https://github.com/N0VI028/JS-Slash-Runner";
-function sc(e) {
+var ac = "https://github.com/N0VI028/JS-Slash-Runner";
+function oc(e) {
 	if (e.ready) return {
 		state: "ready",
 		title: "Inkwell ready",
 		message: `Connected through JS Slash Runner ${e.helper_version}.`
 	};
-	let t = `JS Slash Runner ${In} or newer is required.`;
+	let t = `JS Slash Runner ${Pn} or newer is required.`;
 	switch (e.error_code) {
 		case "tavern_helper_missing": return {
 			state: "blocked",
 			title: "JS Slash Runner is required",
 			message: t,
-			update_url: oc
+			update_url: ac
 		};
 		case "helper_version_invalid": return {
 			state: "blocked",
 			title: "JS Slash Runner version is invalid",
 			message: `Inkwell could not verify the installed version. ${t}`,
-			update_url: oc
+			update_url: ac
 		};
 		case "helper_version_unsupported": return {
 			state: "blocked",
 			title: "Update JS Slash Runner",
 			message: t,
-			update_url: oc
+			update_url: ac
 		};
 		case "helper_api_incomplete": return {
 			state: "blocked",
 			title: "JS Slash Runner API is incomplete",
 			message: `Required public capabilities are unavailable. ${t}`,
-			update_url: oc
+			update_url: ac
 		};
 	}
 }
-function cc() {
+function sc() {
 	return {
 		state: "failed",
 		title: "Inkwell could not start",
@@ -6178,10 +6181,10 @@ function cc() {
 }
 //#endregion
 //#region src/bootstrap/bootstrap.ts
-async function lc(e = {}) {
-	let t = e.document ?? document, n = e.globals ?? globalThis, r = qn(n), i, a, o = null, s = !1;
+async function cc(e = {}) {
+	let t = e.document ?? document, n = e.globals ?? globalThis, r = Gn(n), i, a, o = null, s = !1;
 	try {
-		o = await Ys({
+		o = await Js({
 			...e.composition,
 			probe: r,
 			globals: n,
@@ -6190,17 +6193,17 @@ async function lc(e = {}) {
 	} catch {
 		s = !0;
 	}
-	let c = r.ready ? new St([...e.modules ?? [], ...o?.modules ?? []]) : void 0;
-	if (!r.ready) i = "blocked", a = sc(r);
-	else if (s) i = "failed", a = cc();
+	let c = r.ready ? new bt([...e.modules ?? [], ...o?.modules ?? []]) : void 0;
+	if (!r.ready) i = "blocked", a = oc(r);
+	else if (s) i = "failed", a = sc();
 	else try {
-		await c?.start_all(), i = "ready", a = sc(r);
+		await c?.start_all(), i = "ready", a = oc(r);
 	} catch {
-		i = "failed", a = cc();
+		i = "failed", a = sc();
 	}
-	let l = di(t, e.stylesheet ?? ""), u = Re(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null);
+	let l = li(t, e.stylesheet ?? ""), u = Le(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null);
 	u.apply_locale(d ?? "auto", typeof navigator > "u" ? "en" : navigator.language);
-	let f = je(si, {
+	let f = je(ai, {
 		status: a,
 		probe: r,
 		version: e.version ?? "development",
@@ -6210,7 +6213,7 @@ async function lc(e = {}) {
 		host: o?.host ? Oe(o.host) : null,
 		illustrations: o?.illustrations ? Oe(o.illustrations) : null,
 		translator: o?.translator ?? null
-	}), p = ui(t);
+	}), p = ci(t);
 	f.use(u.i18n), f.onUnmount(() => {
 		l.remove(), p();
 	});
@@ -6260,7 +6263,7 @@ async function lc(e = {}) {
 }
 //#endregion
 //#region src/bootstrap/host_readiness.ts
-function $(e, t) {
+function lc(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
@@ -6268,7 +6271,7 @@ function $(e, t) {
 	}
 }
 function uc(e) {
-	let t = $(e, "SillyTavern"), n = $(t, "getContext");
+	let t = lc(e, "SillyTavern"), n = lc(t, "getContext");
 	if (typeof n != "function") return Promise.resolve();
 	let r;
 	try {
@@ -6276,7 +6279,7 @@ function uc(e) {
 	} catch {
 		return Promise.resolve();
 	}
-	let i = $(r, "eventSource"), a = $($(r, "eventTypes"), "APP_READY"), o = $(i, "on"), s = $(i, "removeListener");
+	let i = lc(r, "eventSource"), a = lc(lc(r, "eventTypes"), "APP_READY"), o = lc(i, "on"), s = lc(i, "removeListener");
 	if (typeof a != "string" || typeof o != "function") return Promise.resolve();
 	let { promise: c, resolve: l } = Promise.withResolvers(), u = !1, d = () => {
 		if (!u) {
@@ -6318,9 +6321,9 @@ var Dc = Ec([
 //#endregion
 //#region src/index.ts
 function Oc() {
-	ws(globalThis, Ts);
+	Cs(globalThis, ws);
 }
-var kc = uc(globalThis).then(() => lc({
+var kc = uc(globalThis).then(() => cc({
 	stylesheet: Dc,
 	version: "3.0.0"
 }));

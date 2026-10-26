@@ -868,6 +868,12 @@ var Le = /* @__PURE__ */ O({
 				kind: "textarea"
 			},
 			{
+				key: "excluded_traits",
+				label: n("assets.characters.excluded_traits_label"),
+				kind: "text",
+				hint: n("assets.characters.excluded_traits_hint")
+			},
+			{
 				key: "context_notes",
 				label: n("assets.characters.context_notes_label"),
 				kind: "textarea"
