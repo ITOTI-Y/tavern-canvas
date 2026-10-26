@@ -11,6 +11,7 @@ export {
   NovelAiAugmentToolSchema,
   NovelAiCharacterPromptSchema,
   NovelAiCharacterReferenceSchema,
+  NovelAiDimensionSchema,
   NovelAiEmotionSchema,
   NovelAiGenerateRequestSchema,
   NovelAiImg2ImgRequestSchema,
@@ -52,6 +53,12 @@ export {
   type NovelAiUndesiredContentPreset,
   type ResolvedNovelAiModel,
 } from "./novelai_models.js";
+export {
+  NovelAiGenerationDefaultsSchema,
+  novelai_ignored_parameters,
+  type NovelAiGenerationDefaults,
+  type NovelAiIgnoredParameter,
+} from "./novelai_defaults.js";
 export {
   estimate_novelai_cost,
   type NovelAiCostContext,

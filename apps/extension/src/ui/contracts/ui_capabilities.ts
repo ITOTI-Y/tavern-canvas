@@ -20,6 +20,7 @@ import type {
   VocabularyCatalogEntry,
   VocabularyCategory,
   VocabularySearchResult,
+  NovelAiGenerationDefaults,
 } from "@tavern-canvas/contracts";
 import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
 
@@ -63,6 +64,8 @@ export interface ProviderProfileSummary {
   readonly is_default: boolean;
   readonly credential_reference: string | null;
   readonly updated_at: string;
+  /** Only a NovelAI profile has them; `null` until saved once. */
+  readonly novelai_defaults: NovelAiGenerationDefaults | null;
 }
 
 export interface ProviderProfileDraft {
@@ -91,6 +94,10 @@ export interface ProfilesCapability {
   test_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
   set_credential(profile_id: Uuid, plaintext_value: string): Promise<ProviderProfileSummary>;
   clear_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
+  save_novelai_defaults(
+    profile_id: Uuid,
+    defaults: NovelAiGenerationDefaults,
+  ): Promise<ProviderProfileSummary>;
 }
 
 // A credential is never part of a save payload; `set_credential` hands the plaintext straight to the credential backend.

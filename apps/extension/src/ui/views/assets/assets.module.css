@@ -397,3 +397,12 @@
   white-space: nowrap;
   border: 0;
 }
+
+.reference_thumbnail {
+  display: block;
+  max-width: 160px;
+  max-height: 160px;
+  margin-bottom: 8px;
+  border-radius: var(--tc-radius-image);
+  object-fit: contain;
+}

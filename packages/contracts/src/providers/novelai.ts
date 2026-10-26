@@ -10,7 +10,7 @@ import {
 export const NOVELAI_MAX_PIXELS = 3_145_728;
 export const NOVELAI_MAX_UPSCALE_PIXELS = 1_048_576;
 
-const NovelAiDimensionSchema = z.number().int().min(64).max(8192).multipleOf(64);
+export const NovelAiDimensionSchema = z.number().int().min(64).max(8192).multipleOf(64);
 const UnitIntervalSchema = z.number().min(0).max(1);
 
 export const NovelAiSamplerSchema = z.enum([

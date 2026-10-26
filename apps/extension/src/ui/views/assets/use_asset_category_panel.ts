@@ -31,6 +31,8 @@ export function use_asset_category_panel(
   controller: StudioController,
   fields: () => readonly AssetFieldSpec[],
   validation_message: () => string,
+  /** Payload keys edited outside the field form, such as an attached image, kept when a record is edited. */
+  preserved_keys: readonly string[] = [],
 ): AssetCategoryPanelController {
   const dialog_open = ref(false);
   const editing_record = ref<AssetRecordSummary | null>(null);
@@ -51,7 +53,14 @@ export function use_asset_category_panel(
     editing_record.value = record;
     name.value = record.display_name;
     name_error.value = null;
-    replace_values(values, form_values_from_record(fields(), record));
+    const preserved: AssetFormValues = {};
+    for (const key of preserved_keys) {
+      const value = record.payload[key];
+      if (typeof value === "string" || typeof value === "number") {
+        preserved[key] = value;
+      }
+    }
+    replace_values(values, { ...form_values_from_record(fields(), record), ...preserved });
     dialog_open.value = true;
   }
 

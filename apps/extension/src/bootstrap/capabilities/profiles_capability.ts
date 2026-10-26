@@ -1,6 +1,8 @@
 import {
+  NovelAiGenerationDefaultsSchema,
   ProviderIdSchema,
   derive_provider_credential_reference,
+  type NovelAiGenerationDefaults,
   type ImageGenerationRequest,
   type ProviderId,
   type Uuid,
@@ -29,6 +31,9 @@ import {
 
 /** A key name only, never credential material: plaintext never reaches IndexedDB (`assert_safe_provider_payload`). */
 export const VAULT_KEY_FIELD = "vault_key";
+
+/** Generation defaults a NovelAI profile starts every request from; see `NovelAiGenerationDefaultsSchema`. */
+export const NOVELAI_DEFAULTS_FIELD = "novelai_defaults";
 
 /** Adapter-owned fields live in their own sub-object because adapter schemas are strict and would reject presentation fields. */
 const ADAPTER_PROFILE_FIELD = "provider_profile";
@@ -108,7 +113,15 @@ function to_summary(record: ProviderProfile): ProviderProfileSummary {
     credential_reference:
       typeof payload[VAULT_KEY_FIELD] === "string" ? payload[VAULT_KEY_FIELD] : null,
     updated_at: record.updated_at,
+    novelai_defaults: read_novelai_defaults(record),
   };
+}
+
+export function read_novelai_defaults(record: ProviderProfile): NovelAiGenerationDefaults | null {
+  const parsed = NovelAiGenerationDefaultsSchema.safeParse(
+    read_payload(record)[NOVELAI_DEFAULTS_FIELD],
+  );
+  return parsed.success ? parsed.data : null;
 }
 
 export function create_profiles_capability(deps: ProfilesCapabilityDeps): ProfilesCapability {
@@ -181,6 +194,24 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
         ...record,
         updated_at: deps.now(),
         payload: to_json_value({ ...read_payload(record), [VAULT_KEY_FIELD]: reference }),
+      };
+      await deps.repository.put(record.namespace, updated);
+      const summary = to_summary(updated);
+      events.emit({ type: "profile_upserted", profile: summary });
+      return summary;
+    },
+    async save_novelai_defaults(profile_id, defaults) {
+      const record = await read(profile_id);
+      if (record.provider_id !== "novelai") {
+        throw new TypeError(`Provider profile ${profile_id} is not a NovelAI profile`);
+      }
+      const updated: ProviderProfile = {
+        ...record,
+        updated_at: deps.now(),
+        payload: to_json_value({
+          ...read_payload(record),
+          [NOVELAI_DEFAULTS_FIELD]: NovelAiGenerationDefaultsSchema.parse(defaults),
+        }),
       };
       await deps.repository.put(record.namespace, updated);
       const summary = to_summary(updated);

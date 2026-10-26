@@ -70,6 +70,7 @@ const PROFILE: ProviderProfileSummary = {
   workflow_id: null,
   is_default: true,
   credential_reference: null,
+  novelai_defaults: null,
   updated_at: "2026-01-01T00:00:00.000Z",
 };
 
@@ -227,12 +228,14 @@ describe("SettingsView provider profiles", () => {
           workflow_id: draft.workflow_id,
           is_default: draft.is_default,
           credential_reference: null,
+          novelai_defaults: null,
           updated_at: "2026-08-07T00:00:00.000Z",
         });
       },
       remove: capabilities.profiles.remove,
       set_credential: capabilities.profiles.set_credential,
       clear_credential: capabilities.profiles.clear_credential,
+      save_novelai_defaults: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -331,6 +334,7 @@ describe("SettingsView provider profiles", () => {
       },
       set_credential: capabilities.profiles.set_credential,
       clear_credential: capabilities.profiles.clear_credential,
+      save_novelai_defaults: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -363,6 +367,7 @@ describe("SettingsView provider profiles", () => {
       remove: capabilities.profiles.remove,
       set_credential: capabilities.profiles.set_credential,
       clear_credential: capabilities.profiles.clear_credential,
+      save_novelai_defaults: vi.fn(),
       test_connection: (): Promise<ProfileConnectionTestResult> =>
         Promise.resolve({ status: "success", latency_ms: 77 }),
     };

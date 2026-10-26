@@ -95,6 +95,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     test_connection: unavailable_command,
     set_credential: unavailable_command,
     clear_credential: unavailable_command,
+    save_novelai_defaults: unavailable_command,
   };
 
   const novelai: NovelAiCapability = {

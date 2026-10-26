@@ -13,6 +13,7 @@ import DataSettings from "./DataSettings.vue";
 import GatewaySettings from "./GatewaySettings.vue";
 import IllustrationSettings from "./IllustrationSettings.vue";
 import LlmConnections from "./LlmConnections.vue";
+import NovelAiSettings from "./NovelAiSettings.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
 import styles from "./settings.module.css";
 import TranslationSettings from "./TranslationSettings.vue";
@@ -62,6 +63,16 @@ function section_label(section: SettingsSection): string {
 }
 
 const section = computed(() => props.state.settings_section);
+
+/** NovelAI parameters belong to the profile generation uses, which is the active one. */
+const active_novelai_profile = computed(
+  () =>
+    props.state.generation.profiles.find(
+      (profile) =>
+        profile.id === props.state.generation.active_profile_id &&
+        profile.provider_id === "novelai",
+    ) ?? null,
+);
 
 function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<string> {
   return props.controller.test_prompt_regex(rule, sample_text);
@@ -132,6 +143,12 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
             </div>
           </section>
           <ProviderProfiles :profiles="state.generation.profiles" :controller="controller" />
+          <NovelAiSettings
+            v-if="active_novelai_profile !== null"
+            :profile="active_novelai_profile"
+            :vibes="state.assets.records.vibe"
+            :controller="controller"
+          />
         </template>
         <TranslationSettings
           v-else-if="section === 'translation'"

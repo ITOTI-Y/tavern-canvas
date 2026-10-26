@@ -72,6 +72,7 @@ const PROFILE_SD: ProviderProfileSummary = {
   display_name: "Local SD WebUI",
   is_default: true,
   credential_reference: null,
+  novelai_defaults: null,
   updated_at: "2026-07-01T09:00:00.000Z",
 };
 
@@ -82,6 +83,7 @@ const PROFILE_NOVELAI: ProviderProfileSummary = {
     "NovelAI production account with an unusually long profile name for truncation testing 测试账号名称非常长用于验证省略号截断效果",
   is_default: false,
   credential_reference: null,
+  novelai_defaults: null,
   updated_at: "2026-07-02T09:00:00.000Z",
 };
 
@@ -91,6 +93,7 @@ const PROFILE_COMFYUI: ProviderProfileSummary = {
   display_name: "ComfyUI (workflow, unsupported in Workbench yet)",
   is_default: false,
   credential_reference: null,
+  novelai_defaults: null,
   updated_at: "2026-07-03T09:00:00.000Z",
 };
 
@@ -568,6 +571,7 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         workflow_id: draft.workflow_id,
         is_default: draft.is_default,
         credential_reference: null,
+        novelai_defaults: null,
         updated_at: new Date().toISOString(),
       };
       profiles.set(summary.id, summary);
@@ -595,6 +599,15 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         return always_rejects("unknown_provider_profile");
       }
       const updated = { ...profile, credential_reference: null };
+      profiles.set(profile_id, updated);
+      return Promise.resolve(updated);
+    },
+    save_novelai_defaults: (profile_id, defaults) => {
+      const profile = profiles.get(profile_id);
+      if (profile === undefined) {
+        return always_rejects("unknown_provider_profile");
+      }
+      const updated = { ...profile, novelai_defaults: defaults };
       profiles.set(profile_id, updated);
       return Promise.resolve(updated);
     },

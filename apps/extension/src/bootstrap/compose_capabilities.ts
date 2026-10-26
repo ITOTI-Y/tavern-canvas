@@ -86,12 +86,14 @@ import {
   VAULT_KEY_FIELD,
   adapter_profile_of,
   create_profiles_capability,
+  read_novelai_defaults,
 } from "./capabilities/profiles_capability.js";
 import { create_prompt_presets_capability } from "./capabilities/prompt_presets_capability.js";
 import { create_settings_capability } from "./capabilities/settings_capability.js";
 import {
   as_record,
   read_array,
+  read_number,
   read_optional_string,
   read_payload,
 } from "./capabilities/_records.js";
@@ -642,7 +644,7 @@ export async function compose_studio_capabilities(
                   }
                   const { build_generation_request } =
                     await import("../modules/generation/build_generation_request.js");
-                  return build_generation_request(
+                  const request = await build_generation_request(
                     {
                       provider_id: active_provider_id,
                       positive_prompt,
@@ -653,6 +655,44 @@ export async function compose_studio_capabilities(
                     },
                     RequestIdSchema.parse(crypto.randomUUID()),
                   );
+                  if (
+                    request.provider_id !== "novelai" ||
+                    request.action !== "generate" ||
+                    load_novelai_runtime === null ||
+                    active_profile_record === null ||
+                    repositories === null
+                  ) {
+                    return request;
+                  }
+                  // Re-read so defaults saved in this session apply without a reload.
+                  const profile = await repositories.provider_profiles.get(
+                    namespace(),
+                    active_profile_record.id,
+                  );
+                  const defaults = profile === null ? null : read_novelai_defaults(profile);
+                  if (defaults === null) {
+                    return request;
+                  }
+                  const [{ apply_novelai_defaults }, { reference_image_bytes }, runtime] =
+                    await Promise.all([
+                      import("../modules/novelai/novelai_profile_defaults.js"),
+                      import("../ui/views/assets/reference_image.js"),
+                      load_novelai_runtime(),
+                    ]);
+                  return apply_novelai_defaults(request, defaults, {
+                    store_input: (bytes) => runtime.store_input(bytes),
+                    async load_vibe(vibe_id) {
+                      const record = await repositories.novelai_vibes.get(namespace(), vibe_id);
+                      const payload = record === null ? {} : read_payload(record);
+                      return typeof payload.image === "string"
+                        ? {
+                            image_bytes: reference_image_bytes(payload.image),
+                            strength: read_number(payload, "strength", 0.6),
+                            information_extracted: read_number(payload, "information_extracted", 1),
+                          }
+                        : null;
+                    },
+                  });
                 },
                 async build_edit_request(edit) {
                   if (active_provider_id !== "novelai" || load_novelai_runtime === null) {

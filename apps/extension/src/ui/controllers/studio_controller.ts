@@ -5,6 +5,9 @@ import type {
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
+  NovelAiAccountStatus,
+  NovelAiGenerationDefaults,
+  ResolvedNovelAiModel,
   PersonaProfile,
   PersonaProfileDraft,
   TavernCanvasSettings,
@@ -108,6 +111,13 @@ export interface StudioController {
     plaintext_value: string,
   ): Promise<ProviderProfileSummary>;
   clear_provider_profile_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
+  save_novelai_defaults(
+    profile_id: Uuid,
+    defaults: NovelAiGenerationDefaults,
+  ): Promise<ProviderProfileSummary>;
+  /** Tier and Anlas of the account behind the active NovelAI profile. */
+  load_novelai_account(): Promise<NovelAiAccountStatus>;
+  load_novelai_models(): Promise<readonly ResolvedNovelAiModel[]>;
   acknowledge_http_origin(origin: string): Promise<void>;
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
@@ -968,6 +978,27 @@ class StudioControllerImpl implements StudioController {
       });
     }
     return profile;
+  }
+
+  async save_novelai_defaults(
+    profile_id: Uuid,
+    defaults: NovelAiGenerationDefaults,
+  ): Promise<ProviderProfileSummary> {
+    const profile = await this.#capabilities.profiles.save_novelai_defaults(profile_id, defaults);
+    if (!this.#stopped) {
+      this.#patch_generation({
+        profiles: upsert_by_id(this.#state.generation.profiles, profile, (item) => item.id),
+      });
+    }
+    return profile;
+  }
+
+  load_novelai_account(): Promise<NovelAiAccountStatus> {
+    return this.#capabilities.novelai.get_account();
+  }
+
+  load_novelai_models(): Promise<readonly ResolvedNovelAiModel[]> {
+    return this.#capabilities.novelai.load();
   }
 
   acknowledge_http_origin(origin: string): Promise<void> {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppDialog from "../../components/AppDialog.vue";
@@ -12,6 +12,8 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
 import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
+import styles from "./assets.module.css";
+import { read_reference_image } from "./reference_image.js";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 
 const NOVELAI = "novelai";
@@ -66,7 +68,26 @@ const panel = use_asset_category_panel(
   props.controller,
   () => FIELDS.value,
   () => t("errors.validation_required"),
+  ["provider", "image"],
 );
+
+const image_error = ref<string | null>(null);
+const image_url = computed(() =>
+  typeof panel.values.image === "string" && panel.values.image !== "" ? panel.values.image : null,
+);
+
+async function choose_image(event: Event): Promise<void> {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (file === undefined) {
+    return;
+  }
+  image_error.value = null;
+  try {
+    panel.values.image = await read_reference_image(file);
+  } catch {
+    image_error.value = t("assets.vibe.image_unreadable");
+  }
+}
 
 const provider_value = computed<string>(() =>
   typeof panel.values.provider === "string" && panel.values.provider !== ""
@@ -144,6 +165,28 @@ const delete_confirm_title = (record_name: string): string =>
         @cancel="panel.close_dialog"
       >
         <template #extra-fields>
+          <FieldGroup
+            :label="t('assets.vibe.image_label')"
+            :hint="t('assets.vibe.image_hint')"
+            :error="image_error"
+          >
+            <template #default="{ fieldId, describedBy }">
+              <img
+                v-if="image_url !== null"
+                :src="image_url"
+                :alt="t('assets.vibe.image_label')"
+                :class="styles.reference_thumbnail"
+              />
+              <input
+                :id="fieldId"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                :aria-describedby="describedBy"
+                data-testid="vibe-image-input"
+                @change="choose_image"
+              />
+            </template>
+          </FieldGroup>
           <FieldGroup :label="t('assets.vibe.provider_label')">
             <template #default>
               <SegmentedControl

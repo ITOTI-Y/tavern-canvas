@@ -165,6 +165,7 @@ function build_mock_studio() {
     remove: vi.fn(),
     set_credential: vi.fn(),
     clear_credential: vi.fn(),
+    save_novelai_defaults: vi.fn(),
     test_connection: vi.fn(),
   };
 
@@ -392,6 +393,7 @@ describe("create_studio_controller", () => {
         display_name: "Local SD",
         is_default: true,
         credential_reference: null,
+        novelai_defaults: null,
         updated_at: "2026-01-01T00:00:00Z",
       },
     ]);
@@ -424,6 +426,7 @@ describe("create_studio_controller", () => {
         display_name: "NovelAI",
         is_default: false,
         credential_reference: null,
+        novelai_defaults: null,
         updated_at: "2026-01-02T00:00:00Z",
       },
     });
@@ -634,6 +637,7 @@ describe("create_studio_controller: prompt and workbench commands", () => {
       workflow_id: null,
       is_default: true,
       credential_reference: null,
+      novelai_defaults: null,
       updated_at: "2026-08-10T00:00:00Z",
     });
 
