@@ -427,6 +427,11 @@ export async function compose_studio_capabilities(
             namespace,
             load_adapters: load_provider_adapters,
             secrets,
+            credential_present: async (reference) =>
+              secrets === null ||
+              (settings_adapter?.get_settings().credential_storage_mode ?? "host") === "host"
+                ? null
+                : secrets.probe_secret(reference),
             now,
           }),
         ),

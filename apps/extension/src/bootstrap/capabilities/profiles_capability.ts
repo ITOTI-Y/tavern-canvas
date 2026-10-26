@@ -45,6 +45,11 @@ export interface ProfilesCapabilityDeps {
     Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
   >;
   readonly secrets: SecretDestinationPort | null;
+  /**
+   * Whether the selected backend still holds a reference; `null` when it cannot tell without
+   * revealing secrets (SillyTavern's vault), so the stored reference is trusted.
+   */
+  readonly credential_present: (reference: string) => Promise<boolean | null>;
   readonly now: () => string;
 }
 
@@ -138,7 +143,19 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
   return {
     async load() {
       const records = await deps.repository.list(deps.namespace());
-      return records.map(to_summary);
+      return Promise.all(
+        records.map(async (record) => {
+          const summary = to_summary(record);
+          if (summary.credential_reference === null) {
+            return summary;
+          }
+          // Switching credential storage leaves references whose keys live in the old backend.
+          const present = await deps
+            .credential_present(summary.credential_reference)
+            .catch(() => false);
+          return present === false ? { ...summary, credential_reference: null } : summary;
+        }),
+      );
     },
     subscribe: (handler) => events.subscribe(handler),
     async save(draft) {

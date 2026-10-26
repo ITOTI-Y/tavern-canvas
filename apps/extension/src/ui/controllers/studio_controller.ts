@@ -893,12 +893,17 @@ class StudioControllerImpl implements StudioController {
           this.#patch_settings({ settings });
           return settings;
         }
-        const snapshot = await this.#capabilities.settings.load();
+        const [snapshot, profiles] = await Promise.all([
+          this.#capabilities.settings.load(),
+          // Credential presence is checked against the newly selected backend.
+          this.#capabilities.profiles.load(),
+        ]);
         this.#patch_settings({
           settings: snapshot.settings,
           vocabulary_update_channel: snapshot.vocabulary_update_channel,
           browser_secret_vault: snapshot.browser_secret_vault,
         });
+        this.#patch_generation({ profiles });
         return snapshot.settings;
       },
     );
