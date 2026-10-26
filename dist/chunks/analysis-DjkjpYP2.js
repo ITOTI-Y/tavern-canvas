@@ -52,7 +52,15 @@ var c = {
 					tags: { type: "string" },
 					characters: {
 						type: "array",
-						items: { type: "string" }
+						items: {
+							type: "object",
+							properties: {
+								name: { type: "string" },
+								tags: { type: "string" }
+							},
+							required: ["name", "tags"],
+							additionalProperties: !1
+						}
 					}
 				},
 				required: [
@@ -73,7 +81,7 @@ function l(e) {
 	let t = new Map(e.characters.map((e) => [e.id, e.name]));
 	return [
 		"",
-		"Characters and outfits below have stored tags that are added automatically. When one of them is in the picture, do not describe their hair, eyes, face, body or clothing in tags; describe only pose, action, expression and the setting. List these characters in characters using exactly the name shown.",
+		"Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing; use exactly the name shown.",
 		...e.characters.map((e) => `- character: ${e.name}`),
 		...e.outfits.map((e) => {
 			let n = e.character_id === null ? void 0 : t.get(e.character_id);
@@ -83,12 +91,12 @@ function l(e) {
 }
 function u(e, t, n) {
 	return [
-		"[TavernCanvas illustration request]",
+		"[Inkwell illustration request]",
 		`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
 		"- paragraph: the paragraph number",
 		"- scene: one sentence describing what the picture shows",
-		"- tags: comma-separated Danbooru-style English tags for an anime image model (subject count such as 1girl, pose, action, expression, clothing, setting, lighting, composition); use a character name only when it is a well-known Danbooru character tag",
-		"- characters: the names of the characters visible in the picture, exactly as written in the story",
+		"- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
+		"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl, boy or other (no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
 		"Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.",
 		...l(n),
 		"",
@@ -100,7 +108,10 @@ var d = t({
 	paragraph: r().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	tags: e([n(), i(n()).transform((e) => e.join(", "))]),
-	characters: i(n().trim().min(1).max(120)).max(16).default([])
+	characters: i(t({
+		name: n().trim().min(1).max(120),
+		tags: n().trim()
+	})).max(16)
 }), f = t({ illustrations: i(d) }), p = class extends Error {
 	excerpt;
 	constructor(e, t) {

@@ -6,7 +6,7 @@ import { n as P, t as F } from "./AppDialog-DJhokkv1.js";
 import { t as I } from "./trash-2-B6ZXZcor.js";
 import { t as L } from "./upload-CQtsg_mB.js";
 import { t as ee } from "./x-CDKrptQJ.js";
-import { a as R, n as z } from "./analysis-Dx736NsQ.js";
+import { a as R, n as z } from "./analysis-DjkjpYP2.js";
 import { t as te } from "./portal_keys-gQ1cWdMS.js";
 import { r as ne, t as re } from "./inpaint_session-BGEtfxwf.js";
 import { n as ie, t as B } from "./AppSelect-DJk9aRkS.js";
@@ -244,29 +244,29 @@ var de = k("eraser", [["path", {
 			let t = ke(e);
 			t !== null && Y.push(t);
 		}
-		function Me(e) {
-			J === e.pointerId && (J = null, Ne());
+		function Q(e) {
+			J === e.pointerId && (J = null, Me());
 		}
-		function Ne() {
+		function Me() {
 			if (q === null || Y.length === 0) {
 				Y = [];
 				return;
 			}
 			q.stroke(Y, F.value, R.value ? "erase" : "brush"), Y = [], X(), Z();
 		}
-		function Pe() {
+		function Ne() {
 			q?.undo(), X(), Z();
 		}
-		function Fe() {
+		function Pe() {
 			q?.redo(), X(), Z();
 		}
-		function Ie() {
+		function Fe() {
 			q?.clear(), X(), Z();
 		}
-		function Le() {
+		function Ie() {
 			z.value = Math.min(Ce, z.value + .5);
 		}
-		function Q() {
+		function Le() {
 			z.value = Math.max(Se, z.value - .5);
 		}
 		function $() {
@@ -308,7 +308,7 @@ var de = k("eraser", [["path", {
 									icon: d(me),
 									label: e.undoLabel,
 									disabled: !G.value,
-									onClick: Pe
+									onClick: Ne
 								}, null, 8, [
 									"icon",
 									"label",
@@ -318,7 +318,7 @@ var de = k("eraser", [["path", {
 									icon: d(fe),
 									label: e.redoLabel,
 									disabled: !we.value,
-									onClick: Fe
+									onClick: Pe
 								}, null, 8, [
 									"icon",
 									"label",
@@ -338,7 +338,7 @@ var de = k("eraser", [["path", {
 									icon: d(I),
 									label: e.clearLabel,
 									destructive: "",
-									onClick: Ie
+									onClick: Fe
 								}, null, 8, ["icon", "label"]),
 								y("span", {
 									class: T(d(U).inpaintToolbarDivider),
@@ -347,12 +347,12 @@ var de = k("eraser", [["path", {
 								O(V, {
 									icon: d(ge),
 									label: e.zoomOutLabel,
-									onClick: Q
+									onClick: Le
 								}, null, 8, ["icon", "label"]),
 								O(V, {
 									icon: d(he),
 									label: e.zoomInLabel,
-									onClick: Le
+									onClick: Ie
 								}, null, 8, ["icon", "label"]),
 								e.showUpload ? (a(), l(w, { key: 0 }, [y("span", {
 									class: T(d(U).inpaintToolbarDivider),
@@ -381,8 +381,8 @@ var de = k("eraser", [["path", {
 								"data-testid": "inpaint-mask-canvas",
 								onPointerdown: Ae,
 								onPointermove: je,
-								onPointerup: Me,
-								onPointercancel: Me
+								onPointerup: Q,
+								onPointercancel: Q
 							}, null, 36)], 6),
 							K.value ? (a(), l("p", {
 								key: 0,
@@ -458,7 +458,7 @@ var de = k("eraser", [["path", {
 	excerpt: "_excerpt_p8k7z_66",
 	footer: "_footer_p8k7z_78",
 	total: "_total_p8k7z_86"
-}, we = { key: 0 }, K = ["onUpdate:modelValue"], Te = ["onUpdate:modelValue"], Ee = /* @__PURE__ */ D({
+}, we = { key: 0 }, K = ["onUpdate:modelValue"], Te = ["onUpdate:modelValue"], Ee = ["onUpdate:modelValue"], q = /* @__PURE__ */ D({
 	__name: "IllustrateDialog",
 	props: {
 		request: {},
@@ -495,6 +495,7 @@ var de = k("eraser", [["path", {
 					selected: e.slot_id !== null || t.image_ids.length === 0,
 					positive_prompt: t.positive_prompt,
 					negative_prompt: t.negative_prompt,
+					character_prompts: t.character_prompts.map((e) => ({ ...e })),
 					estimate: null,
 					translating: !1,
 					reading: null,
@@ -534,7 +535,8 @@ var de = k("eraser", [["path", {
 				try {
 					for (let t of D.value) await n.service.generate(e.location, t.slot_id, {
 						positive_prompt: t.positive_prompt,
-						negative_prompt: t.negative_prompt
+						negative_prompt: t.negative_prompt,
+						character_prompts: t.character_prompts.filter((e) => e.prompt.trim() !== "")
 					});
 					o("close");
 				} catch (e) {
@@ -584,10 +586,18 @@ var de = k("eraser", [["path", {
 						"label"
 					]),
 					y("blockquote", { class: T(d(G).anchor) }, C(t.anchor), 3),
-					y("label", { class: T(d(G).label) }, [E(C(d(f)("chat.dialog.positive_prompt")) + " ", 1), i(y("textarea", {
+					y("label", { class: T(d(G).label) }, [E(C(t.character_prompts.length > 0 ? d(f)("chat.dialog.base_prompt") : d(f)("chat.dialog.positive_prompt")) + " ", 1), i(y("textarea", {
 						"onUpdate:modelValue": (e) => t.positive_prompt = e,
 						class: T(d(G).prompt)
 					}, null, 10, K), [[u, t.positive_prompt]])], 2),
+					(a(!0), l(w, null, r(t.character_prompts, (e) => (a(), l("label", {
+						key: e.name,
+						class: T(d(G).label),
+						"data-testid": "character-prompt"
+					}, [E(C(d(f)("chat.dialog.character_prompt", { name: e.name })) + " ", 1), i(y("textarea", {
+						"onUpdate:modelValue": (t) => e.prompt = t,
+						class: T(d(G).prompt)
+					}, null, 10, Te), [[u, e.prompt]])], 2))), 128)),
 					e.translator === null ? g("", !0) : (a(), l("div", {
 						key: 0,
 						class: T(d(G).meta)
@@ -619,7 +629,7 @@ var de = k("eraser", [["path", {
 					y("label", { class: T(d(G).label) }, [E(C(d(f)("chat.dialog.negative_prompt")) + " ", 1), i(y("textarea", {
 						"onUpdate:modelValue": (e) => t.negative_prompt = e,
 						class: T(d(G).prompt)
-					}, null, 10, Te), [[u, t.negative_prompt]])], 2),
+					}, null, 10, Ee), [[u, t.negative_prompt]])], 2),
 					y("div", { class: T(d(G).meta) }, [y("span", null, C(ee(t)), 1)], 2)
 				], 2))), 128)),
 				x.value === null ? g("", !0) : (a(), l("p", {
@@ -658,7 +668,7 @@ var de = k("eraser", [["path", {
 });
 //#endregion
 //#region src/ui/chat/mask_png.ts
-async function q(e, t, n) {
+async function J(e, t, n) {
 	let r = new Uint8ClampedArray(t * n * 4);
 	for (let t = 0; t < e.length; t += 1) {
 		let n = e[t] === 255 ? 255 : 0;
@@ -672,7 +682,7 @@ async function q(e, t, n) {
 }
 //#endregion
 //#region src/ui/chat/quick_edit_labels.ts
-var J = [
+var Y = [
 	"lineart",
 	"sketch",
 	"colorize",
@@ -680,7 +690,7 @@ var J = [
 	"declutter",
 	"declutter-keep-bubbles",
 	"bg-removal"
-], Y = [
+], X = [
 	"neutral",
 	"happy",
 	"sad",
@@ -706,7 +716,7 @@ var J = [
 	"hurt",
 	"playful"
 ];
-function X(e, t) {
+function De(e, t) {
 	switch (t) {
 		case "lineart": return e("chat.quick_edit.tools.lineart");
 		case "sketch": return e("chat.quick_edit.tools.sketch");
@@ -717,7 +727,7 @@ function X(e, t) {
 		case "bg-removal": return e("chat.quick_edit.tools.bg_removal");
 	}
 }
-function De(e, t) {
+function Oe(e, t) {
 	switch (t) {
 		case "neutral": return e("chat.quick_edit.emotions.neutral");
 		case "happy": return e("chat.quick_edit.emotions.happy");
@@ -747,7 +757,7 @@ function De(e, t) {
 }
 //#endregion
 //#region src/ui/chat/QuickEditDialog.vue?vue&type=script&setup=true&lang.ts
-var Oe = { key: 1 }, Z = /* @__PURE__ */ D({
+var Z = { key: 1 }, ke = /* @__PURE__ */ D({
 	__name: "QuickEditDialog",
 	props: {
 		request: {},
@@ -763,12 +773,12 @@ var Oe = { key: 1 }, Z = /* @__PURE__ */ D({
 				case "upscale": return o("chat.quick_edit.upscale");
 				default: return o("chat.quick_edit.director");
 			}
-		}), ee = S(() => J.map((e) => ({
-			value: e,
-			label: X(o, e)
-		}))), R = S(() => Y.map((e) => ({
+		}), ee = S(() => Y.map((e) => ({
 			value: e,
 			label: De(o, e)
+		}))), R = S(() => X.map((e) => ({
+			value: e,
+			label: Oe(o, e)
 		})));
 		function z() {
 			let e = n.request;
@@ -829,10 +839,10 @@ var Oe = { key: 1 }, Z = /* @__PURE__ */ D({
 		});
 		let ne = S(() => M.value === null ? "" : M.value.opus_free ? o("chat.dialog.cost_free") : M.value.anlas === null ? o("chat.dialog.cost_rejected") : o("chat.dialog.cost_anlas", { anlas: M.value.anlas }));
 		function re(e) {
-			v.value = J.find((t) => t === e) ?? v.value;
+			v.value = Y.find((t) => t === e) ?? v.value;
 		}
 		function ie(e) {
-			x.value = Y.find((t) => t === e) ?? x.value;
+			x.value = X.find((t) => t === e) ?? x.value;
 		}
 		async function ae() {
 			let e = n.request, t = z();
@@ -875,7 +885,7 @@ var Oe = { key: 1 }, Z = /* @__PURE__ */ D({
 						void 0,
 						{ number: !0 }
 					]])], 2)
-				], 64)) : e.request?.kind === "upscale" ? (a(), l("p", Oe, C(d(o)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (a(), l(w, { key: 2 }, [
+				], 64)) : e.request?.kind === "upscale" ? (a(), l("p", Z, C(d(o)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (a(), l(w, { key: 2 }, [
 					O(B, {
 						"model-value": v.value,
 						options: ee.value,
@@ -950,7 +960,7 @@ var Oe = { key: 1 }, Z = /* @__PURE__ */ D({
 });
 //#endregion
 //#region src/ui/chat/slot_error_label.ts
-function ke(t, n) {
+function Ae(t, n) {
 	let r = e.safeParse(n);
 	if (!r.success) return n;
 	switch (r.data) {
@@ -966,7 +976,7 @@ function ke(t, n) {
 }
 //#endregion
 //#region src/ui/chat/SlotCard.vue?vue&type=script&setup=true&lang.ts
-var Ae = ["src", "alt"], je = { key: 3 }, Me = { key: 4 }, Ne = ["disabled", "aria-label"], Pe = ["disabled", "aria-label"], Fe = ["disabled"], Ie = ["disabled", "onClick"], Le = /* @__PURE__ */ D({
+var je = ["src", "alt"], Q = { key: 3 }, Me = { key: 4 }, Ne = ["disabled", "aria-label"], Pe = ["disabled", "aria-label"], Fe = ["disabled"], Ie = ["disabled", "onClick"], Le = /* @__PURE__ */ D({
 	__name: "SlotCard",
 	props: {
 		entry: {},
@@ -1022,7 +1032,7 @@ var Ae = ["src", "alt"], je = { key: 3 }, Me = { key: 4 }, Ne = ["disabled", "ar
 				src: c.value,
 				alt: e.entry.scene,
 				onClick: n[0] ||= (t) => i("preview", e.entry.active_image_id)
-			}, null, 10, Ae)) : (a(), l("div", {
+			}, null, 10, je)) : (a(), l("div", {
 				key: 1,
 				class: T(d(H).placeholder)
 			}, [e.pending ? (a(), l(w, { key: 0 }, [y("span", {
@@ -1031,10 +1041,10 @@ var Ae = ["src", "alt"], je = { key: 3 }, Me = { key: 4 }, Ne = ["disabled", "ar
 			}, null, 2), y("span", null, C(d(o)("chat.slot.generating")), 1)], 64)) : u.value ? (a(), l("span", {
 				key: 1,
 				class: T(d(H).error)
-			}, C(d(o)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? p.value ? (a(), l("span", je, C(d(o)("chat.slot.interrupted")), 1)) : (a(), l("span", Me, C(e.entry.scene), 1)) : (a(), l("span", {
+			}, C(d(o)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? p.value ? (a(), l("span", Q, C(d(o)("chat.slot.interrupted")), 1)) : (a(), l("span", Me, C(e.entry.scene), 1)) : (a(), l("span", {
 				key: 2,
 				class: T(d(H).error)
-			}, C(d(o)("chat.slot.failed", { reason: d(ke)(d(o), e.entry.last_error) })), 3))], 2))], 2),
+			}, C(d(o)("chat.slot.failed", { reason: d(Ae)(d(o), e.entry.last_error) })), 3))], 2))], 2),
 			y("div", { class: T(d(H).toolbar) }, [
 				e.entry.image_ids.length > 1 ? (a(), l("span", {
 					key: 0,
@@ -1083,25 +1093,25 @@ var Ae = ["src", "alt"], je = { key: 3 }, Me = { key: 4 }, Ne = ["disabled", "ar
 			}, C(t.label()), 11, Ie)), 64))], 2)) : g("", !0)
 		], 2));
 	}
-}), Q = "data-tc-illustrate", $ = "data-tc-notice", Re = 50;
-function ze(e) {
+}), $ = "data-tc-illustrate", Re = "data-tc-notice", ze = 50;
+function Be(e) {
 	return `${e.chat_id}:${String(e.message_id)}:${String(e.swipe_id)}`;
 }
-function Be(e) {
+function Ve(e) {
 	let { host: n, service: r } = e, i = x([]), a = x([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = [], l = null;
 	function u(t, n) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
-		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${Q}]`) !== null) return;
+		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${$}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(R(t.ownerDocument)), a.setAttribute(Q, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(R(t.ownerDocument)), a.setAttribute($, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}
 	function d(e) {
-		let t = e.parentElement?.querySelector(`:scope > [${$}]`);
+		let t = e.parentElement?.querySelector(`:scope > [${Re}]`);
 		if (t != null) return t;
 		let n = e.ownerDocument.createElement("div");
-		return n.setAttribute($, ""), e.after(n), n;
+		return n.setAttribute(Re, ""), e.after(n), n;
 	}
 	function f(e) {
 		let t = n.find_message_element(e.message_id);
@@ -1114,7 +1124,7 @@ function Be(e) {
 		for (let n of t.querySelectorAll("[data-tc-slot]")) {
 			let t = i.find((e) => e.slot_id === n.dataset.tcSlot);
 			t !== void 0 && a.push({
-				key: `${ze(e)}:${t.slot_id}`,
+				key: `${Be(e)}:${t.slot_id}`,
 				element: n,
 				location: e,
 				slot: t
@@ -1155,7 +1165,7 @@ function Be(e) {
 	function g() {
 		l !== null && clearTimeout(l), l = setTimeout(() => {
 			l = null, h();
-		}, Re);
+		}, ze);
 	}
 	return t(() => {
 		c.push(n.subscribe_message_rendered((e) => {
@@ -1165,7 +1175,7 @@ function Be(e) {
 		}), n.subscribe_chat_rendered(() => {
 			s.clear(), g();
 		}), r.subscribe((e) => {
-			let t = ze(e.location);
+			let t = Be(e.location);
 			e.type === "analysis_started" ? s.set(t, { status: "running" }) : e.type === "analysis_failed" ? s.set(t, {
 				status: "failed",
 				message: e.message,
@@ -1175,7 +1185,7 @@ function Be(e) {
 	}), v(() => {
 		for (let e of c.splice(0)) e();
 		l !== null && clearTimeout(l);
-		for (let e of document.querySelectorAll(`[${Q}], [${$}]`)) e.remove();
+		for (let e of document.querySelectorAll(`[${$}], [${Re}]`)) e.remove();
 	}), {
 		targets: i,
 		notices: a
@@ -1183,7 +1193,7 @@ function Be(e) {
 }
 //#endregion
 //#region src/ui/chat/use_image_urls.ts
-function Ve(e) {
+function He(e) {
 	let t = /* @__PURE__ */ new Map();
 	return v(() => {
 		for (let e of t.values()) e.then((e) => {
@@ -1197,7 +1207,7 @@ function Ve(e) {
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
+var Ue = { key: 1 }, We = ["src"], Ge = /* @__PURE__ */ D({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1207,7 +1217,7 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 		translator: {}
 	},
 	setup(e) {
-		let n = e, { t: i } = b(), o = m(null), s = m(null), c = Ve(n.gallery), u = m(null), p = x(null), h = m(!1);
+		let n = e, { t: i } = b(), o = m(null), s = m(null), c = He(n.gallery), u = m(null), p = x(null), h = m(!1);
 		async function S(e) {
 			let t = await n.gallery.read_bytes(e);
 			return createImageBitmap(new Blob([new Uint8Array(t)]));
@@ -1242,7 +1252,7 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 					kind: "inpaint",
 					image_id: t.request.image_id,
 					source: r,
-					mask_png: await q(e.mask, r.width, r.height),
+					mask_png: await J(e.mask, r.width, r.height),
 					positive_prompt: e.positivePrompt,
 					negative_prompt: e.negativePrompt,
 					strength: e.denoiseStrength
@@ -1251,7 +1261,7 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 				h.value = !1, k();
 			}
 		}
-		let { targets: j, notices: M } = Be({
+		let { targets: j, notices: M } = Ve({
 			host: n.host,
 			service: n.service,
 			button_label: () => i("chat.message_button"),
@@ -1317,7 +1327,7 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 					key: 0,
 					class: T(d(H).excerpt)
 				}, C(e.notice.excerpt), 3)),
-				e.notice.excerpt === null ? g("", !0) : (a(), l("div", He, C(d(i)("chat.dialog.parse_failed_hint")), 1))
+				e.notice.excerpt === null ? g("", !0) : (a(), l("div", Ue, C(d(i)("chat.dialog.parse_failed_hint")), 1))
 			], 64))], 2)], 8, ["to"]))), 128)),
 			s.value === null ? g("", !0) : (a(), _(f, {
 				key: 0,
@@ -1329,8 +1339,8 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 			}, [y("img", {
 				src: s.value,
 				alt: ""
-			}, null, 8, Ue)], 2)])),
-			O(Ee, {
+			}, null, 8, We)], 2)])),
+			O(q, {
 				request: o.value,
 				service: e.service,
 				novelai: e.novelai,
@@ -1342,7 +1352,7 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 				"novelai",
 				"translator"
 			]),
-			O(Z, {
+			O(ke, {
 				request: u.value,
 				service: e.service,
 				novelai: e.novelai,
@@ -1402,4 +1412,4 @@ var He = { key: 1 }, Ue = ["src"], We = /* @__PURE__ */ D({
 	}
 });
 //#endregion
-export { We as default };
+export { Ge as default };

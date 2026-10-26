@@ -729,6 +729,8 @@ var o = {
 			parse_failed_hint: "The model did not return the requested JSON. Your preset may impose its own output format or obfuscate replies; try another preset in the illustration settings.",
 			translate_to_tags: "Translate to English tags",
 			read_in_chinese: "Read in Chinese",
+			base_prompt: "Shared prompt (scene and style)",
+			character_prompt: "{name}",
 			positive_prompt: "Prompt",
 			negative_prompt: "Negative prompt",
 			cost_anlas: "About {anlas} Anlas",
@@ -808,7 +810,7 @@ var o = {
 			malformed_response: "the provider returned an unreadable response"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DWCyjmfv.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-CBwsiAKZ.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2
