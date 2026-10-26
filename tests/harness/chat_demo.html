@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TavernCanvas Chat Demo</title>
+    <style>
+      :root {
+        --SmartThemeBodyColor: #dcdcd2;
+        --SmartThemeEmColor: #919191;
+        --SmartThemeQuoteColor: #e18a24;
+        --SmartThemeBorderColor: rgb(0 0 0 / 50%);
+        --SmartThemeBlurTintColor: rgb(40 40 46 / 90%);
+        --mainFontSize: 15px;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #1b1b20;
+        color: var(--SmartThemeBodyColor);
+        font:
+          15px/1.6 system-ui,
+          sans-serif;
+      }
+
+      #chat {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .mes {
+        margin-bottom: 16px;
+        padding: 12px 16px;
+        border: 1px solid var(--SmartThemeBorderColor);
+        border-radius: 10px;
+        background: var(--SmartThemeBlurTintColor);
+      }
+
+      .mes_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+
+      .ch_name {
+        font-weight: 600;
+      }
+
+      .extraMesButtons {
+        display: flex;
+        gap: 6px;
+      }
+
+      .mes_button {
+        padding: 2px 8px;
+        border: 1px solid var(--SmartThemeBorderColor);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .mes_button[data-tc-illustrate]::before {
+        content: "配图";
+      }
+
+      .mes_text p {
+        margin: 0 0 0.6em;
+      }
+
+      .demo_note {
+        max-width: 760px;
+        margin: 16px auto 0;
+        padding: 0 16px;
+        color: var(--SmartThemeEmColor);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="demo_note">
+      模拟的 SillyTavern
+      聊天：点击回复右上角的“配图”按钮运行段落分析（返回固定结果），出图由本页模拟的 SD WebUI
+      生成占位图片。右下角的悬浮按钮打开设置与画廊。
+    </p>
+    <div id="chat"></div>
+    <script type="module" src="./src/chat_demo_boot.ts"></script>
+  </body>
+</html>

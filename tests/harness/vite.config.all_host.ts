@@ -46,7 +46,10 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: true,
     rolldownOptions: {
-      input: [resolve(import.meta.dirname, "sillytavern_host.html")],
+      input: [
+        resolve(import.meta.dirname, "sillytavern_host.html"),
+        resolve(import.meta.dirname, "chat_demo.html"),
+      ],
     },
   },
 });
