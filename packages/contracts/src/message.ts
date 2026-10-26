@@ -8,6 +8,14 @@ export type IllustrationSlotId = z.infer<typeof IllustrationSlotIdSchema>;
 
 export const MAX_SLOTS_PER_SWIPE = 16;
 
+/** One NovelAI character prompt; the slot's positive prompt then holds only shared tags. */
+export const SlotCharacterPromptSchema = z.strictObject({
+  name: z.string().trim().min(1).max(120),
+  prompt: z.string().trim().min(1).max(4000),
+  negative_prompt: z.string().max(4000),
+});
+export type SlotCharacterPrompt = z.infer<typeof SlotCharacterPromptSchema>;
+
 export const IllustrationSlotSchema = z.strictObject({
   slot_id: IllustrationSlotIdSchema,
   /** Zero-based index of the paragraph the marker follows when the slot was created. */
@@ -17,6 +25,7 @@ export const IllustrationSlotSchema = z.strictObject({
   characters: z.array(z.string().trim().min(1).max(120)).max(16),
   positive_prompt: z.string().max(8000),
   negative_prompt: z.string().max(8000),
+  character_prompts: z.array(SlotCharacterPromptSchema).max(16),
   image_ids: z.array(ImageIdSchema),
   active_image_id: ImageIdSchema.nullable(),
   pending_request_ids: z.array(RequestIdSchema),

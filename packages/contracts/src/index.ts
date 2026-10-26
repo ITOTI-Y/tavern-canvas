@@ -94,10 +94,16 @@ export type {
 export {
   IllustrationSlotIdSchema,
   IllustrationSlotSchema,
+  SlotCharacterPromptSchema,
   MAX_SLOTS_PER_SWIPE,
   SwipeIllustrationsSchema,
 } from "./message.js";
-export type { IllustrationSlot, IllustrationSlotId, SwipeIllustrations } from "./message.js";
+export type {
+  IllustrationSlot,
+  IllustrationSlotId,
+  SlotCharacterPrompt,
+  SwipeIllustrations,
+} from "./message.js";
 
 export {
   PROVIDER_CREDENTIAL_KIND,

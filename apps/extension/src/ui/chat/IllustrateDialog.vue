@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NovelAiCostEstimate } from "@tavern-canvas/contracts";
+import type { NovelAiCostEstimate, SlotCharacterPrompt } from "@tavern-canvas/contracts";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -22,6 +22,7 @@ interface SlotDraft {
   selected: boolean;
   positive_prompt: string;
   negative_prompt: string;
+  character_prompts: { -readonly [Key in keyof SlotCharacterPrompt]: SlotCharacterPrompt[Key] }[];
   estimate: NovelAiCostEstimate | null;
   translating: boolean;
   reading: string | null;
@@ -89,6 +90,7 @@ async function load(request: IllustrateRequest): Promise<void> {
         selected: request.slot_id !== null || slot.image_ids.length === 0,
         positive_prompt: slot.positive_prompt,
         negative_prompt: slot.negative_prompt,
+        character_prompts: slot.character_prompts.map((character) => ({ ...character })),
         estimate: null,
         translating: false,
         reading: null,
@@ -148,6 +150,9 @@ async function confirm(): Promise<void> {
       await props.service.generate(current.location, draft.slot_id, {
         positive_prompt: draft.positive_prompt,
         negative_prompt: draft.negative_prompt,
+        character_prompts: draft.character_prompts.filter(
+          (character) => character.prompt.trim() !== "",
+        ),
       });
     }
     emit("close");
@@ -206,8 +211,21 @@ function update_open(open: boolean): void {
           <AppCheckbox v-model="draft.selected" :label="draft.scene" />
           <blockquote :class="styles.anchor">{{ draft.anchor }}</blockquote>
           <label :class="styles.label">
-            {{ t("chat.dialog.positive_prompt") }}
+            {{
+              draft.character_prompts.length > 0
+                ? t("chat.dialog.base_prompt")
+                : t("chat.dialog.positive_prompt")
+            }}
             <textarea v-model="draft.positive_prompt" :class="styles.prompt" />
+          </label>
+          <label
+            v-for="character in draft.character_prompts"
+            :key="character.name"
+            :class="styles.label"
+            data-testid="character-prompt"
+          >
+            {{ t("chat.dialog.character_prompt", { name: character.name }) }}
+            <textarea v-model="character.prompt" :class="styles.prompt" />
           </label>
           <div v-if="translator !== null" :class="styles.meta">
             <span>

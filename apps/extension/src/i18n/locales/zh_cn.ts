@@ -733,6 +733,8 @@ const chat = {
       "模型没有返回所需的 JSON。所用预设可能规定了自己的输出格式或对回复做了混淆，可以在插图设置中换用其他预设。",
     translate_to_tags: "译为英文标签",
     read_in_chinese: "中文核对",
+    base_prompt: "共享提示词（场景与画风）",
+    character_prompt: "{name}",
     positive_prompt: "提示词",
     negative_prompt: "负面提示词",
     cost_anlas: "约 {anlas} Anlas",

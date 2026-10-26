@@ -283,6 +283,7 @@ describe("SwipeIllustrationsSchema", () => {
     characters: ["Alice"],
     positive_prompt: "1girl, door",
     negative_prompt: "",
+    character_prompts: [{ name: "Alice", prompt: "girl, silver hair", negative_prompt: "" }],
     image_ids: [image_id],
     active_image_id: image_id,
     pending_request_ids: [request_id],

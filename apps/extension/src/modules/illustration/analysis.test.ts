@@ -6,7 +6,7 @@ const PROPOSAL = {
   paragraph: 1,
   scene: "a girl at a door",
   tags: "1girl, door",
-  characters: ["Alice"],
+  characters: [{ name: "Alice", tags: "girl, smile" }],
 };
 
 describe("build_analysis_input", () => {
@@ -31,7 +31,7 @@ describe("build_analysis_input", () => {
       outfits: [{ id: "o1", name: "Forest cloak", description: "green cloak", character_id: "c1" }],
     });
 
-    expect(input).toContain("do not describe their hair, eyes, face, body or clothing");
+    expect(input).toContain("never hair, eyes, face, body or clothing");
     expect(input).toContain("- character: Seraphina");
     expect(input).toContain("- outfit: Forest cloak (worn by Seraphina)");
     expect(input).not.toContain("pink hair");

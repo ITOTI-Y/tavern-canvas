@@ -6,6 +6,7 @@ import {
   type ImageGenerationRequest,
   type RequestId,
   type SwipeIllustrations,
+  type SlotCharacterPrompt,
 } from "@tavern-canvas/contracts";
 import type { GenerationJobSnapshot } from "@tavern-canvas/core";
 
@@ -24,6 +25,7 @@ import {
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
+import { attach_character_prompts } from "./character_prompts.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
 
 export interface SlotPromptContext {
@@ -34,6 +36,7 @@ export interface SlotPromptContext {
 export interface SlotGenerationInput {
   readonly positive_prompt: string;
   readonly negative_prompt: string;
+  readonly character_prompts: readonly SlotCharacterPrompt[];
 }
 
 export interface IllustrationJobPort {
@@ -250,12 +253,13 @@ export class IllustrationService {
         ...proposals.map((proposal): IllustrationSlot => {
           const library = match_library(
             `${paragraphs[proposal.paragraph]?.text ?? ""}\n${proposal.scene}`,
-            proposal.characters,
+            proposal.characters.map((character) => character.name),
             context.library,
           );
           const prompt = assemble_slot_prompt({
             preset: context.preset,
             library,
+            characters: proposal.characters,
             scene_tags: proposal.tags,
           });
           return {
@@ -265,12 +269,13 @@ export class IllustrationService {
             scene: proposal.scene,
             characters: [
               ...new Set([
-                ...proposal.characters,
+                ...proposal.characters.map((character) => character.name),
                 ...library.characters.map((entry) => entry.character.name),
               ]),
             ],
             positive_prompt: prompt.positive_prompt,
             negative_prompt: prompt.negative_prompt,
+            character_prompts: [...prompt.character_prompts],
             image_ids: [],
             active_image_id: null,
             pending_request_ids: [],
@@ -301,7 +306,11 @@ export class IllustrationService {
     prompt?: SlotGenerationInput,
   ): Promise<ImageGenerationRequest> {
     const slot = this.#require_slot(location, slot_id);
-    return this.#deps.build_request(prompt ?? slot);
+    return this.#build_slot_request(prompt ?? slot);
+  }
+
+  async #build_slot_request(input: SlotGenerationInput): Promise<ImageGenerationRequest> {
+    return attach_character_prompts(await this.#deps.build_request(input), input.character_prompts);
   }
 
   async generate(
@@ -310,13 +319,21 @@ export class IllustrationService {
     prompt?: SlotGenerationInput,
   ): Promise<void> {
     const slot = this.#require_slot(location, slot_id);
-    const positive_prompt = prompt?.positive_prompt ?? slot.positive_prompt;
-    const negative_prompt = prompt?.negative_prompt ?? slot.negative_prompt;
+    const input: SlotGenerationInput = {
+      positive_prompt: prompt?.positive_prompt ?? slot.positive_prompt,
+      negative_prompt: prompt?.negative_prompt ?? slot.negative_prompt,
+      character_prompts: prompt?.character_prompts ?? slot.character_prompts,
+    };
     await this.#submit_for_slot(
       location,
       slot_id,
-      () => this.#deps.build_request({ positive_prompt, negative_prompt }),
-      (current) => ({ ...current, positive_prompt, negative_prompt }),
+      () => this.#build_slot_request(input),
+      (current) => ({
+        ...current,
+        positive_prompt: input.positive_prompt,
+        negative_prompt: input.negative_prompt,
+        character_prompts: [...input.character_prompts],
+      }),
     );
   }
 
@@ -333,8 +350,13 @@ export class IllustrationService {
 
   /** Queues a quick edit whose result is added to the same slot. */
   async edit(location: HostSwipeLocation, slot_id: string, edit: SlotEdit): Promise<void> {
-    this.#require_slot(location, slot_id);
-    await this.#submit_for_slot(location, slot_id, () => this.#deps.build_edit_request(edit));
+    const slot = this.#require_slot(location, slot_id);
+    // Edits that redraw content keep each character's own prompt, as the original image had.
+    const characters =
+      edit.kind === "img2img" || edit.kind === "inpaint" ? slot.character_prompts : [];
+    await this.#submit_for_slot(location, slot_id, async () =>
+      attach_character_prompts(await this.#deps.build_edit_request(edit), characters),
+    );
   }
 
   async #submit_for_slot(

@@ -26,6 +26,7 @@ const SLOT: IllustrationSlot = {
   characters: [],
   positive_prompt: "1girl, door",
   negative_prompt: "lowres",
+  character_prompts: [],
   image_ids: [IMAGE_ID],
   active_image_id: IMAGE_ID,
   pending_request_ids: [],
