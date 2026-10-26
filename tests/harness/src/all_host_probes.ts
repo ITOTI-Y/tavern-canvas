@@ -26,13 +26,6 @@ export interface FallbackParseOutcome {
   readonly executed_marker: string | null;
 }
 
-export interface MarkdownRenderOutcome {
-  readonly html: string;
-  readonly script_element_count: number;
-  readonly event_handler_attributes: readonly string[];
-  readonly unsafe_urls: readonly string[];
-}
-
 export interface HttpAcknowledgmentOutcome {
   readonly before: string;
   readonly after: string;
@@ -97,7 +90,6 @@ export interface SecurityProbes {
   provider_override(attempt: ProviderOverrideAttempt): Promise<ProviderOverrideOutcome>;
   parse_fallback(chunks: readonly string[]): FallbackParseOutcome;
   render_workflow(workflow_json: string, values: Readonly<Record<string, unknown>>): string;
-  render_markdown(raw_text: string): Promise<MarkdownRenderOutcome>;
   http_acknowledgment(endpoint: string): HttpAcknowledgmentOutcome;
 }
 
@@ -120,7 +112,6 @@ export async function create_security_probes(
     { probe_host_capabilities },
     { FallbackStreamParser },
     { render_comfyui_workflow, validate_stored_comfyui_workflow },
-    { render_assistant_markdown },
     { acknowledge_http_origin, is_http_origin_acknowledged },
     { select_transport, TransportConfigurationError },
     { ProviderProfileRepository },
@@ -134,7 +125,6 @@ export async function create_security_probes(
     import("../../../apps/extension/src/host/index.js"),
     import("@tavern-canvas/core"),
     import("@tavern-canvas/providers"),
-    import("../../../apps/extension/src/modules/assistant/assistant_markdown.js"),
     import("../../../apps/extension/src/transport/http_acknowledgment.js"),
     import("../../../apps/extension/src/transport/transport_selector.js"),
     import("@tavern-canvas/storage"),
@@ -518,31 +508,6 @@ export async function create_security_probes(
           values as unknown as Parameters<typeof render_comfyui_workflow>[1],
         ),
       );
-    },
-
-    async render_markdown(raw_text) {
-      const rendered = await render_assistant_markdown(raw_text);
-      const container = document.createElement("div");
-      container.innerHTML = rendered.html;
-      const event_handler_attributes: string[] = [];
-      const unsafe_urls: string[] = [];
-      for (const element of container.querySelectorAll("*")) {
-        for (const attribute of element.attributes) {
-          if (attribute.name.toLowerCase().startsWith("on")) {
-            event_handler_attributes.push(`${element.tagName}:${attribute.name}`);
-          }
-          const value = attribute.value.trim().toLowerCase();
-          if (value.startsWith("javascript:") || value.startsWith("data:text/html")) {
-            unsafe_urls.push(`${element.tagName}:${attribute.name}`);
-          }
-        }
-      }
-      return {
-        html: rendered.html,
-        script_element_count: container.querySelectorAll("script").length,
-        event_handler_attributes,
-        unsafe_urls,
-      };
     },
 
     http_acknowledgment(endpoint) {

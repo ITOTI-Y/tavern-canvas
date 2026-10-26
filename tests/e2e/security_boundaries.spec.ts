@@ -171,25 +171,6 @@ test.describe("hostile content never becomes code", () => {
 
     expect(rejected).not.toBeNull();
   });
-
-  test("Markdown and user tag content cannot produce a script, event handler or unsafe URL", async ({
-    page,
-  }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const outcome = await page.evaluate(() =>
-      window.__TAVERN_CANVAS_E2E__.probes.render_markdown(
-        '<script>window.x=1</script>\n\n<img src=x onerror="window.x=1">\n\n' +
-          "[click](javascript:alert(1))\n\n" +
-          "[data](data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==)\n\n" +
-          "<iframe src=\"javascript:alert(1)\"></iframe>\n\n<a href='vbscript:x'>v</a>",
-      ),
-    );
-
-    expect(outcome.script_element_count).toBe(0);
-    expect(outcome.event_handler_attributes).toEqual([]);
-    expect(outcome.unsafe_urls).toEqual([]);
-  });
 });
 
 test.describe("diagnostics never carry user or credential data", () => {

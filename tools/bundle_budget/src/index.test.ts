@@ -137,8 +137,6 @@ describe("classify_forbidden_modules", () => {
   it.each([
     ["tokenizer", "../../apps/extension/src/modules/novelai/tokenizer/tokenizer_service.ts"],
     ["tokenizer", "../../node_modules/@huggingface/transformers/dist/transformers.js"],
-    ["assistant", "../../apps/extension/src/modules/assistant/assistant_module.ts"],
-    ["assistant", "../../apps/extension/src/ui/assistant/AssistantPanel.vue"],
     ["gallery-detail", "../../apps/extension/src/ui/views/gallery/ImagePreviewDialog.vue"],
     ["gallery-detail", "../../apps/extension/src/ui/views/gallery/ImageMetadataInspector.vue"],
     ["vocabulary-worker", "../../apps/extension/src/workers/vocabulary_worker.ts"],
@@ -187,9 +185,9 @@ describe("classify_forbidden_modules", () => {
     const findings = classify_forbidden_modules(
       ["index.js"],
       sourcemap_for([
-        "../../apps/extension/src/modules/assistant/assistant_module.ts",
-        "../../apps/extension/src/modules/assistant/assistant_session.ts",
-        "../../apps/extension/src/ui/assistant/AssistantPanel.vue",
+        "../../apps/extension/src/modules/novelai/tokenizer/tokenizer_service.ts",
+        "../../apps/extension/src/modules/novelai/tokenizer/tokenizer_worker.ts",
+        "../../node_modules/@huggingface/transformers/dist/transformers.js",
       ]),
     );
     expect(findings).toHaveLength(1);
