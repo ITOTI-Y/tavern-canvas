@@ -34,9 +34,14 @@ export interface SettingsCapabilityDeps {
   readonly extension_version: string;
   readonly secrets: SecretDestinationPort | null;
   readonly browser_secret_vault: BrowserSecretVaultPort | null;
+  /** SillyTavern's own secret store, which its server-side routes such as DeepL read from. */
+  readonly host_secrets: SecretDestinationPort | null;
 }
 
 const SECRET_DESTINATION_UNAVAILABLE = "The selected credential storage backend is unavailable";
+const HOST_SECRETS_UNAVAILABLE = "SillyTavern's secret store is unreachable from this page";
+/** The key SillyTavern's `/api/translate/deepl` route reads. */
+const DEEPL_SECRET_KEY = "deepl";
 
 function require_database(database: StorageDatabase | null): StorageDatabase {
   if (database === null) {
@@ -107,6 +112,18 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
       await deps.secrets.write_secret(reference, plaintext_value);
       apply({ gateway: { ...current.gateway, token_secret_id: reference } });
       return deps.settings.flush();
+    },
+    async set_deepl_key(plaintext_value) {
+      if (deps.host_secrets === null) {
+        throw capability_unavailable_error(HOST_SECRETS_UNAVAILABLE);
+      }
+      await deps.host_secrets.write_secret(DEEPL_SECRET_KEY, plaintext_value.trim());
+    },
+    async clear_deepl_key() {
+      if (deps.host_secrets?.delete_secret === undefined) {
+        throw capability_unavailable_error(HOST_SECRETS_UNAVAILABLE);
+      }
+      await deps.host_secrets.delete_secret(DEEPL_SECRET_KEY);
     },
     async clear_gateway_token() {
       const current = deps.settings.get_settings();

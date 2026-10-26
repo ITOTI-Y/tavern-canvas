@@ -264,6 +264,8 @@ function build_mock_studio() {
     acknowledge_http_origin: vi.fn(),
     set_gateway_token: vi.fn(),
     clear_gateway_token: vi.fn(),
+    set_deepl_key: vi.fn(() => Promise.resolve()),
+    clear_deepl_key: vi.fn(() => Promise.resolve()),
     initialize_browser_secret_vault: vi.fn(),
     unlock_browser_secret_vault: vi.fn(),
     lock_browser_secret_vault: vi.fn(),

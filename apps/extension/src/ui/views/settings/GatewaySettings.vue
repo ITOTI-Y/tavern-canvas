@@ -173,7 +173,7 @@ const is_detecting = computed(() => props.connectionTestCommand.status === "pend
             v-model="endpoint_draft"
             type="text"
             :aria-describedby="describedBy"
-            :class="styles.typed_confirm_input"
+            :class="styles.text_input"
             data-testid="gateway-endpoint-input"
             @blur="save_endpoint"
           />
@@ -246,7 +246,7 @@ const is_detecting = computed(() => props.connectionTestCommand.status === "pend
             type="password"
             autocomplete="off"
             :aria-describedby="describedBy"
-            :class="styles.typed_confirm_input"
+            :class="styles.text_input"
             data-testid="gateway-token-input"
           />
         </template>

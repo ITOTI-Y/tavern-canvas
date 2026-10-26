@@ -8,13 +8,14 @@ import type { PromptRegexRule } from "../../contracts/ui_capabilities.js";
 import type { SettingsSection, StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import AppearanceSettings from "./AppearanceSettings.vue";
-import AutomationSettings from "./AutomationSettings.vue";
 import CredentialStorageSettings from "./CredentialStorageSettings.vue";
 import DataSettings from "./DataSettings.vue";
 import GatewaySettings from "./GatewaySettings.vue";
+import IllustrationSettings from "./IllustrationSettings.vue";
 import LlmConnections from "./LlmConnections.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
 import styles from "./settings.module.css";
+import TranslationSettings from "./TranslationSettings.vue";
 
 const PromptView = defineAsyncComponent(() => import("../prompt/PromptView.vue"));
 const AssetsView = defineAsyncComponent(() => import("../assets/AssetsView.vue"));
@@ -104,7 +105,11 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
       <div v-else :class="styles.view">
         <h1 class="tc-visually-hidden">{{ section_label(section) }}</h1>
         <template v-if="section === 'illustration'">
-          <AutomationSettings :settings="state.settings.settings" :controller="controller" />
+          <IllustrationSettings
+            :settings="state.settings.settings"
+            :prompt-presets="state.prompt.presets"
+            :controller="controller"
+          />
         </template>
         <template v-else-if="section === 'providers'">
           <section
@@ -128,6 +133,11 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
           </section>
           <ProviderProfiles :profiles="state.generation.profiles" :controller="controller" />
         </template>
+        <TranslationSettings
+          v-else-if="section === 'translation'"
+          :settings="state.settings.settings"
+          :controller="controller"
+        />
         <template v-else-if="section === 'connections'">
           <LlmConnections
             :connections="state.llm_connections.connections"

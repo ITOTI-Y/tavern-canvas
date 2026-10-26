@@ -344,7 +344,7 @@ async function run_connection_test(connection: LlmConnectionProfile): Promise<vo
               v-model="draft.display_name"
               type="text"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
             />
           </template>
         </FieldGroup>
@@ -387,7 +387,7 @@ async function run_connection_test(connection: LlmConnectionProfile): Promise<vo
               v-model="draft.model_id"
               type="text"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
             />
           </template>
         </FieldGroup>
@@ -468,7 +468,7 @@ async function run_connection_test(connection: LlmConnectionProfile): Promise<vo
               type="password"
               autocomplete="off"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="llm-credential-input"
             />
           </template>

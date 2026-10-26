@@ -324,7 +324,7 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               v-model="draft.display_name"
               type="text"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
             />
           </template>
         </FieldGroup>
@@ -345,7 +345,7 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               v-model="draft.model_id"
               type="text"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="provider-model-input"
             />
           </template>
@@ -361,7 +361,7 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               v-model="draft.workflow_id"
               type="text"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="provider-workflow-input"
             />
           </template>
@@ -411,7 +411,7 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               type="password"
               autocomplete="new-password"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="provider-credential-input"
             />
           </template>

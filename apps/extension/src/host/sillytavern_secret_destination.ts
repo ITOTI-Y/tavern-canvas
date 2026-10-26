@@ -43,7 +43,7 @@ export class SillyTavernSecretDestination implements SecretDestinationPort {
       body: JSON.stringify({
         key: reference,
         value: plaintext_value,
-        label: "TavernCanvas migrated credential",
+        label: "TavernCanvas",
       }),
     });
     if (!response.ok) {
@@ -88,7 +88,7 @@ function looks_like_secret_context(value: unknown): value is SillyTavernSecretCo
   );
 }
 
-/** Returns `null` when no SillyTavern context is reachable; the migration runner treats that as `no_supported_destination`. */
+/** Returns `null` when no SillyTavern context is reachable. */
 export function create_sillytavern_secret_destination(
   context: unknown,
   fetch_: unknown,

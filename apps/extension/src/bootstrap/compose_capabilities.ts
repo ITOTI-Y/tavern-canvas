@@ -396,6 +396,7 @@ export async function compose_studio_capabilities(
             extension_version,
             secrets,
             browser_secret_vault,
+            host_secrets: host_secret_destination,
           }),
         ),
     fallback.settings,

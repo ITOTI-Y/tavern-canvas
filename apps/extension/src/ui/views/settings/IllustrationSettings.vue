@@ -1,0 +1,249 @@
+<script setup lang="ts">
+import type {
+  AnalysisConnection,
+  IllustrationSettings,
+  TavernCanvasSettings,
+} from "@tavern-canvas/contracts";
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+import AppSelect from "../../components/AppSelect.vue";
+import AppSwitch from "../../components/AppSwitch.vue";
+import FieldGroup from "../../components/FieldGroup.vue";
+import NumberStepper from "../../components/NumberStepper.vue";
+import SegmentedControl from "../../components/SegmentedControl.vue";
+import type { PromptPresetSummary } from "../../contracts/ui_capabilities.js";
+import type { StudioController } from "../../controllers/studio_controller.js";
+import styles from "./settings.module.css";
+
+const props = defineProps<{
+  readonly settings: TavernCanvasSettings | null;
+  readonly promptPresets: readonly PromptPresetSummary[];
+  readonly controller: StudioController;
+}>();
+
+const { t } = useI18n();
+
+const CURRENT_PRESET = "in_use";
+const NO_PROMPT_PRESET = "none";
+
+const illustration = computed(() => props.settings?.illustration ?? null);
+
+function update(partial: Partial<TavernCanvasSettings>): void {
+  void props.controller.update_settings(partial);
+}
+
+function update_illustration(partial: Partial<IllustrationSettings>): void {
+  const current = illustration.value;
+  if (current !== null) {
+    update({ illustration: { ...current, ...partial } });
+  }
+}
+
+const preset_name_draft = ref("");
+const proxy_preset_draft = ref("");
+const proxy_model_draft = ref("");
+
+watch(
+  illustration,
+  (current) => {
+    preset_name_draft.value =
+      current === null || current.preset_name === CURRENT_PRESET ? "" : current.preset_name;
+    if (current?.connection.kind === "proxy_preset") {
+      proxy_preset_draft.value = current.connection.proxy_preset;
+      proxy_model_draft.value = current.connection.model ?? "";
+    }
+  },
+  { immediate: true },
+);
+
+function save_preset_name(): void {
+  update_illustration({ preset_name: preset_name_draft.value.trim() || CURRENT_PRESET });
+}
+
+const connection_options = computed(() => [
+  { value: "current", label: t("settings.illustration.connection_current") },
+  { value: "proxy_preset", label: t("settings.illustration.connection_proxy_preset") },
+]);
+
+function proxy_connection(): AnalysisConnection | null {
+  const proxy_preset = proxy_preset_draft.value.trim();
+  if (proxy_preset === "") {
+    return null;
+  }
+  const model = proxy_model_draft.value.trim();
+  return { kind: "proxy_preset", proxy_preset, model: model === "" ? null : model };
+}
+
+const connection_kind = ref(illustration.value?.connection.kind ?? "current");
+watch(
+  () => illustration.value?.connection.kind,
+  (kind) => {
+    if (kind !== undefined) {
+      connection_kind.value = kind;
+    }
+  },
+);
+
+function set_connection_kind(value: string): void {
+  if (value === "current") {
+    connection_kind.value = "current";
+    update_illustration({ connection: { kind: "current" } });
+  } else if (value === "proxy_preset") {
+    connection_kind.value = "proxy_preset";
+    const connection = proxy_connection();
+    if (connection !== null) {
+      update_illustration({ connection });
+    }
+  }
+}
+
+function save_proxy_connection(): void {
+  const connection = proxy_connection();
+  if (connection !== null) {
+    update_illustration({ connection });
+  }
+}
+
+const prompt_preset_options = computed(() => [
+  { value: NO_PROMPT_PRESET, label: t("settings.illustration.prompt_preset_none") },
+  ...props.promptPresets.map((preset) => ({ value: preset.id, label: preset.display_name })),
+]);
+
+function set_prompt_preset(value: string): void {
+  const preset = props.promptPresets.find((candidate) => candidate.id === value);
+  update_illustration({ prompt_preset_id: preset?.id ?? null });
+}
+</script>
+
+<template>
+  <div :class="styles.section" data-testid="illustration-settings">
+    <div :class="styles.section_header">
+      <h2 :class="styles.section_title">{{ t("settings.nav.illustration") }}</h2>
+    </div>
+
+    <div :class="styles.form_grid">
+      <AppSwitch
+        :model-value="settings?.auto_generation_enabled ?? false"
+        :label="t('settings.illustration.auto_generation_label')"
+        :disabled="!settings"
+        @update:model-value="(value) => update({ auto_generation_enabled: value })"
+      />
+      <p :class="styles.description">{{ t("settings.illustration.auto_generation_hint") }}</p>
+
+      <FieldGroup
+        :label="t('settings.illustration.preset_label')"
+        :hint="t('settings.illustration.preset_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <input
+            :id="fieldId"
+            v-model="preset_name_draft"
+            type="text"
+            :placeholder="t('settings.illustration.preset_placeholder')"
+            :aria-describedby="describedBy"
+            :class="styles.text_input"
+            :disabled="!settings"
+            data-testid="analysis-preset-input"
+            @blur="save_preset_name"
+          />
+        </template>
+      </FieldGroup>
+
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.connection_label") }}</span>
+        <SegmentedControl
+          :model-value="connection_kind"
+          :options="connection_options"
+          :label="t('settings.illustration.connection_label')"
+          :disabled="!settings"
+          @update:model-value="set_connection_kind"
+        />
+      </div>
+      <template v-if="connection_kind === 'proxy_preset'">
+        <FieldGroup
+          :label="t('settings.illustration.proxy_preset_label')"
+          :hint="t('settings.illustration.proxy_preset_hint')"
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="proxy_preset_draft"
+              type="text"
+              :aria-describedby="describedBy"
+              :class="styles.text_input"
+              data-testid="analysis-proxy-preset-input"
+              @blur="save_proxy_connection"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup
+          :label="t('settings.illustration.proxy_model_label')"
+          :hint="t('settings.illustration.proxy_model_hint')"
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="proxy_model_draft"
+              type="text"
+              :aria-describedby="describedBy"
+              :class="styles.text_input"
+              @blur="save_proxy_connection"
+            />
+          </template>
+        </FieldGroup>
+      </template>
+
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.chat_history_label") }}</span>
+        <NumberStepper
+          :model-value="illustration?.max_chat_history"
+          :label="t('settings.illustration.chat_history_label')"
+          :min="0"
+          :max="20"
+          :increment-label="t('common.actions.increase')"
+          :decrement-label="t('common.actions.decrease')"
+          :disabled="!settings"
+          @update:model-value="(value) => update_illustration({ max_chat_history: value })"
+        />
+      </div>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>
+        <NumberStepper
+          :model-value="illustration?.max_images_per_message"
+          :label="t('settings.illustration.max_images_label')"
+          :min="1"
+          :max="8"
+          :increment-label="t('common.actions.increase')"
+          :decrement-label="t('common.actions.decrease')"
+          :disabled="!settings"
+          @update:model-value="(value) => update_illustration({ max_images_per_message: value })"
+        />
+      </div>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.prompt_preset_label") }}</span>
+        <AppSelect
+          :model-value="illustration?.prompt_preset_id ?? NO_PROMPT_PRESET"
+          :options="prompt_preset_options"
+          :placeholder="t('settings.illustration.prompt_preset_label')"
+          :aria-label="t('settings.illustration.prompt_preset_label')"
+          :disabled="!settings"
+          @update:model-value="set_prompt_preset"
+        />
+      </div>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.concurrency_label") }}</span>
+        <NumberStepper
+          :model-value="settings?.global_concurrency"
+          :label="t('settings.illustration.concurrency_label')"
+          :min="1"
+          :max="4"
+          :increment-label="t('common.actions.increase')"
+          :decrement-label="t('common.actions.decrease')"
+          :disabled="!settings"
+          @update:model-value="(value) => update({ global_concurrency: value })"
+        />
+      </div>
+    </div>
+  </div>
+</template>

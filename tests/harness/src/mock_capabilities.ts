@@ -990,14 +990,6 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       Promise.resolve({
         settings: current,
         vocabulary_update_channel: current.vocabulary_update_channel,
-        illustration: {
-          preset_name: "in_use",
-          connection: { kind: "current" },
-          max_chat_history: 4,
-          max_images_per_message: 2,
-          prompt_preset_id: null,
-        },
-        translation: { deepl_endpoint: "free", glossary: [] },
         browser_secret_vault,
       }),
     subscribe: () => () => {},
@@ -1025,6 +1017,8 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       };
       return Promise.resolve();
     },
+    set_deepl_key: () => Promise.resolve(),
+    clear_deepl_key: () => Promise.resolve(),
     clear_gateway_token: () => {
       current = { ...current, gateway: { ...current.gateway, token_secret_id: null } };
       return Promise.resolve();

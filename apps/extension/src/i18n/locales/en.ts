@@ -433,6 +433,50 @@ const settings = {
     general: "General",
     diagnostics: "Diagnostics",
   },
+  illustration: {
+    auto_generation_label: "Illustrate every reply automatically",
+    auto_generation_hint:
+      "When off, use the image button beside a reply to choose paragraphs and confirm before generating.",
+    preset_label: "SillyTavern preset for the analysis",
+    preset_placeholder: "Current preset",
+    preset_hint:
+      "Leave empty to use the preset loaded in SillyTavern. The analysis request goes through this preset as is, including any jailbreak, obfuscation or output format it applies; choosing and maintaining it is up to you.",
+    connection_label: "Analysis connection",
+    connection_current: "SillyTavern's current API",
+    connection_proxy_preset: "Proxy preset",
+    proxy_preset_label: "Proxy preset name",
+    proxy_preset_hint:
+      "The exact name of a proxy preset saved in SillyTavern's chat completion settings.",
+    proxy_model_label: "Model",
+    proxy_model_hint: "Leave empty to keep the preset's model.",
+    chat_history_label: "Chat messages sent with the analysis",
+    max_images_label: "Images per reply at most",
+    prompt_preset_label: "Prompt preset for image prompts",
+    prompt_preset_none: "None",
+    concurrency_label: "Images generated at the same time",
+  },
+  translation: {
+    description:
+      "Translation runs through SillyTavern's DeepL route because DeepL does not accept requests from a browser page. Glossary terms and the vocabulary's Chinese names are applied first; only the rest is sent to DeepL.",
+    key_label: "DeepL key",
+    key_hint:
+      "Stored in SillyTavern's secret store, shared with SillyTavern's own translate extension. Free and Pro keys use different endpoints.",
+    key_save: "Save key",
+    key_clear: "Remove key",
+    key_saved: "Key saved.",
+    key_cleared: "Key removed.",
+    key_failed: "SillyTavern did not accept the change.",
+    endpoint_label: "DeepL plan",
+    endpoint_free: "Free",
+    endpoint_pro: "Pro",
+    glossary_title: "Glossary",
+    glossary_description: "Each Chinese term is replaced by its tag before anything goes to DeepL.",
+    glossary_source: "Chinese term",
+    glossary_target: "Tag",
+    glossary_add: "Add term",
+    glossary_remove: "Remove",
+    glossary_save: "Save glossary",
+  },
   onboarding: {
     label: "First connection",
     title: "Set up the service that will generate your images",
@@ -444,7 +488,6 @@ const settings = {
     provider_profiles: "Provider profiles",
     llm_connections: "Text model connections",
     gateway: "Gateway",
-    automation: "Automation",
     appearance: "Appearance",
     data: "Data",
   },
@@ -572,11 +615,6 @@ const settings = {
     continue_action: "Continue anyway",
     acknowledged_label: "Acknowledged for this origin",
   },
-  automation: {
-    auto_generation_label: "Generate automatically after each message",
-    global_concurrency_label: "Global concurrent requests",
-    provider_concurrency_label: "Per-provider concurrent requests",
-  },
   appearance: {
     theme_label: "Theme",
     theme_system: "Match system",
@@ -615,7 +653,6 @@ const settings = {
 };
 
 const errors = {
-  capability_blocked: "This action needs {capability}, which is unavailable on the current host.",
   validation_required: "This field is required.",
   gateway_incompatible: "The Gateway at {origin} reports an incompatible protocol version.",
   gateway_offline: "The Gateway at {origin} is not reachable.",

@@ -406,14 +406,6 @@ describe("SettingsView credential storage", () => {
         Promise.resolve({
           settings: current_settings,
           vocabulary_update_channel: current_settings.vocabulary_update_channel,
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: vault_status,
         }),
       update: (partial) => {
@@ -667,62 +659,116 @@ describe("SettingsView gateway settings", () => {
   });
 });
 
-describe("SettingsView automation settings", () => {
+function recording_settings_capability(
+  updates: Partial<TavernCanvasSettings>[],
+): SettingsCapability {
+  const capabilities = create_unavailable_capabilities();
+  let current = DEFAULT_SETTINGS;
+  return {
+    ...capabilities.settings,
+    load: () =>
+      Promise.resolve({
+        settings: current,
+        vocabulary_update_channel: "bundled",
+        browser_secret_vault: { state: "unavailable", secret_count: 0 },
+      }),
+    subscribe: () => () => {},
+    update: (partial) => {
+      updates.push(partial);
+      current = { ...current, ...partial };
+      return Promise.resolve(current);
+    },
+    set_deepl_key: vi.fn(() => Promise.resolve()),
+    clear_deepl_key: vi.fn(() => Promise.resolve()),
+  };
+}
+
+describe("SettingsView illustration settings", () => {
   beforeEach(() => {
     current_section = "illustration";
   });
 
-  it("toggles auto-generation and fallback through the controller", async () => {
+  it("toggles automatic illustration through the controller", async () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
     const capabilities = create_unavailable_capabilities();
-    const settings: SettingsCapability = {
-      ...capabilities.settings,
-      load: () =>
-        Promise.resolve({
-          settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-        }),
-      subscribe: () => () => {},
-      update: (partial) => {
-        updates.push(partial);
-        return Promise.resolve({ ...DEFAULT_SETTINGS, ...partial });
-      },
-      acknowledge_http_origin: capabilities.settings.acknowledge_http_origin,
-      set_gateway_token: capabilities.settings.set_gateway_token,
-      clear_gateway_token: capabilities.settings.clear_gateway_token,
-      set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
-      import_vocabulary_package: capabilities.settings.import_vocabulary_package,
-      cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,
-      export_archive: capabilities.settings.export_archive,
-      import_archive: capabilities.settings.import_archive,
-    };
+    const controller = build_controller({
+      ...capabilities,
+      settings: recording_settings_capability(updates),
+    });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+
+    await wrapper.get('[data-testid="illustration-settings"] [role="switch"]').trigger("click");
+    await nextTick();
+
+    expect(updates.some((update) => update.auto_generation_enabled === true)).toBe(true);
+  });
+
+  it("stores an empty analysis preset as the current preset and a typed name as is", async () => {
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const capabilities = create_unavailable_capabilities();
+    const controller = build_controller({
+      ...capabilities,
+      settings: recording_settings_capability(updates),
+    });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+    const input = wrapper.get('[data-testid="analysis-preset-input"]');
+
+    await input.setValue("  ");
+    await input.trigger("blur");
+    await input.setValue("Analysis preset");
+    await input.trigger("blur");
+
+    expect(updates.map((update) => update.illustration?.preset_name)).toEqual([
+      "in_use",
+      "Analysis preset",
+    ]);
+  });
+});
+
+describe("SettingsView translation settings", () => {
+  beforeEach(() => {
+    current_section = "translation";
+  });
+
+  it("writes the DeepL key to SillyTavern and never keeps it in settings", async () => {
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const settings = recording_settings_capability(updates);
+    const capabilities = create_unavailable_capabilities();
     const controller = build_controller({ ...capabilities, settings });
     const { wrapper } = await mount_view_with_live_controller(controller);
 
-    const section = wrapper.get('[data-testid="automation-settings"]');
-    const switches = section.findAll('[role="switch"]');
-    await switches[0]?.trigger("click");
+    await wrapper.get('[data-testid="deepl-key-input"]').setValue(" key:fx ");
+    const save = wrapper.findAll("button").find((button) => button.text() === "Save key");
+    await save?.trigger("click");
     await nextTick();
 
-    expect(updates.some((u) => u.auto_generation_enabled === true)).toBe(true);
+    expect(settings.set_deepl_key).toHaveBeenCalledWith("key:fx");
+    expect(JSON.stringify(updates)).not.toContain("key:fx");
   });
 
-  it("shows global concurrency and a blocked state for per-provider concurrency (no contract field yet)", () => {
-    const { wrapper } = mount_view(
-      build_state(),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const stepper = wrapper.get('[data-testid="provider-concurrency-stepper"]');
-    expect(stepper.attributes("data-disabled")).toBeDefined();
+  it("saves glossary rows that have both a term and a tag", async () => {
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const capabilities = create_unavailable_capabilities();
+    const controller = build_controller({
+      ...capabilities,
+      settings: recording_settings_capability(updates),
+    });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+    const button = (label: string) =>
+      wrapper.findAll("button").find((candidate) => candidate.text() === label);
+
+    await button("Add term")?.trigger("click");
+    await button("Add term")?.trigger("click");
+    const rows = wrapper.findAll('[data-testid="glossary-row"]');
+    const [first, second] = rows.map((row) => row.findAll("input"));
+    await first?.[0]?.setValue("爱丽丝");
+    await first?.[1]?.setValue("alice (wonderland)");
+    await second?.[0]?.setValue("半行");
+    await button("Save glossary")?.trigger("click");
+
+    expect(updates.at(-1)?.translation?.glossary).toEqual([
+      { source: "爱丽丝", target: "alice (wonderland)" },
+    ]);
   });
 });
 
@@ -752,14 +798,6 @@ describe("SettingsView appearance settings", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -802,14 +840,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       set_vocabulary_update_channel: (channel) => {
@@ -839,14 +869,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: (file, on_progress) => {
@@ -892,14 +914,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: () => import_promise,
@@ -931,14 +945,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       export_archive: () => Promise.resolve(archive_blob),
@@ -970,14 +976,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_archive: (archive) => {

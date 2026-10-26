@@ -111,6 +111,8 @@ export interface StudioController {
   acknowledge_http_origin(origin: string): Promise<void>;
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
+  set_deepl_key(plaintext_value: string): Promise<void>;
+  clear_deepl_key(): Promise<void>;
   initialize_browser_secret_vault(passphrase: string): Promise<void>;
   unlock_browser_secret_vault(passphrase: string): Promise<void>;
   lock_browser_secret_vault(): Promise<void>;
@@ -974,6 +976,14 @@ class StudioControllerImpl implements StudioController {
 
   set_gateway_token(plaintext_value: string): Promise<void> {
     return this.#reload_settings(this.#capabilities.settings.set_gateway_token(plaintext_value));
+  }
+
+  set_deepl_key(plaintext_value: string): Promise<void> {
+    return this.#capabilities.settings.set_deepl_key(plaintext_value);
+  }
+
+  clear_deepl_key(): Promise<void> {
+    return this.#capabilities.settings.clear_deepl_key();
   }
 
   clear_gateway_token(): Promise<void> {

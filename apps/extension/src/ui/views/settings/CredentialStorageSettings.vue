@@ -220,7 +220,7 @@ async function reset_vault(): Promise<void> {
               type="password"
               autocomplete="new-password"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="browser-vault-passphrase"
             />
           </template>
@@ -233,7 +233,7 @@ async function reset_vault(): Promise<void> {
               type="password"
               autocomplete="new-password"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="browser-vault-passphrase-confirmation"
             />
           </template>
@@ -258,7 +258,7 @@ async function reset_vault(): Promise<void> {
               type="password"
               autocomplete="current-password"
               :aria-describedby="describedBy"
-              :class="styles.typed_confirm_input"
+              :class="styles.text_input"
               data-testid="browser-vault-passphrase"
               @keydown.enter="unlock_vault"
             />

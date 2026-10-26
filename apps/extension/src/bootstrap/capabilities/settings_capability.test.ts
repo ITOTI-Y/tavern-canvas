@@ -108,6 +108,7 @@ function create_capability(
       extension_version: "3.0.0-test",
       secrets,
       browser_secret_vault,
+      host_secrets: secrets,
     }),
   };
 }

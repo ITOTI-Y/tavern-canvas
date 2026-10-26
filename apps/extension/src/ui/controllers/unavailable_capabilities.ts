@@ -187,6 +187,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     acknowledge_http_origin: unavailable_command,
     set_gateway_token: unavailable_command,
     clear_gateway_token: unavailable_command,
+    set_deepl_key: unavailable_command,
+    clear_deepl_key: unavailable_command,
     initialize_browser_secret_vault: unavailable_command,
     unlock_browser_secret_vault: unavailable_command,
     lock_browser_secret_vault: unavailable_command,

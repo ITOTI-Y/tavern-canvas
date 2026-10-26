@@ -415,6 +415,48 @@ const settings = {
     general: "通用",
     diagnostics: "诊断",
   },
+  illustration: {
+    auto_generation_label: "每条回复后自动配图",
+    auto_generation_hint: "关闭时，可点击回复旁的配图按钮选择段落，确认后再生成。",
+    preset_label: "段落分析使用的 SillyTavern 预设",
+    preset_placeholder: "当前预设",
+    preset_hint:
+      "留空则使用 SillyTavern 当前加载的预设。分析请求会原样经过该预设，包括其中的破限、混淆和输出格式要求；预设的选择与维护由使用者自行负责。",
+    connection_label: "分析连接",
+    connection_current: "SillyTavern 当前 API",
+    connection_proxy_preset: "代理预设",
+    proxy_preset_label: "代理预设名称",
+    proxy_preset_hint: "与 SillyTavern 聊天补全设置中保存的代理预设名称完全一致。",
+    proxy_model_label: "模型",
+    proxy_model_hint: "留空则使用代理预设中的模型。",
+    chat_history_label: "随分析发送的聊天记录条数",
+    max_images_label: "每条回复最多配图数",
+    prompt_preset_label: "图片提示词使用的提示词预设",
+    prompt_preset_none: "不使用",
+    concurrency_label: "同时生成的图片数",
+  },
+  translation: {
+    description:
+      "翻译经 SillyTavern 的 DeepL 接口转发，因为 DeepL 不接受来自浏览器页面的请求。术语库和词表中的中文译名优先替换，剩下的部分才发给 DeepL。",
+    key_label: "DeepL 密钥",
+    key_hint:
+      "保存在 SillyTavern 密钥库中，与 SillyTavern 自带的翻译扩展共用。免费版与付费版密钥使用不同的接口。",
+    key_save: "保存密钥",
+    key_clear: "删除密钥",
+    key_saved: "密钥已保存。",
+    key_cleared: "密钥已删除。",
+    key_failed: "SillyTavern 没有接受这次修改。",
+    endpoint_label: "DeepL 版本",
+    endpoint_free: "免费版",
+    endpoint_pro: "付费版",
+    glossary_title: "术语库",
+    glossary_description: "每个中文术语会先替换为对应标签，再把剩余内容发给 DeepL。",
+    glossary_source: "中文术语",
+    glossary_target: "标签",
+    glossary_add: "添加术语",
+    glossary_remove: "删除",
+    glossary_save: "保存术语库",
+  },
   onboarding: {
     label: "首次连接",
     title: "配置用于生成图片的服务",
@@ -426,7 +468,6 @@ const settings = {
     provider_profiles: "Provider 配置",
     llm_connections: "文本模型连接",
     gateway: "Gateway",
-    automation: "自动化",
     appearance: "外观",
     data: "数据",
   },
@@ -547,11 +588,6 @@ const settings = {
     continue_action: "仍要继续",
     acknowledged_label: "已针对此来源确认",
   },
-  automation: {
-    auto_generation_label: "每条消息后自动生成",
-    global_concurrency_label: "全局并发请求数",
-    provider_concurrency_label: "单个 provider 并发请求数",
-  },
   appearance: {
     theme_label: "主题",
     theme_system: "跟随系统",
@@ -589,7 +625,6 @@ const settings = {
 };
 
 const errors = {
-  capability_blocked: "此操作需要 {capability}，但当前宿主不支持。",
   validation_required: "此项为必填。",
   gateway_incompatible: "位于 {origin} 的 Gateway 协议版本不兼容。",
   gateway_offline: "无法连接到位于 {origin} 的 Gateway。",

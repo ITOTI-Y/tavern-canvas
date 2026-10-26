@@ -289,6 +289,8 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     acknowledge_http_origin: vi.fn(() => Promise.resolve()),
     set_gateway_token: vi.fn(() => Promise.resolve()),
     clear_gateway_token: vi.fn(() => Promise.resolve()),
+    set_deepl_key: vi.fn(() => Promise.resolve()),
+    clear_deepl_key: vi.fn(() => Promise.resolve()),
     set_vocabulary_update_channel: vi.fn(() => Promise.resolve()),
     import_vocabulary_package: vi.fn(() => Promise.resolve()),
     cancel_vocabulary_import: vi.fn(),
