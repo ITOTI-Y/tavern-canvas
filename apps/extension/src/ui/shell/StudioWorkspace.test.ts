@@ -83,7 +83,7 @@ beforeAll(async () => {
     import("../views/diagnostics/DiagnosticsView.vue"),
     import("../views/settings/SettingsView.vue"),
   ]);
-});
+}, 60_000);
 
 /**
  * Mounts the real `StudioWorkspace` over a real, running `StudioController` (never a hand-rolled

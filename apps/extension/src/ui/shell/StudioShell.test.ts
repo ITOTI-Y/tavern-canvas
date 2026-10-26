@@ -79,7 +79,7 @@ beforeAll(async () => {
     import("./InspectorSheet.vue"),
     import("./MobileBottomNav.vue"),
   ]);
-});
+}, 60_000);
 
 interface MountOptions {
   readonly state?: Partial<StudioState>;

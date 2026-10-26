@@ -1,5 +1,7 @@
 // @vitest-environment node
 
+import { resolve } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { GatewayConfigError, load_gateway_config } from "./load_config.js";
@@ -58,7 +60,7 @@ describe("load_gateway_config", () => {
       bind_port: 8787,
       cors_origins: ["http://localhost"],
       bearer_token_hashes: [TOKEN_HASH],
-      data_directory: "/srv/tavern-canvas/output/gateway",
+      data_directory: resolve("/srv/tavern-canvas/output/gateway"),
       concurrency: 2,
       max_pending_jobs: 256,
       retention_hours: 168,

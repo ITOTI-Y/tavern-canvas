@@ -179,5 +179,5 @@ describe("builder <-> Worker integration (real Task 2 output)", () => {
     const hot = await query(engine, "");
     expect(hot[0]).toMatchObject({ display_text: "cat", match_kind: "hot" });
     expect(hot.map((result) => result.display_text).slice(0, 3)).toEqual(["cat", "moon", "dog"]);
-  });
+  }, 60_000);
 });

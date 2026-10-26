@@ -75,6 +75,6 @@ describe("write_jsonl / read_jsonl", () => {
     const path = join(temp_dir, "bad.jsonl");
     await write_jsonl(path, [{ id: "nope", name: "a" }]);
 
-    await expect(read_jsonl(path, RecordSchema)).rejects.toThrow(new RegExp(`${path}:1`));
+    await expect(read_jsonl(path, RecordSchema)).rejects.toThrow(`${path}:1`);
   });
 });
