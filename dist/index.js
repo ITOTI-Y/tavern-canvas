@@ -3,7 +3,7 @@ import { n as t, r as n, t as r } from "./chunks/sha2-BGNex9vj.js";
 import { $ as i, C as a, D as o, E as s, Et as c, F as l, G as u, I as d, K as f, L as p, M as m, N as h, O as g, P as ee, Q as te, R as _, S as v, T as y, _t as ne, b, bt as re, et as x, gt as ie, it as S, j as ae, k as oe, lt as se, mt as ce, nt as le, ot as ue, rt as de, st as fe, w as pe, xt as me, y as he } from "./chunks/src-B1pCVwkN.js";
 import { i as ge, n as _e, o as ve, r as ye, s as be, t as xe } from "./chunks/media_command_service-sG67r8ea.js";
 import { A as Se, F as Ce, I as we, N as C, O as Te, P as Ee, Q as De, V as Oe, W as ke, Z as Ae, _ as w, b as T, ct as E, et as D, ft as je, g as O, h as k, i as Me, k as Ne, m as A, n as Pe, nt as Fe, p as j, pt as M, rt as Ie, u as Le, ut as N, x as Re, y as ze } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as Be } from "./chunks/create_i18n-BXdoJDo7.js";
+import { t as Be } from "./chunks/create_i18n-BJ1cTRr9.js";
 import { n as Ve, t as He } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { a as Ue } from "./chunks/route_nav-hvhq2rfa.js";
 import { t as We } from "./chunks/chevron-down-Tu_8qTxg.js";
@@ -1626,7 +1626,7 @@ function mr(e) {
 //#region src/ui/controllers/unavailable_capabilities.ts
 var hr = "capability_not_implemented";
 function z() {
-	let e = /* @__PURE__ */ Error("No adapter wraps the real domain module for this capability yet (see task-1-report.md's \"future adapter layer\" note); bootstrap.ts uses this placeholder until one is wired in.");
+	let e = /* @__PURE__ */ Error("This capability is not available in the current host");
 	return Object.defineProperty(e, "code", { value: hr }), Promise.reject(e);
 }
 function B() {
@@ -2940,7 +2940,7 @@ var ui = /* @__PURE__ */ Re({
 		controller: {}
 	},
 	setup(e) {
-		let t = T(() => import("./chunks/WorkbenchView-tJ2tfGhe.js")), n = T(() => import("./chunks/PromptView-CFcqgRgh.js")), r = T(() => import("./chunks/AssetsView-DTiiaXtm.js")), i = T(() => import("./chunks/GalleryView-DMy-F1au.js")), a = T(() => import("./chunks/DiagnosticsView-BrVfJ49F.js")), o = T(() => import("./chunks/SettingsView-DkCZu_iL.js")), s = e, c = li(() => s.state, s.controller);
+		let t = T(() => import("./chunks/WorkbenchView-tJ2tfGhe.js")), n = T(() => import("./chunks/PromptView-CFcqgRgh.js")), r = T(() => import("./chunks/AssetsView-DTiiaXtm.js")), i = T(() => import("./chunks/GalleryView-RGHFplEu.js")), a = T(() => import("./chunks/DiagnosticsView-Cyv9k-bi.js")), o = T(() => import("./chunks/SettingsView-SA9Ifmkg.js")), s = e, c = li(() => s.state, s.controller);
 		function l(e, t) {
 			return s.controller.test_prompt_regex(e, t);
 		}
@@ -6520,7 +6520,7 @@ async function Ks(e) {
 		});
 	}), r.generation), C = e.create_vocabulary_worker === void 0 ? Bs() : e.create_vocabulary_worker, Te = o("vocabulary", f === null ? G($) : C === null ? G("This host has no Worker constructor, so vocabulary search cannot run") : K(() => ps({
 		async load_catalog() {
-			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-DwaulQpc.js");
+			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-_bAndlzG.js");
 			return new e({
 				current_extension_version: n,
 				open_database_impl: () => Promise.resolve(f)

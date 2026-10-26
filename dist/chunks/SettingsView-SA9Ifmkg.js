@@ -568,47 +568,44 @@ var B = C("circle-check", [["circle", {
 					x.value = n("errors.unexpected");
 				});
 			}
-		}), D = h(() => n(`settings.credential_storage.states.${t.vaultStatus.state}`, { count: t.vaultStatus.secret_count }));
-		function O() {
+		}), D = h(() => {
+			let e = { count: t.vaultStatus.secret_count };
+			switch (t.vaultStatus.state) {
+				case "unavailable": return n("settings.credential_storage.states.unavailable", e);
+				case "error": return n("settings.credential_storage.states.error", e);
+				case "uninitialized": return n("settings.credential_storage.states.uninitialized", e);
+				case "locked": return n("settings.credential_storage.states.locked", e);
+				case "unlocked": return n("settings.credential_storage.states.unlocked", e);
+			}
+		}), O = h(() => t.vaultStatus.state === "error" ? n("settings.credential_storage.error") : n("settings.credential_storage.unavailable"));
+		function k() {
 			a.value = "", f.value = "";
 		}
-		function k(e) {
+		function j(e) {
 			return a.value.length < 12 ? (x.value = n("settings.credential_storage.passphrase_too_short", { count: 12 }), !1) : e && a.value !== f.value ? (x.value = n("settings.credential_storage.passphrase_mismatch"), !1) : !0;
 		}
-		function j(e) {
+		function M(e) {
 			return typeof e == "object" && e && "code" in e && Reflect.get(e, "code") === "invalid_passphrase" ? n("settings.credential_storage.invalid_passphrase") : n("errors.unexpected");
 		}
-		async function M() {
-			if (!(b.value || !k(!0))) {
-				b.value = !0, x.value = null;
-				try {
-					await t.controller.initialize_browser_secret_vault(a.value), await t.controller.update_settings({ credential_storage_mode: "browser_encrypted" }), O();
-				} catch (e) {
-					x.value = j(e);
-				} finally {
-					b.value = !1;
-				}
-			}
-		}
 		async function N() {
-			if (!(b.value || !k(!1))) {
+			if (!(b.value || !j(!0))) {
 				b.value = !0, x.value = null;
 				try {
-					await t.controller.unlock_browser_secret_vault(a.value), O();
+					await t.controller.initialize_browser_secret_vault(a.value), await t.controller.update_settings({ credential_storage_mode: "browser_encrypted" }), k();
 				} catch (e) {
-					x.value = j(e);
+					x.value = M(e);
 				} finally {
 					b.value = !1;
 				}
 			}
 		}
 		async function P() {
-			if (!b.value) {
+			if (!(b.value || !j(!1))) {
 				b.value = !0, x.value = null;
 				try {
-					await t.controller.lock_browser_secret_vault(), O();
-				} catch {
-					x.value = n("errors.unexpected");
+					await t.controller.unlock_browser_secret_vault(a.value), k();
+				} catch (e) {
+					x.value = M(e);
 				} finally {
 					b.value = !1;
 				}
@@ -618,7 +615,19 @@ var B = C("circle-check", [["circle", {
 			if (!b.value) {
 				b.value = !0, x.value = null;
 				try {
-					await t.controller.reset_browser_secret_vault(), C.value = !1, O();
+					await t.controller.lock_browser_secret_vault(), k();
+				} catch {
+					x.value = n("errors.unexpected");
+				} finally {
+					b.value = !1;
+				}
+			}
+		}
+		async function L() {
+			if (!b.value) {
+				b.value = !0, x.value = null;
+				try {
+					await t.controller.reset_browser_secret_vault(), C.value = !1, k();
 				} catch {
 					x.value = n("errors.unexpected");
 				} finally {
@@ -655,7 +664,7 @@ var B = C("circle-check", [["circle", {
 				class: y(l(H).status_text),
 				"data-tone": "error",
 				role: "alert"
-			}, g(l(n)(`settings.credential_storage.${e.vaultStatus.state}`)), 3)) : e.vaultStatus.state === "uninitialized" ? (i(), s(v, { key: 1 }, [
+			}, g(O.value), 3)) : e.vaultStatus.state === "uninitialized" ? (i(), s(v, { key: 1 }, [
 				S(A, {
 					label: l(n)("settings.credential_storage.passphrase_label"),
 					hint: l(n)("settings.credential_storage.passphrase_hint", { count: l(12) }),
@@ -690,7 +699,7 @@ var B = C("circle-check", [["circle", {
 				S(E, {
 					label: l(n)("settings.credential_storage.initialize_action"),
 					pending: b.value,
-					onClick: M
+					onClick: N
 				}, null, 8, ["label", "pending"])
 			], 64)) : e.vaultStatus.state === "locked" ? (i(), s(v, { key: 2 }, [S(A, {
 				label: l(n)("settings.credential_storage.passphrase_label"),
@@ -705,13 +714,13 @@ var B = C("circle-check", [["circle", {
 					"aria-describedby": t,
 					class: y(l(H).typed_confirm_input),
 					"data-testid": "browser-vault-passphrase",
-					onKeydown: _(N, ["enter"])
+					onKeydown: _(P, ["enter"])
 				}, null, 42, J), [[c, a.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]), S(E, {
 				label: l(n)("settings.credential_storage.unlock_action"),
 				pending: b.value,
-				onClick: N
+				onClick: P
 			}, null, 8, ["label", "pending"])], 64)) : (i(), s("div", {
 				key: 3,
 				class: y(l(H).vault_unlocked_actions)
@@ -719,7 +728,7 @@ var B = C("circle-check", [["circle", {
 				label: l(n)("settings.credential_storage.lock_action"),
 				variant: "secondary",
 				pending: b.value,
-				onClick: P
+				onClick: F
 			}, null, 8, ["label", "pending"]), S(E, {
 				label: l(n)("settings.credential_storage.reset_action"),
 				variant: "destructive",
@@ -738,7 +747,7 @@ var B = C("circle-check", [["circle", {
 				"cancel-label": l(n)("common.actions.cancel"),
 				pending: b.value,
 				"onUpdate:open": u[5] ||= (e) => C.value = e,
-				onConfirm: F
+				onConfirm: L
 			}, null, 8, [
 				"open",
 				"title",

@@ -827,7 +827,7 @@ var o = {
 			discard_action: "Discard changes"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-M6otoYBS.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-BwXjqYEX.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

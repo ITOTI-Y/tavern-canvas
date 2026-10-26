@@ -555,8 +555,8 @@ var e = {
 				unavailable: "不可用",
 				error: "密钥库错误",
 				uninitialized: "尚未初始化",
-				locked: "已锁定 · {count} 条加密密钥",
-				unlocked: "已解锁 · {count} 条密钥"
+				locked: "已锁定 · {count} 条加密密钥 | 已锁定 · {count} 条加密密钥",
+				unlocked: "已解锁 · {count} 条密钥 | 已解锁 · {count} 条密钥"
 			},
 			passphrase_label: "密钥库口令",
 			confirm_passphrase_label: "确认口令",

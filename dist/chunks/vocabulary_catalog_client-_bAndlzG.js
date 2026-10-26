@@ -762,7 +762,7 @@ async function me(e, t) {
 	}
 }
 function he(e = {}) {
-	let t = e.catalog_url ?? "https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/catalog.json";
+	let t = e.catalog_url ?? "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json";
 	pe(t);
 	let n = e.fetch_impl ?? fetch, i = e.max_bytes ?? de, a = e.ttl_ms ?? 0, o = null;
 	async function s(e = {}) {
