@@ -1006,7 +1006,7 @@ function vt(e, t) {
 		negative_prompt: l,
 		legacy: !1,
 		legacy_v3_extend: !1,
-		add_original_image: !0,
+		add_original_image: e.action !== "infill",
 		image_format: "png",
 		...n.cfg_rescale ? { cfg_rescale: e.cfg_rescale } : {},
 		...u === null ? {} : { noise_schedule: u },

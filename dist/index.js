@@ -4,7 +4,7 @@ import { D as o, E as s, _ as c, a as l, b as u, g as d, i as f, l as p, m, n as
 import { i as y, n as ne, r as b } from "./chunks/generation-Ck4v0g3Y.js";
 import { a as re, i as ie, n as ae, r as oe } from "./chunks/llm_connection-BJrh9qUU.js";
 import { a as x, i as S, n as se, o as ce, t as le } from "./chunks/settings-CBjQWJ8F.js";
-import { i as ue, n as de, o as fe, r as pe, s as me, t as he } from "./chunks/media_command_service-CLDKjice.js";
+import { i as ue, n as de, o as fe, r as pe, s as me, t as he } from "./chunks/media_command_service-Bi0l-441.js";
 import { A as C, F as ge, I as _e, N as w, O as ve, P as ye, Q as be, V as xe, W as Se, Z as Ce, _ as T, b as E, ct as D, et as O, ft as we, g as k, h as A, i as Te, k as Ee, m as j, n as De, nt as Oe, p as M, pt as N, rt as ke, u as Ae, ut as P, x as je, y as Me } from "./chunks/vue-i18n-DUz2Gjn8.js";
 import { t as Ne } from "./chunks/create_i18n-BJ1cTRr9.js";
 import { n as Pe, t as Fe } from "./chunks/AppIcon-Cnhzrx9o.js";
@@ -6443,7 +6443,7 @@ function nc() {
 	), { type: "module" });
 }
 async function rc(e) {
-	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-CcVZKObZ.js"), o = {
+	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-jYOOihnr.js"), o = {
 		novelai: new r(),
 		sd_webui: new a(),
 		openai_image: new i(),
@@ -6546,7 +6546,7 @@ async function cc(e) {
 		provider_id: ue,
 		credential_reference: ho(se, ds),
 		secrets_readable: ne !== null
-	}, me = null, C = b === null || f === null ? null : () => me ??= import("./chunks/novelai_runtime-D8nwtT_x.js").then((t) => t.create_novelai_runtime({
+	}, me = null, C = b === null || f === null ? null : () => me ??= import("./chunks/novelai_runtime-CLw91GFI.js").then((t) => t.create_novelai_runtime({
 		vibe_encodings: b.novelai_vibe_encodings,
 		provider_inputs: b.provider_input_assets,
 		namespace: h,
@@ -6661,6 +6661,7 @@ async function cc(e) {
 					...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 				}),
 				assets: ge ?? ic(f, h),
+				...C === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await C()).finish(e, t, AbortSignal.timeout(uc)) : t },
 				log: { write: () => {} },
 				plans: r
 			}),
@@ -6793,7 +6794,7 @@ function mc(e, t) {
 function hc(e) {
 	let t = null;
 	return { async execute(n, r) {
-		let { GatewayJobExecutor: i } = await (t ??= import("./chunks/gateway_job_executor-CVa1yNNN.js"));
+		let { GatewayJobExecutor: i } = await (t ??= import("./chunks/gateway_job_executor-DXy8cCh-.js"));
 		return new i(e).execute(n, r);
 	} };
 }

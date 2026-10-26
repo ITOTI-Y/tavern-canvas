@@ -138,8 +138,8 @@ var x = 1e3, S = class {
 			code: "invalid_request",
 			retryable: !1
 		});
-		let r = n.kind === "video" ? await this.#n(n.request, t) : await this.#r(n.request, t);
-		return { image_ids: await this.#i(e, r) };
+		let r = n.kind === "video" ? await this.#n(n.request, t) : await this.#i(n.request, await this.#r(n.request, t));
+		return { image_ids: await this.#a(e, r) };
 	}
 	async #n(e, t) {
 		return await t.mark_running(), [await _(this.#e.transport, e, t.signal)];
@@ -170,6 +170,9 @@ var x = 1e3, S = class {
 		}
 	}
 	#i(e, t) {
+		return this.#e.postprocess === void 0 ? Promise.resolve(t) : this.#e.postprocess(e, t);
+	}
+	#a(e, t) {
 		return b(this.#e, e, t.map((e) => ({
 			bytes: e.bytes,
 			media_type: e.asset.media_type
