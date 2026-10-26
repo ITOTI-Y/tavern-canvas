@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 
 import type { HostAdapter, HostSwipeLocation } from "../../host/index.js";
 import type { IllustrationService } from "../../modules/illustration/illustration_service.js";
+import type { PromptTranslator } from "../../modules/translation/prompt_translator.js";
 import type { GalleryCapability, NovelAiCapability } from "../contracts/ui_capabilities.js";
 import styles from "./chat.module.css";
 import InpaintDialog from "../dialogs/InpaintDialog.vue";
@@ -22,6 +23,7 @@ const props = defineProps<{
   readonly service: IllustrationService;
   readonly gallery: GalleryCapability;
   readonly novelai: NovelAiCapability;
+  readonly translator: PromptTranslator | null;
 }>();
 
 const { t } = useI18n();
@@ -178,6 +180,7 @@ onBeforeUnmount(() => {
     :request="dialog_request"
     :service="service"
     :novelai="novelai"
+    :translator="translator"
     @close="dialog_request = null"
   />
   <QuickEditDialog

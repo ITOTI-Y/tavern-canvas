@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import type { HostSwipeLocation } from "../../host/index.js";
 import { AnalysisParseError } from "../../modules/illustration/analysis.js";
 import type { IllustrationService } from "../../modules/illustration/illustration_service.js";
+import type { PromptTranslator } from "../../modules/translation/prompt_translator.js";
 import AppButton from "../components/AppButton.vue";
 import AppCheckbox from "../components/AppCheckbox.vue";
 import AppDialog from "../components/AppDialog.vue";
@@ -22,6 +23,9 @@ interface SlotDraft {
   positive_prompt: string;
   negative_prompt: string;
   estimate: NovelAiCostEstimate | null;
+  translating: boolean;
+  reading: string | null;
+  translation_error: string | null;
 }
 
 type DialogState =
@@ -33,6 +37,7 @@ const props = defineProps<{
   readonly request: IllustrateRequest | null;
   readonly service: IllustrationService;
   readonly novelai: NovelAiCapability;
+  readonly translator: PromptTranslator | null;
 }>();
 
 const emit = defineEmits<{
@@ -85,6 +90,9 @@ async function load(request: IllustrateRequest): Promise<void> {
         positive_prompt: slot.positive_prompt,
         negative_prompt: slot.negative_prompt,
         estimate: null,
+        translating: false,
+        reading: null,
+        translation_error: null,
       }));
     state.value = { status: "ready", location };
     await Promise.all(drafts.value.map((draft) => estimate(location, draft)));
@@ -106,6 +114,27 @@ watch(
   },
   { immediate: true },
 );
+
+async function translate(draft: SlotDraft, direction: "to_tags" | "read"): Promise<void> {
+  const translator = props.translator;
+  if (translator === null) {
+    return;
+  }
+  draft.translating = true;
+  draft.translation_error = null;
+  try {
+    if (direction === "to_tags") {
+      draft.positive_prompt = await translator.to_tags(draft.positive_prompt);
+      draft.reading = null;
+    } else {
+      draft.reading = await translator.read_in_chinese(draft.positive_prompt);
+    }
+  } catch (error) {
+    draft.translation_error = error instanceof Error ? error.message : String(error);
+  } finally {
+    draft.translating = false;
+  }
+}
 
 async function confirm(): Promise<void> {
   const current = state.value;
@@ -180,6 +209,24 @@ function update_open(open: boolean): void {
             {{ t("chat.dialog.positive_prompt") }}
             <textarea v-model="draft.positive_prompt" :class="styles.prompt" />
           </label>
+          <div v-if="translator !== null" :class="styles.meta">
+            <span>
+              <AppButton
+                :label="t('chat.dialog.translate_to_tags')"
+                :pending="draft.translating"
+                @click="translate(draft, 'to_tags')"
+              />
+              <AppButton
+                :label="t('chat.dialog.read_in_chinese')"
+                :pending="draft.translating"
+                @click="translate(draft, 'read')"
+              />
+            </span>
+          </div>
+          <p v-if="draft.reading !== null" :class="styles.anchor">{{ draft.reading }}</p>
+          <p v-if="draft.translation_error !== null" :class="styles.error">
+            {{ draft.translation_error }}
+          </p>
           <label :class="styles.label">
             {{ t("chat.dialog.negative_prompt") }}
             <textarea v-model="draft.negative_prompt" :class="styles.prompt" />

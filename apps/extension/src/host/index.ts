@@ -4,6 +4,8 @@ export type { BootstrapProbeResult } from "./capability_probe.js";
 export { HOST_CAPABILITY_IDS } from "./host_adapter.js";
 export type {
   HostAdapter,
+  DeepLEndpoint,
+  DeepLTarget,
   HostCapabilityId,
   HostChatChangeEvent,
   HostChatChangeHandler,

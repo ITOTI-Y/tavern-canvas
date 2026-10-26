@@ -470,6 +470,7 @@ describe("initial settings and capability contracts", () => {
       max_images_per_message: 2,
       prompt_preset_id: null,
     },
+    translation: { deepl_endpoint: "free", glossary: [] },
     gateway: {
       endpoint: "http://192.168.1.10:8080",
       token_secret_id: null,
@@ -603,6 +604,7 @@ describe("strict public object boundaries", () => {
       max_images_per_message: 2,
       prompt_preset_id: null,
     },
+    translation: { deepl_endpoint: "free", glossary: [] },
     gateway: gateway_settings,
     ui: {
       color_mode: "system" as const,

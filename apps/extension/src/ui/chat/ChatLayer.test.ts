@@ -78,6 +78,7 @@ function create_host(text_element: HTMLElement): HostAdapter {
     generate_with_preset: vi.fn(() => Promise.reject(new Error("not expected"))),
     stop_generation: () => undefined,
     sync_regex_scripts: () => Promise.resolve(false),
+    translate_deepl: () => Promise.reject(new Error("not used")),
   };
 }
 
@@ -114,7 +115,16 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
   } as unknown as GalleryCapability;
   const i18n = createI18n({ legacy: false, locale: "en", messages: { en: en_messages } });
   const wrapper = mount(ChatLayer, {
-    props: { host, service: markRaw(service), gallery, novelai: {} as NovelAiCapability },
+    props: {
+      host,
+      service: markRaw(service),
+      gallery,
+      novelai: {} as NovelAiCapability,
+      translator: {
+        to_tags: (prompt: string) => Promise.resolve(`${prompt}, smile`),
+        read_in_chinese: () => Promise.resolve("一个女孩，门"),
+      },
+    },
     global: { plugins: [i18n] },
     attachTo: document.body,
   });
@@ -152,6 +162,13 @@ describe("ChatLayer", () => {
     const prompts = [...document.querySelectorAll("textarea")].map((element) => element.value);
     expect(prompts).toEqual(["1girl, door", "lowres"]);
     expect(host.generate_with_preset).not.toHaveBeenCalled();
+
+    const translate = [...document.querySelectorAll('[role="dialog"] button')].find(
+      (element) => element.textContent?.trim() === "Translate to English tags",
+    );
+    (translate as HTMLButtonElement | undefined)?.click();
+    await flushPromises();
+    expect(document.querySelector("textarea")?.value).toBe("1girl, door, smile");
 
     wrapper.unmount();
     expect(document.querySelector("[data-tc-illustrate]")).toBeNull();

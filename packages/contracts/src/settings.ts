@@ -73,6 +73,20 @@ export const IllustrationSettingsSchema = z.strictObject({
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 
+export const GlossaryEntrySchema = z.strictObject({
+  source: z.string().trim().min(1).max(32),
+  target: z.string().trim().min(1).max(128),
+});
+export type GlossaryEntry = z.infer<typeof GlossaryEntrySchema>;
+
+/** The DeepL key itself lives in SillyTavern's secret store under `deepl`. */
+export const TranslationSettingsSchema = z.strictObject({
+  deepl_endpoint: z.enum(["free", "pro"]),
+  /** Applied before DeepL; capped so the whole settings object stays under SillyTavern's size limit. */
+  glossary: z.array(GlossaryEntrySchema).max(200),
+});
+export type TranslationSettings = z.infer<typeof TranslationSettingsSchema>;
+
 export const TavernCanvasSettingsSchema = z.strictObject({
   schema_version: z.literal(1),
   active_namespace: NamespaceIdentifierSchema,
@@ -83,6 +97,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   auto_generation_enabled: z.boolean(),
   vocabulary_update_channel: z.enum(["bundled", "remote"]),
   illustration: IllustrationSettingsSchema,
+  translation: TranslationSettingsSchema,
   gateway: GatewaySettingsSchema,
   ui: TavernCanvasUiSettingsSchema,
 });

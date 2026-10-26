@@ -45,6 +45,10 @@ import {
   new_slot_id,
 } from "../modules/illustration/illustration_module.js";
 import { NovelAiServiceUnavailableError } from "../modules/novelai/novelai_errors.js";
+import {
+  create_prompt_translator,
+  type PromptTranslator,
+} from "../modules/translation/prompt_translator.js";
 import type { NovelAiRuntime } from "../modules/novelai/novelai_runtime.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
 import { SecretBackendRouter } from "../host/secret_backend_router.js";
@@ -130,6 +134,8 @@ export interface StudioComposition {
   readonly host: CompositeHostAdapter | null;
   /** `null` when the host, storage or settings needed to illustrate replies are missing. */
   readonly illustrations: IllustrationService | null;
+  /** `null` when the host or settings needed to translate are missing. */
+  readonly translator: PromptTranslator | null;
   readonly modules: readonly RuntimeModule[];
   dispose(): Promise<void>;
 }
@@ -748,6 +754,14 @@ export async function compose_studio_capabilities(
     resolutions,
     host,
     illustrations,
+    translator:
+      host === null || settings_adapter === null
+        ? null
+        : create_prompt_translator({
+            host,
+            settings: () => settings_adapter.get_settings().translation,
+            vocabulary,
+          }),
     modules,
     async dispose() {
       for (const stop of [...teardown].reverse()) {

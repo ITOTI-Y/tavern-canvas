@@ -24,6 +24,7 @@ export type VocabularyMatchKind = z.infer<typeof VocabularyMatchKindSchema>;
 export const VocabularySearchResultSchema = z.strictObject({
   record_id: VocabularyRecordIdSchema,
   display_text: z.string().trim().min(1).max(512),
+  translation: z.string().trim().max(512).optional(),
   category: VocabularyCategorySchema.optional(),
   popularity: VocabularyPopularitySchema,
   match_kind: VocabularyMatchKindSchema,

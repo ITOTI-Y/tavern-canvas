@@ -728,6 +728,8 @@ const chat = {
     no_slots: "分析结果中没有值得配图的段落。",
     parse_failed_hint:
       "模型没有返回所需的 JSON。所用预设可能规定了自己的输出格式或对回复做了混淆，可以在插图设置中换用其他预设。",
+    translate_to_tags: "译为英文标签",
+    read_in_chinese: "中文核对",
     positive_prompt: "提示词",
     negative_prompt: "负面提示词",
     cost_anlas: "约 {anlas} Anlas",

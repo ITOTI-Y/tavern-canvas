@@ -48,6 +48,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     max_images_per_message: 2,
     prompt_preset_id: null,
   },
+  translation: { deepl_endpoint: "free", glossary: [] },
   gateway: { endpoint: null, token_secret_id: TOKEN_REFERENCE, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
@@ -397,6 +398,7 @@ describe("SettingsView credential storage", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: vault_status,
         }),
       update: (partial) => {
@@ -558,6 +560,7 @@ describe("SettingsView gateway settings", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       set_gateway_token: (plaintext_value) => {
@@ -611,6 +614,7 @@ describe("SettingsView gateway settings", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -661,6 +665,7 @@ describe("SettingsView automation settings", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -727,6 +732,7 @@ describe("SettingsView appearance settings", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -772,6 +778,7 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       set_vocabulary_update_channel: (channel) => {
@@ -808,6 +815,7 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: (file, on_progress) => {
@@ -860,6 +868,7 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: () => import_promise,
@@ -898,6 +907,7 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       export_archive: () => Promise.resolve(archive_blob),
@@ -936,6 +946,7 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
             max_images_per_message: 2,
             prompt_preset_id: null,
           },
+          translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_archive: (archive) => {

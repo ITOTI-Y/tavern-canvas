@@ -94,6 +94,9 @@ export interface HostRegexScript {
   readonly destination: "display" | "prompt";
 }
 
+export type DeepLTarget = "EN-US" | "ZH";
+export type DeepLEndpoint = "free" | "pro";
+
 export interface HostAdapter {
   readonly capabilities: CapabilityMatrix;
   get_locale(): string;
@@ -115,4 +118,6 @@ export interface HostAdapter {
   stop_generation(generation_id: string): void;
   /** Installs or updates the scripts; returns whether anything changed, which reloads the chat. */
   sync_regex_scripts(scripts: readonly HostRegexScript[]): Promise<boolean>;
+  /** Translates through SillyTavern's server with the DeepL key stored in its secrets. */
+  translate_deepl(text: string, target: DeepLTarget, endpoint: DeepLEndpoint): Promise<string>;
 }

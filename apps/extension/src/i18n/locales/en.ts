@@ -757,6 +757,8 @@ const chat = {
     no_slots: "The analysis found no paragraph worth illustrating.",
     parse_failed_hint:
       "The model did not return the requested JSON. Your preset may impose its own output format or obfuscate replies; try another preset in the illustration settings.",
+    translate_to_tags: "Translate to English tags",
+    read_in_chinese: "Read in Chinese",
     positive_prompt: "Prompt",
     negative_prompt: "Negative prompt",
     cost_anlas: "About {anlas} Anlas",

@@ -108,6 +108,7 @@ export async function bootstrap_tavern_canvas(
     // Class instances with private fields must never be wrapped in a reactive proxy.
     host: composition?.host ? markRaw(composition.host) : null,
     illustrations: composition?.illustrations ? markRaw(composition.illustrations) : null,
+    translator: composition?.translator ?? null,
   });
   const remove_chat_stylesheet = install_chat_stylesheet(document_);
   app.use(locale_runtime.i18n);

@@ -1,4 +1,6 @@
 import type {
+  DeepLEndpoint,
+  DeepLTarget,
   HostChatChangeHandler,
   HostGenerationHandler,
   HostMessageRenderedHandler,
@@ -165,10 +167,12 @@ function read_message_id(value: unknown): number | null {
 
 export class SillyTavernHost {
   readonly #get_context: () => SillyTavernContextSurface;
+  readonly #fetch: typeof fetch;
 
   /** The context is fetched per call: `getContext()` returns a snapshot whose `chat` binding is replaced on chat load. */
-  constructor(get_context: () => SillyTavernContextSurface) {
+  constructor(get_context: () => SillyTavernContextSurface, fetch_: typeof fetch) {
     this.#get_context = get_context;
+    this.#fetch = fetch_.bind(globalThis);
   }
 
   get_locale(): string {
@@ -302,6 +306,25 @@ export class SillyTavernHost {
     const extra = this.#find_extra(location, false);
     const record = extra?.[TAVERN_CANVAS_EXTRA_KEY];
     return record === undefined ? null : structuredClone(record);
+  }
+
+  async translate_deepl(
+    text: string,
+    target: DeepLTarget,
+    endpoint: DeepLEndpoint,
+  ): Promise<string> {
+    const response = await this.#fetch("/api/translate/deepl", {
+      method: "POST",
+      headers: clone_request_headers(this.#get_context().getRequestHeaders()),
+      body: JSON.stringify({ text, lang: target, endpoint }),
+    });
+    if (response.status === 400) {
+      throw new Error("No DeepL key is stored in SillyTavern; set it in Settings > Translation");
+    }
+    if (!response.ok) {
+      throw new Error(`DeepL translation failed with status ${String(response.status)}`);
+    }
+    return response.text();
   }
 
   async write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void> {

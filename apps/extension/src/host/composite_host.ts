@@ -1,6 +1,8 @@
 import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
 import type {
+  DeepLEndpoint,
+  DeepLTarget,
   HostAdapter,
   HostChatChangeHandler,
   HostChatSnapshot,
@@ -93,6 +95,10 @@ export class CompositeHostAdapter implements HostAdapter {
   sync_regex_scripts(scripts: readonly HostRegexScript[]): Promise<boolean> {
     return this.#helper.sync_regex_scripts(scripts);
   }
+
+  translate_deepl(text: string, target: DeepLTarget, endpoint: DeepLEndpoint): Promise<string> {
+    return this.#sillytavern.translate_deepl(text, target, endpoint);
+  }
 }
 
 function read_property(container: unknown, property_name: string): unknown {
@@ -113,6 +119,7 @@ export function create_composite_host(
 ): CompositeHostAdapter | null {
   const helper_surface = read_property(globals, "TavernHelper");
   const sillytavern_global = read_property(globals, "SillyTavern");
+  const fetch_ = read_property(globals, "fetch");
   const helper_inspection = inspect_tavern_helper(helper_surface);
   const sillytavern_inspection = inspect_sillytavern(sillytavern_global);
 
@@ -121,13 +128,15 @@ export function create_composite_host(
     !helper_inspection.preset_generation ||
     !helper_inspection.tavern_regex ||
     !sillytavern_inspection.main_generation_events ||
-    !sillytavern_inspection.message_swipe_metadata
+    !sillytavern_inspection.message_swipe_metadata ||
+    typeof fetch_ !== "function"
   ) {
     return null;
   }
 
-  const sillytavern = new SillyTavernHost(() =>
-    (sillytavern_global as { getContext(): SillyTavernContextSurface }).getContext(),
+  const sillytavern = new SillyTavernHost(
+    () => (sillytavern_global as { getContext(): SillyTavernContextSurface }).getContext(),
+    fetch_ as typeof fetch,
   );
   const helper = new TavernHelperHost(helper_surface as TavernHelperSurface, () =>
     sillytavern.get_active_chat_id(),

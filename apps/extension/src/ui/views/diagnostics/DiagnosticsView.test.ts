@@ -122,6 +122,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           max_images_per_message: 2,
           prompt_preset_id: null,
         },
+        translation: { deepl_endpoint: "free", glossary: [] },
         gateway: {
           endpoint: "https://gateway.example.test",
           token_secret_id: SECRET_TOKEN_VALUE,
@@ -263,6 +264,7 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
     max_images_per_message: 2,
     prompt_preset_id: null,
   },
+  translation: { deepl_endpoint: "free", glossary: [] },
   gateway: {
     endpoint: "https://gateway.example.test",
     token_secret_id: null,
@@ -302,6 +304,7 @@ describe("DiagnosticsView connection test", () => {
               max_images_per_message: 2,
               prompt_preset_id: null,
             },
+            translation: { deepl_endpoint: "free", glossary: [] },
             browser_secret_vault: { state: "unavailable", secret_count: 0 },
           }),
       },
@@ -516,6 +519,7 @@ describe("DiagnosticsView support bundle export", () => {
               max_images_per_message: 2,
               prompt_preset_id: null,
             },
+            translation: { deepl_endpoint: "free", glossary: [] },
             browser_secret_vault: { state: "unavailable" as const, secret_count: 0 },
           }),
       },

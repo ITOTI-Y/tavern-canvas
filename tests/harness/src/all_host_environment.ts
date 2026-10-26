@@ -169,6 +169,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         max_images_per_message: 2,
         prompt_preset_id: null,
       },
+      translation: { deepl_endpoint: "free", glossary: [] },
       gateway: {
         endpoint: options.gateway_endpoint,
         token_secret_id: null,

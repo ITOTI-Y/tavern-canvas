@@ -88,6 +88,7 @@ class MemoryHost {
     },
     stop_generation: () => undefined,
     sync_regex_scripts: () => Promise.resolve(false),
+    translate_deepl: () => Promise.reject(new Error("not used")),
   } satisfies HostAdapter;
 
   #key(location: HostSwipeLocation): string {

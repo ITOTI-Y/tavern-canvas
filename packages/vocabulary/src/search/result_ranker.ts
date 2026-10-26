@@ -20,6 +20,7 @@ export interface VocabularyRecordLike {
 export interface VocabularyRankedResult {
   readonly record_id: VocabularyRecordId;
   readonly display_text: string;
+  readonly translation?: string;
   readonly category?: VocabularyCategory;
   readonly popularity: VocabularyPopularity;
   readonly match_kind: VocabularyMatchKind;
@@ -147,6 +148,7 @@ export function rank_vocabulary_candidates(
     results.push({
       record_id: record.record_id,
       display_text: record.tag,
+      ...(record.translation === undefined ? {} : { translation: record.translation }),
       ...(record.category !== undefined ? { category: record.category } : {}),
       popularity: record.popularity,
       match_kind,

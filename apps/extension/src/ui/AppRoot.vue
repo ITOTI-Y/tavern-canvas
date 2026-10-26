@@ -9,6 +9,7 @@ import {
   type HostAdapter,
 } from "../host/index.js";
 import type { IllustrationService } from "../modules/illustration/illustration_service.js";
+import type { PromptTranslator } from "../modules/translation/prompt_translator.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
@@ -28,6 +29,7 @@ const props = defineProps<{
   capabilities?: StudioCapabilities;
   host?: HostAdapter | null;
   illustrations?: IllustrationService | null;
+  translator?: PromptTranslator | null;
 }>();
 
 const ChatLayer = defineAsyncComponent(() => import("./chat/ChatLayer.vue"));
@@ -181,6 +183,7 @@ function close_studio(): void {
         :service="illustrations"
         :gallery="capabilities.gallery"
         :novelai="capabilities.novelai"
+        :translator="translator ?? null"
       />
     </template>
   </PortalProvider>

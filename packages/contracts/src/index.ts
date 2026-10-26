@@ -192,20 +192,24 @@ export {
   CredentialStorageModeSchema,
   GATEWAY_CREDENTIAL_KIND,
   GatewaySettingsSchema,
+  GlossaryEntrySchema,
   IllustrationSettingsSchema,
   NormalizedOriginSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
+  TranslationSettingsSchema,
   derive_gateway_credential_reference,
 } from "./settings.js";
 export type {
   AnalysisConnection,
   CredentialStorageMode,
   GatewaySettings,
+  GlossaryEntry,
   IllustrationSettings,
   NormalizedOrigin,
   TavernCanvasSettings,
   TavernCanvasUiSettings,
+  TranslationSettings,
 } from "./settings.js";
 export {
   ARCHIVE_EXCLUDED_SECRET_CATEGORIES,

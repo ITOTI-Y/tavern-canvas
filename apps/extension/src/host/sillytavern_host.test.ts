@@ -19,7 +19,10 @@ const EVENT_TYPES = {
   MORE_MESSAGES_LOADED: "more_messages_loaded",
 };
 
-function create_host(chat: SillyTavernChatMessage[] = []): {
+function create_host(
+  chat: SillyTavernChatMessage[] = [],
+  fetch_: typeof fetch = vi.fn<typeof fetch>(),
+): {
   host: SillyTavernHost;
   context: SillyTavernContextSurface;
   emit(event_name: string, ...arguments_: unknown[]): void;
@@ -44,7 +47,7 @@ function create_host(chat: SillyTavernChatMessage[] = []): {
     eventTypes: EVENT_TYPES,
   };
   return {
-    host: new SillyTavernHost(() => context),
+    host: new SillyTavernHost(() => context, fetch_),
     context,
     emit(event_name, ...arguments_) {
       for (const listener of listeners.get(event_name) ?? []) {
@@ -119,5 +122,26 @@ describe("SillyTavernHost swipe records", () => {
     ).rejects.toThrow("is not available");
     expect(context.saveChat).not.toHaveBeenCalled();
     expect(host.read_swipe_record({ chat_id: "chat-2", message_id: 0, swipe_id: 0 })).toBeNull();
+  });
+});
+
+describe("SillyTavernHost DeepL translation", () => {
+  it("posts the text, target and endpoint to SillyTavern's DeepL route", async () => {
+    const fetch_ = vi.fn<typeof fetch>(() => Promise.resolve(new Response("1girl, smile")));
+    const { host } = create_host([], fetch_);
+
+    await expect(host.translate_deepl("微笑的女孩", "EN-US", "pro")).resolves.toBe("1girl, smile");
+    expect(fetch_).toHaveBeenCalledWith("/api/translate/deepl", {
+      method: "POST",
+      headers: {},
+      body: JSON.stringify({ text: "微笑的女孩", lang: "EN-US", endpoint: "pro" }),
+    });
+  });
+
+  it("explains a missing key, which SillyTavern reports as status 400", async () => {
+    const fetch_ = vi.fn<typeof fetch>(() => Promise.resolve(new Response(null, { status: 400 })));
+    const { host } = create_host([], fetch_);
+
+    await expect(host.translate_deepl("文本", "EN-US", "free")).rejects.toThrow("No DeepL key");
   });
 });

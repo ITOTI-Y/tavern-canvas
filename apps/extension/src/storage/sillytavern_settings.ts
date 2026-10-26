@@ -42,6 +42,10 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
     max_images_per_message: 2,
     prompt_preset_id: null,
   },
+  translation: {
+    deepl_endpoint: "free",
+    glossary: [],
+  },
   gateway: {
     endpoint: null,
     token_secret_id: null,
@@ -321,6 +325,16 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
             raw.illustration,
             structuredClone(defaults.illustration),
             "illustration",
+            diagnostics,
+          ),
+    translation:
+      raw.translation === undefined
+        ? structuredClone(defaults.translation)
+        : recover_field(
+            TavernCanvasSettingsSchema.shape.translation,
+            raw.translation,
+            structuredClone(defaults.translation),
+            "translation",
             diagnostics,
           ),
     gateway: recover_gateway(raw.gateway, diagnostics),

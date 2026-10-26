@@ -301,6 +301,7 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
       max_images_per_message: 2,
       prompt_preset_id: null,
     },
+    translation: { deepl_endpoint: "free", glossary: [] },
     gateway: {
       endpoint: with_http_warning ? "http://192.168.1.50:7860" : "https://gateway.example.invalid",
       token_secret_id: "mock-secret-reference",
@@ -995,6 +996,7 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
           max_images_per_message: 2,
           prompt_preset_id: null,
         },
+        translation: { deepl_endpoint: "free", glossary: [] },
         browser_secret_vault,
       }),
     subscribe: () => () => {},
