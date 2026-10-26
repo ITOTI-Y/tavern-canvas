@@ -5,50 +5,48 @@ import { bootstrap_tavern_canvas } from "./bootstrap.js";
 
 interface HostFixture {
   readonly globals: Record<string, unknown>;
-  readonly register_tool: Mock;
   readonly subscribe_event: Mock;
 }
 
-function create_host_fixture(version = "4.9.1"): HostFixture {
-  const register_tool = vi.fn();
+function create_host_fixture(version = "4.11.1"): HostFixture {
   const subscribe_event = vi.fn();
-  const event_source = {
-    on: subscribe_event,
-    removeListener: vi.fn(),
-  };
   const context = {
     getCurrentLocale: vi.fn(() => "en"),
     getCurrentChatId: vi.fn(() => "chat-42"),
     getRequestHeaders: vi.fn(() => ({ "Content-Type": "application/json" })),
-    isToolCallingSupported: vi.fn(() => true),
-    eventSource: event_source,
+    chat: [],
+    saveChat: vi.fn(() => Promise.resolve()),
+    eventSource: { on: subscribe_event, removeListener: vi.fn() },
     eventTypes: {
       GENERATION_STARTED: "generation_started",
       GENERATION_STOPPED: "generation_stopped",
       GENERATION_ENDED: "generation_ended",
-      STREAM_TOKEN_RECEIVED: "stream_token_received",
-      CHAT_CHANGED: "chat_changed",
+      CHAT_CHANGED: "chat_id_changed",
       MESSAGE_SWIPED: "message_swiped",
+      MESSAGE_UPDATED: "message_updated",
+      MESSAGE_EDITED: "message_edited",
+      CHARACTER_MESSAGE_RENDERED: "character_message_rendered",
+      MORE_MESSAGES_LOADED: "more_messages_loaded",
     },
-    registerFunctionTool: register_tool,
-    unregisterFunctionTool: vi.fn(),
   };
 
   return {
     globals: {
       TavernHelper: {
         getTavernHelperVersion: vi.fn(() => version),
-        generateRaw: vi.fn(),
-        getChatMessages: vi.fn(),
+        getChatMessages: vi.fn(() => []),
         setChatMessages: vi.fn(),
+        generate: vi.fn(),
+        stopGenerationById: vi.fn(),
+        getTavernRegexes: vi.fn(() => []),
+        replaceTavernRegexes: vi.fn(),
+        retrieveDisplayedMessage: vi.fn(() => ({ get: () => undefined })),
       },
       SillyTavern: {
         getContext: vi.fn(() => context),
       },
-      __TAURITAVERN__: undefined,
       fetch: vi.fn(),
     },
-    register_tool,
     subscribe_event,
   };
 }
@@ -81,7 +79,7 @@ afterEach(() => {
 
 describe("bootstrap_tavern_canvas", () => {
   it("blocks every runtime module before an unsupported helper can register host effects", async () => {
-    const fixture = create_host_fixture("4.9.0");
+    const fixture = create_host_fixture("4.10.0");
     const sequence: string[] = [];
 
     const handle = await bootstrap_tavern_canvas({
@@ -94,11 +92,10 @@ describe("bootstrap_tavern_canvas", () => {
     const root = document.querySelector("#tavern-canvas-root");
     expect(handle.state).toBe("blocked");
     expect(sequence).toEqual([]);
-    expect(fixture.register_tool).not.toHaveBeenCalled();
     expect(fixture.subscribe_event).not.toHaveBeenCalled();
     expect(document.querySelectorAll("#tavern-canvas-root")).toHaveLength(1);
     expect(root?.shadowRoot?.querySelector('[data-startup-state="blocked"]')).not.toBeNull();
-    expect(root?.shadowRoot?.textContent).toContain("4.9.1");
+    expect(root?.shadowRoot?.textContent).toContain("4.11.1");
     expect(root?.shadowRoot?.querySelectorAll("a")).toHaveLength(1);
 
     await handle.dispose();
@@ -198,7 +195,7 @@ describe("bootstrap_tavern_canvas", () => {
   });
 
   it("still reports resolutions when the host probe blocks startup", async () => {
-    const fixture = create_host_fixture("4.9.0");
+    const fixture = create_host_fixture("4.10.0");
 
     const handle = await bootstrap_tavern_canvas({
       globals: fixture.globals,
@@ -213,42 +210,6 @@ describe("bootstrap_tavern_canvas", () => {
 
     expect(handle.state).toBe("blocked");
     expect(handle.resolutions).toHaveLength(12);
-    await handle.dispose();
-  });
-
-  it("starts the Tauri chat surface module the composition root contributes", async () => {
-    const fixture = create_host_fixture();
-    const sequence: string[] = [];
-    Reflect.set(fixture.globals, "__TAURITAVERN__", {
-      abiVersion: 1,
-      api: {
-        chatSurface: {
-          protocolVersion: 1,
-          isManagedOwnershipRequired: vi.fn(() => false),
-          registerParticipant: vi.fn(),
-        },
-      },
-    });
-
-    const handle = await bootstrap_tavern_canvas({
-      globals: fixture.globals,
-      modules: [create_module("host", [], sequence)],
-      stylesheet: "",
-      version: "3.0.0-alpha.1",
-      composition: {
-        open_storage: () => Promise.reject(new Error("no storage in this environment")),
-        create_vocabulary_worker: null,
-        estimate_storage: () => Promise.resolve(undefined),
-      },
-    });
-
-    expect(handle.state).toBe("ready");
-    expect(sequence).toEqual(["start:host"]);
-    const chat_surface = Reflect.get(
-      Reflect.get(Reflect.get(fixture.globals, "__TAURITAVERN__") as object, "api") as object,
-      "chatSurface",
-    ) as { registerParticipant: Mock };
-    expect(chat_surface.registerParticipant).toHaveBeenCalledOnce();
     await handle.dispose();
   });
 });

@@ -16,36 +16,6 @@ export type { GenerationAnchors, RandomSource, SecureCryptoSource } from "./gene
 export { canonical_json } from "./generation/canonical_json.js";
 export { SourceContextSchema } from "./generation/source_context.js";
 export type { SourceContext } from "./generation/source_context.js";
-export {
-  FALLBACK_CANDIDATE_BYTE_LIMIT,
-  FALLBACK_COMMENT_OPENING,
-  FallbackStreamParser,
-} from "./generation/fallback_stream_parser.js";
-export type { FallbackParseDelta } from "./generation/fallback_stream_parser.js";
-export type {
-  GenerationSession,
-  OpenGenerationSessionRequest,
-} from "./generation/generation_session.js";
-export {
-  DEFAULT_SESSION_RETENTION_MS,
-  GenerationSessionError,
-  SessionRegistry,
-} from "./generation/session_registry.js";
-export type { GenerationSessionErrorCode, TimeSource } from "./generation/session_registry.js";
-export { BrowserRequestIdSource, RequestImageTool } from "./generation/request_image_tool.js";
-export type {
-  ImageRequestQueuePort,
-  QueuedImageRequest,
-  QueuedImageRequestResult,
-  RequestIdSource,
-  RequestImageToolDefinition,
-} from "./generation/request_image_tool.js";
-export { create_trigger_policy, PRIVATE_PROMPT_POLICY } from "./generation/tool_policy.js";
-export type {
-  GenerationTriggerPolicy,
-  HostPromptInjection,
-  PrivatePromptPolicy,
-} from "./generation/tool_policy.js";
 
 export { snapshot_generation_job, SystemJobTimeSource } from "./jobs/generation_job.js";
 export type {
@@ -68,20 +38,3 @@ export {
   is_terminal_generation_state,
   transition_generation_job,
 } from "./jobs/job_state_machine.js";
-
-export type {
-  ChatChangeEvent,
-  ChatChangeHandler,
-  FinalAssistantHandler,
-  FinalAssistantMessageEvent,
-  MessageAttachmentUpdate,
-  MessageBindingJobPort,
-  MessageCandidateRole,
-  MessageMedia,
-  MessagePort,
-  MessageTarget,
-  MessageTargetQuery,
-  SwipeChangeEvent,
-  SwipeChangeHandler,
-} from "./messages/message_binding.js";
-export { MessageBinder } from "./messages/message_binder.js";

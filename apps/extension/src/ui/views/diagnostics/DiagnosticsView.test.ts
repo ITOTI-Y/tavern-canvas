@@ -33,23 +33,20 @@ const DATETIME_FORMATS = {
 };
 
 const FULL_MATRIX = {
-  native_tool_manager: { available: true },
   main_generation_events: { available: true },
-  private_prompt_generation: {
+  preset_generation: {
     available: false,
-    reason: "TavernHelper.generateRaw is unavailable",
+    reason: "TavernHelper.generate or stopGenerationById is unavailable",
   },
   message_swipe_metadata: { available: true },
-  host_image_upload: { available: true },
+  tavern_regex: { available: true },
   tavern_helper: { available: true },
-  tauri_chat_surface: { available: false, reason: "TauriTavern is not present" },
-  tauri_world_info_activation: { available: false, reason: "TauriTavern is not present" },
   gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
 };
 
 const SNAPSHOT: DiagnosticsSnapshot = {
   capability_matrix: FULL_MATRIX,
-  helper_version: "4.9.1",
+  helper_version: "4.11.1",
   protocol_version: "1.0",
   storage_usage_bytes: 1_000_000,
   storage_quota_bytes: 10_000_000,
@@ -117,7 +114,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         active_provider_profile_id: null,
         global_concurrency: 1,
         auto_generation_enabled: false,
-        fallback_generation_enabled: false,
         vocabulary_update_channel: "bundled" as const,
         gateway: {
           endpoint: "https://gateway.example.test",
@@ -193,15 +189,15 @@ afterEach(() => {
 });
 
 describe("DiagnosticsView capability matrix", () => {
-  it("displays all nine capability IDs with their availability", () => {
+  it("displays all six capability IDs with their availability", () => {
     const { wrapper } = mount_view(
       build_state(),
       build_controller(create_unavailable_capabilities()),
     );
     const rows = wrapper.findAll("[data-capability-id]");
-    expect(rows).toHaveLength(9);
+    expect(rows).toHaveLength(6);
     const ids = rows.map((row) => row.attributes("data-capability-id"));
-    expect(new Set(ids).size).toBe(9);
+    expect(new Set(ids).size).toBe(6);
     expect(wrapper.text()).toContain("JS Slash Runner");
     expect(wrapper.text()).toContain("Gateway protocol");
   });
@@ -224,7 +220,7 @@ describe("DiagnosticsView versions", () => {
       build_state(),
       build_controller(create_unavailable_capabilities()),
     );
-    expect(wrapper.text()).toContain("4.9.1");
+    expect(wrapper.text()).toContain("4.11.1");
     expect(wrapper.text()).toContain("1.0");
   });
 
@@ -253,7 +249,6 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
   global_concurrency: 1,
   auto_generation_enabled: false,
   vocabulary_update_channel: "bundled",
-  fallback_generation_enabled: false,
   gateway: {
     endpoint: "https://gateway.example.test",
     token_secret_id: null,

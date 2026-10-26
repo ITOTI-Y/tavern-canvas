@@ -8,12 +8,10 @@ import {
   type OutfitFields,
 } from "./character_context_source.js";
 import {
-  build_private_llm_prompt_request,
   join_context_block,
   resolve_context,
   to_context_preview,
   type ContextSourcesInput,
-  PRIVATE_PROMPT_POLICY,
 } from "./context_sources.js";
 import {
   build_persona_prompt_content,
@@ -396,16 +394,6 @@ describe("knowledge_context_source: knowledge base", () => {
   it("reads a single entry by ID", () => {
     expect(read_knowledge_entry(KNOWLEDGE_ENTRIES, "k1")?.title).toBe("Sword lore");
     expect(read_knowledge_entry(KNOWLEDGE_ENTRIES, "missing")).toBeNull();
-  });
-});
-
-describe("context_sources: private prompt-building LLM calls", () => {
-  it("always carries tools: [] and tool_choice: 'none'", () => {
-    expect(PRIVATE_PROMPT_POLICY).toEqual({ tools: [], tool_choice: "none" });
-    const request = build_private_llm_prompt_request([{ role: "user", content: "hi" }]);
-    expect(request.tools).toEqual([]);
-    expect(request.tool_choice).toBe("none");
-    expect(request.prompts).toEqual([{ role: "user", content: "hi" }]);
   });
 });
 

@@ -1,15 +1,11 @@
-import type { CapabilityMatrix, TavernCanvasMessageMetadata } from "@tavern-canvas/contracts";
-import type { HostPromptInjection } from "@tavern-canvas/core";
+import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
 export const HOST_CAPABILITY_IDS = [
-  "native_tool_manager",
   "main_generation_events",
-  "private_prompt_generation",
+  "preset_generation",
   "message_swipe_metadata",
-  "host_image_upload",
+  "tavern_regex",
   "tavern_helper",
-  "tauri_chat_surface",
-  "tauri_world_info_activation",
   "gateway_protocol",
 ] as const;
 
@@ -19,8 +15,6 @@ export type HostMessageRole = "system" | "assistant" | "user";
 export interface HostMessageSwipeSnapshot {
   readonly swipe_id: number;
   readonly content: string;
-  readonly data: Readonly<Record<string, unknown>>;
-  readonly metadata: Readonly<Record<string, unknown>>;
 }
 
 export interface HostChatMessageSnapshot {
@@ -47,79 +41,78 @@ export type HostGenerationEvent =
   | { readonly phase: "ended"; readonly message_id: number };
 
 export type HostGenerationHandler = (event: HostGenerationEvent) => void;
-export type HostGenerationChunkHandler = (chunk: string) => void;
 export interface HostChatChangeEvent {
   readonly chat_id: string;
 }
 export type HostChatChangeHandler = (event: HostChatChangeEvent) => void;
+export type HostMessageRenderedHandler = (message_id: number) => void;
 
-export interface HostMessageSwipedEvent {
-  readonly message_id: number;
-}
-export type HostMessageSwipedHandler = (event: HostMessageSwipedEvent) => void;
-
-export interface HostImageTool {
-  readonly name: string;
-  readonly display_name: string;
-  readonly description: string;
-  readonly parameters: Readonly<Record<string, unknown>>;
-  readonly stealth: boolean;
-  execute(arguments_: Readonly<Record<string, unknown>>): string | Promise<string>;
-}
-
-export interface HostPromptMessage {
-  readonly role: HostMessageRole;
-  readonly content: string;
-}
-
-/** Private prompt generation never exposes tools (`tools: []` / `tool_choice: "none"`); the literal field types stop callers from widening the policy. */
-export interface PrivatePromptRequest {
-  readonly generation_id: string;
-  readonly prompts: readonly HostPromptMessage[];
-  readonly max_chat_history?: "all" | number;
-  readonly tools?: readonly never[];
-  readonly tool_choice?: "none";
-}
-
-export interface HostMessageMedia {
-  readonly image_id: string;
-  readonly [property_name: string]: unknown;
-}
-
-export interface MessageUpdateRequest {
+/** Identifies one swipe of one message in one chat; writes are refused when the chat is no longer active. */
+export interface HostSwipeLocation {
+  readonly chat_id: string;
   readonly message_id: number;
   readonly swipe_id: number;
+}
+
+export type HostGenerationConnection =
+  | { readonly kind: "current" }
+  | { readonly kind: "proxy_preset"; readonly proxy_preset: string; readonly model: string | null }
+  | {
+      readonly kind: "custom";
+      readonly api_url: string;
+      readonly api_key: string;
+      readonly model: string;
+      readonly source: string;
+    };
+
+export interface HostJsonSchema {
+  readonly name: string;
+  readonly value: Readonly<Record<string, unknown>>;
+}
+
+/** Always runs through a SillyTavern preset: the extension never sends a request the user's preset has not shaped. */
+export interface PresetGenerationRequest {
+  readonly generation_id: string;
+  readonly preset_name: string;
+  readonly user_input: string;
+  readonly max_chat_history: number;
+  readonly connection: HostGenerationConnection;
+  readonly json_schema: HostJsonSchema | null;
+}
+
+export interface PresetGenerationResult {
   readonly content: string;
-  readonly metadata: TavernCanvasMessageMetadata;
-  readonly media: readonly HostMessageMedia[];
+  readonly reasoning: string | null;
 }
 
-export type HostImageFormat = "jpg" | "png" | "webp";
-
-export interface HostImageUploadRequest {
-  readonly image_base64: string;
-  readonly character_name: string;
-  readonly file_name: string;
-  readonly format: HostImageFormat;
-}
-
-export interface HostImageUploadResult {
-  readonly path: string;
+/** A SillyTavern global regex script owned by the extension, keyed by a stable id. */
+export interface HostRegexScript {
+  readonly id: string;
+  readonly script_name: string;
+  readonly find_regex: string;
+  readonly replace_string: string;
+  readonly destination: "display" | "prompt";
 }
 
 export interface HostAdapter {
   readonly capabilities: CapabilityMatrix;
-  can_use_native_tools(): boolean;
   get_locale(): string;
+  get_active_chat_id(): string;
   get_active_chat(): Promise<HostChatSnapshot>;
   subscribe_generation(handler: HostGenerationHandler): () => void;
-  subscribe_generation_chunk(handler: HostGenerationChunkHandler): () => void;
   subscribe_chat_change(handler: HostChatChangeHandler): () => void;
-  subscribe_message_swiped(handler: HostMessageSwipedHandler): () => void;
-  register_image_tool(tool: HostImageTool): () => void;
-  /** Without this instruction the model cannot know the generation anchor and both trigger paths reject every request it makes. */
-  set_trigger_injection(injection: HostPromptInjection | null): void;
-  generate_private_prompt(request: PrivatePromptRequest): Promise<string>;
-  update_message(request: MessageUpdateRequest): Promise<void>;
-  upload_image(request: HostImageUploadRequest): Promise<HostImageUploadResult>;
+  /** Fires for every message whose DOM was rebuilt: rendered, updated, edited or swiped. */
+  subscribe_message_rendered(handler: HostMessageRenderedHandler): () => void;
+  /** Fires when the whole visible chat was rebuilt, so every message must be scanned again. */
+  subscribe_chat_rendered(handler: () => void): () => void;
+  find_message_element(message_id: number): HTMLElement | null;
+  /** Reads the extension's record from the swipe's `extra`; `null` when absent or the chat is not active. */
+  read_swipe_record(location: HostSwipeLocation): unknown;
+  write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void>;
+  /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
+  replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
+  generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;
+  stop_generation(generation_id: string): void;
+  /** Installs or updates the scripts; returns whether anything changed, which reloads the chat. */
+  sync_regex_scripts(scripts: readonly HostRegexScript[]): Promise<boolean>;
 }

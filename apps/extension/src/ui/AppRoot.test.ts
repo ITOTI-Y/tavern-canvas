@@ -86,13 +86,13 @@ describe("AppRoot capability-blocked state", () => {
         ready: false,
         error_code: "helper_version_unsupported",
         missing_capabilities: ["tavern_helper"],
-        current_version: "4.9.0",
+        current_version: "4.10.0",
       },
     });
 
     const screen = wrapper.get('[data-startup-state="blocked"]');
-    expect(screen.text()).toContain("4.9.1");
-    expect(screen.text()).toContain("4.9.0");
+    expect(screen.text()).toContain("4.11.1");
+    expect(screen.text()).toContain("4.10.0");
     expect(wrapper.findAll("a")).toHaveLength(1);
     expect(wrapper.get("a").attributes("href")).toBe("https://github.com/N0VI028/JS-Slash-Runner");
     expect(wrapper.find("nav").exists()).toBe(false);

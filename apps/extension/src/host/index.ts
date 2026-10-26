@@ -9,41 +9,19 @@ export type {
   HostChatChangeHandler,
   HostChatMessageSnapshot,
   HostChatSnapshot,
+  HostGenerationConnection,
   HostGenerationEvent,
-  HostGenerationChunkHandler,
   HostGenerationHandler,
-  HostImageFormat,
-  HostImageTool,
-  HostImageUploadRequest,
-  HostImageUploadResult,
+  HostJsonSchema,
+  HostMessageRenderedHandler,
   HostMessageRole,
-  HostMessageMedia,
   HostMessageSwipeSnapshot,
-  HostMessageSwipedEvent,
-  HostMessageSwipedHandler,
-  HostPromptMessage,
-  MessageUpdateRequest,
-  PrivatePromptRequest,
+  HostRegexScript,
+  HostSwipeLocation,
+  PresetGenerationRequest,
+  PresetGenerationResult,
 } from "./host_adapter.js";
 
-export { TAVERN_CANVAS_SWIPE_METADATA_KEY, TavernHelperHost } from "./tavern_helper_host.js";
+export { TavernHelperHost } from "./tavern_helper_host.js";
 
-export { SillyTavernHost } from "./sillytavern_host.js";
-
-export { create_tauritavern_host, TauriTavernHost } from "./tauritavern_host.js";
-export type {
-  HostWorldInfoActivationBatch,
-  HostWorldInfoActivationEntry,
-  HostWorldInfoActivationHandler,
-  TauriChatSurfaceDetachedContext,
-  TauriChatSurfaceDisposer,
-  TauriChatSurfaceMountedContext,
-  TauriChatSurfaceParticipant,
-  TauriChatSurfaceRegistration,
-  TauriChatSurfaceRuntimeClaims,
-  TauriChatSurfaceRuntimeContext,
-  TauriDetectionGlobals,
-  TauriTavernChatSurfaceParticipantSurface,
-  TauriTavernGlobalSurface,
-  TauriWorldInfoActivationPosition,
-} from "./tauritavern_host.js";
+export { SillyTavernHost, TAVERN_CANVAS_EXTRA_KEY } from "./sillytavern_host.js";

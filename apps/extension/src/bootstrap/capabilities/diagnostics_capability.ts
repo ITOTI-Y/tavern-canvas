@@ -78,7 +78,6 @@ function redact_settings(settings: TavernCanvasSettings | null): Readonly<Record
     locale: settings.locale,
     global_concurrency: settings.global_concurrency,
     auto_generation_enabled: settings.auto_generation_enabled,
-    fallback_generation_enabled: settings.fallback_generation_enabled,
     gateway_configured: settings.gateway.endpoint !== null,
     acknowledged_origin_count: Object.keys(settings.gateway.http_acknowledgments).length,
     ui: settings.ui,

@@ -1,19 +1,15 @@
 import {
   ProviderIdSchema,
+  RequestIdSchema,
   direct_image_catalog_entry,
   type ImageGenerationRequest,
   type ProviderId,
 } from "@tavern-canvas/contracts";
 import {
   BrowserRandomSource,
-  BrowserRequestIdSource,
   ImageJobQueue,
-  MessageBinder,
-  RequestImageTool,
-  SessionRegistry,
   SystemJobTimeSource,
   type JobExecutor,
-  type MessagePort,
   type RuntimeModule,
 } from "@tavern-canvas/core";
 import type {
@@ -35,29 +31,14 @@ import {
 import type { BootstrapProbeResult } from "../host/index.js";
 import type { CompositeHostAdapter } from "../host/composite_host.js";
 import {
-  HostSurfaceChatMediaInteractions,
-  StandardHostChatMediaInteractions,
-  type ChatMediaInteractionPort,
-} from "../modules/media/chat_media_interactions.js";
-import {
   IndexedDbJobPersistence,
   MediaExecutionPlanRegistry,
   MediaJobExecutor,
   type GeneratedImageStoreDeps,
   type ImageStorePort,
 } from "../modules/media/media_command_service.js";
-import {
-  AutomaticGenerationSessionModule,
-  AutomaticImageRequestRouter,
-  HostFallbackTextSink,
-  HostGenerationSessionPort,
-} from "../modules/generation/automatic_generation.js";
-import { GenerationTriggerModule } from "../modules/generation/generation_trigger_module.js";
 import { NovelAiServiceUnavailableError } from "../modules/novelai/novelai_errors.js";
 import type { NovelAiRuntime } from "../modules/novelai/novelai_runtime.js";
-import { HostMessagePort } from "../modules/generation/message_binding_module.js";
-import { TauriChatSurfaceModule } from "../modules/tauri/chat_surface_module.js";
-import { TauriWorldInfoActivationModule } from "../modules/tauri/world_info_activation_module.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
 import { SecretBackendRouter } from "../host/secret_backend_router.js";
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
@@ -97,12 +78,7 @@ import {
 } from "./capabilities/profiles_capability.js";
 import { create_prompt_presets_capability } from "./capabilities/prompt_presets_capability.js";
 import { create_settings_capability } from "./capabilities/settings_capability.js";
-import {
-  as_record,
-  read_array,
-  read_optional_string,
-  read_payload,
-} from "./capabilities/_records.js";
+import { read_optional_string, read_payload } from "./capabilities/_records.js";
 import { create_vocabulary_capability } from "./capabilities/vocabulary_capability.js";
 import {
   capability_unavailable_error,
@@ -126,7 +102,6 @@ export interface ComposeCapabilitiesOptions {
   readonly open_storage?: () => Promise<StorageDatabase>;
   readonly create_vocabulary_worker?: (() => VocabularyWorkerLike) | null;
   readonly estimate_storage?: () => Promise<{ usage?: number; quota?: number } | undefined>;
-  readonly message_port?: MessagePort | null;
   readonly provider_fetch?: ProviderFetch;
   readonly create_browser_secret_vault?: (globals: unknown) => BrowserSecretVaultPort | null;
 }
@@ -141,8 +116,6 @@ export interface StudioComposition {
   readonly capabilities: StudioCapabilities;
   readonly resolutions: readonly CapabilityResolutionRecord[];
   readonly host: CompositeHostAdapter | null;
-  /** Only TauriTavern's ChatSurface produces classified chat-image gestures; standard SillyTavern gets the permanently-unavailable port. */
-  readonly chat_media: ChatMediaInteractionPort;
   readonly modules: readonly RuntimeModule[];
   dispose(): Promise<void>;
 }
@@ -219,12 +192,6 @@ function to_image_metadata(metadata: Readonly<Record<string, unknown>>): PutImag
   return ImageRecordFieldsSchema.omit({ media_type: true, quarantined: true }).parse(metadata);
 }
 
-function read_first_allowlisted_model(payload: Readonly<Record<string, unknown>>): string | null {
-  const models = read_array(as_record(payload.provider_profile), "model_allowlist");
-  const first_model = models[0];
-  return typeof first_model === "string" && first_model.length > 0 ? first_model : null;
-}
-
 function create_image_store_port(
   database: StorageDatabase,
   namespace: () => string,
@@ -281,23 +248,6 @@ export async function compose_studio_capabilities(
   const host = create_host_adapter(globals, capability_matrix);
 
   const modules: RuntimeModule[] = [];
-  const chat_media: ChatMediaInteractionPort =
-    capability_matrix.tauri_chat_surface?.available === true
-      ? new HostSurfaceChatMediaInteractions()
-      : new StandardHostChatMediaInteractions();
-  if (chat_media instanceof HostSurfaceChatMediaInteractions) {
-    modules.push(
-      new TauriChatSurfaceModule({
-        globals,
-        port: chat_media,
-      }),
-    );
-  }
-  /** Guarded by the probe, not the ChatSurface branch: TauriTavern advertises the two capabilities independently. */
-  if (capability_matrix.tauri_world_info_activation?.available === true) {
-    modules.push(new TauriWorldInfoActivationModule({ globals }));
-  }
-
   let database: StorageDatabase | null = null;
   try {
     database = await (options.open_storage ?? open_database)();
@@ -339,18 +289,6 @@ export async function compose_studio_capabilities(
   const load_provider_adapters = (): Promise<
     Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
   > => (provider_adapters ??= build_provider_adapters(database));
-  const is_auto_generation_enabled = (): boolean =>
-    settings_adapter?.get_settings().auto_generation_enabled ?? false;
-  const trigger_sessions =
-    host === null
-      ? null
-      : new HostGenerationSessionPort({
-          host,
-          sessions: new SessionRegistry(new BrowserRandomSource(globalThis.crypto)),
-          new_root_id: () => crypto.randomUUID(),
-          is_auto_generation_enabled,
-        });
-
   /** `base_url` only reaches `LocalDirectTransport`, which requires a loopback origin; cloud origins come from the code-owned route catalog. */
   const active_profile_record =
     repositories === null || settings_adapter === null
@@ -361,7 +299,6 @@ export async function compose_studio_capabilities(
   const active_profile_payload =
     active_profile_record === null ? {} : read_payload(active_profile_record);
   const direct_provider_base_url = read_optional_string(active_profile_payload, "base_url");
-  const active_profile_model_id = read_first_allowlisted_model(active_profile_payload);
   const active_provider_id =
     active_profile_record === null
       ? null
@@ -543,37 +480,6 @@ export async function compose_studio_capabilities(
     fallback.gallery,
   );
 
-  function wire_generation_trigger(
-    queue: ImageJobQueue,
-    plans: MediaExecutionPlanRegistry,
-    sessions: HostGenerationSessionPort,
-  ): void {
-    if (host === null) {
-      return;
-    }
-    const fallback_text_sink = new HostFallbackTextSink({ host, sessions });
-    modules.push(
-      new AutomaticGenerationSessionModule(sessions, fallback_text_sink),
-      new GenerationTriggerModule({
-        host,
-        request_image_tool: new RequestImageTool(
-          sessions.registry,
-          new BrowserRequestIdSource(),
-          new AutomaticImageRequestRouter({
-            queue,
-            plans,
-            targets: sessions,
-            provider_id: () => active_provider_id,
-            model_id: () => active_profile_model_id,
-          }),
-        ),
-        session_port: sessions,
-        fallback_text_sink,
-        is_auto_generation_enabled,
-      }),
-    );
-  }
-
   const generation = record(
     "generation",
     database === null
@@ -661,20 +567,6 @@ export async function compose_studio_capabilities(
               global_concurrency: settings_adapter?.get_settings().global_concurrency ?? 1,
             });
             teardown.push(timeline.observe_jobs(queue));
-            const message_port =
-              options.message_port ??
-              (trigger_sessions === null ? null : new HostMessagePort(host, trigger_sessions));
-            if (message_port !== null) {
-              const binder = new MessageBinder(queue, message_port);
-              binder.start();
-              teardown.push(() => {
-                binder.stop();
-              });
-            }
-            if (trigger_sessions !== null) {
-              wire_generation_trigger(queue, plans, trigger_sessions);
-            }
-            const request_ids = new BrowserRequestIdSource();
             return create_generation_capability({
               queue,
               plans,
@@ -684,7 +576,7 @@ export async function compose_studio_capabilities(
                 host,
                 new BrowserRandomSource(globalThis.crypto),
               ),
-              new_request_id: () => request_ids.next(),
+              new_request_id: () => RequestIdSchema.parse(crypto.randomUUID()),
               ...(prepare_request === null ? {} : { prepare_request }),
             });
           }),
@@ -755,7 +647,6 @@ export async function compose_studio_capabilities(
     },
     resolutions,
     host,
-    chat_media,
     modules,
     async dispose() {
       for (const stop of [...teardown].reverse()) {

@@ -293,7 +293,6 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
     active_provider_profile_id: PROFILE_SD.id,
     global_concurrency: 2,
     auto_generation_enabled: false,
-    fallback_generation_enabled: true,
     vocabulary_update_channel: "bundled",
     gateway: {
       endpoint: with_http_warning ? "http://192.168.1.50:7860" : "https://gateway.example.invalid",

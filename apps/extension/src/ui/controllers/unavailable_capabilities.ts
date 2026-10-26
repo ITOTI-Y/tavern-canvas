@@ -60,7 +60,6 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
-  fallback_generation_enabled: false,
   vocabulary_update_channel: "bundled",
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {

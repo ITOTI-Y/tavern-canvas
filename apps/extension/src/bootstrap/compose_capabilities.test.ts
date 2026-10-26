@@ -15,16 +15,13 @@ import { CAPABILITY_UNAVAILABLE_CODE } from "./capability_resolution.js";
 
 const READY_PROBE: BootstrapProbeResult = {
   ready: true,
-  helper_version: "4.9.1",
+  helper_version: "4.11.1",
   matrix: {
-    native_tool_manager: { available: true },
     main_generation_events: { available: true },
-    private_prompt_generation: { available: true },
+    preset_generation: { available: true },
     message_swipe_metadata: { available: true },
-    host_image_upload: { available: true },
+    tavern_regex: { available: true },
     tavern_helper: { available: true },
-    tauri_chat_surface: { available: false, reason: "TauriTavern is absent" },
-    tauri_world_info_activation: { available: false, reason: "TauriTavern is absent" },
     gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
   },
 };
@@ -40,18 +37,20 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
     getCurrentLocale: () => "en",
     getCurrentChatId: () => "chat-42",
     getRequestHeaders: () => ({ "Content-Type": "application/json" }),
-    isToolCallingSupported: () => true,
+    chat: [],
+    saveChat: vi.fn(() => Promise.resolve()),
     eventSource: { on: vi.fn(), removeListener: vi.fn() },
     eventTypes: {
       GENERATION_STARTED: "generation_started",
       GENERATION_STOPPED: "generation_stopped",
       GENERATION_ENDED: "generation_ended",
-      STREAM_TOKEN_RECEIVED: "stream_token_received",
-      CHAT_CHANGED: "chat_changed",
+      CHAT_CHANGED: "chat_id_changed",
       MESSAGE_SWIPED: "message_swiped",
+      MESSAGE_UPDATED: "message_updated",
+      MESSAGE_EDITED: "message_edited",
+      CHARACTER_MESSAGE_RENDERED: "character_message_rendered",
+      MORE_MESSAGES_LOADED: "more_messages_loaded",
     },
-    registerFunctionTool: vi.fn(),
-    unregisterFunctionTool: vi.fn(),
   };
   if (overrides.with_settings !== false) {
     context.extensionSettings = {};
@@ -59,10 +58,14 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
   }
   return {
     TavernHelper: {
-      getTavernHelperVersion: () => "4.9.1",
-      generateRaw: vi.fn(),
+      getTavernHelperVersion: () => "4.11.1",
       getChatMessages: vi.fn(() => []),
       setChatMessages: vi.fn(),
+      generate: vi.fn(),
+      stopGenerationById: vi.fn(),
+      getTavernRegexes: vi.fn(() => []),
+      replaceTavernRegexes: vi.fn(),
+      retrieveDisplayedMessage: vi.fn(() => ({ get: () => undefined })),
     },
     SillyTavern: { getContext: () => context },
     fetch: create_secrets_fetch(),
@@ -232,7 +235,7 @@ describe("compose_studio_capabilities", () => {
 
     await expect(composition.capabilities.diagnostics.load()).resolves.toMatchObject({
       capability_matrix: READY_PROBE.ready ? READY_PROBE.matrix : {},
-      helper_version: "4.9.1",
+      helper_version: "4.11.1",
       storage_usage_bytes: 1024,
       storage_quota_bytes: 4096,
     });
@@ -257,53 +260,6 @@ describe("compose_studio_capabilities", () => {
     expect(bundle.redacted_settings.capability_resolutions).toHaveLength(12);
     expect(JSON.stringify(bundle.redacted_settings)).not.toContain("token_secret_id");
     await composition.dispose();
-  });
-
-  it("selects the permanently-unavailable chat gesture port on a standard SillyTavern host", async () => {
-    const composition = await compose();
-
-    expect(composition.chat_media.capability.available).toBe(false);
-    expect(composition.chat_media.capability.reason).toContain("no message-media gesture hook");
-    expect(composition.modules).toHaveLength(0);
-    await composition.dispose();
-  });
-
-  it("registers the Tauri chat surface module and a live gesture port when TauriTavern is present", async () => {
-    const composition = await compose({
-      probe: {
-        ...READY_PROBE,
-        matrix: {
-          ...(READY_PROBE.ready ? READY_PROBE.matrix : {}),
-          tauri_chat_surface: { available: true },
-        },
-      } as BootstrapProbeResult,
-    });
-
-    expect(composition.chat_media.capability.available).toBe(true);
-    expect(composition.modules.map((module) => module.module_id)).toEqual(["tauri_chat_surface"]);
-    await composition.dispose();
-  });
-
-  it("registers the Tauri WorldInfo activation module only when the host advertises it", async () => {
-    const standard = await compose();
-    expect(standard.modules.map((module) => module.module_id)).not.toContain(
-      "tauri_world_info_activation",
-    );
-    await standard.dispose();
-
-    const tauri = await compose({
-      probe: {
-        ...READY_PROBE,
-        matrix: {
-          ...(READY_PROBE.ready ? READY_PROBE.matrix : {}),
-          tauri_world_info_activation: { available: true },
-        },
-      } as BootstrapProbeResult,
-    });
-    expect(tauri.modules.map((module) => module.module_id)).toEqual([
-      "tauri_world_info_activation",
-    ]);
-    await tauri.dispose();
   });
 
   it("persists a provider profile through the real repository and reads it back", async () => {

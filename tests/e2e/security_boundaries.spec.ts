@@ -67,29 +67,6 @@ test.describe("provider destination control", () => {
 });
 
 test.describe("hostile content never becomes code", () => {
-  test("a malformed fallback control comment is discarded without executing or leaking", async ({
-    page,
-  }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const outcome = await page.evaluate(() =>
-      window.__TAVERN_CANVAS_E2E__.probes.parse_fallback([
-        "before ",
-        "<!-- tavern-canv",
-        "as:image ",
-        '{"prompt":"</script><script>window.__TAVERN_CANVAS_E2E_EXECUTED__=\\"fallback\\"</script>"',
-        ',"__proto__":{"polluted":true}} -->',
-        " after",
-      ]),
-    );
-
-    expect(outcome.executed_marker).toBeNull();
-    expect(outcome.request_count).toBe(0);
-    expect(outcome.cleaned_text).not.toContain("tavern-canvas:image");
-    expect(outcome.cleaned_text).not.toContain("script");
-    expect(outcome.cleaned_text.trim()).toBe("before  after".trim());
-  });
-
   test("workflow placeholder substitution never evaluates its values or pollutes a prototype", async ({
     page,
   }) => {

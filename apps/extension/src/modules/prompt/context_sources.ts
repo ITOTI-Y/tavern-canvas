@@ -1,5 +1,3 @@
-import { PRIVATE_PROMPT_POLICY } from "@tavern-canvas/core";
-
 import {
   expand_character_placeholders,
   type CharacterResolvers,
@@ -20,30 +18,6 @@ import {
   type WorldInfoEntry,
   type WorldInfoEntrySelectionState,
 } from "./world_info_source.js";
-
-export { PRIVATE_PROMPT_POLICY };
-
-export interface HostPromptMessageLike {
-  readonly role: "system" | "assistant" | "user";
-  readonly content: string;
-}
-
-export interface PrivateLlmPromptRequest {
-  readonly prompts: readonly HostPromptMessageLike[];
-  readonly tools: readonly never[];
-  readonly tool_choice: "none";
-}
-
-/** Builds a private-LLM call payload that always carries the no-tools policy. */
-export function build_private_llm_prompt_request(
-  prompts: readonly HostPromptMessageLike[],
-): PrivateLlmPromptRequest {
-  return {
-    prompts,
-    tools: PRIVATE_PROMPT_POLICY.tools,
-    tool_choice: PRIVATE_PROMPT_POLICY.tool_choice,
-  };
-}
 
 export interface WorldInfoContextInput {
   readonly entries: readonly WorldInfoEntry[];

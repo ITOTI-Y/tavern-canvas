@@ -2,10 +2,9 @@ import type { CapabilityMatrix, CapabilityStatus } from "@tavern-canvas/contract
 
 import type { HostCapabilityId } from "./host_adapter.js";
 import { inspect_sillytavern, type SillyTavernInspection } from "./sillytavern_host.js";
-import { inspect_tauritavern, type TauriTavernInspection } from "./tauritavern_host.js";
 import { inspect_tavern_helper, type TavernHelperInspection } from "./tavern_helper_host.js";
 
-export const MINIMUM_TAVERN_HELPER_VERSION = "4.9.1";
+export const MINIMUM_TAVERN_HELPER_VERSION = "4.11.1";
 
 /** semver.org grammar plus surrounding whitespace and a leading `v`; build metadata is matched and ignored. Local so the `semver` package stays out of the initial chunk. */
 const SEMVER_PATTERN =
@@ -73,9 +72,9 @@ export type BootstrapProbeResult =
 
 const REQUIRED_CAPABILITY_IDS = [
   "main_generation_events",
-  "private_prompt_generation",
+  "preset_generation",
   "message_swipe_metadata",
-  "host_image_upload",
+  "tavern_regex",
   "tavern_helper",
 ] as const satisfies readonly HostCapabilityId[];
 
@@ -101,40 +100,27 @@ function read_global(value: unknown, property_name: string): unknown {
 function build_matrix(
   helper: TavernHelperInspection,
   sillytavern: SillyTavernInspection,
-  tauri: TauriTavernInspection,
 ): CapabilityMatrix {
   return {
-    native_tool_manager: available_when(
-      sillytavern.native_tool_manager,
-      "SillyTavern ToolManager API is unavailable",
-    ),
     main_generation_events: available_when(
       sillytavern.main_generation_events,
       "SillyTavern generation event API is unavailable",
     ),
-    private_prompt_generation: available_when(
-      helper.private_prompt_generation,
-      "TavernHelper.generateRaw is unavailable",
+    preset_generation: available_when(
+      helper.preset_generation,
+      "TavernHelper.generate or stopGenerationById is unavailable",
     ),
     message_swipe_metadata: available_when(
       helper.message_swipe_metadata && sillytavern.message_swipe_metadata,
-      "TavernHelper message swipe API is unavailable",
+      "TavernHelper or SillyTavern chat message API is unavailable",
     ),
-    host_image_upload: available_when(
-      sillytavern.host_image_upload,
-      "SillyTavern image upload API is unavailable",
+    tavern_regex: available_when(
+      helper.tavern_regex,
+      "TavernHelper regex or displayed message API is unavailable",
     ),
     tavern_helper: available_when(
       helper.version.state === "available",
       "TavernHelper version API is unavailable",
-    ),
-    tauri_chat_surface: available_when(
-      tauri.tauri_chat_surface,
-      "TauriTavern ChatSurface API is unavailable",
-    ),
-    tauri_world_info_activation: available_when(
-      tauri.tauri_world_info_activation,
-      "TauriTavern WorldInfo activation API is unavailable",
     ),
     gateway_protocol: unavailable("Gateway protocol is not connected"),
   };
@@ -148,12 +134,8 @@ function missing_required_capabilities(matrix: CapabilityMatrix): string[] {
 
 export function probe_host_capabilities(globals: unknown): BootstrapProbeResult {
   const helper = inspect_tavern_helper(read_global(globals, "TavernHelper"));
-  const sillytavern = inspect_sillytavern(
-    read_global(globals, "SillyTavern"),
-    read_global(globals, "fetch"),
-  );
-  const tauri = inspect_tauritavern(read_global(globals, "__TAURITAVERN__"));
-  const matrix = build_matrix(helper, sillytavern, tauri);
+  const sillytavern = inspect_sillytavern(read_global(globals, "SillyTavern"));
+  const matrix = build_matrix(helper, sillytavern);
 
   if (!helper.detected) {
     return {

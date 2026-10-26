@@ -1,67 +1,46 @@
-import type { HostPromptInjection } from "@tavern-canvas/core";
-
 import type {
   HostChatChangeHandler,
-  HostGenerationChunkHandler,
   HostGenerationHandler,
-  HostImageTool,
-  HostImageUploadRequest,
-  HostImageUploadResult,
-  HostMessageSwipedHandler,
+  HostMessageRenderedHandler,
+  HostSwipeLocation,
 } from "./host_adapter.js";
 
 export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => void;
 
-/** The extension-prompt slot TavernCanvas owns. Namespaced so no other extension's slot collides. */
-export const TRIGGER_INJECTION_KEY = "tavern_canvas_image_trigger";
-
-/** SillyTavern's own `extension_prompt_types` / `extension_prompt_roles` enum values. They are not
- * reachable through `getContext()`, so the two the trigger injection uses are restated here. */
-const SILLYTAVERN_PROMPT_POSITION = { none: -1, in_chat: 1 } as const;
-const SILLYTAVERN_PROMPT_ROLE = { system: 0 } as const;
+/** The key under a message's `extra` (and each `swipe_info[i].extra`) that holds TavernCanvas data. */
+export const TAVERN_CANVAS_EXTRA_KEY = "tavern_canvas";
 
 export interface SillyTavernEventSource {
   on(event_name: string, listener: SillyTavernEventListener): void;
   removeListener(event_name: string, listener: SillyTavernEventListener): void;
 }
 
-export interface SillyTavernFunctionTool {
-  readonly name: string;
-  readonly displayName: string;
-  readonly description: string;
-  readonly parameters: Readonly<Record<string, unknown>>;
-  readonly action: (arguments_: unknown) => string | Promise<string>;
-  readonly stealth: boolean;
+type EventTypeName =
+  | "GENERATION_STARTED"
+  | "GENERATION_STOPPED"
+  | "GENERATION_ENDED"
+  | "CHAT_CHANGED"
+  | "MESSAGE_SWIPED"
+  | "MESSAGE_UPDATED"
+  | "MESSAGE_EDITED"
+  | "CHARACTER_MESSAGE_RENDERED"
+  | "MORE_MESSAGES_LOADED";
+
+/** A SillyTavern chat message as stored in `context.chat`; only the fields TavernCanvas touches. */
+export interface SillyTavernChatMessage {
+  swipe_id?: number;
+  extra?: Record<string, unknown>;
+  swipe_info?: { extra?: Record<string, unknown> }[];
 }
 
 export interface SillyTavernContextSurface {
   getCurrentLocale(): unknown;
   getCurrentChatId(): unknown;
   getRequestHeaders(): unknown;
+  readonly chat: SillyTavernChatMessage[];
+  saveChat(): Promise<void>;
   readonly eventSource: SillyTavernEventSource;
-  readonly eventTypes: {
-    readonly GENERATION_STARTED: string;
-    readonly GENERATION_STOPPED: string;
-    readonly GENERATION_ENDED: string;
-    readonly STREAM_TOKEN_RECEIVED: string;
-    readonly CHAT_CHANGED: string;
-    readonly MESSAGE_SWIPED: string;
-  };
-  registerFunctionTool(tool: SillyTavernFunctionTool): void;
-  /** SillyTavern 1.18+ runtime check. It includes the current API, model, prompt processing mode,
-   * and the user's function-calling setting. */
-  isToolCallingSupported?(): unknown;
-  unregisterFunctionTool(name: string): void;
-  /** SillyTavern 1.12+ context member. Optional here so an older or trimmed context degrades to
-   * "no trigger instruction" instead of failing the whole host. */
-  setExtensionPrompt?: (
-    key: string,
-    value: string,
-    position: number,
-    depth: number,
-    scan: boolean,
-    role: number,
-  ) => void;
+  readonly eventTypes: Readonly<Record<EventTypeName, string>>;
 }
 
 export interface SillyTavernUploadResponse {
@@ -91,177 +70,75 @@ function is_plain_record(value: unknown): value is Record<string, unknown> {
   if (typeof value !== "object" || value === null) {
     return false;
   }
-  try {
-    const prototype: unknown = Object.getPrototypeOf(value);
-    return prototype === Object.prototype || prototype === null;
-  } catch {
-    return false;
-  }
+  const prototype: unknown = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
 }
 
 export interface SillyTavernInspection {
-  readonly native_tool_manager: boolean;
   readonly main_generation_events: boolean;
   readonly message_swipe_metadata: boolean;
-  readonly host_image_upload: boolean;
 }
 
-const SILLYTAVERN_UNAVAILABLE: SillyTavernInspection = {
-  native_tool_manager: false,
-  main_generation_events: false,
-  message_swipe_metadata: false,
-  host_image_upload: false,
-};
-
-type SafePropertyRead = { readonly ok: true; readonly value: unknown } | { readonly ok: false };
-
-function read_property(value: object, property_name: string): SafePropertyRead {
+function read_property(value: object, property_name: string): unknown {
   try {
-    return { ok: true, value: Reflect.get(value, property_name) };
+    return Reflect.get(value, property_name);
   } catch {
-    return { ok: false };
+    return undefined;
   }
 }
 
-function has_function_property(value: object, property_name: string): boolean {
-  const property = read_property(value, property_name);
-  return property.ok && typeof property.value === "function";
-}
-
-function call_method(value: object, method_name: string): SafePropertyRead {
+function call_method(value: object, method_name: string): unknown {
   const method = read_property(value, method_name);
-  if (!method.ok || typeof method.value !== "function") {
-    return { ok: false };
+  if (typeof method !== "function") {
+    return undefined;
   }
   try {
-    return { ok: true, value: Reflect.apply(method.value, value, []) };
+    return Reflect.apply(method, value, []);
   } catch {
-    return { ok: false };
+    return undefined;
   }
 }
 
-function calls_with_nonempty_string(context: object, method_name: string): boolean {
-  const result = call_method(context, method_name);
-  return result.ok && typeof result.value === "string" && result.value.trim().length > 0;
-}
-
-function has_generation_events(context: object): boolean {
-  const event_source_property = read_property(context, "eventSource");
-  const event_types_property = read_property(context, "eventTypes");
-  if (
-    !event_source_property.ok ||
-    !is_property_container(event_source_property.value) ||
-    !event_types_property.ok ||
-    !is_property_container(event_types_property.value)
-  ) {
+function has_events(context: object, names: readonly EventTypeName[]): boolean {
+  const event_source = read_property(context, "eventSource");
+  const event_types = read_property(context, "eventTypes");
+  if (!is_property_container(event_source) || !is_property_container(event_types)) {
     return false;
   }
-
-  const event_types = event_types_property.value;
-  const started = read_property(event_types, "GENERATION_STARTED");
-  const stopped = read_property(event_types, "GENERATION_STOPPED");
-  const ended = read_property(event_types, "GENERATION_ENDED");
-  const stream_chunk = read_property(event_types, "STREAM_TOKEN_RECEIVED");
   return (
-    has_function_property(event_source_property.value, "on") &&
-    has_function_property(event_source_property.value, "removeListener") &&
-    started.ok &&
-    typeof started.value === "string" &&
-    started.value.length > 0 &&
-    stopped.ok &&
-    typeof stopped.value === "string" &&
-    stopped.value.length > 0 &&
-    ended.ok &&
-    typeof ended.value === "string" &&
-    ended.value.length > 0 &&
-    stream_chunk.ok &&
-    typeof stream_chunk.value === "string" &&
-    stream_chunk.value.length > 0
+    typeof read_property(event_source, "on") === "function" &&
+    typeof read_property(event_source, "removeListener") === "function" &&
+    names.every((name) => {
+      const value = read_property(event_types, name);
+      return typeof value === "string" && value.length > 0;
+    })
   );
 }
 
-function has_message_events(context: object): boolean {
-  const event_source_property = read_property(context, "eventSource");
-  const event_types_property = read_property(context, "eventTypes");
-  if (
-    !event_source_property.ok ||
-    !is_property_container(event_source_property.value) ||
-    !event_types_property.ok ||
-    !is_property_container(event_types_property.value)
-  ) {
-    return false;
+export function inspect_sillytavern(value: unknown): SillyTavernInspection {
+  const context = is_property_container(value) ? call_method(value, "getContext") : undefined;
+  if (!is_property_container(context)) {
+    return { main_generation_events: false, message_swipe_metadata: false };
   }
-  const chat_changed = read_property(event_types_property.value, "CHAT_CHANGED");
-  const message_swiped = read_property(event_types_property.value, "MESSAGE_SWIPED");
-  return (
-    has_function_property(event_source_property.value, "on") &&
-    has_function_property(event_source_property.value, "removeListener") &&
-    chat_changed.ok &&
-    typeof chat_changed.value === "string" &&
-    chat_changed.value.length > 0 &&
-    message_swiped.ok &&
-    typeof message_swiped.value === "string" &&
-    message_swiped.value.length > 0
-  );
-}
-
-function has_valid_request_headers(context: object): boolean {
-  const headers = call_method(context, "getRequestHeaders");
-  if (!headers.ok) {
-    return false;
-  }
-  try {
-    clone_request_headers(headers.value);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function inspect_sillytavern(value: unknown, fetch_: unknown): SillyTavernInspection {
-  if (!is_property_container(value)) {
-    return { ...SILLYTAVERN_UNAVAILABLE };
-  }
-  const context_result = call_method(value, "getContext");
-  if (!context_result.ok || !is_property_container(context_result.value)) {
-    return { ...SILLYTAVERN_UNAVAILABLE };
-  }
-
-  const context = context_result.value;
-  const locale_available = calls_with_nonempty_string(context, "getCurrentLocale");
-  const chat_id_api_available = has_function_property(context, "getCurrentChatId");
+  const locale = call_method(context, "getCurrentLocale");
   return {
-    native_tool_manager:
-      has_function_property(context, "registerFunctionTool") &&
-      has_function_property(context, "unregisterFunctionTool"),
-    main_generation_events: locale_available && has_generation_events(context),
-    message_swipe_metadata: chat_id_api_available && has_message_events(context),
-    host_image_upload: typeof fetch_ === "function" && has_valid_request_headers(context),
+    main_generation_events:
+      typeof locale === "string" &&
+      locale.trim().length > 0 &&
+      has_events(context, ["GENERATION_STARTED", "GENERATION_STOPPED", "GENERATION_ENDED"]),
+    message_swipe_metadata:
+      typeof read_property(context, "getCurrentChatId") === "function" &&
+      Array.isArray(read_property(context, "chat")) &&
+      typeof read_property(context, "saveChat") === "function" &&
+      has_events(context, [
+        "CHAT_CHANGED",
+        "MESSAGE_SWIPED",
+        "MESSAGE_UPDATED",
+        "MESSAGE_EDITED",
+        "CHARACTER_MESSAGE_RENDERED",
+        "MORE_MESSAGES_LOADED",
+      ]),
   };
-}
-
-type ListenerRegistration = readonly [string, SillyTavernEventListener];
-
-type RemovalResult =
-  { readonly failed: false } | { readonly failed: true; readonly error: unknown };
-
-function remove_listeners(
-  event_source: SillyTavernEventSource,
-  listeners: readonly ListenerRegistration[],
-): RemovalResult {
-  let failed = false;
-  let first_error: unknown;
-  for (const [event_name, listener] of listeners.toReversed()) {
-    try {
-      event_source.removeListener(event_name, listener);
-    } catch (error) {
-      if (!failed) {
-        failed = true;
-        first_error = error;
-      }
-    }
-  }
-  return failed ? { failed: true, error: first_error } : { failed: false };
 }
 
 function read_nonempty_string(value: unknown, error_message: string): string {
@@ -271,272 +148,170 @@ function read_nonempty_string(value: unknown, error_message: string): string {
   return value;
 }
 
-function clone_tool_arguments(value: unknown): Readonly<Record<string, unknown>> {
-  if (!is_plain_record(value)) {
-    throw new Error("Image tool arguments must be a record");
-  }
-
-  let clone: unknown;
-  try {
-    clone = structuredClone(value);
-  } catch {
-    throw new Error("Image tool arguments could not be cloned");
-  }
-  if (!is_plain_record(clone)) {
-    throw new Error("Image tool arguments could not be cloned");
-  }
-  return clone;
-}
-
-/** Exported for `sillytavern_secret_destination.ts`, which authenticates the same
- * CSRF-header way against SillyTavern's `/api/secrets/*` endpoints. */
+/** Exported for the secret modules, which authenticate the same CSRF-header way against `/api/secrets/*`. */
 export function clone_request_headers(value: unknown): Readonly<Record<string, string>> {
-  if (!is_plain_record(value)) {
-    throw new Error("SillyTavern returned invalid request headers");
-  }
-
-  let clone: unknown;
-  try {
-    clone = structuredClone(value);
-  } catch {
-    throw new Error("SillyTavern returned invalid request headers");
-  }
   if (
-    !is_plain_record(clone) ||
-    !Object.values(clone).every((header) => typeof header === "string")
+    !is_plain_record(value) ||
+    !Object.values(value).every((header) => typeof header === "string")
   ) {
     throw new Error("SillyTavern returned invalid request headers");
   }
-  return clone as Record<string, string>;
+  return { ...(value as Record<string, string>) };
+}
+
+function read_message_id(value: unknown): number | null {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : null;
 }
 
 export class SillyTavernHost {
-  readonly #context: SillyTavernContextSurface;
-  readonly #fetch: SillyTavernFetch;
+  readonly #get_context: () => SillyTavernContextSurface;
 
-  constructor(context: SillyTavernContextSurface, fetch_: SillyTavernFetch) {
-    this.#context = context;
-    this.#fetch = bind_sillytavern_fetch(fetch_);
+  /** The context is fetched per call: `getContext()` returns a snapshot whose `chat` binding is replaced on chat load. */
+  constructor(get_context: () => SillyTavernContextSurface) {
+    this.#get_context = get_context;
   }
 
-  can_use_native_tools(): boolean {
-    const has_tool_manager =
-      has_function_property(this.#context, "registerFunctionTool") &&
-      has_function_property(this.#context, "unregisterFunctionTool");
-    if (!has_tool_manager) {
-      return false;
-    }
-    const result = call_method(this.#context, "isToolCallingSupported");
-    return result.ok && result.value === true;
-  }
   get_locale(): string {
     return read_nonempty_string(
-      this.#context.getCurrentLocale(),
+      this.#get_context().getCurrentLocale(),
       "SillyTavern returned an invalid locale",
     );
   }
 
   get_active_chat_id(): string {
     return read_nonempty_string(
-      this.#context.getCurrentChatId(),
+      this.#get_context().getCurrentChatId(),
       "SillyTavern returned an invalid active chat ID",
     );
   }
 
+  #listen(listeners: readonly (readonly [EventTypeName, SillyTavernEventListener])[]): () => void {
+    const context = this.#get_context();
+    const registered = listeners.map(
+      ([name, listener]) => [context.eventTypes[name], listener] as const,
+    );
+    for (const [event_name, listener] of registered) {
+      context.eventSource.on(event_name, listener);
+    }
+    let disposed = false;
+    return () => {
+      if (disposed) {
+        return;
+      }
+      disposed = true;
+      for (const [event_name, listener] of registered) {
+        context.eventSource.removeListener(event_name, listener);
+      }
+    };
+  }
+
   subscribe_generation(handler: HostGenerationHandler): () => void {
-    const started: SillyTavernEventListener = (...arguments_) => {
-      const generation_type = arguments_[0];
-      const dry_run = arguments_[2];
-      if (typeof generation_type === "string" && typeof dry_run === "boolean") {
-        handler({ phase: "started", generation_type, dry_run });
-      }
-    };
-    const stopped: SillyTavernEventListener = () => {
-      handler({ phase: "stopped" });
-    };
-    const ended: SillyTavernEventListener = (...arguments_) => {
-      const next_message_id = arguments_[0];
-      // SillyTavern 1.18 emits `chat.length`, which is the next zero-based message ID.
-      if (
-        typeof next_message_id === "number" &&
-        Number.isInteger(next_message_id) &&
-        next_message_id > 0
-      ) {
-        handler({ phase: "ended", message_id: next_message_id - 1 });
-      }
-    };
-    const listeners: readonly ListenerRegistration[] = [
-      [this.#context.eventTypes.GENERATION_STARTED, started],
-      [this.#context.eventTypes.GENERATION_STOPPED, stopped],
-      [this.#context.eventTypes.GENERATION_ENDED, ended],
-    ];
-    const registered: ListenerRegistration[] = [];
-
-    try {
-      for (const listener_registration of listeners) {
-        this.#context.eventSource.on(...listener_registration);
-        registered.push(listener_registration);
-      }
-    } catch (error) {
-      remove_listeners(this.#context.eventSource, registered);
-      throw error;
-    }
-
-    let disposed = false;
-    return () => {
-      if (disposed) {
-        return;
-      }
-      disposed = true;
-      const result = remove_listeners(this.#context.eventSource, registered);
-      if (result.failed) {
-        throw result.error;
-      }
-    };
-  }
-
-  subscribe_generation_chunk(handler: HostGenerationChunkHandler): () => void {
-    const event_name = this.#context.eventTypes.STREAM_TOKEN_RECEIVED;
-    let previous_text = "";
-    const listener: SillyTavernEventListener = (...arguments_) => {
-      const text = arguments_[0];
-      if (typeof text !== "string") {
-        return;
-      }
-      const chunk = text.startsWith(previous_text) ? text.slice(previous_text.length) : text;
-      previous_text = text;
-      if (chunk.length > 0) {
-        handler(chunk);
-      }
-    };
-    this.#context.eventSource.on(event_name, listener);
-
-    let disposed = false;
-    return () => {
-      if (disposed) {
-        return;
-      }
-      disposed = true;
-      this.#context.eventSource.removeListener(event_name, listener);
-    };
-  }
-
-  subscribe_chat_change(handler: HostChatChangeHandler): () => void {
-    const event_name = this.#context.eventTypes.CHAT_CHANGED;
-    const listener: SillyTavernEventListener = (...arguments_) => {
-      const chat_id = arguments_[0];
-      if (typeof chat_id === "string" && chat_id.trim().length > 0) {
-        handler({ chat_id });
-      }
-    };
-    this.#context.eventSource.on(event_name, listener);
-
-    let disposed = false;
-    return () => {
-      if (disposed) {
-        return;
-      }
-      disposed = true;
-      this.#context.eventSource.removeListener(event_name, listener);
-    };
-  }
-
-  subscribe_message_swiped(handler: HostMessageSwipedHandler): () => void {
-    const event_name = this.#context.eventTypes.MESSAGE_SWIPED;
-    const listener: SillyTavernEventListener = (...arguments_) => {
-      const message_id = arguments_[0];
-      if (typeof message_id === "number" && Number.isInteger(message_id) && message_id >= 0) {
-        handler({ message_id });
-      }
-    };
-    this.#context.eventSource.on(event_name, listener);
-
-    let disposed = false;
-    return () => {
-      if (disposed) {
-        return;
-      }
-      disposed = true;
-      this.#context.eventSource.removeListener(event_name, listener);
-    };
-  }
-
-  register_image_tool(tool: HostImageTool): () => void {
-    this.#context.registerFunctionTool({
-      name: tool.name,
-      displayName: tool.display_name,
-      description: tool.description,
-      parameters: structuredClone(tool.parameters),
-      action: async (arguments_) => tool.execute(clone_tool_arguments(arguments_)),
-      stealth: tool.stealth,
-    });
-
-    let disposed = false;
-    return () => {
-      if (disposed) {
-        return;
-      }
-      disposed = true;
-      this.#context.unregisterFunctionTool(tool.name);
-    };
-  }
-
-  set_trigger_injection(injection: HostPromptInjection | null): void {
-    const set_extension_prompt = this.#context.setExtensionPrompt;
-    if (set_extension_prompt === undefined) {
-      return;
-    }
-    Reflect.apply(set_extension_prompt, this.#context, [
-      TRIGGER_INJECTION_KEY,
-      injection?.content ?? "",
-      injection === null ? SILLYTAVERN_PROMPT_POSITION.none : SILLYTAVERN_PROMPT_POSITION.in_chat,
-      injection?.depth ?? 0,
-      injection?.scan_world_info ?? false,
-      SILLYTAVERN_PROMPT_ROLE.system,
+    return this.#listen([
+      [
+        "GENERATION_STARTED",
+        (generation_type, _options, dry_run) => {
+          if (typeof generation_type === "string" && typeof dry_run === "boolean") {
+            handler({ phase: "started", generation_type, dry_run });
+          }
+        },
+      ],
+      [
+        "GENERATION_STOPPED",
+        () => {
+          handler({ phase: "stopped" });
+        },
+      ],
+      [
+        "GENERATION_ENDED",
+        (next_message_id) => {
+          // SillyTavern emits `chat.length`, the next zero-based message ID.
+          const message_id = read_message_id(next_message_id);
+          if (message_id !== null && message_id > 0) {
+            handler({ phase: "ended", message_id: message_id - 1 });
+          }
+        },
+      ],
     ]);
   }
 
-  async upload_image(request: HostImageUploadRequest): Promise<HostImageUploadResult> {
-    const response = await this.#fetch("/api/images/upload", {
-      method: "POST",
-      headers: clone_request_headers(this.#context.getRequestHeaders()),
-      body: JSON.stringify({
-        image: request.image_base64,
-        format: request.format,
-        ch_name: request.character_name,
-        filename: request.file_name.replaceAll(".", "_"),
-      }),
-    });
+  subscribe_chat_change(handler: HostChatChangeHandler): () => void {
+    return this.#listen([
+      [
+        "CHAT_CHANGED",
+        (chat_id) => {
+          if (typeof chat_id === "string" && chat_id.trim().length > 0) {
+            handler({ chat_id });
+          }
+        },
+      ],
+    ]);
+  }
 
-    let payload: unknown;
-    try {
-      payload = await response.json();
-    } catch {
-      if (!response.ok) {
-        throw new Error(`Host image upload failed with status ${String(response.status)}`);
+  subscribe_message_rendered(handler: HostMessageRenderedHandler): () => void {
+    const listener: SillyTavernEventListener = (value) => {
+      const message_id = read_message_id(value);
+      if (message_id !== null) {
+        handler(message_id);
       }
-      throw new Error("Host image upload returned an invalid response");
-    }
+    };
+    return this.#listen([
+      ["CHARACTER_MESSAGE_RENDERED", listener],
+      ["MESSAGE_UPDATED", listener],
+      ["MESSAGE_EDITED", listener],
+      ["MESSAGE_SWIPED", listener],
+    ]);
+  }
 
-    if (!response.ok) {
-      if (
-        is_plain_record(payload) &&
-        typeof payload.error === "string" &&
-        payload.error.trim().length > 0
-      ) {
-        throw new Error(payload.error);
+  subscribe_chat_rendered(handler: () => void): () => void {
+    const listener: SillyTavernEventListener = () => {
+      handler();
+    };
+    return this.#listen([
+      ["CHAT_CHANGED", listener],
+      ["MORE_MESSAGES_LOADED", listener],
+    ]);
+  }
+
+  #find_extra(location: HostSwipeLocation, create: boolean): Record<string, unknown> | null {
+    const context = this.#get_context();
+    if (context.getCurrentChatId() !== location.chat_id) {
+      return null;
+    }
+    const message = context.chat[location.message_id];
+    if (message === undefined) {
+      return null;
+    }
+    // SillyTavern keeps the active swipe's extra on the message and copies it into swipe_info on swipe.
+    if ((message.swipe_id ?? 0) === location.swipe_id) {
+      if (message.extra === undefined && create) {
+        message.extra = {};
       }
-      throw new Error(`Host image upload failed with status ${String(response.status)}`);
+      return message.extra ?? null;
     }
-
-    if (
-      !is_plain_record(payload) ||
-      typeof payload.path !== "string" ||
-      payload.path.trim().length === 0
-    ) {
-      throw new Error("Host image upload returned an invalid response");
+    const info = message.swipe_info?.[location.swipe_id];
+    if (info === undefined) {
+      return null;
     }
+    if (info.extra === undefined && create) {
+      info.extra = {};
+    }
+    return info.extra ?? null;
+  }
 
-    return { path: payload.path };
+  read_swipe_record(location: HostSwipeLocation): unknown {
+    const extra = this.#find_extra(location, false);
+    const record = extra?.[TAVERN_CANVAS_EXTRA_KEY];
+    return record === undefined ? null : structuredClone(record);
+  }
+
+  async write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void> {
+    const extra = this.#find_extra(location, true);
+    if (extra === null) {
+      throw new Error(
+        `Chat ${location.chat_id} message ${String(location.message_id)} swipe ${String(location.swipe_id)} is not available`,
+      );
+    }
+    extra[TAVERN_CANVAS_EXTRA_KEY] = structuredClone(record);
+    await this.#get_context().saveChat();
   }
 }

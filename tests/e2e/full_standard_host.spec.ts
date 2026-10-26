@@ -6,7 +6,7 @@ import {
   REQUIRED_HOST_CAPABILITY_IDS,
 } from "./all_host_utils.js";
 
-test.describe("standard SillyTavern with JS Slash Runner 4.9.1 runs core generation, message binding, gallery and settings", () => {
+test.describe("standard SillyTavern with JS Slash Runner 4.11.1 runs core generation, message binding, gallery and settings", () => {
   test("the probe activates and every required host capability resolves available", async ({
     page,
   }) => {
@@ -22,11 +22,10 @@ test.describe("standard SillyTavern with JS Slash Runner 4.9.1 runs core generat
     if (!surface.probe.ready) {
       throw new Error("probe must be ready");
     }
-    expect(surface.probe.helper_version).toBe("4.9.1");
+    expect(surface.probe.helper_version).toBe("4.11.1");
     for (const capability_id of REQUIRED_HOST_CAPABILITY_IDS) {
       expect(surface.probe.matrix[capability_id]?.available, capability_id).toBe(true);
     }
-    expect(surface.probe.matrix.native_tool_manager?.available).toBe(true);
   });
 
   test("the Studio mounts into a real Shadow Root and installs no page-wide error listeners", async ({
@@ -47,7 +46,7 @@ test.describe("standard SillyTavern with JS Slash Runner 4.9.1 runs core generat
     expect(page_wide).toEqual([]);
   });
 
-  test("generation, gallery, settings, migration and diagnostics all resolve to real implementations", async ({
+  test("generation, gallery, settings and diagnostics all resolve to real implementations", async ({
     page,
   }) => {
     await open_host_page(page, "sillytavern_host.html");
@@ -109,21 +108,18 @@ test.describe("standard SillyTavern with JS Slash Runner 4.9.1 runs core generat
     expect(result.provider_urls).toEqual(["http://127.0.0.1:7860/sdapi/v1/txt2img"]);
   });
 
-  test("message and swipe metadata round-trip through the real TavernHelper adapter", async ({
-    page,
-  }) => {
+  test("the chat snapshot is read through the real TavernHelper adapter", async ({ page }) => {
     await open_host_page(page, "sillytavern_host.html", { mode: "capabilities" });
 
     const messages = await page.evaluate(() =>
       window.__TAVERN_CANVAS_E2E__.control.chat_messages.map((message) => ({
-        message_id: message.message_id,
-        role: message.role,
+        is_user: message.is_user,
         swipe_count: message.swipes.length,
       })),
     );
     expect(messages).toEqual([
-      { message_id: 0, role: "user", swipe_count: 1 },
-      { message_id: 1, role: "assistant", swipe_count: 1 },
+      { is_user: true, swipe_count: 1 },
+      { is_user: false, swipe_count: 1 },
     ]);
   });
 
@@ -164,21 +160,6 @@ test.describe("standard SillyTavern with JS Slash Runner 4.9.1 runs core generat
     );
     expect(foreign_requests).toEqual([]);
   });
-
-  test("no TauriTavern capability is claimed on a standard host", async ({ page }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const tauri = await page.evaluate(() => {
-      const probe = window.__TAVERN_CANVAS_E2E__.probe;
-      return probe.ready
-        ? {
-            chat_surface: probe.matrix.tauri_chat_surface?.available,
-            world_info: probe.matrix.tauri_world_info_activation?.available,
-          }
-        : null;
-    });
-    expect(tauri).toEqual({ chat_surface: false, world_info: false });
-  });
 });
 
 test.describe("a missing, disabled or too-old JS Slash Runner blocks activation with an actionable message", () => {
@@ -216,7 +197,7 @@ test.describe("a missing, disabled or too-old JS Slash Runner blocks activation 
       const host = [...document.body.children].find((element) => element.shadowRoot !== null);
       return host?.shadowRoot?.textContent ?? "";
     });
-    expect(shadow_text).toContain("4.9.1");
+    expect(shadow_text).toContain("4.11.1");
   });
 
   test("running code touches only the documented TavernHelper API", async ({ page }) => {
@@ -227,43 +208,5 @@ test.describe("a missing, disabled or too-old JS Slash Runner blocks activation 
     ]);
     const undocumented = reads.filter((name) => !PUBLIC_TAVERN_HELPER_MEMBERS.has(name));
     expect(undocumented).toEqual([]);
-  });
-});
-
-test.describe("main LLM trigger path (native tool first, hidden-comment fallback)", () => {
-  test("a tool-capable host gets the request_image function tool registered for the generation", async ({
-    page,
-  }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const registered = await page.evaluate(async () => {
-      window.__TAVERN_CANVAS_E2E__.control.emit_generation_started("normal", false);
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      return window.__TAVERN_CANVAS_E2E__.control.registered_tools.map((tool) => tool.name);
-    });
-
-    expect(
-      registered,
-      "compose_capabilities.ts must start GenerationTriggerModule so the main LLM can request " +
-        "images through SillyTavern's native ToolManager",
-    ).toContain("request_image");
-  });
-
-  test("a host without native tools gets the hidden-comment fallback stream parser attached", async ({
-    page,
-  }) => {
-    await open_host_page(page, "sillytavern_host.html", { tools: "none" });
-
-    const subscribed = await page.evaluate(async () => {
-      window.__TAVERN_CANVAS_E2E__.control.emit_generation_started("normal", false);
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      return window.__TAVERN_CANVAS_E2E__.control.subscribed_events;
-    });
-
-    expect(
-      subscribed,
-      "compose_capabilities.ts must start GenerationTriggerModule so a non-tool model's hidden " +
-        "comments are parsed out of the stream",
-    ).toContain("STREAM_TOKEN_RECEIVED");
   });
 });

@@ -9,7 +9,6 @@ import {
   type JobIdSource,
   type JobPersistencePort,
   type JobTimeSource,
-  type MessagePort,
 } from "@tavern-canvas/core";
 import type {
   ProviderAdapter,
@@ -28,7 +27,6 @@ import { describe, expect, it, vi } from "vitest";
 import { build_image_edit_request } from "./image_edit.js";
 import { build_comfyui_inpaint_request, build_novelai_inpaint_request } from "./inpaint_session.js";
 import {
-  bind_media_jobs_to_messages,
   cancel_media_job,
   classify_send_button_press,
   MediaExecutionPlanRegistry,
@@ -656,108 +654,5 @@ describe("source-message navigation", () => {
       SourceMessageNotFoundError,
     );
     expect(navigate).not.toHaveBeenCalled();
-  });
-});
-
-type FinalAssistantHandler = Parameters<MessagePort["subscribe_final_assistant"]>[0];
-type FinalAssistantEvent = Parameters<FinalAssistantHandler>[0];
-type FindTarget = Awaited<ReturnType<MessagePort["find_target"]>>;
-
-class FakeMessagePort implements MessagePort {
-  target: FindTarget = null;
-  readonly updates: Parameters<MessagePort["update_target"]>[0][] = [];
-  readonly #final_handlers = new Set<FinalAssistantHandler>();
-
-  find_target(): Promise<FindTarget> {
-    return Promise.resolve(this.target);
-  }
-
-  update_target(request: Parameters<MessagePort["update_target"]>[0]): Promise<void> {
-    this.updates.push(request);
-    return Promise.resolve();
-  }
-
-  subscribe_final_assistant(handler: FinalAssistantHandler): () => void {
-    this.#final_handlers.add(handler);
-    return () => this.#final_handlers.delete(handler);
-  }
-
-  subscribe_chat_change(): () => void {
-    return () => {};
-  }
-
-  subscribe_swipe_change(): () => void {
-    return () => {};
-  }
-
-  emit_final_assistant(event: FinalAssistantEvent): void {
-    for (const handler of this.#final_handlers) {
-      handler(event);
-    }
-  }
-}
-
-describe("bind_media_jobs_to_messages: attach/detach state transitions", () => {
-  it("marks a completed media job attached once its chat message is found", async () => {
-    const harness = create_harness();
-    const messages = new FakeMessagePort();
-    messages.target = {
-      chat_id: "chat-1",
-      message_id: 9,
-      swipe_id: 0,
-      generation_anchor: GENERATION_ANCHOR,
-      metadata: null,
-      media: [],
-    };
-
-    const binder = bind_media_jobs_to_messages(harness.queue, messages);
-    try {
-      const job = await submit_manual_generation(harness.deps, base(), sd_request());
-      await wait_for_state(harness.queue, job.job_id, "completed");
-
-      messages.emit_final_assistant({
-        chat_id: "chat-1",
-        message_id: 9,
-        swipe_id: 0,
-        role: "assistant",
-        is_final: true,
-        generation_anchor: GENERATION_ANCHOR,
-        source_anchor: SOURCE_ANCHOR,
-        request_ids: [job.request_id],
-      });
-
-      await wait_for_state(harness.queue, job.job_id, "attached");
-      expect(messages.updates).toHaveLength(1);
-    } finally {
-      binder.stop();
-    }
-  });
-
-  it("marks a completed media job orphaned when its target message no longer exists", async () => {
-    const harness = create_harness();
-    const messages = new FakeMessagePort();
-    messages.target = null;
-
-    const binder = bind_media_jobs_to_messages(harness.queue, messages);
-    try {
-      const job = await submit_manual_generation(harness.deps, base(), sd_request());
-      await wait_for_state(harness.queue, job.job_id, "completed");
-
-      messages.emit_final_assistant({
-        chat_id: "chat-1",
-        message_id: 9,
-        swipe_id: 0,
-        role: "assistant",
-        is_final: true,
-        generation_anchor: GENERATION_ANCHOR,
-        source_anchor: SOURCE_ANCHOR,
-        request_ids: [job.request_id],
-      });
-
-      await wait_for_state(harness.queue, job.job_id, "orphaned");
-      expect(messages.updates).toHaveLength(0);
-    } finally {
-      binder.stop();
-    }
   });
 });

@@ -11,7 +11,6 @@ import {
   ProviderProfileRepository,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
-import { ModuleRuntime } from "@tavern-canvas/core";
 import { deleteDB } from "idb";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -20,6 +19,7 @@ import {
   type StudioComposition,
 } from "../../apps/extension/src/bootstrap/compose_capabilities.js";
 import type { BootstrapProbeResult } from "../../apps/extension/src/host/index.js";
+import { create_standard_host, READY_PROBE } from "../harness/src/standard_host.js";
 import type {
   GenerationJobSummary,
   StudioCapabilities,
@@ -38,123 +38,23 @@ const SD_RESPONSE = JSON.parse(
   ),
 ) as { readonly images: readonly string[] };
 
-const READY_PROBE: BootstrapProbeResult = {
-  ready: true,
-  helper_version: "4.9.1",
-  matrix: {
-    native_tool_manager: { available: true },
-    main_generation_events: { available: true },
-    private_prompt_generation: { available: true },
-    message_swipe_metadata: { available: true },
-    host_image_upload: { available: true },
-    tavern_helper: { available: true },
-    tauri_chat_surface: { available: false, reason: "TauriTavern is absent" },
-    tauri_world_info_activation: { available: false, reason: "TauriTavern is absent" },
-    gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
+const HOST_SETTINGS = {
+  schema_version: 1,
+  active_namespace: NAMESPACE,
+  locale: "auto",
+  credential_storage_mode: "host",
+  active_provider_profile_id: PROFILE_ID,
+  global_concurrency: 2,
+  auto_generation_enabled: false,
+  vocabulary_update_channel: "bundled",
+  gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
+  ui: {
+    color_mode: "system",
+    inspector_width: 320,
+    inspector_collapsed: false,
+    optional_entry_enabled: false,
   },
 };
-
-interface RegisteredTool {
-  readonly name: string;
-  readonly action: (arguments_: unknown) => string | Promise<string>;
-}
-
-interface HostControl {
-  readonly globals: object;
-  readonly registered_tools: RegisteredTool[];
-  readonly injections: string[];
-  emit(event_name: string, ...arguments_: readonly unknown[]): void;
-}
-
-function create_host_control(auto_generation_enabled = true): HostControl {
-  const listeners = new Map<string, ((...arguments_: readonly unknown[]) => void)[]>();
-  const registered_tools: RegisteredTool[] = [];
-  const injections: string[] = [];
-  const context = {
-    getCurrentLocale: () => "en",
-    getCurrentChatId: () => "chat-42",
-    getRequestHeaders: () => ({ "Content-Type": "application/json" }),
-    isToolCallingSupported: () => true,
-    eventSource: {
-      on(event_name: string, listener: (...arguments_: readonly unknown[]) => void) {
-        listeners.set(event_name, [...(listeners.get(event_name) ?? []), listener]);
-      },
-      removeListener(event_name: string, listener: (...arguments_: readonly unknown[]) => void) {
-        listeners.set(
-          event_name,
-          (listeners.get(event_name) ?? []).filter((candidate) => candidate !== listener),
-        );
-      },
-    },
-    eventTypes: {
-      GENERATION_STARTED: "generation_started",
-      GENERATION_STOPPED: "generation_stopped",
-      GENERATION_ENDED: "generation_ended",
-      STREAM_TOKEN_RECEIVED: "stream_token_received",
-      CHAT_CHANGED: "chat_changed",
-      MESSAGE_SWIPED: "message_swiped",
-    },
-    registerFunctionTool(tool: RegisteredTool) {
-      registered_tools.push(tool);
-    },
-    unregisterFunctionTool: vi.fn(),
-    setExtensionPrompt(_key: string, value: string) {
-      injections.push(value);
-    },
-    extensionSettings: {
-      tavern_canvas: {
-        schema_version: 1,
-        active_namespace: NAMESPACE,
-        locale: "auto",
-        credential_storage_mode: "host",
-        active_provider_profile_id: PROFILE_ID,
-        global_concurrency: 2,
-        auto_generation_enabled,
-        fallback_generation_enabled: auto_generation_enabled,
-        vocabulary_update_channel: "bundled",
-        gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
-        ui: {
-          color_mode: "system",
-          inspector_width: 320,
-          inspector_collapsed: false,
-          optional_entry_enabled: false,
-        },
-      },
-    },
-    saveSettingsDebounced: vi.fn(),
-  };
-  return {
-    globals: {
-      TavernHelper: {
-        getTavernHelperVersion: () => "4.9.1",
-        generateRaw: vi.fn(),
-        getChatMessages: vi.fn(() => []),
-        setChatMessages: vi.fn(),
-      },
-      SillyTavern: { getContext: () => context },
-      fetch: vi.fn(),
-    },
-    registered_tools,
-    injections,
-    emit(event_name, ...arguments_) {
-      for (const listener of [...(listeners.get(event_name) ?? [])]) {
-        listener(...arguments_);
-      }
-    },
-  };
-}
-
-function create_globals(): object {
-  return create_host_control(false).globals;
-}
-
-function published_anchor(control: HostControl): string {
-  const anchor = /"([a-f0-9]{64})"/u.exec(control.injections.at(-1) ?? "")?.[1];
-  if (anchor === undefined) {
-    throw new Error("No generation anchor was published to the main LLM");
-  }
-  return anchor;
-}
 
 async function seed_provider_profile(database: StorageDatabase): Promise<void> {
   const repository = new ProviderProfileRepository(database);
@@ -206,7 +106,7 @@ interface Harness {
 
 async function create_harness(
   respond: (signal: AbortSignal | undefined) => Promise<Response>,
-  globals: object = create_globals(),
+  globals: object = create_standard_host({ settings: HOST_SETTINGS }).globals,
   probe: BootstrapProbeResult = READY_PROBE,
 ): Promise<Harness> {
   const database = await open_database();
@@ -227,24 +127,6 @@ async function create_harness(
   });
 
   return { composition, capabilities: composition.capabilities, database, requests };
-}
-
-// Composition alone wires nothing; only start_all() attaches the trigger to the host.
-async function start_modules(composition: StudioComposition): Promise<ModuleRuntime> {
-  const runtime = new ModuleRuntime(composition.modules);
-  await runtime.start_all();
-  return runtime;
-}
-
-function probe_without_native_tools(): BootstrapProbeResult {
-  return {
-    ready: true,
-    helper_version: "4.9.1",
-    matrix: {
-      ...(READY_PROBE.ready ? READY_PROBE.matrix : {}),
-      native_tool_manager: { available: false },
-    },
-  };
 }
 
 function request_url(input: RequestInfo | URL): string {
@@ -387,119 +269,6 @@ describe("composed generation flow", () => {
 
     const records = await new GalleryImageRecordRepository(harness.database).list(NAMESPACE);
     expect(records).toEqual([]);
-    await harness.composition.dispose();
-  });
-
-  it("registers request_image with the host and drives a native tool call to a stored image", async () => {
-    const control = create_host_control();
-    const harness = await create_harness(
-      () => Promise.resolve(json_response(SD_RESPONSE)),
-      control.globals,
-    );
-    const runtime = await start_modules(harness.composition);
-    await vi.waitFor(() => expect(control.injections.length).toBeGreaterThan(0));
-
-    control.emit("generation_started", "normal", {}, false);
-    const tool = control.registered_tools.find((candidate) => candidate.name === "request_image");
-    if (tool === undefined) {
-      throw new Error(
-        "the composition root must start GenerationTriggerModule so SillyTavern's ToolManager can " +
-          "reach request_image",
-      );
-    }
-
-    const response: unknown = JSON.parse(
-      await tool.action({
-        generation_anchor: published_anchor(control),
-        scene_description: "a rainy alley at night",
-      }),
-    );
-    expect(response).toMatchObject({ status: "queued" });
-
-    await vi.waitFor(async () =>
-      expect(await harness.capabilities.generation.load()).toMatchObject([{ state: "completed" }]),
-    );
-    expect(harness.requests[0]?.url).toBe(`${PROVIDER_ORIGIN}/sdapi/v1/txt2img`);
-    expect(harness.requests[0]?.body).toContain("a rainy alley at night");
-    await expect(
-      new GalleryImageRecordRepository(harness.database).list(NAMESPACE),
-    ).resolves.toHaveLength(1);
-
-    await runtime.stop_all();
-    await harness.composition.dispose();
-  });
-
-  it("turns a hidden-comment stream from a non-tool model into a completed generation job", async () => {
-    const control = create_host_control();
-    const harness = await create_harness(
-      () => Promise.resolve(json_response(SD_RESPONSE)),
-      control.globals,
-      probe_without_native_tools(),
-    );
-    const runtime = await start_modules(harness.composition);
-    await vi.waitFor(() => expect(control.injections.length).toBeGreaterThan(0));
-
-    control.emit("generation_started", "normal", {}, false);
-    expect(control.registered_tools).toEqual([]);
-
-    const marker = `<!-- tavern-canvas:image ${JSON.stringify({
-      generation_anchor: published_anchor(control),
-      scene_description: "a neon rooftop",
-    })} -->`;
-    control.emit("stream_token_received", `Before ${marker} after`);
-    control.emit("generation_stopped");
-
-    await vi.waitFor(async () =>
-      expect(await harness.capabilities.generation.load()).toMatchObject([{ state: "completed" }]),
-    );
-    expect(harness.requests[0]?.body).toContain("a neon rooftop");
-
-    await runtime.stop_all();
-    await harness.composition.dispose();
-  });
-
-  it("registers no tool and parses no marker while automatic generation is disabled", async () => {
-    const control = create_host_control(false);
-    const harness = await create_harness(
-      () => Promise.resolve(json_response(SD_RESPONSE)),
-      control.globals,
-      probe_without_native_tools(),
-    );
-    const runtime = await start_modules(harness.composition);
-
-    control.emit("generation_started", "normal", {}, false);
-    control.emit(
-      "stream_token_received",
-      `<!-- tavern-canvas:image ${JSON.stringify({
-        generation_anchor: "a".repeat(64),
-        scene_description: "should never run",
-      })} -->`,
-    );
-    control.emit("generation_stopped");
-    await new Promise((resolve) => setTimeout(resolve, 20));
-
-    expect(control.injections.at(-1) ?? "").toBe("");
-    expect(harness.requests).toEqual([]);
-    await expect(harness.capabilities.generation.load()).resolves.toEqual([]);
-
-    await runtime.stop_all();
-    await harness.composition.dispose();
-  });
-
-  it("detaches the trigger from the host when the runtime stops", async () => {
-    const control = create_host_control();
-    const harness = await create_harness(
-      () => Promise.resolve(json_response(SD_RESPONSE)),
-      control.globals,
-    );
-    const runtime = await start_modules(harness.composition);
-    await vi.waitFor(() => expect(control.injections.length).toBeGreaterThan(0));
-    await runtime.stop_all();
-
-    control.emit("generation_started", "normal", {}, false);
-    expect(control.registered_tools).toEqual([]);
-    expect(control.injections.at(-1)).toBe("");
-
     await harness.composition.dispose();
   });
 

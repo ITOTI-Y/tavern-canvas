@@ -16,7 +16,6 @@ import {
 import { createApp, defineComponent, h, ref } from "vue";
 
 import { create_i18n } from "../../../apps/extension/src/i18n/create_i18n.js";
-import { ChatMediaInteractionCommands } from "../../../apps/extension/src/modules/media/chat_media_interactions.js";
 import {
   MediaExecutionPlanRegistry,
   MediaJobExecutor,
@@ -248,19 +247,6 @@ const JobsPanel = defineComponent({
       );
     }
 
-    const commands = new ChatMediaInteractionCommands({
-      open_prompt_edit: (image_id) => {
-        log.value.push(`command: open_prompt_edit ${image_id}`);
-      },
-      confirm_active_profile: () => Promise.resolve(true),
-      regenerate: (image_id) => {
-        log.value.push(`command: regenerate ${image_id}`);
-      },
-      open_preview: (image_id) => {
-        log.value.push(`command: open_preview ${image_id}`);
-      },
-    });
-
     return () =>
       h("div", { "data-testid": "jobs-panel" }, [
         h(
@@ -273,42 +259,6 @@ const JobsPanel = defineComponent({
           "button",
           { "data-testid": "run-failed-edit", onClick: () => void run_failed_edit() },
           "Run failed edit",
-        ),
-        h(
-          "button",
-          {
-            "data-testid": "simulate-long-press",
-            onClick: () =>
-              void commands.handle({
-                image_id: "44444444-4444-4444-8444-444444444444",
-                gesture: "long_press",
-              }),
-          },
-          "Simulate long press",
-        ),
-        h(
-          "button",
-          {
-            "data-testid": "simulate-double-click",
-            onClick: () =>
-              void commands.handle({
-                image_id: "44444444-4444-4444-8444-444444444444",
-                gesture: "double_click",
-              }),
-          },
-          "Simulate double click",
-        ),
-        h(
-          "button",
-          {
-            "data-testid": "simulate-click",
-            onClick: () =>
-              void commands.handle({
-                image_id: "44444444-4444-4444-8444-444444444444",
-                gesture: "click",
-              }),
-          },
-          "Simulate click",
         ),
         h("pre", { "data-testid": "jobs-log" }, log.value.join("\n")),
       ]);

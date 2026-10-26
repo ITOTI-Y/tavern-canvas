@@ -20,12 +20,6 @@ export interface ProviderOverrideOutcome {
   readonly request_headers: readonly Readonly<Record<string, string>>[];
 }
 
-export interface FallbackParseOutcome {
-  readonly cleaned_text: string;
-  readonly request_count: number;
-  readonly executed_marker: string | null;
-}
-
 export interface HttpAcknowledgmentOutcome {
   readonly before: string;
   readonly after: string;
@@ -88,7 +82,6 @@ export interface SecurityProbes {
   ): Promise<GatewayGenerationOutcome>;
   vocabulary_update(): Promise<VocabularyUpdateOutcome>;
   provider_override(attempt: ProviderOverrideAttempt): Promise<ProviderOverrideOutcome>;
-  parse_fallback(chunks: readonly string[]): FallbackParseOutcome;
   render_workflow(workflow_json: string, values: Readonly<Record<string, unknown>>): string;
   http_acknowledgment(endpoint: string): HttpAcknowledgmentOutcome;
 }
@@ -102,7 +95,6 @@ export interface SecurityProbeOptions {
 }
 
 const ATTACKER_PROFILE_ID = "33333333-3333-4333-8333-333333333333";
-const EXECUTION_MARKER_KEY = "__TAVERN_CANVAS_E2E_EXECUTED__";
 
 export async function create_security_probes(
   options: SecurityProbeOptions,
@@ -110,7 +102,6 @@ export async function create_security_probes(
   const [
     { compose_studio_capabilities },
     { probe_host_capabilities },
-    { FallbackStreamParser },
     { render_comfyui_workflow, validate_stored_comfyui_workflow },
     { acknowledge_http_origin, is_http_origin_acknowledged },
     { select_transport, TransportConfigurationError },
@@ -123,7 +114,6 @@ export async function create_security_probes(
   ] = await Promise.all([
     import("../../../apps/extension/src/bootstrap/compose_capabilities.js"),
     import("../../../apps/extension/src/host/index.js"),
-    import("@tavern-canvas/core"),
     import("@tavern-canvas/providers"),
     import("../../../apps/extension/src/transport/http_acknowledgment.js"),
     import("../../../apps/extension/src/transport/transport_selector.js"),
@@ -479,24 +469,6 @@ export async function create_security_probes(
         error,
         request_urls: observed.map((request) => request.url),
         request_headers: observed.map((request) => request.headers),
-      };
-    },
-
-    parse_fallback(chunks) {
-      Reflect.deleteProperty(window, EXECUTION_MARKER_KEY);
-      const parser = new FallbackStreamParser("d".repeat(64), true);
-      let cleaned_text = "";
-      let request_count = 0;
-      for (const chunk of chunks) {
-        const parsed = parser.push(chunk);
-        cleaned_text += parsed.cleaned_text;
-        request_count += parsed.requests.length;
-      }
-      const marker: unknown = Reflect.get(window, EXECUTION_MARKER_KEY);
-      return {
-        cleaned_text,
-        request_count,
-        executed_marker: typeof marker === "string" ? marker : null,
       };
     },
 

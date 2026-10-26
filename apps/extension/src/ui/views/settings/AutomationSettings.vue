@@ -35,12 +35,6 @@ const global_concurrency = computed(() => props.settings?.global_concurrency);
         :disabled="!settings"
         @update:model-value="(value) => update({ auto_generation_enabled: value })"
       />
-      <AppSwitch
-        :model-value="settings?.fallback_generation_enabled ?? false"
-        :label="t('settings.automation.fallback_generation_label')"
-        :disabled="!settings"
-        @update:model-value="(value) => update({ fallback_generation_enabled: value })"
-      />
       <div :class="styles.row">
         <span :class="styles.row_label">{{
           t("settings.automation.global_concurrency_label")

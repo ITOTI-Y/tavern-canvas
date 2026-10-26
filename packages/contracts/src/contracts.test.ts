@@ -475,7 +475,6 @@ describe("initial settings and capability contracts", () => {
     active_provider_profile_id: null,
     global_concurrency: 4,
     auto_generation_enabled: true,
-    fallback_generation_enabled: true,
     vocabulary_update_channel: "bundled",
     gateway: {
       endpoint: "http://192.168.1.10:8080",
@@ -606,7 +605,6 @@ describe("strict public object boundaries", () => {
     global_concurrency: 4,
     auto_generation_enabled: true,
     vocabulary_update_channel: "bundled",
-    fallback_generation_enabled: true,
     gateway: gateway_settings,
     ui: {
       color_mode: "system" as const,

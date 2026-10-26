@@ -8,14 +8,12 @@ import {
 import {
   ImageJobQueue,
   JobExecutorFailure,
-  MessageBinder,
   type EnqueueGenerationJobRequest,
   type GenerationJobSnapshot,
   type JobExecutionControl,
   type JobExecutionResult,
   type JobExecutor,
   type JobPersistencePort,
-  type MessagePort,
 } from "@tavern-canvas/core";
 import type {
   ProviderAdapter,
@@ -378,13 +376,4 @@ export async function navigate_to_source_message(
     throw new SourceMessageNotFoundError();
   }
   await navigation.navigate(source_message);
-}
-
-export function bind_media_jobs_to_messages(
-  queue: ImageJobQueue,
-  messages: MessagePort,
-): MessageBinder {
-  const binder = new MessageBinder(queue, messages);
-  binder.start();
-  return binder;
 }

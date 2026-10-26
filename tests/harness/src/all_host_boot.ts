@@ -22,7 +22,6 @@ record_listeners(window, "window");
 record_listeners(document, "document");
 
 const params = new URLSearchParams(window.location.search);
-const host_kind = document.body.dataset.host === "tauri" ? "tauri" : "sillytavern";
 
 const PROFILE_ID = "11111111-1111-4111-8111-111111111111";
 const NAMESPACE = "primary";
@@ -47,12 +46,10 @@ async function boot(): Promise<void> {
     import("./all_host_probes.js"),
   ]);
 
-  const helper_parameter = params.get("helper") ?? "4.9.1";
+  const helper_parameter = params.get("helper") ?? "4.11.1";
   const gateway_endpoint = params.get("gateway");
   const environment = create_host_environment({
     helper_version: helper_parameter === "missing" ? null : helper_parameter,
-    native_tool_manager: params.get("tools") !== "none",
-    tauri: host_kind === "tauri",
     secrets_readable: params.get("secrets") !== "sealed",
     active_provider_profile_id: PROFILE_ID,
     gateway_endpoint,
@@ -61,15 +58,6 @@ async function boot(): Promise<void> {
         ? { [new URL(gateway_endpoint).origin]: "2026-08-08T00:00:00.000Z" }
         : {},
   });
-
-  // native_tool_manager is probed from SillyTavern's context, so a host without native tools lacks the two methods.
-  if (params.get("tools") === "none") {
-    const context = (
-      environment.globals.SillyTavern as { getContext(): Record<string, unknown> }
-    ).getContext();
-    delete context.registerFunctionTool;
-    delete context.unregisterFunctionTool;
-  }
 
   // Deletion must complete before open_database() runs, which a Playwright-side evaluate cannot order.
   if (params.get("reset") === "1") {

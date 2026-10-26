@@ -1,8 +1,8 @@
 import type {
   SillyTavernContextSurface,
   SillyTavernEventListener,
-  SillyTavernFunctionTool,
 } from "../../../apps/extension/src/host/sillytavern_host.js";
+import type { TavernRegex } from "../../../apps/extension/src/host/tavern_helper_host.js";
 import type { HostMessageRole } from "../../../apps/extension/src/host/host_adapter.js";
 
 export interface RecordedRequest {
@@ -15,55 +15,40 @@ export interface RecordedRequest {
 export interface HostEnvironmentOptions {
   /** `null` installs no `window.TavernHelper` at all (the "extension is missing" blocked case). */
   readonly helper_version: string | null;
-  readonly native_tool_manager: boolean;
-  readonly tauri: boolean;
   /** Whether the host reveals stored credentials (SillyTavern's `allowKeysExposure`). */
   readonly secrets_readable: boolean;
-  /** Seeded under `extension_settings["st-chatu8"]` so the migration capability sees a v2 install. */
   readonly active_provider_profile_id: string;
   readonly gateway_endpoint: string | null;
   readonly http_acknowledgments: Readonly<Record<string, string>>;
 }
 
-export interface WorldInfoActivationRecord {
-  readonly uid: string;
-  readonly world: string;
+/** A message in SillyTavern's own `chat` format; TavernHelper's view is derived from it. */
+export interface MutableChatMessage {
+  name: string;
+  is_user: boolean;
+  is_system: boolean;
+  mes: string;
+  swipe_id: number;
+  swipes: string[];
+  extra: Record<string, unknown>;
+  swipe_info: { extra?: Record<string, unknown> }[];
 }
 
 export interface HostEnvironmentControl {
-  readonly registered_tools: readonly SillyTavernFunctionTool[];
-  readonly unregistered_tool_names: readonly string[];
   readonly subscribed_events: readonly string[];
-  readonly trigger_injections: readonly string[];
-  readonly upload_requests: readonly RecordedRequest[];
   readonly requests: readonly RecordedRequest[];
   readonly chat_messages: readonly MutableChatMessage[];
+  readonly regex_scripts: readonly TavernRegex[];
+  readonly generate_calls: readonly Readonly<Record<string, unknown>>[];
   readonly helper_property_reads: readonly string[];
   readonly saved_settings_count: () => number;
   readonly extension_settings: Record<string, unknown>;
+  set_generate_response(response: string): void;
   emit_generation_started(generation_type: string, dry_run: boolean): void;
   emit_generation_ended(message_id: number): void;
-  emit_stream_token(cumulative_text: string): void;
   emit_chat_changed(chat_id: string): void;
-  emit_message_swiped(message_id: number): void;
+  emit_message_rendered(message_id: number): void;
   set_active_chat_id(chat_id: string): void;
-  set_active_swipe(message_id: number, swipe_id: number): void;
-  append_swipe(message_id: number, content: string): void;
-  delete_message(message_id: number): void;
-  emit_world_info_activation(entries: readonly WorldInfoActivationRecord[]): void;
-  subscribed_world_info_handler_count(): number;
-  chat_surface_participant_count(): number;
-}
-
-export interface MutableChatMessage {
-  message_id: number;
-  name: string;
-  role: HostMessageRole;
-  is_hidden: boolean;
-  swipe_id: number;
-  swipes: string[];
-  swipes_data: Record<string, unknown>[];
-  swipes_info: Record<string, unknown>[];
 }
 
 const SEEDED_CREDENTIAL = "seeded-plaintext-credential-never-in-a-bundle";
@@ -76,26 +61,40 @@ export const SEEDED_CHAT_TEXT = "SEEDED_CHAT_CONTENT_marker_never_leaves_the_hos
 function initial_chat_messages(): MutableChatMessage[] {
   return [
     {
-      message_id: 0,
       name: "User",
-      role: "user",
-      is_hidden: false,
+      is_user: true,
+      is_system: false,
+      mes: SEEDED_CHAT_TEXT,
       swipe_id: 0,
       swipes: [SEEDED_CHAT_TEXT],
-      swipes_data: [{}],
-      swipes_info: [{}],
+      extra: {},
+      swipe_info: [{ extra: {} }],
     },
     {
-      message_id: 1,
       name: "Assistant",
-      role: "assistant",
-      is_hidden: false,
+      is_user: false,
+      is_system: false,
+      mes: "first assistant swipe",
       swipe_id: 0,
       swipes: ["first assistant swipe"],
-      swipes_data: [{}],
-      swipes_info: [{}],
+      extra: {},
+      swipe_info: [{ extra: {} }],
     },
   ];
+}
+
+function to_helper_message(message: MutableChatMessage, message_id: number) {
+  const role: HostMessageRole = message.is_user ? "user" : "assistant";
+  return {
+    message_id,
+    name: message.name,
+    role,
+    is_hidden: message.is_system,
+    swipe_id: message.swipe_id,
+    swipes: [...message.swipes],
+    swipes_data: message.swipes.map(() => ({})),
+    swipes_info: structuredClone(message.swipe_info),
+  };
 }
 
 function to_header_record(init: RequestInit | undefined): Readonly<Record<string, string>> {
@@ -142,16 +141,13 @@ export function create_host_environment(options: HostEnvironmentOptions): {
   readonly provider_requests: readonly RecordedRequest[];
 } {
   const listeners = new Map<string, Set<SillyTavernEventListener>>();
-  const registered_tools: SillyTavernFunctionTool[] = [];
-  const unregistered_tool_names: string[] = [];
   const subscribed_events: string[] = [];
-  const trigger_injections: string[] = [];
-  const upload_requests: RecordedRequest[] = [];
   const requests: RecordedRequest[] = [];
   const provider_requests: RecordedRequest[] = [];
-  const world_info_handlers = new Set<(batch: unknown) => void>();
-  const chat_surface_participants: unknown[] = [];
   const chat_messages = initial_chat_messages();
+  const regex_scripts: TavernRegex[] = [];
+  const generate_calls: Record<string, unknown>[] = [];
+  let generate_response = JSON.stringify({ illustrations: [] });
   const stored_secret_keys = new Set<string>(["tavern_canvas:image:openai_image:default"]);
   let active_chat_id = "chat-a";
   let saved_settings_count = 0;
@@ -165,7 +161,6 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       active_provider_profile_id: options.active_provider_profile_id,
       global_concurrency: 2,
       auto_generation_enabled: false,
-      fallback_generation_enabled: false,
       vocabulary_update_channel: "bundled",
       gateway: {
         endpoint: options.gateway_endpoint,
@@ -208,25 +203,18 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         listeners.get(event_name)?.delete(listener);
       },
     },
+    chat: chat_messages,
+    saveChat: () => Promise.resolve(),
     eventTypes: {
       GENERATION_STARTED: "GENERATION_STARTED",
       GENERATION_STOPPED: "GENERATION_STOPPED",
       GENERATION_ENDED: "GENERATION_ENDED",
-      STREAM_TOKEN_RECEIVED: "STREAM_TOKEN_RECEIVED",
       CHAT_CHANGED: "CHAT_CHANGED",
       MESSAGE_SWIPED: "MESSAGE_SWIPED",
-    },
-    registerFunctionTool(tool) {
-      registered_tools.push(tool);
-    },
-    unregisterFunctionTool(name) {
-      unregistered_tool_names.push(name);
-    },
-    isToolCallingSupported() {
-      return true;
-    },
-    setExtensionPrompt(_key, value) {
-      trigger_injections.push(value);
+      MESSAGE_UPDATED: "MESSAGE_UPDATED",
+      MESSAGE_EDITED: "MESSAGE_EDITED",
+      CHARACTER_MESSAGE_RENDERED: "CHARACTER_MESSAGE_RENDERED",
+      MORE_MESSAGES_LOADED: "MORE_MESSAGES_LOADED",
     },
     extensionSettings: extension_settings,
     saveSettingsDebounced() {
@@ -243,10 +231,6 @@ export function create_host_environment(options: HostEnvironmentOptions): {
     };
     requests.push(record);
 
-    if (record.url === "/api/images/upload") {
-      upload_requests.push(record);
-      return Promise.resolve(json_response({ path: "/user/images/harness/generated.png" }));
-    }
     if (record.url === "/api/secrets/write") {
       const key: unknown = (JSON.parse(record.body) as { key?: unknown }).key;
       if (typeof key === "string") {
@@ -289,23 +273,39 @@ export function create_host_environment(options: HostEnvironmentOptions): {
   if (options.helper_version !== null) {
     const helper = {
       getTavernHelperVersion: () => options.helper_version,
-      generateRaw: () => Promise.resolve("harness private prompt response"),
-      getChatMessages: (range: string | number) =>
-        typeof range === "number"
-          ? structuredClone(chat_messages.filter((message) => message.message_id === range))
-          : structuredClone(chat_messages),
-      setChatMessages: (updates: readonly { message_id: number }[]) => {
+      getChatMessages: (range: string | number) => {
+        if (typeof range !== "number") {
+          return chat_messages.map(to_helper_message);
+        }
+        const message = chat_messages[range];
+        return message === undefined ? [] : [to_helper_message(message, range)];
+      },
+      setChatMessages: (updates: readonly { message_id: number; message: string }[]) => {
         for (const update of updates) {
-          const index = chat_messages.findIndex(
-            (message) => message.message_id === update.message_id,
-          );
-          const existing = chat_messages[index];
-          if (existing !== undefined) {
-            chat_messages[index] = { ...existing, ...structuredClone(update) };
+          const message = chat_messages[update.message_id];
+          if (message !== undefined) {
+            message.mes = update.message;
+            message.swipes[message.swipe_id] = update.message;
           }
         }
         return Promise.resolve();
       },
+      generate: (config: Record<string, unknown>) => {
+        generate_calls.push(structuredClone(config));
+        return Promise.resolve({ content: generate_response });
+      },
+      stopGenerationById: () => true,
+      getTavernRegexes: () => structuredClone(regex_scripts),
+      replaceTavernRegexes: (regexes: TavernRegex[]) => {
+        regex_scripts.splice(0, regex_scripts.length, ...structuredClone(regexes));
+        return Promise.resolve();
+      },
+      retrieveDisplayedMessage: (message_id: number) => ({
+        get: () =>
+          document.querySelector<HTMLElement>(
+            `#chat .mes[mesid="${String(message_id)}"] .mes_text`,
+          ) ?? undefined,
+      }),
     };
     globals.TavernHelper = new Proxy(helper, {
       get(target, property, receiver) {
@@ -315,37 +315,6 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         return Reflect.get(target, property, receiver) as unknown;
       },
     });
-  }
-
-  if (options.tauri) {
-    globals.__TAURITAVERN__ = {
-      abiVersion: 1,
-      ready: Promise.resolve(),
-      api: {
-        chatSurface: {
-          protocolVersion: 1,
-          isManagedOwnershipRequired: () => true,
-          registerParticipant: (participant: unknown) => {
-            chat_surface_participants.push(participant);
-            return () => {
-              const index = chat_surface_participants.indexOf(participant);
-              if (index >= 0) {
-                chat_surface_participants.splice(index, 1);
-              }
-            };
-          },
-        },
-        worldInfo: {
-          getLastActivation: () => ({ entries: [] }),
-          subscribeActivations: (handler: (batch: unknown) => void) => {
-            world_info_handlers.add(handler);
-            return () => {
-              world_info_handlers.delete(handler);
-            };
-          },
-        },
-      },
-    };
   }
 
   const provider_fetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
@@ -359,73 +328,33 @@ export function create_host_environment(options: HostEnvironmentOptions): {
   };
 
   const control: HostEnvironmentControl = {
-    registered_tools,
-    unregistered_tool_names,
     subscribed_events,
-    trigger_injections,
-    upload_requests,
     requests,
     chat_messages,
+    regex_scripts,
+    generate_calls,
     helper_property_reads,
     saved_settings_count: () => saved_settings_count,
     extension_settings,
+    set_generate_response(response) {
+      generate_response = response;
+    },
     emit_generation_started(generation_type, dry_run) {
       emit("GENERATION_STARTED", generation_type, {}, dry_run);
     },
     emit_generation_ended(message_id) {
-      emit("GENERATION_ENDED", message_id);
-    },
-    emit_stream_token(cumulative_text) {
-      emit("STREAM_TOKEN_RECEIVED", cumulative_text);
+      emit("GENERATION_ENDED", message_id + 1);
     },
     emit_chat_changed(chat_id) {
       active_chat_id = chat_id;
       emit("CHAT_CHANGED", chat_id);
     },
-    emit_message_swiped(message_id) {
-      emit("MESSAGE_SWIPED", message_id);
+    emit_message_rendered(message_id) {
+      emit("CHARACTER_MESSAGE_RENDERED", message_id, "normal");
     },
     set_active_chat_id(chat_id) {
       active_chat_id = chat_id;
     },
-    set_active_swipe(message_id, swipe_id) {
-      const message = chat_messages.find((candidate) => candidate.message_id === message_id);
-      if (message !== undefined) {
-        message.swipe_id = swipe_id;
-      }
-    },
-    append_swipe(message_id, content) {
-      const message = chat_messages.find((candidate) => candidate.message_id === message_id);
-      if (message !== undefined) {
-        message.swipes.push(content);
-        message.swipes_data.push({});
-        message.swipes_info.push({});
-      }
-    },
-    delete_message(message_id) {
-      const index = chat_messages.findIndex((message) => message.message_id === message_id);
-      if (index >= 0) {
-        chat_messages.splice(index, 1);
-      }
-    },
-    // A partial batch is rejected by a subscribed module; emit the full TauriWorldInfoActivationBatchSurface shape.
-    emit_world_info_activation(entries) {
-      for (const handler of [...world_info_handlers]) {
-        handler({
-          timestampMs: 1_780_000_000_000,
-          trigger: "generation",
-          entries: entries.map((entry) => ({
-            uid: entry.uid,
-            world: entry.world,
-            displayName: entry.uid,
-            constant: false,
-            position: "before",
-          })),
-        });
-      }
-    },
-    subscribed_world_info_handler_count: () => world_info_handlers.size,
-    chat_surface_participant_count: () => chat_surface_participants.length,
   };
 
   return { globals, control, provider_fetch, provider_requests };

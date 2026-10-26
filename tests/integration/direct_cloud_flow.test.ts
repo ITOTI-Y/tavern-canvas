@@ -18,7 +18,7 @@ import {
   compose_studio_capabilities,
   type StudioComposition,
 } from "../../apps/extension/src/bootstrap/compose_capabilities.js";
-import type { BootstrapProbeResult } from "../../apps/extension/src/host/index.js";
+import { create_standard_host, READY_PROBE } from "../harness/src/standard_host.js";
 import type {
   GenerationJobSummary,
   StudioCapabilities,
@@ -37,22 +37,6 @@ const NOVELAI_RESPONSE = JSON.parse(
     "utf8",
   ),
 ) as { readonly images: readonly unknown[] };
-
-const READY_PROBE: BootstrapProbeResult = {
-  ready: true,
-  helper_version: "4.9.1",
-  matrix: {
-    native_tool_manager: { available: true },
-    main_generation_events: { available: true },
-    private_prompt_generation: { available: true },
-    message_swipe_metadata: { available: true },
-    host_image_upload: { available: true },
-    tavern_helper: { available: true },
-    tauri_chat_surface: { available: false, reason: "TauriTavern is absent" },
-    tauri_world_info_activation: { available: false, reason: "TauriTavern is absent" },
-    gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
-  },
-};
 
 interface HostFetchCall {
   readonly route: string;
@@ -75,55 +59,28 @@ function create_globals(options: { readonly reveals_secrets: boolean }): {
     }
     return Promise.resolve({ ok: false, status: 403, json: () => Promise.resolve({}) });
   });
-  const context = {
-    getCurrentLocale: () => "en",
-    getCurrentChatId: () => "chat-42",
-    getRequestHeaders: () => ({ "X-CSRF-TOKEN": "csrf-token" }),
-    isToolCallingSupported: () => true,
-    eventSource: { on: vi.fn(), removeListener: vi.fn() },
-    eventTypes: {
-      GENERATION_STARTED: "generation_started",
-      GENERATION_STOPPED: "generation_stopped",
-      GENERATION_ENDED: "generation_ended",
-      STREAM_TOKEN_RECEIVED: "stream_token_received",
-      CHAT_CHANGED: "chat_changed",
-      MESSAGE_SWIPED: "message_swiped",
-    },
-    registerFunctionTool: vi.fn(),
-    unregisterFunctionTool: vi.fn(),
-    extensionSettings: {
-      tavern_canvas: {
-        schema_version: 1,
-        active_namespace: NAMESPACE,
-        locale: "auto",
-        credential_storage_mode: "host",
-        active_provider_profile_id: PROFILE_ID,
-        global_concurrency: 2,
-        auto_generation_enabled: false,
-        fallback_generation_enabled: false,
-        vocabulary_update_channel: "bundled",
-        gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
-        ui: {
-          color_mode: "system",
-          inspector_width: 320,
-          inspector_collapsed: false,
-          optional_entry_enabled: false,
-        },
+  const { globals } = create_standard_host({
+    settings: {
+      schema_version: 1,
+      active_namespace: NAMESPACE,
+      locale: "auto",
+      credential_storage_mode: "host",
+      active_provider_profile_id: PROFILE_ID,
+      global_concurrency: 2,
+      auto_generation_enabled: false,
+      vocabulary_update_channel: "bundled",
+      gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
+      ui: {
+        color_mode: "system",
+        inspector_width: 320,
+        inspector_collapsed: false,
+        optional_entry_enabled: false,
       },
     },
-    saveSettingsDebounced: vi.fn(),
-  };
+    fetch: host_fetch,
+  });
   return {
-    globals: {
-      TavernHelper: {
-        getTavernHelperVersion: () => "4.9.1",
-        generateRaw: vi.fn(),
-        getChatMessages: vi.fn(() => []),
-        setChatMessages: vi.fn(),
-      },
-      SillyTavern: { getContext: () => context },
-      fetch: host_fetch,
-    },
+    globals,
     host_calls,
   };
 }

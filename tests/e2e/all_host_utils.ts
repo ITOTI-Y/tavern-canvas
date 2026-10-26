@@ -31,7 +31,7 @@ declare global {
   }
 }
 
-export type HostPage = "sillytavern_host.html" | "tauri_host.html";
+export type HostPage = "sillytavern_host.html";
 
 export interface HarnessScenario {
   /** TavernHelper version to advertise, or `"missing"` to install no TavernHelper at all. */
@@ -79,15 +79,19 @@ export async function open_host_page(
 
 export const REQUIRED_HOST_CAPABILITY_IDS = [
   "main_generation_events",
-  "private_prompt_generation",
+  "preset_generation",
   "message_swipe_metadata",
-  "host_image_upload",
+  "tavern_regex",
   "tavern_helper",
 ] as const;
 
 export const PUBLIC_TAVERN_HELPER_MEMBERS: ReadonlySet<string> = new Set([
   "getTavernHelperVersion",
-  "generateRaw",
   "getChatMessages",
   "setChatMessages",
+  "generate",
+  "stopGenerationById",
+  "getTavernRegexes",
+  "replaceTavernRegexes",
+  "retrieveDisplayedMessage",
 ]);

@@ -92,21 +92,6 @@ test.describe("GenerationParametersDialog: dimensions mode", () => {
   });
 });
 
-test.describe("chat_media_interactions: long-press, double-click, click command routing", () => {
-  test("long press opens prompt edit, double-click regenerates, click opens preview", async ({
-    page,
-  }) => {
-    await goto_panel(page, "jobs");
-    await page.locator('[data-testid="simulate-long-press"]').click();
-    await page.locator('[data-testid="simulate-double-click"]').click();
-    await page.locator('[data-testid="simulate-click"]').click();
-    const log = await page.locator('[data-testid="jobs-log"]').textContent();
-    expect(log).toContain("command: open_prompt_edit");
-    expect(log).toContain("command: regenerate");
-    expect(log).toContain("command: open_preview");
-  });
-});
-
 test.describe("media_command_service: four-image, video, and failed-edit flows in a real browser", () => {
   test("a four-result submission completes with 4 stored images", async ({ page }) => {
     await goto_panel(page, "jobs");
