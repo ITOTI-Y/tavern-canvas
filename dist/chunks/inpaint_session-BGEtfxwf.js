@@ -1,4 +1,4 @@
-import { n as e } from "./novelai_request_defaults-ZvIzjSeh.js";
+import { n as e } from "./novelai_request_defaults-B4CHIiJ8.js";
 var t = class extends TypeError {
 	constructor(e) {
 		super(e), this.name = "InpaintDimensionError";

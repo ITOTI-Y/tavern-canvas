@@ -1,4 +1,4 @@
-import { t as e } from "./shell.module-BO7qLX9Z.js";
+import { t as e } from "./shell.module-DFs3Bhuc.js";
 import { N as t, _ as n, ct as r, et as i, m as a, n as o, p as s, pt as c, u as l, ut as u, x as d } from "./vue-i18n-DUz2Gjn8.js";
 //#region src/ui/shell/ContextInspector.vue?vue&type=script&setup=true&lang.ts
 var f = [

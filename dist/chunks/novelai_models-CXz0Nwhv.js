@@ -152,8 +152,8 @@ var h = [
 	[/^nai-diffusion-4-5(?:-|$)/u, u],
 	[/^nai-diffusion-4(?:-|$)/u, f],
 	[/^nai-diffusion-(?:furry-)?3(?:-|$)/u, t]
-];
-function v(e) {
+], v = h;
+function y(e) {
 	let t = g.get(e);
 	if (t !== void 0) return {
 		profile: t,
@@ -172,21 +172,21 @@ function v(e) {
 	};
 	return null;
 }
-var y = /nai-diffusion-[a-z0-9-]*[a-z0-9]/gu;
-function b(e) {
+var b = /nai-diffusion-[a-z0-9-]*[a-z0-9]/gu;
+function x(e) {
 	let t = /* @__PURE__ */ new Set();
-	for (let n of e) for (let e of n.matchAll(y)) v(e[0]) !== null && t.add(e[0]);
+	for (let n of e) for (let e of n.matchAll(b)) y(e[0]) !== null && t.add(e[0]);
 	return [...t].sort();
 }
-function x(t = e) {
+function S(t = e) {
 	let n = /* @__PURE__ */ new Set(), r = [];
 	for (let e of [...h.map((e) => e.model_id), ...t]) {
 		if (n.has(e)) continue;
 		n.add(e);
-		let t = v(e);
+		let t = y(e);
 		t !== null && t.profile.selectable && r.push(t);
 	}
 	return r;
 }
 //#endregion
-export { e as i, x as n, v as r, b as t };
+export { e as a, y as i, x as n, S as r, v as t };

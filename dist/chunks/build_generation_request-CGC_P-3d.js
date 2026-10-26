@@ -1,4 +1,4 @@
-import { n as e } from "./novelai_request_defaults-ZvIzjSeh.js";
+import { n as e } from "./novelai_request_defaults-B4CHIiJ8.js";
 //#region src/modules/generation/build_generation_request.ts
 var t = class extends Error {
 	code = "workbench_provider_unsupported";

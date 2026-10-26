@@ -1,5 +1,5 @@
 import { n as e } from "./rolldown-runtime-B0aSnxlc.js";
-import { r as t } from "./novelai_models-CWhnujYI.js";
+import { i as t } from "./novelai_models-CXz0Nwhv.js";
 //#region src/modules/novelai/novelai_request_defaults.ts
 var n = /* @__PURE__ */ e({
 	DEFAULT_NOVELAI_MODEL_ID: () => r,

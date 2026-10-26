@@ -1,6 +1,6 @@
 import { o as e } from "./ids-DjWg1HG8.js";
 import { n as t, t as n } from "./build-BtJLSgAU.js";
-import { n as r } from "./browser_secret_vault-BPvzuZ77.js";
+import { n as r } from "./browser_secret_vault-DhuOFaGV.js";
 //#region src/storage/_encrypted_browser_secret_vault.ts
 var i = "vault", a = "metadata", o = "secrets", s = 6e5, c = 16, l = 12, u = 16, d = 1024, f = 16384, p = "tavern-canvas-browser-secret-vault:v1", m = "tavern-canvas-browser-secret-vault:metadata:v1";
 function h(e) {

@@ -1,14 +1,16 @@
 var e = {
 	app: {
-		name: "智绘姬",
+		name: "Inkwell",
+		entry_description: "为聊天回复生成配图。设置、图库和图像服务都在 Inkwell 窗口中。",
+		open_action: "打开 Inkwell",
 		version_label: "版本 {version}",
 		unsupported_host: {
 			title: "需要更新 JS Slash Runner",
-			description: "智绘姬需要 JS Slash Runner {required_version} 或更高版本，当前安装的版本是 {current_version}。",
+			description: "Inkwell需要 JS Slash Runner {required_version} 或更高版本，当前安装的版本是 {current_version}。",
 			update_action: "查看更新说明"
 		},
 		fatal_error: {
-			title: "智绘姬未能启动",
+			title: "Inkwell未能启动",
 			description: "运行时初始化失败，请重新加载 SillyTavern，然后在诊断页查看详情。",
 			reload_action: "重新加载 SillyTavern"
 		},
@@ -81,7 +83,7 @@ var e = {
 		blocked: "已阻止",
 		unknown: "未知"
 	},
-	provider: { credentials: { not_stored_locally: "Token 保存在当前选择的密钥存储中，不会出现在智绘姬界面或导出文件里。" } },
+	provider: { credentials: { not_stored_locally: "Token 保存在当前选择的密钥存储中，不会出现在Inkwell界面或导出文件里。" } },
 	prompt: {
 		preset_browser: {
 			title: "预设",
@@ -269,7 +271,7 @@ var e = {
 		},
 		workflow: {
 			empty_title: "还没有导入 ComfyUI 工作流",
-			empty_description: "导入一个工作流 JSON 文件，将其中的占位符映射到智绘姬的输入。",
+			empty_description: "导入一个工作流 JSON 文件，将其中的占位符映射到Inkwell的输入。",
 			import_action: "导入工作流",
 			placeholder_scan_action: "扫描占位符",
 			edit_action: "编辑工作流",
@@ -417,7 +419,7 @@ var e = {
 			custom_invalid: "请填写 http 或 https 地址和模型名。",
 			custom_model_label: "模型",
 			custom_key_label: "API 密钥",
-			custom_key_hint: "与 TavernCanvas 的其他凭据存放在一起。读取它需要在 SillyTavern 中开启 allowKeysExposure，或在“设置 > 连接”中改用加密的浏览器密钥库。",
+			custom_key_hint: "与 Inkwell 的其他凭据存放在一起。读取它需要在 SillyTavern 中开启 allowKeysExposure，或在“设置 > 连接”中改用加密的浏览器密钥库。",
 			custom_key_save: "保存密钥",
 			custom_key_clear: "移除密钥",
 			custom_key_saved: "密钥已保存。",
@@ -453,6 +455,8 @@ var e = {
 		novelai: {
 			title: "NovelAI 默认参数",
 			refresh_account: "刷新账户",
+			account_unreachable: "当前宿主拦截了 NovelAI 账户接口，无法在此显示 Anlas 余额，出图不受影响。",
+			account_open_site: "在 NovelAI 网站查看",
 			account_summary: "{tier} · {anlas} Anlas · {expires} 续期",
 			model_label: "模型",
 			width_label: "宽度",
@@ -517,7 +521,7 @@ var e = {
 			credential_set: "已配置 API 密钥",
 			credential_unset: "尚未配置 API 密钥",
 			credential_dialog_title: "设置 {name} 的 API 密钥",
-			credential_dialog_description: "密钥将写入当前选择的密钥存储，智绘姬只保留引用。",
+			credential_dialog_description: "密钥将写入当前选择的密钥存储，Inkwell只保留引用。",
 			credential_label: "API 密钥",
 			provider_types: {
 				sd_webui: "SD WebUI",
@@ -529,12 +533,13 @@ var e = {
 			default_badge: "默认",
 			set_default_action: "设为默认",
 			remove_confirm_title: "移除 {name}？",
-			remove_confirm_description: "此操作会将该 provider 配置从智绘姬中断开，已提交的任务不受影响。"
+			remove_confirm_description: "此操作会将该 provider 配置从Inkwell中断开，已提交的任务不受影响。"
 		},
 		credential_storage: {
 			mode_label: "存储后端",
-			mode_hint: "应用于 Provider、文本模型和 Gateway 密钥。",
+			mode_hint: "应用于 Provider、文本模型和 Gateway 密钥。本机加密存储无需口令，在当前浏览器内加密保存；切换存储方式不会迁移已有密钥，需要重新填写。",
 			modes: {
+				browser_device: "本机加密存储",
 				host: "SillyTavern 密钥库",
 				browser_encrypted: "浏览器加密库"
 			},
@@ -591,10 +596,10 @@ var e = {
 			credential_set: "已配置 API 密钥",
 			credential_unset: "尚未设置 API 密钥",
 			credential_dialog_title: "设置 API 密钥",
-			credential_dialog_description: "密钥将写入当前选择的密钥存储，智绘姬只保留引用。",
+			credential_dialog_description: "密钥将写入当前选择的密钥存储，Inkwell只保留引用。",
 			credential_label: "API 密钥",
 			remove_confirm_title: "移除 {name}？",
-			remove_confirm_description: "此操作会将该文本模型从智绘姬中断开，已保存的 API 密钥仍留在对应的密钥存储中。"
+			remove_confirm_description: "此操作会将该文本模型从Inkwell中断开，已保存的 API 密钥仍留在对应的密钥存储中。"
 		},
 		gateway: {
 			endpoint_label: "Gateway 地址",
@@ -604,7 +609,7 @@ var e = {
 			token_not_set: "尚未配置 token",
 			endpoint_hint: "你的 provider 配置将通过这个 Gateway 地址连接。",
 			token_label: "Gateway 访问 token",
-			token_hint: "该 Gateway 的 bearer token。它会写入当前选择的密钥存储，智绘姬只保留引用。",
+			token_hint: "该 Gateway 的 bearer token。它会写入当前选择的密钥存储，Inkwell只保留引用。",
 			token_save_action: "保存 token",
 			token_clear_action: "清除 token"
 		},

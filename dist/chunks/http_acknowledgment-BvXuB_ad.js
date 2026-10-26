@@ -19,7 +19,11 @@ function _(e) {
 function v(e) {
 	return s.parse(`tavern_canvas:${e}:${g}`);
 }
-var y = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must not have surrounding whitespace"), b = c(["host", "browser_encrypted"]), x = f({
+var y = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must not have surrounding whitespace"), b = c([
+	"browser_device",
+	"host",
+	"browser_encrypted"
+]), x = f({
 	color_mode: c([
 		"system",
 		"light",

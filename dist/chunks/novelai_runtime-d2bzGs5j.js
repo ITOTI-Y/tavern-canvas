@@ -1,6 +1,6 @@
 import { t as e } from "./ids-DjWg1HG8.js";
 import { l as t, o as n, u as r } from "./novelai-BG6cLQq6.js";
-import { i, n as a, r as o, t as s } from "./novelai_models-CWhnujYI.js";
+import { a as i, i as a, n as o, r as s } from "./novelai_models-CXz0Nwhv.js";
 import { t as c } from "./novelai_errors-Bve94MgO.js";
 //#region ../../packages/contracts/src/providers/novelai_pricing.ts
 var l = 65536, u = 1048576, d = 28, f = 140, p = 2, ee = 4, te = 5, m = [
@@ -17,10 +17,10 @@ function g(e, t) {
 	return e === null || e.tier_level < 3 || !e.active ? !1 : !(t && e.usage?.is_negative === !0);
 }
 function _(e, t, n) {
-	let i = o(e.model_id)?.profile, a = i?.smea === !0 && e.smea ? e.dyn ? 1.4 : 1.2 : 1, s = e.action === "infill" ? e.inpaint_strength : e.action === "img2img" ? e.strength : 1, c = h({
+	let i = a(e.model_id)?.profile, o = i?.smea === !0 && e.smea ? e.dyn ? 1.4 : 1.2 : 1, s = e.action === "infill" ? e.inpaint_strength : e.action === "img2img" ? e.strength : 1, c = h({
 		pixels: e.width * e.height,
 		steps: e.steps,
-		smea_factor: a,
+		smea_factor: o,
 		strength: s,
 		price_multiplier: i?.price_multiplier ?? 1,
 		step_price_factor: i?.step_price_factor ?? 1
@@ -395,7 +395,7 @@ var K = class extends Error {
 	}
 };
 function de(e) {
-	let t = o(e);
+	let t = a(e);
 	if (t === null) throw new K(`"${e}" is not a NovelAI image model`);
 	return t.profile;
 }
@@ -504,7 +504,7 @@ async function he(e, t, r) {
 	return n.parse(i);
 }
 async function ge(e, t, n) {
-	if (t.action === "upscale" || t.action === "augment" || t.vibe_references === void 0 || !r(t) || o(t.model_id)?.profile.vibe_transfer !== "encoded") return 0;
+	if (t.action === "upscale" || t.action === "augment" || t.vibe_references === void 0 || !r(t) || a(t.model_id)?.profile.vibe_transfer !== "encoded") return 0;
 	let i = 0;
 	for (let r of t.vibe_references) {
 		if (r.encoding !== void 0) continue;
@@ -519,21 +519,21 @@ var Q = "https://novelai.net/image", $ = /\/_next\/static\/chunks\/[A-Za-z0-9._-
 async function ve(e, t) {
 	let n = await e(Q, t), r = [...new Set(n.match($) ?? [])].map((e) => new URL(e, Q).href), i = [n];
 	for (let n of r) i.push(await e(n, t));
-	return s(i);
+	return o(i);
 }
 function ye(e) {
 	let t = i, n = null;
 	return {
 		async get_account(t) {
-			let { fetch_novelai_account: r } = await import("./adapters-DCY9LpKj.js");
+			let { fetch_novelai_account: r } = await import("./adapters-Dz5kwPco.js");
 			return n = await r(e.transport(), t), n;
 		},
-		list_models: () => a(t),
+		list_models: () => s(t),
 		async refresh_models(n) {
 			let r = [];
 			for (let i of e.page_fetchers) try {
 				let e = await ve(i, n);
-				if (e.length > 0) return t = e, a(t);
+				if (e.length > 0) return t = e, s(t);
 				r.push("the page named no NovelAI models");
 			} catch (e) {
 				r.push(e instanceof Error ? e.message : String(e));
@@ -553,7 +553,7 @@ function ye(e) {
 			});
 		},
 		async encode_vibe(t, n, r, i) {
-			let { encode_novelai_vibe: a } = await import("./adapters-DCY9LpKj.js");
+			let { encode_novelai_vibe: a } = await import("./adapters-Dz5kwPco.js");
 			return a(e.transport(), {
 				image: t,
 				model_id: n,

@@ -31,15 +31,17 @@ async function a(e, n, r) {
 }
 var o = {
 	app: {
-		name: "TavernCanvas",
+		name: "Inkwell",
 		version_label: "Version {version}",
+		entry_description: "Illustrates chat replies with generated images. Settings, the gallery and image services are in the Inkwell window.",
+		open_action: "Open Inkwell",
 		unsupported_host: {
 			title: "JS Slash Runner update required",
-			description: "TavernCanvas needs JS Slash Runner {required_version} or newer. The installed version is {current_version}.",
+			description: "Inkwell needs JS Slash Runner {required_version} or newer. The installed version is {current_version}.",
 			update_action: "Open update instructions"
 		},
 		fatal_error: {
-			title: "TavernCanvas could not start",
+			title: "Inkwell could not start",
 			description: "Runtime initialization failed. Reload SillyTavern, then check Diagnostics for details.",
 			reload_action: "Reload SillyTavern"
 		},
@@ -112,7 +114,7 @@ var o = {
 		blocked: "Blocked",
 		unknown: "Unknown"
 	},
-	provider: { credentials: { not_stored_locally: "The token is kept in the selected credential storage and never appears in TavernCanvas UI or exports." } },
+	provider: { credentials: { not_stored_locally: "The token is kept in the selected credential storage and never appears in Inkwell UI or exports." } },
 	prompt: {
 		preset_browser: {
 			title: "Presets",
@@ -300,7 +302,7 @@ var o = {
 		},
 		workflow: {
 			empty_title: "No ComfyUI workflows imported yet",
-			empty_description: "Import a workflow JSON file to map its placeholders to TavernCanvas inputs.",
+			empty_description: "Import a workflow JSON file to map its placeholders to Inkwell inputs.",
 			import_action: "Import workflow",
 			placeholder_scan_action: "Scan placeholders",
 			edit_action: "Edit workflow",
@@ -449,7 +451,7 @@ var o = {
 			custom_invalid: "Enter an http or https URL and a model.",
 			custom_model_label: "Model",
 			custom_key_label: "API key",
-			custom_key_hint: "Stored with your other TavernCanvas credentials. Reading it back needs allowKeysExposure in SillyTavern, or the encrypted browser vault under Settings > Connections.",
+			custom_key_hint: "Stored with your other Inkwell credentials. Reading it back needs allowKeysExposure in SillyTavern, or the encrypted browser vault under Settings > Connections.",
 			custom_key_save: "Save key",
 			custom_key_clear: "Remove key",
 			custom_key_saved: "Key saved.",
@@ -484,6 +486,8 @@ var o = {
 		novelai: {
 			title: "NovelAI defaults",
 			refresh_account: "Refresh account",
+			account_unreachable: "This host blocks NovelAI's account API, so the Anlas balance cannot be shown here. Image generation is not affected.",
+			account_open_site: "Check it on NovelAI",
 			account_summary: "{tier} · {anlas} Anlas · renews {expires}",
 			model_label: "Model",
 			width_label: "Width",
@@ -548,7 +552,7 @@ var o = {
 			credential_set: "API key configured",
 			credential_unset: "No API key configured",
 			credential_dialog_title: "Set API key for {name}",
-			credential_dialog_description: "The key is written to the selected credential storage backend. TavernCanvas keeps only its reference.",
+			credential_dialog_description: "The key is written to the selected credential storage backend. Inkwell keeps only its reference.",
 			credential_label: "API key",
 			provider_types: {
 				sd_webui: "SD WebUI",
@@ -560,12 +564,13 @@ var o = {
 			default_badge: "Default",
 			set_default_action: "Set as default",
 			remove_confirm_title: "Remove {name}?",
-			remove_confirm_description: "This disconnects the provider profile from TavernCanvas. Jobs already submitted are not affected."
+			remove_confirm_description: "This disconnects the provider profile from Inkwell. Jobs already submitted are not affected."
 		},
 		credential_storage: {
 			mode_label: "Storage backend",
-			mode_hint: "Applies to Provider, text-model, and Gateway credentials.",
+			mode_hint: "Applies to Provider, text-model, and Gateway credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
 			modes: {
+				browser_device: "This device",
 				host: "SillyTavern vault",
 				browser_encrypted: "Encrypted browser"
 			},
@@ -622,10 +627,10 @@ var o = {
 			credential_set: "API key configured",
 			credential_unset: "No API key stored",
 			credential_dialog_title: "Set API key",
-			credential_dialog_description: "The key is written to the selected credential storage backend. TavernCanvas keeps only its reference.",
+			credential_dialog_description: "The key is written to the selected credential storage backend. Inkwell keeps only its reference.",
 			credential_label: "API key",
 			remove_confirm_title: "Remove {name}?",
-			remove_confirm_description: "This disconnects the text model from TavernCanvas. The stored API key remains in its credential backend."
+			remove_confirm_description: "This disconnects the text model from Inkwell. The stored API key remains in its credential backend."
 		},
 		gateway: {
 			endpoint_label: "Gateway endpoint",
@@ -635,7 +640,7 @@ var o = {
 			token_not_set: "No token configured",
 			endpoint_hint: "The Gateway endpoint your provider profiles connect through.",
 			token_label: "Gateway access token",
-			token_hint: "The bearer token configured for this Gateway. It is written to the selected credential storage backend; TavernCanvas keeps only its reference.",
+			token_hint: "The bearer token configured for this Gateway. It is written to the selected credential storage backend; Inkwell keeps only its reference.",
 			token_save_action: "Save token",
 			token_clear_action: "Clear token"
 		},
@@ -803,7 +808,7 @@ var o = {
 			malformed_response: "the provider returned an unreadable response"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-7SqbjYFU.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DA-5Nfos.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

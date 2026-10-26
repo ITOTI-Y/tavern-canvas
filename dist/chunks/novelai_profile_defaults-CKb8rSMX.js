@@ -1,4 +1,4 @@
-import { r as e } from "./novelai_models-CWhnujYI.js";
+import { i as e } from "./novelai_models-CXz0Nwhv.js";
 //#region src/modules/novelai/novelai_profile_defaults.ts
 async function t(t, n, r) {
 	let { vibe_asset_ids: i, ...a } = n, o = e(t.model_id)?.profile.vibe_transfer !== "unsupported", s = [];

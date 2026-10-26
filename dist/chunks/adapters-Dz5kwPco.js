@@ -2,7 +2,7 @@ import { n as e, t } from "./sha2-BGNex9vj.js";
 import { C as n, S as r, _ as i, b as a, g as o, l as s, m as c, s as l, t as u, u as d, v as f, w as p, y as m } from "./ids-DjWg1HG8.js";
 import { f as h, l as g, o as ee, u as _ } from "./novelai-BG6cLQq6.js";
 import { c as v, d as y, l as b, n as x, u as S } from "./provider-Bp1QeoG9.js";
-import { r as te } from "./novelai_models-CWhnujYI.js";
+import { i as te } from "./novelai_models-CXz0Nwhv.js";
 import { a as C, c as w, i as T, o as E, r as D, s as ne } from "./provider_transport-DxRVhJ6l.js";
 //#region ../../packages/contracts/src/providers/novelai_account.ts
 var re = o().int().nonnegative(), ie = i({
