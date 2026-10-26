@@ -8,7 +8,7 @@ import { compare_semver } from "../package_verifier.js";
 
 /** The live, published, CORS-verified catalog this client defaults to when no URL is injected. */
 export const DEFAULT_CATALOG_URL =
-  "https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/catalog.json";
+  "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json";
 
 /** Generous ceiling for a JSON array of catalog entries (each entry is a few hundred bytes). */
 const DEFAULT_MAX_CATALOG_BYTES = 1 * 1024 * 1024;

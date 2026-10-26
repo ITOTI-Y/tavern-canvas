@@ -179,7 +179,7 @@ remote catalog.
 The catalog is a single JSON document:
 
 ```text
-https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/catalog.json
+https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json
 ```
 
 `huggingface.co` is the only host contacted. HTTPS is enforced twice, at the client and in the

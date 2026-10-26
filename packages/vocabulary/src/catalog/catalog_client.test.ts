@@ -54,7 +54,7 @@ describe("create_catalog_client configuration", () => {
     );
   });
 
-  it("defaults to the published ITOTII catalog URL", async () => {
+  it("defaults to the published catalog URL", async () => {
     const requested_urls: string[] = [];
     const fetch_impl = vi.fn(async (input: RequestInfo | URL) => {
       requested_urls.push(request_url(input));

@@ -13,13 +13,13 @@ import { REPO_ROOT } from "./pack_common.js";
 // generate_baseline.ts and generate_full_pack.ts.
 //
 // Hosting (user decision, 2026-08-06): packages live on the user's HF
-// dataset repo `ITOTII/tavern-canvas-vocabulary`, one subdirectory per
+// dataset repo `ITOTIY/tavern-canvas-vocabulary`, one subdirectory per
 // package_id (`packages/<package_id>/...`), with this catalog itself
 // intended to be uploaded to the repo root as `catalog.json` so the
 // extension can refresh the package list remotely without a redeploy.
 
 const HF_DATASET_BASE_URL =
-  "https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main";
+  "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main";
 
 const DEFAULT_BASELINE_DIRECTORY = resolve(REPO_ROOT, "apps/extension/public/vocabulary/baseline");
 const DEFAULT_FULL_PACK_DIRECTORY = resolve(REPO_ROOT, "output/packages/tavern-canvas-full-zh");

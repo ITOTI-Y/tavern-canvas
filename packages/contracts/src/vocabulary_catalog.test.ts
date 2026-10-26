@@ -7,7 +7,7 @@ import {
 } from "./vocabulary_catalog.js";
 
 // Captured verbatim from
-// https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/catalog.json
+// https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json
 // (fetched 2026-08-06) -- the ground truth this schema must accept exactly as published.
 const LIVE_CATALOG_DOCUMENT = [
   {
@@ -47,7 +47,7 @@ const LIVE_CATALOG_DOCUMENT = [
     languages: ["en", "zh-CN"],
     min_extension_version: "3.0.0-alpha.1",
     base_url:
-      "https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/packages/tavern-canvas-full-zh/",
+      "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/packages/tavern-canvas-full-zh/",
     bundled: false,
     updated_at: "2026-08-06T18:36:34.789Z",
   },
