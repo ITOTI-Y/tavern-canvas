@@ -196,9 +196,10 @@ describe("ChatLayer", () => {
       (button) => button.textContent?.trim() === "Generate",
     );
     (confirm as HTMLButtonElement | undefined)?.click();
-    await flushPromises();
 
-    expect(submit).toHaveBeenCalledWith({ provider_id: "sd_webui", prompt: "upscale" });
+    await vi.waitFor(() => {
+      expect(submit).toHaveBeenCalledWith({ provider_id: "sd_webui", prompt: "upscale" });
+    });
     wrapper.unmount();
   });
 });

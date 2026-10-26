@@ -25,7 +25,6 @@ import {
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
-import { attach_character_prompts } from "./character_prompts.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
 
 export interface SlotPromptContext {
@@ -119,6 +118,15 @@ async function to_host_connection(
         source: "openai",
       };
   }
+}
+
+/** Loaded on demand: it needs the NovelAI model table, which stays out of the initial bundle. */
+async function with_character_prompts(
+  request: ImageGenerationRequest,
+  prompts: readonly SlotCharacterPrompt[],
+): Promise<ImageGenerationRequest> {
+  const { attach_character_prompts } = await import("./character_prompts.js");
+  return attach_character_prompts(request, prompts);
 }
 
 function error_message(error: unknown): string {
@@ -310,7 +318,7 @@ export class IllustrationService {
   }
 
   async #build_slot_request(input: SlotGenerationInput): Promise<ImageGenerationRequest> {
-    return attach_character_prompts(await this.#deps.build_request(input), input.character_prompts);
+    return with_character_prompts(await this.#deps.build_request(input), input.character_prompts);
   }
 
   async generate(
@@ -355,7 +363,7 @@ export class IllustrationService {
     const characters =
       edit.kind === "img2img" || edit.kind === "inpaint" ? slot.character_prompts : [];
     await this.#submit_for_slot(location, slot_id, async () =>
-      attach_character_prompts(await this.#deps.build_edit_request(edit), characters),
+      with_character_prompts(await this.#deps.build_edit_request(edit), characters),
     );
   }
 
