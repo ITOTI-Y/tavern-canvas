@@ -2266,6 +2266,7 @@ var wr = {
 				top: `${s.value.y}px`
 			}),
 			"aria-label": e.openLabel,
+			"data-testid": "floating-entry",
 			"data-dragging": c.value,
 			"data-media-state": d.value.state,
 			"data-shadow-role": "entry",
