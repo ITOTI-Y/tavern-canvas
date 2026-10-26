@@ -81,7 +81,7 @@ function l(e) {
 	let t = new Map(e.characters.map((e) => [e.id, e.name]));
 	return [
 		"",
-		"Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing; use exactly the name shown.",
+		"Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing, and never an outfit name; use exactly the name shown.",
 		...e.characters.map((e) => `- character: ${e.name}`),
 		...e.outfits.map((e) => {
 			let n = e.character_id === null ? void 0 : t.get(e.character_id);
