@@ -68,7 +68,20 @@ var c = {
 		additionalProperties: !1
 	}
 };
-function l(e, t) {
+function l(e) {
+	if (e.characters.length === 0 && e.outfits.length === 0) return [];
+	let t = new Map(e.characters.map((e) => [e.id, e.name]));
+	return [
+		"",
+		"Characters and outfits below have stored tags that are added automatically. When one of them is in the picture, do not describe their hair, eyes, face, body or clothing in tags; describe only pose, action, expression and the setting. List these characters in characters using exactly the name shown.",
+		...e.characters.map((e) => `- character: ${e.name}`),
+		...e.outfits.map((e) => {
+			let n = e.character_id === null ? void 0 : t.get(e.character_id);
+			return `- outfit: ${e.name}${n === void 0 ? "" : ` (worn by ${n})`}`;
+		})
+	];
+}
+function u(e, t, n) {
 	return [
 		"[TavernCanvas illustration request]",
 		`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
@@ -77,23 +90,24 @@ function l(e, t) {
 		"- tags: comma-separated Danbooru-style English tags for an anime image model (subject count such as 1girl, pose, action, expression, clothing, setting, lighting, composition); use a character name only when it is a well-known Danbooru character tag",
 		"- characters: the names of the characters visible in the picture, exactly as written in the story",
 		"Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.",
+		...l(n),
 		"",
 		"Paragraphs:",
 		...e.map((e) => `[${String(e.index)}] ${e.text}`)
 	].join("\n");
 }
-var u = t({
+var d = t({
 	paragraph: r().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	tags: e([n(), i(n()).transform((e) => e.join(", "))]),
 	characters: i(n().trim().min(1).max(120)).max(16).default([])
-}), d = t({ illustrations: i(u) }), f = class extends Error {
+}), f = t({ illustrations: i(d) }), p = class extends Error {
 	excerpt;
 	constructor(e, t) {
 		super(e), this.name = "AnalysisParseError", this.excerpt = t.slice(0, 400);
 	}
-}, p = /<(think|thinking|reasoning)>[\s\S]*?<\/\1>/giu, m = /```(?:json)?\s*([\s\S]*?)```/giu;
-function h(e) {
+}, m = /<(think|thinking|reasoning)>[\s\S]*?<\/\1>/giu, h = /```(?:json)?\s*([\s\S]*?)```/giu;
+function g(e) {
 	for (let t = e.lastIndexOf("}"); t >= 0; t = e.lastIndexOf("}", t - 1)) {
 		let n = 0;
 		for (let r = t; r >= 0; --r) {
@@ -108,28 +122,28 @@ function h(e) {
 	}
 	return null;
 }
-function g(e) {
-	let t = e.replace(p, "").trim(), n = [...t.matchAll(m)].map((e) => (e[1] ?? "").trim()).reverse(), r = h(t);
+function _(e) {
+	let t = e.replace(m, "").trim(), n = [...t.matchAll(h)].map((e) => (e[1] ?? "").trim()).reverse(), r = g(t);
 	return [
 		t,
 		...n,
 		...r === null ? [] : [r]
 	];
 }
-function _(e, t, n) {
-	for (let r of g(e)) {
+function v(e, t, n) {
+	for (let r of _(e)) {
 		let e;
 		try {
 			e = JSON.parse(r);
 		} catch {
 			continue;
 		}
-		let i = d.safeParse(e);
+		let i = f.safeParse(e);
 		if (!i.success) continue;
 		let a = /* @__PURE__ */ new Set();
 		return i.data.illustrations.filter((e) => e.paragraph >= t || a.has(e.paragraph) ? !1 : (a.add(e.paragraph), !0)).slice(0, n);
 	}
-	throw new f("The analysis reply contains no illustrations JSON object", e);
+	throw new p("The analysis reply contains no illustrations JSON object", e);
 }
 //#endregion
-export { s as a, _ as i, f as n, l as r, c as t };
+export { s as a, v as i, p as n, u as r, c as t };

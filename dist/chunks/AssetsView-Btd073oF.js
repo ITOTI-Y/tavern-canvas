@@ -349,51 +349,52 @@ var q = /* @__PURE__ */ O({
 		}, 8, ["focusable", "active"]));
 	}
 }), Y = {
-	assetsView: "_assetsView_1fpd5_10",
-	tabsList: "_tabsList_1fpd5_23",
-	tabsTrigger: "_tabsTrigger_1fpd5_31",
-	tabsContent: "_tabsContent_1fpd5_55",
-	categoryList: "_categoryList_1fpd5_70",
-	categoryToolbar: "_categoryToolbar_1fpd5_77",
-	searchInput: "_searchInput_1fpd5_84",
-	reorderHint: "_reorderHint_1fpd5_100",
-	emptyDescription: "_emptyDescription_1fpd5_105",
-	cardGrid: "_cardGrid_1fpd5_110",
-	assetCard: "_assetCard_1fpd5_120",
-	dragHandle: "_dragHandle_1fpd5_135",
-	assetCardMain: "_assetCardMain_1fpd5_147",
-	assetCardName: "_assetCardName_1fpd5_165",
-	assetCardSummary: "_assetCardSummary_1fpd5_175",
-	assetCardSummaryPart: "_assetCardSummaryPart_1fpd5_183",
-	assetCardActions: "_assetCardActions_1fpd5_187",
-	form: "_form_1fpd5_199",
-	textInput: "_textInput_1fpd5_205",
-	textArea: "_textArea_1fpd5_206",
-	formActions: "_formActions_1fpd5_228",
-	vocabularyPanel: "_vocabularyPanel_1fpd5_238",
-	vocabularySearchRow: "_vocabularySearchRow_1fpd5_244",
-	searchResultsList: "_searchResultsList_1fpd5_249",
-	searchResultRow: "_searchResultRow_1fpd5_255",
-	searchResultTag: "_searchResultTag_1fpd5_264",
-	searchResultTranslation: "_searchResultTranslation_1fpd5_269",
-	loadMoreRow: "_loadMoreRow_1fpd5_274",
-	sectionTitle: "_sectionTitle_1fpd5_280",
-	catalogList: "_catalogList_1fpd5_286",
-	catalogEntry: "_catalogEntry_1fpd5_292",
-	catalogEntryInfo: "_catalogEntryInfo_1fpd5_301",
-	catalogEntryName: "_catalogEntryName_1fpd5_308",
-	catalogEntryMeta: "_catalogEntryMeta_1fpd5_314",
-	bundledBadge: "_bundledBadge_1fpd5_319",
-	nsfwSection: "_nsfwSection_1fpd5_329",
-	nsfwToggle: "_nsfwToggle_1fpd5_335",
-	nsfwNotice: "_nsfwNotice_1fpd5_345",
-	installProgress: "_installProgress_1fpd5_351",
-	workflowToolbarRow: "_workflowToolbarRow_1fpd5_360",
-	placeholderList: "_placeholderList_1fpd5_366",
-	placeholderRow: "_placeholderRow_1fpd5_372",
-	placeholderKey: "_placeholderKey_1fpd5_378",
-	hiddenFileInput: "_hiddenFileInput_1fpd5_389",
-	reference_thumbnail: "_reference_thumbnail_1fpd5_401"
+	assetsView: "_assetsView_10uyv_10",
+	tabsList: "_tabsList_10uyv_23",
+	tabsTrigger: "_tabsTrigger_10uyv_31",
+	tabsContent: "_tabsContent_10uyv_55",
+	categoryList: "_categoryList_10uyv_70",
+	categoryToolbar: "_categoryToolbar_10uyv_77",
+	searchInput: "_searchInput_10uyv_84",
+	reorderHint: "_reorderHint_10uyv_100",
+	emptyDescription: "_emptyDescription_10uyv_105",
+	cardGrid: "_cardGrid_10uyv_110",
+	assetCard: "_assetCard_10uyv_120",
+	dragHandle: "_dragHandle_10uyv_135",
+	assetCardMain: "_assetCardMain_10uyv_147",
+	assetCardName: "_assetCardName_10uyv_165",
+	assetCardSummary: "_assetCardSummary_10uyv_175",
+	assetCardSummaryPart: "_assetCardSummaryPart_10uyv_183",
+	assetCardActions: "_assetCardActions_10uyv_187",
+	form: "_form_10uyv_199",
+	textInput: "_textInput_10uyv_205",
+	textArea: "_textArea_10uyv_206",
+	formError: "_formError_10uyv_228",
+	formActions: "_formActions_10uyv_234",
+	vocabularyPanel: "_vocabularyPanel_10uyv_244",
+	vocabularySearchRow: "_vocabularySearchRow_10uyv_250",
+	searchResultsList: "_searchResultsList_10uyv_255",
+	searchResultRow: "_searchResultRow_10uyv_261",
+	searchResultTag: "_searchResultTag_10uyv_270",
+	searchResultTranslation: "_searchResultTranslation_10uyv_275",
+	loadMoreRow: "_loadMoreRow_10uyv_280",
+	sectionTitle: "_sectionTitle_10uyv_286",
+	catalogList: "_catalogList_10uyv_292",
+	catalogEntry: "_catalogEntry_10uyv_298",
+	catalogEntryInfo: "_catalogEntryInfo_10uyv_307",
+	catalogEntryName: "_catalogEntryName_10uyv_314",
+	catalogEntryMeta: "_catalogEntryMeta_10uyv_320",
+	bundledBadge: "_bundledBadge_10uyv_325",
+	nsfwSection: "_nsfwSection_10uyv_335",
+	nsfwToggle: "_nsfwToggle_10uyv_341",
+	nsfwNotice: "_nsfwNotice_10uyv_351",
+	installProgress: "_installProgress_10uyv_357",
+	workflowToolbarRow: "_workflowToolbarRow_10uyv_366",
+	placeholderList: "_placeholderList_10uyv_372",
+	placeholderRow: "_placeholderRow_10uyv_378",
+	placeholderKey: "_placeholderKey_10uyv_384",
+	hiddenFileInput: "_hiddenFileInput_10uyv_395",
+	reference_thumbnail: "_reference_thumbnail_10uyv_407"
 };
 //#endregion
 //#region src/ui/views/assets/asset_field_schema.ts
@@ -655,6 +656,7 @@ var ke = ["for"], Ae = [
 		namePlaceholder: {},
 		name: {},
 		nameError: {},
+		saveError: {},
 		fields: {},
 		values: {},
 		saveLabel: {},
@@ -751,6 +753,11 @@ var ke = ["for"], Ae = [
 				_: 2
 			}, 1040, ["label"]))), 128)),
 			a(t.$slots, "extra-fields"),
+			e.saveError ? (o(), l("p", {
+				key: 0,
+				class: E(p(Y).formError),
+				role: "alert"
+			}, C(e.saveError), 3)) : g("", !0),
 			y("div", { class: E(p(Y).formActions) }, [k(F, {
 				label: e.cancelLabel,
 				variant: "secondary",
@@ -768,32 +775,32 @@ var ke = ["for"], Ae = [
 //#endregion
 //#region src/ui/views/assets/use_asset_category_panel.ts
 function Q(t, n, r, i, a = []) {
-	let o = m(!1), s = m(null), c = m(""), l = m(null), u = e({}), d = m(!1);
-	function f() {
-		s.value = null, c.value = "", l.value = null, $(u, Ee(r())), o.value = !0;
+	let o = m(!1), s = m(null), c = m(""), l = m(null), u = m(null), d = e({}), f = m(!1);
+	function p() {
+		s.value = null, c.value = "", l.value = null, u.value = null, $(d, Ee(r())), o.value = !0;
 	}
-	function p(e) {
-		s.value = e, c.value = e.display_name, l.value = null;
+	function h(e) {
+		s.value = e, c.value = e.display_name, l.value = null, u.value = null;
 		let t = {};
 		for (let n of a) {
 			let r = e.payload[n];
 			(typeof r == "string" || typeof r == "number") && (t[n] = r);
 		}
-		$(u, {
+		$(d, {
 			...Te(r(), e),
 			...t
 		}), o.value = !0;
 	}
-	function h() {
+	function g() {
 		o.value = !1;
 	}
-	async function g() {
+	async function _() {
 		let e = c.value.trim();
 		if (e === "") {
 			l.value = i();
 			return;
 		}
-		d.value = !0;
+		f.value = !0, u.value = null;
 		try {
 			let r = s.value?.id ?? crypto.randomUUID();
 			await n.save_asset(t, {
@@ -801,35 +808,38 @@ function Q(t, n, r, i, a = []) {
 				category: t,
 				record_key: r,
 				display_name: e,
-				payload: { ...u }
+				payload: { ...d }
 			}), o.value = !1;
+		} catch (e) {
+			u.value = e instanceof Error ? e.message : String(e);
 		} finally {
-			d.value = !1;
+			f.value = !1;
 		}
 	}
-	function _(e) {
+	function v(e) {
 		n.remove_asset(t, e);
 	}
-	function v(e) {
+	function y(e) {
 		n.reorder_assets(t, e);
 	}
-	function y(e) {
-		p(e);
+	function b(e) {
+		h(e);
 	}
 	return {
 		dialog_open: o,
 		editing_record: s,
 		name: c,
 		name_error: l,
-		values: u,
-		saving: d,
-		open_create: f,
-		open_edit: p,
-		close_dialog: h,
-		save: g,
-		remove: _,
-		reorder: v,
-		random_select: y
+		save_error: u,
+		values: d,
+		saving: f,
+		open_create: p,
+		open_edit: h,
+		close_dialog: g,
+		save: _,
+		remove: v,
+		reorder: y,
+		random_select: b
 	};
 }
 function $(e, t) {
@@ -931,6 +941,7 @@ var Le = /* @__PURE__ */ O({
 				"name-placeholder": p(n)("common.labels.name"),
 				name: p(i).name.value,
 				"name-error": p(i).name_error.value,
+				"save-error": p(i).save_error.value,
 				fields: r.value,
 				values: p(i).values,
 				"save-label": p(n)("common.actions.save"),
@@ -949,6 +960,7 @@ var Le = /* @__PURE__ */ O({
 				"name-placeholder",
 				"name",
 				"name-error",
+				"save-error",
 				"fields",
 				"values",
 				"save-label",
@@ -1423,6 +1435,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder": p(n)("common.labels.name"),
 				name: p(a).name.value,
 				"name-error": p(a).name_error.value,
+				"save-error": p(a).save_error.value,
 				fields: r.value,
 				values: p(a).values,
 				"save-label": p(n)("common.actions.save"),
@@ -1441,6 +1454,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder",
 				"name",
 				"name-error",
+				"save-error",
 				"fields",
 				"values",
 				"save-label",
@@ -1797,6 +1811,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder": p(r)("common.labels.name"),
 				name: p(s).name.value,
 				"name-error": p(s).name_error.value,
+				"save-error": p(s).save_error.value,
 				fields: i.value,
 				values: p(s).values,
 				"save-label": p(r)("common.actions.save"),
@@ -1831,6 +1846,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder",
 				"name",
 				"name-error",
+				"save-error",
 				"fields",
 				"values",
 				"save-label",
@@ -1928,6 +1944,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder": p(n)("common.labels.name"),
 				name: p(i).name.value,
 				"name-error": p(i).name_error.value,
+				"save-error": p(i).save_error.value,
 				fields: r.value,
 				values: p(i).values,
 				"save-label": p(n)("common.actions.save"),
@@ -1946,6 +1963,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder",
 				"name",
 				"name-error",
+				"save-error",
 				"fields",
 				"values",
 				"save-label",
@@ -2082,6 +2100,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder": p(n)("common.labels.name"),
 				name: p(s).name.value,
 				"name-error": p(s).name_error.value,
+				"save-error": p(s).save_error.value,
 				fields: i.value,
 				values: p(s).values,
 				"save-label": p(n)("common.actions.save"),
@@ -2138,6 +2157,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 				"name-placeholder",
 				"name",
 				"name-error",
+				"save-error",
 				"fields",
 				"values",
 				"save-label",

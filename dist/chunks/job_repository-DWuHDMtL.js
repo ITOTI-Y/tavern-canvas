@@ -1,4 +1,4 @@
-import { S as e, T as t, b as n, c as r, d as i, g as a, l as o, m as s, p as c, s as l, u, v as ee, y as d } from "./ids-DjWg1HG8.js";
+import { S as e, T as t, b as n, c as r, d as i, g as a, l as o, m as s, p as ee, s as c, u as l, v as u, y as d } from "./ids-DjWg1HG8.js";
 //#region ../../packages/storage/src/database_schema.ts
 var f = "tavern_canvas_v3", te = {
 	provider_profiles: {
@@ -131,14 +131,19 @@ var f = "tavern_canvas_v3", te = {
 		key_path: "record_key",
 		indexes: ["namespace", "updated_at"],
 		since_version: 4
+	},
+	outfit_profiles: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 5
 	}
-}, p = c(() => e([
+}, p = ee(() => e([
 	n(),
 	a(),
-	u(),
+	l(),
 	r(),
 	o(p),
-	ee(n(), p)
+	u(n(), p)
 ])), m = n().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), h = n().regex(/^[a-f0-9]{64}$/u), g = t({ offset: !0 }), _ = n().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), ne = {
 	schema_version: s(1),
 	id: m,
@@ -154,37 +159,37 @@ function v(e) {
 		...e
 	});
 }
-var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)]), x = n().min(1).max(64), re = n().min(1).max(128), S = v({ provider_id: y }), C = v({}), w = v({}), T = v({}), E = v({}), D = v({}), O = v({ source_type: n().min(1).max(128) }), k = v({}), A = v({ vocabulary_id: m }), j = v({
+var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)]), re = n().min(1).max(64), x = n().min(1).max(128), S = v({ provider_id: y }), C = v({}), w = v({}), T = v({}), E = v({}), D = v({}), O = v({}), k = v({ source_type: n().min(1).max(128) }), A = v({}), j = v({ vocabulary_id: m }), M = v({
 	data_version: b,
-	state: x
-}), M = v({
+	state: re
+}), N = v({
 	data_version: b,
-	kind: re
-}), N = v({}), P = v({
+	kind: x
+}), P = v({}), F = v({
 	provider_kind: n().min(1).max(64),
 	credential_reference: n().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
-}), F = v({
+}), I = v({
 	image_sha256: h,
 	model_id: n().min(1).max(128),
 	information_extracted: a().min(0).max(1),
 	encoding: n().min(1).max(4e7)
-}), I = v({
+}), L = v({
 	sha256: h,
 	last_accessed_at: g,
-	pinned: u()
-}), L = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), R = d({
+	pinned: l()
+}), R = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), z = d({
 	sha256: h,
 	ref_count: a().int().nonnegative(),
 	byte_length: a().int().nonnegative(),
-	blob: L
-}), z = v({
-	media_type: l([
+	blob: R
+}), B = v({
+	media_type: c([
 		"image/png",
 		"image/jpeg",
 		"image/webp"
 	]),
 	byte_length: a().int().positive(),
-	blob: L
+	blob: R
 }), ie = d({
 	generation_anchor: h,
 	scene_description: n().trim().min(1).max(12e3),
@@ -193,7 +198,7 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 	style_preset_id: m.optional(),
 	image_count: a().int().min(1).max(4).optional()
 }), ae = d({
-	code: l([
+	code: c([
 		"auth_failed",
 		"rate_limited",
 		"content_blocked",
@@ -203,10 +208,10 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 		"cancelled",
 		"malformed_response"
 	]),
-	retryable: u(),
+	retryable: l(),
 	retry_after_ms: a().int().nonnegative().optional(),
 	status_code: a().int().min(100).max(599).optional()
-}), B = v({
+}), V = v({
 	request_id: m,
 	request_digest: h,
 	generation_anchor: h,
@@ -215,7 +220,7 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 	requested_swipe_id: a().int().nonnegative(),
 	provider_id: y,
 	arguments: ie,
-	state: l([
+	state: c([
 		"queued",
 		"preparing",
 		"submitting",
@@ -228,8 +233,8 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 	]),
 	error: ae.nullable(),
 	image_ids: o(m),
-	automatic: u().optional()
-}), V = d({
+	automatic: l().optional()
+}), oe = d({
 	migration_id: n().min(1).max(256),
 	source_version: a().int().nonnegative(),
 	state: n().min(1).max(64),
@@ -241,18 +246,19 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 	comfy_workflows: w,
 	novelai_vibes: T,
 	character_profiles: E,
-	regex_rules: D,
-	knowledge_entries: O,
-	vocabularies: k,
-	vocabulary_groups: A,
-	vocabulary_packages: j,
-	vocabulary_shards: M,
-	image_records: I,
-	generation_jobs: B,
-	legacy_preferences: N,
-	llm_connections: P,
-	novelai_vibe_encodings: F,
-	provider_input_assets: z
+	regex_rules: O,
+	knowledge_entries: k,
+	vocabularies: A,
+	vocabulary_groups: j,
+	vocabulary_packages: M,
+	vocabulary_shards: N,
+	image_records: L,
+	generation_jobs: V,
+	legacy_preferences: P,
+	llm_connections: F,
+	novelai_vibe_encodings: I,
+	provider_input_assets: B,
+	outfit_profiles: D
 }, U = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
 function W(e, t, n) {
 	if (e !== null && typeof e != "string" && typeof e != "boolean") {
@@ -296,8 +302,8 @@ function K(e) {
 function q(e, t, n) {
 	if (_.parse(e), m.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
 }
-function oe(e, t, n, r, i) {
-	if (!(t >= 4)) for (let [n, r] of Object.entries(te)) {
+function se(e, t, n, r, i) {
+	if (!(t >= 5)) for (let [n, r] of Object.entries(te)) {
 		if (r.since_version <= t) continue;
 		let i = e.createObjectStore(n, { keyPath: r.key_path });
 		for (let e of r.indexes) i.createIndex(e, e);
@@ -326,10 +332,10 @@ function Z(e) {
 		throw new J(`Value cannot cross the structured-clone boundary: ${e instanceof Error ? e.message : String(e)}`);
 	}
 }
-function se(e) {
+function ce(e) {
 	return e instanceof Error && e.name === "ConstraintError";
 }
-function ce(e) {
+function le(e) {
 	if (e.mode === "readonly") throw TypeError("A readwrite transaction is required for this repository method");
 }
 var Q = class {
@@ -360,7 +366,7 @@ var Q = class {
 			try {
 				await this.store(e).add(r);
 			} catch (e) {
-				throw se(e) ? new Y(this.store_name, r.record_key) : e;
+				throw ce(e) ? new Y(this.store_name, r.record_key) : e;
 			}
 		});
 	}
@@ -446,7 +452,7 @@ var Q = class {
 		}
 	}
 	async run_write(e, t) {
-		if (e !== void 0) return ce(e), t(e);
+		if (e !== void 0) return le(e), t(e);
 		let n = this.database.transaction(this.store_name, "readwrite");
 		try {
 			let e = await t(n);
@@ -463,11 +469,11 @@ var Q = class {
 	}
 }, $ = class extends Q {
 	constructor(e) {
-		super(e, "generation_jobs", B);
+		super(e, "generation_jobs", V);
 	}
 };
-function le(e) {
+function ue(e) {
 	return new $(e);
 }
 //#endregion
-export { G as A, h as C, j as D, A as E, k as O, D as S, m as T, T as _, X as a, S as b, w as c, I as d, O as f, F as g, V as h, Y as i, oe as j, M as k, f as l, P as m, le as n, J as o, N as p, Q as r, E as s, $ as t, R as u, C as v, g as w, H as x, z as y };
+export { N as A, O as C, j as D, m as E, se as M, M as O, H as S, g as T, T as _, X as a, B as b, w as c, L as d, k as f, I as g, oe as h, Y as i, G as j, A as k, f as l, F as m, ue as n, J as o, P as p, Q as r, E as s, $ as t, z as u, D as v, h as w, S as x, C as y };
