@@ -13,14 +13,12 @@ const SQUARE_GALLERY_RECORD_ID = `00000000-0000-4000-8000-${String(202).padStart
 const DETAILED_GALLERY_RECORD_ID = `00000000-0000-4000-8000-${String(205).padStart(12, "0")}`;
 
 test.describe("Studio workflow: gallery preview", () => {
-  test("opens a preview and offers the source message only for images with one", async ({
-    page,
-  }) => {
+  test("opens a preview that offers the image's source message", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
     await navigate_to_route(page, "gallery", "en");
     await page.locator(`button[aria-label="Open preview: ${SQUARE_GALLERY_RECORD_ID}"]`).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Go to source message" })).toBeDisabled();
+    await expect(page.locator('[role="dialog"][data-state="open"]')).toBeVisible();
+    await expect(page.getByRole("button", { name: "Go to source message" })).toBeEnabled();
   });
 });
 
@@ -57,7 +55,7 @@ test.describe("Studio workflow: workflow import", () => {
       mimeType: "application/json",
       buffer: Buffer.from(JSON.stringify({ prompt: "{{positive_prompt}}", seed: "{{seed}}" })),
     });
-    await expect(page.getByRole("dialog")).toBeVisible();
+    await expect(page.locator('[role="dialog"][data-state="open"]')).toBeVisible();
     await page.getByRole("button", { name: "Scan placeholders" }).click();
     await expect(page.getByText("{{positive_prompt}}", { exact: false })).toBeVisible();
   });

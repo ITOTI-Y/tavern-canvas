@@ -62,6 +62,9 @@ export async function goto_studio(page: Page, options: GotoOptions = {}): Promis
     undefined,
     { timeout: 15_000 },
   );
+  // The Studio starts closed; the harness page has no extensions menu, so it opens from the floating entry.
+  await page.locator('[data-testid="floating-entry"]').click();
+  await page.locator('[data-testid="workspace"]').waitFor({ state: "attached" });
 }
 
 export async function wait_for_images_settled(page: Page, root_selector = "img"): Promise<void> {

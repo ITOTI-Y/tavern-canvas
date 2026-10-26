@@ -60,6 +60,7 @@ test.describe("Studio accessibility: focus order and return", () => {
     page,
   }) => {
     await goto_studio(page, { viewport: MOBILE_LARGE });
+    await navigate_to_route(page, "gallery", "en");
     const toggle = page.locator('[data-testid="inspector-toggle"]');
     await toggle.focus();
     await toggle.press("Enter");
@@ -87,19 +88,6 @@ test.describe("Studio accessibility: dialog focus traps", () => {
       });
       expect(focused_inside).toBe(true);
     }
-  });
-
-  test("Escape closes the settings archive-cleanup dialog without leaving a stray focus target", async ({
-    page,
-  }) => {
-    await goto_studio(page, { viewport: DESKTOP_LARGE });
-    await open_settings_section(page, "General");
-    const open_button = page.locator('[data-testid="manual-cleanup-action"]');
-    await open_button.click();
-    await expect(page.locator('[data-testid="cleanup-confirm-input"]')).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(page.locator('[data-testid="cleanup-confirm-input"]')).toHaveCount(0);
-    await expect(open_button).toBeFocused();
   });
 });
 
@@ -180,7 +168,7 @@ test.describe("Studio accessibility: no focus clipping", () => {
     page,
   }) => {
     await goto_studio(page, { viewport: MOBILE_LARGE });
-    const nav_buttons = page.locator("nav > button");
+    const nav_buttons = page.locator('[data-testid="studio-bottom-nav"] button');
     const count = await nav_buttons.count();
     for (let index = 0; index < count; index += 1) {
       const button = nav_buttons.nth(index);

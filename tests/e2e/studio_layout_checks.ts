@@ -310,6 +310,10 @@ export async function find_fixed_nav_overlap(page: Page): Promise<LayoutFinding[
     ];
     for (const selector of chrome_selectors) {
       for (const chrome of root.querySelectorAll(selector)) {
+        // Navigation inside the workspace, such as the Settings section list, is content.
+        if (workspace.contains(chrome)) {
+          continue;
+        }
         const rect = chrome.getBoundingClientRect();
         const overlap_x =
           Math.min(rect.right, workspace_rect.right) - Math.max(rect.left, workspace_rect.left);

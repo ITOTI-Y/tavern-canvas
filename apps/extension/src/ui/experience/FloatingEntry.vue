@@ -169,6 +169,7 @@ function on_keydown(event: KeyboardEvent): void {
     :class="[styles.floatingEntry, dragging && styles.floatingEntryDragging]"
     :style="{ left: `${position.x}px`, top: `${position.y}px` }"
     :aria-label="openLabel"
+    data-testid="floating-entry"
     :data-dragging="dragging"
     :data-media-state="resolved_media.state"
     data-shadow-role="entry"

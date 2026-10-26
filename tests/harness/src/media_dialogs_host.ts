@@ -248,7 +248,8 @@ const JobsPanel = defineComponent({
     }
 
     return () =>
-      h("div", { "data-testid": "jobs-panel" }, [
+      // The Shadow Root host ignores pointer events; harness-only controls opt back in.
+      h("div", { "data-testid": "jobs-panel", style: { pointerEvents: "auto" } }, [
         h(
           "button",
           { "data-testid": "run-four-image", onClick: () => void run_four_image() },
