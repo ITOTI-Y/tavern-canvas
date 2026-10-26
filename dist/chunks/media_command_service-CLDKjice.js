@@ -1,6 +1,6 @@
-import { n as e, t } from "./sha2-BGNex9vj.js";
-import { W as n, nt as r, tt as i } from "./src-B1pCVwkN.js";
-import { n as a } from "./job_repository-Cci2nOvt.js";
+import { d as e, f as t, i as n } from "./provider-ChWi4KfU.js";
+import { n as r, t as i } from "./ids-CQF5rr2J.js";
+import { n as a } from "./job_repository-BCVJs26r.js";
 //#region ../../packages/core/src/jobs/job_executor.ts
 var o = class extends Error {
 	provider_error;
@@ -16,10 +16,10 @@ var o = class extends Error {
 function l(e) {
 	return e.length < s + c.length ? !1 : c.every((t, n) => e[s + n] === t);
 }
-function u(t) {
-	let n = t.slice(0, 16);
+function u(e) {
+	let n = e.slice(0, 16);
 	n[6] = (n[6] ?? 0) & 15 | 80, n[8] = (n[8] ?? 0) & 63 | 128;
-	let r = e(n);
+	let r = t(n);
 	return i.parse(`${r.slice(0, 8)}-${r.slice(8, 12)}-${r.slice(12, 16)}-${r.slice(16, 20)}-${r.slice(20)}`);
 }
 var d = class extends Error {
@@ -30,13 +30,13 @@ var d = class extends Error {
 };
 function f(n, r) {
 	if (!l(n)) throw new d("not_mp4", "Bytes do not carry an MP4 ftyp signature");
-	let i = t(n);
+	let i = e(n);
 	return {
 		asset: {
 			asset_id: u(i),
 			media_type: "video/mp4",
 			byte_length: n.byteLength,
-			sha256: e(i),
+			sha256: t(i),
 			...r === void 0 ? {} : { duration_ms: r }
 		},
 		bytes: n

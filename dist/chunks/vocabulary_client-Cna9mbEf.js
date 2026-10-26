@@ -1,15 +1,103 @@
-import { a as e } from "./src-B1pCVwkN.js";
-//#region src/modules/vocabulary/vocabulary_client.ts
-var t = 120, n = class extends Error {
+import { b as e, f as t, g as n, i as r, l as i, m as a, s as o, x as s } from "./ids-CQF5rr2J.js";
+import { a as c, c as l, i as u, o as d, t as f } from "./vocabulary-Vj-CVv6I.js";
+//#region ../../packages/contracts/src/vocabulary_worker.ts
+var p = 50, m = o([
+	"exact",
+	"hot",
+	"prefix",
+	"alias",
+	"translation",
+	"trigram"
+]), h = e({
+	record_id: d,
+	display_text: s().trim().min(1).max(512),
+	category: f.optional(),
+	popularity: c,
+	match_kind: m,
+	score: n().nonnegative()
+}), g = o(["tavern_canvas_jsonl", "legacy_v2"]), _ = s().trim().min(1).max(512), v = e({
+	type: a("initialize"),
+	request_id: r
+}), y = e({
+	type: a("query"),
+	request_id: r,
+	query: s().trim().max(256),
+	category: f.optional()
+}), b = e({
+	type: a("next_page"),
+	request_id: r,
+	cursor: _
+}), x = e({
+	type: a("cancel"),
+	request_id: r,
+	target_request_id: r
+}), S = e({
+	type: a("import_source"),
+	request_id: r,
+	format: g,
+	batch_index: n().int().nonnegative(),
+	batch_count: n().int().positive(),
+	payload: s().min(1).max(8388608)
+}), C = e({
+	type: a("dispose"),
+	request_id: r
+});
+t("type", [
+	v,
+	y,
+	b,
+	x,
+	S,
+	C
+]);
+var w = e({
+	type: a("ready"),
+	package_id: u,
+	data_version: l,
+	record_count: n().int().nonnegative()
+}), T = e({
+	type: a("partial_results"),
+	request_id: r,
+	results: i(h).max(p)
+}), E = e({
+	type: a("complete"),
+	request_id: r,
+	results: i(h).max(p),
+	next_cursor: _.nullable()
+}), D = e({
+	type: a("progress"),
+	request_id: r,
+	phase: s().trim().min(1).max(64),
+	processed: n().int().nonnegative(),
+	total: n().int().positive()
+}), O = o([
+	"cancelled",
+	"invalid_request",
+	"not_ready",
+	"package_unavailable",
+	"import_failed",
+	"internal_error"
+]), k = e({
+	type: a("error"),
+	request_id: r,
+	code: O,
+	message: s().trim().min(1).max(1024)
+}), A = t("type", [
+	w,
+	T,
+	E,
+	D,
+	k
+]), j = 120, M = class extends Error {
 	code;
 	constructor(e, t) {
 		super(t), this.name = "VocabularySearchError", this.code = e;
 	}
 };
-function r(e) {
-	return new n("cancelled", e);
+function N(e) {
+	return new M("cancelled", e);
 }
-var i = class {
+var P = class {
 	#e;
 	#t;
 	#n = /* @__PURE__ */ new Map();
@@ -22,7 +110,7 @@ var i = class {
 	#l;
 	#u = null;
 	constructor(e) {
-		this.#t = e.debounce_ms ?? t, this.#e = e.create_worker(), this.#e.addEventListener("message", (e) => {
+		this.#t = e.debounce_ms ?? j, this.#e = e.create_worker(), this.#e.addEventListener("message", (e) => {
 			this.#h(e.data);
 		}), this.#l = crypto.randomUUID(), this.#y({
 			type: "initialize",
@@ -30,7 +118,7 @@ var i = class {
 		});
 	}
 	search(e, t = {}) {
-		if (this.#a) return Promise.reject(r("client disposed"));
+		if (this.#a) return Promise.reject(N("client disposed"));
 		this.#f(), this.#c += 1;
 		let n = this.#c;
 		return new Promise((r, i) => {
@@ -60,7 +148,7 @@ var i = class {
 	dispose() {
 		if (this.#a) return;
 		this.#a = !0, this.#o !== null && (clearTimeout(this.#o), this.#o = null);
-		let e = r("client disposed");
+		let e = N("client disposed");
 		for (let t of this.#n.values()) t.reject(e);
 		this.#n.clear(), this.#s !== null && this.#s.request_id === null && this.#s.reject(e), this.#s = null;
 		for (let e of this.#i) e.resolve();
@@ -96,10 +184,10 @@ var i = class {
 			type: "cancel",
 			request_id: crypto.randomUUID(),
 			target_request_id: e.request_id
-		})), e.reject(r("superseded by a newer search")));
+		})), e.reject(N("superseded by a newer search")));
 	}
 	#p() {
-		if (this.#a) throw r("client disposed");
+		if (this.#a) throw N("client disposed");
 	}
 	#m() {
 		return this.#r || this.#a ? Promise.resolve() : this.#u === null ? new Promise((e, t) => {
@@ -109,35 +197,35 @@ var i = class {
 			});
 		}) : Promise.reject(this.#u);
 	}
-	#h(t) {
-		let r = e.safeParse(t);
-		if (!r.success) return;
-		let i = r.data;
-		if (i.type === "ready") {
+	#h(e) {
+		let t = A.safeParse(e);
+		if (!t.success) return;
+		let n = t.data;
+		if (n.type === "ready") {
 			this.#r = !0, this.#_();
 			return;
 		}
-		if (i.type === "error" && i.request_id === this.#l) {
-			this.#u = new n(i.code, i.message), this.#v(this.#u);
+		if (n.type === "error" && n.request_id === this.#l) {
+			this.#u = new M(n.code, n.message), this.#v(this.#u);
 			return;
 		}
-		let a = this.#n.get(i.request_id);
-		if (a !== void 0) switch (i.type) {
+		let r = this.#n.get(n.request_id);
+		if (r !== void 0) switch (n.type) {
 			case "partial_results":
-				a.on_partial?.({
-					results: i.results,
+				r.on_partial?.({
+					results: n.results,
 					next_cursor: null
 				});
 				return;
 			case "progress": return;
 			case "complete":
-				this.#g(i.request_id), a.resolve({
-					results: i.results,
-					next_cursor: i.next_cursor
+				this.#g(n.request_id), r.resolve({
+					results: n.results,
+					next_cursor: n.next_cursor
 				});
 				return;
 			case "error":
-				this.#g(i.request_id), a.reject(new n(i.code, i.message));
+				this.#g(n.request_id), r.reject(new M(n.code, n.message));
 				return;
 		}
 	}
@@ -159,4 +247,4 @@ var i = class {
 	}
 };
 //#endregion
-export { i as VocabularyClient };
+export { P as VocabularyClient };

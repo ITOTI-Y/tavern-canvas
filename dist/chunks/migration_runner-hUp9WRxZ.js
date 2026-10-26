@@ -1,52 +1,53 @@
-import { n as e, r as t, t as n } from "./sha2-BGNex9vj.js";
-import { Ct as r, S as i, St as a, _t as o, bt as s, gt as c, lt as l, mt as u, st as d, ut as f, vt as p, xt as m, yt as h } from "./src-B1pCVwkN.js";
-import { C as g, b as _, d as v, g as ee, k as y, w as te, y as ne } from "./job_repository-Cci2nOvt.js";
-import { a as b, d as x, l as re } from "./business_repositories-CSXCQSWl.js";
-import { i as ie, n as ae, r as oe, t as se } from "./migration_journal-D7Tj2ayV.js";
+import { d as e, f as t, p as n } from "./provider-ChWi4KfU.js";
+import { C as r, _ as i, b as a, g as o, l as s, m as c, s as l, u, v as d, w as f, x as p, y as m } from "./ids-CQF5rr2J.js";
+import { i as h } from "./settings-CBjQWJ8F.js";
+import { E as g, S as _, T as v, d as y, g as ee, j as b, x as te } from "./job_repository-BCVJs26r.js";
+import { a as x, d as S, l as ne } from "./business_repositories-Cv2ukFwX.js";
+import { i as re, n as ie, r as ae, t as oe } from "./migration_journal-DJrA1Suw.js";
 //#region ../../tools/v2_migration/src/conversion_result.ts
-function S(e, t) {
+function C(e, t) {
 	return `${e}:${t}`;
 }
-function C(e, t) {
+function w(e, t) {
 	return {
 		schema_version: 1,
 		id: t,
 		namespace: e.namespace,
-		record_key: S(e.namespace, t),
+		record_key: C(e.namespace, t),
 		created_at: e.migrated_at,
 		updated_at: e.migrated_at
 	};
 }
-var ce = s({
-	schema_version: u(1),
-	id: te,
+var se = a({
+	schema_version: c(1),
+	id: g,
 	namespace: ee,
-	record_key: m().min(1),
-	created_at: g,
-	updated_at: g
+	record_key: p().min(1),
+	created_at: v,
+	updated_at: v
 });
 //#endregion
 //#region ../../tools/v2_migration/src/inventory.ts
-function w(e) {
+function ce(e) {
 	if (typeof e != "object" || !e || Array.isArray(e)) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function T(e, t = []) {
-	if (!w(e)) return [];
+function le(e, t = []) {
+	if (!ce(e)) return [];
 	let n = [];
 	for (let r of Object.keys(e)) {
 		let i = [...t, r];
 		n.push({
 			segments: i,
 			path: i.join(".")
-		}), n.push(...T(e[r], i));
+		}), n.push(...le(e[r], i));
 	}
 	return n;
 }
 //#endregion
 //#region ../../tools/v2_migration/src/path_rules.ts
-function le(e, t) {
+function ue(e, t) {
 	let n = e.split("."), r = n.at(-1) === "**", i = r ? n.slice(0, -1) : n;
 	if (!(r ? t.length >= i.length : t.length === i.length)) return null;
 	let a = 0;
@@ -60,10 +61,10 @@ function le(e, t) {
 	}
 	return a;
 }
-function E(e, t) {
+function T(e, t) {
 	let n;
 	for (let r of t) {
-		let t = le(r.pattern, e);
+		let t = ue(r.pattern, e);
 		t !== null && (n === void 0 || t > n.score) && (n = {
 			rule: r,
 			score: t
@@ -73,14 +74,14 @@ function E(e, t) {
 }
 //#endregion
 //#region ../../tools/v2_migration/src/settings_path_registry.ts
-function ue(e, t) {
+function de(e, t) {
 	return {
 		pattern: e,
 		classification: "mapped",
 		converter: t
 	};
 }
-var de = [
+var fe = [
 	["theme_id", "settings_converter"],
 	["themes.**", "settings_converter"],
 	["generate_btn_style", "settings_converter"],
@@ -341,7 +342,7 @@ var de = [
 	["worldBookConfig.worldBookSelections.**", "knowledge_converter"],
 	["worldBookConfig.worldEntrySelections.**", "knowledge_converter"],
 	["jiuguanStorage.**", "gallery_converter"]
-], fe = [
+], pe = [
 	["st_chatu8_sd_auth", "sd_webui_auth"],
 	["novelaiApi", "novelai_token"],
 	["novelaiApi_id", "novelai_token"],
@@ -350,9 +351,9 @@ var de = [
 	["chatu8_ai_assistant.api_key", "chatu8_ai_assistant_api_key"],
 	["llm_profiles.*.api_key", "llm_profile_api_key"],
 	["ai_token", "legacy_ai_token"]
-], D = [
-	...de.map(([e, t]) => ue(e, t)),
-	...fe.map(([e, t]) => ({
+], E = [
+	...fe.map(([e, t]) => de(e, t)),
+	...pe.map(([e, t]) => ({
 		pattern: e,
 		classification: "deferred_secret_transfer",
 		converter: "provider_converter",
@@ -371,48 +372,48 @@ var de = [
 ];
 //#endregion
 //#region ../../tools/v2_migration/src/id_derivation.ts
-function O(r) {
-	return e(n(t(r)));
+function D(r) {
+	return t(e(n(r)));
 }
-function k(t) {
-	return e(n(t));
+function O(n) {
+	return t(e(n));
 }
-function pe(e, r) {
+function me(t, r) {
 	let i = new Uint8Array(r), a = 0, o = 0;
 	for (; a < r;) {
-		let s = n(t(`${e}::${String(o)}`)), c = Math.min(s.length, r - a);
+		let s = e(n(`${t}::${String(o)}`)), c = Math.min(s.length, r - a);
 		i.set(s.subarray(0, c), a), a += c, o += 1;
 	}
 	return i;
 }
-var me = "0123456789abcdef";
-function he(e, t) {
+var k = "0123456789abcdef";
+function A(e, t) {
 	let n = e[t];
 	if (n === void 0) throw RangeError(`Missing byte at index ${String(t)}`);
 	return n;
 }
-function ge(e) {
-	return me.charAt(e >> 4) + me.charAt(e & 15);
+function he(e) {
+	return k.charAt(e >> 4) + k.charAt(e & 15);
 }
-function A(e) {
-	let t = pe(e, 16);
-	t[6] = he(t, 6) & 15 | 80, t[8] = he(t, 8) & 63 | 128;
-	let n = Array.from(t, ge).join("");
+function j(e) {
+	let t = me(e, 16);
+	t[6] = A(t, 6) & 15 | 80, t[8] = A(t, 8) & 63 | 128;
+	let n = Array.from(t, he).join("");
 	return `${n.slice(0, 8)}-${n.slice(8, 12)}-${n.slice(12, 16)}-${n.slice(16, 20)}-${n.slice(20, 32)}`;
 }
 //#endregion
 //#region ../../tools/v2_migration/src/legacy_coercion.ts
-function j(e, t = !1) {
+function M(e, t = !1) {
 	return typeof e == "boolean" ? e : e === "true" || e !== "false" && t;
 }
-function M(e) {
+function N(e) {
 	let t = atob(e), n = new Uint8Array(t.length);
 	for (let e = 0; e < t.length; e += 1) n[e] = t.charCodeAt(e);
 	return n;
 }
 //#endregion
 //#region ../../tools/v2_migration/src/payload_extraction.ts
-function _e(e, t) {
+function ge(e, t) {
 	let n = /* @__PURE__ */ new Set();
 	for (let r of e) {
 		if (r.classification !== "mapped" || r.converter !== t) continue;
@@ -421,26 +422,26 @@ function _e(e, t) {
 	}
 	return [...n].toSorted();
 }
-function N(e, t, n) {
+function P(e, t, n) {
 	let r = {};
-	for (let i of _e(t, n)) Object.hasOwn(e, i) && (r[i] = e[i]);
+	for (let i of ge(t, n)) Object.hasOwn(e, i) && (r[i] = e[i]);
 	return r;
 }
-function P(e, t, n) {
-	if (!w(e)) return e;
+function _e(e, t, n) {
+	if (!ce(e)) return e;
 	let r = {};
 	for (let [i, a] of Object.entries(e)) {
 		let e = [...t, i];
-		E(e, n)?.classification !== "deferred_secret_transfer" && (r[i] = P(a, e, n));
+		T(e, n)?.classification !== "deferred_secret_transfer" && (r[i] = _e(a, e, n));
 	}
 	return r;
 }
 function F(e) {
-	return y(e), e;
+	return b(e), e;
 }
 //#endregion
 //#region ../../tools/v2_migration/src/converters/settings_converter.ts
-var ve = ce.extend({ payload: h(m(), r()) });
+var ve = se.extend({ payload: m(p(), f()) });
 function ye(e, t) {
 	let n = [
 		{
@@ -467,15 +468,15 @@ function ye(e, t) {
 			path: "ui.inspector_width",
 			message: "v2 has no inspector panel; defaulted to 360."
 		}
-	], r = i.parse({
+	], r = h.parse({
 		schema_version: 1,
 		active_namespace: t.namespace,
 		locale: "auto",
 		credential_storage_mode: "host",
 		active_provider_profile_id: null,
 		global_concurrency: 1,
-		auto_generation_enabled: j(e.autoLLMImageGen),
-		fallback_generation_enabled: j(e.enablePregen),
+		auto_generation_enabled: M(e.autoLLMImageGen),
+		fallback_generation_enabled: M(e.enablePregen),
 		vocabulary_update_channel: "bundled",
 		gateway: {
 			endpoint: null,
@@ -488,17 +489,17 @@ function ye(e, t) {
 			inspector_collapsed: !1,
 			optional_entry_enabled: e.enable_chatu8_fab
 		}
-	}), a = A(`${t.namespace}:legacy_preferences:settings_converter`), o = F(N(e, D, "settings_converter"));
+	}), i = j(`${t.namespace}:legacy_preferences:settings_converter`), a = F(P(e, E, "settings_converter"));
 	return {
 		settings: r,
 		legacy_preferences: ve.parse({
 			schema_version: 1,
-			id: a,
+			id: i,
 			namespace: t.namespace,
-			record_key: S(t.namespace, a),
+			record_key: C(t.namespace, i),
 			created_at: t.migrated_at,
 			updated_at: t.migrated_at,
-			payload: o
+			payload: a
 		}),
 		warnings: n
 	};
@@ -506,8 +507,8 @@ function ye(e, t) {
 //#endregion
 //#region ../../tools/v2_migration/src/converters/provider_converter.ts
 function I(e, t, n, r) {
-	return ne.parse({
-		...C(e, t),
+	return te.parse({
+		...w(e, t),
 		provider_id: n,
 		payload: F(r)
 	});
@@ -524,13 +525,13 @@ function R(e, t, n) {
 	});
 }
 function be(e, t) {
-	let n = [], r = [], i = [], a = A(`${t.namespace}:provider_converter:legacy_all`), o = P(N(e, D, "provider_converter"), [], D);
+	let n = [], r = [], i = [], a = j(`${t.namespace}:provider_converter:legacy_all`), o = _e(P(e, E, "provider_converter"), [], E);
 	i.push(I(t, a, "legacy_all", o)), n.push({
 		path: "mode",
 		message: `v2 "mode" was ${JSON.stringify(e.mode)}; the migration runner resolves this to active_provider_profile_id.`
 	});
 	for (let [n, a] of Object.entries(e.novelai_profiles)) {
-		let e = A(`${t.namespace}:provider_converter:novelai:${n}`);
+		let e = j(`${t.namespace}:provider_converter:novelai:${n}`);
 		i.push(I(t, e, "novelai", L(a, ["novelaiApi"]))), R(r, a.novelaiApi, {
 			credential_kind: "novelai_token",
 			source_path: `novelai_profiles.${n}.novelaiApi`,
@@ -538,18 +539,18 @@ function be(e, t) {
 		});
 	}
 	for (let [n, r] of Object.entries(e.comfyui_profiles)) {
-		let e = A(`${t.namespace}:provider_converter:comfyui:${n}`);
+		let e = j(`${t.namespace}:provider_converter:comfyui:${n}`);
 		i.push(I(t, e, "comfyui", { ...r }));
 	}
 	for (let [n, a] of Object.entries(e.llm_profiles)) {
-		let e = A(`${t.namespace}:provider_converter:llm:${n}`);
+		let e = j(`${t.namespace}:provider_converter:llm:${n}`);
 		i.push(I(t, e, "llm", L(a, ["api_key"]))), R(r, a.api_key, {
 			credential_kind: "llm_profile_api_key",
 			source_path: `llm_profiles.${n}.api_key`,
 			provider_profile_id: e
 		});
 	}
-	let s = A(`${t.namespace}:provider_converter:openai_image:banana`);
+	let s = j(`${t.namespace}:provider_converter:openai_image:banana`);
 	i.push(I(t, s, "openai_image", {
 		...L(e.banana, ["apiKey"]),
 		character_presets: e.bananaCharacterPresets,
@@ -562,7 +563,7 @@ function be(e, t) {
 		source_path: "banana.apiKey",
 		provider_profile_id: s
 	});
-	let c = A(`${t.namespace}:provider_converter:llm:chatu8_ai_assistant`);
+	let c = j(`${t.namespace}:provider_converter:llm:chatu8_ai_assistant`);
 	return i.push(I(t, c, "llm", L(e.chatu8_ai_assistant, ["api_key"]))), R(r, e.chatu8_ai_assistant.api_key, {
 		credential_kind: "chatu8_ai_assistant_api_key",
 		source_path: "chatu8_ai_assistant.api_key",
@@ -593,21 +594,21 @@ function be(e, t) {
 //#region ../../tools/v2_migration/src/converters/prompt_converter.ts
 function z(e, t, n) {
 	return _.prompt_presets.parse({
-		...C(e, t),
+		...w(e, t),
 		payload: F(n)
 	});
 }
 function B(e, t, n) {
 	return _.regex_rules.parse({
-		...C(e, t),
+		...w(e, t),
 		payload: F(n)
 	});
 }
 function xe(e, t) {
-	let n = [], r = [], i = [], a = A(`${t.namespace}:prompt_converter:legacy_all`);
-	r.push(z(t, a, N(e, D, "prompt_converter")));
+	let n = [], r = [], i = [], a = j(`${t.namespace}:prompt_converter:legacy_all`);
+	r.push(z(t, a, P(e, E, "prompt_converter")));
 	for (let [n, i] of Object.entries(e.yushe)) {
-		let e = A(`${t.namespace}:prompt_converter:yushe:${n}`);
+		let e = j(`${t.namespace}:prompt_converter:yushe:${n}`);
 		r.push(z(t, e, {
 			kind: "yushe",
 			name: n,
@@ -615,14 +616,14 @@ function xe(e, t) {
 		}));
 	}
 	for (let [n, i] of Object.entries(e.test_context_profiles)) {
-		let e = A(`${t.namespace}:prompt_converter:test_context:${n}`);
+		let e = j(`${t.namespace}:prompt_converter:test_context:${n}`);
 		r.push(z(t, e, {
 			kind: "llm_test_context",
 			name: n,
 			...i
 		}));
 	}
-	let o = A(`${t.namespace}:prompt_converter:persona_ai_defaults`);
+	let o = j(`${t.namespace}:prompt_converter:persona_ai_defaults`);
 	r.push(z(t, o, {
 		kind: "llm_prompt_builder_defaults",
 		characterAI: e.characterAI,
@@ -635,7 +636,7 @@ function xe(e, t) {
 		defaultImageDemand: e.defaultImageDemand
 	}));
 	for (let [n, r] of Object.entries(e.prompt_replace)) {
-		let e = A(`${t.namespace}:prompt_converter:prompt_replace:${n}`);
+		let e = j(`${t.namespace}:prompt_converter:prompt_replace:${n}`);
 		i.push(B(t, e, {
 			kind: "prompt_replace",
 			name: n,
@@ -643,7 +644,7 @@ function xe(e, t) {
 		}));
 	}
 	for (let [n, r] of Object.entries(e.regex_profiles)) {
-		let e = A(`${t.namespace}:prompt_converter:regex_profile:${n}`);
+		let e = j(`${t.namespace}:prompt_converter:regex_profile:${n}`);
 		i.push(B(t, e, {
 			kind: "regex_profile",
 			name: n,
@@ -651,7 +652,7 @@ function xe(e, t) {
 		}));
 	}
 	for (let [n, r] of Object.entries(e.word_replacement_profiles)) {
-		let e = A(`${t.namespace}:prompt_converter:word_replacement:${n}`);
+		let e = j(`${t.namespace}:prompt_converter:word_replacement:${n}`);
 		i.push(B(t, e, {
 			kind: "word_replacement",
 			name: n,
@@ -668,34 +669,34 @@ function xe(e, t) {
 //#region ../../tools/v2_migration/src/converters/asset_converter.ts
 function V(e, t, n) {
 	return _.comfy_workflows.parse({
-		...C(e, t),
+		...w(e, t),
 		payload: F(n)
 	});
 }
 function H(e, t, n) {
 	return _.novelai_vibes.parse({
-		...C(e, t),
+		...w(e, t),
 		payload: F(n)
 	});
 }
 function Se(e, t, n) {
-	let r = [], i = [], a = [], o = [], s = A(`${n.namespace}:asset_converter:legacy_all`);
-	i.push(V(n, s, N(e, D, "asset_converter")));
+	let r = [], i = [], a = [], o = [], s = j(`${n.namespace}:asset_converter:legacy_all`);
+	i.push(V(n, s, P(e, E, "asset_converter")));
 	for (let [t, r] of Object.entries(e.workers)) {
-		let e = A(`${n.namespace}:asset_converter:workers:${t}`);
+		let e = j(`${n.namespace}:asset_converter:workers:${t}`);
 		i.push(V(n, e, {
 			kind: "workflow",
 			name: t,
 			workflow_json: r
 		}));
 	}
-	let c = A(`${n.namespace}:asset_converter:edit_workflow`);
+	let c = j(`${n.namespace}:asset_converter:edit_workflow`);
 	i.push(V(n, c, {
 		kind: "edit_workflow",
 		editWorkerid: e.editWorkerid,
 		editWorker: e.editWorker
 	}));
-	let l = A(`${n.namespace}:asset_converter:inpaint_defaults`);
+	let l = j(`${n.namespace}:asset_converter:inpaint_defaults`);
 	i.push(V(n, l, {
 		kind: "inpaint_lora_defaults",
 		inpaint_denoise: e.inpaint_denoise,
@@ -705,14 +706,14 @@ function Se(e, t, n) {
 		weilin_lora_fix: e.weilin_lora_fix
 	}));
 	for (let [t, r] of Object.entries(e.vibePresets)) {
-		let e = A(`${n.namespace}:asset_converter:vibe:${t}`);
+		let e = j(`${n.namespace}:asset_converter:vibe:${t}`);
 		a.push(H(n, e, {
 			kind: "vibe_preset",
 			name: t,
 			...r
 		}));
 	}
-	let u = A(`${n.namespace}:asset_converter:vibe_defaults`);
+	let u = j(`${n.namespace}:asset_converter:vibe_defaults`);
 	a.push(H(n, u, {
 		kind: "vibe_defaults",
 		nai3VibeTransfer: e.nai3VibeTransfer,
@@ -725,9 +726,9 @@ function Se(e, t, n) {
 		vibeJiuguanchucun: e.vibeJiuguanchucun
 	}));
 	for (let e of t?.config_images ?? []) {
-		let t = M(e.data_base64), r = k(t), i = A(`${n.namespace}:asset_converter:config_image:${e.id}`);
-		o.push(v.parse({
-			...C(n, i),
+		let t = N(e.data_base64), r = O(t), i = j(`${n.namespace}:asset_converter:config_image:${e.id}`);
+		o.push(y.parse({
+			...w(n, i),
 			sha256: r,
 			last_accessed_at: n.migrated_at,
 			pinned: !0,
@@ -752,16 +753,16 @@ function Se(e, t, n) {
 //#region ../../tools/v2_migration/src/converters/character_converter.ts
 function U(e, t, n) {
 	return _.character_profiles.parse({
-		...C(e, t),
+		...w(e, t),
 		payload: F(n)
 	});
 }
 function Ce(e, t) {
-	let n = [], r = [], i = A(`${t.namespace}:character_converter:legacy_all`);
-	r.push(U(t, i, N(e, D, "character_converter")));
+	let n = [], r = [], i = j(`${t.namespace}:character_converter:legacy_all`);
+	r.push(U(t, i, P(e, E, "character_converter")));
 	let a = e.personaProfiles?.presets ?? {};
 	for (let [e, n] of Object.entries(a)) {
-		let i = A(`${t.namespace}:character_converter:persona:${e}`);
+		let i = j(`${t.namespace}:character_converter:persona:${e}`);
 		r.push(U(t, i, {
 			kind: "persona_preset",
 			name: e,
@@ -780,18 +781,18 @@ function Ce(e, t) {
 //#region ../../tools/v2_migration/src/converters/knowledge_converter.ts
 function W(e, t, n, r) {
 	return _.knowledge_entries.parse({
-		...C(e, t),
+		...w(e, t),
 		source_type: n,
 		payload: F(r)
 	});
 }
 function we(e, t) {
-	let n = [], r = [], i = A(`${t.namespace}:knowledge_converter:legacy_all`);
-	r.push(W(t, i, "legacy_all", N(e, D, "knowledge_converter")));
-	let a = A(`${t.namespace}:knowledge_converter:knowledge_base_config`);
+	let n = [], r = [], i = j(`${t.namespace}:knowledge_converter:legacy_all`);
+	r.push(W(t, i, "legacy_all", P(e, E, "knowledge_converter")));
+	let a = j(`${t.namespace}:knowledge_converter:knowledge_base_config`);
 	r.push(W(t, a, "knowledge_base_config", e.knowledgeBaseConfig));
 	for (let [n, i] of Object.entries(e.worldBookList)) {
-		let a = A(`${t.namespace}:knowledge_converter:builtin_world_book:${n}`);
+		let a = j(`${t.namespace}:knowledge_converter:builtin_world_book:${n}`);
 		r.push(W(t, a, "builtin_world_book", {
 			name: n,
 			enabled: e.worldBookEnabled,
@@ -800,7 +801,7 @@ function we(e, t) {
 		}));
 	}
 	if (e.worldBookConfig !== void 0) {
-		let n = A(`${t.namespace}:knowledge_converter:send_data_world_book_config`);
+		let n = j(`${t.namespace}:knowledge_converter:send_data_world_book_config`);
 		r.push(W(t, n, "send_data_world_book_config", e.worldBookConfig));
 	} else n.push({
 		path: "worldBookConfig",
@@ -815,8 +816,8 @@ function we(e, t) {
 //#region ../../tools/v2_migration/src/converters/gallery_converter.ts
 var G = "manual";
 function Te(e, t, n, r, i) {
-	return v.parse({
-		...C(e, t),
+	return y.parse({
+		...w(e, t),
 		sha256: n,
 		last_accessed_at: e.migrated_at,
 		pinned: !1,
@@ -834,8 +835,8 @@ function K(e, t, n, r, i, a, o) {
 		});
 		return;
 	}
-	let s = M(r.data_base64), c = k(s);
-	return Te(e, A(`${e.namespace}:gallery_converter:${t}:${r.uuid}`), c, i, {
+	let s = N(r.data_base64), c = O(s);
+	return Te(e, j(`${e.namespace}:gallery_converter:${t}:${r.uuid}`), c, i, {
 		tag_key: n,
 		legacy_uuid: r.uuid,
 		...r.path === void 0 ? {} : { host_path: r.path },
@@ -868,9 +869,9 @@ function Ee(e, t, n) {
 		vocabulary_groups: o,
 		warnings: r
 	};
-	let s = t.tags.filter((e) => e.fileName === G), c = A(`${n.namespace}:gallery_converter:manual_vocabulary`);
+	let s = t.tags.filter((e) => e.fileName === G), c = j(`${n.namespace}:gallery_converter:manual_vocabulary`);
 	a.push(_.vocabularies.parse({
-		...C(n, c),
+		...w(n, c),
 		payload: {
 			kind: "manual_vocabulary",
 			tags: s
@@ -878,9 +879,9 @@ function Ee(e, t, n) {
 	}));
 	let l = t.groups.filter((e) => e.fileName === G), u = t.subgroups.filter((e) => e.fileName === G);
 	for (let e of l) {
-		let t = A(`${n.namespace}:gallery_converter:group:${e.id_index}`);
+		let t = j(`${n.namespace}:gallery_converter:group:${e.id_index}`);
 		o.push(_.vocabulary_groups.parse({
-			...C(n, t),
+			...w(n, t),
 			vocabulary_id: c,
 			payload: {
 				kind: "group",
@@ -889,9 +890,9 @@ function Ee(e, t, n) {
 		}));
 	}
 	for (let e of u) {
-		let t = A(`${n.namespace}:gallery_converter:subgroup:${e.id_index}`);
+		let t = j(`${n.namespace}:gallery_converter:subgroup:${e.id_index}`);
 		o.push(_.vocabulary_groups.parse({
-			...C(n, t),
+			...w(n, t),
 			vocabulary_id: c,
 			payload: {
 				kind: "subgroup",
@@ -914,8 +915,8 @@ function Ee(e, t, n) {
 //#region ../../tools/v2_migration/src/converter_registry.ts
 function De(e) {
 	let t = [], n = [];
-	for (let { segments: r, path: i } of T(e)) {
-		let e = E(r, D);
+	for (let { segments: r, path: i } of le(e)) {
+		let e = T(r, E);
 		e === void 0 ? n.push(i) : t.push({
 			path: i,
 			rule: e
@@ -928,91 +929,91 @@ function De(e) {
 }
 //#endregion
 //#region ../../tools/v2_migration/src/legacy_schema.ts
-var q = a([
-	m(),
-	c(),
-	f()
-]), Oe = s({
-	fixedPrompt: m(),
-	fixedPrompt_end: m(),
-	negativePrompt: m()
-}), ke = s({
-	model: m(),
-	infoExtract: c(),
-	strength: c(),
-	imageId: m().nullable(),
-	vibeDataId: m().nullable()
-}), Ae = s({
-	beforeAfterRegex: m(),
-	textRegex: m()
-}), je = s({
-	textReplacement: m(),
-	aiReplacement: m()
-}), J = s({ text: m() }), Me = s({
-	bgColor: m(),
-	iconColor: m(),
-	opacity: c()
-}), Ne = s({
-	bgColor: m().optional(),
-	textColor: m().optional(),
-	accentColor: m().optional()
-}), Pe = s({
-	novelaiApi: m(),
-	novelaisite: m(),
-	novelaiOtherSite: m(),
-	enableCloudQueue: m(),
-	cloudQueueUrl: m(),
-	cloudQueueGreeting: m(),
-	showQueueGreeting: m(),
-	novelaimode: m(),
-	novelai_sampler: m(),
-	Schedule: m(),
-	nai3Scale: m(),
-	cfg_rescale: m(),
-	AI_use_coords: m(),
-	sm: m(),
-	dyn: m(),
-	nai3Variety: m(),
-	nai3Deceisp: m(),
-	enableVibeGroupTransfer: m(),
-	randomVibeGroup: m(),
-	normalizeRefStrength: m(),
-	novelai_width: m(),
-	novelai_height: m(),
-	novelai_steps: m(),
-	novelai_seed: m()
-}), Fe = s({
-	workerid: m(),
-	worker: m(),
-	editWorkerid: m(),
-	editWorker: m(),
-	comfyuiUrl: m(),
-	MODEL_NAME: m(),
-	comfyuisamplerName: m(),
-	comfyui_vae: m(),
-	comfyui_scheduler: m(),
-	comfyuiCLIPName: m(),
-	comfyui_width: m(),
-	comfyui_height: m(),
-	comfyui_steps: m(),
-	comfyui_seed: m(),
-	cfg_comfyui: m()
-}), Ie = s({
-	api_url: m(),
-	api_key: m(),
-	model: m(),
-	temperature: c(),
-	top_p: c(),
-	max_tokens: c(),
-	stream: f(),
-	bypass_proxy: f()
-}), Y = s({
-	api_profile: m(),
-	context_profile: m()
+var q = r([
+	p(),
+	o(),
+	u()
+]), Oe = a({
+	fixedPrompt: p(),
+	fixedPrompt_end: p(),
+	negativePrompt: p()
+}), ke = a({
+	model: p(),
+	infoExtract: o(),
+	strength: o(),
+	imageId: p().nullable(),
+	vibeDataId: p().nullable()
+}), Ae = a({
+	beforeAfterRegex: p(),
+	textRegex: p()
+}), je = a({
+	textReplacement: p(),
+	aiReplacement: p()
+}), J = a({ text: p() }), Me = a({
+	bgColor: p(),
+	iconColor: p(),
+	opacity: o()
+}), Ne = a({
+	bgColor: p().optional(),
+	textColor: p().optional(),
+	accentColor: p().optional()
+}), Pe = a({
+	novelaiApi: p(),
+	novelaisite: p(),
+	novelaiOtherSite: p(),
+	enableCloudQueue: p(),
+	cloudQueueUrl: p(),
+	cloudQueueGreeting: p(),
+	showQueueGreeting: p(),
+	novelaimode: p(),
+	novelai_sampler: p(),
+	Schedule: p(),
+	nai3Scale: p(),
+	cfg_rescale: p(),
+	AI_use_coords: p(),
+	sm: p(),
+	dyn: p(),
+	nai3Variety: p(),
+	nai3Deceisp: p(),
+	enableVibeGroupTransfer: p(),
+	randomVibeGroup: p(),
+	normalizeRefStrength: p(),
+	novelai_width: p(),
+	novelai_height: p(),
+	novelai_steps: p(),
+	novelai_seed: p()
+}), Fe = a({
+	workerid: p(),
+	worker: p(),
+	editWorkerid: p(),
+	editWorker: p(),
+	comfyuiUrl: p(),
+	MODEL_NAME: p(),
+	comfyuisamplerName: p(),
+	comfyui_vae: p(),
+	comfyui_scheduler: p(),
+	comfyuiCLIPName: p(),
+	comfyui_width: p(),
+	comfyui_height: p(),
+	comfyui_steps: p(),
+	comfyui_seed: p(),
+	cfg_comfyui: p()
+}), Ie = a({
+	api_url: p(),
+	api_key: p(),
+	model: p(),
+	temperature: o(),
+	top_p: o(),
+	max_tokens: o(),
+	stream: u(),
+	bypass_proxy: u()
+}), Y = a({
+	api_profile: p(),
+	context_profile: p()
 }), X = {
 	api_profile: "",
 	context_profile: ""
-}, Z = s({
+}, Z = a({
 	image_gen: Y,
 	char_design: Y,
 	char_display: Y,
@@ -1034,50 +1035,50 @@ var q = a([
 	persona_gen: X,
 	user_persona_gen: X,
 	chat_summary: X
-}, Re = s({
-	id: m(),
-	name: m(),
-	role: d([
+}, Re = a({
+	id: p(),
+	name: p(),
+	role: l([
 		"system",
 		"user",
 		"assistant"
 	]),
-	content: m(),
-	enabled: f(),
-	triggerMode: d(["always", "trigger"]),
-	triggerWords: m(),
-	andTriggerWords: m()
-}), ze = s({ entries: l(Re) }), Q = s({
-	user: s({
-		text: m(),
-		image: m()
+	content: p(),
+	enabled: u(),
+	triggerMode: l(["always", "trigger"]),
+	triggerWords: p(),
+	andTriggerWords: p()
+}), ze = a({ entries: s(Re) }), Q = a({
+	user: a({
+		text: p(),
+		image: p()
 	}),
-	model: s({
-		text: m(),
-		image: m()
+	model: a({
+		text: p(),
+		image: p()
 	})
-}), Be = s({
-	fixedPrompt: m(),
-	postfixPrompt: m(),
-	conversation: l(Q)
-}), Ve = s({
-	triggers: m(),
+}), Be = a({
+	fixedPrompt: p(),
+	postfixPrompt: p(),
+	conversation: s(Q)
+}), Ve = a({
+	triggers: p(),
 	conversation: Q
-}), He = s({
-	apiKey: m(),
-	apiUrl: m(),
-	model: m(),
-	editModel: m(),
-	videoModel: m(),
-	aspectRatio: m(),
-	imageSize: m(),
-	useGrokFormat: m(),
-	conversationPresetId: m(),
-	editPresetId: m(),
-	videoPresetId: m(),
-	conversationPresets: h(m(), Be),
-	prompt_replace: h(m(), J),
-	prompt_replace_id: m()
+}), He = a({
+	apiKey: p(),
+	apiUrl: p(),
+	model: p(),
+	editModel: p(),
+	videoModel: p(),
+	aspectRatio: p(),
+	imageSize: p(),
+	useGrokFormat: p(),
+	conversationPresetId: p(),
+	editPresetId: p(),
+	videoPresetId: p(),
+	conversationPresets: m(p(), Be),
+	prompt_replace: m(p(), J),
+	prompt_replace_id: p()
 }), Ue = {
 	apiKey: "123456",
 	apiUrl: "http://localhost:8008",
@@ -1093,13 +1094,13 @@ var q = a([
 	conversationPresets: {},
 	prompt_replace: {},
 	prompt_replace_id: ""
-}, We = s({
-	api_url: m(),
-	api_key: m(),
-	model: m(),
-	bypass_proxy: f(),
-	stream: f(),
-	system_prompt: m()
+}, We = a({
+	api_url: p(),
+	api_key: p(),
+	model: p(),
+	bypass_proxy: u(),
+	stream: u(),
+	system_prompt: p()
 }), Ge = {
 	api_url: "",
 	api_key: "",
@@ -1107,17 +1108,17 @@ var q = a([
 	bypass_proxy: !1,
 	stream: !0,
 	system_prompt: ""
-}, Ke = s({
-	enabled: f(),
-	asrServerUrl: m(),
-	mode: d(["vad", "ptt"]),
-	silenceTimeout: c(),
-	vadThreshold: c(),
-	maxKeepDuration: c(),
-	language: m(),
-	appendMode: f(),
-	autoSend: f(),
-	conversationMode: f()
+}, Ke = a({
+	enabled: u(),
+	asrServerUrl: p(),
+	mode: l(["vad", "ptt"]),
+	silenceTimeout: o(),
+	vadThreshold: o(),
+	maxKeepDuration: o(),
+	language: p(),
+	appendMode: u(),
+	autoSend: u(),
+	conversationMode: u()
 }), qe = {
 	enabled: !1,
 	asrServerUrl: "https://qwen-qwen3-asr-demo.ms.show",
@@ -1129,45 +1130,45 @@ var q = a([
 	appendMode: !0,
 	autoSend: !0,
 	conversationMode: !1
-}, Je = s({
-	enabled: f(),
-	triggerDepth: c(),
-	worldBookSelections: h(m(), a([f(), u("force")])),
-	worldEntrySelections: h(m(), h(m(), a([f(), u("force")])))
+}, Je = a({
+	enabled: u(),
+	triggerDepth: o(),
+	worldBookSelections: m(p(), r([u(), c("force")])),
+	worldEntrySelections: m(p(), m(p(), r([u(), c("force")])))
 }), Ye = {
 	enabled: !1,
 	triggerDepth: 1,
 	worldBookSelections: {},
 	worldEntrySelections: {}
-}, Xe = s({
-	worldBookSelections: h(m(), a([f(), u("force")])),
-	worldEntrySelections: h(m(), h(m(), a([f(), u("force")])))
-}), Ze = s({
-	backends: s({
-		sd: s({
-			success: c(),
-			fail: c()
+}, Xe = a({
+	worldBookSelections: m(p(), r([u(), c("force")])),
+	worldEntrySelections: m(p(), m(p(), r([u(), c("force")])))
+}), Ze = a({
+	backends: a({
+		sd: a({
+			success: o(),
+			fail: o()
 		}),
-		comfyui: s({
-			success: c(),
-			fail: c()
+		comfyui: a({
+			success: o(),
+			fail: o()
 		}),
-		banana: s({
-			success: c(),
-			fail: c()
+		banana: a({
+			success: o(),
+			fail: o()
 		}),
-		novelai: s({
-			success: c(),
-			fail: c()
+		novelai: a({
+			success: o(),
+			fail: o()
 		})
 	}),
-	total: s({
-		success: c(),
-		fail: c()
+	total: a({
+		success: o(),
+		fail: o()
 	}),
-	firstGenTime: c().nullable(),
-	lastGenTime: c().nullable(),
-	daily: h(m(), r())
+	firstGenTime: o().nullable(),
+	lastGenTime: o().nullable(),
+	daily: m(p(), f())
 }), Qe = {
 	backends: {
 		sd: {
@@ -1194,107 +1195,107 @@ var q = a([
 	firstGenTime: null,
 	lastGenTime: null,
 	daily: {}
-}, $e = s({
-	presets: h(m(), h(m(), r())),
-	currentPresetId: m().optional(),
-	enabled: f().optional(),
-	injectionMode: m().optional(),
-	currentUserPresetId: m().optional(),
-	userEnabled: f().optional(),
-	userInjectionMode: m().optional()
-}), et = s({
-	model: m(),
-	temperature: c(),
-	systemPrompt: m(),
-	lastPrompt: m()
+}, $e = a({
+	presets: m(p(), m(p(), f())),
+	currentPresetId: p().optional(),
+	enabled: u().optional(),
+	injectionMode: p().optional(),
+	currentUserPresetId: p().optional(),
+	userEnabled: u().optional(),
+	userInjectionMode: p().optional()
+}), et = a({
+	model: p(),
+	temperature: o(),
+	systemPrompt: p(),
+	lastPrompt: p()
 }), tt = {
 	model: "mistral",
 	temperature: .8,
 	systemPrompt: "",
 	lastPrompt: ""
-}, nt = o({
-	theme_id: m().default(""),
-	themes: h(m(), Ne).default({}),
-	generate_btn_style: m().default(""),
-	image_frame_style: m().default(""),
-	collapse_style: m().default(""),
-	scriptEnabled: f().default(!1),
+}, nt = i({
+	theme_id: p().default(""),
+	themes: m(p(), Ne).default({}),
+	generate_btn_style: p().default(""),
+	image_frame_style: p().default(""),
+	collapse_style: p().default(""),
+	scriptEnabled: u().default(!1),
 	helpTipsEnabled: q.default("true"),
 	characterAI: et.default(tt),
 	outfitAI: et.default(tt),
 	newlineFixEnabled: q.default("true"),
-	yushe: h(m(), Oe).default({}),
-	yusheid_sd: m().default(""),
-	yusheid_novelai: m().default(""),
-	yusheid_comfyui: m().default(""),
+	yushe: m(p(), Oe).default({}),
+	yusheid_sd: p().default(""),
+	yusheid_novelai: p().default(""),
+	yusheid_comfyui: p().default(""),
 	randomYushe: q.default("false"),
-	aiAutonomousResolution: f().default(!0),
-	prompt_replace: h(m(), J).default({}),
-	prompt_replace_id: m().default(""),
-	vibePresets: h(m(), ke).default({}),
-	vibePresetId: m().default(""),
-	regex_profiles: h(m(), Ae).default({}),
-	current_regex_profile: m().default(""),
-	word_replacement_profiles: h(m(), je).default({}),
-	current_word_replacement_profile: m().default(""),
-	regexTestMode: f().default(!1),
-	mode: m().default("comfyui"),
-	client: m().default("browser"),
-	cache: m().default("1"),
-	sdUrl: m().default("http://localhost:7860"),
-	st_chatu8_sd_auth: m().default(""),
-	comfyuiUrl: m().default("http://localhost:8188"),
-	novelaiApi: m().default("000000"),
-	novelaiApi_id: m().default("000000"),
-	startTag: m().default("image###"),
-	endTag: m().default("###"),
-	nai3Scale: m().default("10"),
-	sdCfgScale: m().default("7"),
-	sm: m().default("true"),
-	dyn: m().default("true"),
-	cfg_rescale: m().default("0.18"),
-	AQT_sd: m().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_sd: m().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
-	AQT_novelai: m().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_novelai: m().default("Heavy"),
+	aiAutonomousResolution: u().default(!0),
+	prompt_replace: m(p(), J).default({}),
+	prompt_replace_id: p().default(""),
+	vibePresets: m(p(), ke).default({}),
+	vibePresetId: p().default(""),
+	regex_profiles: m(p(), Ae).default({}),
+	current_regex_profile: p().default(""),
+	word_replacement_profiles: m(p(), je).default({}),
+	current_word_replacement_profile: p().default(""),
+	regexTestMode: u().default(!1),
+	mode: p().default("comfyui"),
+	client: p().default("browser"),
+	cache: p().default("1"),
+	sdUrl: p().default("http://localhost:7860"),
+	st_chatu8_sd_auth: p().default(""),
+	comfyuiUrl: p().default("http://localhost:8188"),
+	novelaiApi: p().default("000000"),
+	novelaiApi_id: p().default("000000"),
+	startTag: p().default("image###"),
+	endTag: p().default("###"),
+	nai3Scale: p().default("10"),
+	sdCfgScale: p().default("7"),
+	sm: p().default("true"),
+	dyn: p().default("true"),
+	cfg_rescale: p().default("0.18"),
+	AQT_sd: p().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_sd: p().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
+	AQT_novelai: p().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_novelai: p().default("Heavy"),
 	addFurryDataset: q.default("false"),
-	AQT_comfyui: m().default("best quality, amazing quality, very aesthetic, absurdres"),
-	UCP_comfyui: m().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
-	sd_csteps: m().default("28"),
-	sd_cwidth: m().default("1024"),
-	sd_cheight: m().default("1024"),
-	sd_cseed: m().default("-1"),
-	novelai_steps: m().default("28"),
-	novelai_width: m().default("1024"),
-	novelai_height: m().default("1024"),
-	novelai_seed: m().default("0"),
-	comfyui_steps: m().default("28"),
-	comfyui_width: m().default("1024"),
-	comfyui_height: m().default("1024"),
-	comfyui_seed: m().default("0"),
-	inpaint_denoise: m().default("0.75"),
+	AQT_comfyui: p().default("best quality, amazing quality, very aesthetic, absurdres"),
+	UCP_comfyui: p().default("bad proportions, out of focus, username, text, bad anatomy, lowres, worstquality, watermark, cropped, bad body, deformed, mutated, disfigured, poorly drawn face, malformed hands, extra arms, extra limb, missing limb, too many fingers, extra legs, bad feet, missing fingers, fused fingers, acnes, floating limbs, disconnected limbs, long neck, long body, mutation, ugly, blurry, low quality, sketches, normal quality, monochrome, grayscale, signature, logo, jpeg artifacts, unfinished, displeasing, chromatic aberration, extra digits, artistic error, scan, abstract, photo, realism, screencap"),
+	sd_csteps: p().default("28"),
+	sd_cwidth: p().default("1024"),
+	sd_cheight: p().default("1024"),
+	sd_cseed: p().default("-1"),
+	novelai_steps: p().default("28"),
+	novelai_width: p().default("1024"),
+	novelai_height: p().default("1024"),
+	novelai_seed: p().default("0"),
+	comfyui_steps: p().default("28"),
+	comfyui_width: p().default("1024"),
+	comfyui_height: p().default("1024"),
+	comfyui_seed: p().default("0"),
+	inpaint_denoise: p().default("0.75"),
 	weilin_lora_fix: q.default("false"),
-	inpaint_brush_size: c().default(30),
-	inpaint_positive_prompt: m().default(""),
-	inpaint_negative_prompt: m().default(""),
-	cfg_comfyui: m().default("6"),
-	sd_cchatu_8_model: m().default(""),
-	sd_cchatu_8_vae: m().default("Automatic"),
-	sd_cchatu_8_scheduler: m().default(""),
-	sd_cchatu_8_upscaler: m().default("Latent"),
-	sd_cupscale_factor: m().default("1"),
-	sd_chires_fix: m().default("false"),
-	sd_chires_steps: m().default("0"),
-	sd_cdenoising_strength: m().default("0.7"),
-	sd_cclip_skip: m().default("2"),
-	sd_cadetailer: m().default("false"),
-	restoreFaces: m().default("false"),
-	sd_cchatu_8_samplerName: m().default("DPM++ 2M"),
-	comfyuisamplerName: m().default(""),
-	comfyuiCLIPName: m().default(""),
-	comfyui_scheduler: m().default(""),
-	comfyui_vae: m().default(""),
-	novelai_sampler: m().default("k_euler"),
+	inpaint_brush_size: o().default(30),
+	inpaint_positive_prompt: p().default(""),
+	inpaint_negative_prompt: p().default(""),
+	cfg_comfyui: p().default("6"),
+	sd_cchatu_8_model: p().default(""),
+	sd_cchatu_8_vae: p().default("Automatic"),
+	sd_cchatu_8_scheduler: p().default(""),
+	sd_cchatu_8_upscaler: p().default("Latent"),
+	sd_cupscale_factor: p().default("1"),
+	sd_chires_fix: p().default("false"),
+	sd_chires_steps: p().default("0"),
+	sd_cdenoising_strength: p().default("0.7"),
+	sd_cclip_skip: p().default("2"),
+	sd_cadetailer: p().default("false"),
+	restoreFaces: p().default("false"),
+	sd_cchatu_8_samplerName: p().default("DPM++ 2M"),
+	comfyuisamplerName: p().default(""),
+	comfyuiCLIPName: p().default(""),
+	comfyui_scheduler: p().default(""),
+	comfyui_vae: p().default(""),
+	novelai_sampler: p().default("k_euler"),
 	zidongdianji: q.default("false"),
 	zidongdianji2: q.default("false"),
 	longPressToEdit: q.default("false"),
@@ -1305,91 +1306,91 @@ var q = a([
 	normalizeRefStrength: q.default("false"),
 	nai3CharRef: q.default("false"),
 	nai3StylePerception: q.default("false"),
-	InformationExtracted: m().default("0.3"),
-	ReferenceStrength: m().default("0.6"),
+	InformationExtracted: p().default("0.3"),
+	ReferenceStrength: p().default("0.6"),
 	nai3Deceisp: q.default("true"),
 	nai3Variety: q.default("true"),
-	Schedule: m().default("karras"),
-	MODEL_NAME: m().default(""),
-	c_fenwei: m().default("0.8"),
-	c_xijie: m().default("0.8"),
-	c_idquanzhong: m().default("1.10"),
-	c_quanzhong: m().default("0.8"),
-	ipa: m().default("STANDARD (medium strength)"),
+	Schedule: p().default("karras"),
+	MODEL_NAME: p().default(""),
+	c_fenwei: p().default("0.8"),
+	c_xijie: p().default("0.8"),
+	c_idquanzhong: p().default("1.10"),
+	c_quanzhong: p().default("0.8"),
+	ipa: p().default("STANDARD (medium strength)"),
 	dbclike: q.default("false"),
 	collapseImage: q.default("false"),
-	workers: h(m(), m()).default({}),
-	workerid: m().default(""),
-	worker: m().default(""),
-	editWorkerid: m().default(""),
-	editWorker: m().default(""),
-	novelaimode: m().default("nai-diffusion-4-5-full"),
-	novelaisite: m().default(""),
-	novelaiOtherSite: m().default("http://localhost:9696/get-new-token"),
+	workers: m(p(), p()).default({}),
+	workerid: p().default(""),
+	worker: p().default(""),
+	editWorkerid: p().default(""),
+	editWorker: p().default(""),
+	novelaimode: p().default("nai-diffusion-4-5-full"),
+	novelaisite: p().default(""),
+	novelaiOtherSite: p().default("http://localhost:9696/get-new-token"),
 	enableCloudQueue: q.default("false"),
-	cloudQueueUrl: m().default("https://st-chatu-novelai-queue.hf.space"),
-	cloudQueueGreeting: m().default(""),
+	cloudQueueUrl: p().default("https://st-chatu-novelai-queue.hf.space"),
+	cloudQueueGreeting: p().default(""),
 	showQueueGreeting: q.default("true"),
-	displayMode: m().default(""),
+	displayMode: p().default(""),
 	heavyFrontendMode: q.default("false"),
 	insertOriginalText: q.default("false"),
 	tagthinkEcho: q.default("false"),
-	historyKeepImageTag: f().default(!1),
+	historyKeepImageTag: u().default(!1),
 	enablePregen: q.default("false"),
 	autoLLMImageGen: q.default("false"),
-	imageAlignment: m().default("center"),
-	imageSizeScale: m().default("100"),
-	imageGenInterval: c().default(100),
-	ai_temperature: c().default(1),
-	ai_top_p: c().default(1),
-	ai_presence_penalty: c().default(0),
-	ai_frequency_penalty: c().default(0),
+	imageAlignment: p().default("center"),
+	imageSizeScale: p().default("100"),
+	imageGenInterval: o().default(100),
+	ai_temperature: o().default(1),
+	ai_top_p: o().default(1),
+	ai_presence_penalty: o().default(0),
+	ai_frequency_penalty: o().default(0),
 	ai_stream: q.default("false"),
 	ai_private: q.default("true"),
-	ai_token: m().default(""),
-	ai_test_system: m().default("You are a helpful assistant."),
-	ai_test_user: m().default("What is the capital of France?"),
-	ai_test_output: m().default(""),
+	ai_token: p().default(""),
+	ai_test_system: p().default("You are a helpful assistant."),
+	ai_test_user: p().default("What is the capital of France?"),
+	ai_test_output: p().default(""),
 	chatu8_ai_assistant: We.default(Ge),
-	chatu8_code: m().default(""),
+	chatu8_code: p().default(""),
 	asr: Ke.default(qe),
 	knowledgeBaseConfig: Je.default(Ye),
-	llm_history_depth: c().default(2),
+	llm_history_depth: o().default(2),
 	imageGenStats: Ze.default(Qe),
-	llm_profiles: h(m(), Ie).default({}),
-	current_llm_profile: m().default(""),
-	llm_request_type_profiles: h(m(), Z).default({}),
-	current_llm_request_type_profile: m().default(""),
+	llm_profiles: m(p(), Ie).default({}),
+	current_llm_profile: p().default(""),
+	llm_request_type_profiles: m(p(), Z).default({}),
+	current_llm_request_type_profile: p().default(""),
 	llm_request_type_configs: Z.default(Le),
-	test_context_profiles: h(m(), ze).default({}),
-	current_test_context_profile: m().default(""),
-	translation_model: m().default("mistral"),
-	translation_system_prompt: m().default(""),
+	test_context_profiles: m(p(), ze).default({}),
+	current_test_context_profile: p().default(""),
+	translation_model: p().default("mistral"),
+	translation_system_prompt: p().default(""),
 	AI_use_coords: q.default("true"),
-	fabThemes: h(m(), Me).default({}),
-	chatu8_fab_theme: m().default(""),
-	enable_chatu8_fab: f().default(!0),
-	enable_chatu8_fab_video: f().default(!1),
-	enable_chatu8_desktop_pet: f().default(!1),
-	chatu8_fab_bg_color: m().default("#ADD8E6"),
-	chatu8_fab_icon_color: m().default("#FFFFFF"),
-	chatu8_fab_icon_image_id: m().default(""),
-	chatu8_fab_opacity: c().default(1),
-	chatu8_fab_size: s({
-		desktop: c(),
-		mobile: c()
+	fabThemes: m(p(), Me).default({}),
+	chatu8_fab_theme: p().default(""),
+	enable_chatu8_fab: u().default(!0),
+	enable_chatu8_fab_video: u().default(!1),
+	enable_chatu8_desktop_pet: u().default(!1),
+	chatu8_fab_bg_color: p().default("#ADD8E6"),
+	chatu8_fab_icon_color: p().default("#FFFFFF"),
+	chatu8_fab_icon_image_id: p().default(""),
+	chatu8_fab_opacity: o().default(1),
+	chatu8_fab_size: a({
+		desktop: o(),
+		mobile: o()
 	}).default({
 		desktop: 50,
 		mobile: 40
 	}),
-	chatu8_fab_position: s({
-		desktop: s({
-			top: m(),
-			left: m()
+	chatu8_fab_position: a({
+		desktop: a({
+			top: p(),
+			left: p()
 		}),
-		mobile: s({
-			top: m(),
-			left: m()
+		mobile: a({
+			top: p(),
+			left: p()
 		})
 	}).default({
 		desktop: {
@@ -1401,117 +1402,117 @@ var q = a([
 			left: "10px"
 		}
 	}),
-	chatu8_fab_video_paths: s({
-		idle: m(),
-		dragging: m()
+	chatu8_fab_video_paths: a({
+		idle: p(),
+		dragging: p()
 	}).default({
 		idle: "",
 		dragging: ""
 	}),
-	lastTab: m().default("main"),
-	cacheStorageMigrated: f().default(!1),
+	lastTab: p().default("main"),
+	cacheStorageMigrated: u().default(!1),
 	worldBookEnabled: q.default("false"),
-	worldBookList: h(m(), s({ content: m() })).default({}),
-	worldBookList_id: m().default(""),
+	worldBookList: m(p(), a({ content: p() })).default({}),
+	worldBookList_id: p().default(""),
 	vocabulary_search_startswith: q.default("false"),
-	vocabulary_search_limit: c().default(100),
-	vocabulary_search_sort: m().default("hot_desc"),
+	vocabulary_search_limit: o().default(100),
+	vocabulary_search_sort: p().default("hot_desc"),
 	jiuguanchucun: q.default("false"),
 	vibeJiuguanchucun: q.default("true"),
 	convertToJpegStorage: q.default("false"),
-	jiuguanStorage: h(m(), s({
-		images: l(s({
-			uuid: m(),
-			path: m(),
-			thumbnail_uuid: m(),
-			thumbnail_path: m(),
-			date: c(),
-			isVideo: f(),
-			originalUrl: m(),
-			size: c(),
-			thumbnail_size: c(),
-			genParams: h(m(), r()).nullable().optional(),
-			data_base64: p((e) => e === "" ? void 0 : e, m().min(1).optional())
+	jiuguanStorage: m(p(), a({
+		images: s(a({
+			uuid: p(),
+			path: p(),
+			thumbnail_uuid: p(),
+			thumbnail_path: p(),
+			date: o(),
+			isVideo: u(),
+			originalUrl: p(),
+			size: o(),
+			thumbnail_size: o(),
+			genParams: m(p(), f()).nullable().optional(),
+			data_base64: d((e) => e === "" ? void 0 : e, p().min(1).optional())
 		})),
-		index: c(),
-		change: m()
+		index: o(),
+		change: p()
 	})).default({}),
 	banana: He.default(Ue),
-	bananaCharacterPresets: h(m(), Ve).default({}),
-	bananaCharacterPresetId: m().default(""),
-	gestureEnabled: f().default(!1),
-	clickTriggerEnabled: f().default(!0),
-	gesture1: l(m()).default([]),
-	gesture2: l(m()).default([]),
-	gestureShowRecognition: f().default(!0),
-	gestureShowTrail: f().default(!0),
-	gestureTrailColor: m().default("#00ff00"),
-	gestureMatchThreshold: c().default(60),
-	defaultCharDemand: m().default(""),
-	defaultImageDemand: m().default(""),
-	novelai_profiles: h(m(), Pe).default({}),
-	novelai_profile_id: m().default(""),
-	comfyui_profiles: h(m(), Fe).default({}),
-	comfyui_profile_id: m().default(""),
+	bananaCharacterPresets: m(p(), Ve).default({}),
+	bananaCharacterPresetId: p().default(""),
+	gestureEnabled: u().default(!1),
+	clickTriggerEnabled: u().default(!0),
+	gesture1: s(p()).default([]),
+	gesture2: s(p()).default([]),
+	gestureShowRecognition: u().default(!0),
+	gestureShowTrail: u().default(!0),
+	gestureTrailColor: p().default("#00ff00"),
+	gestureMatchThreshold: o().default(60),
+	defaultCharDemand: p().default(""),
+	defaultImageDemand: p().default(""),
+	novelai_profiles: m(p(), Pe).default({}),
+	novelai_profile_id: p().default(""),
+	comfyui_profiles: m(p(), Fe).default({}),
+	comfyui_profile_id: p().default(""),
 	worldBookConfig: Xe.optional(),
 	personaProfiles: $e.optional()
-}), rt = s({
-	uuid: m().min(1),
-	path: m().optional(),
-	thumbnail_uuid: m().min(1).optional(),
-	thumbnail_path: m().optional(),
-	date: c().int().nonnegative(),
-	isVideo: f(),
-	originalUrl: m(),
-	size: c().int().nonnegative(),
-	thumbnail_size: c().int().nonnegative(),
-	genParams: h(m(), r()).nullable().optional(),
-	data_base64: m().min(1).optional()
-}), it = s({
-	images: l(rt),
-	index: c().int().nonnegative(),
-	change: m()
-}), at = s({
-	id_index: m().min(1),
-	fileName: m().min(1),
-	name: m().min(1)
-}), ot = s({
-	fileName: m().min(1),
-	name: m().min(1),
-	hot: c().int().optional()
-}), st = s({
-	id: m().min(1),
-	data_base64: m().min(1),
-	date: c().int().nonnegative()
-}), ct = s({
-	tupianhuancun_metadata: h(m(), it),
-	tupianhuancun_blobs: h(m(), m().min(1)),
-	groups: l(at),
-	subgroups: l(at),
-	tags: l(ot),
-	config_images: l(st)
-}), lt = s({
-	tag: m().min(1),
-	regex: m().optional(),
-	locked: f().optional()
-}), ut = s({
-	chat_id: m().min(1),
-	message_id: c().int().nonnegative(),
-	role: d([
+}), rt = a({
+	uuid: p().min(1),
+	path: p().optional(),
+	thumbnail_uuid: p().min(1).optional(),
+	thumbnail_path: p().optional(),
+	date: o().int().nonnegative(),
+	isVideo: u(),
+	originalUrl: p(),
+	size: o().int().nonnegative(),
+	thumbnail_size: o().int().nonnegative(),
+	genParams: m(p(), f()).nullable().optional(),
+	data_base64: p().min(1).optional()
+}), it = a({
+	images: s(rt),
+	index: o().int().nonnegative(),
+	change: p()
+}), at = a({
+	id_index: p().min(1),
+	fileName: p().min(1),
+	name: p().min(1)
+}), ot = a({
+	fileName: p().min(1),
+	name: p().min(1),
+	hot: o().int().optional()
+}), st = a({
+	id: p().min(1),
+	data_base64: p().min(1),
+	date: o().int().nonnegative()
+}), ct = a({
+	tupianhuancun_metadata: m(p(), it),
+	tupianhuancun_blobs: m(p(), p().min(1)),
+	groups: s(at),
+	subgroups: s(at),
+	tags: s(ot),
+	config_images: s(st)
+}), lt = a({
+	tag: p().min(1),
+	regex: p().optional(),
+	locked: u().optional()
+}), ut = a({
+	chat_id: p().min(1),
+	message_id: o().int().nonnegative(),
+	role: l([
 		"user",
 		"assistant",
 		"system"
 	]),
-	mes: m(),
-	swipe_id: c().int().nonnegative().nullable(),
-	extra: s({
-		images: h(m(), l(lt)).optional(),
-		lockedTags: l(m()).optional()
+	mes: p(),
+	swipe_id: o().int().nonnegative().nullable(),
+	extra: a({
+		images: m(p(), s(lt)).optional(),
+		lockedTags: s(p()).optional()
 	}).optional()
 });
-s({ messages: l(ut) }), s({
-	chatu8_uid: m().optional(),
-	migration_flags: h(m(), m())
+a({ messages: s(ut) }), a({
+	chatu8_uid: p().optional(),
+	migration_flags: m(p(), p())
 });
 //#endregion
 //#region src/storage/active_namespace.ts
@@ -1551,7 +1552,7 @@ async function gt(e) {
 		let t = e instanceof Error && e.message.length > 0 ? e.message.slice(0, 240) : "unknown error";
 		return {
 			kind: "invalid",
-			fingerprint: O(JSON.stringify({
+			fingerprint: D(JSON.stringify({
 				source: "settings",
 				error: t
 			})),
@@ -1566,7 +1567,7 @@ async function gt(e) {
 		let t = e instanceof Error && e.message.length > 0 ? e.message.slice(0, 240) : "unknown error";
 		return {
 			kind: "invalid",
-			fingerprint: O(JSON.stringify({
+			fingerprint: D(JSON.stringify({
 				source: "gallery",
 				error: t
 			})),
@@ -1575,7 +1576,7 @@ async function gt(e) {
 	}
 	let r;
 	try {
-		r = O(JSON.stringify({
+		r = D(JSON.stringify({
 			settings: t,
 			gallery: n ?? null
 		}));
@@ -1583,7 +1584,7 @@ async function gt(e) {
 		let t = e instanceof Error && e.message.length > 0 ? e.message.slice(0, 240) : "unknown error";
 		return {
 			kind: "invalid",
-			fingerprint: O(JSON.stringify({
+			fingerprint: D(JSON.stringify({
 				source: "serialization",
 				error: t
 			})),
@@ -1635,7 +1636,7 @@ function vt(e, t) {
 	let n = /* @__PURE__ */ new Map(), r = (e) => {
 		if (typeof e != "string" || e.length === 0) return;
 		let t = _t(e);
-		t.byteLength !== 0 && n.set(k(t), t);
+		t.byteLength !== 0 && n.set(O(t), t);
 	};
 	for (let t of Object.values(e.jiuguanStorage)) for (let e of t.images) r(e.data_base64);
 	for (let e of Object.values(t?.tupianhuancun_metadata ?? {})) for (let n of e.images) r(n.data_base64 ?? t?.tupianhuancun_blobs[n.uuid]);
@@ -1737,12 +1738,12 @@ var $ = class extends Error {
 };
 function Tt(e, t, n) {
 	if (e.mode === "banana") {
-		let e = A(`${t}:provider_converter:openai_image:banana`);
+		let e = j(`${t}:provider_converter:openai_image:banana`);
 		return n.some((t) => t.id === e) ? e : null;
 	}
 	let r = wt[e.mode]?.(e);
 	if (r == null) return null;
-	let i = A(`${t}:provider_converter:${e.mode}:${r}`);
+	let i = j(`${t}:provider_converter:${e.mode}:${r}`);
 	return n.some((e) => e.id === i) ? i : null;
 }
 function Et(e, t, n, r) {
@@ -1787,7 +1788,7 @@ async function Dt(e, t, n, r, i) {
 	if (o === void 0) throw new $("missing_blob", `No resolved bytes for image ${r.id} (sha256 ${r.sha256})`, "assets_gallery");
 	let s = await t.image_blobs.get(r.sha256, e);
 	if (s === null) {
-		let n = re(o), i = new Uint8Array(o), a = {
+		let n = ne(o), i = new Uint8Array(o), a = {
 			sha256: r.sha256,
 			ref_count: 1,
 			byte_length: o.byteLength,
@@ -1812,9 +1813,9 @@ var Ot = [
 	"settings"
 ];
 async function kt(e, t) {
-	let { database: n, namespace: r, plan: i, bytes_by_sha256: a, migrated_at: o } = t, s = b(n);
+	let { database: n, namespace: r, plan: i, bytes_by_sha256: a, migrated_at: o } = t, s = x(n);
 	switch (e) {
-		case "provider": return x(n, ["provider_profiles"], async (e) => {
+		case "provider": return S(n, ["provider_profiles"], async (e) => {
 			for (let t of i.provider_profiles) await s.provider_profiles.put(r, t, e);
 			return i.provider_profiles.length;
 		});
@@ -1825,12 +1826,12 @@ async function kt(e, t) {
 			if (a !== void 0) throw new $("secret_transfer_blocked", `Secret transfer blocked for credential "${a.credential_kind}" (${a.reason}); configure SillyTavern secret storage or a Gateway profile and retry`, "secrets");
 			return n.records.length;
 		}
-		case "prompts": return x(n, ["prompt_presets", "regex_rules"], async (e) => {
+		case "prompts": return S(n, ["prompt_presets", "regex_rules"], async (e) => {
 			for (let t of i.prompt_presets) await s.prompt_presets.put(r, t, e);
 			for (let t of i.regex_rules) await s.regex_rules.put(r, t, e);
 			return i.prompt_presets.length + i.regex_rules.length;
 		});
-		case "assets": return x(n, [
+		case "assets": return S(n, [
 			"comfy_workflows",
 			"novelai_vibes",
 			"image_records",
@@ -1841,15 +1842,15 @@ async function kt(e, t) {
 			for (let t of i.asset_image_records) await Dt(e, s, r, t, a);
 			return i.comfy_workflows.length + i.novelai_vibes.length + i.asset_image_records.length;
 		});
-		case "characters": return x(n, ["character_profiles"], async (e) => {
+		case "characters": return S(n, ["character_profiles"], async (e) => {
 			for (let t of i.character_profiles) await s.character_profiles.put(r, t, e);
 			return i.character_profiles.length;
 		});
-		case "knowledge": return x(n, ["knowledge_entries"], async (e) => {
+		case "knowledge": return S(n, ["knowledge_entries"], async (e) => {
 			for (let t of i.knowledge_entries) await s.knowledge_entries.put(r, t, e);
 			return i.knowledge_entries.length;
 		});
-		case "gallery": return x(n, [
+		case "gallery": return S(n, [
 			"image_records",
 			"image_blobs",
 			"vocabularies",
@@ -1860,19 +1861,19 @@ async function kt(e, t) {
 			for (let t of i.vocabulary_groups) await s.vocabulary_groups.put(r, t, e);
 			return i.gallery_image_records.length + i.vocabularies.length + i.vocabulary_groups.length;
 		});
-		case "settings": return x(n, ["legacy_preferences"], async (e) => (await s.legacy_preferences.put(r, {
+		case "settings": return S(n, ["legacy_preferences"], async (e) => (await s.legacy_preferences.put(r, {
 			schema_version: 1,
 			id: i.legacy_preferences_id,
 			namespace: r,
 			record_key: `${r}:${i.legacy_preferences_id}`,
 			created_at: o,
 			updated_at: o,
-			payload: y(i.legacy_preferences_payload)
+			payload: b(i.legacy_preferences_payload)
 		}, e), 1));
 	}
 }
 async function At(e, t, n, r) {
-	let i = b(e), a = {
+	let i = x(e), a = {
 		provider_profiles: n.provider_profiles.length,
 		prompt_presets: n.prompt_presets.length,
 		regex_rules: n.regex_rules.length,
@@ -1896,17 +1897,17 @@ async function At(e, t, n, r) {
 	for (let e of s) {
 		let t = await i.image_blobs.get(e);
 		if (t === null) throw new $("missing_blob", `Missing image_blobs entry for ${e}`, "verifying");
-		if (k(t.blob instanceof Blob ? new Uint8Array(await t.blob.arrayBuffer()) : new Uint8Array(t.blob)) !== e) throw new $("hash_mismatch", `Stored blob ${e} no longer hashes to its key`, "verifying");
+		if (O(t.blob instanceof Blob ? new Uint8Array(await t.blob.arrayBuffer()) : new Uint8Array(t.blob)) !== e) throw new $("hash_mismatch", `Stored blob ${e} no longer hashes to its key`, "verifying");
 	}
 	return s;
 }
 async function jt(e) {
-	let { database: t, settings: n, legacy_source: r, image_resolver: i, secret_destination: a } = e, o = e.migrated_at ?? (/* @__PURE__ */ new Date()).toISOString(), s = oe(t), c = await gt(r);
-	if (c.kind === "absent") return await s.save(ae, {
+	let { database: t, settings: n, legacy_source: r, image_resolver: i, secret_destination: a } = e, o = e.migrated_at ?? (/* @__PURE__ */ new Date()).toISOString(), s = ae(t), c = await gt(r);
+	if (c.kind === "absent") return await s.save(ie, {
 		state: "not_required",
 		checked_at: o
 	}, o), { status: "not_required" };
-	let l = `${se}${A(c.fingerprint)}`, u = await s.load(l);
+	let l = `${oe}${j(c.fingerprint)}`, u = await s.load(l);
 	if (u !== null && u.payload.state === "completed") return {
 		status: "completed",
 		namespace: l,
@@ -1980,7 +1981,7 @@ async function jt(e) {
 		}
 		await g("verifying"), h = await At(t, l, m, c.inventory), await g("ready_to_switch");
 		try {
-			await ft(n, l, ie(t));
+			await ft(n, l, re(t));
 		} catch (e) {
 			throw new $("switch_failed", e instanceof Error ? e.message : String(e), "switch");
 		}

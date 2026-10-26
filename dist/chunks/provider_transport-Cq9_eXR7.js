@@ -1,4 +1,4 @@
-import { W as e } from "./src-B1pCVwkN.js";
+import { i as e } from "./provider-ChWi4KfU.js";
 //#region ../../packages/providers/src/provider_error.ts
 var t = class extends Error {
 	provider_error;

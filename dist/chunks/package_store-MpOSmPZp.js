@@ -1,7 +1,8 @@
-import { n as e, t } from "./sha2-BGNex9vj.js";
-import { bt as n, c as r, d as i, f as a, gt as o, lt as s, o as c, u as l, ut as u, xt as d } from "./src-B1pCVwkN.js";
-import { C as f, k as p } from "./job_repository-Cci2nOvt.js";
-import { d as m, i as ee, r as te } from "./business_repositories-CSXCQSWl.js";
+import { d as e, f as t } from "./provider-ChWi4KfU.js";
+import { b as n, g as r, l as i, u as a, x as o } from "./ids-CQF5rr2J.js";
+import { c as s, i as c, l as ee, n as l, u } from "./vocabulary-Vj-CVv6I.js";
+import { T as d, j as f } from "./job_repository-BCVJs26r.js";
+import { d as p, i as te, r as m } from "./business_repositories-Cv2ukFwX.js";
 //#region ../../node_modules/.pnpm/@msgpack+msgpack@3.1.3/node_modules/@msgpack/msgpack/dist.esm/utils/utf8.mjs
 function h(e) {
 	let t = e.length, n = 0, r = 0;
@@ -22,7 +23,7 @@ function h(e) {
 	}
 	return n;
 }
-function ne(e, t, n) {
+function g(e, t, n) {
 	let r = e.length, i = n, a = 0;
 	for (; a < r;) {
 		let n = e.charCodeAt(a++);
@@ -41,14 +42,14 @@ function ne(e, t, n) {
 		t[i++] = n & 63 | 128;
 	}
 }
-var g = new TextEncoder(), _ = 50;
-function v(e, t, n) {
-	g.encodeInto(e, t.subarray(n));
-}
+var _ = new TextEncoder(), v = 50;
 function y(e, t, n) {
-	e.length > _ ? v(e, t, n) : ne(e, t, n);
+	_.encodeInto(e, t.subarray(n));
 }
-var b = 4096;
+function b(e, t, n) {
+	e.length > v ? y(e, t, n) : g(e, t, n);
+}
+var ne = 4096;
 function x(e, t, n) {
 	let r = t, i = r + n, a = [], o = "";
 	for (; r < i;) {
@@ -64,7 +65,7 @@ function x(e, t, n) {
 			let n = e[r++] & 63, i = e[r++] & 63, o = e[r++] & 63, s = (t & 7) << 18 | n << 12 | i << 6 | o;
 			s > 65535 && (s -= 65536, a.push(s >>> 10 & 1023 | 55296), s = 56320 | s & 1023), a.push(s);
 		} else a.push(t);
-		a.length >= b && (o += String.fromCharCode(...a), a.length = 0);
+		a.length >= ne && (o += String.fromCharCode(...a), a.length = 0);
 	}
 	return a.length > 0 && (o += String.fromCharCode(...a)), o;
 }
@@ -132,10 +133,10 @@ function I(e) {
 		nsec: r - i * 1e9
 	};
 }
-function re(e) {
+function L(e) {
 	return e instanceof Date ? F(I(e)) : null;
 }
-function L(e) {
+function R(e) {
 	let t = new DataView(e.buffer, e.byteOffset, e.byteLength);
 	switch (e.byteLength) {
 		case 4: return {
@@ -156,14 +157,14 @@ function L(e) {
 		default: throw new D(`Unrecognized data size for timestamp (expected 4, 8, or 12): ${e.length}`);
 	}
 }
-function R(e) {
-	let t = L(e);
+function z(e) {
+	let t = R(e);
 	return /* @__PURE__ */ new Date(t.sec * 1e3 + t.nsec / 1e6);
 }
-var z = {
+var re = {
 	type: -1,
-	encode: re,
-	decode: R
+	encode: L,
+	decode: z
 }, B = class e {
 	static defaultCodec = new e();
 	__brand;
@@ -172,7 +173,7 @@ var z = {
 	encoders = [];
 	decoders = [];
 	constructor() {
-		this.register(z);
+		this.register(re);
 	}
 	register({ type: e, encode: t, decode: n }) {
 		if (e >= 0) this.encoders[e] = t, this.decoders[e] = n;
@@ -232,21 +233,21 @@ function q(e) {
 	return e;
 }
 var J = n({
-	package_id: r,
-	changelog: d().min(1).max(4096),
-	record_count: o().int().nonnegative(),
-	compressed_size: o().int().nonnegative(),
-	minimum_extension_version: l,
-	shard_entries: s(i),
-	pinned: u(),
-	confirmed_at: f.optional()
+	package_id: c,
+	changelog: o().min(1).max(4096),
+	record_count: r().int().nonnegative(),
+	compressed_size: r().int().nonnegative(),
+	minimum_extension_version: s,
+	shard_entries: i(ee),
+	pinned: a(),
+	confirmed_at: d.optional()
 }), Y = n({
-	package_record_id: d().min(1),
-	shard_id: d().min(1),
-	path: a,
-	sha256: d().regex(/^[a-f0-9]{64}$/u),
-	byte_length: o().int().nonnegative(),
-	bytes_base64: d().min(1)
+	package_record_id: o().min(1),
+	shard_id: o().min(1),
+	path: u,
+	sha256: o().regex(/^[a-f0-9]{64}$/u),
+	byte_length: r().int().nonnegative(),
+	bytes_base64: o().min(1)
 });
 function X(e) {
 	let t = J.safeParse(e);
@@ -259,7 +260,7 @@ function Z(e) {
 	return t.data;
 }
 function Q(e) {
-	return p({
+	return f({
 		package_id: e.package_id,
 		changelog: e.changelog,
 		record_count: e.record_count,
@@ -271,7 +272,7 @@ function Q(e) {
 	});
 }
 function ie(e) {
-	return p({ ...e });
+	return f({ ...e });
 }
 function ae(e) {
 	let t = "", n = 32768;
@@ -313,7 +314,7 @@ var ce = class {
 	cache_active_package;
 	active_package_cache = void 0;
 	constructor(e, t, n = {}) {
-		this.database = e, this.namespace = t, this.packages = new te(e), this.shards = new ee(e), this.cache_active_package = n.cache_active_package ?? !1;
+		this.database = e, this.namespace = t, this.packages = new m(e), this.shards = new te(e), this.cache_active_package = n.cache_active_package ?? !1;
 	}
 	invalidate_caches() {
 		this.invalidate_shard_index_cache(), this.invalidate_active_package_cache();
@@ -364,7 +365,7 @@ var ce = class {
 		await this.transition_state(e, "ready");
 	}
 	async activate(e) {
-		return m(this.database, ["vocabulary_packages"], async (t) => {
+		return p(this.database, ["vocabulary_packages"], async (t) => {
 			let n = await this.packages.list(this.namespace, t), r = null;
 			for (let i of n) i.id !== e && W.has(K(i.state)) && (await this.packages.update(this.namespace, {
 				...i,
@@ -385,7 +386,7 @@ var ce = class {
 		await this.transition_state(e, "confirmed", { confirmed_at: (/* @__PURE__ */ new Date()).toISOString() });
 	}
 	async reselect_prior_confirmed(e) {
-		return m(this.database, ["vocabulary_packages"], async (t) => {
+		return p(this.database, ["vocabulary_packages"], async (t) => {
 			let n = await this.packages.list(this.namespace, t), r = n.filter((t) => t.id !== e).map((e) => ({
 				record: e,
 				payload: X(e.payload)
@@ -405,7 +406,7 @@ var ce = class {
 	}
 	async rollback_staging(e) {
 		let t = await this.list_owned_shards(e);
-		await m(this.database, ["vocabulary_packages", "vocabulary_shards"], async (n) => {
+		await p(this.database, ["vocabulary_packages", "vocabulary_shards"], async (n) => {
 			for (let e of t) await this.shards.delete(this.namespace, e.id, n);
 			await this.packages.delete(this.namespace, e, n);
 		}), this.invalidate_shard_index_cache(), this.invalidate_active_package_cache();
@@ -415,7 +416,7 @@ var ce = class {
 			let t = X(e.payload), n = K(e.state);
 			return (n === "superseded" || n === "failed") && !t.pinned;
 		}), t = new Set(e.map((e) => e.id)), n = (await this.shards.list(this.namespace)).filter((e) => t.has(Z(e.payload).package_record_id));
-		return await m(this.database, ["vocabulary_packages", "vocabulary_shards"], async (t) => {
+		return await p(this.database, ["vocabulary_packages", "vocabulary_shards"], async (t) => {
 			for (let e of n) await this.shards.delete(this.namespace, e.id, t);
 			for (let n of e) await this.packages.delete(this.namespace, n.id, t);
 		}), this.invalidate_shard_index_cache(), this.invalidate_active_package_cache(), { deleted_package_ids: [...t] };
@@ -446,11 +447,11 @@ var ce = class {
 		if (a.payload.byte_length !== i.byte_length || a.payload.sha256 !== i.sha256) throw new G(`Stored shard metadata for ${n} does not match the active manifest`);
 		let o = oe(a.payload.bytes_base64);
 		if (o.byteLength !== i.byte_length) throw new G(`Stored shard bytes for ${n} do not match the manifest byte_length`);
-		if (e(t(o)) !== i.sha256) throw new G(`Stored shard bytes for ${n} do not match the manifest SHA-256`);
+		if (t(e(o)) !== i.sha256) throw new G(`Stored shard bytes for ${n} do not match the manifest SHA-256`);
 		return o;
 	}
 	async create_shard_record(e, t, n) {
-		let r = (/* @__PURE__ */ new Date()).toISOString(), i = crypto.randomUUID(), a = c.parse(t.kind), o = {
+		let r = (/* @__PURE__ */ new Date()).toISOString(), i = crypto.randomUUID(), a = l.parse(t.kind), o = {
 			schema_version: 1,
 			id: i,
 			namespace: this.namespace,
@@ -515,4 +516,4 @@ var ce = class {
 	}
 };
 //#endregion
-export { j as a, k as c, T as d, x as f, O as i, D as l, H as n, M as o, y as p, B as r, A as s, ce as t, h as u };
+export { j as a, k as c, T as d, x as f, O as i, D as l, H as n, M as o, b as p, B as r, A as s, ce as t, h as u };

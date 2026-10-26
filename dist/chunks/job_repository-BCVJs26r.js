@@ -1,6 +1,6 @@
-import { St as e, Tt as t, bt as n, ct as r, dt as i, gt as a, lt as o, mt as s, pt as c, st as l, ut as u, xt as d, yt as ee } from "./src-B1pCVwkN.js";
+import { C as e, E as t, b as n, c as r, d as i, g as a, l as o, m as ee, p as s, s as c, u as l, x as u, y as d } from "./ids-CQF5rr2J.js";
 //#region ../../packages/storage/src/database_schema.ts
-var f = "tavern_canvas_v3", p = {
+var f = "tavern_canvas_v3", te = {
 	provider_profiles: {
 		key_path: "record_key",
 		indexes: [
@@ -121,56 +121,79 @@ var f = "tavern_canvas_v3", p = {
 			"updated_at"
 		],
 		since_version: 3
+	},
+	novelai_vibe_encodings: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 4
+	},
+	provider_input_assets: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 4
 	}
-}, m = c(() => e([
-	d(),
-	a(),
+}, p = s(() => e([
 	u(),
+	a(),
+	l(),
 	r(),
-	o(m),
-	ee(d(), m)
-])), h = d().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), g = d().regex(/^[a-f0-9]{64}$/u), _ = t({ offset: !0 }), v = d().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), y = {
-	schema_version: s(1),
-	id: h,
-	namespace: v,
-	record_key: d().min(1),
-	created_at: _,
-	updated_at: _,
-	payload: m.optional()
+	o(p),
+	d(u(), p)
+])), m = u().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), h = u().regex(/^[a-f0-9]{64}$/u), g = t({ offset: !0 }), _ = u().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), ne = {
+	schema_version: ee(1),
+	id: m,
+	namespace: _,
+	record_key: u().min(1),
+	created_at: g,
+	updated_at: g,
+	payload: p.optional()
 };
-function b(e) {
+function v(e) {
 	return n({
-		...y,
+		...ne,
 		...e
 	});
 }
-var x = d().min(1).max(128), S = e([a().int().nonnegative(), d().min(1).max(128)]), te = d().min(1).max(64), C = d().min(1).max(128), w = b({ provider_id: x }), T = b({}), E = b({}), D = b({}), O = b({}), k = b({}), A = b({ source_type: d().min(1).max(128) }), j = b({}), M = b({ vocabulary_id: h }), N = b({
-	data_version: S,
-	state: te
-}), P = b({
-	data_version: S,
-	kind: C
-}), F = b({}), I = b({
-	provider_kind: d().min(1).max(64),
-	credential_reference: d().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
-}), L = b({
-	sha256: g,
-	last_accessed_at: _,
-	pinned: u()
-}), R = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), z = n({
-	sha256: g,
+var y = u().min(1).max(128), b = e([a().int().nonnegative(), u().min(1).max(128)]), x = u().min(1).max(64), re = u().min(1).max(128), S = v({ provider_id: y }), C = v({}), w = v({}), T = v({}), E = v({}), D = v({}), O = v({ source_type: u().min(1).max(128) }), k = v({}), A = v({ vocabulary_id: m }), j = v({
+	data_version: b,
+	state: x
+}), M = v({
+	data_version: b,
+	kind: re
+}), N = v({}), P = v({
+	provider_kind: u().min(1).max(64),
+	credential_reference: u().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
+}), F = v({
+	image_sha256: h,
+	model_id: u().min(1).max(128),
+	information_extracted: a().min(0).max(1),
+	encoding: u().min(1).max(4e7)
+}), I = v({
+	sha256: h,
+	last_accessed_at: g,
+	pinned: l()
+}), L = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), R = n({
+	sha256: h,
 	ref_count: a().int().nonnegative(),
 	byte_length: a().int().nonnegative(),
-	blob: R
-}), ne = n({
-	generation_anchor: g,
-	scene_description: d().trim().min(1).max(12e3),
-	negative_constraints: d().trim().max(4e3).optional(),
+	blob: L
+}), z = v({
+	media_type: c([
+		"image/png",
+		"image/jpeg",
+		"image/webp"
+	]),
+	byte_length: a().int().positive(),
+	blob: L
+}), ie = n({
+	generation_anchor: h,
+	scene_description: u().trim().min(1).max(12e3),
+	negative_constraints: u().trim().max(4e3).optional(),
 	context_turns: a().int().min(0).max(12).optional(),
-	style_preset_id: h.optional(),
+	style_preset_id: m.optional(),
 	image_count: a().int().min(1).max(4).optional()
-}), re = n({
-	code: l([
+}), ae = n({
+	code: c([
 		"auth_failed",
 		"rate_limited",
 		"content_blocked",
@@ -180,19 +203,19 @@ var x = d().min(1).max(128), S = e([a().int().nonnegative(), d().min(1).max(128)
 		"cancelled",
 		"malformed_response"
 	]),
-	retryable: u(),
+	retryable: l(),
 	retry_after_ms: a().int().nonnegative().optional(),
 	status_code: a().int().min(100).max(599).optional()
-}), B = b({
-	request_id: h,
-	request_digest: g,
-	generation_anchor: g,
-	source_anchor: g,
-	chat_id: d().min(1).max(512),
+}), B = v({
+	request_id: m,
+	request_digest: h,
+	generation_anchor: h,
+	source_anchor: h,
+	chat_id: u().min(1).max(512),
 	requested_swipe_id: a().int().nonnegative(),
-	provider_id: x,
-	arguments: ne,
-	state: l([
+	provider_id: y,
+	arguments: ie,
+	state: c([
 		"queued",
 		"preparing",
 		"submitting",
@@ -203,33 +226,35 @@ var x = d().min(1).max(128), S = e([a().int().nonnegative(), d().min(1).max(128)
 		"attached",
 		"orphaned"
 	]),
-	error: re.nullable(),
-	image_ids: o(h),
-	automatic: u().optional()
-}), ie = n({
-	migration_id: d().min(1).max(256),
+	error: ae.nullable(),
+	image_ids: o(m),
+	automatic: l().optional()
+}), V = n({
+	migration_id: u().min(1).max(256),
 	source_version: a().int().nonnegative(),
-	state: d().min(1).max(64),
-	updated_at: _,
-	payload: m.optional()
-}), V = {
-	provider_profiles: w,
-	prompt_presets: T,
-	comfy_workflows: E,
-	novelai_vibes: D,
-	character_profiles: O,
-	regex_rules: k,
-	knowledge_entries: A,
-	vocabularies: j,
-	vocabulary_groups: M,
-	vocabulary_packages: N,
-	vocabulary_shards: P,
-	image_records: L,
+	state: u().min(1).max(64),
+	updated_at: g,
+	payload: p.optional()
+}), H = {
+	provider_profiles: S,
+	prompt_presets: C,
+	comfy_workflows: w,
+	novelai_vibes: T,
+	character_profiles: E,
+	regex_rules: D,
+	knowledge_entries: O,
+	vocabularies: k,
+	vocabulary_groups: A,
+	vocabulary_packages: j,
+	vocabulary_shards: M,
+	image_records: I,
 	generation_jobs: B,
-	legacy_preferences: F,
-	llm_connections: I
-}, H = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
-function U(e, t, n) {
+	legacy_preferences: N,
+	llm_connections: P,
+	novelai_vibe_encodings: F,
+	provider_input_assets: z
+}, U = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
+function W(e, t, n) {
 	if (e !== null && typeof e != "string" && typeof e != "boolean") {
 		if (typeof e == "number") {
 			if (Number.isFinite(e)) return;
@@ -238,22 +263,22 @@ function U(e, t, n) {
 		if (typeof e != "object") throw TypeError(`${t} must be JSON serializable`);
 		if (typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer || e instanceof Date || e instanceof Map || e instanceof Set) throw TypeError(`${t} must not contain structured non-JSON values`);
 		if (n.has(e)) throw TypeError(`${t} must not contain cycles`);
-		if (n.add(e), Array.isArray(e)) for (let [r, i] of e.entries()) U(i, `${t}[${String(r)}]`, n);
+		if (n.add(e), Array.isArray(e)) for (let [r, i] of e.entries()) W(i, `${t}[${String(r)}]`, n);
 		else {
 			if (Object.getPrototypeOf(e) !== Object.prototype && Object.getPrototypeOf(e) !== null) throw TypeError(`${t} must contain plain objects`);
 			for (let r of Reflect.ownKeys(e)) {
 				if (typeof r != "string") throw TypeError(`${t} must not contain symbol keys`);
-				U(e[r], `${t}.${r}`, n);
+				W(e[r], `${t}.${r}`, n);
 			}
 		}
 		n.delete(e);
 	}
 }
-function W(e) {
-	return U(e, "payload", /* @__PURE__ */ new WeakSet()), m.parse(e);
-}
 function G(e) {
-	let t = W(e), n = (e, t) => {
+	return W(e, "payload", /* @__PURE__ */ new WeakSet()), p.parse(e);
+}
+function K(e) {
+	let t = G(e), n = (e, t) => {
 		if (Array.isArray(e)) {
 			e.forEach((e, r) => {
 				n(e, `${t}[${String(r)}]`);
@@ -262,17 +287,17 @@ function G(e) {
 		}
 		if (typeof e == "object" && e) for (let [r, i] of Object.entries(e)) {
 			let e = r.toLowerCase().replace(/[^a-z0-9]/gu, "");
-			if (H.test(e)) throw TypeError(`${t}.${r} contains a credential-like field`);
+			if (U.test(e)) throw TypeError(`${t}.${r} contains a credential-like field`);
 			n(i, `${t}.${r}`);
 		}
 	};
 	n(t, "payload");
 }
-function K(e, t, n) {
-	if (v.parse(e), h.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
+function q(e, t, n) {
+	if (_.parse(e), m.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
 }
-function q(e, t, n, r, i) {
-	if (!(t >= 3)) for (let [n, r] of Object.entries(p)) {
+function oe(e, t, n, r, i) {
+	if (!(t >= 4)) for (let [n, r] of Object.entries(te)) {
 		if (r.since_version <= t) continue;
 		let i = e.createObjectStore(n, { keyPath: r.key_path });
 		for (let e of r.indexes) i.createIndex(e, e);
@@ -301,10 +326,10 @@ function Z(e) {
 		throw new J(`Value cannot cross the structured-clone boundary: ${e instanceof Error ? e.message : String(e)}`);
 	}
 }
-function ae(e) {
+function se(e) {
 	return e instanceof Error && e.name === "ConstraintError";
 }
-function oe(e) {
+function ce(e) {
 	if (e.mode === "readonly") throw TypeError("A readwrite transaction is required for this repository method");
 }
 var Q = class {
@@ -312,7 +337,7 @@ var Q = class {
 	store_name;
 	schema;
 	rejects_provider_secrets;
-	constructor(e, t, n = V[t], r = !1) {
+	constructor(e, t, n = H[t], r = !1) {
 		this.database = e, this.store_name = t, this.schema = n, this.rejects_provider_secrets = r;
 	}
 	async get(e, t, n) {
@@ -323,7 +348,7 @@ var Q = class {
 		});
 	}
 	async list(e, t) {
-		let n = v.parse(e);
+		let n = _.parse(e);
 		return this.run_read(t, async (e) => {
 			let t = (await this.store(e).index("namespace").getAll(n)).map((e) => this.validate_loaded(e));
 			return t.sort((e, t) => e.id < t.id ? -1 : +(e.id > t.id)), t;
@@ -335,7 +360,7 @@ var Q = class {
 			try {
 				await this.store(e).add(r);
 			} catch (e) {
-				throw ae(e) ? new Y(this.store_name, r.record_key) : e;
+				throw se(e) ? new Y(this.store_name, r.record_key) : e;
 			}
 		});
 	}
@@ -363,45 +388,45 @@ var Q = class {
 		return e.objectStore(this.store_name);
 	}
 	record_key(e, t) {
-		return `${v.parse(e)}:${h.parse(t)}`;
+		return `${_.parse(e)}:${m.parse(t)}`;
 	}
 	prepare_record(e, t) {
-		let n = v.parse(e), r = Z(t);
+		let n = _.parse(e), r = Z(t);
 		if (r.namespace !== void 0 && r.namespace !== n) throw new J("Record namespace does not match the method namespace");
 		if (typeof r.id != "string") throw new J("Record id must be a UUID");
-		let i = h.safeParse(r.id);
+		let i = m.safeParse(r.id);
 		if (!i.success) throw new J("Record id must be a UUID", i.error.issues);
 		let a = `${n}:${i.data}`;
 		if (r.record_key !== void 0 && r.record_key !== a) throw new J("Record key does not match namespace and id");
 		if (r.namespace = n, r.record_key = a, Object.hasOwn(r, "payload") && r.payload === void 0) throw new J("Payload must be serializable JSON");
 		if (r.payload !== void 0) {
 			try {
-				r.payload = W(r.payload);
+				r.payload = G(r.payload);
 			} catch (e) {
 				throw new J(e instanceof Error ? e.message : "Payload must be serializable JSON");
 			}
 			if (this.rejects_provider_secrets) try {
-				G(r.payload);
+				K(r.payload);
 			} catch (e) {
 				throw new J(e instanceof Error ? e.message : "Provider payload contains a secret");
 			}
 		}
 		let o = this.schema.safeParse(r);
 		if (!o.success) throw new J("Record failed schema validation", o.error.issues);
-		return K(o.data.namespace, o.data.id, o.data.record_key), Z(o.data);
+		return q(o.data.namespace, o.data.id, o.data.record_key), Z(o.data);
 	}
 	validate_loaded(e) {
 		let t = Z(e);
 		if (typeof t == "object" && t && Object.hasOwn(t, "payload") && t.payload === void 0) throw new J("Stored payload must be serializable JSON");
 		if (typeof t == "object" && t && "payload" in t && t.payload !== void 0) try {
-			W(t.payload);
+			G(t.payload);
 		} catch (e) {
 			throw new J(e instanceof Error ? e.message : "Stored payload must be serializable JSON");
 		}
 		let n = this.schema.safeParse(t);
 		if (!n.success) throw new J("Stored record failed schema validation", n.error.issues);
 		try {
-			K(n.data.namespace, n.data.id, n.data.record_key), this.rejects_provider_secrets && n.data.payload !== void 0 && G(n.data.payload);
+			q(n.data.namespace, n.data.id, n.data.record_key), this.rejects_provider_secrets && n.data.payload !== void 0 && K(n.data.payload);
 		} catch (e) {
 			throw new J(e instanceof Error ? e.message : "Stored record failed derived-key validation");
 		}
@@ -421,7 +446,7 @@ var Q = class {
 		}
 	}
 	async run_write(e, t) {
-		if (e !== void 0) return oe(e), t(e);
+		if (e !== void 0) return ce(e), t(e);
 		let n = this.database.transaction(this.store_name, "readwrite");
 		try {
 			let e = await t(n);
@@ -441,8 +466,8 @@ var Q = class {
 		super(e, "generation_jobs", B);
 	}
 };
-function se(e) {
+function le(e) {
 	return new $(e);
 }
 //#endregion
-export { q as A, _ as C, j as D, N as E, P as O, g as S, M as T, D as _, X as a, V as b, E as c, L as d, A as f, v as g, ie as h, Y as i, W as k, f as l, I as m, se as n, J as o, F as p, Q as r, O as s, $ as t, z as u, T as v, h as w, k as x, w as y };
+export { M as A, D as C, A as D, m as E, oe as M, j as O, H as S, g as T, F as _, X as a, z as b, w as c, I as d, O as f, _ as g, V as h, Y as i, G as j, k, f as l, P as m, le as n, J as o, N as p, Q as r, E as s, $ as t, R as u, T as v, h as w, S as x, C as y };

@@ -9,11 +9,11 @@ import { n as D, t as O } from "./StateSurface-Bo_sA18G.js";
 import { n as k, t as A } from "./NumberStepper-zIDhvMwB.js";
 import { n as j, t as M } from "./FieldGroup-LDtWeac7.js";
 import { t as N } from "./x-CDKrptQJ.js";
-import { t as P } from "./build_generation_request-CwGRNQz1.js";
-import { t as F } from "./AppSelect-CJ-1Hi5_.js";
-import { n as I, t as L } from "./_prop_utils-DtjJGT5O.js";
-import { t as R } from "./ToastViewport-B5UnHzMU.js";
-import { t as z } from "./IconButton-JYVgios9.js";
+import { t as P } from "./AppSelect-CJ-1Hi5_.js";
+import { n as F, t as I } from "./_prop_utils-DtjJGT5O.js";
+import { t as L } from "./ToastViewport-B5UnHzMU.js";
+import { t as R } from "./IconButton-JYVgios9.js";
+import { t as z } from "./build_generation_request-CEm_MXO4.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/ban.js
 var B = b("ban", [["circle", {
 	cx: "12",
@@ -204,7 +204,7 @@ var B = b("ban", [["circle", {
 						role: "alert",
 						class: g(s(U).job_error)
 					}, m(s(x)("errors.generation_failed", { message: e.error.code })), 3)) : l("", !0),
-					d("span", { class: g(s(U).job_row_actions) }, [E(e) ? (r(), u(z, {
+					d("span", { class: g(s(U).job_row_actions) }, [E(e) ? (r(), u(R, {
 						key: 0,
 						icon: s(B),
 						size: "sm",
@@ -216,7 +216,7 @@ var B = b("ban", [["circle", {
 						"icon",
 						"label",
 						"onClick"
-					])) : l("", !0), D(e) ? (r(), u(z, {
+					])) : l("", !0), D(e) ? (r(), u(R, {
 						key: 1,
 						icon: s(V),
 						size: "sm",
@@ -236,7 +236,7 @@ var B = b("ban", [["circle", {
 				"empty-message",
 				"error-message"
 			]),
-			y(I, {
+			y(F, {
 				open: S.value !== null,
 				title: s(x)("workbench.active_jobs.cancel_confirm_title"),
 				description: s(x)("workbench.active_jobs.cancel_confirm_description", { provider: j.value?.provider_id ?? "" }),
@@ -316,7 +316,7 @@ var B = b("ban", [["circle", {
 				}, [y(x, {
 					icon: s(T),
 					size: 14
-				}, null, 8, ["icon"]), _(" " + m(s(b)("common.actions.copy")), 1)], 2), k.value ? (r(), u(z, {
+				}, null, 8, ["icon"]), _(" " + m(s(b)("common.actions.copy")), 1)], 2), k.value ? (r(), u(R, {
 					key: 0,
 					icon: s(V),
 					size: "sm",
@@ -423,7 +423,7 @@ var B = b("ban", [["circle", {
 				label: s(l)("workbench.prompt_composer.image_count_label"),
 				error: i.imageCountError ?? null
 			}, {
-				default: a(({ fieldId: e, describedBy: r }) => [y(A, t(s(L)({ describedBy: r }), {
+				default: a(({ fieldId: e, describedBy: r }) => [y(A, t(s(I)({ describedBy: r }), {
 					id: e,
 					"model-value": i.imageCount,
 					label: s(l)("workbench.prompt_composer.image_count_label"),
@@ -478,7 +478,7 @@ var B = b("ban", [["circle", {
 				"data-testid": "open-provider-settings",
 				onClick: t[0] ||= (e) => i("open-settings")
 			}, m(s(c)("workbench.provider_summary.open_settings_action")), 3)]),
-			default: a(() => [y(F, {
+			default: a(() => [y(P, {
 				"data-testid": "provider-select",
 				"model-value": n.activeProfileId ?? void 0,
 				options: u.value,
@@ -566,7 +566,7 @@ var B = b("ban", [["circle", {
 				}, null, 8, ["icon"])], 2),
 				d("span", { class: g(s(U).reference_tile_name) }, m(e.display_name), 3),
 				d("span", { class: g(s(U).reference_tile_actions) }, [
-					y(z, {
+					y(R, {
 						icon: s(w),
 						size: "sm",
 						label: s(v)("workbench.reference_strip.move_up_action"),
@@ -578,7 +578,7 @@ var B = b("ban", [["circle", {
 						"disabled",
 						"onClick"
 					]),
-					y(z, {
+					y(R, {
 						icon: s(C),
 						size: "sm",
 						label: s(v)("workbench.reference_strip.move_down_action"),
@@ -590,7 +590,7 @@ var B = b("ban", [["circle", {
 						"disabled",
 						"onClick"
 					]),
-					y(z, {
+					y(R, {
 						icon: s(N),
 						size: "sm",
 						label: s(v)("workbench.reference_strip.remove_action"),
@@ -692,17 +692,18 @@ var se = /* @__PURE__ */ v({
 		}), T = c(!1), E = c(null), O = /* @__PURE__ */ new Map(), k = c(null), A = p(() => a.state.workbench.profiles.find((e) => e.id === a.state.workbench.active_profile_id) ?? null), j = p(() => !a.state.loading.has("profiles") && !a.state.failures.has("profiles") && a.state.workbench.profiles.length === 0), M = p(() => {
 			let e = {};
 			return a.state.workbench.active_profile_id || (e.profile = _("workbench.submit.validation.profile_required")), w.positive_prompt.trim() === "" && (e.prompt = _("workbench.submit.validation.prompt_required")), (w.image_count < 1 || w.image_count > 4) && (e.image_count = _("workbench.submit.validation.image_count_range")), A.value?.provider_id === "comfyui" && (e.provider = _("workbench.submit.validation.provider_unsupported")), e;
-		}), N = p(() => Object.keys(M.value).length > 0), F = p(() => a.state.workbench.jobs.find((e) => e.job_id === E.value) ?? null), I = p(() => F.value ? O.get(F.value.request_id) ?? null : null);
-		async function L() {
+		}), N = p(() => Object.keys(M.value).length > 0), P = p(() => a.state.workbench.jobs.find((e) => e.job_id === E.value) ?? null), F = p(() => P.value ? O.get(P.value.request_id) ?? null : null);
+		async function I() {
 			T.value = !0;
 			let e = a.state.workbench.active_profile_id, t = A.value;
 			if (N.value || !e || !t) return;
-			let n = crypto.randomUUID(), r = await P({
+			let n = crypto.randomUUID(), r = await z({
 				provider_id: t.provider_id,
 				positive_prompt: w.positive_prompt,
 				negative_prompt: w.negative_prompt,
 				image_count: w.image_count,
-				references: w.references
+				references: w.references,
+				...t.model_id === null ? {} : { model_id: t.model_id }
 			}, n);
 			k.value = r, u("submit", {
 				profile_id: e,
@@ -719,7 +720,7 @@ var se = /* @__PURE__ */ v({
 				variant: "info"
 			}), u("consume-inspector-selection");
 		}, { immediate: !0 });
-		function z(e) {
+		function R(e) {
 			let t = a.state.assets.records.reference.find((t) => t.id === e);
 			!t || w.references.length >= 4 || (w.references = [...w.references, {
 				asset_id: e,
@@ -740,7 +741,7 @@ var se = /* @__PURE__ */ v({
 			});
 		}
 		function G() {
-			F.value && u("retry-job", F.value.job_id);
+			P.value && u("retry-job", P.value.job_id);
 		}
 		return (e, t) => (r(), o("div", {
 			class: g([s(U).workbench_view, j.value && s(U).workbench_view_setup]),
@@ -807,7 +808,7 @@ var se = /* @__PURE__ */ v({
 					variant: "primary",
 					pending: a.state.workbench.submit_command.status === "pending",
 					"data-testid": "submit-generation",
-					onClick: L
+					onClick: I
 				}, null, 8, ["label", "pending"]),
 				T.value && M.value.profile ? (r(), o("p", {
 					key: 0,
@@ -832,7 +833,7 @@ var se = /* @__PURE__ */ v({
 				references: w.references,
 				available: a.state.assets.records.reference,
 				status: a.state.loading.has("assets") ? "loading" : a.state.failures.has("assets") ? "error" : "ready",
-				onAdd: z,
+				onAdd: R,
 				onRemove: B,
 				onReorder: V
 			}, null, 8, [
@@ -855,8 +856,8 @@ var se = /* @__PURE__ */ v({
 				"selected-job-id"
 			])
 		], 2), d("div", { class: g(s(U).side_column) }, [y(Q, {
-			job: F.value,
-			request: I.value,
+			job: P.value,
+			request: F.value,
 			"preview-urls": a.previewUrls ?? {},
 			onCopyParameters: W,
 			onRetry: G
@@ -864,7 +865,7 @@ var se = /* @__PURE__ */ v({
 			"job",
 			"request",
 			"preview-urls"
-		])], 2)], 64)), y(R, {
+		])], 2)], 64)), y(L, {
 			toasts: s(v),
 			"viewport-label": s(_)("common.notifications.viewport_label"),
 			"announce-label": s(_)("common.notifications.announce_label"),

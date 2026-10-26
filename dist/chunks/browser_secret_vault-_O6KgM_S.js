@@ -52,7 +52,7 @@ var r = class {
 		this.#t !== null && await (await this.#t).close();
 	}
 	#n() {
-		return this.#t ??= import("./_encrypted_browser_secret_vault-CCbB8yYk.js").then(({ EncryptedBrowserSecretVault: e }) => new e(this.#e));
+		return this.#t ??= import("./_encrypted_browser_secret_vault-4YsrQUdv.js").then(({ EncryptedBrowserSecretVault: e }) => new e(this.#e));
 	}
 };
 function i(e = globalThis) {

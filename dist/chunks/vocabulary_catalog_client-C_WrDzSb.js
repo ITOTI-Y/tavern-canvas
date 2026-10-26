@@ -1,34 +1,78 @@
-import { n as e, t } from "./sha2-BGNex9vj.js";
-import { ht as n, i as r, o as i, s as a } from "./src-B1pCVwkN.js";
-import { f as o } from "./business_repositories-CSXCQSWl.js";
-import { a as s, d as c, f as l, l as u, n as d, o as ee, r as te, t as ne } from "./package_store-DeBejCK2.js";
-//#region ../../packages/vocabulary/src/package_client.ts
-var f = class extends TypeError {}, p = class extends Error {
+import { d as e, f as t } from "./provider-ChWi4KfU.js";
+import { E as n, T as r, b as i, g as a, h as o, l as s, u as c, x as l } from "./ids-CQF5rr2J.js";
+import { i as u } from "./generation-Ck4v0g3Y.js";
+import { c as d, i as ee, n as te, r as f } from "./vocabulary-Vj-CVv6I.js";
+import { f as p } from "./business_repositories-Cv2ukFwX.js";
+import { a as m, d as h, f as g, l as _, n as v, o as ne, r as re, t as ie } from "./package_store-MpOSmPZp.js";
+//#region ../../packages/contracts/src/vocabulary_catalog.ts
+var ae = l().trim().min(2).max(16).regex(/^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$/u), y = i({
+	en: l().trim().min(1).max(128),
+	"zh-CN": l().trim().min(1).max(128)
+}), oe = i({
+	en: l().trim().min(1).max(1024),
+	"zh-CN": l().trim().min(1).max(1024)
+}), se = r().check((e) => {
+	URL.canParse(e.value) && new URL(e.value).protocol !== "https:" && e.issues.push({
+		code: "custom",
+		input: e.value,
+		message: "Catalog entry base_url must use the https: scheme"
+	});
+}), b = i({
+	package_id: ee,
+	display_name: y,
+	description: oe,
+	data_version: d,
+	record_count: a().int().nonnegative(),
+	compressed_bytes: a().int().nonnegative(),
+	manifest_sha256: u,
+	languages: s(ae).min(1).max(16),
+	min_extension_version: d,
+	base_url: se.nullable(),
+	bundled: c().optional(),
+	updated_at: n({ offset: !1 })
+}).check((e) => {
+	e.value.bundled !== !0 && e.value.base_url === null && e.issues.push({
+		code: "custom",
+		input: e.value.base_url,
+		message: "base_url must be a non-null https URL unless the entry is bundled",
+		path: ["base_url"]
+	});
+}), x = s(b).min(1).max(500).check((e) => {
+	let t = /* @__PURE__ */ new Set();
+	e.value.forEach((n, r) => {
+		t.has(n.package_id) && e.issues.push({
+			code: "custom",
+			input: n.package_id,
+			message: `duplicate package_id: ${n.package_id}`,
+			path: [r, "package_id"]
+		}), t.add(n.package_id);
+	});
+}), S = class extends TypeError {}, C = class extends Error {
 	path;
 	constructor(e, t) {
 		super(t), this.name = "PackageFetchError", this.path = e;
 	}
-}, m = "manifest.json", h = 8388608;
-function re(e) {
+}, w = "manifest.json", ce = 8388608;
+function le(e) {
 	let t;
 	try {
 		t = new URL(e.base_url);
 	} catch {
-		throw new f(`Package source base_url is not a valid absolute URL: ${e.base_url}`);
+		throw new S(`Package source base_url is not a valid absolute URL: ${e.base_url}`);
 	}
-	if (e.kind === "https" && t.protocol !== "https:") throw new f(`An HTTPS package source must use the https: scheme, got: ${t.protocol}`);
+	if (e.kind === "https" && t.protocol !== "https:") throw new S(`An HTTPS package source must use the https: scheme, got: ${t.protocol}`);
 	return t.pathname.endsWith("/") || (t.pathname = `${t.pathname}/`), t.search = "", t.hash = "", t;
 }
-function g(e, t) {
+function T(e, t) {
 	return new URL(t, e);
 }
-async function _(e, t, n, r) {
-	if (e === null) throw new p(t, `Response for ${t} has no readable body`);
+async function E(e, t, n, r) {
+	if (e === null) throw new C(t, `Response for ${t} has no readable body`);
 	let i = e.getReader(), a = [], o = 0;
 	for (;;) {
 		let { done: e, value: s } = await i.read();
 		if (e) break;
-		if (o += s.byteLength, o > n) throw await i.cancel("bounded_stream_exceeded").catch(() => void 0), new p(t, `Response for ${t} exceeded the allowed ${String(n)}-byte bound`);
+		if (o += s.byteLength, o > n) throw await i.cancel("bounded_stream_exceeded").catch(() => void 0), new C(t, `Response for ${t} exceeded the allowed ${String(n)}-byte bound`);
 		a.push(s), r?.({
 			downloaded_bytes: o,
 			total_bytes: n
@@ -38,43 +82,43 @@ async function _(e, t, n, r) {
 	for (let e of a) s.set(e, c), c += e.byteLength;
 	return s;
 }
-function ie(e, t = fetch) {
-	let n = re(e);
+function ue(e, t = fetch) {
+	let n = le(e);
 	return {
 		async fetch_manifest(e) {
-			let r = await t(g(n, m), e === void 0 ? {} : { signal: e });
-			if (!r.ok) throw new p(m, `Manifest request failed with status ${String(r.status)}`);
-			let i = await _(r.body, m, h), o;
+			let r = await t(T(n, w), e === void 0 ? {} : { signal: e });
+			if (!r.ok) throw new C(w, `Manifest request failed with status ${String(r.status)}`);
+			let i = await E(r.body, w, ce), a;
 			try {
-				o = JSON.parse(new TextDecoder().decode(i));
+				a = JSON.parse(new TextDecoder().decode(i));
 			} catch {
-				throw new p(m, "Manifest response is not valid JSON");
+				throw new C(w, "Manifest response is not valid JSON");
 			}
-			let s = a.safeParse(o);
-			if (!s.success) throw new p(m, "Manifest response failed schema validation");
-			return s.data;
+			let o = f.safeParse(a);
+			if (!o.success) throw new C(w, "Manifest response failed schema validation");
+			return o.data;
 		},
 		async fetch_shard_bytes(e, r) {
-			let i = await t(g(n, e), r.signal === void 0 ? {} : { signal: r.signal });
-			if (!i.ok) throw new p(e, `Shard request failed with status ${String(i.status)}: ${e}`);
-			return _(i.body, e, r.max_bytes, r.on_progress);
+			let i = await t(T(n, e), r.signal === void 0 ? {} : { signal: r.signal });
+			if (!i.ok) throw new C(e, `Shard request failed with status ${String(i.status)}: ${e}`);
+			return E(i.body, e, r.max_bytes, r.on_progress);
 		}
 	};
 }
 //#endregion
 //#region ../../node_modules/.pnpm/@msgpack+msgpack@3.1.3/node_modules/@msgpack/msgpack/dist.esm/utils/prettyByte.mjs
-function v(e) {
+function D(e) {
 	return `${e < 0 ? "-" : ""}0x${Math.abs(e).toString(16).padStart(2, "0")}`;
 }
 //#endregion
 //#region ../../node_modules/.pnpm/@msgpack+msgpack@3.1.3/node_modules/@msgpack/msgpack/dist.esm/CachedKeyDecoder.mjs
-var y = 16, b = 16, x = class {
+var O = 16, k = 16, A = class {
 	hit = 0;
 	miss = 0;
 	caches;
 	maxKeyLength;
 	maxLengthPerKey;
-	constructor(e = y, t = b) {
+	constructor(e = O, t = k) {
 		this.maxKeyLength = e, this.maxLengthPerKey = t, this.caches = [];
 		for (let e = 0; e < this.maxKeyLength; e++) this.caches.push([]);
 	}
@@ -101,13 +145,13 @@ var y = 16, b = 16, x = class {
 		let r = this.find(e, t, n);
 		if (r != null) return this.hit++, r;
 		this.miss++;
-		let i = l(e, t, n), a = Uint8Array.prototype.slice.call(e, t, t + n);
+		let i = g(e, t, n), a = Uint8Array.prototype.slice.call(e, t, t + n);
 		return this.store(a, i), i;
 	}
-}, S = "array", C = "map_key", w = "map_value", ae = (e) => {
+}, j = "array", M = "map_key", N = "map_value", P = (e) => {
 	if (typeof e == "string" || typeof e == "number") return e;
-	throw new u("The type of key must be string or number but " + typeof e);
-}, oe = class {
+	throw new _("The type of key must be string or number but " + typeof e);
+}, F = class {
 	stack = [];
 	stackHeadPosition = -1;
 	get length() {
@@ -118,11 +162,11 @@ var y = 16, b = 16, x = class {
 	}
 	pushArrayState(e) {
 		let t = this.getUninitializedStateFromPool();
-		t.type = S, t.position = 0, t.size = e, t.array = Array(e);
+		t.type = j, t.position = 0, t.size = e, t.array = Array(e);
 	}
 	pushMapState(e) {
 		let t = this.getUninitializedStateFromPool();
-		t.type = C, t.readCount = 0, t.size = e, t.map = {};
+		t.type = M, t.readCount = 0, t.size = e, t.map = {};
 	}
 	getUninitializedStateFromPool() {
 		return this.stackHeadPosition++, this.stackHeadPosition === this.stack.length && this.stack.push({
@@ -137,11 +181,11 @@ var y = 16, b = 16, x = class {
 	}
 	release(e) {
 		if (this.stack[this.stackHeadPosition] !== e) throw Error("Invalid stack state. Released state is not on top of the stack.");
-		if (e.type === S) {
+		if (e.type === j) {
 			let t = e;
 			t.size = 0, t.array = void 0, t.position = 0, t.type = void 0;
 		}
-		if (e.type === C || e.type === w) {
+		if (e.type === M || e.type === N) {
 			let t = e;
 			t.size = 0, t.map = void 0, t.readCount = 0, t.type = void 0;
 		}
@@ -150,13 +194,13 @@ var y = 16, b = 16, x = class {
 	reset() {
 		this.stack.length = 0, this.stackHeadPosition = -1;
 	}
-}, T = -1, E = /* @__PURE__ */ new DataView(/* @__PURE__ */ new ArrayBuffer(0)), se = new Uint8Array(E.buffer);
+}, I = -1, L = /* @__PURE__ */ new DataView(/* @__PURE__ */ new ArrayBuffer(0)), R = new Uint8Array(L.buffer);
 try {
-	E.getInt8(0);
+	L.getInt8(0);
 } catch (e) {
 	if (!(e instanceof RangeError)) throw Error("This module is not supported in the current JavaScript engine because DataView does not throw RangeError on out-of-bounds access");
 }
-var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class e {
+var z = /* @__PURE__ */ RangeError("Insufficient data"), B = new A(), V = class e {
 	extensionCodec;
 	context;
 	useBigInt64;
@@ -170,13 +214,13 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 	mapKeyConverter;
 	totalPos = 0;
 	pos = 0;
-	view = E;
-	bytes = se;
-	headByte = T;
-	stack = new oe();
+	view = L;
+	bytes = R;
+	headByte = I;
+	stack = new F();
 	entered = !1;
 	constructor(e) {
-		this.extensionCodec = e?.extensionCodec ?? te.defaultCodec, this.context = e?.context, this.useBigInt64 = e?.useBigInt64 ?? !1, this.rawStrings = e?.rawStrings ?? !1, this.maxStrLength = e?.maxStrLength ?? 4294967295, this.maxBinLength = e?.maxBinLength ?? 4294967295, this.maxArrayLength = e?.maxArrayLength ?? 4294967295, this.maxMapLength = e?.maxMapLength ?? 4294967295, this.maxExtLength = e?.maxExtLength ?? 4294967295, this.keyDecoder = e?.keyDecoder === void 0 ? O : e.keyDecoder, this.mapKeyConverter = e?.mapKeyConverter ?? ae;
+		this.extensionCodec = e?.extensionCodec ?? re.defaultCodec, this.context = e?.context, this.useBigInt64 = e?.useBigInt64 ?? !1, this.rawStrings = e?.rawStrings ?? !1, this.maxStrLength = e?.maxStrLength ?? 4294967295, this.maxBinLength = e?.maxBinLength ?? 4294967295, this.maxArrayLength = e?.maxArrayLength ?? 4294967295, this.maxMapLength = e?.maxMapLength ?? 4294967295, this.maxExtLength = e?.maxExtLength ?? 4294967295, this.keyDecoder = e?.keyDecoder === void 0 ? B : e.keyDecoder, this.mapKeyConverter = e?.mapKeyConverter ?? P;
 	}
 	clone() {
 		return new e({
@@ -193,16 +237,16 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 		});
 	}
 	reinitializeState() {
-		this.totalPos = 0, this.headByte = T, this.stack.reset();
+		this.totalPos = 0, this.headByte = I, this.stack.reset();
 	}
 	setBuffer(e) {
-		let t = d(e);
+		let t = v(e);
 		this.bytes = t, this.view = new DataView(t.buffer, t.byteOffset, t.byteLength), this.pos = 0;
 	}
 	appendBuffer(e) {
-		if (this.headByte === T && !this.hasRemaining(1)) this.setBuffer(e);
+		if (this.headByte === I && !this.hasRemaining(1)) this.setBuffer(e);
 		else {
-			let t = this.bytes.subarray(this.pos), n = d(e), r = new Uint8Array(t.length + n.length);
+			let t = this.bytes.subarray(this.pos), n = v(e), r = new Uint8Array(t.length + n.length);
 			r.set(t), r.set(n, t.length), this.setBuffer(r);
 		}
 	}
@@ -255,7 +299,7 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 				return n;
 			}
 			let { headByte: r, pos: i, totalPos: a } = this;
-			throw RangeError(`Insufficient data in parsing ${v(r)} at ${a} (${i} in the current buffer)`);
+			throw RangeError(`Insufficient data in parsing ${D(r)} at ${a} (${i} in the current buffer)`);
 		} finally {
 			this.entered = !1;
 		}
@@ -384,20 +428,20 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 			} else if (e === 201) {
 				let e = this.lookU32();
 				t = this.decodeExtension(e, 4);
-			} else throw new u(`Unrecognized type byte: ${v(e)}`);
+			} else throw new _(`Unrecognized type byte: ${D(e)}`);
 			this.complete();
 			let n = this.stack;
 			for (; n.length > 0;) {
 				let e = n.top();
-				if (e.type === S) if (e.array[e.position] = t, e.position++, e.position === e.size) t = e.array, n.release(e);
+				if (e.type === j) if (e.array[e.position] = t, e.position++, e.position === e.size) t = e.array, n.release(e);
 				else continue DECODE;
-				else if (e.type === C) {
-					if (t === "__proto__") throw new u("The key __proto__ is not allowed");
-					e.key = this.mapKeyConverter(t), e.type = w;
+				else if (e.type === M) {
+					if (t === "__proto__") throw new _("The key __proto__ is not allowed");
+					e.key = this.mapKeyConverter(t), e.type = N;
 					continue DECODE;
 				} else if (e.map[e.key] = t, e.readCount++, e.readCount === e.size) t = e.map, n.release(e);
 				else {
-					e.key = null, e.type = C;
+					e.key = null, e.type = M;
 					continue DECODE;
 				}
 			}
@@ -405,10 +449,10 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 		}
 	}
 	readHeadByte() {
-		return this.headByte === T && (this.headByte = this.readU8()), this.headByte;
+		return this.headByte === I && (this.headByte = this.readU8()), this.headByte;
 	}
 	complete() {
-		this.headByte = T;
+		this.headByte = I;
 	}
 	readArraySize() {
 		let e = this.readHeadByte();
@@ -417,37 +461,37 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 			case 221: return this.readU32();
 			default:
 				if (e < 160) return e - 144;
-				throw new u(`Unrecognized array type byte: ${v(e)}`);
+				throw new _(`Unrecognized array type byte: ${D(e)}`);
 		}
 	}
 	pushMapState(e) {
-		if (e > this.maxMapLength) throw new u(`Max length exceeded: map length (${e}) > maxMapLengthLength (${this.maxMapLength})`);
+		if (e > this.maxMapLength) throw new _(`Max length exceeded: map length (${e}) > maxMapLengthLength (${this.maxMapLength})`);
 		this.stack.pushMapState(e);
 	}
 	pushArrayState(e) {
-		if (e > this.maxArrayLength) throw new u(`Max length exceeded: array length (${e}) > maxArrayLength (${this.maxArrayLength})`);
+		if (e > this.maxArrayLength) throw new _(`Max length exceeded: array length (${e}) > maxArrayLength (${this.maxArrayLength})`);
 		this.stack.pushArrayState(e);
 	}
 	decodeString(e, t) {
 		return !this.rawStrings || this.stateIsMapKey() ? this.decodeUtf8String(e, t) : this.decodeBinary(e, t);
 	}
 	decodeUtf8String(e, t) {
-		if (e > this.maxStrLength) throw new u(`Max length exceeded: UTF-8 byte length (${e}) > maxStrLength (${this.maxStrLength})`);
-		if (this.bytes.byteLength < this.pos + t + e) throw D;
+		if (e > this.maxStrLength) throw new _(`Max length exceeded: UTF-8 byte length (${e}) > maxStrLength (${this.maxStrLength})`);
+		if (this.bytes.byteLength < this.pos + t + e) throw z;
 		let n = this.pos + t, r;
-		return r = this.stateIsMapKey() && this.keyDecoder?.canBeCached(e) ? this.keyDecoder.decode(this.bytes, n, e) : c(this.bytes, n, e), this.pos += t + e, r;
+		return r = this.stateIsMapKey() && this.keyDecoder?.canBeCached(e) ? this.keyDecoder.decode(this.bytes, n, e) : h(this.bytes, n, e), this.pos += t + e, r;
 	}
 	stateIsMapKey() {
-		return this.stack.length > 0 && this.stack.top().type === C;
+		return this.stack.length > 0 && this.stack.top().type === M;
 	}
 	decodeBinary(e, t) {
-		if (e > this.maxBinLength) throw new u(`Max length exceeded: bin length (${e}) > maxBinLength (${this.maxBinLength})`);
-		if (!this.hasRemaining(e + t)) throw D;
+		if (e > this.maxBinLength) throw new _(`Max length exceeded: bin length (${e}) > maxBinLength (${this.maxBinLength})`);
+		if (!this.hasRemaining(e + t)) throw z;
 		let n = this.pos + t, r = this.bytes.subarray(n, n + e);
 		return this.pos += t + e, r;
 	}
 	decodeExtension(e, t) {
-		if (e > this.maxExtLength) throw new u(`Max length exceeded: ext length (${e}) > maxExtLength (${this.maxExtLength})`);
+		if (e > this.maxExtLength) throw new _(`Max length exceeded: ext length (${e}) > maxExtLength (${this.maxExtLength})`);
 		let n = this.view.getInt8(this.pos + t), r = this.decodeBinary(e, t + 1);
 		return this.extensionCodec.decode(r, n, this.context);
 	}
@@ -485,11 +529,11 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 		return this.pos += 4, e;
 	}
 	readU64() {
-		let e = ee(this.view, this.pos);
+		let e = ne(this.view, this.pos);
 		return this.pos += 8, e;
 	}
 	readI64() {
-		let e = s(this.view, this.pos);
+		let e = m(this.view, this.pos);
 		return this.pos += 8, e;
 	}
 	readU64AsBigInt() {
@@ -511,35 +555,35 @@ var D = /* @__PURE__ */ RangeError("Insufficient data"), O = new x(), k = class 
 };
 //#endregion
 //#region ../../node_modules/.pnpm/@msgpack+msgpack@3.1.3/node_modules/@msgpack/msgpack/dist.esm/decode.mjs
-function A(e, t) {
-	return new k(t).decode(e);
+function H(e, t) {
+	return new V(t).decode(e);
 }
 //#endregion
 //#region ../../packages/vocabulary/src/package_verifier.ts
-var j = class extends Error {
+var U = class extends Error {
 	reason;
 	path;
 	constructor(e, t, n) {
 		super(t), this.name = "PackageVerificationError", this.reason = e, this.path = n;
 	}
-}, M = 128, N = 65536, P = 33554432;
-function F(e) {
-	return Math.min(P, Math.max(e * M, N));
+}, de = 128, fe = 65536, pe = 33554432;
+function me(e) {
+	return Math.min(pe, Math.max(e * de, fe));
 }
-function I(e) {
+function W(e) {
 	if (typeof e != "object" || !e) return;
 	let t = e.schema_version;
 	return typeof t == "number" ? t : void 0;
 }
-function L(e, t) {
-	let [n, r] = R(e), [i, a] = R(t);
+function G(e, t) {
+	let [n, r] = K(e), [i, a] = K(t);
 	for (let e = 0; e < 3; e += 1) {
 		let t = n[e] ?? 0, r = i[e] ?? 0;
 		if (t !== r) return t < r ? -1 : 1;
 	}
-	return r === void 0 && a === void 0 ? 0 : r === void 0 ? 1 : a === void 0 ? -1 : z(r, a);
+	return r === void 0 && a === void 0 ? 0 : r === void 0 ? 1 : a === void 0 ? -1 : he(r, a);
 }
-function R(e) {
+function K(e) {
 	let [t, n] = (e.split("+")[0] ?? e).split("-", 2), r = t.split(".").map((e) => Number.parseInt(e, 10));
 	return [[
 		r[0] ?? 0,
@@ -547,7 +591,7 @@ function R(e) {
 		r[2] ?? 0
 	], n];
 }
-function z(e, t) {
+function he(e, t) {
 	let n = e.split("."), r = t.split("."), i = Math.max(n.length, r.length);
 	for (let e = 0; e < i; e += 1) {
 		let t = n[e], i = r[e];
@@ -564,50 +608,50 @@ function z(e, t) {
 	}
 	return 0;
 }
-var B = n({ kind: i });
-function V(e, t) {
-	if (I(e) !== 1) throw new j("unsupported_schema", "Manifest declares an unsupported schema_version");
-	let n = a.safeParse(e);
-	if (!n.success) throw new j("invalid_manifest", "Manifest failed schema validation");
+var ge = o({ kind: te });
+function _e(e, t) {
+	if (W(e) !== 1) throw new U("unsupported_schema", "Manifest declares an unsupported schema_version");
+	let n = f.safeParse(e);
+	if (!n.success) throw new U("invalid_manifest", "Manifest failed schema validation");
 	let r = n.data;
-	if (L(t.current_extension_version, r.minimum_extension_version) < 0) throw new j("extension_version_too_low", `Extension version ${t.current_extension_version} is below the package's minimum ${r.minimum_extension_version}`);
+	if (G(t.current_extension_version, r.minimum_extension_version) < 0) throw new U("extension_version_too_low", `Extension version ${t.current_extension_version} is below the package's minimum ${r.minimum_extension_version}`);
 	let i = /* @__PURE__ */ new Set();
 	for (let e of r.shards) {
-		if (i.has(e.path)) throw new j("duplicate_shard_path", `Duplicate shard path in manifest: ${e.path}`, e.path);
+		if (i.has(e.path)) throw new U("duplicate_shard_path", `Duplicate shard path in manifest: ${e.path}`, e.path);
 		i.add(e.path);
 	}
 	return r;
 }
-async function H(e, t) {
-	let n = F(t.byte_length), r = new Response(new Uint8Array(e)).body;
-	if (r === null) throw new j("corrupt_gzip", `No readable body for ${t.path}`, t.path);
+async function ve(e, t) {
+	let n = me(t.byte_length), r = new Response(new Uint8Array(e)).body;
+	if (r === null) throw new U("corrupt_gzip", `No readable body for ${t.path}`, t.path);
 	let i = r.pipeThrough(new DecompressionStream("gzip")).getReader(), a = [], o = 0;
 	try {
 		for (;;) {
 			let { done: e, value: r } = await i.read();
 			if (e) break;
-			if (o += r.byteLength, o > n) throw await i.cancel("decompressed_size_exceeded").catch(() => void 0), new j("decompressed_size_exceeded", `Decompressed size of ${t.path} exceeds the allowed bound`, t.path);
+			if (o += r.byteLength, o > n) throw await i.cancel("decompressed_size_exceeded").catch(() => void 0), new U("decompressed_size_exceeded", `Decompressed size of ${t.path} exceeds the allowed bound`, t.path);
 			a.push(r);
 		}
 	} catch (e) {
-		throw e instanceof j ? e : new j("corrupt_gzip", `Corrupt gzip stream for ${t.path}: ${e instanceof Error ? e.message : String(e)}`, t.path);
+		throw e instanceof U ? e : new U("corrupt_gzip", `Corrupt gzip stream for ${t.path}: ${e instanceof Error ? e.message : String(e)}`, t.path);
 	}
 	let s = new Uint8Array(o), c = 0;
 	for (let e of a) s.set(e, c), c += e.byteLength;
 	return s;
 }
-async function U(n, r) {
-	if (r.byteLength !== n.byte_length) throw new j("byte_length_mismatch", `Declared byte_length ${String(n.byte_length)} does not match downloaded size ${String(r.byteLength)} for ${n.path}`, n.path);
-	if (e(t(r)) !== n.sha256) throw new j("hash_mismatch", `SHA-256 mismatch for ${n.path}`, n.path);
-	let i = await H(r, n), a;
+async function ye(n, r) {
+	if (r.byteLength !== n.byte_length) throw new U("byte_length_mismatch", `Declared byte_length ${String(n.byte_length)} does not match downloaded size ${String(r.byteLength)} for ${n.path}`, n.path);
+	if (t(e(r)) !== n.sha256) throw new U("hash_mismatch", `SHA-256 mismatch for ${n.path}`, n.path);
+	let i = await ve(r, n), a;
 	try {
-		a = A(i);
+		a = H(i);
 	} catch (e) {
-		throw new j("corrupt_messagepack", `MessagePack decode failed for ${n.path}: ${e instanceof Error ? e.message : String(e)}`, n.path);
+		throw new U("corrupt_messagepack", `MessagePack decode failed for ${n.path}: ${e instanceof Error ? e.message : String(e)}`, n.path);
 	}
-	let o = B.safeParse(a);
-	if (!o.success) throw new j("corrupt_messagepack", `Decoded shard content for ${n.path} is not a valid envelope`, n.path);
-	if (o.data.kind !== n.kind) throw new j("wrong_shard_kind", `Shard ${n.path} declares kind "${n.kind}" but content is "${o.data.kind}"`, n.path);
+	let o = ge.safeParse(a);
+	if (!o.success) throw new U("corrupt_messagepack", `Decoded shard content for ${n.path} is not a valid envelope`, n.path);
+	if (o.data.kind !== n.kind) throw new U("wrong_shard_kind", `Shard ${n.path} declares kind "${n.kind}" but content is "${o.data.kind}"`, n.path);
 	return {
 		entry: n,
 		compressed_bytes: r
@@ -615,34 +659,34 @@ async function U(n, r) {
 }
 //#endregion
 //#region ../../packages/vocabulary/src/package_updater.ts
-var W = class extends Error {
+var q = class extends Error {
 	constructor(e) {
 		super(e), this.name = "PackageUpdateError";
 	}
-}, G = 65536;
-function K(e) {
-	return e + G;
+}, be = 65536;
+function xe(e) {
+	return e + be;
 }
-function ce(e, t) {
+function Se(e, t) {
 	if (e.data_version !== t.data_version || e.shards.length !== t.shards.length) return !1;
 	let n = new Map(e.shards.map((e) => [e.path, e.sha256]));
 	return t.shards.every((e) => n.get(e.path) === e.sha256);
 }
-function le(e, t) {
+function Ce(e, t) {
 	let n = new Map(e?.manifest.shards.map((e) => [e.path, e.sha256]) ?? []);
 	return t.shards.reduce((e, t) => n.get(t.path) === t.sha256 ? e : e + t.byte_length, 0);
 }
-function q(e) {
+function J(e) {
 	if (e?.aborted === !0) throw new DOMException("Vocabulary package update was aborted", "AbortError");
 }
-var ue = class {
+var we = class {
 	store;
 	client;
 	current_extension_version;
 	on_progress;
 	tail = Promise.resolve();
 	constructor(e) {
-		this.store = new ne(e.database, e.namespace), this.client = e.client, this.current_extension_version = e.current_extension_version, this.on_progress = e.on_progress;
+		this.store = new ie(e.database, e.namespace), this.client = e.client, this.current_extension_version = e.current_extension_version, this.on_progress = e.on_progress;
 	}
 	async update(e) {
 		let t = this.tail.then(() => this.run_update(e), () => this.run_update(e));
@@ -663,19 +707,19 @@ var ue = class {
 		this.on_progress?.(e);
 	}
 	async run_update(e) {
-		this.emit({ phase: "checking_manifest" }), q(e);
-		let t = V(await this.client.fetch_manifest(e), { current_extension_version: this.current_extension_version }), n = await this.store.find_active_or_confirmed();
-		if (n !== null && ce(n.manifest, t)) return this.emit({
+		this.emit({ phase: "checking_manifest" }), J(e);
+		let t = _e(await this.client.fetch_manifest(e), { current_extension_version: this.current_extension_version }), n = await this.store.find_active_or_confirmed();
+		if (n !== null && Se(n.manifest, t)) return this.emit({
 			phase: "up_to_date",
 			data_version: t.data_version
 		}), {
 			outcome: "up_to_date",
 			data_version: t.data_version
 		};
-		let r = await this.store.create_staging_package(t), i = le(n, t), a = 0;
+		let r = await this.store.create_staging_package(t), i = Ce(n, t), a = 0;
 		try {
 			for (let o of t.shards) {
-				if (q(e), n?.manifest.shards.find((e) => e.path === o.path)?.sha256 === o.sha256 && n !== null) {
+				if (J(e), n?.manifest.shards.find((e) => e.path === o.path)?.sha256 === o.sha256 && n !== null) {
 					this.emit({
 						phase: "reusing_shard",
 						shard_path: o.path
@@ -683,7 +727,7 @@ var ue = class {
 					continue;
 				}
 				let t = await this.client.fetch_shard_bytes(o.path, {
-					max_bytes: K(o.byte_length),
+					max_bytes: xe(o.byte_length),
 					...e === void 0 ? {} : { signal: e },
 					on_progress: (e) => {
 						this.emit({
@@ -698,7 +742,7 @@ var ue = class {
 					phase: "verifying",
 					shard_path: o.path
 				});
-				let s = await U(o, t);
+				let s = await ye(o, t);
 				await this.store.put_shard_content(r, s.entry, s.compressed_bytes);
 			}
 			return await this.store.mark_ready(r.record_id), this.emit({
@@ -718,39 +762,39 @@ var ue = class {
 			throw this.emit({
 				phase: "rolled_back",
 				reason: t
-			}), e instanceof j ? new W(`Vocabulary package update rejected a shard: ${t}`) : e instanceof DOMException && e.name === "AbortError" ? e : new W(`Vocabulary package update failed and was rolled back: ${t}`);
+			}), e instanceof U ? new q(`Vocabulary package update rejected a shard: ${t}`) : e instanceof DOMException && e.name === "AbortError" ? e : new q(`Vocabulary package update failed and was rolled back: ${t}`);
 		}
 	}
-}, de = 1048576, J = class extends TypeError {}, Y = class extends Error {
+}, Te = 1048576, Y = class extends TypeError {}, X = class extends Error {
 	constructor(e) {
 		super(e), this.name = "CatalogFetchError";
 	}
-}, fe = class extends Error {
+}, Ee = class extends Error {
 	constructor(e) {
 		super(e), this.name = "CatalogValidationError";
 	}
-}, X = class extends Error {
+}, Z = class extends Error {
 	constructor(e) {
 		super(e), this.name = "CatalogPlanError";
 	}
 };
-function pe(e) {
+function De(e) {
 	let t;
 	try {
 		t = new URL(e);
 	} catch {
-		throw new J(`Catalog URL is not a valid absolute URL: ${e}`);
+		throw new Y(`Catalog URL is not a valid absolute URL: ${e}`);
 	}
-	if (t.protocol !== "https:") throw new J(`Catalog URL must use the https: scheme, got: ${e}`);
+	if (t.protocol !== "https:") throw new Y(`Catalog URL must use the https: scheme, got: ${e}`);
 	return t;
 }
-async function me(e, t) {
-	if (e === null) throw new Y("Catalog response has no readable body");
+async function Oe(e, t) {
+	if (e === null) throw new X("Catalog response has no readable body");
 	let n = e.getReader(), r = [], i = 0;
 	for (;;) {
 		let { done: e, value: a } = await n.read();
 		if (e) break;
-		if (i += a.byteLength, i > t) throw await n.cancel("bounded_stream_exceeded").catch(() => void 0), new Y(`Catalog response exceeded the allowed ${String(t)}-byte bound`);
+		if (i += a.byteLength, i > t) throw await n.cancel("bounded_stream_exceeded").catch(() => void 0), new X(`Catalog response exceeded the allowed ${String(t)}-byte bound`);
 		r.push(a);
 	}
 	let a = new Uint8Array(i), o = 0;
@@ -758,40 +802,40 @@ async function me(e, t) {
 	try {
 		return JSON.parse(new TextDecoder().decode(a));
 	} catch {
-		throw new Y("Catalog response is not valid JSON");
+		throw new X("Catalog response is not valid JSON");
 	}
 }
-function he(e = {}) {
+function ke(e = {}) {
 	let t = e.catalog_url ?? "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json";
-	pe(t);
-	let n = e.fetch_impl ?? fetch, i = e.max_bytes ?? de, a = e.ttl_ms ?? 0, o = null;
-	async function s(e = {}) {
-		if (o !== null && a > 0 && Date.now() - o.fetched_at_ms < a) return o.entries;
-		let s = await n(t, e.signal === void 0 ? {} : { signal: e.signal });
-		if (!s.ok) throw new Y(`Catalog request failed with status ${String(s.status)}`);
-		let c = await me(s.body, i), l = r.safeParse(c);
-		if (!l.success) throw new fe("Catalog response failed schema validation");
-		return a > 0 && (o = {
-			entries: l.data,
+	De(t);
+	let n = e.fetch_impl ?? fetch, r = e.max_bytes ?? Te, i = e.ttl_ms ?? 0, a = null;
+	async function o(e = {}) {
+		if (a !== null && i > 0 && Date.now() - a.fetched_at_ms < i) return a.entries;
+		let o = await n(t, e.signal === void 0 ? {} : { signal: e.signal });
+		if (!o.ok) throw new X(`Catalog request failed with status ${String(o.status)}`);
+		let s = await Oe(o.body, r), c = x.safeParse(s);
+		if (!c.success) throw new Ee("Catalog response failed schema validation");
+		return i > 0 && (a = {
+			entries: c.data,
 			fetched_at_ms: Date.now()
-		}), l.data;
+		}), c.data;
 	}
 	return {
-		fetch_catalog: s,
+		fetch_catalog: o,
 		async list_supported_entries(e, t) {
-			return (await s(t)).filter((t) => L(e, t.min_extension_version) >= 0);
+			return (await o(t)).filter((t) => G(e, t.min_extension_version) >= 0);
 		}
 	};
 }
-function ge(e, t = {}) {
+function Ae(e, t = {}) {
 	if (e.bundled === !0) {
-		if (t.bundled_base_url === void 0) throw new X(`Catalog entry "${e.package_id}" is bundled: a bundled_base_url is required to plan its install`);
+		if (t.bundled_base_url === void 0) throw new Z(`Catalog entry "${e.package_id}" is bundled: a bundled_base_url is required to plan its install`);
 		return {
 			kind: "bundled",
 			base_url: t.bundled_base_url
 		};
 	}
-	if (e.base_url === null) throw new X(`Catalog entry "${e.package_id}" has no base_url and is not marked bundled`);
+	if (e.base_url === null) throw new Z(`Catalog entry "${e.package_id}" has no base_url and is not marked bundled`);
 	return {
 		kind: "https",
 		base_url: e.base_url
@@ -799,58 +843,58 @@ function ge(e, t = {}) {
 }
 //#endregion
 //#region ../../packages/vocabulary/src/catalog/catalog_install.ts
-var Z = 8388608, Q = class extends Error {
+var Q = 8388608, $ = class extends Error {
 	reason;
 	constructor(e, t) {
 		super(t), this.name = "CatalogInstallError", this.reason = e;
 	}
 };
-function $(e) {
+function je(e) {
 	let t = e.endsWith("/") ? e : `${e}/`;
 	return new URL("manifest.json", t);
 }
-async function _e(e, t, n) {
+async function Me(e, t, n) {
 	let r = await t(e, n === void 0 ? {} : { signal: n });
-	if (!r.ok) throw new Q("manifest_fetch_failed", `Manifest request failed with status ${String(r.status)}: ${e.href}`);
-	if (r.body === null) throw new Q("manifest_fetch_failed", `Manifest response for ${e.href} has no readable body`);
+	if (!r.ok) throw new $("manifest_fetch_failed", `Manifest request failed with status ${String(r.status)}: ${e.href}`);
+	if (r.body === null) throw new $("manifest_fetch_failed", `Manifest response for ${e.href} has no readable body`);
 	let i = r.body.getReader(), a = [], o = 0;
 	for (;;) {
 		let { done: t, value: n } = await i.read();
 		if (t) break;
-		if (o += n.byteLength, o > Z) throw await i.cancel("bounded_stream_exceeded").catch(() => void 0), new Q("manifest_fetch_failed", `Manifest response for ${e.href} exceeded the allowed ${String(Z)}-byte bound`);
+		if (o += n.byteLength, o > Q) throw await i.cancel("bounded_stream_exceeded").catch(() => void 0), new $("manifest_fetch_failed", `Manifest response for ${e.href} exceeded the allowed ${String(Q)}-byte bound`);
 		a.push(n);
 	}
 	let s = new Uint8Array(o), c = 0;
 	for (let e of a) s.set(e, c), c += e.byteLength;
 	return s;
 }
-function ve(e, t) {
+function Ne(e, t) {
 	let n;
 	try {
 		n = JSON.parse(new TextDecoder().decode(e));
 	} catch {
-		throw new Q("manifest_fetch_failed", `Manifest response for ${t} is not valid JSON`);
+		throw new $("manifest_fetch_failed", `Manifest response for ${t} is not valid JSON`);
 	}
-	let r = a.safeParse(n);
-	if (!r.success) throw new Q("manifest_fetch_failed", `Manifest response for ${t} failed schema validation`);
+	let r = f.safeParse(n);
+	if (!r.success) throw new $("manifest_fetch_failed", `Manifest response for ${t} failed schema validation`);
 	return r.data;
 }
-function ye(e, t) {
+function Pe(e, t) {
 	return {
 		fetch_manifest: () => Promise.resolve(t),
 		fetch_shard_bytes: e.fetch_shard_bytes.bind(e)
 	};
 }
-async function be(n, r) {
-	let i = ge(n, r.bundled_base_url === void 0 ? {} : { bundled_base_url: r.bundled_base_url }), a = r.fetch_impl ?? fetch;
+async function Fe(n, r) {
+	let i = Ae(n, r.bundled_base_url === void 0 ? {} : { bundled_base_url: r.bundled_base_url }), a = r.fetch_impl ?? fetch;
 	r.on_progress?.({ phase: "verifying_catalog_manifest" });
-	let o = await _e($(i.base_url), a, r.signal), s = e(t(o));
-	if (s !== n.manifest_sha256) throw new Q("manifest_hash_mismatch", `Fetched manifest hash ${s} does not match catalog entry hash ${n.manifest_sha256} for package ${n.package_id}`);
-	let c = ve(o, n.package_id);
-	if (c.package_id !== n.package_id) throw new Q("package_id_mismatch", `Catalog entry declares package_id ${n.package_id} but the fetched manifest declares ${c.package_id}`);
-	if (c.data_version !== n.data_version) throw new Q("data_version_mismatch", `Catalog entry ${n.package_id} declares data_version ${n.data_version} but the fetched manifest declares ${c.data_version}`);
-	let l = ye(ie(i, a), c);
-	return new ue({
+	let o = await Me(je(i.base_url), a, r.signal), s = t(e(o));
+	if (s !== n.manifest_sha256) throw new $("manifest_hash_mismatch", `Fetched manifest hash ${s} does not match catalog entry hash ${n.manifest_sha256} for package ${n.package_id}`);
+	let c = Ne(o, n.package_id);
+	if (c.package_id !== n.package_id) throw new $("package_id_mismatch", `Catalog entry declares package_id ${n.package_id} but the fetched manifest declares ${c.package_id}`);
+	if (c.data_version !== n.data_version) throw new $("data_version_mismatch", `Catalog entry ${n.package_id} declares data_version ${n.data_version} but the fetched manifest declares ${c.data_version}`);
+	let l = Pe(ue(i, a), c);
+	return new we({
 		database: r.database,
 		namespace: r.namespace,
 		client: l,
@@ -860,11 +904,11 @@ async function be(n, r) {
 }
 //#endregion
 //#region src/modules/vocabulary/vocabulary_catalog_client.ts
-var xe = "vocabulary", Se = class extends Error {
+var Ie = "vocabulary", Le = class extends Error {
 	constructor() {
 		super("A vocabulary package install is already in progress on this client"), this.name = "CatalogInstallBusyError";
 	}
-}, Ce = class {
+}, Re = class {
 	#e;
 	#t;
 	#n;
@@ -872,11 +916,11 @@ var xe = "vocabulary", Se = class extends Error {
 	#i;
 	#a = null;
 	constructor(e) {
-		this.#e = he({
+		this.#e = ke({
 			...e.catalog_url === void 0 ? {} : { catalog_url: e.catalog_url },
 			...e.fetch_impl === void 0 ? {} : { fetch_impl: e.fetch_impl },
 			...e.ttl_ms === void 0 ? {} : { ttl_ms: e.ttl_ms }
-		}), this.#t = e.current_extension_version, this.#n = e.bundled_base_url, this.#r = e.fetch_impl, this.#i = e.open_database_impl ?? o;
+		}), this.#t = e.current_extension_version, this.#n = e.bundled_base_url, this.#r = e.fetch_impl, this.#i = e.open_database_impl ?? p;
 	}
 	list() {
 		return this.#e.list_supported_entries(this.#t);
@@ -885,13 +929,13 @@ var xe = "vocabulary", Se = class extends Error {
 		return this.#a !== null;
 	}
 	async install(e, t) {
-		if (this.#a !== null) throw new Se();
+		if (this.#a !== null) throw new Le();
 		let n = new AbortController();
 		this.#a = n;
 		try {
-			return await be(e, {
+			return await Fe(e, {
 				database: await this.#i(),
-				namespace: xe,
+				namespace: Ie,
 				current_extension_version: this.#t,
 				signal: n.signal,
 				...t === void 0 ? {} : { on_progress: t },
@@ -907,4 +951,4 @@ var xe = "vocabulary", Se = class extends Error {
 	}
 };
 //#endregion
-export { Ce as VocabularyCatalogClient };
+export { Re as VocabularyCatalogClient };
