@@ -4194,7 +4194,7 @@ function fo(e) {
 		},
 		subscribe: (e) => t.subscribe(e),
 		async save(r, i) {
-			let a = n(r), o = e.namespace(), s = await a.get(o, i.id), c = e.now(), l = {
+			let a = n(r), o = e.namespace(), s = await a.get(o, i.id), c = e.now(), l = s === null ? Math.max(-1, ...(await a.list(o)).map((e) => ro(X(e), "order", -1))) + 1 : ro(X(s), "order", 2 ** 53 - 1), u = {
 				schema_version: 1,
 				id: i.id,
 				namespace: o,
@@ -4203,15 +4203,16 @@ function fo(e) {
 				updated_at: c,
 				payload: Q({
 					...i.payload,
-					display_name: i.display_name
+					display_name: i.display_name,
+					...l === 2 ** 53 - 1 ? {} : { order: l }
 				})
 			};
-			await a.put(o, l);
-			let u = lo(l, r);
+			await a.put(o, u);
+			let d = lo(u, r);
 			return t.emit({
 				type: "asset_upserted",
-				asset: u
-			}), u;
+				asset: d
+			}), d;
 		},
 		async remove(r, i) {
 			await n(r).delete(e.namespace(), i), t.emit({
