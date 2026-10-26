@@ -43,7 +43,7 @@ export class SillyTavernSecretDestination implements SecretDestinationPort {
       body: JSON.stringify({
         key: reference,
         value: plaintext_value,
-        label: "TavernCanvas",
+        label: "Inkwell",
       }),
     });
     if (!response.ok) {

@@ -1,5 +1,6 @@
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
 import type { SecretDestinationPort } from "../host/secret_destination.js";
+import { DeviceSecretVault } from "./device_secret_vault.js";
 
 export const BROWSER_SECRET_DATABASE_NAME = "config_tavern_canvas_browser_secrets" as const;
 export const BROWSER_SECRET_DATABASE_VERSION = 1 as const;
@@ -118,6 +119,22 @@ class LazyBrowserSecretVault implements BrowserSecretVaultPort {
       ({ EncryptedBrowserSecretVault }) => new EncryptedBrowserSecretVault(this.#options),
     ));
   }
+}
+
+/** `null` when the page lacks IndexedDB or WebCrypto. */
+export function create_device_secret_vault(
+  globals: unknown = globalThis,
+): DeviceSecretVault | null {
+  const indexed_db = read_global_property(globals, "indexedDB");
+  const crypto = read_global_property(globals, "crypto");
+  if (
+    typeof indexed_db !== "object" ||
+    indexed_db === null ||
+    typeof read_global_property(crypto, "subtle") !== "object"
+  ) {
+    return null;
+  }
+  return new DeviceSecretVault({ crypto: crypto as Crypto });
 }
 
 export function create_browser_secret_vault(

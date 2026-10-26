@@ -49,7 +49,7 @@ describe("SillyTavernSecretDestination", () => {
       body: JSON.stringify({
         key: "tavern_canvas:ns:profile:novelai_token",
         value: "sk-plaintext",
-        label: "TavernCanvas",
+        label: "Inkwell",
       }),
     });
   });

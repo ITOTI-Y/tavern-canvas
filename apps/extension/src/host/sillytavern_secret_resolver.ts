@@ -31,8 +31,9 @@ export interface SecretResolverPort {
 }
 
 const NOT_EXPOSED_MESSAGE =
-  "SillyTavern refused to reveal the stored credential. Set allowKeysExposure to true in " +
-  "config.yaml to allow direct provider calls, or route this profile through the Gateway instead.";
+  "The host refused to reveal the stored credential. Switch credential storage to This device " +
+  "in Settings > General and enter the key again, or allow key exposure in the host " +
+  "(allowKeysExposure in SillyTavern's config.yaml).";
 
 /** `POST /api/secrets/view` is gated by `allowKeysExposure`; only the value named by the requested reference is extracted. */
 export class SillyTavernSecretResolver implements SecretResolverPort {

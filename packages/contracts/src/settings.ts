@@ -47,7 +47,8 @@ const NamespaceIdentifierSchema = z
     (value) => value === value.trim(),
     "active_namespace must not have surrounding whitespace",
   );
-export const CredentialStorageModeSchema = z.enum(["host", "browser_encrypted"]);
+/** `browser_device` needs no passphrase and no host permission to reveal secrets. */
+export const CredentialStorageModeSchema = z.enum(["browser_device", "host", "browser_encrypted"]);
 export type CredentialStorageMode = z.infer<typeof CredentialStorageModeSchema>;
 
 export const TavernCanvasUiSettingsSchema = z.strictObject({

@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { ProviderProfileSummary } from "../../contracts/ui_capabilities.js";
-import { UuidSchema, type ProviderId, type Uuid } from "@tavern-canvas/contracts";
+import {
+  NOVELAI_MODEL_PROFILES,
+  UuidSchema,
+  type ProviderId,
+  type Uuid,
+} from "@tavern-canvas/contracts";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StudioController } from "../../controllers/studio_controller.js";
+import { DEFAULT_NOVELAI_MODEL_ID } from "../../../modules/novelai/novelai_request_defaults.js";
 import AppButton from "../../components/AppButton.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import AppSelect from "../../components/AppSelect.vue";
@@ -59,9 +65,19 @@ const provider_id_model = computed<string>({
     if (draft.value) {
       draft.value.provider_id = value as ProviderId;
       draft.value.workflow_id = "";
+      if (value === "novelai" && !NOVELAI_MODEL_IDS.has(draft.value.model_id)) {
+        draft.value.model_id = DEFAULT_NOVELAI_MODEL_ID;
+      }
     }
   },
 });
+
+const NOVELAI_MODEL_IDS: ReadonlySet<string> = new Set(
+  NOVELAI_MODEL_PROFILES.map((profile) => profile.model_id),
+);
+const novelai_model_options = NOVELAI_MODEL_PROFILES.filter((profile) => profile.selectable).map(
+  (profile) => ({ value: profile.model_id, label: profile.display_name }),
+);
 
 function open_add_dialog(): void {
   draft.value = {
@@ -338,7 +354,21 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
             />
           </template>
         </FieldGroup>
-        <FieldGroup :label="t('settings.provider_profiles.model_label')" required>
+        <FieldGroup
+          v-if="draft.provider_id === 'novelai'"
+          :label="t('settings.provider_profiles.model_label')"
+          required
+        >
+          <template #default="{ fieldId }">
+            <AppSelect
+              :id="fieldId"
+              v-model="draft.model_id"
+              :options="novelai_model_options"
+              :placeholder="t('settings.provider_profiles.model_label')"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup v-else :label="t('settings.provider_profiles.model_label')" required>
           <template #default="{ fieldId, describedBy }">
             <input
               :id="fieldId"

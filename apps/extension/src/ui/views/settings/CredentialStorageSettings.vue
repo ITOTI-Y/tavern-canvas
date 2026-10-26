@@ -28,6 +28,7 @@ const error = ref<string | null>(null);
 const reset_open = ref(false);
 
 const mode_options = computed(() => [
+  { value: "browser_device", label: t("settings.credential_storage.modes.browser_device") },
   { value: "host", label: t("settings.credential_storage.modes.host") },
   {
     value: "browser_encrypted",
@@ -36,7 +37,7 @@ const mode_options = computed(() => [
 ]);
 
 const mode = computed<string>({
-  get: () => props.settings?.credential_storage_mode ?? "host",
+  get: () => props.settings?.credential_storage_mode ?? "browser_device",
   set: (value) => {
     error.value = null;
     void props.controller

@@ -57,6 +57,7 @@ import { SecretBackendRouter } from "../host/secret_backend_router.js";
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
 import {
   create_browser_secret_vault,
+  create_device_secret_vault,
   type BrowserSecretVaultPort,
 } from "../storage/browser_secret_vault.js";
 import type { ProviderFetch } from "../transport/browser_fetch.js";
@@ -297,11 +298,16 @@ export async function compose_studio_capabilities(
   if (browser_secret_vault !== null) {
     teardown.push(() => browser_secret_vault.close());
   }
+  const device_vault = create_device_secret_vault(globals);
+  if (device_vault !== null) {
+    teardown.push(() => device_vault.close());
+  }
   const secret_router = new SecretBackendRouter({
     mode: () => settings_adapter?.get_settings().credential_storage_mode ?? "host",
     host_destination: host_secret_destination,
     host_resolver: host_secret_resolver,
     browser_vault: browser_secret_vault,
+    device_vault,
   });
   const secrets = secret_router.has_destination ? secret_router : null;
   const secret_resolver = secret_router.has_resolver ? secret_router : null;

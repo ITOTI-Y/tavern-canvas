@@ -96,7 +96,7 @@ describe("SillyTavern settings adapter", () => {
     const host = create_host();
     const adapter = create_sillytavern_settings(host);
 
-    expect(adapter.get_settings().credential_storage_mode).toBe("host");
+    expect(adapter.get_settings().credential_storage_mode).toBe("browser_device");
     expect(
       adapter.update_settings({ credential_storage_mode: "browser_encrypted" })
         .credential_storage_mode,

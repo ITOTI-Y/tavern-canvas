@@ -16,6 +16,7 @@ import { create_unavailable_capabilities } from "./controllers/unavailable_capab
 import { use_studio_controller } from "./controllers/use_studio_controller.js";
 import FloatingEntry from "./experience/FloatingEntry.vue";
 import { use_extensions_menu_entry } from "./experience/use_extensions_menu_entry.js";
+import { use_host_entry_points } from "./experience/use_host_entry_points.js";
 import FloatingStudioWindow from "./experience/FloatingStudioWindow.vue";
 import PortalProvider from "./shell/PortalProvider.vue";
 import styles from "./shell/shell.module.css";
@@ -92,6 +93,14 @@ function reload(): void {
 const studio_opened = ref(false);
 const shell_visible = computed(() => studio_opened.value);
 const menu_entry_available = use_extensions_menu_entry(() => t("app.name"), open_studio);
+use_host_entry_points(
+  {
+    name: () => t("app.name"),
+    description: () => t("app.entry_description"),
+    open: () => t("app.open_action"),
+  },
+  open_studio,
+);
 /** Without SillyTavern's extensions menu the floating entry is the only way to open the studio. */
 const floating_entry_enabled = computed(
   () =>

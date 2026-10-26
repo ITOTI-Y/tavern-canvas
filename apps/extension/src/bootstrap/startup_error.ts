@@ -24,7 +24,7 @@ export function status_from_probe(result: BootstrapProbeResult): StartupStatus {
   if (result.ready) {
     return {
       state: "ready",
-      title: "TavernCanvas ready",
+      title: "Inkwell ready",
       message: `Connected through JS Slash Runner ${result.helper_version}.`,
     };
   }
@@ -42,7 +42,7 @@ export function status_from_probe(result: BootstrapProbeResult): StartupStatus {
       return {
         state: "blocked",
         title: "JS Slash Runner version is invalid",
-        message: `TavernCanvas could not verify the installed version. ${requirement}`,
+        message: `Inkwell could not verify the installed version. ${requirement}`,
         update_url: JS_SLASH_RUNNER_UPDATE_URL,
       };
     case "helper_version_unsupported":
@@ -65,7 +65,7 @@ export function status_from_probe(result: BootstrapProbeResult): StartupStatus {
 export function startup_failed_status(): StartupStatus {
   return {
     state: "failed",
-    title: "TavernCanvas could not start",
+    title: "Inkwell could not start",
     message:
       "Runtime initialization failed. Reload SillyTavern after checking extension diagnostics.",
   };

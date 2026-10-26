@@ -1,6 +1,6 @@
-# TavernCanvas
+# Inkwell
 
-TavernCanvas (智绘姬) is a SillyTavern extension that generates images for chat messages. It builds
+Inkwell (repository `tavern-canvas`) is a SillyTavern and TauriTavern extension that generates images for chat messages. It builds
 prompts from chat context, dispatches generation jobs to an image provider, and stores the results
 in the browser alongside the message that anchored them.
 

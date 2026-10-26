@@ -11,7 +11,7 @@ const package_version = z
   .parse(JSON.parse(await readFile(resolve(repository_root, "package.json"), "utf8"))).version;
 
 const expected_manifest = {
-  display_name: "智绘姬",
+  display_name: "Inkwell",
   loading_order: 110,
   requires: [],
   optional: [],

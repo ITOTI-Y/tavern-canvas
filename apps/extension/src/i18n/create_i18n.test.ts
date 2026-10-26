@@ -7,7 +7,7 @@ describe("create_i18n", () => {
     const { i18n } = create_i18n();
 
     expect(i18n.global.locale.value).toBe("en");
-    expect(i18n.global.t("app.name")).toBe("TavernCanvas");
+    expect(i18n.global.t("app.name")).toBe("Inkwell");
   });
 
   it("lazy-loads the Simplified Chinese chunk and activates it", async () => {
@@ -17,7 +17,7 @@ describe("create_i18n", () => {
 
     expect(outcome).toEqual({ locale: "zh-CN" });
     expect(i18n.global.locale.value).toBe("zh-CN");
-    expect(i18n.global.t("app.name")).toBe("智绘姬");
+    expect(i18n.global.t("app.name")).toBe("Inkwell");
   });
 
   it("follows the host locale when the preference is auto", async () => {

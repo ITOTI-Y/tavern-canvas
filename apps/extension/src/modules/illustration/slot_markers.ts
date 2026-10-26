@@ -11,14 +11,14 @@ export function slot_marker(slot_id: string): string {
 export const SLOT_REGEX_SCRIPTS: readonly HostRegexScript[] = [
   {
     id: "tavern-canvas-image-slot-display",
-    script_name: "TavernCanvas image slot (display)",
+    script_name: "Inkwell image slot (display)",
     find_regex: `/<!--tc-image:(${SLOT_ID_CHARACTERS})-->/g`,
     replace_string: '<div class="tavern-canvas-slot" data-tc-slot="$1"></div>',
     destination: "display",
   },
   {
     id: "tavern-canvas-image-slot-prompt",
-    script_name: "TavernCanvas image slot (prompt)",
+    script_name: "Inkwell image slot (prompt)",
     find_regex: `/\\n?<!--tc-image:${SLOT_ID_CHARACTERS}-->/g`,
     replace_string: "",
     destination: "prompt",

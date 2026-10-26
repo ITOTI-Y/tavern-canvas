@@ -30,7 +30,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
   schema_version: 1,
   active_namespace: "primary",
   locale: "auto",
-  credential_storage_mode: "host",
+  credential_storage_mode: "browser_device",
   active_provider_profile_id: null,
   global_concurrency: 4,
   auto_generation_enabled: true,

@@ -264,6 +264,7 @@ describe("compose_studio_capabilities", () => {
 
   it("persists a provider profile through the real repository and reads it back", async () => {
     const composition = await compose();
+    await composition.capabilities.settings.update({ credential_storage_mode: "host" });
     const profile_id = "11111111-1111-4111-8111-111111111111";
 
     const saved = await composition.capabilities.profiles.save({
@@ -394,6 +395,7 @@ describe("compose_studio_capabilities", () => {
 
   it("stores an LLM credential by reference and never returns the plaintext", async () => {
     const composition = await compose();
+    await composition.capabilities.settings.update({ credential_storage_mode: "host" });
     const connection_id = "66666666-6666-4666-8666-666666666666";
     await composition.capabilities.llm_connections.save({
       id: connection_id,

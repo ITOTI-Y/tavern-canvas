@@ -35,7 +35,7 @@ const props = withDefaults(
     viewportOverride: undefined,
     mediaState: "idle",
     mediaAssets: () => ({}),
-    openLabel: "Open TavernCanvas Studio",
+    openLabel: "Open Inkwell",
   },
 );
 

@@ -376,9 +376,10 @@ export interface SettingsCapability {
   /** Hands the Gateway bearer token to the selected backend; settings keep only its reference. */
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
-  /** Writes SillyTavern's own DeepL key, which its translate route and translate extension share. */
+  /** Hands the custom analysis API key to the selected backend, like the Gateway token. */
   set_analysis_key(plaintext_value: string): Promise<void>;
   clear_analysis_key(): Promise<void>;
+  /** Writes SillyTavern's own DeepL key, which its translate route and translate extension share. */
   set_deepl_key(plaintext_value: string): Promise<void>;
   clear_deepl_key(): Promise<void>;
   initialize_browser_secret_vault(passphrase: string): Promise<BrowserSecretVaultStatus>;

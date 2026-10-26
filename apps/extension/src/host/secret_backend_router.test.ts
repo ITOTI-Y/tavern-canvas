@@ -41,6 +41,7 @@ describe("SecretBackendRouter", () => {
       host_destination,
       host_resolver,
       browser_vault: browser,
+      device_vault: null,
     });
 
     await router.write_secret(REFERENCE, "host-value");
@@ -66,6 +67,7 @@ describe("SecretBackendRouter", () => {
       host_destination: null,
       host_resolver: null,
       browser_vault: browser,
+      device_vault: null,
     });
 
     expect(router.supports("novelai_token")).toBe(false);
@@ -90,6 +92,7 @@ describe("SecretBackendRouter", () => {
       host_destination,
       host_resolver: null,
       browser_vault: null,
+      device_vault: null,
     });
 
     await expect(router.delete_secret(REFERENCE)).rejects.toThrowError(

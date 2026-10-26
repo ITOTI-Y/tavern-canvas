@@ -99,14 +99,19 @@ const ignored = computed(() => {
 
 const account = ref<NovelAiAccountStatus | null>(null);
 const account_error = ref<string | null>(null);
+/** A network-level failure here is the browser blocking NovelAI's account API (CORS), as in TauriTavern. */
+const account_unreachable = ref(false);
+const NOVELAI_ACCOUNT_URL = "https://novelai.net/image";
 const account_pending = ref(false);
 
 async function refresh_account(): Promise<void> {
   account_pending.value = true;
   account_error.value = null;
+  account_unreachable.value = false;
   try {
     account.value = await props.controller.load_novelai_account();
   } catch (error) {
+    account_unreachable.value = error instanceof Error && error.name === "ProviderNetworkError";
     account_error.value = error instanceof Error ? error.message : String(error);
   } finally {
     account_pending.value = false;
@@ -222,6 +227,16 @@ async function save(): Promise<void> {
               expires: d(new Date(account.expires_at), "short_date"),
             })
           }}
+        </span>
+        <span
+          v-else-if="account_unreachable"
+          :class="styles.status_text"
+          data-testid="novelai-account-unreachable"
+        >
+          {{ t("settings.novelai.account_unreachable") }}
+          <a :href="NOVELAI_ACCOUNT_URL" target="_blank" rel="noopener noreferrer">
+            {{ t("settings.novelai.account_open_site") }}
+          </a>
         </span>
         <span v-else-if="account_error !== null" :class="styles.status_text">
           {{ account_error }}
