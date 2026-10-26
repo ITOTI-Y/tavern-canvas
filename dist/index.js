@@ -1740,12 +1740,12 @@ var ar = class {
 		}, async () => {
 			let t = await this.#e.settings.update(e);
 			if (e.credential_storage_mode === void 0) return this.#h({ settings: t }), t;
-			let n = await this.#e.settings.load();
+			let [n, r] = await Promise.all([this.#e.settings.load(), this.#e.profiles.load()]);
 			return this.#h({
 				settings: n.settings,
 				vocabulary_update_channel: n.vocabulary_update_channel,
 				browser_secret_vault: n.browser_secret_vault
-			}), n.settings;
+			}), this.#s({ profiles: r }), n.settings;
 		});
 	}
 	test_diagnostics_connection() {
@@ -4955,7 +4955,14 @@ function ts(e) {
 	}
 	return {
 		async load() {
-			return (await e.repository.list(e.namespace())).map($o);
+			let t = await e.repository.list(e.namespace());
+			return Promise.all(t.map(async (t) => {
+				let n = $o(t);
+				return n.credential_reference === null ? n : await e.credential_present(n.credential_reference).catch(() => !1) === !1 ? {
+					...n,
+					credential_reference: null
+				} : n;
+			}));
 		},
 		subscribe: (e) => t.subscribe(e),
 		async save(n) {
@@ -5723,6 +5730,7 @@ async function Vs(e) {
 		namespace: m,
 		load_adapters: ie,
 		secrets: te,
+		credential_present: async (e) => te === null || (p?.get_settings().credential_storage_mode ?? "host") === "host" ? null : te.probe_secret(e),
 		now: h
 	})), r.profiles), me = o("llm_connections", S === null ? q($) : te === null || x === null ? q(Ps) : J(() => Uo({
 		repository: S.llm_connections,
