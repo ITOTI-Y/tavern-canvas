@@ -1,10 +1,3 @@
-/**
- * The "regex rules" pipeline stage: sequential SillyTavern-style find/replace scripts applied to
- * the already replacement-transformed prompt text. Structurally compatible with (but independent
- * of) the Studio's `PromptRegexRule` UI-capability shape -- this module owns the domain type; a
- * future adapter maps between the two rather than this domain module importing from the UI layer.
- */
-
 export interface RegexRule {
   readonly id: string;
   readonly pattern: string;
@@ -22,10 +15,7 @@ export interface RegexTransformResult {
   readonly failures: readonly RegexRuleFailure[];
 }
 
-/**
- * Applies a single rule. An invalid pattern/flags combination is reported as a failure rather than
- * thrown -- one malformed rule must not abort the rest of the pipeline.
- */
+/** An invalid pattern/flags combination is reported as a failure, not thrown, so one malformed rule does not abort the pipeline. */
 export function apply_regex_rule(
   text: string,
   rule: RegexRule,
@@ -51,7 +41,6 @@ export function apply_regex_rules(text: string, rules: readonly RegexRule[]): Re
   return { text: current_text, failures };
 }
 
-/** Runs a single rule against arbitrary sample text -- the "test regex" capability's pure core. */
 export function test_regex_rule(rule: RegexRule, sample_text: string): string {
   return apply_regex_rule(sample_text, rule).text;
 }

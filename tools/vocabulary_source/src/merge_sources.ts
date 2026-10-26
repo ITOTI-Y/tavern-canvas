@@ -3,7 +3,6 @@ import { z } from "zod";
 import { read_jsonl, write_jsonl } from "./jsonl_io.js";
 import { VocabularyRecordSchema, type VocabularyRecord } from "./vocabulary_record_schema.js";
 
-/** Normalizes a tag for cross-source matching: NFKC (stable across environments), trimmed, lowercased. */
 export function normalize_tag_key(tag: string): string {
   return tag.normalize("NFKC").trim().toLowerCase();
 }
@@ -22,35 +21,15 @@ function without_translation(record: VocabularyRecord): VocabularyRecord {
 
 export interface MergeSourcesResult {
   readonly records: VocabularyRecord[];
-  /** Number of `fact_records` whose exact tag name matched an entry in `popularity_overlay`. */
   readonly popularity_overlay_hit_count: number;
-  /** Number of `fact_records` whose normalized tag matched a translated `seed_records` entry. */
   readonly translation_hit_count: number;
 }
 
 /**
- * Merges a fact stream with a zh translation seed and an optional
- * fresh-popularity overlay into one deterministically ordered
- * (popularity desc, then tag asc) output.
- *
- * `fact_records` is the source of truth for record_id/category/aliases --
- * `seed_records` only ever contributes a `translation` (matched by
- * normalized tag key; unmatched seed translations and fact records without
- * a seed match are both expected and silent, since the seed and fact
- * streams are not guaranteed to cover the same tag set).
- *
- * `popularity_overlay`, when given, replaces a fact record's `popularity`
- * with the overlay's count for an *exact* (not normalized) tag-name match
- * -- e.g. a fresh per-post aggregation overlaid onto a staler tag-table
- * fact stream. A fact record with no overlay entry keeps its original
- * popularity unchanged.
- *
- * Translations are included in the returned records without restriction:
- * as of the 2026-08-06 controller ruling, the user has explicitly assumed
- * responsibility for zh translation licensing, reversing the earlier
- * fact-only distribution rule (see data/vocabulary/LICENSES.json). Callers
- * that need a translation-free variant can still strip it themselves --
- * this module no longer produces one, since nothing currently needs it.
+ * Output order: popularity desc, tag asc. `fact_records` is the source of truth for
+ * record_id/category/aliases; `seed_records` contributes only `translation` (matched by normalized
+ * tag; unmatched entries on either side are silent). `popularity_overlay` replaces popularity on an
+ * exact tag-name match.
  */
 export function merge_sources(
   fact_records: readonly VocabularyRecord[],
@@ -98,16 +77,10 @@ export interface RunMergeCliOptions {
   readonly fact_path?: string;
   readonly popularity_overlay_path?: string;
   readonly out_path: string;
-  /** Called when falling back to the seed's own (vintage ~2023) facts, so the CLI can print a staleness warning. */
   readonly on_stale_fact_source?: () => void;
 }
 
-/**
- * Shape of a fresh-popularity overlay JSONL line, e.g. the per-tag
- * post-count aggregation `aggregate_fresh_popularity.py` produces from
- * post-level data. Deliberately distinct from `VocabularyRecordSchema`:
- * this is a raw counts file, not a vocabulary record.
- */
+/** A raw counts file line, not a vocabulary record. */
 export const PopularityOverlayEntrySchema = z.object({
   tag: z.string().trim().min(1),
   post_count: z.number().int().nonnegative(),

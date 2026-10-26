@@ -6,11 +6,9 @@ import {
 import type { PackageSourceConfig } from "../package_client.js";
 import { compare_semver } from "../package_verifier.js";
 
-/** The live, published, CORS-verified catalog this client defaults to when no URL is injected. */
 export const DEFAULT_CATALOG_URL =
   "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json";
 
-/** Generous ceiling for a JSON array of catalog entries (each entry is a few hundred bytes). */
 const DEFAULT_MAX_CATALOG_BYTES = 1 * 1024 * 1024;
 
 export class CatalogSourceConfigError extends TypeError {}
@@ -29,8 +27,6 @@ export class CatalogValidationError extends Error {
   }
 }
 
-/** Same shape as plan_catalog_install()'s failure mode: kept as its own class so callers can
- * distinguish "the catalog document itself is unusable" from "this one entry can't be planned". */
 export class CatalogPlanError extends Error {
   constructor(message: string) {
     super(message);
@@ -42,9 +38,7 @@ export interface CatalogClientOptions {
   readonly catalog_url?: string;
   readonly fetch_impl?: typeof fetch;
   readonly max_bytes?: number;
-  /** Milliseconds a fetched catalog document may be reused for. 0 (the default) never caches --
-   * every call re-fetches. This is not persistence: the cache lives only in this client instance
-   * and is gone the moment it is garbage collected. */
+  /** Milliseconds a fetched document may be reused for; 0 never caches. Per instance only. */
   readonly ttl_ms?: number;
 }
 
@@ -54,10 +48,6 @@ export interface FetchCatalogOptions {
 
 export interface CatalogClient {
   fetch_catalog(options?: FetchCatalogOptions): Promise<readonly VocabularyCatalogEntry[]>;
-  /** fetch_catalog() filtered to entries whose min_extension_version the running extension
-   * version satisfies (packages/vocabulary/src/package_verifier.ts's compare_semver, ordinary
-   * SemVer precedence). An entry the running extension is too old for is silently excluded, not
-   * an error -- it simply is not offered for install yet. */
   list_supported_entries(
     current_extension_version: string,
     options?: FetchCatalogOptions,
@@ -119,11 +109,6 @@ interface CachedCatalog {
   readonly fetched_at_ms: number;
 }
 
-/**
- * Fetches and validates a vocabulary catalog document from a configured HTTPS URL. Owns nothing
- * beyond the fetch itself: no IndexedDB, no filesystem, no persistence of the document across
- * client instances -- `ttl_ms` only avoids redundant re-fetches within one instance's lifetime.
- */
 export function create_catalog_client(options: CatalogClientOptions = {}): CatalogClient {
   const catalog_url = options.catalog_url ?? DEFAULT_CATALOG_URL;
   validated_https_url(catalog_url);
@@ -170,18 +155,9 @@ export function create_catalog_client(options: CatalogClientOptions = {}): Catal
 }
 
 export interface CatalogInstallPlanOptions {
-  /** Required only to plan a bundled entry -- the catalog cannot itself supply a location for
-   * content the extension already ships, since a bundled entry's base_url is null. */
   readonly bundled_base_url?: string;
 }
 
-/**
- * Maps one validated catalog entry to the PackageUpdater/PackageClient configuration that would
- * install it -- pure and synchronous, no network or storage access. A bundled entry can only be
- * planned when the caller supplies where the extension's own bundled content lives; a non-bundled
- * entry must carry a real base_url (the contract schema already guarantees this, but a
- * hand-constructed entry bypassing the schema is still rejected here defensively).
- */
 export function plan_catalog_install(
   entry: VocabularyCatalogEntry,
   options: CatalogInstallPlanOptions = {},

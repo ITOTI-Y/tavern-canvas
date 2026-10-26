@@ -18,13 +18,8 @@ export type AssetId = z.infer<typeof AssetIdSchema>;
 export const JobIdSchema = UuidSchema;
 export type JobId = z.infer<typeof JobIdSchema>;
 
-/**
- * A handle into the host secret vault, never the secret itself. The `tavern_canvas:` prefix is
- * what makes "someone pasted a raw provider key into this field" a schema failure rather than a
- * silent plaintext write, and it matches `derive_secret_reference`'s migration-side format so
- * every path -- provider profiles, LLM connections, the Gateway token -- addresses the same vault
- * entries through one validated shape.
- */
+// A handle into the host secret vault, never the secret. The `tavern_canvas:` prefix makes a pasted
+// raw provider key a schema failure instead of a silent plaintext write.
 export const VaultReferenceSchema = z
   .string()
   .min(1)

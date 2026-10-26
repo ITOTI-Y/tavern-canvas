@@ -8,20 +8,11 @@ import {
   type VocabularyRecordLike,
 } from "@tavern-canvas/vocabulary";
 
-// Complementary Node-side benchmark for the pure algorithmic layer (query
-// planning + ranking, packages/vocabulary/src/search), isolated from
-// IndexedDB/Worker/postMessage overhead. The full end-to-end proof
-// (including that overhead, against the real 500,000-record package in a
-// real Worker) is tests/e2e/vocabulary_performance.spec.ts -- this file is
-// not part of the Stage 05 Task 6 gate (vitest `bench` files are not swept
-// into `vitest run`/`pnpm test`; none of vitest.config.ts's project
-// `include` globs match `*.bench.ts`). Run manually:
+// Node-side benchmark of query planning and ranking, isolated from IndexedDB/Worker overhead.
+// Not part of `pnpm test`; run manually:
 //   pnpm exec vitest bench tests/performance/vocabulary_search.bench.ts
 
-// Matches the 500,000-record benchmark fixture's typical 2-char prefix
-// group size (~500,000 records / ~676 possible two-letter group keys --
-// generate_benchmark_fixture.ts's syllable scheme), so this isolates the
-// worst realistic single-shard candidate volume the ranker must sort.
+// Typical 2-char prefix group size of the 500,000-record benchmark fixture: the worst single-shard candidate volume the ranker sorts.
 const BUSY_GROUP_SIZE = 5_000;
 const TRIGRAM_OVERLAP_MAP_SIZE = 2_000;
 

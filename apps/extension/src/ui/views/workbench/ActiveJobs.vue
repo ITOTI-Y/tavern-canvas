@@ -45,19 +45,10 @@ const surface_status = computed<"loading" | "empty" | "error" | "ready">(() => {
   return props.jobs.length === 0 ? "empty" : "ready";
 });
 
-// "{n} job(s) running" (workbench.active_jobs.active_count) means literally in-flight jobs --
-// this list also keeps completed/failed/cancelled rows visible (for completion preview and
-// retry), so the header count must exclude those terminal states rather than count every row.
 const running_count = computed(
   () => props.jobs.filter((job) => CANCELLABLE_STATES.includes(job.state)).length,
 );
 
-/**
- * Locale keys are looked up by a literal string at every call site (plan rule: "Dynamic keys are
- * forbidden", enforced mechanically by tools/locale_check). `GenerationState` has nine members, so
- * this is a plain switch over nine separate, literally-keyed translate calls instead of building
- * the lookup key from `job.state` at runtime.
- */
 function state_label(state: GenerationState): string {
   switch (state) {
     case "queued":

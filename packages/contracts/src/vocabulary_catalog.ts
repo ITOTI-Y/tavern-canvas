@@ -3,11 +3,7 @@ import { z } from "zod";
 import { Sha256Schema } from "./generation.js";
 import { VocabularyPackageIdSchema, VocabularySemverSchema } from "./vocabulary.js";
 
-/**
- * BCP-47-ish language tag: a 2-3 letter primary subtag, optionally followed by a region/script
- * subtag (e.g. "en", "zh-CN"). Deliberately not a closed enum -- the catalog is published data,
- * and locking this to today's two languages would reject a legitimate future catalog entry.
- */
+// Not a closed enum: the catalog is published data and a future entry may use another language.
 const VocabularyCatalogLanguageSchema = z
   .string()
   .trim()
@@ -25,11 +21,7 @@ const VocabularyCatalogDescriptionSchema = z.strictObject({
   "zh-CN": z.string().trim().min(1).max(1_024),
 });
 
-/**
- * A catalog entry's base_url is the one place the extension is allowed to source a package
- * download location from (see packages/vocabulary/src/package_client.ts's I/O contract) -- it
- * must always be a well-formed absolute https URL, never http or another scheme.
- */
+// base_url is the only source of a package download location; it must be an absolute https URL.
 const VocabularyCatalogBaseUrlSchema = z.url().check((context) => {
   if (!URL.canParse(context.value)) {
     return;
@@ -43,12 +35,7 @@ const VocabularyCatalogBaseUrlSchema = z.url().check((context) => {
   }
 });
 
-/**
- * One installable vocabulary package as published by the catalog document. Strict and exact to
- * the live shape at https://huggingface.co/datasets/ITOTII/tavern-canvas-vocabulary/resolve/main/catalog.json
- * -- an unknown field or a shape drift on the published catalog fails closed rather than being
- * silently ignored.
- */
+// Strict: an unknown field in the published catalog fails closed.
 export const VocabularyCatalogEntrySchema = z
   .strictObject({
     package_id: VocabularyPackageIdSchema,
@@ -62,7 +49,6 @@ export const VocabularyCatalogEntrySchema = z
     min_extension_version: VocabularySemverSchema,
     base_url: VocabularyCatalogBaseUrlSchema.nullable(),
     bundled: z.boolean().optional(),
-    // ISO 8601 UTC only ("Z" offset) -- mirrors packages/storage's TimestampSchema convention.
     updated_at: z.iso.datetime({ offset: false }),
   })
   .check((context) => {
@@ -77,12 +63,7 @@ export const VocabularyCatalogEntrySchema = z
   });
 export type VocabularyCatalogEntry = z.infer<typeof VocabularyCatalogEntrySchema>;
 
-/**
- * The published catalog document is a bare JSON array of entries (not wrapped in an envelope
- * object) -- verified directly against the live document. Bounded to a generous entry count as a
- * defensive ceiling; uniqueness of package_id is enforced so two entries can never race to
- * describe the same installable package.
- */
+// Bare JSON array; package_id is unique so two entries cannot describe the same package.
 export const VocabularyCatalogDocumentSchema = z
   .array(VocabularyCatalogEntrySchema)
   .min(1)

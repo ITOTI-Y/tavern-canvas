@@ -9,15 +9,6 @@ import {
   route_label,
 } from "./studio_harness_utils.js";
 
-/**
- * Real-browser navigation coverage for every route, on both the desktop rail and the mobile
- * bottom nav ("More" menu included), in both locales. StudioShell.test.ts (happy-dom) already
- * covers the component's own emitted events in isolation; this spec proves the real StudioWorkspace
- * routing wiring (task-8-report.md's gap 1) actually swaps the mounted view in a real browser, for
- * every one of the six routes -- not just "workbench" (the only one any pre-existing unit test
- * happened to exercise by default).
- */
-
 const ROUTE_MARKERS: Readonly<Record<(typeof ROUTES)[number], string>> = {
   workbench: '[data-testid="workbench-view"]',
   prompt: '[data-testid="prompt-view"]',

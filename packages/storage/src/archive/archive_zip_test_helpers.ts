@@ -8,19 +8,12 @@ import {
 } from "@zip.js/zip.js";
 
 export interface RebuildArchiveOptions {
-  /** Replace an existing entry's bytes while keeping its declared checksums.json entry stale. */
   readonly replace?: Readonly<Record<string, Uint8Array>>;
-  /** Drop an existing entry entirely, simulating a file promised by checksums.json but absent. */
   readonly exclude?: readonly string[];
   /** Force a `passThrough` write so the entry declares a size unrelated to its real byte count. */
   readonly forge_uncompressed_size?: Readonly<Record<string, number>>;
 }
 
-/**
- * Reads every entry of a valid archive and rewrites it into a new zip, applying the requested
- * tampering. Used to build archives that are well-formed at the zip-container level but violate
- * TavernCanvas's own integrity invariants (stale checksums, missing files, forged sizes).
- */
 export async function rebuild_archive(
   blob: Blob,
   options: RebuildArchiveOptions = {},
@@ -94,12 +87,7 @@ function find_eocd_offset(bytes: Uint8Array): number {
   throw new Error("End of central directory record not found");
 }
 
-/**
- * Duplicates the archive's first central-directory record in place (zip.js's own `ZipWriter`
- * refuses duplicate filenames via `add()`, so a genuinely ambiguous archive can only be produced
- * by editing the central directory directly). Both copies point at the same local file data;
- * only the directory listing gains a second entry with an identical name.
- */
+// zip.js `ZipWriter` refuses duplicate filenames, so the central directory is edited directly.
 export async function duplicate_first_central_directory_entry(blob: Blob): Promise<Blob> {
   const bytes = new Uint8Array(await blob.arrayBuffer());
   const eocd_offset = find_eocd_offset(bytes);

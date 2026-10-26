@@ -16,16 +16,6 @@ import {
   run_all_layout_checks,
 } from "./studio_layout_checks.js";
 
-/**
- * Programmatic overflow/overlap/layout-shift/blank-image/portal-escape/button-dimension checks
- * (task-8-brief.md Step 4) -- every route at every one of the four required viewports, in the
- * "full" scenario (richest data: real bitmap images, long-text fixtures, four generation jobs in
- * different states). A second, targeted pass covers zh-CN at the narrowest viewport (text growth
- * under CJK line-breaking is the most overflow-prone combination) and dark mode at the widest
- * viewport (a distinct CSS branch -- tokens.css's single dark-mode override block -- worth its own
- * pixel-level proof, not just an assumption that light-mode geometry checks also cover it).
- */
-
 test.describe("Studio overflow: full matrix (en, light)", () => {
   for (const viewport of VIEWPORTS) {
     for (const route of ROUTES) {
@@ -92,8 +82,6 @@ test.describe("Studio overflow: blank/zero-dimension image sweep", () => {
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    // The "full" scenario seeds one already-completed job (see mock_capabilities.ts's build_jobs)
-    // -- select it directly instead of waiting on the harness's submit->complete timer.
     const completed_row = page
       .locator('[data-testid="job-row"][data-job-state="completed"]')
       .first();
@@ -146,9 +134,7 @@ test.describe("Studio overflow: buttons never change dimensions on hover/loading
     expect(hover_box).toEqual(idle_box);
 
     await page.locator('[data-testid="positive-prompt-input"]').fill("a river at dawn");
-    // Race the click against the pending box measurement -- the mock's submit() resolves fast, so
-    // the measurement happens in the same tick as the click dispatch, before Vue's reactive
-    // "pending" render could already have flipped back to idle.
+    // The mock's submit() resolves fast; asserting aria-busy concurrently with the click catches the pending render.
     await Promise.all([
       page.locator(selector).click(),
       expect(page.locator(selector)).toHaveAttribute("aria-busy", "true"),

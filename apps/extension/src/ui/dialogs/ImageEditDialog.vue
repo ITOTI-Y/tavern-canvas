@@ -8,14 +8,6 @@ import IconButton from "../components/IconButton.vue";
 import { find_preset_matches, type PresetMatchCandidate } from "../../modules/media/image_edit.js";
 import styles from "./dialogs.module.css";
 
-/**
- * Tag-edit textbox dialog (manual.tag_edit_dialog) with preset-match highlighting underlay, the
- * per-tag reset/lock/delete actions (manual.tag_actions_menu), and the 4-way image-processing
- * submenu (manual.image_process_submenu: Banana retouch / Grok video / ComfyUI inpaint / NovelAI
- * inpaint). This dialog only edits/saves the tag text and reports which processing route the user
- * picked -- actually opening InpaintDialog or submitting a retouch/video request is the caller's
- * job (`open-*` events), keeping this component focused on one responsibility.
- */
 const props = withDefaults(
   defineProps<{
     readonly open: boolean;

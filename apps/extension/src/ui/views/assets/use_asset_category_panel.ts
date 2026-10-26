@@ -26,12 +26,6 @@ export interface AssetCategoryPanelController {
   random_select(record: AssetRecordSummary): void;
 }
 
-/**
- * Shared add/edit/delete/reorder wiring for every AssetCategory panel (Character/Outfit/LoRA/
- * Vibe/Reference share this exact shape -- Workflow needs its own bespoke import/scan flow on top
- * and composes this only for its base record list). Keeps each XxxPanel.vue to just its field
- * list and locale strings instead of re-deriving this state machine six times.
- */
 export function use_asset_category_panel(
   category: AssetCategory,
   controller: StudioController,
@@ -116,7 +110,6 @@ export function use_asset_category_panel(
   };
 }
 
-/** Emits the `update:values` payload without accumulating stale keys from a previous edit. */
 export function replace_values(target: AssetFormValues, next: AssetFormValues): void {
   for (const key of Object.keys(target)) {
     Reflect.deleteProperty(target, key);

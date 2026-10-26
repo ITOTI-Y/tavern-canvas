@@ -5,14 +5,6 @@ import { nextTick } from "vue";
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 import InpaintDialog from "./InpaintDialog.vue";
 
-/**
- * InpaintDialog: pointer events support mouse, pen, and touch without UA detection; Lucide
- * undo/redo/eraser/trash/zoom/upload/generate icons (no custom SVG toolbar icons); canvas and
- * controls do not resize when status changes. See inpaint_session.test.ts for the underlying mask
- * math (brush/erase rasterization, undo/redo history, provider-specific export, dimension
- * validation) this dialog delegates to.
- */
-
 function fake_bitmap(width: number, height: number): ImageBitmap {
   return { width, height, close: () => {} } as unknown as ImageBitmap;
 }

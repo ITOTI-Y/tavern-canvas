@@ -6,10 +6,6 @@ import type { AssistantTask } from "../../modules/assistant/assistant_module.js"
 import AppButton from "../components/AppButton.vue";
 import styles from "./assistant.module.css";
 
-/**
- * What the assistant is doing right now, and what it just finished. Status dots carry real
- * semantic state only (running, completed, failed) and never decorate a row for its own sake.
- */
 const props = defineProps<{
   readonly tasks: readonly AssistantTask[];
 }>();

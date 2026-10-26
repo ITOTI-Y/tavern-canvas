@@ -2,17 +2,7 @@ import type { StorageDatabase } from "@tavern-canvas/storage";
 
 import type { RecordedRequest } from "./all_host_environment.js";
 
-/**
- * Security probes for tests/e2e/security_boundaries.spec.ts. Each one runs the REAL first-party
- * module against hostile input inside the real browser and returns plain data; none of them
- * reimplements or approximates the behaviour under test. They live here rather than inside the
- * spec because a Playwright `page.evaluate` callback is serialized as source and cannot import the
- * extension's modules, and rather than inside all_host_boot.ts because they are a distinct
- * concern from booting the host.
- */
-
 export interface ProviderOverrideAttempt {
-  /** Everything a client could conceivably try to smuggle into a stored provider profile. */
   readonly base_url?: string;
   readonly url?: string;
   readonly endpoint?: string;
@@ -24,7 +14,6 @@ export interface ProviderOverrideAttempt {
 }
 
 export interface ProviderOverrideOutcome {
-  /** Non-null when the storage layer refused to persist the smuggled field at all. */
   readonly rejected_at_storage: string | null;
   readonly error: string | null;
   readonly request_urls: readonly string[];
@@ -83,7 +72,6 @@ export interface GatewayGenerationOutcome {
 }
 
 export interface SecurityProbes {
-  /** The raw capabilities document the REAL GatewayTransport read over real HTTP. */
   gateway_capabilities(origin: string, token: string): Promise<Record<string, unknown>>;
   gateway_submit(
     origin: string,
@@ -100,22 +88,11 @@ export interface SecurityProbes {
     token: string,
     options: GatewayJobOptions,
   ): Promise<GatewayCancelOutcome>;
-  /**
-   * Drives the REAL `GatewayJobExecutor` -- the piece that makes a configured Gateway a working
-   * generation transport rather than a dead one -- across the real cross-origin boundary: submit,
-   * SSE, asset download, and the Stage 04 persistence call the queue's executor contract requires.
-   */
   gateway_generation(
     origin: string,
     token: string,
     options: GatewayJobOptions,
   ): Promise<GatewayGenerationOutcome>;
-  /**
-   * Drives the REAL `VocabularyCatalogClient` against a catalog whose published manifest hash does
-   * not match the package it serves, through the class's own documented `catalog_url`/`fetch_impl`
-   * seam. Acceptance criterion 12: a hash failure must leave the previously active package in
-   * place.
-   */
   vocabulary_update(): Promise<VocabularyUpdateOutcome>;
   provider_override(attempt: ProviderOverrideAttempt): Promise<ProviderOverrideOutcome>;
   parse_fallback(chunks: readonly string[]): FallbackParseOutcome;
@@ -168,11 +145,6 @@ export async function create_security_probes(
     import("../../../apps/extension/src/modules/media/media_command_service.js"),
   ]);
 
-  /**
-   * A `fetch` that can truncate an SSE body after N events, so a spec can make the client lose its
-   * stream mid-job and prove the polling fallback finishes the job. `poll_count` counts the plain
-   * job reads the client falls back to.
-   */
   function instrumented_gateway_fetch(drop_after_events: number | undefined): {
     readonly fetch_impl: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
     poll_count(): number;
@@ -387,7 +359,7 @@ export async function create_security_probes(
         data_version: "1.0.0",
         record_count: 1,
         compressed_bytes: 8,
-        // Deliberately not the digest of the manifest served below.
+        // Does not match the served manifest's digest.
         manifest_sha256: "f".repeat(64),
         languages: ["en"],
         min_extension_version: "0.0.1",
@@ -402,8 +374,6 @@ export async function create_security_probes(
         fetch_impl: (input: RequestInfo | URL) => {
           const url =
             typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-          // The catalog document is a bare JSON array; the package manifest it points at is served
-          // with contents whose digest cannot match the published manifest_sha256 above.
           const body = url.endsWith("/catalog.json")
             ? JSON.stringify([catalog_entry])
             : JSON.stringify({ tampered: true });
@@ -436,12 +406,6 @@ export async function create_security_probes(
       };
     },
 
-    /**
-     * Writes an attacker-controlled provider profile through the only door a client has -- a
-     * stored profile record -- activates it, recomposes the real capability graph, and submits.
-     * Whatever URL and headers the provider request ends up with are the ones the code-owned
-     * route catalog (packages/contracts/src/direct_catalog.ts) decided, never the ones below.
-     */
     async provider_override(attempt) {
       const before = options.provider_requests.length;
       const repository = new ProviderProfileRepository(options.database);
@@ -469,8 +433,6 @@ export async function create_security_probes(
           },
         });
       } catch (thrown) {
-        // The storage layer refusing to persist the field is itself one of the two acceptable
-        // outcomes: the attempt is rejected before any transport could read it.
         return {
           rejected_at_storage: String(thrown),
           error: null,

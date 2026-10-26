@@ -39,13 +39,8 @@ export interface VerifyManifestOptions {
   readonly current_extension_version: string;
 }
 
-/**
- * A shard's decompressed size is bounded relative to its declared (compressed) byte_length
- * rather than by a single flat number, so small shards cannot hide a large expansion and large
- * legitimate shards are not clipped. Both bounds are defensive (no manifest field states an
- * expected decompressed size); MAX_SHARD_DECOMPRESSED_BYTES is an absolute ceiling well above
- * the largest legitimate shard (a 4,096-record detail shard).
- */
+// Decompressed size is bounded relative to the declared byte_length so small shards cannot hide a
+// large expansion; MAX_SHARD_DECOMPRESSED_BYTES is an absolute ceiling.
 const MAX_DECOMPRESSION_RATIO = 128;
 const MIN_DECOMPRESSED_BOUND_BYTES = 65_536;
 const MAX_SHARD_DECOMPRESSED_BYTES = 32 * 1024 * 1024;
@@ -65,13 +60,6 @@ function extract_schema_version(value: unknown): number | undefined {
   return typeof candidate === "number" ? candidate : undefined;
 }
 
-/**
- * Ordinary SemVer precedence (semver.org #11): numeric release fields compare numerically;
- * absence of a prerelease outranks any prerelease; prerelease identifiers compare
- * field-by-field (numeric identifiers numerically, alphanumeric identifiers lexically ASCII,
- * numeric always lower than alphanumeric, a shorter identifier list loses to a longer one whose
- * shared prefix is equal). Build metadata never affects precedence.
- */
 export function compare_semver(left: string, right: string): number {
   const [left_release, left_prerelease] = split_semver(left);
   const [right_release, right_prerelease] = split_semver(right);
@@ -136,19 +124,10 @@ function compare_prerelease_identifiers(left: string, right: string): number {
   return 0;
 }
 
-/**
- * Structural-only envelope check: every decoded shard payload is a map with a `kind` field drawn
- * from the fixed index-kind enum. Deeper per-kind shape (entries/records/start_id/...) is
- * decoding semantics owned by the Worker search implementation, not verification.
- */
 const ShardEnvelopeSchema = z.looseObject({ kind: VocabularyIndexKindSchema });
 
-/**
- * Validates manifest shape plus everything the contracts schema does not already enforce:
- * unsupported schema version (checked before the full parse, mirroring the archive importer's
- * `extract_schema_version` guard), the running extension's minimum-version gate, and duplicate
- * shard paths (the contracts schema only rejects duplicate shard_id).
- */
+// Checks the schema version before the full parse, the minimum-version gate and duplicate shard
+// paths (the contracts schema only rejects duplicate shard_id).
 export function verify_manifest(raw: unknown, options: VerifyManifestOptions): VocabularyManifest {
   if (extract_schema_version(raw) !== VOCABULARY_SCHEMA_VERSION) {
     throw new PackageVerificationError(
@@ -244,13 +223,6 @@ async function bounded_gunzip(
   return combined;
 }
 
-/**
- * Verifies one downloaded shard against its manifest entry: declared/compressed byte-length
- * consistency, SHA-256 of the compressed bytes as stored, bounded gzip well-formedness, bounded
- * MessagePack well-formedness, and that the decoded envelope's `kind` matches the manifest's
- * declared kind. Returns the still-compressed bytes for staging — content interpretation beyond
- * the envelope is out of scope here.
- */
 export async function verify_shard_bytes(
   entry: VocabularyShardEntry,
   compressed_bytes: Uint8Array,

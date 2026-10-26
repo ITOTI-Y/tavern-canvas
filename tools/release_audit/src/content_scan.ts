@@ -24,11 +24,6 @@ function find_line_start_marker(content: string, index: number, marker: string):
   }
 }
 
-/**
- * Resolves which source module a bundled offset came from, using the `//#region <specifier>`
- * markers the production bundler emits. Returns `undefined` when the offset sits outside every
- * region, or when the bundle carries no markers at all.
- */
 export function owning_region(content: string, index: number): string | undefined {
   const region_at = find_line_start_marker(content, index, REGION_OPEN_MARKER);
   if (region_at === -1) {
@@ -44,12 +39,7 @@ export function owning_region(content: string, index: number): string | undefine
     .trim();
 }
 
-/**
- * A bundle mixes first-party modules with vendored dependencies, and rules that police authoring
- * style (emoji, the v2 settings key) only govern the first-party half. Absent region markers the
- * whole file counts as first party, so a bundler that stops emitting them fails loud rather than
- * silently disabling these rules.
- */
+/** Absent region markers count as first party, so a bundler that stops emitting them fails loud instead of disabling the authoring-style rules. */
 export function is_first_party_offset(content: string, index: number): boolean {
   const region = owning_region(content, index);
   return region === undefined || !region.includes("node_modules");
@@ -70,8 +60,7 @@ export function find_first_party_emoji(content: string): ContentMatch[] {
   return matches;
 }
 
-// `fa-` stays case sensitive: a case-insensitive form matches the `fA-F` inside the hex character
-// classes every bundled UUID/regex library ships, which has nothing to do with Font Awesome.
+// `fa-` stays case sensitive: a case-insensitive form matches `fA-F` in bundled hex character classes.
 const FONT_AWESOME_PATTERNS: readonly RegExp[] = [
   /Font\s*Awesome/giu,
   /fontawesome/giu,
@@ -105,9 +94,8 @@ interface LegacyPattern {
   readonly pattern: RegExp;
 }
 
-// The v2 settings key is legitimate in exactly one place: the code that reads v2's
-// `extension_settings` bucket so the v3 runtime can migrate it. Region attribution keeps that
-// reader allowed without allowing the key to reappear anywhere else in the bundle.
+// The v2 settings key is legitimate only in the code that reads v2's `extension_settings` bucket;
+// region attribution keeps it from reappearing elsewhere in the bundle.
 const MIGRATION_READER_REGION_PATTERN = /migration|legacy|host_environment/u;
 const LEGACY_SETTINGS_KEY_PATTERN = /st-chatu8/gu;
 const LEGACY_CONTENT_PATTERNS: readonly LegacyPattern[] = [
@@ -150,9 +138,7 @@ interface FetchContextPattern {
   readonly pattern: RegExp;
 }
 
-// Targeted at fetch contexts only. An absolute URL that merely sits in a string -- the manifest
-// homePage, a provider API base in the code-owned route catalog, a license notice link -- is not a
-// runtime fetch and must not trip this rule.
+// Fetch contexts only: absolute URLs in plain strings (homePage, provider API bases, license links) must not trip this rule.
 const REMOTE_FETCH_PATTERNS: readonly FetchContextPattern[] = [
   { label: "remote script tag", pattern: /<script\b[^>]*\bsrc\s*=\s*["']?\s*https?:\/\//giu },
   { label: "remote dynamic import", pattern: /\bimport\s*\(\s*["'`]\s*https?:\/\//gu },
@@ -195,8 +181,6 @@ export function is_placeholder_value(value: string): boolean {
   if (PLACEHOLDER_FILLER_PATTERN.test(trimmed)) {
     return true;
   }
-  // A value carrying a template interpolation is code that will produce a secret at runtime, not a
-  // secret baked into the archive.
   if (trimmed.includes("${") || trimmed.startsWith("{{") || trimmed.startsWith("<")) {
     return true;
   }
@@ -206,7 +190,6 @@ export function is_placeholder_value(value: string): boolean {
 interface SecretPattern {
   readonly label: string;
   readonly pattern: RegExp;
-  /** Index of the capture group holding the candidate value, when the shape needs a placeholder check. */
   readonly value_group?: number;
 }
 
@@ -228,11 +211,7 @@ const SECRET_PATTERNS: readonly SecretPattern[] = [
   },
 ];
 
-/**
- * Locates high-signal credential shapes. The returned detail names the pattern and nothing else --
- * a matched secret is never echoed back, because the audit report is written to logs that are
- * shared far more widely than the archive that leaked it.
- */
+/** The detail names the pattern only: a matched secret is never echoed into audit logs. */
 export function find_secret_matches(content: string): ContentMatch[] {
   const matches: ContentMatch[] = [];
   for (const { label, pattern, value_group } of SECRET_PATTERNS) {
@@ -254,10 +233,6 @@ const DYNAMIC_IMPORT_PREFIX_PATTERN = /\bimport\s*\(\s*$/u;
 const STATIC_IMPORT_PREFIX_PATTERN = /(?:\bfrom|\bimport|\brequire\s*\(\s*)\s*$/u;
 const IMPORT_PREFIX_WINDOW = 60;
 
-/**
- * Chunks reached through `import("./chunks/...")` load on demand and stay out of the initial
- * transfer; only statically linked chunks belong in the initial JS figure.
- */
 export function find_static_chunk_imports(content: string): string[] {
   const specifiers = new Set<string>();
   for (const match of content.matchAll(CHUNK_SPECIFIER_PATTERN)) {
@@ -276,13 +251,11 @@ export function find_static_chunk_imports(content: string): string[] {
   return [...specifiers].sort((left, right) => left.localeCompare(right));
 }
 
-// apps/extension/vite.config.ts's `renderBuiltUrl` rewrites every build asset URL to a
-// `__TAVERN_CANVAS_ASSET_URL__<path>__` marker that the runtime resolves against `dist/index.js`'s
-// own location, so each marker payload names a file the runtime fetches at `dist/<path>`.
+// Marker payloads name files the runtime fetches at `dist/<path>`.
 const ASSET_URL_MARKER_PATTERN = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
 const PLAIN_FONT_URL_PATTERN = /url\(\s*["']?([^"')]+\.woff2)["']?\s*\)/gu;
-// The bundle also contains the runtime's own marker regex source (`__TAVERN_CANVAS_ASSET_URL__(.*?)__`),
-// so a payload only names a real asset when it looks like a relative path with a file extension.
+// The bundle also holds the runtime's own marker regex source, so a payload counts only when it
+// looks like a relative path with a file extension.
 const ASSET_REFERENCE_PATTERN = /^[A-Za-z0-9._/-]+\.[A-Za-z0-9]+$/u;
 
 export function find_runtime_asset_references(content: string): string[] {

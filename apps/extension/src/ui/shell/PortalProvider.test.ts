@@ -64,16 +64,12 @@ describe("PortalProvider", () => {
       },
       attachTo: host,
     });
-    // Reka's DialogContent mounts through an internal Presence wrapper that resolves over a
-    // couple of microtask ticks even with `open` already true on first render.
     await nextTick();
     await nextTick();
 
     const rendered = target.querySelector('[data-testid="portal-content"]');
     expect(rendered).not.toBeNull();
     expect(rendered?.closest('[data-shadow-role="portal"]')).toBe(target);
-    // The dialog content must not be a *direct* child of document.body -- it must land inside the
-    // dedicated portal element, matching the "never document.body" contract from task-2-brief.md.
     expect(Array.from(document.body.children)).not.toContain(rendered);
   });
 });

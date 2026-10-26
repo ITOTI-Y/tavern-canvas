@@ -3,12 +3,6 @@ import { computed, useId } from "vue";
 
 import styles from "./components.module.css";
 
-/**
- * Label-above-input, error-below-input composition (taste directive 4) for every first-party
- * form control. Never renders an input itself -- the default slot receives the generated
- * `fieldId`/`describedBy` so any control (native input, `AppSelect`, `NumberStepper`, ...) wires
- * up the label association and error linkage without `FieldGroup` knowing its shape.
- */
 const props = withDefaults(
   defineProps<{
     readonly label: string;

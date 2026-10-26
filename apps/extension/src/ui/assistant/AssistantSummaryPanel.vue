@@ -11,11 +11,6 @@ import StateSurface from "../components/StateSurface.vue";
 import AssistantSummaryGraph from "./AssistantSummaryGraph.vue";
 import styles from "./assistant.module.css";
 
-/**
- * Summary manager: the list, the selected summary's full detail, and the hierarchy graph that
- * makes `parent_id` legible. Enabling one summary disables its parent and children upstream, so
- * this view only emits intent and renders whatever comes back.
- */
 const props = defineProps<{
   readonly summaries: readonly AssistantSummaryRecord[];
 }>();

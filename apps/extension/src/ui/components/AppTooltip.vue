@@ -12,16 +12,6 @@ import { computed, inject } from "vue";
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 import styles from "./components.module.css";
 
-/**
- * Generic tooltip wrapper around Reka UI's Tooltip primitives (dialog/tooltip/focus/portal
- * behavior stays exactly Reka's -- this file only adds tokens and layout). The default slot must
- * render exactly one element, which becomes the trigger via Reka's `as-child` composition; Reka
- * merges the hover/focus listeners and `aria-describedby` onto that element directly.
- *
- * Every instance owns its own `TooltipProvider` so `AppTooltip` works standalone anywhere in the
- * tree without depending on a shell-level provider; nesting Reka providers is supported and the
- * innermost one simply wins for its subtree.
- */
 withDefaults(
   defineProps<{
     readonly content: string;

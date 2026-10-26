@@ -6,9 +6,7 @@ import {
   type VocabularyCatalogEntry,
 } from "./vocabulary_catalog.js";
 
-// Captured verbatim from
-// https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json
-// (fetched 2026-08-06) -- the ground truth this schema must accept exactly as published.
+// The published catalog document, verbatim.
 const LIVE_CATALOG_DOCUMENT = [
   {
     package_id: "tavern-canvas-baseline",

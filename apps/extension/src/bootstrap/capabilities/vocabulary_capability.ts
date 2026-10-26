@@ -8,15 +8,9 @@ import type {
 } from "../../ui/contracts/ui_capabilities.js";
 
 export interface VocabularyCapabilityDeps {
-  /**
-   * Resolved on first use rather than at composition time. The catalog client drags in the whole
-   * package installer -- verifier, updater, msgpack store -- and a session that never opens the
-   * vocabulary panel needs none of it. It also fetches from a remote host, so constructing it
-   * eagerly was how a studio open became an unsolicited third-party request.
-   */
+  /** Resolved on first use: constructing the catalog client eagerly would issue an unsolicited third-party request when the Studio opens. */
   readonly load_catalog: () => Promise<VocabularyCatalogClient>;
-  /** A fresh client per call site is required after an install: the search Worker holds an open
-   * snapshot of the installed packages and never sees a mid-session install. */
+  /** A fresh client is needed after an install: the search Worker holds a snapshot of the installed packages. */
   readonly create_client: () => Promise<VocabularyClient>;
 }
 
@@ -85,8 +79,6 @@ export function create_vocabulary_capability(deps: VocabularyCapabilityDeps): Vo
       recreate_client();
     },
     cancel_install: () => {
-      // Nothing can be in flight before the catalog client exists, so an unloaded catalog is a
-      // no-op rather than a reason to load it.
       void catalog?.then((instance) => {
         instance.cancel();
       });

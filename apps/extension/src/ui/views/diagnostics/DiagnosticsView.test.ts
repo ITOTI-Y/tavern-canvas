@@ -24,9 +24,6 @@ import { zh_cn_messages } from "../../../i18n/locales/zh_cn.js";
 import DiagnosticsView from "./DiagnosticsView.vue";
 import TaskTimeline from "./TaskTimeline.vue";
 
-// Mirrors create_i18n.ts's own NUMBER_FORMATS/DATETIME_FORMATS -- without them, TaskTimeline's
-// `d(occurred_at, "short_time")` call warns ("Not found 'short_time' key") and silently falls
-// back to a raw string instead of exercising the real formatted-time path this test verifies.
 const NUMBER_FORMATS = {
   decimal: { style: "decimal" as const, maximumFractionDigits: 2 },
   percent: { style: "percent" as const, maximumFractionDigits: 1 },
@@ -114,10 +111,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       support_bundle_command: IDLE_COMMAND_STATE,
     },
     settings: {
-      // SECRET_TOKEN_VALUE stands in for what a *raw* token would look like if a future adapter
-      // ever wired one into `token_secret_id` by mistake -- Diagnostics must never render this
-      // field (or anything under `settings.settings.gateway`) at all, unlike Settings' Gateway
-      // panel which intentionally shows a secret *reference*.
       settings: {
         schema_version: 1,
         active_namespace: "default",
@@ -151,9 +144,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
   };
 }
 
-/** `markRaw` mirrors `use_studio_controller.ts`'s production fix: the controller's private class
- * fields break the moment Vue (or vue-test-utils' own props-reactivity for `setProps()`) wraps
- * this in a `reactive()` Proxy, which happens here too since `controller` is a mounted prop. */
 function build_controller(capabilities: StudioCapabilities): StudioController {
   return markRaw(create_studio_controller({ capabilities }));
 }
@@ -177,15 +167,6 @@ function mount_view(state: StudioState, controller: StudioController) {
   return { wrapper, host };
 }
 
-/**
- * For tests that click a control wired to a real controller command: the controller only ever
- * mutates its *own* internal state (studio_controller.ts's `#patch`/`#notify`), never a state
- * object handed to it externally, so the mounted `state` prop must be the controller's own
- * `.state` from the start and re-synced on every `on_change` -- otherwise a command's
- * pending/success/error transition would never reach the rendered view. `capabilities.diagnostics
- * /settings/migration.load()` are what seed the controller's initial state here (mirroring how
- * `start()` really works), not a hand-built `StudioState` literal.
- */
 async function mount_view_with_live_controller(controller: StudioController) {
   await controller.start();
   const i18n = createI18n({
@@ -396,20 +377,11 @@ describe("DiagnosticsView task timeline", () => {
     const list = wrapper.get('[role="list"]');
     expect((list.element as HTMLElement).style.height).toBe("320px");
     const sizer = list.element.firstElementChild as HTMLElement;
-    // 1,000 rows * 32px row height reserved in the scroll extent -- proves every event is
-    // accounted for even though only a small overscanned window is ever in the DOM.
     expect(sizer.style.height).toBe("32000px");
     expect(wrapper.findAll('[data-testid="timeline-row"]').length).toBeLessThan(1000);
   });
 
   it("renders only stable, non-content fields per timeline row (redaction is structural)", () => {
-    // @tanstack/virtual-core's real windowed rendering depends on a live browser layout engine
-    // (element sizes, scroll offsets) that happy-dom does not implement -- it reliably reports a
-    // correct *total* scroll extent (proven above) but not a populated visible window, exactly
-    // why components.test.ts's own VirtualList suite never asserts rendered row content either.
-    // Stubbing VirtualList to render every item via its slot (bypassing the virtualizer, not
-    // TaskTimeline's own row template) verifies the one thing that actually determines
-    // redaction: which fields TaskTimeline pulls out of each `TaskTimelineEntry` and renders.
     const VirtualListStub = defineComponent({
       props: {
         items: { type: Array as () => readonly TaskTimelineEntry[], required: true },
@@ -598,9 +570,6 @@ describe("DiagnosticsView support bundle export", () => {
       diagnostics,
       settings: {
         ...capabilities.settings,
-        // A raw-looking token value living in *live* settings, deliberately never included in
-        // the mock export_support_bundle's redacted_settings above -- proves the exported
-        // preview reflects only the capability-provided bundle, never the full live settings.
         load: () =>
           Promise.resolve({
             settings: {

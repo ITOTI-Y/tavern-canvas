@@ -8,9 +8,6 @@ export default typescriptEslint.config(
   {
     ignores: [
       "**/dist/**",
-      // Generated, gitignored build output -- the benchmark harness bundles
-      // real Worker sources into output/benchmark/site, and linting bundler
-      // output says nothing about the sources it came from.
       "output/**",
       "coverage/**",
       "playwright-report/**",

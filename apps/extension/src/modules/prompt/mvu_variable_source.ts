@@ -1,16 +1,5 @@
-/**
- * The "MVU variable resolution" pipeline stage: resolves `{@getvar::path.to.value@}` macros against
- * host chat variables. Ported from legacy `resolveNestedVariable`/`setNestedVariable`
- * (utils/chatDataUtils.js) and the `{@getvar}` pass of `processVariablePlaceholders`
- * (utils/worldbookProcessor.js). Read-only: T2 intentionally does not restore the legacy
- * `{@setvar}`/`{@setworldvar}` write-side macros a model could use to mutate chat state from inside
- * its own output -- see docs/parity/feature_matrix.md's `worldinfo.variable_write_macros` row
- * (removed_approved).
- */
-
 export type VariableStore = Readonly<Record<string, unknown>>;
 
-/** Caps a single resolved value so one runaway variable cannot dominate the assembled prompt. */
 export const MAX_VARIABLE_OUTPUT_LENGTH = 2_000;
 
 const GETVAR_PATTERN = /\{@getvar::([^@]+)@\}/g;
@@ -42,11 +31,7 @@ function stringify_value(value: unknown): string {
   return "[unsupported]";
 }
 
-/**
- * Resolves a dot-delimited nested path against `store`. Missing path segments (undefined/null at
- * any depth) resolve to `""`; `false`/`0`/`""` resolve to their literal string form since they are
- * legitimately-set values, not absence.
- */
+/** Missing path segments resolve to `""`; `false`/`0`/`""` resolve to their literal string form. */
 export function resolve_nested_variable(
   store: VariableStore | null | undefined,
   path: string,
@@ -97,7 +82,7 @@ export function set_nested_variable(
   node[last_segment] = value;
 }
 
-/** Resolves every `{@getvar::path@}` macro in `content` against `store` in a single pass. */
+/** Read-only: `{@setvar}`/`{@setworldvar}` write macros are deliberately unsupported, so model output cannot mutate chat state. */
 export function resolve_getvar_macros(
   content: string,
   store: VariableStore | null | undefined,

@@ -8,13 +8,7 @@ interface SettingsFieldDescriptor {
   readonly secret: boolean;
 }
 
-/**
- * The entire assistant-browsable settings surface. Every writable, non-secret path here also has
- * an entry in `FIELD_SCHEMAS` below, reusing the real `TavernCanvasSettingsSchema` node for
- * validation so this table can never drift from what the settings capability actually accepts.
- * `schema_version`/`active_namespace` are internal bookkeeping (never writable); `gateway.
- * token_secret_id` is a secret reference -- browsable as a path/help entry, never as a value.
- */
+/** `gateway.token_secret_id` is a secret reference: browsable as a path/help entry, never as a value. */
 const SETTINGS_SCHEMA: readonly SettingsFieldDescriptor[] = [
   {
     path: "schema_version",
@@ -140,8 +134,7 @@ export interface SettingsSchemaEntry {
   readonly writable: boolean;
 }
 
-/** The redacted schema+help browse tool: paths and human-readable descriptions only, secret
- * paths always report `writable: false` and carry no value. */
+/** Paths and descriptions only; secret paths report `writable: false` and carry no value. */
 export function list_settings_schema(): readonly SettingsSchemaEntry[] {
   return SETTINGS_SCHEMA.map(({ path, help, writable, secret }) => ({
     path,
@@ -150,7 +143,6 @@ export function list_settings_schema(): readonly SettingsSchemaEntry[] {
   }));
 }
 
-/** Flat fallback search over the same redacted schema (mirrors legacy `keys_list`/`query_key`). */
 export function search_settings_paths(query: string): readonly SettingsSchemaEntry[] {
   const normalized_query = query.trim().toLowerCase();
   const entries = list_settings_schema();
@@ -172,8 +164,7 @@ export type SettingsPathReadResult =
       readonly reason: "unknown_path" | "secret_path";
     };
 
-/** Reads one path's current value out of an already-redacted `TavernCanvasSettings` snapshot the
- * caller supplies -- this function never reaches into raw browser storage itself. */
+/** Reads from the caller-supplied redacted snapshot; never reaches into raw storage. */
 export function read_settings_path(
   settings: TavernCanvasSettings,
   path: string,
@@ -209,13 +200,7 @@ export type CreateSettingsDraftResult =
   | { readonly status: "ok"; readonly draft: SettingsDraftDiff }
   | { readonly status: "rejected"; readonly rejections: readonly SettingsDraftRejection[] };
 
-/**
- * The assistant's only settings-write surface: turns a proposed change set into a typed diff
- * against `current`, or a typed rejection list -- it never calls anything that persists. Every
- * unknown path, every secret/non-writable path, and every value that fails the field's real zod
- * schema is rejected; a single bad entry rejects the whole draft rather than silently applying
- * the rest.
- */
+/** Never persists; a single bad entry rejects the whole draft. */
 export function create_settings_draft(
   current: TavernCanvasSettings,
   proposed_changes: Readonly<Record<string, unknown>>,
@@ -282,12 +267,7 @@ function build_partial_update(
   return partial;
 }
 
-/**
- * The ONLY function in this module that may reach the real settings capability, and it takes an
- * already-approved `SettingsDraftDiff` -- never proposed_changes, never a path string. The
- * assistant's own tool dispatcher must never hold a reference to `settings`; only the UI's
- * explicit Review-then-Apply action wires this call.
- */
+/** The only function that may reach the real settings capability; it takes an already-approved `SettingsDraftDiff`, and the assistant's dispatcher must never hold `settings`. */
 export async function apply_settings_draft(
   draft: SettingsDraftDiff,
   current: TavernCanvasSettings,
@@ -307,13 +287,7 @@ export const ASSISTANT_UI_ACTIONS = [
 
 export type AssistantUiAction = (typeof ASSISTANT_UI_ACTIONS)[number];
 
-/**
- * Deliberately small, fixed allowlist replacing legacy's ~30-selector `UIActionRegistry`
- * (utils/configHelper/configBrowseAPI.js) and its raw chat-input read/write bridge
- * (utils/aiSettingsBridge.js `tavern_input`/`tavern_read_input`): highlighting a known Studio
- * section is in authority, reading or overwriting arbitrary host DOM/textarea state is not (see
- * feature_matrix.md's `assistant.tavern_input_bridge` row).
- */
+/** Fixed allowlist: highlighting a known Studio section is allowed, reading or overwriting arbitrary host DOM/textarea state is not. */
 export function is_known_ui_action(action: string): action is AssistantUiAction {
   return (ASSISTANT_UI_ACTIONS as readonly string[]).includes(action);
 }
@@ -322,8 +296,7 @@ export interface DiagnosticsCodesView {
   readonly codes: readonly string[];
 }
 
-/** Diagnostics codes only -- never message/prompt content, matching `TaskTimelineEntry`'s own
- * redaction contract (packages: this reads whatever redacted view the caller already has). */
+/** Diagnostics codes only, never message/prompt content. */
 export function list_diagnostics_codes(
   timeline: readonly { readonly error_code: string | null }[],
 ): DiagnosticsCodesView {
@@ -339,8 +312,7 @@ export interface WorkflowMetadataView {
   readonly updated_at: string;
 }
 
-/** Workflow identity/bookkeeping only -- the graph payload itself (or any other field a real
- * `AssetRecordSummary`-shaped source carries) never crosses this tool. */
+/** Workflow identity only; the graph payload never crosses this tool. */
 export function list_workflow_metadata(
   records: readonly {
     readonly id: string;

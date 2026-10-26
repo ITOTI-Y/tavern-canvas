@@ -10,13 +10,6 @@ import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 
-/**
- * Plain reference-image records. AssetsCapability has no byte-upload method (unlike
- * GalleryCapability.read_bytes, which only reads generated images) -- there is no capability
- * surface to persist an uploaded file's bytes as asset payload, so a record here tracks a
- * source reference (URL or a description of where the image lives) rather than image bytes
- * themselves. Ledgered for stage review as a real capability gap, not an oversight.
- */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly loading: boolean;

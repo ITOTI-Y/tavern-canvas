@@ -15,22 +15,11 @@ import styles from "./shell/shell.module.css";
 import StudioShell from "./shell/StudioShell.vue";
 
 const props = defineProps<{
-  /** Derived from BootstrapHandle.state -- authoritative for which of the five shell-level
-   * states to render. Only `.title`/`.message` (pre-formatted English) are ignored in favor of
-   * this component's own i18n-driven copy; `.state` and (for "blocked") `.update_url` still come
-   * from here. */
   status: StartupStatus;
-  /** Carries the structured data the blocked screen needs (current/required version) that
-   * StartupStatus's pre-formatted strings do not expose. */
   probe: BootstrapProbeResult;
   version: string;
   portalTarget: HTMLElement;
-  /** The Shadow Root host element (create_shadow_root.ts) -- color_mode is reflected onto it as
-   * `data-color-mode`, per tokens.css's single dark-mode override block. */
   hostElement: HTMLElement;
-  /** Built by bootstrap's composition root (compose_capabilities.ts) from the real modules; each
-   * capability is either a working implementation or the honest-unavailable one. Omitted only by
-   * tests, which supply their own. */
   capabilities?: StudioCapabilities;
 }>();
 
@@ -43,20 +32,11 @@ function detect_system_color_mode(): "light" | "dark" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-// `hostElement` is an imperative DOM node reference the Shadow Root already owns (not reactive
-// app state) -- read once into a local binding so mutating its dataset doesn't read as a Vue
-// prop mutation (vue/no-mutating-props), which is meant for reactive data, not a passed-through
-// element handle.
 const host_element = props.hostElement;
 
 const initial_color_mode = detect_system_color_mode();
-// Applied unconditionally (even on the blocked/failed screens) so the whole Shadow Root -- not
-// just the eventual normal studio -- respects the system theme from first paint.
 host_element.dataset.colorMode = initial_color_mode;
 
-// probe and status are two independent discriminated unions describing the same bootstrap
-// outcome (see BootstrapOptions/BootstrapHandle in bootstrap.ts); `current_version` only exists
-// on probe's not-ready branch, and only ever carries a value for "helper_version_unsupported".
 const current_version = computed(() =>
   !props.probe.ready ? props.probe.current_version : undefined,
 );
@@ -97,11 +77,6 @@ function reload(): void {
   window.location.reload();
 }
 
-/**
- * The persisted optional-entry setting decides the initial surface. Closing is always available:
- * it hides the floating workbench and exposes the existing draggable entry, which is the single
- * reopening path and leaves the SillyTavern page interactive.
- */
 const floating_entry_enabled = computed(
   () => studio?.state.value.settings.settings?.ui.optional_entry_enabled === true,
 );

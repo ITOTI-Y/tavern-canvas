@@ -137,8 +137,8 @@ describe("normalize_vocabulary_search_key", () => {
   });
 
   it("applies NFKC so composed and decomposed accent forms match", () => {
-    const composed = "Caf\u00e9"; // single precomposed code point for e-acute
-    const decomposed = "Cafe\u0301"; // e followed by a combining acute accent
+    const composed = "Caf\u00e9";
+    const decomposed = "Cafe\u0301";
     expect(normalize_vocabulary_search_key(composed)).toBe(
       normalize_vocabulary_search_key(decomposed),
     );

@@ -14,13 +14,6 @@ import LlmConnections from "./LlmConnections.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
 import styles from "./settings.module.css";
 
-/**
- * Top-level Settings workspace. Reads `state.workbench.profiles` (provider profile summaries --
- * they never carry `secret_reference`, only the read/write draft type does) and
- * `state.diagnostics.migration`/`connection_test_command` (cross-slice, read-only) alongside its
- * own `state.settings.*` slice. Every mutation goes through `controller`, passed straight to each
- * section so no intermediate event-relay layer has to enumerate every command by hand.
- */
 defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;

@@ -24,9 +24,7 @@ import {
 } from "./tokenizer_worker.js";
 
 const TEST_FILE_DIR = path.dirname(fileURLToPath(import.meta.url));
-// apps/extension/src/modules/novelai/tokenizer -> apps/extension, then into public/tokenizers --
-// the real committed assets this whole module ships (SOURCE.json records their pinned
-// model/revision/checksums).
+// The real committed tokenizer assets under public/tokenizers.
 const LOCAL_TOKENIZER_BASE_URL =
   path.join(TEST_FILE_DIR, "..", "..", "..", "..", "public", "tokenizers") + "/";
 const MISSING_TOKENIZER_BASE_URL =
@@ -80,7 +78,7 @@ describe("strip_novelai_weight_syntax", () => {
     expect(strip_novelai_weight_syntax("a\nb\r\nc")).toBe("a b c");
   });
 
-  it("combines all rules the way legacy calculateNovelAITokens did", () => {
+  it("combines all normalization rules", () => {
     expect(strip_novelai_weight_syntax("1.5::masterpiece::, [worst quality], {bad anatomy}")).toBe(
       "masterpiece, worst quality, bad anatomy",
     );
@@ -256,10 +254,7 @@ describe("TokenizerEngine (real pinned tokenizer, real local assets, no fake Wor
     globalThis.fetch = ORIGINAL_FETCH;
   });
 
-  // Golden values recorded from the actual pinned Xenova/t5-small tokenizer.json/
-  // tokenizer_config.json committed at apps/extension/public/tokenizers/novelai/ (see SOURCE.json
-  // for the pinned model/revision/checksums). Regression fixture: a broken or swapped asset would
-  // silently change these counts.
+  // Golden counts from the pinned tokenizer assets; a broken or swapped asset would silently change them.
   const fixed_prompts: readonly [prompt: string, expected_token_count: number][] = [
     ["1girl, masterpiece, best quality", 8],
     ["1.5::masterpiece::, [worst quality], {bad anatomy}", 8],
@@ -335,9 +330,7 @@ describe("TokenizerEngine (real pinned tokenizer, real local assets, no fake Wor
 
 describe("TokenizerService end-to-end via start_tokenizer_worker (real engine, no DOM Worker)", () => {
   it("returns tokenizer_unavailable through the full request/response protocol on a load failure", async () => {
-    // Reuses the real message-handling wiring (start_tokenizer_worker) with a failing loader,
-    // proving the Worker-side error path -> "error" response -> TokenizerService's
-    // tokenizer_unavailable result, end to end, without a real DOM Worker thread.
+    // Real message-handling wiring with a failing loader: Worker error path to "error" response to `tokenizer_unavailable`, without a real Worker thread.
     const engine = new TokenizerEngine(() => Promise.reject(new Error("asset missing")));
 
     const client_handlers: ((event: { data: unknown }) => void)[] = [];

@@ -94,11 +94,7 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
       });
       return deps.settings.flush();
     },
-    /**
-     * The plaintext token goes straight to the selected credential backend; settings keep only
-     * the reference. There is no read path back through this capability, so the UI and support
-     * bundles cannot retrieve the value.
-     */
+    /** The plaintext token goes straight to the credential backend; settings keep only the reference, and no read path exists. */
     async set_gateway_token(plaintext_value) {
       if (plaintext_value.trim().length === 0) {
         throw new TypeError("A Gateway token must not be blank");
@@ -166,7 +162,6 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
       let operation: RunningVocabularyImport | null = null;
       active_import = loading;
       try {
-        // This optional import boundary keeps parser and index-builder code out of host startup.
         const { start_vocabulary_import } = await import("./vocabulary_import.js");
         operation = start_vocabulary_import(deps.database, file, on_progress);
         active_import = operation;
@@ -183,8 +178,6 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
     cancel_vocabulary_import() {
       active_import?.cancel();
     },
-    // Both halves of the archive path, including the zip writer they pull in, load only when the
-    // user actually exports or imports.
     async export_archive() {
       const { export_archive } = await import("@tavern-canvas/storage/archive");
       return export_archive({

@@ -52,9 +52,6 @@ describe("VocabularyAliasShardPayloadSchema", () => {
   });
 
   it("accepts an entry key at the 512-character bound a normalized translation can reach", () => {
-    // VocabularyRecordSchema's translation max is 512 (vocabulary.ts); a key
-    // bound below that would make a legitimate long translation unindexable
-    // even though the source record itself validates fine.
     const long_key = "a".repeat(512);
     const payload = { kind: "alias", entries: [[long_key, 0, 10]] };
     expect(VocabularyAliasShardPayloadSchema.safeParse(payload).success).toBe(true);
@@ -137,9 +134,7 @@ describe("VocabularyHotShardPayloadSchema", () => {
 });
 
 describe("fnv1a_32", () => {
-  // The canonical FNV-1a 32-bit test vectors, independent of this
-  // implementation -- the encoder/decoder agreement the addendum demands is
-  // only meaningful against an externally fixed reference.
+  // Canonical FNV-1a 32-bit test vectors, independent of the implementation.
   it.each([
     ["", 0x811c9dc5],
     ["a", 0xe40c292c],

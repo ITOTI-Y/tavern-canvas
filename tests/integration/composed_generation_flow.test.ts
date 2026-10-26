@@ -25,21 +25,6 @@ import type {
   StudioCapabilities,
 } from "../../apps/extension/src/ui/contracts/ui_capabilities.js";
 
-/**
- * End-to-end proof that the composition root actually wires a generation job all the way through:
- *
- *   StudioCapabilities.generation.submit
- *     -> MediaExecutionPlanRegistry + ImageJobQueue (real, from @tavern-canvas/core)
- *     -> MediaJobExecutor (real)
- *     -> SdWebuiAdapter (real, from @tavern-canvas/providers)
- *     -> LocalDirectTransport (real) -> fetch      <-- the ONLY fake in this test
- *     -> put_image into IndexedDB (real @tavern-canvas/storage, fake-indexeddb driver)
- *     -> gallery capability lists the persisted record
- *     -> IndexedDbJobPersistence writes the job, generation.load() reads it back
- *
- * Nothing between submit and storage is stubbed.
- */
-
 const PROVIDER_ORIGIN = "http://127.0.0.1:7860";
 const PROFILE_ID = "11111111-1111-4111-8111-111111111111";
 const REQUEST_ID = "22222222-2222-4222-8222-222222222222";
@@ -81,12 +66,6 @@ interface HostControl {
   emit(event_name: string, ...arguments_: readonly unknown[]): void;
 }
 
-/**
- * A SillyTavern + TavernHelper global graph with a real event source and a real
- * `setExtensionPrompt`, so the composed `GenerationTriggerModule` can be driven exactly the way a
- * live host drives it: emit `GENERATION_STARTED`, then either invoke the registered function tool
- * or stream a hidden-comment chunk.
- */
 function create_host_control(auto_generation_enabled = true): HostControl {
   const listeners = new Map<string, ((...arguments_: readonly unknown[]) => void)[]>();
   const registered_tools: RegisteredTool[] = [];
@@ -169,8 +148,6 @@ function create_globals(): object {
   return create_host_control(false).globals;
 }
 
-/** The anchor the composition published to the model, read back out of the trigger injection --
- * the only place a caller can legitimately learn it, and the same place a real model reads it. */
 function published_anchor(control: HostControl): string {
   const anchor = /"([a-f0-9]{64})"/u.exec(control.injections.at(-1) ?? "")?.[1];
   if (anchor === undefined) {
@@ -252,8 +229,7 @@ async function create_harness(
   return { composition, capabilities: composition.capabilities, database, requests };
 }
 
-/** Composition alone wires nothing: `bootstrap_tavern_canvas` hands `composition.modules` to a
- * `ModuleRuntime`, and only `start_all()` attaches the trigger to the host. */
+// Composition alone wires nothing; only start_all() attaches the trigger to the host.
 async function start_modules(composition: StudioComposition): Promise<ModuleRuntime> {
   const runtime = new ModuleRuntime(composition.modules);
   await runtime.start_all();
@@ -347,18 +323,15 @@ describe("composed generation flow", () => {
     const completed = await wait_for_state(harness.capabilities, submitted.job_id, "completed");
     expect(completed.completed_image_ids).toHaveLength(1);
 
-    // The real provider adapter drove the real transport, and only fetch was faked.
     expect(harness.requests).toHaveLength(1);
     expect(harness.requests[0]?.url).toBe(`${PROVIDER_ORIGIN}/sdapi/v1/txt2img`);
     expect(harness.requests[0]?.body).toContain("a rainy alley at night");
 
-    // The provider's bytes were persisted as a real Stage 04 image record...
     const records = await new GalleryImageRecordRepository(harness.database).list(NAMESPACE);
     expect(records).toHaveLength(1);
     expect(records[0]?.media_type).toBe("image/png");
     expect(records[0]?.provider_id).toBe("sd_webui");
 
-    // ...and the gallery capability reads that same record back.
     await expect(harness.capabilities.gallery.load()).resolves.toMatchObject([
       { id: completed.completed_image_ids[0], provider_id: "sd_webui", media_type: "image/png" },
     ]);
@@ -366,7 +339,6 @@ describe("composed generation flow", () => {
       harness.capabilities.gallery.read_bytes(completed.completed_image_ids[0] ?? ""),
     ).resolves.toBeInstanceOf(Uint8Array);
 
-    // The job itself was persisted, so a fresh load() sees it without any in-memory state.
     await expect(harness.capabilities.generation.load()).resolves.toMatchObject([
       { job_id: submitted.job_id, state: "completed" },
     ]);

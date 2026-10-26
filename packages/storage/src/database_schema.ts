@@ -5,10 +5,6 @@ export const DATABASE_NAME = "tavern_canvas_v3" as const;
 export const DATABASE_VERSION = 3 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
-// `since_version` pins the database version that first creates a store, so
-// `upgrade_database` can derive both a fresh install (every store at once)
-// and an incremental upgrade (only stores newer than `old_version`) from one
-// table instead of duplicating store/index definitions per version.
 export const STORE_DEFINITIONS = {
   provider_profiles: {
     key_path: "record_key",
@@ -524,12 +520,8 @@ export const RECORD_SCHEMAS: {
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;
 export const MIGRATION_JOURNAL_SCHEMA: z.ZodType<MigrationJournal> = MigrationJournalSchema;
 
-// `token(?!s)` (not the plain `token` alternative it replaces) excludes the
-// plural "...tokens" quantity fields legitimate provider payloads carry
-// (e.g. an LLM profile's `max_tokens`), while still matching every singular
-// credential-shaped compound this pattern targets ("apiToken" -> "apitoken",
-// "access_token" -> "accesstoken", ...) and the explicit "refreshtoken"
-// alternative, which is unaffected.
+// `token(?!s)` excludes plural quantity fields such as `max_tokens` but still matches singular
+// credential keys (apitoken, accesstoken, refreshtoken).
 const secret_key_pattern =
   /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
 

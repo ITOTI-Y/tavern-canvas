@@ -16,17 +16,9 @@ import { code_point_group_key } from "../search/query_normalizer.js";
 import { encode_shard_bytes } from "../search/shard_codec.js";
 import type { VocabularyShardPayload } from "../search/vocabulary_shard_payloads.js";
 
-// Mirrors tools/vocabulary_builder's index-building algorithms exactly (same
-// group-key width, sort order, and shard_id/path conventions) so a
-// user-imported package is addressable by the Worker's ManifestShardIndex
-// (apps/extension/src/workers/vocabulary_worker.ts) identically to a
-// CLI-built one. Duplicated rather than imported from
-// tools/vocabulary_builder because that package is Node/fs-oriented (its
-// entry point pulls in node:fs) and this module ships inside the browser
-// Worker bundle -- the same duplicate-and-cross-verify tradeoff Task 4 made
-// for code_point_group_key. import_builder.test.ts's
-// "matches the CLI builder's shard shapes" case is the cross-verification
-// proof.
+// Mirrors tools/vocabulary_builder's index algorithms (group-key width, sort order, shard_id and
+// path conventions) so an imported package is addressed by the Worker exactly like a CLI-built one.
+// Duplicated because that package pulls in node:fs.
 const GROUP_CODE_POINT_COUNT = 2;
 const TRIGRAM_CODE_POINT_LENGTH = 3;
 
@@ -102,8 +94,6 @@ export function build_prefix_shards(records: readonly VocabularyRecord[]): Draft
   const entries_by_group = new Map<string, PrefixOrAliasEntry[]>();
   for (const record of records) {
     const normalized_tag = normalize_vocabulary_search_key(record.tag);
-    // Mirrors tools/vocabulary_builder/src/build_prefix_index.ts: a tag
-    // normalizing to "" cannot be an index key (schema requires min(1)).
     if (normalized_tag.length === 0) {
       continue;
     }
@@ -121,9 +111,6 @@ function alias_search_texts(record: VocabularyRecord): string[] {
     : [...record.aliases, record.translation];
 }
 
-// Alias keys bucket by a hash of their two-code-point group (payload
-// contract addendum v2), unlike prefix shards which keep one file per
-// group -- see packages/contracts/src/vocabulary_shards.ts for why.
 export function build_alias_shards(records: readonly VocabularyRecord[]): DraftShard[] {
   const seen_ids_by_key = new Map<string, Set<number>>();
   const entries_by_partition = new Map<string, PrefixOrAliasEntry[]>();
@@ -131,8 +118,6 @@ export function build_alias_shards(records: readonly VocabularyRecord[]): DraftS
   for (const record of records) {
     for (const text of alias_search_texts(record)) {
       const normalized_key = normalize_vocabulary_search_key(text);
-      // Mirrors build_prefix_shards' guard: an alias/translation
-      // normalizing to "" cannot be an index key (schema requires min(1)).
       if (normalized_key.length === 0) {
         continue;
       }
@@ -174,9 +159,7 @@ function delta_encode(sorted_ids: readonly number[]): number[] {
   return deltas;
 }
 
-// Trigram-indexes the normalized tag only, matching
-// tools/vocabulary_builder/src/build_trigram_index.ts's documented scoping
-// decision (aliases/translations already have their own alias index).
+// Only the normalized tag is trigram-indexed; aliases and translations have the alias index.
 export function build_trigram_shards(records: readonly VocabularyRecord[]): DraftShard[] {
   const ids_by_trigram = new Map<string, Set<number>>();
   for (const record of records) {

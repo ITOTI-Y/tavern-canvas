@@ -4,20 +4,9 @@ import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Stage 05 Task 6: serves output/benchmark/site verbatim over plain HTTP.
-// `vite preview` cannot be used here -- its static middleware treats any
-// `.gz`-suffixed path as a precompressed asset and answers with
-// `Content-Encoding: gzip`, which a browser's `fetch()` transparently
-// decompresses before the Worker's own gunzip step ever runs. Every shard
-// path the real builder writes literally ends in `.msgpack.gz`
-// (tools/vocabulary_builder/src/write_package.ts) -- that suffix is part of
-// the application's own filename, not a transport hint, so the shard bytes
-// arrived already-decompressed and failed `verify_shard_bytes`'s declared
-// vs. downloaded byte-length check (caught during manual smoke-testing:
-// "Declared byte_length 1731 does not match downloaded size 2815"). This
-// server never sets Content-Encoding, so every file's bytes reach `fetch()`
-// unmodified -- exactly what a real static host (e.g. the extension's own
-// bundled-baseline origin) does.
+// Serves the benchmark site without ever setting Content-Encoding. `vite preview` answers `.gz`
+// paths with Content-Encoding: gzip, so fetch() would decompress `.msgpack.gz` shards before the
+// Worker's own gunzip step and the declared byte_length check would fail.
 
 const ROOT = fileURLToPath(new URL("../../output/benchmark/site", import.meta.url));
 const PORT = Number.parseInt(process.env.STATIC_SERVER_PORT ?? "4173", 10);

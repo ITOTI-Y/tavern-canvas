@@ -429,13 +429,7 @@ describe("FloatingEntry.vue: media states and icon fallback", () => {
     wrapper.unmount();
   });
 
-  // Parity ledger guard (docs/parity/feature_matrix.md's floatingentry.video_mascot_mode and
-  // floatingentry.alpha_hit_test, both removed_approved [decorative-flourish-out-of-scope]): the
-  // legacy WebGL alpha-channel video-mascot renderer required a <canvas> element -- both for the
-  // WebGL context itself and for the per-pixel alpha readback that drove hit-testing. This
-  // component never creates one, in any state, including with a video asset configured -- proof
-  // the leaner state -> asset <img>/<video> swap (media_state_player.ts's own scope-boundary
-  // comment) is what actually ships, not a compositor.
+  // The entry never creates a <canvas>, in any state, including with a video asset configured.
   it("never renders a canvas element, even with a video reaction state active", () => {
     const wrapper = mount(FloatingEntry, {
       props: {

@@ -7,13 +7,7 @@ import { inspect_tavern_helper, type TavernHelperInspection } from "./tavern_hel
 
 export const MINIMUM_TAVERN_HELPER_VERSION = "4.9.1";
 
-/**
- * The semver.org reference grammar, plus the two liberties the `semver` package's own `valid()`
- * took and hosts may already rely on: surrounding whitespace and a leading `v`. The probe needs
- * exactly the two checks `valid()` and `gte()` gave it, and pulling that package in for them cost
- * ~28 KB of the extension's initial chunk, so both live here instead. Build metadata is matched
- * and then ignored, the same way `valid("1.2.3+build")` accepted it.
- */
+/** semver.org grammar plus surrounding whitespace and a leading `v`; build metadata is matched and ignored. Local so the `semver` package stays out of the initial chunk. */
 const SEMVER_PATTERN =
   /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
 
@@ -44,9 +38,7 @@ function is_at_least(version: ParsedVersion, minimum: ParsedVersion): boolean {
   if (core_order !== 0) {
     return core_order > 0;
   }
-  // Equal release cores: a prerelease sorts below its own release (semver 11.3), so 4.9.1-rc.1 is
-  // not yet 4.9.1. Ordering two prereleases of the same core against each other is deliberately
-  // not implemented -- `minimum` is only ever MINIMUM_TAVERN_HELPER_VERSION, a plain release.
+  // Equal cores: a prerelease sorts below its release (4.9.1-rc.1 < 4.9.1). Comparing two prereleases is not implemented; `minimum` is always a plain release.
   return version.prerelease === null;
 }
 
@@ -75,13 +67,7 @@ export type BootstrapProbeResult =
         | "helper_version_unsupported"
         | "helper_api_incomplete";
       missing_capabilities: string[];
-      /**
-       * The detected (but unsupported) TavernHelper version -- only ever populated for
-       * `helper_version_unsupported`, the one blocked variant where a valid, parseable, too-old
-       * version string genuinely exists. The other blocked variants (missing, invalid, API
-       * incomplete) have no reliable version to report here. Threads through to the Studio
-       * shell's blocked-state copy (`app.unsupported_host.description`'s `{current_version}`).
-       */
+      /** Only populated for `helper_version_unsupported`; used for `{current_version}` in the blocked-state copy. */
       current_version?: string;
     };
 

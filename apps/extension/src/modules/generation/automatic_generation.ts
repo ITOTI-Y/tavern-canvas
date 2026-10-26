@@ -46,12 +46,9 @@ export interface GenerationTargetSource {
 }
 
 /**
- * Which swipe the assistant message this turn produces will occupy, decided from the host's own
- * generation type against the chat as it stood when the turn began: a swipe appends one past the
- * last message's existing swipes, a continue rewrites the active one, and every other turn appends
- * a new message whose first swipe is 0. `MessageBinder` refuses to attach when the finished
- * message's swipe disagrees, which is what turns a wrong prediction into an orphaned image rather
- * than an image attached to the wrong text.
+ * A swipe appends one past the last message's swipes, a continue rewrites the active one, and
+ * every other turn appends a new message at swipe 0. `MessageBinder` refuses to attach when the
+ * finished message's swipe disagrees, so a wrong prediction orphans the image.
  */
 function predict_target_swipe_id(generation_type: string, chat: HostChatSnapshot): number {
   const last_message = chat.messages.at(-1);
@@ -76,15 +73,9 @@ export interface HostGenerationSessionPortOptions {
 }
 
 /**
- * The production `GenerationTriggerSessionPort`: it owns one root `GenerationSession` per chat turn
- * and publishes that session's anchor to the main LLM through the host's trigger injection.
- *
- * A session is prepared *ahead* of the turn rather than at `GENERATION_STARTED`, because the model
- * has to already know the anchor by the time it writes: an anchor published mid-turn would reach
- * the model a turn late and every request it made would be rejected. `begin()` therefore adopts the
- * prepared session, and the next one is prepared once the turn retires -- which is also what makes
- * tool recursion reuse the root anchor, since a recursive `GENERATION_STARTED` arrives long before
- * the retiring turn's chat re-read resolves.
+ * The session is prepared ahead of the turn: an anchor published mid-turn would reach the model
+ * too late and every request would be rejected. `begin()` adopts the prepared session and the
+ * next one is prepared when the turn retires, which also lets tool recursion reuse the root anchor.
  */
 export class HostGenerationSessionPort
   implements GenerationTriggerSessionPort, FinalAssistantBindingSource, GenerationTargetSource
@@ -152,9 +143,7 @@ export class HostGenerationSessionPort
     this.#sessions.complete(session.host_root_generation_id);
   }
 
-  /** Every image requested inside a turn belongs to that turn's single root session, so the binding
-   * is the root's regardless of which message the host reports -- `HostMessagePort` re-reads the
-   * message itself and discards anything that is not the final assistant text. */
+  /** Every image in a turn binds to the root session regardless of the message the host reports; `HostMessagePort` discards anything that is not the final assistant text. */
   resolve(_message_id: number): FinalAssistantBinding | null {
     const session = this.#root;
     if (session === null) {
@@ -246,11 +235,7 @@ export class HostGenerationSessionPort
   }
 }
 
-/**
- * Owns the two host subscriptions the trigger module's own ports need, so they are established
- * exactly when the runtime starts the trigger and torn down when it stops -- never at composition
- * time, when the probe may still be blocked.
- */
+/** Subscriptions are established when the runtime starts the trigger, never at composition time, when the probe may still be blocked. */
 export class AutomaticGenerationSessionModule implements RuntimeModule {
   readonly module_id = "automatic_generation_session";
   readonly requires: readonly string[] = [];
@@ -281,17 +266,11 @@ export interface AutomaticImageRequestRouterOptions {
   readonly plans: MediaExecutionPlanRegistry;
   readonly targets: GenerationTargetSource;
   readonly provider_id: () => ProviderId | null;
-  /** The active profile's own model. An automatic request has no parameter editor behind it, so a
-   * placeholder model would be rejected by every profile that declares an allowlist. */
+  /** The active profile's own model; a placeholder would be rejected by profiles that declare an allowlist. */
   readonly model_id: () => string | null;
 }
 
-/**
- * Turns a `RequestImageTool` acceptance into a real queued job on the same `ImageJobQueue` the
- * Workbench submits to: same execution-plan registry, same provider adapters, same persistence.
- * `enqueue` is synchronous by contract, so a rejected enqueue drops its own orphaned plan instead
- * of leaving one behind for a later request id collision.
- */
+/** `enqueue` is synchronous, so a rejected enqueue drops its own orphaned plan. */
 export class AutomaticImageRequestRouter implements ImageRequestQueuePort {
   readonly #options: AutomaticImageRequestRouterOptions;
 
@@ -350,12 +329,7 @@ export interface HostFallbackTextSinkOptions {
   readonly sessions: HostGenerationSessionPort;
 }
 
-/**
- * Where the fallback parser's cleaned text lands. SillyTavern saves whatever the model streamed, so
- * without this the hidden `<!-- tavern-canvas:image ... -->` comment stays in the chat log and in
- * every later prompt. The rewrite is deliberately narrow: it only touches a message that still
- * carries the marker, so a non-streaming turn (no chunks, no cleaned text) is never overwritten.
- */
+/** SillyTavern saves what the model streamed, so the hidden fallback comment is rewritten out of the chat log; only a message still carrying the marker is touched. */
 export class HostFallbackTextSink implements FallbackTextSink {
   readonly #host: HostAdapter;
   readonly #sessions: HostGenerationSessionPort;

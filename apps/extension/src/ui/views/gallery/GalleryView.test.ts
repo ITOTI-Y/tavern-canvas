@@ -42,17 +42,6 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-// ---------------------------------------------------------------------------
-// GalleryTile: mounted directly. TanStack Vue Virtual (ImageGrid's VirtualList) reads the real
-// scroll element's offsetHeight/offsetWidth to decide which rows are visible -- happy-dom (this
-// repo's test environment) has no layout engine and always reports 0 there, so it never actually
-// renders a virtualized row's content (the same class of Reka/TanStack-internal, real-DOM-only
-// limitation already ledgered for SegmentedControl in Task 4's report). Tile-level behavior is
-// therefore verified against GalleryTile directly, and GalleryView-level interactions below drive
-// ImageGrid's `open`/`toggle-select` emits directly instead of a synthetic DOM click on a row that
-// this environment cannot render.
-// ---------------------------------------------------------------------------
-
 describe("GalleryTile: stable dimensions before load, object URL lifecycle, failed fallback", () => {
   it("reserves its pixel box immediately, before the image byte fetch resolves", () => {
     let resolve_bytes!: (bytes: Uint8Array) => void;
@@ -176,10 +165,6 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
     expect(unpinned.find('[aria-label="Pin"]').exists()).toBe(false);
   });
 });
-
-// ---------------------------------------------------------------------------
-// GalleryView
-// ---------------------------------------------------------------------------
 
 function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioState {
   return {
@@ -348,16 +333,10 @@ function mount_gallery_view(options: MountOptions = {}) {
   return { wrapper, state, controller };
 }
 
-/** AppDialog/ImagePreviewDialog/ConfirmDialog/AppSelect all teleport their real content to a
- * sibling of the mounted root -- see the identical note in AssetsView.test.ts. */
 function dom(): DOMWrapper<HTMLElement> {
   return new DOMWrapper(document.body);
 }
 
-/** Simulates "the user opened this record's tile" without depending on TanStack Virtual actually
- * rendering a row (see the module-level comment above) -- emits ImageGrid's real `open` event,
- * which GalleryView's real `open_preview` handler (and everything downstream of it: the preview
- * dialog, the controller calls) still runs exactly as it would from a real click. */
 function open_tile(
   wrapper: ReturnType<typeof mount_gallery_view>["wrapper"],
   record_id: string,
@@ -386,11 +365,6 @@ describe("GalleryView: state surface and data flow into ImageGrid", () => {
     expect(dom().text()).toContain("Generate an image from the Workbench");
   });
 
-  // Regression test for the fix-wave a11y-correctness finding: each tile's select toggle and
-  // open-preview button were previously wired to `common.actions.select_all` ("Select all") and
-  // `gallery.download_action` ("Download") -- non-empty and unique, so the pre-existing e2e
-  // "accessible names" checks passed, but the announced names were wrong for what the controls
-  // actually do (a single-image toggle, an open-preview action, not "select all"/"download").
   it("passes the correct select/open-preview accessible-name labels to ImageGrid, not select_all/download", () => {
     const state = build_state({ records: [make_record()] });
     const { wrapper } = mount_gallery_view({ state });
@@ -466,9 +440,6 @@ describe("filters", () => {
     });
     const state = build_state({ records: [sd, nai] });
     const { wrapper } = mount_gallery_view({ state });
-    // AppSelect's own interactive open/select flow is Reka-internal pointer-event driven (see
-    // AssetsView.test.ts's outfit-dropdown test); here the underlying data flow is asserted by
-    // driving the same v-model update the component would emit.
     wrapper.findComponent(AppSelect).vm.$emit("update:modelValue", "novelai");
     await flushPromises();
     const remaining = wrapper
@@ -525,8 +496,8 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     open_tile(wrapper, record.id);
     await flushPromises();
     await flushPromises();
-    expect(dom().text()).toContain("123456789"); // seed
-    expect(dom().text()).toContain("tavern-canvas-fixture-v1"); // model
+    expect(dom().text()).toContain("123456789");
+    expect(dom().text()).toContain("tavern-canvas-fixture-v1");
   });
 
   it("shows a composed 'no parameters' message for an image with no embedded metadata", async () => {
@@ -680,8 +651,6 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     await flushPromises();
     expect(controller.detach_gallery_record).not.toHaveBeenCalled();
     expect(controller.delete_gallery_record).not.toHaveBeenCalled();
-    // The detach confirm dialog's own confirm button says "Detach from message", not the
-    // generic "Delete" -- confirming this action must never read as if it deletes the image.
     await dom()
       .find('[role="alertdialog"] button[aria-label="Detach from message"]')
       .trigger("click");
@@ -766,9 +735,6 @@ describe("multi-select and batch actions", () => {
 });
 
 describe("GalleryView: toast notification region", () => {
-  // Regression test for the fix-wave a11y-correctness finding: the toast region was previously
-  // labeled with common.actions.copy ("Copy") and the "Parameters copied" toast text itself,
-  // announcing the notification region as something unrelated to notifications.
   it("names the toast notification region correctly, not Copy/copied", async () => {
     mount_gallery_view();
     await nextTick();

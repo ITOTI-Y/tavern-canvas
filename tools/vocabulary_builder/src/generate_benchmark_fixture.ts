@@ -10,11 +10,9 @@ import {
 
 import { EXIT_INVALID_INPUT, EXIT_IO_FAILURE, EXIT_SUCCESS } from "./index.js";
 
-// Stage 05 Task 6: deterministic 500,000-record synthetic vocabulary,
-// generated from a fixed seed so the fixture, the built package, and every
-// query oracle below regenerate byte-identically across runs. This file
-// never reads or writes anything under Git-tracked paths -- callers point
-// `--output`/`--queries-output` at `output/benchmark/` (gitignored).
+// Deterministic 500,000-record synthetic vocabulary from a fixed seed; fixture, built package and
+// query oracles regenerate byte-identically. Point `--output`/`--queries-output` at gitignored
+// `output/benchmark/`.
 
 class GenerateBenchmarkError extends Error {}
 
@@ -80,7 +78,6 @@ function default_queries_output_path(output_path: string): string {
   return resolve(dirname(output_path), "known_queries.json");
 }
 
-/** mulberry32: a small, fast, fully deterministic 32-bit PRNG (public-domain algorithm). */
 function mulberry32(seed: number): () => number {
   let state = seed >>> 0;
   return () => {
@@ -96,25 +93,15 @@ const CATEGORIES = ["character", "general", "scene", "object", "action", "style"
 const SYLLABLE_LENGTH = 4;
 const CJK_BASE_CODE_POINT = 0x4e00;
 const CJK_SUFFIX_POOL_SIZE = 2048;
-// Translations are 4 code points: 2 shared "prefix" points drawn from a
-// small pool (so many translations land in the same alias-shard group_key,
-// matching how the builder groups by a normalized text's first two code
-// points -- tools/vocabulary_builder/src/build_alias_index.ts) followed by
-// 2 unique "suffix" points. A naive 2-code-point translation makes
-// group_key equal the whole translation, giving nearly one alias shard per
-// translation (verified: produced 40,723 alias shards, almost all
-// singletons, for 500,000 records) -- unrealistic versus real multi-entry
-// alias/translation shards, and needlessly inflates package shard count.
+// Translations are 4 code points: 2 shared prefix points from a small pool, so many translations
+// share an alias-shard group_key, then 2 unique suffix points. A 2-point translation would give
+// nearly one alias shard per translation.
 const CJK_PREFIX_POOL_SIZE = 50;
 const ALIAS_PROBABILITY = 0.15;
 const TRANSLATION_PROBABILITY = 0.08;
 
-// Disjoint index residue classes (mod 11) reserve non-overlapping record
-// pools for each oracle bucket, so no record's popularity sentinel (below)
-// is ever overwritten by a different bucket's assignment -- correctness of
-// every designated query's expected top-1 result follows from simple tier
-// dominance and sentinel magnitude, never from probabilistic reasoning
-// about pool overlap.
+// Disjoint index residue classes (mod 11) reserve non-overlapping record pools per oracle bucket,
+// so no popularity sentinel is overwritten by another bucket.
 const RESIDUE_MODULUS = 11;
 const PREFIX_RESIDUE = 0;
 const TYPO_RESIDUE = 3;
@@ -130,13 +117,9 @@ const ALIAS_PROBE_COUNT = 40;
 const TRANSLATION_PROBE_COUNT = 40;
 const EXACT_PROBE_COUNT = 10;
 
-// Sentinel popularity values dwarf the ambient range (records() below caps
-// ambient popularity under 200,000), so any designated record strictly
-// outranks every other candidate within its own match tier -- this is what
-// makes each oracle's expected top-1 result provable by construction
-// (MATCH_TIER dominance + popularity tie-break, both read directly from
-// packages/vocabulary/src/search/result_ranker.ts) without re-executing the
-// real query planner/ranker here.
+// Sentinel popularities exceed the ambient range (under 200,000), so a designated record outranks
+// every candidate in its match tier and each oracle's top-1 holds by construction (MATCH_TIER
+// dominance plus popularity tie-break in result_ranker.ts).
 const SENTINEL_BASE = 500_000_000;
 const HOT_SENTINEL_POPULARITY = 999_999_999;
 
@@ -164,15 +147,7 @@ function random_letters(rng: () => number, length: number): string {
   return text;
 }
 
-/**
- * Encodes `index` into 4 code points from a fixed, assigned CJK Unified
- * Ideographs range: 2 shared prefix points (index mod CJK_PREFIX_POOL_SIZE,
- * so ~CJK_PREFIX_POOL_SIZE distinct alias-shard groups form, each holding
- * many translations) plus 2 suffix points that make the full 4-point
- * translation injective in `index` (index = suffix * CJK_PREFIX_POOL_SIZE +
- * prefix_group is a bijection, and each factor is re-derived exactly by
- * this same base-conversion on decode -- no lookup table needed).
- */
+/** 4 code points from CJK Unified Ideographs: 2 shared prefix points (index mod CJK_PREFIX_POOL_SIZE) and 2 suffix points, making the translation injective in `index`. */
 function cjk_translation(index: number): string {
   const prefix_group = index % CJK_PREFIX_POOL_SIZE;
   const suffix = Math.floor(index / CJK_PREFIX_POOL_SIZE);
@@ -188,7 +163,6 @@ function cjk_translation(index: number): string {
   );
 }
 
-/** Shifts the first character by 13 letters (mod 26) -- always a different letter, defeating exact/prefix match. */
 function typo_variant(tag: string): string {
   const first = required(tag.codePointAt(0), "cannot build a typo variant of an empty tag");
   const first_letter_code = required(LETTERS.codePointAt(0), "LETTERS must be non-empty");
@@ -260,24 +234,9 @@ function select_prefix_probes(
   const oracles: QueryOracleEntry[] = [];
   const eligible = (index: number) => index % RESIDUE_MODULUS === PREFIX_RESIDUE;
 
-  // Every prefix3 group's members are also members of the prefix2 group
-  // sharing its first two characters (e.g. "acb" subset "ac"), so a
-  // prefix3 group's winner is ALSO a valid candidate for its parent
-  // prefix2 query -- the query engine correctly ranks by popularity
-  // within a tier regardless of which group "owns" a probe. Two
-  // consequences a naive per-group pick misses: (1) the SAME underlying
-  // record could be picked as the first eligible member of both a
-  // prefix2 and a prefix3 group, silently overwriting its own earlier
-  // sentinel when picked again; (2) even with distinct records, a
-  // prefix3 winner could legitimately outrank its parent prefix2
-  // group's own winner if it happened to receive a larger sentinel.
-  // used_winner_indices makes every winner's underlying record unique
-  // across all prefix probes; processing every prefix2 group to
-  // completion before any prefix3 group (already the call order below)
-  // then guarantees every prefix2 sentinel is strictly greater than
-  // every prefix3 sentinel (next_sentinel() decreases monotonically), so
-  // a broader group's own winner can never be outranked by one of its
-  // narrower child groups' winners.
+  // prefix3 winners are also candidates for their parent prefix2 query. `used_winner_indices` keeps
+  // every winner's record unique, and prefix2 groups are processed first so their sentinels
+  // (decreasing monotonically) always exceed every prefix3 sentinel.
   const used_winner_indices = new Set<number>();
 
   const pick_from = (map: Map<string, number[]>, subtype: "prefix2" | "prefix3", limit: number) => {

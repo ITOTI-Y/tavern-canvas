@@ -7,12 +7,6 @@ import AppIcon from "../../components/AppIcon.vue";
 import { CAPABILITY_MATRIX_IDS, capability_label } from "./capability_labels.js";
 import styles from "./diagnostics.module.css";
 
-/**
- * Displays all nine capability IDs (`CAPABILITY_MATRIX_IDS`) unconditionally, in fixed order, even
- * when `matrix` has not reported a status for one yet (host probing runs before the Gateway
- * protocol capability is ever known, for example) -- rendered as "unknown" rather than omitted, so
- * the row count never changes across loading states.
- */
 defineProps<{
   readonly matrix: CapabilityMatrix;
 }>();

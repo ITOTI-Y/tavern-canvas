@@ -7,12 +7,6 @@ import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
 import styles from "./gallery.module.css";
 import { use_gallery_object_url } from "./use_gallery_object_url.js";
 
-/**
- * One grid tile: fixed box (pixelWidth x rowHeight, reserved before any byte loads -- taste
- * directive), lazy byte fetch through the controller's read_gallery_bytes (never a direct fetch),
- * failed-thumbnail fallback composed of an icon and message rather than a blank box, and object
- * URL release the instant this tile unmounts (a virtualized row scrolling out of view).
- */
 const props = defineProps<{
   readonly record: GalleryRecordSummary;
   readonly pixelWidth: number;
@@ -77,9 +71,6 @@ const decoded = ref(false);
       <AppIcon :icon="Pin" :size="12" />
     </span>
 
-    <!-- Checkmark on select, empty box otherwise. The previous ringed dot inside this box read as
-         the digit "0" against artwork: two concentric outlines with nothing filled in. A checkbox
-         that is either empty or ticked has no such second reading. -->
     <button
       type="button"
       :class="styles.tileSelectToggle"

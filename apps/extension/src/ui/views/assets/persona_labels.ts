@@ -2,8 +2,6 @@ import type { KnowledgeSourceType, PersonaRole } from "@tavern-canvas/contracts"
 
 export type Translate = (key: string) => string;
 
-/** Literal-key `switch`es, matching `provider_labels.ts`, so `tools/locale_check`'s dynamic-key
- * rule can verify every call site statically. */
 export function persona_role_label(t: Translate, role: PersonaRole): string {
   switch (role) {
     case "assistant":

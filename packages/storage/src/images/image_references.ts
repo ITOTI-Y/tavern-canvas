@@ -61,11 +61,6 @@ async function update_job_after_reference_change(
   return updated;
 }
 
-/**
- * Persists a generated image into the gallery (content-addressed record +
- * blob reference) and marks the owning generation job "attached", all in one
- * IndexedDB transaction.
- */
 export async function attach_image(
   database: IDBPDatabase<DBSchema>,
   input: AttachImageInput,
@@ -97,12 +92,6 @@ export async function attach_image(
   });
 }
 
-/**
- * Removes a gallery record, releases its blob reference (physically deleting
- * the blob only once no reference remains), and updates the owning
- * generation job, all in one IndexedDB transaction. The job is marked
- * "orphaned" once it no longer references any attached image.
- */
 export async function detach_image(
   database: IDBPDatabase<DBSchema>,
   input: DetachImageInput,

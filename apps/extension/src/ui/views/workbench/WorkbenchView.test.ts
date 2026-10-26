@@ -130,10 +130,6 @@ function mount_view(
   return { wrapper, host };
 }
 
-/** Reka portals (dialog/select content) render outside the mounted wrapper's own DOM subtree
- * (into the injected portal target, appended straight to `document.body`) -- `wrapper.find()`
- * only searches the wrapper's tracked tree, so portaled content must be queried from `document`
- * directly, the same way Task 4's components.test.ts does for Select/Dialog content. */
 function find_in_document(selector: string): DOMWrapper<Element> {
   const element = document.querySelector(selector);
   if (!element) {
@@ -215,10 +211,6 @@ describe("WorkbenchView: prompt drafts and image count", () => {
     expect((negative.element as HTMLTextAreaElement).value).toBe("no watermark");
   });
 
-  // Regression test for the fix-wave a11y-correctness finding: both buttons previously shared
-  // the single "Image count" label as both increment-label and decrement-label (indistinguishable
-  // to assistive tech), while every other NumberStepper call site correctly used
-  // common.actions.increase/decrease.
   it("gives the image-count stepper's increment/decrement buttons distinct accessible names", () => {
     const { wrapper } = mount_view();
     const stepper = wrapper.find('[data-testid="image-count-stepper"]');
@@ -625,9 +617,6 @@ describe("WorkbenchView: completion preview and inspector", () => {
     expect(document.body.textContent).toContain("Copied");
   });
 
-  // Regression test for the fix-wave a11y-correctness finding: the toast region was previously
-  // labeled with common.inspector.title ("Inspector") and common.actions.confirm ("Confirm"),
-  // announcing the notification region as something unrelated to notifications.
   it("names the toast notification region correctly, not Inspector/Confirm", async () => {
     mount_view();
     await nextTick();

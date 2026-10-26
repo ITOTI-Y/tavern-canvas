@@ -253,11 +253,6 @@ describe("lru_eviction", () => {
   });
 
   it("skips an image_records row from a different domain instead of crashing on it", async () => {
-    // `image_records` is shared with non-gallery writers (e.g. a migrated v2
-    // asset), whose rows do not carry `provider_id`/`source_message`/
-    // `generation_parameters`/`media_type` and so fail `GalleryImageRecordSchema`.
-    // Such a row must never crash cleanup, and its blob must never be evicted
-    // since eligibility (pinned, persisted_url) cannot be determined for it.
     const database = await open_database();
     const repositories = create_business_repositories(database);
     const foreign_bytes = png_bytes_of_length(400, 50);
@@ -301,7 +296,7 @@ describe("lru_eviction", () => {
     expect(await new ImageBlobRepository(database).get(foreign_sha256)).not.toBeNull();
   });
 
-  it("reconstructs ref_count from surviving image_records after eviction deletes the blob row, instead of resetting to 1 (I2 regression)", async () => {
+  it("reconstructs ref_count from surviving image_records after eviction deletes the blob row, instead of resetting to 1", async () => {
     const database = await open_database();
     const bytes = png_bytes_of_length(500, 60);
     const first = await seed_record(database, {
@@ -329,15 +324,9 @@ describe("lru_eviction", () => {
       excluded_count: 0,
     });
     expect(await new ImageBlobRepository(database).get(first.sha256)).toBeNull();
-    // Both referencing image_records rows survive eviction — only the blob
-    // row (and its ref_count) is gone.
     expect(await new GalleryImageRecordRepository(database).get(NAMESPACE, IDS.a)).not.toBeNull();
     expect(await new GalleryImageRecordRepository(database).get(NAMESPACE, IDS.b)).not.toBeNull();
 
-    // A third reference to the same content re-creates the blob row. On the
-    // pre-fix code this always reset to ref_count 1 regardless of how many
-    // image_records rows already reference the content, arming a later
-    // single `release_image_blob` call to delete bytes `a`/`b` still need.
     const third = await seed_record(database, {
       id: IDS.c,
       bytes,

@@ -4,11 +4,8 @@ export interface ObjectUrlFactory {
 }
 
 export interface ObjectUrlRegistry {
-  /** Creates and tracks an object URL for the given owner component ID. */
   create(owner_id: string, blob: Blob): string;
-  /** Revokes every object URL owned by the given component ID. */
   release(owner_id: string): void;
-  /** Revokes every tracked object URL for every owner (app unmount). */
   dispose(): void;
 }
 
@@ -19,12 +16,6 @@ const default_factory: ObjectUrlFactory = {
   },
 };
 
-/**
- * Tracks blob object URLs by owner component ID so every URL a component
- * creates is revoked when that component releases its resources, and any
- * still-tracked URL is revoked on app unmount. Object URL strings are never
- * persisted: this registry only ever holds them in memory.
- */
 export function create_object_url_registry(
   factory: ObjectUrlFactory = default_factory,
 ): ObjectUrlRegistry {

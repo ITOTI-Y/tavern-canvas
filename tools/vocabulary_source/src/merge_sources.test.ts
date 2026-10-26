@@ -167,9 +167,7 @@ describe("run_merge_cli", () => {
   });
 
   it("uses the seed's own facts when no fact file is supplied, and warns via on_stale_fact_source", async () => {
-    // "1girl" and the two popularity figures below mirror the brief's
-    // documented staleness example (factual public Danbooru data, safe to
-    // reproduce); the translation text is an invented placeholder.
+    // Real Danbooru counts; the translation is an invented placeholder.
     const seed_path = join(temp_dir, "seed.jsonl");
     await write_jsonl(seed_path, [
       fact({

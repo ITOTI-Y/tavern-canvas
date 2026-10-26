@@ -21,9 +21,6 @@ export const VocabularyMatchKindSchema = z.enum([
 ]);
 export type VocabularyMatchKind = z.infer<typeof VocabularyMatchKindSchema>;
 
-// Compact search-result DTO the Worker returns across the postMessage
-// boundary. It never carries a full shard object — only what the UI needs
-// to render a result row.
 export const VocabularySearchResultSchema = z.strictObject({
   record_id: VocabularyRecordIdSchema,
   display_text: z.string().trim().min(1).max(512),
@@ -93,9 +90,8 @@ export const VocabularyWorkerRequestSchema = z.discriminatedUnion("type", [
 ]);
 export type VocabularyWorkerRequest = z.infer<typeof VocabularyWorkerRequestSchema>;
 
-// The only response without request_id: it is an unprompted lifecycle
-// signal emitted once the Worker has loaded the active package, not a
-// reply correlated to a specific client request.
+// The only response without request_id: an unsolicited lifecycle signal sent once the active
+// package is loaded.
 export const VocabularyReadyResponseSchema = z.strictObject({
   type: z.literal("ready"),
   package_id: VocabularyPackageIdSchema,

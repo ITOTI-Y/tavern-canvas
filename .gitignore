@@ -3,19 +3,13 @@ node_modules/
 **/dist/
 !/dist/
 !/dist/**
-# Source maps are built (build.sourcemap: "hidden") so tools/bundle_budget can attribute the
-# initial chunk's modules, but they are neither committed nor packaged: a released extension that
-# ships a map hands out the whole first-party source tree.
+# Source maps would ship the whole first-party source tree with the extension.
 /dist/**/*.map
-# dist/vocabulary/ is intentionally NOT ignored: Stage 07 release commits the full dist/ tree (see plan 07 §release)
 .vite/
 coverage/
 playwright-report/
 test-results/
 output/
-# Stage 05 Task 6: 500,000-record benchmark package staged into the
-# harness's Vite publicDir by tests/harness/prepare_benchmark_site.mjs --
-# regenerated on every benchmark run, never committed.
 tests/harness/.benchmark_public/
 .env
 .env.*
@@ -26,10 +20,5 @@ tests/harness/.benchmark_public/
 data/_archive/
 docs/_dev/
 data/vocabulary/*.jsonl
-# Redistributable per explicit user decision (data/vocabulary/LICENSES.json):
-# facts + zh translations. The sole permitted input for the committed
-# apps/extension/public/vocabulary/baseline package and the (uncommitted,
-# output/-shipped) full pack (see docs/_dev/DATA.md's
-# processed-vocabulary-baseline-v1 entry).
 !data/vocabulary/raw_vocabulary_tags_public.jsonl
 .claude/

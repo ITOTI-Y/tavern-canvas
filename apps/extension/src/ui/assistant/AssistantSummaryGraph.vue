@@ -5,11 +5,6 @@ import { useI18n } from "vue-i18n";
 import type { AssistantSummaryRecord } from "../../modules/assistant/assistant_session.js";
 import styles from "./assistant.module.css";
 
-/**
- * The summary hierarchy drawn as a relation graph. `AssistantSummaryRecord.parent_id` is the only
- * structure there is, so the layout is a plain depth-by-order tree: depth sets the column, sibling
- * order sets the row. Rectangles and straight lines only, no hand drawn path data.
- */
 const props = defineProps<{
   readonly summaries: readonly AssistantSummaryRecord[];
   readonly selectedId: string | null;

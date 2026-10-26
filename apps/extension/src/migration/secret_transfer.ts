@@ -1,14 +1,9 @@
 import type { SecretCredentialKind, SecretTransferOperation } from "@tavern-canvas/v2-migration";
 
-/**
- * Narrow credential-storage port shared by v2 migration and live settings. The runtime router
- * selects either SillyTavern's secret store or the encrypted browser vault; callers receive only
- * stable references and presence probes, never a plaintext read API.
- */
+/** Callers receive only stable references and presence probes, never a plaintext read API. */
 export interface SecretDestinationPort {
   supports(credential_kind: SecretCredentialKind): boolean;
   write_secret(reference: string, plaintext_value: string): Promise<void>;
-  /** Removes a credential by reference when the destination exposes deletion. */
   delete_secret?(reference: string): Promise<void>;
   /** A credential-reference probe: confirms the secret is retrievable by reference, never returns plaintext. */
   probe_secret(reference: string): Promise<boolean>;
@@ -40,11 +35,7 @@ export interface SecretTransferSummary {
   readonly blocked: boolean;
 }
 
-/**
- * Deterministic so the same (namespace, provider profile, credential) always
- * derives the same reference: nothing needs to persist the mapping anywhere
- * — including the journal, which must never carry a plaintext-adjacent value.
- */
+/** Deterministic, so the mapping never needs persisting; the journal must not carry plaintext-adjacent values. */
 export function derive_secret_reference(
   namespace: string,
   provider_profile_id: string,
@@ -88,12 +79,7 @@ async function transfer_one(
   return { ...identity, status: "transferred", reference };
 }
 
-/**
- * Transfers every reversible v2 credential to `destination`, verifying each
- * one through a credential-reference probe before it counts as migrated.
- * Never touches `operation.plaintext_value` after the write call, and never
- * returns it: the caller (migration_runner) journals only `SecretTransferRecord`s.
- */
+/** Never touches `operation.plaintext_value` after the write and never returns it; the caller journals only `SecretTransferRecord`s. */
 export async function transfer_secrets(
   operations: readonly SecretTransferOperation[],
   namespace: string,
@@ -101,9 +87,7 @@ export async function transfer_secrets(
 ): Promise<SecretTransferSummary> {
   const records: SecretTransferRecord[] = [];
   for (const operation of operations) {
-    // Sequential, not Promise.all: secret destinations (a single SillyTavern
-    // secrets.json write endpoint) are not guaranteed safe under concurrent
-    // writes, and transfer order has no correctness requirement to trade away.
+    // Sequential: SillyTavern's secrets.json write endpoint is not safe under concurrent writes.
     records.push(await transfer_one(operation, namespace, destination));
   }
   return { records, blocked: records.some((record) => record.status === "blocked") };

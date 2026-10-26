@@ -34,14 +34,6 @@ export interface MigrationCapabilityDeps {
   readonly secrets: SecretDestinationPort | null;
 }
 
-/**
- * Reads the migration journal that `run_migration` itself writes, so the Studio reflects the real
- * resumable state rather than a separately-tracked copy. `run_migration` is idempotent and resumes
- * from the journal, which is why `retry()` simply re-invokes it.
- *
- * The runner and its whole v2 converter graph are imported only when a migration actually runs:
- * every session pays for them otherwise, and almost no session needs them.
- */
 export function create_migration_capability(deps: MigrationCapabilityDeps): MigrationCapability {
   const events = new DomainEventEmitter<MigrationDomainEvent>();
   const journal_store = create_journal_store(deps.database);
@@ -110,8 +102,7 @@ export function create_migration_capability(deps: MigrationCapabilityDeps): Migr
       return snapshot;
     },
     confirm_legacy_cleanup() {
-      /* v2 data is never deleted by this app: no v2 teardown routine exists anywhere in the
-       * codebase, and inventing one that removes another extension's data is out of scope. */
+      /* v2 data is never deleted by this app. */
       return Promise.reject(
         capability_unavailable_error(
           "Legacy v2 data cleanup is not implemented; remove the v2 extension manually once the migration reports completed.",

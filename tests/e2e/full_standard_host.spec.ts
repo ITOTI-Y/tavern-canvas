@@ -6,19 +6,7 @@ import {
   REQUIRED_HOST_CAPABILITY_IDS,
 } from "./all_host_utils.js";
 
-/**
- * Standard-SillyTavern acceptance gate. Every test here boots the REAL
- * apps/extension/src/bootstrap/bootstrap.ts (or the same compose_capabilities.ts composition root
- * it calls) in real Chromium against a fake SillyTavern 1.18.0 + JS-Slash-Runner 4.9.1 global
- * object graph, so the assertions land on the shipped host adapters, capability probe and
- * composition root rather than on a stand-in.
- *
- * Named for the architecture acceptance criteria in
- * docs/plans/2026-08-04-tavern-canvas-v3-architecture-design.md section 23; the criterion-to-test
- * mapping is recorded in docs/parity/feature_matrix.md.
- */
-
-test.describe("criterion 6: standard SillyTavern with JS Slash Runner 4.9.1 runs core generation, message binding, gallery and settings", () => {
+test.describe("standard SillyTavern with JS Slash Runner 4.9.1 runs core generation, message binding, gallery and settings", () => {
   test("the probe activates and every required host capability resolves available", async ({
     page,
   }) => {
@@ -193,7 +181,7 @@ test.describe("criterion 6: standard SillyTavern with JS Slash Runner 4.9.1 runs
   });
 });
 
-test.describe("criterion 7: a missing, disabled or too-old JS Slash Runner blocks activation with an actionable message", () => {
+test.describe("a missing, disabled or too-old JS Slash Runner blocks activation with an actionable message", () => {
   test("no TavernHelper at all blocks startup", async ({ page }) => {
     await open_host_page(page, "sillytavern_host.html", { helper: "missing" });
 
@@ -242,7 +230,7 @@ test.describe("criterion 7: a missing, disabled or too-old JS Slash Runner block
   });
 });
 
-test.describe("criteria 1 and 2: the main LLM trigger path (native tool first, hidden-comment fallback)", () => {
+test.describe("main LLM trigger path (native tool first, hidden-comment fallback)", () => {
   test("a tool-capable host gets the request_image function tool registered for the generation", async ({
     page,
   }) => {

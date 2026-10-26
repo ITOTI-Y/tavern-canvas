@@ -10,12 +10,6 @@ import type { VocabularyShardFile } from "./write_package.js";
 const HOT_SHARD_ID = "hot:global";
 const HOT_SHARD_PATH = "hot/global.msgpack.gz";
 
-/**
- * Builds the single hot shard: record ids ranked by popularity descending
- * (record_id ascending as a tie-break), capped globally and per category.
- * Both lists are derived from the same popularity-sorted pass, so
- * per-category order falls out of the global order for free.
- */
 export function build_hot_shard(records: readonly VocabularyRecord[]): VocabularyShardFile {
   const by_popularity_desc = [...records].sort((left, right) =>
     left.popularity !== right.popularity

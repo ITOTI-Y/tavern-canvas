@@ -24,7 +24,7 @@ function fetch_returning(
 }
 
 describe("SillyTavernSecretDestination", () => {
-  it("supports every v2 credential kind: SillyTavern's secret vault is a generic string-keyed store", () => {
+  it("supports every credential kind: SillyTavern's secret vault is a generic string-keyed store", () => {
     const destination = new SillyTavernSecretDestination(context(), vi.fn());
 
     expect(destination.supports("chatu8_ai_assistant_api_key")).toBe(true);

@@ -10,12 +10,6 @@ import GalleryTile from "./GalleryTile.vue";
 const ROW_HEIGHT = 176;
 const ROW_GAP = 8;
 
-/**
- * Virtualized justified-row grid (assumes `records` is non-empty and loaded -- GalleryView owns
- * the loading/empty StateSurface wrapping). Rows are windowed through VirtualList (real DOM
- * windowing for a library with thousands of records); each row's tiles get their own aspect-ratio
- * width, giving the masonry look without needing every tile mounted at once.
- */
 const props = defineProps<{
   readonly records: readonly GalleryRecordSummary[];
   readonly selectedIds: ReadonlySet<string>;
@@ -25,9 +19,6 @@ const props = defineProps<{
   readonly selectLabel: string;
   readonly openLabel: string;
   readonly ariaLabel: string;
-  /** Forces the measured viewport instead of tracking ResizeObserver -- happy-dom (this repo's
-   * test environment) has no real layout engine, so clientWidth/clientHeight and ResizeObserver
-   * callbacks never fire on their own (same rationale as use_shell_viewport.ts's `override`). */
   readonly widthOverride?: number;
   readonly heightOverride?: number;
 }>();
@@ -77,11 +68,7 @@ function row_key(row: LayoutRow<GalleryRecordSummary>): string {
 
 <template>
   <div ref="container" :class="styles.gridContainer">
-    <!-- eslint-disable vue/attribute-hyphenation -- "aria-label" is exempt from Vue's kebab-to-camel
-         attribute/prop matching (it stays a literal passthrough attribute), so `ariaLabel` below
-         must stay camelCase to actually bind VirtualList's prop; hyphenating it silently breaks the
-         binding instead of merely triggering the style rule (confirmed via vue-tsc, which fails
-         "Property 'ariaLabel' is missing" against the hyphenated form). -->
+    <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind VirtualList's prop -->
     <VirtualList
       v-if="container_height > 0"
       :items="rows"

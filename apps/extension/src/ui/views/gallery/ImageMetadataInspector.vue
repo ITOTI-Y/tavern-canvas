@@ -7,19 +7,6 @@ import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { ExtractedGenerationParameters } from "./image_metadata.js";
 import styles from "./gallery.module.css";
 
-/**
- * Parameters panel: seed/provider/model/prompt when the PNG carries embedded generation
- * parameters (image_metadata.ts), a composed empty state otherwise -- openai_image/google_image
- * outputs, or any file with no recognized text chunk, are a real "nothing to show" case, not a
- * bug. Modify prompt/regenerate hand off through the select-inspector-record channel
- * (InspectorSelection's `intent`/`prefill`, Stage 06 Task 6 addition, extended in the stage
- * fix-wave) carrying the already-extracted `parameters` prop along so the Workbench can prefill
- * its prompt fields -- there is no other cross-view channel into the Workbench yet. Edit and
- * inpaint hand off the same way, carrying `intent: "edit" | "inpaint"`, which the inspector's
- * action row consumes and turns into a real media command. Source-message stays disabled: no host
- * exposes a chat-navigation hook, so rendering it active would be a live control that silently does
- * nothing -- the banned state -- rather than an honest unavailable one.
- */
 const props = defineProps<{
   readonly record: GalleryRecordSummary;
   readonly parameters: ExtractedGenerationParameters | null;

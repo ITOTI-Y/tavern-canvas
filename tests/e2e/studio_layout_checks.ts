@@ -1,23 +1,10 @@
 import type { Page } from "@playwright/test";
 
-/**
- * Programmatic layout/pixel checks shared by studio_overflow.spec.ts (the exhaustive
- * route/viewport/locale/color-mode sweep) and studio_visual.spec.ts (a pre-snapshot sanity pass,
- * since a broken layout makes its own screenshot baseline meaningless). Every check runs inside
- * `page.evaluate` against the real Shadow Root DOM (`#tavern-canvas-root`'s `shadowRoot`) --
- * these are genuine rendered-pixel/geometry assertions, not DOM-shape assumptions.
- */
-
 export interface LayoutFinding {
   readonly kind: string;
   readonly detail: string;
 }
 
-/** Any first-party element whose own box extends past the viewport horizontally, or past its
- * nearest scrollable ancestor's box on an axis that ancestor does not scroll -- i.e. real,
- * user-visible overflow, not a deliberately scrollable list (`.rail`, `.workspace`, `.inspector`,
- * VirtualList's own viewport, and so on all legitimately scroll and are excluded by only ever
- * comparing an element against the *nearest* scrollable ancestor's own box, never the document). */
 export async function find_overflow_violations(page: Page): Promise<LayoutFinding[]> {
   return page.evaluate(() => {
     const host = document.getElementById("tavern-canvas-root");
@@ -33,9 +20,6 @@ export async function find_overflow_violations(page: Page): Promise<LayoutFindin
     }
 
     function nearest_scroll_container(element: Element): Element | null {
-      // `.parentElement` (unlike `.parentNode`) naturally stops at `null` once it walks past the
-      // last real Element ancestor inside the Shadow Root -- it never returns the ShadowRoot
-      // itself, so the loop needs no explicit boundary check against `root`.
       let current = element.parentElement;
       while (current) {
         if (is_scroll_container(current)) {
@@ -46,8 +30,6 @@ export async function find_overflow_violations(page: Page): Promise<LayoutFindin
       return null;
     }
 
-    // The shell itself must never need a horizontal scrollbar at any viewport -- unlike its
-    // internal panes, the top-level `.shell` grid has no legitimate reason to scroll sideways.
     const shell = root.querySelector<HTMLElement>('[class*="shell"]');
     if (shell && shell.scrollWidth > shell.clientWidth + 1) {
       findings.push({
@@ -65,9 +47,6 @@ export async function find_overflow_violations(page: Page): Promise<LayoutFindin
         continue;
       }
       const container = nearest_scroll_container(element);
-      // No scrollable ancestor found before the Shadow Root boundary: the element's own box must
-      // stay within the host's box on the right edge, since nothing between them can ever scroll
-      // to reveal an overflow there.
       if (container) {
         continue;
       }
@@ -85,10 +64,6 @@ export async function find_overflow_violations(page: Page): Promise<LayoutFindin
   });
 }
 
-/** Text clipped by `white-space: nowrap` + `overflow: hidden` without either an ellipsis
- * affordance or a `title` fallback for the full string -- a real usability regression, not the
- * intentional truncation pattern (StudioShell.test.ts's own "long labels truncate instead of
- * growing their container" contract already requires ellipsis + nowrap + hidden together). */
 export async function find_clipped_text_violations(page: Page): Promise<LayoutFinding[]> {
   return page.evaluate(() => {
     const host = document.getElementById("tavern-canvas-root");
@@ -100,8 +75,7 @@ export async function find_clipped_text_violations(page: Page): Promise<LayoutFi
     const elements = root.querySelectorAll<HTMLElement>("*");
     for (const element of elements) {
       if (element.children.length > 0) {
-        continue; // Only leaf-ish text nodes are meaningfully "clipped"; a wrapper's own
-        // scrollWidth reflects its children's layout, not a text-clipping decision it made itself.
+        continue;
       }
       const text = element.textContent.trim();
       if (text.length === 0) {
@@ -109,9 +83,7 @@ export async function find_clipped_text_violations(page: Page): Promise<LayoutFi
       }
       const rect = element.getBoundingClientRect();
       if (rect.width <= 1 && rect.height <= 1) {
-        continue; // utilities.css's `.tc-visually-hidden` pattern (1x1px, clip-path) -- screen-
-        // reader-only text that is deliberately never meant to be visually legible, not a
-        // truncation bug. Real clipped text always has a visible, non-degenerate box.
+        continue;
       }
       const style = getComputedStyle(element);
       if (style.whiteSpace !== "nowrap" || style.overflow !== "hidden") {
@@ -134,8 +106,6 @@ export async function find_clipped_text_violations(page: Page): Promise<LayoutFi
   });
 }
 
-/** Two first-party interactive controls whose boxes visibly intersect (not one nested inside the
- * other, e.g. an icon inside its own button) -- always a layout bug, never an intended state. */
 export async function find_overlapping_controls(page: Page): Promise<LayoutFinding[]> {
   return page.evaluate(() => {
     const host = document.getElementById("tavern-canvas-root");
@@ -144,13 +114,7 @@ export async function find_overlapping_controls(page: Page): Promise<LayoutFindi
       return [{ kind: "overlap", detail: "Shadow Root not found" }];
     }
 
-    // An element scrolled (even partially) out of view inside an `overflow: hidden|auto|scroll`
-    // ancestor (e.g. Workbench's `.workspace` on a short mobile viewport) keeps a real, *unclipped*
-    // `getBoundingClientRect()` wherever it would naturally fall in flow -- comparing that raw rect
-    // against something outside the scroll container reports a geometric "overlap" for pixels that
-    // are never actually painted on screen. This clips an element's rect against every one of its
-    // scrolling ancestors' own boxes (intersection, not just an any-overlap visibility gate), so
-    // "56x28px" of a mostly-clipped button never gets compared as if it were fully visible.
+    // Clip each rect against its scrolling ancestors; unclipped rects report overlaps for pixels never painted.
     interface ClippedRect {
       readonly top: number;
       readonly bottom: number;
@@ -175,7 +139,7 @@ export async function find_overlapping_controls(page: Page): Promise<LayoutFindi
             right: Math.min(rect.right, ancestor_rect.right),
           };
           if (rect.bottom <= rect.top || rect.right <= rect.left) {
-            return null; // Fully clipped away by this ancestor -- not visible at all.
+            return null;
           }
         }
         ancestor = ancestor.parentElement;
@@ -216,17 +180,11 @@ export async function find_overlapping_controls(page: Page): Promise<LayoutFindi
         }
         const overlap_x = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
         const overlap_y = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
-        // 4px tolerance (not 2px): adjacent flex/grid items sharing a hairline boundary can
-        // legitimately round to a few px of getBoundingClientRect() overlap under subpixel
-        // layout -- observed on the mobile bottom nav's five equal-width flex items, never a
-        // real visual collision at that scale.
+        // 4px tolerance: subpixel rounding of adjacent flex items on the mobile bottom nav overlaps by a few px.
         if (overlap_x <= 4 || overlap_y <= 4) {
           continue;
         }
-        // A smaller control almost fully layered on top of a larger one (e.g. GalleryTile.vue's
-        // 20x20px select-toggle badge sitting in the corner of its own full-tile "open" button)
-        // is a deliberate, common composition pattern, not an accidental collision -- only flag
-        // a *partial* intersection, where neither control contains the bulk of the other's area.
+        // Only partial intersections count; a badge nested in a larger control is intentional.
         const overlap_area = overlap_x * overlap_y;
         const area_a = (ra.right - ra.left) * (ra.bottom - ra.top);
         const area_b = (rb.right - rb.left) * (rb.bottom - rb.top);
@@ -245,11 +203,6 @@ export async function find_overlapping_controls(page: Page): Promise<LayoutFindi
   });
 }
 
-/** Every Reka-portaled surface (dialog/menu/tooltip/listbox) must render inside the Shadow
- * Root's own portal element (PortalProvider.vue's PORTAL_TARGET_KEY), never appended directly to
- * `document.body` outside the Shadow Root -- the whole point of the portal wiring
- * (AppRoot.test.ts's "provides the given portal target... never document.body" contract, exercised
- * here across every route/viewport instead of one component at a time). */
 export async function find_portal_escapes(page: Page): Promise<LayoutFinding[]> {
   return page.evaluate(() => {
     const host = document.getElementById("tavern-canvas-root");
@@ -277,10 +230,6 @@ export async function find_portal_escapes(page: Page): Promise<LayoutFinding[]> 
   });
 }
 
-/** A visible `<img>` with zero natural dimensions, or one whose decoded pixels are all a single
- * uniform color (a common silent-failure signature: a 1x1 placeholder stretched to fill its box,
- * or a fully transparent/black decode) -- the six bitmap fixtures (tests/fixtures/ui) are all
- * deliberately non-uniform, so any uniform sample here is a real rendering failure. */
 export async function find_blank_or_zero_dimension_images(page: Page): Promise<LayoutFinding[]> {
   return page.evaluate(() => {
     const host = document.getElementById("tavern-canvas-root");
@@ -314,8 +263,7 @@ export async function find_blank_or_zero_dimension_images(page: Page): Promise<L
       try {
         data = context.getImageData(0, 0, sample_size, sample_size).data;
       } catch {
-        continue; // Cross-origin canvas taint -- none of this harness's images are cross-origin,
-        // but fail open rather than false-positive if that ever changes.
+        continue; // canvas tainted by a cross-origin image
       }
       const [r0, g0, b0, a0] = [data[0], data[1], data[2], data[3]];
       let uniform = true;
@@ -341,10 +289,6 @@ export async function find_blank_or_zero_dimension_images(page: Page): Promise<L
   });
 }
 
-/** Fixed-navigation-hides-content check: the shell's fixed-size chrome (top bar / rail / bottom
- * nav / task strip) must never overlap the workspace's own rendered content -- verified by
- * intersecting each chrome band's rect against the workspace region's rect (their CSS grid areas
- * should make this geometrically impossible; this is the pixel-level proof, not an assumption). */
 export async function find_fixed_nav_overlap(page: Page): Promise<LayoutFinding[]> {
   return page.evaluate(() => {
     const host = document.getElementById("tavern-canvas-root");
@@ -395,9 +339,6 @@ export async function run_all_layout_checks(page: Page): Promise<LayoutFinding[]
   return [...overflow, ...clipped, ...overlap, ...portal, ...images, ...fixed_nav];
 }
 
-/** width/height of one element, for a caller to diff before/after a hover or a pending/loading
- * state change (taste directive 2: "buttons never change DIMENSIONS on hover/loading/state
- * change"). */
 export async function measure_box(
   page: Page,
   selector: string,
@@ -413,10 +354,6 @@ export async function measure_box(
   }, selector);
 }
 
-/** Cumulative Layout Shift observed while `action` runs, via the real
- * `PerformanceObserver("layout-shift")` API -- not a heuristic, the same signal browsers report
- * for Core Web Vitals. Used to assert "layout shifts after images/loaders resolve" never happens
- * once a scenario's data has actually settled. */
 export async function measure_layout_shift(
   page: Page,
   action: () => Promise<void>,

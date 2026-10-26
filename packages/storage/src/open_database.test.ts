@@ -88,11 +88,6 @@ describe("tavern_canvas_v3 schema", () => {
     await deleteDB(fresh_name);
   });
 
-  /**
-   * The three Stage 07 capabilities read `character_profiles` and `knowledge_entries` (version 1)
-   * and `llm_connections` (version 3), so an installed v2 user must both gain the new store and
-   * keep the rows the older ones already hold.
-   */
   it("adds the version 3 store to an installed v2 database without disturbing its rows", async () => {
     const name = "tavern_canvas_v3_upgrade_v2_to_v3";
     const v2_store_names = store_names.filter(

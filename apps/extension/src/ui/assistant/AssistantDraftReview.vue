@@ -6,12 +6,6 @@ import AppButton from "../components/AppButton.vue";
 import AppDialog from "../components/AppDialog.vue";
 import styles from "./assistant.module.css";
 
-/**
- * The Review-then-Apply gate: shows exactly the typed `SettingsDraftDiff` `settings_draft_tools.
- * create_settings_draft` produced, and nothing else. `apply`/`discard` are events only -- this
- * component never imports `apply_settings_draft` or a settings capability itself, so it cannot
- * become a second path to a hidden auto-execute.
- */
 defineProps<{
   readonly open: boolean;
   readonly draft: SettingsDraftDiff | null;

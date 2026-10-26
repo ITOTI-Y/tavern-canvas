@@ -68,7 +68,6 @@ export interface ReportFields {
 export interface AuditReport {
   readonly findings: readonly ReleaseFinding[];
   readonly fields: ReportFields;
-  /** SHA-256 of the archive file and of every entry's decompressed bytes, recomputed by rule `entry-checksum`. */
   readonly archive_sha256: string;
   readonly entry_sha256: ReadonlyMap<string, string>;
 }
@@ -93,25 +92,14 @@ export function format_finding(finding: ReleaseFinding): string {
   return `${finding.rule_id}: ${finding.detail}`;
 }
 
-/**
- * The `dist/` half of the release is only reproducible from a checkout when git actually tracks
- * it. Stage 05 shipped `dist/vocabulary/` into the archive while `.gitignore` excluded it, so a
- * fresh clone built a runtime that fetched files nobody could restore. `historical_paths` covers
- * the other half of the same question: what the published repository's history carries.
- */
+/** Runtime inputs must be tracked by git, or a fresh clone builds a runtime that fetches files nobody can restore. `historical_paths` covers what the published history carries. */
 export interface GitDistPort {
   tracked_dist_paths(): ReadonlySet<string>;
   historical_paths(): ReadonlySet<string>;
   ignore_rule?(path: string): string | undefined;
 }
 
-/**
- * The commit whose ancestry the `legacy-history` rule judges. It is the ref being released, not
- * `--all`: a clone only ever receives the refs the remote publishes, and `git push origin main`
- * only transfers objects reachable from `main`. Scanning `--all` instead charges the release for
- * local-only branches that no clone can reach, which is a different question from the one
- * architecture criterion 18 asks.
- */
+/** The released ref, not `--all`: a clone only receives refs the remote publishes, so local-only branches must not count against the release. */
 export const DEFAULT_HISTORY_REF = "HEAD";
 
 export function create_git_dist_port(
@@ -151,15 +139,11 @@ export function create_git_dist_port(
           .split("\n")
           .find((line) => line !== "")
           ?.split("\t")[0];
-        // `-v` also reports the negation pattern that un-ignored a path (`.gitignore:5:!/dist/**`),
-        // which would otherwise be printed as the reason a file is excluded when it is the reason
-        // the file is allowed. Such a path is simply one nobody committed.
+        // `-v` can report the negation pattern that un-ignored a path, which is the reason it is allowed; such a path is one nobody committed.
         return rule === undefined || rule.slice(rule.lastIndexOf(":") + 1).startsWith("!")
           ? undefined
           : rule;
       } catch {
-        // git check-ignore exits 1 when no rule matches, which is the common case for a path that
-        // is simply absent from the index.
         return undefined;
       }
     },
@@ -340,9 +324,7 @@ interface NonRuntimeDistPrefix {
   readonly reason: string;
 }
 
-// `dist/**` is otherwise wide open, so the build's own bookkeeping needs naming explicitly.
-// apps/extension/vite.config.ts writes dist/.vite/manifest.json for the bundle-budget gate; it is
-// gitignored, it is never fetched at runtime, and it must not reach a user's extensions directory.
+// `dist/**` is otherwise open; `dist/.vite/manifest.json` is gitignored build bookkeeping that must not reach a user's extensions directory.
 const NON_RUNTIME_DIST_PREFIXES: readonly NonRuntimeDistPrefix[] = [
   { prefix: "dist/.vite/", reason: "Vite build metadata rather than runtime output" },
 ];
@@ -674,8 +656,7 @@ function check_locales(context: AuditContext, manifest: ManifestFacts): number {
     }
   }
 
-  // The default catalog is compiled into the entry chunk rather than split out, so a present and
-  // non-empty dist/index.js is what ships `en`; every other locale arrives as its own chunk.
+  // The default catalog is compiled into the entry chunk; other locales are separate chunks.
   const entry_bundle = context.by_path.get(ENTRY_BUNDLE_PATH);
   if (entry_bundle !== undefined && entry_bundle.bytes.byteLength > 0) {
     locales.add("en");
@@ -704,12 +685,6 @@ function check_locales(context: AuditContext, manifest: ManifestFacts): number {
   return locales.size;
 }
 
-/**
- * The JS the host loads before anything renders: the entry bundle plus every chunk it statically
- * imports. Chunks behind `import("./chunks/...")` arrive later and belong to neither the version
- * gate nor the initial transfer figure. Returned paths may be absent from the archive; callers that
- * care report the gap themselves.
- */
 function initial_js_paths(context: AuditContext): string[] {
   const entry_bundle = context.by_path.get(ENTRY_BUNDLE_PATH);
   if (entry_bundle === undefined) {
@@ -742,9 +717,7 @@ function check_version_gate(
     });
   }
 
-  // Code splitting moves the constant out of the entry bundle into a statically imported chunk, so
-  // the gate is satisfied by the initial JS asset set as a whole. A chunk reached only through a
-  // dynamic import does not count: the version check runs before anything is lazily loaded.
+  // A dynamic-import-only chunk does not count: the version check runs before anything loads lazily.
   const initial_js = initial_js_paths(context);
   const carried = initial_js.some((path) => {
     const asset = context.by_path.get(path);
@@ -886,13 +859,7 @@ const LEGACY_HISTORY_PATTERNS: readonly ForbiddenPattern[] = [
   { label: "v2 root monolith", pattern: /^index\.js$/u },
 ];
 
-/**
- * Architecture criterion 18 requires the published repository to start from a clean orphan root
- * commit, so the old version's source archive is absent from the history as well as from the
- * artifact. A path that any commit in the released ref's ancestry ever added stays recoverable
- * from a clone forever; see `DEFAULT_HISTORY_REF` for why that ancestry, and not `--all`, is the
- * subject.
- */
+/** Any path a commit in the released ref's ancestry ever added stays recoverable from a clone, so history must not contain the old version's source archive; see `DEFAULT_HISTORY_REF`. */
 function check_legacy_history(context: AuditContext, git: GitDistPort): void {
   const paths = [...git.historical_paths()].sort((left, right) => left.localeCompare(right));
   for (const path of paths) {
@@ -919,11 +886,7 @@ interface BundleBytes {
   readonly initial_css_gzip_bytes: number;
 }
 
-/**
- * Sums the per-file gzip sizes rather than gzipping a concatenation, because each file crosses the
- * wire as its own response. tools/bundle_budget owns the pass/fail threshold; this audit only
- * reports the numbers.
- */
+/** Sums per-file gzip sizes because each file is its own response; the threshold lives in tools/bundle_budget. */
 function measure_bundle_bytes(context: AuditContext): BundleBytes {
   const initial_js = initial_js_paths(context);
   const stylesheet = context.by_path.get(STYLESHEET_PATH);
@@ -1001,10 +964,7 @@ export function audit_entries(
 const CAPABILITY_PROBE_PATH = "apps/extension/src/host/capability_probe.ts";
 const HELPER_VERSION_DECLARATION_PATTERN = /MINIMUM_TAVERN_HELPER_VERSION\s*=\s*["']([^"']+)["']/u;
 
-/**
- * Reads the gate from the code that enforces it, so the audit cannot drift from the runtime it
- * audits. A hardcoded copy here would pass forever after the constant moved.
- */
+/** Reads the gate from the enforcing code so the audit cannot drift from the runtime. */
 export async function read_expected_helper_version(repository_root: string): Promise<string> {
   const source_path = resolve(repository_root, CAPABILITY_PROBE_PATH);
   const declared = HELPER_VERSION_DECLARATION_PATTERN.exec(

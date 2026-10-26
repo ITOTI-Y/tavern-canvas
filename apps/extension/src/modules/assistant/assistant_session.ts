@@ -36,8 +36,7 @@ export interface AssistantSession {
   readonly summaries: readonly AssistantSummaryRecord[];
 }
 
-/** Injected persistence -- the real implementation is IndexedDB-backed; tests use an in-memory
- * fake. Never assumed synchronous, so a real store can validate/serialize on every call. */
+/** Injected persistence; never assumed synchronous. */
 export interface AssistantSessionStore {
   list(): Promise<readonly AssistantSession[]>;
   get(id: string): Promise<AssistantSession | null>;
@@ -97,12 +96,7 @@ export interface LoadSessionResult {
   readonly recovered: boolean;
 }
 
-/**
- * Reads one session, recovering from a store read that throws or returns a malformed row instead
- * of ever propagating the error to the UI (mirrors the corrupt-history-recovery requirement).
- * `recovered: true` signals the caller to surface a "history could not be read; started fresh"
- * notice rather than silently discarding history.
- */
+/** Recovers from a throwing or malformed store read; `recovered: true` tells the caller to show a "history could not be read; started fresh" notice. */
 export async function load_session_safe(
   store: AssistantSessionStore,
   id: string,
@@ -132,8 +126,6 @@ export interface AssistantSessionExport {
   readonly sessions: readonly AssistantSession[];
 }
 
-/** Exports selected sessions (images embedded, since `AssistantImageAttachment.data_url` already
- * carries the data URI) to a single downloadable JSON document. */
 export function export_sessions_json(
   sessions: readonly AssistantSession[],
   exported_at: string,
@@ -142,8 +134,7 @@ export function export_sessions_json(
   return JSON.stringify(payload, null, 2);
 }
 
-/** Enabling a summary auto-disables its parent and children (conflicting coverage would double
- * up context) -- mirrors legacy `enableSummary`. */
+/** Enabling a summary auto-disables its parent and children, whose coverage would double up context. */
 export function enable_summary(
   summaries: readonly AssistantSummaryRecord[],
   id: string,
@@ -170,9 +161,7 @@ export function disable_summary(
   return summaries.map((summary) => (summary.id === id ? { ...summary, enabled: false } : summary));
 }
 
-/** Deletes a summary and reparents its children to the deleted node's own parent, rather than
- * orphaning them under a dangling `parent_id` (mirrors legacy `deleteSummary`'s hierarchy
- * cleanup). */
+/** Reparents the deleted summary's children to its own parent instead of leaving a dangling `parent_id`. */
 export function delete_summary_with_cleanup(
   summaries: readonly AssistantSummaryRecord[],
   id: string,
@@ -186,8 +175,7 @@ export function delete_summary_with_cleanup(
     );
 }
 
-/** Reorders sibling summary cards (same `parent_id`) per `ordered_ids`; every other summary is
- * left in place (mirrors legacy `enableDragSort`). Unknown IDs in `ordered_ids` are ignored. */
+/** Summaries not in `ordered_ids` stay in place; unknown IDs are ignored. */
 export function reorder_summaries(
   summaries: readonly AssistantSummaryRecord[],
   parent_id: string | null,
@@ -209,20 +197,14 @@ export function reorder_summaries(
 
 const CJK_PATTERN = /[一-鿿]/gu;
 
-/** A documented approximation, not a real tokenizer: roughly 1 token per 1.5 CJK characters and
- * 1 token per 4 other characters, close enough for the live token-count display's purpose
- * (mirrors legacy `calculateAndDisplayTokens`, which used the same kind of heuristic estimate). */
+/** Approximation, not a tokenizer: about 1 token per 1.5 CJK characters and 1 per 4 other characters. */
 export function estimate_summary_tokens(text: string): number {
   const cjk_count = (text.match(CJK_PATTERN) ?? []).length;
   const other_count = text.length - cjk_count;
   return Math.ceil(cjk_count / 1.5 + other_count / 4);
 }
 
-/**
- * One-time migration of the legacy v1 flat chat-history array into the v2 multi-session shape
- * (mirrors legacy `migrateV1ToV2`). Returns `null` when `raw` is not that shape at all, so the
- * caller can tell "nothing to migrate" apart from "migrated to zero messages".
- */
+/** Returns `null` when `raw` is not the legacy v1 flat history shape, distinguishing it from migrating to zero messages. */
 export function migrate_legacy_flat_history(raw: unknown, now: string): AssistantSession | null {
   if (!Array.isArray(raw)) {
     return null;

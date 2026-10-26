@@ -41,9 +41,7 @@ export interface AssistantConnectionResult {
   }[];
 }
 
-/** Injected so `AssistantModule` never builds a URL/header/credential itself -- the real
- * implementation resolves route-only `ProviderTransportOperation`s host/Gateway-side, exactly
- * like every other provider connection in this stage (see `provider_transport.ts`). */
+/** Injected so the module never builds a URL, header or credential; the real implementation resolves route-only operations host-side. */
 export interface AssistantConnectionPort {
   send(
     request: AssistantCompletionRequest,
@@ -57,8 +55,6 @@ export interface AssistantImageGenerationJob {
   readonly job_id: string;
 }
 
-/** The same typed Stage 02 image-generation command surface, scoped down to what the assistant's
- * `generate_image` tool needs. */
 export interface AssistantImageGenerationPort {
   submit(request: {
     readonly profile_id: string;
@@ -76,11 +72,7 @@ export interface AssistantTaskStripEntry {
 export type AssistantTaskKind = "tool_call" | "image_generation" | "summary";
 export type AssistantTaskState = "running" | "completed" | "failed";
 
-/**
- * One tracked unit of assistant work. Every model-issued tool call opens one, so the user can see
- * what the assistant is doing and why a turn is taking time, instead of only image generation
- * surfacing anywhere. `task_strip` stays the narrow image-generation projection it always was.
- */
+/** One tracked unit of assistant work; every model-issued tool call opens one. */
 export interface AssistantTask {
   readonly task_id: string;
   readonly kind: AssistantTaskKind;
@@ -94,11 +86,7 @@ export interface AssistantTask {
   readonly error_code: string | null;
 }
 
-/**
- * Incremental render feed. The connection port has always handed chunks to `send`; this is how
- * they reach a caller, so a message can render as it arrives instead of appearing whole once the
- * request resolves. `done` fires exactly once per turn, including when nothing streamed at all.
- */
+/** `done` fires exactly once per turn, including when nothing streamed. */
 export interface AssistantStreamEvent {
   readonly session_id: string;
   readonly message_id: string;
@@ -122,13 +110,7 @@ export interface AssistantModuleDependencies {
   readonly screen_input: ScreenInputService;
   readonly clock: () => string;
   readonly id_source: () => string;
-  /**
-   * How many model turns one `send` may run. `1` (the default) keeps the historical single-round
-   * behaviour: dispatch the tool calls and return. Anything higher feeds each round's tool results
-   * back as a fresh turn until the model stops requesting tools or the cap is reached, which is
-   * what lets the assistant answer a question that needs two or three lookups without the user
-   * prompting again. The cap is a hard stop, never a heuristic.
-   */
+  /** Max model turns per `send`; `1` dispatches the tool calls and returns, higher values feed tool results back until the model stops requesting tools or the cap is hit. */
   readonly auto_query_max_iterations?: number;
 }
 
@@ -202,17 +184,8 @@ function read_string_argument(arguments_: Readonly<Record<string, unknown>>, key
 }
 
 /**
- * Top-level assistant orchestrator, implementing `RuntimeModule` so it only starts when
- * explicitly enabled/opened (never in the initial `ModuleRuntime` list). Owns session state, the
- * chat send/abort loop, the fixed tool-dispatch allowlist, and disposal of every media/URL
- * resource screen capture might be holding. Voice features (TTS/ASR) were removed entirely per
- * the user's 2026-08-07 scope ruling; this module never wires speech synthesis or recognition.
- *
- * Authority boundary: `#dispatch_tool` is the *only* code path that executes a model-issued tool
- * call, and its `switch` has no case that persists or executes anything directly -- reads go
- * through `settings_draft_tools.ts`'s redacted views, writes go through `create_settings_draft`
- * (which only ever returns a diff), and `apply_settings_draft` (the one function that can call
- * the real settings capability) is never imported here at all.
+ * `#dispatch_tool` is the only path that executes a model-issued tool call. Writes go through
+ * `create_settings_draft`, which only returns a diff; `apply_settings_draft` must never be imported here.
  */
 export class AssistantModule implements RuntimeModule {
   readonly module_id = "assistant";
@@ -256,7 +229,6 @@ export class AssistantModule implements RuntimeModule {
     return this.#tasks;
   }
 
-  /** The image-generation projection of `tasks`, kept in its original shape for the task strip. */
   get task_strip(): readonly AssistantTaskStripEntry[] {
     return this.#tasks
       .filter((task) => task.kind === "image_generation" && task.job_id !== null)
@@ -290,7 +262,6 @@ export class AssistantModule implements RuntimeModule {
     this.#settle_task(task_id, "failed", error_code);
   }
 
-  /** Drops completed and failed tasks, leaving running work visible. */
   clear_finished_tasks(): void {
     this.#set_tasks(this.#tasks.filter((task) => task.state === "running"));
   }
@@ -318,8 +289,6 @@ export class AssistantModule implements RuntimeModule {
     return result;
   }
 
-  /** Scroll windowing: the most recent `limit` messages starting `offset` messages back from the
-   * end, for a virtualized/infinite-scroll-up message list. */
   windowed_messages(
     session: AssistantSession,
     offset: number,
@@ -389,8 +358,6 @@ export class AssistantModule implements RuntimeModule {
       for (const call of result.tool_calls) {
         const record = await this.#run_tool_call(call.name, call.arguments, settings);
         tool_call_records.push(record);
-        // The tool result becomes the next turn's context, which is what makes another
-        // iteration worth running at all.
         conversation.push({ role: "assistant", content: `${call.name} -> ${record.result}` });
       }
     }
@@ -417,7 +384,6 @@ export class AssistantModule implements RuntimeModule {
     return assistant_message;
   }
 
-  /** Hydrates in-memory sessions from the store, for a panel opening on an existing history. */
   async load_sessions(): Promise<readonly AssistantSession[]> {
     this.#sessions = await this.#deps.session_store.list();
     return this.#sessions;
@@ -501,7 +467,6 @@ export class AssistantModule implements RuntimeModule {
     );
   }
 
-  /** Dispatches one tool call inside a tracked task, so a stuck or rejected call is visible. */
   async #run_tool_call(
     name: string,
     arguments_: Readonly<Record<string, unknown>>,
@@ -525,9 +490,7 @@ export class AssistantModule implements RuntimeModule {
     return { tool_name: name, arguments: arguments_, result: JSON.stringify(dispatched) };
   }
 
-  /** Edit-and-resend / "continue from here": truncates history at `message_id` (inclusive) and
-   * re-sends `new_content` as a fresh user turn -- per-message regenerate uses the same path with
-   * the prior assistant reply's own content. */
+  /** Truncates history at `message_id` (inclusive) and re-sends `new_content` as a fresh user turn. */
   async edit_and_resend(
     session_id: string,
     message_id: string,
@@ -545,8 +508,7 @@ export class AssistantModule implements RuntimeModule {
     return this.send(session_id, new_content);
   }
 
-  /** Summary generation is a prompt-building call, never the tool-enabled chat turn -- routed
-   * through `build_prompt_building_request`, which structurally carries no tools. */
+  /** Summary generation uses `build_prompt_building_request`, which structurally carries no tools. */
   async generate_summary(
     session_id: string,
     message_ids: readonly string[],

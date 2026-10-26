@@ -17,20 +17,9 @@ function alias_search_texts(record: VocabularyRecord): string[] {
 }
 
 /**
- * Indexes every alias and the translation (if present) of each record,
- * keyed by their own normalized text — not the record's tag. `record_id`
- * always points back at the primary record. Duplicate (key, record_id)
- * pairs (e.g. an alias equal to the translation) collapse to one entry,
- * tracked per normalized key rather than via string concatenation so no
- * separator choice can ever misidentify two distinct pairs as the same one.
- *
- * Shard layout is the payload contract addendum v2's hashed bucketing: a
- * key's two-code-point group is hashed into one of 512 fixed buckets, so
- * the alias index costs at most 512 files however many distinct CJK
- * two-character groups the corpus contains. Entries stay sorted by key,
- * then popularity descending, then record_id ascending — a bucket is
- * simply the concatenation of several v1 groups, and the Worker's
- * `startsWith` filtering treats it identically.
+ * Keyed by each alias's and the translation's own normalized text. Duplicate (key, record_id) pairs
+ * collapse, tracked per key so no separator can conflate distinct pairs. A key's two-code-point
+ * group hashes into one of 512 fixed buckets; entries sort by key, popularity desc, record_id asc.
  */
 export function build_alias_shards(records: readonly VocabularyRecord[]): VocabularyShardFile[] {
   const seen_ids_by_key = new Map<string, Set<number>>();
@@ -39,8 +28,7 @@ export function build_alias_shards(records: readonly VocabularyRecord[]): Vocabu
   for (const record of records) {
     for (const text of alias_search_texts(record)) {
       const normalized_key = normalize_vocabulary_search_key(text);
-      // See build_prefix_index.ts's matching guard: an alias/translation
-      // normalizing to "" cannot be an index key (schema requires min(1)).
+      // Keys that normalize to "" are skipped (schema requires min(1)).
       if (normalized_key.length === 0) {
         continue;
       }

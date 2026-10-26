@@ -72,14 +72,7 @@ export interface HostPromptMessage {
   readonly content: string;
 }
 
-/**
- * Private prompt generation is prompt-building, never a chat turn, so it must never expose tools
- * to the model (`tools: []` / `tool_choice: "none"` -- @tavern-canvas/core's `PrivatePromptPolicy`,
- * built by `create_trigger_policy` and mirrored by the prompt module's `PRIVATE_PROMPT_POLICY`).
- * The fields are typed as the policy's literal shape rather than as free-form values, so a caller
- * can state the policy but can never widen it; `TavernHelperHost.generate_private_prompt` emits it
- * unconditionally either way.
- */
+/** Private prompt generation never exposes tools (`tools: []` / `tool_choice: "none"`); the literal field types stop callers from widening the policy. */
 export interface PrivatePromptRequest {
   readonly generation_id: string;
   readonly prompts: readonly HostPromptMessage[];
@@ -116,7 +109,6 @@ export interface HostImageUploadResult {
 
 export interface HostAdapter {
   readonly capabilities: CapabilityMatrix;
-  /** Returns whether the host can expose native function tools under its current runtime settings. */
   can_use_native_tools(): boolean;
   get_locale(): string;
   get_active_chat(): Promise<HostChatSnapshot>;
@@ -125,13 +117,7 @@ export interface HostAdapter {
   subscribe_chat_change(handler: HostChatChangeHandler): () => void;
   subscribe_message_swiped(handler: HostMessageSwipedHandler): () => void;
   register_image_tool(tool: HostImageTool): () => void;
-  /**
-   * Publishes (or clears, with `null`) the one system instruction that tells the main LLM how to
-   * ask for an image. Without it the model cannot know the generation anchor, and both trigger
-   * paths reject every request it makes: `RequestImageTool` throws `missing` and
-   * `FallbackStreamParser` discards the comment. The descriptor comes from
-   * `create_trigger_policy`, so the wording and the anchor are stated in exactly one place.
-   */
+  /** Without this instruction the model cannot know the generation anchor and both trigger paths reject every request it makes. */
   set_trigger_injection(injection: HostPromptInjection | null): void;
   generate_private_prompt(request: PrivatePromptRequest): Promise<string>;
   update_message(request: MessageUpdateRequest): Promise<void>;

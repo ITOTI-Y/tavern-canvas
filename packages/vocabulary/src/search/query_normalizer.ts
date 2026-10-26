@@ -4,11 +4,8 @@ export interface NormalizedVocabularyQuery {
   readonly raw: string;
   readonly normalized: string;
   readonly is_empty: boolean;
-  // First two normalized Unicode code points, matching the prefix/alias
-  // shard grouping key (payload-contract.md). null when the normalized
-  // query has fewer than 2 code points -- too short to address a group.
+  // null when the normalized query has fewer than 2 code points.
   readonly group_key: string | null;
-  // Unique normalized 3-code-point sequences, in first-occurrence order.
   readonly trigrams: readonly string[];
 }
 
@@ -16,14 +13,6 @@ function to_code_points(text: string): readonly string[] {
   return Array.from(text);
 }
 
-/**
- * First `code_point_count` Unicode code points of `text`, as a shard
- * grouping key -- matches the builder's `shard_group_key` exactly (same
- * code-point-aware slicing via `Array.from`, so astral characters group
- * identically on both the encode and decode sides). Used both for the
- * query's own prefix/alias group_key (below) and, by the Worker, to group
- * each individual trigram for trigram shard lookup.
- */
 export function code_point_group_key(text: string, code_point_count: number): string {
   return Array.from(text).slice(0, code_point_count).join("");
 }
@@ -44,12 +33,6 @@ function build_trigrams(code_points: readonly string[]): readonly string[] {
   return trigrams;
 }
 
-/**
- * Normalizes a raw search box query into every derived artifact the query
- * planner's phases need: the shared search key (reusing the contracts
- * normalizer so query-side and index-side normalization can never drift),
- * the prefix/alias shard group key, and the trigram set for fuzzy recall.
- */
 export function normalize_vocabulary_query(raw: string): NormalizedVocabularyQuery {
   const normalized = normalize_vocabulary_search_key(raw);
   const code_points = to_code_points(normalized);

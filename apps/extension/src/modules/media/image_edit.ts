@@ -16,10 +16,6 @@ export class TagEditError extends Error {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Tag-edit textbox dialog state (manual.tag_edit_dialog, manual.tag_actions_menu)
-// ---------------------------------------------------------------------------
-
 export interface TagEditDraft {
   readonly tag_id: string;
   readonly original_text: string;
@@ -61,10 +57,6 @@ export function assert_tag_deletable(draft: TagEditDraft): void {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Preset-match highlighting underlay
-// ---------------------------------------------------------------------------
-
 export interface PresetMatchCandidate {
   readonly preset_id: string;
   readonly label: string;
@@ -76,13 +68,7 @@ export interface PresetMatchRange {
   readonly preset_id: string;
 }
 
-/**
- * Scans `text` for occurrences of each preset's label (case-insensitive, longest-label-first so a
- * longer preset name is never shadowed by a shorter one it happens to contain), returning
- * non-overlapping match ranges in left-to-right order. Backs the tag-edit textbox's preset-match
- * highlighting underlay (manual.tag_edit_dialog); the underlay rendering itself lives in
- * ImageEditDialog.vue.
- */
+/** Longest label first so a longer preset name is never shadowed by a shorter one it contains; matches do not overlap and are ordered left to right. */
 export function find_preset_matches(
   text: string,
   presets: readonly PresetMatchCandidate[],
@@ -116,11 +102,6 @@ export function find_preset_matches(
   return ranges.sort((left, right) => left.start - right.start);
 }
 
-// ---------------------------------------------------------------------------
-// Banana retouch / {修图} edit-mode request building
-// (manual.banana_retouch_trigger_dialog, manual.banana_edit_mode_trigger)
-// ---------------------------------------------------------------------------
-
 export type ImageEditProvider = "openai_image" | "google_image";
 
 export interface ImageEditInput {
@@ -131,13 +112,7 @@ export interface ImageEditInput {
   readonly provider_id: ImageEditProvider;
 }
 
-/**
- * Builds a whole-image edit request (Banana retouch dialog, or the {修图}-tag trigger routed
- * through a dedicated edit preset) -- no mask, so this is always a full-image edit, distinct from
- * inpaint_session.ts's masked submissions. OpenAI already declares `mode: "edit"` for exactly this
- * shape; Google has no explicit mode, editing is implicit via `reference_asset_ids` -- both fit the
- * existing contracts unchanged.
- */
+/** Whole-image edit with no mask. OpenAI declares `mode: "edit"`; Google edits implicitly through `reference_asset_ids`. */
 export function build_image_edit_request(
   input: ImageEditInput,
 ): OpenAiImageRequest | GoogleImageRequest {

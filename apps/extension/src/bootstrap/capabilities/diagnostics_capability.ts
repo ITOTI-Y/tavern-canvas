@@ -12,13 +12,9 @@ import type {
 import type { CapabilityResolutionRecord } from "../capability_resolution.js";
 import { DomainEventEmitter } from "./_records.js";
 
-/** Bounded so a long session cannot grow the timeline without limit. */
 const MAX_TIMELINE_ENTRIES = 500;
 
-/**
- * The Studio's real event log. Entries carry only correlation fields (anchors, ids, codes) -- never
- * prompt text, message content, or anything a provider payload touched.
- */
+/** Entries carry only correlation fields, never prompt text, message content or provider payloads. */
 export class TaskTimeline {
   readonly #entries: TaskTimelineEntry[] = [];
   readonly #events = new DomainEventEmitter<DiagnosticsDomainEvent>();
@@ -46,7 +42,6 @@ export class TaskTimeline {
     this.#events.emit({ type: "timeline_entry_appended", entry: full });
   }
 
-  /** Mirrors every job transition the queue publishes into the timeline. */
   observe_jobs(queue: ImageJobQueue): () => void {
     return queue.subscribe((job: GenerationJobSnapshot) => {
       this.append({
@@ -70,13 +65,10 @@ export interface DiagnosticsCapabilityDeps {
   readonly settings: () => TavernCanvasSettings | null;
   readonly estimate_storage: () => Promise<StorageEstimate | undefined>;
   readonly extension_version: string;
-  /** Present only when a Gateway endpoint is configured; otherwise the connection test reports the
-   * absence rather than pretending to have reached something. */
   readonly probe_gateway: (() => Promise<ConnectionTestResult>) | null;
 }
 
-/** Settings are exported into the support bundle with every value that could identify a host or a
- * credential removed, keeping only shape and non-sensitive flags. */
+/** Exported settings have every value that could identify a host or a credential removed. */
 function redact_settings(settings: TavernCanvasSettings | null): Readonly<Record<string, unknown>> {
   if (settings === null) {
     return {};

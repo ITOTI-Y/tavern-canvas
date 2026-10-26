@@ -5,8 +5,6 @@ import AppButton from "../../components/AppButton.vue";
 import IconButton from "../../components/IconButton.vue";
 import styles from "./gallery.module.css";
 
-/** Appears once at least one tile is selected. A 1px top divider separates it from the grid
- * (cockpit density discipline) instead of wrapping the whole bar in its own card. */
 defineProps<{
   readonly selectedCountLabel: string;
   readonly downloadLabel: string;

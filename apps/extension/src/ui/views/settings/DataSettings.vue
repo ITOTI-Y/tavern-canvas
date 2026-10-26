@@ -16,11 +16,7 @@ import SegmentedControl from "../../components/SegmentedControl.vue";
 import MigrationStatus from "../diagnostics/MigrationStatus.vue";
 import styles from "./settings.module.css";
 
-/**
- * Manual legacy cleanup (plan + Stage 04 carry-over, binding): shows source record counts + a
- * byte estimate, requires an exact typed confirmation phrase, and calls the destructive capability
- * only after a verified migration or a just-exported archive -- never automatically.
- */
+/** Destructive cleanup is offered only after a verified migration or a just-exported archive, and requires the exact typed confirmation phrase. */
 const props = defineProps<{
   readonly vocabularyUpdateChannel: VocabularyUpdateChannel | null;
   readonly migration: MigrationSnapshot | null;
@@ -30,9 +26,6 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-/** Kept identical across locales (settings.data.manual_cleanup.confirm_phrase, en.ts/zh_cn.ts):
- * a typed-delete-confirmation phrase is arbitrary text to retype exactly, not content that
- * benefits from translation, matching common typed-confirm UX (e.g. "type the resource name"). */
 const CONFIRM_PHRASE = computed(() => t("settings.data.manual_cleanup.confirm_phrase"));
 
 const channel_pending = ref(false);

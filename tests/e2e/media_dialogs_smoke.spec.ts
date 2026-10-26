@@ -1,12 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-/**
- * Stage 07 Task 3 browser-smoke: touch inpaint, long-press, double-click, preview, a four-image
- * result, one video, and one failed edit -- run under both the "media_dialogs_desktop" (Desktop
- * Chrome) and "media_dialogs_mobile" (Pixel 7, touch-capable) Playwright projects
- * (playwright.config.ts), so every test here exercises real Chromium on both device shapes.
- */
-
 async function goto_panel(page: import("@playwright/test").Page, panel: string): Promise<void> {
   await page.goto(`/media_dialogs_host.html?panel=${panel}`);
   await page.waitForFunction(
@@ -31,13 +24,8 @@ test.describe("InpaintDialog: touch inpaint (real bitmap, real canvas)", () => {
     const center_x = canvas_box.x + canvas_box.width / 2;
     const center_y = canvas_box.y + canvas_box.height / 2;
 
-    // Dispatched directly as a touch-typed PointerEvent (not Playwright's mouse API) so this
-    // proves the SAME handler InpaintDialog.vue wires for mouse/pen also fires for touch, with
-    // zero navigator.userAgent branching in the component itself.
     await page.evaluate(
       ({ x, y }) => {
-        // The app mounts inside a real (open) Shadow Root -- plain document.querySelector does
-        // not pierce it, unlike Playwright's own page.locator(), which flattens shadow trees.
         const shadow_root = document.getElementById("tavern-canvas-root")?.shadowRoot;
         const element = shadow_root?.querySelector('[data-testid="inpaint-mask-canvas"]');
         if (!(element instanceof HTMLElement)) {

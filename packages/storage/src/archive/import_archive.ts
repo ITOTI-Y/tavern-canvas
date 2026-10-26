@@ -62,7 +62,6 @@ export type ArchiveImportFailureReason =
 
 export class ArchiveImportError extends Error {
   readonly reason: ArchiveImportFailureReason;
-  /** The staging namespace that was rolled back, when the failure happened after it was allocated. */
   readonly namespace: string | undefined;
 
   constructor(reason: ArchiveImportFailureReason, message: string, namespace?: string) {
@@ -223,13 +222,8 @@ function verify_checksum(path: string, bytes: Uint8Array, checksums: ArchiveChec
   }
 }
 
-/**
- * `image_records` alone validates through `ImageRecordUnionSchema`: the
- * store holds both migrated (base-shape) and runtime gallery (flat-shape)
- * rows, and `RECORD_SCHEMAS.image_records` only recognizes the base shape —
- * an archive containing an exported gallery row would otherwise fail import
- * with `invalid_record` (Stage 04 review finding I1).
- */
+// `RECORD_SCHEMAS.image_records` only recognizes the base shape, but archives can contain exported
+// gallery rows, so `image_records` validates through `ImageRecordUnionSchema`.
 function record_schema_for(store: ArchiveRecordStore): ZodType<NamespacedRecord> {
   return store === "image_records" ? ImageRecordUnionSchema : RECORD_SCHEMAS[store];
 }
@@ -341,13 +335,8 @@ async function rollback_image_blobs(
   }
 }
 
-/**
- * Stages a verified archive into a fresh `import:<uuid>` namespace and, only on full success,
- * writes an `import_ready` marker to `migration_journal` keyed by that same namespace name.
- * `switch_active_namespace()` is the only code allowed to promote the namespace to active; this
- * function never touches the active namespace, and any failure or cancellation sweeps the
- * staging namespace clean before rejecting.
- */
+// Never touches the active namespace (switch_active_namespace() promotes it); any failure or
+// cancellation sweeps the staging namespace before rejecting.
 export async function import_archive(options: ImportArchiveOptions): Promise<ImportArchiveResult> {
   const { database, signal } = options;
   const zip = await load_zip_module();

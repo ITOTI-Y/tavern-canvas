@@ -1,21 +1,4 @@
-/**
- * Main-trigger parsing: extracts image-generation cues the roleplay model embeds inline in its own
- * reply between configured start/end markers -- distinct from Stage 02's structured native-tool and
- * `<!-- tavern-canvas:image ... -->` fallback-comment mechanisms (`generation_trigger_module.ts`).
- * Ported from legacy `parsePrompts`/`pregenManager` (utils/settings/stream_generate.js,
- * utils/pregen_manager.js).
- *
- * Delegates every extracted prompt to Stage 02 by calling an injected `RequestImageTool`-shaped
- * port (`TriggerDelegatePort`) -- this module keeps only a per-session dedupe `Set`, never a second
- * job queue.
- *
- * Boundary with T3: this module owns text-marker PARSING only. Click/drawing/gesture triggers
- * (`clicktrigger.*`, `gesture.*` in docs/parity/feature_matrix.md) are DOM/canvas interactions with
- * no text to parse -- T3's `ChatMediaInteractionPort` owns binding those to the host surface. Both
- * ultimately produce the same typed delegation call shape this module defines
- * (`TriggerDelegatePort.execute`), so T3 can reuse it once its own trigger detection resolves a
- * scene description.
- */
+/** Text-marker parsing only; every extracted prompt is delegated through an injected `TriggerDelegatePort`. */
 
 export interface TriggerMarkerConfig {
   readonly start: string;
@@ -46,11 +29,7 @@ function sanitize_trigger_content(raw: string): string {
   return raw.trim().replace(/\n/g, "").replace(/，/g, ",").replace(/；/g, ";").replace(/：/g, ":");
 }
 
-/**
- * One-shot extraction from a complete, final text (a fully received message, not a stream). When
- * `retain_original_text` is false the matched `start...end` blocks are removed from `cleaned_text`;
- * when true they are left in place (the "insert original text" behavior).
- */
+/** `retain_original_text` false removes the matched blocks from `cleaned_text`; true leaves them in place. */
 export function extract_triggers_from_text(
   text: string,
   markers: TriggerMarkerConfig = DEFAULT_TRIGGER_MARKERS,
@@ -68,20 +47,11 @@ export function extract_triggers_from_text(
   return { cleaned_text, triggers };
 }
 
-// ---------------------------------------------------------------------------
-// Streaming extraction -- partial markers across chunk boundaries
-// ---------------------------------------------------------------------------
-
 const MAX_CANDIDATE_LENGTH = 8_192;
 
 type StreamState = "text" | "candidate" | "discarding";
 
-/**
- * Stateful char-by-char scanner for streaming text, mirroring `FallbackStreamParser`'s buffering
- * strategy (`packages/core/src/generation/fallback_stream_parser.ts`) but for plain configured
- * start/end markers instead of a JSON control comment: characters are only ever emitted once they
- * are provably not the prefix of a start marker split across two `push()` calls.
- */
+/** Emits characters only once they cannot be the prefix of a start marker split across `push()` calls. */
 export class TriggerStreamParser {
   readonly #markers: TriggerMarkerConfig;
   readonly #retain_original_text: boolean;
@@ -187,16 +157,11 @@ export class TriggerStreamParser {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Delegation to Stage 02 with per-session pre-generation dedupe
-// ---------------------------------------------------------------------------
-
 export interface TriggerDelegateArguments {
   readonly generation_anchor: string;
   readonly scene_description: string;
 }
 
-/** Structurally the surface `@tavern-canvas/core`'s `RequestImageTool` already exposes. */
 export interface TriggerDelegatePort {
   execute(host_root_generation_id: string, arguments_: unknown): unknown;
 }
@@ -210,12 +175,7 @@ export interface TriggerParserSessionOptions {
   readonly delegate: TriggerDelegatePort;
 }
 
-/**
- * Drives a `TriggerStreamParser` for one generation and, when `auto_generation_enabled`, delegates
- * every newly seen distinct prompt to Stage 02 exactly once (a `Set`-backed dedupe -- never a
- * second queue). When automatic generation is disabled, prompts are still extracted and exposed via
- * `delegated_prompts_since_last_check` for a caller to act on manually.
- */
+/** With `auto_generation_enabled` false, prompts are still extracted and exposed via `delegated_prompts_since_last_check`. */
 export class TriggerParserSession {
   readonly #parser: TriggerStreamParser;
   readonly #options: TriggerParserSessionOptions;
@@ -263,10 +223,6 @@ export class TriggerParserSession {
   }
 }
 
-// ---------------------------------------------------------------------------
-// "Insert original text" auto-regex descriptors
-// ---------------------------------------------------------------------------
-
 export interface InsertOriginalTextRegexScript {
   readonly script_name: string;
   readonly find_regex: string;
@@ -277,12 +233,7 @@ export interface InsertOriginalTextRegexScript {
 const IMAGE_TAG_SCRIPT_NAME = "tavern-canvas-hide-image-tag";
 const IMGTHINK_TAG_SCRIPT_NAME = "tavern-canvas-hide-imgthink-tag";
 
-/**
- * Descriptors for the two hide-rules the "insert original text" toggle needs so the raw
- * `<image>`/`<imgthink>` markup a retained-original message carries never renders in chat. Returning
- * typed descriptors keeps this module host-agnostic -- applying them to a live SillyTavern-style
- * regex engine is a host-adapter concern, not this pure module's.
- */
+/** Descriptors for hiding the raw `<image>`/`<imgthink>` markup of retained-original messages; applying them is a host concern. */
 export function build_insert_original_text_regex_scripts(): readonly InsertOriginalTextRegexScript[] {
   return [
     {

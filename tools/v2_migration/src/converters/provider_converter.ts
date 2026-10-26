@@ -44,13 +44,8 @@ function push_secret(
   secret_transfers.push({ operation: "secret_transfer", plaintext_value, ...rest });
 }
 
-// `provider_id` values below include "llm" and "legacy_all", which fall
-// outside the roadmap §5 `provider_ids` enum — `storage`'s `provider_id`
-// field is deliberately a bare string, not that enum, so LLM profiles and
-// the catch-all "everything else" record have somewhere to live. This is an
-// intentional, undocumented-elsewhere contract deviation (Stage 04 review
-// M6); record it before Stage 06 starts consuming provider profiles by
-// `provider_id`.
+// `provider_id` includes "llm" and "legacy_all", outside the `provider_ids` enum; storage's
+// `provider_id` is a bare string.
 export function convert_provider(
   legacy: LegacySettings,
   context: ConversionContext,
@@ -59,9 +54,7 @@ export function convert_provider(
   const secret_transfers: SecretTransferOperation[] = [];
   const records: ProviderProfile[] = [];
 
-  // Every provider_converter-owned path, secret-redacted, so nothing is lost
-  // even where the per-profile expansion below is imprecise about which v2
-  // route a shared legacy default scalar originally applied to.
+  // Every owned path, secret-redacted, so nothing is lost where the per-profile expansion below is imprecise.
   const legacy_all_id = deterministic_uuid(`${context.namespace}:provider_converter:legacy_all`);
   const legacy_all_payload = redact_secret_paths(
     select_owned_fields(legacy, SETTINGS_PATH_RULES, "provider_converter"),

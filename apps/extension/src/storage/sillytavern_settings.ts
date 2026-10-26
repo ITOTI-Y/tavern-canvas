@@ -12,10 +12,8 @@ import type { SillyTavernSettingsHostOptions } from "./settings_port.js";
 export const TAVERN_CANVAS_SETTINGS_KEY = "tavern_canvas" as const;
 export const MAX_SETTINGS_SERIALIZED_BYTES = 65_536 as const;
 
-// These v2 categories belong in IndexedDB (business records, image bytes,
-// vocabulary data) or are excluded entirely (logs), never in small settings.
-// Naming them lets recovery report `disallowed_category` instead of the
-// generic `unknown_field`.
+// v2 business, image and vocabulary data belong in IndexedDB and logs are excluded; naming them
+// reports `disallowed_category` instead of `unknown_field`.
 const DISALLOWED_SMALL_SETTINGS_CATEGORIES: ReadonlySet<string> = new Set([
   "profiles",
   "workflows",
@@ -76,9 +74,7 @@ function clone_default(): TavernCanvasSettings {
   return structuredClone(DEFAULT_TAVERN_CANVAS_SETTINGS);
 }
 
-// JSON.stringify's lib types claim it always returns string, but it returns
-// undefined for functions, symbols, and undefined itself; this signature
-// carries the accurate contract across the call boundary.
+// `JSON.stringify` also returns `undefined` for functions, symbols and `undefined`.
 function stringify(value: unknown): string | undefined {
   return JSON.stringify(value);
 }
@@ -323,13 +319,6 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
   };
 }
 
-/**
- * Owns `extension_settings.tavern_canvas`. Every write validates the
- * candidate, replaces the settings object immutably in memory and on the
- * host, then schedules one debounced host save; same-task writes coalesce
- * into that single save. `flush()`/`stop()` bypass the scheduler and persist
- * immediately.
- */
 export function create_sillytavern_settings(
   host: SillyTavernSettingsHostOptions,
 ): SillyTavernSettings {

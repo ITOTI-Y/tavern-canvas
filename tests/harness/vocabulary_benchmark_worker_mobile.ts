@@ -4,8 +4,7 @@ import {
   with_activation_lifecycle,
 } from "../../apps/extension/src/workers/vocabulary_worker.js";
 
-// Explicit mobile-mode (16 MiB LRU) benchmark worker -- the mirror of
-// vocabulary_benchmark_worker_desktop.ts; see that file for why both exist.
+// Explicit mobile-mode (16 MiB LRU) benchmark worker; see vocabulary_benchmark_worker_desktop.ts.
 declare const self: DedicatedWorkerGlobalScope;
 
 interface VocabularyWorkerDebugGlobal {

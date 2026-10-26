@@ -18,13 +18,6 @@ import {
 } from "../../../transport/http_acknowledgment.js";
 import styles from "./settings.module.css";
 
-/**
- * Step 3 (HTTP risk disclosure, plan Step 3 / brief binding): loopback and private-IP HTTP is
- * warning severity, public/unknown-host HTTP is error-colored risk -- neither ever blocks saving
- * the endpoint. Acknowledgment is read straight from `settings.gateway.http_acknowledgments`
- * (persisted, per normalized origin, Stage 04's model) rather than local-only component state, so
- * a page reload does not re-show a banner the user already dismissed for that origin.
- */
 const props = defineProps<{
   readonly settings: TavernCanvasSettings | null;
   readonly connectionTestCommand: CommandState<ConnectionTestResult>;
@@ -122,8 +115,7 @@ async function acknowledge(): Promise<void> {
   }
 }
 
-/** The plaintext never lands in settings: the controller hands it to the selected credential
- * backend and only the returned reference is rendered. The draft clears after the write. */
+/** The plaintext goes to the credential backend; settings keep only the returned reference. */
 async function save_token(): Promise<void> {
   const value = token_draft.value.trim();
   token_error.value = null;

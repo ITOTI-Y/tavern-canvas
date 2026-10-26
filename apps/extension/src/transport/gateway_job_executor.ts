@@ -26,23 +26,13 @@ const REMOTE_CANCEL_TIMEOUT_MS = 5_000;
 export interface GatewayJobExecutorDeps extends GeneratedImageStoreDeps {
   readonly endpoint: string;
   readonly http_acknowledgments: Readonly<Record<string, string>>;
-  /**
-   * Resolved from the selected credential storage once per job. The plaintext token lives no
-   * longer than the `GatewayTransport` that carries it, which is discarded when the job settles.
-   */
+  /** The plaintext token lives no longer than the `GatewayTransport` that carries it. */
   readonly access_token: () => Promise<string>;
   readonly plans: MediaExecutionPlanRegistry;
   readonly fetch?: GatewayFetch;
 }
 
-/**
- * Drives the standalone Gateway as a `JobExecutor` rather than a `ProviderTransport`: the Gateway
- * runs the provider adapter itself, so the client submits one whole `ImageGenerationRequest` and
- * follows the resulting job over SSE (falling back to polling) instead of issuing per-route
- * provider calls. What comes back is an asset id list, downloaded here and written through the
- * same Stage 04 persistence step the direct executors use, so a Gateway-produced image is
- * indistinguishable from a directly generated one everywhere downstream.
- */
+/** A `JobExecutor`, not a `ProviderTransport`: the Gateway runs the provider adapter itself, so one whole `ImageGenerationRequest` is submitted and followed over SSE (polling fallback). */
 export class GatewayJobExecutor implements JobExecutor {
   readonly #deps: GatewayJobExecutorDeps;
 
@@ -89,8 +79,7 @@ export class GatewayJobExecutor implements JobExecutor {
     try {
       return await this.#deps.access_token();
     } catch {
-      /* The vault failure carries no diagnostic the user can act on here beyond "no usable token",
-       * and its message may have been built from a response that held the token itself. */
+      /* The vault failure's message may have been built from a response that held the token. */
       throw new JobExecutorFailure({ code: "auth_failed", retryable: false });
     }
   }
@@ -129,8 +118,7 @@ async function cancel_remote_job(
   try {
     await transport.cancel(submitted.job_id, AbortSignal.timeout(REMOTE_CANCEL_TIMEOUT_MS));
   } catch {
-    /* The local job is already ending; a Gateway that cannot be told stays authoritative for its
-     * own copy and reaps it on the next restart. */
+    /* A Gateway that cannot be told reaps its own copy on restart. */
   }
 }
 

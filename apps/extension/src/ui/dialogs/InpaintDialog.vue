@@ -33,24 +33,6 @@ import {
 } from "../../modules/media/inpaint_session.js";
 import styles from "./dialogs.module.css";
 
-/**
- * Real-bitmap mask editor (inpaint.comfyui_mask_editor / inpaint.novelai_mask_editor). All mask
- * math (brush/erase rasterization, undo/redo history, provider-specific export) lives in
- * `InpaintMaskSession` (inpaint_session.ts) -- this component only owns the two `<canvas>` layers
- * (bitmap + mask overlay), native Pointer Events (mouse/pen/touch all flow through the same
- * `pointerdown`/`pointermove`/`pointerup` handlers -- no `event.pointerType` branching, no
- * `navigator.userAgent`), and the toolbar/prompt/denoise form. The canvas frame's aspect ratio is
- * computed once from the loaded bitmap and never recalculated from `pending`/error state, so
- * neither the canvas nor the surrounding controls resize when status changes.
- *
- * Built on raw Reka Dialog primitives, not AppDialog: AppDialog's `dialogContent` hard-caps at
- * 480px (right for a form, wrong for an image editor -- the same reasoning
- * apps/extension/src/ui/views/gallery/ImagePreviewDialog.vue already documents for its own use of
- * these same primitives), and browser-smoke testing this task's own harness
- * (tests/harness/media_dialogs_host.html) directly caught the 480px cap silently clipping the mask
- * canvas. `.dialogHeader`/`.dialogTitle`/`.dialogClose`/`.dialogDescription`/`.dialogOverlay` are
- * reused as-is from components.module.css so the chrome still matches every other dialog.
- */
 const props = withDefaults(
   defineProps<{
     readonly open: boolean;
@@ -129,8 +111,6 @@ const dimension_error = computed<string | null>(() => {
   }
 });
 
-// Computed once from the bitmap and re-derived only when the bitmap prop itself changes -- never
-// from `pending`/status, which is exactly what keeps the frame from resizing on status change.
 const aspect_ratio = computed(() => props.bitmap.width / props.bitmap.height);
 const frame_style = computed(() => ({ "--tc-inpaint-aspect": String(aspect_ratio.value) }));
 
@@ -214,7 +194,6 @@ function to_mask_point(event: PointerEvent): MaskPoint | null {
   return { x: (event.clientX - rect.left) * scale_x, y: (event.clientY - rect.top) * scale_y };
 }
 
-/** Mouse, pen, and touch all reach this same handler through the native Pointer Events API. */
 function on_pointer_down(event: PointerEvent): void {
   if (active_pointer_id !== null) {
     return;

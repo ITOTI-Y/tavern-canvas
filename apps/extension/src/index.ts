@@ -1,11 +1,7 @@
 declare const __TAVERN_CANVAS_VERSION__: string;
 
-// Plain (non-inline) imports of every first-party stylesheet, purely so Vite's cssCodeSplit:false
-// build still emits dist/index.css (apps/extension/scripts/assert_bundle.mjs requires it to
-// exist) and processes the Geist font's url() into a real emitted asset. Their content there is
-// otherwise inert: nothing ever links dist/index.css into the host page. The Shadow Root's real
-// stylesheet is FIRST_PARTY_STYLESHEET (runtime_stylesheet.ts), built from the same files'
-// `?inline` text.
+// These plain imports make the build emit dist/index.css (required by assert_bundle.mjs); the Shadow
+// Root's stylesheet is FIRST_PARTY_STYLESHEET.
 import "./ui/styles/tokens.css";
 import "./ui/styles/base.css";
 import "./ui/styles/utilities.css";

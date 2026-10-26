@@ -71,8 +71,6 @@ describe("GenerationParametersDialog", () => {
     const wrapper = mount_dialog({ mode: "dimensions" });
     await nextTick();
     await new Promise((resolve) => setTimeout(resolve, 0));
-    // Both the width stepper's increment and decrement buttons share the widthStepLabel
-    // aria-label; either one changing the value is enough to prove the wiring is live.
     const width_button = [...document.querySelectorAll("button")].find(
       (button) => button.getAttribute("aria-label") === "Adjust width",
     );

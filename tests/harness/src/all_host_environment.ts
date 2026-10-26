@@ -5,16 +5,6 @@ import type {
 } from "../../../apps/extension/src/host/sillytavern_host.js";
 import type { HostMessageRole } from "../../../apps/extension/src/host/host_adapter.js";
 
-/**
- * The host-global surface the real extension probes and binds to, built as a plain object graph
- * rather than as a `HostAdapter`. `tests/harness/src/fake_host.ts` fakes the *adapter*, which is
- * the right seam for the unit/integration suites; the all-host E2E has to prove one level lower --
- * that `probe_host_capabilities`, `create_composite_host`, `SillyTavernHost`, `TavernHelperHost`
- * and `TauriTavernHost` themselves work against a host shaped like the real one, inside a real
- * browser. So everything below is expressed exactly as SillyTavern 1.18.0, JS-Slash-Runner 4.9.1
- * and TauriTavern 2.2.0 expose it, and the extension is given nothing but `window`.
- */
-
 export interface RecordedRequest {
   readonly url: string;
   readonly method: string;
@@ -45,16 +35,10 @@ export interface HostEnvironmentControl {
   readonly registered_tools: readonly SillyTavernFunctionTool[];
   readonly unregistered_tool_names: readonly string[];
   readonly subscribed_events: readonly string[];
-  /** Every value the extension published through SillyTavern's `setExtensionPrompt`. The trigger
-   * injection is how the main LLM learns the generation anchor it must echo back. */
   readonly trigger_injections: readonly string[];
   readonly upload_requests: readonly RecordedRequest[];
   readonly requests: readonly RecordedRequest[];
   readonly chat_messages: readonly MutableChatMessage[];
-  /**
-   * Every property name the extension read off `window.TavernHelper`. Acceptance criterion 7's
-   * second half ("运行代码只使用 TavernHelper 公开 API") is only checkable by watching the reads.
-   */
   readonly helper_property_reads: readonly string[];
   readonly saved_settings_count: () => number;
   readonly extension_settings: Record<string, unknown>;
@@ -86,7 +70,6 @@ export interface MutableChatMessage {
 const SEEDED_CREDENTIAL = "seeded-plaintext-credential-never-in-a-bundle";
 const CSRF_HEADER_VALUE = "harness-csrf-token";
 
-/** The value the security spec searches for; deliberately distinctive so a substring hit is real. */
 export const SEEDED_SECRET_VALUE = SEEDED_CREDENTIAL;
 export const SEEDED_PROMPT_TEXT = "SEEDED_PROMPT_a_rainy_alley_at_night_marker";
 export const SEEDED_CHAT_TEXT = "SEEDED_CHAT_CONTENT_marker_never_leaves_the_host";
@@ -153,12 +136,6 @@ function json_response(body: unknown, status = 200): Response {
   });
 }
 
-/**
- * Builds the fake host globals and returns both the object the extension is booted against and the
- * control surface a spec drives it with. Nothing here reaches the network: any request that is not
- * one of SillyTavern's own first-party routes resolves to 404 and is recorded, which is what makes
- * "no remote runtime request occurred" an assertion rather than an assumption.
- */
 export function create_host_environment(options: HostEnvironmentOptions): {
   readonly globals: Record<string, unknown>;
   readonly control: HostEnvironmentControl;
@@ -282,8 +259,6 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       return Promise.resolve(json_response({}));
     }
     if (record.url === "/api/secrets/read") {
-      // SillyTavern's `/api/secrets/read` answers presence-and-active state for every stored key,
-      // masked; the migration runner probes it after each write to confirm the transfer landed.
       return Promise.resolve(
         json_response(
           Object.fromEntries([...stored_secret_keys].map((key) => [key, [{ active: true }]])),
@@ -437,9 +412,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         chat_messages.splice(index, 1);
       }
     },
-    // TauriTavern 2.2.0's real activation batch shape: `TauriWorldInfoActivationBatchSurface`
-    // (apps/extension/src/host/tauritavern_host.ts). Emitting a partial batch went unnoticed while
-    // nothing in the extension subscribed; a subscribed module validates it and rejects.
+    // A partial batch is rejected by a subscribed module; emit the full TauriWorldInfoActivationBatchSurface shape.
     emit_world_info_activation(entries) {
       for (const handler of [...world_info_handlers]) {
         handler({
@@ -462,12 +435,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
   return { globals, control, provider_fetch, provider_requests };
 }
 
-/**
- * A one-image SD WebUI txt2img body. Inlined rather than read from
- * `tests/fixtures/providers/sd_webui/txt2img_response.json` because this module is bundled into a
- * browser page, which has no filesystem; the bytes are a 1x1 PNG, the smallest thing
- * `decode_base64_image` accepts.
- */
+// Inlined: this module is bundled into a browser page without filesystem access.
 const PROVIDER_RESPONSE = {
   images: [
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsSAAALEgHS3X78AAAADUlEQVQImWNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==",

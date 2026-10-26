@@ -14,9 +14,8 @@ export const CHECKSUMS_PATH = "checksums.json";
 export const ASSET_DIRECTORY = "assets";
 
 /**
- * A single entry may not declare more than this many uncompressed bytes. Checked against the
- * central directory's declared size before decompression starts, so a forged size is rejected
- * without ever inflating the payload (the primary zip-bomb defense for import).
+ * Checked against the central directory's declared size before decompression, so a forged size is
+ * rejected without inflating the payload (zip-bomb defense).
  */
 export const MAX_ENTRY_UNCOMPRESSED_BYTES = 512 * 1024 * 1024;
 
@@ -26,11 +25,8 @@ export function record_path(store: ArchiveRecordStore): string {
   return `records/${store}.jsonl`;
 }
 
-/**
- * The archive's fixed, non-asset paths: manifest, checksums, and one JSONL file per record
- * store. Asset paths are matched by pattern instead, since their count varies. Together these
- * form the complete allowlist import uses to reject unexpected or path-traversal entries.
- */
+// Asset paths are matched by pattern. Together with these, they form the allowlist import uses to
+// reject unexpected or path-traversal entries.
 export const FIXED_ENTRY_PATHS: ReadonlySet<string> = new Set([
   MANIFEST_PATH,
   CHECKSUMS_PATH,

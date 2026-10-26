@@ -1,11 +1,6 @@
 import { VocabularyManifestSchema, type VocabularyManifest } from "@tavern-canvas/contracts";
 
-/**
- * Where package content is fetched from: a remote HTTPS update channel, or the extension's own
- * bundled baseline (served from its own origin at a relative path). Both resolve to a concrete
- * absolute base URL supplied by the caller — this module never derives a fetch URL from
- * manifest or shard content, so downloaded bytes can never redirect a future fetch.
- */
+// The base URL is supplied by the caller; fetch URLs are never derived from manifest or shard content.
 export type PackageSourceConfig =
   | { readonly kind: "https"; readonly base_url: string }
   | { readonly kind: "bundled"; readonly base_url: string };
@@ -39,7 +34,6 @@ export class PackageFetchError extends Error {
 }
 
 const MANIFEST_FILE_NAME = "manifest.json";
-/** Generous ceiling for a JSON manifest (bounded array of up to 50,000 shard entries). */
 const MAX_MANIFEST_BYTES = 8 * 1024 * 1024;
 
 function validated_base_url(config: PackageSourceConfig): URL {
@@ -64,11 +58,6 @@ function validated_base_url(config: PackageSourceConfig): URL {
   return url;
 }
 
-/**
- * Resolves strictly against the configured, statically-supplied base — the only URL source this
- * client ever consults. `relative_path` always comes from a validated `VocabularyShardPath` (or
- * the fixed manifest filename), never from a field decoded out of downloaded package content.
- */
 function resolve_relative(base_url: URL, relative_path: string): URL {
   return new URL(relative_path, base_url);
 }

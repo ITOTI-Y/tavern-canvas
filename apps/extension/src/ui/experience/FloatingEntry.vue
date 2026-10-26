@@ -21,13 +21,6 @@ import AppIcon from "../components/AppIcon.vue";
 import { use_shell_viewport } from "../shell/use_shell_viewport.js";
 import styles from "./experience.module.css";
 
-/**
- * Settings-gated FAB that opens the Studio (Stage 04's `ui.optional_entry_enabled`; the caller
- * owns reading that setting and passes it as `enabled`). Renders nothing when disabled -- no
- * hidden/collapsed DOM, a plain `v-if`. Position, drag, and media-state resolution all live in
- * modules/experience (framework-agnostic, independently tested); this component only wires
- * Pointer Events/keyboard to that state and renders the result.
- */
 const props = withDefaults(
   defineProps<{
     readonly enabled: boolean;
@@ -35,8 +28,6 @@ const props = withDefaults(
     readonly mediaAssets?: MediaStateAssetMap;
     readonly openLabel?: string;
     readonly positionStore?: FloatingEntryPositionStore | undefined;
-    /** Test/harness seam -- forces a desktop/mobile bucket instead of reading matchMedia, same
-     * convention as use_shell_viewport.ts's own override parameter. */
     readonly viewportOverride?: ViewportBucket | undefined;
   }>(),
   {
@@ -61,11 +52,7 @@ function read_viewport(): ViewportSize {
   return { width: window.innerWidth, height: window.innerHeight };
 }
 
-// `FloatingEntryController`/its position store rely on true (#) private class fields for
-// encapsulation -- Vue's reactivity Proxy breaks brand-checked private field access if either
-// object is ever wrapped (a prop value can arrive already reactive-wrapped by the parent). toRaw()
-// unwraps a store passed in as a prop; markRaw() on the fallback store prevents Vue from ever
-// wrapping it in the first place.
+// Vue's reactivity Proxy breaks the private-field brand checks of the controller and store; unwrap with toRaw() and markRaw().
 const position_store =
   toRaw(props.positionStore) ?? markRaw(new InMemoryFloatingEntryPositionStore());
 
@@ -103,8 +90,6 @@ onBeforeUnmount(() => {
 
 const resolved_media = computed<MediaStateResolution>(() => {
   const state: MediaState = dragging.value ? "dragging" : props.mediaState;
-  // "Idle" doubles as the user-provided static icon (task-6-brief.md's "user-provided icon"
-  // bullet) -- image only, never video, unlike the richer reaction states.
   if (state === "idle") {
     return { state, asset: validate_custom_icon(props.mediaAssets.idle) };
   }
@@ -118,10 +103,6 @@ function on_pointerdown(event: PointerEvent): void {
   if (!(target instanceof HTMLElement) || !event.isPrimary) {
     return;
   }
-  // Rebound to a freshly-typed const: TS does not carry the `instanceof` narrowing above into the
-  // function declarations below (they're stored as event listeners, so it conservatively widens
-  // `target` back to `EventTarget | null` inside them) -- `element` keeps the narrowed HTMLElement
-  // type available everywhere it's actually used.
   const element: HTMLElement = target;
 
   element.setPointerCapture(event.pointerId);
@@ -175,8 +156,6 @@ function on_keydown(event: KeyboardEvent): void {
   if (event.key !== "Enter" && event.key !== " ") {
     return;
   }
-  // Prevents the browser's own default action (which would otherwise synthesize a second click)
-  // rather than relying on it -- keeps activation testable and deterministic across hosts.
   event.preventDefault();
   emit("open");
 }

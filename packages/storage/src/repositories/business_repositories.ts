@@ -131,15 +131,8 @@ export class VocabularyShardRepository extends IndexedDbRepository<
   }
 }
 
-/**
- * Validates through `ImageRecordUnionSchema` (base `ImageRecord` shape *or*
- * flat `GalleryImageRecord` shape): the `image_records` store holds both —
- * migrated v2 rows (this repository's primary write path, in migration) and
- * runtime gallery rows written elsewhere via `GalleryImageRecordRepository`.
- * A single-shape schema here made archive export/import and blob-corruption
- * quarantine crash on whichever shape they did not expect (Stage 04 review
- * finding I1).
- */
+// Validates through `ImageRecordUnionSchema`: `image_records` holds both migrated and gallery rows,
+// and a single-shape schema would fail archive export/import and blob-corruption quarantine.
 export class ImageRecordRepository extends IndexedDbRepository<"image_records", ImageRecordUnion> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "image_records", ImageRecordUnionSchema);
@@ -155,12 +148,8 @@ export class LegacyPreferenceRepository extends IndexedDbRepository<
   }
 }
 
-/**
- * Text-LLM connections. Constructed with provider-secret rejection enabled (the same flag
- * `ProviderProfileRepository` uses), so a plaintext key smuggled into `payload` fails the write
- * instead of landing in IndexedDB; the vault handle lives in the typed `credential_reference`
- * column, which only accepts `tavern_canvas:`-prefixed references.
- */
+// Provider-secret rejection is enabled, so a plaintext key in `payload` fails the write; the vault
+// handle lives in `credential_reference`, which only accepts `tavern_canvas:`-prefixed references.
 export class LlmConnectionRepository extends IndexedDbRepository<"llm_connections", LlmConnection> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "llm_connections", LlmConnectionSchema, true);

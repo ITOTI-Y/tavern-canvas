@@ -7,11 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { create_git_dist_port } from "./index.js";
 
-/**
- * `create_git_dist_port` is the half of the audit that talks to a real repository, so the fakes in
- * index.test.ts cannot say what it actually scans. These tests build a repository shaped like the
- * released one: a clean orphan `main`, plus a local-only branch carrying the abandoned v2 monolith.
- */
+/** Builds a repository shaped like the released one: a clean orphan `main` plus a local-only branch carrying the abandoned v2 monolith. */
 let repository_root: string;
 
 function git(...args: readonly string[]): string {

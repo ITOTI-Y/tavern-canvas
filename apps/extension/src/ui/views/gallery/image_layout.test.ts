@@ -22,7 +22,6 @@ describe("layout_justified_rows", () => {
     const items = [item("a", 400, 200), item("b", 400, 200), item("c", 400, 200)];
     const rows = layout_justified_rows(items, 850, 200, 8);
     expect(rows.length).toBeGreaterThan(1);
-    // Every row's total pixel width (plus inter-tile gaps) stays within the container.
     for (const row of rows) {
       const total =
         row.tiles.reduce((sum, tile) => sum + tile.pixel_width, 0) + (row.tiles.length - 1) * 8;
@@ -31,12 +30,12 @@ describe("layout_justified_rows", () => {
   });
 
   it("derives each tile's pixel width from its own aspect ratio at the fixed row height", () => {
-    const portrait = item("portrait", 100, 200); // aspect 0.5
-    const landscape = item("landscape", 200, 100); // aspect 2
+    const portrait = item("portrait", 100, 200);
+    const landscape = item("landscape", 200, 100);
     const rows = layout_justified_rows([portrait, landscape], 2000, 100, 8);
     const [first, second] = rows[0]?.tiles ?? [];
-    expect(first?.pixel_width).toBe(50); // 100 * 0.5
-    expect(second?.pixel_width).toBe(200); // 100 * 2
+    expect(first?.pixel_width).toBe(50);
+    expect(second?.pixel_width).toBe(200);
   });
 
   it("falls back to a square aspect ratio when width or height is unknown", () => {
@@ -50,7 +49,7 @@ describe("layout_justified_rows", () => {
     const extremely_tall = item("tall", 10, 5000);
     const rows = layout_justified_rows([extremely_wide], 10_000, 100, 8);
     const wide_width = rows[0]?.tiles[0]?.pixel_width ?? 0;
-    expect(wide_width).toBeLessThan(5000 * 10); // clamped, not the raw ratio
+    expect(wide_width).toBeLessThan(5000 * 10);
 
     const tall_rows = layout_justified_rows([extremely_tall], 10_000, 100, 8);
     const tall_width = tall_rows[0]?.tiles[0]?.pixel_width ?? 0;

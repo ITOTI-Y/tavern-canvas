@@ -8,13 +8,6 @@ export interface SegmentedControlOption {
   readonly label: string;
 }
 
-/**
- * Mode-choice control (roadmap rule: "mode choices use segmented controls"). A mutually exclusive
- * choice is a radio-group pattern for assistive tech ("radio button, 2 of 3, selected"), so this
- * wraps Reka's `RadioGroupRoot`/`RadioGroupItem` -- which already provides the roving-tabindex
- * arrow-key navigation (Left/Right/Up/Down move selection, Tab leaves the group as one stop) --
- * rather than a plain button row.
- */
 withDefaults(
   defineProps<{
     readonly modelValue: string;

@@ -5,10 +5,6 @@ import { useI18n } from "vue-i18n";
 import type { InspectorSelection } from "../contracts/view_models.js";
 import styles from "./shell.module.css";
 
-// Matches TavernCanvasUiSettingsSchema's real stored bounds (packages/contracts/src/settings.ts):
-// the *persisted* width can range wider than the [320px, 400px] CSS clamp() that bounds the
-// *rendered* column (task-2-brief.md's desktop assertion) -- dragging past 400px still records a
-// value the clamp will honor once the window is wide enough, instead of clipping data silently.
 const MIN_STORED_WIDTH = 240;
 const MAX_STORED_WIDTH = 720;
 const KEYBOARD_RESIZE_STEP = 16;
@@ -89,7 +85,6 @@ function on_pointer_down(event: PointerEvent): void {
   is_dragging.value = true;
 
   function on_pointer_move(move_event: PointerEvent): void {
-    // The inspector sits on the trailing (right) edge: dragging toward the left grows it.
     const delta = start_x - move_event.clientX;
     emit("resize", clamp_width(start_width + delta));
   }
@@ -107,7 +102,6 @@ function on_pointer_down(event: PointerEvent): void {
   target.addEventListener("pointercancel", stop_dragging);
 }
 
-// Keyboard resize mirrors the WAI-ARIA window-splitter pattern for role="separator".
 function on_key_down(event: KeyboardEvent): void {
   if (event.key === "ArrowLeft") {
     event.preventDefault();

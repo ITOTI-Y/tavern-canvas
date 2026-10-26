@@ -2,14 +2,6 @@ import { HOST_CAPABILITY_IDS, type HostCapabilityId } from "../../../host/index.
 
 export type Translate = (key: string) => string;
 
-/** The exact nine keys `capability_probe.ts`'s `build_matrix` always populates, in the fixed
- * display order the brief calls out ("the nine capability IDs"). Reuses the host layer's own
- * `HOST_CAPABILITY_IDS` constant (a pure identifier list, not a fetch/storage/provider import --
- * roadmap rule 5 is about domain implementations, not shared ID constants) instead of redeclaring
- * it, so the two can never drift. `capability_label` below resolves each ID through a `switch`
- * with a literal translate-function call per case, never a template-interpolated lookup key, so
- * `tools/locale_check`'s dynamic-key rule can statically verify every call site -- matching
- * `route_nav.ts`'s `route_label` precedent. */
 export const CAPABILITY_MATRIX_IDS = HOST_CAPABILITY_IDS;
 
 export type CapabilityMatrixId = HostCapabilityId;

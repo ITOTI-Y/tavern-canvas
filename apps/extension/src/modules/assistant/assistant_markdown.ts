@@ -10,11 +10,7 @@ export interface AssistantThinkingSplit {
   readonly visible_text: string;
 }
 
-/**
- * Mirrors legacy `parseThinkingContent` (utils/aiThinkingParser.js): everything before the
- * *last* `</think>` is reasoning, discarded from the visible reply, and truncated past 10240
- * characters so a runaway reasoning stream never blows up storage or the DOM.
- */
+/** Everything before the last `</think>` is reasoning: discarded from the reply and truncated past 10240 characters. */
 export function split_thinking_content(text: string): AssistantThinkingSplit {
   const last_close_index = text.lastIndexOf(THINK_CLOSE_TAG);
   if (last_close_index === -1) {
@@ -56,12 +52,7 @@ function stringify_option(option: unknown): string {
   return String(option);
 }
 
-/**
- * Mirrors legacy `parseAndRenderAskChoice`: a single `<AskChoice>[...]</AskChoice>` block whose
- * body is a JSON string array (falling back to newline-split plain text when it isn't valid
- * JSON). Runs on raw text *before* Markdown rendering -- `<AskChoice>` is never real HTML, so it
- * must never reach the sanitizer looking like a tag.
- */
+/** Runs on raw text before Markdown rendering: `<AskChoice>` is never real HTML and must not reach the sanitizer looking like a tag. */
 export function extract_ask_choices(text: string): AssistantAskChoiceExtraction {
   const match = /<AskChoice>([\s\S]*?)<\/AskChoice>/iu.exec(text);
   if (!match) {
@@ -117,12 +108,7 @@ interface AssistantMarkdownRenderer {
 
 let renderer_promise: Promise<AssistantMarkdownRenderer> | null = null;
 
-/**
- * `marked` and `dompurify` are imported dynamically, and only from here: this is the one module
- * boundary the whole assistant feature's Markdown weight crosses, so nothing that merely
- * references `assistant_markdown.ts`'s types pulls the parser/sanitizer into its chunk -- only an
- * actual render call does (task-5-brief.md's "load only when enabled/opened").
- */
+/** `marked` and `dompurify` are imported dynamically only here, so referencing this module's types does not pull the parser/sanitizer into a chunk. */
 async function load_renderer(): Promise<AssistantMarkdownRenderer> {
   renderer_promise ??= (async () => {
     const [{ Marked }, purify_module] = await Promise.all([import("marked"), import("dompurify")]);
@@ -141,12 +127,7 @@ async function load_renderer(): Promise<AssistantMarkdownRenderer> {
   return renderer_promise;
 }
 
-/**
- * Renders one assistant reply: strips the reasoning block and any AskChoice directive first
- * (neither is meant to reach the reader as prose), then Markdown-renders and sanitizes the
- * remainder down to a minimal text/code/list/link subset -- no scripts, event handlers, unsafe
- * URLs, iframes, style tags, or SVG survive `ALLOWED_TAGS`/`ALLOWED_ATTR`.
- */
+/** Strips the reasoning block and AskChoice directive, then Markdown-renders and sanitizes down to a minimal text/code/list/link subset. */
 export async function render_assistant_markdown(
   raw_text: string,
 ): Promise<AssistantRenderedMessage> {

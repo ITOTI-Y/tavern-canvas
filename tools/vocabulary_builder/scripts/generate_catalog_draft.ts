@@ -5,18 +5,11 @@ import { fileURLToPath } from "node:url";
 
 import { REPO_ROOT } from "./pack_common.js";
 
-// Emits output/packages/catalog.draft.json: a draft catalog listing every
-// known vocabulary package (the bundled baseline + the full bilingual
-// pack), for a follow-up CATALOG work item that will formalize the contract
-// schema and the client install-from-catalog flow. This script only emits
-// the data file -- it does not upload anything. Run after both
-// generate_baseline.ts and generate_full_pack.ts.
+// Emits output/packages/catalog.draft.json listing the bundled baseline and the full pack; uploads
+// nothing. Run after generate_baseline.ts and generate_full_pack.ts.
 //
-// Hosting (user decision, 2026-08-06): packages live on the user's HF
-// dataset repo `ITOTIY/tavern-canvas-vocabulary`, one subdirectory per
-// package_id (`packages/<package_id>/...`), with this catalog itself
-// intended to be uploaded to the repo root as `catalog.json` so the
-// extension can refresh the package list remotely without a redeploy.
+// Packages are hosted in the HF dataset repo `ITOTIY/tavern-canvas-vocabulary` under
+// `packages/<package_id>/...`; the catalog is meant to be uploaded to the repo root as `catalog.json`.
 
 const HF_DATASET_BASE_URL =
   "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main";
@@ -38,11 +31,8 @@ interface BilingualText {
   readonly "zh-CN": string;
 }
 
-// Draft shape only -- the follow-up CATALOG work item owns the formal Zod
-// contract. `base_url: null` + `bundled: true` marks a package that ships
-// inside the extension itself (no remote fetch needed); every other entry
-// carries a real HF dataset URL the client's PackageClient can resolve
-// manifest/shard paths against.
+// `base_url: null` + `bundled: true` marks a package shipped inside the extension; every other entry
+// carries an HF dataset URL that PackageClient resolves manifest/shard paths against.
 interface CatalogEntryDraft {
   readonly package_id: string;
   readonly display_name: BilingualText;

@@ -301,17 +301,8 @@ async function wait_for_state(
   await vi.waitFor(() => expect(queue.get(job_id)?.state).toBe(state));
 }
 
-/**
- * media_command_service: manual text-to-image, image-to-image, prompt modification, regenerate,
- * upload reference (see reference_upload.test.ts), SD/NovelAI/ComfyUI inpaint (see
- * inpaint_session.test.ts for the mask math; submission integration covered here),
- * Google/OpenAI edit (see image_edit.test.ts for request building; submission integration
- * covered here), supported video generation (see video_generation.test.ts for MP4 handling),
- * multiple results, cancellation, failed upload, cache-only source, and source-message
- * navigation -- every flow creating or reusing typed Stage 02 jobs and Stage 04 assets.
- */
 describe("submit_manual_generation: text-to-image and image-to-image", () => {
-  it("creates a queued Stage 02 job and stores the resulting Stage 04 asset (t2i)", async () => {
+  it("creates a queued job and stores the resulting gallery asset (t2i)", async () => {
     const harness = create_harness();
     const job = await submit_manual_generation(
       harness.deps,
@@ -360,7 +351,7 @@ describe("prompt modification and regenerate (including cache-only source)", () 
     expect(harness.queue.get(modified.job_id)?.arguments.scene_description).toBe("A sunny alley");
   });
 
-  it("regenerates purely from a cached Stage 04 record with no live job (cache-only source)", async () => {
+  it("regenerates purely from a cached gallery record with no live job (cache-only source)", async () => {
     const harness = create_harness();
     // Simulate a gallery record that already exists in the store from a long-gone job.
     await harness.store.put_image({
@@ -562,7 +553,7 @@ describe("cancellation", () => {
   });
 });
 
-describe("classify_send_button_press: manual.send_button_longpress", () => {
+describe("classify_send_button_press", () => {
   it("sends immediately on a plain click (a short press)", () => {
     expect(classify_send_button_press(0)).toBe("send_immediately");
     expect(classify_send_button_press(SEND_BUTTON_LONG_PRESS_THRESHOLD_MS - 1)).toBe(
@@ -642,10 +633,6 @@ describe("source-message navigation", () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 });
-
-// ---------------------------------------------------------------------------
-// Attach/detach <-> in-memory ImageJobQueue wiring (Stage 03/04 carry-over)
-// ---------------------------------------------------------------------------
 
 type FinalAssistantHandler = Parameters<MessagePort["subscribe_final_assistant"]>[0];
 type FinalAssistantEvent = Parameters<FinalAssistantHandler>[0];

@@ -2,10 +2,6 @@ import { z } from "zod";
 
 import { VocabularyRecordSchema, type VocabularyImportFormat } from "@tavern-canvas/contracts";
 
-// Source records never carry a record_id -- ImportBuilder assigns ids after
-// merging duplicates across every batch, the same rule tools/vocabulary_builder
-// uses for the deterministic baseline (record_id is a build-time artifact,
-// never user input).
 export const ImportedRecordDraftSchema = VocabularyRecordSchema.omit({ record_id: true });
 export type ImportedRecordDraft = z.infer<typeof ImportedRecordDraftSchema>;
 
@@ -19,9 +15,6 @@ export interface ImportBatchParseResult {
   readonly malformed: readonly MalformedImportRecord[];
 }
 
-// A batch-level failure (the payload itself is not the declared format at
-// all) -- distinct from a per-record MalformedImportRecord, which never
-// aborts the batch.
 export class ImportSourceFormatError extends Error {
   constructor(message: string) {
     super(message);
@@ -71,16 +64,8 @@ export const tavern_canvas_jsonl_adapter: ImportSourceAdapter = {
   parse_batch: parse_tavern_canvas_jsonl,
 };
 
-// --- legacy v2 group-tree adapter -----------------------------------------
-//
-// Both known legacy shapes decrypt to `{ tag_groups, tag_tags }`
-// (task-src-report.md SS10): a 10-group / 131-subgroup / 3,926-tag "tags.json"
-// tree with a working `tag_tags.subgroup_id -> tag_groups[].subgroups[].id_index`
-// FK, and a flat 1-group / 161-tag "tag_NSFW001.json" tree with no subgroup FK
-// at all. Both also carry a corrupted color/create_time/t_uuid/g_uuid quartet
-// (a v2 serialization bug that leaked a broken "rgba(...)" string across
-// fields) -- tolerated by only picking the fields this adapter understands
-// (plain `z.object` strips the rest) rather than guessing at a fix.
+// Legacy group-tree format: `{ tag_groups, tag_tags }`. Its color/create_time/uuid fields are
+// corrupted in known files, so the adapter reads only the fields it understands.
 
 const LegacySubgroupSchema = z.object({
   id_index: z.number().int(),
@@ -105,15 +90,11 @@ const LegacyGroupTreeSchema = z.object({
 });
 type LegacyGroupTree = z.infer<typeof LegacyGroupTreeSchema>;
 
-// Contracts has no dedicated content-rating field yet (task-5-brief.md
-// pre-ruling #4): NSFW-group membership maps to category "nsfw", a plain
-// string the schema already allows.
+// Contracts has no content-rating field: NSFW-group membership maps to category "nsfw".
 const NSFW_CATEGORY = "nsfw";
 
-// tag_NSFW001.json's one group has no subgroups at all -- every tag in a
-// document shaped that way belongs to it implicitly, so this structural
-// check (rather than matching the group's own name) is what actually
-// distinguishes the two known legacy shapes.
+// A document whose single group has no subgroups puts every tag in that group; detected
+// structurally rather than by group name.
 function is_flat_nsfw_document(group_tree: LegacyGroupTree): boolean {
   return group_tree.tag_groups.length === 1 && group_tree.tag_groups[0]?.subgroups.length === 0;
 }

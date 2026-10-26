@@ -25,7 +25,6 @@ import {
   type MessageUpdateRequest,
 } from "../host/index.js";
 
-/** The subset of `HostAdapter` this module needs: read the open chat, write metadata back to one message. */
 export interface LazyMessageMigrationHost {
   get_active_chat(): Promise<HostChatSnapshot>;
   update_message(request: MessageUpdateRequest): Promise<void>;
@@ -78,19 +77,7 @@ function is_chat_migration_payload(value: unknown): value is ChatMigrationPayloa
   );
 }
 
-/**
- * A v2 message's image tags lived under `extra.images`, a dictionary keyed by
- * swipe id whose *values* are the per-swipe `{tag, regex?, locked?}` entry
- * arrays (confirmed against the archived v2 source: `saveImageGroup` writes
- * `chat[id].extra.images[swipe_id] = mergedImages`) — never a bare array
- * itself. This mirrors `message_converter.ts`'s own
- * `Object.entries(message.extra?.images ?? {})` treatment of the same field;
- * `extra.images` is reconstructed here from `HostChatSnapshot` rather than a
- * standalone fixture, since it is the one part of the v2 data model
- * `message_converter` (Task 5) never had to define itself. Anything not
- * shaped like a tag entry is skipped rather than rejected, since a host
- * swipe can carry unrelated `extra` data.
- */
+/** v2 stored image tags in `extra.images`, a dictionary keyed by swipe id whose values are the per-swipe tag entry arrays. Entries not shaped like a tag are skipped. */
 function extract_legacy_image_entries(
   data: Readonly<Record<string, unknown>>,
   swipe_id: number,
@@ -160,15 +147,7 @@ function metadata_equal(
   return left !== undefined && JSON.stringify(left) === JSON.stringify(right);
 }
 
-/**
- * Converts and journals message metadata for the chat that is open right
- * now. The host cannot enumerate every v2 chat, so this never scans or
- * touches any chat other than the active one, and skips entirely once a
- * chat's content fingerprint matches its last successful migration. A
- * mismatch found only after `update_message` (the re-read verification)
- * downgrades the whole call to `"partial"`: the affected message stays
- * unjournaled so the next time this chat opens, it is retried.
- */
+/** Only the open chat is converted; a mismatch found by the re-read after `update_message` downgrades the call to `"partial"` and leaves the message unjournaled for retry. */
 export async function migrate_active_chat_messages(
   options: LazyMessageMigrationOptions,
 ): Promise<MessageMigrationOutcome> {

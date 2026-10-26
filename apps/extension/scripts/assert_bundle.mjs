@@ -30,11 +30,7 @@ if (!/url\(["']?geist_variable\.woff2["']?\)/u.test(stylesheet)) {
   throw new Error("The linked production stylesheet does not reference its sibling Geist font");
 }
 
-// The vocabulary baseline (apps/extension/public/vocabulary/baseline) ships
-// via Vite's publicDir copy, not the module graph -- verify every shard the
-// manifest lists actually reached dist/, since a future Vite upgrade
-// silently changing the copyPublicDir default would otherwise fail only at
-// runtime, in the Worker, far from this build step.
+// The vocabulary baseline ships via publicDir copy, not the module graph; verify every listed shard reached dist/.
 const vocabulary_baseline_manifest_path = resolve(
   repository_root,
   "dist/vocabulary/baseline/manifest.json",

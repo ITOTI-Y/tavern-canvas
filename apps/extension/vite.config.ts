@@ -12,10 +12,8 @@ export default defineConfig(({ mode }) => ({
     __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
   },
   experimental: {
-    // The emitted stylesheet is linked by SillyTavern, so its font URL must remain relative to
-    // dist/index.css. The same CSS is also imported as a string for injection into the Shadow
-    // Root; that copy needs a marker which runtime_stylesheet.ts resolves against import.meta.url,
-    // because relative url() values in a plain <style> resolve against the host page instead.
+    // The emitted CSS keeps relative font URLs; the string copy injected into the Shadow Root gets a
+    // marker that runtime_stylesheet.ts resolves against import.meta.url.
     renderBuiltUrl(filename, { hostType }) {
       if (!filename.endsWith(".woff2")) {
         return;
@@ -31,21 +29,12 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: resolve(import.meta.dirname, "../../dist"),
     emptyOutDir: true,
-    // Emits dist/.vite/manifest.json, the input the bundle-budget gate
-    // (tools/bundle_budget) walks to size the initial payload.
     manifest: true,
     assetsDir: "assets",
     cssCodeSplit: false,
-    // "hidden" emits the maps tools/bundle_budget needs to attribute the initial chunk's modules
-    // but writes no `sourceMappingURL` into the shipped JS, so a released extension neither
-    // carries nor points at the first-party source tree. `--mode debug` opts back in locally.
+    // Hidden source maps keep `sourceMappingURL` out of the shipped JS.
     sourcemap: mode === "debug" ? true : "hidden",
-    // Explicit rather than relying on Vite's default: the committed
-    // vocabulary baseline (public/vocabulary/baseline) must reach dist/ as
-    // plain static files, byte-identical, for the extension's bundled
-    // ShardByteSource to fetch at a relative runtime path (packages/vocabulary's
-    // PackageClient "bundled" source kind). Verified by
-    // apps/extension/scripts/assert_bundle.mjs after every build.
+    // The committed vocabulary baseline must reach dist/ byte-identical for the bundled ShardByteSource.
     copyPublicDir: true,
     lib: {
       entry: resolve(import.meta.dirname, "src/index.ts"),
@@ -60,12 +49,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-  // A future `new Worker(new URL("../workers/vocabulary_worker.ts", import.meta.url), { type: "module" })`
-  // call site (not yet wired -- see apps/extension/src/workers/vocabulary_worker.ts)
-  // needs a stable output path to compute the bundled baseline's URL relative
-  // to its own self.location: pinning it under dist/workers/ keeps that
-  // offset ("../vocabulary/baseline/" from the worker back up to dist/)
-  // fixed regardless of how other chunks are named.
+  // Worker output stays under dist/workers/ so the bundled baseline path ("../vocabulary/baseline/") is fixed.
   worker: {
     format: "es",
     rolldownOptions: {

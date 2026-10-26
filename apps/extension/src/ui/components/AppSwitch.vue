@@ -5,17 +5,6 @@ import { computed } from "vue";
 import { drop_undefined } from "./_prop_utils.js";
 import styles from "./components.module.css";
 
-/**
- * Binary settings control (roadmap rule: "binary settings use switches/checkboxes"). Wraps Reka's
- * `SwitchRoot`/`SwitchThumb` for `role="switch"` + keyboard (Space/Enter toggle, native button
- * focus order) -- this file only adds tokens and the label row.
- *
- * `labelHidden` is for the narrow list row, where the label row's own layout is the problem: it is
- * a `space-between` two-column box whose text wraps at any opportunity, so a switch sharing a row
- * with other controls gets its label squeezed to one character per line rather than the row
- * admitting it does not fit. Hidden, the label stays the accessible name and callers pair it with a
- * tooltip for the sighted affordance.
- */
 const props = withDefaults(
   defineProps<{
     readonly modelValue: boolean;

@@ -82,55 +82,25 @@ export interface StudioController {
   submit_generation(command: GenerationSubmitCommand): Promise<void>;
   cancel_generation(job_id: Uuid): Promise<void>;
   retry_generation(job_id: Uuid): Promise<void>;
-  /** Persists and selects the provider profile used for subsequent generation. */
   select_provider_profile(profile_id: Uuid | null): Promise<void>;
-  /** Loads a preset's editable draft and selects it. The draft then lives only in controller state
-   * (`state.prompt.draft`) until `save_prompt_preset` persists it -- matching the plan's "draft
-   * edits remain local until Save" rule. */
   select_prompt_preset(preset_id: Uuid): Promise<void>;
-  /** Starts a new, unsaved preset draft (`id: null`) and clears the current selection. */
   start_new_prompt_preset(): void;
-  /** Clears the current draft/selection without loading a replacement (e.g. after a confirmed
-   * discard). */
   clear_prompt_draft(): void;
-  /** Patches the in-progress draft locally; never calls `save_draft` itself. */
   update_prompt_draft(patch: Partial<PromptPresetDraft>): void;
   remove_prompt_preset(preset_id: Uuid): Promise<void>;
   bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void>;
   test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
   save_prompt_preset(draft: PromptPresetDraft): Promise<void>;
-  /** `on_progress` (Stage 06 Task 6 addition) forwards VocabularyCapability.install's own
-   * progress callback straight through -- see that method's doc comment on the Worker
-   * dispose/recreate handoff the caller must do after this resolves. */
   install_vocabulary_package(
     entry: VocabularyCatalogEntry,
     on_progress?: (progress: VocabularyInstallProgressView) => void,
   ): Promise<void>;
-  /** Fetches the remote catalog on demand. Never called during bootstrap -- see the implementation
-   * for why the studio must open without touching the network. */
   load_vocabulary_catalog(): Promise<void>;
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void>;
   test_diagnostics_connection(): Promise<void>;
   export_support_bundle(): Promise<void>;
   retry_migration(): Promise<void>;
 
-  // -------------------------------------------------------------------------
-  // Additive Diagnostics/Settings command surface (Stage 06 Task 7).
-  //
-  // T1's command surface was intentionally partial (task-1-report.md, ledgered concern (a)):
-  // "T5-7 extend via run_command pattern". These are plain async passthroughs rather than
-  // run_command-tracked CommandState slices -- each one is either a collection-item-level
-  // mutation (profile save/remove/test) whose pending/error UI belongs to the row/dialog that
-  // triggered it, not shared StudioState, or a page-level action (archive export/import, legacy
-  // cleanup) with no other view depending on its pending state. None of them add fields to
-  // SettingsViewModel/DiagnosticsViewModel/MigrationSnapshot: every new field would be a required
-  // addition T1/T2's own already-passing test fixtures (studio_controller.test.ts,
-  // StudioShell.test.ts) don't know about, which is outside this task's ownership to edit.
-  // -------------------------------------------------------------------------
-
-  /** Diagnostics' timeline is intentionally not part of the eager `start()` load (a large
-   * historical ring buffer a session may never need) -- the Diagnostics view requests it once
-   * mounted. */
   load_diagnostics_timeline(): Promise<void>;
   save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary>;
   remove_provider_profile(profile_id: Uuid): Promise<void>;
@@ -140,12 +110,7 @@ export interface StudioController {
     plaintext_value: string,
   ): Promise<ProviderProfileSummary>;
   clear_provider_profile_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
-  /** Re-fetches the settings snapshot after acknowledging, so `state.settings.settings.gateway
-   * .http_acknowledgments` reflects the host adapter's own persisted timestamp rather than a
-   * client-guessed one. */
   acknowledge_http_origin(origin: string): Promise<void>;
-  /** Stores the Gateway bearer token in the selected credential backend and refreshes settings so
-   * the view renders the persisted reference rather than a client-guessed one. */
   set_gateway_token(plaintext_value: string): Promise<void>;
   clear_gateway_token(): Promise<void>;
   initialize_browser_secret_vault(passphrase: string): Promise<void>;
@@ -160,58 +125,31 @@ export interface StudioController {
   cancel_vocabulary_import(): void;
   export_settings_archive(): Promise<Blob>;
   import_settings_archive(archive: Blob): Promise<void>;
-  /** Re-fetches the migration snapshot after cleanup so `state.diagnostics.migration` reflects
-   * the post-cleanup counts. */
   confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
 
-  // -------------------------------------------------------------------------
-  // Assets (Stage 06 Task 6 addition -- T1's command surface intentionally left
-  // these to the view tasks that actually need them; see task-1-report.md).
-  // -------------------------------------------------------------------------
   set_active_asset_category(category: AssetCategory): void;
   save_asset(category: AssetCategory, asset: Omit<AssetRecordSummary, "updated_at">): Promise<void>;
   remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void>;
   reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void>;
 
-  // -------------------------------------------------------------------------
-  // Personas and knowledge (Stage 07 feature-gap addition). Stage 06 shipped read paths only;
-  // these are the create/update/delete surface behind the Assets view's two new panels.
-  // -------------------------------------------------------------------------
   save_persona(draft: PersonaProfileDraft): Promise<PersonaProfile>;
   remove_persona(persona_id: Uuid): Promise<void>;
   save_knowledge_entry(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord>;
   set_knowledge_entry_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord>;
   remove_knowledge_entry(entry_id: Uuid): Promise<void>;
-  /** Local multi-select state for the knowledge panel's batch actions; no capability call. */
   set_knowledge_selection(entry_ids: readonly Uuid[]): void;
   bulk_remove_knowledge_entries(entry_ids: readonly Uuid[]): Promise<void>;
 
-  // -------------------------------------------------------------------------
-  // Vocabulary search (Stage 06 Task 6 addition). Plain request/response
-  // pass-throughs, not run_command-tracked: VocabularyCapability.search/next_page
-  // already mirror VocabularyClient's stateless request/response shape (no
-  // domain event stream), and per-keystroke search pending state is local to
-  // whichever panel is searching, not something the rest of the Studio observes.
-  // -------------------------------------------------------------------------
   search_vocabulary(
     query: string,
     category?: VocabularyCategory,
   ): Promise<VocabularySearchPageView>;
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView>;
 
-  // -------------------------------------------------------------------------
-  // Gallery (Stage 06 Task 6 addition).
-  // -------------------------------------------------------------------------
-  // -------------------------------------------------------------------------
-  // Text-LLM connections (Stage 07 feature-gap addition). Plain pass-throughs for the same reason
-  // the provider-profile commands are: pending state belongs to the row or dialog that triggered
-  // the mutation, not to shared StudioState.
-  // -------------------------------------------------------------------------
   select_llm_connection(connection_id: Uuid | null): void;
   save_llm_connection(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
   remove_llm_connection(connection_id: Uuid): Promise<void>;
-  /** The plaintext argument reaches the selected credential backend and nothing else; state only
-   * ever holds the reference the capability resolves with. */
+  /** The plaintext reaches only the credential backend; state holds the returned reference. */
   set_llm_connection_credential(
     connection_id: Uuid,
     plaintext_value: string,
@@ -222,15 +160,12 @@ export interface StudioController {
   select_gallery_record(record_id: Uuid | null): void;
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array>;
   pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void>;
-  /** Detaching and deleting are distinct confirmed actions (plan rule) -- this never deletes the
-   * record, only clears its message attachment; `delete_gallery_record` is the separate,
-   * permanent action. */
+  /** Clears only the message attachment; `delete_gallery_record` is the separate permanent action. */
   detach_gallery_record(record_id: Uuid): Promise<void>;
   delete_gallery_record(record_id: Uuid): Promise<void>;
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void>;
 }
 
-/** Stable fallback code for a rejection whose error doesn't already carry a snake_case `code`. */
 const DEFAULT_FAILURE_CODE = "capability_load_failed";
 const DEFAULT_COMMAND_FAILURE_CODE = "command_failed";
 const STABLE_CODE_PATTERN = /^[a-z][a-z0-9_]*$/u;
@@ -245,7 +180,6 @@ function to_ui_failure(error: unknown, fallback_code: string): UiFailure {
   return { code: fallback_code };
 }
 
-/** Reused by every list-shaped domain event (upsert-by-id semantics) across five capabilities. */
 function upsert_by_id<TItem>(
   list: readonly TItem[],
   item: TItem,
@@ -261,9 +195,6 @@ function upsert_by_id<TItem>(
   return next;
 }
 
-/** Generation states the task strip mirrors -- terminal states (completed/cancelled/attached/
- * orphaned) drop off the strip immediately, since Active jobs (workbench.module.css) and Gallery
- * already surface finished work; the strip is only for in-flight/just-failed generation. */
 const TASK_STRIP_STATES: ReadonlySet<GenerationState> = new Set([
   "queued",
   "preparing",
@@ -272,15 +203,10 @@ const TASK_STRIP_STATES: ReadonlySet<GenerationState> = new Set([
   "failed",
 ]);
 
-/** `TaskStripItemViewModel.status` only has three values (pending/success/error, see
- * shell.module.css's chip-dot styling) -- every non-failed in-flight state maps to "pending". */
 function job_to_task_status(state: GenerationState): TaskStripItemViewModel["status"] {
   return state === "failed" ? "error" : "pending";
 }
 
-/** `label_code` must be a literal `TASK_LABEL_RESOLVERS` key (TaskStrip.vue) -- "running" gets its
- * own code so the strip can distinguish it from merely-queued work; every other tracked state
- * reads as "pending". */
 function job_to_task_label_code(state: GenerationState): string {
   if (state === "running") {
     return "status.running";
@@ -300,18 +226,10 @@ function job_to_task(job: GenerationJobSummary): TaskStripItemViewModel {
   };
 }
 
-/** Derives `StudioState.tasks` from `workbench.jobs` -- the task strip is meant to mirror active
- * generation jobs (task-2-brief.md), so every mutation of `jobs` recomputes `tasks` from the same
- * list in the same patch instead of leaving the strip's own state to drift out of sync. */
 function jobs_to_tasks(jobs: readonly GenerationJobSummary[]): readonly TaskStripItemViewModel[] {
   return jobs.filter((job) => TASK_STRIP_STATES.has(job.state)).map(job_to_task);
 }
 
-/**
- * Runs a mutating command with pending/success/error tracking and duplicate-submission
- * prevention. A command already `pending` short-circuits to a resolved no-op instead of
- * re-invoking `operation`.
- */
 function run_command<TResult>(
   get_current: () => CommandState<TResult>,
   set_next: (next: CommandState<TResult>) => void,
@@ -438,8 +356,6 @@ class StudioControllerImpl implements StudioController {
     this.#patch({ workbench: { ...this.#state.workbench, ...patch } });
   }
 
-  /** Every call site that replaces `workbench.jobs` routes through here so `tasks` (the task
-   * strip's own state) is recomputed from the same list in the same patch -- see `jobs_to_tasks`. */
   #patch_jobs(jobs: readonly GenerationJobSummary[]): void {
     this.#patch({
       workbench: { ...this.#state.workbench, jobs },
@@ -499,7 +415,6 @@ class StudioControllerImpl implements StudioController {
     this.#patch({ failures: next });
   }
 
-  /** Loads one capability's initial slice without gating on any other capability's load. */
   #load_slice<TSnapshot>(
     id: CapabilityId,
     load: () => Promise<TSnapshot>,
@@ -678,12 +593,7 @@ class StudioControllerImpl implements StudioController {
     this.#patch_settings({ settings: event.settings });
   }
 
-  /**
-   * Deliberately absent from `start()`: the vocabulary catalog lives on a remote host, and loading
-   * it eagerly turned opening the studio into an unsolicited third-party request disclosing the
-   * user's IP and extension version on every chat session. Called when the vocabulary panel is
-   * opened or the user asks for updates -- both genuine user actions.
-   */
+  /** Not part of `start()`: the catalog is remote, and loading it eagerly would disclose the user's IP and extension version on every session. */
   load_vocabulary_catalog(): Promise<void> {
     return this.#load_slice(
       "vocabulary",
@@ -1284,8 +1194,6 @@ class StudioControllerImpl implements StudioController {
     }
   }
 
-  /** Activation is exclusive per role, so promoting one persona demotes its same-role siblings in
-   * the same patch rather than leaving two assistants briefly both active. */
   #merge_persona(persona: PersonaProfile): readonly PersonaProfile[] {
     const merged = upsert_by_id(this.#state.library.personas, persona, (item) => item.id);
     if (!persona.is_active) {
@@ -1398,7 +1306,6 @@ class StudioControllerImpl implements StudioController {
     return this.#capabilities.llm_connections.test_connection(connection_id);
   }
 
-  /** A default is exclusive, so promoting one connection demotes the rest in the same patch. */
   #upsert_llm_connection(connection: LlmConnectionProfile): void {
     const merged = upsert_by_id(
       this.#state.llm_connections.connections,
@@ -1437,9 +1344,7 @@ class StudioControllerImpl implements StudioController {
     if (this.#stopped) {
       return;
     }
-    // GalleryRecordSummary has no dedicated "detached" flag (see ui_capabilities.ts) -- `quarantined`
-    // is the closest existing signal for "no longer attached to a live message" and is what the
-    // Gallery view's orphan filter reads (implementer judgment call, ledgered for stage review).
+    // `quarantined` marks a record no longer attached to a live message.
     this.#patch_gallery({
       records: this.#state.gallery.records.map((record) =>
         record.id === record_id ? { ...record, quarantined: true } : record,

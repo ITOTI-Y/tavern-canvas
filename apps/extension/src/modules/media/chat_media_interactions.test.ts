@@ -11,13 +11,6 @@ import {
 
 const IMAGE_ID = "33333333-3333-4333-8333-333333333333";
 
-/**
- * chat_media_interactions: ChatMediaInteractionPort click/double-click/long-press/context
- * actions keyed by TavernCanvas image ID; long press opens prompt edit, double-click submits
- * regenerate after confirming the active profile, single click opens image preview; streaming
- * placeholders keyed by request ID and replaced only by matching job completion (see
- * chat_placeholder.test.ts for the placeholder half).
- */
 describe("StandardHostChatMediaInteractions", () => {
   it("reports gestures as unavailable rather than using a private selector", () => {
     const port = new StandardHostChatMediaInteractions();

@@ -21,17 +21,14 @@ import settingsFixture from "../../fixtures/migration/v2_settings_full.json" wit
 export type V2SettingsFixture = typeof settingsFixture;
 export type V2GalleryFixture = typeof galleryFixture;
 
-/** A fresh, mutable copy of the fully populated v2 settings fixture — safe for a scenario to edit in place. */
 export function clone_settings_fixture(): V2SettingsFixture {
   return structuredClone(settingsFixture);
 }
 
-/** A fresh, mutable copy of the v2 gallery database fixture — safe for a scenario to edit in place. */
 export function clone_gallery_fixture(): V2GalleryFixture {
   return structuredClone(galleryFixture);
 }
 
-/** A scheduler that queues callbacks instead of running them, so a test controls exactly when a settings flush happens. */
 export function manual_scheduler(): SettingsScheduler & { run_pending(): Promise<void> } {
   const callbacks: Array<() => void | Promise<void>> = [];
   return {
@@ -52,7 +49,6 @@ export interface TestSettingsHarness {
   readonly flush_count: { value: number };
 }
 
-/** A `SillyTavernSettings` instance backed by an in-memory host object, with a manual (never-auto-firing) flush scheduler. */
 export function create_test_settings(): TestSettingsHarness {
   const extension_settings: ExtensionSettingsHost = {};
   const flush_count = { value: 0 };
@@ -66,11 +62,7 @@ export function create_test_settings(): TestSettingsHarness {
   return { settings, extension_settings, flush_count };
 }
 
-/**
- * Wraps the full v2 fixtures (or the caller's overrides) as a `LegacySourcePort`. Passing
- * `settings`/`gallery` explicitly (including `undefined`, to simulate "no legacy install")
- * overrides the corresponding fixture; omitting a key keeps the fixture default.
- */
+// Passing `settings`/`gallery` explicitly (including `undefined`, for "no legacy install") overrides the fixture; omitting a key keeps it.
 export function fake_legacy_source(
   overrides: { readonly settings?: unknown; readonly gallery?: unknown } = {},
 ): LegacySourcePort {
@@ -82,7 +74,6 @@ export function fake_legacy_source(
   };
 }
 
-/** Every fixture image already embeds `data_base64`, so the default resolver never needs to be called. */
 export function fake_image_resolver(
   resolve: (path: string) => Uint8Array | null = () => null,
 ): LegacyImageResolverPort {
@@ -96,7 +87,6 @@ export interface FakeSecretDestination extends SecretDestinationPort {
   }>;
 }
 
-/** Tracks every `write_secret` call so a scenario can assert a blocked transfer never attempted (and never leaked) a plaintext value. */
 export function fake_secret_destination(
   supports: (kind: SecretCredentialKind) => boolean = () => true,
 ): FakeSecretDestination {
@@ -114,7 +104,6 @@ export function fake_secret_destination(
   };
 }
 
-/** Default `run_migration` options wired to the full v2 fixtures, an always-supporting secret destination, and a fixed clock. */
 export function migration_options(
   database: StorageDatabase,
   settings: SillyTavernSettings,

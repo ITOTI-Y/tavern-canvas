@@ -22,17 +22,12 @@ import type {
   VocabularyCapability,
 } from "../contracts/ui_capabilities.js";
 
-/**
- * Stable failure code for every mutating command below (studio_controller.ts's `to_ui_failure`
- * passes an `Error#code` matching /^[a-z][a-z0-9_]*$/ straight through).
- */
 export const CAPABILITY_NOT_IMPLEMENTED_CODE = "capability_not_implemented";
 
 function unavailable_command<T>(): Promise<T> {
-  const error = new Error(
-    "No adapter wraps the real domain module for this capability yet (see task-1-report.md's " +
-      '"future adapter layer" note); bootstrap.ts uses this placeholder until one is wired in.',
-  ) as Error & { readonly code: string };
+  const error = new Error("This capability is not available in the current host") as Error & {
+    readonly code: string;
+  };
   Object.defineProperty(error, "code", { value: CAPABILITY_NOT_IMPLEMENTED_CODE });
   return Promise.reject(error);
 }
@@ -85,21 +80,6 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
   },
 };
 
-/**
- * Every `load()` resolves to an empty snapshot (so the shell renders a genuinely empty "normal"
- * studio instead of a permanent failure banner), every `subscribe()` is a no-op unsubscribe, and
- * every mutating command rejects with the stable `capability_not_implemented` code -- never a
- * synchronous throw, so every capability always presents an explicit, typed "unavailable" outcome
- * a caller can branch on instead of an uncaught exception. Wiring real generation/storage/
- * vocabulary/provider adapters (SecretDestinationPort and friends) is unscheduled work owned by a
- * later stage, per task-1-report.md and task-2-report.md -- not partial or in-progress within
- * Stage 06. This factory IS the finalized Stage 06 production composition root: `bootstrap.ts`
- * (the only production call site) wires it explicitly as `capabilities: create_unavailable_capabilities()`
- * when constructing `AppRoot`, and every Studio view (Task 8, task-8-report.md's routing-wiring
- * gap) now actually mounts and calls through it. A later stage swaps this for a real
- * implementation by changing only `bootstrap.ts`'s composition root -- `AppRoot` and everything
- * below it never change.
- */
 export function create_unavailable_capabilities(): StudioCapabilities {
   const generation: GenerationCapability = {
     load: () => Promise.resolve([]),

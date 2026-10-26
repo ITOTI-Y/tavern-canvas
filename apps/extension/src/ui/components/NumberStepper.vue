@@ -12,23 +12,10 @@ import { drop_undefined } from "./_prop_utils.js";
 import AppIcon from "./AppIcon.vue";
 import styles from "./components.module.css";
 
-/**
- * Numeric-value control (roadmap rule: "numeric values use steppers/inputs"). Wraps Reka's
- * NumberField primitives -- Reka's own increment/decrement buttons hard-code English
- * `aria-label="Increase"/"Decrease"` internally, so `incrementLabel`/`decrementLabel` are required
- * props here and forwarded as explicit `aria-label` overrides (Vue's fallthrough-attrs merge lets
- * the caller's attr win over the component's own template default), keeping the control
- * locale-agnostic like every other shared component.
- */
 const props = withDefaults(
   defineProps<{
     readonly modelValue: number | undefined;
-    /** The field's own name (e.g. "Image count", "Weight") -- applied as `aria-label` directly
-     * on the actual `role="spinbutton"` input, never left to a `<label for>` association: Reka's
-     * `NumberFieldRoot` renders as a plain wrapper `<div>`, not the labelable form control itself,
-     * so a caller's own `id`/`<label for>` pairing (FieldGroup.vue's pattern) can never reach the
-     * real input this way -- every caller needs this prop regardless of whether it also wraps the
-     * stepper in a FieldGroup. */
+    /** Set as `aria-label` on the spinbutton input; the Reka root is a plain `<div>`, so `<label for>` cannot reach it. */
     readonly label: string;
     readonly incrementLabel: string;
     readonly decrementLabel: string;

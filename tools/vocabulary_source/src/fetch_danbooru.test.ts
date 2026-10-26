@@ -183,8 +183,6 @@ describe("run_fetch_danbooru_cli", () => {
     const out_path = join(temp_dir, "raw_danbooru_tags.jsonl");
     const checkpoint_path = join(temp_dir, "checkpoint.json");
 
-    // First run completes fully: writes both TAGS_PAGE records (ids 1, 4)
-    // and a checkpoint at last_id 4.
     const { fetch_impl: first_fetch } = make_router_fetch({
       tags: [TAGS_PAGE, []],
       aliases: [ALIASES_PAGE, []],
@@ -199,9 +197,7 @@ describe("run_fetch_danbooru_cli", () => {
       checkpoint_path,
     });
 
-    // Simulate a second crawl interrupted such that the API now only
-    // returns a tag newer than the checkpoint -- the exact shape
-    // fetch_danbooru_fact_records itself produces on resume.
+    // Resume after an interruption: the API only returns a tag newer than the checkpoint.
     const NEW_TAG_PAGE = [{ id: 9, name: "new_tag", category: 0, post_count: 42 }];
     const { fetch_impl: resumed_fetch } = make_router_fetch({
       tags: [NEW_TAG_PAGE, []],

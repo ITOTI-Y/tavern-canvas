@@ -65,11 +65,6 @@ function read_context(globals: unknown): unknown {
   }
 }
 
-/**
- * `SillyTavernContextSurface` deliberately types only what the host adapters call. Settings
- * persistence needs two further well-known context members, read defensively here so their absence
- * degrades the settings capability instead of failing the probe every other capability depends on.
- */
 export function read_settings_host(globals: unknown): SillyTavernSettingsHostOptions | null {
   const context = read_context(globals);
   const extension_settings = read_property(context, "extensionSettings");
@@ -102,20 +97,12 @@ export function read_secret_destination(globals: unknown): SecretDestinationPort
   );
 }
 
-/**
- * The read half of host secret storage, needed only by a direct browser-to-vendor call. Separate
- * from `read_secret_destination` because a host can accept writes while refusing to reveal values
- * (SillyTavern's `allowKeysExposure`), and that difference decides whether the direct transport is
- * usable at all.
- */
+/** Separate from `read_secret_destination`: a host can accept writes while refusing to reveal values (`allowKeysExposure`). */
 export function read_secret_resolver(globals: unknown): SecretResolverPort | null {
   return create_sillytavern_secret_resolver(read_context(globals), read_property(globals, "fetch"));
 }
 
-/**
- * Reads v2 settings and the real v2 IndexedDB gallery stores. The source remains read-only: opening
- * an absent database is aborted before creation, and no legacy store is ever written or deleted.
- */
+/** Opening an absent v2 database is aborted before creation; no legacy store is written or deleted. */
 export function create_legacy_source(globals: unknown): LegacySourcePort | null {
   const settings_host = read_settings_host(globals);
   if (settings_host === null) {
@@ -124,7 +111,6 @@ export function create_legacy_source(globals: unknown): LegacySourcePort | null 
   return {
     read_settings: () => Promise.resolve(settings_host.extension_settings[LEGACY_SETTINGS_KEY]),
     read_gallery_database: async () => {
-      // A static import would add the migration-only IndexedDB parser to every host startup.
       const { read_legacy_gallery_database } = await import("./legacy_gallery_source.js");
       return read_legacy_gallery_database(globals);
     },
@@ -235,10 +221,7 @@ function is_image_bytes(bytes: Uint8Array): boolean {
   return prefix.startsWith("<svg") || (prefix.startsWith("<?xml") && prefix.includes("<svg"));
 }
 
-/**
- * Resolves v2 host image paths through the host fetch boundary. URLs must stay on the current
- * origin, contain no traversal segment, and return a non-empty response with actual image bytes.
- */
+/** URLs must stay on the current origin, contain no traversal segment, and return non-empty image bytes. */
 export function create_legacy_image_resolver(globals: unknown): LegacyImageResolverPort | null {
   const fetch_impl = read_property(globals, "fetch") ?? read_property(globalThis, "fetch");
   const location = read_location(globals);

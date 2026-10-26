@@ -1,11 +1,5 @@
 import { deflateSync } from "node:zlib";
 
-/**
- * Minimal, dependency-free PNG encoder: 8-bit RGBA, filter-none scanlines, one zlib-deflated IDAT.
- * No third-party image library is a workspace dependency, and the point of these fixtures is a
- * deterministic *generator* the repo can review byte-for-byte, not a black-box binary blob.
- */
-
 const PNG_SIGNATURE = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
 const CRC_TABLE = (() => {
@@ -58,7 +52,6 @@ export interface PngTextChunkInput {
   readonly text: string;
 }
 
-/** RGBA pixel buffer, row-major, 4 bytes per pixel, length === width * height * 4. */
 export type RgbaBuffer = Uint8Array;
 
 export function encode_png(
@@ -77,16 +70,16 @@ export function encode_png(
   const ihdr_view = new DataView(ihdr.buffer);
   ihdr_view.setUint32(0, width, false);
   ihdr_view.setUint32(4, height, false);
-  ihdr[8] = 8; // bit depth
-  ihdr[9] = 6; // color type: truecolor + alpha
-  ihdr[10] = 0; // compression method
-  ihdr[11] = 0; // filter method
-  ihdr[12] = 0; // interlace: none
+  ihdr[8] = 8;
+  ihdr[9] = 6;
+  ihdr[10] = 0;
+  ihdr[11] = 0;
+  ihdr[12] = 0;
 
   const stride = width * 4;
   const raw = new Uint8Array((stride + 1) * height);
   for (let y = 0; y < height; y += 1) {
-    raw[y * (stride + 1)] = 0; // filter type: none
+    raw[y * (stride + 1)] = 0;
     raw.set(rgba.subarray(y * stride, y * stride + stride), y * (stride + 1) + 1);
   }
   const idat = new Uint8Array(deflateSync(Buffer.from(raw.buffer, raw.byteOffset, raw.byteLength)));

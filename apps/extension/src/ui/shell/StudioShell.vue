@@ -11,12 +11,6 @@ import TaskStrip from "./TaskStrip.vue";
 import TopCommandBar from "./TopCommandBar.vue";
 import { use_shell_viewport, type ShellViewport } from "./use_shell_viewport.js";
 
-/**
- * The four viewport-exclusive surfaces. Each is rendered behind a `viewport === ...` guard, so a
- * desktop session never needs the mobile drawer or the dropdown navigation and a mobile session
- * never needs the rail or the docked inspector; loading both halves eagerly put Reka's Drawer,
- * DropdownMenu and the Floating UI positioning engine into every session's initial payload.
- */
 const ContextInspector = defineAsyncComponent(() => import("./ContextInspector.vue"));
 const DesktopIconRail = defineAsyncComponent(() => import("./DesktopIconRail.vue"));
 const InspectorSheet = defineAsyncComponent(() => import("./InspectorSheet.vue"));
@@ -25,7 +19,6 @@ const MobileBottomNav = defineAsyncComponent(() => import("./MobileBottomNav.vue
 const props = defineProps<{
   state: StudioState;
   controller: StudioController;
-  /** Forces desktop/mobile instead of tracking `matchMedia` -- see use_shell_viewport.ts. */
   viewport?: ShellViewport;
 }>();
 
@@ -39,18 +32,7 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const viewport = use_shell_viewport(props.viewport);
 
-// "Startup loading" and "partial initialization" (task-2-brief.md's shell-level states) are both
-// driven directly by StudioState -- loading.size > 0 while any of the nine capability slices is
-// still resolving its first load, failures.size > 0 once at least one slice has settled with an
-// error. The two are not mutually exclusive: some slices can still be loading while others have
-// already failed.
-/**
- * The startup skeleton stands in for the whole workspace, so it must never be raised by a load the
- * workspace itself started: swapping the routed view out for a skeleton unmounts it, and the view
- * comes back having lost every piece of local state, including which tab was open. The vocabulary
- * catalog is the one slice loaded on demand from inside a view (VocabularyPanel), so it drives that
- * panel's own surface and nothing above it.
- */
+/** The startup skeleton must not be raised by loads the workspace starts itself (the vocabulary catalog): unmounting the routed view discards its local state. */
 const ON_DEMAND_SLICES: ReadonlySet<string> = new Set(["vocabulary"]);
 const is_loading = computed(() =>
   [...props.state.loading].some((capability_id) => !ON_DEMAND_SLICES.has(capability_id)),
@@ -60,12 +42,6 @@ const inspector_style = computed(() => ({
   "--tc-inspector-width": `${String(props.state.inspector.width)}px`,
 }));
 
-// StudioState.inspector.collapsed defaults to false (create_initial_state, studio_controller.ts):
-// a sensible default for the *desktop* persistent panel (visible unless the user hides it), but
-// wrong for the *mobile* sheet -- a modal overlay must never auto-open over the workspace on
-// first paint just because the shared "collapsed" flag happens to default to false. Mobile's open
-// state is therefore local, always starting closed, and only forwards to set-inspector-collapsed
-// (keeping the persisted preference in sync for whenever the viewport becomes desktop again).
 const mobile_inspector_open = ref(false);
 
 const context_inspector_available = computed(() => props.state.route !== "workbench");

@@ -26,9 +26,6 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const portal_target = use_portal_target();
 
-// Desktop rail exposes all six routes directly (task-2-brief.md); labels are resolved once here
-// through route_label's exhaustive switch (never a data-driven translate call) so both the
-// tooltip text and each button's accessible name come from the same literal-keyed lookup.
 const items = computed(() =>
   STUDIO_ROUTES.map((item) => ({ ...item, label: route_label(t, item.route) })),
 );

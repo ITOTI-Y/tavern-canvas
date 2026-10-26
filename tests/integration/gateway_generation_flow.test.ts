@@ -31,15 +31,6 @@ import type {
   StudioCapabilities,
 } from "../../apps/extension/src/ui/contracts/ui_capabilities.js";
 
-/**
- * The Gateway counterpart to `direct_cloud_flow.test.ts`: the same composition root, the same real
- * queue and storage, but generation runs through the REAL Express Gateway on a real loopback port
- * against a real provider upstream. Nothing about the client is stubbed -- `GatewayJobExecutor`
- * submits, follows SSE, downloads the finished asset and persists it -- so this is what proves the
- * defect Task 8 flagged is gone: with a Gateway endpoint configured the generation capability is
- * available and a submitted job reaches `completed`.
- */
-
 const NAMESPACE = "primary";
 const GATEWAY_TOKEN = "integration-gateway-bearer-token";
 const TOKEN_REFERENCE = `tavern_canvas:${NAMESPACE}:gateway_access_token`;
@@ -81,7 +72,6 @@ function server_origin(server: Server): string {
   return `http://127.0.0.1:${String((address as AddressInfo).port)}`;
 }
 
-/** Stands in for the operator's own SD WebUI. Only the Gateway ever talks to it. */
 function create_upstream(): Server {
   return createServer((request: IncomingMessage, response: ServerResponse) => {
     upstream_request_paths.push(request.url ?? "");
@@ -349,11 +339,9 @@ describe("gateway generation flow", () => {
     expect(records[0]?.provider_id).toBe("sd_webui");
     expect(records[0]?.media_type).toBe("image/png");
 
-    // The provider was reached by the Gateway, from its own configured upstream.
     expect(upstream_request_paths).toEqual(["/sdapi/v1/txt2img"]);
 
-    // Every client request went to the Gateway origin and nowhere else; the client never named
-    // the upstream, and it carried the bearer token resolved from the host vault by reference.
+    // Every client request went to the Gateway origin, carrying the bearer token resolved from the host vault.
     expect(harness.requests.length).toBeGreaterThan(0);
     for (const url of harness.requests) {
       expect(new URL(url).origin).toBe(gateway_origin);

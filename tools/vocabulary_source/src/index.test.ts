@@ -8,10 +8,7 @@ import { read_jsonl } from "./jsonl_io.js";
 import { run_cli } from "./index.js";
 import { VocabularyRecordSchema } from "./vocabulary_record_schema.js";
 
-// Same synthetic 3-tag shard used in extract_legacy_seed.test.ts, generated
-// with the module's own EVP_BytesToKey-compatible derivation (verified
-// against real `openssl enc -aes-256-cbc -md md5` output). All tag names
-// and translations are invented for testing.
+// Same synthetic 3-tag shard as extract_legacy_seed.test.ts; names are invented.
 const SHARD_A_PAYLOAD =
   "U2FsdGVkX19U7CA+ajpa9MGWxfq5D4EvD66CFKVQSvGpFdUr95/Q7jPhDN5Rxlf3pLDaF9MBccK5FAwXRXrxr6hTWGEblsWzWitkvtStbKZt5uIyHp1yEsxmzjlM3DQ9UMydqCNW5euzM3FMg2V2Zb+ag4Hpwxjg0jzjguZQE8m1xpX7SyfvM7HoIAZ0+mpvQCkXWhaLgPm3R2YdYV2oyDI9SHgkQcT6Ri2z5nw5pfk5Hz9LlIp7Xz7VOzlEyMXi+PxsUyHnSxEnUGI7uoWLAs+EcJ5DyiCUk7FrqnIRXqBdFAOVVEGxD4c8Q5JXsGnt16ePz0JWfcXyVr3buEqhyqAV4gar19lEpcz16rq1j87rIsrJ5cNUPHOc2DU0i9mbUk128TcO0zbodgbAkj6cEHCvG/nmSSIgusPjJ4P6Dzs9PZ7CjxFYHJZjoVtMzgiqxwgWejeUvl8faqFIoiTtePPSb4RHlmE3wTFjEeORdH4=";
 

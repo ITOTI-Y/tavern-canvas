@@ -1,17 +1,4 @@
-/**
- * Character/outfit context source: expands `$Name-sfw-upperbody...$`-style placeholder tokens in an
- * image prompt into full character/outfit field text. Ported from legacy `processCharacterPrompt`
- * (utils/characterprompt.js), scoped to the plain suffix-pattern token grammar; the JSON-object
- * token variant (`${"name":...,"angle":...}`) is NovelAI multi-character scene-composition-specific
- * and is NAI-provider territory, not this generic context source's -- see
- * docs/parity/feature_matrix.md's `prompt.tag_placeholder_expand` row.
- *
- * Fuzzy name matching against a character/outfit database is a storage concern this module does not
- * own: callers inject a resolver (`CharacterResolvers`) that already knows how to look a normalized
- * name up. Unlike legacy (which hands the whole "name + free-text camera angle" string to a fuzzy
- * matcher), this module strips the recognized "from behind" angle phrase before resolving the name,
- * so the resolver contract stays a plain name lookup and camera-angle detection never leaks into it.
- */
+/** Expands `$Name-sfw-upperbody...$`-style placeholder tokens; name lookup is delegated to the injected `CharacterResolvers`. */
 
 export interface CharacterFields {
   readonly traits: string;
@@ -100,11 +87,7 @@ export interface CharacterExpansionResult {
   readonly collected_negatives: readonly string[];
 }
 
-/**
- * Expands every `$...$` token in `text`. Outfit tokens with no camera-angle information of their
- * own inherit the "from behind" facing of the most recently resolved character token earlier in
- * the same string, matching legacy's shared-closure behavior.
- */
+/** Outfit tokens without camera-angle information inherit the "from behind" facing of the most recently resolved character token in the same string. */
 export function expand_character_placeholders(
   text: string,
   resolvers: CharacterResolvers,
@@ -125,9 +108,7 @@ export function expand_character_placeholders(
         continue;
       }
       const name_and_angle = trimmed_content.slice(0, -format.suffix.length).trim();
-      // The resolver looks characters up by name alone; the camera-angle phrase ("from behind")
-      // is stripped before lookup and used only to decide `shared_is_from_behind`, so callers get
-      // a clean name-lookup contract instead of having to fuzzy-match around free-text angle words.
+      // The resolver looks characters up by name alone; the camera-angle phrase is stripped before lookup and only decides `shared_is_from_behind`.
       const clean_name = name_and_angle.replace(/from behind/gi, "").trim();
       const character = resolvers.resolve_character(normalize_character_name(clean_name));
       if (character === null) {

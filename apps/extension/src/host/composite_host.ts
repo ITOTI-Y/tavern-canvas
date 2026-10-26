@@ -26,13 +26,7 @@ import {
   type TavernHelperSurface,
 } from "./tavern_helper_host.js";
 
-/**
- * `HostAdapter` is deliberately one interface over two disjoint host surfaces: TavernHelper owns
- * chat reads/writes and private prompt generation, SillyTavern owns events, tool registration and
- * image upload. Every stage built its half; nothing ever joined them, so no production code could
- * hold a `HostAdapter`. This composite is that join -- pure delegation, no logic of its own beyond
- * carrying the probe's capability matrix.
- */
+/** Pure delegation: TavernHelper owns chat reads/writes and private prompt generation; SillyTavern owns events, tool registration and image upload. */
 export class CompositeHostAdapter implements HostAdapter {
   readonly capabilities: CapabilityMatrix;
   readonly #helper: TavernHelperHost;
@@ -123,12 +117,7 @@ function read_sillytavern_context(globals: unknown): unknown {
   }
 }
 
-/**
- * Returns a composite adapter only when both halves are genuinely present. The shape checks reuse
- * the same `inspect_*` functions the bootstrap probe already runs, so this never introduces a
- * second, divergent notion of "the host is usable"; the host classes themselves re-validate every
- * value they read back, so the casts below never widen trust.
- */
+/** Returns a composite only when both halves are present, reusing the bootstrap probe's `inspect_*` checks; the casts do not widen trust because the host classes re-validate values they read back. */
 export function create_composite_host(
   globals: unknown,
   capabilities: CapabilityMatrix,

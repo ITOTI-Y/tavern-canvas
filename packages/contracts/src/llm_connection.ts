@@ -2,13 +2,8 @@ import { z } from "zod";
 
 import { UuidSchema, VaultReferenceSchema } from "./ids.js";
 
-/**
- * Text-LLM connection profiles, the text-generation counterpart to the image `ProviderProfile`
- * family. The client picks a dialect and a route *from this file's fixed catalog*; it never
- * supplies an origin, a header, or a credential value. Origin resolution and credential
- * attachment happen host/Gateway-side exactly as they do for image providers
- * (`packages/providers`' `ProviderTransport`), which is why nothing here can express a URL.
- */
+// The client picks a dialect and route from this fixed catalog and never supplies an origin,
+// header or credential; origin resolution and credential attachment happen host-side.
 export const LlmProviderKindSchema = z.enum([
   "openai_compatible",
   "anthropic",
@@ -18,9 +13,7 @@ export const LlmProviderKindSchema = z.enum([
 export type LlmProviderKind = z.infer<typeof LlmProviderKindSchema>;
 
 export interface LlmRouteCatalogEntry {
-  /** Every completion route this dialect is allowed to select, in preference order. */
   readonly completion_routes: readonly `/${string}`[];
-  /** The route a model listing is read from; never selectable, always derived from the kind. */
   readonly models_route: `/${string}`;
 }
 
@@ -34,9 +27,6 @@ export const LLM_ROUTE_CATALOG: Readonly<Record<LlmProviderKind, LlmRouteCatalog
     models_route: "/v1/models",
   },
   google_generative: {
-    // Both routes live on Google's OpenAI-compatibility surface so one Bearer key authenticates
-    // the completion call and the model listing; the native `/v1beta/models` route would need a
-    // second, differently-named auth header for no gain.
     completion_routes: ["/v1beta/openai/chat/completions"],
     models_route: "/v1beta/openai/models",
   },
@@ -46,10 +36,8 @@ export const LLM_ROUTE_CATALOG: Readonly<Record<LlmProviderKind, LlmRouteCatalog
   },
 };
 
-/**
- * Mirrors `assert_provider_route`'s rejection set (relative absolute-path references only) so a
- * catalog entry can never be widened into something that escapes the host-resolved origin.
- */
+// Mirrors `assert_provider_route`'s rejection set so a catalog entry cannot escape the
+// host-resolved origin.
 function is_relative_absolute_path(route: string): boolean {
   return (
     route.startsWith("/") &&
@@ -100,11 +88,8 @@ function route_issue(route: string): {
   return { code: "custom", input: route, path: ["route"], message: ROUTE_ISSUE_MESSAGE };
 }
 
-/**
- * What the Settings UI is allowed to submit. There is deliberately no credential, header, or
- * endpoint field: writing a credential is a separate operation that hands the plaintext straight
- * to the secret vault, so no save path exists through which a secret could reach storage.
- */
+// No credential, header or endpoint field: credentials go straight to the secret vault in a
+// separate operation, so no save path can carry a secret into storage.
 export const LlmConnectionDraftSchema = z.strictObject(llm_connection_fields).check((context) => {
   if (!is_allowed_llm_route(context.value.provider_kind, context.value.route)) {
     context.issues.push(route_issue(context.value.route));

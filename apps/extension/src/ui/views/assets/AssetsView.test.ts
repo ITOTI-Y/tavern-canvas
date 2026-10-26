@@ -202,9 +202,6 @@ function mount_assets_view(options: MountOptions = {}) {
     props: { state, controller },
     global: {
       plugins: [i18n],
-      // AppDialog/AppSelect/ConfirmDialog all inject PORTAL_TARGET_KEY -- without it they fall
-      // back to no `to` prop, and Reka's Portal defaults to teleporting into document.body
-      // anyway, which `dom()` below already covers either way.
       provide: {},
     },
     attachTo: document.body,
@@ -213,15 +210,6 @@ function mount_assets_view(options: MountOptions = {}) {
   return { wrapper, state, controller };
 }
 
-/**
- * AppDialog/AppSelect/ConfirmDialog all render their real content through a Reka `<Teleport>`
- * into a portal element that is a *sibling* of the mounted component's own root, not a
- * descendant of it -- `wrapper.find()`/`wrapper.text()` only ever search the wrapper's own
- * subtree (confirmed against components.test.ts's AppDialog suite, which queries
- * `document.querySelector` directly for the same reason) and silently miss anything teleported.
- * Every mount here uses `attachTo: document.body`, so a `document.body`-scoped DOMWrapper is a
- * strict superset that reaches both the app's own tree and every teleported dialog/select.
- */
 function dom(): DOMWrapper<HTMLElement> {
   return new DOMWrapper(document.body);
 }
@@ -231,10 +219,6 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-/** Reka's TabsTrigger renders a plain `<button role="tab">` with no `value` DOM attribute (a
- * generated `id` instead), so tabs can only be located by their visible label text. Selection
- * fires on `mousedown` (Reka's own TabsTrigger.js), not `click` -- a plain `.trigger("click")`
- * never activates the tab. */
 async function click_tab(label: string): Promise<void> {
   const tab = dom()
     .findAll('[role="tab"]')
@@ -338,9 +322,6 @@ describe("Character panel CRUD and destructive confirmation", () => {
     await dom().find('button[aria-label="Delete"]').trigger("click");
     expect(controller.remove_asset).not.toHaveBeenCalled();
 
-    // The card's own delete icon and the confirm dialog's confirm button share the same
-    // accessible name ("Delete") by design (confirmations.destructive.default_confirm_action);
-    // the alertdialog role scopes to the confirm button specifically.
     await dom().find('[role="alertdialog"] button[aria-label="Delete"]').trigger("click");
     await flushPromises();
     expect(controller.remove_asset).toHaveBeenCalledWith("character", record.id);
@@ -353,7 +334,6 @@ describe("Character panel CRUD and destructive confirmation", () => {
     });
     const { controller } = mount_assets_view({ state });
     await dom().find('button[aria-label="Delete"]').trigger("click");
-    // AlertDialogCancel's accessible name comes from its text content, not an aria-label attr.
     const cancel_button = dom()
       .findAll('[role="alertdialog"] button')
       .find((candidate) => candidate.text() === "Cancel");
@@ -423,9 +403,6 @@ describe("Outfit panel character link", () => {
     mount_assets_view({ state });
     await click_tab("Outfits");
     await dom().find('button[aria-label="Add outfit"]').trigger("click");
-    // AppSelect renders its option list lazily, only once opened. Reka's SelectTrigger opens on
-    // `pointerdown` (SelectTrigger.js), not `click` or `mousedown` -- matching the same
-    // Reka-internal-widget-interaction caveat already ledgered for SegmentedControl (Task 4).
     await dom().find('button[role="combobox"]').trigger("pointerdown", { button: 0, pointerId: 1 });
     await flushPromises();
     expect(dom().text()).toContain("Kaede");
@@ -438,9 +415,6 @@ describe("LoRA metadata panel", () => {
     await click_tab("LoRA");
     await dom().find('button[aria-label="Add LoRA"]').trigger("click");
     await dom().find('input[placeholder="Name"]').setValue("Detail LoRA");
-    // Scoped to the open dialog specifically: AssetCategoryList's own search box (still mounted
-    // behind the dialog) is also `input[type="text"]`, and a document.body-wide query would pick
-    // it up as an unwanted extra match ahead of the dialog's own fields.
     const trigger_words_input = dom().findAll('[role="dialog"] input[type="text"]')[1];
     await trigger_words_input?.setValue("detailed, sharp focus");
     await dom().find('button[type="submit"]').trigger("click");
@@ -461,7 +435,7 @@ describe("Vibe/reference group panel", () => {
     await dom().find('button[aria-label="Add group"]').trigger("click");
     expect(dom().text()).toContain("Strength");
     const radios = dom().findAll('[role="radio"]');
-    await radios[1]?.trigger("click"); // options: [novelai, google]
+    await radios[1]?.trigger("click");
     await flushPromises();
     expect(dom().text()).not.toContain("Strength");
   });

@@ -12,17 +12,13 @@ const DIST_PREFIX = "dist/";
 const SOURCE_MAP_SUFFIX = ".map";
 const LOCALE_PATTERN = /^i18n\/[^/]+\.json$/u;
 
-/**
- * apps/extension/vite.config.ts writes dist/.vite/manifest.json for the bundle-budget gate. It is
- * build bookkeeping, never fetched at runtime, and must not reach a user's extensions directory.
- */
+/** `dist/.vite/manifest.json` is build bookkeeping for the bundle-budget gate and must not ship to a user's extensions directory. */
 const NON_RUNTIME_DIST_PREFIXES = ["dist/.vite/"] as const;
 
 export function is_source_map(path: string): boolean {
   return path.endsWith(SOURCE_MAP_SUFFIX);
 }
 
-/** A `dist/` path the released extension actually loads, as opposed to build bookkeeping. */
 export function is_packageable_dist_path(path: string): boolean {
   return (
     path.startsWith(DIST_PREFIX) &&
@@ -41,9 +37,7 @@ export interface ManifestFacts {
 export interface SelectionInput {
   readonly manifest: ManifestFacts;
   readonly package_version: string;
-  /** Paths git tracks under the packaged roots, relative to the repository root, POSIX separators. */
   readonly tracked: ReadonlySet<string>;
-  /** Paths present on disk under the packaged roots, same shape as `tracked`. */
   readonly present: ReadonlySet<string>;
 }
 
@@ -52,14 +46,7 @@ export interface Selection {
   readonly rejections: readonly string[];
 }
 
-/**
- * Decides the exact archive contents and every reason the repository is not releasable.
- *
- * Both halves of the "is this file real" question are asked: a runtime input git does not track
- * cannot be restored by anyone who clones the repository (Stage 05 shipped `dist/vocabulary/` from
- * an ignored directory), and a tracked path missing from the build output means the committed
- * runtime is stale.
- */
+/** A runtime input git does not track cannot be restored from a clone, and a tracked path missing from the build output means the committed runtime is stale; both are reported. */
 export function select_release_paths(input: SelectionInput): Selection {
   const rejections: string[] = [];
   const paths = new Set<string>();
@@ -156,11 +143,7 @@ const REGULAR_FILE_MODE = 0o100_644;
 const EXTERNAL_FILE_ATTRIBUTES = (REGULAR_FILE_MODE * 0x1_00_00) >>> 0;
 const DEFLATE_LEVEL = 9;
 
-/**
- * Writes the archive with every source of run-to-run variance pinned: entry order, modification
- * time, permission bits, and compression level. Two builds of the same file set produce identical
- * bytes, so the published SHA-256 is something a reader can reproduce.
- */
+/** Entry order, mtime, permission bits and compression level are pinned, so identical file sets give identical bytes and a reproducible SHA-256. */
 export async function build_archive(files: readonly ArchiveFile[]): Promise<Uint8Array> {
   const writer = new ZipWriter(new Uint8ArrayWriter(), {
     level: DEFLATE_LEVEL,
@@ -181,7 +164,6 @@ export function sha256_hex(bytes: Uint8Array): string {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
-/** The `sha256sum` text format, so `sha256sum -c` verifies the sidecar without transformation. */
 export function format_checksum_sidecar(digest: string, archive_name: string): string {
   return `${digest}  ${archive_name}\n`;
 }
@@ -216,7 +198,6 @@ export function read_manifest_facts(source: string): ManifestFacts {
   };
 }
 
-/** Roots whose disk and git contents decide the archive. */
 const PACKAGED_ROOTS = ["dist", "i18n"] as const;
 
 async function list_present_paths(repository_root: string): Promise<Set<string>> {

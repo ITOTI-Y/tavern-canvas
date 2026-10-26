@@ -11,11 +11,6 @@ import IconButton from "../components/IconButton.vue";
 import StateSurface from "../components/StateSurface.vue";
 import styles from "./assistant.module.css";
 
-/**
- * The chat history rail with multi-select management. `delete_sessions` and the export helper have
- * always been batch shaped; this is the selection UI that actually reaches them, so deleting or
- * exporting ten chats is one confirmed action rather than ten.
- */
 const props = defineProps<{
   readonly sessions: readonly AssistantSession[];
   readonly activeSessionId: string | null;
@@ -56,8 +51,6 @@ function toggle_select_all(selected: boolean): void {
   selected_ids.value = selected ? props.sessions.map((session) => session.id) : [];
 }
 
-/** A template ref inside `v-for` collects into an array, so the editing input registers itself
- * through a callback ref instead; only one row is ever in rename mode. */
 function register_rename_input(element: unknown): void {
   rename_input.value = element instanceof HTMLInputElement ? element : null;
 }

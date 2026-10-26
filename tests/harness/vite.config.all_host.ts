@@ -6,14 +6,6 @@ import { defineConfig } from "vite";
 
 import package_metadata from "../../package.json" with { type: "json" };
 
-/**
- * Stage 07 Task 7's all-host harness build. Serves tests/harness/sillytavern_host.html and
- * tests/harness/tauri_host.html, both of which boot the real extension bootstrap/composition root
- * (tests/harness/src/all_host_boot.ts). Separate from vite.config.studio.ts because that harness
- * mounts AppRoot.vue with mock capabilities and never touches bootstrap, storage or the host
- * adapters; sharing one config would entangle two unrelated entry graphs and make each page pay
- * for the other's dependencies. Output goes to output/all_host_harness/site (gitignored).
- */
 export default defineConfig({
   root: resolve(import.meta.dirname),
   base: "./",
@@ -22,10 +14,7 @@ export default defineConfig({
     __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
   },
   resolve: {
-    // Same reason as vite.config.studio.ts: "tests/harness" is not a pnpm workspace member, so its
-    // own files have no node_modules symlink for bare "@tavern-canvas/*" or "vue" specifiers.
-    // Files under apps/extension/src and packages/* resolve their own imports normally, since
-    // Vite walks up from each file's real location on disk.
+    // tests/harness is not a pnpm workspace member, so bare "@tavern-canvas/*" and "vue" imports from its own files need explicit aliases.
     alias: {
       "@tavern-canvas/contracts": fileURLToPath(
         new URL("../../packages/contracts/src/index.ts", import.meta.url),
@@ -33,8 +22,7 @@ export default defineConfig({
       "@tavern-canvas/core": fileURLToPath(
         new URL("../../packages/core/src/index.ts", import.meta.url),
       ),
-      // Subpath entries first: an object alias replaces the matched prefix, so a barrel entry
-      // would otherwise rewrite "@tavern-canvas/providers/adapters" to ".../src/index.ts/adapters".
+      // Subpath entries first: an object alias replaces the matched prefix, so a barrel entry would rewrite subpath imports.
       "@tavern-canvas/providers/adapters": fileURLToPath(
         new URL("../../packages/providers/src/adapters.ts", import.meta.url),
       ),

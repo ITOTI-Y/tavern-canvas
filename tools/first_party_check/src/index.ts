@@ -34,11 +34,8 @@ const SKIPPED_DIRECTORY_NAMES = new Set([
   "test-results",
 ]);
 const ALLOWED_FIXTURE_PATHS = ["tests/fixtures/user_content/", "tools/v2_migration/fixtures/"];
-// Vendored third-party data, not first-party source: pinned and checksummed exactly as
-// downloaded (apps/extension/public/tokenizers/novelai/SOURCE.json records the upstream
-// model/revision/checksums), so it must never be hand-edited to satisfy a source-hygiene rule.
-// tokenizer.json's SentencePiece vocabulary legitimately spans the full Unicode range, including
-// symbols the first-party-emoji rule matches (e.g. U+00AE REGISTERED SIGN).
+// Vendored tokenizer data pinned by SOURCE.json checksums; never hand-edit it. Its vocabulary spans
+// the full Unicode range, which the first-party-emoji rule matches.
 const ALLOWED_VENDORED_DATA_PATHS = ["apps/extension/public/tokenizers/novelai/"];
 const SOURCE_RULES: readonly SourceRule[] = [
   {
@@ -59,15 +56,9 @@ const SOURCE_RULES: readonly SourceRule[] = [
   },
   {
     rule_id: "legacy-runtime-import",
-    // index.js alone is too common a first-party filename (every workspace
-    // package has one) to flag on a single '../' -- that only ever reaches a
-    // sibling module within the SAME package (e.g. a test one directory
-    // below src/ importing its own package's entry point, as
-    // apps/gateway/src/http/lifecycle_sse.test.ts genuinely does). Two or
-    // more '../' segments are required before an import plausibly escapes
-    // the current package toward the legacy v2 runtime's actual root
-    // index.js. settings.html and transformers.min.js are never legitimate
-    // first-party filenames, so any relative escape still flags them.
+    // `index.js` is a common first-party filename, so a single '../' (a sibling module in the same
+    // package) must not flag it; two or more '../' segments can reach the legacy v2 root.
+    // settings.html and transformers.min.js flag on any relative escape.
     pattern:
       /(?:import\s+(?:[^"']+\s+from\s+)?|import\s*\(|require\s*\()\s*["'](?:\/(?:index\.js|settings\.html|transformers\.min\.js)|(?:\.\.\/){2,}index\.js|(?:\.\.\/)+(?:settings\.html|transformers\.min\.js))["']/u,
   },

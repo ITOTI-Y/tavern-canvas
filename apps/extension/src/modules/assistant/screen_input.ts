@@ -1,4 +1,3 @@
-/** Injected so `ScreenInputService` never touches `navigator.mediaDevices` directly. */
 export interface DisplayMediaPort {
   get_display_media(): Promise<MediaStream>;
 }
@@ -9,7 +8,6 @@ export function create_browser_display_media_port(
   return { get_display_media: () => media_devices.getDisplayMedia({ video: true }) };
 }
 
-/** Injected so `ScreenInputService` never touches `ImageCapture`/canvas directly. */
 export interface FrameCapturePort {
   capture_frame(track: MediaStreamTrack): Promise<Blob>;
 }
@@ -37,12 +35,7 @@ export function create_browser_frame_capture_port(
 
 export type ScreenCaptureState = "idle" | "capturing" | "error";
 
-/**
- * Explicit-command-only screen/tab capture (mirrors legacy `startScreenShare`/
- * `startBrowserCapture`). `start_capture()` is never called automatically by this class or any
- * timer -- only a direct caller invocation reaches `getDisplayMedia`. The native browser "stop
- * sharing" affordance is kept in sync by listening for the track's own `ended` event.
- */
+/** Explicit-command-only: `start_capture()` is never called automatically; the track's `ended` event keeps the native "stop sharing" affordance in sync. */
 export class ScreenInputService {
   readonly #display_media: DisplayMediaPort;
   readonly #frame_capture: FrameCapturePort;
@@ -131,8 +124,7 @@ export interface ScreenInputAutoCaptureSettings {
   readonly auto_capture_on_send: boolean;
 }
 
-/** Pure decision function (mirrors legacy `captureForMessage`'s gate): a send never triggers a
- * capture unless both the feature and the toggle are explicitly on. */
+/** A send never triggers a capture unless both the feature and the toggle are on. */
 export function should_auto_capture_on_send(settings: ScreenInputAutoCaptureSettings): boolean {
   return settings.screen_capture_enabled && settings.auto_capture_on_send;
 }

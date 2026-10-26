@@ -1,11 +1,3 @@
-/**
- * Persona/user injection formatting and the separate, user-curated knowledge base preview surface.
- * Ported from legacy `buildPersonaPromptContent`/`buildUserPromptContent`
- * (utils/settings/knowledgeBase/personaService.js, userService.js) -- fixed labeled sections wrapped
- * in Chinese-tag markers, structurally the same "escaped user content in structural markup" concern
- * `world_info_source.ts`'s injection templates address, so this module reuses that escaper.
- */
-
 import { escape_injected_field_value } from "./world_info_source.js";
 
 export type PersonaFields = Readonly<Record<string, string | undefined>>;
@@ -55,11 +47,6 @@ function build_field_lines(data: PersonaFields, fields: readonly string[]): read
   return lines;
 }
 
-/**
- * Shared renderer behind both `build_persona_prompt_content` and `build_user_prompt_content` --
- * legacy carries two structurally identical copies of this logic for character-persona and
- * User-persona respectively; this module collapses them into one parameterized implementation.
- */
 function build_labeled_prompt_content(data: PersonaFields | null, enabled: boolean): string {
   if (!enabled || data === null) {
     return "";
@@ -89,10 +76,6 @@ export function build_user_prompt_content(user: PersonaFields | null, enabled: b
   return build_labeled_prompt_content(user, enabled);
 }
 
-// ---------------------------------------------------------------------------
-// Knowledge base (separate from World Info): explicit, previewable selection
-// ---------------------------------------------------------------------------
-
 export interface KnowledgeEntry {
   readonly id: string;
   readonly title: string;
@@ -100,7 +83,6 @@ export interface KnowledgeEntry {
   readonly keys: readonly string[];
 }
 
-/** Read-only lookup by ID -- the "read_knowledge" surface. */
 export function read_knowledge_entry(
   entries: readonly KnowledgeEntry[],
   id: string,
@@ -108,7 +90,6 @@ export function read_knowledge_entry(
   return entries.find((entry) => entry.id === id) ?? null;
 }
 
-/** Case-insensitive substring search across title/content/keys -- the "search_knowledge" surface. */
 export function search_knowledge_entries(
   entries: readonly KnowledgeEntry[],
   query: string,
@@ -125,10 +106,7 @@ export function search_knowledge_entries(
   );
 }
 
-/**
- * Selection stays explicit and previewable: only entries the caller has actually selected are
- * returned, in the caller's selection order, never a silent "everything matching" fallback.
- */
+/** Returns only entries the caller selected, in selection order, never a silent "everything matching" fallback. */
 export function preview_selected_knowledge(
   entries: readonly KnowledgeEntry[],
   selected_ids: readonly string[],

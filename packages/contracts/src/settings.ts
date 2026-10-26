@@ -27,10 +27,8 @@ export type GatewaySettings = z.infer<typeof GatewaySettingsSchema>;
 
 export const GATEWAY_CREDENTIAL_KIND = "gateway_access_token" as const;
 
-/**
- * One Gateway bearer token per namespace. Settings hold this string; the token itself only ever
- * exists in host secret storage and in the outgoing `Authorization` header of a live request.
- */
+// One Gateway bearer token per namespace; the token itself lives only in host secret storage and in
+// the `Authorization` header of a live request.
 export function derive_gateway_credential_reference(namespace: string): string {
   return VaultReferenceSchema.parse(`tavern_canvas:${namespace}:${GATEWAY_CREDENTIAL_KIND}`);
 }

@@ -186,7 +186,6 @@ describe("bootstrap_tavern_canvas", () => {
 
     expect(handle.state).toBe("ready");
     expect(handle.resolutions).toHaveLength(12);
-    // A capability that could not be composed degrades; it never prevents the shell from mounting.
     expect(handle.resolutions.some((entry) => entry.status === "unavailable")).toBe(true);
     expect(handle.resolutions.every((entry) => entry.capability_id.length > 0)).toBe(true);
     expect(
@@ -244,8 +243,6 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("ready");
-    // The caller's own module started, and the composition root's Tauri chat surface module was
-    // started alongside it -- its participant registration is the observable proof.
     expect(sequence).toEqual(["start:host"]);
     const chat_surface = Reflect.get(
       Reflect.get(Reflect.get(fixture.globals, "__TAURITAVERN__") as object, "api") as object,

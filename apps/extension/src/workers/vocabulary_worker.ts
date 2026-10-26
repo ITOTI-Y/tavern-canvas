@@ -40,31 +40,12 @@ import {
   type VocabularyTrigramShardPayload,
 } from "@tavern-canvas/vocabulary";
 
-// The Worker returns at most this many results per page, matching the
-// frozen protocol's MAX_RESULT_PAGE_SIZE (packages/contracts/src/vocabulary_worker.ts,
-// not exported there -- kept in lockstep by the shared VocabularySearchResultSchema
-// max(50) bound both files are checked against).
 const RESULT_PAGE_SIZE = 50;
-// Trigram shards group by the first two code points of the trigram itself
-// (tools/vocabulary_builder/src/build_trigram_index.ts), the same width as
-// prefix/alias grouping -- not one code point, which an earlier version of
-// this file assumed before the builder landed.
 const TRIGRAM_GROUP_CODE_POINT_COUNT = 2;
 const MANIFEST_CACHE_KEY = "__manifest__";
-// A live query session (>50 ranked DTOs, held for next_page) is retained
-// only until the NEXT one completes: the client's supersede semantics
-// (vocabulary_client.ts's #supersede_active) mean a caller can never
-// legitimately hold and page a cursor from before the most recent
-// completed query, so anything older is unreachable dead weight. Without
-// this cap, every multi-page search leaks ~10-20 KB forever outside all
-// LRU accounting (a session is never touched by cancel, and #handle_query's
-// cleanup only ever removes the CURRENT request_id's cancellation flag).
+// Only the most recent completed query keeps its paging session; the client supersedes older cursors, and retaining them would leak memory outside LRU accounting.
 const MAX_QUERY_SESSIONS = 1;
-// Same unbounded-leak shape as sessions, on a smaller scale (2 bytes/char
-// UUID): a `cancel` that arrives after its target's `finally` already ran
-// (the complete response was in flight when the user typed) adds an orphan
-// entry #handle_query's cleanup will never remove, since that request_id
-// will never run again.
+// A cancel arriving after its target finished leaves an orphan id that is never removed otherwise.
 const MAX_CANCELLED_REQUEST_IDS = 256;
 
 class VocabularySearchCancelledError extends Error {
@@ -78,9 +59,6 @@ function error_message(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-// Both #sessions and #cancelled_request_ids are Maps/Sets, which iterate in
-// insertion order -- the oldest entry is always whatever `.keys().next()`
-// yields, so a plain bounded FIFO needs no extra bookkeeping.
 function evict_oldest_until_within_cap(
   collection: Map<string, unknown> | Set<string>,
   max_size: number,
@@ -94,11 +72,6 @@ function evict_oldest_until_within_cap(
   }
 }
 
-// record_ids are dense, sequential, and 0-indexed (assign_record_ids in the
-// builder), and detail shards chunk them contiguously in
-// VOCABULARY_DETAIL_SHARD_MAX_RECORDS-sized blocks starting at 0
-// (build_detail_shards.ts), so a record's shard start_id is always this
-// floor -- verified directly by the builder-package integration test.
 function detail_partition_start(record_id: number): number {
   return (
     Math.floor(record_id / VOCABULARY_DETAIL_SHARD_MAX_RECORDS) *
@@ -131,18 +104,9 @@ function find_record(
 }
 
 /**
- * Locates the shard file for a group/record by `shard_id`, matching Task 2's
- * builder exactly (tools/vocabulary_builder/src/build_{prefix,alias,trigram,
- * detail,hot}_index.ts): `prefix:${group_key}` where group_key is the first
- * two normalized code points; `alias:${partition}` where partition is that
- * same group key hashed into one of 512 fixed buckets (payload contract
- * addendum v2 — computed directly here, never scanned for in the manifest);
- * `trigram:${group_key}` where group_key is the first two code points of the
- * trigram itself (not the query); `detail:${start_id}` where start_id is the
- * record's shard's first record_id (record_ids are dense/sequential/
- * 0-indexed, so this is a pure floor-division computation, no manifest lookup
- * table needed); and the single fixed `hot:global`. Reconciled against the
- * real builder output in builder_package_integration.test.ts.
+ * Shard ids must match the builder's naming exactly: `prefix:`/`trigram:` use the first two
+ * code points of the key, `alias:` a fixed 512-bucket hash of that key, `detail:` the shard's
+ * first record id (record ids are dense and 0-indexed), and a single `hot:global`.
  */
 class ManifestShardIndex {
   readonly #by_shard_id = new Map<string, VocabularyShardEntry>();
@@ -174,10 +138,6 @@ class ManifestShardIndex {
   }
 }
 
-// The payload contract's narrowed residency rule (addendum v2): a live
-// query session pins the current page's COMPACT result DTOs and nothing
-// else. The decoded detail shards those DTOs were extracted from are
-// ordinary LRU citizens the moment extraction finishes.
 interface QuerySession {
   readonly results: readonly VocabularyRankedResult[];
   offset: number;
@@ -185,20 +145,9 @@ interface QuerySession {
 
 export interface VocabularyWorkerEngineOptions {
   readonly memory_mode?: ShardMemoryMode;
-  // Overrides the budget `memory_mode` would resolve. A host that knows its
-  // own memory constraints better than navigator.deviceMemory does can set
-  // it directly; tests use it to exercise eviction without building
-  // multi-megabyte fixtures.
   readonly lru_budget_bytes?: number;
 }
 
-/**
- * Owns everything the brief assigns the Worker: package reads (via the
- * ShardByteSource port), decompression + MessagePack decode (shard_codec.ts),
- * in-memory indexes, cancellation flags, result cursors, and the decoded-
- * shard LRU. Pure message-in/response-out so it is testable without a real
- * Worker global scope; start_vocabulary_worker below wires it to one.
- */
 export class VocabularyWorkerEngine {
   readonly #byte_source: ShardByteSource;
   readonly #lru: ShardLru;
@@ -216,33 +165,18 @@ export class VocabularyWorkerEngine {
     });
   }
 
-  // Benchmark/ops introspection only (Stage 05 Task 6's browser LRU
-  // high-water-mark proof) -- never part of the postMessage protocol, and
-  // never influences search behavior. #lru already self-enforces its
-  // configured budget synchronously inside put()/unpin() (shard_lru.ts), so
-  // this getter only ever reports a value external callers could not
-  // otherwise observe without reimplementing cache accounting.
   get resident_shard_bytes(): number {
     return this.#lru.resident_bytes;
   }
 
-  // Companion to the above: the budget that high-water mark must respect.
-  // Reading it from the live engine is what lets the benchmark gate each
-  // worker against its OWN resolved budget instead of assuming one.
   get shard_lru_budget_bytes(): number {
     return this.#lru.budget_bytes;
   }
 
-  // Ops introspection only, mirroring resident_shard_bytes -- proves
-  // #sessions stays bounded at MAX_QUERY_SESSIONS instead of growing
-  // unboundedly across repeated multi-page queries.
   get pending_session_count(): number {
     return this.#sessions.size;
   }
 
-  // Ops introspection only -- proves #cancelled_request_ids stays bounded
-  // at MAX_CANCELLED_REQUEST_IDS instead of accumulating orphaned cancel
-  // targets forever.
   get pending_cancelled_request_count(): number {
     return this.#cancelled_request_ids.size;
   }
@@ -278,12 +212,7 @@ export class VocabularyWorkerEngine {
         evict_oldest_until_within_cap(this.#cancelled_request_ids, MAX_CANCELLED_REQUEST_IDS);
         return;
       case "import_source":
-        // The ImportBuilder pipeline (packages/vocabulary/src/import/) is
-        // complete but not wired into this engine -- responding here (rather
-        // than falling through the switch with no case, which drops the
-        // request on the floor) keeps the protocol from ever dead-airing a
-        // schema-valid request. Full in-Worker wiring belongs to whichever
-        // stage ships the import UI (ledgered in progress.md).
+        // Import is not wired into the Worker; answer explicitly so a valid request is not dropped.
         emit({
           type: "error",
           request_id: request.request_id,
@@ -339,9 +268,6 @@ export class VocabularyWorkerEngine {
     }
 
     const normalized = normalize_vocabulary_query(request.query);
-    // Records hydrated for phase A are reused by the final pass, whose
-    // candidate set is a superset -- otherwise every non-empty query decodes
-    // its detail shards twice.
     const hydrated = new Map<number, VocabularyRecordLike | null>();
     try {
       const phase_a_candidates = await this.#collect_phase_a_candidates(
@@ -427,8 +353,6 @@ export class VocabularyWorkerEngine {
       return;
     }
 
-    // Pagination replays already-hydrated result DTOs held by the session,
-    // so it needs no shard access at all.
     const page = session.results.slice(session.offset, session.offset + RESULT_PAGE_SIZE);
     session.offset += page.length;
     const has_more = session.offset < session.results.length;
@@ -609,13 +533,6 @@ export class VocabularyWorkerEngine {
     });
   }
 
-  /**
-   * Resolves every not-yet-known record id into `hydrated`, loading each
-   * covering detail shard exactly once per call. `null` records a
-   * confirmed absence so a repeat pass never re-fetches a shard for it.
-   * The decoded shard is handed straight back to the LRU's ordinary
-   * accounting -- nothing here retains it past extraction.
-   */
   async #hydrate_records(
     request_id: string,
     record_ids: readonly number[],
@@ -679,11 +596,7 @@ export class VocabularyWorkerEngine {
   }
 }
 
-// Vocabulary data is shared reference content, not scoped to a profile/
-// character the way other stores are (packages/storage's `namespace`
-// generally means that) -- a fixed namespace is the correct model here, not
-// an omission. Flagged for stage review alongside the rest of this
-// production wiring.
+// Vocabulary data is shared across profiles, so it uses a fixed namespace.
 const VOCABULARY_NAMESPACE = "vocabulary";
 
 interface ReadyPackageAccess {
@@ -691,11 +604,7 @@ interface ReadyPackageAccess {
   readonly updater: PackageUpdater;
 }
 
-// The bundled baseline (apps/extension/public/vocabulary/baseline) is
-// copied verbatim to dist/vocabulary/baseline (vite.config.ts,
-// copyPublicDir), while this Worker script is pinned to dist/workers/*.js
-// (vite.config.ts's worker.rolldownOptions.output) -- so from the Worker's
-// own self.location, the baseline is always exactly one directory up.
+// The baseline sits one directory above the Worker script (dist/workers/*.js) at dist/vocabulary/baseline.
 export function resolve_bundled_baseline_base_url(scope: WorkerScopeLike): string {
   const { location } = scope;
   if (location === undefined) {
@@ -708,17 +617,7 @@ export function resolve_bundled_baseline_base_url(scope: WorkerScopeLike): strin
 
 declare const __TAVERN_CANVAS_VERSION__: string;
 
-/**
- * The real ShardByteSource for production: reads through
- * VocabularyPackageStore (IndexedDB). Nothing async runs at construction --
- * opening the database, and bootstrapping from the extension's bundled
- * baseline via PackageUpdater if no package has ever been activated yet,
- * both happen lazily on first use (the first inbound Worker message).
- * Constructing this class at module-evaluation time (as the production
- * entry point below does) must never itself touch IndexedDB or the
- * network -- merely importing this module (as every test here does) must
- * stay side-effect-free.
- */
+/** Opening IndexedDB and bootstrapping the baseline happen lazily on first use; construction stays side-effect-free. */
 export class PackageStoreShardByteSource implements ShardByteSource {
   readonly #scope: WorkerScopeLike;
   #ready_promise: Promise<ReadyPackageAccess> | null = null;
@@ -754,10 +653,6 @@ export class PackageStoreShardByteSource implements ShardByteSource {
 
   async #initialize(): Promise<ReadyPackageAccess> {
     const database = await open_database();
-    // This store is a pure reader for the Worker's lifetime -- only the
-    // PackageUpdater below (which owns its own store instance) ever writes
-    // package state, and only from #initialize -- so it may cache the active
-    // package lookup that shard_bytes() would otherwise redo per read.
     const store = new VocabularyPackageStore(database, VOCABULARY_NAMESPACE, {
       cache_active_package: true,
     });
@@ -783,18 +678,9 @@ export class PackageStoreShardByteSource implements ShardByteSource {
 export interface WorkerScopeLike {
   postMessage(message: unknown): void;
   addEventListener(type: "message", handler: (event: { data: unknown }) => void): void;
-  // Only the real production entry point (below) reads this; test fakes
-  // never need to supply it.
   readonly location?: { readonly href: string };
 }
 
-/**
- * Wires the engine to a real (or fake, in tests) Worker message scope:
- * validates every inbound message against the frozen protocol schema before
- * touching the engine, and posts every emitted response back out. Returns
- * the engine so callers (tests, and eventually integration code) can still
- * reach it directly if needed.
- */
 export function start_vocabulary_worker(
   byte_source: ShardByteSource,
   scope: WorkerScopeLike,
@@ -813,24 +699,13 @@ export function start_vocabulary_worker(
   return engine;
 }
 
-// Error codes that indicate the *package itself* is unusable (a corrupt
-// shard, a manifest that never loaded) rather than a protocol/caller
-// mistake ("invalid_request", "not_ready") or a benign supersession
-// ("cancelled") -- only these justify reselecting the prior confirmed
-// version. Implementer-chosen heuristic, flagged for stage review.
+// Error codes meaning the package itself is unusable; only these reselect the prior confirmed version.
 const PACKAGE_HEALTH_ERROR_CODES: ReadonlySet<string> = new Set([
   "package_unavailable",
   "internal_error",
 ]);
 
-/**
- * Implements "old version remains until the new version completes one
- * successful Worker query" (plan Task 3) at the one place that can observe
- * every response the engine emits, without changing start_vocabulary_worker
- * or VocabularyWorkerEngine themselves: any "complete" response confirms
- * the active package; a package-health error reselects the prior confirmed
- * one. Both calls are idempotent no-ops once already confirmed/reselected.
- */
+/** Confirms the active package on the first successful query; a package-health error reselects the prior confirmed one. */
 export function with_activation_lifecycle(
   scope: WorkerScopeLike,
   byte_source: PackageStoreShardByteSource,
@@ -840,10 +715,7 @@ export function with_activation_lifecycle(
       if (message !== null && typeof message === "object" && "type" in message) {
         const response = message as { readonly type: unknown; readonly code?: unknown };
         if (response.type === "complete") {
-          // Best-effort lifecycle bookkeeping (IndexedDB write) -- its
-          // failure must never surface as an unhandled rejection, since the
-          // response has already been posted back to the caller by the time
-          // this runs.
+          // Best-effort: a failed write must not become an unhandled rejection.
           void byte_source.report_query_success().catch(() => undefined);
         } else if (
           response.type === "error" &&
@@ -863,17 +735,10 @@ export function with_activation_lifecycle(
 
 declare const self: WorkerScopeLike | undefined;
 
-// Benchmark/ops introspection only (Stage 05 Task 6) -- a debug global
-// exposing the running engine so an external harness (Playwright's
-// `Worker.evaluate`) can read `resident_shard_bytes` for the LRU high-water
-// mark without any protocol change. Never read by production code.
 interface VocabularyWorkerDebugGlobal {
   __vocabulary_worker_engine_debug__?: VocabularyWorkerEngine;
 }
 
-// Purely synchronous: constructing PackageStoreShardByteSource and calling
-// start_vocabulary_worker only registers a message listener. No IndexedDB
-// or network access happens until a real message arrives.
 if (typeof self !== "undefined" && typeof self.postMessage === "function") {
   const byte_source = new PackageStoreShardByteSource(self);
   const engine = start_vocabulary_worker(byte_source, with_activation_lifecycle(self, byte_source));

@@ -13,12 +13,7 @@ export class LegacyDecryptionError extends Error {
   }
 }
 
-/**
- * Replicates OpenSSL's legacy (pre-`-pbkdf2`) `EVP_BytesToKey` key
- * derivation with the MD5 digest: `D_0 = ""`, `D_i = MD5(D_{i-1} + password +
- * salt)`, concatenated until there are enough bytes for the key and IV. This
- * is the derivation `openssl enc -aes-256-cbc -md md5 -pass ...` performs.
- */
+/** OpenSSL's legacy `EVP_BytesToKey` with MD5: `D_i = MD5(D_{i-1} + password + salt)` until key and IV are covered. */
 function derive_key_and_iv(
   passphrase: string,
   salt: Buffer,
@@ -42,13 +37,7 @@ function derive_key_and_iv(
   };
 }
 
-/**
- * Decrypts a base64-encoded OpenSSL-salted AES-256-CBC payload, i.e. the
- * output of `openssl enc -aes-256-cbc -salt -md md5 -a -pass pass:<passphrase>`.
- * The legacy st-chatu8 v2.8.1 `tagData/*.json` shard files are this format
- * verbatim (whole-file base64 text starting with the `Salted__` magic once
- * decoded).
- */
+/** Decrypts `openssl enc -aes-256-cbc -salt -md md5 -a` output, the format of the v2.8.1 `tagData/*.json` shard files. */
 export function decrypt_legacy_openssl_payload(
   base64_ciphertext: string,
   passphrase: string,

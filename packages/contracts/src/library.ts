@@ -2,12 +2,8 @@ import { z } from "zod";
 
 import { ImageIdSchema, UuidSchema } from "./ids.js";
 
-/**
- * Persona and knowledge records: the two library surfaces Stage 06 could only read. Both are
- * plain content, so the schemas here carry no transport or credential shape at all; the one
- * field that could smuggle a remote fetch, a persona avatar, is an `ImageId` into the local image
- * store rather than a URL.
- */
+// A persona avatar is an `ImageId` into the local image store, not a URL, so these schemas carry
+// no remote fetch.
 
 export const PersonaRoleSchema = z.enum(["user", "assistant"]);
 export type PersonaRole = z.infer<typeof PersonaRoleSchema>;

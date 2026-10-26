@@ -119,12 +119,10 @@ export interface ComposeCapabilitiesOptions {
   readonly probe: BootstrapProbeResult;
   readonly globals?: unknown;
   readonly extension_version?: string;
-  /** Injection seams: production defaults reach the real IndexedDB, Worker and provider adapters. */
   readonly open_storage?: () => Promise<StorageDatabase>;
   readonly create_vocabulary_worker?: (() => VocabularyWorkerLike) | null;
   readonly estimate_storage?: () => Promise<{ usage?: number; quota?: number } | undefined>;
   readonly message_port?: MessagePort | null;
-  /** The single network boundary: swapped in tests so the whole job path stays real. */
   readonly provider_fetch?: ProviderFetch;
   readonly create_browser_secret_vault?: (globals: unknown) => BrowserSecretVaultPort | null;
 }
@@ -139,14 +137,8 @@ export interface StudioComposition {
   readonly capabilities: StudioCapabilities;
   readonly resolutions: readonly CapabilityResolutionRecord[];
   readonly host: CompositeHostAdapter | null;
-  /**
-   * Already-classified chat-image gestures. Only a host that owns the rendered message DOM
-   * (TauriTavern's ChatSurface) can produce them; standard SillyTavern exposes no such hook and
-   * would need a private selector, which is forbidden, so it gets the permanently-unavailable port
-   * and the same commands stay reachable from the Gallery instead.
-   */
+  /** Only TauriTavern's ChatSurface produces classified chat-image gestures; standard SillyTavern gets the permanently-unavailable port. */
   readonly chat_media: ChatMediaInteractionPort;
-  /** Host-specific runtime modules the caller starts alongside its own. */
   readonly modules: readonly RuntimeModule[];
   dispose(): Promise<void>;
 }
@@ -163,11 +155,6 @@ function default_estimate_storage(): Promise<{ usage?: number; quota?: number } 
   return navigator.storage.estimate();
 }
 
-/**
- * The vocabulary search Worker is a first-party module bundled beside the extension entry; hosts
- * without a `Worker` constructor (unit tests, non-browser runtimes) get `null` and the capability
- * resolves unavailable instead of throwing at first search.
- */
 function default_vocabulary_worker_factory(): (() => VocabularyWorkerLike) | null {
   if (typeof Worker === "undefined") {
     return null;
@@ -176,11 +163,6 @@ function default_vocabulary_worker_factory(): (() => VocabularyWorkerLike) | nul
     new Worker(new URL("../workers/vocabulary_worker.js", import.meta.url), { type: "module" });
 }
 
-/**
- * The five concrete adapters, imported only when a job runs or a connection is tested. Loading them
- * at composition time put every provider's request mapping, response parsing and workflow renderer
- * into the initial chunk for a session that may never generate anything.
- */
 async function build_provider_adapters(
   database: StorageDatabase | null,
 ): Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>> {
@@ -206,7 +188,6 @@ async function build_provider_adapters(
   return adapters;
 }
 
-/** Reads a stored gallery image back as a provider source asset (i2i / edit / inpaint inputs). */
 function create_asset_reader(
   database: StorageDatabase,
   namespace: () => string,
@@ -230,14 +211,10 @@ function create_asset_reader(
   };
 }
 
-/** `MediaJobExecutor` always supplies these three fields; parsing rather than casting keeps a
- * malformed executor change from reaching IndexedDB as an invalid record. */
 function to_image_metadata(metadata: Readonly<Record<string, unknown>>): PutImageRecordMetadata {
   return ImageRecordFieldsSchema.omit({ media_type: true, quarantined: true }).parse(metadata);
 }
 
-/** The first model the stored profile permits. Automatic requests have no parameter editor behind
- * them, so this is the only model such a request can legitimately name. */
 function read_first_allowlisted_model(payload: Readonly<Record<string, unknown>>): string | null {
   const models = read_array(as_record(payload.provider_profile), "model_allowlist");
   const first_model = models[0];
@@ -271,12 +248,6 @@ function create_image_store_port(
   };
 }
 
-/**
- * Builds the real `StudioCapabilities` from the real modules, one capability at a time. Every slice
- * is independent: a capability that cannot be built resolves to the honest-unavailable
- * implementation with a diagnostics-visible reason instead of aborting the composition, so
- * bootstrap never fails because one subsystem is missing.
- */
 export async function compose_studio_capabilities(
   options: ComposeCapabilitiesOptions,
 ): Promise<StudioComposition> {
@@ -286,12 +257,6 @@ export async function compose_studio_capabilities(
   const resolutions: CapabilityResolutionRecord[] = [];
   const teardown: (() => void | Promise<void>)[] = [];
 
-  /**
-   * An unavailable capability must not look like an empty one: its `load()` rejects with the stable
-   * `capability_unavailable` code carrying the real reason, which is what drives StudioShell's
-   * partial-initialization banner and puts the reason in front of the user instead of showing an
-   * empty view that silently does nothing.
-   */
   function record<TValue extends { load: (...args: never[]) => Promise<unknown> }>(
     capability_id: CapabilityId,
     resolution: CapabilityResolution<TValue>,
@@ -324,10 +289,7 @@ export async function compose_studio_capabilities(
       }),
     );
   }
-  /**
-   * Guarded by the probe rather than by the ChatSurface branch above: TauriTavern advertises the two
-   * capabilities independently, and on a standard SillyTavern host neither module exists at all.
-   */
+  /** Guarded by the probe, not the ChatSurface branch: TauriTavern advertises the two capabilities independently. */
   if (capability_matrix.tauri_world_info_activation?.available === true) {
     modules.push(new TauriWorldInfoActivationModule({ globals }));
   }
@@ -385,13 +347,7 @@ export async function compose_studio_capabilities(
           is_auto_generation_enabled,
         });
 
-  /**
-   * A provider's allowlists and its vault reference live on its stored profile -- never in code,
-   * never supplied remotely. Loaded once here so the job executor's synchronous `profiles.resolve`
-   * reads a real validated profile rather than an invented one. Neither field can name a cloud
-   * destination: `base_url` only ever reaches `LocalDirectTransport`, which requires a loopback
-   * origin, and a cloud provider's origin comes from the code-owned route catalog instead.
-   */
+  /** `base_url` only reaches `LocalDirectTransport`, which requires a loopback origin; cloud origins come from the code-owned route catalog. */
   const active_profile_record =
     repositories === null || settings_adapter === null
       ? null
@@ -447,12 +403,6 @@ export async function compose_studio_capabilities(
     fallback.profiles,
   );
 
-  /**
-   * `llm_connections` needs three things at once, so its unavailable reasons are distinct: the
-   * database version 3 store, a vault that accepts a credential write, and a vault that reveals it
-   * again for the connection test. Personas and knowledge need only storage -- they ride on the
-   * version 1 `character_profiles` and `knowledge_entries` stores.
-   */
   const llm_connections = record(
     "llm_connections",
     repositories === null
@@ -540,12 +490,6 @@ export async function compose_studio_capabilities(
     fallback.gallery,
   );
 
-  /**
-   * The main-LLM trigger: `request_image` as a native function tool where the host has a
-   * ToolManager, the hidden-comment stream parser where it does not. Wired from inside the
-   * generation capability because it enqueues onto exactly the queue the Workbench submits to --
-   * where there is no working generation capability there is nothing for a trigger to do either.
-   */
   function wire_generation_trigger(
     queue: ImageJobQueue,
     plans: MediaExecutionPlanRegistry,
@@ -652,11 +596,6 @@ export async function compose_studio_capabilities(
               global_concurrency: settings_adapter?.get_settings().global_concurrency ?? 1,
             });
             teardown.push(timeline.observe_jobs(queue));
-            /**
-             * Production now has a real `MessagePort`: without it no automatic image ever reaches
-             * the message it was requested from, because nothing carries a completed job through
-             * `completed -> attached | orphaned`.
-             */
             const message_port =
               options.message_port ??
               (trigger_sessions === null ? null : new HostMessagePort(host, trigger_sessions));
@@ -798,14 +737,7 @@ export interface ProviderTransportDependencies {
   readonly fetch?: ProviderFetch;
 }
 
-/**
- * Turns a `select_transport` decision into the `ProviderTransport` the adapter executor drives.
- *
- * `gateway` never arrives here: the Gateway runs the provider adapter on its own side, so it is a
- * job-level client rather than a per-route transport and gets `GatewayJobExecutor` instead. What
- * remains unreachable from this build is TauriTavern's provider bridge and a first-party
- * SillyTavern relay; both leave the generation capability unavailable with that reason named.
- */
+/** `gateway` never arrives here: it is a job-level client served by `GatewayJobExecutor`. */
 export function create_provider_transport(
   selection: TransportSelection,
   dependencies: ProviderTransportDependencies = { secrets: null },
@@ -843,11 +775,6 @@ const GATEWAY_TOKEN_MISSING =
 const GATEWAY_TOKEN_UNREADABLE =
   "This host cannot reveal stored credentials, so the Gateway access token cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml, or clear the Gateway endpoint to generate directly";
 
-/**
- * Fails composition rather than the first job: an endpoint the client can never authenticate
- * against is a settings mistake, and naming it as the generation capability's unavailable reason
- * puts it in Diagnostics and in the shell's banner instead of behind a submit button.
- */
 function require_gateway_token_source(
   token_secret_id: string | null,
   secrets: SecretResolverPort | null,
@@ -861,11 +788,6 @@ function require_gateway_token_source(
   return () => secrets.resolve_secret(token_secret_id);
 }
 
-/**
- * Deferred exactly like the provider adapters: the Gateway client's SSE reader, protocol schemas
- * and job state machine are dead weight in every session that generates directly, so they load on
- * the first Gateway job instead of at extension load.
- */
 function create_gateway_job_executor(deps: GatewayJobExecutorDeps): JobExecutor {
   let loading: Promise<typeof import("../transport/gateway_job_executor.js")> | null = null;
   return {

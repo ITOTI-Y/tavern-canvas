@@ -1,25 +1,13 @@
 import { z } from "zod";
 
-/**
- * Runtime counterpart of ui/styles/tokens.css's `:host` / `:host([data-color-mode="dark"])`
- * blocks. A "theme" in TavernCanvas is nothing but a validated vector of these exact custom
- * property names -- there is no free-text CSS surface anywhere in this module (the removed
- * `[custom-css-injector]` legacy behavior, feature_matrix.md's theme.legacy_dom_style_mutation
- * row). Keep this list in sync with tokens.css and style_contract.test.ts's NEUTRAL/ACCENT/STATUS
- * token lists by hand; nothing enforces the two automatically.
- */
+/** Keep in sync with tokens.css and style_contract.test.ts by hand; nothing enforces it automatically. */
 const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/u;
 
 const HexColorSchema = z
   .string()
   .regex(HEX_COLOR_PATTERN, "Theme color tokens must be a strict 6-digit hex color, e.g. #2457d6");
 
-/**
- * Radius tokens are locked by taste directive ("shape consistency lock ... no component invents a
- * fifth radius"): a custom theme may omit them (falling back to the canonical value) or repeat the
- * canonical value, never override it. Each token's "bound" is a set of exactly one value -- still a
- * real, machine-checked bound, not a passthrough.
- */
+/** Radius tokens are locked: a custom theme may omit them or repeat the canonical value, never override it. */
 const THEME_RADIUS_TOKEN_BOUNDS = {
   "--tc-radius-panel": "0",
   "--tc-radius-field": "6px",
@@ -88,12 +76,6 @@ export const CustomThemeSchema = z.strictObject({
 });
 export type CustomTheme = z.infer<typeof CustomThemeSchema>;
 
-// ---------------------------------------------------------------------------
-// Contrast validation (WCAG 2.x relative luminance), mirroring
-// ui/styles/style_contract.test.ts's own algorithm so the two never silently diverge on formula,
-// only on which token pairs they gate.
-// ---------------------------------------------------------------------------
-
 function hex_to_rgb(hex: string): readonly [number, number, number] {
   const normalized = hex.slice(1);
   return [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16)) as [
@@ -127,9 +109,7 @@ const CONTRAST_BACKGROUND_KEYS: readonly ThemeColorTokenKey[] = [
   "--tc-surface",
   "--tc-surface-raised",
 ];
-// Body-text-bearing tokens only (mirrors style_contract.test.ts's own body_foregrounds list).
-// --tc-success/--tc-warning are icon/badge-only tokens tokens.css itself documents as clearing
-// only large-text AA on bare --tc-canvas, not body-text AA -- out of scope for this uniform gate.
+// Body-text tokens only; --tc-success/--tc-warning are icon/badge-only and clear only large-text AA.
 const CONTRAST_FOREGROUND_KEYS: readonly ThemeColorTokenKey[] = [
   "--tc-text",
   "--tc-text-muted",
@@ -179,12 +159,6 @@ export function validate_custom_theme(candidate: unknown): ThemeValidationResult
   return { ok: true, theme: parsed.data };
 }
 
-// ---------------------------------------------------------------------------
-// Legacy migration: only a fixed, permitted subset of legacy color fields carries over. Everything
-// else -- unknown fields, and any permitted field whose value fails normalization -- is dropped,
-// never partially trusted.
-// ---------------------------------------------------------------------------
-
 const FORBIDDEN_VALUE_PATTERNS: readonly RegExp[] = [
   /<[a-z!]/iu, // HTML tags
   /url\s*\(/iu, // external/asset resource reference
@@ -211,11 +185,7 @@ function clamp_byte(value: string): number {
   return Math.min(255, Math.max(0, Number.parseInt(value, 10)));
 }
 
-/**
- * Normalizes a raw legacy color value (hex or rgb()/rgba()) into the strict 6-digit hex this
- * module accepts. Returns null for anything unrecognized or matching a forbidden pattern --
- * migration drops the field rather than guessing.
- */
+/** Returns null for anything unrecognized or matching a forbidden pattern; migration drops the field. */
 export function normalize_legacy_color(raw: unknown): string | null {
   if (typeof raw !== "string") {
     return null;
@@ -248,15 +218,7 @@ export function normalize_legacy_color(raw: unknown): string | null {
   return null;
 }
 
-/**
- * Best-effort mapping from chatu8 v2.8.1's `utils/settings/theme.js` color-picker fields
- * (feature_matrix.md's theme.picker_and_custom_editor row) to the v3 token schema. The legacy
- * source archive is gitignored and was not present in this worktree at implementation time, so
- * exact field names could not be confirmed against `populateThemeColorPickers`; this list uses
- * the closest documented SillyTavern-family theme field naming as a placeholder. Reconcile against
- * the real legacy source at stage merge -- same reconciliation pattern used for ports defined
- * ahead of their owning task landing (Stage 05/06).
- */
+/** Best-effort mapping; the legacy field names are unconfirmed placeholders. */
 export const LEGACY_FIELD_TO_TOKEN: Readonly<Record<string, ThemeColorTokenKey>> = {
   main_bg_color: "--tc-canvas",
   chat_tint_color: "--tc-surface",
@@ -303,10 +265,7 @@ export function migrate_legacy_theme_values(
   return { tokens, dropped_fields: Object.freeze(dropped_fields) };
 }
 
-// ---------------------------------------------------------------------------
-// Applying a theme changes Shadow Root custom properties only -- no <style> element, no innerHTML,
-// no document-level mutation of any kind.
-// ---------------------------------------------------------------------------
+// Applying a theme sets Shadow Root custom properties only: no <style> element, no innerHTML.
 
 export function apply_theme_tokens(host_element: HTMLElement, tokens: ThemeTokenSet): void {
   for (const key of ALL_TOKEN_KEYS) {
@@ -318,12 +277,6 @@ export function apply_theme_tokens(host_element: HTMLElement, tokens: ThemeToken
     }
   }
 }
-
-// ---------------------------------------------------------------------------
-// The two canonical built-ins, transcribed from tokens.css's :host / dark-mode override blocks.
-// Custom themes validate against the same schema and contrast gate as these; there is no separate
-// "built-in" code path.
-// ---------------------------------------------------------------------------
 
 export const DEFAULT_LIGHT_THEME: CustomTheme = {
   id: "default-light",

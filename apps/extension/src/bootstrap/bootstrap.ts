@@ -25,8 +25,6 @@ export interface BootstrapOptions {
   readonly stylesheet?: string;
   readonly version?: string;
   readonly owned_resources?: BootstrapOwnedResources;
-  /** Forwarded to the composition root; production supplies nothing and gets the real
-   * IndexedDB/Worker/provider wiring. */
   readonly composition?: Omit<
     ComposeCapabilitiesOptions,
     "probe" | "globals" | "extension_version"
@@ -38,8 +36,6 @@ export type BootstrapState = "ready" | "blocked" | "failed";
 export interface BootstrapHandle {
   readonly state: BootstrapState;
   readonly probe: BootstrapProbeResult;
-  /** One row per Studio capability: which resolved to a real implementation and, when it did not,
-   * why. Surfaced through Diagnostics and the support bundle. */
   readonly resolutions: readonly CapabilityResolutionRecord[];
   dispose(): Promise<void>;
 }
@@ -53,11 +49,8 @@ export async function bootstrap_tavern_canvas(
   let state: BootstrapState;
   let status: StartupStatus;
 
-  // Composed before any module starts, and composed even on a blocked/failed probe: every
-  // capability then resolves to the honest-unavailable implementation carrying its own reason, so
-  // Diagnostics can explain the state rather than showing nothing at all. Composition also decides
-  // which host-specific runtime modules exist (e.g. the Tauri chat surface), so the runtime cannot
-  // be built until it has run.
+  // Composed even on a blocked probe, so every capability resolves to unavailable with its own reason;
+  // composition also decides which host-specific runtime modules exist.
   let composition: StudioComposition | null = null;
   let composition_failed = false;
   try {
@@ -94,10 +87,7 @@ export async function bootstrap_tavern_canvas(
 
   const surface = create_shadow_root(document_, options.stylesheet ?? "");
   const locale_runtime = create_i18n();
-  // Fire-and-forget: English ships bundled so the shell always has a working fallback the instant
-  // it mounts, and vue-i18n's reactive locale swaps every already-rendered translated string over
-  // once the lazy zh-CN chunk (if needed) resolves -- startup never blocks on it. The persisted
-  // preference now comes from the real settings capability; "auto" still follows the host language.
+  // Fire-and-forget: English is bundled, and the reactive locale swaps in once the lazy zh-CN chunk resolves.
   const persisted_locale = await composition?.capabilities.settings
     .load()
     .then((snapshot) => snapshot.settings.locale)

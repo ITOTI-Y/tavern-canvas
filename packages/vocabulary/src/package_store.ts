@@ -28,11 +28,7 @@ import {
   type VocabularyShard,
 } from "@tavern-canvas/storage";
 
-/**
- * `staging` -> `ready` -> `active` -> `confirmed` is the happy path (see package_updater.ts).
- * `superseded` is a former active/confirmed version kept as a fallback. `failed` is a version
- * whose activation could not be confirmed. Both are inert leftovers cleanup_stale() may remove.
- */
+/** `superseded` and `failed` versions are inert leftovers that cleanup_stale() may remove. */
 export const VOCABULARY_PACKAGE_STATES = [
   "staging",
   "ready",
@@ -44,9 +40,7 @@ export const VOCABULARY_PACKAGE_STATES = [
 export type VocabularyPackageState = (typeof VOCABULARY_PACKAGE_STATES)[number];
 
 const KNOWN_STATES: ReadonlySet<string> = new Set(VOCABULARY_PACKAGE_STATES);
-// A version currently being served to the Worker is either freshly promoted ("active", not yet
-// proven by a query) or proven ("confirmed"). Exactly one record holds one of these two states
-// at a time; activate() enforces that invariant.
+// Exactly one record is active or confirmed at a time; activate() enforces it.
 const ACTIVE_LIKE_STATES: ReadonlySet<VocabularyPackageState> = new Set(["active", "confirmed"]);
 
 export class PackageStoreError extends Error {
@@ -127,7 +121,6 @@ function shard_payload_to_json(payload: StoredShardPayload): JsonValue {
   return parse_json_value({ ...payload });
 }
 
-/** Chunked to avoid `String.fromCharCode(...bytes)` blowing the call-stack argument limit. */
 function encode_base64(bytes: Uint8Array): string {
   let binary = "";
   const chunk_size = 32_768;
@@ -174,44 +167,15 @@ function to_stored_package(record: VocabularyPackage): StoredVocabularyPackage {
   };
 }
 
-/**
- * IndexedDB persistence for vocabulary package/shard lifecycle state, built strictly on the
- * `vocabulary_packages` / `vocabulary_shards` stores and repositories Stage 04's storage package
- * already provides (no ad-hoc connections, no schema changes). Shard byte content is stored
- * base64-encoded inside each shard record's generic `payload` field, since that field is the
- * only extension point the frozen store schema offers for binary content.
- */
 export class VocabularyPackageStore {
   private readonly packages: VocabularyPackageRepository;
   private readonly shards: VocabularyShardRepository;
-  // Lazily-built "<package_record_id>:<path>" -> shard record id index.
-  // Without it, shard_bytes() -- the Worker's per-shard-cache-miss hot path
-  // -- re-ran shards.list(namespace) (an IndexedDB getAll() across every
-  // shard row, each carrying its own base64-encoded payload, plus a
-  // structuredClone + zod parse per row) on every single call, which at a
-  // 500,000-record / ~2,600-shard package made ordinary queries take
-  // seconds. It deliberately stores only the record id: an earlier version
-  // cached each row's whole payload, which pinned the entire package's
-  // base64 content (~40 MB for the 500,000-record package) in Worker memory
-  // for the Worker's lifetime -- several times the mobile LRU budget, and
-  // invisible to it. A store instance lives for a Worker's whole lifetime
-  // (vocabulary_worker.ts's PackageStoreShardByteSource), so this cache is
-  // built once on first read and invalidated on every write.
+  // "<package_record_id>:<path>" -> shard record id. Holds ids only: caching payloads would pin the
+  // whole package's base64 content in Worker memory. Invalidated on every write.
   private shard_index_cache: Map<string, string> | null = null;
 
-  // find_active_or_confirmed() sits on the same hot path -- shard_bytes()
-  // resolves the active package on every read -- and is expensive out of all
-  // proportion to its result: it lists every package row, and a package row's
-  // payload embeds the whole shard_entries array (2,611 entries for the
-  // 500,000-record package), which the storage layer's recursive JSON schema
-  // and this file's StoredPackagePayloadSchema each walk in full. That is
-  // tens of thousands of validated nodes per shard read.
-  //
-  // Caching it is only safe for a reader that knows no other component is
-  // mutating package state underneath it, because PackageUpdater and
-  // ImportBuilder own their own store instances -- so it is opt-in, and the
-  // one opted-in caller (the Worker's PackageStoreShardByteSource) calls
-  // invalidate_caches() after any update it triggers.
+  // Opt-in: only safe when no other store instance (PackageUpdater, ImportBuilder) mutates package
+  // state, and the caller must call invalidate_caches() after any update it triggers.
   private readonly cache_active_package: boolean;
   private active_package_cache: StoredVocabularyPackage | null | undefined = undefined;
 
@@ -225,7 +189,6 @@ export class VocabularyPackageStore {
     this.cache_active_package = options.cache_active_package ?? false;
   }
 
-  /** Drops every read cache; call after another store instance may have written. */
   invalidate_caches(): void {
     this.invalidate_shard_index_cache();
     this.invalidate_active_package_cache();
@@ -285,10 +248,6 @@ export class VocabularyPackageStore {
     await this.create_shard_record(package_record, entry, encode_base64(compressed_bytes));
   }
 
-  /**
-   * Copies an unchanged shard's already-downloaded bytes from a prior package version into the
-   * new one, so the updater never re-downloads content whose hash did not change.
-   */
   async copy_shard(
     package_record: StoredVocabularyPackage,
     entry: VocabularyShardEntry,
@@ -310,7 +269,6 @@ export class VocabularyPackageStore {
     await this.transition_state(package_record_id, "ready");
   }
 
-  /** Supersedes any currently active/confirmed record and promotes this one, in one transaction. */
   async activate(package_record_id: string): Promise<{ superseded_id: string | null }> {
     return with_transaction(this.database, ["vocabulary_packages"], async (transaction) => {
       const records = await this.packages.list(this.namespace, transaction);
@@ -347,7 +305,6 @@ export class VocabularyPackageStore {
     });
   }
 
-  /** Marks the active version confirmed after its first successful Worker query. */
   async confirm(package_record_id: string): Promise<void> {
     const record = await this.require_record(package_record_id);
     if (as_package_state(record.state) !== "active") {
@@ -360,11 +317,6 @@ export class VocabularyPackageStore {
     });
   }
 
-  /**
-   * On a failed first query against a newly activated version, marks it `failed` and restores
-   * the most recently confirmed superseded version to `confirmed` — it already proved itself,
-   * so it does not re-enter `active` to be re-proven. Both transitions happen in one transaction.
-   */
   async reselect_prior_confirmed(
     failed_package_record_id: string,
   ): Promise<StoredVocabularyPackage | null> {
@@ -408,7 +360,6 @@ export class VocabularyPackageStore {
     });
   }
 
-  /** Deletes a staging package and every shard record it owns — used on interruption or a bad shard. */
   async rollback_staging(package_record_id: string): Promise<void> {
     const owned = await this.list_owned_shards(package_record_id);
     await with_transaction(
@@ -425,7 +376,6 @@ export class VocabularyPackageStore {
     this.invalidate_active_package_cache();
   }
 
-  /** Removes unpinned superseded/failed packages and their shards — never active/confirmed/staging/ready. */
   async cleanup_stale(): Promise<{ deleted_package_ids: string[] }> {
     const package_records = await this.packages.list(this.namespace);
     const deletable = package_records.filter((record) => {
@@ -468,8 +418,6 @@ export class VocabularyPackageStore {
     });
     this.invalidate_active_package_cache();
   }
-
-  // --- ShardByteSource port (packages/vocabulary/src/search consumes this at integration) ---
 
   async manifest(): Promise<VocabularyManifest> {
     const active = await this.find_active_or_confirmed();

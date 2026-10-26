@@ -152,9 +152,7 @@ describe("probe_host_capabilities", () => {
     },
   );
 
-  // The version parsing and >= comparison used to come from the `semver` package; they are now
-  // local to capability_probe.ts (SEMVER_PATTERN / is_at_least), so the grammar's rejections and
-  // the ordering rules it owns are pinned here rather than assumed from a dependency.
+  // Pins the local semver grammar's rejections and ordering rules.
   it.each([
     "=4.9.1",
     "04.9.1",

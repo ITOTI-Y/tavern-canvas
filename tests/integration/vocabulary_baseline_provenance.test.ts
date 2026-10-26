@@ -1,15 +1,3 @@
-// Provenance guard (2026-08-06 controller ruling, REVERSING the earlier
-// task-5-brief.md fact-only rule): the user explicitly decided to rebuild
-// the committed vocabulary baseline (apps/extension/public/vocabulary/
-// baseline) from FRESH data ("既然是重构就用新数据，不要以旧数据做分发") and
-// to include zh translations, assuming responsibility for translation
-// licensing himself ("补充中文包（先不考虑上游，如有许可问题由我去解决）").
-// The baseline is now a fixed top-50,000-by-popularity cut of the full
-// bilingual data/vocabulary/raw_vocabulary_tags_public.jsonl (built by
-// tools/vocabulary_builder/scripts/generate_baseline.ts) and MUST carry zh
-// translations end to end. This runs under plain `pnpm test`, independent
-// of the CI-only byte-compare rebuild (generate_baseline.ts --check), so a
-// regression is caught locally too.
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,8 +12,7 @@ const BASELINE_DIRECTORY = resolve(
   "../../../apps/extension/public/vocabulary/baseline",
 );
 
-// Mirrors tools/vocabulary_builder/scripts/generate_baseline.ts's
-// BASELINE_RECORD_LIMIT and the controller's adjusted sanity gates.
+// Mirrors BASELINE_RECORD_LIMIT in tools/vocabulary_builder/scripts/generate_baseline.ts.
 const EXPECTED_RECORD_COUNT = 50_000;
 const MINIMUM_TRANSLATION_COVERAGE = 35_000;
 const POPULARITY_FLOOR_PROBE = {
@@ -35,9 +22,7 @@ const POPULARITY_FLOOR_PROBE = {
 };
 
 describe("committed vocabulary baseline", () => {
-  // The bilingual baseline's alias index (zh translations + aliases) grew
-  // shard count from 2,163 to 2,742 -- re-verifying every shard's hash,
-  // gzip, and MessagePack framing genuinely takes longer than the 5s default.
+  // Re-verifying every shard's hash, gzip and MessagePack framing takes longer than the 5s default.
   const VERIFY_TIMEOUT_MS = 30_000;
 
   it(
@@ -89,16 +74,8 @@ describe("committed vocabulary baseline", () => {
     );
   });
 
-  // Parity ledger guard (docs/parity/feature_matrix.md's
-  // vocabulary.nsfw_group_tree_default_load, removed_approved
-  // [non-redistributable-content-default-bundle]): the legacy v2.8.1
-  // archive's tag_NSFW001.json group tree is non-redistributable
-  // (data/vocabulary/LICENSES.json's legacy-st-chatu8-v2-8-1-tagdata entry
-  // -- "Both remain out of scope") and MUST NOT ship inside the package a
-  // fresh install gets by default. This does not test the removal of a
-  // capability -- packages/vocabulary/src/import/import_builder.test.ts
-  // proves the same NSFW-shaped source still imports via explicit
-  // user-initiated install -- it tests the absence of automatic bundling.
+  // The legacy v2.8.1 NSFW group tree is non-redistributable (data/vocabulary/LICENSES.json) and must
+  // not ship in the default package; explicit user-initiated imports are unaffected.
   it("never auto-bundles NSFW-category records into the default first-run package", async () => {
     const manifest_text = await readFile(resolve(BASELINE_DIRECTORY, "manifest.json"), "utf8");
     const manifest = VocabularyManifestSchema.parse(JSON.parse(manifest_text));

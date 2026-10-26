@@ -134,8 +134,8 @@ describe("trigger_parser: streaming extraction", () => {
   });
 });
 
-describe("trigger_parser: session dedupe and delegation to Stage 02", () => {
-  it("delegates each newly seen distinct prompt to the injected Stage 02 port exactly once", () => {
+describe("trigger_parser: session dedupe and delegation", () => {
+  it("delegates each newly seen distinct prompt to the injected delegate port exactly once", () => {
     const delegate = new RecordingDelegate();
     const session = new TriggerParserSession({
       auto_generation_enabled: true,

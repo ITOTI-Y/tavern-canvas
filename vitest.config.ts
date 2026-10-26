@@ -34,10 +34,6 @@ export default defineConfig({
   resolve: {
     alias: workspace_alias,
   },
-  // Mirrors apps/extension/vite.config.ts's build-time define so code that
-  // references this global (e.g. apps/extension/src/index.ts, the
-  // vocabulary Worker's production bootstrap) evaluates identically under
-  // test.
   define: {
     __TAVERN_CANVAS_VERSION__: JSON.stringify(package_metadata.version),
   },

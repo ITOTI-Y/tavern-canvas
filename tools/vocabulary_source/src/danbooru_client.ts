@@ -6,10 +6,7 @@ export const DANBOORU_DEFAULT_BASE_URL = "https://danbooru.donmai.us";
 export const DANBOORU_DEFAULT_PAGE_LIMIT = 1000;
 export const DANBOORU_MIN_REQUEST_DELAY_MS = 150;
 
-/**
- * Danbooru's tag category enum (from `app/models/tag.rb`; id 2 is unused).
- * https://danbooru.donmai.us/wiki_pages/help:api
- */
+/** Danbooru's tag category enum (`app/models/tag.rb`; id 2 is unused). */
 export const DANBOORU_TAG_CATEGORY_NAMES: Readonly<Record<number, string>> = {
   0: "general",
   1: "artist",
@@ -38,7 +35,6 @@ export const DanbooruTagAliasSchema = z.object({
 });
 export type DanbooruTagAlias = z.infer<typeof DanbooruTagAliasSchema>;
 
-/** Minimal structural subset of the global `fetch` this client depends on, for injection in tests. */
 export type FetchLike = (
   url: string,
   init: { headers: Record<string, string> },
@@ -55,16 +51,12 @@ export class DanbooruApiError extends Error {
 }
 
 export interface DanbooruClientOptions {
-  /**
-   * Required, no default: Danbooru's API etiquette requires clients to
-   * self-identify (e.g. "YourBotName/1.0 (your-danbooru-username)"). A
-   * shared default would misrepresent every caller as the same identity.
-   */
+  /** Required: Danbooru requires clients to self-identify, and a shared default would misrepresent every caller. */
   readonly user_agent: string;
   readonly base_url?: string;
   readonly page_limit?: number;
   readonly fetch_impl?: FetchLike;
-  /** Minimum delay awaited between successive requests. Danbooru's global read rate limit is 10 req/s. */
+  /** Minimum delay between requests; Danbooru's read limit is 10 req/s. */
   readonly min_request_delay_ms?: number;
   readonly delay_fn?: (ms: number) => Promise<void>;
 }
@@ -118,28 +110,10 @@ async function fetch_json(
 }
 
 /**
- * Cursor-paginates `/tags.json` in ascending id order using Danbooru's
- * documented sequential-cursor convention, `page=a{cursor}` ("after
- * {cursor}"), plus `limit` and `search[post_count]=>={min_post_count}`.
- *
- * Does NOT use `search[id]=>{cursor}` + `search[order]=id`: Danbooru's
- * `Tag.search` only recognizes `search[order]` values `name`, `date`,
- * `count`, `similarity`, and `custom` (see `app/models/tag.rb`); any other
- * value, including the non-existent `id` token, is silently ignored and
- * falls back to the default order, `id DESC`. Combined with
- * `search[id]=>{cursor}` as a bare WHERE filter, that default order made a
- * full crawl return only the newest `page_limit` tags table-wide, then jump
- * the cursor to (approximately) the table's maximum id and see nothing
- * beyond it on the next page — a silent one-page truncation, not an error.
- * `page=a{cursor}` instead resolves to
- * `WHERE id > {cursor} ORDER BY id ASC LIMIT {page_limit}` via
- * `PaginationExtension#paginate_sequential_after`, which applies `reorder`
- * and so is unaffected by (and needs no) `search[order]`.
- *
- * Yields one page (array of tags) at a time; stops once a page has fewer
- * than `page_limit` entries (the standard end-of-results signal for this
- * cursor style). Awaits `delay_fn(min_request_delay_ms)` between requests
- * (not before the first).
+ * Cursor-paginates with `page=a{cursor}` (`WHERE id > cursor ORDER BY id ASC`). Do not use
+ * `search[id]=>cursor` with `search[order]=id`: Danbooru ignores `id` as an order and falls back to
+ * `id DESC`, which silently truncates a crawl to one page. Yields one page at a time and stops on
+ * a page shorter than `page_limit`.
  */
 export async function* fetch_danbooru_tags(
   options: DanbooruClientOptions & {
@@ -177,7 +151,6 @@ export async function* fetch_danbooru_tags(
   }
 }
 
-/** Cursor-paginates `/tag_aliases.json` the same way as `fetch_danbooru_tags`. */
 export async function* fetch_danbooru_tag_aliases(
   options: DanbooruClientOptions & { readonly start_after_id?: number },
 ): AsyncGenerator<DanbooruTagAlias[]> {
@@ -215,7 +188,6 @@ const CheckpointSchema = z.strictObject({
 });
 export type Checkpoint = z.infer<typeof CheckpointSchema>;
 
-/** Reads a resumability checkpoint, returning `undefined` if the file does not exist yet. */
 export async function read_checkpoint(path: string): Promise<Checkpoint | undefined> {
   let text: string;
   try {

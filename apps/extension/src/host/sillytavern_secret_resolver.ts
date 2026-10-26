@@ -25,12 +25,7 @@ export class SecretResolutionError extends Error {
   }
 }
 
-/**
- * Reads a credential back out of host secret storage by reference, for the one caller that needs
- * the value itself: a direct browser-to-vendor request, which has to put the credential in a
- * header. Deliberately a separate port from `SecretDestinationPort`, which stays write-and-probe
- * only, so "can store a secret" and "can read a secret back" remain independently grantable.
- */
+/** Separate from `SecretDestinationPort` so "can store" and "can read back" stay independently grantable; used by direct browser-to-vendor requests that put the credential in a header. */
 export interface SecretResolverPort {
   resolve_secret(reference: string): Promise<string>;
 }
@@ -39,12 +34,7 @@ const NOT_EXPOSED_MESSAGE =
   "SillyTavern refused to reveal the stored credential. Set allowKeysExposure to true in " +
   "config.yaml to allow direct provider calls, or route this profile through the Gateway instead.";
 
-/**
- * Concrete `SecretResolverPort` over SillyTavern's `POST /api/secrets/view` route. The route is
- * gated by the host's `allowKeysExposure` setting and returns the active plaintext value for each
- * custom and built-in key. This resolver extracts only the value named by its requested vault
- * reference.
- */
+/** `POST /api/secrets/view` is gated by `allowKeysExposure`; only the value named by the requested reference is extracted. */
 export class SillyTavernSecretResolver implements SecretResolverPort {
   readonly #context: SillyTavernSecretContext;
   readonly #fetch: SillyTavernFetch;

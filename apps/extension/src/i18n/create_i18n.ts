@@ -10,9 +10,6 @@ import {
 } from "./locale_resolution.js";
 import { en_messages, type LocaleMessageSchema } from "./locales/en.js";
 
-// Simplified Chinese ships as a separate Vite chunk, fetched only when a
-// user (or the host locale, under "auto") actually needs it. English stays
-// bundled so the shell always has a working fallback if this import fails.
 const LOCALE_LOADERS: LocaleMessageLoaders = {
   "zh-CN": async () => (await import("./locales/zh_cn.js")).zh_cn_messages,
 };
@@ -63,9 +60,7 @@ export function create_i18n(): LocaleRuntime {
   return { i18n, apply_locale };
 }
 
-// CLDR's "kilobyte"/"megabyte"/... units (ECMA-402 sanctioned) are decimal
-// (base 1000), not the binary base-1024 KiB/MiB some UIs use. Scaling here
-// matches that so the rendered unit word and the magnitude agree.
+// CLDR byte units are decimal (base 1000).
 const BYTE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"] as const;
 
 export function format_byte_size(byte_count: number, locale: SupportedLocale): string {

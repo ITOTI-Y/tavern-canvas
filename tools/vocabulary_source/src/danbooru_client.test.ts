@@ -17,11 +17,6 @@ import {
   type FetchLike,
 } from "./danbooru_client.js";
 
-// Recorded-shape fixtures mirroring real /tags.json and /tag_aliases.json
-// response objects (field names verified against Danbooru's public API
-// docs and, for the query semantics below, the live API). Tests inject
-// fetch_impl rather than calling the network, so they stay deterministic
-// regardless of live reachability.
 const TAG_PAGE_1: DanbooruTag[] = [
   { id: 1, name: "1girl", category: 0, post_count: 8_243_826 },
   { id: 2, name: "solo", category: 0, post_count: 7_000_000 },
@@ -52,25 +47,9 @@ function make_paged_fetch(pages: unknown[][]): { fetch_impl: FetchLike; calls: s
 }
 
 /**
- * Simulates the subset of Danbooru's real `/tags.json` and
- * `/tag_aliases.json` query semantics this client depends on, verified
- * against the live API and the `Tag.search`/`PaginationExtension` Rails
- * source (2026-08-06):
- *
- * - `search[order]` only recognizes `name`, `date`, `count`, `similarity`,
- *   `custom`. Any other value (including the non-existent `id` token) is
- *   silently ignored and falls back to the default order, `id DESC`.
- * - `search[id]=>N` is a WHERE filter only; it does not affect ORDER BY.
- * - `page=aN` ("after N") is Danbooru's documented sequential-cursor
- *   pagination convention: `WHERE id > N ORDER BY id ASC LIMIT limit`,
- *   applied via `reorder` (i.e. it overrides `search[order]` entirely).
- *   `page=bN` is the mirror "before N" descending cursor.
- *
- * A client that filters with `search[id]=>{cursor}` and hopes
- * `search[order]=id` sorts ascending gets the *default* `id DESC` order
- * instead: page 1 returns the newest `limit` records table-wide (the id
- * filter barely excludes anything when the cursor is near 0), the cursor
- * then jumps to the table's near-maximum id, and page 2 comes back empty.
+ * Simulates the Danbooru query semantics the client relies on: `search[order]` accepts only name,
+ * date, count, similarity and custom (anything else, including `id`, falls back to `id DESC`), and
+ * `page=aN` is `WHERE id > N ORDER BY id ASC` via `reorder`, overriding `search[order]`.
  */
 function make_realistic_danbooru_fetch(records: readonly (DanbooruTag | DanbooruTagAlias)[]): {
   fetch_impl: FetchLike;
@@ -113,8 +92,6 @@ function make_realistic_danbooru_fetch(records: readonly (DanbooruTag | Danbooru
         const min_id = Number(id_match[1]);
         filtered = filtered.filter((record) => record.id > min_id);
       }
-      // `search[order]` is never `custom` in this client; every other
-      // value (including "id") silently falls back to default order.
       filtered = filtered.sort((a, b) => b.id - a.id).slice(0, limit);
     }
 
@@ -196,12 +173,7 @@ describe("fetch_danbooru_tags", () => {
     expect(url.searchParams.get("page")).toBe("a10");
     expect(url.searchParams.get("limit")).toBe("1000");
     expect(url.searchParams.get("search[post_count]")).toBe(">=50");
-    // `search[order]=id` is not a token Danbooru's `Tag.search` recognizes;
-    // it silently falls back to the default `id DESC` order, defeating
-    // ascending-cursor pagination. Ascending order must come from the
-    // `page=a<id>` sequential-cursor convention instead (see
-    // `PaginationExtension#paginate_sequential_after`, which uses
-    // `reorder` and so overrides `search[order]` regardless).
+    // `search[order]=id` is ignored by Danbooru; ascending order must come from `page=a<id>`.
     expect(url.searchParams.has("search[order]")).toBe(false);
     expect(url.searchParams.has("search[id]")).toBe(false);
   });
@@ -324,10 +296,6 @@ describe("fetch_danbooru_tags — full-table crawl against realistic Danbooru se
       }),
     );
 
-    // The old `search[id]=>cursor` + `search[order]=id` query silently fell
-    // back to `id DESC` order: page 1 would return the 1000 newest ids
-    // (2500 downto 1501), the cursor would jump to 2500, and page 2 would
-    // come back empty — yielding exactly 1000 records instead of 2500.
     expect(results).toHaveLength(2_500);
     expect(results.map((tag) => tag.id).sort((a, b) => a - b)).toEqual(
       universe.map((tag) => tag.id),

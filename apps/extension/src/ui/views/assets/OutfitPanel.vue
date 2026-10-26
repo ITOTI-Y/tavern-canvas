@@ -13,9 +13,6 @@ import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 
-/** Outfit CRUD panel. Links to a character via `character_id`, populated from the character
- * records already loaded in AssetsViewModel -- a real dropdown, not free text, since that data
- * is on hand (unlike the World Info reference in CharacterPanel, which has no capability source). */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly characterRecords: readonly AssetRecordSummary[];

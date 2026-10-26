@@ -47,7 +47,6 @@ export interface GatewayRunOptions {
   readonly on_event?: (event: GatewayJobEvent) => void;
 }
 
-/** The bytes of one generated image plus the media type the Gateway stored it under. */
 export interface GatewayAssetContent {
   readonly media_type: string;
   readonly bytes: Uint8Array;
@@ -278,10 +277,7 @@ export class GatewayTransport {
     });
   }
 
-  /**
-   * Downloads one completed image. The id is re-parsed rather than trusted: it arrives inside a
-   * job response, and a UUID is the only thing that can be interpolated into the path.
-   */
+  /** The id is re-parsed because a UUID is the only thing that may be interpolated into the path. */
   async fetch_asset(image_id: ImageId, signal: AbortSignal): Promise<GatewayAssetContent> {
     const response = await this.#request(`/v1/assets/${ImageIdSchema.parse(image_id)}/content`, {
       method: "GET",

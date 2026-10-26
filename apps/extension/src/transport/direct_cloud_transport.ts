@@ -36,16 +36,9 @@ export interface DirectCloudTransportOptions {
 }
 
 /**
- * A `ProviderTransport` that reaches the vendor straight from the page (user decision 2026-08-07,
- * taken after all three cloud vendors' CORS preflights were confirmed to allow a browser origin
- * with their documented auth header).
- *
- * What the client can decide is unchanged from the Gateway path: which stored profile is active,
- * and nothing else. The origin and the legal path set come from `DirectRouteCatalogEntry`, the
- * header set is built here from that entry, and the credential arrives as a vault reference that
- * is exchanged for a value at call time and dropped when the request is dispatched. There is no
- * parameter on this class, on its operations, or on the profile schema through which a URL, a
- * host, a path or an extra header could be supplied.
+ * Reaches the vendor straight from the page. The origin and legal path set come from
+ * `DirectRouteCatalogEntry`; the credential is a vault reference exchanged at call time. No parameter
+ * accepts a URL, host, path or extra header.
  */
 export class DirectCloudTransport implements ProviderTransport {
   readonly #entry: DirectRouteCatalogEntry;
@@ -97,11 +90,7 @@ export class DirectCloudTransport implements ProviderTransport {
     return response;
   }
 
-  /**
-   * Provider-hosted result downloads (OpenAI returns temporary blob URLs). The credential is
-   * deliberately absent: these URLs already carry their own signature, and the profile's origin
-   * allowlist is what bounds where the bytes may come from.
-   */
+  /** Result downloads carry their own signature, so no credential is attached; the profile's origin allowlist bounds the source. */
   async fetch_remote_asset(
     operation: ProviderRemoteAssetOperation,
   ): Promise<ProviderTransportResponse> {
@@ -120,11 +109,6 @@ export interface DirectLlmTransportOptions {
   readonly fetch?: ProviderFetch;
 }
 
-/**
- * The text-LLM counterpart, on identical terms. Both the catalog entry and the credential
- * reference are chosen per operation rather than per transport: one host holds several text
- * connections, across different dialects, whose credentials are distinct vault entries.
- */
 export class DirectLlmTransport implements LlmTransportPort {
   readonly #secrets: SecretResolverPort;
   readonly #fetch: ProviderFetch;
@@ -170,13 +154,7 @@ export class DirectLlmTransport implements LlmTransportPort {
   }
 }
 
-/**
- * A direct request carries the credential in its own headers, so whatever `fetch` throws was
- * raised while holding it -- a wrapped or instrumented `fetch` can put the request, headers and
- * all, into the message it rejects with. `ProviderNetworkError` would then carry that as `cause`
- * straight into a support bundle. The network failure itself is the whole diagnostic signal here,
- * so the chain is dropped rather than sanitized.
- */
+/** A `fetch` rejection can embed the request with its credential headers, so the cause chain is dropped instead of sanitized. */
 async function without_cause_chain<TValue>(pending: Promise<TValue>): Promise<TValue> {
   try {
     return await pending;
@@ -199,11 +177,7 @@ function resolve_catalog_url(entry: DirectRouteCatalogEntry, route: string): str
   }
 }
 
-/**
- * The complete outgoing header set: content negotiation the adapter asked for, the vendor
- * constants the catalog names, and one auth header. `Object.freeze` is not the guard here -- the
- * guard is that nothing outside this function contributes a key.
- */
+/** Nothing outside this function contributes a header key. */
 async function build_headers(
   entry: DirectRouteCatalogEntry,
   credential_reference: string | null,
@@ -231,11 +205,7 @@ async function build_headers(
   return headers;
 }
 
-/**
- * A vault failure is reported by its own message only when the vault itself authored it (those are
- * fixed strings written to be shown to a user). Anything else is summarized, because an arbitrary
- * thrown value may have been built from the response body that carried the credential.
- */
+/** Only vault-authored messages are surfaced; other thrown values may be built from a response body that carried the credential. */
 function credential_failure_message(error: unknown): string {
   if (
     error instanceof Error &&

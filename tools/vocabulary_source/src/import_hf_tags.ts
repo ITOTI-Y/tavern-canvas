@@ -3,12 +3,7 @@ import { z } from "zod";
 import { read_jsonl, write_jsonl } from "./jsonl_io.js";
 import { VocabularyRecordSchema, type VocabularyRecord } from "./vocabulary_record_schema.js";
 
-/**
- * A row of the JayxMay95/qdlabs-shaped HF tag-table JSONL (fields verified
- * against `JayxMay95/danbooru-tags-JayMay/tags.jsonl`, apache-2.0). Both
- * datasets appear same-origin (identical row count) -- see
- * data/vocabulary/LICENSES.json.
- */
+/** Row of the JayxMay95/qdlabs HF tag-table JSONL (apache-2.0); see data/vocabulary/LICENSES.json. */
 export const HfTagRowSchema = z.object({
   id: z.number().int().nonnegative(),
   name: z.string().trim().min(1),
@@ -21,12 +16,7 @@ export const HfTagRowSchema = z.object({
 });
 export type HfTagRow = z.infer<typeof HfTagRowSchema>;
 
-/**
- * Danbooru's tag category enum as observed in the HF table. The dataset's
- * card claims no artist rows, but 5 category=1 rows were found in the
- * 2026-08-06 fetch of tags.jsonl -- kept as "artist" per controller ruling
- * rather than treated as an error.
- */
+/** Danbooru category enum as observed in the HF table, which contains a few category=1 rows kept as "artist". */
 const HF_TAG_CATEGORY_NAMES: Readonly<Record<number, string>> = {
   0: "general",
   1: "artist",
@@ -67,19 +57,9 @@ export class HfTagConflictError extends Error {
 }
 
 /**
- * Maps HF tag-table rows to fact-only `VocabularyRecordSchema` records:
- * `name` -> tag, `post_count` -> popularity (untouched; the fresh-popularity
- * overlay in `merge_sources` corrects staleness later), `category` -> its
- * name via the strict enum above, `record_id` <- `id`. `is_deprecated: true`
- * rows are dropped; `words`/`created_at`/`updated_at` are ignored;
- * `aliases` stays `[]` (the HF table carries no alias data).
- *
- * The verified 2026-08-06 fetch of tags.jsonl contains 33,925 tag names
- * with 2-6 byte-identical duplicate rows (same id/post_count/category) --
- * an upstream data-quality artifact, not real duplicate tags. Rows are
- * deduped by `name`, keeping the first occurrence; a later row with the
- * same name but a *different* id/post_count/category throws
- * `HfTagConflictError` instead of silently picking one side.
+ * `name`->tag, `post_count`->popularity, `category`->name via the strict enum, `id`->`record_id`;
+ * `is_deprecated` rows are dropped. Upstream holds byte-identical duplicate rows per name: dedupe
+ * by `name` keeping the first, and throw `HfTagConflictError` if a later row differs.
  */
 export function import_hf_tags(rows: readonly HfTagRow[]): VocabularyRecord[] {
   const records_by_name = new Map<string, VocabularyRecord>();

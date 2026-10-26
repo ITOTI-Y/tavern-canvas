@@ -1,13 +1,3 @@
-/**
- * Reads generation parameters embedded directly in a PNG's own tEXt/iTXt chunks -- the convention
- * every provider this Studio targets already uses (sd_webui's "parameters" chunk, NovelAI's
- * "Comment"/"Description" chunks, ComfyUI's "prompt"/"workflow" chunks). GalleryRecordSummary
- * carries no seed/prompt/model fields of its own (ui_capabilities.ts), so this is the only place
- * that data can come from once GalleryCapability.read_bytes returns the raw file; the metadata
- * inspector shows a composed "no embedded parameters found" state when none of these chunks are
- * present (e.g. openai_image/google_image, which do not embed generation parameters at all).
- */
-
 export interface PngTextChunk {
   readonly keyword: string;
   readonly text: string;
@@ -50,8 +40,6 @@ function decode_itxt_chunk(bytes: Uint8Array, start: number, end: number): PngTe
   const keyword = new TextDecoder("iso-8859-1").decode(bytes.subarray(start, keyword_end));
   const compression_flag = bytes[keyword_end + 1] ?? 0;
   if (compression_flag !== 0) {
-    // Compressed iTXt (zlib deflate) is not decoded here -- no compression dependency for one
-    // rarely-used chunk variant; treated the same as "no parameters found" rather than throwing.
     return null;
   }
   const language_end = split_at_null(bytes, keyword_end + 3);
@@ -66,8 +54,6 @@ function decode_itxt_chunk(bytes: Uint8Array, start: number, end: number): PngTe
   return { keyword, text };
 }
 
-/** Parses every tEXt/iTXt chunk out of a PNG byte stream. Returns an empty array for non-PNG
- * bytes, a truncated file, or a PNG with no text chunks at all -- never throws. */
 export function parse_png_text_chunks(bytes: Uint8Array): readonly PngTextChunk[] {
   if (bytes.length < 8 || !PNG_SIGNATURE.every((expected, index) => bytes[index] === expected)) {
     return [];
@@ -113,7 +99,6 @@ export interface ExtractedGenerationParameters {
   readonly sampler: string | null;
   readonly steps: string | null;
   readonly model: string | null;
-  /** The full text this was extracted from -- what "copy parameters" puts on the clipboard. */
   readonly raw_text: string;
 }
 
@@ -183,8 +168,6 @@ function extract_novelai(chunks: readonly PngTextChunk[]): ExtractedGenerationPa
   if (comment_chunk) {
     try {
       const parsed: unknown = JSON.parse(comment_chunk.text);
-      // NovelAiComment's fields are all optional, so any plain object is already structurally
-      // assignable to it -- no cast needed once narrowed past `null`.
       if (parsed !== null && typeof parsed === "object") {
         comment = parsed;
       }
@@ -225,9 +208,6 @@ function extract_comfyui(chunks: readonly PngTextChunk[]): ExtractedGenerationPa
   };
 }
 
-/** Tries each known provider convention in order and returns the first match, or null when the
- * image carries no recognized embedded parameters at all (openai_image/google_image outputs,
- * or any PNG whose text chunks do not match a known key). */
 export function extract_generation_parameters(
   bytes: Uint8Array,
 ): ExtractedGenerationParameters | null {

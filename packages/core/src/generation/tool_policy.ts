@@ -24,8 +24,6 @@ export interface GenerationTriggerPolicy {
   readonly private_prompt: PrivatePromptPolicy;
 }
 
-/** The single source of the no-tools prompt-building policy; every private-LLM call site reads it
- * from here rather than restating the literal. */
 export const PRIVATE_PROMPT_POLICY: PrivatePromptPolicy = Object.freeze({
   tools: Object.freeze([]),
   tool_choice: "none",

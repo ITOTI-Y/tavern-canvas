@@ -8,10 +8,7 @@ import {
   type PackageUpdateResult,
 } from "@tavern-canvas/vocabulary";
 
-// Matches VOCABULARY_NAMESPACE in apps/extension/src/workers/vocabulary_worker.ts. Vocabulary
-// data is shared reference content, not scoped per profile/character, so a fixed namespace is
-// correct here too -- not exported there, so redeclared (same accepted duplication that file's
-// own comment documents for the same constant).
+// Must match VOCABULARY_NAMESPACE in vocabulary_worker.ts, which does not export it.
 const VOCABULARY_NAMESPACE = "vocabulary";
 
 export class CatalogInstallBusyError extends Error {
@@ -23,32 +20,17 @@ export class CatalogInstallBusyError extends Error {
 
 export interface VocabularyCatalogClientOptions {
   readonly current_extension_version: string;
-  /** Where the extension's own bundled baseline package lives -- required only to install a
-   * catalog entry marked `bundled`. See resolve_bundled_baseline_base_url in
-   * apps/extension/src/workers/vocabulary_worker.ts for the Worker-side equivalent. */
+  /** Required only to install a catalog entry marked `bundled`. */
   readonly bundled_base_url?: string;
   readonly catalog_url?: string;
   readonly fetch_impl?: typeof fetch;
   readonly ttl_ms?: number;
-  /** Overrides how the IndexedDB connection is obtained -- tests inject a fake; production
-   * defaults to the shared @tavern-canvas/storage connection (the same one the vocabulary search
-   * Worker's PackageStoreShardByteSource reads from). */
   readonly open_database_impl?: () => Promise<StorageDatabase>;
 }
 
 /**
- * The catalog capability Stage 06's Vue layer depends on -- it never fetches the catalog document
- * or drives PackageUpdater itself. Owns catalog listing (filtered to versions the running
- * extension supports) and driving one install at a time to completion, mirroring
- * VocabularyClient's role for search: a typed, framework-agnostic surface with no UI concerns.
- *
- * Integration note for whoever wires this into a live session: activating a new package here
- * writes straight to the same IndexedDB namespace the search Worker reads from, but does not
- * itself notify a running Worker -- a live VocabularyClient's Worker caches the active package
- * pointer (apps/extension/src/workers/vocabulary_worker.ts's PackageStoreShardByteSource,
- * cache_active_package: true) and only re-reads it on its own initialization. A caller must
- * dispose and recreate its VocabularyClient after a successful install() for search to observe
- * the newly active package.
+ * Activating a package does not notify a running Worker, which caches the active package pointer:
+ * dispose and recreate the VocabularyClient after a successful install() to observe it.
  */
 export class VocabularyCatalogClient {
   readonly #catalog: CatalogClient;
@@ -70,9 +52,7 @@ export class VocabularyCatalogClient {
     this.#open_database_impl = options.open_database_impl ?? open_database;
   }
 
-  /** Catalog entries whose min_extension_version the running extension satisfies, in publisher
-   * order. Throws CatalogFetchError/CatalogValidationError (packages/vocabulary/src/catalog) on
-   * a network or schema failure -- callers decide how to surface that to the user. */
+  /** Throws CatalogFetchError/CatalogValidationError on a network or schema failure. */
   list(): Promise<readonly VocabularyCatalogEntry[]> {
     return this.#catalog.list_supported_entries(this.#current_extension_version);
   }
@@ -81,13 +61,7 @@ export class VocabularyCatalogClient {
     return this.#install_controller !== null;
   }
 
-  /**
-   * Installs one catalog entry (pass an entry returned by list() -- already schema-validated)
-   * end to end: manifest cross-check, staged download, verification, and activation. Only one
-   * install may run at a time per client instance; call cancel() first (or await the in-flight
-   * install) rather than racing two downloads whose progress would be indistinguishable to a
-   * caller. Progress is delivered synchronously via on_progress for the duration of this call.
-   */
+  /** Only one install may run at a time per client instance; call cancel() first or await the in-flight install. */
   async install(
     entry: VocabularyCatalogEntry,
     on_progress?: (progress: CatalogInstallProgress) => void,
@@ -115,8 +89,6 @@ export class VocabularyCatalogClient {
     }
   }
 
-  /** Aborts the in-flight install, if any -- a no-op otherwise. The aborted install's own
-   * rejection (propagated to whoever is awaiting install()) is how the caller observes this. */
   cancel(): void {
     this.#install_controller?.abort();
   }

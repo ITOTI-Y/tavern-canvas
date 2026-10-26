@@ -1,10 +1,4 @@
-/**
- * Injection seams for the SillyTavern host settings surface.
- *
- * `packages/*` must never import SillyTavern globals directly. This module
- * defines the minimal shape the extension host must provide so the settings
- * adapter can be constructed and unit tested without a real host runtime.
- */
+/** `packages/*` must never import SillyTavern globals directly; this is the host settings surface they receive instead. */
 
 export type SaveSettingsFunction = () => void | Promise<void>;
 

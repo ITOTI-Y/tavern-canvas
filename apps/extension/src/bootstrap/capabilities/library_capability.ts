@@ -12,13 +12,6 @@ import type {
   PersonasCapability,
 } from "../../ui/contracts/ui_capabilities.js";
 
-/**
- * The three Stage 07 services already implement their capability's behaviour; what they do not
- * share is the capability contract's `load()` name for a listing. These adapters exist to bridge
- * that one difference, so the services stay free of UI-contract vocabulary and the composition
- * root stays free of per-service shims.
- */
-
 export interface LlmConnectionsCapabilityDeps {
   readonly repository: LlmConnectionRepository;
   readonly namespace: string;

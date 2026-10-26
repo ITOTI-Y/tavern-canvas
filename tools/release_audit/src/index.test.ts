@@ -43,7 +43,6 @@ const CLEAN_ENTRY_BUNDLE = [
   `export { HELPER_VERSION, load_locale, font_url };`,
 ].join("\n");
 
-/** An entry bundle carrying no version literal of its own, so the gate depends on the chunk. */
 function split_bundle(host_import: string): string {
   return [
     host_import,

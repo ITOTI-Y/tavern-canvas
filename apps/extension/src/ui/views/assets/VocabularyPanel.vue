@@ -11,20 +11,7 @@ import type { CommandState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./assets.module.css";
 
-/**
- * Vocabulary catalog + search. Consumes the Stage 05 catalog capability (list packages, install
- * selected, progress) via the controller's search_vocabulary/load_more_vocabulary/
- * install_vocabulary_package pass-throughs. Per VocabularyCapability.install's own doc comment, a
- * live VocabularyClient Worker never observes a package installed mid-session on its own -- after
- * a successful install this panel drops its current search results/cursor and, if a query was
- * active, re-issues it, which is the UI-side half of the "dispose and recreate" contract (the
- * capability adapter that owns the actual Worker instance is out of this task's ownership).
- *
- * NSFW ruling (controller): the legacy NSFW group-tree is not installed as default data and is
- * never pre-selected. Since VocabularyCatalogEntry carries no dedicated NSFW flag, any catalog
- * entry whose package_id/display_name matches /nsfw|adult|explicit/ is treated as opt-in: hidden
- * behind a collapsed disclosure the user must expand before an install button even renders.
- */
+/** Catalog entries matching /nsfw|adult|explicit/ are opt-in: hidden behind a collapsed disclosure and never preselected. */
 const props = defineProps<{
   readonly catalog: readonly VocabularyCatalogEntry[];
   readonly installCommand: CommandState<void>;
@@ -35,8 +22,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-// The catalog is fetched from a remote host, so it is loaded here rather than at bootstrap:
-// opening this panel is the user asking for it. See StudioController.load_vocabulary_catalog.
+// The catalog is remote, so it loads when this panel opens, not at bootstrap.
 onMounted(() => {
   void props.controller.load_vocabulary_catalog();
 });
@@ -62,8 +48,6 @@ function entry_name(entry: VocabularyCatalogEntry): string {
 const installing_package_id = ref<string | null>(null);
 const install_progress_label = ref<string | null>(null);
 
-/** Explicit branches (not a template literal into the phase name) so every translation call site
- * stays a static key the locale checker can verify. */
 function progress_label(progress: { readonly phase: string }): string {
   switch (progress.phase) {
     case "verifying_catalog_manifest":
@@ -91,8 +75,6 @@ async function install(entry: VocabularyCatalogEntry): Promise<void> {
   installing_package_id.value = null;
   install_progress_label.value = null;
   if (props.controller.state.assets.vocabulary_install_command.status === "success") {
-    // Worker dispose/recreate handoff: this session's results are stale the moment a new
-    // package might be active, so drop them and, if the user had a query in flight, ask again.
     search_results.value = [];
     next_cursor.value = null;
     if (search_query.value.trim() !== "") {
@@ -100,10 +82,6 @@ async function install(entry: VocabularyCatalogEntry): Promise<void> {
     }
   }
 }
-
-// ---------------------------------------------------------------------------
-// Search (stateless request/response -- see VocabularyCapability's own doc comment)
-// ---------------------------------------------------------------------------
 
 const search_query = ref("");
 const search_results = ref<readonly VocabularySearchResult[]>([]);
@@ -170,8 +148,6 @@ const catalog_status = computed(() => {
   return props.catalog.length === 0 ? ("empty" as const) : ("ready" as const);
 });
 
-/** "ready" once there is either no active query (nothing to show yet) or at least one result;
- * "empty" only for a completed, non-empty query with zero matches. */
 const search_status = computed(() => {
   if (searching.value && search_results.value.length === 0) {
     return "loading" as const;

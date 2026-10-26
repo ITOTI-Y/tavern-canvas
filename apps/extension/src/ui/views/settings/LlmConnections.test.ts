@@ -80,8 +80,6 @@ function mount_panel(
   return { wrapper, controller };
 }
 
-/** Dialog content teleports into a portal that is a sibling of the mounted root, so assertions
- * run against a document-scoped wrapper (the AssetsView.test.ts precedent). */
 function dom(): DOMWrapper<HTMLElement> {
   return new DOMWrapper(document.body);
 }

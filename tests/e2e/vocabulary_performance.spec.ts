@@ -10,33 +10,8 @@ import type {
   WorkerRunResult,
 } from "../harness/vocabulary_benchmark_harness.js";
 
-// Stage 05 performance gate. Drives the REAL, unmodified
-// apps/extension/src/workers/vocabulary_worker.ts as an actual Web Worker
-// (via tests/harness/vocabulary_benchmark_harness.ts, loaded by
-// vocabulary_benchmark.html) against the 500,000-record package generated
-// deterministically by generate_benchmark_fixture.ts (seed 20260804) and
-// built by the real vocabulary-builder CLI -- see playwright.config.ts's
-// webServer for the build/serve pipeline. Acceptance budgets are the plan's
-// (docs/_dev/plans/2026-08-04-tavern-canvas-05-vocabulary.md, Task 6):
-// prefix p95 <= 100 ms, content/fuzzy p95 <= 300 ms, LRU budgets 16 MiB
-// (mobile) / 64 MiB (desktop), zero main-thread long tasks > 50 ms, zero
-// incorrect query results.
-//
-// Both LRU budgets are proven every run: the primary worker resolves its
-// own budget from navigator.deviceMemory the way production does, and the
-// harness runs a second worker configured for the complementary mode. Each
-// worker's high-water mark is checked against the budget that worker itself
-// reports (read live from the engine, not assumed here), and the two
-// budgets together must cover both 16 MiB and 64 MiB.
-//
-// The latency budgets gate the PRIMARY worker -- the one configured the way
-// production configures itself on this host. The secondary worker's
-// latencies are measured and logged for the stage review but not gated: on
-// a 16 MiB budget the 500,000-record package's decoded detail index alone
-// is 39.85 MB, so its working set provably cannot be cached at all, and the
-// gap that leaves is a package-sizing question for low-memory device
-// classes rather than something this engine can close. See
-// task-perf-report.md.
+// Latency budgets gate the primary worker only. The secondary worker runs the complementary LRU
+// mode and is logged but not gated: a 16 MiB budget cannot hold the 39.85 MB decoded detail index.
 
 const MOBILE_LRU_BUDGET_BYTES = 16 * 1024 * 1024;
 const DESKTOP_LRU_BUDGET_BYTES = 64 * 1024 * 1024;
@@ -60,7 +35,7 @@ function load_known_queries(): KnownQueriesFile {
   } catch (error) {
     throw new Error(
       `Cannot read ${path}. Run "pnpm --filter @tavern-canvas/vocabulary-builder generate-benchmark" ` +
-        `and "build-package" first (see task-6-brief.md Step 2).`,
+        `and "build-package" first.`,
       { cause: error },
     );
   }
@@ -147,7 +122,7 @@ async function read_worker_lru(worker: PlaywrightWorker): Promise<WorkerLruSampl
           };
     });
   } catch {
-    return null; // Worker not yet initialized, or already terminated -- not an error here.
+    return null;
   }
 }
 
@@ -169,17 +144,8 @@ declare global {
   }
 }
 
-/**
- * A single `page.evaluate()` that itself `await`s the whole multi-minute
- * benchmark run hangs indefinitely in this environment: Playwright's
- * `Runtime.evaluate(awaitPromise: true)` does not reliably pump the page's
- * Worker message channel while the outer promise is pending (reproduced
- * directly during Task 6 -- a fire-and-forget trigger plus a separately-
- * polled `window` flag resolves in seconds instead; the same evaluate()
- * calls used for the trigger and each poll tick, individually short-lived,
- * never hang). This is a harness-infrastructure workaround, not a change to
- * what is measured or asserted.
- */
+// A single page.evaluate awaiting the whole run hangs: Playwright does not pump the page's Worker
+// message channel while the outer promise is pending. Trigger the run, then poll a window flag.
 async function run_benchmark_via_polling(
   page: Page,
   config: BenchmarkConfig,
@@ -336,10 +302,7 @@ test("500,000-record vocabulary Worker meets latency, correctness, and LRU budge
     `content/fuzzy p95 for ${primary_stats.label}`,
   ).toBeLessThanOrEqual(CONTENT_FUZZY_P95_BUDGET_MS);
 
-  // Each worker is held to the budget its own engine resolved, and between
-  // them both documented budgets must have been exercised -- so neither a
-  // future environment change nor a detection change can silently drop the
-  // mobile-budget proof (Task 6 lost it exactly that way).
+  // Each worker is held to the budget its own engine resolved; together they must cover both budgets.
   expect(
     [primary_lru.budget_bytes, secondary_lru.budget_bytes].sort((a, b) => (a ?? 0) - (b ?? 0)),
     "both the mobile and desktop LRU budgets must be exercised",

@@ -1,13 +1,3 @@
-/**
- * Justified-row masonry layout: every row shares one fixed height (so it can be virtualized as a
- * single fixed-size VirtualList row, unlike a true Pinterest-style column masonry, which needs
- * every item present in the DOM to flow correctly), and each tile's *width* inside that row scales
- * to its own aspect ratio -- giving the varied-width masonry look while keeping windowing.
- *
- * Every tile's box is sized from GalleryRecordSummary.width/height, known before any image byte
- * ever loads, which is what makes "stable dimensions before load" possible at all: a record with
- * unknown dimensions (width/height null) falls back to a square aspect ratio rather than guessing.
- */
 export interface LayoutSourceItem {
   readonly id: string;
   readonly width: number | null;
@@ -36,13 +26,6 @@ function aspect_ratio(item: LayoutSourceItem): number {
   return Math.min(MAX_ASPECT_RATIO, Math.max(MIN_ASPECT_RATIO, ratio));
 }
 
-/**
- * Packs `items` into fixed-height rows for a `container_width`-wide viewport. Greedy left-to-right
- * packing (not full row-justification/stretch): a row closes as soon as the next tile would
- * overflow the container, so the last tile in a row keeps its natural aspect-derived width instead
- * of being stretched to fill -- simpler and avoids the iterative rebalancing a true justified
- * gallery needs, at the cost of a ragged (not flush) right edge on most rows.
- */
 export function layout_justified_rows<TItem extends LayoutSourceItem>(
   items: readonly TItem[],
   container_width: number,

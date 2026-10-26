@@ -9,9 +9,7 @@ export interface VocabularyIndexEntry {
   readonly popularity: number;
 }
 
-// Phase-generated candidate, before dedup/hydration/scoring (result_ranker's
-// job). "alias" is provisional: a candidate sourced from the alias shard may
-// be refined to "translation" once hydration reveals which field matched.
+// "alias" is provisional: refined to "translation" once hydration reveals which field matched.
 export interface VocabularyPlannerCandidate {
   readonly record_id: number;
   readonly match_kind: VocabularyMatchKind;
@@ -25,12 +23,8 @@ export interface VocabularyPlannerInput {
   readonly category?: string;
   readonly hot_global: readonly number[];
   readonly hot_by_category: readonly number[];
-  // Already-loaded entries for the query's group_key shard(s), unfiltered by
-  // the query itself -- plan_vocabulary_query does the startsWith filtering.
   readonly prefix_entries: readonly VocabularyIndexEntry[];
   readonly alias_entries: readonly VocabularyIndexEntry[];
-  // record_id -> number of query trigrams it matched, from
-  // resolve_trigram_candidates.
   readonly trigram_matches: ReadonlyMap<number, number>;
 }
 
@@ -39,20 +33,9 @@ function plan_hot_candidates(input: VocabularyPlannerInput): readonly Vocabulary
     input.category !== undefined && input.category !== ""
       ? input.hot_by_category
       : input.hot_global;
-  // The hot shard stores only record ids, already sorted popularity-descending
-  // by the builder (tools/vocabulary_builder/src/build_hot_index.ts) -- no
-  // per-id popularity value travels with them. Without a synthetic value here,
-  // every hot candidate's source_popularity is indistinguishable (null), so
-  // select_hydration_targets' pre-hydration 200-record cap (result_ranker.ts)
-  // falls through its comparator to a record_id tie-break and silently drops
-  // the shard's real most-popular entries whenever a corpus has more than 200
-  // hot candidates -- reproduced directly at 500,000-record scale (Stage 05
-  // Task 6): an empty query's top result was record_id-smallest, not the
-  // actual global-max-popularity record. Threading the array position through
-  // as a descending synthetic value preserves the builder-guaranteed order
-  // across the cap; the final rank still scores by real hydrated popularity
-  // (result_ranker.ts's `record.popularity`), so this only affects which 200
-  // candidates get hydrated, never the resulting order among them.
+  // The hot shard holds record ids already sorted by popularity, without values. The synthetic
+  // descending value keeps select_hydration_targets' 200-record cap from falling back to record_id
+  // order and dropping the most popular entries; final ranking uses the hydrated popularity.
   return ids.map((record_id, index) => ({
     record_id,
     match_kind: "hot",
@@ -96,14 +79,6 @@ function plan_trigram_candidates(
   }));
 }
 
-/**
- * Runs the exact/hot -> prefix -> alias/translation -> trigram phases and
- * returns raw candidates: no dedup, no hydration, no score. An empty query
- * short-circuits to hot-only, since prefix/alias/trigram all require query
- * text to match against. result_ranker owns dedup, hydration-based
- * alias/translation refinement, category filtering, scoring, and the
- * 200-detail-record cap.
- */
 export function plan_vocabulary_query(
   input: VocabularyPlannerInput,
 ): readonly VocabularyPlannerCandidate[] {
@@ -119,11 +94,6 @@ export function plan_vocabulary_query(
   ];
 }
 
-/**
- * Delta-decodes trigram shard entries and counts, per candidate record,
- * how many of the query's trigrams it matched -- the fuzzy/typo recall
- * signal used to rank and cap trigram-phase candidates before hydration.
- */
 export function resolve_trigram_candidates(
   shards: readonly VocabularyTrigramShardPayload[],
   trigrams: readonly string[],

@@ -132,8 +132,6 @@ describe("import_archive", () => {
     expect(staged_legacy_preferences[0]?.payload).toEqual({ theme_id: "夜间" });
     expect(result.manifest.record_counts.legacy_preferences).toBe(1);
 
-    // image_blobs is global/content-addressed: the pre-existing active-namespace blob's
-    // ref_count must be merged with, not replaced by, this import's contribution.
     const merged_blob = await repositories.image_blobs.get(seeded.sha256);
     expect(merged_blob?.ref_count).toBe(2);
 
@@ -142,15 +140,12 @@ describe("import_archive", () => {
     expect(marker?.source_version).toBe(1);
     expect(marker?.payload).toMatchObject({ asset_count: 1 });
 
-    // switch_active_namespace() owns activation; import must never touch the active namespace.
     expect(await repositories.provider_profiles.list(NAMESPACE)).toHaveLength(1);
   });
 
   it("rejects a checksum mismatch and rolls back everything staged before it", async () => {
     const database = await open_test_database();
     const seeded = await seed_and_export(database);
-    // records/generation_jobs.jsonl is the last store processed; provider_profiles and every
-    // store before it will already be staged by the time this failure fires.
     const tampered = await rebuild_archive(seeded.blob, {
       replace: { "records/generation_jobs.jsonl": new TextEncoder().encode("") },
     });
@@ -164,7 +159,6 @@ describe("import_archive", () => {
     expect(await repositories.provider_profiles.list(staging_namespace)).toHaveLength(0);
     expect(await repositories.image_records.list(staging_namespace)).toHaveLength(0);
     expect(await repositories.migration_journal.get(staging_namespace)).toBeNull();
-    // The pre-existing active-namespace blob must be unaffected by the rolled-back import.
     expect((await repositories.image_blobs.get(seeded.sha256))?.ref_count).toBe(1);
   });
 
@@ -291,8 +285,6 @@ describe("import_archive", () => {
       namespace: NAMESPACE,
       extension_version: "3.0.0-alpha.1",
     });
-    // Import into a database with no pre-existing blob for this hash, so the resulting
-    // ref_count reflects only this archive's three image_records, not a merge.
     await reset_test_database();
     const fresh_database = await open_test_database();
 
@@ -304,7 +296,7 @@ describe("import_archive", () => {
     expect(staged_blob?.ref_count).toBe(3);
   });
 
-  it("round-trips a namespace mixing migrated (base-shape) and runtime gallery (flat-shape) image_records rows (I1 regression)", async () => {
+  it("round-trips a namespace mixing migrated (base-shape) and runtime gallery (flat-shape) image_records rows", async () => {
     const database = await open_test_database();
     const repositories = create_business_repositories(database);
     const migrated_bytes = make_asset_bytes("migrated-round-trip");
@@ -326,9 +318,6 @@ describe("import_archive", () => {
       extension_version: "3.0.0-alpha.1",
     });
 
-    // Pre-fix, `parse_jsonl_records` validated every image_records.jsonl line
-    // against the base-only `RECORD_SCHEMAS.image_records`, so the exported
-    // gallery-shape row failed with `invalid_record` here.
     const result = await import_archive({ database, archive: blob });
     expect(result.asset_count).toBe(2);
     expect(result.manifest.record_counts.image_records).toBe(2);
@@ -339,12 +328,9 @@ describe("import_archive", () => {
     expect(staged_gallery_row).toMatchObject({ media_type: "image/png", quarantined: false });
   });
 
-  it("restores the blob's MIME type on import instead of leaving it untyped (M2)", async () => {
+  it("restores the blob's MIME type on import instead of leaving it untyped", async () => {
     const database = await open_test_database();
     const seeded = await seed_and_export(database);
-    // A fresh database with no pre-existing blob for this hash: `write_image_blob`
-    // must take its "create" branch, the one this fix touches, rather than merging
-    // into an already-typed blob left over from seeding.
     await reset_test_database();
     const fresh_database = await open_test_database();
 

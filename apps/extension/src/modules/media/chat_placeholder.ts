@@ -28,13 +28,7 @@ function terminal_placeholder(
   return null;
 }
 
-/**
- * Tracks one streaming placeholder per in-flight chat generation, keyed by `request_id` (known
- * the moment a trigger fires, before any Stage 02 job exists). `handle_job` only ever replaces a
- * placeholder on a matching, terminal job state (`completed`/`attached`/`failed`/`cancelled`) --
- * every intermediate state (`queued`/`preparing`/`submitting`/`running`) leaves the placeholder
- * untouched so the chat UI keeps showing its own streaming indicator until real completion.
- */
+/** `handle_job` replaces a placeholder only on a matching terminal job state (`completed`/`attached`/`failed`/`cancelled`); intermediate states leave it so the chat UI keeps its streaming indicator. */
 export class ChatPlaceholderRegistry {
   readonly #placeholders = new Map<string, ChatPlaceholder>();
   readonly #listeners = new Set<ChatPlaceholderListener>();
@@ -62,7 +56,6 @@ export class ChatPlaceholderRegistry {
     };
   }
 
-  /** Removes a placeholder outright, e.g. once its message rendering has consumed it. */
   discard(request_id: string): void {
     this.#placeholders.delete(request_id);
   }

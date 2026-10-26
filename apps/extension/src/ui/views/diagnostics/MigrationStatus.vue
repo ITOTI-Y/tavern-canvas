@@ -6,11 +6,6 @@ import type { MigrationSnapshot } from "../../contracts/ui_capabilities.js";
 import { migration_failure_reason_label, migration_state_label } from "./migration_labels.js";
 import styles from "./diagnostics.module.css";
 
-/**
- * Read-only migration journal display (the brief's Diagnostics scope). Retry/typed-confirm
- * cleanup are actionable Settings-only commands (Settings > Data), kept out of this component so
- * the two views never both wire the same mutating command.
- */
 const props = defineProps<{
   readonly snapshot: MigrationSnapshot | null;
 }>();

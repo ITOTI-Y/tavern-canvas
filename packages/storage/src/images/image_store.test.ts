@@ -231,16 +231,11 @@ describe("image_store content addressing", () => {
     expect((await records.get(NAMESPACE, IDS.first))?.quarantined).toBe(true);
   });
 
-  it("quarantines the gallery row without crashing when a migrated (base-shape) row shares the same corrupted sha256 (I1 regression)", async () => {
+  it("quarantines the gallery row without crashing when a migrated (base-shape) row shares the same corrupted sha256", async () => {
     const database = await open_database();
     const bytes = png_bytes(7, 7, 7);
     const record = await put_image(database, NAMESPACE, put_input({ bytes }));
 
-    // A migrated v2 asset sharing the same content — base shape, no `quarantined`
-    // field at all. Before the fix, quarantine hard-parsed every row sharing this
-    // sha256 against `GalleryImageRecordSchema`, so this row's presence replaced
-    // the caller's typed `ImageCorruptionError` with an uncaught `ZodError` and
-    // aborted the quarantine write entirely.
     const image_records = new ImageRecordRepository(database);
     await image_records.create(NAMESPACE, {
       schema_version: 1,
@@ -326,7 +321,7 @@ describe("image_store content addressing", () => {
     ).rejects.toThrow(ImageMediaTypeError);
   });
 
-  it("stores a video/mp4 record with duration_ms, poster_image_id, and source_job_id (Stage 07 Task 3)", async () => {
+  it("stores a video/mp4 record with duration_ms, poster_image_id, and source_job_id", async () => {
     const database = await open_database();
     const poster = await put_image(
       database,

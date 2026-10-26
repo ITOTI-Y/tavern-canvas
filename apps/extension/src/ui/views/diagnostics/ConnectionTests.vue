@@ -7,11 +7,6 @@ import type { ConnectionTestResult } from "../../contracts/ui_capabilities.js";
 import AppButton from "../../components/AppButton.vue";
 import styles from "./diagnostics.module.css";
 
-/**
- * `gateway_endpoint` is only used to fill `{origin}` on the two Gateway-specific error templates
- * (`errors.gateway_incompatible`/`errors.gateway_offline`) -- `ConnectionTestResult` itself never
- * carries an origin, only a stable `code` (view_models.ts's `UiFailure` convention).
- */
 const props = defineProps<{
   readonly command: CommandState<ConnectionTestResult>;
   readonly gatewayEndpoint: string | null;

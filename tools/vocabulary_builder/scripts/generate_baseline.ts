@@ -13,23 +13,13 @@ import {
   stage_pack_source,
 } from "./pack_common.js";
 
-// This is the repository's generation script for the committed vocabulary
-// baseline: it drives the committed builder, then either publishes the
-// verified output into apps/extension/public/vocabulary/baseline (default)
-// or, under --check, rebuilds into a scratch directory and byte-compares
-// every manifest/shard against the committed output without touching it --
-// the CI gate in .github/workflows/ci.yml runs the latter. Never hand-edit
-// generated shards; re-run this script instead.
+// Publishes the verified build into apps/extension/public/vocabulary/baseline, or under --check
+// rebuilds into a scratch directory and byte-compares every manifest/shard against the committed
+// output (the CI gate). Never hand-edit generated shards; re-run this script.
 //
-// Stage 05 REFRESH (2026-08-06): the bundled baseline is now a fixed
-// top-50,000-by-popularity CUT of the full bilingual source
-// (data/vocabulary/raw_vocabulary_tags_public.jsonl, ~153k records) rather
-// than the whole file -- large packages are no longer force-bundled; the
-// full pack ships separately (see generate_full_pack.ts) and is
-// user-selectable through a future catalog install flow. It also now
-// carries zh translations (see assert_translations_present below),
-// reversing the earlier fact-only provenance ruling per the user's explicit
-// 2026-08-06 decision to assume translation-licensing responsibility.
+// The baseline is the top 50,000 records by popularity of
+// data/vocabulary/raw_vocabulary_tags_public.jsonl and carries zh translations (see
+// assert_translations_present); the full pack comes from generate_full_pack.ts.
 
 class GenerateBaselineError extends Error {}
 
@@ -50,14 +40,8 @@ const POPULARITY_FLOOR = 8_000_000;
 
 const TRANSLATION_ROUND_TRIP_PROBE = { tag: "1girl", translation: "一个女孩" } as const;
 
-// Provenance guard (2026-08-06 controller ruling, reversing the earlier
-// fact-only rule): the committed baseline must now carry zh translations.
-// Rather than re-asserting an exact coverage count here (a moving target as
-// source data is refreshed), this re-checks the built output directly for
-// the one invariant that matters structurally -- a known, always-translated
-// head tag survives the full build round trip -- so a future accidental
-// reversion to the fact-only source (or a broken overlay) fails loudly here
-// instead of shipping silently untranslated.
+// A known, always-translated head tag must survive the build round trip, so a source without zh
+// translations (or a broken overlay) fails here instead of shipping untranslated.
 async function assert_translations_present(output_directory: string): Promise<void> {
   let probe_translation: string | undefined;
   let probe_shard_id: string | undefined;

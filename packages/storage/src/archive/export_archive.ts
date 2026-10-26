@@ -53,11 +53,8 @@ async function read_blob_bytes(blob: Blob | ArrayBuffer): Promise<Uint8Array> {
   return new Uint8Array(blob as ArrayBuffer);
 }
 
-/**
- * Streams a namespace's business records and content-addressed assets into a verified
- * TavernCanvas archive. manifest.json and checksums.json are written last because
- * checksums.json's own content depends on every other file's hash, including manifest.json's.
- */
+// manifest.json and checksums.json are written last because checksums.json depends on every other
+// file's hash.
 export async function export_archive(options: ExportArchiveOptions): Promise<Blob> {
   const { database, namespace, extension_version, signal } = options;
   const created_at = options.created_at ?? new Date().toISOString();

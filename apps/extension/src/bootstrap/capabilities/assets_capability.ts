@@ -20,12 +20,7 @@ type CategoryRepository = Pick<
   "get" | "list" | "put" | "delete"
 >;
 
-/**
- * Three of the six asset categories have a matching v3 store; three do not. Rather than overload an
- * unrelated store to fill the row, the unmapped categories resolve to an explicit
- * `capability_unavailable` on every mutation and load as empty -- visible in diagnostics, not
- * silently broken.
- */
+/** Categories without a matching v3 store resolve to `capability_unavailable` on mutation and load as empty. */
 const UNMAPPED_CATEGORY_REASON =
   "No v3 store exists for this asset category yet; character, vibe and workflow assets are stored, the rest are not.";
 

@@ -433,7 +433,7 @@ describe("AssistantModule: sessions, abort, edit/resend, persistence", () => {
   });
 });
 
-describe("AssistantModule: image generation stays on the typed Stage 02 command and the task strip", () => {
+describe("AssistantModule: image generation stays on the typed image-generation command and the task strip", () => {
   it("generate_image dispatches through the injected image-generation port and appends a task-strip entry", async () => {
     const image_generation = fake_image_generation();
     const connection = fake_connection(() => ({

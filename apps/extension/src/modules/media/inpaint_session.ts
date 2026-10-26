@@ -25,11 +25,7 @@ function validate_positive_integer(value: number, name: string): void {
   }
 }
 
-/**
- * Enforces that a mask buffer is pixel-for-pixel congruent with the source image it will be
- * submitted alongside -- every provider's inpaint endpoint rejects (or silently misbehaves on) a
- * size mismatch, so this fails fast client-side instead.
- */
+/** Providers reject or misbehave on a mask/source size mismatch, so fail fast client-side. */
 export function validate_mask_dimensions(
   source_width: number,
   source_height: number,
@@ -79,13 +75,6 @@ function stamp_circle(
   }
 }
 
-/**
- * A width/height-bound, single-channel binary mask buffer with brush/erase drawing, capped
- * linear undo/redo (ports legacy's snapshot-array history -- `MAX_MASK_HISTORY` matches both
- * legacy editors' `maxHistory = 20`), and provider-specific export post-processing. Kept free of
- * any canvas/DOM dependency so it is exhaustively unit-testable; `InpaintDialog.vue` owns the real
- * `<canvas>` and only ever calls into this class.
- */
 export class InpaintMaskSession {
   readonly width: number;
   readonly height: number;
@@ -115,12 +104,7 @@ export class InpaintMaskSession {
     return this.#history_index < this.#history.length - 1;
   }
 
-  /**
-   * Rasterizes a poly-line of circular dabs along `points`, interpolating extra dabs every
-   * `brush_size / 4` pixels between consecutive points (ports legacy NovelAI editor's approach,
-   * generalized to both providers) so a fast pointer move leaves no gaps. Commits one history
-   * entry per stroke, not per dab.
-   */
+  /** Interpolates dabs every `brush_size / 4` pixels so fast pointer moves leave no gaps; commits one history entry per stroke. */
   stroke(points: readonly MaskPoint[], brush_size: number, mode: BrushMode): void {
     if (points.length === 0) {
       return;
@@ -183,8 +167,6 @@ export class InpaintMaskSession {
   }
 
   #commit(): void {
-    // Any redo branch abandoned by a new stroke is discarded, matching a standard linear
-    // undo/redo stack (and both legacy editors' own history arrays).
     this.#history = [...this.#history.slice(0, this.#history_index + 1), this.#mask.slice()];
     if (this.#history.length > MAX_MASK_HISTORY) {
       this.#history = this.#history.slice(this.#history.length - MAX_MASK_HISTORY);
@@ -192,16 +174,11 @@ export class InpaintMaskSession {
     this.#history_index = this.#history.length - 1;
   }
 
-  /** Already strictly binary (0/255) by construction -- no thresholding pass needed. */
   export_binary_mask(): Uint8ClampedArray {
     return this.#mask.slice();
   }
 
-  /**
-   * ComfyUI export: a distance-field feather (ports legacy `applyGaussianBlur`, itself not a real
-   * Gaussian -- for every unmasked pixel within `radius` of a masked one, alpha falls off linearly
-   * with distance to the nearest masked pixel). `radius <= 0` returns the unmodified binary mask.
-   */
+  /** ComfyUI export: linear distance-field feather of `radius` px around masked pixels; `radius <= 0` returns the binary mask. */
   export_feathered_mask(radius: number): Uint8ClampedArray {
     if (radius <= 0) {
       return this.export_binary_mask();
@@ -245,12 +222,7 @@ export class InpaintMaskSession {
     return output;
   }
 
-  /**
-   * NovelAI export: quantizes the mask into `grid_size`-px blocks (ports legacy
-   * `applyGridAlignment`) -- any block containing at least one masked pixel becomes fully masked,
-   * guaranteeing every mask boundary lands on a latent-pixel boundary (NAI's VAE operates at 8px
-   * granularity).
-   */
+  /** NovelAI export: any `grid_size` block containing a masked pixel becomes fully masked, so boundaries land on the 8 px latent grid. */
   export_grid_aligned_mask(grid_size = 8): Uint8ClampedArray {
     validate_positive_integer(grid_size, "grid_size");
     const source = this.#mask;
@@ -281,10 +253,6 @@ export class InpaintMaskSession {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Provider submission request builders (inpaint.comfyui_submit / inpaint.novelai_submit)
-// ---------------------------------------------------------------------------
-
 export interface ComfyUiInpaintInput {
   readonly request_id: RequestId;
   readonly generation_anchor: Sha256;
@@ -297,13 +265,6 @@ export interface ComfyUiInpaintInput {
   readonly output_count?: number;
 }
 
-/**
- * Uploads original+mask to ComfyUI, submitting through a dedicated edit workflow preset
- * (`workflow_id`), positive/negative prompt, and denoise strength -- entirely representable in the
- * existing `ComfyUiRequestSchema` via `input_asset_bindings`' generic name->asset map and
- * `placeholder_values`' generic text-substitution map, so no packages/contracts change was needed
- * for this provider (unlike NovelAI -- see `build_novelai_inpaint_request`).
- */
 export function build_comfyui_inpaint_request(input: ComfyUiInpaintInput): ComfyUiRequest {
   return {
     provider_id: "comfyui",
@@ -336,13 +297,7 @@ export interface NovelAiInpaintInput {
   readonly model_id?: string;
 }
 
-/**
- * 8px-grid-aligned mask (`InpaintMaskSession.export_grid_aligned_mask`), dedicated NovelAI
- * inpainting model, always issued as a direct API call (never routed through the user's normal
- * generation-mode setting, matching legacy). Uses `action: "infill"` plus the `image_asset_id`/
- * `mask_asset_id`/`inpaint_strength` fields added to `NovelAiRequestSchema` for this task, since
- * the base contract had no inpaint hook at all.
- */
+/** Always a direct API call, bypassing the user's generation-mode setting; uses `action: "infill"` with the dedicated inpaint model. */
 export function build_novelai_inpaint_request(input: NovelAiInpaintInput): NovelAiRequest {
   return {
     provider_id: "novelai",

@@ -2,9 +2,6 @@ import { normalize_vocabulary_search_key, type VocabularyRecord } from "@tavern-
 
 import type { VocabularySourceRecord } from "./read_source.js";
 
-// `String.prototype.codePointAt` is typed as possibly `undefined` even
-// though every call site here guards `index` against `text.length` first;
-// this narrows without a non-null assertion.
 function code_point_at(text: string, index: number): number {
   const code_point = text.codePointAt(index);
   if (code_point === undefined) {
@@ -13,12 +10,7 @@ function code_point_at(text: string, index: number): number {
   return code_point;
 }
 
-/**
- * Compares two strings by Unicode code point (not UTF-16 code unit), so
- * ordering matches the payload contract's "code-point order" requirement
- * even for text containing astral characters. Used everywhere the builder
- * needs a reproducible, source-order-independent sort.
- */
+/** Code-point order (not UTF-16 code unit), as the payload contract requires. */
 export function compare_by_code_point(left: string, right: string): number {
   let left_index = 0;
   let right_index = 0;
@@ -34,7 +26,6 @@ export function compare_by_code_point(left: string, right: string): number {
   return left.length - left_index - (right.length - right_index);
 }
 
-/** Takes the first `code_point_count` Unicode code points of `text` as a shard grouping key. */
 export function shard_group_key(text: string, code_point_count: number): string {
   let index = 0;
   let taken = 0;
@@ -46,7 +37,6 @@ export function shard_group_key(text: string, code_point_count: number): string 
   return text.slice(0, index);
 }
 
-/** Encodes a shard group key as a filesystem- and URL-safe path segment. */
 export function encode_group_key_segment(group_key: string): string {
   const bytes = new TextEncoder().encode(group_key);
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -59,12 +49,7 @@ export class VocabularyMergeConflictError extends Error {
   }
 }
 
-/**
- * Deduplicates aliases by normalized key. When two spellings normalize to
- * the same key, the lexicographically smallest (code-point order) original
- * spelling is kept as canonical — a deterministic, source-order-independent
- * tie-break. The result is sorted by normalized key for reproducibility.
- */
+/** On key collision the smallest original spelling (code-point order) is kept, independent of source order. */
 export function dedupe_and_sort_aliases(aliases: readonly string[]): string[] {
   const canonical_by_key = new Map<string, string>();
   for (const alias of aliases) {
@@ -129,16 +114,9 @@ interface RecordAccumulator {
 }
 
 /**
- * Duplicate-merge rule: two source records collide when their `tag`
- * normalizes to the same search key.
- *
- * - `aliases` merge by union (see `dedupe_and_sort_aliases`) — never lost.
- * - `popularity` merges by maximum across duplicates.
- * - `tag`, `translation`, `category`, and `description` merge by "the
- *   populated side wins when only one side has a value"; if both duplicates
- *   supply a different non-empty value for the same field, merging throws
- *   `VocabularyMergeConflictError` instead of silently discarding one side's
- *   primary content.
+ * Records collide when `tag` normalizes to the same key. `aliases` union, `popularity` takes the
+ * maximum; other fields take the populated side, and differing non-empty values throw
+ * `VocabularyMergeConflictError`.
  */
 export function merge_duplicate_records(
   source_records: readonly VocabularySourceRecord[],
@@ -197,11 +175,7 @@ export function merge_duplicate_records(
     }));
 }
 
-/**
- * Assigns final `record_id`s in deterministic order: by normalized tag,
- * then by original tag text (code-point order) as a tie-break. Ids are
- * sequential from 0 so detail shards can chunk records contiguously.
- */
+/** Ids are sequential from 0 in normalized-tag order (original tag as tie-break), so detail shards chunk contiguously. */
 export function assign_record_ids(
   merged_records: readonly MergedVocabularyRecord[],
 ): VocabularyRecord[] {

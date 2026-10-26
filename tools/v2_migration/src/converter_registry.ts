@@ -35,13 +35,6 @@ export class UnknownLegacyPathError extends Error {
   }
 }
 
-/**
- * Classifies every own path (at every depth) reachable from a v2 settings
- * object against `SETTINGS_PATH_RULES`. This is the completeness check: a
- * fully populated fixture must produce zero `unknown` entries, and every v2
- * settings field a real user could have must resolve to exactly one of
- * mapped / deferred_secret_transfer / intentionally_obsolete.
- */
 export function classify_settings_paths(settings: unknown): SettingsClassification {
   const classified: ClassifiedPath[] = [];
   const unknown: string[] = [];

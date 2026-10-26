@@ -9,14 +9,7 @@ export interface ChatMediaInteractionEvent {
 
 export type ChatMediaInteractionHandler = (event: ChatMediaInteractionEvent) => void;
 
-/**
- * Source of already-classified chat-image gestures, keyed by TavernCanvas image ID. Deliberately
- * receives classified gestures, not raw pointer/timing events: only a host with real DOM access to
- * rendered message media (Tauri's ChatSurface) can measure press duration / double-click windows
- * safely, so that classification lives in the host-specific wiring (T6's
- * apps/extension/src/modules/tauri/chat_surface_module.ts), while this port -- and the shared
- * command logic below -- stays host-agnostic.
- */
+/** Receives already-classified gestures: only a host with real DOM access to rendered message media (Tauri's ChatSurface) can measure press and double-click timing safely. */
 export interface ChatMediaInteractionPort {
   readonly capability: CapabilityStatus;
   subscribe(handler: ChatMediaInteractionHandler): () => void;
@@ -28,15 +21,7 @@ function unavailable_capability(reason: string): CapabilityStatus {
   return { available: false, reason };
 }
 
-/**
- * `HostAdapter` (apps/extension/src/host/host_adapter.ts) exposes no click/dblclick/long-press/
- * context hook on rendered chat message media at all -- confirmed by its full method list
- * (message/data-level only, no DOM access). A standard SillyTavern host therefore cannot expose
- * these gestures without a private DOM selector, which the parity brief explicitly forbids,
- * so this implementation degrades to a permanently unavailable capability and never emits.
- * The identical commands stay reachable from Gallery and GenerationParametersDialog, which call
- * `ChatMediaInteractionCommands` directly instead of going through gesture events.
- */
+/** A standard SillyTavern host exposes no hook on rendered chat media, so this implementation is permanently unavailable and never emits; the same commands stay reachable from Gallery and GenerationParametersDialog. */
 export class StandardHostChatMediaInteractions implements ChatMediaInteractionPort {
   readonly capability = unavailable_capability(
     "Standard SillyTavern host exposes no message-media gesture hook; use Gallery or the image parameters dialog instead.",
@@ -47,12 +32,7 @@ export class StandardHostChatMediaInteractions implements ChatMediaInteractionPo
   }
 }
 
-/**
- * What a host that *does* own the rendered message DOM pushes into. `ChatMediaInteractionPort`
- * above is the read side (already-classified gestures out); this is the write side (a host surface
- * reporting one). `apps/extension/src/modules/tauri/chat_surface_module.ts` measures press duration
- * and double-click windows against real Pointer Events and calls `handle`.
- */
+/** Write side of `ChatMediaInteractionPort`: a host surface that owns the message DOM reports classified gestures through `handle`. */
 export interface ChatMediaSurfaceEvent {
   readonly action: ChatMediaGesture;
   readonly image_id: ImageId;
@@ -63,11 +43,7 @@ export interface ChatMediaGestureSink {
   handle(event: ChatMediaSurfaceEvent): void;
 }
 
-/**
- * Joins the two halves: a host surface reports gestures into `handle`, and the shared command logic
- * consumes them through `subscribe`. `message_id` is dropped at this boundary because every command
- * is keyed by image ID -- the surface needs it to scope its DOM listeners, the commands do not.
- */
+/** `message_id` is dropped at this boundary because every command is keyed by image ID. */
 export class HostSurfaceChatMediaInteractions
   implements ChatMediaInteractionPort, ChatMediaGestureSink
 {
@@ -88,15 +64,8 @@ export class HostSurfaceChatMediaInteractions
   }
 }
 
-// ---------------------------------------------------------------------------
-// Shared command logic (manual.longpress_edit_open, gallery.click_to_regenerate-equivalent,
-// gallery.click_to_preview-equivalent) -- identical whether triggered by a real gesture (Tauri) or
-// by an explicit Gallery/params-dialog button.
-// ---------------------------------------------------------------------------
-
 export interface ChatMediaInteractionCommandsDeps {
   open_prompt_edit(image_id: ImageId): void | Promise<void>;
-  /** "double-click submits regenerate after confirming the active profile" */
   confirm_active_profile(image_id: ImageId): Promise<boolean>;
   regenerate(image_id: ImageId): void | Promise<void>;
   open_preview(image_id: ImageId): void | Promise<void>;

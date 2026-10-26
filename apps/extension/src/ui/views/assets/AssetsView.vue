@@ -17,12 +17,6 @@ import VibePanel from "./VibePanel.vue";
 import VocabularyPanel from "./VocabularyPanel.vue";
 import WorkflowPanel from "./WorkflowPanel.vue";
 
-/**
- * The Assets page: tabs inside an unframed page (brief Step 1) -- no page-level card wraps this,
- * only the tab list's own bottom rule separates chrome from content. Each tab's content is one
- * category panel; asset records inside a panel may be cards (repeated/draggable), but nothing here
- * nests a card inside another card.
- */
 const props = defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;
@@ -30,8 +24,6 @@ const props = defineProps<{
 
 const { t, locale } = useI18n();
 
-/** Personas and knowledge are their own capability slices, not `AssetCategory` members, so they
- * ride alongside the category tabs without widening that union. */
 type AssetsTab = "vocabulary" | "persona" | "knowledge" | AssetCategory;
 
 const ASSET_CATEGORY_TABS: ReadonlySet<string> = new Set([
@@ -43,10 +35,6 @@ const ASSET_CATEGORY_TABS: ReadonlySet<string> = new Set([
   "workflow",
 ]);
 
-// Starts on whichever category the controller already considers active (StudioState.assets
-// .active_category, "character" per create_initial_state) instead of hard-coding "vocabulary" --
-// the tab selection and the controller's own notion of the active category should agree from
-// first paint, not just after the user's first click.
 const active_tab = ref<AssetsTab>(props.state.assets.active_category);
 
 function select_tab(value: string): void {

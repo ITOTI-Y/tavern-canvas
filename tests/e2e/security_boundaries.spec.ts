@@ -2,23 +2,11 @@ import { expect, test } from "@playwright/test";
 
 import { open_host_page } from "./all_host_utils.js";
 
-/**
- * Security boundary gate for the shipped extension, run in real Chromium against the real
- * bootstrap and composition root (tests/harness/src/all_host_boot.ts). Every probe below drives
- * first-party production code with hostile input; nothing here reimplements the behaviour it
- * asserts.
- *
- * Backs docs/parity/feature_matrix.md's "SD WebUI", "NovelAI", "ComfyUI", "OpenAI compatible and
- * Google/Banana/Grok", "LLM prompt generation and testing", and "diagnostics, migration,
- * import/export, and cleanup" sections, and architecture acceptance criterion 10 (a client request
- * can never name the upstream destination).
- */
-
 const SEEDED_PROMPT = "SEEDED_PROMPT_a_rainy_alley_at_night_marker";
 const SEEDED_CHAT = "SEEDED_CHAT_CONTENT_marker_never_leaves_the_host";
 const SEEDED_SECRET = "seeded-plaintext-credential-never-in-a-bundle";
 
-test.describe("provider destination control (criterion 10)", () => {
+test.describe("provider destination control", () => {
   test("a stored profile cannot move the request off the code-owned catalog route", async ({
     page,
   }) => {
@@ -87,8 +75,6 @@ test.describe("hostile content never becomes code", () => {
     const outcome = await page.evaluate(() =>
       window.__TAVERN_CANVAS_E2E__.probes.parse_fallback([
         "before ",
-        // The real control-comment opening, split across chunk boundaries mid-token, carrying a
-        // payload that is neither valid JSON nor valid tool arguments.
         "<!-- tavern-canv",
         "as:image ",
         '{"prompt":"</script><script>window.__TAVERN_CANVAS_E2E_EXECUTED__=\\"fallback\\"</script>"',
@@ -99,7 +85,6 @@ test.describe("hostile content never becomes code", () => {
 
     expect(outcome.executed_marker).toBeNull();
     expect(outcome.request_count).toBe(0);
-    // The malformed directive is removed from what the user's message keeps.
     expect(outcome.cleaned_text).not.toContain("tavern-canvas:image");
     expect(outcome.cleaned_text).not.toContain("script");
     expect(outcome.cleaned_text.trim()).toBe("before  after".trim());
@@ -142,7 +127,6 @@ test.describe("hostile content never becomes code", () => {
       () => ({}) as Record<string, unknown> & { polluted?: unknown },
     );
     expect(polluted.polluted).toBeUndefined();
-    // The hostile value survives only as an inert string, exactly where the binding put it.
     expect(JSON.parse(rendered)).toMatchObject({
       "1": {
         inputs: { text: "${constructor.constructor('window.__TAVERN_CANVAS_E2E_EXECUTED__=1')()}" },
@@ -258,7 +242,7 @@ test.describe("diagnostics never carry user or credential data", () => {
   });
 });
 
-test.describe("cleartext HTTP disclosure is per origin and non-blocking (criterion 9)", () => {
+test.describe("cleartext HTTP disclosure is per origin and non-blocking", () => {
   test("an unacknowledged cleartext origin is refused, and the same origin works once acknowledged", async ({
     page,
   }) => {
@@ -315,9 +299,7 @@ test.describe("the page stays inert", () => {
       await route.continue();
     });
 
-    // Deliberately the default (full bootstrap) mode: the studio controller's eager start() is
-    // part of a real extension load, so anything it fetches is an unsolicited request the user
-    // never asked for.
+    // Full bootstrap mode on purpose: capabilities mode skips the studio controller start.
     await open_host_page(page, "sillytavern_host.html");
     await page.waitForTimeout(1_000);
 
@@ -325,9 +307,6 @@ test.describe("the page stays inert", () => {
       foreign,
       "loading the extension must not reach any origin the user did not ask it to",
     ).toEqual([]);
-    // Named separately from the origin check: this is the exact request a previously eager
-    // `studio_controller.start()` made, and it would still be wrong if the catalog ever moved to
-    // an origin the loop above happens to allow.
     expect(
       catalog,
       "the vocabulary catalog is fetched when the vocabulary panel opens, never during bootstrap",

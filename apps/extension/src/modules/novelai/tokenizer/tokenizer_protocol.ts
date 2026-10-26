@@ -1,7 +1,4 @@
-// Wire protocol between tokenizer_service.ts (main thread) and tokenizer_worker.ts (Worker
-// thread), plus the prompt normalization both real and fake tokenizer paths agree on. Kept free
-// of any @huggingface/transformers import so tokenizer_service.ts can depend on it without
-// pulling the lazy Worker module's heavy dependency into the initial bundle.
+// Kept free of @huggingface/transformers imports so the service does not pull the Worker's heavy dependency into the initial bundle.
 
 export type TokenizerErrorCode = "tokenizer_unavailable";
 
@@ -58,10 +55,7 @@ export function is_tokenizer_worker_response(value: unknown): value is Tokenizer
   return false;
 }
 
-// Mirrors legacy utils/novelaiTokenCalculator.js:22034 calculateNovelAITokens's normalization
-// (st-chatu8 v2.8.1), so counts stay meaningful against the same 512-token budget the editor UI
-// historically showed: strip NovelAI's own `weight::tag::` emphasis syntax and `{}`/`[]` grouping
-// before counting, since none of those characters reach the model as prompt text.
+// Strip NovelAI's `weight::tag::` emphasis syntax and `{}`/`[]` grouping before counting, since none of those characters reach the model as prompt text.
 export function strip_novelai_weight_syntax(prompt: string): string {
   return prompt
     .replace(/[-+]?\d*\.?\d+::/g, "")

@@ -2,16 +2,8 @@ import { cp, rm, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Stage 05 Task 6: stages the already-built 500,000-record benchmark
-// package (output/benchmark/package, produced by
-// `vocabulary-builder build-package`) into the harness's Vite `publicDir`
-// at the exact relative offset production expects: the bundled Worker
-// lands at `workers/*.js` (vite.config.ts's worker.rolldownOptions.output),
-// and vocabulary_worker.ts's resolve_bundled_baseline_base_url resolves the
-// package one directory up, at `vocabulary/baseline/`. Runs before every
-// `vite build` invocation (see playwright.config.ts's webServer.command) --
-// idempotent, always starts from a clean copy so a stale prior run can
-// never leak into a fresh benchmark.
+// Stages the built benchmark package at vocabulary/baseline/, one directory above the bundled
+// Worker's workers/*.js, the offset production expects. Always starts from a clean copy.
 
 const HARNESS_ROOT = resolve(fileURLToPath(import.meta.url), "..");
 const REPO_ROOT = resolve(HARNESS_ROOT, "../..");

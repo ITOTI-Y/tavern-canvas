@@ -20,22 +20,9 @@ import RegexRules from "./RegexRules.vue";
 import ReplacementRules from "./ReplacementRules.vue";
 import { use_toasts } from "./use_toasts.js";
 
-/**
- * Presentational, controller-agnostic view -- same pattern as WorkbenchView.vue and
- * StudioShell.vue: receives `StudioState` and emits intent events instead of holding a
- * `StudioController` reference. Mounting into StudioShell's workspace slot for the `prompt` route
- * is deferred to the stage's whole-review integration pass (see task-5-report.md).
- */
 const props = defineProps<{
   readonly state: StudioState;
-  /** Pure request/response, not a mutating command -- unlike submit/save/delete, a regex test has
-   * no effect on shared `StudioState` (nothing else in the Studio needs its result), so it is
-   * wired as a direct callback rather than round-tripped through emitted events + a new
-   * `StudioState` field that would exist for no other reason than this one panel. */
   readonly testRegex: (rule: PromptRegexRule, sampleText: string) => Promise<string>;
-  /** No `StudioCapabilities` port runs a private prompt yet (see PromptTestPanel.vue's docstring).
-   * Omit this prop in production until a real capability exists; the panel then shows the
-   * composed "not connected" state instead of silently doing nothing. */
   readonly testCommand?: CommandState<string>;
   readonly contextPreview?: ContextPreview | null;
 }>();
@@ -72,10 +59,6 @@ const is_dirty = () =>
 watch(
   () => props.state.prompt.draft,
   (draft) => {
-    // A baseline is captured either right after a deliberate select/new-preset action
-    // (`awaiting_baseline`) or the very first time a draft is seen at all (e.g. the view mounts
-    // with a preset already selected from a prior session) -- without the latter, a draft that
-    // arrives before the user ever calls select/new would never get a dirty-check baseline.
     const needs_baseline = awaiting_baseline.value || saved_snapshot.value === null;
     if (needs_baseline && draft) {
       saved_snapshot.value = draft;

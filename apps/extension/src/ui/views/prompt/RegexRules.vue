@@ -29,7 +29,6 @@ function pattern_error(rule: PromptRegexRule): string | null {
     return null;
   }
   try {
-    // Validity check only; RegExp() throws SyntaxError for a malformed pattern/flags pair.
     const validity_check = new RegExp(rule.pattern, rule.flags);
     void validity_check;
     return null;
@@ -67,8 +66,6 @@ function run_test(rule: PromptRegexRule): void {
   emit("test", rule, sample_text_by_rule[rule.id] ?? "");
 }
 
-/** Template expressions do not narrow a discriminated union the way a `<script>` block does, so
- * the `status === "success"` check and the `.result` access happen together, here. */
 function test_result_text(rule_id: string): string | null {
   const result = props.testResults[rule_id];
   return result?.status === "success" ? result.result : null;

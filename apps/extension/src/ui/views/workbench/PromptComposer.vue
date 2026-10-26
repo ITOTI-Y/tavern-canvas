@@ -6,11 +6,6 @@ import FieldGroup from "../../components/FieldGroup.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
 import styles from "./workbench.module.css";
 
-/**
- * The dense editor's central panel: positive/negative prompt drafts and the image-count stepper.
- * Long prompts are expected (brief's browser-smoke step) -- both textareas grow with content
- * instead of clipping.
- */
 const props = defineProps<{
   readonly positivePrompt: string;
   readonly negativePrompt: string;

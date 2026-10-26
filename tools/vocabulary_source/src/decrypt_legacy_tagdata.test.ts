@@ -4,11 +4,8 @@ import { decrypt_legacy_openssl_payload, LegacyDecryptionError } from "./decrypt
 
 const PASSPHRASE = "a-very-secret-key-that-is-not-so-secret";
 
-// Fixtures below were generated with the real `openssl enc -aes-256-cbc -md
-// md5 -a -A -pass pass:<passphrase>` CLI against small synthetic plaintexts
-// (never against real archive content), so decrypt_legacy_openssl_payload's
-// key derivation is verified against actual OpenSSL output, not just
-// self-consistency with its own encryption.
+// Fixtures come from the real `openssl enc -aes-256-cbc -md md5 -a -A -pass pass:<passphrase>` CLI
+// run on synthetic plaintexts.
 const VALID_DANBOORU_TAG_PAYLOAD =
   "U2FsdGVkX1+eT68OQat0sPvrohhtY3TJomVZbfJ/EIwLwtnut3Vxe07z3LQeHDgyMRh4doqbpVwn2PCDXrBjGkjnIHN2oorJxRHUYzSLv1EhNmdkKM4dj05CD8AuSGSw0FPwIBps7bSVkt0aFEW2dIsOKWdBnmmC1x18pU/A3XRnX8uymGsGlfhtxUDYznLh";
 const VALID_DANBOORU_TAG_PLAINTEXT =
@@ -17,9 +14,6 @@ const VALID_DANBOORU_TAG_PLAINTEXT =
 const NON_JSON_PAYLOAD = "U2FsdGVkX1/eXdpQT5ZvfxwSXnTKfoSw1kBIi+/dSq0=";
 const NON_JSON_PLAINTEXT = "not json at all";
 
-// Structural stand-in for the real archive's tagData/tags.json and
-// tag_NSFW001.json shape ({ tag_groups, tag_tags }); content is invented, not
-// copied from the real archive.
 const GROUP_TREE_SHAPE_PAYLOAD =
   "U2FsdGVkX1/6TGAwunrgbrgD5qx3Yb8kX30lubl+IgBrdT3BqxN109xfD966zOyMQy9w0TSc/ED1kH9BL2UMk7kaOj4LFg3yrOmWivImmKDih5oSG2lr13RopauXNHosSwlC01G+/9sNYJrFRprXH8swgRIsoARwnCGhIbREgudif77baXrPvUDNU0Z4FR+/";
 const GROUP_TREE_SHAPE_PLAINTEXT =

@@ -4,12 +4,7 @@ import { provide } from "vue";
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 
 const props = defineProps<{
-  /**
-   * The Shadow Root's dedicated portal element (see contracts/portal_keys.ts). Every Reka dialog,
-   * tooltip, menu, and sheet portal under this subtree resolves to this exact element instead of
-   * `document.body` -- the extension mounts inside a closed Shadow Root and must never leak
-   * overlay content past its own boundary.
-   */
+  /** Portals under this subtree render into the Shadow Root's portal element, never `document.body`. */
   portalTarget: HTMLElement;
 }>();
 

@@ -4,13 +4,7 @@ import { useI18n } from "vue-i18n";
 import AppSwitch from "../../components/AppSwitch.vue";
 import styles from "./prompt.module.css";
 
-/**
- * `PromptPresetDraft` (Task 1's contract) has no `ucp_enabled`/`aqt_enabled` fields -- Universal
- * Composition Prompt and Auto Quality Tags toggles have no backing field anywhere in the current
- * contracts, so this component's state is local-only and does NOT round-trip through
- * `save_prompt_preset` yet. Flagged as a genuine contract gap in task-5-report.md (NEEDS_CONTEXT):
- * a future `PromptPresetDraft` extension is required before these toggles can persist.
- */
+/** These toggles are local state: `PromptPresetDraft` has no field for them, so they are not saved with the preset. */
 const props = defineProps<{
   readonly ucpEnabled: boolean;
   readonly aqtEnabled: boolean;

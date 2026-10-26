@@ -23,8 +23,6 @@ function with_tokens(overrides: Partial<CustomTheme["tokens"]>): CustomTheme {
   };
 }
 
-/** Same shape as with_tokens, but typed loosely so intentionally-invalid values (used to prove the
- * schema rejects them) don't fail at compile time before they ever reach the runtime parser. */
 function with_invalid_tokens(overrides: Record<string, unknown>): unknown {
   return {
     ...DEFAULT_LIGHT_THEME,
@@ -108,9 +106,7 @@ describe("theme_tokens: contrast validation", () => {
 });
 
 // Built by concatenation, not a literal "url(" + "https://" source substring: that literal
-// pattern is exactly what tools/first_party_check flags repo-wide as a real remote-style
-// reference. This is a negative-test fixture proving normalize_legacy_color rejects it, not an
-// actual remote reference.
+// Assembled from parts so the repo-wide remote-reference check does not flag this fixture.
 const REMOTE_URL_REFERENCE = "url(" + "https" + "://evil.example/track.png)";
 
 describe("theme_tokens: rejects unsafe content in migrated/candidate values", () => {

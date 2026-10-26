@@ -36,11 +36,10 @@ describe("fixtures", () => {
   });
 });
 
-describe("LegacySettingsSchema: older-install defaults (I5 regression)", () => {
+describe("LegacySettingsSchema: older-install defaults", () => {
   it("parses successfully when fields added after 2.8.1 are entirely absent, instead of permanently blocking migration", () => {
     const older_install = { ...settingsFixture } as Record<string, unknown>;
-    // `asr`, `imageGenStats`, and the gesture fields are cited by the review
-    // as fields that "did not always exist" on older v2 installs.
+    // Fields absent on older v2 installs.
     delete older_install.asr;
     delete older_install.imageGenStats;
     delete older_install.gestureEnabled;
@@ -171,12 +170,9 @@ describe("classify_settings_paths", () => {
     );
   });
 
-  it("classifies a credential as deferred_secret_transfer even when its profile name contains a dot (C2 regression)", () => {
-    // A dot-joined path representation re-splits "v4.5 anime" into extra
-    // segments, shifting `novelai_profiles.*.novelaiApi` (3 pattern segments)
-    // out of alignment with the resulting 4-segment path, so it falls back to
-    // the recursive `novelai_profiles.**` rule and gets classified `mapped`
-    // instead of `deferred_secret_transfer` — silently defeating redaction.
+  it("classifies a credential as deferred_secret_transfer even when its profile name contains a dot", () => {
+    // A dot-joined path would re-split "v4.5 anime" and shift the `*` wildcard secret rule out of
+    // alignment, classifying the credential as `mapped`.
     const dotted_profile = legacy_settings.novelai_profiles.默认;
     if (dotted_profile === undefined) {
       throw new Error("unreachable");
@@ -258,7 +254,7 @@ describe("provider_converter", () => {
     expect(result.records.some((record) => record.provider_id === "openai_image")).toBe(true);
   });
 
-  it("never leaks a credential from a dot-containing v2 profile name (C2 regression)", () => {
+  it("never leaks a credential from a dot-containing v2 profile name", () => {
     const dotted_profile = legacy_settings.novelai_profiles.默认;
     if (dotted_profile === undefined) {
       throw new Error("unreachable");

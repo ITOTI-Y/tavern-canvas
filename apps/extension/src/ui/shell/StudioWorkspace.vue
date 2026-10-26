@@ -6,14 +6,6 @@ import type { StudioState } from "../contracts/view_models.js";
 import type { StudioController } from "../controllers/studio_controller.js";
 import { use_generation_preview_urls } from "./use_generation_preview_urls.js";
 
-/**
- * One chunk per route, never a static import: this component is the only importer of the six
- * feature views, so keeping every loader dynamic is what keeps five of the six (and the whole
- * reka-ui/@vueuse surface only they use) out of the extension's initial payload. `v-if` already
- * mounts exactly one of them, so the loader for a route the session never opens is never called.
- * No `loadingComponent`: the chunks resolve within a frame from the host's own origin, and a
- * flashed placeholder would be a visible regression over the previous synchronous mount.
- */
 const WorkbenchView = defineAsyncComponent(() => import("../views/workbench/WorkbenchView.vue"));
 const PromptView = defineAsyncComponent(() => import("../views/prompt/PromptView.vue"));
 const AssetsView = defineAsyncComponent(() => import("../views/assets/AssetsView.vue"));
@@ -23,16 +15,6 @@ const DiagnosticsView = defineAsyncComponent(
 );
 const SettingsView = defineAsyncComponent(() => import("../views/settings/SettingsView.vue"));
 
-/**
- * Mounts the active route's feature view under StudioShell.vue's workspace region -- the piece
- * every T5/T6/T7 view doc comment flagged as deferred ("StudioShell currently always renders a
- * generic placeholder... mounting into StudioShell's workspace slot is deferred to the stage's
- * whole-review integration pass") and progress.md's stage-review ledger called a MUST-close
- * integration gap. Assets/Gallery/Diagnostics/Settings already accept `state` + `controller`
- * directly and need no translation; Workbench/Prompt stay presentational (state in, intents out --
- * see their own doc comments) precisely so they mount and unit-test standalone, so this component
- * is where their emitted intents become real controller calls.
- */
 const props = defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;

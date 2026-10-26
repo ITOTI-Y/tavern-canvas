@@ -27,26 +27,15 @@ import {
   to_json_value,
 } from "./_records.js";
 
-/**
- * The stored payload key holding which host-vault entry this profile authenticates with. It is a
- * key *name*, never credential material -- plaintext only ever travels UI -> host vault, never
- * into IndexedDB (roadmap rule: provider credentials are never client-stored), which is exactly
- * what `assert_safe_provider_payload` guards `provider_profiles` against.
- */
+/** A key name only, never credential material: plaintext never reaches IndexedDB (`assert_safe_provider_payload`). */
 export const VAULT_KEY_FIELD = "vault_key";
 
-/**
- * Every provider adapter validates its profile against its own `strictObject` schema (allowlists,
- * byte limits), so adapter-owned fields live in their own sub-object rather than beside this
- * capability's presentation fields, which those schemas would reject.
- */
+/** Adapter-owned fields live in their own sub-object because adapter schemas are strict and would reject presentation fields. */
 const ADAPTER_PROFILE_FIELD = "provider_profile";
 
 export interface ProfilesCapabilityDeps {
   readonly repository: ProviderProfileRepository;
   readonly namespace: () => string;
-  /** Resolved on demand: the five concrete adapters are a sixth of the initial bundle and are
-   * needed only by a connection test or a running job. */
   readonly load_adapters: () => Promise<
     Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
   >;
@@ -98,7 +87,6 @@ function build_adapter_profile(
   }
 }
 
-/** The exact object a `ProviderAdapter.validate_profile` expects: adapter-owned fields plus identity. */
 export function adapter_profile_of(record: ProviderProfile): Readonly<Record<string, unknown>> {
   return {
     ...as_record(read_payload(record)[ADAPTER_PROFILE_FIELD]),
@@ -217,13 +205,6 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
       events.emit({ type: "profile_upserted", profile: summary });
       return summary;
     },
-    /**
-     * Two real checks, no network round-trip: the stored profile is validated by the provider's own
-     * `validate_profile` (allowlists, byte limits, model list), and -- when the profile names a
-     * host-vault entry -- the credential is probed for presence by reference. A provider-side
-     * reachability call is not attempted because no provider adapter in this codebase exposes an
-     * idempotent status route.
-     */
     async test_connection(profile_id): Promise<ProfileConnectionTestResult> {
       const started_at = Date.now();
       const record = await read(profile_id);

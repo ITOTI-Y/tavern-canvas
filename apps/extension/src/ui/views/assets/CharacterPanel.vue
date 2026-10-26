@@ -10,13 +10,6 @@ import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 
-/**
- * Character (and persona -- AssetCategory has no separate "persona" slot; a persona is a
- * character record whose role_label the user sets to say so) CRUD panel. `world_info_reference`
- * is a free-text label, not a live picker: no capability port exposes SillyTavern's World Info
- * entries to the Studio (ui_capabilities.ts has no world_info-shaped capability), so a real
- * lookup would have to invent one out of scope for this task; ledgered for stage review.
- */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly loading: boolean;

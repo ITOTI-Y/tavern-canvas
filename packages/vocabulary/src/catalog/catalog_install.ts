@@ -17,9 +17,7 @@ import {
 } from "../package_updater.js";
 import { plan_catalog_install, type CatalogInstallPlanOptions } from "./catalog_client.js";
 
-/** Mirrors package_client.ts's MAX_MANIFEST_BYTES bound for the same file (a JSON manifest with
- * up to 50,000 shard entries) -- this module fetches manifest.json itself, ahead of and
- * independently from PackageUpdater, so it needs the same bound. */
+// Same bound as MAX_MANIFEST_BYTES in package_client.ts.
 const MAX_MANIFEST_BYTES = 8 * 1024 * 1024;
 
 export type CatalogInstallFailureReason =
@@ -28,13 +26,7 @@ export type CatalogInstallFailureReason =
   | "package_id_mismatch"
   | "data_version_mismatch";
 
-/**
- * A validated catalog entry describes content the extension has not yet downloaded -- its
- * manifest_sha256 and data_version are promises about bytes it has not seen. This error means
- * one of those promises did not hold: the actually-fetched manifest.json disagreed with what the
- * catalog document said it would be. Always thrown before any staging package is created, so an
- * install that fails this way never touches stored state.
- */
+/** Thrown when the fetched manifest.json disagrees with the catalog entry, before any staging package exists. */
 export class CatalogInstallError extends Error {
   readonly reason: CatalogInstallFailureReason;
 
@@ -127,8 +119,6 @@ function parse_manifest_bytes(bytes: Uint8Array, package_id: string): Vocabulary
   return result.data;
 }
 
-/** Wraps a real PackageClient so PackageUpdater reuses the exact manifest this module already
- * fetched and hash-verified against the catalog entry, instead of fetching manifest.json again. */
 function with_verified_manifest(
   client: PackageClient,
   manifest: VocabularyManifest,
@@ -139,16 +129,6 @@ function with_verified_manifest(
   };
 }
 
-/**
- * Downloads, cross-checks, and installs one catalog-selected vocabulary package end to end:
- * resolves the entry's source (plan_catalog_install), fetches manifest.json independently and
- * verifies its SHA-256 against the catalog entry's manifest_sha256 (a mismatch is a hard
- * CatalogInstallError, thrown before anything is staged), cross-checks package_id/data_version
- * agreement between the catalog entry and the fetched manifest, then hands off to the existing
- * PackageUpdater for staged, verified, atomic shard download and activation. Progress and
- * cancellation pass through PackageUpdater's own semantics: an aborted signal rolls back any
- * staging package and leaves the previously active/confirmed package untouched.
- */
 export async function install_catalog_entry(
   entry: VocabularyCatalogEntry,
   options: CatalogInstallOptions,

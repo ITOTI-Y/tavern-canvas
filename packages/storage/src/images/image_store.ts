@@ -52,9 +52,8 @@ export class GalleryImageRecordRepository extends IndexedDbRepository<
   GalleryImageRecord
 > {
   constructor(database: IDBPDatabase<DBSchema>) {
-    // rejects_provider_secrets is left at its default (false): it only scans
-    // the generic `payload` field, which GalleryImageRecordSchema never
-    // sets. Its strictObject shape already rules out arbitrary/secret keys.
+    // rejects_provider_secrets stays false: it only scans the generic `payload`, which gallery
+    // records never set.
     super(database, "image_records", GalleryImageRecordSchema);
   }
 }
@@ -84,11 +83,6 @@ async function to_bytes(data: Blob | ArrayBuffer): Promise<Uint8Array> {
   return new Uint8Array(await data.arrayBuffer());
 }
 
-/**
- * Counts `image_records` rows currently referencing `sha256_value`, via the
- * store's `sha256` index. Requires `transaction` to include `image_records`
- * in its scope.
- */
 async function count_referencing_image_records(
   transaction: StorageWriteTransaction,
   sha256_value: Sha256,
@@ -110,15 +104,8 @@ export async function put_image_blob(
   const digest = Sha256Schema.parse(bytesToHex(sha256(bytes)));
   const existing = await blobs.get(digest, transaction);
   if (existing === null) {
-    // The blob row can be physically absent while `image_records` rows still
-    // reference this content: LRU eviction (lru_eviction.ts) deletes only the
-    // `image_blobs` row, keeping metadata. `ref_count` must be reconstructed
-    // from that ground truth — not assumed to be 1 — or a later single
-    // `release_image_blob` would delete bytes other records still need. This
-    // call site (`create_image_record`) always adds exactly one new
-    // reference not yet reflected in the index, hence `+ 1`; a future caller
-    // that restores bytes for already-existing records *without* adding a
-    // new one must not reuse this arithmetic as-is.
+    // The blob row can be absent while records still reference the content (LRU eviction deletes only
+    // `image_blobs`), so ref_count is rebuilt from the index; `+ 1` is the reference this call adds.
     const referencing_count = await count_referencing_image_records(transaction, digest);
     const ref_count = referencing_count + 1;
     const blob: ImageBlob = {
@@ -219,16 +206,8 @@ export async function delete_image_record_entry(
   return { sha256: existing.sha256, blob_deleted };
 }
 
-/**
- * A blob's sha256 can be shared by a migrated (base-shape) `image_records`
- * row and a runtime gallery row alike. `quarantined` only exists on the
- * gallery shape, so a base-shape match is skipped rather than parsed against
- * `GalleryImageRecordSchema` — which used to throw a `ZodError` there,
- * replacing the caller's typed `ImageCorruptionError` and aborting the
- * quarantine write entirely (Stage 04 review finding I1). A row matching
- * neither shape is left untouched, mirroring LRU eviction's existing
- * "cannot prove safe, so don't touch it" treatment of foreign rows.
- */
+// `quarantined` exists only on the gallery shape: base-shape rows sharing the sha256 are skipped,
+// and rows matching neither shape are left untouched.
 async function quarantine_records_for_sha256(
   transaction: StorageWriteTransaction,
   records: GalleryImageRecordRepository,
@@ -279,9 +258,8 @@ export async function read_image_bytes(
 ): Promise<Uint8Array | null> {
   const records = new GalleryImageRecordRepository(database);
   const blobs = new ImageBlobRepository(database);
-  // The quarantine write must be committed even though the read itself
-  // fails, so corruption is captured as a value here and only re-thrown
-  // once the transaction (including the quarantine update) has settled.
+  // The quarantine write is committed although the read fails: corruption is captured as a value and
+  // re-thrown after the transaction settles.
   const outcome = await with_transaction(database, IMAGE_STORES, async (transaction) => {
     try {
       return { bytes: await read_image_blob(transaction, blobs, sha256_value) };

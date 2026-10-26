@@ -59,21 +59,10 @@ function build_job(overrides: Partial<GenerationJobSummary> = {}): GenerationJob
   };
 }
 
-/**
- * Every spy defaults to the honest "unavailable" behavior (create_unavailable_capabilities.ts) and
- * a test overrides only the handful of methods its own scenario exercises -- mirrors the
- * `build_controller`-with-overrides pattern the T5-T7 view test files already use.
- */
 function build_capabilities(overrides: Partial<StudioCapabilities> = {}): StudioCapabilities {
   return { ...create_unavailable_capabilities(), ...overrides };
 }
 
-/**
- * StudioWorkspace reaches every route view through `defineAsyncComponent`, so a view renders only
- * once its own dynamic import settles. Loading those six modules off disk takes far longer than the
- * flush after `mount()` allows, so they are warmed once here; every loader afterwards resolves from
- * the module cache, which a single flush does cover.
- */
 beforeAll(async () => {
   await Promise.all([
     import("../views/workbench/WorkbenchView.vue"),
@@ -85,13 +74,6 @@ beforeAll(async () => {
   ]);
 }, 60_000);
 
-/**
- * Mounts the real `StudioWorkspace` over a real, running `StudioController` (never a hand-rolled
- * mock) so both halves of the routing gap are exercised together: which view a route renders, and
- * whether that view's emitted intents actually reach the capabilities behind the controller.
- * `controller.on_change` keeps the mounted `state` prop in sync exactly the way `AppRoot.vue`'s own
- * `use_studio_controller.ts` composable does in production.
- */
 async function mount_at_route(route: StudioRoute, capabilities: StudioCapabilities) {
   const controller = markRaw(create_studio_controller({ capabilities, initial_route: route }));
   await controller.start();

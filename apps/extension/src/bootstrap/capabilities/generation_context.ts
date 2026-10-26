@@ -17,11 +17,7 @@ export interface GenerationOrigin {
   readonly source_anchor: Sha256;
 }
 
-/**
- * A manual Workbench submission still needs the same anchored identity an automatic tool call gets:
- * anchors are derived from the real active chat's `SourceContext`, so a manually generated image
- * binds to a message through exactly the same `MessageBinder` path as an automatic one.
- */
+/** A manual submission gets the same anchors as an automatic tool call, so it binds to a message through the same `MessageBinder` path. */
 export interface GenerationOriginSource {
   resolve(): Promise<GenerationOrigin>;
 }

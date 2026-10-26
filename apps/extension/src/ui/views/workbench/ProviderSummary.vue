@@ -51,32 +51,32 @@ function handle_select(value: string): void {
     </div>
     <div :class="styles.provider_content">
       <StateSurface
-      :status="surface_status"
-      min-height="56px"
-      :empty-title="t('workbench.provider_summary.no_profile_title')"
-      :empty-message="t('workbench.provider_summary.no_profile_description')"
-      :error-message="t('workbench.provider_summary.load_error')"
-    >
-      <template #action>
-        <button
-          type="button"
-          class="tc-interactive"
-          :class="styles.text_action_button"
-          data-testid="open-provider-settings"
-          @click="emit('open-settings')"
-        >
-          {{ t("workbench.provider_summary.open_settings_action") }}
-        </button>
-      </template>
-      <AppSelect
-        data-testid="provider-select"
-        :model-value="props.activeProfileId ?? undefined"
-        :options="options"
-        :placeholder="t('workbench.provider_summary.select_label')"
-        :aria-label="t('workbench.provider_summary.select_label')"
-        @update:model-value="handle_select"
-      />
-    </StateSurface>
+        :status="surface_status"
+        min-height="56px"
+        :empty-title="t('workbench.provider_summary.no_profile_title')"
+        :empty-message="t('workbench.provider_summary.no_profile_description')"
+        :error-message="t('workbench.provider_summary.load_error')"
+      >
+        <template #action>
+          <button
+            type="button"
+            class="tc-interactive"
+            :class="styles.text_action_button"
+            data-testid="open-provider-settings"
+            @click="emit('open-settings')"
+          >
+            {{ t("workbench.provider_summary.open_settings_action") }}
+          </button>
+        </template>
+        <AppSelect
+          data-testid="provider-select"
+          :model-value="props.activeProfileId ?? undefined"
+          :options="options"
+          :placeholder="t('workbench.provider_summary.select_label')"
+          :aria-label="t('workbench.provider_summary.select_label')"
+          @update:model-value="handle_select"
+        />
+      </StateSurface>
     </div>
   </div>
 </template>

@@ -16,11 +16,7 @@ export function md5_hex(value: string): string {
   return bytesToHex(md5(utf8ToBytes(value)));
 }
 
-/**
- * Expands a seed into as many pseudo-random bytes as requested via counter-based
- * SHA-256 blocks (HKDF-expand shape). Deterministic so re-running a migration on the
- * same legacy source never mints different IDs for the same logical record.
- */
+/** Deterministic, so re-running a migration never mints different IDs for the same record. */
 export function deterministic_bytes(seed: string, length: number): Uint8Array {
   const output = new Uint8Array(length);
   let filled = 0;
@@ -49,12 +45,7 @@ function byte_to_hex(byte: number): string {
   return HEX_DIGITS.charAt(byte >> 4) + HEX_DIGITS.charAt(byte & 0x0f);
 }
 
-/**
- * Formats 16 deterministic bytes as a lowercase UUID satisfying the shared
- * `UuidSchema` pattern (version nibble in 1-8, variant nibble in 89ab). Not a
- * cryptographic RFC 4122 name-based UUID, only a stable, collision-resistant
- * identifier derived from a seed string.
- */
+/** Not an RFC 4122 name-based UUID; only matches `UuidSchema` (version nibble 1-8, variant nibble 89ab). */
 export function deterministic_uuid(seed: string): string {
   const bytes = deterministic_bytes(seed, 16);
   bytes[6] = (require_byte(bytes, 6) & 0x0f) | 0x50;

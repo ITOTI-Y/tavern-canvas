@@ -320,11 +320,6 @@ function build_mock_studio() {
 
 type MockStudio = ReturnType<typeof build_mock_studio>;
 
-/**
- * Resolves every capability's load() with an empty/default snapshot. Native promise resolvers
- * are idempotent no-ops once a promise has already settled, so calling this after a test has
- * already resolved or rejected a specific capability's load is safe.
- */
 function resolve_all_defaults(mock: MockStudio): void {
   mock.generation.deferred_load.resolve([]);
   mock.profiles.deferred_load.resolve([]);
@@ -390,7 +385,6 @@ describe("create_studio_controller", () => {
     mock.gallery.deferred_load.resolve([]);
     mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
     mock.migration.deferred_load.resolve(NOT_REQUIRED_MIGRATION_SNAPSHOT);
-    // settings is deliberately left unresolved.
 
     await vi.waitFor(() => {
       expect(controller.state.loading.has("generation")).toBe(false);
@@ -566,7 +560,7 @@ describe("create_studio_controller", () => {
     expect(failure?.code).not.toContain("Could not reach");
   });
 
-  it("populates state.tasks from a running job event, so the task strip is not dead code", async () => {
+  it("populates state.tasks from a running job event", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });
     const start_promise = controller.start();
@@ -592,7 +586,6 @@ describe("create_studio_controller", () => {
     expect(controller.state.tasks).toEqual([
       { id: JOB_ID, label_code: "status.running", status: "pending", progress: 0.5 },
     ]);
-    // The job list itself is unaffected -- tasks is a derived projection, not a replacement.
     expect(controller.state.workbench.jobs).toHaveLength(1);
   });
 
@@ -677,7 +670,7 @@ function build_prompt_draft(overrides: Partial<PromptPresetDraft> = {}): PromptP
   };
 }
 
-describe("create_studio_controller: Task 5 command extensions", () => {
+describe("create_studio_controller: prompt and workbench commands", () => {
   it("persists the Workbench active provider profile selection", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });

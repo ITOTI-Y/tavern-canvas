@@ -94,10 +94,7 @@ describe("prompt_pipeline: fixed stage order", () => {
     const regex_rules: RegexRule[] = [
       { id: "r1", pattern: "ABCDEFGH", flags: "g", replacement: "MATCHED" },
     ];
-    // A fixed roll seed always produces the same 8-char string; if regex ran *after* roll
-    // resolution, hard-coding that exact string in a rule could match it. Since regex runs first
-    // in the fixed order, the roll placeholder is still literal `{{roll 10}}` text at that point,
-    // so this contrived rule can never match.
+    // Regex runs before roll resolution, so a rule matching the fixed roll output never sees it.
     const result = run_prompt_pipeline(
       build_input({
         raw_scene: "{{roll 10}}",

@@ -2,15 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { open_host_page, REQUIRED_HOST_CAPABILITY_IDS } from "./all_host_utils.js";
 
-/**
- * TauriTavern acceptance gate. The page installs a `__TAURITAVERN__` global shaped exactly like
- * TauriTavern 2.2.0's documented ABI 1 surface (ChatSurface protocol 1, WorldInfo activation) on
- * top of the same standard SillyTavern + JS-Slash-Runner globals the standard-host harness uses,
- * then boots the real bootstrap. Criterion 8 in
- * docs/plans/2026-08-04-tavern-canvas-v3-architecture-design.md section 23.
- */
-
-test.describe("criterion 8: TauriTavern enables the ChatSurface and WorldInfo activation enhancements", () => {
+test.describe("TauriTavern enables the ChatSurface and WorldInfo activation enhancements", () => {
   test("the standard host baseline still holds under TauriTavern", async ({ page }) => {
     await open_host_page(page, "tauri_host.html");
 
@@ -60,8 +52,6 @@ test.describe("criterion 8: TauriTavern enables the ChatSurface and WorldInfo ac
         { uid: "entry-1", world: "harness-world" },
       ]);
       await new Promise((resolve) => setTimeout(resolve, 100));
-      // A subscribed module registers a handler with the host; with none registered the emit is
-      // delivered to nobody, which is exactly what this assertion detects.
       return window.__TAVERN_CANVAS_E2E__.control.subscribed_world_info_handler_count();
     });
 

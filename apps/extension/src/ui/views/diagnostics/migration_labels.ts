@@ -2,13 +2,6 @@ import type { MigrationJournalStateView } from "../../contracts/ui_capabilities.
 
 export type Translate = (key: string) => string;
 
-/**
- * Failure reasons come straight from `MigrationFailureInfo.reason` (migration_journal.ts) through
- * `MigrationSnapshot.failure_reason` (a `string | null`, not the narrower literal union, since the
- * UI contract layer never imports the migration module's own types -- roadmap rule 5). Each
- * known reason still resolves through a literal translate-function call; an unrecognized value
- * falls back to the raw code rather than crashing or silently guessing a translation.
- */
 export function migration_state_label(t: Translate, state: MigrationJournalStateView): string {
   switch (state) {
     case "inventory":

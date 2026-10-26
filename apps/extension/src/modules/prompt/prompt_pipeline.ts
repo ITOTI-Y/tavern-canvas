@@ -1,19 +1,8 @@
 /**
- * The top-level pipeline orchestrator. Runs the fixed stage order from the Stage 07 plan:
- *
- *   raw scene -> selected context -> MVU variable resolution -> fixed positive/negative and
- *   UCP/AQT quality controls -> preset/random group selection -> replacement rules -> regex rules
- *   -> roll/random expression resolution -> tag normalization and stable deduplication ->
- *   provider-specific request mapping
- *
- * This is a deliberate reordering from legacy (where replacement ran *before* the positive-prompt
- * assembly, feeding its 5 insertion points directly into `zhengmian`): the brief fixes replacement
- * rules *after* quality-control assembly, so this pipeline keeps the assembled positive prompt as
- * named slices (`fixed_start` / `middle` / `fixed_end` / `aqt`) through the quality-control and
- * preset-selection stages, and only performs the final 9-part join once the replacement stage's
- * insertions are known. Regex, roll resolution, and tag deduplication then run as plain string
- * transforms on the joined result. The negative prompt is assembled once (quality controls) and
- * never touched by replacement/regex/roll -- see the "negative prompt separation" test.
+ * Replacement rules run after quality-control assembly, so the positive prompt is kept as named
+ * slices (`fixed_start` / `middle` / `fixed_end` / `aqt`) and joined only once the replacement
+ * insertions are known. The negative prompt is assembled once and never touched by
+ * replacement, regex or roll resolution.
  */
 
 import {
@@ -36,10 +25,6 @@ import {
   normalize_physical_newlines,
 } from "./tag_normalizer.js";
 
-// ---------------------------------------------------------------------------
-// Shared helpers reused outside the main 9-stage text pipeline
-// ---------------------------------------------------------------------------
-
 const CHINESE_PARENTHETICAL_PATTERN = /（[^（）]*）/g;
 
 /** Repeatedly strips full-width Chinese parenthetical annotations, e.g. "1girl（一个女孩）" -> "1girl". */
@@ -61,7 +46,6 @@ export interface ChatMessageLike {
   readonly content: string;
 }
 
-/** Merges consecutive same-role messages, optionally folding "system" into "user" first. */
 export function merge_adjacent_messages(
   messages: readonly ChatMessageLike[],
   options: { readonly merge_system_user?: boolean } = {},
@@ -103,10 +87,6 @@ export function substitute_template_placeholders(
   );
 }
 
-// ---------------------------------------------------------------------------
-// Roll / random expression resolution (seeded)
-// ---------------------------------------------------------------------------
-
 const ROLL_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const ROLL_DEFAULT_SEED_MAX = 100_000;
 const ROLL_STRING_LENGTH = 8;
@@ -133,11 +113,7 @@ function seeded_random_string(seed: number): string {
   return result;
 }
 
-/**
- * Resolves `{{roll N}}` / `{{roll 1dN}}` into an 8-character deterministic-per-seed string.
- * `pick_seed` chooses the seed (defaults to `Math.random`-driven); injecting a fixed sequence makes
- * resolution fully deterministic for tests.
- */
+/** Resolves `{{roll N}}` / `{{roll 1dN}}` into an 8-character string that is deterministic per seed. */
 export function resolve_roll_placeholders(
   text: string,
   pick_seed: (seed_max: number) => number = (seed_max) =>
@@ -150,10 +126,6 @@ export function resolve_roll_placeholders(
     return seeded_random_string(pick_seed(seed_max));
   });
 }
-
-// ---------------------------------------------------------------------------
-// Quality-control assembly (zhengmian / fumian)
-// ---------------------------------------------------------------------------
 
 export interface QualityControlInput {
   readonly fixed_positive_prompt: string;
@@ -190,10 +162,6 @@ function assemble_quality_controls(input: QualityControlInput): {
   return { slices, negative_prompt };
 }
 
-// ---------------------------------------------------------------------------
-// Provider-specific request mapping
-// ---------------------------------------------------------------------------
-
 type DistributiveOmit<T, K extends string | number | symbol> = T extends unknown
   ? Omit<T, K & keyof T>
   : never;
@@ -203,7 +171,6 @@ export type ProviderRequestBase = DistributiveOmit<
   "prompt" | "negative_prompt"
 >;
 
-/** Merges the assembled positive/negative text into a provider-specific request and validates it. */
 export function map_to_provider_request(
   base: ProviderRequestBase,
   assembled: { readonly positive_prompt: string; readonly negative_prompt: string },
@@ -216,10 +183,6 @@ export function map_to_provider_request(
   };
   return ImageGenerationRequestSchema.parse(candidate);
 }
-
-// ---------------------------------------------------------------------------
-// Full pipeline orchestration
-// ---------------------------------------------------------------------------
 
 export type PipelineStageId =
   | "context"
@@ -304,8 +267,7 @@ export function run_prompt_pipeline(input: PromptPipelineInput): PromptPipelineR
   const trace: PipelineStageTrace[] = [];
   const original_text = input.raw_scene;
 
-  // Stage: context -- the resolved context block is folded into the working scene text ahead of
-  // MVU resolution, so `{@getvar}` macros anywhere in context content resolve too.
+  // Context is folded into the scene text before MVU resolution so `{@getvar}` macros inside it resolve.
   const context_block =
     input.context === null
       ? ""
@@ -321,13 +283,11 @@ export function run_prompt_pipeline(input: PromptPipelineInput): PromptPipelineR
   let working_scene = context_block ? `${context_block}\n${input.raw_scene}` : input.raw_scene;
   trace.push({ stage: "context", positive_snapshot: working_scene });
 
-  // Stage: MVU variable resolution.
   working_scene = normalize_physical_newlines(
     resolve_getvar_macros(working_scene, input.mvu_store),
   );
   trace.push({ stage: "mvu_resolution", positive_snapshot: working_scene });
 
-  // Stage: fixed positive/negative and UCP/AQT quality controls.
   const { slices, negative_prompt: base_negative } = assemble_quality_controls({
     fixed_positive_prompt: input.fixed_positive_prompt,
     scene: working_scene,
@@ -338,7 +298,6 @@ export function run_prompt_pipeline(input: PromptPipelineInput): PromptPipelineR
   });
   trace.push({ stage: "quality_controls", positive_snapshot: positive_from_slices(slices, {}) });
 
-  // Stage: preset/random group selection -- resolves IDs only, no text mutation.
   const random_source = input.random_source ?? Math.random;
   const selected_preset_id =
     input.preset_selection === null
@@ -360,8 +319,7 @@ export function run_prompt_pipeline(input: PromptPipelineInput): PromptPipelineR
         ).selected_id;
   trace.push({ stage: "preset_selection", positive_snapshot: positive_from_slices(slices, {}) });
 
-  // Stage: replacement rules -- matches against the whole assembled context, mutates only the
-  // scene ("middle") slice, and the 5 insertion positions are spliced in as this stage's final join.
+  // Replacement matches against the whole assembled context but mutates only the scene slice.
   const other_prompt_haystack = join_prompt_parts([
     slices.fixed_start,
     slices.fixed_end,
@@ -384,24 +342,20 @@ export function run_prompt_pipeline(input: PromptPipelineInput): PromptPipelineR
   );
   trace.push({ stage: "replacement_rules", positive_snapshot: positive_prompt });
 
-  // Stage: regex rules.
   const regex_result = apply_regex_rules(positive_prompt, input.regex_rules);
   positive_prompt = regex_result.text;
   trace.push({ stage: "regex_rules", positive_snapshot: positive_prompt });
 
-  // Stage: roll/random expression resolution.
   const roll_seed_picker =
     input.roll_seed_picker ?? ((seed_max: number) => Math.floor(random_source() * (seed_max + 1)));
   positive_prompt = resolve_roll_placeholders(positive_prompt, roll_seed_picker);
   let negative_prompt = resolve_roll_placeholders(base_negative, roll_seed_picker);
   trace.push({ stage: "roll_resolution", positive_snapshot: positive_prompt });
 
-  // Stage: tag normalization and stable deduplication -- applied to positive and negative independently.
   positive_prompt = deduplicate_tags(positive_prompt);
   negative_prompt = deduplicate_tags(negative_prompt);
   trace.push({ stage: "tag_normalization", positive_snapshot: positive_prompt });
 
-  // Stage: provider-specific request mapping.
   const provider_request = map_to_provider_request(input.provider_request_base, {
     positive_prompt,
     negative_prompt,

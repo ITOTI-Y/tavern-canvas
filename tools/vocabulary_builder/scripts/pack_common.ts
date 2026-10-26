@@ -13,36 +13,19 @@ import {
 
 import { EXIT_SUCCESS, run_build, run_verify } from "../src/index.js";
 
-// Shared build/verify plumbing for the two vocabulary package generators
-// (generate_baseline.ts, the bundled 50,000-record cut; generate_full_pack.ts,
-// the unabridged ~153k-record pack) -- both drive the same committed builder
-// against the same source file and need the same record_id-stripping,
-// build+self-verify, and shard-inspection logic. Kept here instead of
-// duplicated so a fix in one always applies to both.
-
 export const REPO_ROOT = resolve(fileURLToPath(import.meta.url), "../../../..");
 
 export class PackBuildError extends Error {}
 
-// minimum_extension_version gates whether the (future) Worker bootstrap
-// accepts a package (package_verifier.ts's verify_manifest). It must never
-// exceed the repo's own current version -- during 3.0.0-alpha.x development
-// that is lower than a hardcoded "3.0.0" would be, which would make every
-// generated package permanently unusable until a real 3.0.0 release.
-// Reading the live version keeps this self-correcting across alpha bumps.
+// Must not exceed the repo's current version, or `verify_manifest` rejects every generated package;
+// read the live version rather than hardcoding "3.0.0".
 export async function read_current_extension_version(): Promise<string> {
   const text = await readFile(resolve(REPO_ROOT, "package.json"), "utf8");
   const parsed = JSON.parse(text) as { readonly version: string };
   return parsed.version;
 }
 
-/**
- * Reads `source_path` as full `VocabularyRecord`s, optionally cuts it down
- * to the top `limit` by popularity desc/tag asc (`select_top_records`), and
- * writes the result to `staged_path` with `record_id` stripped -- the
- * builder's source schema never accepts one (it reassigns ids
- * deterministically after merging duplicates, see read_source.ts).
- */
+/** Strips `record_id` from the staged file: the builder's source schema rejects it and reassigns ids after merging duplicates. */
 export async function stage_pack_source(
   source_path: string,
   staged_path: string,
@@ -63,7 +46,6 @@ export interface PackIdentity {
   readonly changelog: string;
 }
 
-/** Runs the committed builder's `build`, then its own `verify`, into `output_directory`. */
 export async function build_pack_into(
   output_directory: string,
   source_path: string,
@@ -122,7 +104,6 @@ interface DetailRecordLike {
   readonly popularity: number;
 }
 
-/** Visits every record across every `detail` shard of a built package, in shard order. */
 export async function for_each_detail_record(
   output_directory: string,
   visit: (record: DetailRecordLike, shard_id: string) => void,
@@ -140,11 +121,7 @@ export async function for_each_detail_record(
   }
 }
 
-/**
- * Sanity gate (2026-08-06 fresh-data refresh): a known head tag's
- * popularity must be at least `floor`, proving fresh counts actually landed
- * rather than a stale/regressed source silently shipping.
- */
+/** Fails unless a known head tag's popularity is at least `floor`, so stale source counts do not ship. */
 export async function assert_tag_popularity_at_least(
   output_directory: string,
   tag: string,

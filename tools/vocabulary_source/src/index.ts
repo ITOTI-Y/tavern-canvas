@@ -26,7 +26,7 @@ export * from "./select_baseline_subset.js";
 export * from "./vocabulary_record_schema.js";
 export { decrypt_legacy_openssl_payload, LegacyDecryptionError } from "./decrypt_legacy_tagdata.js";
 
-/** The 25 canonical v2.8.1 shard files (24 x 2000 + 1 x 1857 = 49,857 records). */
+/** The 25 canonical v2.8.1 shard files (49,857 records). */
 const DEFAULT_SHARD_NAMES = Array.from(
   { length: 25 },
   (_, index) => `danbooru_${String(index + 1).padStart(3, "0")}.json`,

@@ -6,25 +6,13 @@ import AppIcon from "./AppIcon.vue";
 import AppTooltip from "./AppTooltip.vue";
 import styles from "./components.module.css";
 
-/**
- * Icon-only control: a Lucide icon, an accessible label (`aria-label`, never visible text), and an
- * associated tooltip. Fixed square dimensions per `size` -- pressed/disabled/destructive never
- * resize the box (taste directive 2), only color/border/transform change.
- */
 const props = withDefaults(
   defineProps<{
     readonly icon: Component;
-    /** Accessible name. Also the tooltip text unless `tooltip` overrides it. */
     readonly label: string;
     readonly tooltip?: string | undefined;
     readonly size?: "sm" | "md" | "lg";
-    /**
-     * `null` (default) renders a plain command button; `true`/`false` renders a toggle
-     * (`aria-pressed`). Vue's compiler defaults an absent plain `boolean` prop to `false` rather
-     * than `undefined` (its "boolean casting" rule for single-`Boolean`-typed props), which would
-     * make "not a toggle" indistinguishable from "toggle, currently off" -- `null` is a real,
-     * distinct default that sidesteps that rule.
-     */
+    /** `null` renders a plain command button, a boolean a toggle; Vue would cast an absent Boolean prop to `false`. */
     readonly pressed?: boolean | null;
     readonly disabled?: boolean;
     readonly destructive?: boolean;

@@ -10,16 +10,7 @@ function read_property(container: unknown, property_name: string): unknown {
   }
 }
 
-/**
- * Wait until SillyTavern finishes its own startup UI before mounting the Studio.
- *
- * SillyTavern loads third-party modules before its first-run Persona dialog. Mounting during that
- * gap leaves the Studio visible underneath the host modal, where every pointer event is intercepted.
- * Other hosts, older SillyTavern builds, and malformed context surfaces degrade to immediate startup.
- *
- * Args:
- *   globals: Global object carrying the optional SillyTavern API.
- */
+/** SillyTavern loads third-party modules before its first-run Persona dialog; mounting then leaves the Studio under the host modal, which intercepts pointer events. */
 export function wait_for_sillytavern_app_ready(globals: unknown): Promise<void> {
   const sillytavern = read_property(globals, "SillyTavern");
   const get_context = read_property(sillytavern, "getContext");

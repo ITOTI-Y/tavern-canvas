@@ -18,22 +18,8 @@ import ReferenceStrip from "./ReferenceStrip.vue";
 import { use_toasts } from "./use_toasts.js";
 import styles from "./workbench.module.css";
 
-/**
- * Presentational, controller-agnostic view (mirrors StudioShell.vue's own pattern): receives the
- * full `StudioState` and emits granular intent events instead of importing/calling
- * `StudioController` directly, so it mounts and tests standalone. Wiring these events to a live
- * controller instance -- and mounting this view into StudioShell's workspace slot for a given
- * route -- is deferred to the stage's whole-review integration pass (StudioShell.vue currently
- * always renders a generic placeholder; see task-5-report.md).
- */
 const props = defineProps<{
   readonly state: StudioState;
-  /** `GalleryCapability.read_bytes` (Task 1) can resolve a completed image's bytes, but nothing
-   * in this view's own props/events reaches that capability (only `StudioState` and generation
-   * intents flow through here). The caller resolves object URLs (e.g. keyed by
-   * `GeneratedAsset.asset_id` once a job's result is known) and passes them in; omitted entirely
-   * until that wiring exists, the completion preview then shows its placeholder tile instead of
-   * silently never having a real-image code path at all. */
   readonly previewUrls?: Readonly<Record<string, string>>;
 }>();
 
@@ -43,9 +29,6 @@ const emit = defineEmits<{
   "cancel-job": [jobId: Uuid];
   "retry-job": [jobId: Uuid];
   "open-settings": [];
-  /** Fired once a `modify_prompt`/`regenerate` gallery hand-off (`InspectorSelection`) has been
-   * applied to the draft, so the caller clears `state.inspector.selected_record` and a later
-   * unrelated Workbench mount does not re-apply a stale prefill. */
   "consume-inspector-selection": [];
 }>();
 
@@ -137,11 +120,6 @@ watch(
   },
 );
 
-// Gallery's "modify prompt"/"regenerate" hand-off (GalleryView.vue's hand_off_to_workbench)
-// selects the record for the inspector *and* routes here in the same tick, so by the time this
-// view mounts the selection is already set -- `immediate: true` picks it up on first render, not
-// only on a later change. Only these two intents carry a prefill; `view`/`edit`/`inpaint` (the
-// latter two never produced by Gallery -- see ImageMetadataInspector.vue) are left alone.
 watch(
   () => props.state.inspector.selected_record,
   (selection) => {

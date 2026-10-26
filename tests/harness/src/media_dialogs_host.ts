@@ -32,14 +32,6 @@ import { create_shadow_root } from "../../../apps/extension/src/ui/create_shadow
 import { FIRST_PARTY_STYLESHEET } from "../../../apps/extension/src/ui/styles/runtime_stylesheet.js";
 import { fixture_by_id, read_bitmap_fixture_bytes } from "./bitmap_fixtures.js";
 
-/**
- * Stage 07 Task 3 browser-smoke harness. Mounts the real, unmodified InpaintDialog.vue,
- * ImageEditDialog.vue, and GenerationParametersDialog.vue -- the same files apps/extension ships
- * -- plus a small demo of media_command_service.ts's job flows against fake provider adapters, so
- * multi-result/video/failure behavior is proven in a real Chromium JS engine, not only Node/
- * happy-dom. `?panel=inpaint|edit|params|jobs` selects which panel mounts.
- */
-
 function output_asset(seed: number): ProviderOutputAsset {
   const bytes = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, seed]);
   return {
@@ -323,11 +315,7 @@ const JobsPanel = defineComponent({
   },
 });
 
-/**
- * Resolved once, top-level, before the app ever mounts -- an async `setup()` needs a `<Suspense>`
- * boundary to render at all, and this harness's panel router does not use one. Loading the real
- * bitmap eagerly keeps InpaintPanel itself synchronous.
- */
+// Resolved before mount: an async setup() would need a <Suspense> boundary, which the panel router lacks.
 async function load_square_bitmap(): Promise<ImageBitmap> {
   const fixture = fixture_by_id("square");
   const bytes = await read_bitmap_fixture_bytes(fixture);

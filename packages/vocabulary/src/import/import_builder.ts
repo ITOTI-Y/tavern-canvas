@@ -20,18 +20,8 @@ import {
   type EncodedShard,
 } from "./shard_builder.js";
 
-// Mirrors the frozen Worker protocol's per-batch bound
-// (packages/contracts/src/vocabulary_worker.ts,
-// VocabularyImportSourceRequestSchema.payload) so this package-level layer
-// enforces the same limit even though it does not import that Worker-only
-// schema. A JS string's .length is UTF-16 code units, the same unit the
-// contracts z.string().max() bound counts.
+// Same limit as VocabularyImportSourceRequestSchema.payload, in UTF-16 code units.
 export const DEFAULT_MAX_BATCH_PAYLOAD_LENGTH = 8_388_608;
-// Defensive aggregate bound across the whole import (implementer-chosen,
-// same category as Task 1/3's flagged defensive bounds -- revisit once real
-// user-import sizes are known). Both bounds are constructor-configurable so
-// callers (and tests) are never forced to allocate a real 8 MiB string or
-// 200,000 records to exercise the limit.
 export const DEFAULT_MAX_TOTAL_RECORDS = 200_000;
 const MAX_ALIASES_PER_RECORD = 32;
 
@@ -125,9 +115,7 @@ function merge_text_field(
   return current;
 }
 
-// Deduplicates by normalized key, keeping the lexicographically smallest
-// (code-point order) original spelling as canonical -- deterministic
-// regardless of accumulation order.
+// The canonical spelling is the smallest in code-point order, independent of accumulation order.
 function dedupe_and_sort_aliases(aliases: readonly string[]): string[] {
   const canonical_by_key = new Map<string, string>();
   for (const alias of aliases) {
@@ -143,14 +131,8 @@ function dedupe_and_sort_aliases(aliases: readonly string[]): string[] {
 }
 
 /**
- * Accumulates records across every batch of one import, merging duplicates
- * by normalized tag. Unlike tools/vocabulary_builder's baseline-build merge
- * rule (which throws on a primary-field conflict, appropriate for a curated
- * single source that must never silently lose content), this uses a
- * tolerant "first occurrence wins, later conflicts counted" policy --
- * legacy_v2's real data has duplicate tag text under different subgroups
- * with different resolved categories (task-src-report.md SS10: 193 such
- * cases in tags.json alone), and a user import must not abort over that.
+ * First occurrence wins and later conflicts are counted instead of throwing: real data has duplicate
+ * tag text under different categories, and a user import must not abort over that.
  */
 class ImportAccumulation {
   readonly #records = new Map<string, RecordAccumulator>();
@@ -204,16 +186,6 @@ class ImportAccumulation {
   }
 }
 
-/**
- * Runs one user import to completion: parses bounded batches through an
- * explicit format adapter, accumulates and merges records across batches,
- * and -- once every batch has arrived -- builds index shards and persists
- * them into a fresh staging package one shard at a time (VocabularyPackageStore.
- * put_shard_content per shard, never one monolithic write), then marks it
- * ready and activates it. Activation confirms only after the caller reports
- * one successful Worker query (report_query_success), the same lifecycle
- * package_updater.ts uses for remote updates.
- */
 export class ImportBuilder {
   readonly #store: VocabularyPackageStore;
   readonly #package_id: string;
@@ -306,7 +278,6 @@ export class ImportBuilder {
     return { accepted_records: parsed.records.length, malformed: parsed.malformed, complete };
   }
 
-  /** Call after the newly activated package completes one successful Worker query. */
   async report_query_success(): Promise<void> {
     const active = await this.#store.find_active_or_confirmed();
     if (active !== null && active.state === "active") {
@@ -314,7 +285,6 @@ export class ImportBuilder {
     }
   }
 
-  /** Call when the first query against the newly activated package fails. */
   async report_query_failure(): Promise<StoredVocabularyPackage | null> {
     const active = await this.#store.find_active_or_confirmed();
     if (active === null || active.state !== "active") {
@@ -333,10 +303,8 @@ export class ImportBuilder {
     this.#on_progress?.(progress);
   }
 
-  // Runs exactly once, when the last outstanding batch arrives. Sets
-  // #finalized unconditionally up front -- whether this succeeds, is
-  // cancelled, or fails, every batch has already been consumed into the
-  // accumulator, and this instance never accepts another one.
+  // Sets #finalized up front: whatever the outcome, every batch is already consumed and this
+  // instance accepts no more.
   async #finalize(): Promise<void> {
     this.#finalized = true;
     this.#emit({ phase: "indexing" });

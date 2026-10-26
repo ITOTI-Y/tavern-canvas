@@ -1,16 +1,3 @@
-/**
- * Orchestrates the pipeline's "selected World Info/user/character/outfit/knowledge context" stage:
- * fans out to `world_info_source.ts`, `character_context_source.ts`, and `knowledge_context_source.ts`,
- * then assembles their outputs both as a joined text block (for `prompt_pipeline.ts`'s MVU-resolution
- * stage) and as the `ContextPreview` shape `PromptView.vue`/`PromptBuilder.vue` already expect (see
- * `apps/extension/src/ui/views/prompt/context_preview.ts`).
- *
- * Also owns the "prompt-building private LLM calls set tools: [] and tool_choice: 'none'" policy
- * for context-adjacent private calls (e.g. AI persona generation, knowledge summarization) --
- * reusing `@tavern-canvas/core`'s `PrivatePromptPolicy` shape from Stage 02's `create_trigger_policy`
- * rather than inventing a second one.
- */
-
 import { PRIVATE_PROMPT_POLICY } from "@tavern-canvas/core";
 
 import {
@@ -157,7 +144,6 @@ export function resolve_context(input: ContextSourcesInput): ResolvedContext {
   };
 }
 
-/** The `ContextPreview` shape `PromptView.vue`/`PromptBuilder.vue` already render (Stage 06). */
 export interface ContextPreview {
   readonly worldInfo: readonly string[];
   readonly userPersona: string | null;

@@ -7,14 +7,6 @@ import StateSurface from "../../components/StateSurface.vue";
 import VirtualList from "../../components/VirtualList.vue";
 import styles from "./diagnostics.module.css";
 
-/**
- * Renders every field `TaskTimelineEntry` carries and nothing else (event_code, module_id,
- * generation_anchor, request_id, job_id, provider_id, error_code) -- the type itself has no
- * prompt/message/secret field to leak (view_models.ts's doc comment), so this component's
- * redaction guarantee is structural, not a runtime filter that could be bypassed. Always goes
- * through VirtualList regardless of entry count, so the 1,000-event ring buffer and a 3-event
- * list share one rendering path.
- */
 const props = defineProps<{
   readonly entries: readonly TaskTimelineEntry[];
 }>();

@@ -159,9 +159,7 @@ async function has_no_stray_staging_entries(parent_directory: string): Promise<b
   );
 }
 
-// Expected deterministic record_id assignment for the fixture: sorted by
-// normalized tag (code-point order), which happens to fully order this
-// fixture without needing the original-tag tie-break.
+// Sorted by normalized tag; the fixture needs no original-tag tie-break.
 const EXPECTED_TAG_ORDER = [
   "1boy",
   "1girl",
@@ -231,9 +229,7 @@ describe("index builders", () => {
   });
 
   it("skips a tag that normalizes to an empty key instead of emitting an unindexable entry", () => {
-    // "_" normalizes (underscore-to-space, then trim) to "" --
-    // VocabularyShardKeyEntrySchema requires a non-empty key, so indexing it
-    // verbatim would fail the builder's own self-verification.
+    // "_" normalizes to "", which VocabularyShardKeyEntrySchema rejects as a key.
     const records = [{ record_id: 0, tag: "_", aliases: [], popularity: 1 }];
     const shards = build_prefix_shards(records);
     const entries = shards.flatMap(
@@ -288,8 +284,7 @@ describe("index builders", () => {
   });
 
   it("bounds alias shard count at 512 however many distinct groups the corpus has", () => {
-    // 3,000 distinct CJK two-character groups -- the code-point-pair layout
-    // this replaced would have emitted one shard per group.
+    // 3,000 distinct CJK two-character groups.
     const records = Array.from({ length: 3_000 }, (_, index) => ({
       record_id: index,
       tag: `tag_${String(index)}`,
@@ -459,10 +454,6 @@ describe("vocabulary_builder build", () => {
   });
 
   it("builds successfully for a translation at the 512-character bound the record schema allows", async () => {
-    // Previously the alias entry-key bound (256) was narrower than
-    // VocabularyRecordSchema's translation max (512), so a legitimate
-    // maximal-length translation passed record validation but then failed
-    // the builder's own self-verification (EXIT_VERIFICATION_FAILURE).
     const root = await make_temp_root();
     const output = join(root, "package");
     const long_translation = "猫".repeat(512);

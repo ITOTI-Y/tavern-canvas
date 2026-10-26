@@ -20,8 +20,6 @@ import StateSurface from "./StateSurface.vue";
 import ToastViewport from "./ToastViewport.vue";
 import VirtualList from "./VirtualList.vue";
 
-/** A CJK string with no natural break opportunities and an English string long enough that a
- * fixed-width control must either wrap or ellipsize it -- never let it blow out the layout. */
 const LONG_EN =
   "This is an unusually long English label used to verify shared controls neither clip nor overflow their container when the text cannot fit on one line";
 const LONG_CJK =
@@ -190,7 +188,6 @@ describe("AppButton", () => {
     const button = wrapper.find("button");
     expect(button.attributes("aria-label")).toBe("Generate");
     expect(button.attributes("aria-busy")).toBe("true");
-    // Content stays in the DOM (visibility, not display) so the button's box never resizes.
     const content = wrapper.find(`[class*="appButtonContent"]`);
     expect(content.exists()).toBe(true);
     expect(content.text()).toContain("Generate");
@@ -276,13 +273,6 @@ describe("SegmentedControl", () => {
   });
 
   it("intercepts ArrowRight/ArrowLeft/Home/End for roving-focus navigation (Reka's RovingFocusGroup, not forked)", async () => {
-    // Reka's RovingFocusItem moves focus by resolving its live Collection inside a `nextTick`
-    // callback, which this project's jsdom-based unit environment cannot reliably observe end to
-    // end (a happy-dom/Collection timing limitation, not a first-party behavior); it is exercised
-    // for real in the mandatory browser keyboard pass (brief Step 3). This test instead asserts
-    // the reliable, environment-independent half of the contract: the roving-focus item recognizes
-    // and claims each arrow/Home/End key (`preventDefault`), proving `RadioGroupRoot` ->
-    // `RovingFocusGroup` -> `RovingFocusItem` is wired, not that Reka's own focus-moving code runs.
     const wrapper = mount(SegmentedControl, {
       props: { modelValue: "fast", options, label: "Generation mode" },
       attachTo: document.body,
@@ -460,8 +450,6 @@ describe("NumberStepper", () => {
       attachTo: document.body,
     });
     const [decrement, increment] = wrapper.findAll("button");
-    // Reka's stepper buttons trigger on `pointerdown` (press-and-hold repeat), not `click`; the
-    // vueuse listener attaches one tick after mount, so wait before dispatching.
     await nextTick();
     await new Promise((resolve) => setTimeout(resolve, 0));
     await increment?.trigger("pointerdown", { button: 0 });
@@ -563,7 +551,6 @@ describe("AppSelect", () => {
       props: { modelValue: undefined, options, placeholder: "Select a model", ariaLabel: "Model" },
     });
     expect(wrapper.text()).toContain("Select a model");
-    // The accessible name comes from `ariaLabel`, independent of the placeholder text.
     expect(wrapper.find('[role="combobox"]').attributes("aria-label")).toBe("Model");
   });
 

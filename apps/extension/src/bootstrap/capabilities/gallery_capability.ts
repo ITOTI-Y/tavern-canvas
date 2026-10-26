@@ -24,11 +24,7 @@ export interface GalleryCapabilityDeps {
   readonly now: () => string;
 }
 
-/**
- * `GalleryMediaType` covers the three still-image types the Studio grid renders. Video records
- * (Stage 07 Task 3 added `video/mp4` to the store) have no grid representation in the Gallery view,
- * so they are filtered out here instead of being coerced into an image type.
- */
+/** Video records have no grid representation and are filtered out instead of coerced into an image type. */
 function to_gallery_media_type(record: GalleryImageRecord): GalleryMediaType | null {
   switch (record.media_type) {
     case "image/png":
@@ -107,11 +103,7 @@ export function create_gallery_capability(deps: GalleryCapabilityDeps): GalleryC
       const record = await read(record_id);
       await write({ ...record, pinned, updated_at: deps.now() });
     },
-    /**
-     * Detach clears the record's link to its chat message without deleting the image -- the two are
-     * distinct confirmed actions. `quarantined` is the record-level flag the Gallery's orphan filter
-     * already reads (there is no separate "detached" field on the schema).
-     */
+    /** Detach clears the record's chat-message link without deleting the image; `quarantined` is the flag the orphan filter reads. */
     async detach_from_message(record_id) {
       const record = await read(record_id);
       await write({ ...record, quarantined: true, updated_at: deps.now() });

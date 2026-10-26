@@ -14,13 +14,6 @@ import {
   type TauriTavernHost,
 } from "../../host/index.js";
 
-/**
- * Re-pointed at Stage 07 Task 3's canonical definitions in
- * `apps/extension/src/modules/media/chat_media_interactions.ts` -- the reconciliation this file's
- * previous doc comment described ("whichever module lands second at stage merge re-points its
- * import to the other's real definition"). These aliases keep the names this module already
- * published while there is now exactly one port shape in the codebase.
- */
 export type ChatMediaInteractionAction = ChatMediaGesture;
 export type ChatMediaInteractionEvent = ChatMediaSurfaceEvent;
 export type ChatMediaInteractionPort = ChatMediaGestureSink;
@@ -38,9 +31,6 @@ export interface ChatSurfaceDiagnostics {
 export interface ChatSurfaceModuleOptions {
   readonly globals: TauriDetectionGlobals;
   readonly port: ChatMediaInteractionPort;
-  /** Test/production seam. Production defaults to create_tauritavern_host (host/tauritavern_host.ts)
-   * -- the same capability-probing entry point capability_probe.ts already uses, so this module
-   * never reads any Tauri global beyond the one documented readiness entry it delegates to. */
   readonly connect?: (globals: TauriDetectionGlobals) => Promise<TauriTavernHost | undefined>;
 }
 
@@ -65,14 +55,7 @@ function failure_reason(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-/**
- * Tauri-side wiring for T3's ChatMediaInteractionPort: when TauriTavern's ChatSurface capability is
- * present, this module claims each mounted message's content and translates click/double-click/
- * long-press/context-menu gestures on TavernCanvas-owned media into port calls. Standard
- * SillyTavern hosts never see this module active (RuntimeModule.start degrades to a diagnostics-only
- * no-op when TauriTavern is absent) -- "the identical command remains available from Gallery and
- * the image parameters dialog" per the brief, unaffected by this module either way.
- */
+/** When TauriTavern's ChatSurface is absent, `RuntimeModule.start` degrades to a diagnostics-only no-op; the same commands stay available from Gallery and the parameters dialog. */
 export class TauriChatSurfaceModule implements RuntimeModule {
   readonly module_id = "tauri_chat_surface";
   readonly requires: readonly string[] = [];

@@ -1,10 +1,5 @@
 // @vitest-environment node
-//
-// happy-dom (this project's default "apps" environment) ships its own Blob
-// class, distinct from Node's; `structuredClone` (used by every repository's
-// clone-boundary guard) always returns a Node-native Blob, which then fails
-// `instanceof Blob` against happy-dom's global. Running this file under plain
-// Node sidesteps that mismatch — it never touches the DOM, only IndexedDB.
+// happy-dom's Blob differs from the Node Blob that `structuredClone` returns; this file only needs IndexedDB.
 import "fake-indexeddb/auto";
 
 import galleryFixture from "../../../../tests/fixtures/migration/v2_gallery_metadata.json" with { type: "json" };
@@ -172,7 +167,7 @@ describe("run_migration: journal-before-write and unknown settings", () => {
   });
 });
 
-describe("run_migration: older v2 installs (I5 regression)", () => {
+describe("run_migration: older v2 installs", () => {
   it("does not permanently block migration when fields added after 2.8.1 are entirely absent from settings", async () => {
     const database = await open_database();
     const { settings } = create_settings();
@@ -219,15 +214,6 @@ describe("run_migration: older v2 installs (I5 regression)", () => {
 });
 
 describe("run_migration: degenerate source plausibility guard", () => {
-  // I5 gave every LegacySettingsSchema field a default, so a source that
-  // claims to exist but classifies to zero real (`mapped`) v2 data paths
-  // would otherwise parse into a fully-defaulted, effectively-empty
-  // settings object and "complete" migration silently, switching the user
-  // to a blank v3 profile with no error and no signal. Both cases below
-  // must fail loudly instead — this is distinct from `not_required` (no
-  // legacy data at all, covered by the "no legacy data" describe block
-  // above) and from the I5 target case (real mapped data present, some
-  // fields absent, covered by the "older v2 installs" describe block).
   it("blocks an empty settings object instead of completing against a blank profile", async () => {
     const database = await open_database();
     const { settings } = create_settings();
@@ -249,11 +235,7 @@ describe("run_migration: degenerate source plausibility guard", () => {
   it("blocks a non-empty object whose paths are all intentionally_obsolete, never mapped", async () => {
     const database = await open_database();
     const { settings } = create_settings();
-    // Both fields exist as real SETTINGS_PATH_RULES entries (not unknown
-    // paths — this must fail via the plausibility guard, not
-    // unknown_setting_path), but both classify as intentionally_obsolete,
-    // so this object carries zero real business data despite being
-    // non-empty and fully classified.
+    // Both fields are known path rules classified as intentionally_obsolete, so the plausibility guard rejects the object, not the unknown-path check.
     const obsolete_only = { lastTab: "main", cacheStorageMigrated: false };
 
     const outcome = await run_migration(
@@ -342,11 +324,7 @@ describe("run_migration: rerun safety for images", () => {
     expect(blobs_before.length).toBeGreaterThan(0);
     const ref_counts_before = new Map(blobs_before.map((blob) => [blob.sha256, blob.ref_count]));
 
-    // Simulate the exact crash window this guarantee protects: the "gallery"
-    // batch's write transaction committed, but the journal update marking it
-    // done did not (process died in between). Downgrading the journal
-    // without touching any already-written record or blob reproduces that
-    // state so a retry can be observed directly.
+    // Simulate a crash after the "gallery" batch committed but before the journal recorded it.
     const journal = await repos.migration_journal.get(namespace);
     if (journal === null) {
       throw new Error("unreachable");
@@ -568,8 +546,6 @@ describe("run_migration: verification failures block the switch", () => {
 
     const repos = repositories(database);
     const namespace = outcome.namespace as string;
-    // Failed before the "prompts"/"assets"/... batches ran: nothing beyond
-    // "provider" (which precedes "secrets" in copy order) should exist.
     expect(await repos.prompt_presets.list(namespace)).toEqual([]);
     const final_journal = await repos.migration_journal.get(namespace);
     expect(final_journal?.state).toBe("failed");
@@ -592,10 +568,7 @@ describe("run_migration: verification failures block the switch", () => {
     );
 
     expect(outcome.status).toBe("completed");
-    // Regression for C1: the post-switch cosmetic settings write must not
-    // clobber a live Gateway configuration with convert_settings' hardcoded
-    // "no Gateway" placeholder — the "secrets" batch just relied on this
-    // exact configuration to skip client-side credential transfer.
+    // The post-switch cosmetic settings write must not overwrite the live Gateway configuration.
     expect(settings.get_settings().gateway).toEqual(configured_gateway);
   });
 
@@ -697,8 +670,6 @@ describe("run_migration: happy path", () => {
         gallery_image_count + jiuguan_image_count + config_image_count,
       );
 
-      // A second call is idempotent: the journal is already "completed", so it
-      // returns immediately without switching again or writing anything new.
       const rerun = await run_migration(options);
       expect(rerun).toEqual({ status: "completed", namespace, counts: outcome.counts });
       expect(flush_count.value).toBe(1);

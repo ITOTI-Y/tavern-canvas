@@ -12,18 +12,11 @@ export interface ViewportSize {
   readonly height: number;
 }
 
-/** A common FAB touch-target size, comfortably above the 44px WCAG minimum. */
 export const FLOATING_ENTRY_DIAMETER_PX = 56;
 const VIEWPORT_MARGIN_PX = 8;
 
-/** Movement below this (in either axis) during a press-release cycle still counts as a click, not
- * a drag -- distinguishes "activate" from "reposition" the same way native click targets do. */
 export const DRAG_CLICK_THRESHOLD_PX = 4;
 
-/**
- * Clamps a position so the entry's full square stays within the viewport (minus a small margin),
- * regardless of how it got there (drag, resize, or a stored value from a since-shrunk window).
- */
 export function clamp_position(
   position: FloatingEntryPosition,
   viewport: ViewportSize,
@@ -52,13 +45,7 @@ export function center_position(viewport: ViewportSize): FloatingEntryPosition {
   );
 }
 
-/**
- * Position persists separately for desktop/mobile (feature_matrix.md's floatingentry.drag_reposition
- * row) -- deliberately not routed through TavernCanvasUiSettingsSchema (packages/contracts, a
- * strictObject owned by Stage 04 and outside this task's file list); a caller wires whichever
- * concrete storage it wants behind this port. InMemoryFloatingEntryPositionStore below is a
- * ready-to-use default for hosts that don't need cross-session persistence yet.
- */
+/** Position persists separately for desktop and mobile; the caller wires the concrete storage. */
 export interface FloatingEntryPositionStore {
   get(bucket: ViewportBucket): FloatingEntryPosition | null;
   set(bucket: ViewportBucket, position: FloatingEntryPosition): void;
@@ -87,11 +74,6 @@ export interface FloatingEntryControllerOptions {
   readonly get_viewport_bucket: () => ViewportBucket;
 }
 
-/**
- * Framework-agnostic drag/position state machine. FloatingEntry.vue wires Pointer Events to this
- * (never UA detection: viewport bucket comes from a caller-supplied measurement, matching
- * use_shell_viewport.ts's existing matchMedia-based desktop/mobile split).
- */
 export class FloatingEntryController {
   readonly #options: FloatingEntryControllerOptions;
   #position: FloatingEntryPosition;
@@ -123,9 +105,7 @@ export class FloatingEntryController {
     this.#position = clamp_position(position, this.#options.get_viewport());
   }
 
-  /** Returns whether the gesture moved the entry past the click threshold (a real drag) vs. a
-   * plain press-release (a click) -- the caller only suppresses its own click handling for the
-   * former. Position is persisted either way; a sub-threshold "drag" is a harmless no-op write. */
+  /** Returns whether the gesture exceeded the click threshold; position is persisted either way. */
   end_drag(): { readonly moved: boolean } {
     const was_dragging = this.#dragging;
     const start = this.#drag_start;
@@ -148,8 +128,7 @@ export class FloatingEntryController {
     this.#options.position_store.set(this.#options.get_viewport_bucket(), this.#position);
   }
 
-  /** Re-reads the persisted position for the current viewport bucket/size -- call on resize/bucket
-   * change so a position stored for desktop doesn't leak into a since-narrowed mobile viewport. */
+  /** Call on resize or bucket change so a desktop position does not leak into a narrowed mobile viewport. */
   reflow(): void {
     this.#position = this.#read_or_center();
   }

@@ -22,21 +22,15 @@ function describe_zod_issue_paths(error: ZodError): string {
 }
 
 /**
- * Injection seam for the v2 data this migration reads. `read_settings`
- * mirrors `extension_settings["st-chatu8"]`; `read_gallery_database` mirrors
- * the "chatu8_gallery"/"tupian" IndexedDB stores and the
- * "chatu8_config_images"/"config_images" store. Both return `undefined`
- * when the source is absent (the production host adapter resolves these against
- * the actual v2 storage locations; this module only validates and inventories
- * what comes back). Legacy sources are read-only: nothing in this module, or
- * anything that consumes it, may write back to a v2 location.
+ * `read_settings` mirrors `extension_settings["st-chatu8"]`; `read_gallery_database` mirrors the
+ * "chatu8_gallery"/"tupian" and "chatu8_config_images"/"config_images" IndexedDB stores. Both return
+ * `undefined` when absent. Legacy sources are read-only.
  */
 export interface LegacySourcePort {
   read_settings(): Promise<unknown>;
   read_gallery_database(): Promise<unknown>;
 }
 
-/** Fetches one host-persisted legacy image by its v2 file path. `null` means the file could not be resolved. */
 export interface LegacyImageResolverPort {
   resolve_host_image(path: string): Promise<Uint8Array | null>;
 }
@@ -79,21 +73,7 @@ function compute_inventory(
   return { jiuguan_image_count, gallery_image_count, config_image_count };
 }
 
-/**
- * Reads and validates the raw v2 source, computing a stable content
- * fingerprint up front (used to derive the staging namespace deterministically,
- * so re-running the migration against unchanged v2 data always resumes the
- * same journal — even when that source turns out to be invalid or
- * unclassifiable) and an inventory used later to detect data loss
- * (`missing_blob`).
- *
- * Classification runs against the *raw* settings object, before
- * `LegacySettingsSchema.safeParse`: that schema is a plain `z.object`, which
- * silently strips unrecognized keys rather than rejecting them, so
- * classifying the already-parsed value would make a genuinely unknown v2
- * field invisible to `assert_settings_fully_classified`'s "don't silently
- * drop it" guarantee.
- */
+/** Classification runs on the raw settings: `LegacySettingsSchema` silently strips unknown keys, which would hide unknown v2 fields from `assert_settings_fully_classified`. */
 export async function load_legacy_source(port: LegacySourcePort): Promise<LegacySourceResult> {
   let raw_settings: unknown;
   try {
@@ -151,15 +131,7 @@ export async function load_legacy_source(port: LegacySourcePort): Promise<Legacy
     return { kind: "unknown_paths", fingerprint, paths: classification.unknown };
   }
 
-  // Plausibility guard: every field in `LegacySettingsSchema` now has a
-  // default (I5), so `{}` — or any object whose own paths are all
-  // `intentionally_obsolete`/`deferred_secret_transfer`, never `mapped` —
-  // would otherwise parse into a fully-defaulted, effectively-empty
-  // settings object and complete migration silently, switching the user to
-  // a blank v3 profile with no error and no signal. A real v2 source always
-  // classifies at least one own path as `mapped` (business data); zero
-  // means this source claims to exist but carries nothing real, and must
-  // fail loudly instead of "completing".
+  // Without a `mapped` path the source would parse into an empty defaulted profile and complete silently.
   const has_mapped_path = classification.classified.some(
     (entry) => entry.rule.classification === "mapped",
   );
@@ -213,13 +185,6 @@ function base64_to_bytes(value: string): Uint8Array {
   return bytes;
 }
 
-/**
- * Every image byte a converter can hash, indexed by that same sha256.
- * Converters (Task 5, pure, no I/O) only ever emit an `ImageRecord.sha256`
- * computed from bytes resolved this same way, so this index and a
- * converter's declared hash always agree — the migration runner uses it to
- * get the raw bytes back for writing `image_blobs`.
- */
 export function index_legacy_image_bytes(
   settings: LegacySettings,
   gallery: LegacyGalleryDatabaseFixture | undefined,
@@ -260,15 +225,7 @@ function bytes_to_base64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-/**
- * `jiuguanStorage` entries reference host filesystem paths, not embedded
- * bytes (unlike `tupianhuancun`, whose fixture already carries resolved
- * bytes). Resolves every entry lacking a non-empty `data_base64` through
- * `resolver` before the converters run, so a missing host file surfaces as
- * `gallery_converter`'s "no resolved bytes" warning — which
- * `migration_runner` escalates to a blocking `missing_blob` failure — instead
- * of silently producing an incomplete gallery.
- */
+/** Resolves entries without `data_base64` through `resolver`, so a missing host file becomes a blocking `missing_blob` instead of an incomplete gallery. */
 export async function resolve_jiuguan_images(
   settings: LegacySettings,
   resolver: LegacyImageResolverPort,
@@ -292,8 +249,6 @@ export async function resolve_jiuguan_images(
           bytes = null;
         }
         if (bytes === null || bytes.byteLength === 0) {
-          // Keep this record visible to the converter, which reports the
-          // unresolved image and lets the runner fail with `missing_blob`.
           return { ...image, data_base64: undefined };
         }
         return { ...image, data_base64: bytes_to_base64(bytes) };

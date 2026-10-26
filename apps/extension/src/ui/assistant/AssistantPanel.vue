@@ -24,12 +24,6 @@ import AssistantSummaryPanel from "./AssistantSummaryPanel.vue";
 import AssistantTaskTracker from "./AssistantTaskTracker.vue";
 import styles from "./assistant.module.css";
 
-/**
- * Presentational shell (mirrors WorkbenchView.vue's own controller-agnostic pattern): receives
- * session/message/task-strip/draft state and emits intent events. Mounting this into a live
- * controller and a floating-entry launcher is the stage's whole-review integration pass, same as
- * every other Studio view today (see task-5-report.md).
- */
 const props = defineProps<{
   readonly sessions: readonly AssistantSession[];
   readonly activeSessionId: string | null;
@@ -38,7 +32,6 @@ const props = defineProps<{
   readonly taskStrip: readonly AssistantTaskStripEntry[];
   readonly tasks: readonly AssistantTask[];
   readonly summaries: readonly AssistantSummaryRecord[];
-  /** The in-flight assistant reply as it streams. Null once the turn has settled. */
   readonly streamingText: string | null;
   readonly pendingDraft: SettingsDraftDiff | null;
   readonly screenCaptureActive: boolean;
@@ -75,8 +68,6 @@ const draft_review_open = ref(false);
 const message_list = ref<HTMLElement | null>(null);
 const summary_open = ref(false);
 
-/** Paging up is a scroll gesture rather than a button press, with the button kept as the explicit
- * fallback for keyboard and reduced-motion users. */
 function handle_message_scroll(): void {
   const element = message_list.value;
   if (element && props.hasOlderMessages && element.scrollTop <= 48) {
@@ -84,8 +75,6 @@ function handle_message_scroll(): void {
   }
 }
 
-/** Keeps the view pinned to the newest turn while a reply streams in, but only when the reader is
- * already at the bottom, so scrolling back through history is never yanked away. */
 async function scroll_to_latest(): Promise<void> {
   await nextTick();
   const element = message_list.value;

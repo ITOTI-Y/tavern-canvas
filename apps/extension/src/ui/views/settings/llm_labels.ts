@@ -9,8 +9,6 @@ export const LLM_PROVIDER_KINDS = [
   "ollama",
 ] as const satisfies readonly LlmProviderKind[];
 
-/** A `switch` over literal keys, matching `provider_labels.ts`, so `tools/locale_check`'s
- * dynamic-key rule can verify every call site statically. */
 export function llm_provider_kind_label(t: Translate, kind: LlmProviderKind): string {
   switch (kind) {
     case "openai_compatible":
@@ -24,8 +22,7 @@ export function llm_provider_kind_label(t: Translate, kind: LlmProviderKind): st
   }
 }
 
-/** The route options a kind allows. Rendered as a select, never a text field: a free-text route
- * would be the client controlling part of the request URL, which this stage removed everywhere. */
+/** Rendered as a select: a free-text route would let the client control part of the request URL. */
 export function llm_route_options(kind: LlmProviderKind): readonly string[] {
   return LLM_ROUTE_CATALOG[kind].completion_routes;
 }

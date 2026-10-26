@@ -9,11 +9,6 @@ import type { CapabilityResolutionRecord } from "../../apps/extension/src/bootst
 import type { StudioCapabilities } from "../../apps/extension/src/ui/contracts/ui_capabilities.js";
 import type { SecurityProbes } from "../harness/src/all_host_probes.js";
 
-/**
- * The object tests/harness/src/all_host_boot.ts publishes on `window` after the real bootstrap (or
- * the real composition root) has run. Declared here rather than in the harness so the harness
- * itself never depends on Playwright, and so every spec shares one description of the surface.
- */
 export interface AllHostSurface {
   readonly state: "ready" | "blocked" | "failed";
   readonly probe: BootstrapProbeResult;
@@ -66,11 +61,7 @@ function to_query(scenario: HarnessScenario): string {
   return query.length === 0 ? "" : `?${query}`;
 }
 
-/**
- * Navigates to a harness page and waits for the real bootstrap to finish. Every scenario starts
- * from an empty IndexedDB: `open_database()` is a real database keyed by origin, and both harness
- * pages share one, so a previous spec's records would otherwise leak into the next.
- */
+/** Both harness pages share one origin-keyed IndexedDB, so every scenario starts with a reset. */
 export async function open_host_page(
   page: Page,
   host_page: HostPage,
@@ -86,7 +77,6 @@ export async function open_host_page(
   expect(boot_error, "the harness must boot the real extension without throwing").toBeUndefined();
 }
 
-/** The five capabilities the bootstrap probe requires before TavernCanvas may activate at all. */
 export const REQUIRED_HOST_CAPABILITY_IDS = [
   "main_generation_events",
   "private_prompt_generation",
@@ -95,7 +85,6 @@ export const REQUIRED_HOST_CAPABILITY_IDS = [
   "tavern_helper",
 ] as const;
 
-/** The documented TavernHelper 4.9.1 surface v3 is allowed to touch. */
 export const PUBLIC_TAVERN_HELPER_MEMBERS: ReadonlySet<string> = new Set([
   "getTavernHelperVersion",
   "generateRaw",

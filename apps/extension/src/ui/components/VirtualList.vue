@@ -4,11 +4,6 @@ import { computed, ref } from "vue";
 
 import styles from "./components.module.css";
 
-/**
- * Fixed-height virtualized list wrapping TanStack Vue Virtual. `height` is a fixed viewport size
- * the caller reserves up front, so the container's own box never changes as `items` grows,
- * shrinks, or is still loading -- only the scroll content inside it does.
- */
 const props = withDefaults(
   defineProps<{
     readonly items: readonly TItem[];

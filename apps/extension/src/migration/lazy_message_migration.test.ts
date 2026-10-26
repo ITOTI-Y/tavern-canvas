@@ -96,9 +96,7 @@ function build_message(
   content: string,
   tags: readonly string[],
 ): MutableMessage {
-  // Real v2 data shapes `extra.images` as a dictionary keyed by swipe id
-  // (`{"0": [{tag}, ...]}`), never a bare array — this single swipe always
-  // carries swipe_id 0, so its tags live under that key.
+  // v2 stores `extra.images` as a dictionary keyed by swipe id; this single swipe uses swipe_id 0.
   return {
     message_id,
     name: "Assistant",

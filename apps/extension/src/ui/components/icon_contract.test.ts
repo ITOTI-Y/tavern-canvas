@@ -3,19 +3,6 @@ import { relative, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-/**
- * Keeps AppIcon.vue's central claim true mechanically: every Lucide glyph the Studio renders goes
- * through AppIcon, which is the only file allowed to set `stroke-width`.
- *
- * Before this contract existed the claim was documentation only. shell/route_nav.ts exported a
- * second `ICON_STROKE_WIDTH = 1.75` and fourteen call sites rendered Lucide components directly;
- * nine of those passed no stroke width at all and rendered at Lucide's own default of 2, so icons
- * of nominally the same weight did not match between views. Both rules below fail on the exact
- * shapes that produced that drift.
- *
- * `AppIcon.vue` itself is the one exemption: it is the wrapper doing the pinning.
- */
-
 const ui_root = resolve(import.meta.dirname, "..");
 const APP_ICON_FILE = resolve(ui_root, "components/AppIcon.vue");
 
@@ -43,8 +30,6 @@ async function load_vue_files(): Promise<readonly VueFile[]> {
   return Promise.all(paths.map(async (path) => ({ path, source: await readFile(path, "utf8") })));
 }
 
-/** The identifiers a file pulls out of `lucide-vue-next`, which are exactly the component names a
- * template could then render directly instead of handing to AppIcon. */
 function lucide_imports(source: string): readonly string[] {
   const names: string[] = [];
   for (const match of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*["']lucide-vue-next["']/gu)) {
@@ -83,8 +68,6 @@ describe("icon contract", () => {
       }
       const template = template_of(file.source);
       for (const name of lucide_imports(file.source)) {
-        // `<Name` followed by whitespace, `/`, or `>` -- a real element tag, not a prefix match on
-        // a longer component name (`<Pin` must not match `<PinOff`).
         const tag = new RegExp(`<${name}(?=[\\s/>])`, "u");
         if (tag.test(template)) {
           offenders.push(`${relative(ui_root, file.path)}: <${name} ...>`);

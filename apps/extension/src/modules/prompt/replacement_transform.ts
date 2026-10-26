@@ -1,11 +1,3 @@
-/**
- * The "replacement rules" pipeline stage: a trigger-word engine that either replaces matched text
- * in place or inserts fixed content at one of five splice points around the fixed/main prompt.
- * Ported from legacy `prompt_replace`/`prompt_replace_for_character` (utils/aiModules -- see
- * task-2-report.md for the exact line references), including the `@if(expr)` boolean guard
- * mini-language and multi-trigger `A|B=...` rule lines.
- */
-
 export const REPLACEMENT_INSERTION_POSITIONS = [
   "前置前",
   "前置后",
@@ -39,11 +31,7 @@ function escape_regex_chars(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/**
- * Splits a trailing `@if(expression)` guard off a rule's value. Only recognized when the
- * expression is balanced-parenthesized and immediately preceded by `@if` (case-insensitive);
- * anything else is left as literal value text with no condition.
- */
+/** The guard is recognized only when balanced-parenthesized and immediately preceded by `@if` (case-insensitive); otherwise the text stays literal. */
 export function extract_if_condition(raw_value: string): {
   readonly value: string;
   readonly condition: string | null;
@@ -88,10 +76,6 @@ export function extract_if_condition(raw_value: string): {
 
 class IfConditionSyntaxError extends Error {}
 
-/**
- * Recursive-descent evaluator for the `@if` mini-language: `&&`/`||`/`!`, parenthesized groups,
- * and bareword or quoted-string substring tests against a lowercased haystack.
- */
 export function evaluate_if_condition(condition: string, haystack: string): boolean {
   const source = condition;
   const hay = haystack.toLowerCase();
@@ -208,11 +192,7 @@ export function safe_evaluate_if_condition(condition: string, haystack: string):
   }
 }
 
-/**
- * Parses the line-oriented rule text format: `trigger[|trigger...]=type|value[@if(expr)]`.
- * Blank lines, lines without `=`, and lines without a `|` inside the right-hand side are skipped
- * rather than raising -- matching the legacy engine's silent-skip behavior for malformed lines.
- */
+/** Malformed lines (no `=`, or no `|` on the right-hand side) are skipped silently. */
 export function parse_replacement_rules(rules_text: string): readonly ReplacementRule[] {
   const rules: ReplacementRule[] = [];
   for (const line of rules_text.split("\n")) {
@@ -272,11 +252,7 @@ function finalize_insertions(
   };
 }
 
-/**
- * Applies the global replacement/insertion engine to the main prompt. `other_prompt` is appended
- * to the trigger-matching haystack only (legacy's "also match against the fixed prompt" input) --
- * it never appears in `modified_prompt`.
- */
+/** `other_prompt` extends the trigger-matching haystack only and never appears in `modified_prompt`. */
 export function apply_replacement_rules(
   original_prompt: string,
   rules: readonly ReplacementRule[],
@@ -313,11 +289,7 @@ export function apply_replacement_rules(
   return { modified_prompt, insertions: finalize_insertions(insertions) };
 }
 
-/**
- * Applies the character-scoped variant: only `替换`/`替换分角色` rules apply, matched and applied
- * progressively against the character's own prompt segment (no insertion positions). `full_context`
- * -- when given -- is used only for `@if` guard evaluation, not for trigger matching.
- */
+/** Only `替换`/`替换分角色` rules apply; `full_context` is used only for `@if` guard evaluation, not trigger matching. */
 export function apply_character_replacement_rules(
   original_prompt: string,
   rules: readonly ReplacementRule[],

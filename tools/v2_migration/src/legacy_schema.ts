@@ -1,11 +1,6 @@
 import { z } from "zod";
 
-/**
- * Shapes below are reverse-engineered from the archived v2 `index.js`
- * (`defaultSettings`, `dbs.*`, `configDatabase.js`, and the message-image
- * insertion pipeline). Field names and nesting mirror the legacy source
- * exactly; values in fixtures are synthetic.
- */
+/** Mirrors the v2 `index.js` settings and storage shapes; fixture values are synthetic. */
 
 const legacy_scalar = z.union([z.string(), z.number(), z.boolean()]);
 
@@ -186,9 +181,8 @@ const legacy_banana_settings = z.strictObject({
   prompt_replace: z.record(z.string(), legacy_prompt_replace_profile),
   prompt_replace_id: z.string(),
 });
-// v2's shipped default is an unconfigured local install (placeholder key,
-// localhost URL); a root install missing this field entirely predates the
-// field's introduction and is in the same "never configured" state.
+// v2's shipped default is an unconfigured local install (placeholder key, localhost URL); a missing
+// field means the same state.
 const legacy_banana_default: z.infer<typeof legacy_banana_settings> = {
   apiKey: "123456",
   apiUrl: "http://localhost:8008",
@@ -321,20 +315,10 @@ const legacy_ai_persona_default: z.infer<typeof legacy_ai_persona_profile> = {
 };
 
 /**
- * `extension_settings["st-chatu8"]`. Every own path here must classify via
- * `converter_registry.ts`; `worldBookConfig` and `personaProfiles` are absent
- * from the static v2 `defaultSettings` object but are lazily attached to this
- * same settings object the first time their owning feature runs.
- *
- * Every field below carries `.default(...)`: an install that predates a
- * field's introduction (or never re-booted to merge new defaults) must not
- * be permanently blocked from migrating (see Stage 04 review finding I5).
- * Defaults mirror v2 2.8.1's own `defaultSettings` for short/scalar values;
- * dictionaries the user populates (presets, profiles, themes, workflows) and
- * long/CJK cosmetic copy default to an empty/blank "never configured" state
- * rather than replicating shipped example content byte-for-byte — a missing
- * field has no data to lose, and the safe fallback never masks a field that
- * was genuinely present.
+ * `extension_settings["st-chatu8"]`. `worldBookConfig` and `personaProfiles` are attached lazily
+ * by v2, so they are absent from its static `defaultSettings`. Every field has a `.default(...)`
+ * so installs predating a field are not blocked from migrating; user-populated dictionaries
+ * default to empty.
  */
 export const LegacySettingsSchema = z.object({
   theme_id: z.string().default(""),
@@ -535,9 +519,8 @@ export const LegacySettingsSchema = z.object({
   jiuguanchucun: legacy_scalar.default("false"),
   vibeJiuguanchucun: legacy_scalar.default("true"),
   convertToJpegStorage: legacy_scalar.default("false"),
-  // `path` is a host filesystem reference with no locally hashable bytes; a
-  // resolved `data_base64` (fetched by the Task 6 runner, not this pure
-  // converter) is required before gallery_converter can mint an ImageRecord.
+  // `path` is a host filesystem reference with no hashable bytes; `data_base64` must be resolved
+  // before gallery_converter can mint an ImageRecord.
   jiuguanStorage: z
     .record(
       z.string(),
@@ -554,8 +537,7 @@ export const LegacySettingsSchema = z.object({
             size: z.number(),
             thumbnail_size: z.number(),
             genParams: z.record(z.string(), z.unknown()).nullable().optional(),
-            // v2 used an empty string as the "not embedded" marker; normalize it
-            // to absence so the migration runner invokes its host resolver.
+            // v2 uses an empty string for "not embedded"; normalized to absence.
             data_base64: z.preprocess(
               (value) => (value === "" ? undefined : value),
               z.string().min(1).optional(),

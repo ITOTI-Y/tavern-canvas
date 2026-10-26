@@ -6,8 +6,6 @@ import {
 
 export const FALLBACK_CANDIDATE_BYTE_LIMIT = 16_384;
 
-/** The literal a non-tool model emits to request an image. Exported so a caller can recognise a
- * still-uncleaned message without restating the marker. */
 export const FALLBACK_COMMENT_OPENING = "<!-- tavern-canvas:image ";
 
 const CONTROL_COMMENT_OPENING = FALLBACK_COMMENT_OPENING;

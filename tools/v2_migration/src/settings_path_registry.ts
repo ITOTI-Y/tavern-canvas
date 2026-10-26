@@ -5,8 +5,6 @@ function mapped(pattern: string, converter: ConverterName): MappedPathRule {
 }
 
 const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = [
-  // Theme, UI chrome, and cache-behavior preferences without a dedicated v3
-  // record type yet (see settings_converter's `legacy_preferences` output).
   ["theme_id", "settings_converter"],
   ["themes.**", "settings_converter"],
   ["generate_btn_style", "settings_converter"],
@@ -39,10 +37,8 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["imageSizeScale", "settings_converter"],
   ["imageGenInterval", "settings_converter"],
   ["chatu8_code", "settings_converter"],
-  // `asr` has a fixed, finite key set (unlike the dynamic-name dictionaries
-  // below), so each leaf — and the container path itself — is listed
-  // explicitly rather than via a "**" rule: an unrecognized field here
-  // should fail migration, not be silently swept in as mapped.
+  // Fixed key set: leaves are listed explicitly so an unrecognized field fails migration instead of
+  // being swept in as mapped.
   ["asr", "settings_converter"],
   ["asr.enabled", "settings_converter"],
   ["asr.asrServerUrl", "settings_converter"],
@@ -56,8 +52,6 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["asr.conversationMode", "settings_converter"],
   ["imageGenStats", "settings_converter"],
   ["imageGenStats.backends", "settings_converter"],
-  // "*" covers the fixed backend names (sd/comfyui/banana/novelai) as one
-  // rule while still rejecting an unrecognized third field under a backend.
   ["imageGenStats.backends.*", "settings_converter"],
   ["imageGenStats.backends.*.success", "settings_converter"],
   ["imageGenStats.backends.*.fail", "settings_converter"],
@@ -99,9 +93,6 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["gestureMatchThreshold", "settings_converter"],
   ["regexTestMode", "settings_converter"],
 
-  // Provider endpoints, generation parameters, model IDs, route selections,
-  // and every LLM profile (secrets inside these containers are carved out by
-  // more specific rules below).
   ["mode", "provider_converter"],
   ["client", "provider_converter"],
   ["sdUrl", "provider_converter"],
@@ -193,17 +184,12 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["current_llm_profile", "provider_converter"],
   ["llm_request_type_profiles.**", "provider_converter"],
   ["current_llm_request_type_profile", "provider_converter"],
-  // Fixed, enumerable request-type names (image_gen, char_design, ...) with a
-  // fixed two-field shape; "*" covers the type name without swallowing an
-  // unrecognized third field.
   ["llm_request_type_configs", "provider_converter"],
   ["llm_request_type_configs.*", "provider_converter"],
   ["llm_request_type_configs.*.api_profile", "provider_converter"],
   ["llm_request_type_configs.*.context_profile", "provider_converter"],
   ["AI_use_coords", "provider_converter"],
 
-  // Prompt content: presets, quality-control strings, replacement/regex
-  // rules, and LLM prompt-builder templates.
   ["characterAI", "prompt_converter"],
   ["characterAI.model", "prompt_converter"],
   ["characterAI.temperature", "prompt_converter"],
@@ -240,8 +226,6 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["translation_system_prompt", "prompt_converter"],
   ["defaultImageDemand", "prompt_converter"],
 
-  // Generation assets: ComfyUI/edit workflows, LoRA-adjacent inpaint
-  // parameters, NovelAI vibes, and FAB icon/video asset references.
   ["workers.**", "asset_converter"],
   ["workerid", "asset_converter"],
   ["worker", "asset_converter"],
@@ -266,7 +250,6 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["enable_chatu8_fab_video", "asset_converter"],
   ["chatu8_fab_video_paths.**", "asset_converter"],
 
-  // Character presets and persona profiles.
   ["defaultCharDemand", "character_converter"],
   ["personaProfiles", "character_converter"],
   ["personaProfiles.presets.**", "character_converter"],
@@ -277,7 +260,6 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["personaProfiles.userEnabled", "character_converter"],
   ["personaProfiles.userInjectionMode", "character_converter"],
 
-  // World Info / knowledge base / send_data selections.
   ["knowledgeBaseConfig", "knowledge_converter"],
   ["knowledgeBaseConfig.enabled", "knowledge_converter"],
   ["knowledgeBaseConfig.triggerDepth", "knowledge_converter"],
@@ -290,7 +272,6 @@ const MAPPED_SETTINGS: readonly [pattern: string, converter: ConverterName][] = 
   ["worldBookConfig.worldBookSelections.**", "knowledge_converter"],
   ["worldBookConfig.worldEntrySelections.**", "knowledge_converter"],
 
-  // Gallery: host-persisted image metadata living inside settings.
   ["jiuguanStorage.**", "gallery_converter"],
 ];
 
@@ -305,12 +286,6 @@ const SECRET_SETTINGS: readonly [pattern: string, credential_kind: string][] = [
   ["ai_token", "legacy_ai_token"],
 ];
 
-/**
- * Exhaustive classification for every own path reachable under
- * `extension_settings["st-chatu8"]`. Every nonempty path in a fully
- * populated fixture must resolve here; `converter_registry.classify_settings`
- * fails migration for anything that does not.
- */
 export const SETTINGS_PATH_RULES: readonly PathRule[] = [
   ...MAPPED_SETTINGS.map(([pattern, converter]) => mapped(pattern, converter)),
   ...SECRET_SETTINGS.map(([pattern, credential_kind]): PathRule => ({

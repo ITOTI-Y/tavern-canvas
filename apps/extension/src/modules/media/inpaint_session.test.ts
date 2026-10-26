@@ -16,14 +16,6 @@ const GENERATION_ANCHOR = "a".repeat(64);
 const ASSET_A = "33333333-3333-4333-8333-333333333333";
 const ASSET_B = "44444444-4444-4444-8444-444444444444";
 
-/**
- * inpaint_session: loads a real bitmap, maintains fixed canvas aspect ratio, brush
- * size/erase/undo/redo/clear, exports a binary mask, validates source/mask dimensions, and
- * submits asset IDs. See docs/parity/feature_matrix.md's "manual generation, edit, inpaint,
- * video, and image upload" section for the exact parity rows this test backs
- * (inpaint.comfyui_mask_editor, inpaint.comfyui_submit, inpaint.novelai_mask_editor,
- * inpaint.novelai_submit).
- */
 describe("InpaintMaskSession dimensions", () => {
   it("loads a real bitmap by allocating a mask matching its width and height", () => {
     const session = new InpaintMaskSession(64, 32);
@@ -56,7 +48,7 @@ describe("InpaintMaskSession brush/erase", () => {
     expect(mask[0]).toBe(UNMASKED);
   });
 
-  it("erase mode clears previously masked pixels back to unmasked", () => {
+  it("erase mode clears masked pixels back to unmasked", () => {
     const session = new InpaintMaskSession(20, 20);
     session.stroke([{ x: 10, y: 10 }], 10, "brush");
     expect(session.mask[10 * 20 + 10]).toBe(MASKED);

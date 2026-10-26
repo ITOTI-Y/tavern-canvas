@@ -49,16 +49,11 @@ import { BITMAP_FIXTURES, read_bitmap_fixture_bytes } from "./bitmap_fixtures.js
 
 export type ScenarioName = "full" | "empty" | "loading" | "partial" | "error";
 
-/** Deterministic, readable, schema-valid UUIDs (UuidSchema: lowercase, version nibble 1-8,
- * variant nibble 8/9/a/b) -- `seq` only ever fills the trailing 12 hex digits so every id stays
- * visually distinguishable in a snapshot diff or a failed assertion message. */
 function uuid(seq: number): Uuid {
   return `00000000-0000-4000-8000-${seq.toString().padStart(12, "0")}`;
 }
 
-/** `noUncheckedIndexedAccess` makes every fixed-size array index a `T | undefined` -- this
- * fixture data is a compile-time-known, always-in-range constant, so a thrown error (never
- * actually reachable) reads better than a banned non-null assertion at each call site. */
+// Fixture indices are always in range; throwing avoids non-null assertions under noUncheckedIndexedAccess.
 function required<T>(value: T | undefined, label: string): T {
   if (value === undefined) {
     throw new Error(`mock_capabilities: expected ${label} to be defined`);
@@ -66,10 +61,7 @@ function required<T>(value: T | undefined, label: string): T {
   return value;
 }
 
-/** A real network call is never instant -- resolving a mutating command on the same microtask
- * (a bare `Promise.resolve()`) makes its pending UI state (e.g. a submit button's `aria-busy`)
- * physically unobservable by anything, including a real user's screen reader announcement or a
- * test's own assertion. A short, fixed delay keeps every command genuinely async. */
+// Resolving on the same microtask would make pending UI state (e.g. aria-busy) unobservable.
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -357,8 +349,6 @@ const VOCABULARY_CATALOG: readonly VocabularyCatalogEntry[] = [
   },
 ];
 
-/** Every fixture rendered as a gallery record, cycling through provider ids and pin/quarantine
- * flags so the grid, filters, and metadata inspector all have something real to show. */
 function build_gallery_records(): readonly GalleryRecordSummary[] {
   const providers: readonly ProviderId[] = [
     "sd_webui",
@@ -436,9 +426,6 @@ function build_jobs(): GenerationJobSummary[] {
   ];
 }
 
-/** Real, working request/response mocks shared by every scenario (subscribe/submit/cancel/retry
- * are genuine state machines, not scripted no-ops -- the interaction workflow spec depends on
- * real job-state transitions actually happening). */
 function create_generation_capability(initial_jobs: GenerationJobSummary[]): GenerationCapability {
   const jobs = new Map(initial_jobs.map((job) => [job.job_id, job]));
   const listeners = new Set<(event: GenerationDomainEvent) => void>();
@@ -478,9 +465,7 @@ function create_generation_capability(initial_jobs: GenerationJobSummary[]): Gen
         submitted_at: new Date().toISOString(),
       };
       update(job);
-      // Mimics the real domain event stream: a job started "running" transitions to "completed"
-      // on its own after a short, deterministic delay, so the interaction workflow spec can wait
-      // on real UI state instead of the harness faking a synchronous "already done" result.
+      // A running job completes on its own after a short deterministic delay.
       setTimeout(() => {
         const completed_ids = BITMAP_FIXTURES.slice(0, image_count).map(
           (_, index) =>
@@ -764,8 +749,6 @@ function create_prompt_presets_capability(
       }
       return Promise.resolve();
     },
-    // A real regex test (genuine RegExp execution, not a scripted response) so
-    // PromptTestPanel/RegexRules exercise real match/replace behavior end to end.
     test_regex: (rule: PromptRegexRule, sample_text: string) => {
       try {
         const pattern = new RegExp(rule.pattern, rule.flags);
@@ -1063,8 +1046,7 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
   };
 }
 
-/** A load() that never settles -- keeps StudioShell's is_loading skeleton showing indefinitely
- * (the "loading" scenario is a startup-loading snapshot, not a real transient state). */
+// Never settles, so the "loading" scenario keeps the skeleton showing.
 function forever_pending<T>(): Promise<T> {
   return new Promise<T>(() => {});
 }
@@ -1193,7 +1175,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     };
   }
 
-  // "full": every slice loads real, rich, interactive data.
   return {
     generation: create_generation_capability(build_jobs()),
     profiles: create_profiles_capability([PROFILE_SD, PROFILE_NOVELAI, PROFILE_COMFYUI]),

@@ -8,11 +8,6 @@ import NumberStepper from "../../components/NumberStepper.vue";
 import type { AssetFieldSpec, AssetFormValues } from "./asset_field_schema.js";
 import styles from "./assets.module.css";
 
-/**
- * Generic add/edit form for one asset category, shared by every XxxPanel.vue so each category's
- * own file only has to declare its field list and locale strings once. Lives inside AppDialog
- * (never a card of its own), so this never nests a card inside AssetCategoryList's cards.
- */
 const props = defineProps<{
   readonly nameLabel: string;
   readonly namePlaceholder: string;
@@ -47,9 +42,6 @@ function handle_submit(event: Event): void {
   emit("save");
 }
 
-// Vue's compiler synthesizes a `false` default for a sole-`boolean`-typed optional prop (the same
-// casting behavior IconButton.vue's `pressed` prop comment documents), so `props.pending` is
-// never actually `undefined` here.
 const is_pending = computed(() => props.pending);
 </script>
 

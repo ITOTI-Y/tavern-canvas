@@ -17,14 +17,7 @@ import { TavernCanvasSettingsSchema, type TavernCanvasSettings } from "@tavern-c
 export { TavernCanvasSettingsSchema };
 export type { TavernCanvasSettings };
 
-/**
- * `packages/storage` has no dedicated business store yet for v2's theme,
- * trigger-tag, cache-policy, and floating-entry preferences — every existing
- * store beyond `provider_profiles`/`knowledge_entries`/`image_records` is
- * presently an untyped `namespaced_schema({})`. This record is structurally
- * identical to that base shape so it slots into whichever store a future
- * stage designates (reported as a schema gap in the Task 5 report).
- */
+/** Shape-compatible with the untyped `namespaced_schema({})` base, as no dedicated store exists for these preferences. */
 export const LegacyPreferenceRecordSchema = NamespacedRecordBaseSchema.extend({
   payload: z.record(z.string(), z.unknown()),
 });

@@ -56,18 +56,8 @@ function record_to_summary(record: GenerationJob): GenerationJobSummary {
   };
 }
 
-/**
- * The Workbench's submit path, end to end: a typed request plus the active chat's anchored origin
- * become a `MediaExecutionPlan` and a queued `ImageJobQueue` job, which the queue hands to
- * `MediaJobExecutor` -> provider adapter -> transport, whose output assets are persisted as Stage 04
- * image records before the job reaches `completed`. Cancellation aborts the executor's signal
- * through the same queue, and `MessageBinder` carries `completed -> attached | orphaned` once the
- * target message is resolvable (wired in compose_capabilities.ts).
- */
 export function create_generation_capability(deps: GenerationCapabilityDeps): GenerationCapability {
   const events = new DomainEventEmitter<GenerationDomainEvent>();
-  /** Retry resubmits the original request; the queue's state machine has no failed -> queued edge,
-   * so a retry is genuinely a new job rather than a revived one. */
   const submitted_requests = new Map<string, ImageGenerationRequest>();
 
   deps.queue.subscribe((job) => {

@@ -49,8 +49,6 @@ export interface PackageUpdaterOptions {
   readonly on_progress?: (progress: PackageUpdateProgress) => void;
 }
 
-/** A fixed margin above the manifest's declared byte_length: enough for verify_shard_bytes to
- * see the true (possibly mismatched) size, tight enough to bound a misbehaving server's response. */
 const SHARD_DOWNLOAD_MARGIN_BYTES = 65_536;
 
 function shard_download_bound(declared_byte_length: number): number {
@@ -89,17 +87,7 @@ function assert_not_aborted(signal: AbortSignal | undefined): void {
   }
 }
 
-/**
- * Orchestrates one atomic package update: compare manifests, download only changed shards
- * (unchanged ones are copied from the current version without a network request), verify every
- * downloaded shard, stage everything under a fresh package record, and flip the active pointer
- * in a single transaction only once every shard is staged and verified. Any failure — a bad
- * shard, an aborted signal, a storage error — rolls the staging package back in full; the
- * previously active version is never touched until activation succeeds.
- *
- * Concurrent `update()` calls serialize on an internal promise chain (`tail`) rather than
- * rejecting, so callers never need to coordinate calls themselves.
- */
+// Concurrent `update()` calls serialize on `tail` instead of rejecting.
 export class PackageUpdater {
   private readonly store: VocabularyPackageStore;
   private readonly client: PackageClient;
@@ -126,7 +114,6 @@ export class PackageUpdater {
     return run;
   }
 
-  /** Call after the new version completes one successful Worker query. Idempotent no-op otherwise. */
   async report_query_success(): Promise<void> {
     const active = await this.store.find_active_or_confirmed();
     if (active !== null && active.state === "active") {
@@ -134,7 +121,6 @@ export class PackageUpdater {
     }
   }
 
-  /** Call when the first query against a newly activated version fails: reselects the prior confirmed version. */
   async report_query_failure(): Promise<StoredVocabularyPackage | null> {
     const active = await this.store.find_active_or_confirmed();
     if (active === null || active.state !== "active") {
@@ -143,7 +129,6 @@ export class PackageUpdater {
     return this.store.reselect_prior_confirmed(active.record_id);
   }
 
-  /** Removes unpinned superseded/failed staging leftovers; never touches active/confirmed data. */
   async cleanup(): Promise<{ deleted_package_ids: string[] }> {
     return this.store.cleanup_stale();
   }

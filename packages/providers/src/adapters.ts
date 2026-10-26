@@ -1,9 +1,5 @@
-/**
- * The five concrete adapters, reachable without the package barrel. The barrel is imported
- * statically by the transports (for `ProviderNetworkError` and `redact_provider_log`), so a
- * dynamic `import("@tavern-canvas/providers")` would resolve to a module the initial chunk already
- * contains and defer nothing. This entry point is what the composition root loads on demand.
- */
+// Concrete adapters without the package barrel: the transports import the barrel statically, so a
+// dynamic import of it would defer nothing.
 export { ComfyUiAdapter, type ComfyUiAdapterOptions } from "./comfyui/comfyui_adapter.js";
 export {
   GoogleImageAdapter,

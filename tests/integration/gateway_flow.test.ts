@@ -318,7 +318,7 @@ async function start_scripted_upstream(): Promise<ScriptedUpstream> {
             state.cancelled_prompt_ids.push(parsed.delete[0]);
           }
         } catch {
-          // The real adapter reports malformed upstream JSON to the Gateway.
+          // Malformed upstream JSON is ignored by the fake.
         }
         write_json(response, 200, { success: true });
         return;

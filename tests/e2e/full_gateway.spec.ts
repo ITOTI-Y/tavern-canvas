@@ -13,18 +13,6 @@ import { load_gateway_config } from "../../apps/gateway/src/config/load_config.j
 import type { GatewayAdapter } from "../../apps/gateway/src/jobs/job_worker.js";
 import { open_host_page } from "./all_host_utils.js";
 
-/**
- * Gateway acceptance gate. Unlike tests/integration/gateway_flow.test.ts, which drives the server
- * with Node `fetch`, this spec starts the REAL Express server on a real loopback port and drives
- * it from a real Chromium page through the REAL client (apps/extension/src/transport/
- * gateway_transport.ts), across a real cross-origin boundary with real CORS preflights, real
- * bearer auth, real SSE, and a real server restart.
- *
- * Architecture acceptance criteria 9 (LAN HTTP works and warns about cleartext on first use) and
- * 10 (the Gateway never hands a provider secret to the client, and the client never names the
- * upstream URL).
- */
-
 const GATEWAY_TOKEN = "e2e-gateway-bearer-token";
 const HARNESS_ORIGIN = "http://localhost:4176";
 const PROVIDER_CREDENTIAL = "gateway-side-provider-credential-never-sent-down";
@@ -60,7 +48,6 @@ async function listen(server: Server): Promise<void> {
   });
 }
 
-/** Stands in for the operator's own SD WebUI. Only the Gateway ever talks to it. */
 function create_upstream(): Server {
   return createServer((request: IncomingMessage, response: ServerResponse) => {
     upstream_request_paths.push(request.url ?? "");
@@ -158,7 +145,7 @@ async function open_gateway_client(page: Parameters<typeof open_host_page>[0]): 
   });
 }
 
-test.describe("criterion 9: the Gateway works over LAN HTTP with an explicit, non-blocking cleartext warning", () => {
+test.describe("Gateway over LAN HTTP with an explicit, non-blocking cleartext warning", () => {
   test("an unacknowledged cleartext origin refuses to build a transport", async ({ page }) => {
     await open_host_page(page, "sillytavern_host.html", { mode: "capabilities" });
 
@@ -187,7 +174,7 @@ test.describe("criterion 9: the Gateway works over LAN HTTP with an explicit, no
   });
 });
 
-test.describe("criterion 10: no provider secret reaches the client and the client never names the upstream", () => {
+test.describe("no provider secret reaches the client and the client never names the upstream", () => {
   test("the capabilities document carries no credential, base URL or upstream host", async ({
     page,
   }) => {

@@ -19,19 +19,7 @@ import type {
 } from "@tavern-canvas/contracts";
 import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
 
-/**
- * The Studio never imports domain modules, storage repositories, or provider adapters directly
- * (roadmap rule 5) -- it depends on these nine capability ports instead. A future adapter layer
- * implements each port by wrapping the real generation/vocabulary modules, storage repositories,
- * the migration runner, and the settings adapter; the shapes below are deliberately faithful to
- * those existing surfaces (see task-1-report.md for the mapping) without importing their classes.
- */
-
 export type Unsubscribe = () => void;
-
-// ---------------------------------------------------------------------------
-// Generation
-// ---------------------------------------------------------------------------
 
 export interface GenerationJobSummary {
   readonly job_id: Uuid;
@@ -61,10 +49,6 @@ export interface GenerationCapability {
   cancel(job_id: Uuid): Promise<GenerationJobSummary>;
   retry(job_id: Uuid): Promise<GenerationJobSummary>;
 }
-
-// ---------------------------------------------------------------------------
-// Provider profiles
-// ---------------------------------------------------------------------------
 
 export interface ProviderProfileSummary {
   readonly id: Uuid;
@@ -105,16 +89,7 @@ export interface ProfilesCapability {
   clear_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
 }
 
-// ---------------------------------------------------------------------------
-// Text-LLM connections (Stage 07 feature-gap addition)
-//
-// The text counterpart to the image `ProfilesCapability`. It mirrors that port deliberately, with
-// one difference that carries the whole credential design: a credential is never part of the save
-// payload. `LlmConnectionDraft` (packages/contracts) is a strict object with no credential,
-// header, or endpoint field, and `set_credential` is a separate operation whose plaintext argument
-// goes straight to the selected credential storage. Nothing the UI can send reaches a repository
-// as a secret, and nothing it reads back carries one.
-// ---------------------------------------------------------------------------
+// A credential is never part of a save payload; `set_credential` hands the plaintext straight to the credential backend.
 
 export type LlmConnectionsDomainEvent =
   | { readonly type: "connection_upserted"; readonly connection: LlmConnectionProfile }
@@ -130,10 +105,6 @@ export interface LlmConnectionsCapability {
   clear_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
   test_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
 }
-
-// ---------------------------------------------------------------------------
-// Prompt presets
-// ---------------------------------------------------------------------------
 
 export interface PromptPresetSummary {
   readonly id: Uuid;
@@ -179,15 +150,6 @@ export interface PromptPresetsCapability {
   test_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
 }
 
-// ---------------------------------------------------------------------------
-// Assets (character / outfit / lora / vibe / reference / workflow)
-// ---------------------------------------------------------------------------
-
-/**
- * Storage keeps asset content as an opaque payload (packages/storage's namespaced_schema
- * pattern) -- only identity and bookkeeping fields are typed at the storage layer, so the UI
- * capability mirrors that shape instead of inventing per-category schemas the domain doesn't have.
- */
 export type AssetCategory = "character" | "outfit" | "lora" | "vibe" | "reference" | "workflow";
 
 export interface AssetRecordSummary {
@@ -214,15 +176,6 @@ export interface AssetsCapability {
   reorder(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void>;
 }
 
-// ---------------------------------------------------------------------------
-// Personas and knowledge (Stage 07 feature-gap addition)
-//
-// Stage 06 shipped only read paths for these two. They are separate ports rather than extra
-// `AssetCategory` members because a persona and a knowledge entry both carry typed, validated
-// fields, while `AssetRecordSummary` is deliberately an opaque payload the storage layer never
-// types.
-// ---------------------------------------------------------------------------
-
 export type PersonasDomainEvent =
   | { readonly type: "persona_upserted"; readonly persona: PersonaProfile }
   | { readonly type: "persona_removed"; readonly persona_id: Uuid };
@@ -246,10 +199,6 @@ export interface KnowledgeCapability {
   remove(entry_id: Uuid): Promise<void>;
   bulk_remove(entry_ids: readonly Uuid[]): Promise<void>;
 }
-
-// ---------------------------------------------------------------------------
-// Gallery
-// ---------------------------------------------------------------------------
 
 export type GalleryMediaType = "image/png" | "image/jpeg" | "image/webp";
 
@@ -275,16 +224,11 @@ export interface GalleryCapability {
   subscribe(handler: (event: GalleryDomainEvent) => void): Unsubscribe;
   read_bytes(record_id: Uuid): Promise<Uint8Array>;
   pin(record_id: Uuid, pinned: boolean): Promise<void>;
-  /** Detaching from a message and deleting the record are distinct confirmed actions (plan rule). */
+  /** Detaching from a message and deleting the record are distinct confirmed actions. */
   detach_from_message(record_id: Uuid): Promise<void>;
   delete_record(record_id: Uuid): Promise<void>;
   bulk_delete(record_ids: readonly Uuid[]): Promise<void>;
 }
-
-// ---------------------------------------------------------------------------
-// Vocabulary (search + catalog install) -- mirrors VocabularyClient /
-// VocabularyCatalogClient's real request/response shape: no event stream, request/response only.
-// ---------------------------------------------------------------------------
 
 export interface VocabularySearchPageView {
   readonly results: readonly VocabularySearchResult[];
@@ -331,21 +275,13 @@ export interface VocabularyCapability {
   load(): Promise<readonly VocabularyCatalogEntry[]>;
   search(query: string, category?: VocabularyCategory): Promise<VocabularySearchPageView>;
   next_page(cursor: string): Promise<VocabularySearchPageView>;
-  /**
-   * A live VocabularyClient's Worker will not see a package installed mid-session until disposed
-   * and recreated (carried over from Stage 05) -- the caller must plan to recreate its search
-   * session after this resolves.
-   */
+  /** A live VocabularyClient Worker does not see a package installed mid-session; recreate the search session after this resolves. */
   install(
     entry: VocabularyCatalogEntry,
     on_progress?: (progress: VocabularyInstallProgressView) => void,
   ): Promise<void>;
   cancel_install(): void;
 }
-
-// ---------------------------------------------------------------------------
-// Diagnostics
-// ---------------------------------------------------------------------------
 
 export interface DiagnosticsSnapshot {
   readonly capability_matrix: CapabilityMatrix;
@@ -355,8 +291,7 @@ export interface DiagnosticsSnapshot {
   readonly storage_quota_bytes: number | null;
 }
 
-/** Correlation fields per the architecture doc's logging contract (generation_anchor, request_id,
- * job_id, provider_id, module_id, error_code); never prompt/message content or secrets. */
+/** Correlation fields only; never prompt/message content or secrets. */
 export interface TaskTimelineEntry {
   readonly event_id: string;
   readonly occurred_at: string;
@@ -394,10 +329,6 @@ export interface DiagnosticsCapability {
   export_support_bundle(): Promise<SupportBundle>;
 }
 
-// ---------------------------------------------------------------------------
-// Migration (v2 -> v3)
-// ---------------------------------------------------------------------------
-
 export type MigrationJournalStateView =
   | "inventory"
   | "copying"
@@ -423,13 +354,10 @@ export type MigrationDomainEvent = {
 export interface MigrationCapability {
   load(): Promise<MigrationSnapshot>;
   subscribe(handler: (event: MigrationDomainEvent) => void): Unsubscribe;
-  /** run_migration is idempotent/resumable from the journal -- there is no separate retry op. */
   retry(): Promise<MigrationSnapshot>;
   /** UI never auto-deletes v2 data; this requires an explicit typed confirmation string. */
   confirm_legacy_cleanup(confirmation_text: string): Promise<void>;
 }
-// Settings
-// ---------------------------------------------------------------------------
 
 export type VocabularyUpdateChannel = "bundled" | "remote";
 
@@ -448,7 +376,6 @@ export interface SettingsCapability {
   load(): Promise<SettingsSnapshot>;
   subscribe(handler: (event: SettingsDomainEvent) => void): Unsubscribe;
   update(partial: Partial<TavernCanvasSettings>): Promise<TavernCanvasSettings>;
-  /** Records disclosure acknowledgment for one normalized origin's plaintext HTTP risk. */
   acknowledge_http_origin(origin: string): Promise<void>;
   /** Hands the Gateway bearer token to the selected backend; settings keep only its reference. */
   set_gateway_token(plaintext_value: string): Promise<void>;
@@ -466,7 +393,6 @@ export interface SettingsCapability {
   export_archive(): Promise<Blob>;
   import_archive(archive: Blob): Promise<void>;
 }
-// ---------------------------------------------------------------------------
 
 export interface StudioCapabilities {
   readonly generation: GenerationCapability;
@@ -483,5 +409,4 @@ export interface StudioCapabilities {
   readonly settings: SettingsCapability;
 }
 
-/** The stable loading/failure key for each capability -- doubles as the controller's slice code. */
 export type CapabilityId = keyof StudioCapabilities;

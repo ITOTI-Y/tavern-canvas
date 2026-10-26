@@ -9,8 +9,8 @@ Three dev servers replace that loop. Each serves the real, unmodified production
 through Vite's dev server, so a saved file reaches the running Studio over HMR instead of a
 rebuild.
 
-| Command                | Port | What it boots                                                            | Needs SillyTavern |
-| ---------------------- | ---- | ------------------------------------------------------------------------ | ----------------- |
+| Command              | Port | What it boots                                                          | Needs SillyTavern |
+| -------------------- | ---- | ---------------------------------------------------------------------- | ----------------- |
 | `pnpm dev`           | 5180 | `AppRoot.vue` in a real Shadow Root, wired to deterministic mock ports | No                |
 | `pnpm dev:host`      | 5181 | The real`bootstrap.ts` against a fake SillyTavern/TavernHelper globals | No                |
 | `pnpm dev:extension` | 5182 | The real`bootstrap.ts` inside your actual running SillyTavern          | Yes               |

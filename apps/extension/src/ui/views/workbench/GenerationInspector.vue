@@ -25,11 +25,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-/**
- * Not every provider request carries every field (seed/steps/sampler/model_id are per-provider --
- * see build_generation_request.ts): each row only renders when the concrete request variant
- * actually has that field.
- */
 const seed = computed(() =>
   props.request && "seed" in props.request ? props.request.seed : undefined,
 );

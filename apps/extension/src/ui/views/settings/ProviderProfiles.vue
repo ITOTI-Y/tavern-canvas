@@ -44,10 +44,6 @@ const credential_value = ref("");
 const credential_pending = ref(false);
 const credential_error = ref<string | null>(null);
 
-/** Row-scoped connection-test feedback, keyed by profile id -- deliberately local component
- * state, not shared StudioState (see studio_controller.ts's "additive command surface" note):
- * each row's pending/result is independent, so a single shared CommandState would misattribute
- * one profile's test outcome to every row. */
 const test_state = ref<Map<Uuid, { readonly pending: boolean; readonly label: string | null }>>(
   new Map(),
 );
@@ -57,9 +53,6 @@ const provider_options = PROVIDER_IDS.map((id) => ({
   label: provider_type_label(t, id),
 }));
 
-/** Bridges AppSelect's generic `string` v-model back to the narrower `ProviderId` union: the
- * options list above is built exclusively from `PROVIDER_IDS`, so every value AppSelect can ever
- * emit here is already a valid `ProviderId`. */
 const provider_id_model = computed<string>({
   get: () => draft.value?.provider_id ?? "sd_webui",
   set: (value) => {

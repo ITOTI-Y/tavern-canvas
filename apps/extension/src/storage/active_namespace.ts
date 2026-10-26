@@ -16,9 +16,7 @@ export interface NamespaceMarkerPort {
   ): Promise<T> | T;
 }
 
-// Both an import staging area and a completed migration can hand off to
-// switch_active_namespace; any other state means the namespace is still
-// being written to and must not become active.
+// Only an import staging area or a completed migration may become active.
 const READY_MARKER_STATES: ReadonlySet<string> = new Set(["import_ready", "ready_to_switch"]);
 
 export async function switch_active_namespace(

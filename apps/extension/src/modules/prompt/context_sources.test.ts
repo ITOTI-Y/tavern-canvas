@@ -44,10 +44,6 @@ import {
   type WorldInfoEntrySelectionState,
 } from "./world_info_source.js";
 
-// ---------------------------------------------------------------------------
-// MVU variable resolution
-// ---------------------------------------------------------------------------
-
 describe("mvu_variable_source", () => {
   it("resolves nested paths such as 角色.属性.力量 against a host chat variable store", () => {
     const store = { 角色: { 属性: { 力量: 42 } } };
@@ -94,10 +90,6 @@ describe("mvu_variable_source", () => {
     expect(resolve_nested_variable(store, "a.b.c")).toBe("deep");
   });
 });
-
-// ---------------------------------------------------------------------------
-// World Info: selection, keyword engine, Tauri activation, never tool-control text
-// ---------------------------------------------------------------------------
 
 function make_entry(overrides: Partial<WorldInfoEntry> & { readonly uid: string }): WorldInfoEntry {
   return {
@@ -225,10 +217,6 @@ describe("world_info_source", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Injection templates: three approved schemes, escaped user content
-// ---------------------------------------------------------------------------
-
 describe("world_info_source: injection templates", () => {
   it("exposes exactly the three approved schemes: default, Tavern XML, compact Markdown", () => {
     expect(Object.keys(INJECTION_TEMPLATE_SCHEMES).sort()).toEqual([
@@ -276,10 +264,6 @@ describe("world_info_source: injection templates", () => {
     expect(apply_injection_template("plain line\n{nameCN}", { nameCN: "x" })).toBe("plain line\nx");
   });
 });
-
-// ---------------------------------------------------------------------------
-// Character/outfit context source
-// ---------------------------------------------------------------------------
 
 const SAMPLE_CHARACTER: CharacterFields = {
   traits: "brave",
@@ -355,10 +339,6 @@ describe("character_context_source", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Persona/user injection formatting
-// ---------------------------------------------------------------------------
-
 describe("knowledge_context_source: persona/user injection", () => {
   const persona: PersonaFields = {
     name: "Nova",
@@ -388,10 +368,6 @@ describe("knowledge_context_source: persona/user injection", () => {
     expect(content).toContain("&lt;evil&gt;");
   });
 });
-
-// ---------------------------------------------------------------------------
-// Knowledge base: explicit, previewable selection (distinct from World Info)
-// ---------------------------------------------------------------------------
 
 const KNOWLEDGE_ENTRIES: readonly KnowledgeEntry[] = [
   { id: "k1", title: "Sword lore", content: "The sword is ancient.", keys: ["sword"] },
@@ -423,10 +399,6 @@ describe("knowledge_context_source: knowledge base", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Private LLM call policy: tools: [] + tool_choice: "none"
-// ---------------------------------------------------------------------------
-
 describe("context_sources: private prompt-building LLM calls", () => {
   it("always carries tools: [] and tool_choice: 'none'", () => {
     expect(PRIVATE_PROMPT_POLICY).toEqual({ tools: [], tool_choice: "none" });
@@ -436,10 +408,6 @@ describe("context_sources: private prompt-building LLM calls", () => {
     expect(request.prompts).toEqual([{ role: "user", content: "hi" }]);
   });
 });
-
-// ---------------------------------------------------------------------------
-// context_sources orchestration
-// ---------------------------------------------------------------------------
 
 describe("context_sources: resolve_context orchestration", () => {
   function build_input(): ContextSourcesInput {

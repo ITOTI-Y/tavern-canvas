@@ -62,13 +62,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
   };
 }
 
-/**
- * StudioWorkspace.vue reaches every route view through `defineAsyncComponent`, and StudioShell.vue
- * does the same for its four viewport-exclusive surfaces. Mounting the shell therefore starts
- * dynamic imports that outlive a synchronous test body, and the load would still be in flight when
- * the environment tears down. Warming them keeps every later loader resolving straight from the
- * module cache, which a microtask flush can then await.
- */
 beforeAll(async () => {
   await Promise.all([
     import("../views/workbench/WorkbenchView.vue"),
@@ -106,10 +99,6 @@ async function mount_shell(options: MountOptions = {}) {
   const host = document.createElement("div");
   document.body.append(host);
 
-  // A real controller (over the same honest "unavailable" capabilities production uses --
-  // unavailable_capabilities.ts) rather than a hand-rolled mock: StudioShell now mounts the
-  // routed view for real (StudioWorkspace.vue), and every wired-through view expects a genuine
-  // `StudioController` instance, not just a same-shaped object.
   const controller = create_studio_controller({ capabilities: create_unavailable_capabilities() });
 
   const wrapper = mount(StudioShell, {
@@ -125,8 +114,6 @@ async function mount_shell(options: MountOptions = {}) {
     attachTo: host,
   });
 
-  // The viewport-exclusive shell surfaces are async components (StudioShell.vue), so a mounted
-  // shell is only complete once their chunks resolve.
   await flushPromises();
   return { wrapper, portal_target, host };
 }
@@ -134,11 +121,6 @@ async function mount_shell(options: MountOptions = {}) {
 afterEach(() => {
   document.body.innerHTML = "";
 });
-
-// ---------------------------------------------------------------------------
-// Layout contract: parsed straight from shell.module.css (postcss, matching
-// style_contract.test.ts's precedent) since happy-dom has no real layout engine to measure boxes.
-// ---------------------------------------------------------------------------
 
 describe("StudioShell layout contract (shell.module.css)", () => {
   let css_text: string;
@@ -189,25 +171,14 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     expect(safe_area).toMatch(/env\(safe-area-inset-bottom/u);
   });
 
-  // Regression test: `.task_strip`'s `grid-area: taskstrip` (declared once, shared by both
-  // viewports) silently no-ops when the current viewport's `grid-template-areas` has no
-  // "taskstrip" area -- the item then falls into grid auto-placement, landing in an unplanned
-  // implicit row that breaks the mobile shell's fixed 100dvh layout. Undetectable before the
-  // fix wave that made `state.tasks` non-empty (TaskStrip never rendered on any viewport until
-  // then), caught by an actual browser render (Playwright), not happy-dom.
   it("mobile grid-template-areas reserves a taskstrip row, so .task_strip's grid-area actually resolves", () => {
     const areas = declaration('.shell[data-viewport="mobile"]', "grid-template-areas");
     expect(areas).toMatch(/taskstrip/u);
-    // 4 tracks: 56px topbar, flexible workspace, auto (content-sized) taskstrip, 64px bottomnav --
-    // matched as a whole pattern rather than split on whitespace, since `minmax(0, 1fr)`'s own
-    // internal comma-space would otherwise miscount as two tokens.
     const rows = declaration('.shell[data-viewport="mobile"]', "grid-template-rows");
     expect(rows).toMatch(/^56px\s+minmax\(0,\s*1fr\)\s+auto\s+64px$/u);
   });
 
   it("desktop rail and mobile bottom-nav items declare fixed dimensions with no per-state override", () => {
-    // The base rule sets width/height once; no `[data-selected="true"]` (or any other state)
-    // block may redeclare either, so a route button never changes size when it becomes selected.
     expect(declaration(".rail_button", "width")).toBe("48px");
     expect(declaration(".rail_button", "height")).toBe("48px");
     expect(declaration('.rail_button[data-selected="true"]', "width")).toBeUndefined();
@@ -220,7 +191,6 @@ describe("StudioShell layout contract (shell.module.css)", () => {
       expect(declaration(selector, "text-overflow"), selector).toBe("ellipsis");
       expect(declaration(selector, "overflow"), selector).toBe("hidden");
     }
-    // The chip itself is capped so a long task label cannot widen the task strip row.
     expect(declaration(".task_chip", "max-width")).toBeDefined();
   });
 
@@ -229,16 +199,10 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     expect(declaration(".rail", "border-right")).toMatch(/^1px solid var\(--tc-divider\)$/u);
     expect(declaration(".inspector", "border-left")).toMatch(/^1px solid var\(--tc-divider\)$/u);
     expect(declaration(".task_strip", "border-top")).toMatch(/^1px solid var\(--tc-divider\)$/u);
-    // No panel radius anywhere on the workspace/inspector bands themselves (radius belongs to
-    // fields/images/status pills, never the shell bands -- taste directive 10).
     expect(declaration(".workspace", "border-radius")).toBeUndefined();
     expect(declaration(".inspector", "border-radius")).toBeUndefined();
   });
 });
-
-// ---------------------------------------------------------------------------
-// Desktop navigation
-// ---------------------------------------------------------------------------
 
 describe("StudioShell desktop navigation", () => {
   it("exposes all six routes directly in the rail with a visible selected state", async () => {
@@ -284,7 +248,6 @@ describe("StudioShell desktop navigation", () => {
     const { wrapper, portal_target } = await mount_shell();
     const first_rail_button = wrapper.findAll("nav > button")[0];
     await first_rail_button?.trigger("focus");
-    // Reka's Tooltip opens on focus without the provider's hover delay.
     await nextTick();
     await nextTick();
     await nextTick();
@@ -294,10 +257,6 @@ describe("StudioShell desktop navigation", () => {
     expect(Array.from(document.body.children)).not.toContain(tooltip);
   });
 });
-
-// ---------------------------------------------------------------------------
-// Mobile navigation
-// ---------------------------------------------------------------------------
 
 describe("StudioShell mobile navigation", () => {
   it("shows exactly five stable bottom-nav items: four routes plus More", async () => {
@@ -347,10 +306,6 @@ describe("StudioShell mobile navigation", () => {
     expect(more_trigger.attributes("data-selected")).toBe("true");
   });
 });
-
-// ---------------------------------------------------------------------------
-// Inspector: collapse, resize, mobile sheet, focus return
-// ---------------------------------------------------------------------------
 
 describe("StudioShell inspector", () => {
   it("leaves the global inspector to non-Workbench routes", async () => {
@@ -431,8 +386,6 @@ describe("StudioShell inspector", () => {
 
     await toggle.trigger("click");
     expect(wrapper.emitted("set-inspector-collapsed")).toEqual([[false]]);
-    // DrawerRoot's `open` is controlled by StudioState.inspector.collapsed -- applying the
-    // emitted next value is what AppRoot (via the Studio controller) would do in production.
     await wrapper.setProps({
       state: build_state({
         route: "gallery",
@@ -444,8 +397,6 @@ describe("StudioShell inspector", () => {
     await nextTick();
     await nextTick();
 
-    // The sheet's content is Teleported into the Shadow-Root portal element, outside
-    // `wrapper.element`'s own subtree -- it must be queried from the portal target directly.
     const sheet_element = portal_target.querySelector('[data-testid="inspector-sheet"]');
     expect(sheet_element).not.toBeNull();
     const sheet = new DOMWrapper(sheet_element as Element);
@@ -467,10 +418,6 @@ describe("StudioShell inspector", () => {
     expect(document.activeElement).toBe(toggle.element);
   });
 });
-
-// ---------------------------------------------------------------------------
-// Task strip
-// ---------------------------------------------------------------------------
 
 describe("StudioShell task strip", () => {
   it("renders nothing when there are no tasks", async () => {
@@ -524,10 +471,6 @@ describe("StudioShell task strip", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Shell-level states: startup loading, partial initialization, normal
-// ---------------------------------------------------------------------------
-
 describe("StudioShell shell-level states", () => {
   it("shows a skeleton matching the final layout while capabilities are still loading, not a spinner", async () => {
     const { wrapper } = await mount_shell({
@@ -535,7 +478,6 @@ describe("StudioShell shell-level states", () => {
     });
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-placeholder"]').exists()).toBe(false);
-    // No spinner element or animated keyframe class -- skeleton-over-spinner (taste directive 1).
     expect(wrapper.html()).not.toMatch(/spinner/iu);
   });
 
@@ -546,7 +488,6 @@ describe("StudioShell shell-level states", () => {
     const banner = wrapper.find('[data-testid="partial-banner"]');
     expect(banner.exists()).toBe(true);
     expect(banner.text()).toContain("Running with limited functionality");
-    // The rest of the shell keeps rendering underneath the banner.
     expect(wrapper.findAll("nav > button")).toHaveLength(6);
   });
 
@@ -560,17 +501,11 @@ describe("StudioShell shell-level states", () => {
 
   it("renders the routed workbench view once nothing is loading and nothing has failed", async () => {
     const { wrapper } = await mount_shell();
-    // StudioWorkspace.vue reaches every route view through `defineAsyncComponent`, so the workbench
-    // view appears only once its own dynamic import settles, not on the mount tick.
     await expect.poll(() => wrapper.find('[data-testid="workbench-view"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="partial-banner"]').exists()).toBe(false);
   });
 });
-
-// ---------------------------------------------------------------------------
-// Narrow / long locale labels
-// ---------------------------------------------------------------------------
 
 describe("StudioShell narrow and long locale labels", () => {
   it("keeps all six desktop routes and their accessible names when a label is unusually long", async () => {

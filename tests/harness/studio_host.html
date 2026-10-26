@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TavernCanvas Studio Harness</title>
     <style>
-      /* The harness page itself stays inert -- every real style lives inside the Shadow Root
-         (runtime_stylesheet.ts), exactly like production. This only removes the host page's own
-         default margin so viewport-sized screenshots aren't off by the UA stylesheet's 8px body
-         margin. */
       html,
       body {
         margin: 0;
@@ -18,11 +14,7 @@
     </style>
   </head>
   <body>
-    <p>
-      Stage 06 Task 8 browser/accessibility/visual-regression harness. Driven by
-      tests/e2e/studio_navigation.spec.ts, studio_workflows.spec.ts, studio_accessibility.spec.ts,
-      studio_visual.spec.ts, and studio_overflow.spec.ts.
-    </p>
+    <p>Studio host for navigation, workflow, accessibility, visual and overflow tests.</p>
     <script type="module" src="./src/studio_host.ts"></script>
   </body>
 </html>

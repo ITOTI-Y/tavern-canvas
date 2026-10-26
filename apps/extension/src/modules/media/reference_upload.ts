@@ -18,7 +18,7 @@ export interface ReferenceCacheEntry {
   readonly server_file_name?: string;
 }
 
-/** Persists an uploaded reference image across reloads (ports legacy's IndexedDB-backed cache). */
+/** Persists an uploaded reference image across reloads. */
 export interface ReferenceCache {
   get(key: string): Promise<ReferenceCacheEntry | null>;
   set(key: string, value: ReferenceCacheEntry): Promise<void>;
@@ -53,10 +53,7 @@ function assert_real_image(claimed_media_type: string, bytes: Uint8Array): void 
   }
 }
 
-// ---------------------------------------------------------------------------
-// Minimal multipart/form-data encoder (packages/providers/src/multipart.ts is not part of that
-// package's public surface, so this stays self-contained rather than depending on an internal).
-// ---------------------------------------------------------------------------
+// Self-contained: the multipart encoder in packages/providers is not part of its public surface.
 
 function random_boundary(): string {
   return `tavern-canvas-ref-${globalThis.crypto.randomUUID()}`;
@@ -80,10 +77,6 @@ function encode_image_multipart(
   body.set(tail, head.byteLength + bytes.byteLength);
   return { content_type: `multipart/form-data; boundary=${boundary}`, body };
 }
-
-// ---------------------------------------------------------------------------
-// ComfyUI reference/IP-Adapter upload (manual.comfyui_reference_upload, comfyui.reference_ipadapter_controls)
-// ---------------------------------------------------------------------------
 
 export interface UploadComfyUiReferenceInput {
   readonly bytes: Uint8Array;
@@ -121,12 +114,7 @@ function parse_comfyui_upload_response(body: Uint8Array): UploadComfyUiReference
   return { server_file_name: name };
 }
 
-/**
- * Uploads a reference image to the ComfyUI server via /upload/image (manual.comfyui_reference_upload),
- * then caches it locally keyed by `cache_key` together with the server-assigned filename so a
- * later reload can restore the preview without re-uploading (ports legacy's `loadCachedImages`).
- * Rejects video outright -- reference upload only ever accepts images.
- */
+/** Rejects video outright; caches the server-assigned filename under `cache_key` so a reload can restore the preview. */
 export async function upload_comfyui_reference_image(
   transport: ProviderTransport,
   cache: ReferenceCache,
@@ -160,10 +148,6 @@ export async function upload_comfyui_reference_image(
   return result;
 }
 
-// ---------------------------------------------------------------------------
-// ComfyUI IP-Adapter weight sliders (comfyui.reference_ipadapter_controls)
-// ---------------------------------------------------------------------------
-
 export interface IpAdapterWeights {
   readonly general: number;
   readonly detail: number;
@@ -190,11 +174,6 @@ export function validate_ip_adapter_weights(weights: IpAdapterWeights): void {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Legacy single-slot NovelAI vibe / character-reference cache
-// (vibe.reference_image_upload_legacy, charref.reference_image_upload_legacy)
-// ---------------------------------------------------------------------------
-
 export const NOVELAI_VIBE_CACHE_KEY = "novelai_vibe_transfer_image";
 export const NOVELAI_CHAR_REF_CACHE_KEY = "novelai_char_ref_image";
 
@@ -214,10 +193,6 @@ export async function remove_cached_reference_image(
 ): Promise<void> {
   await cache.remove(cache_key);
 }
-
-// ---------------------------------------------------------------------------
-// Banana conversation-preset image slots (banana.preset_image_upload_slots)
-// ---------------------------------------------------------------------------
 
 export type PresetImageRole = "user" | "model";
 export const PRESET_IMAGE_TURN_COUNT = 3;

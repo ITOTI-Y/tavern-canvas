@@ -4,8 +4,7 @@ export interface AssistantPersonaInfo {
   readonly avatar_url: string | null;
 }
 
-/** Persona follows the active persona preset, polled by the caller; falls back to the bundled
- * mascot avatar when none is selected (mirrors legacy `getCurrentCharAvatar`). */
+/** Falls back to the bundled mascot avatar when no persona is selected. */
 export function resolve_assistant_avatar(
   persona: AssistantPersonaInfo | null,
   default_avatar_url: string,
@@ -36,9 +35,7 @@ function substitute_template(template: string, values: Readonly<Record<string, s
   return template.replace(/\{\{(\w+)\}\}/gu, (_match, key: string) => values[key] ?? "");
 }
 
-/** Custom-preset vs built-in system-prompt assembly with placeholder substitution (mirrors
- * legacy `buildSystemPrompt`/`substituteTemplateVariables`). Blank placeholder lines collapse
- * rather than leaving visible gaps. */
+/** Blank placeholder lines collapse rather than leaving visible gaps. */
 export function build_system_prompt(input: AssistantSystemPromptInput): string {
   const template = input.custom_preset_template ?? DEFAULT_SYSTEM_PROMPT_TEMPLATE;
   const filled = substitute_template(template, {
@@ -66,10 +63,7 @@ export interface FloorCollectionOptions {
   readonly max_messages: number;
 }
 
-/** N nearest messages around a clicked/anchored message, deduplicated and capped with
- * oldest-eviction (mirrors legacy `collectFloorMessagesFromContext`). Manual selections bypass
- * the anchor search entirely -- pass them directly as `messages` with a radius covering the
- * whole list. */
+/** Manual selections bypass the anchor search: pass them as `messages` with a radius covering the whole list. */
 export function collect_floor_messages(
   messages: readonly FloorSourceMessage[],
   options: FloorCollectionOptions,
@@ -97,9 +91,7 @@ export interface FloorRegexRule {
   readonly replacement: string;
 }
 
-/** Runs floor-collected text through the shared chat regex pipeline (mirrors legacy
- * `processTextThroughRegex`). An invalid rule is skipped, never allowed to drop the whole floor
- * context. */
+/** An invalid rule is skipped, never allowed to drop the whole floor context. */
 export function apply_floor_regex(text: string, rules: readonly FloorRegexRule[]): string {
   return rules.reduce((accumulated, rule) => {
     try {
@@ -122,9 +114,7 @@ export interface CapHistoryImagesResult {
 
 const MAX_HISTORY_IMAGES = 5;
 
-/** Caps history images sent to the LLM to the 5 most recent, noting omissions; the "send images"
- * toggle strips all of them when disabled (mirrors legacy `limitImagesInHistory`/
- * `stripImagesFromMessages2`). */
+/** Keeps the 5 most recent history images and notes omissions; disabling "send images" strips all of them. */
 export function cap_history_images(
   images: readonly HistoryImageRef[],
   send_images_enabled: boolean,
@@ -148,9 +138,7 @@ export interface SummaryContextEntry {
   readonly covers_up_to_message_id: number;
 }
 
-/** Assembles enabled summaries into a "previous conversation summary" prompt block (mirrors
- * legacy `buildSummaryContextBlock`). `null` when nothing is enabled -- callers omit the block
- * entirely rather than inject an empty one. */
+/** Returns `null` when no summary is enabled so callers omit the block. */
 export function build_summary_context_block(
   summaries: readonly SummaryContextEntry[],
 ): string | null {
@@ -161,8 +149,7 @@ export function build_summary_context_block(
   return `Previous conversation summary:\n${enabled.map((summary) => summary.text).join("\n\n")}`;
 }
 
-/** Excludes raw history already covered by an enabled summary, beyond a floor buffer of the most
- * recent messages (mirrors legacy `filterHistoryMessages`). */
+/** Excludes raw history already covered by an enabled summary, beyond a floor buffer of the most recent messages. */
 export function filter_history_covered_by_summaries(
   messages: readonly FloorSourceMessage[],
   summaries: readonly SummaryContextEntry[],
@@ -199,10 +186,7 @@ export interface AssistantCompletionRequest {
   readonly tool_choice: "auto" | "none";
 }
 
-/** The user-facing assistant chat turn: carries whatever tool allowlist the caller supplies
- * (draft-review tools, diagnostics, image-gen command). `tool_choice` degrades to "none" on its
- * own the moment the tool list is empty, so an empty allowlist can never accidentally leave the
- * model thinking tools are still available. */
+/** `tool_choice` degrades to "none" when the tool list is empty. */
 export function build_chat_completion_request(
   messages: readonly AssistantConnectionMessage[],
   tools: readonly AssistantToolDefinition[],
@@ -210,13 +194,7 @@ export function build_chat_completion_request(
   return { messages, tools, tool_choice: tools.length > 0 ? "auto" : "none" };
 }
 
-/**
- * Every prompt-building LLM call that is not the user-facing chat turn itself (summary
- * generation, floor-context assembly, any future internal completion) goes through this instead
- * of `build_chat_completion_request`. It has no `tools` parameter at all, so there is no call
- * site that could pass one by mistake -- `tools: []` / `tool_choice: "none"` are structural, not
- * a default that a future edit could quietly override.
- */
+/** Has no `tools` parameter at all, so `tools: []` / `tool_choice: "none"` are structural for every non-chat completion. */
 export function build_prompt_building_request(
   messages: readonly AssistantConnectionMessage[],
 ): AssistantCompletionRequest {

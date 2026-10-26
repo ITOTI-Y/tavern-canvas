@@ -7,14 +7,6 @@ import FieldGroup from "../../components/FieldGroup.vue";
 import type { CommandState } from "../../contracts/view_models.js";
 import styles from "./prompt.module.css";
 
-/**
- * Private LLM prompt-builder test, tools disabled: no `StudioCapabilities` port runs a private
- * prompt (the Studio never imports host modules directly per roadmap rule 5, and
- * `host_adapter.ts`'s `generate_private_prompt` is not among the nine capability ports -- see
- * task-5-report.md's contract-gap note). `testCommand` therefore stays `idle` in production until
- * a future capability is wired in; a `capability_not_implemented` failure renders the composed
- * "not connected yet" message instead of a raw error.
- */
 const props = defineProps<{
   readonly inputValue: string;
   readonly testCommand: CommandState<string>;

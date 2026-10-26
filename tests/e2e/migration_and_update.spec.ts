@@ -2,15 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { open_host_page } from "./all_host_utils.js";
 
-/**
- * v2-to-v3 migration and vocabulary-update acceptance gate, run against the real composition root
- * in real Chromium with real IndexedDB. Covers architecture acceptance criteria 11 (settings,
- * presets, workflows, vocabulary and image data switch over only after verification, and no
- * failure ever overwrites v2 data or writes a success flag) and 12 (the user drives the update
- * check, and an interrupted or hash-mismatched install keeps the previous package).
- */
-
-test.describe("criterion 11: v2 data migrates losslessly and a failure never writes a success flag", () => {
+test.describe("v2 data migrates losslessly and a failure never writes a success flag", () => {
   test("a host with no v2 install reports not_required rather than inventing work", async ({
     page,
   }) => {
@@ -105,7 +97,7 @@ test.describe("criterion 11: v2 data migrates losslessly and a failure never wri
   });
 });
 
-test.describe("criterion 12: the user drives vocabulary updates and a bad package never replaces a good one", () => {
+test.describe("the user drives vocabulary updates and a bad package never replaces a good one", () => {
   test("the catalog is only read when something asks for it", async ({ page }) => {
     const catalog_requests: string[] = [];
     await page.route("**/*", async (route) => {

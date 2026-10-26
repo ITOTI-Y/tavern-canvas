@@ -15,10 +15,8 @@ export type SecretCredentialKind =
   | "legacy_ai_token";
 
 /**
- * A reversible v2 credential, carved out of its source path so the plaintext
- * never enters a v3 record. `plaintext_value` exists only for the Task 6
- * runner to hand off to SillyTavern secret storage in memory; callers must
- * never log, journal, or persist this operation as-is.
+ * `plaintext_value` is handed to SillyTavern secret storage in memory only; never log,
+ * journal or persist this operation.
  */
 export interface SecretTransferOperation {
   readonly operation: "secret_transfer";
@@ -40,12 +38,7 @@ export function empty_result<TRecord>(
   return { records: [], warnings, secret_transfers: [] };
 }
 
-/**
- * Every converter is parameterized by namespace and a caller-supplied
- * migration timestamp instead of reading `Date.now()`, so the same legacy
- * input always produces byte-identical output (required for safe migration
- * resume/retry without duplicating records).
- */
+/** Converters take a caller-supplied timestamp instead of `Date.now()`, so identical input yields byte-identical output and resume/retry never duplicates records. */
 export interface ConversionContext {
   readonly namespace: string;
   readonly migrated_at: string;
@@ -55,7 +48,6 @@ export function build_record_key(namespace: string, id: string): string {
   return `${namespace}:${id}`;
 }
 
-/** The six fields every namespaced v3 record shares, common to all converters that mint one. */
 export function namespaced_record_base(
   context: ConversionContext,
   id: string,

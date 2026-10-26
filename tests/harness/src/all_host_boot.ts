@@ -1,39 +1,11 @@
 import legacy_settings_fixture from "../../fixtures/migration/v2_settings_full.json" with { type: "json" };
 
-/**
- * Stage 07 Task 7's all-host harness entry point. Everything it runs is production code: the REAL
- * `bootstrap_tavern_canvas` (apps/extension/src/bootstrap/bootstrap.ts) or the REAL
- * `compose_studio_capabilities` that bootstrap itself calls, driven inside a real browser against
- * nothing but a fake host-global object graph (all_host_environment.ts). The whole startup path --
- * capability probe, composite host adapter, capability composition, Shadow-Root mount, i18n -- is
- * the shipped one. Contrast with studio_host.ts (Stage 06), which skips bootstrap entirely and
- * hands AppRoot.vue pre-built mock capabilities: that harness proves the UI, this one proves the
- * host contract.
- *
- * Two modes, because `BootstrapHandle` deliberately exposes only lifecycle state (`state`,
- * `probe`, `resolutions`, `dispose`) and never the composed capability ports:
- *
- * - `mode=bootstrap` (default) runs the full mount and is what the host-baseline, blocked-startup
- *   and Tauri-enhancement criteria assert against.
- * - `mode=capabilities` runs the same composition root with the same arguments and stops there, so
- *   a spec can drive generation, gallery, settings, migration and diagnostics through their real
- *   ports. Nothing is substituted; the only difference is that AppRoot is not mounted.
- *
- * Scenario selection is by URL query string only; there is no harness-only backdoor into the
- * extension. The two committed pages (sillytavern_host.html, tauri_host.html) differ solely in the
- * `data-host` attribute they set on <body>.
- */
-
 interface PageListenerRegistration {
   readonly target: "window" | "document";
   readonly type: string;
 }
 
-/**
- * Installed before any extension module is imported. v2 shipped a page-wide error collector
- * (`[global-error-collector]` in docs/parity/feature_matrix.md) that swallowed unrelated host
- * errors; v3 must install none, and this is what turns that into an assertion instead of a claim.
- */
+// Installed before any extension module is imported.
 const page_listener_registrations: PageListenerRegistration[] = [];
 
 function record_listeners(target: EventTarget, label: "window" | "document"): void {
@@ -93,8 +65,7 @@ async function boot(): Promise<void> {
         : {},
   });
 
-  // `native_tool_manager` is probed from SillyTavern's own context, so "this host has no native
-  // tools" has to be expressed by removing the two methods, not by a flag the extension can read.
+  // native_tool_manager is probed from SillyTavern's context, so a host without native tools lacks the two methods.
   if (params.get("tools") === "none") {
     const context = (
       environment.globals.SillyTavern as { getContext(): Record<string, unknown> }
@@ -103,9 +74,7 @@ async function boot(): Promise<void> {
     delete context.unregisterFunctionTool;
   }
 
-  // Both harness pages share one origin, so they share one IndexedDB. A spec asks for a clean
-  // slate here rather than from the outside, because deletion has to complete before
-  // `open_database()` runs and a Playwright-side `evaluate` cannot order itself against page load.
+  // Deletion must complete before open_database() runs, which a Playwright-side evaluate cannot order.
   if (params.get("reset") === "1") {
     await Promise.all(
       (await indexedDB.databases()).map(
@@ -151,9 +120,7 @@ async function boot(): Promise<void> {
     },
   });
 
-  // Only two seams are supplied: the already-seeded database and the provider network boundary.
-  // The vocabulary Worker factory is deliberately left at its production default so the real
-  // `new Worker(new URL("../workers/vocabulary_worker.js", import.meta.url))` call is exercised.
+  // Only the seeded database and the provider network boundary are substituted; the vocabulary Worker keeps its production factory.
   const composition_options = {
     open_storage: () => Promise.resolve(database),
     provider_fetch: environment.provider_fetch,
@@ -191,8 +158,7 @@ async function boot(): Promise<void> {
     surface.probe = handle.probe;
     surface.resolutions = handle.resolutions;
     surface.state = handle.state;
-    // Dev server only: bootstrap owns the Shadow Root, so the stylesheet binding has to be made
-    // from the outside, against the element it just mounted. Inert in the built harness.
+    // Dev server only: bootstrap owns the Shadow Root, so the stylesheet is bound from outside.
     const mounted_shadow_root = document.getElementById("tavern-canvas-root")?.shadowRoot;
     if (mounted_shadow_root) {
       bind_shadow_root_stylesheet(mounted_shadow_root);

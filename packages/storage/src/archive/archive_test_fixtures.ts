@@ -67,7 +67,6 @@ export function image_record(
   );
 }
 
-/** A runtime gallery-shape row (flat domain fields) — the shape `image_records` also holds alongside migrated `image_record()` rows. */
 export function gallery_image_record(
   id: string,
   sha256_hex: string,

@@ -19,29 +19,16 @@ import ImageGrid from "./ImageGrid.vue";
 import ImagePreviewDialog from "./ImagePreviewDialog.vue";
 import type { ExtractedGenerationParameters } from "./image_metadata.js";
 
-/**
- * Gallery: filters, virtualized/masonry grid, multi-select with batch actions, and a full preview
- * dialog with the parameter inspector. Physical blob cleanup is never issued directly (roadmap
- * rule 5) -- every mutation routes through the controller's gallery methods, which own translating
- * a delete/bulk-delete into the actual storage cleanup.
- */
 const props = defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;
-  /** Forwarded to ImageGrid -- see its own doc comment (happy-dom test override). */
   readonly gridWidthOverride?: number;
   readonly gridHeightOverride?: number;
 }>();
 
 const { t, locale } = useI18n();
 
-// ---------------------------------------------------------------------------
-// Filters
-// ---------------------------------------------------------------------------
-
-/** Reka's SelectItem rejects an empty-string value (reserved as its own "nothing selected"
- * sentinel -- see WorkflowPanel.vue's identical UNMAPPED constant), so "no provider filter" is
- * its own real option value instead of "". */
+/** Reka's SelectItem rejects an empty-string value. */
 const ALL_PROVIDERS = "all";
 
 const filter_provider = ref(ALL_PROVIDERS);
@@ -65,9 +52,7 @@ function matches_filters(record: GalleryRecordSummary): boolean {
   if (filter_pinned_only.value && !record.pinned) {
     return false;
   }
-  // GalleryRecordSummary has no dedicated "detached from message" flag -- `quarantined` is the
-  // closest available signal (see studio_controller.ts's detach_gallery_record). Judgment call,
-  // ledgered for stage review.
+  // `quarantined` marks a record detached from its message.
   if (filter_orphaned_only.value && !record.quarantined) {
     return false;
   }
@@ -82,10 +67,6 @@ function matches_filters(record: GalleryRecordSummary): boolean {
 
 const filtered_records = computed(() => props.state.gallery.records.filter(matches_filters));
 
-// ---------------------------------------------------------------------------
-// Cache occupancy
-// ---------------------------------------------------------------------------
-
 const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN" ? "zh-CN" : "en"));
 const cache_occupancy_label = computed<string | null>(() => {
   const snapshot = props.state.diagnostics.snapshot;
@@ -97,10 +78,6 @@ const cache_occupancy_label = computed<string | null>(() => {
     limit: format_byte_size(snapshot.storage_quota_bytes, resolved_locale.value),
   });
 });
-
-// ---------------------------------------------------------------------------
-// Selection
-// ---------------------------------------------------------------------------
 
 const selected_ids = reactive(new Set<string>());
 
@@ -120,21 +97,10 @@ const selected_count_label = computed(() =>
   t("gallery.selection.selected_count", selected_ids.size),
 );
 
-// ---------------------------------------------------------------------------
-// Toasts
-// ---------------------------------------------------------------------------
-
 const toasts = ref<ToastItem[]>([]);
 let toast_sequence = 0;
 
-// A type interface exported from another .vue file's <script setup> block (ToastItem here,
-// confirmed the same for AppSelect.vue's AppSelectOption via an isolated repro) resolves as `any`
-// under typescript-eslint's type-aware checker specifically when spread, even though vue-tsc --
-// the real, Vue-aware type checker this repo's `pnpm typecheck` runs -- resolves it correctly and
-// reports no error at all. A project-wide ESLint/typescript-eslint cross-.vue-SFC type-resolution
-// gap, not a real type-safety issue in this code; ledgered for stage review since it is not
-// specific to Gallery and a shared eslint.config.js change is out of this task's ownership.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- see comment above */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- type-aware ESLint resolves types exported from another SFC as any */
 function push_toast(title: string): void {
   toast_sequence += 1;
   const id = `gallery-toast-${String(toast_sequence)}`;
@@ -148,10 +114,6 @@ function dismiss_toast(id: string): void {
   toasts.value = toasts.value.filter((toast) => toast.id !== id);
 }
 /* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-
-// ---------------------------------------------------------------------------
-// Downloads (client-side object URL + anchor click -- no capability needed beyond read_bytes)
-// ---------------------------------------------------------------------------
 
 const EXTENSION_BY_MEDIA_TYPE: Readonly<Record<string, string>> = {
   "image/png": "png",
@@ -176,10 +138,6 @@ async function download_selected(): Promise<void> {
     await download_record(record);
   }
 }
-
-// ---------------------------------------------------------------------------
-// Preview
-// ---------------------------------------------------------------------------
 
 const preview_record_id = ref<string | null>(null);
 
@@ -215,13 +173,6 @@ function step_preview(direction: -1 | 1): void {
   }
 }
 
-/**
- * Modify prompt/regenerate hand off to the Workbench with the record's already-extracted prompt
- * (ImagePreviewDialog/ImageMetadataInspector's own `parameters` prop, forwarded through the click
- * event -- see InspectorSelectionPrefill's doc comment) prefilled into the composer. `parameters`
- * is null when the image carries no recognized embedded generation parameters; the hand-off still
- * navigates, it just prefills nothing, matching the "no embedded parameters" state shown elsewhere.
- */
 function hand_off_to_workbench(
   intent: "modify_prompt" | "regenerate" | "edit" | "inpaint",
   parameters: ExtractedGenerationParameters | null,
@@ -266,10 +217,6 @@ async function delete_preview(): Promise<void> {
   preview_record_id.value = null;
 }
 
-// ---------------------------------------------------------------------------
-// Bulk destructive actions
-// ---------------------------------------------------------------------------
-
 const bulk_delete_pending = ref(false);
 const bulk_detach_pending = ref(false);
 
@@ -299,14 +246,8 @@ const grid_status = computed(() => {
   <div :class="styles.galleryView">
     <div :class="styles.filterBar">
       <span class="tc-visually-hidden">{{ t("gallery.filters.title") }}</span>
-      <!-- eslint-disable vue/attribute-hyphenation -- see ImageGrid.vue's identical note: "aria-label"
-           bypasses Vue's kebab-to-camel prop matching, so AppSelect's `ariaLabel` prop must stay
-           camelCase here to actually bind. `:key="locale"` (real-browser-smoke-caught): Reka's
-           closed SelectValue keeps showing the option label text from whichever locale was active
-           when that value was first registered -- it does not react to the option list's own
-           labels changing later -- so a real remount is needed on locale switch. Only matters when
-           a real value is pre-selected by default (this filter's "Clear" placeholder-like option);
-           OutfitPanel's character select has no default selection and is unaffected. -->
+      <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind AppSelect's prop -->
+      <!-- :key="locale" remounts the select: Reka's SelectValue keeps the old-locale label when option labels change. -->
 
       <AppSelect
         :key="locale"
@@ -347,7 +288,7 @@ const grid_status = computed(() => {
       <template #action>
         <p :class="styles.emptyDescription">{{ t("gallery.empty_description") }}</p>
       </template>
-      <!-- eslint-disable vue/attribute-hyphenation -- see the AppSelect note above. -->
+      <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind AppSelect's prop -->
       <ImageGrid
         :records="filtered_records"
         :selected-ids="selected_ids"

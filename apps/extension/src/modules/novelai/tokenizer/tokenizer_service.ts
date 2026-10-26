@@ -4,9 +4,6 @@ import {
   type TokenizerWorkerRequest,
 } from "./tokenizer_protocol.js";
 
-// Subset of the DOM Worker interface this service actually uses -- lets tests inject a plain
-// object instead of spinning up a real Worker thread. Mirrors VocabularyWorkerHandle
-// (apps/extension/src/modules/vocabulary/vocabulary_client.ts).
 export interface TokenizerWorkerHandle {
   postMessage(message: unknown): void;
   terminate(): void;
@@ -22,8 +19,6 @@ export type TokenizerCountResult =
     };
 
 export interface TokenizerServiceOptions {
-  // Overrides how the Worker is constructed -- tests inject a fake; production defaults to the
-  // real lazy Worker below. Never invoked until the first count_tokens() call.
   readonly create_worker?: () => TokenizerWorkerHandle;
 }
 
@@ -39,14 +34,7 @@ interface PendingCount {
   readonly resolve: (result: TokenizerCountResult) => void;
 }
 
-/**
- * The capability the NovelAI prompt editor's live token-budget display depends on. Owns lazy
- * Worker construction (never before the first count_tokens() call, so opening an unrelated view
- * never loads the tokenizer chunk or its bundled assets), request/response correlation, and
- * teardown. Never imports @huggingface/transformers itself -- only tokenizer_worker.ts does, and
- * that file is reached exclusively through the `new Worker(new URL(...))` call below, which Vite
- * code-splits into its own chunk rather than inlining into whatever imports this service.
- */
+/** The Worker is constructed lazily and `@huggingface/transformers` is reached only through tokenizer_worker.ts, so unrelated views never load the tokenizer chunk. */
 export class TokenizerService {
   readonly #create_worker: () => TokenizerWorkerHandle;
   #worker: TokenizerWorkerHandle | null = null;
@@ -57,12 +45,7 @@ export class TokenizerService {
     this.#create_worker = options.create_worker ?? default_create_worker;
   }
 
-  /**
-   * Counts prompt tokens against the NovelAI budget. Never throws or rejects -- a load failure
-   * (missing/corrupt bundled asset) resolves to a `tokenizer_unavailable` error result instead,
-   * so a caller can skip the budget display without needing to guard generation behind a
-   * try/catch.
-   */
+  /** Never throws or rejects: a load failure resolves to a `tokenizer_unavailable` error result. */
   count_tokens(prompt: string): Promise<TokenizerCountResult> {
     if (this.#disposed) {
       return Promise.resolve(disposed_result());
@@ -76,8 +59,7 @@ export class TokenizerService {
     });
   }
 
-  /** Terminates the Worker (if one was ever created) and settles every pending count_tokens()
-   * call as cancelled. Idempotent. */
+  /** Terminates the Worker (if any) and settles every pending count_tokens() call as cancelled. Idempotent. */
   dispose(): void {
     if (this.#disposed) {
       return;

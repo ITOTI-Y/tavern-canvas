@@ -33,13 +33,6 @@ import {
 } from "./image_metadata.js";
 import { use_gallery_object_url } from "./use_gallery_object_url.js";
 
-/**
- * Full-screen (mobile) / large centered (desktop) preview -- built on Reka's raw Dialog
- * primitives, not AppDialog (which caps at 480px, wrong for an image viewer). No `touch-action`
- * restriction is applied to the image or its wrapper, so native pinch zoom keeps working on
- * mobile; the control bar is pinned above the scrollable metadata region so it never scrolls out
- * of reach under a long parameter list.
- */
 const props = defineProps<{
   readonly open: boolean;
   readonly record: GalleryRecordSummary | null;
@@ -58,9 +51,6 @@ const props = defineProps<{
   readonly detachConfirmDescription: string;
   readonly deleteConfirmTitle: string;
   readonly deleteConfirmDescription: string;
-  /** Distinct confirm labels ("Detach from message" vs. "Delete") -- sharing one generic
-   * "Delete" label across both dialogs would make the detach confirmation read as if it were
-   * about to delete the image (plan rule: the two are distinct confirmed actions). */
   readonly detachConfirmLabel: string;
   readonly deleteConfirmLabel: string;
   readonly cancelLabel: string;

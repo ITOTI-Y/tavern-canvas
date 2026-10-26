@@ -32,8 +32,6 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const portal_target = use_portal_target();
 
-// Five stable items: the four primary routes plus "More" (task-2-brief.md). "More" opens
-// Diagnostics and Settings in a Reka DropdownMenu portaled to the Shadow Root's portal element.
 const primary_items = computed(() =>
   MOBILE_PRIMARY_ROUTES.map((route) => ({
     ...find_route_nav_item(route),

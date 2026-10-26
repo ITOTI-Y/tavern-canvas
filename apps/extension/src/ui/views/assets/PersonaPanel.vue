@@ -14,11 +14,6 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./assets.module.css";
 import { persona_role_label } from "./persona_labels.js";
 
-/**
- * Persona CRUD. A persona is the speaker identity behind a chat: the user's own, or the
- * assistant's. Only one of each role is active at a time, which is why activating one here
- * deactivates its same-role sibling rather than offering a free-for-all of checkboxes.
- */
 const props = defineProps<{
   readonly personas: readonly PersonaProfile[];
   readonly loading: boolean;

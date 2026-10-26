@@ -55,7 +55,6 @@ const groups = computed(() => {
     list.push(preset);
     map.set(key, list);
   }
-  // Ungrouped (null key) always sorts last, after every named group alphabetically.
   return [...map.entries()].sort(([a], [b]) => {
     if (a === null) {
       return 1;

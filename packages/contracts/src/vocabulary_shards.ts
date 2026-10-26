@@ -7,45 +7,19 @@ import {
   VocabularyRecordSchema,
 } from "./vocabulary.js";
 
-/**
- * Decoded shard payload shapes shared by the builder (encoder) and the
- * Worker search (decoder). See
- * .superpowers/sdd/2026-08-04-tavern-canvas-05-vocabulary/payload-contract.md
- * for the binding definition this file transcribes. Every shard file on disk
- * is one of these values, MessagePack-encoded then gzipped.
- */
-
 export const VOCABULARY_DETAIL_SHARD_MAX_RECORDS = 4_096 as const;
 export const VOCABULARY_HOT_SHARD_GLOBAL_CAP = 1_000 as const;
 export const VOCABULARY_HOT_SHARD_CATEGORY_CAP = 500 as const;
 
-/**
- * Alias shard partitioning (payload contract addendum v2). Grouping alias
- * keys by their first two code points the way prefix shards group tags
- * explodes for CJK — a bilingual 50,000-record baseline produced 17,313
- * alias shards at ~2.5 entries each — so alias keys are instead spread over
- * a fixed number of hash buckets.
- *
- * The hashed value is the alias key's two-code-point GROUP key, not the
- * whole key. That is a deliberate, flagged refinement of the addendum's
- * literal wording ("hash of the UTF-8 bytes of the normalized alias key"):
- * the alias index is the only prefix-searchable tier aliases and
- * translations have — the trigram index deliberately covers primary tag
- * text only (build_trigram_index.ts) — so hashing whole keys would silently
- * reduce alias/translation search to exact-match-only, deleting partial
- * CJK translation search entirely. Hashing the group key bounds the shard
- * count identically (<= 512), still lets the Worker compute a query's
- * bucket directly with no manifest scan, and keeps every v1 search
- * semantic: a bucket is a superset of a v1 group, and the query planner
- * already filters entries by `startsWith`.
- */
+// Alias keys are spread over a fixed number of hash buckets of the two-code-point group key, not the
+// whole key: whole-key hashing would reduce alias/translation search to exact match. The Worker
+// computes a query's bucket directly, and a bucket is a superset of a group.
 export const VOCABULARY_ALIAS_SHARD_BUCKET_COUNT = 512 as const;
 export const VOCABULARY_ALIAS_SHARD_GROUP_CODE_POINTS = 2 as const;
 
 const FNV1A_32_OFFSET_BASIS = 2_166_136_261;
 const FNV1A_32_PRIME = 16_777_619;
 
-/** FNV-1a over the UTF-8 bytes of `text`, as an unsigned 32-bit integer. */
 export function fnv1a_32(text: string): number {
   let hash = FNV1A_32_OFFSET_BASIS;
   for (const byte of new TextEncoder().encode(text)) {
@@ -54,23 +28,14 @@ export function fnv1a_32(text: string): number {
   return hash >>> 0;
 }
 
-/**
- * Bucket name for an alias key's group key: `h000`..`h511`. Builder
- * (encode), the in-browser import builder, and the Worker (lookup) all call
- * this one implementation, so the two sides cannot drift.
- */
+/** Builder, import builder and Worker must all use this implementation so bucket names agree. */
 export function vocabulary_alias_shard_partition(group_key: string): string {
   const bucket = fnv1a_32(group_key) % VOCABULARY_ALIAS_SHARD_BUCKET_COUNT;
   return `h${String(bucket).padStart(3, "0")}`;
 }
 
-// key: normalized tag (prefix shards) or normalized alias/translation (alias
-// shards); record_id always points at the primary record. Bound matches
-// VocabularyRecordSchema's translation max (512, vocabulary.ts) rather than
-// its tag/alias max (256) -- NFKC normalization can only shrink or hold text
-// length steady, but a legitimate 512-char translation must still fit its
-// own normalized key, and this schema has no separate per-source-field cap
-// to defer to.
+// Max 512 matches the translation limit in VocabularyRecordSchema: a 512-char translation must fit
+// its own normalized key.
 const VocabularyShardKeyEntrySchema = z.tuple([
   z.string().trim().min(1).max(512),
   VocabularyRecordIdSchema,

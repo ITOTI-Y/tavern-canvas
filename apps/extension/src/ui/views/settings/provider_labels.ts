@@ -10,9 +10,6 @@ export const PROVIDER_IDS = [
   "google_image",
 ] as const satisfies readonly ProviderId[];
 
-/** A `switch` over a literal string per case (never a template-interpolated key), matching
- * `route_nav.ts`'s `route_label` precedent so `tools/locale_check`'s dynamic-key rule can
- * statically verify every call site. */
 export function provider_type_label(t: Translate, provider_id: ProviderId): string {
   switch (provider_id) {
     case "sd_webui":

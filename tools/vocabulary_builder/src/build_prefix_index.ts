@@ -11,22 +11,13 @@ const GROUP_CODE_POINT_COUNT = 2;
 
 type PrefixEntry = [key: string, record_id: number, popularity: number];
 
-/**
- * Groups records by the first two normalized Unicode code points of their
- * tag. Within a shard, entries are sorted by key (code-point order), then
- * popularity descending, then record_id ascending, per the payload
- * contract's prefix shard layout.
- */
 export function build_prefix_shards(records: readonly VocabularyRecord[]): VocabularyShardFile[] {
   const entries_by_group = new Map<string, PrefixEntry[]>();
 
   for (const record of records) {
     const normalized_tag = normalize_vocabulary_search_key(record.tag);
-    // A tag made entirely of characters normalize_vocabulary_search_key
-    // strips (e.g. "_") normalizes to "" -- VocabularyShardKeyEntrySchema
-    // requires a non-empty key, so indexing it would fail builder
-    // self-verification instead of just leaving that record unreachable by
-    // prefix search (it stays findable by exact tag lookup elsewhere).
+    // A tag normalizing to "" cannot be a key (VocabularyShardKeyEntrySchema requires non-empty);
+    // skipping it keeps self-verification passing.
     if (normalized_tag.length === 0) {
       continue;
     }

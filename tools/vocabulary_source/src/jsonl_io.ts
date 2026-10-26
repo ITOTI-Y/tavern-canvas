@@ -15,7 +15,6 @@ export class JsonlParseError extends Error {
   }
 }
 
-/** Serializes records as compact single-line JSON, one per line, LF-terminated. */
 export function to_jsonl(records: readonly unknown[]): string {
   return (
     records.map((record) => JSON.stringify(record)).join("\n") + (records.length > 0 ? "\n" : "")
@@ -27,11 +26,6 @@ export async function write_jsonl(path: string, records: readonly unknown[]): Pr
   await writeFile(path, to_jsonl(records), "utf8");
 }
 
-/**
- * Parses JSONL text against `schema`, validating every line. A malformed
- * line (invalid JSON or schema mismatch) throws `JsonlParseError` identifying
- * the offending file and line number instead of silently skipping it.
- */
 export function parse_jsonl<Schema extends z.ZodType>(
   text: string,
   schema: Schema,

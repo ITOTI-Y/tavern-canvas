@@ -7,8 +7,7 @@ const SENSITIVE_FIELD_NAMES = new Set([
   "secret",
   "apikey",
   "authorization",
-  // Direct browser-to-vendor calls (user decision 2026-08-07) put the credential in whichever
-  // header the vendor documents, so the header names themselves are credential fields here.
+  // Vendors document the credential in their own header, so those header names are credential fields.
   "xgoogapikey",
   "xapikey",
   "credential",

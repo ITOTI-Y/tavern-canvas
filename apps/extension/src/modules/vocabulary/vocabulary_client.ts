@@ -22,8 +22,6 @@ export interface VocabularySearchPage {
   readonly next_cursor: string | null;
 }
 
-// Subset of the DOM Worker interface the client actually uses -- lets tests
-// inject a plain object instead of spinning up a real Worker thread.
 export interface VocabularyWorkerHandle {
   postMessage(message: unknown): void;
   terminate(): void;
@@ -32,8 +30,6 @@ export interface VocabularyWorkerHandle {
 
 export interface VocabularySearchOptions {
   readonly category?: string;
-  // Invoked once per partial_results response for the request this
-  // search() call produced -- exact/prefix results ahead of trigram recall.
   readonly on_partial?: (page: VocabularySearchPage) => void;
 }
 
@@ -63,11 +59,6 @@ function cancelled_error(message: string): VocabularySearchError {
   return new VocabularySearchError("cancelled", message);
 }
 
-/**
- * Owns the Worker handshake, debounce, and request correlation for
- * vocabulary search. This is the capability Stage 06's Vue layer depends
- * on -- it never talks to VocabularyWorkerRequest/Response directly.
- */
 export class VocabularyClient {
   readonly #worker: VocabularyWorkerHandle;
   readonly #debounce_ms: number;
@@ -79,13 +70,7 @@ export class VocabularyClient {
   #active: ActiveCommitment | null = null;
   #generation = 0;
   readonly #initialize_request_id: string;
-  // Set once the Worker reports that `initialize` itself failed (a corrupt
-  // or missing package) -- distinct from #disposed, which is a client-side
-  // teardown. Without tracking this separately, the constructor's
-  // initialize request_id was never registered anywhere #handle_message
-  // could correlate it to, so the Worker's error response was silently
-  // dropped, `#ready` never became true, and every #ensure_ready() waiter
-  // (every search()/next_page() call) hung forever.
+  // Set when the Worker reports that `initialize` failed; without it every `#ensure_ready()` waiter would hang forever.
   #init_error: VocabularySearchError | null = null;
 
   constructor(options: VocabularyClientOptions) {
@@ -120,9 +105,7 @@ export class VocabularyClient {
     if (!this.#ready) {
       await this.#ensure_ready();
     }
-    // dispose() can run on the microtask queue during the await above --
-    // re-check via a method call (not a direct field read) so the type
-    // checker does not stale-narrow #disposed to false across that gap.
+    // Re-check through a method call: dispose() may have run during the await, and a field read would be stale-narrowed.
     this.#throw_if_disposed();
     const request_id = crypto.randomUUID();
     return new Promise<VocabularySearchPage>((resolve, reject) => {
@@ -149,11 +132,7 @@ export class VocabularyClient {
       this.#active.reject(error); // still debouncing, never made it into #pending
     }
     this.#active = null;
-    // Resolve (not reject) ready-waiters on dispose: each waiter's own
-    // caller re-checks #throw_if_disposed() immediately after the await
-    // (see next_page's comment), so resolving here just lets that check run
-    // and produce the "client disposed" error uniformly, whether dispose()
-    // happened before or during the wait.
+    // Resolve (not reject): each waiter re-checks `#throw_if_disposed()` and produces the uniform error.
     for (const waiter of this.#ready_waiters) {
       waiter.resolve();
     }
@@ -172,10 +151,7 @@ export class VocabularyClient {
       try {
         await this.#ensure_ready();
       } catch (error) {
-        // initialize itself failed -- this search can never dispatch.
-        // Reject the caller's promise instead of leaving it (and every
-        // future search()) hanging forever the way an uncaught rejection
-        // here would.
+        // initialize failed, so this search can never dispatch; reject instead of hanging.
         if (generation === this.#generation && !this.#disposed) {
           if (this.#active?.generation === generation) {
             this.#active = null;
@@ -256,12 +232,7 @@ export class VocabularyClient {
     }
 
     if (response.type === "error" && response.request_id === this.#initialize_request_id) {
-      // The Worker's package_unavailable (or similar) response to the
-      // constructor's own `initialize` request -- never registered in
-      // #pending, so without this branch #handle_message's lookup below
-      // would drop it as an unrecognized response and #ready would never
-      // become true (nor false-but-settled): every ensure_ready() waiter
-      // hangs forever.
+      // Response to the constructor's own `initialize` request, which is not in `#pending`; without this branch it is dropped and waiters hang.
       this.#init_error = new VocabularySearchError(response.code, response.message);
       this.#reject_ready_waiters(this.#init_error);
       return;

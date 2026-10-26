@@ -1,42 +1,11 @@
 import type { VocabularyMatchKind, VocabularyWorkerResponse } from "@tavern-canvas/contracts";
 import { detect_shard_memory_mode } from "@tavern-canvas/vocabulary";
 
-// Stage 05 benchmark harness (runs on the page/main thread, bundled by Vite
-// -- see tests/harness/vite.config.ts). Drives two real Web Workers:
+// The "primary" worker is the production entry point; the "secondary" worker uses the memory_mode
+// the primary did not resolve, so both the 16 MiB and 64 MiB LRU budgets are exercised.
 //
-// - "primary": `new Worker(new URL(".../vocabulary_worker.ts", ...))`
-//   against the REAL, unmodified production entry point. This is both the
-//   benchmark vehicle and the end-to-end Worker-to-URL wiring proof (no
-//   `new Worker()` call site existed anywhere in the codebase before Task 6
-//   -- see task-5-report.md's concern #1). It resolves its own LRU budget
-//   from navigator.deviceMemory, exactly as production does.
-// - "secondary": a thin entry (vocabulary_benchmark_worker_{mobile,desktop}.ts)
-//   that reuses the same real exported engine with the memory_mode the
-//   primary did NOT resolve, so the 16 MiB and 64 MiB budgets are BOTH
-//   proven whatever the environment reports. Stage 05 Task 6 assumed
-//   navigator.deviceMemory was unavailable here and therefore that the
-//   primary ran on the mobile budget; it is in fact reported as 16, so that
-//   run measured the desktop budget twice and never exercised the mobile
-//   one. Picking the complement removes the environment dependency.
-//
-// Correctness and timing are measured entirely inside this module so a
-// single trigger call from Playwright captures everything (see
-// tests/e2e/vocabulary_performance.spec.ts's polling wrapper -- a
-// `page.evaluate()` that itself awaits this whole run is unreliable in
-// some environments, so Playwright fires this off and polls a `window`
-// flag instead of awaiting it directly). Playwright separately polls each
-// Worker's own LRU resident-byte high-water mark and configured budget via
-// `Worker.evaluate()` while this runs.
-//
-// `request_id` MUST be a bare UUID (`crypto.randomUUID()`): the frozen
-// protocol's `RequestIdSchema` is `UuidSchema` (packages/contracts/src/ids.ts).
-// `VocabularyWorkerRequestSchema.safeParse` silently drops any message
-// whose `request_id` fails that check (start_vocabulary_worker: "No
-// request_id to correlate an error response to; drop silently") -- no
-// error, no response, ever. A prefixed id like `bench-<uuid>` reproduces
-// as an indefinite hang with zero Worker responses, which is easy to
-// misdiagnose as a bundler or environment bug (it was, at length, during
-// Task 6) rather than a malformed request silently rejected by design.
+// `request_id` must be a bare UUID (`crypto.randomUUID()`): the worker silently drops any message
+// whose `request_id` fails `UuidSchema`, so a prefixed id shows up as a hang with no response.
 
 export interface QueryOracle {
   readonly query: string;
@@ -117,42 +86,7 @@ function is_worker_response(value: unknown): value is VocabularyWorkerResponse {
   return typeof value === "object" && value !== null && "type" in value;
 }
 
-/**
- * Turns an already-settled query outcome into the reported DTO -- pure
- * data, never touches the Worker.
- *
- * "typo" and "prefix3" probes are checked by membership (the expected
- * record appears somewhere in the result page); every other subtype by
- * strict top-1.
- *
- * - "typo": trigram-tier candidates all carry the same match tier, so the
- *   final rank among them is decided purely by (real, hydrated)
- *   popularity -- exactly like any other tier, but trigram is the one
- *   tier with no stronger signal to fall back on. A typo query's
- *   designated target can therefore be legitimately outranked by a
- *   different, unrelated, higher-popularity record that also happens to
- *   share a trigram with the query (coincidental 3-gram collisions among
- *   a 500,000-record corpus are common, not a ranker bug).
- * - "prefix3": a prefix3 group's key (e.g. "aax") is a strict text
- *   superset match of its parent prefix2 group's key ("aa") -- every
- *   prefix3 group is nested inside exactly one prefix2 group. The
- *   designated winner of that PARENT prefix2 group is therefore also a
- *   legitimate prefix-tier candidate for the prefix3 query whenever its
- *   own tag happens to start with the (longer) prefix3 text too, and
- *   since every prefix2 sentinel is assigned before (and is therefore
- *   larger than) every prefix3 sentinel (generate_benchmark_fixture.ts
- *   processes all prefix2 groups first, precisely so a prefix2 query can
- *   never be hijacked by a nested prefix3 winner), that parent winner can
- *   legitimately outrank the prefix3 group's own winner. Both directions
- *   can't be made strict simultaneously without per-pair coordination
- *   this fixture does not attempt; membership still proves the prefix
- *   phase found the right record.
- *
- * "prefix2", "exact", "alias", "translation", and "hot" have no such
- * competing tier reachable (hot: an empty query only ever produces
- * hot-tier candidates; prefix2: no group is nested inside it), so strict
- * top-1 remains the correct, provable criterion for them.
- */
+// "typo" and "prefix3" probes are checked by membership in the result page, not top-1: unrelated records can outrank the designated target (trigram collisions, nested prefix2 winners).
 function to_measurement(
   oracle: QueryOracle,
   duration_ms: number,
@@ -181,7 +115,6 @@ function to_measurement(
   };
 }
 
-/** Runs the measured query sequence (warmup + all four buckets) against an already-initialized driver. Touches no Worker API directly. */
 async function run_measured_queries(
   config: BenchmarkConfig,
   send_query: (text: string) => Promise<QueryPage>,
@@ -228,13 +161,7 @@ async function run_measured_queries(
   return { warmup_ms, prefix, content_fuzzy, exact, hot };
 }
 
-/**
- * Drives an already-constructed real Worker through the frozen postMessage
- * protocol: initialize -> warmup -> the full measured query suite ->
- * dispose. The Worker itself is constructed by the caller because Vite only
- * bundles a worker when it sees a literal `new Worker(new URL("./literal",
- * import.meta.url))` at the call site.
- */
+// The Worker is constructed by the caller: Vite only bundles a worker for a literal `new Worker(new URL("./literal", import.meta.url))`.
 async function run_worker_suite(
   label: string,
   worker: Worker,
@@ -329,17 +256,10 @@ async function run_full_benchmark(config: BenchmarkConfig): Promise<BenchmarkRes
   });
   observer.observe({ entryTypes: ["longtask"] });
 
-  // "unknown" and "mobile" both resolve to the 16 MiB budget
-  // (resolve_shard_lru_budget_bytes), so the complement of either is
-  // "desktop".
   const primary_memory_mode = detect_shard_memory_mode();
   const secondary_memory_mode = primary_memory_mode === "desktop" ? "mobile" : "desktop";
 
-  // Sequenced, not concurrent: the secondary worker's initialize() must run
-  // after the primary worker's package bootstrap has activated a package in
-  // IndexedDB, so it finds an already-active package (PackageStoreShardByteSource
-  // skips its own PackageUpdater.update() call in that case) instead of
-  // racing a second concurrent bootstrap into the same namespace.
+  // Sequenced: the secondary worker must find the package the primary already activated, not race a second bootstrap.
   const primary = await run_worker_suite(
     `primary (production entry, ${primary_memory_mode})`,
     new Worker(new URL("../../apps/extension/src/workers/vocabulary_worker.ts", import.meta.url), {

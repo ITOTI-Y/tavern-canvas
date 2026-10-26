@@ -16,13 +16,6 @@ export type VocabularyPopularity = z.infer<typeof VocabularyPopularitySchema>;
 export const VocabularyIndexKindSchema = z.enum(["prefix", "alias", "trigram", "detail", "hot"]);
 export type VocabularyIndexKind = z.infer<typeof VocabularyIndexKindSchema>;
 
-/**
- * Folds display text into a stable search key: NFKC composition (so composed
- * and combining-accent forms collapse together, and fullwidth forms fold to
- * ASCII), underscore-to-space conversion, lowercasing, whitespace collapse,
- * and trim. Never mutates the user-visible original tag/alias/translation —
- * callers index the normalized key alongside the untouched source field.
- */
 export function normalize_vocabulary_search_key(text: string): string {
   return text.normalize("NFKC").replace(/_/gu, " ").toLowerCase().replace(/\s+/gu, " ").trim();
 }
@@ -82,14 +75,9 @@ export const VocabularyPackageIdSchema = z
 export type VocabularyPackageId = z.infer<typeof VocabularyPackageIdSchema>;
 
 const PATH_TRAVERSAL_PATTERN = /\.\./u;
-// Allowlist, not a denylist: every segment is letters/digits/dot/underscore/
-// hyphen, segments are joined by single '/'. This alone already excludes a
-// leading '/' (absolute), '\\' (Windows-style), and a ':' scheme separator
-// (so "https://attacker.example/shard" can never validate) -- a hostile
-// manifest cannot make a shard path resolve off the configured base origin
-// (packages/vocabulary/src/package_client.ts's resolve_relative). The
-// PATH_TRAVERSAL_PATTERN check still runs separately because ".." itself is
-// built entirely from allowed characters and would otherwise pass.
+// Allowlist: the character set excludes a leading '/', '\' and ':', so a hostile manifest cannot make
+// a shard path leave the base origin. PATH_TRAVERSAL_PATTERN is still checked because ".." is built
+// from allowed characters.
 const SAFE_SHARD_PATH_PATTERN = /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/u;
 
 export const VocabularyShardPathSchema = z
@@ -104,14 +92,8 @@ export const VocabularyShardPathSchema = z
 export type VocabularyShardPath = z.infer<typeof VocabularyShardPathSchema>;
 
 export const VocabularyShardEntrySchema = z.strictObject({
-  // No .trim(): shard_id embeds the raw group-key text a builder grouped
-  // records under (tools/vocabulary_builder/src/build_prefix_index.ts and
-  // friends), which can legitimately end in a space -- e.g. the tag
-  // "v_arms" normalizes to "v arms", whose first-two-code-point group key
-  // is "v " (trailing space), a real, distinct group from the one-character
-  // tag "v" itself. Trimming here silently collided the two into the same
-  // shard_id once real Danbooru-scale data (49,856 records) was built,
-  // caught by Stage 05 Task 5's real baseline build.
+  // No .trim(): shard_id embeds the raw group key, which can end in a space ("v arms" -> "v "), and
+  // trimming would merge distinct groups.
   shard_id: z.string().min(1).max(128),
   package_id: VocabularyPackageIdSchema,
   kind: VocabularyIndexKindSchema,

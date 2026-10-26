@@ -22,13 +22,7 @@ export interface FetchDanbooruOptions {
   readonly checkpoint_path?: string;
 }
 
-/**
- * Fetches the full Danbooru tag dictionary (paginated) plus active tag
- * aliases, and maps them onto fact-only `VocabularyRecordSchema` records
- * (no `translation`: Danbooru's API carries no zh translation). Writes/reads
- * `checkpoint_path` (if given) so an interrupted run resumes from the last
- * completed tag page instead of restarting from id 0.
- */
+/** Maps Danbooru tags and active aliases onto fact-only records (no translation). With `checkpoint_path`, an interrupted run resumes after the last completed page. */
 export async function fetch_danbooru_fact_records(
   options: FetchDanbooruOptions,
 ): Promise<VocabularyRecord[]> {
@@ -79,13 +73,7 @@ export interface RunFetchDanbooruCliOptions extends FetchDanbooruOptions {
   readonly out_path: string;
 }
 
-/**
- * Loads the records a resumed run must not lose. `fetch_danbooru_fact_records`
- * only fetches tag pages after `checkpoint.last_id` on resume, so its return
- * value alone is just the tail of the crawl -- writing that directly over
- * `out_path` (the pre-fix behavior) silently discarded every record from
- * before the interruption. Returns `[]` for a fresh run (no checkpoint yet).
- */
+/** On resume `fetch_danbooru_fact_records` returns only the tail of the crawl, so earlier records must be reloaded or writing it over `out_path` discards them. Returns `[]` for a fresh run. */
 async function load_pre_checkpoint_records(
   options: RunFetchDanbooruCliOptions,
 ): Promise<VocabularyRecord[]> {

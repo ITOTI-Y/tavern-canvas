@@ -8,10 +8,6 @@ import type {
 
 import type { VocabularyPlannerCandidate } from "./query_planner.js";
 
-// Optional fields use the `T | undefined` form (not just `field?: T`) so a
-// contracts VocabularyRecord -- whose zod `.optional()` fields infer that
-// way -- satisfies this interface directly under exactOptionalPropertyTypes,
-// with no adapter object needed at the Worker/contracts boundary.
 export interface VocabularyRecordLike {
   readonly record_id: VocabularyRecordId;
   readonly tag: string;
@@ -37,11 +33,7 @@ export interface RankVocabularyCandidatesOptions {
   readonly query_normalized: string;
 }
 
-// Primary tag matches always outrank alias/translation matches, which
-// always outrank fuzzy trigram recall (brief: "exact tag before prefix",
-// "primary tag before alias/translation"). "hot" only ever appears for an
-// empty query, where it is the sole phase, so its relative position versus
-// exact/prefix never actually competes in a single ranked list.
+// Primary tag matches outrank alias/translation matches, which outrank fuzzy trigram recall.
 const MATCH_TIER: Readonly<Record<VocabularyMatchKind, number>> = {
   exact: 5,
   hot: 4,
@@ -51,8 +43,6 @@ const MATCH_TIER: Readonly<Record<VocabularyMatchKind, number>> = {
   trigram: 1,
 };
 
-// Comfortably larger than any realistic popularity count, so tier always
-// dominates the sort key regardless of popularity magnitude.
 const TIER_WEIGHT = 1_000_000_000;
 const MAX_DETAIL_RECORDS_PER_REQUEST = 200;
 
@@ -107,15 +97,6 @@ function pre_hydration_comparator(
   return a.record_id - b.record_id;
 }
 
-/**
- * Dedupes candidates by record (keeping the best match per record) and
- * bounds hydration cost to at most 200 detail records per request, ranking
- * by the signal already available from the index entry itself (tier, then
- * popularity or trigram overlap) before any detail shard is fetched.
- * Exported so the Worker can resolve and load exactly the detail shards
- * this set of candidates needs, before calling rank_vocabulary_candidates
- * with a synchronous detail_lookup built from those shards.
- */
 export function select_hydration_targets(
   candidates: readonly VocabularyPlannerCandidate[],
 ): readonly VocabularyPlannerCandidate[] {
@@ -124,9 +105,7 @@ export function select_hydration_targets(
     .slice(0, MAX_DETAIL_RECORDS_PER_REQUEST);
 }
 
-// An alias-shard candidate's matched key came from either the record's
-// translation or one of its aliases (payload-contract.md does not
-// distinguish the two structurally) -- hydration is what disambiguates.
+// An alias-shard candidate matched either the translation or an alias; hydration disambiguates.
 function refine_match_kind(
   candidate: VocabularyPlannerCandidate,
   record: VocabularyRecordLike,
@@ -148,12 +127,6 @@ function matches_category(record: VocabularyRecordLike, category: string | undef
   return record.category === category;
 }
 
-/**
- * Dedupes candidates by record (keeping the best match per record), caps
- * detail hydration at 200 records per request, hydrates, disambiguates
- * alias vs. translation matches, applies the category filter, scores, and
- * returns a fully and deterministically ordered result list.
- */
 export function rank_vocabulary_candidates(
   options: RankVocabularyCandidatesOptions,
 ): readonly VocabularyRankedResult[] {

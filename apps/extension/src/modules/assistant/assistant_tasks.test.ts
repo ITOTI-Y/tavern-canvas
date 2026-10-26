@@ -223,7 +223,7 @@ describe("AssistantModule: task tracker", () => {
     });
   });
 
-  it("tracks an image generation task and keeps the legacy task strip shape", async () => {
+  it("tracks an image generation task and keeps the task strip shape", async () => {
     const module_instance = new AssistantModule(
       make_dependencies({
         connection: streaming_connection(
@@ -323,7 +323,7 @@ describe("AssistantModule: auto-query iteration loop", () => {
     return connection as unknown as AssistantConnectionPort & { turns: number };
   }
 
-  it("runs a single round by default, matching the previously tested contract", async () => {
+  it("runs a single round by default", async () => {
     const connection = iterating_connection(5);
     const module_instance = new AssistantModule(make_dependencies({ connection }));
     const session = await module_instance.new_session();

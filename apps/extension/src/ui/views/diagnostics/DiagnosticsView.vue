@@ -12,15 +12,7 @@ import MigrationStatus from "./MigrationStatus.vue";
 import StorageUsage from "./StorageUsage.vue";
 import TaskTimeline from "./TaskTimeline.vue";
 
-/**
- * Top-level Diagnostics workspace. Reads `state.diagnostics.*` for its own slice plus
- * `state.settings.settings?.gateway.endpoint` (cross-slice, read-only) to fill the `{origin}`
- * placeholder on Gateway connection-test failure copy -- it never reads
- * `state.settings.settings.gateway.token_secret_id` or any provider profile's
- * `secret_reference`, so no token material is ever in scope for this view to render (security
- * rule: diagnostics never shows credential material at all, unlike Settings' Gateway panel which
- * intentionally shows the token *reference*).
- */
+/** Never reads `gateway.token_secret_id` or any `secret_reference`: diagnostics must not render credential material. */
 const props = defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;
@@ -45,10 +37,6 @@ function export_bundle(): void {
   void props.controller.export_support_bundle();
 }
 
-/** Triggers a browser download of the exported bundle as a JSON file -- the bundle's fields
- * (version, capability_matrix, redacted_settings, error_codes, timeline) are exactly
- * `SupportBundle`'s shape (ui_capabilities.ts), so serializing the whole object cannot include
- * anything the type doesn't already declare. */
 function download_bundle(): void {
   if (support_bundle_command.value.status !== "success") {
     return;

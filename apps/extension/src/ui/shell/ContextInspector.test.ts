@@ -23,11 +23,6 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-/**
- * ContextInspector previously ignored `selected_record` entirely and always rendered the empty
- * state (Stage 06 gap, carried over to Task 3). These tests prove it now renders
- * `InspectorViewModel.selected_record` for every `InspectorSelection` variant.
- */
 describe("ContextInspector: renders selected_record", () => {
   it("renders the empty state when nothing is selected", () => {
     const wrapper = mount_inspector(null);

@@ -15,13 +15,6 @@ import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 import AppIcon from "./AppIcon.vue";
 import styles from "./components.module.css";
 
-/**
- * General-purpose modal wrapper around Reka's Dialog primitives. Modal `DialogContent` (the
- * default; non-modal is never used here) forces `trapFocus` internally and restores focus to the
- * trigger on close -- this file does not reimplement that, only tokens/layout. Escape and
- * outside-click both close through Reka's default dismiss handling; `ConfirmDialog` (AlertDialog)
- * is the one that blocks outside-click for destructive actions.
- */
 defineProps<{
   readonly open: boolean;
   readonly title: string;
@@ -38,9 +31,6 @@ function handle_open_change(value: boolean): void {
 }
 
 const portal_target = inject(PORTAL_TARGET_KEY, undefined);
-/** Portal's `to` prop is optional -- omit the key entirely rather than pass it as `undefined`, so
- * this composes under `exactOptionalPropertyTypes` in every test that runs without a provided
- * portal host. */
 const portal_props = computed(() => (portal_target ? { to: portal_target } : {}));
 </script>
 

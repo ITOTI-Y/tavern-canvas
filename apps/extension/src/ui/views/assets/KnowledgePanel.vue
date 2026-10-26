@@ -17,11 +17,6 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./assets.module.css";
 import { knowledge_source_label } from "./persona_labels.js";
 
-/**
- * Knowledge entry CRUD with multi-select batch delete. Keywords are entered as a comma separated
- * line and normalized here, which keeps the form to one field instead of a chip editor while the
- * stored shape stays a real array.
- */
 const props = defineProps<{
   readonly entries: readonly KnowledgeRecord[];
   readonly selectedIds: readonly Uuid[];
@@ -72,8 +67,6 @@ const source_model = computed<string>({
 
 const selected_set = computed(() => new Set(props.selectedIds));
 
-/** Mixed rather than unchecked while a subset is selected, so the box reports what clicking it
- * will do -- an unchecked "select all" over a half-selected list claims nothing is selected. */
 const select_all_state = computed<boolean | "indeterminate">(() => {
   if (props.selectedIds.length === 0) {
     return false;
@@ -81,7 +74,6 @@ const select_all_state = computed<boolean | "indeterminate">(() => {
   return props.selectedIds.length === props.entries.length ? true : "indeterminate";
 });
 
-/** Splits on commas and the full-width comma so a Simplified Chinese keyboard needs no switch. */
 function parse_keywords(text: string): string[] {
   const parts = text
     .split(/[,，]/u)

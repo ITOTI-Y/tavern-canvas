@@ -14,11 +14,6 @@ import {
   type WorkerScopeLike,
 } from "./vocabulary_worker.js";
 
-// Covers task-5-brief.md controller pre-ruling #5: the production
-// ShardByteSource wiring and the activation-after-first-successful-query
-// lifecycle. VocabularyWorkerEngine/start_vocabulary_worker themselves are
-// covered by vocabulary_worker.test.ts and stay untouched by this task.
-
 const NAMESPACE = "vocabulary";
 
 async function close_test_database(): Promise<void> {
@@ -80,11 +75,7 @@ describe("resolve_bundled_baseline_base_url", () => {
 
 describe("PackageStoreShardByteSource", () => {
   it("does not touch IndexedDB at construction time", () => {
-    // No fake-indexeddb interaction should be observable here: constructing
-    // does not call open_database. If it did, this synchronous call would
-    // need to be async and would otherwise throw in a real Worker global
-    // scope before the module even finishes evaluating (the regression this
-    // test guards against).
+    // Constructing must not call open_database: a real Worker global scope cannot await it during module evaluation.
     expect(
       () =>
         new PackageStoreShardByteSource(
@@ -102,9 +93,7 @@ describe("PackageStoreShardByteSource", () => {
     });
     const original_fetch = globalThis.fetch;
     globalThis.fetch = vi.fn((input: RequestInfo | URL) => {
-      // PackageClient always calls fetch with a resolved URL object
-      // (package_client.ts's resolve_relative), never a bare string or a
-      // Request -- narrowing directly keeps this fake honest about that.
+      // PackageClient always calls fetch with a resolved URL object.
       if (!(input instanceof URL)) {
         throw new TypeError("expected fetch to be called with a URL");
       }
@@ -141,11 +130,7 @@ describe("PackageStoreShardByteSource", () => {
     try {
       const byte_source = new PackageStoreShardByteSource(scope);
       await expect(byte_source.manifest()).rejects.toThrow();
-      // The manifest fetch above always 404s (no real shard bytes fixture),
-      // so the update itself fails -- but bootstrapping must still have
-      // *attempted* the bundled fetch against the URL this class computed,
-      // proving the wiring reaches PackageUpdater.update() rather than
-      // silently no-op-ing.
+      // The manifest fetch 404s so the update fails, but bootstrapping must still attempt the bundled fetch against the computed URL.
       expect(globalThis.fetch).toHaveBeenCalledWith(
         expect.objectContaining({
           href: "https://example.com/dist/vocabulary/baseline/manifest.json",
@@ -276,12 +261,7 @@ describe("with_activation_lifecycle", () => {
   });
 
   it("attaches a rejection handler to report_query_success instead of leaving it bare", async () => {
-    // A direct check that `.catch` is actually invoked on the returned
-    // promise, rather than relying on the platform's unhandled-rejection
-    // event -- that event's channel differs between Node (`process`
-    // 'unhandledRejection') and the browser/happy-dom ('unhandledrejection'
-    // on the global), and proved unreliable to observe deterministically
-    // inside this test environment either way.
+    // Assert `.catch` is invoked directly; the unhandled-rejection event channel differs between Node and happy-dom and is unreliable here.
     const { scope } = response_scope();
     const inner_promise = Promise.reject(new Error("indexeddb write failed"));
     let catch_was_called = false;

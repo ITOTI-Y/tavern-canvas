@@ -24,14 +24,6 @@ export interface AppSelectOption {
   readonly label: string;
 }
 
-/**
- * Option-set control (roadmap rule: "option sets use selects/menus"). Wraps Reka's Select
- * primitives for the `role="combobox"`/`listbox` pair, typeahead, and arrow-key navigation. The
- * `placeholder` here is the standard "nothing chosen yet" affordance inside the closed trigger --
- * distinct from a field label, which the caller always supplies separately (via `FieldGroup` or
- * its own visible text), so it never substitutes as the label (taste directive: no
- * placeholder-as-label).
- */
 const props = withDefaults(
   defineProps<{
     readonly modelValue: string | undefined;

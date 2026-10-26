@@ -24,17 +24,12 @@ import type {
   VocabularyUpdateChannel,
 } from "./ui_capabilities.js";
 
-/**
- * Stable, non-translated failure descriptor. `code` is a lookup key into the locale layer
- * (Stage 06 Task 3), never a rendered sentence; `params` carries only stable data (IDs, counts,
- * enum values), never pre-formatted or translated text.
- */
+/** `code` is a locale lookup key, never a rendered sentence; `params` holds only stable data. */
 export interface UiFailure {
   readonly code: string;
   readonly params?: Readonly<Record<string, string | number>>;
 }
 
-/** Discriminated command lifecycle: idle before first submission, then pending/success/error. */
 export type CommandState<TResult> =
   | { readonly status: "idle" }
   | { readonly status: "pending" }
@@ -42,10 +37,6 @@ export type CommandState<TResult> =
   | { readonly status: "error"; readonly failure: UiFailure };
 
 export const IDLE_COMMAND_STATE: CommandState<never> = { status: "idle" };
-
-// ---------------------------------------------------------------------------
-// Per-route view models
-// ---------------------------------------------------------------------------
 
 export interface WorkbenchViewModel {
   readonly profiles: readonly ProviderProfileSummary[];
@@ -101,23 +92,6 @@ export interface SettingsViewModel {
   readonly migration_retry_command: CommandState<MigrationSnapshot>;
 }
 
-/**
- * `intent` on the gallery_record variant (Stage 06 Task 6, additive) records which action handed
- * the record off to the inspector/Workbench -- "modify_prompt"/"regenerate"/"edit"/"inpaint" all
- * reuse this same selection channel (there is no other cross-view hand-off primitive yet), so the
- * discriminant is what lets a future consumer tell them apart instead of collapsing to one
- * indistinguishable "a gallery record got selected" signal. Optional and defaults to plain
- * selection ("view") when omitted, so every existing caller stays valid.
- */
-/**
- * `prefill` (Stage 06 fix-wave addition) carries the prompt text already extracted client-side
- * from the record's own image bytes (`image_metadata.ts`'s `extract_generation_parameters`,
- * computed once by the Gallery preview dialog) -- GalleryRecordSummary itself has no prompt field
- * (ui_capabilities.ts), so this is how "modify prompt"/"regenerate" hand a real value to the
- * Workbench without widening that contract. Absent (or all-null) when the image has no recognized
- * embedded parameters (openai_image/google_image outputs); Workbench then simply does not prefill,
- * the same honest "nothing to show" case ImageMetadataInspector already renders.
- */
 export interface InspectorSelectionPrefill {
   readonly positive_prompt: string | null;
   readonly negative_prompt: string | null;
@@ -145,10 +119,6 @@ export interface TaskStripItemViewModel {
   readonly status: "pending" | "success" | "error";
   readonly progress: number | null;
 }
-
-// ---------------------------------------------------------------------------
-// Top-level Studio state (verbatim per task-1-brief.md)
-// ---------------------------------------------------------------------------
 
 export interface StudioState {
   route: "workbench" | "prompt" | "assets" | "gallery" | "diagnostics" | "settings";

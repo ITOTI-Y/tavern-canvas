@@ -67,14 +67,6 @@ const in_progress_shape = {
   warnings: z.array(conversion_warning_schema),
 };
 
-/**
- * One discriminant per state in the brief's state machine
- * (`inventory -> copying -> verifying -> ready_to_switch -> completed`, any
- * of the first four `-> failed`, plus the standalone `not_required` outcome
- * for "no legacy data"). `failed` is the only variant carrying a failure
- * reason; `not_required` carries nothing but a check timestamp, since no
- * staging namespace or source fingerprint ever existed for it.
- */
 export const MigrationJournalPayloadSchema = z.discriminatedUnion("state", [
   z.strictObject({ state: z.literal("inventory"), ...in_progress_shape }),
   z.strictObject({ state: z.literal("copying"), ...in_progress_shape }),
@@ -101,7 +93,6 @@ export interface MigrationJournalStore {
   save(migration_id: string, payload: MigrationJournalPayload, updated_at: string): Promise<void>;
 }
 
-/** Wraps `MigrationJournalRepository` with this module's typed, discriminated payload shape. */
 export function create_journal_store(database: StorageDatabase): MigrationJournalStore {
   const repository = new MigrationJournalRepository(database);
 
@@ -139,12 +130,7 @@ export function create_journal_store(database: StorageDatabase): MigrationJourna
   };
 }
 
-/**
- * The concrete `NamespaceMarkerPort` adapter `switch_active_namespace`
- * (Task 2) needs: reads the `migration_journal` record keyed by `namespace`
- * inside one transaction and reports its state, so a switch can never
- * observe a marker that a concurrent write is still producing.
- */
+/** Reads the record in one transaction so a switch never observes a marker a concurrent write is still producing. */
 export function create_namespace_marker_port(database: StorageDatabase): NamespaceMarkerPort {
   return {
     async with_marker_transaction<T>(

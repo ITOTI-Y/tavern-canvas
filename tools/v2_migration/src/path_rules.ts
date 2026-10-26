@@ -43,16 +43,8 @@ export type PathRule = MappedPathRule | SecretPathRule | ObsoletePathRule;
 export type PathSegments = readonly string[];
 
 /**
- * Pattern segments are dot-separated (patterns are static configuration
- * strings, never derived from user data, so splitting them on "." is safe).
- * A segment of "*" matches exactly one arbitrary path segment (used for
- * entries under a dictionary keyed by user-defined profile names). A
- * trailing "**" segment matches the path built so far plus zero or more
- * further segments (used so one rule can classify an entire dynamic-key
- * container regardless of how deep a fixture nests it). More specific rules
- * (longer literal prefixes, non-recursive) always outscore shorter or
- * wildcard-heavy ones, so exact overrides — e.g. a secret field nested
- * inside an otherwise-mapped container — win ties naturally.
+ * Dot-separated pattern segments: "*" matches exactly one segment, a trailing "**" matches zero or
+ * more further segments. More specific rules outscore wildcard-heavy ones.
  */
 function match_score(pattern: string, path_segments: PathSegments): number | null {
   const pattern_segments = pattern.split(".");
@@ -80,13 +72,8 @@ function match_score(pattern: string, path_segments: PathSegments): number | nul
 }
 
 /**
- * Takes real object-property segments, one array element per key, rather
- * than a dot-joined string: a v2 profile name that itself contains a "."
- * (e.g. a NovelAI profile named "v4.5 anime") would otherwise get re-split
- * into extra segments by a joined-string representation, shifting it out of
- * alignment with a `*`-wildcard secret rule and silently reclassifying a
- * credential field as `mapped` instead of `deferred_secret_transfer` — see
- * Stage 04 review finding C2.
+ * Takes per-key segments, not a dot-joined string: a profile name like "v4.5 anime" would be
+ * re-split and shift a `*` secret rule out of alignment, classifying a credential as `mapped`.
  */
 export function classify_path(
   path_segments: PathSegments,

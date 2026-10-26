@@ -8,11 +8,6 @@ import { render_assistant_markdown } from "../../modules/assistant/assistant_mar
 import type { AssistantMessageRecord } from "../../modules/assistant/assistant_session.js";
 import styles from "./assistant.module.css";
 
-/**
- * Presentational, controller-agnostic (mirrors WorkbenchView.vue's own pattern): receives one
- * `AssistantMessageRecord` and renders it, owning only the derived async Markdown render as local
- * state -- everything else (session mutation, tool dispatch) stays in the caller.
- */
 const props = defineProps<{
   readonly message: AssistantMessageRecord;
   readonly streaming?: boolean;
@@ -84,7 +79,7 @@ function submit_edit(): void {
         @click="submit_edit"
       />
     </div>
-    <!-- rendered_html is DOMPurify output from render_assistant_markdown, restricted to a text/code/list/link allowlist (assistant_markdown.test.ts's attack-fixture coverage) -->
+    <!-- rendered_html is DOMPurify-sanitized by render_assistant_markdown. -->
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-else :class="styles.messageBubble" v-html="rendered_html" />
 

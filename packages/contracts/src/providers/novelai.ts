@@ -40,11 +40,8 @@ export const NovelAiRequestSchema = z
     dyn: z.boolean(),
     vibe_references: z.array(NovelAiVibeReferenceSchema).max(4).optional(),
     character_references: z.array(NovelAiCharacterReferenceSchema).max(6).optional(),
-    // Additive, optional inpaint fields (Stage 07 Task 3 -- inpaint.novelai_submit). `action`
-    // defaults to plain generation when absent so every request built before this addition stays
-    // valid unchanged. "infill" is NovelAI's real masked-inpaint action; `image_asset_id` and
-    // `mask_asset_id` are only meaningful (and only required) together with it -- the mask is
-    // produced by apps/extension/src/modules/media/inpaint_session.ts's 8px-grid-aligned export.
+    // Optional inpaint fields: `action` defaults to plain generation; "infill" is NovelAI's masked
+    // inpaint action and requires `image_asset_id` and `mask_asset_id`.
     action: z.enum(["generate", "infill"]).optional(),
     image_asset_id: AssetIdSchema.optional(),
     mask_asset_id: AssetIdSchema.optional(),

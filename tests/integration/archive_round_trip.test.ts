@@ -1,7 +1,3 @@
-// Proves the archive format survives a real migrated namespace end to end: export a namespace
-// that just went through the full v2 copy -> verify -> switch pipeline, import it into a fresh
-// database, and confirm every store's counts and every asset's bytes match exactly — including
-// `legacy_preferences`, added to `ARCHIVE_RECORD_STORES` by this task's controller ruling.
 import "fake-indexeddb/auto";
 
 import { ARCHIVE_RECORD_STORES, type ArchiveRecordStore } from "@tavern-canvas/contracts";
@@ -88,9 +84,7 @@ describe("scenarios 8-9: export a migrated namespace, import into a fresh databa
     });
     expect(archive_blob.size).toBeGreaterThan(0);
 
-    // "Fresh database" here means a truly separate physical database, not merely a new
-    // namespace within the one still open — the same situation a different browser profile
-    // (or the same profile after a full reinstall) importing this archive file would face.
+    // A separate physical database, not a new namespace in the open one.
     await dispose_database();
     await deleteDB(DATABASE_NAME);
     const fresh_database: StorageDatabase = await open_database();
@@ -111,8 +105,6 @@ describe("scenarios 8-9: export a migrated namespace, import into a fresh databa
     );
     expect(imported_legacy_preferences).toHaveLength(1);
 
-    // Every asset's bytes survived the round trip byte-for-byte, verified independently by
-    // rehashing the imported content rather than trusting the stored sha256 key alone.
     for (const [sha256_hex, expected_bytes] of source_snapshot.blob_bytes_by_sha256) {
       const imported_blob = await fresh_repositories.image_blobs.get(sha256_hex);
       expect(imported_blob).not.toBeNull();
@@ -127,7 +119,6 @@ describe("scenarios 8-9: export a migrated namespace, import into a fresh databa
       expect(sha256_hex_bytes(imported_bytes)).toBe(sha256_hex);
     }
 
-    // Import never touches an active namespace: the fresh database still has none staged as active.
     expect(await fresh_repositories.provider_profiles.list("primary")).toEqual([]);
   });
 });

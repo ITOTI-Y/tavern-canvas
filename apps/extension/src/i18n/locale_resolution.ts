@@ -15,22 +15,13 @@ export type LocaleMessageLoaders = Partial<
   Record<Exclude<SupportedLocale, "en">, LocaleMessageLoader>
 >;
 
-/**
- * Minimal structural surface `load_locale` needs from a Vue I18n Composer
- * (an `I18n` instance's `.global`). Kept narrow (rather than importing
- * vue-i18n's real generic `Composer` type) so this module stays a pure,
- * dependency-light unit that tests can satisfy with a plain fake, while a
- * real `createI18n(...).global` still satisfies it structurally.
- */
 export interface LocaleMessageHost {
   locale: { value: string };
   readonly availableLocales: readonly string[];
   setLocaleMessage(locale: string, messages: Record<string, unknown>): void;
 }
 
-// zh-Hans and zh-SG both resolve to Simplified Chinese content; every other
-// tag (including zh-TW/zh-Hant, which are Traditional Chinese) falls back to
-// English rather than guessing at a script.
+// zh-Hans and zh-SG resolve to Simplified Chinese; every other tag, including zh-TW/zh-Hant, falls back to English.
 const SIMPLIFIED_CHINESE_HOST_LOCALES = new Set(["zh-cn", "zh-sg", "zh-hans"]);
 
 export function normalize_host_locale(host_locale: string): SupportedLocale {

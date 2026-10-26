@@ -13,19 +13,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { VocabularyWorkerEngine } from "./vocabulary_worker.js";
 
-/**
- * Proves the encoder (Task 2's real builder) and the decoder (this Worker
- * engine) agree on the wire: builds an actual package on disk with the
- * committed `tools/vocabulary_builder` CLI entry points (not a
- * reimplementation), serves it through a disk-backed ShardByteSource, and
- * runs real VocabularyWorkerEngine queries against it. If either side's
- * shard-addressing convention, payload shape, or normalization drifts, this
- * test fails -- it is not exercising fakes anywhere past the filesystem.
- *
- * Lives here (not packages/vocabulary) because VocabularyWorkerEngine is
- * owned by apps/extension; a packages/vocabulary test cannot import it
- * without an upward, layering-violating dependency.
- */
+/** Builds a real package with the `tools/vocabulary_builder` CLI entry points and runs real Worker engine queries against it, so drift in shard addressing, payload shape or normalization fails here. */
 
 const SOURCE_RECORDS = [
   { tag: "cat", category: "animal", popularity: 100 },
@@ -94,7 +82,7 @@ async function query(
   return complete.results;
 }
 
-describe("builder <-> Worker integration (real Task 2 output)", () => {
+describe("builder <-> Worker integration (real builder output)", () => {
   let scratch_directory: string | null = null;
 
   afterEach(async () => {
@@ -126,8 +114,6 @@ describe("builder <-> Worker integration (real Task 2 output)", () => {
     ]);
     expect(build_exit_code).toBe(EXIT_SUCCESS);
 
-    // Independent re-verification pass -- the encoder side of the contract
-    // proof, on top of write_vocabulary_package's own internal self-check.
     const verify_exit_code = await run_verify(["--package", output_directory]);
     expect(verify_exit_code).toBe(EXIT_SUCCESS);
 

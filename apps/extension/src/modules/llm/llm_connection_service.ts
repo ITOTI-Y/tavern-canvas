@@ -31,13 +31,7 @@ export interface LlmTransportResponse {
   readonly body: Uint8Array;
 }
 
-/**
- * The text-LLM counterpart to `ProviderTransport`. It takes the same route-only operation shape,
- * with one addition the image side does not need: a `credential_reference`, because a user may
- * hold several text connections against one host and the transport has to know which vault entry
- * to resolve. A reference is not a credential, so this stays inside the same discipline: origin,
- * headers, and the credential value itself are all resolved host/Gateway-side.
- */
+/** Route-only like `ProviderTransport`, plus a `credential_reference` naming the vault entry; origin, headers and the credential value are resolved host/Gateway-side. */
 export interface LlmTransportPort {
   execute(operation: LlmTransportOperation): Promise<LlmTransportResponse>;
 }
@@ -137,15 +131,7 @@ function to_profile(record: LlmConnection): LlmConnectionProfile {
   });
 }
 
-/**
- * Text-LLM connection profiles: CRUD, credential handover, and the connection test.
- *
- * The credential boundary is structural rather than guarded. `save` accepts an
- * `LlmConnectionDraft`, a strict object with no credential, header, or endpoint field, so there
- * is no save path a plaintext key could travel through. The one method that touches plaintext,
- * `set_credential`, hands it straight to the vault and keeps only the derived reference; it never
- * stores, returns, or logs the value.
- */
+/** `save` accepts a strict `LlmConnectionDraft` with no credential, header or endpoint field; only `set_credential` touches plaintext, hands it to the vault and never stores, returns or logs it. */
 export class LlmConnectionService {
   readonly #deps: LlmConnectionServiceDependencies;
   readonly #listeners = new Set<(event: LlmConnectionsDomainEvent) => void>();
@@ -191,11 +177,7 @@ export class LlmConnectionService {
     this.#emit({ type: "connection_removed", connection_id });
   }
 
-  /**
-   * The only method that ever sees a plaintext credential. It writes to the vault, verifies the
-   * write with a reference probe, and persists nothing but the reference; a failed probe leaves
-   * the connection exactly as it was rather than pointing at an entry that cannot be resolved.
-   */
+  /** A failed reference probe leaves the connection unchanged rather than pointing at an unresolvable entry. */
   async set_credential(
     connection_id: string,
     plaintext_value: string,

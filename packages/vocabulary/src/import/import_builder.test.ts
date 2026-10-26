@@ -223,8 +223,6 @@ describe("ImportBuilder.import_batch -- cancellation", () => {
       builder.cancel();
     };
 
-    // Enough distinct groups (prefix, alias-via-translation, trigram, hot,
-    // detail) to guarantee more than one shard gets staged before cancel().
     const records = [
       { tag: "cat", popularity: 5 },
       { tag: "dog", aliases: ["puppy"], popularity: 3 },
@@ -254,7 +252,7 @@ describe("ImportBuilder.import_batch -- malformed records", () => {
     const payload = [
       JSON.stringify({ tag: "cat" }),
       "not json at all",
-      JSON.stringify({ tag: "" }), // fails VocabularyRecordSchema's tag.min(1)
+      JSON.stringify({ tag: "" }),
       JSON.stringify({ tag: "dog" }),
     ].join("\n");
 
@@ -358,7 +356,7 @@ describe("ImportBuilder.import_batch -- duplicate merge behavior", () => {
     expect(complete.merge_conflicts).toBe(1);
   });
 
-  it("merges the same tag text surfaced under two different legacy top-level groups (task-src-report.md SS10)", async () => {
+  it("merges the same tag text surfaced under two different legacy top-level groups", async () => {
     const database = await open_database();
     const builder = create_builder(database);
 
@@ -384,9 +382,6 @@ describe("ImportBuilder.import_batch -- duplicate merge behavior", () => {
     const store = new VocabularyPackageStore(database, NAMESPACE);
     const records = await decode_all_records(store);
     expect(records).toHaveLength(1);
-    // Two different top-level groups resolve to two different category
-    // strings for the same duplicate tag -- the first-occurrence-wins policy
-    // keeps the first, exactly like the general conflict test above.
     expect(records[0]?.category).toBe("人物");
   });
 
@@ -490,9 +485,6 @@ describe("ImportBuilder -- index correctness", () => {
       ]),
     );
 
-    // Alias shards bucket a key's two-code-point group by FNV-1a into one
-    // of 512 partitions (payload contract addendum v2), so "puppy" lands in
-    // the bucket for "pu" rather than in a shard named after it.
     const alias_pu = await decode_shard(store, `alias:${vocabulary_alias_shard_partition("pu")}`);
     expect(alias_pu.kind).toBe("alias");
     if (alias_pu.kind !== "alias") {

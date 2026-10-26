@@ -12,11 +12,6 @@ import StateSurface from "../../components/StateSurface.vue";
 import { summarize_payload, type AssetSummaryFieldSpec } from "./asset_field_schema.js";
 import styles from "./assets.module.css";
 
-/**
- * One asset category's list: search, add, drag/keyboard reorder, and per-record edit/delete.
- * Records render as cards (repeated, draggable -- roadmap allowance) but the card itself never
- * contains another card (taste directive): each card is one flat row of text + icon buttons.
- */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly summaryFields: readonly AssetSummaryFieldSpec[];

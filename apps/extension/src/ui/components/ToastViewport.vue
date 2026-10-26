@@ -22,14 +22,6 @@ export interface ToastItem {
   readonly variant?: "info" | "success" | "error";
 }
 
-/**
- * Transient completion notices only (roadmap: toasts report things like "copied parameters" or a
- * successful save, never primary content). Driven entirely by the `toasts` prop -- no internal
- * timers/state -- so the caller owns dismissal timing and can test it deterministically. Every
- * visible string is a prop; `viewportLabel`/`announceLabel` override Reka's own hard-coded English
- * defaults ("Notifications (F8)" / "Notification") the same way `NumberStepper` overrides
- * increase/decrease.
- */
 defineProps<{
   readonly toasts: readonly ToastItem[];
   readonly viewportLabel: string;

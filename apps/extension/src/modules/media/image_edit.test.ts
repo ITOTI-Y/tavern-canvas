@@ -16,7 +16,7 @@ const REQUEST_ID = "11111111-1111-4111-8111-111111111111";
 const GENERATION_ANCHOR = "a".repeat(64);
 const ASSET_ID = "33333333-3333-4333-8333-333333333333";
 
-describe("tag edit draft: reset/lock/unlock/delete (manual.tag_actions_menu)", () => {
+describe("tag edit draft: reset/lock/unlock/delete", () => {
   it("edits the current text while leaving original_text untouched", () => {
     const draft = create_tag_edit_draft("tag-1", "a cat, sitting");
     const edited = edit_tag_text(draft, "a cat, sitting, night");
@@ -85,7 +85,7 @@ describe("find_preset_matches: preset-match highlighting underlay", () => {
   });
 });
 
-describe("build_image_edit_request (manual.banana_retouch_trigger_dialog, manual.banana_edit_mode_trigger)", () => {
+describe("build_image_edit_request", () => {
   it("builds an OpenAI edit-mode request with no mask (whole-image retouch)", () => {
     const request = build_image_edit_request({
       request_id: REQUEST_ID,

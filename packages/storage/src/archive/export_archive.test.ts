@@ -47,8 +47,6 @@ describe("export_archive", () => {
     );
     await repositories.image_blobs.create(image_blob(first_sha256, first_bytes));
     await repositories.image_blobs.create(image_blob(second_sha256, second_bytes));
-    // Two image_records point at the same content (second_sha256): the archive must contain
-    // exactly one asset file for it, not two.
     await repositories.image_records.create(NAMESPACE, image_record(IDS.first, first_sha256));
     await repositories.image_records.create(NAMESPACE, image_record(IDS.second, second_sha256));
     await repositories.image_records.create(NAMESPACE, image_record(IDS.third, second_sha256));
@@ -213,7 +211,7 @@ describe("export_archive", () => {
     await zip_reader.close();
   });
 
-  it("exports a namespace mixing migrated (base-shape) and runtime gallery (flat-shape) image_records rows (I1 regression)", async () => {
+  it("exports a namespace mixing migrated (base-shape) and runtime gallery (flat-shape) image_records rows", async () => {
     const database = await open_test_database();
     const repositories = create_business_repositories(database);
     const migrated_bytes = make_asset_bytes("migrated-image");
@@ -223,10 +221,6 @@ describe("export_archive", () => {
 
     await repositories.image_blobs.create(image_blob(migrated_sha256, migrated_bytes));
     await repositories.image_blobs.create(image_blob(gallery_sha256, gallery_bytes));
-    // `image_records` holds both shapes at once — a migrated (base-shape) row
-    // and a runtime-attached (flat gallery-shape) row — exactly the mix that
-    // used to make `ImageRecordRepository.list()` throw `RepositoryValidationError`
-    // on whichever shape it did not expect.
     await repositories.image_records.create(NAMESPACE, image_record(IDS.first, migrated_sha256));
     await repositories.image_records.create(
       NAMESPACE,

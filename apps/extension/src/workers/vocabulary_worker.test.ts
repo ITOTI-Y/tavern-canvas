@@ -68,16 +68,12 @@ async function build_fixture(): Promise<Fixture> {
       ["dog", 2, 3],
     ],
   };
-  // Alias shards bucket by a hash of the key's two-code-point group
-  // (payload contract addendum v2): "夕焼け" groups under "夕焼", whose
-  // FNV-1a bucket is h132. The Worker computes that from the query alone.
+  // Alias shards bucket by a hash of the two-code-point group: "夕焼け" groups under "夕焼", whose FNV-1a bucket is h132.
   const alias_su: VocabularyPrefixOrAliasShardPayload = {
     kind: "alias",
     entries: [["夕焼け", 4, 2]],
   };
-  // Trigram shards group by the first two code points of the trigram
-  // itself (tools/vocabulary_builder/src/build_trigram_index.ts), so "sun"
-  // (group "su") and "uns" (group "un") land in different shard files.
+  // Trigram shards group by the trigram's own first two code points, so "sun" (group "su") and "uns" (group "un") land in different shard files.
   const trigram_su: VocabularyTrigramShardPayload = { kind: "trigram", entries: [["sun", [4]]] };
   const trigram_un: VocabularyTrigramShardPayload = { kind: "trigram", entries: [["uns", [4]]] };
   const hot_shard: VocabularyHotShardPayload = { kind: "hot", global: [0, 2, 4], by_category: {} };
@@ -248,10 +244,7 @@ describe("VocabularyWorkerEngine", () => {
     );
     const complete = responses.at(-1);
     if (complete?.type !== "complete") throw new Error("expected complete response");
-    // Only 2 results total ("dog", "dodge") -- exercise pagination logic with a
-    // request for the same page twice via next_page is redundant; assert the
-    // cursor contract directly instead: no more than 50 in one page and a
-    // non-null cursor only when more results remain.
+    // Assert the cursor contract directly: at most 50 results per page and a non-null cursor only when more results remain.
     expect(complete.results.length).toBeLessThanOrEqual(50);
     expect(complete.next_cursor).toBeNull();
   });
@@ -296,9 +289,7 @@ describe("VocabularyWorkerEngine", () => {
     const engine = new VocabularyWorkerEngine(fixture.byte_source, { memory_mode: "desktop" });
     await initialize(engine);
 
-    // Every cancel here targets a request_id that already finished (or
-    // never existed) -- #handle_query's `finally` cleanup never runs for
-    // any of them, so each would previously accumulate forever.
+    // Every cancel targets a request_id that already finished or never existed, so #handle_query's cleanup never removes it.
     for (let index = 0; index < 300; index += 1) {
       await engine.handle(
         {
@@ -367,12 +358,10 @@ describe("VocabularyWorkerEngine", () => {
 });
 
 /**
- * Payload contract addendum v2's narrowed residency rule: a completed
- * query pins the current page's compact result DTOs, and NOTHING pins the
- * decoded detail shards those DTOs were extracted from. The fixture sizes
- * its budget to hold the pinned manifest plus a single detail shard, while
- * every result page deliberately spans three -- so any residual page pin
- * shows up immediately as an over-budget high-water mark.
+ * A completed query pins the current page's compact result DTOs and nothing pins the decoded
+ * detail shards they were extracted from. The budget holds the pinned manifest plus a single
+ * detail shard while every result page spans three, so any residual page pin shows up as an
+ * over-budget high-water mark.
  */
 describe("VocabularyWorkerEngine -- decoded shard residency", () => {
   const DETAIL_SHARD_COUNT = 3;
@@ -524,17 +513,11 @@ describe("VocabularyWorkerEngine -- decoded shard residency", () => {
     const first = await query_first_page(engine, "00000000-0000-4000-8000-00000000000e");
     expect(engine.pending_session_count).toBe(1);
 
-    // Neither `cancel` nor any protocol message ever targets a session
-    // cursor directly -- a second completed multi-page query is the only
-    // way an old session would previously have leaked instead of being
-    // reclaimed.
+    // Neither `cancel` nor any protocol message targets a session cursor; a second completed multi-page query is the only way an old session is reclaimed.
     const second = await query_first_page(engine, "00000000-0000-4000-8000-00000000000f");
     expect(engine.pending_session_count).toBe(1);
 
-    // Not just a count assertion: the evicted session's own cursor must be
-    // unreachable (vocabulary_client.ts's supersede semantics mean a caller
-    // can never legitimately hold and page a pre-supersession cursor), while
-    // the retained one still works.
+    // The evicted session's own cursor must be unreachable while the retained one still works.
     const stale_responses: VocabularyWorkerResponse[] = [];
     await engine.handle(
       {

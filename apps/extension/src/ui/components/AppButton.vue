@@ -6,16 +6,6 @@ import { computed } from "vue";
 import AppIcon from "./AppIcon.vue";
 import styles from "./components.module.css";
 
-/**
- * The one control reserved for clear, named commands (never icon-only -- that is `IconButton`).
- * Every variant renders as text/icon-on-neutral-surface rather than a solid color fill: the
- * mandated accent/error values are calibrated as *foreground* colors (style_contract.test.ts checks
- * `--tc-accent`/`--tc-error` at body-text AA against every neutral surface in both themes), but
- * `--tc-accent` in dark mode is a light tint that fails AA as a solid fill under white label text
- * (2.9:1, verified by hand against the dark palette). Reusing the same foreground-on-surface
- * treatment as the controller's status-badge ruling sidesteps that failure without inventing an
- * unratified "on-accent" token.
- */
 const props = withDefaults(
   defineProps<{
     readonly label: string;

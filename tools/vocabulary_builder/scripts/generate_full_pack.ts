@@ -12,13 +12,9 @@ import {
   stage_pack_source,
 } from "./pack_common.js";
 
-// Generates the FULL bilingual vocabulary pack (~153k records, zh
-// translations included) -- the counterpart to generate_baseline.ts's
-// 50,000-record bundled cut. Not committed: written under output/
-// (gitignored) for the controller to upload to the user's HF dataset repo
-// (ITOTI/tavern-canvas-vocabulary) as a catalog-installable package. Unlike
-// generate_baseline.ts, this script has no --check mode -- there is no
-// committed copy to byte-compare against.
+// Generates the full bilingual pack (~153k records, zh included). Not committed: written under
+// gitignored output/ for upload to the HF dataset repo as a catalog package. No --check mode, since
+// no committed copy exists.
 
 class GenerateFullPackError extends Error {}
 

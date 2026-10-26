@@ -13,11 +13,7 @@ import {
   type LegacyShardSpec,
 } from "./extract_legacy_seed.js";
 
-// Synthetic shards generated with the module's own EVP_BytesToKey-compatible
-// derivation (already verified bit-for-bit against real `openssl enc
-// -aes-256-cbc -md md5` output in decrypt_legacy_tagdata.test.ts). All tag
-// names and translations below are invented for testing; none are copied
-// from the real st-chatu8 v2.8.1 archive.
+// Synthetic shards; all tag names and translations are invented.
 const SHARD_A_PAYLOAD =
   "U2FsdGVkX19U7CA+ajpa9MGWxfq5D4EvD66CFKVQSvGpFdUr95/Q7jPhDN5Rxlf3pLDaF9MBccK5FAwXRXrxr6hTWGEblsWzWitkvtStbKZt5uIyHp1yEsxmzjlM3DQ9UMydqCNW5euzM3FMg2V2Zb+ag4Hpwxjg0jzjguZQE8m1xpX7SyfvM7HoIAZ0+mpvQCkXWhaLgPm3R2YdYV2oyDI9SHgkQcT6Ri2z5nw5pfk5Hz9LlIp7Xz7VOzlEyMXi+PxsUyHnSxEnUGI7uoWLAs+EcJ5DyiCUk7FrqnIRXqBdFAOVVEGxD4c8Q5JXsGnt16ePz0JWfcXyVr3buEqhyqAV4gar19lEpcz16rq1j87rIsrJ5cNUPHOc2DU0i9mbUk128TcO0zbodgbAkj6cEHCvG/nmSSIgusPjJ4P6Dzs9PZ7CjxFYHJZjoVtMzgiqxwgWejeUvl8faqFIoiTtePPSb4RHlmE3wTFjEeORdH4=";
 const SHARD_B_PAYLOAD =
@@ -28,25 +24,19 @@ const SHARD_DUPLICATE_ID_PAYLOAD =
   "U2FsdGVkX19cr4dFnQCKp7jan3ID0f3pBMWJPT9+ion02W2+PBp9URdOP+PQufGu/oCET5jVIsg4uQhgmB4nLM/KtsOk3jszVUGNxiuvE0p1zuzk898K6Xe+/YxGMTLm8vwobumB02aHoZiTrAL3YzcpctSOkE8rhEZXQyFLeUoK6X05n3F7PKB9MkrnXRe+";
 const SHARD_MALFORMED_ENTRY_PAYLOAD =
   "U2FsdGVkX1+ueHOCdcCMAwQ8dTpAk0CMUwGSvv2AzWwT3q0rgOivU43T89JSoAWROczd1TnK3rsHg0eMqhvxoac6cypm8ACriHK+dJWNHG6mRzTvAxxwQ5l0iERtsjDaOmJQBbxKOap0drC5xL5n6H2eMrDcqRYw5JwrGVvBvJtP9N1K/EywSlOHG3OVIsWr";
-// Mirrors the *shape* of the real archive defect found during the real run
-// (danbooru_007.json id_index 12402: an empty tag among otherwise-valid
-// entries). The translation text here is an invented placeholder, not the
-// real archive's value.
+// An empty tag among otherwise-valid entries.
 const SHARD_WITH_ONE_JUNK_ENTRY_PAYLOAD =
   "U2FsdGVkX1+rs5DRGYrz2XOFBTmjizhr6etBbvIbgjSZ1MZiDEB+vds5sAtPETqq1M5khvJNRaRf1A98nW8VSDoupgmYxM649tDvHIJdvgxF0uVIFWC03gebYg2DE5BY4QFaxtv7UrVHNOjjfC7WBVzU8741fTWDtGLZdnNlk/6HrccaI1jkdhvIikuzIM2sZnsNLfpx7QMMKOTkSEo0D+6aQCvGdpNkjUHaLcsZrJG5ApZyVI/JN5VVrdYKI8Bkdg//mjjRRs0QPtUn0bIm9J8tiNNGFqmKWxOTq62o45N+75I7OMm3wcN+1Pzkb5ig4Nph6pKXmym0trnmtOHW7k1PlCUOdvoGULpOPUJvmTgB8+SdEhjxQw/IRz1MVBWaOWXLOqTh6rZdAP/vKcnggCmHvGjt2d9eRDXUiXpmxcvhA/sdBCVQLx3Tc394ILcacMEVYA/FvzP/RjBbu7axkWtjoEAX5UL58drkU1w8sozEY7FZu5Y3Cd8aM3MfK29Y";
-// The real tagData/tag_NSFW001.json and tags.json shape, from the actual
-// archive: `{ tag_groups: [...], tag_tags: [...] }`, not `{ danbooru_tag }`.
-// Content is invented for testing.
+// Archive shape `{ tag_groups, tag_tags }`, not `{ danbooru_tag }`; invented content.
 const GROUP_TREE_SHAPE_PAYLOAD =
   "U2FsdGVkX1/6TGAwunrgbrgD5qx3Yb8kX30lubl+IgBrdT3BqxN109xfD966zOyMQy9w0TSc/ED1kH9BL2UMk7kaOj4LFg3yrOmWivImmKDih5oSG2lr13RopauXNHosSwlC01G+/9sNYJrFRprXH8swgRIsoARwnCGhIbREgudif77baXrPvUDNU0Z4FR+/";
-// color_id 0 and 4 mixed in one shard, for the category-mapping fix.
+// color_id 0 and 4 mixed in one shard.
 const SHARD_MIXED_CATEGORIES_PAYLOAD =
   "U2FsdGVkX1/AlUuZI3x+2c47bm+XY9ynGiUiIkQPMKyax84wZg4vHZNNWqrv41Oq6RpovG1z0/IAKxPghcLAn6U0DlpgfiC9Wm0NszOy7Fqi+RSbcJEhyt6buxzu2g5ZUmkAuyNx1xzVqGkHMwMyJ/mSwH+lYMg/g8rLKkDdzis4OWU+sXhIY6pBFqbFIMpUUTXn893FhKDgDNCSoGGLeVnesuVKzMNYC619mD6VufAjVxkX2j6KnheeS+l23YX2r7IphAsv+9R7deoobI4uWsf7xS1IhOUbWqXNbjJQ2IPHvvuz//WrWLAMea8S2FZbp+xC3E7UFOMmdV1d86hOYkmtPSnrDlpu2oMmO4lrolk=";
 // A color_id (7) outside the known {0=general, 4=character} mapping.
 const SHARD_UNKNOWN_COLOR_ID_PAYLOAD =
   "U2FsdGVkX19DHGoAKYLSXsdU4XmKTCpJhfIMxpV/t1kDb/qaYI0/c2VrsMjQh6C/Qx6P4wvuM7axa5pZJwQcR079AjxkXR4Uw+jPWdn24Y6tddvB1jMMQsj5Wjaj36UqnfVNy4s7bQIZpzcrOetnsGr5plPAGxCrWh13imO4ue6kpHh/++UX00yjrTSASSrG9dbIGJgOpEl2UX6Ba8RHKb9SNXwwkX2IQAuaQFyCSew=";
-// A color_id (9) outside the known mapping, sandwiched with a valid entry —
-// used to prove skip_invalid_entries also covers this failure mode.
+// A color_id (9) outside the known mapping next to a valid entry.
 const SHARD_UNKNOWN_COLOR_ID_WITH_GOOD_NEIGHBOR_PAYLOAD =
   "U2FsdGVkX19c8ZjyH5mHP67dz0GESa1R6aYzpHG5G7hlRW577GMMrPnfcWVkR4vaMkFd+s7ZWhapuIRo+KtYpVZ+r3lE1OJfI/+Sa5c7Jvw41oZoYGrzRzrFpyGCizufAt+T14KvUBCHfqqR/JO4KDELWuXE/4T3OisUsj80XDuPxWxHGHIAZjy7eySxIGWOQVUCYOTbLnXLaMV4nh0QNGrvlK/TlBB/NPKQ+xof84vV8LUwjTBBotC4JGLuRXQ5IFL5qZsJ4rquYT49emAJ5j3ZehgMJjFn/jJr4TNxCs/sTyYK7nwhLaojf1LEOh6lhikGnU1bOM47VD+ILJLK5Frt2PMU/w636eQjhITMrol7AFpPNM7WP7BrJzLQwK6V";
 
@@ -56,7 +46,7 @@ const shard = (label: string, payload: string): LegacyShardSpec => ({
 });
 
 describe("LEGACY_V2_TAGDATA_PASSPHRASE", () => {
-  it("matches the passphrase documented in the task brief", () => {
+  it("matches the passphrase v2.8.1 ships in its source", () => {
     expect(LEGACY_V2_TAGDATA_PASSPHRASE).toBe("a-very-secret-key-that-is-not-so-secret");
   });
 });

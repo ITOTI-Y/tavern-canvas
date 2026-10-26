@@ -34,12 +34,6 @@ import {
 
 import { submit_video_generation, type VideoGenerationRequest } from "./video_generation.js";
 
-// ---------------------------------------------------------------------------
-// Durable Stage 02 job persistence -- neither this nor any concrete JobExecutor is wired up
-// anywhere in the app today (bootstrap.ts/studio_controller.ts construct no ImageJobQueue at
-// all); this is the first real, working consumer.
-// ---------------------------------------------------------------------------
-
 export class IndexedDbJobPersistence implements JobPersistencePort {
   readonly #database: StorageDatabase;
   readonly #namespace: string;
@@ -74,11 +68,7 @@ export class IndexedDbJobPersistence implements JobPersistencePort {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Execution plans: how to actually turn a queued job into provider output. Keyed by request_id
-// (known before `queue.enqueue()` is even called) rather than job_id, so registration can never
-// race the queue's own microtask-scheduled drain.
-// ---------------------------------------------------------------------------
+// Plans are keyed by request_id (known before enqueue) so registration cannot race the queue's microtask-scheduled drain.
 
 export type MediaExecutionPlan =
   | { readonly kind: "adapter"; readonly request: ImageGenerationRequest }
@@ -97,10 +87,6 @@ export class MediaExecutionPlanRegistry {
     return plan;
   }
 }
-
-// ---------------------------------------------------------------------------
-// Stage 04 asset I/O ports consumed by the executor and by "cache-only source" resolution.
-// ---------------------------------------------------------------------------
 
 export interface PutMediaImageInput {
   readonly id: string;
@@ -134,7 +120,6 @@ export interface SourceMessageIdentity {
   readonly swipe_id: number;
 }
 
-/** One generated image as any executor produces it, before it becomes a Stage 04 record. */
 export interface GeneratedImageBytes {
   readonly bytes: Uint8Array;
   readonly media_type: string;
@@ -147,11 +132,6 @@ export interface GeneratedImageStoreDeps {
   readonly resolve_source_message: (job: GenerationJobSnapshot) => SourceMessageIdentity;
 }
 
-/**
- * The single place a generated image becomes a persisted Stage 04 record, shared by the adapter
- * executor and the Gateway executor so both write the same metadata under the same source-message
- * identity regardless of which side of the network ran the provider.
- */
 export async function persist_generated_images(
   deps: GeneratedImageStoreDeps,
   job: GenerationJobSnapshot,
@@ -176,13 +156,6 @@ export async function persist_generated_images(
   }
   return image_ids.map((id) => ImageIdSchema.parse(id));
 }
-
-// ---------------------------------------------------------------------------
-// JobExecutor: routes a queued job to either a real ProviderAdapter (t2i/i2i/edit/ComfyUI-inpaint/
-// NovelAI-inpaint -- all representable in the existing ImageGenerationRequest union) or the
-// direct-transport video path (video_generation.ts's submit_video_generation, since no provider
-// contract has a video-output mode), then persists every output asset as a Stage 04 image.
-// ---------------------------------------------------------------------------
 
 const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
@@ -287,15 +260,6 @@ export class MediaJobExecutor implements JobExecutor {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Command surface: manual text-to-image, image-to-image, edit, ComfyUI/NovelAI inpaint, and video
-// all funnel through `submit_manual_generation`/`submit_manual_video`, which enqueue a typed
-// Stage 02 job and register the matching execution plan. "Regenerate" and "modify prompt" are the
-// same submission mechanics applied to a request rebuilt from a cached source (see
-// `resolve_cached_source_asset` for the "cache-only source" case: no live job, only a Stage 04
-// gallery record, still enough to resubmit).
-// ---------------------------------------------------------------------------
-
 export interface MediaJobBase {
   readonly chat_id: string;
   readonly requested_swipe_id: number;
@@ -358,15 +322,6 @@ export function cancel_media_job(
   return deps.queue.cancel(job_id);
 }
 
-// ---------------------------------------------------------------------------
-// Send-button press classification (manual.send_button_longpress): a plain click sends
-// immediately; a 500ms-or-longer press opens GenerationParametersDialog first. The actual
-// press-and-hold timer lives wherever the send button's own DOM is rendered (a compose/send
-// control that does not exist yet anywhere in this codebase, in-scope or otherwise); this
-// classifier is the reusable, host-agnostic decision that consumer applies to a measured
-// press duration, kept here so the behavior is real and tested rather than only described.
-// ---------------------------------------------------------------------------
-
 export const SEND_BUTTON_LONG_PRESS_THRESHOLD_MS = 500;
 
 export type SendButtonPressOutcome = "send_immediately" | "open_size_popup";
@@ -377,22 +332,12 @@ export function classify_send_button_press(press_duration_ms: number): SendButto
     : "send_immediately";
 }
 
-/**
- * "cache-only source": resolves an already-generated image's bytes purely from the Stage 04
- * gallery store (no live Stage 02 job required -- the original job may be long gone), for i2i/
- * edit/inpaint flows and for regenerate/modify-prompt's "reuse an existing image as the starting
- * point" case.
- */
 export async function resolve_cached_source_asset(
   store: ImageStorePort,
   image_id: string,
 ): Promise<CachedSourceAsset | null> {
   return store.read_image(image_id);
 }
-
-// ---------------------------------------------------------------------------
-// Source-message navigation (manual generation's per-record "go to source message" action)
-// ---------------------------------------------------------------------------
 
 export interface SourceMessageNavigationTarget {
   readonly chat_id: string;
@@ -420,14 +365,6 @@ export async function navigate_to_source_message(
   }
   await navigation.navigate(source_message);
 }
-
-// ---------------------------------------------------------------------------
-// Attach/detach <-> in-memory ImageJobQueue wiring (Stage 03/04 carry-over). `ImageJobQueue`
-// already structurally satisfies `MessageBindingJobPort` (get/subscribe/mark_attached/
-// mark_orphaned), so no adapter class is needed -- this factory just proves the two existing,
-// already-tested pieces (ImageJobQueue, MessageBinder) compose correctly for media-originated
-// jobs, and gives the app's real bootstrap a single call to wire in production.
-// ---------------------------------------------------------------------------
 
 export function bind_media_jobs_to_messages(
   queue: ImageJobQueue,

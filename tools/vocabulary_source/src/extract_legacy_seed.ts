@@ -5,11 +5,7 @@ import { z } from "zod";
 import { decrypt_legacy_openssl_payload } from "./decrypt_legacy_tagdata.js";
 import { VocabularyRecordSchema, type VocabularyRecord } from "./vocabulary_record_schema.js";
 
-/**
- * The legacy v2.8.1 shipped this AES passphrase in cleartext inside its own
- * source (it protects nothing beyond casual inspection of the bundled JSON).
- * Not a runtime secret; documented verbatim in the task brief.
- */
+/** v2.8.1 ships this AES passphrase in cleartext in its own source; it is not a secret. */
 export const LEGACY_V2_TAGDATA_PASSPHRASE = "a-very-secret-key-that-is-not-so-secret";
 
 const LegacyDanbooruTagEntrySchema = z.strictObject({
@@ -18,27 +14,20 @@ const LegacyDanbooruTagEntrySchema = z.strictObject({
   color_id: z.number().int().nonnegative(),
   translate: z.string(),
   hot: z.number().int().nonnegative(),
-  // A count of how many aliases the tag has in v2's UI, not alias content.
-  // Dropped when mapping to VocabularyRecordSchema per binding brief ruling.
+  // Alias count shown in v2's UI, not alias content; dropped when mapping.
   aliases: z.number().int().nonnegative(),
 });
 
 /**
- * v2's `color_id` reuses (a subset of) Danbooru's own tag category enum
- * (0=general, 1=artist, 3=copyright, 4=character, 5=meta — see
- * `danbooru_client.ts`'s `DANBOORU_TAG_CATEGORY_NAMES`), not a decorative
- * UI color as the task brief originally assumed. Only `0` and `4` are
- * observed in the real archive (verified across all 49,857 legacy records).
- * Controller ruling (follow-up to the SRC report): map these two known
- * values to real categories; any other value is unrecognized and must fail
- * loudly with the value and record, never silently default to "general".
+ * v2's `color_id` uses Danbooru's tag category enum (0=general, 1=artist, 3=copyright, 4=character,
+ * 5=meta); only 0 and 4 occur in the archive. Any other value throws instead of defaulting to
+ * "general".
  */
 const LEGACY_COLOR_ID_CATEGORY: Readonly<Record<number, string>> = {
   0: "general",
   4: "character",
 };
 
-/** Throws for any `color_id` outside `LEGACY_COLOR_ID_CATEGORY` — never defaults. */
 function map_legacy_color_id_to_category(color_id: number): string {
   const category = LEGACY_COLOR_ID_CATEGORY[color_id];
   if (category === undefined) {
@@ -50,10 +39,8 @@ function map_legacy_color_id_to_category(color_id: number): string {
   return category;
 }
 
-// Loose top-level shape check only (danbooru_tag entries as `unknown[]`).
-// Real per-entry validation happens one entry at a time in parse_legacy_shard
-// so a single corrupt entry can be identified precisely and, if the caller
-// opts in, skipped without discarding the rest of an otherwise-valid shard.
+// Loose top-level check; per-entry validation in parse_legacy_shard lets one corrupt entry be
+// identified and, if the caller opts in, skipped.
 const LegacyDanbooruTagFileShapeSchema = z.strictObject({
   danbooru_tag: z.array(z.unknown()),
 });
@@ -72,15 +59,8 @@ export interface InvalidLegacyEntry {
 
 export interface ParseLegacyShardOptions {
   /**
-   * Default false: any entry that fails `LegacyDanbooruTagEntrySchema` or
-   * the mapped `VocabularyRecordSchema` throws immediately, failing the
-   * whole run ("malformed records fail the run loudly" — the task brief's
-   * binding default). Set true only for a specific, reviewed, real-archive
-   * defect (see task-src-report.md's finding on `danbooru_007.json`
-   * id_index 12402, an empty-tag junk entry) to skip just that entry
-   * instead of aborting the entire 49,857-record extraction. Every skip is
-   * still reported via `on_invalid_entry` — this is "skip with mandatory
-   * visibility", never a silent drop.
+   * Default false: an invalid entry throws. Set true to skip a known-bad entry (e.g. the empty-tag
+   * entry in `danbooru_007.json`); every skip is still reported via `on_invalid_entry`.
    */
   readonly skip_invalid_entries?: boolean;
   readonly on_invalid_entry?: (entry: InvalidLegacyEntry) => void;
@@ -93,14 +73,6 @@ function compare_tag_records(left: VocabularyRecord, right: VocabularyRecord): n
   return left.tag < right.tag ? -1 : left.tag > right.tag ? 1 : 0;
 }
 
-/**
- * Decrypts, parses, and validates one shard's ciphertext, mapping every
- * `danbooru_tag` entry onto `VocabularyRecordSchema`. Throws loudly on
- * decryption failure, JSON parse failure, or legacy container-shape
- * validation failure in all cases. Per-entry validation failures throw too
- * unless `options.skip_invalid_entries` is explicitly set — see
- * `ParseLegacyShardOptions`.
- */
 export function parse_legacy_shard(
   spec: LegacyShardSpec,
   passphrase: string,
@@ -178,11 +150,6 @@ export function parse_legacy_shard(
   return records;
 }
 
-/**
- * Combines multiple parsed shards into one deterministically ordered record
- * list (popularity descending, then tag ascending), rejecting duplicate
- * `record_id` or `tag` values across shards instead of silently overwriting.
- */
 export function extract_legacy_seed_records(
   shards: readonly LegacyShardSpec[],
   passphrase: string,
@@ -222,18 +189,9 @@ export interface LegacyShardFileSpec {
 }
 
 /**
- * Reads and extracts a list of legacy shard files from disk.
- *
- * Default real-archive file list (see task-src-report.md for the full
- * finding): only `danbooru_001.json`..`danbooru_025.json` decrypt to the
- * `{ danbooru_tag: [...] }` shape (24 shards of 2000 + a final shard of
- * 1857 = 49,857 records, `id_index` continuous 1..49857). `tag_NSFW001.json`
- * and `tags.json` both decrypt to a *different* shape,
- * `{ tag_groups: [...], tag_tags: [...] }` (a zh UI group tree — `tags.json`
- * is the general tree, `tag_NSFW001.json` its NSFW-labeled counterpart), and
- * are therefore out of scope for this function; passing either through here
- * fails loudly via `LegacyDanbooruTagFileShapeSchema` validation rather than
- * silently coercing them.
+ * Only `danbooru_001.json`..`danbooru_025.json` decrypt to `{ danbooru_tag: [...] }` (49,857
+ * records). `tag_NSFW001.json` and `tags.json` hold a `{ tag_groups, tag_tags }` UI tree and fail
+ * `LegacyDanbooruTagFileShapeSchema` validation.
  */
 export async function extract_legacy_seed_from_files(
   files: readonly LegacyShardFileSpec[],

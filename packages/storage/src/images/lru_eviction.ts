@@ -10,16 +10,13 @@ export interface StorageEstimate {
 }
 
 export interface LruEvictionConfig {
-  /** Pressure ratio (usage / quota) at or above which cleanup may run. */
   readonly start_pressure_ratio: number;
-  /** Pressure ratio cleanup stops reclaiming bytes at. */
   readonly target_pressure_ratio: number;
 }
 
 export interface LruEvictionResult {
   readonly reclaimed_bytes: number;
   readonly evicted_sha256: readonly Sha256[];
-  /** Blobs excluded as foreign/unparseable `image_records` rows this job could not prove safe to evict — see `partition_records`. */
   readonly excluded_count: number;
 }
 
@@ -55,7 +52,6 @@ async function safe_estimate(
 
 interface RecordPartition {
   readonly records_by_sha256: ReadonlyMap<Sha256, readonly GalleryImageRecord[]>;
-  /** sha256 values with at least one `image_records` row this job cannot prove safe to evict. */
   readonly foreign_sha256: ReadonlySet<Sha256>;
 }
 
@@ -67,14 +63,8 @@ function raw_sha256(raw: unknown): Sha256 | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-/**
- * `image_records` is shared with non-gallery writers — migrated v2 assets in
- * particular carry no `persisted_url`/`pinned` under `GalleryImageRecordSchema`'s
- * flat fields, so they fail to parse as one. Such a row can never be proven
- * safe to evict, so its sha256 is excluded from eviction entirely (via
- * `foreign_sha256`) rather than silently dropped, in case it shares content
- * with an otherwise-eligible gallery record.
- */
+// `image_records` is shared with non-gallery writers (migrated assets). Rows that fail to parse as
+// gallery records cannot be proven safe to evict, so their sha256 is excluded via `foreign_sha256`.
 function partition_records(raw_records: readonly unknown[]): RecordPartition {
   const records_by_sha256 = new Map<Sha256, GalleryImageRecord[]>();
   const foreign_sha256 = new Set<Sha256>();
@@ -97,12 +87,8 @@ function partition_records(raw_records: readonly unknown[]): RecordPartition {
   return { records_by_sha256, foreign_sha256 };
 }
 
-/**
- * A blob may only have its local bytes evicted while its metadata (the
- * image_records rows) is retained. That is only safe when nothing would lose
- * its sole recoverable copy: every referencing record must carry a
- * persisted_url the content can be re-fetched from, and none may be pinned.
- */
+// Local bytes may be evicted only if every referencing record has a persisted_url to re-fetch from
+// and none is pinned.
 function build_candidate(
   sha256_value: Sha256,
   byte_length: number,
@@ -125,12 +111,6 @@ function build_candidate(
   return { sha256: sha256_value, byte_length, last_accessed_at };
 }
 
-/**
- * Evicts local blob bytes for least-recently-accessed, eligible content until
- * usage falls at or below the target pressure ratio, or eligible candidates
- * are exhausted. Cleanup only runs once usage/quota reaches the start
- * pressure ratio, and is a no-op when the storage estimate is unavailable.
- */
 export async function run_lru_eviction(
   database: IDBPDatabase<DBSchema>,
   config: LruEvictionConfig,

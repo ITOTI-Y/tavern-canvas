@@ -24,14 +24,6 @@ import type {
   StudioCapabilities,
 } from "../../apps/extension/src/ui/contracts/ui_capabilities.js";
 
-/**
- * The cloud counterpart to `composed_generation_flow.test.ts`: the same composition root, the same
- * real queue, executor, adapter and storage, but the transport is the browser-direct one the
- * 2026-08-07 decision introduced. Only two things are faked -- the host secrets endpoint and the
- * provider `fetch` -- and they are deliberately separate functions, so the test can show that the
- * credential travels host-vault -> auth header and appears nowhere else.
- */
-
 const PROFILE_ID = "11111111-1111-4111-8111-111111111111";
 const REQUEST_ID = "22222222-2222-4222-8222-222222222222";
 const ANCHOR = "a".repeat(64);
@@ -136,7 +128,6 @@ function create_globals(options: { readonly reveals_secrets: boolean }): {
   };
 }
 
-/** Deliberately carries no `base_url`: a cloud profile has no field that could name an origin. */
 async function seed_cloud_profile(
   database: StorageDatabase,
   options: { readonly with_credential: boolean },
@@ -308,7 +299,6 @@ describe("direct cloud generation flow", () => {
     expect(harness.requests[0]?.headers.authorization).toBe(`Bearer ${PLAINTEXT_CREDENTIAL}`);
     expect(harness.requests[0]?.body).toContain("lantern-lit canal");
 
-    // The credential came from the host vault, addressed by reference, at call time.
     expect(harness.host_calls).toEqual([{ route: "/api/secrets/view", body: JSON.stringify({}) }]);
 
     const records = await new GalleryImageRecordRepository(harness.database).list(NAMESPACE);

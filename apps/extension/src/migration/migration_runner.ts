@@ -115,13 +115,7 @@ const PROVIDER_MODE_PREFIXES: Readonly<Record<string, (legacy: LegacySettings) =
     llm: (legacy) => legacy.current_llm_profile,
   };
 
-/**
- * Best-effort: v2's "mode" plus the per-kind "current profile" fields select
- * one provider profile, but the mapping is heuristic (v2 never recorded this
- * relationship explicitly). Unresolved cases are left `null`, matching
- * `convert_settings`'s own default and its accompanying warning — this never
- * blocks migration.
- */
+/** Heuristic: v2 never recorded which profile its mode selected; unresolved cases stay `null`. */
 function resolve_active_provider_profile_id(
   legacy: LegacySettings,
   namespace: string,
@@ -192,16 +186,7 @@ function build_plan(
   };
 }
 
-/**
- * Writes one migrated image and, only the first time this record id is seen,
- * accounts for its blob (create at ref_count 1, or increment an existing
- * blob's ref_count). Checking "was this record already present" inside the
- * same transaction — rather than trusting the batch-level `completed_batches`
- * guard alone — makes the write safe to repeat even if a prior attempt
- * committed this transaction but crashed before the journal recorded the
- * batch as done, which is exactly the guarantee "rerun does not duplicate
- * blob references" asks for.
- */
+/** The blob is counted only the first time this record id is seen, inside the same transaction, so a rerun after a crash before the journal update does not duplicate references. */
 async function put_migrated_image(
   transaction: StorageWriteTransaction,
   repositories: BusinessRepositories,
@@ -269,7 +254,6 @@ interface CopyBatchContext {
   readonly secret_destination: SecretDestinationPort | null;
 }
 
-/** Every batch is one atomic transaction, upserting records via `.put` so a repeated batch never duplicates or errors. */
 async function run_copy_batch(batch: CopyBatchName, context: CopyBatchContext): Promise<number> {
   const { database, namespace, plan, bytes_by_sha256, migrated_at } = context;
   const repositories = create_business_repositories(database);
@@ -284,9 +268,7 @@ async function run_copy_batch(batch: CopyBatchName, context: CopyBatchContext): 
       });
 
     case "secrets": {
-      // A Gateway profile only replaces the SillyTavern secret destination once its token
-      // reference is present. An endpoint alone is not a credential and must not discard v2
-      // secrets before they have a usable destination.
+      // An endpoint alone is not a credential: v2 secrets are replaced only once the token reference exists.
       const gateway = context.settings.get_settings().gateway;
       const has_gateway_token_reference =
         typeof gateway.token_secret_id === "string" && gateway.token_secret_id.length > 0;
@@ -413,19 +395,7 @@ type CountedStore =
   | "vocabulary_groups"
   | "legacy_preferences";
 
-/**
- * Re-reads every store from the staging namespace and cross-checks it
- * against the plan computed before copying, then re-reads and re-hashes
- * every distinct image blob actually written. This is independent of the
- * per-batch write itself, so it catches a write that silently dropped
- * records or a blob whose stored bytes drifted from its key.
- *
- * The image-record counts are additionally cross-checked against
- * `inventory` — counted directly from the raw v2 source, independent of any
- * converter — so a converter that silently drops a record (most commonly:
- * an image whose bytes never resolved) fails here even though both `plan`
- * and the store agree with each other.
- */
+/** Image-record counts are also checked against `inventory`, counted from the raw v2 source, so a converter that silently drops a record fails here. */
 async function verify(
   database: StorageDatabase,
   namespace: string,
@@ -508,21 +478,7 @@ async function verify(
 
 type ProgressState = Exclude<MigrationJournalPayload["state"], "not_required" | "failed">;
 
-/**
- * Runs the resumable copy-verify-switch migration. Legacy data is read-only
- * throughout: this function never writes to `legacy_source`/`image_resolver`,
- * never deletes anything, and only ever advances `active_namespace` through
- * `switch_active_namespace`, exactly once, after verification passes.
- *
- * Two failure shapes are deliberately different. Expected, diagnosable
- * failures (an unknown setting path, a missing blob, a hash mismatch, a
- * blocked secret transfer, ...) are caught, journaled as `failed`, and
- * returned as `{status: "failed", ...}` — calling this again after fixing the
- * cause resumes from the last committed batch. Anything else (a thrown error
- * from the injected ports, an unexpected bug) is left to propagate: the
- * journal simply stays at whatever the last successfully committed batch
- * left it at, ready to resume on the next call.
- */
+/** Legacy data is read-only; `active_namespace` advances once, after verification. Expected failures are journaled as `failed` and returned; anything else propagates and leaves the journal at the last committed batch. */
 export async function run_migration(options: RunMigrationOptions): Promise<MigrationOutcome> {
   const { database, settings, legacy_source, image_resolver, secret_destination } = options;
   const migrated_at = options.migrated_at ?? new Date().toISOString();
@@ -537,10 +493,6 @@ export async function run_migration(options: RunMigrationOptions): Promise<Migra
     );
     return { status: "not_required" };
   }
-  // Deterministic: the same v2 source always derives the same staging
-  // namespace, so calling this again (interrupted process, or a blocked
-  // migration retried after the user fixes its cause) naturally resumes the
-  // same journal instead of needing a separately persisted resume token.
   const namespace = `${MIGRATION_NAMESPACE_PREFIX}${deterministic_uuid(source.fingerprint)}`;
   const existing = await journal_store.load(namespace);
   if (existing !== null && existing.payload.state === "completed") {
@@ -562,9 +514,6 @@ export async function run_migration(options: RunMigrationOptions): Promise<Migra
       : {}),
   };
   let plan: MigrationPlan | null = null;
-  // Preserved across a resume purely for journal continuity: `verify()`
-  // always recomputes this from the actually-stored blobs before it is ever
-  // trusted, so a stale value here can never mask real corruption.
   let image_hashes: readonly string[] =
     existing !== null && existing.payload.state !== "not_required"
       ? existing.payload.image_hashes
@@ -678,12 +627,7 @@ export async function run_migration(options: RunMigrationOptions): Promise<Migra
     }
 
     try {
-      // `gateway` is excluded: v2 has no Gateway concept, so
-      // `convert_settings` always produces an unconfigured placeholder for it
-      // (settings_converter.ts) — applying it here would wipe a live,
-      // user-configured Gateway (endpoint/token_secret_id/acknowledgments),
-      // including the exact configuration the "secrets" batch just relied on
-      // to skip client-side credential transfer.
+      // `gateway` is excluded: v2 has no Gateway, so applying the placeholder would wipe the user's live Gateway configuration.
       const {
         schema_version: _schema_version,
         active_namespace: _active_namespace,
@@ -692,9 +636,7 @@ export async function run_migration(options: RunMigrationOptions): Promise<Migra
       } = plan.settings;
       settings.update_settings(cosmetic);
     } catch {
-      // Best-effort: the namespace pointer is already switched and verified;
-      // cosmetic settings (theme mode, concurrency, ...) can be reapplied on
-      // a later run without risking the data that already migrated.
+      // Cosmetic settings are best-effort; the namespace is already switched and verified.
     }
 
     await save_progress("completed");

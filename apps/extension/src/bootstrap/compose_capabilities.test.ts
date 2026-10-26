@@ -35,7 +35,6 @@ const BLOCKED_PROBE: BootstrapProbeResult = {
   missing_capabilities: ["tavern_helper"],
 };
 
-/** A host complete enough for the composite adapter plus the settings/secret surfaces. */
 function create_globals(overrides: { readonly with_settings?: boolean } = {}): object {
   const context: Record<string, unknown> = {
     getCurrentLocale: () => "en",
@@ -71,7 +70,6 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
   };
 }
 
-/** Answers the SillyTavern secret-vault routes the composed capabilities actually call. */
 function create_secrets_fetch() {
   const vault = new Map<string, string>();
   return vi.fn((route: string, init: { readonly body: string }) => {

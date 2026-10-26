@@ -1,10 +1,5 @@
 import type { AssetId, ImageGenerationRequest, ProviderId, Uuid } from "@tavern-canvas/contracts";
 
-/**
- * A reference image the user picked for the current draft, sourced from Assets' `reference`
- * category (`AssetsViewModel.records.reference` -- see WorkbenchView.vue). The Workbench itself
- * never uploads or stores images; it only orders and forwards asset IDs that already exist.
- */
 export interface ReferenceDraftItem {
   readonly asset_id: AssetId;
   readonly display_name: string;
@@ -16,8 +11,6 @@ export interface GenerationDraftInput {
   readonly negative_prompt: string;
   readonly image_count: number;
   readonly references: readonly ReferenceDraftItem[];
-  /** Overrides the provider's placeholder model. An automatic request supplies the active
-   * profile's own allowlisted model, which is the only one that profile will accept. */
   readonly model_id?: string;
 }
 
@@ -30,9 +23,6 @@ export class UnsupportedProviderError extends Error {
   }
 }
 
-/** `sd_webui` and `novelai` accept any provider identifier, so a profile's model passes straight
- * through. OpenAI and Google publish closed model enums, so an override is honoured only when the
- * contract already names it and the documented default stands otherwise. */
 const OPENAI_IMAGE_MODEL_IDS = [
   "gpt-image-1",
   "gpt-image-1-mini",
@@ -67,33 +57,14 @@ function to_hex(bytes: Uint8Array): string {
   return out;
 }
 
-/**
- * `generation_anchor` (Sha256Schema) is normally a hash of the chat `SourceContext` the
- * generation is tied to (packages/core/src/generation/source_context.ts) -- the chat_id, active
- * swipes, and message content hashes at the moment the request was made. A Workbench submission
- * is not triggered from a specific chat message (it is a standalone, manually composed request),
- * so there is no `SourceContext` to hash. This computes a real SHA-256 digest of the request's
- * own identity (request id + submission time) as a syntactically valid, collision-resistant
- * placeholder anchor -- NOT a claim that it reconstructs any chat context. Flagged in
- * task-5-report.md as a genuine contract gap: the plan does not define what a manual, non-chat
- * generation should anchor to.
- */
+/** Placeholder digest of the request id and submission time: a manual request has no chat `SourceContext` to anchor to. */
 export async function compute_generation_anchor(request_id: Uuid): Promise<string> {
   const material = new TextEncoder().encode(`${request_id}:${Date.now().toString()}`);
   const digest = await crypto.subtle.digest("SHA-256", material);
   return to_hex(new Uint8Array(digest));
 }
 
-/**
- * Builds a fully typed `ImageGenerationRequest` for the given provider from the Workbench's
- * common (provider-agnostic) draft fields. No provider-specific settings surface (model,
- * sampler, steps, workflow...) exists anywhere in the current contracts (ProviderProfileSummary
- * carries only identity fields, not generation defaults -- see task-5-report.md's "request
- * construction" concern), so every provider-specific required field below is a documented,
- * fixed placeholder pending a real per-profile parameter editor. ComfyUI additionally requires a
- * real, pre-existing `workflow_id` (an asset that must already exist in Assets/workflow) that
- * Workbench has no way to supply safely, so it is rejected instead of faked.
- */
+/** Provider-specific required fields use fixed placeholders. ComfyUI is rejected because Workbench cannot supply an existing `workflow_id`. */
 export async function build_generation_request(
   input: GenerationDraftInput,
   request_id: Uuid,
@@ -101,8 +72,6 @@ export async function build_generation_request(
   return build_provider_request(input, request_id, await compute_generation_anchor(request_id));
 }
 
-/** The same construction against an anchor the caller already owns: an automatic request is
- * anchored to its live `GenerationSession`, never to a freshly minted placeholder. */
 export function build_provider_request(
   input: GenerationDraftInput,
   request_id: Uuid,

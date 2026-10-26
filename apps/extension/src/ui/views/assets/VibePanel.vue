@@ -17,10 +17,6 @@ import { replace_values, use_asset_category_panel } from "./use_asset_category_p
 const NOVELAI = "novelai";
 const GOOGLE = "google";
 
-/** Vibe/reference transfer groups: NovelAI's vibe transfer (strength + information_extracted,
- * per its own request shape) or a Google reference group (no per-item transfer parameters). One
- * category covers both, matching the existing assets.vibe locale copy which already describes
- * this tab as holding either kind. */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly loading: boolean;

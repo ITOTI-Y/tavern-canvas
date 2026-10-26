@@ -7,12 +7,7 @@ import {
   requires_http_acknowledgment,
 } from "./http_acknowledgment.js";
 
-/**
- * What the active provider profile contributes to the decision. `provider_id` selects the catalog
- * entry, `credential_reference` names a vault entry, and `secrets_readable` records whether this
- * host exposes a secret *resolver* at all -- storing a credential and reading one back are
- * separately granted, and only the second one makes a direct call possible.
- */
+/** `secrets_readable`: storing a credential and reading one back are granted separately, and only reading makes a direct call possible. */
 export interface DirectCloudCandidate {
   readonly provider_id: ProviderId;
   readonly credential_reference: string | null;
@@ -47,16 +42,9 @@ export class TransportConfigurationError extends Error {
 }
 
 /**
- * Fixed, settings-driven priority. Nothing here is client-configurable; the user's only levers are
- * which profile is active and whether a Gateway endpoint is configured.
- *
- * 1. `gateway`   -- configuring an endpoint *is* the opt-in to the higher-security route, so it
- *                   outranks everything else whenever one is present.
- * 2. `tauri`     -- a host-native provider bridge keeps the credential out of the page entirely.
- * 3. `host_proxy`-- same reasoning, for a host that relays provider calls first-party.
- * 4. `direct_cloud` -- the default for the three catalog cloud vendors (user decision
- *                   2026-08-07). Requires a vault reference and a host that can resolve it.
- * 5. `local_direct` -- a loopback provider the user runs themselves.
+ * Fixed priority: `gateway` (configuring an endpoint is the opt-in to the higher-security route),
+ * `tauri`, `host_proxy`, `direct_cloud` (needs a vault reference and a host that can resolve it),
+ * `local_direct`.
  */
 export function select_transport(input: TransportSelectionInput): TransportSelection {
   if (input.gateway_endpoint !== null) {
@@ -89,12 +77,7 @@ export function select_transport(input: TransportSelectionInput): TransportSelec
   throw new TransportConfigurationError("No provider transport is available");
 }
 
-/**
- * `null` means "this profile is not a direct-catalog cloud provider, keep looking". A provider
- * that *is* in the catalog but cannot produce a credential fails loudly instead: falling through
- * to the loopback branch would end in the generic "no transport is available" message, which tells
- * the user nothing about the credential they actually need to set.
- */
+/** `null` means the profile is not a direct-catalog cloud provider. A catalog provider that cannot produce a credential fails loudly instead of falling through to the generic "no transport" error. */
 function select_direct_cloud(candidate: DirectCloudCandidate | null): TransportSelection | null {
   if (candidate === null || direct_image_catalog_entry(candidate.provider_id) === null) {
     return null;

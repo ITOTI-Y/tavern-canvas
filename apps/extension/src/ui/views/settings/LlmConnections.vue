@@ -15,12 +15,7 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import { LLM_PROVIDER_KINDS, llm_provider_kind_label, llm_route_options } from "./llm_labels.js";
 import styles from "./settings.module.css";
 
-/**
- * Text-LLM connection management. The form has no endpoint, header, or credential field: the
- * origin is host-resolved, the route is chosen from the dialect's own catalog, and the credential
- * travels through a separate action to the selected credential backend. Only its reference enters
- * application state. That is why "save" and "set credential" are separate buttons.
- */
+/** The form has no endpoint, header, or credential field; the credential goes through a separate action to the credential backend. */
 const props = defineProps<{
   readonly connections: readonly LlmConnectionProfile[];
   readonly loading: boolean;
@@ -56,8 +51,6 @@ const credential_value = ref("");
 const credential_pending = ref(false);
 const credential_error = ref<string | null>(null);
 
-/** Row-scoped test feedback, keyed by connection id: one shared CommandState would misattribute
- * one row's outcome to every row (the same reasoning ProviderProfiles.vue records). */
 const test_state = ref<Map<Uuid, { readonly pending: boolean; readonly label: string | null }>>(
   new Map(),
 );
@@ -73,9 +66,6 @@ const route_options = computed(() =>
   })),
 );
 
-/** Bridges AppSelect's generic `string` model to the narrower union; every option value comes
- * from `LLM_PROVIDER_KINDS`, so an emitted value is always a valid kind. Switching kind resets
- * the route to that kind's first catalog entry, since routes never cross dialects. */
 const provider_kind_model = computed<string>({
   get: () => draft.value?.provider_kind ?? "openai_compatible",
   set: (value) => {

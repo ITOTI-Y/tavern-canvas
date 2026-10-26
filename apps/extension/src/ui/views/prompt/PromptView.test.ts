@@ -259,8 +259,6 @@ describe("PromptView: unsaved navigation confirmation", () => {
       },
     });
 
-    // Establish the saved baseline (component captures it once the draft first arrives), then
-    // dirty the draft the same way the parent controller would round-trip an edit.
     await flushPromises();
     await wrapper.setProps({
       state: build_state({
@@ -472,9 +470,6 @@ describe("PromptView: bilingual copy", () => {
 });
 
 describe("PromptView: toast notification region", () => {
-  // Regression test for the fix-wave a11y-correctness finding: the toast region was previously
-  // labeled with common.inspector.title ("Inspector") and common.actions.confirm ("Confirm"),
-  // announcing the notification region as something unrelated to notifications.
   it("names the toast notification region correctly, not Inspector/Confirm", async () => {
     mount_view();
     await nextTick();

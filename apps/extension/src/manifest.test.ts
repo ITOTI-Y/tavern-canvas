@@ -6,9 +6,6 @@ import { z } from "zod";
 
 const repository_root = resolve(import.meta.dirname, "../../..");
 
-// The release ships one version number. Reading it from package.json rather than restating it here
-// makes the two impossible to drift apart, which is the same invariant tools/package_extension
-// enforces before it will build an archive.
 const package_version = z
   .object({ version: z.string() })
   .parse(JSON.parse(await readFile(resolve(repository_root, "package.json"), "utf8"))).version;

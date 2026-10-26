@@ -6,21 +6,11 @@ import { checkerboard, concentric_rings, seeded_mosaic } from "../fixtures/ui/bi
 import { encode_png } from "../fixtures/ui/png_encoder.js";
 import { extract_generation_parameters } from "../../apps/extension/src/ui/views/gallery/image_metadata.js";
 
-/**
- * Cross-cutting checks for the six committed UI gallery fixtures (Stage 06 Task 6 brief, Step 3):
- * the bitmap generator is genuinely deterministic (same call, same bytes -- the whole point of
- * "deterministic bitmap generator" instead of a one-off binary blob), the committed files are real
- * PNGs with the required distinct dimensions, and the detailed fixture's embedded sd_webui-style
- * parameters actually round-trip through the Gallery's own PNG metadata extractor.
- */
-
 const FIXTURES_DIR = resolve(import.meta.dirname, "../fixtures/ui");
 
 const PNG_SIGNATURE = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
 function read_ihdr(bytes: Uint8Array): { width: number; height: number } {
-  // PNG layout: 8-byte signature, then IHDR's 4-byte length + 4-byte type ("IHDR"), then its
-  // 13-byte data (width: 4 bytes at offset 16, height: 4 bytes at offset 20, ...).
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   return { width: view.getUint32(16, false), height: view.getUint32(20, false) };
 }
@@ -88,8 +78,7 @@ describe("committed UI fixtures", () => {
   it("the very_light and very_dark fixtures are not flat single-color fills", () => {
     for (const file_name of ["very_light.png", "very_dark.png"]) {
       const bytes = readFileSync(resolve(FIXTURES_DIR, file_name));
-      // A flat fill would compress to a tiny IDAT; the scattered accent squares guarantee real
-      // tonal variation, which zlib cannot compress away to a trivial size.
+      // A flat fill would compress to a tiny IDAT.
       expect(bytes.byteLength).toBeGreaterThan(1000);
     }
   });

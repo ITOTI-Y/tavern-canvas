@@ -5,7 +5,6 @@ interface ProviderTransportOperationBase {
   readonly method: ProviderHttpMethod;
   readonly content_type?: string;
   readonly accept?: string;
-  /** Enforced while reading and decompressing the response body. */
   readonly max_response_bytes: number;
   readonly signal: AbortSignal;
 }
@@ -13,7 +12,6 @@ interface ProviderTransportOperationBase {
 export type ProviderTransportOperation =
   | (ProviderTransportOperationBase & {
       readonly body: Uint8Array;
-      /** Positive encoded request-body limit enforced before transport allocation. */
       readonly max_request_bytes: number;
     })
   | (ProviderTransportOperationBase & {
@@ -21,7 +19,6 @@ export type ProviderTransportOperation =
       readonly max_request_bytes?: undefined;
     });
 
-/** Deliberate upper bound for any encoded provider request body. */
 export const MAX_PROVIDER_REQUEST_BYTES = 200_000_000;
 const MAX_PROVIDER_INPUT_BYTES = 100_000_000;
 const PROVIDER_REQUEST_FIXED_OVERHEAD_BYTES = 1_000_000;

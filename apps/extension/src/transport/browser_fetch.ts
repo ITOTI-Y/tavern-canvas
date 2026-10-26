@@ -4,11 +4,6 @@ import { ProviderTransportBoundaryError } from "./host_proxy_transport.js";
 
 export type ProviderFetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
-/**
- * The one place a browser transport touches `fetch`. Every caller gets the same fixed request
- * posture -- no cache, no ambient cookies, no redirect following -- and the same bounded read, so
- * the difference between transports stays "which URL and which headers", nothing else.
- */
 export async function execute_bounded_fetch(
   fetch_: ProviderFetch,
   url: string,

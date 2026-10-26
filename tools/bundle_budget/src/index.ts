@@ -6,7 +6,6 @@ import { gzipSync } from "node:zlib";
 export const INITIAL_JS_GZIP_LIMIT_BYTES = 188416;
 export const INITIAL_CSS_GZIP_LIMIT_BYTES = 40960;
 
-/** Field names mirror Vite's on-disk manifest, hence the camelCase. */
 export interface ManifestChunk {
   readonly file: string;
   readonly name?: string;
@@ -46,15 +45,7 @@ function add_by_extension(file: string, js_files: Set<string>, css_files: Set<st
   }
 }
 
-/**
- * Sizes what the host loads before any view opens.
- *
- * @param manifest Parsed Vite manifest.
- * @param host_declared_files Dist-relative files the SillyTavern extension manifest names in
- *   its `js` and `css` fields. The host fetches both at extension load time, so they are
- *   initial payload whether or not the Vite graph links them: `cssCodeSplit: false` emits
- *   `index.css` as an entry no chunk imports, which the graph walk alone would miss.
- */
+/** `host_declared_files` are initial payload even when no Vite chunk imports them: `cssCodeSplit: false` emits `index.css` as an entry nothing imports. */
 export function collect_initial_assets(
   manifest: ViteManifest,
   host_declared_files: readonly string[],
@@ -85,9 +76,7 @@ export function collect_initial_assets(
       css_files.add(css_file);
     }
 
-    // Static `imports` only. A `dynamicImports` target is by construction not needed
-    // before the studio or an optional view opens, which is exactly what this budget
-    // measures, so following it would size the wrong payload.
+    // Static `imports` only: a `dynamicImports` target is not part of the initial payload.
     pending.push(...(chunk.imports ?? []));
   }
 
@@ -111,8 +100,7 @@ const FORBIDDEN_MODULE_RULES: readonly ForbiddenModuleRule[] = [
     id: "assistant",
     pattern: /apps\/extension\/src\/(?:modules|ui)\/assistant\//u,
   },
-  // The gallery's detail surfaces only. The list surfaces it sits next to
-  // (ImageGrid, GalleryTile, BulkActionBar) stay allowed in the initial payload.
+  // Detail surfaces only; ImageGrid, GalleryTile and BulkActionBar stay allowed.
   {
     id: "gallery-detail",
     pattern:
@@ -122,7 +110,6 @@ const FORBIDDEN_MODULE_RULES: readonly ForbiddenModuleRule[] = [
     id: "vocabulary-worker",
     pattern: /apps\/extension\/src\/workers\/vocabulary_worker/u,
   },
-  // `en` is the bundled default locale and stays allowed.
   {
     id: "non-default-locale",
     pattern: /apps\/extension\/src\/i18n\/locales\/zh_cn/u,
@@ -146,8 +133,6 @@ export function classify_forbidden_modules(
       continue;
     }
 
-    // One finding per chunk/rule pair: a forbidden module drags in dozens of its own
-    // sources, and repeating the same verdict for each of them buries the other rules.
     const reported = new Set<ForbiddenModuleId>();
     for (const source of sources) {
       const normalized_source = source.replaceAll("\\", "/");
@@ -253,9 +238,6 @@ function parse_manifest(text: string, path: string): ViteManifest {
   return parsed as ViteManifest;
 }
 
-/** Turns the host manifest's repository-relative `js`/`css` fields into dist-relative
- * paths, the same coordinate space the Vite manifest's `file` values use, so the two
- * sources of initial assets deduplicate against each other. */
 function parse_host_declared_files(
   text: string,
   path: string,

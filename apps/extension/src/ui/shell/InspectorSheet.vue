@@ -33,12 +33,7 @@ function close(): void {
   emit("update:open", false);
 }
 
-// `document.activeElement` does not pierce an open Shadow Root: from the top-level document's own
-// perspective it retargets to the shadow host (#tavern-canvas-root, a plain unfocusable div), not
-// the real focused descendant inside it -- confirmed directly against a real Chromium instance,
-// not assumed (happy-dom, this repo's unit-test environment, does not reproduce this retargeting,
-// which is exactly why a real-browser check caught it). Walking into `.shadowRoot.activeElement`
-// finds the element that actually triggered the sheet (the top bar's inspector toggle).
+// `document.activeElement` is retargeted to the shadow host; read `shadowRoot.activeElement` to find the element that opened the sheet.
 function deep_active_element(root: Document | ShadowRoot): Element | null {
   const active = root.activeElement;
   return active?.shadowRoot ? deep_active_element(active.shadowRoot) : active;

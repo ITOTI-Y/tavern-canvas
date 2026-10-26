@@ -3,9 +3,7 @@ import { readFile } from "node:fs/promises";
 import { VocabularyRecordSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
-// The source line shape is the canonical VocabularyRecord minus `record_id`:
-// the builder reassigns ids deterministically after merging duplicates, so
-// source data never supplies one.
+// Source lines are VocabularyRecord minus `record_id`; ids are reassigned after merging duplicates.
 export const VocabularySourceRecordSchema = VocabularyRecordSchema.omit({ record_id: true });
 export type VocabularySourceRecord = z.infer<typeof VocabularySourceRecordSchema>;
 
@@ -19,13 +17,7 @@ export class VocabularySourceError extends Error {
   }
 }
 
-/**
- * Reads a newline-delimited JSON vocabulary source. Blank lines are
- * skipped; every non-blank line must be a JSON object satisfying
- * `VocabularySourceRecordSchema`. Any malformed JSON or schema violation
- * ("malformed or over-limit source") throws before the caller can produce
- * any output, so a bad rebuild never touches a previously valid package.
- */
+/** Any malformed line throws before output is produced, so a bad rebuild never touches a valid package. */
 export async function read_vocabulary_source(
   input_path: string,
 ): Promise<VocabularySourceRecord[]> {

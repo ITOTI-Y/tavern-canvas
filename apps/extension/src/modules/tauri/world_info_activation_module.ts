@@ -8,21 +8,11 @@ import {
   type TauriTavernHost,
 } from "../../host/index.js";
 
-/**
- * Consumed by T2's world_info_source.ts ("World Info uses selected data and optional Tauri
- * activation results", Stage 07 plan Task 2 Step 2). T2 had not merged at implementation time
- * (context_sources.ts is still Task 1's `describe.todo` placeholder), so this module exposes its
- * own standalone port for T2 to wire in directly at stage merge -- reusing
- * HostWorldInfoActivationBatch's already-shipped shape (host/tauritavern_host.ts) rather than
- * inventing a new one.
- */
 export interface WorldInfoActivationSource {
   get_last_activation(): Promise<HostWorldInfoActivationBatch | null>;
   subscribe(handler: HostWorldInfoActivationHandler): () => void;
 }
 
-/** What T2's world_info_source.ts falls back to on a standard SillyTavern host: no activation
- * results, selected World Info context stands unaugmented. */
 export const NULL_WORLD_INFO_ACTIVATION_SOURCE: WorldInfoActivationSource = {
   get_last_activation: () => Promise.resolve(null),
   subscribe: () => () => undefined,
@@ -35,8 +25,6 @@ export interface WorldInfoActivationDiagnostics {
 
 export interface WorldInfoActivationModuleOptions {
   readonly globals: TauriDetectionGlobals;
-  /** Test/production seam. Production defaults to create_tauritavern_host, the same capability
-   * readiness entry capability_probe.ts already uses -- no additional global access. */
   readonly connect?: (globals: TauriDetectionGlobals) => Promise<TauriTavernHost | undefined>;
 }
 
@@ -44,12 +32,7 @@ function failure_reason(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
-/**
- * Tauri-side wiring for WorldInfo activation. Standard SillyTavern hosts degrade gracefully:
- * get_last_activation() resolves null and subscribe() is a no-op, matching
- * NULL_WORLD_INFO_ACTIVATION_SOURCE's contract exactly (a caller can use this module unconditionally
- * without an availability branch).
- */
+/** On standard SillyTavern hosts get_last_activation() resolves null and subscribe() is a no-op, so callers need no availability branch. */
 export class TauriWorldInfoActivationModule implements RuntimeModule, WorldInfoActivationSource {
   readonly module_id = "tauri_world_info_activation";
   readonly requires: readonly string[] = [];
@@ -79,8 +62,7 @@ export class TauriWorldInfoActivationModule implements RuntimeModule, WorldInfoA
       return; // Idempotent: already subscribed.
     }
     if (this.#starting !== null) {
-      // A start() already in flight (e.g. two callers racing) -- await the same attempt instead
-      // of issuing a second concurrent subscribe_world_info_activation call.
+      // A start() already in flight: await the same attempt instead of issuing a second concurrent subscribe_world_info_activation call.
       await this.#starting;
       return;
     }

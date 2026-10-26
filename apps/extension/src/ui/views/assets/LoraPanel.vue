@@ -10,8 +10,6 @@ import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 
-/** LoRA metadata panel: trigger words and recommended weight only (matches the fields the
- * existing assets.lora locale copy already promises -- no invented base-model/file fields). */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly loading: boolean;

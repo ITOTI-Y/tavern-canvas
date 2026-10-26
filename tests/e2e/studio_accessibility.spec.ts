@@ -7,15 +7,6 @@ import {
   navigate_to_route,
 } from "./studio_harness_utils.js";
 
-/**
- * Real-browser accessibility coverage (task-8-brief.md Step 2): keyboard access, focus order and
- * return, accessible names, dialog focus traps, no focus clipping, and reduced motion. Component
- * unit tests (happy-dom) already assert individual pieces of this in isolation
- * (StudioShell.test.ts's tab-order/focus-return tests, components.test.ts's dialog behavior); this
- * spec proves the same contracts hold once every route's real view is mounted together in a real
- * browser, across the whole app rather than one component at a time.
- */
-
 test.describe("Studio accessibility: keyboard access", () => {
   test("every desktop rail button is reachable by Tab and activates with the keyboard", async ({
     page,
@@ -95,9 +86,6 @@ test.describe("Studio accessibility: dialog focus traps", () => {
         const host = document.getElementById("tavern-canvas-root");
         const shadow_root = host?.shadowRoot;
         const active = shadow_root?.activeElement ?? null;
-        // The dialog is portaled into the Shadow Root's own portal element
-        // (PortalProvider.vue), never document.body -- see the portal-escape check in
-        // studio_layout_checks.ts for the negative-space version of this assertion.
         const dialog_element = shadow_root?.querySelector('[role="alertdialog"]') ?? null;
         return dialog_element ? dialog_element.contains(active) : false;
       });
@@ -148,11 +136,6 @@ test.describe("Studio accessibility: accessible names", () => {
             control.id !== ""
               ? root.querySelector(`label[for="${control.id}"]`)?.textContent?.trim()
               : undefined;
-          // AppSwitch.vue's pattern: a labelable control (button/input/...) nested inside a
-          // <label> with no `for` attribute gets its accessible name from the label's own text
-          // content, per the HTML "wrapped control" implicit-association rule -- the same pattern
-          // a plain `<label><span>Enable X</span><input type="checkbox"></label>` relies on
-          // everywhere on the web, not something aria-label/aria-labelledby/for is required for.
           const wrapping_label = control.closest("label")?.textContent?.trim();
           const has_name =
             Boolean(aria_label) ||
@@ -222,8 +205,6 @@ test.describe("Studio accessibility: reduced motion", () => {
       return button ? getComputedStyle(button).transitionDuration : null;
     });
     expect(duration).not.toBeNull();
-    // "0.01ms" (or the equivalent "0s"-rounding some engines report) -- never the real ~180ms
-    // motion-contract duration.
     expect(duration && Number.parseFloat(duration)).toBeLessThan(1);
   });
 });

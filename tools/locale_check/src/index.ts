@@ -122,11 +122,6 @@ function compare_string_values(
   }
 }
 
-// A joint tree walk (rather than flattening each locale to a key/value map
-// and diffing the two maps) so a string-leaf-vs-nested-object mismatch at
-// the same path is classified once as value-type-mismatch, instead of
-// decomposing into an unrelated cascade of key-set-mismatch findings for
-// every leaf under the deeper side.
 function walk_compare(
   en_node: unknown,
   zh_node: unknown,
@@ -201,26 +196,11 @@ export function compare_locales(en_messages: unknown, zh_cn_messages: unknown): 
   return findings;
 }
 
-// A call site is recognized as `t(` or `$t(` only when the preceding
-// character is not an identifier character -- this matches "i18n.t(" and a
-// bare "t(" while skipping identifiers that merely end in "t(" (format(,
-// sort(, insert(...).
 const CALL_SITE_PATTERN = /(?<![\w$])(?:\$t|t)\(/gu;
 const TRAILING_ARGUMENT_PATTERN = /^\s*[),]/u;
 const STATIC_KEY_PATTERN = /^[a-zA-Z0-9_.]+$/u;
-// Prettier line-wraps a call whose arguments exceed the print width by moving the first
-// argument -- the literal key -- onto its own continuation line, e.g.
-//   t(
-//     'prompt.preset_browser.bulk_delete_confirm_title',
-//     { n: bulk_selected.size },
-//     bulk_selected.size,
-//   )
-// `extract_static_key` already skips leading whitespace (the `\s` class includes newlines)
-// before looking for the opening quote, so handing it a bounded lookahead window spanning past
-// the call site's own line -- not just the rest of that one line -- is enough to resolve this
-// case. The window stays bounded (not "rest of file") so a genuinely dynamic call -- `t(var)`,
-// `t(\`errors.${code}\`)` -- still fails fast: `extract_static_key` returns `undefined` the
-// instant the first non-whitespace character isn't a quote, regardless of window size.
+// Prettier may move the literal key onto the next line, so `extract_static_key` receives a
+// bounded lookahead window past the call site's own line.
 const KEY_LOOKAHEAD_WINDOW = 400;
 
 function extract_static_key(after_call: string): string | undefined {
@@ -260,9 +240,6 @@ function extract_static_key(after_call: string): string | undefined {
   return key;
 }
 
-/** Locates the 1-based line number and raw text of the line containing `offset`, without
- * splitting the whole file up front -- only `dynamic-key` findings need this, and a clean
- * codebase produces none. */
 function line_at_offset(content: string, offset: number): { line: number; text: string } {
   const before = content.slice(0, offset);
   const line = (before.match(/\n/gu)?.length ?? 0) + 1;
@@ -297,10 +274,7 @@ export function check_usage(
     }
   }
 
-  // Unused-key detection needs a usage baseline to mean anything. Before
-  // any first-party view calls t()/$t() at all, every canonical key would
-  // trivially be "unused" -- that is a statement about the codebase not
-  // having consumed the catalog yet, not about dead translation entries.
+  // Without any first-party t() call every canonical key would be reported unused.
   if (used_keys.size === 0) {
     return findings;
   }

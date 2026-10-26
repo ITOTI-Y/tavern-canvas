@@ -142,7 +142,7 @@ describe("IP-Adapter weight validation", () => {
   });
 });
 
-describe("legacy NovelAI vibe/char-ref single-slot cache", () => {
+describe("NovelAI vibe/char-ref single-slot cache", () => {
   it("caches and removes a vibe transfer reference image", async () => {
     const cache = fake_cache();
     await cache_legacy_reference_image(cache, NOVELAI_VIBE_CACHE_KEY, PNG_BYTES, "image/png");

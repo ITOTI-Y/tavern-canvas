@@ -4,13 +4,6 @@ import { extname, resolve } from "node:path";
 import postcss, { type AnyNode, type AtRule, type Root } from "postcss";
 import { beforeAll, describe, expect, it } from "vitest";
 
-/**
- * Parses every first-party CSS file the Studio design system owns (apps/extension/src/ui/**\/*.css)
- * with postcss's real CSS parser -- not whole-file regex -- and asserts the style-contract rules
- * from task-1-brief.md. Declarations are inspected via the parsed AST (prop/value pairs, at-rule
- * params, selectors) so a false match inside a comment or a selector string cannot slip through.
- */
-
 const styles_root = resolve(import.meta.dirname, "..");
 
 interface CssFile {
@@ -24,15 +17,9 @@ interface DeclarationRef {
   readonly prop: string;
   readonly value: string;
   readonly line: number;
-  /** True when nested under an `@media (prefers-reduced-motion: reduce)` block, where a
-   * near-zero duration is the intended override, not a style-contract violation. */
   readonly in_reduced_motion: boolean;
 }
 
-/**
- * postcss types `Node#type` as plain `string`, so `.type === "atrule"` alone does not narrow the
- * parent-chain union to `AtRule` -- the cast below is guarded by that same runtime check.
- */
 function is_within_reduced_motion(node: AnyNode): boolean {
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
     if (ancestor.type !== "atrule") {
@@ -92,10 +79,6 @@ function format(
   );
 }
 
-// ---------------------------------------------------------------------------
-// Rule group: forbidden decorative/inaccessible patterns
-// ---------------------------------------------------------------------------
-
 const GRADIENT_PATTERN = /(?:repeating-)?(?:linear|radial|conic)-gradient\s*\(/iu;
 const NOISE_ASSET_PATTERN = /url\([^)]*(?:noise|grain)[^)]*\)/iu;
 const VIEWPORT_UNIT_PATTERN = /\d*\.?\d+\s*(?:vw|vh|vmin|vmax)\b/iu;
@@ -127,20 +110,12 @@ function find_forbidden_pattern_violations(decls: readonly DeclarationRef[]) {
   return violations;
 }
 
-// ---------------------------------------------------------------------------
-// Rule group: exact radius tokens
-// ---------------------------------------------------------------------------
-
 const EXPECTED_RADIUS_TOKENS: Readonly<Record<string, string>> = {
   "--tc-radius-panel": "0",
   "--tc-radius-field": "6px",
   "--tc-radius-image": "8px",
   "--tc-radius-status": "4px",
 };
-
-// ---------------------------------------------------------------------------
-// Rule group: transition/animation duration and property allow-list
-// ---------------------------------------------------------------------------
 
 const ALLOWED_MOTION_PROPERTIES = new Set(["transform", "opacity", "color", "background-color"]);
 const MOTION_TOKEN_MS: Readonly<Record<string, number>> = {
@@ -254,7 +229,7 @@ function find_keyframes_violations(files: readonly CssFile[]): string[] {
     file.root.walkAtRules(/^(-webkit-)?keyframes$/u, (at_rule) => {
       if (/spin(ner)?/iu.test(at_rule.params)) {
         violations.push(
-          `${file.path}: @keyframes ${at_rule.params} reads as a spinner (skeleton-over-spinner directive)`,
+          `${file.path}: @keyframes ${at_rule.params} reads as a spinner; loading states use skeletons`,
         );
       }
       at_rule.walkDecls((decl) => {
@@ -268,10 +243,6 @@ function find_keyframes_violations(files: readonly CssFile[]): string[] {
   }
   return violations;
 }
-
-// ---------------------------------------------------------------------------
-// Rule group: reduced-motion escape hatch
-// ---------------------------------------------------------------------------
 
 function has_reduced_motion_rule(files: readonly CssFile[]): boolean {
   let found = false;
@@ -290,10 +261,6 @@ function has_reduced_motion_rule(files: readonly CssFile[]): boolean {
   return found;
 }
 
-// ---------------------------------------------------------------------------
-// Rule group: font URLs
-// ---------------------------------------------------------------------------
-
 function collect_font_face_urls(files: readonly CssFile[]): { file: string; url: string }[] {
   const urls: { file: string; url: string }[] = [];
   for (const file of files) {
@@ -307,10 +274,6 @@ function collect_font_face_urls(files: readonly CssFile[]): { file: string; url:
   }
   return urls;
 }
-
-// ---------------------------------------------------------------------------
-// Rule group: distinct color families
-// ---------------------------------------------------------------------------
 
 const NEUTRAL_TOKENS = [
   "--tc-canvas",
@@ -340,20 +303,12 @@ function collect_tokens_for_selector(
   return tokens;
 }
 
-// ---------------------------------------------------------------------------
-// Rule group (extra): documented z-index scale
-// ---------------------------------------------------------------------------
-
 function collect_z_index_tokens(decls: readonly DeclarationRef[], selector: string): number[] {
   return decls
     .filter((decl) => decl.selector === selector && /^--tc-z-/u.test(decl.prop))
     .map((decl) => Number(decl.value.trim()))
     .filter((value) => Number.isFinite(value));
 }
-
-// ---------------------------------------------------------------------------
-// Rule group (extra): WCAG AA contrast, both themes, against actual token values
-// ---------------------------------------------------------------------------
 
 function hex_to_rgb(hex: string): [number, number, number] {
   const normalized = hex.trim().replace("#", "");
@@ -479,10 +434,6 @@ describe("style contract", () => {
         }
       }
 
-      // success/warning are tuned for icons, badges, and large status text; on bare canvas in
-      // light mode they clear large-text AA (3:1) but fall marginally short of body-text AA
-      // (4.5:1) -- component work must place small success/warning text on --tc-surface or
-      // --tc-surface-raised, never directly on --tc-canvas.
       for (const fg of ["--tc-success", "--tc-warning"] as const) {
         for (const bg of backgrounds) {
           const fg_value = tokens.get(fg);
@@ -500,11 +451,7 @@ describe("style contract", () => {
     }
   });
 
-  // --tc-accent is the only token the Studio paints as a solid fill behind text (AppButton's
-  // primary variant). Its foreground therefore cannot be a literal color at the call site: the
-  // light accent carries white at 6.16:1, the dark-mode accent carries it at only 2.93:1. This
-  // pins --tc-on-accent against both the resting and hover fills in both themes, so re-tuning
-  // either accent value fails here rather than shipping unreadable primary buttons.
+  // --tc-accent is a solid fill behind text and the dark accent carries white at only 2.93:1, so --tc-on-accent is pinned against both fills in both themes.
   it("meets WCAG AA contrast for the on-accent foreground against every accent fill, both themes", () => {
     for (const selector of [LIGHT_SELECTOR, DARK_SELECTOR]) {
       const tokens = collect_tokens_for_selector(decls, selector);

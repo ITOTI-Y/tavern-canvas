@@ -201,11 +201,7 @@ describe("check_usage", () => {
   });
 
   it("recognizes a static key when prettier wraps the call and parks the literal on a continuation line", () => {
-    // Prettier line-wraps a call whose arguments exceed the print width by moving the first
-    // argument -- the literal key -- onto its own line, e.g. PresetBrowser.vue's
-    // t('prompt.preset_browser.bulk_delete_confirm_title', { n }, count) once reformatted. A
-    // scanner that only looks at the rest of the *same line* after `t(` sees nothing there and
-    // both misreports dynamic-key and (since the key was never recorded as used) unused-key.
+    // Prettier moves the literal key onto its own line when arguments exceed the print width.
     const files: SourceFile[] = [
       {
         path: "apps/extension/src/ui/AppRoot.vue",

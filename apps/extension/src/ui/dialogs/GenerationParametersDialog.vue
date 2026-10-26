@@ -9,13 +9,6 @@ import FieldGroup from "../components/FieldGroup.vue";
 import NumberStepper from "../components/NumberStepper.vue";
 import styles from "./dialogs.module.css";
 
-/**
- * Long-press-send size popup (manual.image_size_popup / manual.send_button_longpress): a 500ms
- * long-press on the send control opens this before generating, auto-parsed from an existing WxH
- * in the tag when one exists. Two mutually exclusive modes -- SD/NovelAI/ComfyUI expose raw
- * width/height steppers; Banana/Grok expose an aspect-ratio select plus a swap action instead,
- * since those providers take an aspect ratio rather than pixel dimensions.
- */
 const props = withDefaults(
   defineProps<{
     readonly open: boolean;

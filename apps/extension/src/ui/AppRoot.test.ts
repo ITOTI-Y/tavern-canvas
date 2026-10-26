@@ -11,8 +11,6 @@ import AppRoot from "./AppRoot.vue";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
 
-/** StudioShell reaches its four viewport-exclusive surfaces through `defineAsyncComponent`, so a
- * mounted AppRoot only carries the rail once those loaders have resolved from the module cache. */
 beforeAll(async () => {
   await Promise.all([
     import("./shell/ContextInspector.vue"),
@@ -22,9 +20,6 @@ beforeAll(async () => {
   ]);
 });
 
-// AppRoot's own `(prefers-color-scheme: dark)` query and StudioShell's desktop-breakpoint query
-// (use_shell_viewport.ts) both go through `window.matchMedia` -- a query-aware mock keeps these
-// tests's desktop-layout assertions independent of whichever color scheme a given test exercises.
 function mock_matches(dark_color_scheme: boolean): void {
   vi.spyOn(window, "matchMedia").mockImplementation(
     (query: string) =>
@@ -100,7 +95,6 @@ describe("AppRoot capability-blocked state", () => {
     expect(screen.text()).toContain("4.9.0");
     expect(wrapper.findAll("a")).toHaveLength(1);
     expect(wrapper.get("a").attributes("href")).toBe("https://github.com/N0VI028/JS-Slash-Runner");
-    // The blocked screen never renders operational shell controls behind the error.
     expect(wrapper.find("nav").exists()).toBe(false);
   });
 
@@ -159,7 +153,7 @@ describe("AppRoot normal studio state", () => {
 
     expect(wrapper.find('[data-startup-state="blocked"]').exists()).toBe(false);
     expect(wrapper.find('[data-startup-state="failed"]').exists()).toBe(false);
-    expect(wrapper.findAll("nav > button")).toHaveLength(6); // desktop rail, six routes
+    expect(wrapper.findAll("nav > button")).toHaveLength(6);
   });
 
   it("closes the floating workbench and reopens it from the draggable entry", async () => {

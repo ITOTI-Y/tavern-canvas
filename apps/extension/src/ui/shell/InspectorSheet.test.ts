@@ -27,7 +27,6 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-/** Mirrors ContextInspector.test.ts for the mobile drawer variant of the same fix. */
 describe("InspectorSheet: renders selected_record", () => {
   it("renders the empty state when nothing is selected", async () => {
     mount_sheet(null);

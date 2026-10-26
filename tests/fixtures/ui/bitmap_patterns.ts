@@ -1,12 +1,5 @@
 import type { RgbaBuffer } from "./png_encoder.js";
 
-/**
- * Deterministic bitmap generator for the six UI gallery fixtures (Stage 06 Task 6 brief, Step 3):
- * hard-edged geometric patterns only -- checkerboards, rings, stripes, a seeded pseudo-random
- * mosaic -- never a smooth gradient or a blur, and never SVG. Every function is a pure, reviewable
- * mapping from pixel coordinates to a color; the same call always produces the same bytes.
- */
-
 export interface RgbColor {
   readonly r: number;
   readonly g: number;
@@ -25,8 +18,7 @@ function make_buffer(width: number, height: number): RgbaBuffer {
   return new Uint8Array(width * height * 4);
 }
 
-/** mulberry32 -- a small, seedable, deterministic PRNG (public-domain algorithm). Never
- * Math.random(): the fixture bytes must be identical on every run. */
+// Never Math.random(): the fixture bytes must be identical on every run.
 function seeded_random(seed: number): () => number {
   let state = seed >>> 0;
   return () => {
@@ -90,8 +82,6 @@ export function diagonal_stripes(
   return buffer;
 }
 
-/** A fine seeded-random mosaic -- deliberately "busy" content for the detailed fixture, distinct
- * from the other five patterns' large hard-edged regions. */
 export function seeded_mosaic(
   width: number,
   height: number,
@@ -121,8 +111,6 @@ export function seeded_mosaic(
   return buffer;
 }
 
-/** High-key: a light background with a deterministic sparse scatter of small dark accent squares
- * (never a bare flat fill -- "visible distinct content" applies to the light/dark fixtures too). */
 export function high_key_scatter(width: number, height: number, seed: number): RgbaBuffer {
   const buffer = make_buffer(width, height);
   const background: RgbColor = { r: 246, g: 246, b: 242 };
@@ -146,8 +134,6 @@ export function high_key_scatter(width: number, height: number, seed: number): R
   return buffer;
 }
 
-/** Low-key: the tonal inverse of high_key_scatter -- a near-black background with a deterministic
- * scatter of small light accent squares. */
 export function low_key_scatter(width: number, height: number, seed: number): RgbaBuffer {
   const buffer = make_buffer(width, height);
   const background: RgbColor = { r: 16, g: 17, b: 20 };

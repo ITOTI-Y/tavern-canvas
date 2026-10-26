@@ -10,13 +10,6 @@ export interface GalleryObjectUrlState {
   readonly bytes: Ref<Uint8Array | null>;
 }
 
-/**
- * Lazily fetches one gallery record's bytes through the controller (never directly -- views never
- * fetch, per the plan) and wraps them in an object URL, revoking it the instant this goes away:
- * on `active` turning false (a virtualized tile scrolling out), the record changing, or the owning
- * component unmounting. This is the one place object URL lifetime is managed so every caller (grid
- * tile, preview dialog) gets the same "release on unmount" guarantee instead of reimplementing it.
- */
 export function use_gallery_object_url(
   record_id: Ref<string>,
   media_type: Ref<GalleryMediaType>,

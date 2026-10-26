@@ -12,17 +12,6 @@ import {
   type StudioLocale,
 } from "./studio_harness_utils.js";
 
-/**
- * Four-viewport visual snapshots (task-8-brief.md Step 3): 1440x900, 1024x768, 390x844, 360x800,
- * each in light/dark x en/zh-CN, covering the shell (Workbench, the default route -- the one
- * screen that always includes the full chrome: top bar, rail/bottom-nav, task strip, inspector)
- * plus each of the six routes individually, all against the "full" scenario so every screenshot
- * shows representative real bitmap content (Gallery grid, Workbench completion preview) rather
- * than empty placeholders. `animations: "disabled"` force-completes any in-flight CSS
- * transition/animation before the screenshot -- the Step 3 requirement to exclude nondeterministic
- * animation state, without faking a state the app can never actually render.
- */
-
 function snapshot_name(
   route: string,
   viewport: { readonly name: string },

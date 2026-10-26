@@ -1,8 +1,3 @@
-// This suite exercises the full copy -> verify -> switch migration pipeline (Stage 04) end to
-// end, wiring only public package exports (@tavern-canvas/storage, @tavern-canvas/v2-migration)
-// and the extension's migration/storage modules together — the same seam a real host adapter
-// would cross. Every scenario asserts real end state (record counts, byte hashes, journal
-// states), never merely "no throw".
 import "fake-indexeddb/auto";
 
 import { TavernCanvasMessageMetadataSchema } from "@tavern-canvas/contracts";
@@ -96,7 +91,6 @@ interface NamespaceSnapshot {
   readonly blob_ref_counts: Readonly<Record<string, number>>;
 }
 
-/** Sorted record ids per store, plus every referenced blob's ref_count — a resumable migration must reproduce this exactly. */
 async function snapshot_namespace(
   repositories: BusinessRepositories,
   namespace: string,
@@ -155,8 +149,6 @@ describe("scenario 1: fully populated v2 fixture migrates every classified path"
     const namespace = outcome.namespace;
     expect(settings.get_settings().active_namespace).toBe(namespace);
 
-    // Recompute the expected output directly from the same pure converters the runner calls
-    // internally, so this test proves persistence fidelity independent of any hardcoded count.
     const context = { namespace, migrated_at: MIGRATED_AT };
     const settings_result = convert_settings(legacy, context);
     const provider_result = convert_provider(legacy, context);
@@ -212,7 +204,6 @@ describe("scenario 1: fully populated v2 fixture migrates every classified path"
     // generation_jobs has no source in v2 data; migration must never populate it.
     expect(await repositories.generation_jobs.list(namespace)).toEqual([]);
 
-    // Every persisted image's bytes are present, correctly deduplicated, and hash-verified.
     const unique_hashes = [...new Set(persisted_image_records.map((record) => record.sha256))];
     expect(unique_hashes.length).toBeGreaterThan(0);
     let verified_bytes = 0;
@@ -407,8 +398,7 @@ describe("scenario 4: a corrupted persisted image blocks the switch", () => {
     const database: StorageDatabase = await open_database();
     const { settings } = create_test_settings();
 
-    // Corrupts the first image blob this run ever persists, before verify() gets a chance to
-    // run — proving the switch is blocked on the very first attempt, not merely "undone".
+    // Corrupts the first image blob before verify() runs, so the switch is blocked on the first attempt.
     let captured_sha256: string | undefined;
     let captured_original_bytes: Uint8Array | undefined;
     const original_create = ImageBlobRepository.prototype.create;
@@ -441,7 +431,6 @@ describe("scenario 4: a corrupted persisted image blocks the switch", () => {
       throw new Error("unreachable");
     }
     expect(first_attempt.failure.reason).toBe("hash_mismatch");
-    // This is the very first migration attempt: the switch has never been reached, let alone undone.
     expect(settings.get_settings().active_namespace).toBe("primary");
     const namespace = first_attempt.namespace as string;
     const repositories = create_business_repositories(database);
@@ -459,7 +448,6 @@ describe("scenario 4: a corrupted persisted image blocks the switch", () => {
       expect(sha256_hex_bytes(stored_bytes)).not.toBe(corrupted_blob.sha256);
     }
 
-    // Restore the byte and retry: verification now passes and the switch finally happens.
     vi.restoreAllMocks();
     if (corrupted_blob === null) {
       throw new Error("unreachable");
@@ -616,7 +604,6 @@ describe("scenario 7: an unopened chat is untouched, then migrates on first open
     );
     expect(dormant_swipe.metadata).toEqual({});
 
-    // Opening the chat makes it active; the next lazy-migration call now targets it.
     host.switch_chat("chat-dormant");
     const dormant_outcome = await migrate_active_chat_messages({
       database,
@@ -641,7 +628,6 @@ describe("scenario 7: an unopened chat is untouched, then migrates on first open
     );
     expect(stored_metadata.image_ids[0]).toBe(expected_image_id);
 
-    // The referenced image genuinely exists from the earlier migration, not a dangling id.
     const linked_image_record = await repositories.image_records.get(namespace, expected_image_id);
     expect(linked_image_record).not.toBeNull();
 

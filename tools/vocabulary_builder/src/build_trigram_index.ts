@@ -12,7 +12,6 @@ const GROUP_CODE_POINT_COUNT = 2;
 
 type TrigramEntry = [trigram: string, deltas: number[]];
 
-/** Every normalized 3-code-point substring of `text`, in left-to-right order. */
 function extract_trigrams(text: string): string[] {
   const code_points = Array.from(text);
   const trigrams: string[] = [];
@@ -32,14 +31,7 @@ function delta_encode(sorted_ids: readonly number[]): number[] {
   return deltas;
 }
 
-/**
- * Trigram-indexes the normalized tag text only (not aliases or
- * translations, which already have their own prefix-searchable alias
- * index) — this is the builder's fallback tier for typo/substring recall
- * on the primary display field. Shards group by the trigram's own first
- * two code points, mirroring prefix/alias shard grouping, and each entry's
- * record ids are delta-encoded in ascending order.
- */
+/** Indexes the normalized tag text only; aliases and translations have the alias index. Record ids are delta-encoded ascending. */
 export function build_trigram_shards(records: readonly VocabularyRecord[]): VocabularyShardFile[] {
   const ids_by_trigram = new Map<string, Set<number>>();
 

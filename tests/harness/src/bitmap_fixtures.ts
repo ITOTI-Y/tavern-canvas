@@ -5,14 +5,6 @@ import square_url from "../../fixtures/ui/square.png?url";
 import very_dark_url from "../../fixtures/ui/very_dark.png?url";
 import very_light_url from "../../fixtures/ui/very_light.png?url";
 
-/**
- * The six real, hard-edged, non-uniform bitmap fixtures tests/fixtures/ui/generate_fixtures.ts
- * produces (Stage 06 Task 6). Task 8's harness serves them as real `image/png` bytes through the
- * mock Gallery/Generation capabilities' `read_bytes`, so the blank-image and zero-dimension
- * programmatic checks (studio_overflow.spec.ts) exercise genuine decoded pixels instead of a
- * placeholder color swatch, and the visual snapshots show real image content in the Gallery grid
- * and the Workbench completion preview.
- */
 export interface BitmapFixture {
   readonly id: string;
   readonly url: string;
@@ -32,8 +24,6 @@ export const BITMAP_FIXTURES: readonly BitmapFixture[] = [
 
 const byte_cache = new Map<string, Uint8Array>();
 
-/** Fetches one fixture's real bytes (from Vite's own dev/preview static serving of the imported
- * asset URL), caching per fixture id so a record read more than once never refetches. */
 export async function read_bitmap_fixture_bytes(fixture: BitmapFixture): Promise<Uint8Array> {
   const cached = byte_cache.get(fixture.id);
   if (cached) {

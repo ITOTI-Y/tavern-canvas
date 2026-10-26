@@ -118,9 +118,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
   };
 }
 
-/** `markRaw` mirrors `use_studio_controller.ts`'s production fix: the controller's private class
- * fields break the moment Vue (or vue-test-utils' own props-reactivity for `setProps()`) wraps it
- * in a `reactive()` Proxy, which happens here too since `controller` is a mounted prop. */
 function build_controller(capabilities: StudioCapabilities): StudioController {
   return markRaw(create_studio_controller({ capabilities }));
 }
@@ -150,9 +147,6 @@ function mount_view(state: StudioState, controller: StudioController) {
   return { wrapper, host, portal_target };
 }
 
-/** For tests exercising a real controller command: the controller only ever mutates its own
- * internal state, so the mounted `state` prop must start as `controller.state` and stay synced
- * via `on_change`, exactly like `use_studio_controller.ts` wires it for AppRoot in production. */
 async function mount_view_with_live_controller(controller: StudioController) {
   await controller.start();
   const portal_target = document.createElement("div");
@@ -177,10 +171,6 @@ afterEach(() => {
   document.body.innerHTML = "";
   vi.restoreAllMocks();
 });
-
-// ---------------------------------------------------------------------------
-// Provider profiles: CRUD + connection test
-// ---------------------------------------------------------------------------
 
 describe("SettingsView provider profiles", () => {
   it("shows a composed empty state with no profiles yet", () => {
@@ -244,9 +234,6 @@ describe("SettingsView provider profiles", () => {
     await wrapper.get('[data-testid="provider-profiles"] button').trigger("click");
     await nextTick();
 
-    // AppDialog portals its content outside `wrapper.element` -- query the real DOM directly,
-    // scoped to the dialog, rather than the wrapper (which could otherwise match the Gateway
-    // panel's own `type="text"` endpoint input rendered earlier on the same page).
     const name_input = document.querySelector(
       '[role="dialog"] input[type="text"]',
     ) as HTMLInputElement;
@@ -272,8 +259,6 @@ describe("SettingsView provider profiles", () => {
     expect(saved).toHaveLength(1);
     expect(saved[0]?.display_name).toBe("New NovelAI profile");
     expect(saved[0]?.model_id).toBe("sdxl-base");
-    // The save resolved and the controller's profiles subscription upserted it -- the row list
-    // now shows two profiles without a page reload.
     expect(wrapper.findAll('[data-testid="provider-profile-row"]').length).toBe(2);
   });
   it("stores a provider API key through the credential command without adding it to the profile draft", async () => {
@@ -458,10 +443,6 @@ describe("SettingsView credential storage", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Gateway: endpoint, protocol discovery, HTTP-risk severity by origin, token reference
-// ---------------------------------------------------------------------------
-
 describe("SettingsView gateway settings", () => {
   it("shows the token secret reference, never a raw secret value", () => {
     const { wrapper } = mount_view(
@@ -493,7 +474,6 @@ describe("SettingsView gateway settings", () => {
     expect(banner.attributes("data-severity")).toBe("warning");
     expect(banner.text()).toContain("token, prompts, and images travel in plaintext");
     expect(banner.find("button").exists()).toBe(true);
-    // The endpoint input is never disabled by the risk banner -- HTTP is never blocked.
     expect(
       wrapper.get('[data-testid="gateway-endpoint-input"]').attributes("disabled"),
     ).toBeUndefined();
@@ -652,10 +632,6 @@ describe("SettingsView gateway settings", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Automation: toggles + concurrency
-// ---------------------------------------------------------------------------
-
 describe("SettingsView automation settings", () => {
   it("toggles auto-generation and fallback through the controller", async () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
@@ -699,14 +675,9 @@ describe("SettingsView automation settings", () => {
       build_controller(create_unavailable_capabilities()),
     );
     const stepper = wrapper.get('[data-testid="provider-concurrency-stepper"]');
-    // Reka's NumberFieldRoot reflects disabled as `data-disabled`, not the native attribute.
     expect(stepper.attributes("data-disabled")).toBeDefined();
   });
 });
-
-// ---------------------------------------------------------------------------
-// Appearance: theme, language, inspector width, optional entry
-// ---------------------------------------------------------------------------
 
 describe("SettingsView appearance settings", () => {
   it("shows theme, language, inspector width, and optional-entry controls", () => {
@@ -757,10 +728,6 @@ describe("SettingsView appearance settings", () => {
     expect(updates.some((u) => u.ui?.color_mode === "dark")).toBe(true);
   });
 });
-
-// ---------------------------------------------------------------------------
-// Data: vocabulary channel, archive export/import, migration retry/report, manual cleanup
-// ---------------------------------------------------------------------------
 
 describe("SettingsView data settings: vocabulary channel and archive", () => {
   it("switches the vocabulary update channel through the controller", async () => {
@@ -962,7 +929,6 @@ describe("SettingsView data settings: migration retry/report", () => {
     await nextTick();
 
     expect(retried).toBe(true);
-    // Manual cleanup unlocks once migration verifiably completed.
     expect(
       section.get('[data-testid="manual-cleanup-action"]').attributes("disabled"),
     ).toBeUndefined();
@@ -1058,8 +1024,6 @@ describe("SettingsView manual legacy cleanup", () => {
     ) as HTMLButtonElement;
     expect(confirm_button).not.toBeNull();
 
-    // Wrong text: the confirm button stays disabled and the destructive capability is never
-    // called, even if something forces a click through.
     confirm_input.value = "delete legacy data";
     confirm_input.dispatchEvent(new Event("input"));
     await nextTick();
@@ -1069,7 +1033,6 @@ describe("SettingsView manual legacy cleanup", () => {
     await nextTick();
     expect(cleanup_confirmation).toBeNull();
 
-    // Exact phrase: the button enables and the capability is called with the typed text.
     confirm_input.value = "DELETE LEGACY DATA";
     confirm_input.dispatchEvent(new Event("input"));
     await nextTick();

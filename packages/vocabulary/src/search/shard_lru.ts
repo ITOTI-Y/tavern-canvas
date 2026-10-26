@@ -1,9 +1,5 @@
 import type { VocabularyIndexKind } from "@tavern-canvas/contracts";
 
-// "manifest" is a local addition beyond the four shard index kinds: the
-// Worker pins the loaded VocabularyManifest itself as a tiny, always-
-// resident cache entry (brief: "pinned manifest metadata ... remain
-// resident"), so it needs a tier/kind like everything else in the cache.
 export type ShardCacheKind = VocabularyIndexKind | "manifest";
 
 export type ShardMemoryMode = "unknown" | "mobile" | "desktop";
@@ -15,13 +11,6 @@ export function resolve_shard_lru_budget_bytes(mode: ShardMemoryMode): number {
   return mode === "desktop" ? DESKTOP_LRU_BUDGET_BYTES : MOBILE_LRU_BUDGET_BYTES;
 }
 
-/**
- * Classifies the host from `navigator.deviceMemory` (GiB). Lives beside the
- * budget table rather than in the Worker so callers that only need to know
- * which budget a host will get -- the benchmark harness picks the
- * complementary mode to prove the other one -- can ask without importing
- * the Worker's side-effecting entry module.
- */
 export function detect_shard_memory_mode(): ShardMemoryMode {
   const navigator_like = (globalThis as { navigator?: { deviceMemory?: number } }).navigator;
   const device_memory = navigator_like?.deviceMemory;
@@ -38,16 +27,8 @@ export interface ShardCacheEntry {
   readonly pinned: boolean;
 }
 
-// Eviction priority: lower evicts first, least-recently-used first within a
-// tier. Brief: "evict trigram then detail shards before ACTIVE prefix/alias
-// shards" -- trigram entries are the cheapest to rebuild (a few KB each,
-// re-derivable from one small shard) so they get their own bottom tier, and
-// "active" is expressed by recency rather than by a standing rank for the
-// prefix/alias kinds. Ranking those kinds permanently above detail instead
-// let one-shot index shards accumulate: a 500,000-record package's 676
-// prefix shards total ~12 MB, enough to crowd every reusable detail shard
-// out of a 16 MiB budget even though each is read by exactly one query
-// (measured: doing so cost ~30% more detail-shard decodes per query).
+// Lower evicts first, least-recently-used first within a tier. Prefix/alias shards are not ranked
+// permanently above detail: one-shot index shards would crowd reusable detail shards out of the budget.
 const EVICTION_TIER: Readonly<Record<ShardCacheKind, number>> = {
   trigram: 0,
   detail: 1,
@@ -66,16 +47,8 @@ interface InternalEntry {
   sequence: number;
 }
 
-/**
- * Bounded in-memory cache of decoded shard payloads. Byte accounting is the
- * caller-supplied decoded size (see shard_codec.ts), never a compressed
- * file size. Eviction always prefers the lowest eviction tier and, within a
- * tier, the least-recently-used entry; pinned entries are never eviction
- * candidates. A put() that cannot fit even after evicting every evictable
- * entry is itself dropped at the end of the same call -- this is how a
- * shard that transiently exceeds budget while being decoded gets released
- * if the caller does not pin it.
- */
+// A put() that cannot fit even after evicting every evictable entry is dropped at the end of the
+// same call unless pinned.
 export class ShardLru {
   readonly #budget_bytes: number;
   readonly #entries = new Map<string, InternalEntry>();
@@ -101,10 +74,6 @@ export class ShardLru {
     return this.#entries.has(key);
   }
 
-  // Returns the cached payload as `unknown` -- this cache is opaque storage
-  // (decoded shard payloads of varying shapes), not a type-safe container.
-  // Callers cast at the call site (they already know which shard kind they
-  // asked for).
   get(key: string): unknown {
     const entry = this.#entries.get(key);
     if (entry === undefined) {
@@ -114,10 +83,8 @@ export class ShardLru {
     return entry.payload;
   }
 
-  // `options.pinned` pins atomically at insert time -- put() immediately
-  // enforces the budget, so pinning a freshly-decoded entry (manifest
-  // metadata, the current result page) via a separate pin() call afterward
-  // would race against eviction if the entry alone doesn't fit yet.
+  // `options.pinned` pins at insert time: put() enforces the budget immediately, so a later pin()
+  // call could lose the entry to eviction.
   put(
     key: string,
     kind: ShardCacheKind,
@@ -174,7 +141,7 @@ export class ShardLru {
     while (this.resident_bytes > this.#budget_bytes) {
       const candidate = this.#pick_eviction_candidate();
       if (candidate === null) {
-        return; // Only pinned entries remain -- cannot reduce further.
+        return;
       }
       this.#entries.delete(candidate.key);
     }

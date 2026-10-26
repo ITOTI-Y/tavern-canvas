@@ -19,11 +19,6 @@ import {
   type WorkflowInputTarget,
 } from "./workflow_placeholders.js";
 
-/**
- * ComfyUI workflow import/placeholder-mapping panel. Bespoke instead of AssetRecordForm: a
- * workflow record's real content is a JSON document plus a placeholder->input mapping, neither of
- * which fits the generic text/textarea/number field schema the other five panels share.
- */
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
   readonly loading: boolean;
@@ -44,12 +39,9 @@ const panel = use_asset_category_panel(
 const file_input = ref<HTMLInputElement | null>(null);
 const placeholder_entries = ref<{ name: string; target: string }[]>([]);
 
-/** Reka's SelectItem rejects an empty-string value (reserved as its own "nothing selected"
- * sentinel), so "not mapped yet" is its own real option value instead of "". */
+/** Reka's SelectItem rejects an empty-string value. */
 const UNMAPPED = "unmapped";
 
-/** Explicit branches (not a template literal into the target name) so every translation call site
- * stays a static key the locale checker can verify -- matches VocabularyPanel's progress_label. */
 function target_label(target: WorkflowInputTarget): string {
   switch (target) {
     case "positive_prompt":
@@ -125,8 +117,7 @@ function trigger_import(): void {
   file_input.value?.click();
 }
 
-/** Built in script, not inline in the template: a literal `{{name}}` written directly inside a
- * `{{ }}` mustache interpolation confuses Vue's template compiler's own delimiter scanning. */
+/** Built in script: a literal `{{name}}` inside a template mustache breaks Vue's delimiter scanning. */
 const OPEN_BRACES = "{{";
 const CLOSE_BRACES = "}}";
 function placeholder_display(name: string): string {
@@ -263,14 +254,8 @@ const delete_confirm_title = (record_name: string): string =>
             :class="styles.placeholderRow"
           >
             <span :class="styles.placeholderKey">{{ placeholder_display(entry.name) }}</span>
-            <!-- eslint-disable vue/attribute-hyphenation -- "aria-label" bypasses Vue's
-                 kebab-to-camel prop matching (it stays a literal passthrough attribute instead),
-                 so AppSelect's `ariaLabel` prop must stay camelCase here to actually bind
-                 (confirmed via vue-tsc against the hyphenated form). `:key="locale"`
-                 (real-browser-smoke-caught, see GalleryView.vue's identical note): this select
-                 always has a real pre-selected value (UNMAPPED by default), and Reka's closed
-                 SelectValue does not react to the option list's own labels changing on a locale
-                 switch -- only a remount picks up the new-locale label. -->
+            <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind AppSelect's prop -->
+            <!-- :key="locale" remounts the select: Reka's SelectValue keeps the old-locale label when option labels change. -->
             <AppSelect
               :key="locale"
               :model-value="entry.target === '' ? UNMAPPED : entry.target"

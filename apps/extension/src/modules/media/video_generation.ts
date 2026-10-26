@@ -3,10 +3,6 @@ import { bytesToHex } from "@noble/hashes/utils.js";
 import { AssetIdSchema, type AssetId, type GeneratedAsset } from "@tavern-canvas/contracts";
 import type { ProviderOutputAsset, ProviderTransport } from "@tavern-canvas/providers";
 
-// ---------------------------------------------------------------------------
-// MP4 magic-byte detection and asset construction
-// ---------------------------------------------------------------------------
-
 const MP4_FTYP_OFFSET = 4;
 const MP4_FTYP_MARKER = [0x66, 0x74, 0x79, 0x70];
 
@@ -37,12 +33,6 @@ export class VideoAssetError extends Error {
   }
 }
 
-/**
- * Builds the provider-output-asset shape for freshly received MP4 bytes, mirroring
- * `@tavern-canvas/providers`' `create_generated_asset` (image_bytes.ts) but for the one media
- * type that helper's local signature sniff never recognizes, since teaching it "video/mp4" is out
- * of this task's file ownership (packages/providers).
- */
 export function create_video_output_asset(
   bytes: Uint8Array,
   duration_ms: number | undefined,
@@ -61,13 +51,7 @@ export function create_video_output_asset(
   return { asset, bytes };
 }
 
-/**
- * Reference (manual) upload only ever accepts image bytes -- provider-generated video is the only
- * path that reaches the gallery as video/mp4 (manual.upload_mobile_compression's replacement note,
- * and the parity brief's explicit "reference upload still rejects video"). Called from
- * reference_upload.ts before any upload/cache write, checking both the caller's claimed MIME type
- * and the bytes themselves so a mislabeled upload cannot slip past a client-controlled string.
- */
+/** Reference upload accepts only images; checks both the claimed MIME type and the bytes. */
 export function assert_reference_upload_rejects_video(
   claimed_media_type: string,
   bytes: Uint8Array,
@@ -79,10 +63,6 @@ export function assert_reference_upload_rejects_video(
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// In-browser MP4 "faststart" rewrite (moov relocated before mdat)
-// ---------------------------------------------------------------------------
 
 interface Mp4Box {
   readonly type: string;
@@ -134,11 +114,7 @@ function read_boxes(view: DataView, start: number, end: number): Mp4Box[] {
   return boxes;
 }
 
-/**
- * Patches every `stco`/`co64` chunk-offset table found by recursing into `moov`'s known container
- * children, adding `delta` to each stored offset. Mutates `buffer` in place; `buffer` must already
- * be an independent copy of the moov box bytes (offset 0 = moov box start).
- */
+/** Mutates `buffer`, which must be an independent copy of the moov box bytes. */
 function patch_chunk_offsets(buffer: Uint8Array, delta: number): void {
   const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
   const boxes = read_boxes(view, 0, buffer.byteLength);
@@ -167,13 +143,7 @@ function patch_chunk_offsets(buffer: Uint8Array, delta: number): void {
   }
 }
 
-/**
- * Ports legacy `fixMp4Faststart` (utils/utils.js:7485): when `moov` sits after `mdat` (the
- * non-"faststart" layout most provider-generated MP4s use), relocates a patched copy of `moov`
- * to immediately before `mdat`, shifting every `stco`/`co64` chunk offset forward by `moov`'s own
- * byte size to compensate. Any parse failure, or a layout that already has `moov` before `mdat`,
- * returns `bytes` unchanged -- this rewrite is a playback nicety, never a hard requirement.
- */
+/** Returns `bytes` unchanged on parse failure or when `moov` already precedes `mdat`. */
 export function fix_mp4_faststart(bytes: Uint8Array): Uint8Array {
   try {
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -210,10 +180,6 @@ export function fix_mp4_faststart(bytes: Uint8Array): Uint8Array {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Playback fallback: blob -> original URL -> download-only
-// ---------------------------------------------------------------------------
-
 export type VideoPlaybackSource = "blob" | "original" | "download_only";
 
 export interface VideoPlaybackState {
@@ -229,12 +195,6 @@ export function create_video_playback_state(
   return { source: blob_url === null ? "original" : "blob", blob_url, original_url };
 }
 
-/**
- * Ports legacy's video `onerror` fallback chain (createAndShowImage, generation.js:35334): blob
- * URL fails -> retry the untouched original URL (only if it differs and exists) -> give up on
- * inline playback and let the caller render a bare download link. Pure state transition; the
- * caller owns actually swapping `<video src>` and revoking the abandoned blob URL.
- */
 export function advance_video_playback_on_error(state: VideoPlaybackState): VideoPlaybackState {
   if (
     state.source === "blob" &&
@@ -245,10 +205,6 @@ export function advance_video_playback_on_error(state: VideoPlaybackState): Vide
   }
   return { ...state, source: "download_only" };
 }
-
-// ---------------------------------------------------------------------------
-// Object URL lifetime
-// ---------------------------------------------------------------------------
 
 export interface ObjectUrlPort {
   create(bytes: Uint8Array, media_type: string): string;
@@ -264,10 +220,6 @@ export class BrowserObjectUrlPort implements ObjectUrlPort {
     URL.revokeObjectURL(url);
   }
 }
-
-// ---------------------------------------------------------------------------
-// Gallery normalization: poster/duration/source-job/cache refs
-// ---------------------------------------------------------------------------
 
 export interface PosterExtractionResult {
   readonly bytes: Uint8Array;
@@ -312,13 +264,7 @@ export interface NormalizeVideoAssetResult {
   readonly poster_image_id: string;
 }
 
-/**
- * Turns provider-generated MP4 bytes into a real gallery asset pair: a `video/mp4` record (poster
- * back-reference, duration, source job) plus a plain `image/jpeg` poster record extracted via the
- * injected `PosterExtractorPort` (poster extraction needs a `<video>` element to decode a frame,
- * which only exists in a real DOM -- kept out of this pure module so it stays unit-testable).
- * Applies `fix_mp4_faststart` before storing so the persisted bytes already play immediately.
- */
+/** Poster extraction needs a `<video>` element, so it is injected through `PosterExtractorPort`. */
 export async function normalize_video_asset(
   deps: {
     readonly store: VideoStorePort;
@@ -363,20 +309,6 @@ export async function normalize_video_asset(
   return { video_image_id: video_id, poster_image_id: poster_id };
 }
 
-// ---------------------------------------------------------------------------
-// Video generation submission (direct ProviderTransport call)
-//
-// Neither google_image.ts nor openai_image.ts (packages/contracts) declares a video-output mode,
-// and their adapters (packages/providers) only ever parse image content parts -- extending either
-// is outside this task's file ownership. Legacy's own video path (gorkVideo.js/banana.js) was
-// never a real ProviderAdapter-shaped flow either: it POSTs a normal chat-completions body and
-// scrapes an mp4 URL out of the model's text response, then fetches that URL separately. This
-// function reproduces exactly that shape against the shared, already-sanctioned `ProviderTransport`
-// (no client-held provider URL/credential -- route-only, matching the removed
-// `client-controlled-provider-url` legacy pattern), so it stays fully within
-// apps/extension/src/modules/media without touching packages/providers.
-// ---------------------------------------------------------------------------
-
 const MP4_URL_PATTERN = /src="([^"]+\.mp4[^"]*)"/u;
 const MAX_VIDEO_RESPONSE_BYTES = 2_000_000;
 const MAX_VIDEO_ASSET_BYTES = 100_000_000;
@@ -397,12 +329,7 @@ export class VideoGenerationError extends Error {
   }
 }
 
-/**
- * Submits a chat-completions-shaped video-generation request, scrapes the first `.mp4` URL out
- * of the decoded response text, then fetches that URL through the same transport's remote-asset
- * channel. Throws `VideoGenerationError("no_video_url")` when the model's response carries no mp4
- * reference at all (a real, honest failure mode -- not every turn produces video).
- */
+/** Throws `VideoGenerationError("no_video_url")` when the response contains no mp4 URL. */
 export async function submit_video_generation(
   transport: ProviderTransport,
   request: VideoGenerationRequest,

@@ -32,7 +32,6 @@ describe("ShardLru", () => {
     const lru = new ShardLru({ budget_bytes: 100 });
     lru.put("trigram-1", "trigram", "t1", 50);
     lru.put("detail-1", "detail", "d1", 50);
-    // Pushes total to 130 > 100 -- something must go.
     lru.put("detail-2", "detail", "d2", 30);
     expect(lru.has("trigram-1")).toBe(false);
     expect(lru.has("detail-1")).toBe(true);
@@ -50,10 +49,6 @@ describe("ShardLru", () => {
   });
 
   it("evicts a stale prefix shard before a freshly used detail shard", () => {
-    // Index shards are read by one query each; detail shards are read by
-    // most of them. Ranking prefix/alias permanently above detail let stale
-    // one-shot index shards crowd every reusable detail shard out of the
-    // budget, so recency -- not kind -- decides between them.
     const lru = new ShardLru({ budget_bytes: 100 });
     lru.put("prefix-stale", "prefix", "p", 50);
     lru.put("detail-hot", "detail", "d", 40);
@@ -67,7 +62,7 @@ describe("ShardLru", () => {
     const lru = new ShardLru({ budget_bytes: 100 });
     lru.put("detail-1", "detail", "d1", 40);
     lru.put("detail-2", "detail", "d2", 40);
-    lru.get("detail-1"); // touch -- now detail-2 is the least recently used
+    lru.get("detail-1");
     lru.put("detail-3", "detail", "d3", 40);
     expect(lru.has("detail-2")).toBe(false);
     expect(lru.has("detail-1")).toBe(true);
@@ -107,8 +102,6 @@ describe("ShardLru", () => {
 
   it("allows one shard to transiently exceed budget while decoding, then releases it since it cannot be retained", () => {
     const lru = new ShardLru({ budget_bytes: 100 });
-    // A single entry larger than the whole budget: nothing else can be
-    // evicted to make it fit, so it cannot be retained in cache.
     lru.put("oversized-detail", "detail", "huge", 500);
     expect(lru.has("oversized-detail")).toBe(false);
     expect(lru.resident_bytes).toBeLessThanOrEqual(100);
