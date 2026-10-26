@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted } from "vue";
+import { onBeforeUnmount, onMounted, watchEffect } from "vue";
 
 const PANEL_ATTRIBUTE = "data-tavern-canvas-settings";
 const SLASH_COMMAND_NAME = "inkwell";
@@ -59,14 +59,17 @@ export function use_host_entry_points(labels: HostEntryPointLabels, on_open: () 
     block.setAttribute(PANEL_ATTRIBUTE, "");
     block.className = "flex-container flexFlowColumn flexGap5";
     const title = document.createElement("b");
-    title.textContent = labels.name();
     const description = document.createElement("small");
-    description.textContent = labels.description();
     const button = document.createElement("div");
+    // The locale resolves after mount, so the texts follow it.
+    watchEffect(() => {
+      title.textContent = labels.name();
+      description.textContent = labels.description();
+      button.textContent = labels.open();
+    });
     button.className = "menu_button interactable";
     button.setAttribute("role", "button");
     button.tabIndex = 0;
-    button.textContent = labels.open();
     button.addEventListener("click", on_open);
     button.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {

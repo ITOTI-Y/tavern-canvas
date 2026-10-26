@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, ref, type Ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, watchEffect, type Ref } from "vue";
 
 import { create_host_image_icon } from "./host_image_icon.js";
 
@@ -27,7 +27,10 @@ export function use_extensions_menu_entry(label: () => string, on_open: () => vo
     icon.className = "extensionsMenuExtensionButton";
     icon.append(create_host_image_icon(document));
     const text = document.createElement("span");
-    text.textContent = label();
+    // The locale resolves after mount, so the label follows it.
+    watchEffect(() => {
+      text.textContent = label();
+    });
     entry.append(icon, text);
     entry.addEventListener("click", on_open);
     menu.append(entry);
