@@ -157,6 +157,10 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
       host.subscribe_message_rendered((message_id) => {
         void scan_message(message_id);
       }),
+      host.subscribe_message_released((message_id) => {
+        targets_by_message.delete(message_id);
+        publish();
+      }),
       host.subscribe_chat_rendered(() => {
         notice_by_location.clear();
         schedule_scan_all();

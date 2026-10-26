@@ -70,6 +70,7 @@ function create_host(text_element: HTMLElement): HostAdapter {
     subscribe_generation: () => () => undefined,
     subscribe_chat_change: () => () => undefined,
     subscribe_message_rendered: () => () => undefined,
+    subscribe_message_released: () => () => undefined,
     subscribe_chat_rendered: () => () => undefined,
     find_message_element: (message_id) => (message_id === 3 ? text_element : null),
     read_swipe_record: () => record,

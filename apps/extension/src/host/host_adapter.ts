@@ -104,8 +104,10 @@ export interface HostAdapter {
   get_active_chat(): Promise<HostChatSnapshot>;
   subscribe_generation(handler: HostGenerationHandler): () => void;
   subscribe_chat_change(handler: HostChatChangeHandler): () => void;
-  /** Fires for every message whose DOM was rebuilt: rendered, updated, edited or swiped. */
+  /** Fires for every message whose DOM was rebuilt: rendered, updated, edited, swiped or remounted. */
   subscribe_message_rendered(handler: HostMessageRenderedHandler): () => void;
+  /** Fires when a virtualized chat drops a message's content from the page. */
+  subscribe_message_released(handler: HostMessageRenderedHandler): () => void;
   /** Fires when the whole visible chat was rebuilt, so every message must be scanned again. */
   subscribe_chat_rendered(handler: () => void): () => void;
   find_message_element(message_id: number): HTMLElement | null;

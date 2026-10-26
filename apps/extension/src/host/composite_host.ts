@@ -13,6 +13,7 @@ import type {
   PresetGenerationRequest,
   PresetGenerationResult,
 } from "./host_adapter.js";
+import type { ChatSurfaceMounts } from "./chat_surface.js";
 import {
   inspect_sillytavern,
   SillyTavernHost,
@@ -29,15 +30,19 @@ export class CompositeHostAdapter implements HostAdapter {
   readonly capabilities: CapabilityMatrix;
   readonly #helper: TavernHelperHost;
   readonly #sillytavern: SillyTavernHost;
+  readonly #surface: ChatSurfaceMounts | null;
 
+  /** `surface` is set when TauriTavern's managed ChatSurface owns the message DOM. */
   constructor(
     capabilities: CapabilityMatrix,
     helper: TavernHelperHost,
     sillytavern: SillyTavernHost,
+    surface: ChatSurfaceMounts | null,
   ) {
     this.capabilities = capabilities;
     this.#helper = helper;
     this.#sillytavern = sillytavern;
+    this.#surface = surface;
   }
 
   get_locale(): string {
@@ -61,7 +66,29 @@ export class CompositeHostAdapter implements HostAdapter {
   }
 
   subscribe_message_rendered(handler: HostMessageRenderedHandler): () => void {
-    return this.#sillytavern.subscribe_message_rendered(handler);
+    const unsubscribe_events = this.#sillytavern.subscribe_message_rendered(handler);
+    const unsubscribe_surface = this.#surface?.subscribe((event) => {
+      if (event.type === "committed") {
+        handler(event.mount.mesid);
+      }
+    });
+    return () => {
+      unsubscribe_events();
+      unsubscribe_surface?.();
+    };
+  }
+
+  subscribe_message_released(handler: HostMessageRenderedHandler): () => void {
+    return (
+      this.#surface?.subscribe((event) => {
+        if (event.type === "released") {
+          handler(event.mesid);
+        }
+      }) ??
+      (() => {
+        // Without a managed surface, message DOM is only replaced, never dropped.
+      })
+    );
   }
 
   subscribe_chat_rendered(handler: () => void): () => void {
@@ -116,6 +143,7 @@ function read_property(container: unknown, property_name: string): unknown {
 export function create_composite_host(
   globals: unknown,
   capabilities: CapabilityMatrix,
+  surface: ChatSurfaceMounts | null,
 ): CompositeHostAdapter | null {
   const helper_surface = read_property(globals, "TavernHelper");
   const sillytavern_global = read_property(globals, "SillyTavern");
@@ -141,5 +169,5 @@ export function create_composite_host(
   const helper = new TavernHelperHost(helper_surface as TavernHelperSurface, () =>
     sillytavern.get_active_chat_id(),
   );
-  return new CompositeHostAdapter(capabilities, helper, sillytavern);
+  return new CompositeHostAdapter(capabilities, helper, sillytavern, surface);
 }

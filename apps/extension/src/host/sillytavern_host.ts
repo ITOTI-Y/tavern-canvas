@@ -32,7 +32,8 @@ type EventTypeName =
 export interface SillyTavernChatMessage {
   swipe_id?: number;
   extra?: Record<string, unknown>;
-  swipe_info?: { extra?: Record<string, unknown> }[];
+  /** TauriTavern's on-demand swipe loading leaves inactive entries of older messages `null`. */
+  swipe_info?: ({ extra?: Record<string, unknown> } | null)[];
 }
 
 export interface SillyTavernContextSurface {
@@ -293,7 +294,7 @@ export class SillyTavernHost {
       return message.extra ?? null;
     }
     const info = message.swipe_info?.[location.swipe_id];
-    if (info === undefined) {
+    if (info === undefined || info === null) {
       return null;
     }
     if (info.extra === undefined && create) {

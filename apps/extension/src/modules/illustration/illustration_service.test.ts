@@ -61,6 +61,7 @@ class MemoryHost {
     },
     subscribe_chat_change: () => () => undefined,
     subscribe_message_rendered: () => () => undefined,
+    subscribe_message_released: () => () => undefined,
     subscribe_chat_rendered: () => () => undefined,
     find_message_element: () => null,
     read_swipe_record: (location: HostSwipeLocation) =>

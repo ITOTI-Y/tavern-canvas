@@ -24,6 +24,9 @@ const expected_manifest = {
   auto_update: true,
   minimum_client_version: "1.18.0",
   minimum_tavern_helper_version: "4.9.1",
+  hooks: {
+    chatSurface: "register_chat_surface",
+  },
   i18n: {
     en: "i18n/en.json",
   },

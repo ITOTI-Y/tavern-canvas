@@ -1,5 +1,6 @@
 import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
+import { chat_surface_mounts } from "../host/chat_surface.js";
 import { create_composite_host, type CompositeHostAdapter } from "../host/composite_host.js";
 import { create_sillytavern_secret_destination } from "../host/sillytavern_secret_destination.js";
 import {
@@ -77,5 +78,9 @@ export function create_host_adapter(
   globals: unknown,
   capabilities: CapabilityMatrix,
 ): CompositeHostAdapter | null {
-  return create_composite_host(globals, capabilities);
+  return create_composite_host(
+    globals,
+    capabilities,
+    chat_surface_mounts.active ? chat_surface_mounts : null,
+  );
 }
