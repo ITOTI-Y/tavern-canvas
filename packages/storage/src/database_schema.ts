@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 4 as const;
+export const DATABASE_VERSION = 5 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 export const STORE_DEFINITIONS = {
@@ -101,6 +101,11 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 4,
   },
+  outfit_profiles: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 5,
+  },
 } as const;
 
 export type StoreName = keyof typeof STORE_DEFINITIONS;
@@ -173,6 +178,9 @@ export type NovelAiVibe = z.infer<typeof NovelAiVibeSchema>;
 
 export const CharacterProfileSchema = namespaced_schema({});
 export type CharacterProfile = z.infer<typeof CharacterProfileSchema>;
+
+export const OutfitProfileSchema = namespaced_schema({});
+export type OutfitProfile = z.infer<typeof OutfitProfileSchema>;
 
 export const RegexRuleSchema = namespaced_schema({});
 export type RegexRule = z.infer<typeof RegexRuleSchema>;
@@ -349,7 +357,8 @@ export type BusinessRecord =
   | LegacyPreference
   | LlmConnection
   | NovelAiVibeEncoding
-  | ProviderInputAsset;
+  | ProviderInputAsset
+  | OutfitProfile;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -375,6 +384,7 @@ export type RecordByStore = {
   llm_connections: LlmConnection;
   novelai_vibe_encodings: NovelAiVibeEncoding;
   provider_input_assets: ProviderInputAsset;
+  outfit_profiles: OutfitProfile;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -542,6 +552,14 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  outfit_profiles: {
+    key: string;
+    value: OutfitProfile;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -564,6 +582,7 @@ export const RECORD_SCHEMAS: {
   llm_connections: LlmConnectionSchema,
   novelai_vibe_encodings: NovelAiVibeEncodingSchema,
   provider_input_assets: ProviderInputAssetSchema,
+  outfit_profiles: OutfitProfileSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;

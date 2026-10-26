@@ -97,7 +97,8 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       prompt_preset_id: null,
     }),
     auto_generation_enabled: () => false,
-    prompt_context: () => Promise.resolve({ preset: null, appearances: [] }),
+    prompt_context: () =>
+      Promise.resolve({ preset: null, library: { characters: [], outfits: [] } }),
     build_request: () => Promise.reject(new Error("no provider profile")),
     build_edit_request: (edit) =>
       Promise.resolve({ provider_id: "sd_webui", prompt: edit.kind } as ImageGenerationRequest),

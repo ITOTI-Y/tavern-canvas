@@ -225,6 +225,12 @@
   outline-offset: 1px;
 }
 
+.formError {
+  margin: 0;
+  color: var(--tc-error);
+  font-size: 12px;
+}
+
 .formActions {
   display: flex;
   justify-content: flex-end;

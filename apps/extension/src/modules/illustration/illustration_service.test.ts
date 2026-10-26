@@ -123,7 +123,8 @@ function create_service(
     host: host.adapter,
     settings: () => options.settings ?? SETTINGS,
     auto_generation_enabled: () => options.auto ?? false,
-    prompt_context: () => Promise.resolve({ preset: null, appearances: [] }),
+    prompt_context: () =>
+      Promise.resolve({ preset: null, library: { characters: [], outfits: [] } }),
     build_request: (input) =>
       Promise.resolve({ prompt: input.positive_prompt } as unknown as ImageGenerationRequest),
     build_edit_request: (edit) =>

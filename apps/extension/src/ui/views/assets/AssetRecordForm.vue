@@ -13,6 +13,7 @@ const props = defineProps<{
   readonly namePlaceholder: string;
   readonly name: string;
   readonly nameError: string | null;
+  readonly saveError?: string | null;
   readonly fields: readonly AssetFieldSpec[];
   readonly values: AssetFormValues;
   readonly saveLabel: string;
@@ -102,6 +103,7 @@ const is_pending = computed(() => props.pending);
 
     <slot name="extra-fields" />
 
+    <p v-if="saveError" :class="styles.formError" role="alert">{{ saveError }}</p>
     <div :class="styles.formActions">
       <AppButton :label="cancelLabel" variant="secondary" type="button" @click="emit('cancel')" />
       <AppButton :label="saveLabel" variant="primary" type="submit" :pending="is_pending" />

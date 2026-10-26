@@ -148,6 +148,7 @@ const delete_confirm_title = (record_name: string): string =>
         :name-placeholder="t('common.labels.name')"
         :name="panel.name.value"
         :name-error="panel.name_error.value"
+        :save-error="panel.save_error.value"
         :fields="FIELDS"
         :values="panel.values"
         :save-label="t('common.actions.save')"

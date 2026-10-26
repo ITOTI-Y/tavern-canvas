@@ -23,15 +23,12 @@ import {
 } from "./analysis.js";
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
-import {
-  assemble_slot_prompt,
-  type CharacterAppearance,
-  type SlotPromptPreset,
-} from "./slot_prompt.js";
+import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
+import { match_library, type SlotLibrary } from "./library_match.js";
 
 export interface SlotPromptContext {
   readonly preset: SlotPromptPreset | null;
-  readonly appearances: readonly CharacterAppearance[];
+  readonly library: SlotLibrary;
 }
 
 export interface SlotGenerationInput {
@@ -231,10 +228,15 @@ export class IllustrationService {
     const settings = this.#deps.settings();
     const record: SwipeIllustrations = { schema_version: 2, slots: [] };
     if (paragraphs.length > 0) {
+      const context = await this.#deps.prompt_context();
       const result = await this.#deps.host.generate_with_preset({
         generation_id: this.#deps.new_generation_id(),
         preset_name: settings.preset_name,
-        user_input: build_analysis_input(paragraphs, settings.max_images_per_message),
+        user_input: build_analysis_input(
+          paragraphs,
+          settings.max_images_per_message,
+          context.library,
+        ),
         max_chat_history: settings.max_chat_history,
         connection: await to_host_connection(settings.connection, this.#deps.resolve_analysis_key),
         json_schema: ANALYSIS_JSON_SCHEMA,
@@ -244,13 +246,16 @@ export class IllustrationService {
         paragraphs.length,
         settings.max_images_per_message,
       );
-      const context = await this.#deps.prompt_context();
       record.slots.push(
         ...proposals.map((proposal): IllustrationSlot => {
+          const library = match_library(
+            `${paragraphs[proposal.paragraph]?.text ?? ""}\n${proposal.scene}`,
+            proposal.characters,
+            context.library,
+          );
           const prompt = assemble_slot_prompt({
             preset: context.preset,
-            characters: proposal.characters,
-            appearances: context.appearances,
+            library,
             scene_tags: proposal.tags,
           });
           return {
@@ -258,7 +263,12 @@ export class IllustrationService {
             paragraph: proposal.paragraph,
             anchor: (paragraphs[proposal.paragraph]?.text ?? "").slice(0, 400),
             scene: proposal.scene,
-            characters: [...proposal.characters],
+            characters: [
+              ...new Set([
+                ...proposal.characters,
+                ...library.characters.map((entry) => entry.character.name),
+              ]),
+            ],
             positive_prompt: prompt.positive_prompt,
             negative_prompt: prompt.negative_prompt,
             image_ids: [],

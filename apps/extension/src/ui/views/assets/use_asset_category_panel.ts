@@ -15,6 +15,8 @@ export interface AssetCategoryPanelController {
   readonly editing_record: Ref<AssetRecordSummary | null>;
   readonly name: Ref<string>;
   readonly name_error: Ref<string | null>;
+  /** Why the last save failed, shown in the form instead of leaving it open without a word. */
+  readonly save_error: Ref<string | null>;
   readonly values: AssetFormValues;
   readonly saving: Ref<boolean>;
   open_create(): void;
@@ -38,6 +40,7 @@ export function use_asset_category_panel(
   const editing_record = ref<AssetRecordSummary | null>(null);
   const name = ref("");
   const name_error = ref<string | null>(null);
+  const save_error = ref<string | null>(null);
   const values = reactive<AssetFormValues>({});
   const saving = ref(false);
 
@@ -45,6 +48,7 @@ export function use_asset_category_panel(
     editing_record.value = null;
     name.value = "";
     name_error.value = null;
+    save_error.value = null;
     replace_values(values, empty_form_values(fields()));
     dialog_open.value = true;
   }
@@ -53,6 +57,7 @@ export function use_asset_category_panel(
     editing_record.value = record;
     name.value = record.display_name;
     name_error.value = null;
+    save_error.value = null;
     const preserved: AssetFormValues = {};
     for (const key of preserved_keys) {
       const value = record.payload[key];
@@ -75,6 +80,7 @@ export function use_asset_category_panel(
       return;
     }
     saving.value = true;
+    save_error.value = null;
     try {
       const id = editing_record.value?.id ?? crypto.randomUUID();
       await controller.save_asset(category, {
@@ -85,6 +91,8 @@ export function use_asset_category_panel(
         payload: { ...values },
       });
       dialog_open.value = false;
+    } catch (error) {
+      save_error.value = error instanceof Error ? error.message : String(error);
     } finally {
       saving.value = false;
     }
@@ -107,6 +115,7 @@ export function use_asset_category_panel(
     editing_record,
     name,
     name_error,
+    save_error,
     values,
     saving,
     open_create,

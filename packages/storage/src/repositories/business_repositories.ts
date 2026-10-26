@@ -2,7 +2,9 @@ import type { IDBPDatabase } from "idb";
 
 import {
   type CharacterProfile,
+  type OutfitProfile,
   CharacterProfileSchema,
+  OutfitProfileSchema,
   type ComfyWorkflow,
   ComfyWorkflowSchema,
   type DBSchema,
@@ -84,6 +86,12 @@ export class CharacterProfileRepository extends IndexedDbRepository<
 > {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "character_profiles", CharacterProfileSchema);
+  }
+}
+
+export class OutfitProfileRepository extends IndexedDbRepository<"outfit_profiles", OutfitProfile> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "outfit_profiles", OutfitProfileSchema);
   }
 }
 
@@ -487,6 +495,7 @@ export interface BusinessRepositories {
   comfy_workflows: ComfyWorkflowRepository;
   novelai_vibes: NovelAiVibeRepository;
   character_profiles: CharacterProfileRepository;
+  outfit_profiles: OutfitProfileRepository;
   regex_rules: RegexRuleRepository;
   knowledge_entries: KnowledgeEntryRepository;
   vocabularies: VocabularyRepository;
@@ -512,6 +521,7 @@ export function create_business_repositories(
     comfy_workflows: new ComfyWorkflowRepository(database),
     novelai_vibes: new NovelAiVibeRepository(database),
     character_profiles: new CharacterProfileRepository(database),
+    outfit_profiles: new OutfitProfileRepository(database),
     regex_rules: new RegexRuleRepository(database),
     knowledge_entries: new KnowledgeEntryRepository(database),
     vocabularies: new VocabularyRepository(database),

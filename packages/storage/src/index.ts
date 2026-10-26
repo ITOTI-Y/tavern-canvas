@@ -26,6 +26,7 @@ export type {
   BusinessRecord,
   BusinessStoreName,
   CharacterProfile,
+  OutfitProfile,
   ComfyWorkflow,
   DBSchema,
   GenerationJob,
@@ -77,6 +78,7 @@ export type { Repository, RepositoryInput } from "./repository.js";
 export {
   business_repositories,
   CharacterProfileRepository,
+  OutfitProfileRepository,
   ComfyWorkflowRepository,
   create_business_repositories,
   ImageBlobRepository,

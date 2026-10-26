@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import type { HostJsonSchema } from "../../host/index.js";
+import type { SlotLibrary } from "./library_match.js";
 import type { Paragraph } from "./slot_markers.js";
 
 export interface IllustrationProposal {
@@ -35,7 +36,27 @@ export const ANALYSIS_JSON_SCHEMA: HostJsonSchema = {
   },
 };
 
-export function build_analysis_input(paragraphs: readonly Paragraph[], max_images: number): string {
+function library_lines(library: SlotLibrary): readonly string[] {
+  if (library.characters.length === 0 && library.outfits.length === 0) {
+    return [];
+  }
+  const owner = new Map(library.characters.map((character) => [character.id, character.name]));
+  return [
+    "",
+    "Characters and outfits below have stored tags that are added automatically. When one of them is in the picture, do not describe their hair, eyes, face, body or clothing in tags; describe only pose, action, expression and the setting. List these characters in characters using exactly the name shown.",
+    ...library.characters.map((character) => `- character: ${character.name}`),
+    ...library.outfits.map((outfit) => {
+      const worn_by = outfit.character_id === null ? undefined : owner.get(outfit.character_id);
+      return `- outfit: ${outfit.name}${worn_by === undefined ? "" : ` (worn by ${worn_by})`}`;
+    }),
+  ];
+}
+
+export function build_analysis_input(
+  paragraphs: readonly Paragraph[],
+  max_images: number,
+  library: SlotLibrary,
+): string {
   return [
     "[TavernCanvas illustration request]",
     `Read the latest reply below, split into numbered paragraphs. Choose at most ${String(max_images)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
@@ -44,6 +65,7 @@ export function build_analysis_input(paragraphs: readonly Paragraph[], max_image
     "- tags: comma-separated Danbooru-style English tags for an anime image model (subject count such as 1girl, pose, action, expression, clothing, setting, lighting, composition); use a character name only when it is a well-known Danbooru character tag",
     "- characters: the names of the characters visible in the picture, exactly as written in the story",
     'Reply with only a JSON object of the form {"illustrations":[...]}. Use an empty array when nothing should be illustrated.',
+    ...library_lines(library),
     "",
     "Paragraphs:",
     ...paragraphs.map((paragraph) => `[${String(paragraph.index)}] ${paragraph.text}`),

@@ -26,14 +26,22 @@ export async function load_slot_prompt_context(
     prompt_preset_id === null ? null : prompt_presets.load_draft(prompt_preset_id),
     assets.load(),
   ]);
+  const text = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
   return {
     preset,
-    appearances: catalog.character.flatMap((record) => {
-      const appearance = record.payload.appearance;
-      return typeof appearance === "string" && appearance.trim().length > 0
-        ? [{ name: record.display_name, appearance }]
-        : [];
-    }),
+    library: {
+      characters: catalog.character.map((record) => ({
+        id: record.id,
+        name: record.display_name,
+        appearance: text(record.payload.appearance),
+      })),
+      outfits: catalog.outfit.map((record) => ({
+        id: record.id,
+        name: record.display_name,
+        description: text(record.payload.description),
+        character_id: text(record.payload.character_id) || null,
+      })),
+    },
   };
 }
 

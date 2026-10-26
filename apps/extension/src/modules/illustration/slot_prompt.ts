@@ -1,5 +1,6 @@
 import { apply_regex_rules, type RegexRule } from "../prompt/regex_transform.js";
 import { deduplicate_tags, get_base_tag, join_prompt_parts } from "../prompt/tag_normalizer.js";
+import type { LibraryMatch } from "./library_match.js";
 
 export interface SlotPromptPreset {
   readonly fixed_positive_prompt: string;
@@ -11,15 +12,9 @@ export interface SlotPromptPreset {
   readonly regex_rules: readonly RegexRule[];
 }
 
-export interface CharacterAppearance {
-  readonly name: string;
-  readonly appearance: string;
-}
-
 export interface SlotPromptInput {
   readonly preset: SlotPromptPreset | null;
-  readonly characters: readonly string[];
-  readonly appearances: readonly CharacterAppearance[];
+  readonly library: LibraryMatch;
   readonly scene_tags: string;
 }
 
@@ -40,18 +35,19 @@ function replace_tags(prompt: string, rules: SlotPromptPreset["replacement_rules
   );
 }
 
-/** Fixed preset tags, then each named character's stored appearance, then the scene's own tags. */
+/**
+ * Fixed preset tags, then each matched character's appearance and outfit, then outfits named
+ * without their character, then the scene's own tags.
+ */
 export function assemble_slot_prompt(input: SlotPromptInput): SlotPrompt {
-  const appearances = input.characters.flatMap((name) => {
-    const match = input.appearances.find(
-      (candidate) => candidate.name.trim().toLowerCase() === name.trim().toLowerCase(),
-    );
-    return match === undefined ? [] : [match.appearance];
-  });
   const preset = input.preset;
   const joined = join_prompt_parts([
     preset?.fixed_positive_prompt,
-    ...appearances,
+    ...input.library.characters.flatMap((entry) => [
+      entry.character.appearance,
+      entry.outfit?.description,
+    ]),
+    ...input.library.loose_outfits.map((outfit) => outfit.description),
     input.scene_tags,
   ]);
   const replaced = preset === null ? joined : replace_tags(joined, preset.replacement_rules);

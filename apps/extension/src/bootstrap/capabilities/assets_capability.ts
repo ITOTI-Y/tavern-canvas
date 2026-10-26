@@ -22,7 +22,7 @@ type CategoryRepository = Pick<
 
 /** Categories without a matching v3 store resolve to `capability_unavailable` on mutation and load as empty. */
 const UNMAPPED_CATEGORY_REASON =
-  "No v3 store exists for this asset category yet; character, vibe and workflow assets are stored, the rest are not.";
+  "No v3 store exists for this asset category yet; character, outfit, vibe and workflow assets are stored, the rest are not.";
 
 export interface AssetsCapabilityDeps {
   readonly repositories: BusinessRepositories;
@@ -51,6 +51,7 @@ function repository_for(
     case "workflow":
       return repositories.comfy_workflows;
     case "outfit":
+      return repositories.outfit_profiles;
     case "lora":
     case "reference":
       return null;
