@@ -21,7 +21,6 @@ import type {
   GenerationCapability,
   GenerationDomainEvent,
   GenerationJobSummary,
-  GenerationSubmitCommand,
   KnowledgeCapability,
   KnowledgeDomainEvent,
   LlmConnectionsCapability,
@@ -235,6 +234,7 @@ function build_mock_studio() {
     pin: vi.fn(),
     detach_from_message: vi.fn(),
     delete_record: vi.fn(),
+    reveal_source: vi.fn(),
     bulk_delete: vi.fn(),
   };
 
@@ -321,13 +321,6 @@ function resolve_all_defaults(mock: MockStudio): void {
   mock.settings.deferred_load.resolve(DEFAULT_SETTINGS_SNAPSHOT);
 }
 
-function build_submit_command(): GenerationSubmitCommand {
-  return {
-    profile_id: PROFILE_ID,
-    request: { provider_id: "sd_webui" } as unknown as GenerationSubmitCommand["request"],
-  };
-}
-
 describe("create_studio_controller", () => {
   it("never touches the remote vocabulary catalog while starting", async () => {
     const mock = build_mock_studio();
@@ -406,8 +399,8 @@ describe("create_studio_controller", () => {
 
     expect(controller.state.failures.has("gallery")).toBe(true);
     expect(controller.state.gallery.records).toEqual([]);
-    expect(controller.state.workbench.profiles).toHaveLength(1);
-    expect(controller.state.workbench.profiles[0]?.id).toBe(PROFILE_ID);
+    expect(controller.state.generation.profiles).toHaveLength(1);
+    expect(controller.state.generation.profiles[0]?.id).toBe(PROFILE_ID);
     expect(controller.state.loading.size).toBe(0);
   });
 
@@ -433,45 +426,10 @@ describe("create_studio_controller", () => {
       },
     });
 
-    expect(controller.state.workbench.profiles).toHaveLength(1);
-    expect(controller.state.workbench.profiles[0]?.id).toBe(PROFILE_ID);
+    expect(controller.state.generation.profiles).toHaveLength(1);
+    expect(controller.state.generation.profiles[0]?.id).toBe(PROFILE_ID);
     expect(controller.state.gallery).toBe(gallery_before);
     expect(controller.state.diagnostics).toBe(diagnostics_before);
-  });
-
-  it("tracks command pending/success/error state and rejects a duplicate in-flight submission", async () => {
-    const mock = build_mock_studio();
-    const controller = create_studio_controller({ capabilities: mock.capabilities });
-    const start_promise = controller.start();
-    resolve_all_defaults(mock);
-    await start_promise;
-
-    expect(controller.state.workbench.submit_command.status).toBe("idle");
-
-    const submit_deferred = deferred<GenerationJobSummary>();
-    mock.generation.submit.mockReturnValue(submit_deferred.promise);
-
-    const command = build_submit_command();
-    const first_call = controller.submit_generation(command);
-    expect(controller.state.workbench.submit_command.status).toBe("pending");
-
-    const second_call = controller.submit_generation(command);
-    expect(mock.generation.submit).toHaveBeenCalledTimes(1);
-
-    const job: GenerationJobSummary = {
-      job_id: JOB_ID,
-      request_id: JOB_ID,
-      provider_id: "sd_webui",
-      state: "queued",
-      image_count: 1,
-      completed_image_ids: [],
-      error: null,
-      submitted_at: "2026-01-01T00:00:00Z",
-    };
-    submit_deferred.resolve(job);
-    await Promise.all([first_call, second_call]);
-
-    expect(controller.state.workbench.submit_command).toEqual({ status: "success", result: job });
   });
 
   it("survives panel resize and color-mode change without losing route or selected-record state", async () => {
@@ -496,16 +454,12 @@ describe("create_studio_controller", () => {
     expect(controller.state.color_mode).toBe("dark");
   });
 
-  it("unsubscribes every domain listener on stop, and never rejects an already-settling command", async () => {
+  it("unsubscribes every domain listener on stop", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });
     const start_promise = controller.start();
     resolve_all_defaults(mock);
     await start_promise;
-
-    const submit_deferred = deferred<GenerationJobSummary>();
-    mock.generation.submit.mockReturnValue(submit_deferred.promise);
-    const pending_submit = controller.submit_generation(build_submit_command());
 
     await controller.stop();
 
@@ -516,18 +470,6 @@ describe("create_studio_controller", () => {
     expect(mock.gallery.sub.unsubscribe).toHaveBeenCalledTimes(1);
     expect(mock.diagnostics.sub.unsubscribe).toHaveBeenCalledTimes(1);
     expect(mock.settings.sub.unsubscribe).toHaveBeenCalledTimes(1);
-
-    submit_deferred.resolve({
-      job_id: JOB_ID,
-      request_id: JOB_ID,
-      provider_id: "sd_webui",
-      state: "queued",
-      image_count: 1,
-      completed_image_ids: [],
-      error: null,
-      submitted_at: "2026-01-01T00:00:00Z",
-    });
-    await expect(pending_submit).resolves.toBeUndefined();
   });
 
   it("carries stable failure codes, never a raw error message, in controller state", async () => {
@@ -571,7 +513,7 @@ describe("create_studio_controller", () => {
     expect(controller.state.tasks).toEqual([
       { id: JOB_ID, label_code: "status.running", status: "pending", progress: 0.5 },
     ]);
-    expect(controller.state.workbench.jobs).toHaveLength(1);
+    expect(controller.state.generation.jobs).toHaveLength(1);
   });
 
   it("derives tasks from the initial job load and drops a job once it reaches a terminal state", async () => {
@@ -612,7 +554,7 @@ describe("create_studio_controller", () => {
     });
 
     expect(controller.state.tasks).toEqual([]);
-    expect(controller.state.workbench.jobs).toHaveLength(1);
+    expect(controller.state.generation.jobs).toHaveLength(1);
   });
 
   it("reflects a failed job in tasks as a status.failed error entry", async () => {
@@ -664,13 +606,13 @@ describe("create_studio_controller: prompt and workbench commands", () => {
     await start_promise;
 
     await controller.select_provider_profile(PROFILE_ID);
-    expect(controller.state.workbench.active_profile_id).toBe(PROFILE_ID);
+    expect(controller.state.generation.active_profile_id).toBe(PROFILE_ID);
     expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
       active_provider_profile_id: PROFILE_ID,
     });
 
     await controller.select_provider_profile(null);
-    expect(controller.state.workbench.active_profile_id).toBeNull();
+    expect(controller.state.generation.active_profile_id).toBeNull();
     expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
       active_provider_profile_id: null,
     });
@@ -706,7 +648,7 @@ describe("create_studio_controller: prompt and workbench commands", () => {
     expect(mock.capabilities.settings.update).toHaveBeenCalledWith({
       active_provider_profile_id: PROFILE_ID,
     });
-    expect(controller.state.workbench.active_profile_id).toBe(PROFILE_ID);
+    expect(controller.state.generation.active_profile_id).toBe(PROFILE_ID);
   });
   it("keeps a vault passphrase out of state while applying the returned vault status", async () => {
     const mock = build_mock_studio();

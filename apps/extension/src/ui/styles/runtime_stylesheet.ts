@@ -12,7 +12,6 @@ import diagnostics_view_stylesheet from "../views/diagnostics/diagnostics.module
 import gallery_view_stylesheet from "../views/gallery/gallery.module.css?inline";
 import prompt_view_stylesheet from "../views/prompt/prompt.module.css?inline";
 import settings_view_stylesheet from "../views/settings/settings.module.css?inline";
-import workbench_view_stylesheet from "../views/workbench/workbench.module.css?inline";
 
 /** Shadow DOM does not inherit page stylesheets: every first-party CSS Module must be imported here, or its rules never reach the shadow root. */
 const ASSET_URL_MARKER_PATTERN = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
@@ -38,7 +37,6 @@ export const FIRST_PARTY_STYLESHEET = resolve_asset_urls(
     shell_stylesheet,
     assets_view_stylesheet,
     gallery_view_stylesheet,
-    workbench_view_stylesheet,
     prompt_view_stylesheet,
     diagnostics_view_stylesheet,
     settings_view_stylesheet,

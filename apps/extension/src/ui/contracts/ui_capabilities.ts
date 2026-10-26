@@ -234,6 +234,8 @@ export type GalleryDomainEvent =
   | { readonly type: "record_upserted"; readonly record: GalleryRecordSummary }
   | { readonly type: "record_removed"; readonly record_id: Uuid };
 
+export type SourceRevealOutcome = "revealed" | "other_chat" | "not_found";
+
 export interface GalleryCapability {
   load(): Promise<readonly GalleryRecordSummary[]>;
   subscribe(handler: (event: GalleryDomainEvent) => void): Unsubscribe;
@@ -242,6 +244,8 @@ export interface GalleryCapability {
   /** Detaching from a message and deleting the record are distinct confirmed actions. */
   detach_from_message(record_id: Uuid): Promise<void>;
   delete_record(record_id: Uuid): Promise<void>;
+  /** Scrolls the chat to the message the image was generated for. */
+  reveal_source(record_id: Uuid): Promise<SourceRevealOutcome>;
   bulk_delete(record_ids: readonly Uuid[]): Promise<void>;
 }
 

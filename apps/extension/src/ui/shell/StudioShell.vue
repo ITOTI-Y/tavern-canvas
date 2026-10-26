@@ -4,7 +4,6 @@ import { useI18n } from "vue-i18n";
 
 import type { StudioRoute, StudioState } from "../contracts/view_models.js";
 import type { StudioController } from "../controllers/studio_controller.js";
-import { route_label } from "./route_nav.js";
 import styles from "./shell.module.css";
 import StudioWorkspace from "./StudioWorkspace.vue";
 import TaskStrip from "./TaskStrip.vue";
@@ -44,7 +43,9 @@ const inspector_style = computed(() => ({
 
 const mobile_inspector_open = ref(false);
 
-const context_inspector_available = computed(() => props.state.route !== "workbench");
+const context_inspector_available = computed(
+  () => props.state.route === "gallery" || props.state.settings_section === "library",
+);
 const desktop_inspector_collapsed = computed(
   () => !context_inspector_available.value || props.state.inspector.collapsed,
 );
@@ -97,9 +98,9 @@ function select_route(route: StudioRoute): void {
           class="tc-interactive"
           :class="styles.icon_button"
           data-testid="partial-banner-diagnostics"
-          @click="select_route('diagnostics')"
+          @click="props.controller.set_settings_section('diagnostics')"
         >
-          {{ route_label(t, "diagnostics") }}
+          {{ t("settings.nav.diagnostics") }}
         </button>
       </div>
 

@@ -74,15 +74,15 @@ function build_timeline(count: number): TaskTimelineEntry[] {
 
 function build_state(overrides: Partial<StudioState> = {}): StudioState {
   return {
-    route: "diagnostics",
+    route: "settings",
+    settings_section: "diagnostics",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },

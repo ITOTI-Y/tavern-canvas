@@ -21,13 +21,9 @@ const app = {
 };
 
 const nav = {
-  workbench: "Workbench",
-  prompt: "Prompt",
   assets: "Assets",
   gallery: "Gallery",
-  diagnostics: "Diagnostics",
   settings: "Settings",
-  more: "More",
   inspector_expand: "Expand inspector",
   inspector_collapse: "Collapse inspector",
   task_strip_expand: "Show tasks",
@@ -40,7 +36,6 @@ const common = {
     save: "Save",
     cancel: "Cancel",
     close: "Close",
-    confirm: "Confirm",
     delete: "Delete",
     copy: "Copy",
     copied: "Copied",
@@ -63,14 +58,9 @@ const common = {
     empty_description: "Select a job, image, or asset to see its details here.",
     selection: {
       id_label: "ID",
-      action_label: "Action",
       kind_generation_job: "Generation job",
       kind_gallery_record: "Gallery image",
       kind_asset: "Asset",
-      intent_modify_prompt: "Modify prompt",
-      intent_regenerate: "Regenerate",
-      intent_edit: "Edit",
-      intent_inpaint: "Inpaint",
     },
   },
   notifications: {
@@ -97,102 +87,6 @@ const status = {
   connected: "Connected",
   blocked: "Blocked",
   unknown: "Unknown",
-};
-
-const workbench = {
-  prompt_composer: {
-    positive_label: "Positive prompt",
-    positive_placeholder: "Describe what the image should contain",
-    negative_label: "Negative prompt",
-    negative_placeholder: "Describe what to avoid",
-    image_count_label: "Image count",
-  },
-  setup: {
-    label: "Service setup",
-    title: "Connect a generation service before you create",
-    description:
-      "Add a provider profile and verify the connection. The creative workspace unlocks as soon as the service is ready.",
-    action: "Set up service",
-    steps: {
-      profile_title: "Create a provider profile",
-      profile_description: "Choose your image backend and the model you want to use.",
-      credentials_title: "Add endpoint and credentials",
-      credentials_description: "Store connection details and secret references in Settings.",
-      test_title: "Verify the connection",
-      test_description: "Run the provider test, then return to Workbench to generate.",
-    },
-  },
-  reference_strip: {
-    title: "Reference images",
-    empty_title: "No reference images yet",
-    empty_description:
-      "Add up to 4 reference images from Assets or your device to guide generation.",
-    add_action: "Add reference",
-    remove_action: "Remove reference",
-    move_up_action: "Move reference earlier",
-    move_down_action: "Move reference later",
-    picker_title: "Add a reference image",
-    picker_empty_title: "No saved reference images",
-    picker_empty_description: "Save a reference image in Assets first, then add it here.",
-    picker_error: "The reference image list failed to load.",
-    max_reached_hint: "Up to 4 reference images.",
-  },
-  provider_summary: {
-    title: "Provider",
-    no_profile_title: "No provider profile selected",
-    no_profile_description: "Choose a provider profile in Settings to enable generation.",
-    open_settings_action: "Open provider settings",
-    select_label: "Provider profile",
-    load_error: "Provider profiles failed to load.",
-  },
-  active_jobs: {
-    title: "Active jobs",
-    active_count: "{n} job running | {n} jobs running",
-    empty_title: "No jobs running",
-    empty_description: "Submit a generation request to see progress here.",
-    cancel_action: "Cancel job",
-    cancel_confirm_title: "Cancel this job?",
-    cancel_confirm_description:
-      "The provider request for {provider} stops immediately and cannot be resumed.",
-    progress_label: "{completed}/{total} images",
-    load_error: "Active jobs failed to load.",
-    state_labels: {
-      queued: "Queued",
-      preparing: "Preparing",
-      submitting: "Submitting",
-      running: "Running",
-      completed: "Completed",
-      failed: "Failed",
-      cancelled: "Cancelled",
-      attached: "Attached",
-      orphaned: "Orphaned",
-    },
-  },
-  generation_inspector: {
-    title: "Generation parameters",
-    seed_label: "Seed",
-    steps_label: "Steps",
-    sampler_label: "Sampler",
-    model_label: "Model",
-    provider_label: "Provider",
-    submitted_at_label: "Submitted",
-    empty_title: "Nothing selected",
-    empty_description: "Select a job in Active jobs to see its parameters here.",
-    completed_images_title: "Completed images",
-    image_alt: "Generated image {n}",
-  },
-  prefilled_from_gallery_notice: "Prompt loaded from the selected image.",
-  submit: {
-    action: "Generate",
-    validation: {
-      profile_required: "Select a provider profile before generating.",
-      prompt_required: "Enter a positive prompt before generating.",
-      image_count_range: "Choose between 1 and 4 images.",
-      provider_unsupported:
-        "This provider profile is not supported in Workbench yet. Choose a different profile.",
-    },
-  },
-  retry_action: "Retry generation",
 };
 
 const provider = {
@@ -447,13 +341,11 @@ const gallery = {
     prompt_label: "Prompt",
     copy_action: "Copy parameters",
     copied_toast: "Parameters copied",
-    modify_prompt_action: "Modify prompt",
-    regenerate_action: "Regenerate",
-    edit_action: "Edit image",
-    inpaint_action: "Inpaint",
     source_message_action: "Go to source message",
+    source_other_chat: "The source message is in another chat; open that chat first.",
+    source_not_found:
+      "The source message is not loaded; load earlier messages or check whether it was deleted.",
     parameters_unavailable: "No embedded generation parameters were found in this image.",
-    actions_unavailable_hint: "Jumping to the source message is not available in this version yet.",
   },
   selection: {
     selected_count: "{n} image selected | {n} images selected",
@@ -531,6 +423,16 @@ const diagnostics = {
 };
 
 const settings = {
+  nav: {
+    illustration: "Illustration",
+    providers: "Image providers",
+    translation: "Translation",
+    prompts: "Prompt presets",
+    library: "Library",
+    connections: "Connections",
+    general: "General",
+    diagnostics: "Diagnostics",
+  },
   onboarding: {
     label: "First connection",
     title: "Set up the service that will generate your images",
@@ -717,7 +619,6 @@ const errors = {
   validation_required: "This field is required.",
   gateway_incompatible: "The Gateway at {origin} reports an incompatible protocol version.",
   gateway_offline: "The Gateway at {origin} is not reachable.",
-  generation_failed: "Generation failed: {message}",
   connection_test_failed: "Connection test failed: {code}",
   unexpected: "Something went wrong. Check Diagnostics for details.",
 };
@@ -845,7 +746,6 @@ export const en_messages = {
   nav,
   common,
   status,
-  workbench,
   provider,
   prompt,
   assets,

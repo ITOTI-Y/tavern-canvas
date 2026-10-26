@@ -1,6 +1,6 @@
 import type { TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
 import { mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { markRaw, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
@@ -14,7 +14,11 @@ import type {
   SettingsSnapshot,
   StudioCapabilities,
 } from "../../contracts/ui_capabilities.js";
-import { IDLE_COMMAND_STATE, type StudioState } from "../../contracts/view_models.js";
+import {
+  IDLE_COMMAND_STATE,
+  type SettingsSection,
+  type StudioState,
+} from "../../contracts/view_models.js";
 import {
   create_studio_controller,
   type StudioController,
@@ -72,14 +76,14 @@ const PROFILE: ProviderProfileSummary = {
 function build_state(overrides: Partial<StudioState> = {}): StudioState {
   return {
     route: "settings",
+    settings_section: "illustration",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [PROFILE],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
@@ -127,13 +131,16 @@ function create_i18n_instance() {
   });
 }
 
+/** The section each describe block exercises; mount helpers open it. */
+let current_section: SettingsSection = "illustration";
+
 function mount_view(state: StudioState, controller: StudioController) {
   const portal_target = document.createElement("div");
   document.body.append(portal_target);
   const host = document.createElement("div");
   document.body.append(host);
   const wrapper = mount(SettingsView, {
-    props: { state, controller },
+    props: { state: { ...state, settings_section: current_section }, controller },
     global: {
       plugins: [create_i18n_instance()],
       provide: { [PORTAL_TARGET_KEY as unknown as string]: portal_target },
@@ -145,6 +152,7 @@ function mount_view(state: StudioState, controller: StudioController) {
 
 async function mount_view_with_live_controller(controller: StudioController) {
   await controller.start();
+  controller.set_settings_section(current_section);
   const portal_target = document.createElement("div");
   document.body.append(portal_target);
   const host = document.createElement("div");
@@ -169,14 +177,17 @@ afterEach(() => {
 });
 
 describe("SettingsView provider profiles", () => {
+  beforeEach(() => {
+    current_section = "providers";
+  });
+
   it("shows a composed empty state with no profiles yet", () => {
     const { wrapper } = mount_view(
       build_state({
-        workbench: {
+        generation: {
           profiles: [],
           active_profile_id: null,
           jobs: [],
-          submit_command: IDLE_COMMAND_STATE,
         },
       }),
       build_controller(create_unavailable_capabilities()),
@@ -378,6 +389,10 @@ describe("SettingsView provider profiles", () => {
   });
 });
 describe("SettingsView credential storage", () => {
+  beforeEach(() => {
+    current_section = "general";
+  });
+
   it("initializes the encrypted browser vault and switches the active backend", async () => {
     const passphrase = "correct horse battery staple";
     const initialize_calls: string[] = [];
@@ -448,6 +463,10 @@ describe("SettingsView credential storage", () => {
 });
 
 describe("SettingsView gateway settings", () => {
+  beforeEach(() => {
+    current_section = "connections";
+  });
+
   it("shows the token secret reference, never a raw secret value", () => {
     const { wrapper } = mount_view(
       build_state(),
@@ -649,6 +668,10 @@ describe("SettingsView gateway settings", () => {
 });
 
 describe("SettingsView automation settings", () => {
+  beforeEach(() => {
+    current_section = "illustration";
+  });
+
   it("toggles auto-generation and fallback through the controller", async () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
     const capabilities = create_unavailable_capabilities();
@@ -704,6 +727,10 @@ describe("SettingsView automation settings", () => {
 });
 
 describe("SettingsView appearance settings", () => {
+  beforeEach(() => {
+    current_section = "general";
+  });
+
   it("shows theme, language, inspector width, and optional-entry controls", () => {
     const { wrapper } = mount_view(
       build_state(),
@@ -762,6 +789,10 @@ describe("SettingsView appearance settings", () => {
 });
 
 describe("SettingsView data settings: vocabulary channel and archive", () => {
+  beforeEach(() => {
+    current_section = "general";
+  });
+
   it("switches the vocabulary update channel through the controller", async () => {
     const channels: string[] = [];
     const capabilities = create_unavailable_capabilities();

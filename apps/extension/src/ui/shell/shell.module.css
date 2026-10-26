@@ -287,29 +287,6 @@
   text-overflow: ellipsis;
 }
 
-.more_menu_content {
-  min-width: 176px;
-  padding: 4px;
-  background-color: var(--tc-surface-raised);
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-}
-
-.more_menu_item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  color: var(--tc-text);
-  border-radius: var(--tc-radius-field);
-}
-
-.more_menu_item[data-highlighted] {
-  color: var(--tc-accent);
-  background-color: var(--tc-surface);
-  outline: none;
-}
-
 .sheet_overlay {
   position: fixed;
   inset: 0;

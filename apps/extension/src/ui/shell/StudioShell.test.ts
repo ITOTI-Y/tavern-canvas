@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
 import postcss, { type Rule } from "postcss";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
-import { nextTick } from "vue";
+import { markRaw, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
@@ -17,15 +17,15 @@ import StudioShell from "./StudioShell.vue";
 
 function build_state(overrides: Partial<StudioState> = {}): StudioState {
   return {
-    route: "workbench",
+    route: "settings",
+    settings_section: "illustration",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
@@ -62,7 +62,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
 
 beforeAll(async () => {
   await Promise.all([
-    import("../views/workbench/WorkbenchView.vue"),
     import("../views/gallery/GalleryView.vue"),
     import("../views/settings/SettingsView.vue"),
     import("./ContextInspector.vue"),
@@ -97,7 +96,9 @@ async function mount_shell(options: MountOptions = {}) {
   const host = document.createElement("div");
   document.body.append(host);
 
-  const controller = create_studio_controller({ capabilities: create_unavailable_capabilities() });
+  const controller = markRaw(
+    create_studio_controller({ capabilities: create_unavailable_capabilities() }),
+  );
 
   const wrapper = mount(StudioShell, {
     props: {
@@ -113,7 +114,7 @@ async function mount_shell(options: MountOptions = {}) {
   });
 
   await flushPromises();
-  return { wrapper, portal_target, host };
+  return { wrapper, portal_target, host, controller };
 }
 
 afterEach(() => {
@@ -203,21 +204,22 @@ describe("StudioShell layout contract (shell.module.css)", () => {
 });
 
 describe("StudioShell desktop navigation", () => {
-  it("exposes all six routes directly in the rail with a visible selected state", async () => {
+  it("exposes settings and gallery in the rail with a visible selected state", async () => {
     const { wrapper } = await mount_shell({ state: { route: "gallery" } });
-    const buttons = wrapper.findAll("nav button[aria-current], nav button:not([aria-current])");
-    const rail_buttons = wrapper.findAll("nav > button");
-    expect(rail_buttons).toHaveLength(6);
+    const rail_buttons = wrapper.findAll('[data-testid="studio-rail"] > button');
+    expect(rail_buttons.map((button) => button.attributes("aria-label"))).toEqual([
+      "Settings",
+      "Gallery",
+    ]);
 
     const selected = wrapper.find('button[aria-current="page"]');
-    expect(selected.exists()).toBe(true);
+    expect(selected.attributes("aria-label")).toBe("Gallery");
     expect(selected.attributes("data-selected")).toBe("true");
-    expect(buttons.length).toBeGreaterThanOrEqual(6);
   });
 
   it("activates a route on click and reports it through select-route", async () => {
-    const { wrapper } = await mount_shell({ state: { route: "workbench" } });
-    const rail_buttons = wrapper.findAll("nav > button");
+    const { wrapper } = await mount_shell({ state: { route: "settings" } });
+    const rail_buttons = wrapper.findAll('[data-testid="studio-rail"] > button');
     const gallery_button = rail_buttons.find(
       (button) => button.attributes("aria-label") === "Gallery",
     );
@@ -230,7 +232,7 @@ describe("StudioShell desktop navigation", () => {
 
   it("rail buttons are real <button> elements (native Enter/Space activation, no negative tabindex)", async () => {
     const { wrapper } = await mount_shell();
-    for (const button of wrapper.findAll("nav > button")) {
+    for (const button of wrapper.findAll('[data-testid="studio-rail"] > button')) {
       expect(button.element.tagName).toBe("BUTTON");
       expect(button.attributes("tabindex")).not.toBe("-1");
     }
@@ -238,13 +240,12 @@ describe("StudioShell desktop navigation", () => {
 
   it("does not render the mobile bottom nav or inspector sheet on desktop", async () => {
     const { wrapper } = await mount_shell({ viewport: "desktop" });
-    expect(wrapper.find('[data-testid="mobile-more-trigger"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="inspector-sheet"]').exists()).toBe(false);
   });
 
   it("tooltips portal into the injected Shadow-Root portal element, never document.body", async () => {
     const { wrapper, portal_target } = await mount_shell();
-    const first_rail_button = wrapper.findAll("nav > button")[0];
+    const first_rail_button = wrapper.findAll('[data-testid="studio-rail"] > button')[0];
     await first_rail_button?.trigger("focus");
     await nextTick();
     await nextTick();
@@ -257,12 +258,10 @@ describe("StudioShell desktop navigation", () => {
 });
 
 describe("StudioShell mobile navigation", () => {
-  it("shows exactly five stable bottom-nav items: four routes plus More", async () => {
+  it("shows the settings and gallery routes in the bottom nav", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile" });
-    const nav = wrapper.find("nav");
-    const items = nav.findAll("button");
-    expect(items).toHaveLength(5);
-    expect(wrapper.find('[data-testid="mobile-more-trigger"]').exists()).toBe(true);
+    const items = wrapper.find('[data-testid="studio-bottom-nav"]').findAll("button");
+    expect(items.map((item) => item.text())).toEqual(["Settings", "Gallery"]);
   });
 
   it("does not render the desktop rail or the persistent inspector column", async () => {
@@ -274,39 +273,19 @@ describe("StudioShell mobile navigation", () => {
     expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(true);
   });
 
-  it("More opens Diagnostics and Settings, portaled to the Shadow-Root portal element", async () => {
-    const { wrapper, portal_target } = await mount_shell({ viewport: "mobile" });
-    const more_trigger = wrapper.get('[data-testid="mobile-more-trigger"]');
-    await more_trigger.trigger("click");
-    await nextTick();
-    await nextTick();
-
-    const menu_items = Array.from(portal_target.querySelectorAll('[role="menuitem"]'));
-    expect(menu_items.map((node) => node.textContent?.trim())).toEqual(["Diagnostics", "Settings"]);
-    for (const item of menu_items) {
-      expect(item.closest('[data-shadow-role="portal"]')).toBe(portal_target);
-    }
-  });
-
-  it("activates a primary route on click", async () => {
-    const { wrapper } = await mount_shell({ viewport: "mobile", state: { route: "workbench" } });
-    const nav = wrapper.find("nav");
-    const prompt_button = nav.findAll("button").find((button) => button.text().includes("Prompt"));
-
-    await prompt_button?.trigger("click");
-
-    expect(wrapper.emitted("select-route")).toEqual([["prompt"]]);
-  });
-
-  it("marks More as selected when the active route lives behind it", async () => {
+  it("activates a route on click", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile", state: { route: "settings" } });
-    const more_trigger = wrapper.get('[data-testid="mobile-more-trigger"]');
-    expect(more_trigger.attributes("data-selected")).toBe("true");
+    const nav = wrapper.find('[data-testid="studio-bottom-nav"]');
+    const gallery_button = nav.findAll("button").find((button) => button.text() === "Gallery");
+
+    await gallery_button?.trigger("click");
+
+    expect(wrapper.emitted("select-route")).toEqual([["gallery"]]);
   });
 });
 
 describe("StudioShell inspector", () => {
-  it("leaves the global inspector to non-Workbench routes", async () => {
+  it("leaves the global inspector out of the settings sections other than the library", async () => {
     const { wrapper } = await mount_shell();
     expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(false);
     expect(wrapper.find(".inspector, [class*=inspector_panel]").exists()).toBe(false);
@@ -317,6 +296,7 @@ describe("StudioShell inspector", () => {
     const { wrapper } = await mount_shell({
       state: {
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: false, width: 320, selected_record: null },
       },
     });
@@ -331,6 +311,7 @@ describe("StudioShell inspector", () => {
     const { wrapper } = await mount_shell({
       state: {
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: true, width: 320, selected_record: null },
       },
     });
@@ -342,6 +323,7 @@ describe("StudioShell inspector", () => {
     const { wrapper } = await mount_shell({
       state: {
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: false, width: 320, selected_record: null },
       },
     });
@@ -356,6 +338,7 @@ describe("StudioShell inspector", () => {
     const { wrapper } = await mount_shell({
       state: {
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: false, width: 320, selected_record: null },
       },
     });
@@ -375,6 +358,7 @@ describe("StudioShell inspector", () => {
       viewport: "mobile",
       state: {
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: true, width: 320, selected_record: null },
       },
     });
@@ -387,6 +371,7 @@ describe("StudioShell inspector", () => {
     await wrapper.setProps({
       state: build_state({
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: false, width: 320, selected_record: null },
       }),
     });
@@ -405,6 +390,7 @@ describe("StudioShell inspector", () => {
     await wrapper.setProps({
       state: build_state({
         route: "gallery",
+        settings_section: "illustration",
         inspector: { collapsed: true, width: 320, selected_record: null },
       }),
     });
@@ -486,44 +472,42 @@ describe("StudioShell shell-level states", () => {
     const banner = wrapper.find('[data-testid="partial-banner"]');
     expect(banner.exists()).toBe(true);
     expect(banner.text()).toContain("Running with limited functionality");
-    expect(wrapper.findAll("nav > button")).toHaveLength(6);
+    expect(wrapper.findAll('[data-testid="studio-rail"] > button')).toHaveLength(2);
   });
 
   it("navigates to Diagnostics from the partial-initialization banner", async () => {
-    const { wrapper } = await mount_shell({
+    const { wrapper, controller } = await mount_shell({
       state: { failures: new Map([["gallery", { code: "capability_load_failed" }]]) },
     });
     await wrapper.get('[data-testid="partial-banner-diagnostics"]').trigger("click");
-    expect(wrapper.emitted("select-route")).toEqual([["diagnostics"]]);
+    expect(controller.state.settings_section).toBe("diagnostics");
   });
 
-  it("renders the routed workbench view once nothing is loading and nothing has failed", async () => {
+  it("renders the routed settings view once nothing is loading and nothing has failed", async () => {
     const { wrapper } = await mount_shell();
-    await expect.poll(() => wrapper.find('[data-testid="workbench-view"]').exists()).toBe(true);
+    await expect.poll(() => wrapper.find('[data-testid="settings-view"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="workspace-skeleton"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="partial-banner"]').exists()).toBe(false);
   });
 });
 
 describe("StudioShell narrow and long locale labels", () => {
-  it("keeps all six desktop routes and their accessible names when a label is unusually long", async () => {
-    const long_label =
-      "Workbench for generating and iterating on many concurrent image requests at once";
+  it("keeps both desktop routes and their accessible names when a label is unusually long", async () => {
+    const long_label = "Gallery of every image generated for this chat and earlier chats";
     const messages = {
-      en: { ...en_messages, nav: { ...en_messages.nav, workbench: long_label } },
+      en: { ...en_messages, nav: { ...en_messages.nav, gallery: long_label } },
     };
     const { wrapper } = await mount_shell({ messages });
 
-    const buttons = wrapper.findAll("nav > button");
-    expect(buttons).toHaveLength(6);
+    const buttons = wrapper.findAll('[data-testid="studio-rail"] > button');
+    expect(buttons).toHaveLength(2);
     expect(buttons.some((button) => button.attributes("aria-label") === long_label)).toBe(true);
   });
 
   it("renders full zh-CN labels in the mobile bottom nav without dropping any item", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile", locale: "zh-CN" });
-    const nav = wrapper.find("nav");
+    const nav = wrapper.find('[data-testid="studio-bottom-nav"]');
     const items = nav.findAll("button");
-    expect(items).toHaveLength(5);
-    expect(items[0]?.text()).toContain("工作台");
+    expect(items.map((item) => item.text())).toEqual(["设置", "图库"]);
   });
 });

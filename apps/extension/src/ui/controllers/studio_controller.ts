@@ -22,7 +22,6 @@ import type {
   GalleryDomainEvent,
   GenerationDomainEvent,
   GenerationJobSummary,
-  GenerationSubmitCommand,
   KnowledgeDomainEvent,
   LlmConnectionsDomainEvent,
   PersonasDomainEvent,
@@ -34,6 +33,7 @@ import type {
   PromptPresetsDomainEvent,
   PromptRegexRule,
   SettingsDomainEvent,
+  SourceRevealOutcome,
   StudioCapabilities,
   Unsubscribe,
   VocabularyImportProgressView,
@@ -48,17 +48,18 @@ import {
   type CommandState,
   type DiagnosticsViewModel,
   type GalleryViewModel,
+  type GenerationViewModel,
   type InspectorSelection,
   type InspectorViewModel,
   type LibraryViewModel,
   type LlmConnectionsViewModel,
   type PromptViewModel,
+  type SettingsSection,
   type SettingsViewModel,
   type StudioRoute,
   type StudioState,
   type TaskStripItemViewModel,
   type UiFailure,
-  type WorkbenchViewModel,
 } from "../contracts/view_models.js";
 
 export interface StudioControllerOptions {
@@ -74,13 +75,12 @@ export interface StudioController {
   start(): Promise<void>;
   stop(): Promise<void>;
   set_route(route: StudioRoute): void;
+  /** Also switches to the settings route. */
+  set_settings_section(section: SettingsSection): void;
   set_color_mode(color_mode: ColorMode): void;
   set_inspector_width(width: number): void;
   set_inspector_collapsed(collapsed: boolean): void;
   select_inspector_record(selection: InspectorSelection | null): void;
-  submit_generation(command: GenerationSubmitCommand): Promise<void>;
-  cancel_generation(job_id: Uuid): Promise<void>;
-  retry_generation(job_id: Uuid): Promise<void>;
   select_provider_profile(profile_id: Uuid | null): Promise<void>;
   select_prompt_preset(preset_id: Uuid): Promise<void>;
   start_new_prompt_preset(): void;
@@ -160,6 +160,7 @@ export interface StudioController {
   /** Clears only the message attachment; `delete_gallery_record` is the separate permanent action. */
   detach_gallery_record(record_id: Uuid): Promise<void>;
   delete_gallery_record(record_id: Uuid): Promise<void>;
+  reveal_gallery_source(record_id: Uuid): Promise<SourceRevealOutcome>;
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void>;
 }
 
@@ -253,14 +254,14 @@ function create_initial_state(
 ): StudioState {
   return {
     route,
+    settings_section: "illustration",
     color_mode,
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: {
       connections: [],
@@ -319,7 +320,7 @@ class StudioControllerImpl implements StudioController {
   constructor(options: StudioControllerOptions) {
     this.#capabilities = options.capabilities;
     this.#state = create_initial_state(
-      options.initial_route ?? "workbench",
+      options.initial_route ?? "settings",
       options.initial_color_mode ?? "light",
       options.initial_inspector_width ?? 320,
     );
@@ -347,13 +348,13 @@ class StudioControllerImpl implements StudioController {
     this.#notify();
   }
 
-  #patch_workbench(patch: Partial<WorkbenchViewModel>): void {
-    this.#patch({ workbench: { ...this.#state.workbench, ...patch } });
+  #patch_generation(patch: Partial<GenerationViewModel>): void {
+    this.#patch({ generation: { ...this.#state.generation, ...patch } });
   }
 
   #patch_jobs(jobs: readonly GenerationJobSummary[]): void {
     this.#patch({
-      workbench: { ...this.#state.workbench, jobs },
+      generation: { ...this.#state.generation, jobs },
       tasks: jobs_to_tasks(jobs),
     });
   }
@@ -440,9 +441,9 @@ class StudioControllerImpl implements StudioController {
       return;
     }
     if (event.type === "job_updated") {
-      this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, event.job, (job) => job.job_id));
+      this.#patch_jobs(upsert_by_id(this.#state.generation.jobs, event.job, (job) => job.job_id));
     } else {
-      this.#patch_jobs(this.#state.workbench.jobs.filter((job) => job.job_id !== event.job_id));
+      this.#patch_jobs(this.#state.generation.jobs.filter((job) => job.job_id !== event.job_id));
     }
   }
 
@@ -451,12 +452,12 @@ class StudioControllerImpl implements StudioController {
       return;
     }
     if (event.type === "profile_upserted") {
-      this.#patch_workbench({
-        profiles: upsert_by_id(this.#state.workbench.profiles, event.profile, (p) => p.id),
+      this.#patch_generation({
+        profiles: upsert_by_id(this.#state.generation.profiles, event.profile, (p) => p.id),
       });
     } else {
-      this.#patch_workbench({
-        profiles: this.#state.workbench.profiles.filter((p) => p.id !== event.profile_id),
+      this.#patch_generation({
+        profiles: this.#state.generation.profiles.filter((p) => p.id !== event.profile_id),
       });
     }
   }
@@ -638,9 +639,9 @@ class StudioControllerImpl implements StudioController {
         "profiles",
         () => this.#capabilities.profiles.load(),
         (profiles) => {
-          this.#patch_workbench({
+          this.#patch_generation({
             profiles,
-            active_profile_id: this.#state.workbench.active_profile_id ?? profiles[0]?.id ?? null,
+            active_profile_id: this.#state.generation.active_profile_id ?? profiles[0]?.id ?? null,
           });
         },
       ),
@@ -734,6 +735,10 @@ class StudioControllerImpl implements StudioController {
     this.#patch({ route });
   }
 
+  set_settings_section(section: SettingsSection): void {
+    this.#patch({ route: "settings", settings_section: section });
+  }
+
   set_color_mode(color_mode: ColorMode): void {
     this.#patch({ color_mode });
   }
@@ -750,40 +755,10 @@ class StudioControllerImpl implements StudioController {
     this.#patch_inspector({ selected_record: selection });
   }
 
-  submit_generation(command: GenerationSubmitCommand): Promise<void> {
-    return run_command(
-      () => this.#state.workbench.submit_command,
-      (next) => {
-        this.#patch_workbench({ submit_command: next });
-      },
-      async () => {
-        const job = await this.#capabilities.generation.submit(command);
-        this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
-        return job;
-      },
-    );
-  }
-
-  async cancel_generation(job_id: Uuid): Promise<void> {
-    const job = await this.#capabilities.generation.cancel(job_id);
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
-  }
-
-  async retry_generation(job_id: Uuid): Promise<void> {
-    const job = await this.#capabilities.generation.retry(job_id);
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_jobs(upsert_by_id(this.#state.workbench.jobs, job, (j) => j.job_id));
-  }
-
   async select_provider_profile(profile_id: Uuid | null): Promise<void> {
     await this.#capabilities.settings.update({ active_provider_profile_id: profile_id });
     if (!this.#stopped) {
-      this.#patch_workbench({ active_profile_id: profile_id });
+      this.#patch_generation({ active_profile_id: profile_id });
     }
   }
 
@@ -945,13 +920,13 @@ class StudioControllerImpl implements StudioController {
 
   async save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary> {
     const profile = await this.#capabilities.profiles.save(draft);
-    const should_select = profile.is_default || this.#state.workbench.active_profile_id === null;
+    const should_select = profile.is_default || this.#state.generation.active_profile_id === null;
     if (should_select) {
       await this.#capabilities.settings.update({ active_provider_profile_id: profile.id });
     }
     if (!this.#stopped) {
-      this.#patch_workbench({
-        profiles: upsert_by_id(this.#state.workbench.profiles, profile, (p) => p.id),
+      this.#patch_generation({
+        profiles: upsert_by_id(this.#state.generation.profiles, profile, (p) => p.id),
         ...(should_select ? { active_profile_id: profile.id } : {}),
       });
     }
@@ -961,8 +936,8 @@ class StudioControllerImpl implements StudioController {
   async remove_provider_profile(profile_id: Uuid): Promise<void> {
     await this.#capabilities.profiles.remove(profile_id);
     if (!this.#stopped) {
-      this.#patch_workbench({
-        profiles: this.#state.workbench.profiles.filter((p) => p.id !== profile_id),
+      this.#patch_generation({
+        profiles: this.#state.generation.profiles.filter((p) => p.id !== profile_id),
       });
     }
   }
@@ -976,8 +951,8 @@ class StudioControllerImpl implements StudioController {
   ): Promise<ProviderProfileSummary> {
     const profile = await this.#capabilities.profiles.set_credential(profile_id, plaintext_value);
     if (!this.#stopped) {
-      this.#patch_workbench({
-        profiles: upsert_by_id(this.#state.workbench.profiles, profile, (item) => item.id),
+      this.#patch_generation({
+        profiles: upsert_by_id(this.#state.generation.profiles, profile, (item) => item.id),
       });
     }
     return profile;
@@ -986,8 +961,8 @@ class StudioControllerImpl implements StudioController {
   async clear_provider_profile_credential(profile_id: Uuid): Promise<ProviderProfileSummary> {
     const profile = await this.#capabilities.profiles.clear_credential(profile_id);
     if (!this.#stopped) {
-      this.#patch_workbench({
-        profiles: upsert_by_id(this.#state.workbench.profiles, profile, (item) => item.id),
+      this.#patch_generation({
+        profiles: upsert_by_id(this.#state.generation.profiles, profile, (item) => item.id),
       });
     }
     return profile;
@@ -1273,6 +1248,10 @@ class StudioControllerImpl implements StudioController {
 
   select_gallery_record(record_id: Uuid | null): void {
     this.#patch_gallery({ selected_record_id: record_id });
+  }
+
+  reveal_gallery_source(record_id: Uuid): Promise<SourceRevealOutcome> {
+    return this.#capabilities.gallery.reveal_source(record_id);
   }
 
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array> {

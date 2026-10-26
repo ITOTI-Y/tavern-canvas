@@ -33,7 +33,7 @@ const items = computed(() =>
 
 <template>
   <TooltipProvider :delay-duration="300">
-    <nav :class="styles.rail">
+    <nav :class="styles.rail" data-testid="studio-rail">
       <TooltipRoot v-for="item in items" :key="item.route">
         <TooltipTrigger as-child>
           <button

@@ -27,11 +27,12 @@ function build_record(overrides: Partial<GalleryRecordSummary> = {}): GalleryRec
 
 function build_state(records: readonly GalleryRecordSummary[]): StudioState {
   return {
-    route: "workbench",
+    route: "settings",
+    settings_section: "illustration",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [
@@ -46,7 +47,6 @@ function build_state(records: readonly GalleryRecordSummary[]): StudioState {
           submitted_at: "2026-01-01T00:00:00Z",
         },
       ],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },

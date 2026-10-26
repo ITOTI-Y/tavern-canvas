@@ -34,15 +34,13 @@ describe("InspectorSheet: renders selected_record", () => {
     expect(document.body.textContent).toContain("Nothing selected");
   });
 
-  it("renders a gallery_record selection with its regenerate intent", async () => {
+  it("renders a gallery_record selection", async () => {
     mount_sheet({
       kind: "gallery_record",
       record_id: "33333333-3333-4333-8333-333333333333",
-      intent: "regenerate",
     });
     await nextTick();
     expect(document.body.textContent).toContain("Gallery image");
     expect(document.body.textContent).toContain("33333333-3333-4333-8333-333333333333");
-    expect(document.body.textContent).toContain("Regenerate");
   });
 });

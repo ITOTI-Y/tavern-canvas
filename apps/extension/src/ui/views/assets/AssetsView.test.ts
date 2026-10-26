@@ -12,15 +12,15 @@ import AssetsView from "./AssetsView.vue";
 
 function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioState {
   return {
-    route: "assets",
+    route: "settings",
+    settings_section: "library",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
@@ -62,13 +62,12 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     start: vi.fn(() => Promise.resolve()),
     stop: vi.fn(() => Promise.resolve()),
     set_route: vi.fn(),
+    set_settings_section: vi.fn(),
+    reveal_gallery_source: vi.fn(),
     set_color_mode: vi.fn(),
     set_inspector_width: vi.fn(),
     set_inspector_collapsed: vi.fn(),
     select_inspector_record: vi.fn(),
-    submit_generation: vi.fn(() => Promise.resolve()),
-    cancel_generation: vi.fn(() => Promise.resolve()),
-    retry_generation: vi.fn(() => Promise.resolve()),
     save_prompt_preset: vi.fn(() => Promise.resolve()),
     install_vocabulary_package: vi.fn(() => Promise.resolve()),
     load_vocabulary_catalog: vi.fn(() => Promise.resolve()),

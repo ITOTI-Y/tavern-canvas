@@ -15,6 +15,7 @@ import type { StudioRoute } from "./contracts/view_models.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
 import { use_studio_controller } from "./controllers/use_studio_controller.js";
 import FloatingEntry from "./experience/FloatingEntry.vue";
+import { use_extensions_menu_entry } from "./experience/use_extensions_menu_entry.js";
 import FloatingStudioWindow from "./experience/FloatingStudioWindow.vue";
 import PortalProvider from "./shell/PortalProvider.vue";
 import styles from "./shell/shell.module.css";
@@ -88,19 +89,15 @@ function reload(): void {
   window.location.reload();
 }
 
-const floating_entry_enabled = computed(
-  () => studio?.state.value.settings.settings?.ui.optional_entry_enabled === true,
-);
-const studio_opened = ref(!floating_entry_enabled.value);
+const studio_opened = ref(false);
 const shell_visible = computed(() => studio_opened.value);
-
-watch(floating_entry_enabled, (enabled, previously_enabled) => {
-  if (enabled && !previously_enabled) {
-    studio_opened.value = false;
-  } else if (!enabled && previously_enabled) {
-    studio_opened.value = true;
-  }
-});
+const menu_entry_available = use_extensions_menu_entry(() => t("app.name"), open_studio);
+/** Without SillyTavern's extensions menu the floating entry is the only way to open the studio. */
+const floating_entry_enabled = computed(
+  () =>
+    !menu_entry_available.value ||
+    studio?.state.value.settings.settings?.ui.optional_entry_enabled === true,
+);
 
 watch(
   shell_visible,
@@ -176,7 +173,11 @@ function close_studio(): void {
           @close="close_studio"
         />
       </FloatingStudioWindow>
-      <FloatingEntry :enabled="!shell_visible" :open-label="t('app.name')" @open="open_studio" />
+      <FloatingEntry
+        :enabled="floating_entry_enabled && !shell_visible"
+        :open-label="t('app.name')"
+        @open="open_studio"
+      />
       <ChatLayer
         v-if="host && illustrations && capabilities"
         :host="host"

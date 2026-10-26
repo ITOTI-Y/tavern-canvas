@@ -538,6 +538,7 @@ function create_gallery_capability(
       emit({ type: "record_upserted", record: next });
       return Promise.resolve();
     },
+    reveal_source: () => Promise.resolve("revealed" as const),
     delete_record: (record_id) => {
       records.delete(record_id);
       emit({ type: "record_removed", record_id });

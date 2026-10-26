@@ -47,15 +47,15 @@ function build_draft(overrides: Partial<PromptPresetDraft> = {}): PromptPresetDr
 
 function build_state(overrides: Partial<StudioState> = {}): StudioState {
   return {
-    route: "prompt",
+    route: "settings",
+    settings_section: "prompts",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },

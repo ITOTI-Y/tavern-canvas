@@ -41,14 +41,12 @@ describe("create_i18n", () => {
   it("renders a real plural message through the loaded locale", async () => {
     const { i18n, apply_locale } = create_i18n();
 
-    expect(i18n.global.t("workbench.active_jobs.active_count", { n: 1 }, 1)).toBe("1 job running");
-    expect(i18n.global.t("workbench.active_jobs.active_count", { n: 3 }, 3)).toBe("3 jobs running");
+    expect(i18n.global.t("nav.task_strip_count", { n: 1 }, 1)).toBe("1 task");
+    expect(i18n.global.t("nav.task_strip_count", { n: 3 }, 3)).toBe("3 tasks");
 
     await apply_locale("zh-CN", "en-US");
 
-    expect(i18n.global.t("workbench.active_jobs.active_count", { n: 3 }, 3)).toBe(
-      "3 个任务正在运行",
-    );
+    expect(i18n.global.t("nav.task_strip_count", { n: 3 }, 3)).toBe("3 个任务");
   });
 });
 

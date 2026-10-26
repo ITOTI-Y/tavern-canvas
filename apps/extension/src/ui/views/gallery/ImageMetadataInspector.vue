@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Brush, Check, Copy, ExternalLink, Pencil, RefreshCw, Wand2 } from "lucide-vue-next";
+import { Check, Copy, ExternalLink } from "lucide-vue-next";
 import { ref } from "vue";
 
 import AppButton from "../../components/AppButton.vue";
@@ -20,19 +20,11 @@ const props = defineProps<{
   readonly copyLabel: string;
   readonly copiedLabel: string;
   readonly emptyDescription: string;
-  readonly modifyPromptLabel: string;
-  readonly regenerateLabel: string;
-  readonly editLabel: string;
-  readonly inpaintLabel: string;
   readonly sourceMessageLabel: string;
-  readonly actionsUnavailableHint: string;
 }>();
 
 const emit = defineEmits<{
-  "modify-prompt": [parameters: ExtractedGenerationParameters | null];
-  regenerate: [parameters: ExtractedGenerationParameters | null];
-  edit: [parameters: ExtractedGenerationParameters | null];
-  inpaint: [parameters: ExtractedGenerationParameters | null];
+  "open-source": [];
   copied: [];
 }>();
 
@@ -89,31 +81,12 @@ async function copy_parameters(): Promise<void> {
 
     <div :class="styles.metadataActions">
       <AppButton
-        :label="modifyPromptLabel"
-        :icon="Wand2"
+        :label="sourceMessageLabel"
+        :icon="ExternalLink"
         variant="secondary"
-        @click="emit('modify-prompt', parameters)"
+        :disabled="record.source_message_id === null"
+        @click="emit('open-source')"
       />
-      <AppButton
-        :label="regenerateLabel"
-        :icon="RefreshCw"
-        variant="secondary"
-        @click="emit('regenerate', parameters)"
-      />
-      <AppButton
-        :label="editLabel"
-        :icon="Pencil"
-        variant="secondary"
-        @click="emit('edit', parameters)"
-      />
-      <AppButton
-        :label="inpaintLabel"
-        :icon="Brush"
-        variant="secondary"
-        @click="emit('inpaint', parameters)"
-      />
-      <AppButton :label="sourceMessageLabel" :icon="ExternalLink" variant="secondary" disabled />
     </div>
-    <p :class="styles.metadataActionsHint">{{ actionsUnavailableHint }}</p>
   </div>
 </template>

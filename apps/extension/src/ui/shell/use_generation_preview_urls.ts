@@ -33,7 +33,7 @@ export function use_generation_preview_urls(
   }
 
   watch(
-    () => get_state().workbench.jobs.flatMap((job) => job.completed_image_ids),
+    () => get_state().generation.jobs.flatMap((job) => job.completed_image_ids),
     (image_ids) => {
       for (const image_id of image_ids) {
         resolve_one(image_id);

@@ -309,3 +309,49 @@
   outline: 2px solid var(--tc-accent);
   outline-offset: 2px;
 }
+
+/* Settings layout: a section list beside the selected section, tabs on narrow viewports. */
+.layout {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  min-height: 100%;
+}
+
+.section_nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 8px;
+  border-inline-end: 1px solid var(--tc-divider);
+}
+
+.section_nav_item {
+  padding: 8px 12px;
+  border-radius: var(--tc-radius-field);
+  color: var(--tc-text-muted);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.section_nav_item[data-selected="true"] {
+  color: var(--tc-accent);
+  background-color: var(--tc-surface-raised);
+}
+
+.section_content {
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section_nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+    border-inline-end: none;
+    border-bottom: 1px solid var(--tc-divider);
+  }
+}

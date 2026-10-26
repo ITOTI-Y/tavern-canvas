@@ -169,14 +169,14 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
 function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioState {
   return {
     route: "gallery",
+    settings_section: "illustration",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),
-    workbench: {
+    generation: {
       profiles: [],
       active_profile_id: null,
       jobs: [],
-      submit_command: IDLE_COMMAND_STATE,
     },
     llm_connections: { connections: [], selected_connection_id: null },
     library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
@@ -222,13 +222,12 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     start: vi.fn(() => Promise.resolve()),
     stop: vi.fn(() => Promise.resolve()),
     set_route: vi.fn(),
+    set_settings_section: vi.fn(),
+    reveal_gallery_source: vi.fn(),
     set_color_mode: vi.fn(),
     set_inspector_width: vi.fn(),
     set_inspector_collapsed: vi.fn(),
     select_inspector_record: vi.fn(),
-    submit_generation: vi.fn(() => Promise.resolve()),
-    cancel_generation: vi.fn(() => Promise.resolve()),
-    retry_generation: vi.fn(() => Promise.resolve()),
     save_prompt_preset: vi.fn(() => Promise.resolve()),
     install_vocabulary_package: vi.fn(() => Promise.resolve()),
     load_vocabulary_catalog: vi.fn(() => Promise.resolve()),
@@ -469,7 +468,7 @@ describe("cache occupancy", () => {
   });
 });
 
-describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, delete", () => {
+describe("preview dialog: parameter inspector, copy, source message, pin, detach, delete", () => {
   it("opening a tile loads the preview and selects the record for the inspector", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
@@ -480,7 +479,6 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     expect(controller.select_inspector_record).toHaveBeenCalledWith({
       kind: "gallery_record",
       record_id: record.id,
-      intent: "view",
     });
     expect(dom().find('[role="dialog"]').exists()).toBe(true);
   });
@@ -526,105 +524,43 @@ describe("preview dialog: parameter inspector, copy, hand-offs, pin, detach, del
     expect(dom().text()).toContain("Parameters copied");
   });
 
-  it("modify prompt hands off with the extracted prompt prefilled and navigates to Workbench", async () => {
+  it("go to source message scrolls the chat through the controller", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
     const { wrapper, controller } = mount_gallery_view({ state });
+    (controller.reveal_gallery_source as ReturnType<typeof vi.fn>).mockResolvedValue("revealed");
     open_tile(wrapper, record.id);
     await flushPromises();
-    await flushPromises();
-    await dom().find('button[aria-label="Modify prompt"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith({
-      kind: "gallery_record",
-      record_id: record.id,
-      intent: "modify_prompt",
-      prefill: {
-        positive_prompt: "a detailed mosaic tile study, vivid color blocks, high texture",
-        negative_prompt: "blurry, low detail",
-      },
-    });
-    expect(controller.set_route).toHaveBeenCalledWith("workbench");
+
+    await dom().find('button[aria-label="Go to source message"]').trigger("click");
+
+    expect(controller.reveal_gallery_source).toHaveBeenCalledWith(record.id);
   });
 
-  it("regenerate hands off with the same prefilled prompt and navigates to Workbench", async () => {
+  it("explains when the source message is in another chat", async () => {
     const record = make_record();
     const state = build_state({ records: [record] });
     const { wrapper, controller } = mount_gallery_view({ state });
+    (controller.reveal_gallery_source as ReturnType<typeof vi.fn>).mockResolvedValue("other_chat");
     open_tile(wrapper, record.id);
     await flushPromises();
+
+    await dom().find('button[aria-label="Go to source message"]').trigger("click");
     await flushPromises();
-    await dom().find('button[aria-label="Regenerate"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({
-        intent: "regenerate",
-        prefill: expect.objectContaining({
-          positive_prompt: "a detailed mosaic tile study, vivid color blocks, high texture",
-        }),
-      }),
-    );
-    expect(controller.set_route).toHaveBeenCalledWith("workbench");
+
+    expect(dom().text()).toContain("The source message is in another chat");
   });
 
-  it("modify prompt still navigates, with no prefill, when the image has no embedded parameters", async () => {
-    const record = make_record();
+  it("disables go to source message for an image made outside a chat message", async () => {
+    const record = make_record({ source_chat_id: null, source_message_id: null });
     const state = build_state({ records: [record] });
-    const controller = build_controller(state);
-    controller.read_gallery_bytes = vi.fn(() => Promise.resolve(PORTRAIT_PNG));
-    const { wrapper } = mount_gallery_view({ state, controller });
+    const { wrapper } = mount_gallery_view({ state });
     open_tile(wrapper, record.id);
     await flushPromises();
-    await flushPromises();
-    await dom().find('button[aria-label="Modify prompt"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith({
-      kind: "gallery_record",
-      record_id: record.id,
-      intent: "modify_prompt",
-      prefill: { positive_prompt: null, negative_prompt: null },
-    });
-    expect(controller.set_route).toHaveBeenCalledWith("workbench");
-  });
 
-  it("edit and inpaint hand off through the inspector selection channel", async () => {
-    const record = make_record();
-    const state = build_state({ records: [record] });
-    const { wrapper, controller } = mount_gallery_view({ state });
-    open_tile(wrapper, record.id);
-    await flushPromises();
-    (controller.select_inspector_record as ReturnType<typeof vi.fn>).mockClear();
-    (controller.set_route as ReturnType<typeof vi.fn>).mockClear();
-
-    await dom().find('button[aria-label="Edit image"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "gallery_record", record_id: record.id, intent: "edit" }),
-    );
-    expect(controller.set_route).toHaveBeenCalledWith("workbench");
-
-    open_tile(wrapper, record.id);
-    await flushPromises();
-    await dom().find('button[aria-label="Inpaint"]').trigger("click");
-    expect(controller.select_inspector_record).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "gallery_record", record_id: record.id, intent: "inpaint" }),
-    );
-  });
-
-  it("keeps source-message navigation disabled: no host exposes a chat-navigation hook", async () => {
-    const record = make_record();
-    const state = build_state({ records: [record] });
-    const { wrapper, controller } = mount_gallery_view({ state });
-    open_tile(wrapper, record.id);
-    await flushPromises();
-    (controller.select_inspector_record as ReturnType<typeof vi.fn>).mockClear();
-    (controller.set_route as ReturnType<typeof vi.fn>).mockClear();
-
-    const source_message_button = dom().find('button[aria-label="Go to source message"]');
-    expect(source_message_button.attributes("disabled")).toBeDefined();
-    expect(dom().text()).toContain(
-      "Jumping to the source message is not available in this version yet.",
-    );
-
-    await source_message_button.trigger("click");
-    expect(controller.select_inspector_record).not.toHaveBeenCalled();
-    expect(controller.set_route).not.toHaveBeenCalled();
+    expect(
+      dom().find('button[aria-label="Go to source message"]').attributes("disabled"),
+    ).toBeDefined();
   });
 
   it("pin toggles pinned state via pin_gallery_record", async () => {

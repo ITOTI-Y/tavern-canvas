@@ -39,7 +39,7 @@ describe("ContextInspector: renders selected_record", () => {
     expect(wrapper.text()).not.toContain("Nothing selected");
   });
 
-  it("renders a gallery_record selection with no intent as a plain view (no action row)", () => {
+  it("renders a gallery_record selection", () => {
     const wrapper = mount_inspector({
       kind: "gallery_record",
       record_id: "33333333-3333-4333-8333-333333333333",
@@ -47,21 +47,6 @@ describe("ContextInspector: renders selected_record", () => {
     expect(wrapper.text()).toContain("Gallery image");
     expect(wrapper.text()).toContain("33333333-3333-4333-8333-333333333333");
     expect(wrapper.text()).not.toContain("Action");
-  });
-
-  it.each([
-    ["modify_prompt", "Modify prompt"],
-    ["regenerate", "Regenerate"],
-    ["edit", "Edit"],
-    ["inpaint", "Inpaint"],
-  ] as const)("renders the %s intent as an action row", (intent, expected_label) => {
-    const wrapper = mount_inspector({
-      kind: "gallery_record",
-      record_id: "33333333-3333-4333-8333-333333333333",
-      intent,
-    });
-    expect(wrapper.text()).toContain("Action");
-    expect(wrapper.text()).toContain(expected_label);
   });
 
   it("renders an asset selection", () => {

@@ -84,25 +84,6 @@ const selection_id = computed(() => {
   }
   return selection.asset_id;
 });
-
-const selection_intent_label = computed(() => {
-  const selection = props.selection;
-  if (selection?.kind !== "gallery_record") {
-    return null;
-  }
-  switch (selection.intent) {
-    case "modify_prompt":
-      return t("common.inspector.selection.intent_modify_prompt");
-    case "regenerate":
-      return t("common.inspector.selection.intent_regenerate");
-    case "edit":
-      return t("common.inspector.selection.intent_edit");
-    case "inpaint":
-      return t("common.inspector.selection.intent_inpaint");
-    default:
-      return null;
-  }
-});
 </script>
 
 <template>
@@ -143,10 +124,6 @@ const selection_intent_label = computed(() => {
               <div>
                 <dt>{{ t("common.inspector.selection.id_label") }}</dt>
                 <dd class="tc-tabular-nums">{{ selection_id }}</dd>
-              </div>
-              <div v-if="selection_intent_label">
-                <dt>{{ t("common.inspector.selection.action_label") }}</dt>
-                <dd>{{ selection_intent_label }}</dd>
               </div>
             </dl>
           </template>

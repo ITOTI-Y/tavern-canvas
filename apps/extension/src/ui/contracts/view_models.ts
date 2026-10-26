@@ -37,11 +37,10 @@ export type CommandState<TResult> =
 
 export const IDLE_COMMAND_STATE: CommandState<never> = { status: "idle" };
 
-export interface WorkbenchViewModel {
+export interface GenerationViewModel {
   readonly profiles: readonly ProviderProfileSummary[];
   readonly active_profile_id: Uuid | null;
   readonly jobs: readonly GenerationJobSummary[];
-  readonly submit_command: CommandState<GenerationJobSummary>;
 }
 
 export interface LlmConnectionsViewModel {
@@ -89,19 +88,9 @@ export interface SettingsViewModel {
   readonly update_command: CommandState<TavernCanvasSettings>;
 }
 
-export interface InspectorSelectionPrefill {
-  readonly positive_prompt: string | null;
-  readonly negative_prompt: string | null;
-}
-
 export type InspectorSelection =
   | { readonly kind: "generation_job"; readonly job_id: Uuid }
-  | {
-      readonly kind: "gallery_record";
-      readonly record_id: Uuid;
-      readonly intent?: "view" | "modify_prompt" | "regenerate" | "edit" | "inpaint";
-      readonly prefill?: InspectorSelectionPrefill;
-    }
+  | { readonly kind: "gallery_record"; readonly record_id: Uuid }
   | { readonly kind: "asset"; readonly category: AssetCategory; readonly asset_id: Uuid };
 
 export interface InspectorViewModel {
@@ -117,12 +106,23 @@ export interface TaskStripItemViewModel {
   readonly progress: number | null;
 }
 
+export type SettingsSection =
+  | "illustration"
+  | "providers"
+  | "translation"
+  | "prompts"
+  | "library"
+  | "connections"
+  | "general"
+  | "diagnostics";
+
 export interface StudioState {
-  route: "workbench" | "prompt" | "assets" | "gallery" | "diagnostics" | "settings";
+  route: "settings" | "gallery";
+  settings_section: SettingsSection;
   color_mode: "light" | "dark";
   loading: ReadonlySet<string>;
   failures: ReadonlyMap<string, UiFailure>;
-  workbench: WorkbenchViewModel;
+  generation: GenerationViewModel;
   llm_connections: LlmConnectionsViewModel;
   prompt: PromptViewModel;
   assets: AssetsViewModel;

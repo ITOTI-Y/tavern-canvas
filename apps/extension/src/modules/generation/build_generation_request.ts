@@ -3,7 +3,7 @@ import type { AssetId, ImageGenerationRequest, ProviderId, Uuid } from "@tavern-
 import {
   DEFAULT_NOVELAI_MODEL_ID,
   novelai_default_parameters,
-} from "../../../modules/novelai/novelai_request_defaults.js";
+} from "../novelai/novelai_request_defaults.js";
 
 export interface ReferenceDraftItem {
   readonly asset_id: AssetId;

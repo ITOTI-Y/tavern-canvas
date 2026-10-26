@@ -13,6 +13,7 @@ import type {
   GalleryDomainEvent,
   GalleryMediaType,
   GalleryRecordSummary,
+  SourceRevealOutcome,
 } from "../../ui/contracts/ui_capabilities.js";
 import { capability_unavailable_error } from "../capability_resolution.js";
 import { DomainEventEmitter } from "./_records.js";
@@ -22,6 +23,8 @@ export interface GalleryCapabilityDeps {
   readonly repository: GalleryImageRecordRepository;
   readonly namespace: () => string;
   readonly now: () => string;
+  /** Scrolls the chat to a message; `null` when no host chat is available. */
+  readonly reveal_message: ((chat_id: string, message_id: number) => SourceRevealOutcome) | null;
 }
 
 /** Video records have no grid representation and are filtered out instead of coerced into an image type. */
@@ -108,6 +111,13 @@ export function create_gallery_capability(deps: GalleryCapabilityDeps): GalleryC
     async detach_from_message(record_id) {
       const record = await read(record_id);
       await write({ ...record, quarantined: true, updated_at: deps.now() });
+    },
+    async reveal_source(record_id) {
+      const source = (await read(record_id)).source_message;
+      if (source === null || deps.reveal_message === null) {
+        return "not_found";
+      }
+      return deps.reveal_message(source.chat_id, Number.parseInt(source.message_id, 10));
     },
     delete_record: remove,
     async bulk_delete(record_ids) {

@@ -499,6 +499,20 @@ export async function compose_studio_capabilities(
             repository: new GalleryImageRecordRepository(database),
             namespace,
             now,
+            reveal_message:
+              host === null
+                ? null
+                : (chat_id, message_id) => {
+                    if (host.get_active_chat_id() !== chat_id) {
+                      return "other_chat";
+                    }
+                    const message = host.find_message_element(message_id)?.closest(".mes");
+                    if (message === null || message === undefined) {
+                      return "not_found";
+                    }
+                    message.scrollIntoView({ behavior: "smooth", block: "center" });
+                    return "revealed";
+                  },
           }),
         ),
     fallback.gallery,
@@ -626,7 +640,7 @@ export async function compose_studio_capabilities(
                     throw new Error("No provider profile is active; choose one in Settings");
                   }
                   const { build_generation_request } =
-                    await import("../ui/views/workbench/build_generation_request.js");
+                    await import("../modules/generation/build_generation_request.js");
                   return build_generation_request(
                     {
                       provider_id: active_provider_id,
@@ -647,7 +661,7 @@ export async function compose_studio_capabilities(
                     await import("../modules/illustration/slot_edits.js");
                   const [{ compute_generation_anchor }, { DEFAULT_NOVELAI_MODEL_ID }] =
                     await Promise.all([
-                      import("../ui/views/workbench/build_generation_request.js"),
+                      import("../modules/generation/build_generation_request.js"),
                       import("../modules/novelai/novelai_request_defaults.js"),
                     ]);
                   const request_id = RequestIdSchema.parse(crypto.randomUUID());

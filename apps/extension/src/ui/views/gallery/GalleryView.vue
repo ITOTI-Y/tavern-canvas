@@ -17,7 +17,6 @@ import BulkActionBar from "./BulkActionBar.vue";
 import styles from "./gallery.module.css";
 import ImageGrid from "./ImageGrid.vue";
 import ImagePreviewDialog from "./ImagePreviewDialog.vue";
-import type { ExtractedGenerationParameters } from "./image_metadata.js";
 
 const props = defineProps<{
   readonly state: StudioState;
@@ -155,7 +154,7 @@ const has_next = computed(
 function open_preview(record_id: string): void {
   preview_record_id.value = record_id;
   props.controller.select_gallery_record(record_id);
-  props.controller.select_inspector_record({ kind: "gallery_record", record_id, intent: "view" });
+  props.controller.select_inspector_record({ kind: "gallery_record", record_id });
 }
 
 function close_preview(open: boolean): void {
@@ -173,23 +172,22 @@ function step_preview(direction: -1 | 1): void {
   }
 }
 
-function hand_off_to_workbench(
-  intent: "modify_prompt" | "regenerate" | "edit" | "inpaint",
-  parameters: ExtractedGenerationParameters | null,
-): void {
-  if (!preview_record.value) {
+async function open_source(): Promise<void> {
+  const record = preview_record.value;
+  if (!record) {
     return;
   }
-  props.controller.select_inspector_record({
-    kind: "gallery_record",
-    record_id: preview_record.value.id,
-    intent,
-    prefill: {
-      positive_prompt: parameters?.positive_prompt ?? null,
-      negative_prompt: parameters?.negative_prompt ?? null,
-    },
-  });
-  props.controller.set_route("workbench");
+  const outcome = await props.controller.reveal_gallery_source(record.id);
+  switch (outcome) {
+    case "revealed":
+      return;
+    case "other_chat":
+      push_toast(t("gallery.metadata_inspector.source_other_chat"));
+      return;
+    case "not_found":
+      push_toast(t("gallery.metadata_inspector.source_not_found"));
+      return;
+  }
 }
 
 async function toggle_pin_preview(): Promise<void> {
@@ -351,12 +349,7 @@ const grid_status = computed(() => {
       :copy-label="t('gallery.metadata_inspector.copy_action')"
       :copied-label="t('gallery.metadata_inspector.copied_toast')"
       :parameters-empty-description="t('gallery.metadata_inspector.parameters_unavailable')"
-      :modify-prompt-label="t('gallery.metadata_inspector.modify_prompt_action')"
-      :regenerate-label="t('gallery.metadata_inspector.regenerate_action')"
-      :edit-label="t('gallery.metadata_inspector.edit_action')"
-      :inpaint-label="t('gallery.metadata_inspector.inpaint_action')"
       :source-message-label="t('gallery.metadata_inspector.source_message_action')"
-      :actions-unavailable-hint="t('gallery.metadata_inspector.actions_unavailable_hint')"
       @update:open="close_preview"
       @previous="step_preview(-1)"
       @next="step_preview(1)"
@@ -364,10 +357,7 @@ const grid_status = computed(() => {
       @download="() => preview_record && void download_record(preview_record)"
       @detach="() => void detach_preview()"
       @delete="() => void delete_preview()"
-      @modify-prompt="(parameters) => hand_off_to_workbench('modify_prompt', parameters)"
-      @regenerate="(parameters) => hand_off_to_workbench('regenerate', parameters)"
-      @edit="(parameters) => hand_off_to_workbench('edit', parameters)"
-      @inpaint="(parameters) => hand_off_to_workbench('inpaint', parameters)"
+      @open-source="() => void open_source()"
       @copied="push_toast(t('gallery.metadata_inspector.copied_toast'))"
     />
 

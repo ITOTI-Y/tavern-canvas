@@ -155,6 +155,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     pin: unavailable_command,
     detach_from_message: unavailable_command,
     delete_record: unavailable_command,
+    reveal_source: unavailable_command,
     bulk_delete: unavailable_command,
   };
 

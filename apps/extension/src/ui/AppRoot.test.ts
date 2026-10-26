@@ -150,13 +150,15 @@ describe("AppRoot normal studio state", () => {
     });
 
     await flushPromises();
+    await wrapper.get('[data-shadow-role="entry"]').trigger("click");
+    await flushPromises();
 
     expect(wrapper.find('[data-startup-state="blocked"]').exists()).toBe(false);
     expect(wrapper.find('[data-startup-state="failed"]').exists()).toBe(false);
-    expect(wrapper.findAll("nav > button")).toHaveLength(6);
+    expect(wrapper.findAll('[data-testid="studio-rail"] > button')).toHaveLength(2);
   });
 
-  it("closes the floating workbench and reopens it from the draggable entry", async () => {
+  it("starts closed, opens from the entry and closes back to it", async () => {
     mock_matches(false);
     const { wrapper, host_element } = mount_app_root({
       status: { state: "ready", title: "ignored", message: "ignored" },
@@ -164,6 +166,8 @@ describe("AppRoot normal studio state", () => {
     });
     await flushPromises();
 
+    expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(false);
+    await wrapper.get('[data-shadow-role="entry"]').trigger("click");
     expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(true);
     await wrapper.get('[data-testid="studio-close"]').trigger("click");
 
@@ -221,6 +225,28 @@ describe("AppRoot normal studio state", () => {
   });
 });
 
+describe("AppRoot SillyTavern extensions menu", () => {
+  it("adds a menu entry that opens the studio and hides the floating entry", async () => {
+    mock_matches(false);
+    const menu = document.createElement("div");
+    menu.id = "extensionsMenu";
+    document.body.append(menu);
+    const { wrapper } = mount_app_root({
+      status: { state: "ready", title: "ignored", message: "ignored" },
+      probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('[data-shadow-role="entry"]').exists()).toBe(false);
+    menu.querySelector<HTMLElement>("[data-tavern-canvas-menu-entry]")?.click();
+    await flushPromises();
+    expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(true);
+
+    wrapper.unmount();
+    expect(menu.children).toHaveLength(0);
+  });
+});
+
 describe("AppRoot portal wiring", () => {
   it("provides the given portal target to descendant Reka portals, never document.body", async () => {
     mock_matches(false);
@@ -229,8 +255,10 @@ describe("AppRoot portal wiring", () => {
       probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
     });
     await flushPromises();
+    await wrapper.get('[data-shadow-role="entry"]').trigger("click");
+    await flushPromises();
 
-    const first_rail_button = wrapper.findAll("nav > button")[0];
+    const first_rail_button = wrapper.findAll('[data-testid="studio-rail"] > button')[0];
     await first_rail_button?.trigger("focus");
     await nextTick();
     await nextTick();
