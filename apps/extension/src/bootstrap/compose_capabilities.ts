@@ -25,6 +25,7 @@ import {
   open_database,
   put_image,
   read_image_bytes,
+  type ProviderProfile,
   type PutImageRecordMetadata,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
@@ -311,32 +312,31 @@ export async function compose_studio_capabilities(
   const load_provider_adapters = (): Promise<
     Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>
   > => (provider_adapters ??= build_provider_adapters(database));
-  /** `base_url` only reaches `LocalDirectTransport`, which requires a loopback origin; cloud origins come from the code-owned route catalog. */
-  const active_profile_record =
-    repositories === null || settings_adapter === null
-      ? null
-      : await repositories.provider_profiles
-          .get(namespace(), settings_adapter.get_settings().active_provider_profile_id ?? "")
-          .catch(() => null);
-  const active_profile_payload =
-    active_profile_record === null ? {} : read_payload(active_profile_record);
-  const direct_provider_base_url = read_optional_string(active_profile_payload, "base_url");
-  const active_provider_id =
-    active_profile_record === null
-      ? null
-      : (ProviderIdSchema.safeParse(active_profile_record.provider_id).data ?? null);
-  const active_model_id =
-    read_array(as_record(active_profile_payload.provider_profile), "model_allowlist").find(
-      (model): model is string => typeof model === "string",
-    ) ?? null;
-  const direct_cloud =
-    active_provider_id === null
-      ? null
-      : {
-          provider_id: active_provider_id,
-          credential_reference: read_optional_string(active_profile_payload, VAULT_KEY_FIELD),
-          secrets_readable: secret_resolver !== null,
-        };
+  /** Last provider seen by `read_active_profile`, for checks that must answer synchronously. */
+  let last_provider_id: ProviderId | null = null;
+  /** Read per use, so switching the active profile in Settings applies to the next request. */
+  const read_active_profile = async (): Promise<ActiveProfile | null> => {
+    if (repositories === null || settings_adapter === null) {
+      return null;
+    }
+    const profile_id = settings_adapter.get_settings().active_provider_profile_id;
+    const record =
+      profile_id === null
+        ? null
+        : await repositories.provider_profiles.get(namespace(), profile_id).catch(() => null);
+    const profile =
+      record === null ? null : describe_active_profile(record, secret_resolver !== null);
+    last_provider_id = profile?.provider_id ?? null;
+    return profile;
+  };
+  await read_active_profile();
+  const require_active_profile = async (): Promise<ActiveProfile> => {
+    const profile = await read_active_profile();
+    if (profile === null) {
+      throw new Error("No provider profile is active; choose one in Settings");
+    }
+    return profile;
+  };
 
   let novelai_runtime: Promise<NovelAiRuntime> | null = null;
   const load_novelai_runtime =
@@ -350,7 +350,13 @@ export async function compose_studio_capabilities(
               namespace,
               gallery_assets: create_asset_reader(database, namespace),
               transport: () =>
-                create_novelai_transport(direct_cloud, secret_resolver, options.provider_fetch),
+                live_transport(async () =>
+                  create_novelai_transport(
+                    (await read_active_profile())?.direct_cloud ?? null,
+                    secret_resolver,
+                    options.provider_fetch,
+                  ),
+                ),
               fetch: options.provider_fetch ?? globalThis.fetch.bind(globalThis),
             }),
           ));
@@ -530,14 +536,17 @@ export async function compose_studio_capabilities(
         ? unavailable(HOST_UNAVAILABLE)
         : resolve_capability(() => {
             const gateway_settings = settings_adapter?.get_settings().gateway ?? null;
-            const selection = select_transport({
-              gateway_endpoint: gateway_settings?.endpoint ?? null,
-              http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
-              tauri_provider_available: false,
-              sillytavern_available: false,
-              direct_provider_base_url,
-              direct_cloud,
-            });
+            const select = (profile: ActiveProfile | null): TransportSelection =>
+              select_transport({
+                gateway_endpoint: gateway_settings?.endpoint ?? null,
+                http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
+                tauri_provider_available: false,
+                sillytavern_available: false,
+                direct_provider_base_url: profile?.base_url ?? null,
+                direct_cloud: profile?.direct_cloud ?? null,
+              });
+            // A Gateway endpoint fixes the route for the session; direct routes follow the active profile.
+            const gateway = gateway_settings?.endpoint == null ? null : select(null);
             const plans = new MediaExecutionPlanRegistry();
             const image_store: GeneratedImageStoreDeps = {
               store: create_image_store_port(database, namespace),
@@ -556,10 +565,10 @@ export async function compose_studio_capabilities(
             };
             const queue = new ImageJobQueue({
               executor:
-                selection.kind === "gateway"
+                gateway?.kind === "gateway"
                   ? create_gateway_job_executor({
                       ...image_store,
-                      endpoint: selection.endpoint,
+                      endpoint: gateway.endpoint,
                       http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
                       access_token: require_gateway_token_source(
                         gateway_settings?.token_secret_id ?? null,
@@ -576,22 +585,23 @@ export async function compose_studio_capabilities(
                       profiles: {
                         resolve: async (provider_id) => {
                           const adapter = (await load_provider_adapters())[provider_id];
-                          if (adapter === undefined || active_profile_record === null) {
+                          const profile = await read_active_profile();
+                          if (adapter === undefined || profile?.provider_id !== provider_id) {
                             throw new Error(
                               `No stored provider profile is active for ${provider_id}`,
                             );
                           }
-                          return adapter.validate_profile(
-                            adapter_profile_of(active_profile_record),
-                          );
+                          return adapter.validate_profile(adapter_profile_of(profile.record));
                         },
                       },
-                      transport: create_provider_transport(selection, {
-                        secrets: secret_resolver,
-                        ...(options.provider_fetch === undefined
-                          ? {}
-                          : { fetch: options.provider_fetch }),
-                      }),
+                      transport: live_transport(async () =>
+                        create_provider_transport(select(await read_active_profile()), {
+                          secrets: secret_resolver,
+                          ...(options.provider_fetch === undefined
+                            ? {}
+                            : { fetch: options.provider_fetch }),
+                        }),
+                      ),
                       assets: provider_asset_reader ?? create_asset_reader(database, namespace),
                       ...(load_novelai_runtime === null
                         ? {}
@@ -639,19 +649,17 @@ export async function compose_studio_capabilities(
                     settings_adapter.get_settings().illustration.prompt_preset_id,
                   ),
                 async build_request({ positive_prompt, negative_prompt }) {
-                  if (active_provider_id === null) {
-                    throw new Error("No provider profile is active; choose one in Settings");
-                  }
+                  const profile = await require_active_profile();
                   const { build_generation_request } =
                     await import("../modules/generation/build_generation_request.js");
                   const request = await build_generation_request(
                     {
-                      provider_id: active_provider_id,
+                      provider_id: profile.provider_id,
                       positive_prompt,
                       negative_prompt,
                       image_count: 1,
                       references: [],
-                      ...(active_model_id === null ? {} : { model_id: active_model_id }),
+                      ...(profile.model_id === null ? {} : { model_id: profile.model_id }),
                     },
                     RequestIdSchema.parse(crypto.randomUUID()),
                   );
@@ -659,17 +667,11 @@ export async function compose_studio_capabilities(
                     request.provider_id !== "novelai" ||
                     request.action !== "generate" ||
                     load_novelai_runtime === null ||
-                    active_profile_record === null ||
                     repositories === null
                   ) {
                     return request;
                   }
-                  // Re-read so defaults saved in this session apply without a reload.
-                  const profile = await repositories.provider_profiles.get(
-                    namespace(),
-                    active_profile_record.id,
-                  );
-                  const defaults = profile === null ? null : read_novelai_defaults(profile);
+                  const defaults = read_novelai_defaults(profile.record);
                   if (defaults === null) {
                     return request;
                   }
@@ -695,7 +697,8 @@ export async function compose_studio_capabilities(
                   });
                 },
                 async build_edit_request(edit) {
-                  if (active_provider_id !== "novelai" || load_novelai_runtime === null) {
+                  const profile = await read_active_profile();
+                  if (profile?.provider_id !== "novelai" || load_novelai_runtime === null) {
                     throw new Error("Quick edits need an active NovelAI provider profile");
                   }
                   const { build_novelai_edit_request } =
@@ -711,7 +714,7 @@ export async function compose_studio_capabilities(
                     generation_anchor: Sha256Schema.parse(
                       await compute_generation_anchor(request_id),
                     ),
-                    model_id: active_model_id ?? DEFAULT_NOVELAI_MODEL_ID,
+                    model_id: profile.model_id ?? DEFAULT_NOVELAI_MODEL_ID,
                   };
                   if (edit.kind !== "inpaint") {
                     return build_novelai_edit_request(edit, context);
@@ -722,13 +725,13 @@ export async function compose_studio_capabilities(
                     mask_asset_id: await runtime.store_input(edit.mask_png),
                   });
                 },
-                edits_available: () => active_provider_id === "novelai",
+                edits_available: () => last_provider_id === "novelai",
                 async submit(request) {
-                  if (active_profile_record === null) {
-                    throw new Error("No provider profile is active; choose one in Settings");
-                  }
+                  const profile = await require_active_profile();
+                  // Job errors carry only a code, so a missing credential is reported here instead.
+                  select(profile);
                   const job = await generation_capability.submit({
-                    profile_id: active_profile_record.id,
+                    profile_id: profile.record.id,
                     request,
                   });
                   return job.request_id;
@@ -870,6 +873,56 @@ export function create_provider_transport(
 }
 
 const NOVELAI_PREPARATION_TIMEOUT_MS = 120_000;
+
+interface ActiveProfile {
+  readonly record: ProviderProfile;
+  readonly provider_id: ProviderId;
+  readonly model_id: string | null;
+  /** Only reaches `LocalDirectTransport`, which requires a loopback origin; cloud origins come from the code-owned route catalog. */
+  readonly base_url: string | null;
+  readonly direct_cloud: DirectCloudCandidate;
+}
+
+function describe_active_profile(
+  record: ProviderProfile,
+  secrets_readable: boolean,
+): ActiveProfile | null {
+  const provider_id = ProviderIdSchema.safeParse(record.provider_id).data;
+  if (provider_id === undefined) {
+    return null;
+  }
+  const payload = read_payload(record);
+  return {
+    record,
+    provider_id,
+    model_id:
+      read_array(as_record(payload.provider_profile), "model_allowlist").find(
+        (model): model is string => typeof model === "string",
+      ) ?? null,
+    base_url: read_optional_string(payload, "base_url"),
+    direct_cloud: {
+      provider_id,
+      credential_reference: read_optional_string(payload, VAULT_KEY_FIELD),
+      secrets_readable,
+    },
+  };
+}
+
+/** Builds the underlying transport per call, so a profile switch takes effect on the next request. */
+function live_transport(resolve: () => Promise<ProviderTransport>): ProviderTransport {
+  return {
+    async execute(operation) {
+      return (await resolve()).execute(operation);
+    },
+    async fetch_remote_asset(operation) {
+      const transport = await resolve();
+      if (transport.fetch_remote_asset === undefined) {
+        throw new Error("The active provider transport cannot fetch remote assets");
+      }
+      return transport.fetch_remote_asset(operation);
+    },
+  };
+}
 
 /** Account lookups and vibe encoding always go straight to NovelAI with the active profile's credential. */
 function create_novelai_transport(

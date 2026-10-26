@@ -296,14 +296,17 @@ describe("direct cloud generation flow", () => {
     await harness.composition.dispose();
   });
 
-  it("reports the missing credential as the generation capability's reason", async () => {
+  it("fails the job without a network call when the profile has no credential", async () => {
     const harness = await create_harness({ with_credential: false });
 
-    const row = harness.composition.resolutions.find(
-      (entry) => entry.capability_id === "generation",
-    );
-    expect(row?.status).toBe("unavailable");
-    expect(row?.reason).toMatch(/stored credential/u);
+    const submitted = await harness.capabilities.generation.submit({
+      profile_id: PROFILE_ID,
+      request: novelai_request(),
+    });
+    const failed = await wait_for_state(harness.capabilities, submitted.job_id, "failed");
+
+    expect(failed.error).toEqual({ code: "provider_unavailable", retryable: false });
+    expect(harness.requests).toEqual([]);
     await harness.composition.dispose();
   });
 });
