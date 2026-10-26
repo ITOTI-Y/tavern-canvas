@@ -47,10 +47,26 @@ const mode = computed<string>({
   },
 });
 
-const status_label = computed(() =>
-  t(`settings.credential_storage.states.${props.vaultStatus.state}`, {
-    count: props.vaultStatus.secret_count,
-  }),
+const status_label = computed(() => {
+  const count = { count: props.vaultStatus.secret_count };
+  switch (props.vaultStatus.state) {
+    case "unavailable":
+      return t("settings.credential_storage.states.unavailable", count);
+    case "error":
+      return t("settings.credential_storage.states.error", count);
+    case "uninitialized":
+      return t("settings.credential_storage.states.uninitialized", count);
+    case "locked":
+      return t("settings.credential_storage.states.locked", count);
+    case "unlocked":
+      return t("settings.credential_storage.states.unlocked", count);
+  }
+});
+
+const vault_failure_message = computed(() =>
+  props.vaultStatus.state === "error"
+    ? t("settings.credential_storage.error")
+    : t("settings.credential_storage.unavailable"),
 );
 
 function clear_inputs(): void {
@@ -184,7 +200,7 @@ async function reset_vault(): Promise<void> {
         data-tone="error"
         role="alert"
       >
-        {{ t(`settings.credential_storage.${vaultStatus.state}`) }}
+        {{ vault_failure_message }}
       </p>
 
       <template v-else-if="vaultStatus.state === 'uninitialized'">
