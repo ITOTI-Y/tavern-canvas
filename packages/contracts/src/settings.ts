@@ -26,11 +26,17 @@ export const GatewaySettingsSchema = z.strictObject({
 export type GatewaySettings = z.infer<typeof GatewaySettingsSchema>;
 
 export const GATEWAY_CREDENTIAL_KIND = "gateway_access_token" as const;
+export const ANALYSIS_CREDENTIAL_KIND = "analysis_api_key" as const;
 
 // One Gateway bearer token per namespace; the token itself lives only in host secret storage and in
 // the `Authorization` header of a live request.
 export function derive_gateway_credential_reference(namespace: string): string {
   return VaultReferenceSchema.parse(`tavern_canvas:${namespace}:${GATEWAY_CREDENTIAL_KIND}`);
+}
+
+/** The custom analysis API's key, one per namespace. */
+export function derive_analysis_credential_reference(namespace: string): string {
+  return VaultReferenceSchema.parse(`tavern_canvas:${namespace}:${ANALYSIS_CREDENTIAL_KIND}`);
 }
 
 const NamespaceIdentifierSchema = z
@@ -59,6 +65,12 @@ export const AnalysisConnectionSchema = z.discriminatedUnion("kind", [
     kind: z.literal("proxy_preset"),
     proxy_preset: z.string().trim().min(1).max(200),
     model: z.string().trim().min(1).max(200).nullable(),
+  }),
+  /** An OpenAI-compatible endpoint; its key is stored under `derive_analysis_credential_reference`. */
+  z.strictObject({
+    kind: z.literal("custom"),
+    api_url: z.url({ protocol: /^https?$/u }).max(500),
+    model: z.string().trim().min(1).max(200),
   }),
 ]);
 export type AnalysisConnection = z.infer<typeof AnalysisConnectionSchema>;

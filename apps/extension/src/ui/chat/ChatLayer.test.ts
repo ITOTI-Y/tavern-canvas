@@ -102,6 +102,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
     build_edit_request: (edit) =>
       Promise.resolve({ provider_id: "sd_webui", prompt: edit.kind } as ImageGenerationRequest),
     edits_available: () => options.edits ?? false,
+    resolve_analysis_key: () => Promise.resolve("analysis-key"),
     submit,
     jobs: {
       subscribe: () => () => undefined,

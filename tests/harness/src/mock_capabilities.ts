@@ -1030,6 +1030,8 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       };
       return Promise.resolve();
     },
+    set_analysis_key: () => Promise.resolve(),
+    clear_analysis_key: () => Promise.resolve(),
     set_deepl_key: () => Promise.resolve(),
     clear_deepl_key: () => Promise.resolve(),
     clear_gateway_token: () => {

@@ -7,6 +7,7 @@ import type {
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppButton from "../../components/AppButton.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
@@ -43,6 +44,8 @@ function update_illustration(partial: Partial<IllustrationSettings>): void {
 const preset_name_draft = ref("");
 const proxy_preset_draft = ref("");
 const proxy_model_draft = ref("");
+const custom_url_draft = ref("");
+const custom_model_draft = ref("");
 
 watch(
   illustration,
@@ -52,6 +55,9 @@ watch(
     if (current?.connection.kind === "proxy_preset") {
       proxy_preset_draft.value = current.connection.proxy_preset;
       proxy_model_draft.value = current.connection.model ?? "";
+    } else if (current?.connection.kind === "custom") {
+      custom_url_draft.value = current.connection.api_url;
+      custom_model_draft.value = current.connection.model;
     }
   },
   { immediate: true },
@@ -64,6 +70,7 @@ function save_preset_name(): void {
 const connection_options = computed(() => [
   { value: "current", label: t("settings.illustration.connection_current") },
   { value: "proxy_preset", label: t("settings.illustration.connection_proxy_preset") },
+  { value: "custom", label: t("settings.illustration.connection_custom") },
 ]);
 
 function proxy_connection(): AnalysisConnection | null {
@@ -74,6 +81,71 @@ function proxy_connection(): AnalysisConnection | null {
   const model = proxy_model_draft.value.trim();
   return { kind: "proxy_preset", proxy_preset, model: model === "" ? null : model };
 }
+
+function custom_connection(): AnalysisConnection | null {
+  const api_url = custom_url_draft.value.trim();
+  const model = custom_model_draft.value.trim();
+  if (model === "" || !URL.canParse(api_url) || !/^https?:$/u.test(new URL(api_url).protocol)) {
+    return null;
+  }
+  return { kind: "custom", api_url, model };
+}
+
+const custom_invalid = computed(
+  () =>
+    connection_kind.value === "custom" &&
+    custom_url_draft.value.trim() !== "" &&
+    custom_connection() === null,
+);
+
+function save_custom_connection(): void {
+  const connection = custom_connection();
+  if (connection !== null) {
+    update_illustration({ connection });
+  }
+}
+
+const key_draft = ref("");
+const key_status = ref<"idle" | "saving" | "saved" | "cleared" | "failed">("idle");
+
+async function save_key(): Promise<void> {
+  const value = key_draft.value.trim();
+  if (value === "") {
+    return;
+  }
+  key_status.value = "saving";
+  try {
+    await props.controller.set_analysis_key(value);
+    key_draft.value = "";
+    key_status.value = "saved";
+  } catch {
+    key_status.value = "failed";
+  }
+}
+
+async function clear_key(): Promise<void> {
+  key_status.value = "saving";
+  try {
+    await props.controller.clear_analysis_key();
+    key_status.value = "cleared";
+  } catch {
+    key_status.value = "failed";
+  }
+}
+
+const key_status_text = computed(() => {
+  switch (key_status.value) {
+    case "saved":
+      return t("settings.illustration.custom_key_saved");
+    case "cleared":
+      return t("settings.illustration.custom_key_cleared");
+    case "failed":
+      return t("settings.illustration.custom_key_failed");
+    case "idle":
+    case "saving":
+      return "";
+  }
+});
 
 const connection_kind = ref(illustration.value?.connection.kind ?? "current");
 watch(
@@ -95,6 +167,9 @@ function set_connection_kind(value: string): void {
     if (connection !== null) {
       update_illustration({ connection });
     }
+  } else if (value === "custom") {
+    connection_kind.value = "custom";
+    save_custom_connection();
   }
 }
 
@@ -192,6 +267,66 @@ function set_prompt_preset(value: string): void {
             />
           </template>
         </FieldGroup>
+      </template>
+      <template v-if="connection_kind === 'custom'">
+        <FieldGroup
+          :label="t('settings.illustration.custom_url_label')"
+          :hint="t('settings.illustration.custom_url_hint')"
+          :error="custom_invalid ? t('settings.illustration.custom_invalid') : null"
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="custom_url_draft"
+              type="url"
+              placeholder="https://"
+              :aria-describedby="describedBy"
+              :class="styles.text_input"
+              data-testid="analysis-custom-url-input"
+              @blur="save_custom_connection"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup :label="t('settings.illustration.custom_model_label')">
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="custom_model_draft"
+              type="text"
+              :aria-describedby="describedBy"
+              :class="styles.text_input"
+              data-testid="analysis-custom-model-input"
+              @blur="save_custom_connection"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup
+          :label="t('settings.illustration.custom_key_label')"
+          :hint="t('settings.illustration.custom_key_hint')"
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="key_draft"
+              type="password"
+              autocomplete="off"
+              :aria-describedby="describedBy"
+              :class="styles.text_input"
+              data-testid="analysis-custom-key-input"
+            />
+          </template>
+        </FieldGroup>
+        <div :class="styles.actions_row">
+          <AppButton
+            :label="t('settings.illustration.custom_key_save')"
+            variant="primary"
+            :pending="key_status === 'saving'"
+            :disabled="key_draft.trim() === ''"
+            @click="save_key"
+          />
+          <AppButton :label="t('settings.illustration.custom_key_clear')" @click="clear_key" />
+          <span :class="styles.status_text" role="status">{{ key_status_text }}</span>
+        </div>
       </template>
 
       <div :class="styles.row">

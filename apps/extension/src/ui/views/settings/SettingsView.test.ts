@@ -683,6 +683,8 @@ function recording_settings_capability(
       current = { ...current, ...partial };
       return Promise.resolve(current);
     },
+    set_analysis_key: vi.fn(() => Promise.resolve()),
+    clear_analysis_key: vi.fn(() => Promise.resolve()),
     set_deepl_key: vi.fn(() => Promise.resolve()),
     clear_deepl_key: vi.fn(() => Promise.resolve()),
   };

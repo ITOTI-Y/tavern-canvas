@@ -1,4 +1,5 @@
 import {
+  derive_analysis_credential_reference,
   ProviderIdSchema,
   RequestIdSchema,
   Sha256Schema,
@@ -726,6 +727,16 @@ export async function compose_studio_capabilities(
                   });
                 },
                 edits_available: () => last_provider_id === "novelai",
+                resolve_analysis_key() {
+                  if (secret_resolver === null) {
+                    throw new Error(ANALYSIS_KEY_UNREADABLE);
+                  }
+                  return secret_resolver.resolve_secret(
+                    derive_analysis_credential_reference(
+                      settings_adapter.get_settings().active_namespace,
+                    ),
+                  );
+                },
                 async submit(request) {
                   const profile = await require_active_profile();
                   // Job errors carry only a code, so a missing credential is reported here instead.
@@ -873,6 +884,9 @@ export function create_provider_transport(
 }
 
 const NOVELAI_PREPARATION_TIMEOUT_MS = 120_000;
+
+const ANALYSIS_KEY_UNREADABLE =
+  "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
 
 interface ActiveProfile {
   readonly record: ProviderProfile;

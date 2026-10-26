@@ -203,6 +203,7 @@ export {
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   TranslationSettingsSchema,
+  derive_analysis_credential_reference,
   derive_gateway_credential_reference,
 } from "./settings.js";
 export type {

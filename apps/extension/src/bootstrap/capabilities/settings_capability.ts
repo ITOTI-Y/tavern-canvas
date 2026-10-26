@@ -1,4 +1,5 @@
 import {
+  derive_analysis_credential_reference,
   derive_gateway_credential_reference,
   type TavernCanvasSettings,
 } from "@tavern-canvas/contracts";
@@ -112,6 +113,27 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
       await deps.secrets.write_secret(reference, plaintext_value);
       apply({ gateway: { ...current.gateway, token_secret_id: reference } });
       return deps.settings.flush();
+    },
+    /** Like the Gateway token: the key goes to the credential backend and settings never hold it. */
+    async set_analysis_key(plaintext_value) {
+      if (plaintext_value.trim().length === 0) {
+        throw new TypeError("An API key must not be blank");
+      }
+      if (deps.secrets === null) {
+        throw capability_unavailable_error(SECRET_DESTINATION_UNAVAILABLE);
+      }
+      await deps.secrets.write_secret(
+        derive_analysis_credential_reference(deps.settings.get_settings().active_namespace),
+        plaintext_value.trim(),
+      );
+    },
+    async clear_analysis_key() {
+      if (deps.secrets?.delete_secret === undefined) {
+        throw capability_unavailable_error(SECRET_DESTINATION_UNAVAILABLE);
+      }
+      await deps.secrets.delete_secret(
+        derive_analysis_credential_reference(deps.settings.get_settings().active_namespace),
+      );
     },
     async set_deepl_key(plaintext_value) {
       if (deps.host_secrets === null) {

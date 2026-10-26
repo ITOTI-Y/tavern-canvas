@@ -105,7 +105,10 @@ class MemoryHost {
   }
 }
 
-function create_service(host: MemoryHost, options: { auto?: boolean } = {}) {
+function create_service(
+  host: MemoryHost,
+  options: { auto?: boolean; settings?: IllustrationSettings } = {},
+) {
   const job_listeners = new Set<(job: GenerationJobSnapshot) => void>();
   const jobs = {
     subscribe: (listener: (job: GenerationJobSnapshot) => void) => {
@@ -118,7 +121,7 @@ function create_service(host: MemoryHost, options: { auto?: boolean } = {}) {
   const submit = vi.fn(() => Promise.resolve(REQUEST_ID));
   const service = new IllustrationService({
     host: host.adapter,
-    settings: () => SETTINGS,
+    settings: () => options.settings ?? SETTINGS,
     auto_generation_enabled: () => options.auto ?? false,
     prompt_context: () => Promise.resolve({ preset: null, appearances: [] }),
     build_request: (input) =>
@@ -126,6 +129,7 @@ function create_service(host: MemoryHost, options: { auto?: boolean } = {}) {
     build_edit_request: (edit) =>
       Promise.resolve({ prompt: edit.kind } as unknown as ImageGenerationRequest),
     edits_available: () => true,
+    resolve_analysis_key: () => Promise.resolve("analysis-key"),
     submit,
     jobs,
     new_slot_id: () => "slot_0001",
@@ -176,6 +180,26 @@ describe("IllustrationService.analyze", () => {
     await service.analyze(3);
 
     expect(host.generate_calls).toHaveLength(1);
+  });
+
+  it("sends a custom API connection with the stored key", async () => {
+    const host = new MemoryHost();
+    const { service } = create_service(host, {
+      settings: {
+        ...SETTINGS,
+        connection: { kind: "custom", api_url: "https://llm.example/v1", model: "m" },
+      },
+    });
+
+    await service.analyze(3);
+
+    expect(host.generate_calls[0]?.connection).toEqual({
+      kind: "custom",
+      api_url: "https://llm.example/v1",
+      api_key: "analysis-key",
+      model: "m",
+      source: "openai",
+    });
   });
 
   it("drops the record when the user edited the reply during analysis", async () => {

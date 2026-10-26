@@ -56,6 +56,8 @@ export interface IllustrationServiceDeps {
   readonly build_edit_request: (edit: SlotEdit) => Promise<ImageGenerationRequest>;
   /** Whether the active provider profile supports quick edits. */
   readonly edits_available: () => boolean;
+  /** Reads back the custom analysis API's key; throws when none is stored or the host refuses. */
+  readonly resolve_analysis_key: () => Promise<string>;
   /** Queues the request and returns its request id. */
   readonly submit: (request: ImageGenerationRequest) => Promise<RequestId>;
   readonly jobs: IllustrationJobPort;
@@ -94,7 +96,10 @@ const ILLUSTRATED_GENERATION_TYPES: ReadonlySet<string> = new Set([
   "continue",
 ]);
 
-function to_host_connection(connection: AnalysisConnection): HostGenerationConnection {
+async function to_host_connection(
+  connection: AnalysisConnection,
+  resolve_key: () => Promise<string>,
+): Promise<HostGenerationConnection> {
   switch (connection.kind) {
     case "current":
       return { kind: "current" };
@@ -103,6 +108,15 @@ function to_host_connection(connection: AnalysisConnection): HostGenerationConne
         kind: "proxy_preset",
         proxy_preset: connection.proxy_preset,
         model: connection.model,
+      };
+    case "custom":
+      // With `apiurl` set, JS-Slash-Runner sends the request as an OpenAI reverse proxy call.
+      return {
+        kind: "custom",
+        api_url: connection.api_url,
+        api_key: await resolve_key(),
+        model: connection.model,
+        source: "openai",
       };
   }
 }
@@ -222,7 +236,7 @@ export class IllustrationService {
         preset_name: settings.preset_name,
         user_input: build_analysis_input(paragraphs, settings.max_images_per_message),
         max_chat_history: settings.max_chat_history,
-        connection: to_host_connection(settings.connection),
+        connection: await to_host_connection(settings.connection, this.#deps.resolve_analysis_key),
         json_schema: ANALYSIS_JSON_SCHEMA,
       });
       const proposals = parse_analysis_output(
