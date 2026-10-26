@@ -17,7 +17,7 @@ describe("assemble_slot_prompt", () => {
     expect(
       assemble_slot_prompt({
         preset: PRESET,
-        library: { characters: [], loose_outfits: [] },
+        library: { characters: [], loose_outfits: [], outfit_names: [] },
         characters: [],
         scene_tags: "door, night, best quality",
       }),
@@ -31,7 +31,11 @@ describe("assemble_slot_prompt", () => {
   it("gives a library character its appearance, outfit and own action in a character prompt", () => {
     const prompt = assemble_slot_prompt({
       preset: PRESET,
-      library: { characters: [{ character: ALICE, outfit: GALA }], loose_outfits: [] },
+      library: {
+        characters: [{ character: ALICE, outfit: GALA }],
+        loose_outfits: [],
+        outfit_names: [],
+      },
       characters: [{ name: "alice", tags: "girl, standing, door, smile" }],
       scene_tags: "1girl, night, indoors",
     });
@@ -46,10 +50,31 @@ describe("assemble_slot_prompt", () => {
     ]);
   });
 
+  it("drops outfit names the model echoed as tags, keeping the stored outfit", () => {
+    const prompt = assemble_slot_prompt({
+      preset: null,
+      library: {
+        characters: [{ character: ALICE, outfit: GALA }],
+        loose_outfits: [],
+        outfit_names: ["Gala", "Forest cloak"],
+      },
+      characters: [{ name: "Alice", tags: "forest cloak, wearing gala, waving" }],
+      scene_tags: "garden",
+    });
+
+    expect(prompt.character_prompts[0]?.prompt).toBe(
+      "girl, silver hair, blue eyes, red gown, waving",
+    );
+  });
+
   it("counts every character and keeps a non-library character's own description", () => {
     const prompt = assemble_slot_prompt({
       preset: null,
-      library: { characters: [{ character: ALICE, outfit: null }], loose_outfits: [] },
+      library: {
+        characters: [{ character: ALICE, outfit: null }],
+        loose_outfits: [],
+        outfit_names: [],
+      },
       characters: [
         { name: "Alice", tags: "sitting" },
         { name: "Bob", tags: "1boy, black hair, armor, standing" },

@@ -82,6 +82,19 @@ function apply_preset(prompt: string, preset: SlotPromptPreset | null): string {
   return deduplicate_tags(apply_regex_rules(replaced, preset.regex_rules).text);
 }
 
+/** Outfit names are library keys, not image tags; the outfit's own description is added instead. */
+function drop_outfit_names(tags: string, outfit_names: readonly string[]): string {
+  const names = new Set(outfit_names.map((name) => name.trim().toLowerCase()));
+  return join_prompt_parts(
+    tags.split(",").filter((tag) => {
+      const base = get_base_tag(tag)
+        .toLowerCase()
+        .replace(/^wearing\s+/u, "");
+      return !names.has(base);
+    }),
+  );
+}
+
 interface CharacterDraft {
   readonly name: string;
   readonly subject: Subject | null;
@@ -99,7 +112,7 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
     }
     used.add(entry.character.id);
     const appearance = split_subject(entry.character.appearance);
-    const own = split_subject(own_tags);
+    const own = split_subject(drop_outfit_names(own_tags, input.library.outfit_names));
     drafts.push({
       name: entry.character.name,
       subject: appearance.subject ?? own.subject,

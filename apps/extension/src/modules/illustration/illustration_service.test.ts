@@ -5,6 +5,7 @@ import {
   type ImageGenerationRequest,
 } from "@tavern-canvas/contracts";
 import { describe, expect, it, vi } from "vitest";
+import { reactive } from "vue";
 
 import type {
   HostAdapter,
@@ -214,6 +215,22 @@ describe("IllustrationService.analyze", () => {
 });
 
 describe("IllustrationService image jobs", () => {
+  it("stores edited character prompts even when the caller passes reactive objects", async () => {
+    const host = new MemoryHost();
+    const { service } = create_service(host);
+    await service.analyze(3);
+
+    await service.generate(LOCATION, "slot_0001", {
+      positive_prompt: "1girl, rain",
+      negative_prompt: "",
+      character_prompts: reactive([{ name: "Alice", prompt: "girl, smile", negative_prompt: "" }]),
+    });
+
+    expect(service.read(LOCATION)?.slots[0]?.character_prompts).toEqual([
+      { name: "Alice", prompt: "girl, smile", negative_prompt: "" },
+    ]);
+  });
+
   it("adds a finished image to its slot and marks the job attached", async () => {
     const host = new MemoryHost();
     const { service, jobs, finish } = create_service(host);

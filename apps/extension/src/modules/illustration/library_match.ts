@@ -26,6 +26,8 @@ export interface LibraryMatch {
   readonly characters: readonly MatchedCharacter[];
   /** Outfits named in the text that belong to no matched character. */
   readonly loose_outfits: readonly LibraryOutfit[];
+  /** Every library outfit name, so a model that echoes them as tags can be filtered. */
+  readonly outfit_names: readonly string[];
 }
 
 const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u;
@@ -82,5 +84,6 @@ export function match_library(
   return {
     characters,
     loose_outfits: named_outfits.filter((outfit) => !worn.has(outfit.id)),
+    outfit_names: library.outfits.map((outfit) => outfit.name),
   };
 }

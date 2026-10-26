@@ -56,7 +56,7 @@ function library_lines(library: SlotLibrary): readonly string[] {
   const owner = new Map(library.characters.map((character) => [character.id, character.name]));
   return [
     "",
-    "Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing; use exactly the name shown.",
+    "Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing, and never an outfit name; use exactly the name shown.",
     ...library.characters.map((character) => `- character: ${character.name}`),
     ...library.outfits.map((outfit) => {
       const worn_by = outfit.character_id === null ? undefined : owner.get(outfit.character_id);

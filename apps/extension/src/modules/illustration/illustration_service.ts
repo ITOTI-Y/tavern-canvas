@@ -340,7 +340,12 @@ export class IllustrationService {
         ...current,
         positive_prompt: input.positive_prompt,
         negative_prompt: input.negative_prompt,
-        character_prompts: [...input.character_prompts],
+        // Plain copies: a caller may pass reactive objects, which structuredClone rejects.
+        character_prompts: input.character_prompts.map((character) => ({
+          name: character.name,
+          prompt: character.prompt,
+          negative_prompt: character.negative_prompt,
+        })),
       }),
     );
   }
