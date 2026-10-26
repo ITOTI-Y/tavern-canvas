@@ -610,8 +610,8 @@ export async function compose_studio_capabilities(
                     assets,
                     settings_adapter.get_settings().illustration.prompt_preset_id,
                   ),
-                async submit({ positive_prompt, negative_prompt }) {
-                  if (active_profile_record === null || active_provider_id === null) {
+                async build_request({ positive_prompt, negative_prompt }) {
+                  if (active_provider_id === null) {
                     throw new Error("No provider profile is active; choose one in Settings");
                   }
                   const { build_generation_request } =
@@ -620,7 +620,7 @@ export async function compose_studio_capabilities(
                     as_record(active_profile_payload.provider_profile),
                     "model_allowlist",
                   ).find((model): model is string => typeof model === "string");
-                  const request = await build_generation_request(
+                  return build_generation_request(
                     {
                       provider_id: active_provider_id,
                       positive_prompt,
@@ -631,6 +631,11 @@ export async function compose_studio_capabilities(
                     },
                     RequestIdSchema.parse(crypto.randomUUID()),
                   );
+                },
+                async submit(request) {
+                  if (active_profile_record === null) {
+                    throw new Error("No provider profile is active; choose one in Settings");
+                  }
                   const job = await generation_capability.submit({
                     profile_id: active_profile_record.id,
                     request,

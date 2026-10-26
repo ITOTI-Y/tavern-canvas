@@ -706,6 +706,49 @@ const confirmations = {
   },
 };
 
+const chat = {
+  message_button: "为这条回复配图",
+  analysis_running: "正在选择需要配图的段落…",
+  analysis_failed: "段落分析失败：{reason}",
+  slot: {
+    generate: "生成",
+    regenerate: "重新生成",
+    edit: "编辑提示词",
+    previous: "上一张",
+    next: "下一张",
+    generating: "生成中…",
+    interrupted: "页面刷新中断了生成",
+    image_missing: "画廊中已没有这张图片",
+    failed: "生成失败：{reason}",
+  },
+  dialog: {
+    title: "为回复配图",
+    close: "关闭",
+    retry: "重新分析",
+    no_slots: "分析结果中没有值得配图的段落。",
+    parse_failed_hint:
+      "模型没有返回所需的 JSON。所用预设可能规定了自己的输出格式或对回复做了混淆，可以在插图设置中换用其他预设。",
+    positive_prompt: "提示词",
+    negative_prompt: "负面提示词",
+    cost_anlas: "约 {anlas} Anlas",
+    cost_free: "Opus 免费",
+    cost_rejected: "请求过大，NovelAI 会拒绝",
+    total_anlas: "合计约 {anlas} Anlas",
+    cancel: "取消",
+    confirm: "生成 {count} 张",
+  },
+  errors: {
+    auth_failed: "服务商拒绝了凭据",
+    rate_limited: "请求过于频繁，请稍后再试",
+    content_blocked: "被服务商的内容过滤拦截",
+    invalid_request: "服务商拒绝了请求",
+    provider_unavailable: "服务商不可用",
+    timed_out: "超时",
+    cancelled: "已取消",
+    malformed_response: "服务商返回了无法解析的结果",
+  },
+};
+
 export const zh_cn_messages = {
   app,
   nav,
@@ -720,4 +763,5 @@ export const zh_cn_messages = {
   settings,
   errors,
   confirmations,
+  chat,
 } satisfies LocaleMessageSchema;

@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StartupStatus } from "../bootstrap/startup_error.js";
-import { MINIMUM_TAVERN_HELPER_VERSION, type BootstrapProbeResult } from "../host/index.js";
+import {
+  MINIMUM_TAVERN_HELPER_VERSION,
+  type BootstrapProbeResult,
+  type HostAdapter,
+} from "../host/index.js";
+import type { IllustrationService } from "../modules/illustration/illustration_service.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
@@ -21,7 +26,11 @@ const props = defineProps<{
   portalTarget: HTMLElement;
   hostElement: HTMLElement;
   capabilities?: StudioCapabilities;
+  host?: HostAdapter | null;
+  illustrations?: IllustrationService | null;
 }>();
+
+const ChatLayer = defineAsyncComponent(() => import("./chat/ChatLayer.vue"));
 
 const { t } = useI18n();
 
@@ -166,6 +175,13 @@ function close_studio(): void {
         />
       </FloatingStudioWindow>
       <FloatingEntry :enabled="!shell_visible" :open-label="t('app.name')" @open="open_studio" />
+      <ChatLayer
+        v-if="host && illustrations && capabilities"
+        :host="host"
+        :service="illustrations"
+        :gallery="capabilities.gallery"
+        :novelai="capabilities.novelai"
+      />
     </template>
   </PortalProvider>
 </template>

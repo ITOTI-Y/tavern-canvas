@@ -1,5 +1,9 @@
 import type { GenerationJobSnapshot } from "@tavern-canvas/core";
-import { RequestIdSchema, type IllustrationSettings } from "@tavern-canvas/contracts";
+import {
+  RequestIdSchema,
+  type IllustrationSettings,
+  type ImageGenerationRequest,
+} from "@tavern-canvas/contracts";
 import { describe, expect, it, vi } from "vitest";
 
 import type {
@@ -115,6 +119,8 @@ function create_service(host: MemoryHost, options: { auto?: boolean } = {}) {
     settings: () => SETTINGS,
     auto_generation_enabled: () => options.auto ?? false,
     prompt_context: () => Promise.resolve({ preset: null, appearances: [] }),
+    build_request: (input) =>
+      Promise.resolve({ prompt: input.positive_prompt } as unknown as ImageGenerationRequest),
     submit,
     jobs,
     new_slot_id: () => "slot_0001",

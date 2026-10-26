@@ -3,6 +3,7 @@ import {
   type AnalysisConnection,
   type IllustrationSettings,
   type IllustrationSlot,
+  type ImageGenerationRequest,
   type RequestId,
   type SwipeIllustrations,
 } from "@tavern-canvas/contracts";
@@ -48,8 +49,10 @@ export interface IllustrationServiceDeps {
   readonly settings: () => IllustrationSettings;
   readonly auto_generation_enabled: () => boolean;
   readonly prompt_context: () => Promise<SlotPromptContext>;
-  /** Queues one image job for the active provider profile and returns its request id. */
-  readonly submit: (input: SlotGenerationInput) => Promise<RequestId>;
+  /** Builds the request the active provider profile would receive for these prompts. */
+  readonly build_request: (input: SlotGenerationInput) => Promise<ImageGenerationRequest>;
+  /** Queues the request and returns its request id. */
+  readonly submit: (request: ImageGenerationRequest) => Promise<RequestId>;
   readonly jobs: IllustrationJobPort;
   readonly new_slot_id: () => string;
   readonly new_generation_id: () => string;
@@ -262,17 +265,29 @@ export class IllustrationService {
     return record;
   }
 
+  /** The request a slot would submit, so its cost can be shown before confirming. */
+  preview_request(
+    location: HostSwipeLocation,
+    slot_id: string,
+    prompt?: SlotGenerationInput,
+  ): Promise<ImageGenerationRequest> {
+    const slot = this.#require_slot(location, slot_id);
+    return this.#deps.build_request(prompt ?? slot);
+  }
+
   async generate(
     location: HostSwipeLocation,
     slot_id: string,
-    prompt?: { readonly positive_prompt: string; readonly negative_prompt: string },
+    prompt?: SlotGenerationInput,
   ): Promise<void> {
     const slot = this.#require_slot(location, slot_id);
     const positive_prompt = prompt?.positive_prompt ?? slot.positive_prompt;
     const negative_prompt = prompt?.negative_prompt ?? slot.negative_prompt;
     let request_id: RequestId;
     try {
-      request_id = await this.#deps.submit({ positive_prompt, negative_prompt });
+      request_id = await this.#deps.submit(
+        await this.#deps.build_request({ positive_prompt, negative_prompt }),
+      );
     } catch (error) {
       await this.#update_slot(location, slot_id, (current) => ({
         ...current,

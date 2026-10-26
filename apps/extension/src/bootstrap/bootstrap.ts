@@ -1,9 +1,10 @@
 import { ModuleRuntime, type RuntimeModule } from "@tavern-canvas/core";
-import { createApp } from "vue";
+import { createApp, markRaw } from "vue";
 
 import { probe_host_capabilities, type BootstrapProbeResult } from "../host/index.js";
 import { create_i18n } from "../i18n/create_i18n.js";
 import AppRoot from "../ui/AppRoot.vue";
+import { install_chat_stylesheet } from "../ui/chat/chat_stylesheet.js";
 import { create_shadow_root } from "../ui/create_shadow_root.js";
 import {
   compose_studio_capabilities,
@@ -104,10 +105,15 @@ export async function bootstrap_tavern_canvas(
     portalTarget: surface.portal_element,
     hostElement: surface.host_element,
     capabilities: composition?.capabilities,
+    // Class instances with private fields must never be wrapped in a reactive proxy.
+    host: composition?.host ? markRaw(composition.host) : null,
+    illustrations: composition?.illustrations ? markRaw(composition.illustrations) : null,
   });
+  const remove_chat_stylesheet = install_chat_stylesheet(document_);
   app.use(locale_runtime.i18n);
   app.onUnmount(() => {
     surface.remove();
+    remove_chat_stylesheet();
   });
 
   try {

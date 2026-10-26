@@ -735,6 +735,49 @@ const confirmations = {
   },
 };
 
+const chat = {
+  message_button: "Illustrate this reply",
+  analysis_running: "Choosing paragraphs to illustrate…",
+  analysis_failed: "Paragraph analysis failed: {reason}",
+  slot: {
+    generate: "Generate",
+    regenerate: "Regenerate",
+    edit: "Edit prompt",
+    previous: "Previous image",
+    next: "Next image",
+    generating: "Generating…",
+    interrupted: "Generation was interrupted by a reload",
+    image_missing: "This image is no longer in the gallery",
+    failed: "Generation failed: {reason}",
+  },
+  dialog: {
+    title: "Illustrate reply",
+    close: "Close",
+    retry: "Analyze again",
+    no_slots: "The analysis found no paragraph worth illustrating.",
+    parse_failed_hint:
+      "The model did not return the requested JSON. Your preset may impose its own output format or obfuscate replies; try another preset in the illustration settings.",
+    positive_prompt: "Prompt",
+    negative_prompt: "Negative prompt",
+    cost_anlas: "About {anlas} Anlas",
+    cost_free: "Free with Opus",
+    cost_rejected: "NovelAI would reject this request as too large",
+    total_anlas: "Total about {anlas} Anlas",
+    cancel: "Cancel",
+    confirm: "Generate {count}",
+  },
+  errors: {
+    auth_failed: "the provider rejected the credential",
+    rate_limited: "rate limited, try again later",
+    content_blocked: "blocked by the provider's content filter",
+    invalid_request: "the provider rejected the request",
+    provider_unavailable: "the provider is unavailable",
+    timed_out: "timed out",
+    cancelled: "cancelled",
+    malformed_response: "the provider returned an unreadable response",
+  },
+};
+
 export const en_messages = {
   app,
   nav,
@@ -749,6 +792,7 @@ export const en_messages = {
   settings,
   errors,
   confirmations,
+  chat,
 };
 
 export type LocaleMessageSchema = typeof en_messages;
