@@ -1,11 +1,16 @@
 import type { ImageGenerationRequest } from "@tavern-canvas/contracts";
-import type { ProviderAssetReader, ProviderTransport } from "@tavern-canvas/providers";
+import type {
+  ProviderAssetReader,
+  ProviderOutputAsset,
+  ProviderTransport,
+} from "@tavern-canvas/providers";
 import type {
   NovelAiVibeEncodingRepository,
   ProviderInputAssetRepository,
 } from "@tavern-canvas/storage";
 
 import { create_browser_image_operations } from "./novelai_image_operations.js";
+import { composite_novelai_infill } from "./novelai_infill_output.js";
 import { prepare_novelai_request } from "./novelai_request_preparation.js";
 import {
   create_novelai_service,
@@ -34,6 +39,12 @@ export interface NovelAiRuntime {
   /** Gallery images plus inputs derived for queued NovelAI requests. */
   readonly assets: ProviderAssetReader;
   prepare(request: ImageGenerationRequest, signal: AbortSignal): Promise<ImageGenerationRequest>;
+  /** Composites NovelAI inpainting results over their source image; other outputs pass through. */
+  finish(
+    request: ImageGenerationRequest,
+    outputs: readonly ProviderOutputAsset[],
+    signal: AbortSignal,
+  ): Promise<readonly ProviderOutputAsset[]>;
 }
 
 /** Loaded on first NovelAI use so the canvas and encoding code stays out of the startup bundle. */
@@ -55,6 +66,10 @@ export function create_novelai_runtime(deps: NovelAiRuntimeDeps): NovelAiRuntime
   return {
     service,
     assets,
+    finish: (request, outputs, signal) =>
+      request.provider_id === "novelai" && request.action === "infill"
+        ? composite_novelai_infill({ assets, image_operations }, request, outputs, signal)
+        : Promise.resolve(outputs),
     prepare: (request, signal) =>
       request.provider_id !== "novelai"
         ? Promise.resolve(request)

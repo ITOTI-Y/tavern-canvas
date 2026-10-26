@@ -10,9 +10,17 @@ export interface NovelAiImageOperations {
   resize(bytes: Uint8Array, target: ImageSize): Promise<Uint8Array>;
   /** Scales to fit inside `target`, centred on black. */
   pad(bytes: Uint8Array, target: ImageSize): Promise<Uint8Array>;
-  /** White where the mask is set, black elsewhere, at one eighth of `target` (NovelAI's latent size). */
+  /** Opaque white where the mask is set and black elsewhere, quantised to NovelAI's 8-pixel latent grid. */
   binarize_mask(bytes: Uint8Array, target: ImageSize): Promise<Uint8Array>;
+  /** Pastes an inpainting result over its source through the feathered latent mask. */
+  composite_infill(
+    source: Uint8Array,
+    generated: Uint8Array,
+    latent_mask: Uint8Array,
+  ): Promise<Uint8Array>;
 }
+
+import { blend_pixels, feather_infill_mask } from "./novelai_infill_compositing.js";
 
 export const RAW_VIBE_CANVAS: ImageSize = { width: 448, height: 448 };
 const DIRECTOR_CANVASES: readonly ImageSize[] = [
@@ -80,8 +88,46 @@ async function encode_png(canvas: OffscreenCanvas): Promise<Uint8Array> {
   return new Uint8Array(await blob.arrayBuffer());
 }
 
+function read_pixels(bitmap: ImageBitmap, size: ImageSize): ImageData {
+  const { context } = canvas_context(size);
+  context.drawImage(bitmap, 0, 0, size.width, size.height);
+  return context.getImageData(0, 0, size.width, size.height);
+}
+
 export function create_browser_image_operations(): NovelAiImageOperations {
   return {
+    async composite_infill(source, generated, latent_mask) {
+      const [source_bitmap, generated_bitmap, mask_bitmap] = await Promise.all([
+        decode(source),
+        decode(generated),
+        decode(latent_mask),
+      ]);
+      try {
+        const size = { width: generated_bitmap.width, height: generated_bitmap.height };
+        const mask_size = {
+          width: Math.max(1, Math.floor(size.width / LATENT_SCALE)),
+          height: Math.max(1, Math.floor(size.height / LATENT_SCALE)),
+        };
+        const mask_pixels = read_pixels(mask_bitmap, mask_size).data;
+        const values = new Uint8Array(mask_size.width * mask_size.height);
+        for (let pixel = 0; pixel < values.length; pixel += 1) {
+          values[pixel] = (mask_pixels[pixel * 4] ?? 0) >= 128 ? 255 : 0;
+        }
+        const weight = feather_infill_mask({ values, ...mask_size }, size.width, size.height);
+        const blended = blend_pixels(
+          read_pixels(source_bitmap, size).data,
+          read_pixels(generated_bitmap, size).data,
+          weight,
+        );
+        const { canvas, context } = canvas_context(size);
+        context.putImageData(new ImageData(blended, size.width, size.height), 0, 0);
+        return await encode_png(canvas);
+      } finally {
+        source_bitmap.close();
+        generated_bitmap.close();
+        mask_bitmap.close();
+      }
+    },
     async size(bytes) {
       const bitmap = await decode(bytes);
       try {
@@ -145,7 +191,10 @@ export function create_browser_image_operations(): NovelAiImageOperations {
           data[offset + 3] = 255;
         }
         context.putImageData(pixels, 0, 0);
-        return await encode_png(canvas);
+        const full = canvas_context(target);
+        full.context.imageSmoothingEnabled = false;
+        full.context.drawImage(canvas, 0, 0, target.width, target.height);
+        return await encode_png(full.canvas);
       } finally {
         bitmap.close();
       }

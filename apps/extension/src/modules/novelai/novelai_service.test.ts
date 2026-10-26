@@ -51,6 +51,7 @@ function service(overrides: Partial<NovelAiServiceDeps> = {}) {
         resize: () => Promise.reject(new Error("unused")),
         pad: () => Promise.reject(new Error("unused")),
         binarize_mask: () => Promise.reject(new Error("unused")),
+        composite_infill: () => Promise.reject(new Error("unused")),
       },
       page_fetchers: [],
       ...overrides,

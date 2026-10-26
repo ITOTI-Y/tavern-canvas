@@ -643,6 +643,18 @@ export async function compose_studio_capabilities(
                           : { fetch: options.provider_fetch }),
                       }),
                       assets: provider_asset_reader ?? create_asset_reader(database, namespace),
+                      ...(load_novelai_runtime === null
+                        ? {}
+                        : {
+                            postprocess: async (request, outputs) =>
+                              request.provider_id === "novelai" && request.action === "infill"
+                                ? (await load_novelai_runtime()).finish(
+                                    request,
+                                    outputs,
+                                    AbortSignal.timeout(NOVELAI_PREPARATION_TIMEOUT_MS),
+                                  )
+                                : outputs,
+                          }),
                       log: { write: () => {} },
                       plans,
                     }),

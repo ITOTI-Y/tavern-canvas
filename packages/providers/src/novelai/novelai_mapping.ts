@@ -135,7 +135,7 @@ function map_diffusion(request: NovelAiDiffusionRequest, assets: Assets): Record
     negative_prompt,
     legacy: false,
     legacy_v3_extend: false,
-    add_original_image: true,
+    add_original_image: request.action !== "infill",
     image_format: "png",
     ...(profile.cfg_rescale ? { cfg_rescale: request.cfg_rescale } : {}),
     ...(noise_schedule === null ? {} : { noise_schedule }),

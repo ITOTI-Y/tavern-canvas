@@ -172,6 +172,11 @@ export interface MediaJobExecutorDeps extends GeneratedImageStoreDeps {
   readonly assets: ProviderAssetReader;
   readonly log: ProviderLogSink;
   readonly plans: MediaExecutionPlanRegistry;
+  /** Provider-specific finishing applied to adapter outputs before they are stored. */
+  readonly postprocess?: (
+    request: ImageGenerationRequest,
+    outputs: readonly ProviderOutputAsset[],
+  ) => Promise<readonly ProviderOutputAsset[]>;
   /** Injectable so tests never wait on a real poll interval. */
   readonly wait?: (milliseconds: number) => Promise<void>;
 }
@@ -197,7 +202,7 @@ export class MediaJobExecutor implements JobExecutor {
     const outputs =
       plan.kind === "video"
         ? await this.#execute_video(plan.request, control)
-        : await this.#execute_adapter(plan.request, control);
+        : await this.#finish(plan.request, await this.#execute_adapter(plan.request, control));
 
     const image_ids = await this.#persist_outputs(job, outputs);
     return { image_ids };
@@ -246,6 +251,15 @@ export class MediaJobExecutor implements JobExecutor {
       }
       poll_after_ms = result.poll_after_ms ?? poll_after_ms;
     }
+  }
+
+  #finish(
+    request: ImageGenerationRequest,
+    outputs: readonly ProviderOutputAsset[],
+  ): Promise<readonly ProviderOutputAsset[]> {
+    return this.#deps.postprocess === undefined
+      ? Promise.resolve(outputs)
+      : this.#deps.postprocess(request, outputs);
   }
 
   #persist_outputs(

@@ -28,17 +28,13 @@ function read_fake(bytes: Uint8Array): { label: string } & ImageSize {
 }
 
 const fake_operations: NovelAiImageOperations = {
+  composite_infill: (_source, generated) => Promise.resolve(generated),
   size: (bytes) => Promise.resolve(read_fake(bytes)),
   resize: (bytes, target) =>
     Promise.resolve(fake_image(`resized:${read_fake(bytes).label}`, target)),
   pad: (bytes, target) => Promise.resolve(fake_image(`padded:${read_fake(bytes).label}`, target)),
   binarize_mask: (bytes, target) =>
-    Promise.resolve(
-      fake_image(`mask:${read_fake(bytes).label}`, {
-        width: target.width / 8,
-        height: target.height / 8,
-      }),
-    ),
+    Promise.resolve(fake_image(`mask:${read_fake(bytes).label}`, target)),
 };
 
 function harness(sources: Record<string, Uint8Array>) {
@@ -184,7 +180,7 @@ describe("prepare_novelai_request", () => {
     expect(prepared).not.toMatchObject({ image_asset_id: SOURCE });
   });
 
-  it("binarises the infill mask at the latent size of the request", async () => {
+  it("binarises the infill mask at the request size", async () => {
     const { deps, stored } = harness({
       [SOURCE]: fake_image("photo", { width: 832, height: 1216 }),
       [MASK]: fake_image("brush", { width: 832, height: 1216 }),
@@ -202,8 +198,8 @@ describe("prepare_novelai_request", () => {
     const mask_id = prepared.action === "infill" ? prepared.mask_asset_id : MASK;
     expect(read_fake(stored.get(mask_id) ?? new Uint8Array())).toMatchObject({
       label: "mask:brush",
-      width: 104,
-      height: 152,
+      width: 832,
+      height: 1216,
     });
   });
 

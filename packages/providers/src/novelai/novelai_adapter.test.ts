@@ -501,7 +501,7 @@ describe("NovelAI mapping", () => {
     expect(payload.body.model).toBe("nai-diffusion-4-5-curated-inpainting");
     expect(payload.body.parameters).toMatchObject({
       mask: PNG_BASE64,
-      add_original_image: true,
+      add_original_image: false,
       inpaintImg2ImgStrength: 0.8,
       img2img: { strength: 0.8, color_correct: true },
     });

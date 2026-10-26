@@ -42,6 +42,7 @@ import {
   type CachedSourceAsset,
   type ImageStorePort,
   type MediaCommandDeps,
+  type MediaJobExecutorDeps,
   type MediaJobBase,
   type ProviderProfileResolver,
   type SourceMessageIdentity,
@@ -235,7 +236,7 @@ interface Harness {
   readonly store: MemoryImageStore;
 }
 
-function create_harness(): Harness {
+function create_harness(postprocess?: MediaJobExecutorDeps["postprocess"]): Harness {
   const adapter = new ControlledAdapter();
   const store = new MemoryImageStore();
   const plans = new MediaExecutionPlanRegistry();
@@ -280,6 +281,7 @@ function create_harness(): Harness {
       swipe_id: job.requested_swipe_id,
     }),
     wait: async () => {},
+    ...(postprocess === undefined ? {} : { postprocess }),
   });
 
   const persistence = new MemoryPersistence();
@@ -419,6 +421,29 @@ describe("SD/NovelAI/ComfyUI inpaint submission integration", () => {
     const submitted = harness.adapter.submissions[0]?.request;
     expect(submitted?.provider_id).toBe("novelai");
     expect((submitted as { action?: string }).action).toBe("infill");
+  });
+
+  it("stores adapter outputs only after the post-processing step", async () => {
+    const finished = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1]);
+    const postprocess = vi.fn(
+      (_request: ImageGenerationRequest, outputs: readonly ProviderOutputAsset[]) =>
+        Promise.resolve(outputs.map((output) => ({ ...output, bytes: finished }))),
+    );
+    const harness = create_harness(postprocess);
+    const request = build_novelai_inpaint_request({
+      request_id: REQUEST_ID_1,
+      generation_anchor: GENERATION_ANCHOR,
+      image_asset_id: ASSET_ID,
+      mask_asset_id: ASSET_ID,
+      positive_prompt: "fix the sky",
+      strength: 1,
+      width: 1024,
+      height: 1024,
+    });
+    const job = await submit_manual_generation(harness.deps, base(), request);
+    await wait_for_state(harness.queue, job.job_id, "completed");
+    expect(postprocess).toHaveBeenCalledWith(request, expect.any(Array));
+    expect(harness.store.records[0]?.bytes).toEqual(finished);
   });
 });
 
