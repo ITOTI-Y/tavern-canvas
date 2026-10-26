@@ -35,6 +35,13 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
   global_concurrency: 4,
   auto_generation_enabled: true,
   vocabulary_update_channel: "bundled",
+  illustration: {
+    preset_name: "in_use",
+    connection: { kind: "current" },
+    max_chat_history: 4,
+    max_images_per_message: 2,
+    prompt_preset_id: null,
+  },
   gateway: {
     endpoint: null,
     token_secret_id: null,
@@ -306,6 +313,16 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
       "vocabulary_update_channel",
       diagnostics,
     ),
+    illustration:
+      raw.illustration === undefined
+        ? structuredClone(defaults.illustration)
+        : recover_field(
+            TavernCanvasSettingsSchema.shape.illustration,
+            raw.illustration,
+            structuredClone(defaults.illustration),
+            "illustration",
+            diagnostics,
+          ),
     gateway: recover_gateway(raw.gateway, diagnostics),
     ui: recover_ui(raw.ui, diagnostics),
   };

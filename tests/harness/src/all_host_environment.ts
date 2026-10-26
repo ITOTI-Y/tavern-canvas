@@ -162,6 +162,13 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       global_concurrency: 2,
       auto_generation_enabled: false,
       vocabulary_update_channel: "bundled",
+      illustration: {
+        preset_name: "in_use",
+        connection: { kind: "current" },
+        max_chat_history: 4,
+        max_images_per_message: 2,
+        prompt_preset_id: null,
+      },
       gateway: {
         endpoint: options.gateway_endpoint,
         token_secret_id: null,

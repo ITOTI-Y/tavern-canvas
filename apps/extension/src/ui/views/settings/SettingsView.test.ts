@@ -41,6 +41,13 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   global_concurrency: 2,
   auto_generation_enabled: false,
   vocabulary_update_channel: "bundled",
+  illustration: {
+    preset_name: "in_use",
+    connection: { kind: "current" },
+    max_chat_history: 4,
+    max_images_per_message: 2,
+    prompt_preset_id: null,
+  },
   gateway: { endpoint: null, token_secret_id: TOKEN_REFERENCE, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
@@ -383,6 +390,13 @@ describe("SettingsView credential storage", () => {
         Promise.resolve({
           settings: current_settings,
           vocabulary_update_channel: current_settings.vocabulary_update_channel,
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: vault_status,
         }),
       update: (partial) => {
@@ -537,6 +551,13 @@ describe("SettingsView gateway settings", () => {
             gateway: { ...DEFAULT_SETTINGS.gateway, token_secret_id },
           },
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       set_gateway_token: (plaintext_value) => {
@@ -583,6 +604,13 @@ describe("SettingsView gateway settings", () => {
             },
           },
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -626,6 +654,13 @@ describe("SettingsView automation settings", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -685,6 +720,13 @@ describe("SettingsView appearance settings", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -723,6 +765,13 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       set_vocabulary_update_channel: (channel) => {
@@ -752,6 +801,13 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: (file, on_progress) => {
@@ -797,6 +853,13 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: () => import_promise,
@@ -828,6 +891,13 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       export_archive: () => Promise.resolve(archive_blob),
@@ -859,6 +929,13 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
           vocabulary_update_channel: "bundled",
+          illustration: {
+            preset_name: "in_use",
+            connection: { kind: "current" },
+            max_chat_history: 4,
+            max_images_per_message: 2,
+            prompt_preset_id: null,
+          },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_archive: (archive) => {

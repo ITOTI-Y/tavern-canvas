@@ -91,8 +91,13 @@ export type {
   LlmRouteCatalogEntry,
 } from "./llm_connection.js";
 
-export { TavernCanvasMessageMetadataSchema } from "./message.js";
-export type { TavernCanvasMessageMetadata } from "./message.js";
+export {
+  IllustrationSlotIdSchema,
+  IllustrationSlotSchema,
+  MAX_SLOTS_PER_SWIPE,
+  SwipeIllustrationsSchema,
+} from "./message.js";
+export type { IllustrationSlot, IllustrationSlotId, SwipeIllustrations } from "./message.js";
 
 export {
   PROVIDER_CREDENTIAL_KIND,
@@ -183,17 +188,21 @@ export type {
 export { MAX_PROVIDER_SEED } from "./providers/common.js";
 
 export {
+  AnalysisConnectionSchema,
   CredentialStorageModeSchema,
   GATEWAY_CREDENTIAL_KIND,
   GatewaySettingsSchema,
+  IllustrationSettingsSchema,
   NormalizedOriginSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   derive_gateway_credential_reference,
 } from "./settings.js";
 export type {
+  AnalysisConnection,
   CredentialStorageMode,
   GatewaySettings,
+  IllustrationSettings,
   NormalizedOrigin,
   TavernCanvasSettings,
   TavernCanvasUiSettings,

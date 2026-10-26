@@ -20,17 +20,14 @@ import {
   ProviderIdSchema,
   RequestImageArgumentsSchema,
   Sha256Schema,
-  TavernCanvasMessageMetadataSchema,
+  SwipeIllustrationsSchema,
   TavernCanvasSettingsSchema,
   UuidSchema,
 } from "./index.js";
 
 const generation_anchor = "a".repeat(64);
-const source_anchor = "0".repeat(64);
 const request_id = "550e8400-e29b-41d4-a716-446655440000";
-const second_request_id = "6ba7b810-9dad-41d1-80b4-00c04fd430c8";
 const image_id = "01906f4e-5f1c-7a2a-8d73-cc3a51abf1ed";
-const second_image_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
 const job_id = "67e55044-10b1-426f-9247-bb680e5fe0c8";
 const occurred_at = "2026-08-05T09:30:00.000Z";
 
@@ -277,40 +274,30 @@ describe("GenerationStateSchema", () => {
   });
 });
 
-describe("TavernCanvasMessageMetadataSchema", () => {
-  const metadata = {
-    schema_version: 1 as const,
-    generation_anchor,
-    source_anchor,
-    request_ids: [request_id, second_request_id],
-    image_ids: [image_id, second_image_id],
+describe("SwipeIllustrationsSchema", () => {
+  const slot = {
+    slot_id: "a1B2c3D4_e5",
+    paragraph: 2,
+    anchor: "She opened the door.",
+    scene: "a girl opening a wooden door",
+    characters: ["Alice"],
+    positive_prompt: "1girl, door",
+    negative_prompt: "",
+    image_ids: [image_id],
+    active_image_id: image_id,
+    pending_request_ids: [request_id],
+    last_error: null,
   };
 
-  it("accepts unique request and image references", () => {
-    expect(TavernCanvasMessageMetadataSchema.parse(metadata)).toEqual(metadata);
+  it("accepts a swipe record with one slot", () => {
+    const record = { schema_version: 2 as const, slots: [slot] };
+    expect(SwipeIllustrationsSchema.parse(record)).toEqual(record);
   });
 
-  it.each([
-    ["request_ids", [request_id, request_id]],
-    ["image_ids", [image_id, image_id]],
-  ])("rejects duplicate IDs in %s", (field, duplicate_ids) => {
-    const result = TavernCanvasMessageMetadataSchema.safeParse({
-      ...metadata,
-      [field]: duplicate_ids,
-    });
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0]?.path).toEqual([field]);
-    }
-  });
-
-  it("rejects unknown metadata keys", () => {
+  it.each(["bad id!", "short", "{{char}}"])("rejects the slot id %s", (slot_id) => {
     expect(
-      TavernCanvasMessageMetadataSchema.safeParse({
-        ...metadata,
-        raw_provider_payload: { secret: true },
-      }).success,
+      SwipeIllustrationsSchema.safeParse({ schema_version: 2, slots: [{ ...slot, slot_id }] })
+        .success,
     ).toBe(false);
   });
 });
@@ -476,6 +463,13 @@ describe("initial settings and capability contracts", () => {
     global_concurrency: 4,
     auto_generation_enabled: true,
     vocabulary_update_channel: "bundled",
+    illustration: {
+      preset_name: "in_use",
+      connection: { kind: "current" },
+      max_chat_history: 4,
+      max_images_per_message: 2,
+      prompt_preset_id: null,
+    },
     gateway: {
       endpoint: "http://192.168.1.10:8080",
       token_secret_id: null,
@@ -553,12 +547,9 @@ describe("strict public object boundaries", () => {
     generation_anchor,
     scene_description: "A rainy alley at night",
   };
-  const message_metadata = {
-    schema_version: 1 as const,
-    generation_anchor,
-    source_anchor,
-    request_ids: [request_id],
-    image_ids: [image_id],
+  const swipe_illustrations = {
+    schema_version: 2 as const,
+    slots: [],
   };
   const provider_error = {
     code: "provider_unavailable" as const,
@@ -605,6 +596,13 @@ describe("strict public object boundaries", () => {
     global_concurrency: 4,
     auto_generation_enabled: true,
     vocabulary_update_channel: "bundled",
+    illustration: {
+      preset_name: "in_use",
+      connection: { kind: "current" },
+      max_chat_history: 4,
+      max_images_per_message: 2,
+      prompt_preset_id: null,
+    },
     gateway: gateway_settings,
     ui: {
       color_mode: "system" as const,
@@ -617,7 +615,7 @@ describe("strict public object boundaries", () => {
   it.each([
     ["CapabilityStatusSchema", CapabilityStatusSchema, { available: true }],
     ["RequestImageArgumentsSchema", RequestImageArgumentsSchema, request_image_arguments],
-    ["TavernCanvasMessageMetadataSchema", TavernCanvasMessageMetadataSchema, message_metadata],
+    ["SwipeIllustrationsSchema", SwipeIllustrationsSchema, swipe_illustrations],
     ["ProviderErrorSchema", ProviderErrorSchema, provider_error],
     ["BaseImageGenerationRequestSchema", BaseImageGenerationRequestSchema, base_provider_request],
     ["ImageGenerationRequestSchema", ImageGenerationRequestSchema, provider_request],

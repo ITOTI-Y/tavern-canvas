@@ -61,6 +61,13 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
   global_concurrency: 1,
   auto_generation_enabled: false,
   vocabulary_update_channel: "bundled",
+  illustration: {
+    preset_name: "in_use",
+    connection: { kind: "current" },
+    max_chat_history: 4,
+    max_images_per_message: 2,
+    prompt_preset_id: null,
+  },
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {
     color_mode: "system",

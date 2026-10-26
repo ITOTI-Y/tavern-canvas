@@ -294,6 +294,13 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
     global_concurrency: 2,
     auto_generation_enabled: false,
     vocabulary_update_channel: "bundled",
+    illustration: {
+      preset_name: "in_use",
+      connection: { kind: "current" },
+      max_chat_history: 4,
+      max_images_per_message: 2,
+      prompt_preset_id: null,
+    },
     gateway: {
       endpoint: with_http_warning ? "http://192.168.1.50:7860" : "https://gateway.example.invalid",
       token_secret_id: "mock-secret-reference",
@@ -981,6 +988,13 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       Promise.resolve({
         settings: current,
         vocabulary_update_channel: current.vocabulary_update_channel,
+        illustration: {
+          preset_name: "in_use",
+          connection: { kind: "current" },
+          max_chat_history: 4,
+          max_images_per_message: 2,
+          prompt_preset_id: null,
+        },
         browser_secret_vault,
       }),
     subscribe: () => () => {},

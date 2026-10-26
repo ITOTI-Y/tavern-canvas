@@ -127,7 +127,7 @@ export interface GeneratedImageStoreDeps {
   readonly store: ImageStorePort;
   readonly ids: IdSource;
   readonly clock: ClockPort;
-  readonly resolve_source_message: (job: GenerationJobSnapshot) => SourceMessageIdentity;
+  readonly resolve_source_message: (job: GenerationJobSnapshot) => SourceMessageIdentity | null;
 }
 
 export async function persist_generated_images(

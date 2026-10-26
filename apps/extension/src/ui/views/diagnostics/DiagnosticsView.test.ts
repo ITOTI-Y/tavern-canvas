@@ -115,6 +115,13 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         global_concurrency: 1,
         auto_generation_enabled: false,
         vocabulary_update_channel: "bundled" as const,
+        illustration: {
+          preset_name: "in_use",
+          connection: { kind: "current" },
+          max_chat_history: 4,
+          max_images_per_message: 2,
+          prompt_preset_id: null,
+        },
         gateway: {
           endpoint: "https://gateway.example.test",
           token_secret_id: SECRET_TOKEN_VALUE,
@@ -249,6 +256,13 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
   global_concurrency: 1,
   auto_generation_enabled: false,
   vocabulary_update_channel: "bundled",
+  illustration: {
+    preset_name: "in_use",
+    connection: { kind: "current" },
+    max_chat_history: 4,
+    max_images_per_message: 2,
+    prompt_preset_id: null,
+  },
   gateway: {
     endpoint: "https://gateway.example.test",
     token_secret_id: null,
@@ -281,6 +295,13 @@ describe("DiagnosticsView connection test", () => {
           Promise.resolve({
             settings: SETTINGS_WITH_GATEWAY,
             vocabulary_update_channel: "bundled",
+            illustration: {
+              preset_name: "in_use",
+              connection: { kind: "current" },
+              max_chat_history: 4,
+              max_images_per_message: 2,
+              prompt_preset_id: null,
+            },
             browser_secret_vault: { state: "unavailable", secret_count: 0 },
           }),
       },
@@ -488,6 +509,13 @@ describe("DiagnosticsView support bundle export", () => {
               gateway: { ...SETTINGS_WITH_GATEWAY.gateway, token_secret_id: SECRET_TOKEN_VALUE },
             },
             vocabulary_update_channel: "bundled" as const,
+            illustration: {
+              preset_name: "in_use",
+              connection: { kind: "current" },
+              max_chat_history: 4,
+              max_images_per_message: 2,
+              prompt_preset_id: null,
+            },
             browser_secret_vault: { state: "unavailable" as const, secret_count: 0 },
           }),
       },

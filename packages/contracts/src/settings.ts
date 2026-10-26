@@ -52,6 +52,27 @@ export const TavernCanvasUiSettingsSchema = z.strictObject({
 });
 export type TavernCanvasUiSettings = z.infer<typeof TavernCanvasUiSettingsSchema>;
 
+/** Which backend answers the paragraph analysis; both route through SillyTavern's server. */
+export const AnalysisConnectionSchema = z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("current") }),
+  z.strictObject({
+    kind: z.literal("proxy_preset"),
+    proxy_preset: z.string().trim().min(1).max(200),
+    model: z.string().trim().min(1).max(200).nullable(),
+  }),
+]);
+export type AnalysisConnection = z.infer<typeof AnalysisConnectionSchema>;
+
+export const IllustrationSettingsSchema = z.strictObject({
+  /** A SillyTavern chat completion preset name; `in_use` is the preset currently loaded. */
+  preset_name: z.string().trim().min(1).max(200),
+  connection: AnalysisConnectionSchema,
+  max_chat_history: z.number().int().min(0).max(20),
+  max_images_per_message: z.number().int().min(1).max(8),
+  prompt_preset_id: UuidSchema.nullable(),
+});
+export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
+
 export const TavernCanvasSettingsSchema = z.strictObject({
   schema_version: z.literal(1),
   active_namespace: NamespaceIdentifierSchema,
@@ -61,6 +82,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   global_concurrency: z.number().int().min(1).max(4),
   auto_generation_enabled: z.boolean(),
   vocabulary_update_channel: z.enum(["bundled", "remote"]),
+  illustration: IllustrationSettingsSchema,
   gateway: GatewaySettingsSchema,
   ui: TavernCanvasUiSettingsSchema,
 });

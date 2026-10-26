@@ -16,7 +16,8 @@ export type SourceMessageIdentity = z.infer<typeof SourceMessageIdentitySchema>;
 
 export const ImageRecordFieldsSchema = z.strictObject({
   provider_id: ProviderIdSchema,
-  source_message: SourceMessageIdentitySchema,
+  /** `null` for images generated outside a chat message, such as from the workbench. */
+  source_message: SourceMessageIdentitySchema.nullable(),
   generation_parameters: RequestImageArgumentsSchema,
   media_type: ImageMediaTypeSchema,
   width: z.number().int().positive().optional(),

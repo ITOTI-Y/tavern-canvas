@@ -45,8 +45,9 @@ function to_summary(record: GalleryImageRecord): GalleryRecordSummary | null {
   return {
     id: record.id,
     provider_id,
-    source_chat_id: record.source_message.chat_id,
-    source_message_id: Number.parseInt(record.source_message.message_id, 10),
+    source_chat_id: record.source_message?.chat_id ?? null,
+    source_message_id:
+      record.source_message === null ? null : Number.parseInt(record.source_message.message_id, 10),
     media_type,
     width: record.width ?? null,
     height: record.height ?? null,

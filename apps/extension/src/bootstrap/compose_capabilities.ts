@@ -37,6 +37,12 @@ import {
   type GeneratedImageStoreDeps,
   type ImageStorePort,
 } from "../modules/media/media_command_service.js";
+import { IllustrationService } from "../modules/illustration/illustration_service.js";
+import {
+  IllustrationModule,
+  load_slot_prompt_context,
+  new_slot_id,
+} from "../modules/illustration/illustration_module.js";
 import { NovelAiServiceUnavailableError } from "../modules/novelai/novelai_errors.js";
 import type { NovelAiRuntime } from "../modules/novelai/novelai_runtime.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
@@ -78,7 +84,12 @@ import {
 } from "./capabilities/profiles_capability.js";
 import { create_prompt_presets_capability } from "./capabilities/prompt_presets_capability.js";
 import { create_settings_capability } from "./capabilities/settings_capability.js";
-import { read_optional_string, read_payload } from "./capabilities/_records.js";
+import {
+  as_record,
+  read_array,
+  read_optional_string,
+  read_payload,
+} from "./capabilities/_records.js";
 import { create_vocabulary_capability } from "./capabilities/vocabulary_capability.js";
 import {
   capability_unavailable_error,
@@ -116,6 +127,8 @@ export interface StudioComposition {
   readonly capabilities: StudioCapabilities;
   readonly resolutions: readonly CapabilityResolutionRecord[];
   readonly host: CompositeHostAdapter | null;
+  /** `null` when the host, storage or settings needed to illustrate replies are missing. */
+  readonly illustrations: IllustrationService | null;
   readonly modules: readonly RuntimeModule[];
   dispose(): Promise<void>;
 }
@@ -480,6 +493,7 @@ export async function compose_studio_capabilities(
     fallback.gallery,
   );
 
+  let illustrations: IllustrationService | null = null;
   const generation = record(
     "generation",
     database === null
@@ -501,11 +515,16 @@ export async function compose_studio_capabilities(
               store: create_image_store_port(database, namespace),
               ids: { next: () => crypto.randomUUID() },
               clock: { now },
-              resolve_source_message: (job) => ({
-                chat_id: job.chat_id,
-                message_id: String(job.requested_swipe_id),
-                swipe_id: job.requested_swipe_id,
-              }),
+              resolve_source_message: (job) => {
+                const location = illustrations?.source_of(job.request_id) ?? null;
+                return location === null
+                  ? null
+                  : {
+                      chat_id: location.chat_id,
+                      message_id: String(location.message_id),
+                      swipe_id: location.swipe_id,
+                    };
+              },
             };
             const queue = new ImageJobQueue({
               executor:
@@ -567,7 +586,7 @@ export async function compose_studio_capabilities(
               global_concurrency: settings_adapter?.get_settings().global_concurrency ?? 1,
             });
             teardown.push(timeline.observe_jobs(queue));
-            return create_generation_capability({
+            const generation_capability = create_generation_capability({
               queue,
               plans,
               jobs: create_business_repositories(database).generation_jobs,
@@ -579,6 +598,52 @@ export async function compose_studio_capabilities(
               new_request_id: () => RequestIdSchema.parse(crypto.randomUUID()),
               ...(prepare_request === null ? {} : { prepare_request }),
             });
+            if (settings_adapter !== null) {
+              illustrations = new IllustrationService({
+                host,
+                settings: () => settings_adapter.get_settings().illustration,
+                auto_generation_enabled: () =>
+                  settings_adapter.get_settings().auto_generation_enabled,
+                prompt_context: () =>
+                  load_slot_prompt_context(
+                    prompt_presets,
+                    assets,
+                    settings_adapter.get_settings().illustration.prompt_preset_id,
+                  ),
+                async submit({ positive_prompt, negative_prompt }) {
+                  if (active_profile_record === null || active_provider_id === null) {
+                    throw new Error("No provider profile is active; choose one in Settings");
+                  }
+                  const { build_generation_request } =
+                    await import("../ui/views/workbench/build_generation_request.js");
+                  const model_id = read_array(
+                    as_record(active_profile_payload.provider_profile),
+                    "model_allowlist",
+                  ).find((model): model is string => typeof model === "string");
+                  const request = await build_generation_request(
+                    {
+                      provider_id: active_provider_id,
+                      positive_prompt,
+                      negative_prompt,
+                      image_count: 1,
+                      references: [],
+                      ...(model_id === undefined ? {} : { model_id }),
+                    },
+                    RequestIdSchema.parse(crypto.randomUUID()),
+                  );
+                  const job = await generation_capability.submit({
+                    profile_id: active_profile_record.id,
+                    request,
+                  });
+                  return job.request_id;
+                },
+                jobs: queue,
+                new_slot_id,
+                new_generation_id: () => crypto.randomUUID(),
+              });
+              modules.push(new IllustrationModule(illustrations, host));
+            }
+            return generation_capability;
           }),
     fallback.generation,
   );
@@ -647,6 +712,7 @@ export async function compose_studio_capabilities(
     },
     resolutions,
     host,
+    illustrations,
     modules,
     async dispose() {
       for (const stop of [...teardown].reverse()) {

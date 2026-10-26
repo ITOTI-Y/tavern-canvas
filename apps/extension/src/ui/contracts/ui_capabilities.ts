@@ -220,8 +220,8 @@ export type GalleryMediaType = "image/png" | "image/jpeg" | "image/webp";
 export interface GalleryRecordSummary {
   readonly id: Uuid;
   readonly provider_id: ProviderId;
-  readonly source_chat_id: string;
-  readonly source_message_id: number;
+  readonly source_chat_id: string | null;
+  readonly source_message_id: number | null;
   readonly media_type: GalleryMediaType;
   readonly width: number | null;
   readonly height: number | null;
