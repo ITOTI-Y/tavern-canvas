@@ -63,13 +63,14 @@ function compute_sha256_hex(bytes: Uint8Array): string {
   return bytesToHex(sha256(bytes));
 }
 
-/**
- * Serializes a decoded shard payload to its on-disk bytes: MessagePack, then
- * gzip at level 9. Node's zlib already emits mtime=0 and a fixed OS byte for
- * every call, so no extra options are needed for byte-reproducibility.
- */
+const GZIP_OS_BYTE_OFFSET = 9;
+const GZIP_OS_UNIX = 3;
+
 function encode_shard_payload(payload: VocabularyShardPayload): Uint8Array {
-  return gzipSync(encode(payload), { level: 9 });
+  const bytes = gzipSync(encode(payload), { level: 9 });
+  // zlib writes the build platform into the header; pinning it keeps shard hashes identical across OSes.
+  bytes[GZIP_OS_BYTE_OFFSET] = GZIP_OS_UNIX;
+  return bytes;
 }
 
 function encode_shards(package_id: string, shards: readonly VocabularyShardFile[]): EncodedShard[] {
