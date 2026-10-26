@@ -36,7 +36,7 @@
         "decision": "redistributable",
         "reason": "Factual data via Danbooru's public API, same basis as hf-tag-table-universe."
       },
-      "notes": "Fetched with `search[order]=count`. tools/vocabulary_source/src/danbooru_client.ts paginates with `search[order]=id`, which Danbooru's /tags.json does not recognise; the API falls back to newest-first order and the client's ascending-id cursor stops after one page (about 1,000 tags)."
+      "notes": "Fetched with `search[order]=count` to select the most popular tags directly."
     },
     {
       "id": "legacy-st-chatu8-v2-8-1-tagdata",
@@ -67,12 +67,12 @@
       "origin": "Danbooru (danbooru.donmai.us) public tags.json / tag_aliases.json API endpoints, via tools/vocabulary_source/src/danbooru_client.ts + fetch_danbooru.ts (the fetch-danbooru CLI command).",
       "license": "Factual data (tag names, post counts, category, alias relationships) obtained via Danbooru's public API. Not creative content.",
       "attribution": "Danbooru (danbooru.donmai.us).",
-      "transformation": "id-cursor paginated fetch (search[id]=>N, search[order]=id, limit=1000, search[post_count]=>=MIN), rate-limited (>=150ms between requests), explicit descriptive User-Agent required per Danbooru API etiquette. Mapped to VocabularyRecordSchema (record_id <- tag id, tag <- name, category <- Danbooru category enum name, popularity <- post_count, aliases <- active tag_aliases).",
+      "transformation": "id-cursor paginated fetch (page=a{last id}, limit=1000, search[post_count]=>=MIN), rate-limited (>=150ms between requests), explicit descriptive User-Agent required per Danbooru API etiquette. Mapped to VocabularyRecordSchema (record_id <- tag id, tag <- name, category <- Danbooru category enum name, popularity <- post_count, aliases <- active tag_aliases).",
       "redistribution": {
         "decision": "redistributable",
         "reason": "Factual data via a public API."
       },
-      "notes": "The fetch-danbooru CLI is not used to build the current raw_vocabulary_tags_public.jsonl; see live-danbooru-top-tag-supplement for its pagination defect."
+      "notes": "The fetch-danbooru CLI is not used to build the current raw_vocabulary_tags_public.jsonl."
     },
     {
       "id": "e621-db-export",
