@@ -2,7 +2,7 @@ import type {
   NovelAiPromptPresetKey,
   NovelAiQualityPreset,
   NovelAiUndesiredContentPreset,
-} from "@tavern-canvas/contracts";
+} from "./novelai_models.js";
 
 const V3_UC = {
   heavy:
@@ -71,7 +71,7 @@ const V5_UC = {
   none: "",
 } as const;
 
-interface PromptPresetTexts {
+export interface PromptPresetTexts {
   readonly quality: Readonly<Partial<Record<Exclude<NovelAiQualityPreset, "none">, string>>>;
   readonly undesired_content: Readonly<Partial<Record<NovelAiUndesiredContentPreset, string>>>;
 }

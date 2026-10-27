@@ -458,16 +458,6 @@ const settings = {
     cfg_rescale_label: "Guidance rescale",
     sampler_label: "Sampler",
     noise_schedule_label: "Noise schedule",
-    quality_label: "Quality tags",
-    quality_standard: "Standard",
-    quality_light: "Light",
-    quality_none: "None",
-    uc_label: "Undesired content preset",
-    uc_heavy: "Heavy",
-    uc_light: "Light",
-    uc_human_focus: "Human focus",
-    uc_furry_focus: "Furry focus",
-    uc_none: "None",
     smea_label: "SMEA",
     dyn_label: "SMEA DYN",
     variety_label: "Variety+",
@@ -480,7 +470,6 @@ const settings = {
     ignored_variety_plus: "Variety+",
     ignored_sampler: "sampler",
     ignored_steps: "steps",
-    ignored_undesired_content: "undesired content preset",
     invalid_size: "Width and height must be multiples of 64 within the model's pixel limit.",
     save: "Save defaults",
     saved: "Defaults saved.",
@@ -791,6 +780,27 @@ const chat = {
   },
 };
 
+const prompt_tags = {
+  quality_prefix: "Quality tags: ",
+  undesired_prefix: "UC preset: ",
+  custom_group: "Custom",
+  missing: "Preset deleted",
+  enable: "Turn on",
+  disable: "Turn off",
+  panel_title: "Quality tags and UC presets",
+  panel_description:
+    "Saved presets appear next to NovelAI's built-in ones in the chips beside the prompt boxes and work with every image provider. Quality tags go after the positive prompt; UC presets go before the negative prompt.",
+  empty_title: "No saved presets yet",
+  empty_description:
+    "Save a set of quality or negative tags you use often, then pick it for any image provider profile.",
+  add_action: "Add preset",
+  kind_label: "Type",
+  kind_quality: "Quality tags",
+  kind_undesired: "UC preset",
+  text_label: "Tags",
+  text_hint: "Separate tags with commas; they are injected as written.",
+};
+
 export const en_messages = {
   app,
   nav,
@@ -805,6 +815,7 @@ export const en_messages = {
   errors,
   confirmations,
   chat,
+  prompt_tags,
 };
 
 export type LocaleMessageSchema = typeof en_messages;

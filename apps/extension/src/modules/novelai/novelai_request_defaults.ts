@@ -43,8 +43,9 @@ export function novelai_default_parameters(model_id: string): NovelAiDiffusionPa
     scale: profile.default_scale,
     cfg_rescale: 0,
     noise_schedule: "karras",
-    quality_preset: "standard",
-    undesired_content_preset: profile.fixed_settings?.undesired_content_preset ?? "heavy",
+    // The profile's prompt tag selection injects quality tags and undesired content as text.
+    quality_preset: "none",
+    undesired_content_preset: profile.fixed_settings?.undesired_content_preset ?? "none",
     smea: false,
     dyn: false,
     variety_plus: false,

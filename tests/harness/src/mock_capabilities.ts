@@ -69,6 +69,10 @@ const PROFILE_SD: ProviderProfileSummary = {
   is_default: true,
   credential_reference: null,
   novelai_defaults: null,
+  prompt_tags: {
+    quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+    undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+  },
   updated_at: "2026-07-01T09:00:00.000Z",
 };
 
@@ -80,6 +84,10 @@ const PROFILE_NOVELAI: ProviderProfileSummary = {
   is_default: false,
   credential_reference: null,
   novelai_defaults: null,
+  prompt_tags: {
+    quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+    undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+  },
   updated_at: "2026-07-02T09:00:00.000Z",
 };
 
@@ -90,6 +98,10 @@ const PROFILE_COMFYUI: ProviderProfileSummary = {
   is_default: false,
   credential_reference: null,
   novelai_defaults: null,
+  prompt_tags: {
+    quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+    undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+  },
   updated_at: "2026-07-03T09:00:00.000Z",
 };
 
@@ -152,6 +164,7 @@ const ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSummary[
   lora: [LORA_ASSET],
   vibe: [VIBE_ASSET],
   workflow: [WORKFLOW_ASSET],
+  prompt_tag: [],
 };
 
 const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSummary[]>> = {
@@ -160,6 +173,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   lora: [],
   vibe: [],
   workflow: [],
+  prompt_tag: [],
 };
 
 const PRESET_SHORT: PromptPresetSummary = {
@@ -558,6 +572,10 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         is_default: draft.is_default,
         credential_reference: null,
         novelai_defaults: null,
+        prompt_tags: {
+          quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+          undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+        },
         updated_at: new Date().toISOString(),
       };
       profiles.set(summary.id, summary);
@@ -594,6 +612,15 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         return always_rejects("unknown_provider_profile");
       }
       const updated = { ...profile, novelai_defaults: defaults };
+      profiles.set(profile_id, updated);
+      return Promise.resolve(updated);
+    },
+    save_prompt_tags: (profile_id, selection) => {
+      const profile = profiles.get(profile_id);
+      if (profile === undefined) {
+        return always_rejects("unknown_provider_profile");
+      }
+      const updated = { ...profile, prompt_tags: selection };
       profiles.set(profile_id, updated);
       return Promise.resolve(updated);
     },
@@ -785,6 +812,7 @@ function create_assets_capability(
     lora: [...initial.lora],
     vibe: [...initial.vibe],
     workflow: [...initial.workflow],
+    prompt_tag: [],
   };
   return {
     load: () => Promise.resolve(records),

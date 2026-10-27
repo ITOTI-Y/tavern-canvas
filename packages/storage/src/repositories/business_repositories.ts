@@ -12,6 +12,8 @@ import {
   ImageBlobSchema,
   type LoraProfile,
   LoraProfileSchema,
+  type PromptTagPreset,
+  PromptTagPresetSchema,
   type LegacyPreference,
   LegacyPreferenceSchema,
   type LlmConnection,
@@ -98,6 +100,15 @@ export class OutfitProfileRepository extends IndexedDbRepository<"outfit_profile
 export class RegexRuleRepository extends IndexedDbRepository<"regex_rules", RegexRule> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "regex_rules", RegexRuleSchema);
+  }
+}
+
+export class PromptTagPresetRepository extends IndexedDbRepository<
+  "prompt_tag_presets",
+  PromptTagPreset
+> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "prompt_tag_presets", PromptTagPresetSchema);
   }
 }
 
@@ -495,6 +506,7 @@ export interface BusinessRepositories {
   outfit_profiles: OutfitProfileRepository;
   regex_rules: RegexRuleRepository;
   lora_profiles: LoraProfileRepository;
+  prompt_tag_presets: PromptTagPresetRepository;
   vocabularies: VocabularyRepository;
   vocabulary_groups: VocabularyGroupRepository;
   vocabulary_packages: VocabularyPackageRepository;
@@ -521,6 +533,7 @@ export function create_business_repositories(
     outfit_profiles: new OutfitProfileRepository(database),
     regex_rules: new RegexRuleRepository(database),
     lora_profiles: new LoraProfileRepository(database),
+    prompt_tag_presets: new PromptTagPresetRepository(database),
     vocabularies: new VocabularyRepository(database),
     vocabulary_groups: new VocabularyGroupRepository(database),
     vocabulary_packages: new VocabularyPackageRepository(database),

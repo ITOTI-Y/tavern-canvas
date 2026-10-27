@@ -442,16 +442,6 @@ const settings = {
     cfg_rescale_label: "引导重缩放",
     sampler_label: "采样器",
     noise_schedule_label: "噪声调度",
-    quality_label: "质量标签",
-    quality_standard: "标准",
-    quality_light: "轻量",
-    quality_none: "不添加",
-    uc_label: "负面内容预设",
-    uc_heavy: "强",
-    uc_light: "弱",
-    uc_human_focus: "人物优先",
-    uc_furry_focus: "兽人优先",
-    uc_none: "不添加",
     smea_label: "SMEA",
     dyn_label: "SMEA DYN",
     variety_label: "Variety+",
@@ -464,7 +454,6 @@ const settings = {
     ignored_variety_plus: "Variety+",
     ignored_sampler: "采样器",
     ignored_steps: "步数",
-    ignored_undesired_content: "负面内容预设",
     invalid_size: "宽和高须为 64 的倍数，且总像素不超过模型上限。",
     save: "保存默认参数",
     saved: "默认参数已保存。",
@@ -767,6 +756,26 @@ const chat = {
   },
 };
 
+const prompt_tags = {
+  quality_prefix: "质量标签：",
+  undesired_prefix: "UC 预设：",
+  custom_group: "自定义",
+  missing: "预设已删除",
+  enable: "启用",
+  disable: "停用",
+  panel_title: "质量标签与 UC 预设",
+  panel_description:
+    "自定义的预设与 NovelAI 内置预设一起出现在提示词框旁的标签按钮中，可用于任何图像服务。质量标签加在正向提示词末尾，UC 预设加在负向提示词前面。",
+  empty_title: "还没有自定义预设",
+  empty_description: "保存一组常用的质量标签或负面标签，之后可在每个图像服务配置中选用。",
+  add_action: "添加预设",
+  kind_label: "类型",
+  kind_quality: "质量标签",
+  kind_undesired: "UC 预设",
+  text_label: "标签",
+  text_hint: "用逗号分隔，发送请求时原样注入。",
+};
+
 export const zh_cn_messages = {
   app,
   nav,
@@ -781,4 +790,5 @@ export const zh_cn_messages = {
   errors,
   confirmations,
   chat,
+  prompt_tags,
 } satisfies LocaleMessageSchema;

@@ -43,8 +43,6 @@ const DEFAULTS = NovelAiGenerationDefaultsSchema.parse({
   cfg_rescale: 0.2,
   sampler: "k_dpmpp_2m",
   noise_schedule: "exponential",
-  quality_preset: "light",
-  undesired_content_preset: "light",
   smea: false,
   dyn: false,
   variety_plus: true,

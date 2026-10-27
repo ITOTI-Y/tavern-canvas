@@ -31,6 +31,7 @@ const ALL_CATEGORIES: readonly AssetCategory[] = [
   "lora",
   "vibe",
   "workflow",
+  "prompt_tag",
 ];
 
 function repository_for(
@@ -48,6 +49,8 @@ function repository_for(
       return repositories.outfit_profiles;
     case "lora":
       return repositories.lora_profiles;
+    case "prompt_tag":
+      return repositories.prompt_tag_presets;
   }
 }
 

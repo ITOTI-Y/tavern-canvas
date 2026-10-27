@@ -355,3 +355,10 @@
     border-bottom: 1px solid var(--tc-divider);
   }
 }
+
+.prompt_tag_row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}

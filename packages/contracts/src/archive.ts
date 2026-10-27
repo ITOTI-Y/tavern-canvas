@@ -12,6 +12,7 @@ export const ARCHIVE_RECORD_STORES = [
   "regex_rules",
   "outfit_profiles",
   "lora_profiles",
+  "prompt_tag_presets",
   "vocabularies",
   "vocabulary_groups",
   "image_records",

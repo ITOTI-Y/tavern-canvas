@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { ProviderProfileSummary } from "../../contracts/ui_capabilities.js";
+import type { PromptTagsPort } from "../../contracts/prompt_tags_port.js";
+import type {
+  AssetRecordSummary,
+  ProviderProfileSummary,
+} from "../../contracts/ui_capabilities.js";
 import {
   NOVELAI_MODEL_PROFILES,
   UuidSchema,
@@ -18,13 +22,23 @@ import AppSwitch from "../../components/AppSwitch.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import StateSurface from "../../components/StateSurface.vue";
+import PromptTagChips from "../../chat/PromptTagChips.vue";
 import { PROVIDER_IDS, provider_type_label } from "./provider_labels.js";
 import styles from "./settings.module.css";
 
 const props = defineProps<{
   readonly profiles: readonly ProviderProfileSummary[];
+  readonly promptTagPresets: readonly AssetRecordSummary[];
   readonly controller: StudioController;
 }>();
+
+function prompt_tags_port(profile: ProviderProfileSummary): PromptTagsPort {
+  return {
+    profile,
+    custom_presets: props.promptTagPresets,
+    save: (profile_id, selection) => props.controller.save_prompt_tags(profile_id, selection),
+  };
+}
 
 const { t } = useI18n();
 
@@ -281,6 +295,10 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
             >
               {{ test_state.get(profile.id)?.label }}
             </span>
+            <div :class="styles.prompt_tag_row">
+              <PromptTagChips :port="prompt_tags_port(profile)" kind="quality" />
+              <PromptTagChips :port="prompt_tags_port(profile)" kind="undesired_content" />
+            </div>
           </div>
           <div :class="styles.profile_actions">
             <span v-if="profile.is_default" :class="styles.badge">{{

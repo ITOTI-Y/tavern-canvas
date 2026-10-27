@@ -39,6 +39,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   lora: [],
   vibe: [],
   workflow: [],
+  prompt_tag: [],
 };
 
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
@@ -94,6 +95,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     set_credential: unavailable_command,
     clear_credential: unavailable_command,
     save_novelai_defaults: unavailable_command,
+    save_prompt_tags: unavailable_command,
   };
 
   const novelai: NovelAiCapability = {

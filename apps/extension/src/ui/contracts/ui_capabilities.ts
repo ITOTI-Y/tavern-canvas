@@ -8,6 +8,7 @@ import type {
   NovelAiAccountStatus,
   NovelAiCostEstimate,
   NovelAiRequest,
+  PromptTagSelection,
   ProviderError,
   ProviderId,
   ResolvedNovelAiModel,
@@ -62,6 +63,8 @@ export interface ProviderProfileSummary {
   readonly updated_at: string;
   /** Only a NovelAI profile has them; `null` until saved once. */
   readonly novelai_defaults: NovelAiGenerationDefaults | null;
+  /** `null` until saved once; the provider's default selection applies until then. */
+  readonly prompt_tags: PromptTagSelection | null;
 }
 
 export interface ProviderProfileDraft {
@@ -93,6 +96,10 @@ export interface ProfilesCapability {
   save_novelai_defaults(
     profile_id: Uuid,
     defaults: NovelAiGenerationDefaults,
+  ): Promise<ProviderProfileSummary>;
+  save_prompt_tags(
+    profile_id: Uuid,
+    selection: PromptTagSelection,
   ): Promise<ProviderProfileSummary>;
 }
 
@@ -168,7 +175,7 @@ export interface PromptPresetsCapability {
   test_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
 }
 
-export type AssetCategory = "character" | "outfit" | "lora" | "vibe" | "workflow";
+export type AssetCategory = "character" | "outfit" | "lora" | "vibe" | "workflow" | "prompt_tag";
 
 export interface AssetRecordSummary {
   readonly id: Uuid;

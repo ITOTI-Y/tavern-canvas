@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 6 as const;
+export const DATABASE_VERSION = 7 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 export const STORE_DEFINITIONS = {
@@ -106,6 +106,11 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 6,
   },
+  prompt_tag_presets: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 7,
+  },
 } as const;
 
 /** Stores dropped from the schema; upgrades delete them from databases created before. */
@@ -187,6 +192,9 @@ export type OutfitProfile = z.infer<typeof OutfitProfileSchema>;
 
 export const LoraProfileSchema = namespaced_schema({});
 export type LoraProfile = z.infer<typeof LoraProfileSchema>;
+
+export const PromptTagPresetSchema = namespaced_schema({});
+export type PromptTagPreset = z.infer<typeof PromptTagPresetSchema>;
 
 export const RegexRuleSchema = namespaced_schema({});
 export type RegexRule = z.infer<typeof RegexRuleSchema>;
@@ -359,7 +367,8 @@ export type BusinessRecord =
   | NovelAiVibeEncoding
   | ProviderInputAsset
   | OutfitProfile
-  | LoraProfile;
+  | LoraProfile
+  | PromptTagPreset;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -386,6 +395,7 @@ export type RecordByStore = {
   provider_input_assets: ProviderInputAsset;
   outfit_profiles: OutfitProfile;
   lora_profiles: LoraProfile;
+  prompt_tag_presets: PromptTagPreset;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -560,6 +570,14 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  prompt_tag_presets: {
+    key: string;
+    value: PromptTagPreset;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -583,6 +601,7 @@ export const RECORD_SCHEMAS: {
   provider_input_assets: ProviderInputAssetSchema,
   outfit_profiles: OutfitProfileSchema,
   lora_profiles: LoraProfileSchema,
+  prompt_tag_presets: PromptTagPresetSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;

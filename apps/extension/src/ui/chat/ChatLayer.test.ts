@@ -127,6 +127,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       service: markRaw(service),
       gallery,
       novelai: {} as NovelAiCapability,
+      promptTags: { profile: null, custom_presets: [], save: () => Promise.resolve() },
       translator: {
         to_tags: (prompt: string) => Promise.resolve(`${prompt}, smile`),
         read_in_chinese: () => Promise.resolve("一个女孩，门"),

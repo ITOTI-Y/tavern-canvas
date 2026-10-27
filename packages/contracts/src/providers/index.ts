@@ -53,6 +53,7 @@ export {
   type NovelAiUndesiredContentPreset,
   type ResolvedNovelAiModel,
 } from "./novelai_models.js";
+export { NOVELAI_PROMPT_PRESETS, type PromptPresetTexts } from "./novelai_prompt_presets.js";
 export {
   NovelAiGenerationDefaultsSchema,
   novelai_ignored_parameters,

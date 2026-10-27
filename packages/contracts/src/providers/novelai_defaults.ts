@@ -5,9 +5,7 @@ import {
   NOVELAI_MAX_PIXELS,
   NovelAiDimensionSchema,
   NovelAiNoiseScheduleSchema,
-  NovelAiQualityPresetSchema,
   NovelAiSamplerSchema,
-  NovelAiUndesiredContentPresetSchema,
 } from "./novelai.js";
 import type { NovelAiModelProfile } from "./novelai_models.js";
 
@@ -21,8 +19,6 @@ export const NovelAiGenerationDefaultsSchema = z
     cfg_rescale: z.number().min(0).max(1),
     sampler: NovelAiSamplerSchema,
     noise_schedule: NovelAiNoiseScheduleSchema,
-    quality_preset: NovelAiQualityPresetSchema,
-    undesired_content_preset: NovelAiUndesiredContentPresetSchema,
     smea: z.boolean(),
     dyn: z.boolean(),
     variety_plus: z.boolean(),
@@ -42,13 +38,7 @@ export const NovelAiGenerationDefaultsSchema = z
 export type NovelAiGenerationDefaults = z.infer<typeof NovelAiGenerationDefaultsSchema>;
 
 export type NovelAiIgnoredParameter =
-  | "vibe_transfer"
-  | "smea"
-  | "cfg_rescale"
-  | "variety_plus"
-  | "sampler"
-  | "steps"
-  | "undesired_content_preset";
+  "vibe_transfer" | "smea" | "cfg_rescale" | "variety_plus" | "sampler" | "steps";
 
 /** The defaults the selected model does not use, so the user can see what has no effect. */
 export function novelai_ignored_parameters(
@@ -75,9 +65,6 @@ export function novelai_ignored_parameters(
     }
     if (defaults.steps !== fixed.steps) {
       ignored.push("steps");
-    }
-    if (defaults.undesired_content_preset !== fixed.undesired_content_preset) {
-      ignored.push("undesired_content_preset");
     }
   }
   return ignored;

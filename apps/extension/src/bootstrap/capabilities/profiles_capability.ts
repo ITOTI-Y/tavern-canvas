@@ -1,6 +1,8 @@
 import {
   NovelAiGenerationDefaultsSchema,
+  PromptTagSelectionSchema,
   ProviderIdSchema,
+  type PromptTagSelection,
   derive_provider_credential_reference,
   type NovelAiGenerationDefaults,
   type ImageGenerationRequest,
@@ -34,6 +36,7 @@ export const VAULT_KEY_FIELD = "vault_key";
 
 /** Generation defaults a NovelAI profile starts every request from; see `NovelAiGenerationDefaultsSchema`. */
 export const NOVELAI_DEFAULTS_FIELD = "novelai_defaults";
+const PROMPT_TAGS_FIELD = "prompt_tags";
 
 /** Adapter-owned fields live in their own sub-object because adapter schemas are strict and would reject presentation fields. */
 const ADAPTER_PROFILE_FIELD = "provider_profile";
@@ -119,7 +122,13 @@ function to_summary(record: ProviderProfile): ProviderProfileSummary {
       typeof payload[VAULT_KEY_FIELD] === "string" ? payload[VAULT_KEY_FIELD] : null,
     updated_at: record.updated_at,
     novelai_defaults: read_novelai_defaults(record),
+    prompt_tags: read_prompt_tags(record),
   };
+}
+
+export function read_prompt_tags(record: ProviderProfile): PromptTagSelection | null {
+  const parsed = PromptTagSelectionSchema.safeParse(read_payload(record)[PROMPT_TAGS_FIELD]);
+  return parsed.success ? parsed.data : null;
 }
 
 export function read_novelai_defaults(record: ProviderProfile): NovelAiGenerationDefaults | null {
@@ -228,6 +237,21 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
         payload: to_json_value({
           ...read_payload(record),
           [NOVELAI_DEFAULTS_FIELD]: NovelAiGenerationDefaultsSchema.parse(defaults),
+        }),
+      };
+      await deps.repository.put(record.namespace, updated);
+      const summary = to_summary(updated);
+      events.emit({ type: "profile_upserted", profile: summary });
+      return summary;
+    },
+    async save_prompt_tags(profile_id, selection) {
+      const record = await read(profile_id);
+      const updated: ProviderProfile = {
+        ...record,
+        updated_at: deps.now(),
+        payload: to_json_value({
+          ...read_payload(record),
+          [PROMPT_TAGS_FIELD]: PromptTagSelectionSchema.parse(selection),
         }),
       };
       await deps.repository.put(record.namespace, updated);

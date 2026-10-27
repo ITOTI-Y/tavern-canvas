@@ -2,9 +2,7 @@
 import {
   NovelAiGenerationDefaultsSchema,
   NovelAiNoiseScheduleSchema,
-  NovelAiQualityPresetSchema,
   NovelAiSamplerSchema,
-  NovelAiUndesiredContentPresetSchema,
   novelai_ignored_parameters,
   resolve_novelai_model,
   type NovelAiAccountStatus,
@@ -29,13 +27,7 @@ import type {
   ProviderProfileSummary,
 } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
-import {
-  ignored_parameter_label,
-  NOISE_SCHEDULE_NAMES,
-  quality_preset_label,
-  SAMPLER_NAMES,
-  undesired_content_label,
-} from "./novelai_labels.js";
+import { ignored_parameter_label, NOISE_SCHEDULE_NAMES, SAMPLER_NAMES } from "./novelai_labels.js";
 import styles from "./settings.module.css";
 
 const props = defineProps<{
@@ -65,8 +57,6 @@ function initial_defaults(): NovelAiGenerationDefaults {
     cfg_rescale: parameters.cfg_rescale,
     sampler: parameters.sampler,
     noise_schedule: parameters.noise_schedule,
-    quality_preset: parameters.quality_preset,
-    undesired_content_preset: parameters.undesired_content_preset,
     smea: parameters.smea,
     dyn: parameters.dyn,
     variety_plus: parameters.variety_plus,
@@ -155,21 +145,8 @@ const noise_options = NovelAiNoiseScheduleSchema.options.map((value) => ({
   value,
   label: NOISE_SCHEDULE_NAMES[value],
 }));
-const quality_options = computed(() =>
-  NovelAiQualityPresetSchema.options.map((value) => ({
-    value,
-    label: quality_preset_label(t, value),
-  })),
-);
-const uc_options = computed(() =>
-  NovelAiUndesiredContentPresetSchema.options.map((value) => ({
-    value,
-    label: undesired_content_label(t, value),
-  })),
-);
-
 function set_enum(
-  key: "sampler" | "noise_schedule" | "quality_preset" | "undesired_content_preset",
+  key: "sampler" | "noise_schedule",
   options: readonly string[],
   value: string,
 ): void {
@@ -337,35 +314,6 @@ async function save(): Promise<void> {
           :aria-label="t('settings.novelai.noise_schedule_label')"
           @update:model-value="
             (value) => set_enum('noise_schedule', NovelAiNoiseScheduleSchema.options, value)
-          "
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.quality_label") }}</span>
-        <AppSelect
-          :model-value="draft.quality_preset"
-          :options="quality_options"
-          :placeholder="t('settings.novelai.quality_label')"
-          :aria-label="t('settings.novelai.quality_label')"
-          @update:model-value="
-            (value) => set_enum('quality_preset', NovelAiQualityPresetSchema.options, value)
-          "
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.uc_label") }}</span>
-        <AppSelect
-          :model-value="draft.undesired_content_preset"
-          :options="uc_options"
-          :placeholder="t('settings.novelai.uc_label')"
-          :aria-label="t('settings.novelai.uc_label')"
-          @update:model-value="
-            (value) =>
-              set_enum(
-                'undesired_content_preset',
-                NovelAiUndesiredContentPresetSchema.options,
-                value,
-              )
           "
         />
       </div>

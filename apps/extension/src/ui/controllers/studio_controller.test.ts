@@ -107,6 +107,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   lora: [],
   vibe: [],
   workflow: [],
+  prompt_tag: [],
 };
 
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
@@ -156,6 +157,7 @@ function build_mock_studio() {
     set_credential: vi.fn(),
     clear_credential: vi.fn(),
     save_novelai_defaults: vi.fn(),
+    save_prompt_tags: vi.fn(),
     test_connection: vi.fn(),
   };
 
@@ -361,6 +363,10 @@ describe("create_studio_controller", () => {
         is_default: true,
         credential_reference: null,
         novelai_defaults: null,
+        prompt_tags: {
+          quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+          undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+        },
         updated_at: "2026-01-01T00:00:00Z",
       },
     ]);
@@ -394,6 +400,10 @@ describe("create_studio_controller", () => {
         is_default: false,
         credential_reference: null,
         novelai_defaults: null,
+        prompt_tags: {
+          quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+          undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+        },
         updated_at: "2026-01-02T00:00:00Z",
       },
     });
@@ -607,6 +617,10 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
       is_default: true,
       credential_reference: null,
       novelai_defaults: null,
+      prompt_tags: {
+        quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+        undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+      },
       updated_at: "2026-08-10T00:00:00Z",
     });
 

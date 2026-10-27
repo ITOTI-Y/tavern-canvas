@@ -18,6 +18,7 @@ describe("create_unavailable_capabilities", () => {
       lora: [],
       vibe: [],
       workflow: [],
+      prompt_tag: [],
     });
     await expect(capabilities.gallery.load()).resolves.toEqual([]);
     await expect(capabilities.vocabulary.load()).resolves.toEqual([]);

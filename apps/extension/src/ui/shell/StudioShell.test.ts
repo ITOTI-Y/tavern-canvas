@@ -36,7 +36,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },

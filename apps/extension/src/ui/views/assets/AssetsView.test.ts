@@ -31,7 +31,7 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
       ...overrides,
@@ -127,6 +127,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_provider_profile_credential: vi.fn(() => Promise.reject(new Error("unavailable"))),
     clear_provider_profile_credential: vi.fn(() => Promise.reject(new Error("unavailable"))),
     save_novelai_defaults: vi.fn(),
+    save_prompt_tags: vi.fn(),
     load_novelai_account: vi.fn(),
     load_novelai_models: vi.fn(),
     initialize_browser_secret_vault: vi.fn(() => Promise.resolve()),
@@ -289,6 +290,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         lora: [],
         vibe: [],
         workflow: [],
+        prompt_tag: [],
       },
     });
     mount_assets_view({ state });
@@ -300,7 +302,14 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("deleting a character requires confirmation before remove_asset is called", async () => {
     const record = make_record("character", "22222222-2222-4222-8222-222222222222", "Kaede");
     const state = build_state({
-      records: { character: [record], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: {
+        character: [record],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+      },
     });
     const { controller } = mount_assets_view({ state });
 
@@ -315,7 +324,14 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("cancelling the delete confirmation never calls remove_asset", async () => {
     const record = make_record("character", "33333333-3333-4333-8333-333333333333", "Kaede");
     const state = build_state({
-      records: { character: [record], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: {
+        character: [record],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+      },
     });
     const { controller } = mount_assets_view({ state });
     await dom().find('button[aria-label="Delete"]').trigger("click");
@@ -337,6 +353,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         lora: [],
         vibe: [],
         workflow: [],
+        prompt_tag: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -349,7 +366,14 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("random selection opens the edit dialog for a record already in the list", async () => {
     const record = make_record("character", "66666666-6666-4666-8666-666666666666", "OnlyOne");
     const state = build_state({
-      records: { character: [record], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: {
+        character: [record],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+      },
     });
     mount_assets_view({ state });
     await dom().find('button[aria-label="Pick random"]').trigger("click");
@@ -361,7 +385,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
     const a = make_record("character", "77777777-7777-4777-8777-777777777777", "Alpha");
     const b = make_record("character", "88888888-8888-4888-8888-888888888888", "Beta");
     const state = build_state({
-      records: { character: [a, b], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: { character: [a, b], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
     });
     mount_assets_view({ state });
     const search_inputs = dom().findAll('input[aria-label="Search"]');
@@ -381,6 +405,7 @@ describe("Outfit panel character link", () => {
         lora: [],
         vibe: [],
         workflow: [],
+        prompt_tag: [],
       },
     });
     mount_assets_view({ state });

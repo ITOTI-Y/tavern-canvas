@@ -10,6 +10,7 @@ import {
 } from "../host/index.js";
 import type { IllustrationService } from "../modules/illustration/illustration_service.js";
 import type { PromptTranslator } from "../modules/translation/prompt_translator.js";
+import type { PromptTagsPort } from "./contracts/prompt_tags_port.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
 import { create_unavailable_capabilities } from "./controllers/unavailable_capabilities.js";
@@ -64,6 +65,17 @@ const studio =
         initial_color_mode,
       })
     : null;
+
+const prompt_tags = computed<PromptTagsPort>(() => {
+  const state = studio?.state.value;
+  const profile_id = state?.settings.settings?.active_provider_profile_id ?? null;
+  return {
+    profile: state?.generation.profiles.find((profile) => profile.id === profile_id) ?? null,
+    custom_presets: state?.assets.records.prompt_tag ?? [],
+    save: (id, selection) =>
+      studio === null ? Promise.resolve() : studio.controller.save_prompt_tags(id, selection),
+  };
+});
 
 if (studio) {
   watch(
@@ -194,6 +206,7 @@ function close_studio(): void {
         :gallery="capabilities.gallery"
         :novelai="capabilities.novelai"
         :translator="translator ?? null"
+        :prompt-tags="prompt_tags"
       />
     </template>
   </PortalProvider>

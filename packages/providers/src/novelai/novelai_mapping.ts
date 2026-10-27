@@ -1,4 +1,5 @@
 import {
+  NOVELAI_PROMPT_PRESETS,
   novelai_sends_vibes,
   resolve_novelai_model,
   type AssetId,
@@ -12,7 +13,6 @@ import {
 
 import { encode_base64, invalid_request } from "../image_bytes.js";
 import type { ProviderSourceAsset } from "../provider_adapter.js";
-import { NOVELAI_PROMPT_PRESETS } from "./novelai_prompt_presets.js";
 
 export const NOVELAI_UPSCALE_MODEL = "nai-diffusion-5-curated";
 

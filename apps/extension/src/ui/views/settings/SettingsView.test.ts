@@ -72,6 +72,10 @@ const PROFILE: ProviderProfileSummary = {
   is_default: true,
   credential_reference: null,
   novelai_defaults: null,
+  prompt_tags: {
+    quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+    undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+  },
   updated_at: "2026-01-01T00:00:00.000Z",
 };
 
@@ -96,7 +100,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -229,6 +233,10 @@ describe("SettingsView provider profiles", () => {
           is_default: draft.is_default,
           credential_reference: null,
           novelai_defaults: null,
+          prompt_tags: {
+            quality: { enabled: false, preset_id: "novelai:v4_5_full:standard" },
+            undesired_content: { enabled: false, preset_id: "novelai:v4_5_full:heavy" },
+          },
           updated_at: "2026-08-07T00:00:00.000Z",
         });
       },
@@ -236,6 +244,7 @@ describe("SettingsView provider profiles", () => {
       set_credential: capabilities.profiles.set_credential,
       clear_credential: capabilities.profiles.clear_credential,
       save_novelai_defaults: vi.fn(),
+      save_prompt_tags: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -335,6 +344,7 @@ describe("SettingsView provider profiles", () => {
       set_credential: capabilities.profiles.set_credential,
       clear_credential: capabilities.profiles.clear_credential,
       save_novelai_defaults: vi.fn(),
+      save_prompt_tags: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -368,6 +378,7 @@ describe("SettingsView provider profiles", () => {
       set_credential: capabilities.profiles.set_credential,
       clear_credential: capabilities.profiles.clear_credential,
       save_novelai_defaults: vi.fn(),
+      save_prompt_tags: vi.fn(),
       test_connection: (): Promise<ProfileConnectionTestResult> =>
         Promise.resolve({ status: "success", latency_ms: 77 }),
     };

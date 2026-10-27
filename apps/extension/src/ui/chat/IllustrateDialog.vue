@@ -11,9 +11,11 @@ import AppButton from "../components/AppButton.vue";
 import AppCheckbox from "../components/AppCheckbox.vue";
 import AppDialog from "../components/AppDialog.vue";
 import StateSurface from "../components/StateSurface.vue";
+import type { PromptTagsPort } from "../contracts/prompt_tags_port.js";
 import type { NovelAiCapability } from "../contracts/ui_capabilities.js";
 import styles from "./illustrate_dialog.module.css";
 import type { IllustrateRequest } from "./illustrate_request.js";
+import PromptTagChips from "./PromptTagChips.vue";
 
 interface SlotDraft {
   readonly slot_id: string;
@@ -39,6 +41,7 @@ const props = defineProps<{
   readonly service: IllustrationService;
   readonly novelai: NovelAiCapability;
   readonly translator: PromptTranslator | null;
+  readonly promptTags: PromptTagsPort;
 }>();
 
 const emit = defineEmits<{
@@ -218,6 +221,9 @@ function update_open(open: boolean): void {
             }}
             <textarea v-model="draft.positive_prompt" :class="styles.prompt" />
           </label>
+          <div :class="styles.chips">
+            <PromptTagChips :port="promptTags" kind="quality" />
+          </div>
           <label
             v-for="character in draft.character_prompts"
             :key="character.name"
@@ -249,6 +255,9 @@ function update_open(open: boolean): void {
             {{ t("chat.dialog.negative_prompt") }}
             <textarea v-model="draft.negative_prompt" :class="styles.prompt" />
           </label>
+          <div :class="styles.chips">
+            <PromptTagChips :port="promptTags" kind="undesired_content" />
+          </div>
           <div :class="styles.meta">
             <span>{{ estimate_label(draft) }}</span>
           </div>

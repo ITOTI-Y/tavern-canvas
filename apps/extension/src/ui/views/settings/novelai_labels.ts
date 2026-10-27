@@ -1,9 +1,7 @@
 import type {
   NovelAiIgnoredParameter,
   NovelAiNoiseSchedule,
-  NovelAiQualityPreset,
   NovelAiSampler,
-  NovelAiUndesiredContentPreset,
 } from "@tavern-canvas/contracts";
 
 type Translate = (key: string) => string;
@@ -26,35 +24,6 @@ export const NOISE_SCHEDULE_NAMES: Readonly<Record<NovelAiNoiseSchedule, string>
   polyexponential: "Polyexponential",
 };
 
-export function quality_preset_label(t: Translate, preset: NovelAiQualityPreset): string {
-  switch (preset) {
-    case "standard":
-      return t("settings.novelai.quality_standard");
-    case "light":
-      return t("settings.novelai.quality_light");
-    case "none":
-      return t("settings.novelai.quality_none");
-  }
-}
-
-export function undesired_content_label(
-  t: Translate,
-  preset: NovelAiUndesiredContentPreset,
-): string {
-  switch (preset) {
-    case "heavy":
-      return t("settings.novelai.uc_heavy");
-    case "light":
-      return t("settings.novelai.uc_light");
-    case "human_focus":
-      return t("settings.novelai.uc_human_focus");
-    case "furry_focus":
-      return t("settings.novelai.uc_furry_focus");
-    case "none":
-      return t("settings.novelai.uc_none");
-  }
-}
-
 export function ignored_parameter_label(t: Translate, parameter: NovelAiIgnoredParameter): string {
   switch (parameter) {
     case "vibe_transfer":
@@ -69,7 +38,5 @@ export function ignored_parameter_label(t: Translate, parameter: NovelAiIgnoredP
       return t("settings.novelai.ignored_sampler");
     case "steps":
       return t("settings.novelai.ignored_steps");
-    case "undesired_content_preset":
-      return t("settings.novelai.ignored_undesired_content");
   }
 }

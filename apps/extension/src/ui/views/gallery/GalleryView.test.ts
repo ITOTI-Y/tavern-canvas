@@ -187,7 +187,7 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -287,6 +287,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_provider_profile_credential: vi.fn(() => Promise.reject(new Error("unavailable"))),
     clear_provider_profile_credential: vi.fn(() => Promise.reject(new Error("unavailable"))),
     save_novelai_defaults: vi.fn(),
+    save_prompt_tags: vi.fn(),
     load_novelai_account: vi.fn(),
     load_novelai_models: vi.fn(),
     initialize_browser_secret_vault: vi.fn(() => Promise.resolve()),

@@ -775,3 +775,109 @@
   left: 0;
   width: 100%;
 }
+
+/* ---------------------------------------------------------------------- */
+/* PromptTagChip                                                          */
+/* ---------------------------------------------------------------------- */
+
+.promptTagChip {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-status);
+  background-color: var(--tc-surface);
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}
+
+.promptTagChip[data-enabled] {
+  color: var(--tc-text);
+}
+
+.promptTagTrigger {
+  min-width: 0;
+  padding: 4px 8px;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  color: inherit;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.promptTagToggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border: 0;
+  border-left: 1px solid var(--tc-divider);
+  background: none;
+  color: var(--tc-text-muted);
+}
+
+.promptTagToggle[aria-pressed="true"] {
+  color: var(--tc-accent);
+}
+
+.promptTagContent {
+  z-index: var(--tc-z-overlay);
+  width: min(420px, 90vw);
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-surface);
+}
+
+.promptTagGroup + .promptTagGroup {
+  margin-top: 4px;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.promptTagGroupTitle {
+  margin: 0;
+  padding: 6px 8px 2px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.promptTagOption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--tc-radius-status);
+  background: none;
+  color: var(--tc-text);
+  text-align: left;
+}
+
+.promptTagOption:hover,
+.promptTagOption[aria-pressed="true"] {
+  background-color: var(--tc-surface-raised);
+}
+
+.promptTagOptionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.promptTagOptionText {
+  color: var(--tc-text-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.promptTagOptionTextClamped {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}

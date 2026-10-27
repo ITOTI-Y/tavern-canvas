@@ -235,3 +235,17 @@
   color: var(--tc-error);
   font-size: 12px;
 }
+
+/* --------------------------------------------------------------------- Prompt tag presets */
+
+.prompt_tag_panel {
+  padding-bottom: 16px;
+  border-top: 1px solid var(--tc-divider);
+}
+
+.prompt_tag_description {
+  margin: 0;
+  padding: 0 16px 8px;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}

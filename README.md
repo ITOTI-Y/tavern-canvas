@@ -142,7 +142,8 @@ text-to-image with multi-character prompts, img2img, inpainting, vibe transfer, 
 references, the Director tools (background removal, line art, sketch, colourise, emotion,
 declutter) and 2x upscaling. Each model only exposes what NovelAI's own client offers for it; V5,
 for example, has no vibe transfer or character references. The profile's saved parameters, under
-**Settings > Image providers**, apply to every illustration.
+**Settings > Image providers**, apply to every illustration; quality tags and UC come from the
+profile's presets described below.
 
 Vibe images are encoded once per model and `information_extracted` value and cached in the
 browser, because NovelAI bills every encoding (2 Anlas). Source images, masks and references are
@@ -153,6 +154,20 @@ The account view reads the subscription tier, Anlas balance and the Opus V5 allo
 including the Opus free image (up to 1024x1024 pixels and 28 steps). NovelAI's server remains the
 authority on what is charged. The model list ships with the extension and is regenerated with
 `pnpm exec tsx packages/contracts/scripts/update_novelai_model_ids.ts`.
+
+### Quality tags and UC presets
+
+Every provider profile carries a quality tag preset and an undesired content (UC) preset, shown as
+chips under the prompt boxes of the illustrate dialog and on each profile under **Settings > Image
+providers**. Opening a chip lists NovelAI's built-in presets for every model, with their full
+text, followed by your own; the check mark switches the preset on or off. Quality tags are appended
+to the positive prompt and UC tags put before the negative prompt when the request is built, for
+every provider, so the tags never appear in the prompt boxes. A change made in any chip is saved to
+the active profile and applies to every later image, automatic illustration included.
+
+A NovelAI profile starts with its model's Standard quality tags and Heavy UC; other providers start
+with both switched off. Your own presets are managed under **Settings > Prompt presets**. A NovelAI
+model that fixes its own UC preset keeps it, and no UC is injected there.
 
 ### Routing generation through the Gateway
 

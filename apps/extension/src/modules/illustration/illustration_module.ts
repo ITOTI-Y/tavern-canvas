@@ -3,6 +3,8 @@ import type { RuntimeModule } from "@tavern-canvas/core";
 
 import type { HostAdapter } from "../../host/index.js";
 import type {
+  AssetCategory,
+  AssetRecordSummary,
   AssetsCapability,
   PromptPresetsCapability,
 } from "../../ui/contracts/ui_capabilities.js";
@@ -27,7 +29,12 @@ function read_reference(payload: Readonly<Record<string, unknown>>): CharacterRe
 
 /** Every stored character, outfit and LoRA, in library order. */
 export async function load_slot_library(assets: AssetsCapability): Promise<SlotLibrary> {
-  const catalog = await assets.load();
+  return slot_library_of(await assets.load());
+}
+
+export function slot_library_of(
+  catalog: Readonly<Record<AssetCategory, readonly AssetRecordSummary[]>>,
+): SlotLibrary {
   const text = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
   return {
     characters: catalog.character.map((record) => ({

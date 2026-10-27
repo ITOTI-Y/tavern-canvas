@@ -139,6 +139,7 @@ export {
   estimate_novelai_cost,
   novelai_ignored_parameters,
   NovelAiGenerationDefaultsSchema,
+  NOVELAI_PROMPT_PRESETS,
   NovelAiDimensionSchema,
   extract_novelai_model_ids,
   is_novelai_diffusion_request,
@@ -208,6 +209,18 @@ export type {
   TavernCanvasUiSettings,
   TranslationSettings,
 } from "./settings.js";
+export {
+  PromptTagChoiceSchema,
+  PromptTagKindSchema,
+  PromptTagSelectionSchema,
+} from "./prompt_tag_selection.js";
+export type { PromptTagChoice, PromptTagKind, PromptTagSelection } from "./prompt_tag_selection.js";
+export {
+  builtin_prompt_tag_presets,
+  custom_prompt_tag_preset_id,
+  default_prompt_tag_selection,
+} from "./prompt_tags.js";
+export type { PromptTagPreset } from "./prompt_tags.js";
 export {
   ARCHIVE_EXCLUDED_SECRET_CATEGORIES,
   ARCHIVE_FORMAT,

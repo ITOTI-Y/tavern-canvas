@@ -20,6 +20,9 @@ import TranslationSettings from "./TranslationSettings.vue";
 
 const PromptView = defineAsyncComponent(() => import("../prompt/PromptView.vue"));
 const AssetsView = defineAsyncComponent(() => import("../assets/AssetsView.vue"));
+const PromptTagPresetPanel = defineAsyncComponent(
+  () => import("../prompt/PromptTagPresetPanel.vue"),
+);
 const DiagnosticsView = defineAsyncComponent(() => import("../diagnostics/DiagnosticsView.vue"));
 
 const props = defineProps<{
@@ -97,16 +100,22 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
     </nav>
 
     <div :class="styles.section_content">
-      <PromptView
-        v-if="section === 'prompts'"
-        :state="state"
-        :test-regex="test_prompt_regex"
-        @select-preset="(id) => void controller.select_prompt_preset(id)"
-        @new-preset="controller.start_new_prompt_preset()"
-        @bulk-delete-presets="(ids) => void controller.bulk_remove_prompt_presets(ids)"
-        @update-draft="(patch) => controller.update_prompt_draft(patch)"
-        @save="(draft) => void controller.save_prompt_preset(draft)"
-      />
+      <template v-if="section === 'prompts'">
+        <PromptView
+          :state="state"
+          :test-regex="test_prompt_regex"
+          @select-preset="(id) => void controller.select_prompt_preset(id)"
+          @new-preset="controller.start_new_prompt_preset()"
+          @bulk-delete-presets="(ids) => void controller.bulk_remove_prompt_presets(ids)"
+          @update-draft="(patch) => controller.update_prompt_draft(patch)"
+          @save="(draft) => void controller.save_prompt_preset(draft)"
+        />
+        <PromptTagPresetPanel
+          :records="state.assets.records.prompt_tag"
+          :loading="state.loading.has('assets')"
+          :controller="controller"
+        />
+      </template>
       <AssetsView v-else-if="section === 'library'" :state="state" :controller="controller" />
       <DiagnosticsView
         v-else-if="section === 'diagnostics'"
@@ -142,7 +151,11 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
               </p>
             </div>
           </section>
-          <ProviderProfiles :profiles="state.generation.profiles" :controller="controller" />
+          <ProviderProfiles
+            :profiles="state.generation.profiles"
+            :prompt-tag-presets="state.assets.records.prompt_tag"
+            :controller="controller"
+          />
           <NovelAiSettings
             v-if="active_novelai_profile !== null"
             :profile="active_novelai_profile"

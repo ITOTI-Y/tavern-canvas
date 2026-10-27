@@ -43,8 +43,8 @@ import {
 import { IllustrationService } from "../modules/illustration/illustration_service.js";
 import {
   IllustrationModule,
-  load_slot_library,
   load_slot_prompt_context,
+  slot_library_of,
   new_slot_id,
 } from "../modules/illustration/illustration_module.js";
 import { find_characters } from "../modules/illustration/library_match.js";
@@ -88,6 +88,7 @@ import {
   adapter_profile_of,
   create_profiles_capability,
   read_novelai_defaults,
+  read_prompt_tags,
 } from "./capabilities/profiles_capability.js";
 import { create_prompt_presets_capability } from "./capabilities/prompt_presets_capability.js";
 import { create_settings_capability } from "./capabilities/settings_capability.js";
@@ -631,11 +632,24 @@ export async function compose_studio_capabilities(
                   ),
                 async build_request({ positive_prompt, negative_prompt, character_prompts }) {
                   const profile = await require_active_profile();
-                  const [{ build_generation_request }, assets_module, library] = await Promise.all([
-                    import("../modules/generation/build_generation_request.js"),
-                    import("../modules/illustration/character_assets.js"),
-                    load_slot_library(assets),
-                  ]);
+                  const [{ build_generation_request }, assets_module, tags_module, catalog] =
+                    await Promise.all([
+                      import("../modules/generation/build_generation_request.js"),
+                      import("../modules/illustration/character_assets.js"),
+                      import("../modules/illustration/prompt_tags.js"),
+                      assets.load(),
+                    ]);
+                  const library = slot_library_of(catalog);
+                  const with_prompt_tags = (built: ImageGenerationRequest) =>
+                    tags_module.inject_prompt_tags(
+                      built,
+                      tags_module.effective_prompt_tags({
+                        provider_id: profile.provider_id,
+                        model_id: profile.model_id,
+                        prompt_tags: read_prompt_tags(profile.record),
+                      }),
+                      tags_module.prompt_tag_presets(catalog.prompt_tag),
+                    );
                   const characters = find_characters(
                     character_prompts.map((character) => character.name),
                     library,
@@ -661,7 +675,7 @@ export async function compose_studio_capabilities(
                     load_novelai_runtime === null ||
                     repositories === null
                   ) {
-                    return request;
+                    return with_prompt_tags(request);
                   }
                   const [{ apply_novelai_defaults }, { reference_image_bytes }, runtime] =
                     await Promise.all([
@@ -694,23 +708,41 @@ export async function compose_studio_capabilities(
                               : null;
                           },
                         });
-                  return assets_module.attach_character_references(configured, characters, {
-                    store_reference: (data_url) =>
-                      runtime.store_input(reference_image_bytes(data_url)),
-                  });
+                  return with_prompt_tags(
+                    await assets_module.attach_character_references(configured, characters, {
+                      store_reference: (data_url) =>
+                        runtime.store_input(reference_image_bytes(data_url)),
+                    }),
+                  );
                 },
                 async build_edit_request(edit) {
                   const profile = await read_active_profile();
                   if (profile?.provider_id !== "novelai" || load_novelai_runtime === null) {
                     throw new Error("Quick edits need an active NovelAI provider profile");
                   }
-                  const { build_novelai_edit_request } =
-                    await import("../modules/illustration/slot_edits.js");
-                  const [{ compute_generation_anchor }, { DEFAULT_NOVELAI_MODEL_ID }] =
-                    await Promise.all([
-                      import("../modules/generation/build_generation_request.js"),
-                      import("../modules/novelai/novelai_request_defaults.js"),
-                    ]);
+                  const [
+                    { build_novelai_edit_request },
+                    { compute_generation_anchor },
+                    { DEFAULT_NOVELAI_MODEL_ID },
+                    tags_module,
+                    catalog,
+                  ] = await Promise.all([
+                    import("../modules/illustration/slot_edits.js"),
+                    import("../modules/generation/build_generation_request.js"),
+                    import("../modules/novelai/novelai_request_defaults.js"),
+                    import("../modules/illustration/prompt_tags.js"),
+                    assets.load(),
+                  ]);
+                  const with_prompt_tags = (built: ImageGenerationRequest) =>
+                    tags_module.inject_prompt_tags(
+                      built,
+                      tags_module.effective_prompt_tags({
+                        provider_id: profile.provider_id,
+                        model_id: profile.model_id,
+                        prompt_tags: read_prompt_tags(profile.record),
+                      }),
+                      tags_module.prompt_tag_presets(catalog.prompt_tag),
+                    );
                   const request_id = RequestIdSchema.parse(crypto.randomUUID());
                   const context = {
                     request_id,
@@ -720,13 +752,15 @@ export async function compose_studio_capabilities(
                     model_id: profile.model_id ?? DEFAULT_NOVELAI_MODEL_ID,
                   };
                   if (edit.kind !== "inpaint") {
-                    return build_novelai_edit_request(edit, context);
+                    return with_prompt_tags(build_novelai_edit_request(edit, context));
                   }
                   const runtime = await load_novelai_runtime();
-                  return build_novelai_edit_request(edit, {
-                    ...context,
-                    mask_asset_id: await runtime.store_input(edit.mask_png),
-                  });
+                  return with_prompt_tags(
+                    build_novelai_edit_request(edit, {
+                      ...context,
+                      mask_asset_id: await runtime.store_input(edit.mask_png),
+                    }),
+                  );
                 },
                 edits_available: () => last_provider_id === "novelai",
                 resolve_analysis_key() {

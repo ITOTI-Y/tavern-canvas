@@ -5,6 +5,7 @@ import type {
   LlmConnectionTestResult,
   NovelAiAccountStatus,
   NovelAiGenerationDefaults,
+  PromptTagSelection,
   ResolvedNovelAiModel,
   TavernCanvasSettings,
   Uuid,
@@ -103,6 +104,10 @@ export interface StudioController {
   save_novelai_defaults(
     profile_id: Uuid,
     defaults: NovelAiGenerationDefaults,
+  ): Promise<ProviderProfileSummary>;
+  save_prompt_tags(
+    profile_id: Uuid,
+    selection: PromptTagSelection,
   ): Promise<ProviderProfileSummary>;
   /** Tier and Anlas of the account behind the active NovelAI profile. */
   load_novelai_account(): Promise<NovelAiAccountStatus>;
@@ -271,7 +276,7 @@ function create_initial_state(
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -889,6 +894,19 @@ class StudioControllerImpl implements StudioController {
     defaults: NovelAiGenerationDefaults,
   ): Promise<ProviderProfileSummary> {
     const profile = await this.#capabilities.profiles.save_novelai_defaults(profile_id, defaults);
+    if (!this.#stopped) {
+      this.#patch_generation({
+        profiles: upsert_by_id(this.#state.generation.profiles, profile, (item) => item.id),
+      });
+    }
+    return profile;
+  }
+
+  async save_prompt_tags(
+    profile_id: Uuid,
+    selection: PromptTagSelection,
+  ): Promise<ProviderProfileSummary> {
+    const profile = await this.#capabilities.profiles.save_prompt_tags(profile_id, selection);
     if (!this.#stopped) {
       this.#patch_generation({
         profiles: upsert_by_id(this.#state.generation.profiles, profile, (item) => item.id),
