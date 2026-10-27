@@ -1,0 +1,484 @@
+import { S as e, T as t, b as n, c as r, d as i, g as a, l as o, m as s, p as c, s as l, u, v as ee, y as d } from "./ids-DjWg1HG8.js";
+//#region ../../packages/storage/src/database_schema.ts
+var te = "tavern_canvas_v3", ne = {
+	provider_profiles: {
+		key_path: "record_key",
+		indexes: [
+			"namespace",
+			"provider_id",
+			"updated_at"
+		],
+		since_version: 1
+	},
+	prompt_presets: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 1
+	},
+	comfy_workflows: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 1
+	},
+	novelai_vibes: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 1
+	},
+	character_profiles: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 1
+	},
+	regex_rules: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 1
+	},
+	vocabularies: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 1
+	},
+	vocabulary_groups: {
+		key_path: "record_key",
+		indexes: ["namespace", "vocabulary_id"],
+		since_version: 1
+	},
+	vocabulary_packages: {
+		key_path: "record_key",
+		indexes: [
+			"namespace",
+			"data_version",
+			"state"
+		],
+		since_version: 1
+	},
+	vocabulary_shards: {
+		key_path: "record_key",
+		indexes: [
+			"namespace",
+			"data_version",
+			"kind"
+		],
+		since_version: 1
+	},
+	image_records: {
+		key_path: "record_key",
+		indexes: [
+			"namespace",
+			"sha256",
+			"created_at",
+			"last_accessed_at",
+			"pinned"
+		],
+		since_version: 1
+	},
+	image_blobs: {
+		key_path: "sha256",
+		indexes: ["ref_count", "byte_length"],
+		since_version: 1
+	},
+	generation_jobs: {
+		key_path: "record_key",
+		indexes: [
+			"namespace",
+			"request_id",
+			"request_digest",
+			"state",
+			"updated_at"
+		],
+		since_version: 1
+	},
+	migration_journal: {
+		key_path: "migration_id",
+		indexes: [
+			"source_version",
+			"state",
+			"updated_at"
+		],
+		since_version: 1
+	},
+	legacy_preferences: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 2
+	},
+	llm_connections: {
+		key_path: "record_key",
+		indexes: [
+			"namespace",
+			"provider_kind",
+			"updated_at"
+		],
+		since_version: 3
+	},
+	novelai_vibe_encodings: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 4
+	},
+	provider_input_assets: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 4
+	},
+	outfit_profiles: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 5
+	},
+	lora_profiles: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 6
+	},
+	prompt_tag_presets: {
+		key_path: "record_key",
+		indexes: ["namespace", "updated_at"],
+		since_version: 7
+	}
+}, f = ["knowledge_entries"], p = c(() => e([
+	n(),
+	a(),
+	u(),
+	r(),
+	o(p),
+	ee(n(), p)
+])), m = n().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), h = n().regex(/^[a-f0-9]{64}$/u), g = t({ offset: !0 }), _ = n().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), re = {
+	schema_version: s(1),
+	id: m,
+	namespace: _,
+	record_key: n().min(1),
+	created_at: g,
+	updated_at: g,
+	payload: p.optional()
+};
+function v(e) {
+	return d({
+		...re,
+		...e
+	});
+}
+var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)]), ie = n().min(1).max(64), ae = n().min(1).max(128), x = v({ provider_id: y }), S = v({}), C = v({}), w = v({}), T = v({}), E = v({}), D = v({}), O = v({}), k = v({}), A = v({}), j = v({ vocabulary_id: m }), M = v({
+	data_version: b,
+	state: ie
+}), N = v({
+	data_version: b,
+	kind: ae
+}), P = v({}), F = v({
+	provider_kind: n().min(1).max(64),
+	credential_reference: n().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
+}), I = v({
+	image_sha256: h,
+	model_id: n().min(1).max(128),
+	information_extracted: a().min(0).max(1),
+	encoding: n().min(1).max(4e7)
+}), L = v({
+	sha256: h,
+	last_accessed_at: g,
+	pinned: u()
+}), R = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), z = d({
+	sha256: h,
+	ref_count: a().int().nonnegative(),
+	byte_length: a().int().nonnegative(),
+	blob: R
+}), B = v({
+	media_type: l([
+		"image/png",
+		"image/jpeg",
+		"image/webp"
+	]),
+	byte_length: a().int().positive(),
+	blob: R
+}), oe = d({
+	generation_anchor: h,
+	scene_description: n().trim().min(1).max(12e3),
+	negative_constraints: n().trim().max(4e3).optional(),
+	context_turns: a().int().min(0).max(12).optional(),
+	style_preset_id: m.optional(),
+	image_count: a().int().min(1).max(4).optional()
+}), se = d({
+	code: l([
+		"auth_failed",
+		"rate_limited",
+		"content_blocked",
+		"invalid_request",
+		"provider_unavailable",
+		"timed_out",
+		"cancelled",
+		"malformed_response"
+	]),
+	retryable: u(),
+	retry_after_ms: a().int().nonnegative().optional(),
+	status_code: a().int().min(100).max(599).optional()
+}), V = v({
+	request_id: m,
+	request_digest: h,
+	generation_anchor: h,
+	source_anchor: h,
+	chat_id: n().min(1).max(512),
+	requested_swipe_id: a().int().nonnegative(),
+	provider_id: y,
+	arguments: oe,
+	state: l([
+		"queued",
+		"preparing",
+		"submitting",
+		"running",
+		"completed",
+		"failed",
+		"cancelled",
+		"attached",
+		"orphaned"
+	]),
+	error: se.nullable(),
+	image_ids: o(m),
+	automatic: u().optional()
+}), ce = d({
+	migration_id: n().min(1).max(256),
+	source_version: a().int().nonnegative(),
+	state: n().min(1).max(64),
+	updated_at: g,
+	payload: p.optional()
+}), H = {
+	provider_profiles: x,
+	prompt_presets: S,
+	comfy_workflows: C,
+	novelai_vibes: w,
+	character_profiles: T,
+	regex_rules: k,
+	vocabularies: A,
+	vocabulary_groups: j,
+	vocabulary_packages: M,
+	vocabulary_shards: N,
+	image_records: L,
+	generation_jobs: V,
+	legacy_preferences: P,
+	llm_connections: F,
+	novelai_vibe_encodings: I,
+	provider_input_assets: B,
+	outfit_profiles: E,
+	lora_profiles: D,
+	prompt_tag_presets: O
+}, U = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
+function W(e, t, n) {
+	if (e !== null && typeof e != "string" && typeof e != "boolean") {
+		if (typeof e == "number") {
+			if (Number.isFinite(e)) return;
+			throw TypeError(`${t} must contain finite JSON numbers`);
+		}
+		if (typeof e != "object") throw TypeError(`${t} must be JSON serializable`);
+		if (typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer || e instanceof Date || e instanceof Map || e instanceof Set) throw TypeError(`${t} must not contain structured non-JSON values`);
+		if (n.has(e)) throw TypeError(`${t} must not contain cycles`);
+		if (n.add(e), Array.isArray(e)) for (let [r, i] of e.entries()) W(i, `${t}[${String(r)}]`, n);
+		else {
+			if (Object.getPrototypeOf(e) !== Object.prototype && Object.getPrototypeOf(e) !== null) throw TypeError(`${t} must contain plain objects`);
+			for (let r of Reflect.ownKeys(e)) {
+				if (typeof r != "string") throw TypeError(`${t} must not contain symbol keys`);
+				W(e[r], `${t}.${r}`, n);
+			}
+		}
+		n.delete(e);
+	}
+}
+function G(e) {
+	return W(e, "payload", /* @__PURE__ */ new WeakSet()), p.parse(e);
+}
+function K(e) {
+	let t = G(e), n = (e, t) => {
+		if (Array.isArray(e)) {
+			e.forEach((e, r) => {
+				n(e, `${t}[${String(r)}]`);
+			});
+			return;
+		}
+		if (typeof e == "object" && e) for (let [r, i] of Object.entries(e)) {
+			let e = r.toLowerCase().replace(/[^a-z0-9]/gu, "");
+			if (U.test(e)) throw TypeError(`${t}.${r} contains a credential-like field`);
+			n(i, `${t}.${r}`);
+		}
+	};
+	n(t, "payload");
+}
+function q(e, t, n) {
+	if (_.parse(e), m.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
+}
+function le(e, t, n, r, i) {
+	if (!(t >= 7)) {
+		for (let t of f) e.objectStoreNames.contains(t) && e.deleteObjectStore(t);
+		for (let [n, r] of Object.entries(ne)) {
+			if (r.since_version <= t) continue;
+			let i = e.createObjectStore(n, { keyPath: r.key_path });
+			for (let e of r.indexes) i.createIndex(e, e);
+		}
+	}
+}
+//#endregion
+//#region ../../packages/storage/src/repository.ts
+var J = class extends Error {
+	issues;
+	constructor(e, t = []) {
+		super(e), this.name = "RepositoryValidationError", this.issues = t;
+	}
+}, Y = class extends Error {
+	constructor(e, t) {
+		super(`A record already exists in ${e}: ${t}`), this.name = "RepositoryDuplicateError";
+	}
+}, X = class extends Error {
+	constructor(e, t) {
+		super(`No record exists in ${e}: ${t}`), this.name = "RepositoryNotFoundError";
+	}
+};
+function Z(e) {
+	try {
+		return globalThis.structuredClone(e);
+	} catch (e) {
+		throw new J(`Value cannot cross the structured-clone boundary: ${e instanceof Error ? e.message : String(e)}`);
+	}
+}
+function ue(e) {
+	return e instanceof Error && e.name === "ConstraintError";
+}
+function de(e) {
+	if (e.mode === "readonly") throw TypeError("A readwrite transaction is required for this repository method");
+}
+var Q = class {
+	database;
+	store_name;
+	schema;
+	rejects_provider_secrets;
+	constructor(e, t, n = H[t], r = !1) {
+		this.database = e, this.store_name = t, this.schema = n, this.rejects_provider_secrets = r;
+	}
+	async get(e, t, n) {
+		let r = this.record_key(e, t);
+		return this.run_read(n, async (e) => {
+			let t = await this.store(e).get(r);
+			return t === void 0 ? null : this.validate_loaded(t);
+		});
+	}
+	async list(e, t) {
+		let n = _.parse(e);
+		return this.run_read(t, async (e) => {
+			let t = (await this.store(e).index("namespace").getAll(n)).map((e) => this.validate_loaded(e));
+			return t.sort((e, t) => e.id < t.id ? -1 : +(e.id > t.id)), t;
+		});
+	}
+	async create(e, t, n) {
+		let r = this.prepare_record(e, t);
+		await this.run_write(n, async (e) => {
+			try {
+				await this.store(e).add(r);
+			} catch (e) {
+				throw ue(e) ? new Y(this.store_name, r.record_key) : e;
+			}
+		});
+	}
+	async update(e, t, n) {
+		let r = this.prepare_record(e, t);
+		await this.run_write(n, async (e) => {
+			let t = this.store(e), n = await t.get(r.record_key);
+			if (n === void 0) throw new X(this.store_name, r.record_key);
+			this.validate_loaded(n), await t.put(r);
+		});
+	}
+	async put(e, t, n) {
+		let r = this.prepare_record(e, t);
+		await this.run_write(n, async (e) => {
+			await this.store(e).put(r);
+		});
+	}
+	async delete(e, t, n) {
+		let r = this.record_key(e, t);
+		await this.run_write(n, async (e) => {
+			await this.store(e).delete(r);
+		});
+	}
+	store(e) {
+		return e.objectStore(this.store_name);
+	}
+	record_key(e, t) {
+		return `${_.parse(e)}:${m.parse(t)}`;
+	}
+	prepare_record(e, t) {
+		let n = _.parse(e), r = Z(t);
+		if (r.namespace !== void 0 && r.namespace !== n) throw new J("Record namespace does not match the method namespace");
+		if (typeof r.id != "string") throw new J("Record id must be a UUID");
+		let i = m.safeParse(r.id);
+		if (!i.success) throw new J("Record id must be a UUID", i.error.issues);
+		let a = `${n}:${i.data}`;
+		if (r.record_key !== void 0 && r.record_key !== a) throw new J("Record key does not match namespace and id");
+		if (r.namespace = n, r.record_key = a, Object.hasOwn(r, "payload") && r.payload === void 0) throw new J("Payload must be serializable JSON");
+		if (r.payload !== void 0) {
+			try {
+				r.payload = G(r.payload);
+			} catch (e) {
+				throw new J(e instanceof Error ? e.message : "Payload must be serializable JSON");
+			}
+			if (this.rejects_provider_secrets) try {
+				K(r.payload);
+			} catch (e) {
+				throw new J(e instanceof Error ? e.message : "Provider payload contains a secret");
+			}
+		}
+		let o = this.schema.safeParse(r);
+		if (!o.success) throw new J("Record failed schema validation", o.error.issues);
+		return q(o.data.namespace, o.data.id, o.data.record_key), Z(o.data);
+	}
+	validate_loaded(e) {
+		let t = Z(e);
+		if (typeof t == "object" && t && Object.hasOwn(t, "payload") && t.payload === void 0) throw new J("Stored payload must be serializable JSON");
+		if (typeof t == "object" && t && "payload" in t && t.payload !== void 0) try {
+			G(t.payload);
+		} catch (e) {
+			throw new J(e instanceof Error ? e.message : "Stored payload must be serializable JSON");
+		}
+		let n = this.schema.safeParse(t);
+		if (!n.success) throw new J("Stored record failed schema validation", n.error.issues);
+		try {
+			q(n.data.namespace, n.data.id, n.data.record_key), this.rejects_provider_secrets && n.data.payload !== void 0 && K(n.data.payload);
+		} catch (e) {
+			throw new J(e instanceof Error ? e.message : "Stored record failed derived-key validation");
+		}
+		return Z(n.data);
+	}
+	async run_read(e, t) {
+		if (e !== void 0) return t(e);
+		let n = this.database.transaction(this.store_name, "readonly");
+		try {
+			let e = await t(n);
+			return await n.done, e;
+		} catch (e) {
+			try {
+				await n.done;
+			} catch {}
+			throw e;
+		}
+	}
+	async run_write(e, t) {
+		if (e !== void 0) return de(e), t(e);
+		let n = this.database.transaction(this.store_name, "readwrite");
+		try {
+			let e = await t(n);
+			return await n.done, e;
+		} catch (e) {
+			try {
+				n.abort();
+			} catch {}
+			try {
+				await n.done;
+			} catch {}
+			throw e;
+		}
+	}
+}, $ = class extends Q {
+	constructor(e) {
+		super(e, "generation_jobs", V);
+	}
+};
+function fe(e) {
+	return new $(e);
+}
+//#endregion
+export { A, H as C, m as D, g as E, G as M, le as N, j as O, x as S, h as T, w as _, X as a, O as b, C as c, L as d, P as f, I as g, ce as h, Y as i, N as j, M as k, te as l, D as m, fe as n, J as o, F as p, Q as r, T as s, $ as t, z as u, E as v, k as w, B as x, S as y };
