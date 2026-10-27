@@ -61,8 +61,11 @@ the analyzed reply, or none. Two separate text boxes, Illustration guidance and 
 carry standing direction such as art style, season, era, or place: the first is appended to every
 paragraph analysis, the second to every wardrobe update, and what the reply states takes precedence.
 
-NovelAI accepts one image generation per account at a time and answers a second with 429, so
-NovelAI images are generated one after another whatever the concurrency setting says.
+NovelAI answers 429 to image requests that reach one account together, so Inkwell starts NovelAI
+requests at least 1.5 seconds apart and lets them run in parallel where the account allows it. A
+subscription account rejects new requests while an image is generating; a rejected request is sent
+again after a wait that starts near 2 seconds and doubles up to 15 seconds, or after a longer
+Retry-After from NovelAI, and fails only when all six retries are rejected. A rejected request generates nothing and costs no Anlas.
 
 Each chosen paragraph gets an image slot below it. A slot keeps every image generated for it, with
 regenerate, prompt editing and paging between images. For NovelAI images a slot also offers image

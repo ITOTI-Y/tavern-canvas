@@ -286,6 +286,34 @@ describe("execute_with_retry", () => {
     expect(clock.delays).toEqual([7_000]);
   });
 
+  it("keeps the backoff when Retry-After asks for less", async () => {
+    const clock = new RecordingClock();
+    let attempts = 0;
+    await execute_with_retry(
+      request,
+      () => {
+        attempts += 1;
+        if (attempts === 1) {
+          throw new ProviderAdapterError({
+            code: "rate_limited",
+            retryable: true,
+            retry_after_ms: 300,
+            status_code: 429,
+          });
+        }
+        return Promise.resolve("complete");
+      },
+      {
+        signal: new AbortController().signal,
+        clock,
+        random: new FixedRandomSource([0.5]),
+        base_delay_ms: 2_000,
+      },
+    );
+
+    expect(clock.delays).toEqual([2_000]);
+  });
+
   it("uses injected jitter and bounds exponential delays", async () => {
     const clock = new RecordingClock();
     let attempts = 0;

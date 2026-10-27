@@ -63,7 +63,15 @@ async function o(t, n, r) {
 	}
 	return a.map((t) => e.parse(t));
 }
-var s = 1e3, c = class {
+var s = 1e3;
+function c(e) {
+	if (e instanceof Error && "provider_error" in e) {
+		let n = t.safeParse(e.provider_error);
+		if (n.success && n.data.code === "rate_limited") return new r(n.data);
+	}
+	return null;
+}
+var l = class {
 	#e;
 	#t;
 	constructor(e) {
@@ -75,8 +83,14 @@ var s = 1e3, c = class {
 			code: "invalid_request",
 			retryable: !1
 		});
-		let i = await this.#r(n, await this.#n(n, t));
-		return { image_ids: await this.#i(e, i) };
+		let i;
+		try {
+			i = await this.#n(n, t);
+		} catch (e) {
+			throw c(e) ?? e;
+		}
+		let a = await this.#r(n, i);
+		return { image_ids: await this.#i(e, a) };
 	}
 	async #n(e, t) {
 		let n = (await this.#e.load_adapters())[e.provider_id];
@@ -113,10 +127,10 @@ var s = 1e3, c = class {
 		})));
 	}
 };
-async function l(e, t, n) {
-	return e.plans.register(n), u(e.queue, t, n.request_id, n.provider_id);
+async function u(e, t, n) {
+	return e.plans.register(n), d(e.queue, t, n.request_id, n.provider_id);
 }
-async function u(e, t, n, r) {
+async function d(e, t, n, r) {
 	let i = {
 		request_id: n,
 		generation_anchor: t.generation_anchor,
@@ -132,8 +146,8 @@ async function u(e, t, n, r) {
 	};
 	return e.enqueue(i);
 }
-function d(e, t) {
+function f(e, t) {
 	return e.queue.cancel(t);
 }
 //#endregion
-export { o as a, d as i, a as n, l as o, c as r, r as s, i as t };
+export { o as a, f as i, a as n, u as o, l as r, r as s, i as t };

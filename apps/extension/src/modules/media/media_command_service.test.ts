@@ -18,6 +18,7 @@ import type {
   ProviderTransport,
   ProviderTransportResponse,
 } from "@tavern-canvas/providers";
+import { ProviderAdapterError } from "@tavern-canvas/providers";
 import { describe, expect, it, vi } from "vitest";
 
 import { build_novelai_inpaint_request } from "./inpaint_session.js";
@@ -171,6 +172,7 @@ class ControlledAdapter implements ProviderAdapter<ImageGenerationRequest> {
     output_assets: [output_asset(1)],
   };
   #poll_outcomes: ProviderPollResult[] = [];
+  #rejections: Error[] = [];
 
   validate_profile(profile: unknown): ProviderProfile {
     return profile as ProviderProfile;
@@ -193,12 +195,17 @@ class ControlledAdapter implements ProviderAdapter<ImageGenerationRequest> {
     this.#poll_outcomes = poll_outcomes;
   }
 
+  reject_next(...errors: Error[]): void {
+    this.#rejections = errors;
+  }
+
   submit(
     context: ProviderExecutionContext,
     request: ImageGenerationRequest,
   ): Promise<ProviderSubmission> {
     this.submissions.push({ request, context });
-    return Promise.resolve(this.#outcome);
+    const rejection = this.#rejections.shift();
+    return rejection === undefined ? Promise.resolve(this.#outcome) : Promise.reject(rejection);
   }
 
   poll(): Promise<ProviderPollResult> {
@@ -494,5 +501,18 @@ describe("failed upload / failed submission", () => {
     const job = await submit_manual_generation(deps, base(), sd_request());
     await wait_for_state(queue, job.job_id, "failed");
     expect(queue.get(job.job_id)?.error).not.toBeNull();
+  });
+});
+
+describe("rate-limited submissions", () => {
+  it("reports a rate limit the adapter could not retry past as rate_limited", async () => {
+    const harness = create_harness();
+    harness.adapter.reject_next(
+      new ProviderAdapterError({ code: "rate_limited", retryable: true, status_code: 429 }),
+    );
+
+    const job = await submit_manual_generation(harness.deps, base(), sd_request());
+    await wait_for_state(harness.queue, job.job_id, "failed");
+    expect(harness.queue.get(job.job_id)?.error?.code).toBe("rate_limited");
   });
 });

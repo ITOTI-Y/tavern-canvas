@@ -133,6 +133,7 @@ function create_queue(
   options: {
     readonly global_concurrency?: number;
     readonly provider_concurrency?: Partial<Record<ProviderId, number>>;
+    readonly provider_start_interval_ms?: Partial<Record<ProviderId, number>>;
   } = {},
 ) {
   const executor = new ControlledExecutor();
@@ -202,6 +203,30 @@ describe("ImageJobQueue", () => {
       "novelai",
       "novelai",
     ]);
+  });
+
+  it("spaces job starts on a provider by its start interval", async () => {
+    vi.useFakeTimers();
+    try {
+      const { queue, executor } = create_queue({ provider_start_interval_ms: { novelai: 1_000 } });
+      await Promise.all([
+        queue.enqueue(request(1, { provider_id: "novelai", automatic: false })),
+        queue.enqueue(request(2, { provider_id: "novelai", automatic: false })),
+        queue.enqueue(request(3, { provider_id: "sd_webui", automatic: false })),
+      ]);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(executor.starts.map((record) => record.job.provider_id).sort()).toEqual([
+        "novelai",
+        "sd_webui",
+      ]);
+
+      await vi.advanceTimersByTimeAsync(999);
+      expect(executor.starts).toHaveLength(2);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(executor.starts[2]?.job.provider_id).toBe("novelai");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("schedules FIFO within providers and round-robin across providers", async () => {

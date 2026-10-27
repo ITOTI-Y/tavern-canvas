@@ -401,8 +401,11 @@ function make_harness<TRequest extends ImageGenerationRequest>(options: {
   };
 }
 
-function rate_limit_responses(): ProviderTransportResponse[] {
-  return Array.from({ length: 3 }, () =>
+// One request plus the NovelAI adapter's six retries.
+const NOVELAI_RATE_LIMIT_ATTEMPTS = 7;
+
+function rate_limit_responses(attempts = 3): ProviderTransportResponse[] {
+  return Array.from({ length: attempts }, () =>
     json_response(429, { error: "synthetic rate limit" }, { "retry-after": "1" }),
   );
 }
@@ -603,7 +606,9 @@ function novelai_operation_validators(
       expect(parameters.director_reference_images).toEqual([bytes_to_base64(SECOND_PNG_BYTES)]);
     }
   };
-  return scenario === "rate_limit" ? repeat_validator(validator, 3) : [validator];
+  return scenario === "rate_limit"
+    ? repeat_validator(validator, NOVELAI_RATE_LIMIT_ATTEMPTS)
+    : [validator];
 }
 
 function comfy_prompt_validator(request: typeof comfy_request): OperationValidator {
@@ -895,7 +900,7 @@ function create_novelai_harness(
     responses = [json_response(451, {})];
     expectation = { kind: "error", code: "content_blocked" };
   } else if (scenario === "rate_limit") {
-    responses = rate_limit_responses();
+    responses = rate_limit_responses(NOVELAI_RATE_LIMIT_ATTEMPTS);
     expectation = { kind: "error", code: "rate_limited" };
   } else if (scenario === "timeout") {
     responses = [timeout_response()];
@@ -1390,9 +1395,14 @@ async function run_matrix_case<TRequest extends ImageGenerationRequest>(
     expect(harness.asset_reader.reads).toEqual([]);
   }
 
-  if (scenario === "rate_limit") {
+  if (scenario === "rate_limit" && harness.adapter.provider_id === "novelai") {
+    expect(harness.transport.operations).toHaveLength(NOVELAI_RATE_LIMIT_ATTEMPTS);
+    expect(harness.clock.sleep_delays).toEqual([2000, 4000, 8000, 15000, 15000, 15000]);
+  } else if (scenario === "rate_limit") {
     expect(harness.transport.operations).toHaveLength(3);
     expect(harness.clock.sleep_delays).toEqual([1000, 1000]);
+  }
+  if (scenario === "rate_limit") {
     expect((failure as ProviderAdapterError).provider_error.retry_after_ms).toBe(1000);
   }
 
@@ -1408,7 +1418,9 @@ async function run_matrix_case<TRequest extends ImageGenerationRequest>(
     }
   }
   if (scenario === "rate_limit") {
-    expect(logs.map((record) => record_value(record, "provider log").attempt)).toEqual([0, 1, 2]);
+    expect(logs.map((record) => record_value(record, "provider log").attempt)).toEqual(
+      harness.transport.operations.map((_, attempt) => attempt),
+    );
   }
   expect(serialized_logs).not.toMatch(/"bytes"\s*:/u);
   expect(serialized_logs).not.toContain(harness.request.prompt);

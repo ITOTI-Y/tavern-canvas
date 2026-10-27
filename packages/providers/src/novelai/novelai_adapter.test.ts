@@ -215,7 +215,7 @@ function contract_case(scenario: ProviderContractScenario) {
     responses = [transport_response(451)];
     expectation = { kind: "error", code: "content_blocked" };
   } else if (scenario === "rate_limit") {
-    responses = Array.from({ length: 3 }, () => transport_response(429));
+    responses = Array.from({ length: 7 }, () => transport_response(429));
     expectation = { kind: "error", code: "rate_limited" };
   } else if (scenario === "timeout") {
     responses = [new ProviderAdapterError({ code: "timed_out", retryable: false })];

@@ -128,11 +128,11 @@ export async function execute_with_retry<TRequest, TResult>(
         throw failure;
       }
 
-      const retry_after_ms = failure.provider_error.retry_after_ms;
-      const delay_ms =
-        retry_after_ms === undefined
-          ? exponential_delay(attempt, base_delay_ms, max_delay_ms, options.random)
-          : Math.min(retry_after_ms, max_retry_after_ms);
+      // Retry-After is a lower bound; a short one must not cut the backoff.
+      const delay_ms = Math.max(
+        Math.min(failure.provider_error.retry_after_ms ?? 0, max_retry_after_ms),
+        exponential_delay(attempt, base_delay_ms, max_delay_ms, options.random),
+      );
       try {
         await options.clock.sleep(delay_ms, options.signal);
       } catch {

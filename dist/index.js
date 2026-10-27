@@ -7,7 +7,7 @@ import { o as v, s as y } from "./chunks/provider-Ctw4medr.js";
 import { t as b } from "./chunks/novelai_defaults-CoeHYmzC.js";
 import { c as x, i as S, n as C, o as w, r as ee, s as te, u as ne } from "./chunks/wardrobe_library-CZLkOF9h.js";
 import { a as re, c as T, d as ie, f as ae, i as oe, l as E, o as se, r as ce, s as le, t as ue, u as de } from "./chunks/http_acknowledgment-DvPfaNgR.js";
-import { i as fe, n as pe, o as me, r as he, s as ge, t as _e } from "./chunks/media_command_service-eWFU54JX.js";
+import { i as fe, n as pe, o as me, r as he, s as ge, t as _e } from "./chunks/media_command_service-U2z67TUK.js";
 import { A as D, F as ve, H as ye, I as be, N as O, O as xe, P as Se, Q as Ce, V as we, W as Te, Z as Ee, _ as k, b as De, ct as A, et as j, ft as Oe, g as M, h as N, i as ke, k as Ae, m as P, n as je, nt as Me, p as F, pt as I, rt as Ne, u as Pe, ut as L, x as R, y as Fe } from "./chunks/vue-i18n-DUz2Gjn8.js";
 import { t as Ie } from "./chunks/create_i18n-zcU8jDbv.js";
 import { n as Le, r as Re, t as ze } from "./chunks/portal_keys-B9C82xtk.js";
@@ -438,67 +438,71 @@ var $t = class {
 	#c = /* @__PURE__ */ new Map();
 	#l = /* @__PURE__ */ new Map();
 	#u = /* @__PURE__ */ new Map();
-	#d = /* @__PURE__ */ new Set();
-	#f = v.options;
-	#p = 0;
-	#m = 0;
-	#h = !1;
+	#d = /* @__PURE__ */ new Map();
+	#f = /* @__PURE__ */ new Map();
+	#p = /* @__PURE__ */ new Set();
+	#m = v.options;
+	#h = 0;
+	#g = 0;
+	#_ = !1;
+	#v = null;
+	#y = 0;
 	constructor(e) {
 		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Wt(), this.#i = Jt(e.global_concurrency ?? 4, "Global job concurrency");
-		for (let t of this.#f) {
+		for (let t of this.#m) {
 			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : Jt(n, `Concurrency for ${t}`);
-			this.#a.set(t, r), this.#o.set(t, []), this.#s.set(t, 0);
+			this.#a.set(t, r), this.#o.set(t, e.provider_start_interval_ms?.[t] ?? 0), this.#c.set(t, []), this.#l.set(t, 0);
 		}
 	}
 	enqueue(e) {
 		let t = Yt(e), n = Xt(t);
 		if (t.automatic) {
-			let e = this.#l.get(n);
+			let e = this.#d.get(n);
 			if (e !== void 0) {
 				let t = this.get(e);
 				if (t !== null) return Promise.resolve(t);
 			}
-			let r = this.#u.get(n);
+			let r = this.#f.get(n);
 			if (r !== void 0) return r;
-			let i = this.#_(t, n);
-			this.#u.set(n, i);
+			let i = this.#x(t, n);
+			this.#f.set(n, i);
 			let a = () => {
-				this.#u.get(n) === i && this.#u.delete(n);
+				this.#f.get(n) === i && this.#f.delete(n);
 			};
 			return i.then(a, a), i;
 		}
-		return this.#_(t, n);
+		return this.#x(t, n);
 	}
 	get(e) {
-		let t = this.#c.get(e);
+		let t = this.#u.get(e);
 		return t === void 0 ? null : B(t.job);
 	}
 	subscribe(e) {
-		this.#d.add(e);
+		this.#p.add(e);
 		let t = !1;
 		return () => {
-			t || (t = !0, this.#d.delete(e));
+			t || (t = !0, this.#p.delete(e));
 		};
 	}
 	async cancel(e) {
-		let t = this.#c.get(e);
+		let t = this.#u.get(e);
 		if (t === void 0) throw Error(`Generation job ${e} does not exist`);
 		if (t.job.state === "cancelled") return B(t.job);
-		t.cancel_requested = !0, t.controller.abort(), t.queued && this.#w(t);
-		let n = await this.#C(t, async () => (t.job.state !== "cancelled" && await this.#S(t, "cancelled"), B(t.job)));
-		return this.#v(), n;
+		t.cancel_requested = !0, t.controller.abort(), t.queued && this.#k(t);
+		let n = await this.#O(t, async () => (t.job.state !== "cancelled" && await this.#D(t, "cancelled"), B(t.job)));
+		return this.#S(), n;
 	}
 	mark_attached(e) {
-		return this.#g(e, "attached");
+		return this.#b(e, "attached");
 	}
 	mark_orphaned(e) {
-		return this.#g(e, "orphaned");
+		return this.#b(e, "orphaned");
 	}
-	#g(e, t) {
-		let n = this.#c.get(e);
-		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#C(n, async () => (n.job.state !== t && await this.#S(n, t), B(n.job)));
+	#b(e, t) {
+		let n = this.#u.get(e);
+		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#O(n, async () => (n.job.state !== t && await this.#D(n, t), B(n.job)));
 	}
-	async #_(e, t) {
+	async #x(e, t) {
 		let n = this.#r.now().toISOString(), r = {
 			job_id: h.parse(this.#n.next()),
 			request_id: e.request_id,
@@ -523,39 +527,59 @@ var $t = class {
 			cancel_requested: !1,
 			queued: !0
 		};
-		return this.#c.set(r.job_id, a), e.automatic && this.#l.set(t, r.job_id), this.#o.get(r.provider_id)?.push(a), this.#T(i), this.#v(), i;
+		return this.#u.set(r.job_id, a), e.automatic && this.#d.set(t, r.job_id), this.#c.get(r.provider_id)?.push(a), this.#A(i), this.#S(), i;
 	}
-	#v() {
-		this.#h || (this.#h = !0, queueMicrotask(() => {
-			this.#h = !1, this.#y();
+	#S() {
+		this.#_ || (this.#_ = !0, queueMicrotask(() => {
+			this.#_ = !1, this.#C();
 		}));
 	}
-	#y() {
-		for (; this.#p < this.#i;) {
-			let e = this.#b();
+	#C() {
+		for (; this.#h < this.#i;) {
+			let e = this.#w();
 			if (e === null) return;
-			let t = this.#o.get(e)?.shift();
-			t !== void 0 && (t.queued = !1, this.#p += 1, this.#s.set(e, (this.#s.get(e) ?? 0) + 1), this.#x(t).finally(() => {
-				--this.#p, this.#s.set(e, Math.max(0, (this.#s.get(e) ?? 1) - 1)), this.#v();
-			}));
+			let t = this.#c.get(e)?.shift();
+			if (t === void 0) continue;
+			t.queued = !1;
+			let n = this.#o.get(e) ?? 0;
+			n > 0 && this.#s.set(e, Date.now() + n), this.#h += 1, this.#l.set(e, (this.#l.get(e) ?? 0) + 1), this.#E(t).finally(() => {
+				--this.#h, this.#l.set(e, Math.max(0, (this.#l.get(e) ?? 1) - 1)), this.#S();
+			});
 		}
 	}
-	#b() {
-		for (let e = 0; e < this.#f.length; e += 1) {
-			let t = (this.#m + e) % this.#f.length, n = this.#f[t];
-			if (n === void 0) continue;
-			let r = this.#o.get(n)?.length ?? 0, i = this.#s.get(n) ?? 0, a = this.#a.get(n) ?? 0;
-			if (r > 0 && i < a) return this.#m = (t + 1) % this.#f.length, n;
+	#w() {
+		let e = Date.now(), t = null;
+		for (let n = 0; n < this.#m.length; n += 1) {
+			let r = (this.#g + n) % this.#m.length, i = this.#m[r];
+			if (i === void 0) continue;
+			let a = this.#c.get(i)?.length ?? 0, o = this.#l.get(i) ?? 0, s = this.#a.get(i) ?? 0;
+			if (a > 0 && o < s) {
+				let n = this.#s.get(i) ?? 0;
+				if (n > e) {
+					t = Math.min(t ?? n, n);
+					continue;
+				}
+				return this.#g = (r + 1) % this.#m.length, i;
+			}
 		}
-		return null;
+		return t !== null && this.#T(t), null;
 	}
-	async #x(e) {
-		if (!await this.#C(e, async () => e.cancel_requested || (await this.#S(e, "preparing"), e.controller.signal.aborted) ? (await this.#S(e, "cancelled"), !1) : (await this.#S(e, "submitting"), !0)) || e.cancel_requested) return;
+	#T(e) {
+		if (this.#v !== null) {
+			if (this.#y <= e) return;
+			clearTimeout(this.#v);
+		}
+		this.#y = e, this.#v = setTimeout(() => {
+			this.#v = null, this.#C();
+		}, Math.max(0, e - Date.now()));
+	}
+	async #E(e) {
+		if (!await this.#O(e, async () => e.cancel_requested || (await this.#D(e, "preparing"), e.controller.signal.aborted) ? (await this.#D(e, "cancelled"), !1) : (await this.#D(e, "submitting"), !0)) || e.cancel_requested) return;
 		let t = {
 			signal: e.controller.signal,
 			mark_running: async () => {
-				await this.#C(e, async () => {
-					!e.cancel_requested && e.job.state === "submitting" && await this.#S(e, "running");
+				await this.#O(e, async () => {
+					!e.cancel_requested && e.job.state === "submitting" && await this.#D(e, "running");
 				});
 			}
 		};
@@ -565,36 +589,36 @@ var $t = class {
 				code: "malformed_response",
 				retryable: !1
 			});
-			await this.#C(e, async () => {
+			await this.#O(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
 				let t = Zt(e.job);
-				t.image_ids = n, await this.#S(e, "completed", t);
+				t.image_ids = n, await this.#D(e, "completed", t);
 			});
 		} catch (t) {
-			await this.#C(e, async () => {
+			await this.#O(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
 				let n = Zt(e.job);
-				n.error = Qt(t), await this.#S(e, "failed", n);
+				n.error = Qt(t), await this.#D(e, "failed", n);
 			});
 		}
 	}
-	async #S(e, t, n = Zt(e.job)) {
+	async #D(e, t, n = Zt(e.job)) {
 		qt(n, t, this.#r.now().toISOString());
 		let r = B(n);
-		return await this.#t.save(r), e.job = n, this.#T(r), r;
+		return await this.#t.save(r), e.job = n, this.#A(r), r;
 	}
-	#C(e, t) {
+	#O(e, t) {
 		let n = e.operation.then(t);
 		return e.operation = n.then(() => void 0, () => void 0), n;
 	}
-	#w(e) {
-		let t = this.#o.get(e.job.provider_id);
+	#k(e) {
+		let t = this.#c.get(e.job.provider_id);
 		if (t === void 0) return;
 		let n = t.indexOf(e);
 		n >= 0 && t.splice(n, 1), e.queued = !1;
 	}
-	#T(e) {
-		for (let t of this.#d) t(e);
+	#A(e) {
+		for (let t of this.#p) t(e);
 	}
 }, en = "tavern_canvas", tn = "tavern_canvas_wardrobe";
 function nn(e) {
@@ -5352,7 +5376,7 @@ function hs() {
 	), { type: "module" });
 }
 async function gs(e) {
-	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-DS_2Rrlq.js"), o = {
+	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-eHk4gE46.js"), o = {
 		novelai: new r(),
 		sd_webui: new a(),
 		openai_image: new i(),
@@ -5450,7 +5474,7 @@ async function bs(e) {
 		let e = await T();
 		if (e === null) throw Error("No provider profile is active; choose one in Settings");
 		return e;
-	}, oe = null, E = w === null || u === null ? null : () => oe ??= import("./chunks/novelai_runtime-Ccalz9I3.js").then((t) => t.create_novelai_runtime({
+	}, oe = null, E = w === null || u === null ? null : () => oe ??= import("./chunks/novelai_runtime-CWSgWNCX.js").then((t) => t.create_novelai_runtime({
 		vibe_encodings: w.novelai_vibe_encodings,
 		provider_inputs: w.provider_input_assets,
 		namespace: m,
@@ -5547,7 +5571,7 @@ async function bs(e) {
 			job_id_source: { next: () => crypto.randomUUID() },
 			time_source: new Wt(),
 			global_concurrency: p?.get_settings().global_concurrency ?? 1,
-			provider_concurrency: Cs
+			provider_start_interval_ms: Cs
 		});
 		a.push(ee.observe_jobs(s));
 		let d = ho({
@@ -5724,7 +5748,7 @@ function xs(e, t = { secrets: null }) {
 		default: throw Error(`The selected ${e.kind} transport cannot drive the job executor; configure a loopback provider endpoint or a credentialed cloud profile`);
 	}
 }
-var Ss = 12e4, Cs = { novelai: 1 }, ws = "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
+var Ss = 12e4, Cs = { novelai: 1500 }, ws = "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
 function Ts(e, t) {
 	let n = v.safeParse(e.provider_id).data;
 	if (n === void 0) return null;
@@ -5775,7 +5799,7 @@ function As(e, t) {
 function js(e) {
 	let t = null;
 	return { async execute(n, r) {
-		let { GatewayJobExecutor: i } = await (t ??= import("./chunks/gateway_job_executor-sjtkc_5U.js"));
+		let { GatewayJobExecutor: i } = await (t ??= import("./chunks/gateway_job_executor-Di3B9J1r.js"));
 		return new i(e).execute(n, r);
 	} };
 }

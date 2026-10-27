@@ -1,5 +1,6 @@
 import {
   ImageIdSchema,
+  ProviderErrorSchema,
   type ImageGenerationRequest,
   type ProviderId,
   type RequestId,
@@ -151,6 +152,17 @@ export async function persist_generated_images(
 
 const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
+/** The provider's 429 classification, which the queue only reads from a JobExecutorFailure. */
+function rate_limit_failure(error: unknown): JobExecutorFailure | null {
+  if (error instanceof Error && "provider_error" in error) {
+    const parsed = ProviderErrorSchema.safeParse(error.provider_error);
+    if (parsed.success && parsed.data.code === "rate_limited") {
+      return new JobExecutorFailure(parsed.data);
+    }
+  }
+  return null;
+}
+
 export interface ProviderProfileResolver {
   resolve(provider_id: ProviderId): Promise<ProviderProfile>;
 }
@@ -191,7 +203,13 @@ export class MediaJobExecutor implements JobExecutor {
       throw new JobExecutorFailure({ code: "invalid_request", retryable: false });
     }
 
-    const outputs = await this.#finish(request, await this.#execute_adapter(request, control));
+    let adapter_outputs: readonly ProviderOutputAsset[];
+    try {
+      adapter_outputs = await this.#execute_adapter(request, control);
+    } catch (error) {
+      throw rate_limit_failure(error) ?? error;
+    }
+    const outputs = await this.#finish(request, adapter_outputs);
 
     const image_ids = await this.#persist_outputs(job, outputs);
     return { image_ids };

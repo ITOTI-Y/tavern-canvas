@@ -30,6 +30,10 @@ import {
 import { map_novelai_request, novelai_request_asset_ids } from "./novelai_mapping.js";
 import { parse_novelai_response, type NovelAiExpectedOutput } from "./novelai_response.js";
 
+// A subscription account answers 429 while another of its images is generating, with a Retry-After
+// well under a second; the backoff has to outlast several queued generations of a few seconds each.
+const NOVELAI_RETRY = { max_retries: 6, base_delay_ms: 2_000, max_delay_ms: 15_000 } as const;
+
 const NovelAiProfileSchema = z
   .strictObject({
     profile_id: z.string().trim().min(1).max(128),
@@ -152,6 +156,7 @@ export class NovelAiAdapter implements ProviderAdapter<NovelAiRequest> {
         signal: context.signal,
         clock: this.#clock,
         random: this.#random,
+        ...NOVELAI_RETRY,
       },
     );
 

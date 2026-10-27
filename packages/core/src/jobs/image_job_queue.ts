@@ -40,6 +40,8 @@ export interface ImageJobQueueOptions {
   readonly time_source?: JobTimeSource;
   readonly global_concurrency?: number;
   readonly provider_concurrency?: Partial<Record<ProviderId, number>>;
+  /** Minimum time between two job starts on the same provider. */
+  readonly provider_start_interval_ms?: Partial<Record<ProviderId, number>>;
 }
 
 interface JobRecord {
@@ -120,6 +122,8 @@ export class ImageJobQueue {
   readonly #time_source: JobTimeSource;
   readonly #global_concurrency: number;
   readonly #provider_concurrency = new Map<ProviderId, number>();
+  readonly #start_interval_ms = new Map<ProviderId, number>();
+  readonly #next_start_at = new Map<ProviderId, number>();
   readonly #provider_queues = new Map<ProviderId, JobRecord[]>();
   readonly #running_by_provider = new Map<ProviderId, number>();
   readonly #records = new Map<string, JobRecord>();
@@ -130,6 +134,8 @@ export class ImageJobQueue {
   #running_jobs = 0;
   #round_robin_cursor = 0;
   #drain_scheduled = false;
+  #wake_timer: ReturnType<typeof setTimeout> | null = null;
+  #wake_at = 0;
 
   constructor(options: ImageJobQueueOptions) {
     this.#executor = options.executor;
@@ -148,6 +154,10 @@ export class ImageJobQueue {
           ? this.#global_concurrency
           : validate_concurrency(configured_limit, `Concurrency for ${provider_id}`);
       this.#provider_concurrency.set(provider_id, limit);
+      this.#start_interval_ms.set(
+        provider_id,
+        options.provider_start_interval_ms?.[provider_id] ?? 0,
+      );
       this.#provider_queues.set(provider_id, []);
       this.#running_by_provider.set(provider_id, 0);
     }
@@ -309,6 +319,10 @@ export class ImageJobQueue {
         continue;
       }
       record.queued = false;
+      const interval = this.#start_interval_ms.get(provider_id) ?? 0;
+      if (interval > 0) {
+        this.#next_start_at.set(provider_id, Date.now() + interval);
+      }
       this.#running_jobs += 1;
       this.#running_by_provider.set(
         provider_id,
@@ -326,6 +340,8 @@ export class ImageJobQueue {
   }
 
   #next_provider(): ProviderId | null {
+    const now = Date.now();
+    let earliest_start: number | null = null;
     for (let offset = 0; offset < this.#provider_order.length; offset += 1) {
       const index = (this.#round_robin_cursor + offset) % this.#provider_order.length;
       const provider_id = this.#provider_order[index];
@@ -336,11 +352,36 @@ export class ImageJobQueue {
       const running_count = this.#running_by_provider.get(provider_id) ?? 0;
       const provider_limit = this.#provider_concurrency.get(provider_id) ?? 0;
       if (queued_count > 0 && running_count < provider_limit) {
+        const start_at = this.#next_start_at.get(provider_id) ?? 0;
+        if (start_at > now) {
+          earliest_start = Math.min(earliest_start ?? start_at, start_at);
+          continue;
+        }
         this.#round_robin_cursor = (index + 1) % this.#provider_order.length;
         return provider_id;
       }
     }
+    if (earliest_start !== null) {
+      this.#wake_at_time(earliest_start);
+    }
     return null;
+  }
+
+  #wake_at_time(at: number): void {
+    if (this.#wake_timer !== null) {
+      if (this.#wake_at <= at) {
+        return;
+      }
+      clearTimeout(this.#wake_timer);
+    }
+    this.#wake_at = at;
+    this.#wake_timer = setTimeout(
+      () => {
+        this.#wake_timer = null;
+        this.#drain();
+      },
+      Math.max(0, at - Date.now()),
+    );
   }
 
   async #execute(record: JobRecord): Promise<void> {
