@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 5 as const;
+export const DATABASE_VERSION = 6 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 export const STORE_DEFINITIONS = {
@@ -34,11 +34,6 @@ export const STORE_DEFINITIONS = {
   regex_rules: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
-    since_version: 1,
-  },
-  knowledge_entries: {
-    key_path: "record_key",
-    indexes: ["namespace", "source_type", "updated_at"],
     since_version: 1,
   },
   vocabularies: {
@@ -106,7 +101,15 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 5,
   },
+  lora_profiles: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 6,
+  },
 } as const;
+
+/** Stores dropped from the schema; upgrades delete them from databases created before. */
+const REMOVED_STORES = ["knowledge_entries"] as const;
 
 export type StoreName = keyof typeof STORE_DEFINITIONS;
 export type NamespacedStoreName = Exclude<StoreName, "image_blobs" | "migration_journal">;
@@ -182,13 +185,11 @@ export type CharacterProfile = z.infer<typeof CharacterProfileSchema>;
 export const OutfitProfileSchema = namespaced_schema({});
 export type OutfitProfile = z.infer<typeof OutfitProfileSchema>;
 
+export const LoraProfileSchema = namespaced_schema({});
+export type LoraProfile = z.infer<typeof LoraProfileSchema>;
+
 export const RegexRuleSchema = namespaced_schema({});
 export type RegexRule = z.infer<typeof RegexRuleSchema>;
-
-export const KnowledgeEntrySchema = namespaced_schema({
-  source_type: z.string().min(1).max(128),
-});
-export type KnowledgeEntry = z.infer<typeof KnowledgeEntrySchema>;
 
 export const VocabularySchema = namespaced_schema({});
 export type Vocabulary = z.infer<typeof VocabularySchema>;
@@ -348,7 +349,6 @@ export type BusinessRecord =
   | NovelAiVibe
   | CharacterProfile
   | RegexRule
-  | KnowledgeEntry
   | Vocabulary
   | VocabularyGroup
   | VocabularyPackage
@@ -358,7 +358,8 @@ export type BusinessRecord =
   | LlmConnection
   | NovelAiVibeEncoding
   | ProviderInputAsset
-  | OutfitProfile;
+  | OutfitProfile
+  | LoraProfile;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -371,7 +372,6 @@ export type RecordByStore = {
   novelai_vibes: NovelAiVibe;
   character_profiles: CharacterProfile;
   regex_rules: RegexRule;
-  knowledge_entries: KnowledgeEntry;
   vocabularies: Vocabulary;
   vocabulary_groups: VocabularyGroup;
   vocabulary_packages: VocabularyPackage;
@@ -385,6 +385,7 @@ export type RecordByStore = {
   novelai_vibe_encodings: NovelAiVibeEncoding;
   provider_input_assets: ProviderInputAsset;
   outfit_profiles: OutfitProfile;
+  lora_profiles: LoraProfile;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -434,15 +435,6 @@ export interface DBSchema extends IdbDBSchema {
     value: RegexRule;
     indexes: {
       namespace: IDBValidKey;
-      updated_at: IDBValidKey;
-    };
-  };
-  knowledge_entries: {
-    key: string;
-    value: KnowledgeEntry;
-    indexes: {
-      namespace: IDBValidKey;
-      source_type: IDBValidKey;
       updated_at: IDBValidKey;
     };
   };
@@ -560,6 +552,14 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  lora_profiles: {
+    key: string;
+    value: LoraProfile;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -571,7 +571,6 @@ export const RECORD_SCHEMAS: {
   novelai_vibes: NovelAiVibeSchema,
   character_profiles: CharacterProfileSchema,
   regex_rules: RegexRuleSchema,
-  knowledge_entries: KnowledgeEntrySchema,
   vocabularies: VocabularySchema,
   vocabulary_groups: VocabularyGroupSchema,
   vocabulary_packages: VocabularyPackageSchema,
@@ -583,6 +582,7 @@ export const RECORD_SCHEMAS: {
   novelai_vibe_encodings: NovelAiVibeEncodingSchema,
   provider_input_assets: ProviderInputAssetSchema,
   outfit_profiles: OutfitProfileSchema,
+  lora_profiles: LoraProfileSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;
@@ -688,6 +688,11 @@ export function upgrade_database(
 ): void {
   if (old_version >= DATABASE_VERSION) {
     return;
+  }
+  for (const store_name of REMOVED_STORES) {
+    if (database.objectStoreNames.contains(store_name as never)) {
+      database.deleteObjectStore(store_name as never);
+    }
   }
   for (const [store_name, definition] of Object.entries(STORE_DEFINITIONS) as [
     StoreName,

@@ -2,16 +2,12 @@ import type {
   CapabilityMatrix,
   GenerationState,
   ImageGenerationRequest,
-  KnowledgeRecord,
-  KnowledgeRecordDraft,
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
   NovelAiAccountStatus,
   NovelAiCostEstimate,
   NovelAiRequest,
-  PersonaProfile,
-  PersonaProfileDraft,
   ProviderError,
   ProviderId,
   ResolvedNovelAiModel,
@@ -172,7 +168,7 @@ export interface PromptPresetsCapability {
   test_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
 }
 
-export type AssetCategory = "character" | "outfit" | "lora" | "vibe" | "reference" | "workflow";
+export type AssetCategory = "character" | "outfit" | "lora" | "vibe" | "workflow";
 
 export interface AssetRecordSummary {
   readonly id: Uuid;
@@ -196,30 +192,6 @@ export interface AssetsCapability {
   ): Promise<AssetRecordSummary>;
   remove(category: AssetCategory, asset_id: Uuid): Promise<void>;
   reorder(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void>;
-}
-
-export type PersonasDomainEvent =
-  | { readonly type: "persona_upserted"; readonly persona: PersonaProfile }
-  | { readonly type: "persona_removed"; readonly persona_id: Uuid };
-
-export interface PersonasCapability {
-  load(): Promise<readonly PersonaProfile[]>;
-  subscribe(handler: (event: PersonasDomainEvent) => void): Unsubscribe;
-  save(draft: PersonaProfileDraft): Promise<PersonaProfile>;
-  remove(persona_id: Uuid): Promise<void>;
-}
-
-export type KnowledgeDomainEvent =
-  | { readonly type: "entry_upserted"; readonly entry: KnowledgeRecord }
-  | { readonly type: "entry_removed"; readonly entry_id: Uuid };
-
-export interface KnowledgeCapability {
-  load(): Promise<readonly KnowledgeRecord[]>;
-  subscribe(handler: (event: KnowledgeDomainEvent) => void): Unsubscribe;
-  save(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord>;
-  set_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord>;
-  remove(entry_id: Uuid): Promise<void>;
-  bulk_remove(entry_ids: readonly Uuid[]): Promise<void>;
 }
 
 export type GalleryMediaType = "image/png" | "image/jpeg" | "image/webp";
@@ -379,6 +351,8 @@ export interface SettingsCapability {
   /** Hands the custom analysis API key to the selected backend, like the Gateway token. */
   set_analysis_key(plaintext_value: string): Promise<void>;
   clear_analysis_key(): Promise<void>;
+  /** Names of every SillyTavern world info book, for choosing the one paragraph analysis reads. */
+  list_worldbooks(): Promise<readonly string[]>;
   /** Writes SillyTavern's own DeepL key, which its translate route and translate extension share. */
   set_deepl_key(plaintext_value: string): Promise<void>;
   clear_deepl_key(): Promise<void>;
@@ -403,8 +377,6 @@ export interface StudioCapabilities {
   readonly novelai: NovelAiCapability;
   readonly prompt_presets: PromptPresetsCapability;
   readonly assets: AssetsCapability;
-  readonly personas: PersonasCapability;
-  readonly knowledge: KnowledgeCapability;
   readonly gallery: GalleryCapability;
   readonly vocabulary: VocabularyCapability;
   readonly diagnostics: DiagnosticsCapability;

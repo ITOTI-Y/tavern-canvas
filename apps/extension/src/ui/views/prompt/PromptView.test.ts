@@ -58,7 +58,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       jobs: [],
     },
     llm_connections: { connections: [], selected_connection_id: null },
-    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [PRESET_A, PRESET_B, PRESET_UNGROUPED],
       selected_preset_id: PRESET_A.id,
@@ -67,7 +66,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -200,7 +199,7 @@ describe("PromptView: preset browser search/group/bulk delete", () => {
   });
 });
 
-describe("PromptView: fixed prompts, quality controls, draft locality", () => {
+describe("PromptView: fixed prompts and draft locality", () => {
   it("edits fixed positive/negative prompts and emits update-draft, never mutating state directly", async () => {
     const { wrapper } = mount_view();
     const positive = wrapper.find('[data-testid="fixed-positive-prompt"]');
@@ -209,16 +208,6 @@ describe("PromptView: fixed prompts, quality controls, draft locality", () => {
     const events = wrapper.emitted("update-draft") ?? [];
     expect(events.length).toBeGreaterThan(0);
     expect(events.at(-1)?.[0]).toEqual({ fixed_positive_prompt: "always add: masterpiece" });
-  });
-
-  it("toggles UCP and AQT switches", async () => {
-    const { wrapper } = mount_view();
-    const ucp = wrapper.find('[data-testid="ucp-switch"] [role="switch"]');
-    expect(ucp.attributes("aria-checked")).toBe("false");
-    await ucp.trigger("click");
-    expect(
-      wrapper.find('[data-testid="ucp-switch"] [role="switch"]').attributes("aria-checked"),
-    ).toBe("true");
   });
 
   it("keeps a new blank draft local (id null) until Save is pressed", async () => {
@@ -377,84 +366,6 @@ describe("PromptView: regex validation and test", () => {
       "a fox ran",
     );
     expect(wrapper.find('[data-testid="regex-test-result"]').text()).toContain("fox -> wolf");
-  });
-});
-
-describe("PromptView: World Info / user persona / character context preview", () => {
-  it("shows composed empty states when no context preview is connected", () => {
-    const { wrapper } = mount_view();
-    const preview = wrapper.find('[data-testid="context-preview"]');
-    expect(preview.text()).toContain("No World Info entries are active");
-    expect(preview.text()).toContain("No user persona is connected");
-    expect(preview.text()).toContain("No character context is connected");
-  });
-
-  it("renders World Info entries, user persona, and character context when supplied", () => {
-    const wrapper = mount(PromptView, {
-      props: {
-        state: build_state(),
-        testRegex: vi.fn(),
-        contextPreview: {
-          worldInfo: ["Entry: The old bridge is haunted."],
-          userPersona: "A wandering merchant.",
-          characterContext: "Elira, a forest guardian.",
-        },
-      },
-      global: {
-        plugins: [
-          createI18n({
-            legacy: false,
-            locale: "en",
-            fallbackLocale: "en",
-            messages: { en: en_messages, "zh-CN": zh_cn_messages },
-          }),
-        ],
-        provide: { [PORTAL_TARGET_KEY]: document.body },
-      },
-    });
-    const preview = wrapper.find('[data-testid="context-preview"]');
-    expect(preview.text()).toContain("The old bridge is haunted");
-    expect(preview.text()).toContain("A wandering merchant.");
-    expect(preview.text()).toContain("Elira, a forest guardian.");
-  });
-});
-
-describe("PromptView: private LLM prompt-builder test panel, tools disabled", () => {
-  it("always shows the tools-disabled note", () => {
-    const { wrapper } = mount_view();
-    expect(wrapper.find('[data-testid="prompt-test-panel"]').text()).toContain(
-      "Tools are disabled for this test run.",
-    );
-  });
-
-  it("shows the unavailable state when no test capability is wired (current production reality)", () => {
-    const { wrapper } = mount_view();
-    expect(wrapper.find('[data-testid="test-panel-unavailable"]').exists()).toBe(true);
-  });
-
-  it("shows pending/success through an injected testCommand and emits run-test on click", async () => {
-    const i18n = createI18n({
-      legacy: false,
-      locale: "en",
-      fallbackLocale: "en",
-      messages: { en: en_messages, "zh-CN": zh_cn_messages },
-    });
-    const wrapper = mount(PromptView, {
-      props: {
-        state: build_state(),
-        testRegex: vi.fn(),
-        testCommand: { status: "success", result: "Generated caption text." },
-      },
-      global: { plugins: [i18n], provide: { [PORTAL_TARGET_KEY]: document.body } },
-    });
-
-    await wrapper.find('[data-testid="test-panel-input"]').setValue("describe this scene");
-    await wrapper.find('[data-testid="test-panel-run"]').trigger("click");
-
-    expect(wrapper.emitted("run-test")?.[0]).toEqual(["describe this scene"]);
-    expect(wrapper.find('[data-testid="test-panel-result"]').text()).toContain(
-      "Generated caption text.",
-    );
   });
 });
 

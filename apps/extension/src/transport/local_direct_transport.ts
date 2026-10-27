@@ -10,7 +10,7 @@ import {
   ProviderTransportBoundaryError,
   validate_provider_operation,
   validate_remote_operation,
-} from "./host_proxy_transport.js";
+} from "./provider_operations.js";
 import { is_loopback_origin, normalize_http_origin } from "./http_acknowledgment.js";
 
 export type { ProviderFetch } from "./browser_fetch.js";

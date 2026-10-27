@@ -80,6 +80,8 @@ function create_host(text_element: HTMLElement): HostAdapter {
     generate_with_preset: vi.fn(() => Promise.reject(new Error("not expected"))),
     stop_generation: () => undefined,
     sync_regex_scripts: () => Promise.resolve(false),
+    list_worldbooks: () => [],
+    read_worldbook: () => Promise.resolve([]),
     translate_deepl: () => Promise.reject(new Error("not used")),
   };
 }
@@ -96,10 +98,11 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       max_chat_history: 4,
       max_images_per_message: 2,
       prompt_preset_id: null,
+      world_info: { mode: "chat" },
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>
-      Promise.resolve({ preset: null, library: { characters: [], outfits: [] } }),
+      Promise.resolve({ preset: null, library: { characters: [], outfits: [], loras: [] } }),
     build_request: () => Promise.reject(new Error("no provider profile")),
     build_edit_request: (edit) =>
       Promise.resolve({ provider_id: "sd_webui", prompt: edit.kind } as ImageGenerationRequest),

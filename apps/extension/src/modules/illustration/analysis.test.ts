@@ -17,7 +17,7 @@ describe("build_analysis_input", () => {
         { index: 1, text: "Second.", line: 2 },
       ],
       2,
-      { characters: [], outfits: [] },
+      { characters: [], outfits: [], loras: [] },
     );
 
     expect(input).toContain("Choose at most 2 paragraphs");
@@ -27,8 +27,17 @@ describe("build_analysis_input", () => {
 
   it("names library characters and outfits so the model leaves their looks out", () => {
     const input = build_analysis_input([{ index: 0, text: "Hi.", line: 0 }], 1, {
-      characters: [{ id: "c1", name: "Seraphina", appearance: "pink hair", excluded_traits: "" }],
+      characters: [
+        {
+          id: "c1",
+          name: "Seraphina",
+          appearance: "pink hair",
+          excluded_traits: "",
+          reference: null,
+        },
+      ],
       outfits: [{ id: "o1", name: "Forest cloak", description: "green cloak", character_id: "c1" }],
+      loras: [],
     });
 
     expect(input).toContain("never hair, eyes, face, body or clothing");

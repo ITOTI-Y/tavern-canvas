@@ -23,7 +23,6 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
       jobs: [],
     },
     llm_connections: { connections: [], selected_connection_id: null },
-    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -32,7 +31,7 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
       ...overrides,
@@ -64,7 +63,6 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_route: vi.fn(),
     set_settings_section: vi.fn(),
     reveal_gallery_source: vi.fn(),
-    set_color_mode: vi.fn(),
     set_inspector_width: vi.fn(),
     set_inspector_collapsed: vi.fn(),
     select_inspector_record: vi.fn(),
@@ -87,25 +85,11 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     delete_gallery_record: vi.fn(() => Promise.resolve()),
     bulk_delete_gallery_records: vi.fn(() => Promise.resolve()),
     update_prompt_draft: vi.fn(),
-    clear_prompt_draft: vi.fn(),
     select_prompt_preset: vi.fn(),
     start_new_prompt_preset: vi.fn(),
-    remove_prompt_preset: vi.fn(() => Promise.resolve()),
     bulk_remove_prompt_presets: vi.fn(() => Promise.resolve()),
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
-    select_provider_profile: vi.fn(),
     select_llm_connection: vi.fn(),
-    save_persona: vi.fn(() => Promise.resolve({}) as ReturnType<StudioController["save_persona"]>),
-    remove_persona: vi.fn(() => Promise.resolve()),
-    save_knowledge_entry: vi.fn(
-      () => Promise.resolve({}) as ReturnType<StudioController["save_knowledge_entry"]>,
-    ),
-    set_knowledge_entry_enabled: vi.fn(
-      () => Promise.resolve({}) as ReturnType<StudioController["set_knowledge_entry_enabled"]>,
-    ),
-    remove_knowledge_entry: vi.fn(() => Promise.resolve()),
-    set_knowledge_selection: vi.fn(),
-    bulk_remove_knowledge_entries: vi.fn(() => Promise.resolve()),
     save_llm_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["save_llm_connection"]>,
     ),
@@ -130,6 +114,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_gateway_token: vi.fn(() => Promise.resolve()),
     clear_gateway_token: vi.fn(() => Promise.resolve()),
     set_analysis_key: vi.fn(() => Promise.resolve()),
+    list_worldbooks: vi.fn(() => Promise.resolve([])),
     clear_analysis_key: vi.fn(() => Promise.resolve()),
     set_deepl_key: vi.fn(() => Promise.resolve()),
     clear_deepl_key: vi.fn(() => Promise.resolve()),
@@ -240,7 +225,6 @@ describe("AssetsView tabs", () => {
     expect(text).toContain("Outfits");
     expect(text).toContain("LoRA");
     expect(text).toContain("Vibe");
-    expect(text).toContain("Reference");
     expect(text).toContain("Workflow");
   });
 
@@ -304,7 +288,6 @@ describe("Character panel CRUD and destructive confirmation", () => {
         outfit: [],
         lora: [],
         vibe: [],
-        reference: [],
         workflow: [],
       },
     });
@@ -317,7 +300,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("deleting a character requires confirmation before remove_asset is called", async () => {
     const record = make_record("character", "22222222-2222-4222-8222-222222222222", "Kaede");
     const state = build_state({
-      records: { character: [record], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [record], outfit: [], lora: [], vibe: [], workflow: [] },
     });
     const { controller } = mount_assets_view({ state });
 
@@ -332,7 +315,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("cancelling the delete confirmation never calls remove_asset", async () => {
     const record = make_record("character", "33333333-3333-4333-8333-333333333333", "Kaede");
     const state = build_state({
-      records: { character: [record], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [record], outfit: [], lora: [], vibe: [], workflow: [] },
     });
     const { controller } = mount_assets_view({ state });
     await dom().find('button[aria-label="Delete"]').trigger("click");
@@ -353,7 +336,6 @@ describe("Character panel CRUD and destructive confirmation", () => {
         outfit: [],
         lora: [],
         vibe: [],
-        reference: [],
         workflow: [],
       },
     });
@@ -367,7 +349,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("random selection opens the edit dialog for a record already in the list", async () => {
     const record = make_record("character", "66666666-6666-4666-8666-666666666666", "OnlyOne");
     const state = build_state({
-      records: { character: [record], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [record], outfit: [], lora: [], vibe: [], workflow: [] },
     });
     mount_assets_view({ state });
     await dom().find('button[aria-label="Pick random"]').trigger("click");
@@ -379,7 +361,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
     const a = make_record("character", "77777777-7777-4777-8777-777777777777", "Alpha");
     const b = make_record("character", "88888888-8888-4888-8888-888888888888", "Beta");
     const state = build_state({
-      records: { character: [a, b], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [a, b], outfit: [], lora: [], vibe: [], workflow: [] },
     });
     mount_assets_view({ state });
     const search_inputs = dom().findAll('input[aria-label="Search"]');
@@ -398,7 +380,6 @@ describe("Outfit panel character link", () => {
         outfit: [],
         lora: [],
         vibe: [],
-        reference: [],
         workflow: [],
       },
     });
@@ -412,19 +393,26 @@ describe("Outfit panel character link", () => {
 });
 
 describe("LoRA metadata panel", () => {
-  it("saves weight and trigger words", async () => {
+  it("saves the file name and trigger words with a default weight of 1", async () => {
     const { controller } = mount_assets_view();
     await click_tab("LoRA");
     await dom().find('button[aria-label="Add LoRA"]').trigger("click");
     await dom().find('input[placeholder="Name"]').setValue("Detail LoRA");
-    const trigger_words_input = dom().findAll('[role="dialog"] input[type="text"]')[1];
+    const [, file_name_input, trigger_words_input] = dom().findAll(
+      '[role="dialog"] input[type="text"]',
+    );
+    await file_name_input?.setValue("detail_v1");
     await trigger_words_input?.setValue("detailed, sharp focus");
     await dom().find('button[type="submit"]').trigger("click");
     await flushPromises();
     expect(controller.save_asset).toHaveBeenCalledWith(
       "lora",
       expect.objectContaining({
-        payload: expect.objectContaining({ trigger_words: "detailed, sharp focus" }),
+        payload: expect.objectContaining({
+          file_name: "detail_v1",
+          weight: 1,
+          trigger_words: "detailed, sharp focus",
+        }),
       }),
     );
   });

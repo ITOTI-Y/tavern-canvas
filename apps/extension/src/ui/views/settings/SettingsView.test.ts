@@ -1,5 +1,5 @@
 import type { TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { markRaw, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
@@ -51,6 +51,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     max_chat_history: 4,
     max_images_per_message: 2,
     prompt_preset_id: null,
+    world_info: { mode: "chat" },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: { endpoint: null, token_secret_id: TOKEN_REFERENCE, http_acknowledgments: {} },
@@ -87,7 +88,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       jobs: [],
     },
     llm_connections: { connections: [], selected_connection_id: null },
-    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -96,7 +96,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -575,6 +575,7 @@ describe("SettingsView gateway settings", () => {
             max_chat_history: 4,
             max_images_per_message: 2,
             prompt_preset_id: null,
+            world_info: { mode: "chat" },
           },
           translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
@@ -629,6 +630,7 @@ describe("SettingsView gateway settings", () => {
             max_chat_history: 4,
             max_images_per_message: 2,
             prompt_preset_id: null,
+            world_info: { mode: "chat" },
           },
           translation: { deepl_endpoint: "free", glossary: [] },
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
@@ -684,6 +686,7 @@ function recording_settings_capability(
       return Promise.resolve(current);
     },
     set_analysis_key: vi.fn(() => Promise.resolve()),
+    list_worldbooks: vi.fn(() => Promise.resolve([])),
     clear_analysis_key: vi.fn(() => Promise.resolve()),
     set_deepl_key: vi.fn(() => Promise.resolve()),
     clear_deepl_key: vi.fn(() => Promise.resolve()),
@@ -729,6 +732,32 @@ describe("SettingsView illustration settings", () => {
       "in_use",
       "Analysis preset",
     ]);
+  });
+
+  it("lists the world info books when analysis should read one book, and can turn world info off", async () => {
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const capabilities = create_unavailable_capabilities();
+    const settings = recording_settings_capability(updates);
+    const list_worldbooks = vi.fn(() => Promise.resolve(["Town", "Wilds"]));
+    const controller = build_controller({
+      ...capabilities,
+      settings: { ...settings, list_worldbooks },
+    });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+    const radio = (label: string) =>
+      wrapper
+        .get('[data-testid="illustration-settings"]')
+        .findAll('[role="radio"]')
+        .find((candidate) => candidate.text() === label);
+
+    await radio("One book")?.trigger("click");
+    await flushPromises();
+    expect(list_worldbooks).toHaveBeenCalledOnce();
+    expect(wrapper.find('[role="combobox"][aria-label="Book"]').exists()).toBe(true);
+
+    await radio("None")?.trigger("click");
+    await nextTick();
+    expect(updates.at(-1)?.illustration?.world_info).toEqual({ mode: "off" });
   });
 });
 
@@ -793,7 +822,7 @@ describe("SettingsView appearance settings", () => {
     expect(section.text()).toContain("Theme");
     expect(section.text()).toContain("Language");
     expect(section.text()).toContain("Inspector width");
-    expect(section.text()).toContain("Show optional entry point");
+    expect(section.text()).toContain("Show the floating entry button");
   });
 
   it("changes the theme through the controller and updates the live color mode immediately", async () => {

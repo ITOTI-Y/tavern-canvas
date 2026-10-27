@@ -1,15 +1,11 @@
 import type {
   GenerationState,
-  KnowledgeRecord,
-  KnowledgeRecordDraft,
   LlmConnectionDraft,
   LlmConnectionProfile,
   LlmConnectionTestResult,
   NovelAiAccountStatus,
   NovelAiGenerationDefaults,
   ResolvedNovelAiModel,
-  PersonaProfile,
-  PersonaProfileDraft,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -25,9 +21,7 @@ import type {
   GalleryDomainEvent,
   GenerationDomainEvent,
   GenerationJobSummary,
-  KnowledgeDomainEvent,
   LlmConnectionsDomainEvent,
-  PersonasDomainEvent,
   ProfileConnectionTestResult,
   ProfilesDomainEvent,
   ProviderProfileDraft,
@@ -54,7 +48,6 @@ import {
   type GenerationViewModel,
   type InspectorSelection,
   type InspectorViewModel,
-  type LibraryViewModel,
   type LlmConnectionsViewModel,
   type PromptViewModel,
   type SettingsSection,
@@ -80,16 +73,12 @@ export interface StudioController {
   set_route(route: StudioRoute): void;
   /** Also switches to the settings route. */
   set_settings_section(section: SettingsSection): void;
-  set_color_mode(color_mode: ColorMode): void;
   set_inspector_width(width: number): void;
   set_inspector_collapsed(collapsed: boolean): void;
   select_inspector_record(selection: InspectorSelection | null): void;
-  select_provider_profile(profile_id: Uuid | null): Promise<void>;
   select_prompt_preset(preset_id: Uuid): Promise<void>;
   start_new_prompt_preset(): void;
-  clear_prompt_draft(): void;
   update_prompt_draft(patch: Partial<PromptPresetDraft>): void;
-  remove_prompt_preset(preset_id: Uuid): Promise<void>;
   bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void>;
   test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
   save_prompt_preset(draft: PromptPresetDraft): Promise<void>;
@@ -124,6 +113,7 @@ export interface StudioController {
   set_deepl_key(plaintext_value: string): Promise<void>;
   clear_deepl_key(): Promise<void>;
   set_analysis_key(plaintext_value: string): Promise<void>;
+  list_worldbooks(): Promise<readonly string[]>;
   clear_analysis_key(): Promise<void>;
   initialize_browser_secret_vault(passphrase: string): Promise<void>;
   unlock_browser_secret_vault(passphrase: string): Promise<void>;
@@ -142,14 +132,6 @@ export interface StudioController {
   save_asset(category: AssetCategory, asset: Omit<AssetRecordSummary, "updated_at">): Promise<void>;
   remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void>;
   reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void>;
-
-  save_persona(draft: PersonaProfileDraft): Promise<PersonaProfile>;
-  remove_persona(persona_id: Uuid): Promise<void>;
-  save_knowledge_entry(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord>;
-  set_knowledge_entry_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord>;
-  remove_knowledge_entry(entry_id: Uuid): Promise<void>;
-  set_knowledge_selection(entry_ids: readonly Uuid[]): void;
-  bulk_remove_knowledge_entries(entry_ids: readonly Uuid[]): Promise<void>;
 
   search_vocabulary(
     query: string,
@@ -289,14 +271,9 @@ function create_initial_state(
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
-    },
-    library: {
-      personas: [],
-      knowledge: [],
-      selected_knowledge_ids: [],
     },
     gallery: {
       records: [],
@@ -383,10 +360,6 @@ class StudioControllerImpl implements StudioController {
 
   #patch_assets(patch: Partial<AssetsViewModel>): void {
     this.#patch({ assets: { ...this.#state.assets, ...patch } });
-  }
-
-  #patch_library(patch: Partial<LibraryViewModel>): void {
-    this.#patch({ library: { ...this.#state.library, ...patch } });
   }
 
   #patch_gallery(patch: Partial<GalleryViewModel>): void {
@@ -534,39 +507,6 @@ class StudioControllerImpl implements StudioController {
     }
   }
 
-  #apply_personas_event(event: PersonasDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "persona_upserted") {
-      this.#patch_library({
-        personas: this.#merge_persona(event.persona),
-      });
-    } else {
-      this.#patch_library({
-        personas: this.#state.library.personas.filter((persona) => persona.id !== event.persona_id),
-      });
-    }
-  }
-
-  #apply_knowledge_event(event: KnowledgeDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "entry_upserted") {
-      this.#patch_library({
-        knowledge: upsert_by_id(this.#state.library.knowledge, event.entry, (item) => item.id),
-      });
-    } else {
-      this.#patch_library({
-        knowledge: this.#state.library.knowledge.filter((item) => item.id !== event.entry_id),
-        selected_knowledge_ids: this.#state.library.selected_knowledge_ids.filter(
-          (id) => id !== event.entry_id,
-        ),
-      });
-    }
-  }
-
   #apply_gallery_event(event: GalleryDomainEvent): void {
     if (this.#stopped) {
       return;
@@ -624,12 +564,6 @@ class StudioControllerImpl implements StudioController {
       this.#capabilities.assets.subscribe((event) => {
         this.#apply_assets_event(event);
       }),
-      this.#capabilities.personas.subscribe((event) => {
-        this.#apply_personas_event(event);
-      }),
-      this.#capabilities.knowledge.subscribe((event) => {
-        this.#apply_knowledge_event(event);
-      }),
       this.#capabilities.gallery.subscribe((event) => {
         this.#apply_gallery_event(event);
       }),
@@ -682,20 +616,6 @@ class StudioControllerImpl implements StudioController {
         () => this.#capabilities.assets.load(),
         (records) => {
           this.#patch_assets({ records });
-        },
-      ),
-      this.#load_slice(
-        "personas",
-        () => this.#capabilities.personas.load(),
-        (personas) => {
-          this.#patch_library({ personas });
-        },
-      ),
-      this.#load_slice(
-        "knowledge",
-        () => this.#capabilities.knowledge.load(),
-        (knowledge) => {
-          this.#patch_library({ knowledge });
         },
       ),
       this.#load_slice(
@@ -753,10 +673,6 @@ class StudioControllerImpl implements StudioController {
     this.#patch({ route: "settings", settings_section: section });
   }
 
-  set_color_mode(color_mode: ColorMode): void {
-    this.#patch({ color_mode });
-  }
-
   set_inspector_width(width: number): void {
     this.#patch_inspector({ width });
   }
@@ -767,13 +683,6 @@ class StudioControllerImpl implements StudioController {
 
   select_inspector_record(selection: InspectorSelection | null): void {
     this.#patch_inspector({ selected_record: selection });
-  }
-
-  async select_provider_profile(profile_id: Uuid | null): Promise<void> {
-    await this.#capabilities.settings.update({ active_provider_profile_id: profile_id });
-    if (!this.#stopped) {
-      this.#patch_generation({ active_profile_id: profile_id });
-    }
   }
 
   async select_prompt_preset(preset_id: Uuid): Promise<void> {
@@ -800,30 +709,11 @@ class StudioControllerImpl implements StudioController {
     });
   }
 
-  clear_prompt_draft(): void {
-    this.#patch_prompt({ selected_preset_id: null, draft: null });
-  }
-
   update_prompt_draft(patch: Partial<PromptPresetDraft>): void {
     if (!this.#state.prompt.draft) {
       return;
     }
     this.#patch_prompt({ draft: { ...this.#state.prompt.draft, ...patch } });
-  }
-
-  async remove_prompt_preset(preset_id: Uuid): Promise<void> {
-    await this.#capabilities.prompt_presets.remove(preset_id);
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_prompt({
-      presets: this.#state.prompt.presets.filter((p) => p.id !== preset_id),
-      selected_preset_id:
-        this.#state.prompt.selected_preset_id === preset_id
-          ? null
-          : this.#state.prompt.selected_preset_id,
-      draft: this.#state.prompt.selected_preset_id === preset_id ? null : this.#state.prompt.draft,
-    });
   }
 
   async bulk_remove_prompt_presets(preset_ids: readonly Uuid[]): Promise<void> {
@@ -1024,6 +914,10 @@ class StudioControllerImpl implements StudioController {
     return this.#capabilities.settings.set_analysis_key(plaintext_value);
   }
 
+  list_worldbooks(): Promise<readonly string[]> {
+    return this.#capabilities.settings.list_worldbooks();
+  }
+
   clear_analysis_key(): Promise<void> {
     return this.#capabilities.settings.clear_analysis_key();
   }
@@ -1158,81 +1052,6 @@ class StudioControllerImpl implements StudioController {
 
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView> {
     return this.#capabilities.vocabulary.next_page(cursor);
-  }
-
-  async save_persona(draft: PersonaProfileDraft): Promise<PersonaProfile> {
-    const persona = await this.#capabilities.personas.save(draft);
-    if (!this.#stopped) {
-      this.#patch_library({ personas: this.#merge_persona(persona) });
-    }
-    return persona;
-  }
-
-  async remove_persona(persona_id: Uuid): Promise<void> {
-    await this.#capabilities.personas.remove(persona_id);
-    if (!this.#stopped) {
-      this.#patch_library({
-        personas: this.#state.library.personas.filter((persona) => persona.id !== persona_id),
-      });
-    }
-  }
-
-  #merge_persona(persona: PersonaProfile): readonly PersonaProfile[] {
-    const merged = upsert_by_id(this.#state.library.personas, persona, (item) => item.id);
-    if (!persona.is_active) {
-      return merged;
-    }
-    return merged.map((item) =>
-      item.id === persona.id || item.role !== persona.role ? item : { ...item, is_active: false },
-    );
-  }
-
-  async save_knowledge_entry(draft: KnowledgeRecordDraft): Promise<KnowledgeRecord> {
-    const entry = await this.#capabilities.knowledge.save(draft);
-    if (!this.#stopped) {
-      this.#patch_library({
-        knowledge: upsert_by_id(this.#state.library.knowledge, entry, (item) => item.id),
-      });
-    }
-    return entry;
-  }
-
-  async set_knowledge_entry_enabled(entry_id: Uuid, enabled: boolean): Promise<KnowledgeRecord> {
-    const entry = await this.#capabilities.knowledge.set_enabled(entry_id, enabled);
-    if (!this.#stopped) {
-      this.#patch_library({
-        knowledge: upsert_by_id(this.#state.library.knowledge, entry, (item) => item.id),
-      });
-    }
-    return entry;
-  }
-
-  async remove_knowledge_entry(entry_id: Uuid): Promise<void> {
-    await this.#capabilities.knowledge.remove(entry_id);
-    if (!this.#stopped) {
-      this.#drop_knowledge_entries([entry_id]);
-    }
-  }
-
-  set_knowledge_selection(entry_ids: readonly Uuid[]): void {
-    this.#patch_library({ selected_knowledge_ids: [...entry_ids] });
-  }
-
-  async bulk_remove_knowledge_entries(entry_ids: readonly Uuid[]): Promise<void> {
-    await this.#capabilities.knowledge.bulk_remove(entry_ids);
-    if (!this.#stopped) {
-      this.#drop_knowledge_entries(entry_ids);
-    }
-  }
-
-  #drop_knowledge_entries(entry_ids: readonly Uuid[]): void {
-    const removed = new Set(entry_ids);
-    this.#patch_library({
-      knowledge: this.#state.library.knowledge.filter((item) => !removed.has(item.id)),
-      selected_knowledge_ids: this.#state.library.selected_knowledge_ids.filter(
-        (id) => !removed.has(id),
-      ),
-    });
   }
 
   select_llm_connection(connection_id: Uuid | null): void {

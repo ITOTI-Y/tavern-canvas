@@ -20,6 +20,9 @@ export type {
   HostMessageSwipeSnapshot,
   HostRegexScript,
   HostSwipeLocation,
+  HostWorldInfo,
+  HostWorldbookEntry,
+  HostWorldbookKey,
   PresetGenerationRequest,
   PresetGenerationResult,
 } from "./host_adapter.js";

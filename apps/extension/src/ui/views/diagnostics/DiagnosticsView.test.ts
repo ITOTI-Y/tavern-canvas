@@ -36,7 +36,7 @@ const FULL_MATRIX = {
   main_generation_events: { available: true },
   preset_generation: {
     available: false,
-    reason: "TavernHelper.generate or stopGenerationById is unavailable",
+    reason: "TavernHelper.generate, stopGenerationById or the world info functions are unavailable",
   },
   message_swipe_metadata: { available: true },
   tavern_regex: { available: true },
@@ -85,7 +85,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       jobs: [],
     },
     llm_connections: { connections: [], selected_connection_id: null },
-    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -94,7 +93,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -121,6 +120,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           max_chat_history: 4,
           max_images_per_message: 2,
           prompt_preset_id: null,
+          world_info: { mode: "chat" },
         },
         translation: { deepl_endpoint: "free", glossary: [] },
         gateway: {
@@ -263,6 +263,7 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
     max_chat_history: 4,
     max_images_per_message: 2,
     prompt_preset_id: null,
+    world_info: { mode: "chat" },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: {

@@ -20,16 +20,6 @@ export function resolve_capability<TValue>(build: () => TValue): CapabilityResol
   }
 }
 
-export async function resolve_capability_async<TValue>(
-  build: () => Promise<TValue>,
-): Promise<CapabilityResolution<TValue>> {
-  try {
-    return available(await build());
-  } catch (error) {
-    return unavailable(describe_failure(error));
-  }
-}
-
 export function describe_failure(error: unknown): string {
   if (error instanceof Error && error.message.trim() !== "") {
     return error.message;

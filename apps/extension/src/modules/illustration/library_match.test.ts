@@ -4,14 +4,15 @@ import { match_library, mentions, type SlotLibrary } from "./library_match.js";
 
 const LIBRARY: SlotLibrary = {
   characters: [
-    { id: "c1", name: "Ann", appearance: "red hair", excluded_traits: "" },
-    { id: "c2", name: "小雪", appearance: "white hair", excluded_traits: "" },
+    { id: "c1", name: "Ann", appearance: "red hair", excluded_traits: "", reference: null },
+    { id: "c2", name: "小雪", appearance: "white hair", excluded_traits: "", reference: null },
   ],
   outfits: [
     { id: "o1", name: "School uniform", description: "serafuku", character_id: "c1" },
     { id: "o2", name: "Ball gown", description: "ball gown", character_id: "c1" },
     { id: "o3", name: "Raincoat", description: "yellow raincoat", character_id: null },
   ],
+  loras: [],
 };
 
 describe("mentions", () => {

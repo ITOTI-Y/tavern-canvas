@@ -109,6 +109,7 @@ function create_capability(
       secrets,
       browser_secret_vault,
       host_secrets: secrets,
+      list_worldbooks: null,
     }),
   };
 }

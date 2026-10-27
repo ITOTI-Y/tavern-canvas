@@ -108,7 +108,7 @@ function build_matrix(
     ),
     preset_generation: available_when(
       helper.preset_generation,
-      "TavernHelper.generate or stopGenerationById is unavailable",
+      "TavernHelper.generate, stopGenerationById or the world info functions are unavailable",
     ),
     message_swipe_metadata: available_when(
       helper.message_swipe_metadata && sillytavern.message_swipe_metadata,

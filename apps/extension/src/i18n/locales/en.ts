@@ -61,9 +61,7 @@ const common = {
     empty_description: "Select a job, image, or asset to see its details here.",
     selection: {
       id_label: "ID",
-      kind_generation_job: "Generation job",
       kind_gallery_record: "Gallery image",
-      kind_asset: "Asset",
     },
   },
   notifications: {
@@ -120,13 +118,6 @@ const prompt = {
     negative_label: "Fixed negative prompt",
     negative_placeholder: "Text always added before the generated negative prompt",
   },
-  quality_controls: {
-    title: "Quality controls",
-    ucp_label: "Universal Composition Prompt",
-    ucp_description: "Apply the shared composition prompt to every generation from this preset.",
-    aqt_label: "Auto Quality Tags",
-    aqt_description: "Append the standard quality tag set automatically.",
-  },
   replacement_rules: {
     title: "Replacement rules",
     add_action: "Add rule",
@@ -154,37 +145,16 @@ const prompt = {
   },
   builder: {
     title: "Prompt builder",
-    context_preview_title: "Context preview",
-    world_info_label: "World Info",
-    world_info_empty_description: "No World Info entries are active for the current context.",
-    user_persona_label: "User persona",
-    user_persona_empty_description: "No user persona is connected to this context yet.",
-    character_context_label: "Character context",
-    character_context_empty_description: "No character context is connected to this context yet.",
-  },
-  test_panel: {
-    title: "Private prompt test",
-    run_action: "Run test",
-    tools_disabled_note: "Tools are disabled for this test run.",
-    running: "Running the prompt against the private LLM channel",
-    result_title: "Result",
-    input_label: "Test prompt",
-    input_placeholder: "Enter the prompt to send to the private LLM channel",
-    unavailable_description:
-      "The private LLM channel is not connected yet, so this test cannot run.",
   },
 };
 
 const assets = {
   tabs: {
     vocabulary: "Vocabulary",
-    personas: "Personas",
-    knowledge: "Knowledge",
     characters: "Characters",
     outfits: "Outfits",
     lora: "LoRA",
     vibe: "Vibe",
-    reference: "Reference",
     workflow: "Workflow",
   },
   vocabulary: {
@@ -204,50 +174,6 @@ const assets = {
     nsfw_disclosure_hint:
       "These packages are never installed automatically. Review them before installing.",
   },
-  personas: {
-    empty_description:
-      "Add a persona to give the chat a speaker identity, either your own or the assistant's.",
-    add_action: "Add persona",
-    role_label: "Speaks as",
-    roles: {
-      assistant: "Assistant",
-      user: "You",
-    },
-    description_label: "Description",
-    description_hint: "How this persona speaks and behaves. Sent as part of the system prompt.",
-    greeting_label: "Opening line",
-    greeting_hint: "Shown at the start of a new chat. Leave empty to skip it.",
-    active_badge: "Active",
-    active_toggle_label: "Active",
-    delete_confirm_description:
-      "This deletes the persona and its description. Chats that already used it keep their messages.",
-  },
-  knowledge: {
-    empty_description:
-      "Add a knowledge entry to feed background facts into prompts when its keywords appear.",
-    add_action: "Add knowledge entry",
-    title_label: "Title",
-    source_type_label: "Source",
-    source_types: {
-      manual: "Written here",
-      imported: "Imported",
-      character: "From a character",
-    },
-    content_label: "Content",
-    content_hint: "The text injected into the prompt when this entry is triggered.",
-    keywords_label: "Keywords",
-    keywords_hint: "Separate keywords with commas. Leave empty to keep the entry always available.",
-    priority_label: "Priority",
-    priority_hint: "Higher priority entries survive when the context budget runs short.",
-    priority_summary: "Priority {priority}",
-    enabled_label: "Enabled",
-    select_label: "Select {title}",
-    select_all_label: "Select all",
-    bulk_delete_action: "Delete {count} selected",
-    bulk_delete_confirm_title: "Delete {count} knowledge entries?",
-    delete_confirm_description:
-      "This removes the entry and its content. Prompts stop including it immediately.",
-  },
   characters: {
     empty_title: "No characters saved yet",
     empty_description:
@@ -259,8 +185,18 @@ const assets = {
     excluded_traits_hint:
       "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",
     context_notes_label: "Character context",
-    world_info_reference_label: "World Info reference",
-    world_info_reference_hint: "A note naming the World Info book or entry this links to.",
+    reference_image_label: "Reference image",
+    reference_image_hint:
+      "Scaled so the long edge is at most 1536 px and saved with the character.",
+    reference_image_unreadable: "This file could not be read as an image.",
+    reference_image_remove: "Remove reference image",
+    reference_send_label: "Send with NovelAI requests that show this character",
+    reference_mode_label: "Use as",
+    reference_mode_hint:
+      "Precise reference works on V4.5 only, costs 5 extra Anlas per image and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
+    reference_mode_vibe: "Vibe transfer",
+    reference_mode_img2img: "Image to image",
+    reference_mode_precise: "Precise reference",
   },
   outfits: {
     empty_title: "No outfits saved yet",
@@ -271,9 +207,15 @@ const assets = {
     character_placeholder: "Select a character",
   },
   lora: {
-    empty_title: "No LoRA metadata yet",
-    empty_description: "Add a LoRA entry to track its trigger words and recommended weight.",
+    empty_title: "No LoRA yet",
+    empty_description:
+      "Add a LoRA and link it to a character. SD WebUI requests that show the character get the LoRA and its trigger words.",
     add_action: "Add LoRA",
+    file_name_label: "File name",
+    file_name_hint: "The LoRA's file name in SD WebUI without the extension, such as seraphina_v2.",
+    character_label: "Character",
+    character_hint: "A LoRA linked to no character is never added automatically.",
+    character_placeholder: "Choose a character",
     weight_label: "Weight",
     trigger_words_label: "Trigger words",
   },
@@ -291,13 +233,6 @@ const assets = {
     image_label: "Image",
     image_hint: "Resized to at most 1536 px and stored with the group.",
     image_unreadable: "This file could not be read as an image.",
-  },
-  reference: {
-    empty_title: "No reference images saved yet",
-    empty_description: "Save a reference image here to reuse it across generations.",
-    add_action: "Add reference",
-    source_url_label: "Source URL",
-    notes_label: "Notes",
   },
   workflow: {
     empty_title: "No ComfyUI workflows imported yet",
@@ -327,7 +262,7 @@ const assets = {
 
 const gallery = {
   empty_title: "No generated images yet",
-  empty_description: "Generate an image from the Workbench to see it here.",
+  empty_description: "Images appear here once a chat reply has been illustrated.",
   filters: {
     title: "Filters",
     provider_label: "Provider",
@@ -465,13 +400,22 @@ const settings = {
     custom_model_label: "Model",
     custom_key_label: "API key",
     custom_key_hint:
-      "Stored with your other Inkwell credentials. Reading it back needs allowKeysExposure in SillyTavern, or the encrypted browser vault under Settings > Connections.",
+      "Stored in the same backend as your other Inkwell credentials. With the SillyTavern secret store chosen under Settings > General, reading it back needs allowKeysExposure in SillyTavern.",
     custom_key_save: "Save key",
     custom_key_clear: "Remove key",
     custom_key_saved: "Key saved.",
     custom_key_cleared: "Key removed.",
     custom_key_failed: "The key could not be changed.",
     chat_history_label: "Chat messages sent with the analysis",
+    world_info_label: "World info",
+    world_info_chat: "Current chat's books",
+    world_info_worldbook: "One book",
+    world_info_off: "None",
+    world_info_hint:
+      "The current chat's books are what SillyTavern activates from the chat, including global, character and chat books. With one book, only its constant entries and the entries the analyzed reply's keywords activate are sent, in place of what SillyTavern activates.",
+    worldbook_label: "Book",
+    worldbook_placeholder: "Choose a book",
+    worldbook_unavailable: "The book list could not be read. JS-Slash-Runner must be enabled.",
     max_images_label: "Images per reply at most",
     prompt_preset_label: "Prompt preset for image prompts",
     prompt_preset_none: "None",
@@ -692,7 +636,7 @@ const settings = {
     language_zh_cn: "Simplified Chinese",
     language_en: "English",
     inspector_width_label: "Inspector width",
-    optional_entry_label: "Show optional entry point in the extensions menu",
+    optional_entry_label: "Show the floating entry button",
   },
   data: {
     vocabulary_channel_label: "Vocabulary update channel",

@@ -179,7 +179,6 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
       jobs: [],
     },
     llm_connections: { connections: [], selected_connection_id: null },
-    library: { personas: [], knowledge: [], selected_knowledge_ids: [] },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -188,7 +187,7 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], reference: [], workflow: [] },
+      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [] },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -224,7 +223,6 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_route: vi.fn(),
     set_settings_section: vi.fn(),
     reveal_gallery_source: vi.fn(),
-    set_color_mode: vi.fn(),
     set_inspector_width: vi.fn(),
     set_inspector_collapsed: vi.fn(),
     select_inspector_record: vi.fn(),
@@ -247,25 +245,11 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     delete_gallery_record: vi.fn(() => Promise.resolve()),
     bulk_delete_gallery_records: vi.fn(() => Promise.resolve()),
     update_prompt_draft: vi.fn(),
-    clear_prompt_draft: vi.fn(),
     select_prompt_preset: vi.fn(),
     start_new_prompt_preset: vi.fn(),
-    remove_prompt_preset: vi.fn(() => Promise.resolve()),
     bulk_remove_prompt_presets: vi.fn(() => Promise.resolve()),
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
-    select_provider_profile: vi.fn(),
     select_llm_connection: vi.fn(),
-    save_persona: vi.fn(() => Promise.resolve({}) as ReturnType<StudioController["save_persona"]>),
-    remove_persona: vi.fn(() => Promise.resolve()),
-    save_knowledge_entry: vi.fn(
-      () => Promise.resolve({}) as ReturnType<StudioController["save_knowledge_entry"]>,
-    ),
-    set_knowledge_entry_enabled: vi.fn(
-      () => Promise.resolve({}) as ReturnType<StudioController["set_knowledge_entry_enabled"]>,
-    ),
-    remove_knowledge_entry: vi.fn(() => Promise.resolve()),
-    set_knowledge_selection: vi.fn(),
-    bulk_remove_knowledge_entries: vi.fn(() => Promise.resolve()),
     save_llm_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["save_llm_connection"]>,
     ),
@@ -290,6 +274,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     set_gateway_token: vi.fn(() => Promise.resolve()),
     clear_gateway_token: vi.fn(() => Promise.resolve()),
     set_analysis_key: vi.fn(() => Promise.resolve()),
+    list_worldbooks: vi.fn(() => Promise.resolve([])),
     clear_analysis_key: vi.fn(() => Promise.resolve()),
     set_deepl_key: vi.fn(() => Promise.resolve()),
     clear_deepl_key: vi.fn(() => Promise.resolve()),
@@ -364,7 +349,7 @@ describe("GalleryView: state surface and data flow into ImageGrid", () => {
   it("shows the composed empty state with no records and not loading", () => {
     mount_gallery_view();
     expect(dom().text()).toContain("No generated images yet");
-    expect(dom().text()).toContain("Generate an image from the Workbench");
+    expect(dom().text()).toContain("Images appear here once a chat reply has been illustrated.");
   });
 
   it("passes the correct select/open-preview accessible-name labels to ImageGrid, not select_all/download", () => {

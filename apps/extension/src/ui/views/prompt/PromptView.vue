@@ -10,12 +10,9 @@ import StateSurface from "../../components/StateSurface.vue";
 import ToastViewport from "../../components/ToastViewport.vue";
 import type { PromptPresetDraft, PromptRegexRule } from "../../contracts/ui_capabilities.js";
 import type { CommandState, StudioState } from "../../contracts/view_models.js";
-import type { ContextPreview } from "./context_preview.js";
 import PresetBrowser from "./PresetBrowser.vue";
 import PromptBuilder from "./PromptBuilder.vue";
-import PromptTestPanel from "./PromptTestPanel.vue";
 import styles from "./prompt.module.css";
-import QualityControls from "./QualityControls.vue";
 import RegexRules from "./RegexRules.vue";
 import ReplacementRules from "./ReplacementRules.vue";
 import { use_toasts } from "./use_toasts.js";
@@ -23,8 +20,6 @@ import { use_toasts } from "./use_toasts.js";
 const props = defineProps<{
   readonly state: StudioState;
   readonly testRegex: (rule: PromptRegexRule, sampleText: string) => Promise<string>;
-  readonly testCommand?: CommandState<string>;
-  readonly contextPreview?: ContextPreview | null;
 }>();
 
 const emit = defineEmits<{
@@ -33,7 +28,6 @@ const emit = defineEmits<{
   "bulk-delete-presets": [presetIds: Uuid[]];
   "update-draft": [patch: Partial<PromptPresetDraft>];
   save: [draft: PromptPresetDraft];
-  "run-test": [input: string];
 }>();
 
 const { t } = useI18n();
@@ -41,10 +35,7 @@ const { toasts, push: push_toast, dismiss: dismiss_toast } = use_toasts();
 
 const saved_snapshot = ref<PromptPresetDraft | null>(null);
 const awaiting_baseline = ref(false);
-const ucp_enabled = ref(false);
-const aqt_enabled = ref(false);
 const pending_action = ref<{ kind: "select"; presetId: Uuid } | { kind: "new" } | null>(null);
-const test_input = ref("");
 const regex_test_results = ref<Record<string, CommandState<string>>>({});
 
 function snapshot_key(draft: PromptPresetDraft | null): string {
@@ -63,8 +54,6 @@ watch(
     if (needs_baseline && draft) {
       saved_snapshot.value = draft;
       awaiting_baseline.value = false;
-      ucp_enabled.value = false;
-      aqt_enabled.value = false;
       regex_test_results.value = {};
     }
     if (draft === null) {
@@ -150,11 +139,6 @@ async function run_regex_test(rule: PromptRegexRule, sample_text: string): Promi
     };
   }
 }
-
-function handle_run_test(input: string): void {
-  test_input.value = input;
-  emit("run-test", input);
-}
 </script>
 
 <template>
@@ -203,7 +187,6 @@ function handle_run_test(input: string): void {
           <PromptBuilder
             :fixed-positive-prompt="props.state.prompt.draft.fixed_positive_prompt"
             :fixed-negative-prompt="props.state.prompt.draft.fixed_negative_prompt"
-            :context-preview="props.contextPreview ?? null"
             @update:fixed-positive-prompt="
               (value) => update_draft({ fixed_positive_prompt: value })
             "
@@ -211,8 +194,6 @@ function handle_run_test(input: string): void {
               (value) => update_draft({ fixed_negative_prompt: value })
             "
           />
-
-          <QualityControls v-model:ucp-enabled="ucp_enabled" v-model:aqt-enabled="aqt_enabled" />
 
           <ReplacementRules
             :rules="props.state.prompt.draft.replacement_rules"
@@ -224,18 +205,6 @@ function handle_run_test(input: string): void {
             :test-results="regex_test_results"
             @update:rules="(rules) => update_draft({ regex_rules: rules })"
             @test="run_regex_test"
-          />
-
-          <PromptTestPanel
-            :input-value="test_input"
-            :test-command="
-              props.testCommand ?? {
-                status: 'error',
-                failure: { code: 'capability_not_implemented' },
-              }
-            "
-            @update:input-value="(value) => (test_input = value)"
-            @run="handle_run_test"
           />
         </template>
       </StateSurface>

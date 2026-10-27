@@ -74,39 +74,12 @@ test.describe("InpaintDialog: touch inpaint (real bitmap, real canvas)", () => {
   });
 });
 
-test.describe("ImageEditDialog: preset highlighting and submenu", () => {
-  test("renders the highlighted preset and the 4-way processing submenu", async ({ page }) => {
-    await goto_panel(page, "edit");
-    await expect(page.locator('[class*="editHighlightMatch"]')).toHaveText("masterpiece");
-    for (const label of ["Banana retouch", "Grok video", "ComfyUI inpaint", "NovelAI inpaint"]) {
-      await expect(page.locator(`button[aria-label="${label}"]`)).toBeVisible();
-    }
-  });
-});
-
-test.describe("GenerationParametersDialog: dimensions mode", () => {
-  test("width/height steppers render and generate is clickable", async ({ page }) => {
-    await goto_panel(page, "params");
-    await expect(page.locator('[role="spinbutton"]')).toHaveCount(2);
-    await page.locator('button[aria-label="Generate"]').click();
-  });
-});
-
-test.describe("media_command_service: four-image, video, and failed-edit flows in a real browser", () => {
+test.describe("media_command_service: four-image and failed flows in a real browser", () => {
   test("a four-result submission completes with 4 stored images", async ({ page }) => {
     await goto_panel(page, "jobs");
     await page.locator('[data-testid="run-four-image"]').click();
     await expect(page.locator('[data-testid="jobs-log"]')).toContainText(
       "four-image: state=completed image_count=4",
-      { timeout: 10_000 },
-    );
-  });
-
-  test("a video submission completes and stores a video/mp4 asset", async ({ page }) => {
-    await goto_panel(page, "jobs");
-    await page.locator('[data-testid="run-video"]').click();
-    await expect(page.locator('[data-testid="jobs-log"]')).toContainText(
-      "video: state=completed image_count=1",
       { timeout: 10_000 },
     );
   });

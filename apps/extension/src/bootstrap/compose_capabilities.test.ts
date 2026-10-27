@@ -63,6 +63,8 @@ function create_globals(overrides: { readonly with_settings?: boolean } = {}): o
       setChatMessages: vi.fn(),
       generate: vi.fn(),
       stopGenerationById: vi.fn(),
+      getWorldbookNames: vi.fn(() => []),
+      getWorldbook: vi.fn(() => Promise.resolve([])),
       getTavernRegexes: vi.fn(() => []),
       replaceTavernRegexes: vi.fn(),
       retrieveDisplayedMessage: vi.fn(() => ({ get: () => undefined })),
@@ -137,10 +139,8 @@ describe("compose_studio_capabilities", () => {
         "diagnostics",
         "gallery",
         "generation",
-        "knowledge",
         "llm_connections",
         "novelai",
-        "personas",
         "profiles",
         "prompt_presets",
         "settings",
@@ -162,8 +162,6 @@ describe("compose_studio_capabilities", () => {
       "diagnostics",
       "llm_connections",
       "novelai",
-      "personas",
-      "knowledge",
     ] as const) {
       expect(status_of(composition.resolutions, capability_id)).toBe("available");
     }
@@ -186,8 +184,6 @@ describe("compose_studio_capabilities", () => {
       "vocabulary",
       "llm_connections",
       "novelai",
-      "personas",
-      "knowledge",
     ] as const) {
       const row = composition.resolutions.find((entry) => entry.capability_id === capability_id);
       expect(row?.status).toBe("unavailable");
@@ -223,7 +219,7 @@ describe("compose_studio_capabilities", () => {
     });
 
     expect(composition.host).toBeNull();
-    expect(composition.resolutions).toHaveLength(12);
+    expect(composition.resolutions).toHaveLength(10);
     expect(status_of(composition.resolutions, "generation")).toBe("unavailable");
     // Diagnostics stays real so the shell can still explain why everything else is blocked.
     expect(status_of(composition.resolutions, "diagnostics")).toBe("available");
@@ -257,7 +253,7 @@ describe("compose_studio_capabilities", () => {
 
     const bundle = await composition.capabilities.diagnostics.export_support_bundle();
     expect(bundle.version).toBe("3.0.0-test");
-    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(12);
+    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(10);
     expect(JSON.stringify(bundle.redacted_settings)).not.toContain("token_secret_id");
     await composition.dispose();
   });
@@ -330,47 +326,6 @@ describe("compose_studio_capabilities", () => {
     await composition.dispose();
   });
 
-  it("round-trips a persona through the version 1 character_profiles store", async () => {
-    const composition = await compose();
-    const persona_id = "33333333-3333-4333-8333-333333333333";
-
-    await composition.capabilities.personas.save({
-      id: persona_id,
-      display_name: "Ling",
-      role: "user",
-      description: "A cartographer",
-      greeting: "Charts, then tea.",
-      avatar_image_id: null,
-      is_active: true,
-    });
-
-    await expect(composition.capabilities.personas.load()).resolves.toMatchObject([
-      { id: persona_id, display_name: "Ling", role: "user", is_active: true },
-    ]);
-    await composition.dispose();
-  });
-
-  it("round-trips a knowledge entry through the version 1 knowledge_entries store", async () => {
-    const composition = await compose();
-    const entry_id = "44444444-4444-4444-8444-444444444444";
-
-    await composition.capabilities.knowledge.save({
-      id: entry_id,
-      title: "Harbour district",
-      source_type: "manual",
-      content: "Fog rolls in after dusk.",
-      keywords: ["harbour"],
-      priority: 10,
-      enabled: true,
-    });
-    await composition.capabilities.knowledge.set_enabled(entry_id, false);
-
-    await expect(composition.capabilities.knowledge.load()).resolves.toMatchObject([
-      { id: entry_id, title: "Harbour district", enabled: false },
-    ]);
-    await composition.dispose();
-  });
-
   it("round-trips an LLM connection through the version 3 llm_connections store", async () => {
     const composition = await compose();
     const connection_id = "55555555-5555-4555-8555-555555555555";
@@ -421,21 +376,22 @@ describe("compose_studio_capabilities", () => {
     await composition.dispose();
   });
 
-  it("rejects asset categories that have no v3 store instead of silently dropping them", async () => {
+  it("stores LoRA entries in their own store", async () => {
     const composition = await compose();
 
-    await expect(
-      composition.capabilities.assets.save("lora", {
-        id: "22222222-2222-4222-8222-222222222222",
-        category: "lora",
-        record_key: "",
-        display_name: "Anime LoRA",
-        payload: {},
-      }),
-    ).rejects.toMatchObject({ code: CAPABILITY_UNAVAILABLE_CODE });
+    await composition.capabilities.assets.save("lora", {
+      id: "22222222-2222-4222-8222-222222222222",
+      category: "lora",
+      record_key: "",
+      display_name: "Anime LoRA",
+      payload: { file_name: "anime_v2", weight: 0.8 },
+    });
 
     const records = await composition.capabilities.assets.load();
-    expect(records.lora).toEqual([]);
+    expect(records.lora).toMatchObject([
+      { display_name: "Anime LoRA", payload: { file_name: "anime_v2", weight: 0.8 } },
+    ]);
+    expect(records.character).toEqual([]);
     await composition.dispose();
   });
 });
@@ -457,8 +413,8 @@ describe("create_provider_transport", () => {
   });
 
   it("refuses to drive the job executor from a transport it cannot honor", () => {
-    expect(() => create_provider_transport({ kind: "tauri" })).toThrowError(
-      /cannot drive the job executor/u,
-    );
+    expect(() =>
+      create_provider_transport({ kind: "gateway", endpoint: "https://gateway.example" }),
+    ).toThrowError(/cannot drive the job executor/u);
   });
 });

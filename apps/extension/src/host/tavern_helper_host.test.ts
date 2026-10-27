@@ -26,6 +26,8 @@ function create_helper(overrides: Partial<TavernHelperSurface> = {}): TavernHelp
     getTavernRegexes: vi.fn(() => []),
     replaceTavernRegexes: vi.fn(() => Promise.resolve()),
     retrieveDisplayedMessage: vi.fn(() => ({ get: () => undefined })),
+    getWorldbookNames: vi.fn(() => []),
+    getWorldbook: vi.fn(() => Promise.resolve([])),
     ...overrides,
   };
 }
@@ -127,6 +129,7 @@ describe("TavernHelperHost", () => {
         source: "openai",
       },
       json_schema: { name: "illustrations", value: { type: "object" } },
+      world_info: { kind: "chat" },
     });
 
     expect(result).toEqual({ content: '{"a":1}', reasoning: "thinking" });
@@ -141,6 +144,65 @@ describe("TavernHelperHost", () => {
       custom_api: { apiurl: "https://llm.example", key: "k", model: "m", source: "openai" },
       json_schema: { name: "illustrations", value: { type: "object" }, strict: true },
     });
+  });
+
+  it("replaces world info and depth entries when the analysis brings its own", async () => {
+    const generate = vi.fn(() => Promise.resolve("{}"));
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+
+    await host.generate_with_preset({
+      generation_id: "g1",
+      preset_name: "in_use",
+      user_input: "analyze",
+      max_chat_history: 4,
+      connection: { kind: "current" },
+      json_schema: null,
+      world_info: { kind: "replace", text: "Doors are blue." },
+    });
+
+    expect(generate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        overrides: {
+          world_info_before: "Doors are blue.",
+          world_info_after: "",
+          chat_history: { with_depth_entries: false },
+        },
+      }),
+    );
+  });
+
+  it("reads world info entries, keeping regular-expression keys", async () => {
+    const getWorldbook = vi.fn(() =>
+      Promise.resolve([
+        {
+          uid: 0,
+          name: "Doors",
+          enabled: true,
+          strategy: {
+            type: "selective",
+            keys: ["door", /gate/iu],
+            keys_secondary: { keys: [] },
+            scan_depth: "same_as_global",
+          },
+          position: { type: "before_character_definition", role: "system", depth: 0, order: 3 },
+          content: "Doors are blue.",
+        },
+      ]),
+    );
+    const host = new TavernHelperHost(create_helper({ getWorldbook }), () => "chat-1");
+
+    await expect(host.read_worldbook("Town")).resolves.toEqual([
+      {
+        enabled: true,
+        strategy: "selective",
+        keys: ["door", { source: "gate", flags: "iu" }],
+        secondary_logic: "and_any",
+        secondary_keys: [],
+        order: 3,
+        content: "Doors are blue.",
+      },
+    ]);
+    expect(getWorldbook).toHaveBeenCalledWith("Town");
   });
 
   it("leaves matching regex scripts alone, including ones the user disabled", async () => {

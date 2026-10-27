@@ -1,8 +1,4 @@
-import type {
-  GoogleImageRequest,
-  ImageGenerationRequest,
-  SdWebuiRequest,
-} from "@tavern-canvas/contracts";
+import type { ImageGenerationRequest, SdWebuiRequest } from "@tavern-canvas/contracts";
 import {
   ImageJobQueue,
   type GenerationJobSnapshot,
@@ -24,26 +20,18 @@ import type {
 } from "@tavern-canvas/providers";
 import { describe, expect, it, vi } from "vitest";
 
-import { build_image_edit_request } from "./image_edit.js";
-import { build_comfyui_inpaint_request, build_novelai_inpaint_request } from "./inpaint_session.js";
+import { build_novelai_inpaint_request } from "./inpaint_session.js";
 import {
   cancel_media_job,
-  classify_send_button_press,
   MediaExecutionPlanRegistry,
   MediaJobExecutor,
-  navigate_to_source_message,
-  resolve_cached_source_asset,
-  SEND_BUTTON_LONG_PRESS_THRESHOLD_MS,
   submit_manual_generation,
-  submit_manual_video,
-  SourceMessageNotFoundError,
   type CachedSourceAsset,
   type ImageStorePort,
   type MediaCommandDeps,
   type MediaJobExecutorDeps,
   type MediaJobBase,
   type ProviderProfileResolver,
-  type SourceMessageIdentity,
 } from "./media_command_service.js";
 
 const GENERATION_ANCHOR = "a".repeat(64);
@@ -367,9 +355,6 @@ describe("prompt modification and regenerate (including cache-only source)", () 
       },
     });
 
-    const cached = await resolve_cached_source_asset(harness.store, "cached-image-1");
-    expect(cached).not.toBeNull();
-
     const job = await submit_manual_generation(
       harness.deps,
       base({ scene_description: "Cached scene" }),
@@ -378,30 +363,9 @@ describe("prompt modification and regenerate (including cache-only source)", () 
     await wait_for_state(harness.queue, job.job_id, "completed");
     expect(harness.queue.get(job.job_id)?.image_ids).toHaveLength(1);
   });
-
-  it("resolve_cached_source_asset returns null for an unknown image ID", async () => {
-    const harness = create_harness();
-    expect(await resolve_cached_source_asset(harness.store, "missing")).toBeNull();
-  });
 });
 
-describe("SD/NovelAI/ComfyUI inpaint submission integration", () => {
-  it("submits a ComfyUI inpaint request through the generic adapter path", async () => {
-    const harness = create_harness();
-    const request = build_comfyui_inpaint_request({
-      request_id: REQUEST_ID_1,
-      generation_anchor: GENERATION_ANCHOR,
-      workflow_id: ASSET_ID,
-      source_asset_id: ASSET_ID,
-      mask_asset_id: ASSET_ID,
-      positive_prompt: "fix the sky",
-      denoise_strength: 0.7,
-    });
-    const job = await submit_manual_generation(harness.deps, base(), request);
-    await wait_for_state(harness.queue, job.job_id, "completed");
-    expect(harness.adapter.submissions[0]?.request.provider_id).toBe("comfyui");
-  });
-
+describe("NovelAI inpaint submission integration", () => {
   it("submits a NovelAI infill request through the generic adapter path", async () => {
     const harness = create_harness();
     const request = build_novelai_inpaint_request({
@@ -445,99 +409,6 @@ describe("SD/NovelAI/ComfyUI inpaint submission integration", () => {
   });
 });
 
-describe("Google/OpenAI edit submission integration", () => {
-  it("submits an OpenAI edit-mode request", async () => {
-    const harness = create_harness();
-    const request = build_image_edit_request({
-      request_id: REQUEST_ID_1,
-      generation_anchor: GENERATION_ANCHOR,
-      source_asset_id: ASSET_ID,
-      instruction: "brighten the scene",
-      provider_id: "openai_image",
-    });
-    const job = await submit_manual_generation(harness.deps, base(), request);
-    await wait_for_state(harness.queue, job.job_id, "completed");
-    expect(harness.adapter.submissions[0]?.request.provider_id).toBe("openai_image");
-  });
-
-  it("submits a Google edit request", async () => {
-    const harness = create_harness();
-    const request = build_image_edit_request({
-      request_id: REQUEST_ID_1,
-      generation_anchor: GENERATION_ANCHOR,
-      source_asset_id: ASSET_ID,
-      instruction: "brighten the scene",
-      provider_id: "google_image",
-    }) as GoogleImageRequest;
-    const job = await submit_manual_generation(harness.deps, base(), request);
-    await wait_for_state(harness.queue, job.job_id, "completed");
-    expect(harness.adapter.submissions[0]?.request.provider_id).toBe("google_image");
-  });
-});
-
-describe("supported video generation", () => {
-  it("submits a video request and stores the resulting video/mp4 asset", async () => {
-    const mp4_bytes = Uint8Array.from([0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 1, 2, 3]);
-    const transport_body_text = `<video src="https://cdn.example.com/out.mp4"></video>`;
-    const store = new MemoryImageStore();
-    const plans = new MediaExecutionPlanRegistry();
-    const transport: ProviderTransport = {
-      execute: vi.fn(async () => ({
-        status: 200,
-        headers: {},
-        body: new TextEncoder().encode(transport_body_text),
-      })),
-      fetch_remote_asset: vi.fn(async () => ({ status: 200, headers: {}, body: mp4_bytes })),
-    };
-    const executor = new MediaJobExecutor({
-      load_adapters: () => Promise.resolve({}),
-      profiles: {
-        resolve: () =>
-          Promise.resolve({
-            profile_id: "p",
-            provider_id: "google_image",
-            model_allowlist: [],
-            output_mime_type_allowlist: [],
-          }),
-      },
-      transport,
-      assets: { read: vi.fn() },
-      log: { write: vi.fn() },
-      plans,
-      store,
-      ids: new SequenceIdSource(),
-      clock: new FixedClock(),
-      resolve_source_message: (job) => ({
-        chat_id: job.chat_id,
-        message_id: "unattached",
-        swipe_id: job.requested_swipe_id,
-      }),
-      wait: async () => {},
-    });
-    const queue = new ImageJobQueue({
-      executor,
-      persistence: new MemoryPersistence(),
-      job_id_source: new SequenceJobIdSource(),
-      time_source: new SequenceTimeSource(),
-    });
-    const deps: MediaCommandDeps = { queue, plans };
-
-    const job = await submit_manual_video(
-      deps,
-      base(),
-      {
-        route: "/v1/chat/completions",
-        body: new TextEncoder().encode("{}"),
-        content_type: "application/json",
-      },
-      REQUEST_ID_1,
-      "google_image",
-    );
-    await wait_for_state(queue, job.job_id, "completed");
-    expect(store.records.some((record) => record.claimed_media_type === "video/mp4")).toBe(true);
-  });
-});
-
 describe("multiple results", () => {
   it("stores every output asset and lists all their image_ids on the completed job", async () => {
     const harness = create_harness();
@@ -573,20 +444,6 @@ describe("cancellation", () => {
     const job = await submit_manual_generation(harness.deps, base(), sd_request());
     const cancelled = await cancel_media_job(harness.deps, job.job_id);
     expect(cancelled.state).toBe("cancelled");
-  });
-});
-
-describe("classify_send_button_press", () => {
-  it("sends immediately on a plain click (a short press)", () => {
-    expect(classify_send_button_press(0)).toBe("send_immediately");
-    expect(classify_send_button_press(SEND_BUTTON_LONG_PRESS_THRESHOLD_MS - 1)).toBe(
-      "send_immediately",
-    );
-  });
-
-  it("opens the size popup once the press reaches the 500ms threshold", () => {
-    expect(classify_send_button_press(SEND_BUTTON_LONG_PRESS_THRESHOLD_MS)).toBe("open_size_popup");
-    expect(classify_send_button_press(1_200)).toBe("open_size_popup");
   });
 });
 
@@ -637,22 +494,5 @@ describe("failed upload / failed submission", () => {
     const job = await submit_manual_generation(deps, base(), sd_request());
     await wait_for_state(queue, job.job_id, "failed");
     expect(queue.get(job.job_id)?.error).not.toBeNull();
-  });
-});
-
-describe("source-message navigation", () => {
-  it("navigates to the resolved source message identity", async () => {
-    const target: SourceMessageIdentity = { chat_id: "chat-1", message_id: "9", swipe_id: 0 };
-    const navigate = vi.fn();
-    await navigate_to_source_message({ navigate }, target);
-    expect(navigate).toHaveBeenCalledWith(target);
-  });
-
-  it("throws when a record carries no source_message identity", async () => {
-    const navigate = vi.fn();
-    await expect(navigate_to_source_message({ navigate }, null)).rejects.toThrow(
-      SourceMessageNotFoundError,
-    );
-    expect(navigate).not.toHaveBeenCalled();
   });
 });

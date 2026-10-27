@@ -10,8 +10,8 @@ import {
   type DBSchema,
   type ImageBlob,
   ImageBlobSchema,
-  type KnowledgeEntry,
-  KnowledgeEntrySchema,
+  type LoraProfile,
+  LoraProfileSchema,
   type LegacyPreference,
   LegacyPreferenceSchema,
   type LlmConnection,
@@ -101,12 +101,9 @@ export class RegexRuleRepository extends IndexedDbRepository<"regex_rules", Rege
   }
 }
 
-export class KnowledgeEntryRepository extends IndexedDbRepository<
-  "knowledge_entries",
-  KnowledgeEntry
-> {
+export class LoraProfileRepository extends IndexedDbRepository<"lora_profiles", LoraProfile> {
   constructor(database: IDBPDatabase<DBSchema>) {
-    super(database, "knowledge_entries", KnowledgeEntrySchema);
+    super(database, "lora_profiles", LoraProfileSchema);
   }
 }
 
@@ -497,7 +494,7 @@ export interface BusinessRepositories {
   character_profiles: CharacterProfileRepository;
   outfit_profiles: OutfitProfileRepository;
   regex_rules: RegexRuleRepository;
-  knowledge_entries: KnowledgeEntryRepository;
+  lora_profiles: LoraProfileRepository;
   vocabularies: VocabularyRepository;
   vocabulary_groups: VocabularyGroupRepository;
   vocabulary_packages: VocabularyPackageRepository;
@@ -523,7 +520,7 @@ export function create_business_repositories(
     character_profiles: new CharacterProfileRepository(database),
     outfit_profiles: new OutfitProfileRepository(database),
     regex_rules: new RegexRuleRepository(database),
-    knowledge_entries: new KnowledgeEntryRepository(database),
+    lora_profiles: new LoraProfileRepository(database),
     vocabularies: new VocabularyRepository(database),
     vocabulary_groups: new VocabularyGroupRepository(database),
     vocabulary_packages: new VocabularyPackageRepository(database),

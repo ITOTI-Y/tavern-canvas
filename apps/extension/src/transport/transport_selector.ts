@@ -17,16 +17,12 @@ export interface DirectCloudCandidate {
 export interface TransportSelectionInput {
   readonly gateway_endpoint: string | null;
   readonly http_acknowledgments: Readonly<Record<string, string>>;
-  readonly tauri_provider_available: boolean;
-  readonly sillytavern_available: boolean;
   readonly direct_provider_base_url: string | null;
   readonly direct_cloud: DirectCloudCandidate | null;
 }
 
 export type TransportSelection =
   | { readonly kind: "gateway"; readonly endpoint: string }
-  | { readonly kind: "tauri" }
-  | { readonly kind: "host_proxy" }
   | {
       readonly kind: "direct_cloud";
       readonly provider_id: ProviderId;
@@ -43,8 +39,7 @@ export class TransportConfigurationError extends Error {
 
 /**
  * Fixed priority: `gateway` (configuring an endpoint is the opt-in to the higher-security route),
- * `tauri`, `host_proxy`, `direct_cloud` (needs a vault reference and a host that can resolve it),
- * `local_direct`.
+ * `direct_cloud` (needs a vault reference and a host that can resolve it), `local_direct`.
  */
 export function select_transport(input: TransportSelectionInput): TransportSelection {
   if (input.gateway_endpoint !== null) {
@@ -56,12 +51,6 @@ export function select_transport(input: TransportSelectionInput): TransportSelec
       throw new TransportConfigurationError("Cleartext Gateway origin has not been acknowledged");
     }
     return { kind: "gateway", endpoint };
-  }
-  if (input.tauri_provider_available) {
-    return { kind: "tauri" };
-  }
-  if (input.sillytavern_available) {
-    return { kind: "host_proxy" };
   }
   const direct_cloud = select_direct_cloud(input.direct_cloud);
   if (direct_cloud !== null) {

@@ -43,9 +43,11 @@ import {
 import { IllustrationService } from "../modules/illustration/illustration_service.js";
 import {
   IllustrationModule,
+  load_slot_library,
   load_slot_prompt_context,
   new_slot_id,
 } from "../modules/illustration/illustration_module.js";
+import { find_characters } from "../modules/illustration/library_match.js";
 import { NovelAiServiceUnavailableError } from "../modules/novelai/novelai_errors.js";
 import {
   create_prompt_translator,
@@ -80,11 +82,7 @@ import { create_gallery_capability } from "./capabilities/gallery_capability.js"
 import { create_generation_capability } from "./capabilities/generation_capability.js";
 import { create_novelai_capability } from "./capabilities/novelai_capability.js";
 import { HostGenerationOriginSource } from "./capabilities/generation_context.js";
-import {
-  create_knowledge_capability,
-  create_llm_connections_capability,
-  create_personas_capability,
-} from "./capabilities/library_capability.js";
+import { create_llm_connections_capability } from "./capabilities/llm_connections_capability.js";
 import {
   VAULT_KEY_FIELD,
   adapter_profile_of,
@@ -412,6 +410,7 @@ export async function compose_studio_capabilities(
             secrets,
             browser_secret_vault,
             host_secrets: host_secret_destination,
+            list_worldbooks: host === null ? null : () => host.list_worldbooks(),
           }),
         ),
     fallback.settings,
@@ -457,34 +456,6 @@ export async function compose_studio_capabilities(
             }),
           ),
     fallback.llm_connections,
-  );
-
-  const personas = record(
-    "personas",
-    repositories === null
-      ? unavailable(STORAGE_UNAVAILABLE)
-      : resolve_capability(() =>
-          create_personas_capability({
-            repository: repositories.character_profiles,
-            namespace: namespace(),
-            clock: now,
-          }),
-        ),
-    fallback.personas,
-  );
-
-  const knowledge = record(
-    "knowledge",
-    repositories === null
-      ? unavailable(STORAGE_UNAVAILABLE)
-      : resolve_capability(() =>
-          create_knowledge_capability({
-            repository: repositories.knowledge_entries,
-            namespace: namespace(),
-            clock: now,
-          }),
-        ),
-    fallback.knowledge,
   );
 
   const prompt_presets = record(
@@ -552,8 +523,6 @@ export async function compose_studio_capabilities(
               select_transport({
                 gateway_endpoint: gateway_settings?.endpoint ?? null,
                 http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
-                tauri_provider_available: false,
-                sillytavern_available: false,
                 direct_provider_base_url: profile?.base_url ?? null,
                 direct_cloud: profile?.direct_cloud ?? null,
               });
@@ -660,20 +629,31 @@ export async function compose_studio_capabilities(
                     assets,
                     settings_adapter.get_settings().illustration.prompt_preset_id,
                   ),
-                async build_request({ positive_prompt, negative_prompt }) {
+                async build_request({ positive_prompt, negative_prompt, character_prompts }) {
                   const profile = await require_active_profile();
-                  const { build_generation_request } =
-                    await import("../modules/generation/build_generation_request.js");
-                  const request = await build_generation_request(
-                    {
-                      provider_id: profile.provider_id,
-                      positive_prompt,
-                      negative_prompt,
-                      image_count: 1,
-                      references: [],
-                      ...(profile.model_id === null ? {} : { model_id: profile.model_id }),
-                    },
-                    RequestIdSchema.parse(crypto.randomUUID()),
+                  const [{ build_generation_request }, assets_module, library] = await Promise.all([
+                    import("../modules/generation/build_generation_request.js"),
+                    import("../modules/illustration/character_assets.js"),
+                    load_slot_library(assets),
+                  ]);
+                  const characters = find_characters(
+                    character_prompts.map((character) => character.name),
+                    library,
+                  );
+                  const request = assets_module.attach_character_loras(
+                    await build_generation_request(
+                      {
+                        provider_id: profile.provider_id,
+                        positive_prompt,
+                        negative_prompt,
+                        image_count: 1,
+                        references: [],
+                        ...(profile.model_id === null ? {} : { model_id: profile.model_id }),
+                      },
+                      RequestIdSchema.parse(crypto.randomUUID()),
+                    ),
+                    characters,
+                    library.loras,
                   );
                   if (
                     request.provider_id !== "novelai" ||
@@ -683,29 +663,40 @@ export async function compose_studio_capabilities(
                   ) {
                     return request;
                   }
-                  const defaults = read_novelai_defaults(profile.record);
-                  if (defaults === null) {
-                    return request;
-                  }
                   const [{ apply_novelai_defaults }, { reference_image_bytes }, runtime] =
                     await Promise.all([
                       import("../modules/novelai/novelai_profile_defaults.js"),
                       import("../ui/views/assets/reference_image.js"),
                       load_novelai_runtime(),
                     ]);
-                  return apply_novelai_defaults(request, defaults, {
-                    store_input: (bytes) => runtime.store_input(bytes),
-                    async load_vibe(vibe_id) {
-                      const record = await repositories.novelai_vibes.get(namespace(), vibe_id);
-                      const payload = record === null ? {} : read_payload(record);
-                      return typeof payload.image === "string"
-                        ? {
-                            image_bytes: reference_image_bytes(payload.image),
-                            strength: read_number(payload, "strength", 0.6),
-                            information_extracted: read_number(payload, "information_extracted", 1),
-                          }
-                        : null;
-                    },
+                  const defaults = read_novelai_defaults(profile.record);
+                  const configured =
+                    defaults === null
+                      ? request
+                      : await apply_novelai_defaults(request, defaults, {
+                          store_input: (bytes) => runtime.store_input(bytes),
+                          async load_vibe(vibe_id) {
+                            const record = await repositories.novelai_vibes.get(
+                              namespace(),
+                              vibe_id,
+                            );
+                            const payload = record === null ? {} : read_payload(record);
+                            return typeof payload.image === "string"
+                              ? {
+                                  image_bytes: reference_image_bytes(payload.image),
+                                  strength: read_number(payload, "strength", 0.6),
+                                  information_extracted: read_number(
+                                    payload,
+                                    "information_extracted",
+                                    1,
+                                  ),
+                                }
+                              : null;
+                          },
+                        });
+                  return assets_module.attach_character_references(configured, characters, {
+                    store_reference: (data_url) =>
+                      runtime.store_input(reference_image_bytes(data_url)),
                   });
                 },
                 async build_edit_request(edit) {
@@ -828,8 +819,6 @@ export async function compose_studio_capabilities(
       settings,
       llm_connections,
       novelai,
-      personas,
-      knowledge,
     },
     resolutions,
     host,

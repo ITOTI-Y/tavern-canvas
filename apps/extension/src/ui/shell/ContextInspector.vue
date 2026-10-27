@@ -21,33 +21,11 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const is_dragging = ref(false);
 
-const selection_kind_label = computed(() => {
-  const selection = props.selection;
-  if (!selection) {
-    return null;
-  }
-  if (selection.kind === "generation_job") {
-    return t("common.inspector.selection.kind_generation_job");
-  }
-  if (selection.kind === "gallery_record") {
-    return t("common.inspector.selection.kind_gallery_record");
-  }
-  return t("common.inspector.selection.kind_asset");
-});
+const selection_kind_label = computed(() =>
+  props.selection ? t("common.inspector.selection.kind_gallery_record") : null,
+);
 
-const selection_id = computed(() => {
-  const selection = props.selection;
-  if (!selection) {
-    return null;
-  }
-  if (selection.kind === "generation_job") {
-    return selection.job_id;
-  }
-  if (selection.kind === "gallery_record") {
-    return selection.record_id;
-  }
-  return selection.asset_id;
-});
+const selection_id = computed(() => props.selection?.record_id ?? null);
 
 function clamp_width(value: number): number {
   return Math.min(MAX_STORED_WIDTH, Math.max(MIN_STORED_WIDTH, value));

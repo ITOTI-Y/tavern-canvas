@@ -1,9 +1,19 @@
+export type CharacterReferenceMode = "vibe" | "img2img" | "precise";
+
+export interface CharacterReference {
+  /** JPEG data URL. */
+  readonly image: string;
+  readonly mode: CharacterReferenceMode;
+}
+
 export interface LibraryCharacter {
   readonly id: string;
   readonly name: string;
   readonly appearance: string;
   /** Tags kept off this character, sent as its own negative prompt. */
   readonly excluded_traits: string;
+  /** Set only when the user chose to send the reference image with NovelAI requests. */
+  readonly reference: CharacterReference | null;
 }
 
 export interface LibraryOutfit {
@@ -13,10 +23,18 @@ export interface LibraryOutfit {
   readonly character_id: string | null;
 }
 
+export interface LibraryLora {
+  readonly file_name: string;
+  readonly weight: number;
+  readonly trigger_words: string;
+  readonly character_id: string;
+}
+
 /** Entries in library order: a character's first linked outfit is its default. */
 export interface SlotLibrary {
   readonly characters: readonly LibraryCharacter[];
   readonly outfits: readonly LibraryOutfit[];
+  readonly loras: readonly LibraryLora[];
 }
 
 export interface MatchedCharacter {
@@ -57,6 +75,17 @@ export function mentions(text: string, name: string): boolean {
 
 function same_name(left: string, right: string): boolean {
   return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
+/** Library characters with these names, in the order the names are given. */
+export function find_characters(
+  names: readonly string[],
+  library: SlotLibrary,
+): readonly LibraryCharacter[] {
+  return names.flatMap((name) => {
+    const character = library.characters.find((candidate) => same_name(candidate.name, name));
+    return character === undefined ? [] : [character];
+  });
 }
 
 /**

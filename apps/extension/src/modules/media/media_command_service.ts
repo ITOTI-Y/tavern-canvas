@@ -30,8 +30,6 @@ import {
   type StorageDatabase,
 } from "@tavern-canvas/storage";
 
-import { submit_video_generation, type VideoGenerationRequest } from "./video_generation.js";
-
 export class IndexedDbJobPersistence implements JobPersistencePort {
   readonly #database: StorageDatabase;
   readonly #namespace: string;
@@ -68,21 +66,17 @@ export class IndexedDbJobPersistence implements JobPersistencePort {
 
 // Plans are keyed by request_id (known before enqueue) so registration cannot race the queue's microtask-scheduled drain.
 
-export type MediaExecutionPlan =
-  | { readonly kind: "adapter"; readonly request: ImageGenerationRequest }
-  | { readonly kind: "video"; readonly request: VideoGenerationRequest };
-
 export class MediaExecutionPlanRegistry {
-  readonly #plans = new Map<string, MediaExecutionPlan>();
+  readonly #requests = new Map<string, ImageGenerationRequest>();
 
-  register(request_id: string, plan: MediaExecutionPlan): void {
-    this.#plans.set(request_id, plan);
+  register(request: ImageGenerationRequest): void {
+    this.#requests.set(request.request_id, request);
   }
 
-  take(request_id: string): MediaExecutionPlan | undefined {
-    const plan = this.#plans.get(request_id);
-    this.#plans.delete(request_id);
-    return plan;
+  take(request_id: string): ImageGenerationRequest | undefined {
+    const request = this.#requests.get(request_id);
+    this.#requests.delete(request_id);
+    return request;
   }
 }
 
@@ -192,27 +186,15 @@ export class MediaJobExecutor implements JobExecutor {
     job: GenerationJobSnapshot,
     control: JobExecutionControl,
   ): Promise<JobExecutionResult> {
-    const plan = this.#deps.plans.take(job.request_id);
-    if (plan === undefined) {
+    const request = this.#deps.plans.take(job.request_id);
+    if (request === undefined) {
       throw new JobExecutorFailure({ code: "invalid_request", retryable: false });
     }
 
-    const outputs =
-      plan.kind === "video"
-        ? await this.#execute_video(plan.request, control)
-        : await this.#finish(plan.request, await this.#execute_adapter(plan.request, control));
+    const outputs = await this.#finish(request, await this.#execute_adapter(request, control));
 
     const image_ids = await this.#persist_outputs(job, outputs);
     return { image_ids };
-  }
-
-  async #execute_video(
-    request: VideoGenerationRequest,
-    control: JobExecutionControl,
-  ): Promise<readonly ProviderOutputAsset[]> {
-    await control.mark_running();
-    const output = await submit_video_generation(this.#deps.transport, request, control.signal);
-    return [output];
   }
 
   async #execute_adapter(
@@ -290,19 +272,8 @@ export async function submit_manual_generation(
   base: MediaJobBase,
   request: ImageGenerationRequest,
 ): Promise<GenerationJobSnapshot> {
-  deps.plans.register(request.request_id, { kind: "adapter", request });
+  deps.plans.register(request);
   return enqueue_media_job(deps.queue, base, request.request_id, request.provider_id);
-}
-
-export async function submit_manual_video(
-  deps: MediaCommandDeps,
-  base: MediaJobBase,
-  request: VideoGenerationRequest,
-  request_id: RequestId,
-  provider_id: ProviderId,
-): Promise<GenerationJobSnapshot> {
-  deps.plans.register(request_id, { kind: "video", request });
-  return enqueue_media_job(deps.queue, base, request_id, provider_id);
 }
 
 async function enqueue_media_job(
@@ -332,48 +303,4 @@ export function cancel_media_job(
   job_id: string,
 ): Promise<GenerationJobSnapshot> {
   return deps.queue.cancel(job_id);
-}
-
-export const SEND_BUTTON_LONG_PRESS_THRESHOLD_MS = 500;
-
-export type SendButtonPressOutcome = "send_immediately" | "open_size_popup";
-
-export function classify_send_button_press(press_duration_ms: number): SendButtonPressOutcome {
-  return press_duration_ms >= SEND_BUTTON_LONG_PRESS_THRESHOLD_MS
-    ? "open_size_popup"
-    : "send_immediately";
-}
-
-export async function resolve_cached_source_asset(
-  store: ImageStorePort,
-  image_id: string,
-): Promise<CachedSourceAsset | null> {
-  return store.read_image(image_id);
-}
-
-export interface SourceMessageNavigationTarget {
-  readonly chat_id: string;
-  readonly message_id: string;
-  readonly swipe_id: number;
-}
-
-export interface SourceMessageNavigationPort {
-  navigate(target: SourceMessageNavigationTarget): void | Promise<void>;
-}
-
-export class SourceMessageNotFoundError extends Error {
-  constructor() {
-    super("Record carries no source_message identity");
-    this.name = "SourceMessageNotFoundError";
-  }
-}
-
-export async function navigate_to_source_message(
-  navigation: SourceMessageNavigationPort,
-  source_message: SourceMessageIdentity | null,
-): Promise<void> {
-  if (source_message === null) {
-    throw new SourceMessageNotFoundError();
-  }
-  await navigation.navigate(source_message);
 }

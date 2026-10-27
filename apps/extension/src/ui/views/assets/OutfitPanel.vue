@@ -33,6 +33,7 @@ const panel = use_asset_category_panel(
   props.controller,
   () => FIELDS.value,
   () => t("errors.validation_required"),
+  ["character_id"],
 );
 
 const character_options = computed<readonly AppSelectOption[]>(() =>

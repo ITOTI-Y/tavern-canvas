@@ -1,7 +1,5 @@
 import type {
-  KnowledgeRecord,
   LlmConnectionProfile,
-  PersonaProfile,
   TavernCanvasSettings,
   Uuid,
   VocabularyCatalogEntry,
@@ -62,12 +60,6 @@ export interface AssetsViewModel {
   readonly vocabulary_install_command: CommandState<void>;
 }
 
-export interface LibraryViewModel {
-  readonly personas: readonly PersonaProfile[];
-  readonly knowledge: readonly KnowledgeRecord[];
-  readonly selected_knowledge_ids: readonly Uuid[];
-}
-
 export interface GalleryViewModel {
   readonly records: readonly GalleryRecordSummary[];
   readonly selected_record_id: Uuid | null;
@@ -88,10 +80,10 @@ export interface SettingsViewModel {
   readonly update_command: CommandState<TavernCanvasSettings>;
 }
 
-export type InspectorSelection =
-  | { readonly kind: "generation_job"; readonly job_id: Uuid }
-  | { readonly kind: "gallery_record"; readonly record_id: Uuid }
-  | { readonly kind: "asset"; readonly category: AssetCategory; readonly asset_id: Uuid };
+export interface InspectorSelection {
+  readonly kind: "gallery_record";
+  readonly record_id: Uuid;
+}
 
 export interface InspectorViewModel {
   readonly collapsed: boolean;
@@ -126,7 +118,6 @@ export interface StudioState {
   llm_connections: LlmConnectionsViewModel;
   prompt: PromptViewModel;
   assets: AssetsViewModel;
-  library: LibraryViewModel;
   gallery: GalleryViewModel;
   diagnostics: DiagnosticsViewModel;
   settings: SettingsViewModel;

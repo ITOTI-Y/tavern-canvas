@@ -12,11 +12,7 @@ import {
   validate_custom_icon,
   type ViewportSize,
 } from "./floating_entry.js";
-import {
-  MediaStatePlayer,
-  resolve_media_for_state,
-  validate_media_asset,
-} from "./media_state_player.js";
+import { resolve_media_for_state, validate_media_asset } from "./media_state_player.js";
 
 const VIEWPORT: ViewportSize = { width: 1200, height: 800 };
 
@@ -163,16 +159,6 @@ describe("floating_entry: media state resolution (idle/thinking/talk/enter/dragg
       state: "enter",
       asset: null,
     });
-  });
-
-  it("MediaStatePlayer tracks the current state across transitions", () => {
-    const player = new MediaStatePlayer({
-      dragging: { kind: "image", url: "blob:tavern-canvas/dragging" },
-    });
-    expect(player.state).toBe("idle");
-    const resolution = player.transition("dragging");
-    expect(resolution.asset?.url).toBe("blob:tavern-canvas/dragging");
-    expect(player.state).toBe("dragging");
   });
 });
 

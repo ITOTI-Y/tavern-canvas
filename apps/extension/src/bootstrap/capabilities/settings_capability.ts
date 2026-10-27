@@ -37,12 +37,15 @@ export interface SettingsCapabilityDeps {
   readonly browser_secret_vault: BrowserSecretVaultPort | null;
   /** SillyTavern's own secret store, which its server-side routes such as DeepL read from. */
   readonly host_secrets: SecretDestinationPort | null;
+  /** `null` when JS-Slash-Runner is unavailable. */
+  readonly list_worldbooks: (() => readonly string[]) | null;
 }
 
 const SECRET_DESTINATION_UNAVAILABLE = "The selected credential storage backend is unavailable";
 const HOST_SECRETS_UNAVAILABLE = "SillyTavern's secret store is unreachable from this page";
 /** The key SillyTavern's `/api/translate/deepl` route reads. */
 const DEEPL_SECRET_KEY = "deepl";
+const WORLDBOOKS_UNAVAILABLE = "Listing world info books needs JS-Slash-Runner";
 
 function require_database(database: StorageDatabase | null): StorageDatabase {
   if (database === null) {
@@ -126,6 +129,12 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
         derive_analysis_credential_reference(deps.settings.get_settings().active_namespace),
         plaintext_value.trim(),
       );
+    },
+    list_worldbooks() {
+      if (deps.list_worldbooks === null) {
+        return Promise.reject(capability_unavailable_error(WORLDBOOKS_UNAVAILABLE));
+      }
+      return Promise.resolve(deps.list_worldbooks());
     },
     async clear_analysis_key() {
       if (deps.secrets?.delete_secret === undefined) {

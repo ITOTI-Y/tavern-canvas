@@ -192,38 +192,6 @@
   border-bottom: 1px solid var(--tc-divider);
 }
 
-.context_preview {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 16px 12px;
-}
-
-.context_block_title {
-  margin-bottom: 4px;
-  color: var(--tc-text-muted);
-  font-size: 12px;
-}
-
-.context_list {
-  margin: 0;
-  padding-left: 16px;
-}
-
-/* --------------------------------------------------------------------- Quality controls */
-
-.quality_controls {
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--tc-divider);
-}
-
-.switch_list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 0 16px 8px;
-}
-
 /* --------------------------------------------------------------------- Rules (replacement/regex) */
 
 .replacement_rules,
@@ -265,28 +233,5 @@
   flex-basis: 100%;
   margin: 0;
   color: var(--tc-error);
-  font-size: 12px;
-}
-
-/* --------------------------------------------------------------------- Test panel */
-
-.test_panel {
-  display: flex;
-  flex-direction: column;
-}
-
-/* .section_header (shared across every section in this view) already carries its own 16px
-   horizontal padding -- this wraps everything below the title instead of padding .test_panel
-   itself, so the title lines up with every other section instead of getting double-indented. */
-.test_panel_body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 16px 16px;
-}
-
-.tools_disabled_note {
-  margin: 0;
-  color: var(--tc-text-muted);
   font-size: 12px;
 }

@@ -20,12 +20,9 @@ import {
   MediaExecutionPlanRegistry,
   MediaJobExecutor,
   submit_manual_generation,
-  submit_manual_video,
   type MediaCommandDeps,
 } from "../../../apps/extension/src/modules/media/media_command_service.js";
 import { PORTAL_TARGET_KEY } from "../../../apps/extension/src/ui/contracts/portal_keys.js";
-import GenerationParametersDialog from "../../../apps/extension/src/ui/dialogs/GenerationParametersDialog.vue";
-import ImageEditDialog from "../../../apps/extension/src/ui/dialogs/ImageEditDialog.vue";
 import InpaintDialog from "../../../apps/extension/src/ui/dialogs/InpaintDialog.vue";
 import { create_shadow_root } from "../../../apps/extension/src/ui/create_shadow_root.js";
 import { FIRST_PARTY_STYLESHEET } from "../../../apps/extension/src/ui/styles/runtime_stylesheet.js";
@@ -186,40 +183,6 @@ const JobsPanel = defineComponent({
       );
     }
 
-    async function run_video(): Promise<void> {
-      const transport: ProviderTransport = {
-        execute: () =>
-          Promise.resolve({
-            status: 200,
-            headers: {},
-            body: new TextEncoder().encode('<video src="https://example.com/out.mp4">'),
-          }),
-        fetch_remote_asset: () =>
-          Promise.resolve({
-            status: 200,
-            headers: {},
-            body: Uint8Array.from([0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 1, 2, 3]),
-          }),
-      };
-      const deps = create_deps({}, transport);
-      const job = await submit_manual_video(
-        deps,
-        base,
-        {
-          route: "/v1/chat/completions",
-          body: new TextEncoder().encode("{}"),
-          content_type: "application/json",
-        },
-        "11111111-1111-4111-8111-111111111112",
-        "google_image",
-      );
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      const completed = deps.queue.get(job.job_id);
-      log.value.push(
-        `video: state=${String(completed?.state)} image_count=${String(completed?.image_ids.length)}`,
-      );
-    }
-
     async function run_failed_edit(): Promise<void> {
       const deps = create_deps(
         { sd_webui: failing_adapter() },
@@ -255,7 +218,6 @@ const JobsPanel = defineComponent({
           { "data-testid": "run-four-image", onClick: () => void run_four_image() },
           "Run four-image",
         ),
-        h("button", { "data-testid": "run-video", onClick: () => void run_video() }, "Run video"),
         h(
           "button",
           { "data-testid": "run-failed-edit", onClick: () => void run_failed_edit() },
@@ -303,65 +265,8 @@ const InpaintPanel = defineComponent({
   },
 });
 
-const EditPanel = defineComponent({
-  setup() {
-    return () =>
-      h(ImageEditDialog, {
-        open: true,
-        title: "Edit tag",
-        closeLabel: "Close",
-        text: "a cat, masterpiece",
-        locked: false,
-        presets: [{ preset_id: "quality", label: "masterpiece" }],
-        textLabel: "Tag text",
-        resetLabel: "Reset",
-        lockLabel: "Lock",
-        unlockLabel: "Unlock",
-        deleteLabel: "Delete",
-        saveLabel: "Save",
-        processMenuLabel: "Process with",
-        bananaRetouchLabel: "Banana retouch",
-        grokVideoLabel: "Grok video",
-        comfyuiInpaintLabel: "ComfyUI inpaint",
-        novelaiInpaintLabel: "NovelAI inpaint",
-      });
-  },
-});
-
-const ParamsPanel = defineComponent({
-  setup() {
-    const width = ref(1024);
-    const height = ref(1024);
-    return () =>
-      h(GenerationParametersDialog, {
-        open: true,
-        title: "Generation size",
-        closeLabel: "Close",
-        mode: "dimensions",
-        widthLabel: "Width",
-        heightLabel: "Height",
-        width: width.value,
-        height: height.value,
-        widthStepLabel: "Adjust width",
-        heightStepLabel: "Adjust height",
-        aspectRatioLabel: "Aspect ratio",
-        aspectRatioPlaceholder: "Choose an aspect ratio",
-        swapLabel: "Swap",
-        generateLabel: "Generate",
-        "onUpdate:width": (value: number) => {
-          width.value = value;
-        },
-        "onUpdate:height": (value: number) => {
-          height.value = value;
-        },
-      });
-  },
-});
-
 const PANELS = {
   inpaint: InpaintPanel,
-  edit: EditPanel,
-  params: ParamsPanel,
   jobs: JobsPanel,
 } as const;
 

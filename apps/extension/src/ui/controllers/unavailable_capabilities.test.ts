@@ -17,7 +17,6 @@ describe("create_unavailable_capabilities", () => {
       outfit: [],
       lora: [],
       vibe: [],
-      reference: [],
       workflow: [],
     });
     await expect(capabilities.gallery.load()).resolves.toEqual([]);

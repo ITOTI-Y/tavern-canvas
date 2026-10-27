@@ -70,6 +70,10 @@ export interface HostJsonSchema {
   readonly value: Readonly<Record<string, unknown>>;
 }
 
+/** `chat` lets SillyTavern insert the world info it activates for the current chat. */
+export type HostWorldInfo =
+  { readonly kind: "chat" } | { readonly kind: "replace"; readonly text: string };
+
 /** Always runs through a SillyTavern preset: the extension never sends a request the user's preset has not shaped. */
 export interface PresetGenerationRequest {
   readonly generation_id: string;
@@ -78,6 +82,19 @@ export interface PresetGenerationRequest {
   readonly max_chat_history: number;
   readonly connection: HostGenerationConnection;
   readonly json_schema: HostJsonSchema | null;
+  readonly world_info: HostWorldInfo;
+}
+
+export type HostWorldbookKey = string | { readonly source: string; readonly flags: string };
+
+export interface HostWorldbookEntry {
+  readonly enabled: boolean;
+  readonly strategy: "constant" | "selective" | "vectorized";
+  readonly keys: readonly HostWorldbookKey[];
+  readonly secondary_logic: "and_any" | "and_all" | "not_all" | "not_any";
+  readonly secondary_keys: readonly HostWorldbookKey[];
+  readonly order: number;
+  readonly content: string;
 }
 
 export interface PresetGenerationResult {
@@ -117,6 +134,8 @@ export interface HostAdapter {
   /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;
+  list_worldbooks(): readonly string[];
+  read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]>;
   stop_generation(generation_id: string): void;
   /** Installs or updates the scripts; returns whether anything changed, which reloads the chat. */
   sync_regex_scripts(scripts: readonly HostRegexScript[]): Promise<boolean>;

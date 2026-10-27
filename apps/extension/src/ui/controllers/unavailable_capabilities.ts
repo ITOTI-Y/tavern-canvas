@@ -8,9 +8,7 @@ import type {
   DiagnosticsSnapshot,
   GalleryCapability,
   GenerationCapability,
-  KnowledgeCapability,
   LlmConnectionsCapability,
-  PersonasCapability,
   NovelAiCapability,
   ProfilesCapability,
   PromptPresetsCapability,
@@ -40,7 +38,6 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   outfit: [],
   lora: [],
   vibe: [],
-  reference: [],
   workflow: [],
 };
 
@@ -67,6 +64,7 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
     max_chat_history: 4,
     max_images_per_message: 2,
     prompt_preset_id: null,
+    world_info: { mode: "chat" },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
@@ -133,22 +131,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     reorder: unavailable_command,
   };
 
-  const personas: PersonasCapability = {
-    load: () => Promise.resolve([]),
-    subscribe: no_subscription,
-    save: unavailable_command,
-    remove: unavailable_command,
-  };
-
-  const knowledge: KnowledgeCapability = {
-    load: () => Promise.resolve([]),
-    subscribe: no_subscription,
-    save: unavailable_command,
-    set_enabled: unavailable_command,
-    remove: unavailable_command,
-    bulk_remove: unavailable_command,
-  };
-
   const gallery: GalleryCapability = {
     load: () => Promise.resolve([]),
     subscribe: no_subscription,
@@ -189,6 +171,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     set_gateway_token: unavailable_command,
     clear_gateway_token: unavailable_command,
     set_analysis_key: unavailable_command,
+    list_worldbooks: unavailable_command,
     clear_analysis_key: unavailable_command,
     set_deepl_key: unavailable_command,
     clear_deepl_key: unavailable_command,
@@ -210,8 +193,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     novelai,
     prompt_presets,
     assets,
-    personas,
-    knowledge,
     gallery,
     vocabulary,
     diagnostics,

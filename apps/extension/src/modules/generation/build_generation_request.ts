@@ -23,7 +23,7 @@ export class UnsupportedProviderError extends Error {
   readonly code = "workbench_provider_unsupported";
 
   constructor(provider_id: ProviderId) {
-    super(`Workbench cannot build a generation request for provider "${provider_id}" yet.`);
+    super(`Inkwell cannot build a generation request for provider "${provider_id}" yet.`);
     this.name = "UnsupportedProviderError";
   }
 }
@@ -69,7 +69,7 @@ export async function compute_generation_anchor(request_id: Uuid): Promise<strin
   return to_hex(new Uint8Array(digest));
 }
 
-/** Provider-specific required fields use fixed placeholders. ComfyUI is rejected because Workbench cannot supply an existing `workflow_id`. */
+/** Provider-specific required fields use fixed placeholders. ComfyUI is rejected because no existing `workflow_id` can be supplied. */
 export async function build_generation_request(
   input: GenerationDraftInput,
   request_id: Uuid,

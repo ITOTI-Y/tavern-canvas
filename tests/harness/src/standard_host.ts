@@ -72,6 +72,8 @@ export function create_standard_host(options: StandardHostOptions = {}): Standar
     setChatMessages: vi.fn(() => Promise.resolve()),
     generate: vi.fn(() => Promise.resolve("")),
     stopGenerationById: vi.fn(() => true),
+    getWorldbookNames: vi.fn(() => []),
+    getWorldbook: vi.fn(() => Promise.resolve([])),
     getTavernRegexes: vi.fn(() => []),
     replaceTavernRegexes: vi.fn(() => Promise.resolve()),
     retrieveDisplayedMessage: vi.fn(() => ({ get: () => undefined })),

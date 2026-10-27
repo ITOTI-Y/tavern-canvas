@@ -57,33 +57,11 @@ function on_close_auto_focus(event: Event): void {
   element_to_restore_focus_to = null;
 }
 
-const selection_kind_label = computed(() => {
-  const selection = props.selection;
-  if (!selection) {
-    return null;
-  }
-  if (selection.kind === "generation_job") {
-    return t("common.inspector.selection.kind_generation_job");
-  }
-  if (selection.kind === "gallery_record") {
-    return t("common.inspector.selection.kind_gallery_record");
-  }
-  return t("common.inspector.selection.kind_asset");
-});
+const selection_kind_label = computed(() =>
+  props.selection ? t("common.inspector.selection.kind_gallery_record") : null,
+);
 
-const selection_id = computed(() => {
-  const selection = props.selection;
-  if (!selection) {
-    return null;
-  }
-  if (selection.kind === "generation_job") {
-    return selection.job_id;
-  }
-  if (selection.kind === "gallery_record") {
-    return selection.record_id;
-  }
-  return selection.asset_id;
-});
+const selection_id = computed(() => props.selection?.record_id ?? null);
 </script>
 
 <template>

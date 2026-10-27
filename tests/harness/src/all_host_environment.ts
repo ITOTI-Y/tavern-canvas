@@ -168,6 +168,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         max_chat_history: 4,
         max_images_per_message: 2,
         prompt_preset_id: null,
+        world_info: { mode: "chat" },
       },
       translation: { deepl_endpoint: "free", glossary: [] },
       gateway: {
@@ -303,6 +304,8 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         return Promise.resolve({ content: generate_response });
       },
       stopGenerationById: () => true,
+      getWorldbookNames: () => [],
+      getWorldbook: () => Promise.resolve([]),
       getTavernRegexes: () => structuredClone(regex_scripts),
       replaceTavernRegexes: (regexes: TavernRegex[]) => {
         regex_scripts.splice(0, regex_scripts.length, ...structuredClone(regexes));

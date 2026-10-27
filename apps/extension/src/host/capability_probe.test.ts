@@ -13,6 +13,8 @@ function create_globals(version = "4.11.1"): {
     setChatMessages: vi.fn(),
     generate: vi.fn(),
     stopGenerationById: vi.fn(),
+    getWorldbookNames: vi.fn(() => []),
+    getWorldbook: vi.fn(() => Promise.resolve([])),
     getTavernRegexes: vi.fn(),
     replaceTavernRegexes: vi.fn(),
     retrieveDisplayedMessage: vi.fn(),

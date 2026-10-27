@@ -29,16 +29,6 @@ describe("ContextInspector: renders selected_record", () => {
     expect(wrapper.text()).toContain("Nothing selected");
   });
 
-  it("renders a generation_job selection", () => {
-    const wrapper = mount_inspector({
-      kind: "generation_job",
-      job_id: "22222222-2222-4222-8222-222222222222",
-    });
-    expect(wrapper.text()).toContain("Generation job");
-    expect(wrapper.text()).toContain("22222222-2222-4222-8222-222222222222");
-    expect(wrapper.text()).not.toContain("Nothing selected");
-  });
-
   it("renders a gallery_record selection", () => {
     const wrapper = mount_inspector({
       kind: "gallery_record",
@@ -47,15 +37,5 @@ describe("ContextInspector: renders selected_record", () => {
     expect(wrapper.text()).toContain("Gallery image");
     expect(wrapper.text()).toContain("33333333-3333-4333-8333-333333333333");
     expect(wrapper.text()).not.toContain("Action");
-  });
-
-  it("renders an asset selection", () => {
-    const wrapper = mount_inspector({
-      kind: "asset",
-      category: "lora",
-      asset_id: "44444444-4444-4444-8444-444444444444",
-    });
-    expect(wrapper.text()).toContain("Asset");
-    expect(wrapper.text()).toContain("44444444-4444-4444-8444-444444444444");
   });
 });

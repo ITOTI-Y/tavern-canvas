@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  build_comfyui_inpaint_request,
   build_novelai_inpaint_request,
   InpaintDimensionError,
   InpaintMaskSession,
@@ -182,31 +181,6 @@ describe("InpaintMaskSession export", () => {
         expect(aligned[y * 16 + x]).toBe(UNMASKED);
       }
     }
-  });
-});
-
-describe("build_comfyui_inpaint_request", () => {
-  it("submits source/mask asset IDs, prompts, and denoise strength via a dedicated workflow", () => {
-    const request = build_comfyui_inpaint_request({
-      request_id: REQUEST_ID,
-      generation_anchor: GENERATION_ANCHOR,
-      workflow_id: ASSET_A,
-      source_asset_id: ASSET_A,
-      mask_asset_id: ASSET_B,
-      positive_prompt: "a cat",
-      negative_prompt: "blurry",
-      denoise_strength: 0.75,
-    });
-
-    expect(request.provider_id).toBe("comfyui");
-    expect(request.prompt).toBe("a cat");
-    expect(request.negative_prompt).toBe("blurry");
-    expect(request.input_asset_bindings).toEqual({
-      source_image: ASSET_A,
-      mask_image: ASSET_B,
-    });
-    expect(request.placeholder_values.denoise).toBe(0.75);
-    expect(request.workflow_id).toBe(ASSET_A);
   });
 });
 

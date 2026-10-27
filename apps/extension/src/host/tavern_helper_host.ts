@@ -3,6 +3,8 @@ import type {
   HostChatSnapshot,
   HostMessageRole,
   HostRegexScript,
+  HostWorldbookEntry,
+  HostWorldbookKey,
   PresetGenerationRequest,
   PresetGenerationResult,
 } from "./host_adapter.js";
@@ -46,6 +48,11 @@ export interface TavernHelperGenerateConfig {
   readonly should_stream: false;
   readonly should_return_reasoning: true;
   readonly custom_api?: Readonly<Record<string, string>>;
+  readonly overrides?: {
+    readonly world_info_before: string;
+    readonly world_info_after: string;
+    readonly chat_history: { readonly with_depth_entries: false };
+  };
   readonly json_schema?: {
     readonly name: string;
     readonly value: Readonly<Record<string, unknown>>;
@@ -64,6 +71,8 @@ export interface TavernHelperSurface {
     options: { readonly refresh: "affected" },
   ): Promise<void>;
   generate(config: TavernHelperGenerateConfig): Promise<unknown>;
+  getWorldbookNames(): unknown;
+  getWorldbook(worldbook_name: string): Promise<unknown>;
   stopGenerationById(generation_id: string): boolean;
   getTavernRegexes(option: GlobalRegexOption): TavernRegex[];
   replaceTavernRegexes(regexes: TavernRegex[], option: GlobalRegexOption): Promise<void>;
@@ -72,7 +81,7 @@ export interface TavernHelperSurface {
 
 const REQUIRED_HELPER_METHODS = {
   message_swipe_metadata: ["getChatMessages", "setChatMessages"],
-  preset_generation: ["generate", "stopGenerationById"],
+  preset_generation: ["generate", "stopGenerationById", "getWorldbookNames", "getWorldbook"],
   tavern_regex: ["getTavernRegexes", "replaceTavernRegexes", "retrieveDisplayedMessage"],
 } as const;
 
@@ -207,6 +216,58 @@ function read_generation_result(value: unknown): PresetGenerationResult {
   throw new Error("TavernHelper.generate returned neither text nor a detailed result");
 }
 
+const SECONDARY_LOGIC = new Set(["and_any", "and_all", "not_all", "not_any"]);
+const STRATEGIES = new Set(["constant", "selective", "vectorized"]);
+
+function to_worldbook_keys(value: unknown): readonly HostWorldbookKey[] {
+  if (!Array.isArray(value)) {
+    throw new Error("TavernHelper returned invalid world info keys");
+  }
+  return value.map((key: unknown) => {
+    if (typeof key === "string") {
+      return key;
+    }
+    if (key instanceof RegExp) {
+      return { source: key.source, flags: key.flags };
+    }
+    throw new Error("TavernHelper returned an invalid world info key");
+  });
+}
+
+function to_worldbook_entry(value: unknown): HostWorldbookEntry {
+  if (
+    !is_plain_record(value) ||
+    !is_plain_record(value.strategy) ||
+    !is_plain_record(value.position)
+  ) {
+    throw new Error("TavernHelper returned an invalid world info entry");
+  }
+  const { enabled, content, strategy, position } = value;
+  const secondary = strategy.keys_secondary;
+  const logic = is_plain_record(secondary) ? (secondary.logic ?? "and_any") : undefined;
+  if (
+    typeof enabled !== "boolean" ||
+    typeof content !== "string" ||
+    typeof strategy.type !== "string" ||
+    !STRATEGIES.has(strategy.type) ||
+    !is_plain_record(secondary) ||
+    typeof logic !== "string" ||
+    !SECONDARY_LOGIC.has(logic) ||
+    typeof position.order !== "number"
+  ) {
+    throw new Error("TavernHelper returned an invalid world info entry");
+  }
+  return {
+    enabled,
+    strategy: strategy.type as HostWorldbookEntry["strategy"],
+    keys: to_worldbook_keys(strategy.keys),
+    secondary_logic: logic as HostWorldbookEntry["secondary_logic"],
+    secondary_keys: to_worldbook_keys(secondary.keys),
+    order: position.order,
+    content,
+  };
+}
+
 function to_custom_api(
   connection: PresetGenerationRequest["connection"],
 ): Readonly<Record<string, string>> | undefined {
@@ -310,11 +371,36 @@ export class TavernHelperHost {
       should_stream: false,
       should_return_reasoning: true,
       ...(custom_api === undefined ? {} : { custom_api }),
+      ...(request.world_info.kind === "chat"
+        ? {}
+        : {
+            overrides: {
+              world_info_before: request.world_info.text,
+              world_info_after: "",
+              chat_history: { with_depth_entries: false },
+            },
+          }),
       ...(request.json_schema === null
         ? {}
         : { json_schema: { ...request.json_schema, strict: true } }),
     });
     return read_generation_result(result);
+  }
+
+  list_worldbooks(): readonly string[] {
+    const names = this.#helper.getWorldbookNames();
+    if (!Array.isArray(names) || !names.every((name) => typeof name === "string")) {
+      throw new Error("TavernHelper returned invalid world info book names");
+    }
+    return names;
+  }
+
+  async read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]> {
+    const entries = await this.#helper.getWorldbook(name);
+    if (!Array.isArray(entries)) {
+      throw new Error(`TavernHelper returned invalid entries for world info book ${name}`);
+    }
+    return entries.map(to_worldbook_entry);
   }
 
   stop_generation(generation_id: string): void {

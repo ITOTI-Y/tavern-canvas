@@ -38,6 +38,8 @@ function create_host_fixture(version = "4.11.1"): HostFixture {
         setChatMessages: vi.fn(),
         generate: vi.fn(),
         stopGenerationById: vi.fn(),
+        getWorldbookNames: vi.fn(() => []),
+        getWorldbook: vi.fn(() => Promise.resolve([])),
         getTavernRegexes: vi.fn(() => []),
         replaceTavernRegexes: vi.fn(),
         retrieveDisplayedMessage: vi.fn(() => ({ get: () => undefined })),
@@ -182,7 +184,7 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("ready");
-    expect(handle.resolutions).toHaveLength(12);
+    expect(handle.resolutions).toHaveLength(10);
     expect(handle.resolutions.some((entry) => entry.status === "unavailable")).toBe(true);
     expect(handle.resolutions.every((entry) => entry.capability_id.length > 0)).toBe(true);
     expect(
@@ -209,7 +211,7 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("blocked");
-    expect(handle.resolutions).toHaveLength(12);
+    expect(handle.resolutions).toHaveLength(10);
     await handle.dispose();
   });
 });

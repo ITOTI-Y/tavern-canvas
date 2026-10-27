@@ -1,6 +1,7 @@
 import {
   SwipeIllustrationsSchema,
   type AnalysisConnection,
+  type AnalysisWorldInfo,
   type IllustrationSettings,
   type IllustrationSlot,
   type ImageGenerationRequest,
@@ -15,6 +16,7 @@ import type {
   HostGenerationConnection,
   HostGenerationEvent,
   HostSwipeLocation,
+  HostWorldInfo,
 } from "../../host/index.js";
 import {
   ANALYSIS_JSON_SCHEMA,
@@ -26,6 +28,7 @@ import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
+import { activate_worldbook } from "./worldbook.js";
 
 export interface SlotPromptContext {
   readonly preset: SlotPromptPreset | null;
@@ -116,6 +119,24 @@ async function to_host_connection(
         api_key: await resolve_key(),
         model: connection.model,
         source: "openai",
+      };
+  }
+}
+
+async function to_host_world_info(
+  world_info: AnalysisWorldInfo,
+  text: string,
+  host: HostAdapter,
+): Promise<HostWorldInfo> {
+  switch (world_info.mode) {
+    case "chat":
+      return { kind: "chat" };
+    case "off":
+      return { kind: "replace", text: "" };
+    case "worldbook":
+      return {
+        kind: "replace",
+        text: activate_worldbook(await host.read_worldbook(world_info.worldbook), text),
       };
   }
 }
@@ -251,6 +272,7 @@ export class IllustrationService {
         max_chat_history: settings.max_chat_history,
         connection: await to_host_connection(settings.connection, this.#deps.resolve_analysis_key),
         json_schema: ANALYSIS_JSON_SCHEMA,
+        world_info: await to_host_world_info(settings.world_info, text, this.#deps.host),
       });
       const proposals = parse_analysis_output(
         result.content,

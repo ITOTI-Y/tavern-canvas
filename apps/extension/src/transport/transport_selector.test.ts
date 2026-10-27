@@ -17,8 +17,6 @@ const CLOUD_CANDIDATE = {
 const EMPTY_INPUT: TransportSelectionInput = {
   gateway_endpoint: null,
   http_acknowledgments: {},
-  tauri_provider_available: false,
-  sillytavern_available: false,
   direct_provider_base_url: null,
   direct_cloud: null,
 };
@@ -29,29 +27,10 @@ describe("transport selection", () => {
       select_transport({
         ...EMPTY_INPUT,
         gateway_endpoint: "https://gateway.example",
-        tauri_provider_available: true,
-        sillytavern_available: true,
         direct_cloud: CLOUD_CANDIDATE,
         direct_provider_base_url: "http://127.0.0.1:7860",
       }),
     ).toEqual({ kind: "gateway", endpoint: "https://gateway.example" });
-    expect(
-      select_transport({
-        ...EMPTY_INPUT,
-        tauri_provider_available: true,
-        sillytavern_available: true,
-        direct_cloud: CLOUD_CANDIDATE,
-        direct_provider_base_url: "http://127.0.0.1:7860",
-      }),
-    ).toEqual({ kind: "tauri" });
-    expect(
-      select_transport({
-        ...EMPTY_INPUT,
-        sillytavern_available: true,
-        direct_cloud: CLOUD_CANDIDATE,
-        direct_provider_base_url: "http://127.0.0.1:7860",
-      }),
-    ).toEqual({ kind: "host_proxy" });
     expect(
       select_transport({
         ...EMPTY_INPUT,

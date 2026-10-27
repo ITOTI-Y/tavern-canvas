@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  is_valid_json,
-  scan_workflow_placeholders,
-  WORKFLOW_INPUT_TARGETS,
-} from "./workflow_placeholders.js";
+import { scan_workflow_placeholders, WORKFLOW_INPUT_TARGETS } from "./workflow_placeholders.js";
 
 describe("scan_workflow_placeholders", () => {
   it("finds every distinct {{placeholder}} in the text", () => {
@@ -32,16 +28,6 @@ describe("scan_workflow_placeholders", () => {
 
   it("preserves first-seen order", () => {
     expect(scan_workflow_placeholders("{{b}} {{a}} {{b}} {{c}}")).toEqual(["b", "a", "c"]);
-  });
-});
-
-describe("is_valid_json", () => {
-  it("accepts a well-formed JSON document", () => {
-    expect(is_valid_json('{"a": 1}')).toBe(true);
-  });
-
-  it("rejects malformed JSON without throwing", () => {
-    expect(is_valid_json("{not json")).toBe(false);
   });
 });
 

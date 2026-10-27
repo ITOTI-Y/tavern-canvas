@@ -88,7 +88,7 @@ describe("tavern_canvas_v3 schema", () => {
     await deleteDB(fresh_name);
   });
 
-  it("adds the stores of later versions to an installed v2 database without disturbing its rows", async () => {
+  it("upgrades an installed v2 database, keeping its rows and dropping removed stores", async () => {
     const name = "tavern_canvas_v3_upgrade_v2_to_v3";
     const v2_store_names = store_names.filter(
       (store_name) => STORE_DEFINITIONS[store_name].since_version <= 2,
@@ -103,21 +103,19 @@ describe("tavern_canvas_v3 schema", () => {
             store.createIndex(index_name, index_name);
           }
         }
+        database.createObjectStore("knowledge_entries", { keyPath: "record_key" });
       },
     });
     expect([...v2_database.objectStoreNames]).not.toContain("llm_connections");
-    for (const store_name of ["character_profiles", "knowledge_entries"] as const) {
-      await v2_database.put(store_name, {
-        schema_version: 1,
-        id: "11111111-1111-4111-8111-111111111111",
-        namespace: "primary",
-        record_key: "primary:11111111-1111-4111-8111-111111111111",
-        created_at: "2026-08-05T00:00:00.000Z",
-        updated_at: "2026-08-05T00:00:00.000Z",
-        ...(store_name === "knowledge_entries" ? { source_type: "manual" } : {}),
-        payload: { survived: true },
-      });
-    }
+    await v2_database.put("character_profiles", {
+      schema_version: 1,
+      id: "11111111-1111-4111-8111-111111111111",
+      namespace: "primary",
+      record_key: "primary:11111111-1111-4111-8111-111111111111",
+      created_at: "2026-08-05T00:00:00.000Z",
+      updated_at: "2026-08-05T00:00:00.000Z",
+      payload: { survived: true },
+    });
     v2_database.close();
 
     const upgraded = await openDB<DBSchema>(name, DATABASE_VERSION, { upgrade: upgrade_database });
@@ -130,11 +128,9 @@ describe("tavern_canvas_v3 schema", () => {
       [...STORE_DEFINITIONS.llm_connections.indexes].sort(),
     );
     await expect(upgraded.count("llm_connections")).resolves.toBe(0);
-    for (const store_name of ["character_profiles", "knowledge_entries"] as const) {
-      await expect(
-        upgraded.get(store_name, "primary:11111111-1111-4111-8111-111111111111"),
-      ).resolves.toMatchObject({ payload: { survived: true } });
-    }
+    await expect(
+      upgraded.get("character_profiles", "primary:11111111-1111-4111-8111-111111111111"),
+    ).resolves.toMatchObject({ payload: { survived: true } });
 
     upgraded.close();
     await deleteDB(name);

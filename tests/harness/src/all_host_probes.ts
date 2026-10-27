@@ -232,10 +232,7 @@ export async function create_security_probes(
 
     async gateway_generation(origin, token, job_options) {
       const plans = new MediaExecutionPlanRegistry();
-      plans.register(job_options.request_id, {
-        kind: "adapter",
-        request: gateway_request(job_options.request_id) as never,
-      });
+      plans.register(gateway_request(job_options.request_id) as never);
       const stored: { id: string; bytes: Uint8Array; claimed_media_type: string }[] = [];
       let token_resolutions = 0;
       let marked_running = false;
@@ -486,8 +483,6 @@ export async function create_security_probes(
       const input = {
         gateway_endpoint: endpoint,
         http_acknowledgments: {} as Readonly<Record<string, string>>,
-        tauri_provider_available: false,
-        sillytavern_available: false,
         direct_provider_base_url: null,
         direct_cloud: null,
       };

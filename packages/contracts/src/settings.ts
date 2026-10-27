@@ -76,6 +76,17 @@ export const AnalysisConnectionSchema = z.discriminatedUnion("kind", [
 ]);
 export type AnalysisConnection = z.infer<typeof AnalysisConnectionSchema>;
 
+/**
+ * World info for paragraph analysis: `chat` is what SillyTavern activates for the current chat,
+ * `worldbook` the entries of one book that the analyzed message activates.
+ */
+export const AnalysisWorldInfoSchema = z.discriminatedUnion("mode", [
+  z.strictObject({ mode: z.literal("chat") }),
+  z.strictObject({ mode: z.literal("off") }),
+  z.strictObject({ mode: z.literal("worldbook"), worldbook: z.string().trim().min(1).max(200) }),
+]);
+export type AnalysisWorldInfo = z.infer<typeof AnalysisWorldInfoSchema>;
+
 export const IllustrationSettingsSchema = z.strictObject({
   /** A SillyTavern chat completion preset name; `in_use` is the preset currently loaded. */
   preset_name: z.string().trim().min(1).max(200),
@@ -83,6 +94,7 @@ export const IllustrationSettingsSchema = z.strictObject({
   max_chat_history: z.number().int().min(0).max(20),
   max_images_per_message: z.number().int().min(1).max(8),
   prompt_preset_id: UuidSchema.nullable(),
+  world_info: AnalysisWorldInfoSchema.default({ mode: "chat" }),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

@@ -10,6 +10,7 @@ import type {
   HostMessageRenderedHandler,
   HostRegexScript,
   HostSwipeLocation,
+  HostWorldbookEntry,
   PresetGenerationRequest,
   PresetGenerationResult,
 } from "./host_adapter.js";
@@ -113,6 +114,14 @@ export class CompositeHostAdapter implements HostAdapter {
 
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
     return this.#helper.generate_with_preset(request);
+  }
+
+  list_worldbooks(): readonly string[] {
+    return this.#helper.list_worldbooks();
+  }
+
+  read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]> {
+    return this.#helper.read_worldbook(name);
   }
 
   stop_generation(generation_id: string): void {

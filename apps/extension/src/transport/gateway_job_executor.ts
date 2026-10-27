@@ -44,8 +44,8 @@ export class GatewayJobExecutor implements JobExecutor {
     job: GenerationJobSnapshot,
     control: JobExecutionControl,
   ): Promise<JobExecutionResult> {
-    const plan = this.#deps.plans.take(job.request_id);
-    if (plan === undefined || plan.kind !== "adapter") {
+    const request = this.#deps.plans.take(job.request_id);
+    if (request === undefined) {
       throw new JobExecutorFailure({ code: "invalid_request", retryable: false });
     }
 
@@ -58,7 +58,7 @@ export class GatewayJobExecutor implements JobExecutor {
         http_acknowledgments: this.#deps.http_acknowledgments,
         ...(this.#deps.fetch === undefined ? {} : { fetch: this.#deps.fetch }),
       });
-      submitted = await transport.submit(plan.request, control.signal);
+      submitted = await transport.submit(request, control.signal);
     } catch (error) {
       throw to_job_failure(error);
     }

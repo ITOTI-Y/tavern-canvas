@@ -4,7 +4,7 @@ import type {
   IllustrationSettings,
   TavernCanvasSettings,
 } from "@tavern-canvas/contracts";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
@@ -189,6 +189,70 @@ function set_prompt_preset(value: string): void {
   const preset = props.promptPresets.find((candidate) => candidate.id === value);
   update_illustration({ prompt_preset_id: preset?.id ?? null });
 }
+
+const world_info_options = computed(() => [
+  { value: "chat", label: t("settings.illustration.world_info_chat") },
+  { value: "worldbook", label: t("settings.illustration.world_info_worldbook") },
+  { value: "off", label: t("settings.illustration.world_info_off") },
+]);
+
+const world_info_mode = ref(illustration.value?.world_info.mode ?? "chat");
+watch(
+  () => illustration.value?.world_info.mode,
+  (mode) => {
+    if (mode !== undefined) {
+      world_info_mode.value = mode;
+    }
+  },
+);
+
+const worldbooks = ref<readonly string[]>([]);
+const worldbooks_failed = ref(false);
+
+async function load_worldbooks(): Promise<void> {
+  try {
+    worldbooks.value = await props.controller.list_worldbooks();
+    worldbooks_failed.value = false;
+  } catch {
+    worldbooks_failed.value = true;
+  }
+}
+
+onMounted(() => {
+  if (world_info_mode.value === "worldbook") {
+    void load_worldbooks();
+  }
+});
+
+const selected_worldbook = computed(() =>
+  illustration.value?.world_info.mode === "worldbook"
+    ? illustration.value.world_info.worldbook
+    : undefined,
+);
+
+/** A book renamed or deleted in SillyTavern stays selectable, so the setting is not lost silently. */
+const worldbook_options = computed(() =>
+  [
+    ...new Set([
+      ...worldbooks.value,
+      ...(selected_worldbook.value === undefined ? [] : [selected_worldbook.value]),
+    ]),
+  ].map((name) => ({ value: name, label: name })),
+);
+
+function set_world_info_mode(value: string): void {
+  if (value === "chat" || value === "off") {
+    world_info_mode.value = value;
+    update_illustration({ world_info: { mode: value } });
+  } else if (value === "worldbook") {
+    world_info_mode.value = value;
+    void load_worldbooks();
+  }
+}
+
+function set_worldbook(worldbook: string): void {
+  update_illustration({ world_info: { mode: "worldbook", worldbook } });
+}
 </script>
 
 <template>
@@ -342,6 +406,32 @@ function set_prompt_preset(value: string): void {
           @update:model-value="(value) => update_illustration({ max_chat_history: value })"
         />
       </div>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.world_info_label") }}</span>
+        <SegmentedControl
+          :model-value="world_info_mode"
+          :options="world_info_options"
+          :label="t('settings.illustration.world_info_label')"
+          :disabled="!settings"
+          @update:model-value="set_world_info_mode"
+        />
+      </div>
+      <p :class="styles.description">{{ t("settings.illustration.world_info_hint") }}</p>
+      <template v-if="world_info_mode === 'worldbook'">
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.illustration.worldbook_label") }}</span>
+          <AppSelect
+            :model-value="selected_worldbook"
+            :options="worldbook_options"
+            :placeholder="t('settings.illustration.worldbook_placeholder')"
+            :aria-label="t('settings.illustration.worldbook_label')"
+            @update:model-value="set_worldbook"
+          />
+        </div>
+        <p v-if="worldbooks_failed" :class="styles.description" role="alert">
+          {{ t("settings.illustration.worldbook_unavailable") }}
+        </p>
+      </template>
       <div :class="styles.row">
         <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>
         <NumberStepper

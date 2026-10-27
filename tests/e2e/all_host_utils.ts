@@ -91,6 +91,8 @@ export const PUBLIC_TAVERN_HELPER_MEMBERS: ReadonlySet<string> = new Set([
   "setChatMessages",
   "generate",
   "stopGenerationById",
+  "getWorldbookNames",
+  "getWorldbook",
   "getTavernRegexes",
   "replaceTavernRegexes",
   "retrieveDisplayedMessage",

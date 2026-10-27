@@ -6,7 +6,6 @@ import type {
   AssetsCapability,
   AssetsDomainEvent,
 } from "../../ui/contracts/ui_capabilities.js";
-import { capability_unavailable_error } from "../capability_resolution.js";
 import {
   DomainEventEmitter,
   read_number,
@@ -20,10 +19,6 @@ type CategoryRepository = Pick<
   "get" | "list" | "put" | "delete"
 >;
 
-/** Categories without a matching v3 store resolve to `capability_unavailable` on mutation and load as empty. */
-const UNMAPPED_CATEGORY_REASON =
-  "No v3 store exists for this asset category yet; character, outfit, vibe and workflow assets are stored, the rest are not.";
-
 export interface AssetsCapabilityDeps {
   readonly repositories: BusinessRepositories;
   readonly namespace: () => string;
@@ -35,14 +30,13 @@ const ALL_CATEGORIES: readonly AssetCategory[] = [
   "outfit",
   "lora",
   "vibe",
-  "reference",
   "workflow",
 ];
 
 function repository_for(
   repositories: BusinessRepositories,
   category: AssetCategory,
-): CategoryRepository | null {
+): CategoryRepository {
   switch (category) {
     case "character":
       return repositories.character_profiles;
@@ -53,8 +47,7 @@ function repository_for(
     case "outfit":
       return repositories.outfit_profiles;
     case "lora":
-    case "reference":
-      return null;
+      return repositories.lora_profiles;
   }
 }
 
@@ -82,20 +75,8 @@ function by_order(left: NamespacedRecord, right: NamespacedRecord): number {
 export function create_assets_capability(deps: AssetsCapabilityDeps): AssetsCapability {
   const events = new DomainEventEmitter<AssetsDomainEvent>();
 
-  function require_repository(category: AssetCategory): CategoryRepository {
-    const repository = repository_for(deps.repositories, category);
-    if (repository === null) {
-      throw capability_unavailable_error(UNMAPPED_CATEGORY_REASON);
-    }
-    return repository;
-  }
-
   async function list(category: AssetCategory): Promise<readonly AssetRecordSummary[]> {
-    const repository = repository_for(deps.repositories, category);
-    if (repository === null) {
-      return [];
-    }
-    const records = await repository.list(deps.namespace());
+    const records = await repository_for(deps.repositories, category).list(deps.namespace());
     return [...records].sort(by_order).map((record) => to_summary(record, category));
   }
 
@@ -110,7 +91,7 @@ export function create_assets_capability(deps: AssetsCapabilityDeps): AssetsCapa
     },
     subscribe: (handler) => events.subscribe(handler),
     async save(category, asset) {
-      const repository = require_repository(category);
+      const repository = repository_for(deps.repositories, category);
       const namespace = deps.namespace();
       const existing = await repository.get(namespace, asset.id);
       const now = deps.now();
@@ -144,12 +125,12 @@ export function create_assets_capability(deps: AssetsCapabilityDeps): AssetsCapa
       return summary;
     },
     async remove(category, asset_id) {
-      const repository = require_repository(category);
+      const repository = repository_for(deps.repositories, category);
       await repository.delete(deps.namespace(), asset_id);
       events.emit({ type: "asset_removed", category, asset_id });
     },
     async reorder(category, ordered_ids) {
-      const repository = require_repository(category);
+      const repository = repository_for(deps.repositories, category);
       const namespace = deps.namespace();
       const now = deps.now();
       for (const [index, asset_id] of ordered_ids.entries()) {

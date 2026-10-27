@@ -32,13 +32,6 @@ export function join_prompt_parts(parts: readonly (string | null | undefined)[])
     .join(", ");
 }
 
-export function normalize_physical_newlines(text: string): string {
-  return text
-    .replace(/[ \t]*[\r\n]+[ \t]*/g, " ")
-    .replace(/ {2,}/g, " ")
-    .trim();
-}
-
 export function deduplicate_tags(tag_string: string): string {
   if (!tag_string) {
     return "";

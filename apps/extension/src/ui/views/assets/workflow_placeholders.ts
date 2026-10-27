@@ -20,12 +20,3 @@ export function scan_workflow_placeholders(workflow_json: string): readonly stri
   }
   return [...seen];
 }
-
-export function is_valid_json(text: string): boolean {
-  try {
-    JSON.parse(text);
-    return true;
-  } catch {
-    return false;
-  }
-}

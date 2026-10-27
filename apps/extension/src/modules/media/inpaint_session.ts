@@ -1,7 +1,5 @@
 import {
-  Sha256Schema,
   type AssetId,
-  type ComfyUiRequest,
   type NovelAiRequest,
   type RequestId,
   type Sha256,
@@ -257,36 +255,6 @@ export class InpaintMaskSession {
   }
 }
 
-export interface ComfyUiInpaintInput {
-  readonly request_id: RequestId;
-  readonly generation_anchor: Sha256;
-  readonly workflow_id: AssetId;
-  readonly source_asset_id: AssetId;
-  readonly mask_asset_id: AssetId;
-  readonly positive_prompt: string;
-  readonly negative_prompt?: string;
-  readonly denoise_strength: number;
-  readonly output_count?: number;
-}
-
-export function build_comfyui_inpaint_request(input: ComfyUiInpaintInput): ComfyUiRequest {
-  return {
-    provider_id: "comfyui",
-    request_id: input.request_id,
-    generation_anchor: input.generation_anchor,
-    prompt: input.positive_prompt,
-    ...(input.negative_prompt === undefined ? {} : { negative_prompt: input.negative_prompt }),
-    output_count: input.output_count ?? 1,
-    workflow_id: input.workflow_id,
-    placeholder_values: { denoise: input.denoise_strength },
-    input_asset_bindings: {
-      source_image: input.source_asset_id,
-      mask_image: input.mask_asset_id,
-    },
-    output_node_ids: ["output"],
-  };
-}
-
 export interface NovelAiInpaintInput {
   readonly request_id: RequestId;
   readonly generation_anchor: Sha256;
@@ -321,8 +289,4 @@ export function build_novelai_inpaint_request(
     mask_asset_id: input.mask_asset_id,
     inpaint_strength: input.strength,
   };
-}
-
-export function assert_sha256(value: string): Sha256 {
-  return Sha256Schema.parse(value);
 }

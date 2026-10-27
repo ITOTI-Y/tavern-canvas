@@ -44,29 +44,3 @@ export function resolve_media_for_state(
   }
   return { state, asset: validate_media_asset(raw) };
 }
-
-export class MediaStatePlayer {
-  #assets: MediaStateAssetMap;
-  #state: MediaState = "idle";
-
-  constructor(assets: MediaStateAssetMap = {}) {
-    this.#assets = assets;
-  }
-
-  get state(): MediaState {
-    return this.#state;
-  }
-
-  set_assets(assets: MediaStateAssetMap): void {
-    this.#assets = assets;
-  }
-
-  transition(state: MediaState): MediaStateResolution {
-    this.#state = state;
-    return this.current();
-  }
-
-  current(): MediaStateResolution {
-    return resolve_media_for_state(this.#assets, this.#state);
-  }
-}

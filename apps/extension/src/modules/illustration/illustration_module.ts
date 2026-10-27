@@ -7,6 +7,7 @@ import type {
   PromptPresetsCapability,
 } from "../../ui/contracts/ui_capabilities.js";
 import type { IllustrationService, SlotPromptContext } from "./illustration_service.js";
+import type { CharacterReference, SlotLibrary } from "./library_match.js";
 import { SLOT_REGEX_SCRIPTS } from "./slot_markers.js";
 
 const SLOT_ID_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
@@ -16,34 +17,59 @@ export function new_slot_id(): string {
   return [...bytes].map((byte) => SLOT_ID_ALPHABET[byte % 64] ?? "_").join("");
 }
 
-/** The preset chosen in the illustration settings and every stored character appearance. */
+function read_reference(payload: Readonly<Record<string, unknown>>): CharacterReference | null {
+  const { reference_image: image, reference_send: send, reference_mode: mode } = payload;
+  if (typeof image !== "string" || image === "" || send !== 1) {
+    return null;
+  }
+  return mode === "img2img" || mode === "precise" ? { image, mode } : { image, mode: "vibe" };
+}
+
+/** Every stored character, outfit and LoRA, in library order. */
+export async function load_slot_library(assets: AssetsCapability): Promise<SlotLibrary> {
+  const catalog = await assets.load();
+  const text = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
+  return {
+    characters: catalog.character.map((record) => ({
+      id: record.id,
+      name: record.display_name,
+      appearance: text(record.payload.appearance),
+      excluded_traits: text(record.payload.excluded_traits),
+      reference: read_reference(record.payload),
+    })),
+    outfits: catalog.outfit.map((record) => ({
+      id: record.id,
+      name: record.display_name,
+      description: text(record.payload.description),
+      character_id: text(record.payload.character_id) || null,
+    })),
+    loras: catalog.lora.flatMap((record) => {
+      const character_id = text(record.payload.character_id);
+      return character_id === ""
+        ? []
+        : [
+            {
+              file_name: text(record.payload.file_name),
+              weight: typeof record.payload.weight === "number" ? record.payload.weight : 1,
+              trigger_words: text(record.payload.trigger_words),
+              character_id,
+            },
+          ];
+    }),
+  };
+}
+
+/** The preset chosen in the illustration settings and the whole library. */
 export async function load_slot_prompt_context(
   prompt_presets: PromptPresetsCapability,
   assets: AssetsCapability,
   prompt_preset_id: Uuid | null,
 ): Promise<SlotPromptContext> {
-  const [preset, catalog] = await Promise.all([
+  const [preset, library] = await Promise.all([
     prompt_preset_id === null ? null : prompt_presets.load_draft(prompt_preset_id),
-    assets.load(),
+    load_slot_library(assets),
   ]);
-  const text = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
-  return {
-    preset,
-    library: {
-      characters: catalog.character.map((record) => ({
-        id: record.id,
-        name: record.display_name,
-        appearance: text(record.payload.appearance),
-        excluded_traits: text(record.payload.excluded_traits),
-      })),
-      outfits: catalog.outfit.map((record) => ({
-        id: record.id,
-        name: record.display_name,
-        description: text(record.payload.description),
-        character_id: text(record.payload.character_id) || null,
-      })),
-    },
-  };
+  return { preset, library };
 }
 
 /** Installs the slot regex scripts before listening, so the first marker it writes already renders. */

@@ -151,7 +151,7 @@ class ScriptedGateway {
 
 interface HarnessOptions {
   readonly responses: readonly (() => Response)[];
-  readonly plan?: "adapter" | "video" | "none";
+  readonly plan?: "adapter" | "none";
   readonly access_token?: () => Promise<string>;
   readonly endpoint?: string;
   readonly http_acknowledgments?: Readonly<Record<string, string>>;
@@ -167,12 +167,7 @@ function create_harness(options: HarnessOptions): {
 } {
   const plans = new MediaExecutionPlanRegistry();
   if (options.plan !== "none") {
-    plans.register(
-      REQUEST_ID,
-      options.plan === "video"
-        ? { kind: "video", request: { provider_id: "openai_image" } as never }
-        : { kind: "adapter", request },
-    );
+    plans.register(request);
   }
   const store = new RecordingStore();
   const gateway = new ScriptedGateway(options.responses);
@@ -324,15 +319,6 @@ describe("GatewayJobExecutor", () => {
     const result = await harness.executor.execute(job, harness.control);
 
     expect(result.image_ids).toEqual([STORED_ID]);
-  });
-
-  it("rejects a video plan the Gateway protocol cannot express", async () => {
-    const harness = create_harness({ responses: [], plan: "video" });
-
-    await expect(harness.executor.execute(job, harness.control)).rejects.toMatchObject({
-      provider_error: { code: "invalid_request", retryable: false },
-    });
-    expect(harness.gateway.calls).toEqual([]);
   });
 
   it("maps a rejected bearer token to auth_failed", async () => {

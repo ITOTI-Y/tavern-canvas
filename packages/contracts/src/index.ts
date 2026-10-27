@@ -47,23 +47,6 @@ export {
 export type { AssetId, ImageId, JobId, RequestId, Uuid, VaultReference } from "./ids.js";
 
 export {
-  KnowledgeRecordDraftSchema,
-  KnowledgeRecordSchema,
-  KnowledgeSourceTypeSchema,
-  PersonaProfileDraftSchema,
-  PersonaProfileSchema,
-  PersonaRoleSchema,
-} from "./library.js";
-export type {
-  KnowledgeRecord,
-  KnowledgeRecordDraft,
-  KnowledgeSourceType,
-  PersonaProfile,
-  PersonaProfileDraft,
-  PersonaRole,
-} from "./library.js";
-
-export {
   DIRECT_IMAGE_ROUTE_CATALOG,
   DIRECT_LLM_ROUTE_CATALOG,
   DirectRouteRejectedError,
@@ -200,6 +183,7 @@ export { MAX_PROVIDER_SEED } from "./providers/common.js";
 
 export {
   AnalysisConnectionSchema,
+  AnalysisWorldInfoSchema,
   CredentialStorageModeSchema,
   GATEWAY_CREDENTIAL_KIND,
   GatewaySettingsSchema,
@@ -214,6 +198,7 @@ export {
 } from "./settings.js";
 export type {
   AnalysisConnection,
+  AnalysisWorldInfo,
   CredentialStorageMode,
   GatewaySettings,
   GlossaryEntry,

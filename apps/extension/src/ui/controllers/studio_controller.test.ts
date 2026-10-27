@@ -1,10 +1,4 @@
-import type {
-  KnowledgeRecord,
-  LlmConnectionProfile,
-  PersonaProfile,
-  TavernCanvasSettings,
-  Uuid,
-} from "@tavern-canvas/contracts";
+import type { LlmConnectionProfile, TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
 import { describe, expect, it, vi, type Mock } from "vitest";
 
 import type {
@@ -21,12 +15,8 @@ import type {
   GenerationCapability,
   GenerationDomainEvent,
   GenerationJobSummary,
-  KnowledgeCapability,
-  KnowledgeDomainEvent,
   LlmConnectionsCapability,
   LlmConnectionsDomainEvent,
-  PersonasCapability,
-  PersonasDomainEvent,
   ProfilesCapability,
   ProfilesDomainEvent,
   ProviderProfileSummary,
@@ -99,6 +89,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     max_chat_history: 4,
     max_images_per_message: 2,
     prompt_preset_id: null,
+    world_info: { mode: "chat" },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
@@ -115,7 +106,6 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   outfit: [],
   lora: [],
   vibe: [],
-  reference: [],
   workflow: [],
 };
 
@@ -209,24 +199,6 @@ function build_mock_studio() {
     reorder: vi.fn(),
   };
 
-  const personas_harness = harness<readonly PersonaProfile[], PersonasDomainEvent>();
-  const personas: PersonasCapability = {
-    load: personas_harness.load,
-    subscribe: personas_harness.sub.subscribe,
-    save: vi.fn(),
-    remove: vi.fn(),
-  };
-
-  const knowledge_harness = harness<readonly KnowledgeRecord[], KnowledgeDomainEvent>();
-  const knowledge: KnowledgeCapability = {
-    load: knowledge_harness.load,
-    subscribe: knowledge_harness.sub.subscribe,
-    save: vi.fn(),
-    set_enabled: vi.fn(),
-    remove: vi.fn(),
-    bulk_remove: vi.fn(),
-  };
-
   const gallery_harness = harness<readonly GalleryRecordSummary[], GalleryDomainEvent>();
   const gallery: GalleryCapability = {
     load: gallery_harness.load,
@@ -266,6 +238,7 @@ function build_mock_studio() {
     set_gateway_token: vi.fn(),
     clear_gateway_token: vi.fn(),
     set_analysis_key: vi.fn(() => Promise.resolve()),
+    list_worldbooks: vi.fn(() => Promise.resolve([])),
     clear_analysis_key: vi.fn(() => Promise.resolve()),
     set_deepl_key: vi.fn(() => Promise.resolve()),
     clear_deepl_key: vi.fn(() => Promise.resolve()),
@@ -287,8 +260,6 @@ function build_mock_studio() {
     novelai: create_unavailable_capabilities().novelai,
     prompt_presets,
     assets,
-    personas,
-    knowledge,
     gallery,
     vocabulary,
     diagnostics,
@@ -303,8 +274,6 @@ function build_mock_studio() {
     llm_connections: llm_connections_harness,
     prompt_presets: prompt_presets_harness,
     assets: assets_harness,
-    personas: personas_harness,
-    knowledge: knowledge_harness,
     gallery: gallery_harness,
     diagnostics: diagnostics_harness,
     settings: settings_harness,
@@ -319,8 +288,6 @@ function resolve_all_defaults(mock: MockStudio): void {
   mock.llm_connections.deferred_load.resolve([]);
   mock.prompt_presets.deferred_load.resolve([]);
   mock.assets.deferred_load.resolve(EMPTY_ASSET_RECORDS);
-  mock.personas.deferred_load.resolve([]);
-  mock.knowledge.deferred_load.resolve([]);
   mock.gallery.deferred_load.resolve([]);
   mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
   mock.settings.deferred_load.resolve(DEFAULT_SETTINGS_SNAPSHOT);
@@ -365,8 +332,6 @@ describe("create_studio_controller", () => {
     mock.llm_connections.deferred_load.resolve([]);
     mock.prompt_presets.deferred_load.resolve([]);
     mock.assets.deferred_load.resolve(EMPTY_ASSET_RECORDS);
-    mock.personas.deferred_load.resolve([]);
-    mock.knowledge.deferred_load.resolve([]);
     mock.gallery.deferred_load.resolve([]);
     mock.diagnostics.deferred_load.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT);
 
@@ -450,7 +415,6 @@ describe("create_studio_controller", () => {
     controller.select_inspector_record({ kind: "gallery_record", record_id: RECORD_ID });
 
     controller.set_inspector_width(400);
-    controller.set_color_mode("dark");
 
     expect(controller.state.route).toBe("gallery");
     expect(controller.state.inspector.selected_record).toEqual({
@@ -458,7 +422,6 @@ describe("create_studio_controller", () => {
       record_id: RECORD_ID,
     });
     expect(controller.state.inspector.width).toBe(400);
-    expect(controller.state.color_mode).toBe("dark");
   });
 
   it("unsubscribes every domain listener on stop", async () => {
@@ -604,27 +567,7 @@ function build_prompt_draft(overrides: Partial<PromptPresetDraft> = {}): PromptP
   };
 }
 
-describe("create_studio_controller: prompt and workbench commands", () => {
-  it("persists the Workbench active provider profile selection", async () => {
-    const mock = build_mock_studio();
-    const controller = create_studio_controller({ capabilities: mock.capabilities });
-    const start_promise = controller.start();
-    resolve_all_defaults(mock);
-    await start_promise;
-
-    await controller.select_provider_profile(PROFILE_ID);
-    expect(controller.state.generation.active_profile_id).toBe(PROFILE_ID);
-    expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
-      active_provider_profile_id: PROFILE_ID,
-    });
-
-    await controller.select_provider_profile(null);
-    expect(controller.state.generation.active_profile_id).toBeNull();
-    expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
-      active_provider_profile_id: null,
-    });
-  });
-
+describe("create_studio_controller: prompt and provider profile commands", () => {
   it("selects and persists a newly saved default provider profile", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });
@@ -746,27 +689,6 @@ describe("create_studio_controller: prompt and workbench commands", () => {
       replacement_rules: [],
       regex_rules: [],
     });
-  });
-
-  it("removes a single preset and clears the draft when the removed preset was selected", async () => {
-    const mock = build_mock_studio();
-    const controller = create_studio_controller({ capabilities: mock.capabilities });
-    const start_promise = controller.start();
-    mock.prompt_presets.deferred_load.resolve([
-      { id: PRESET_ID, display_name: "Preset A", group: null, updated_at: "2026-01-01T00:00:00Z" },
-    ]);
-    resolve_all_defaults(mock);
-    await start_promise;
-
-    vi.mocked(mock.capabilities.prompt_presets.load_draft).mockResolvedValue(build_prompt_draft());
-    await controller.select_prompt_preset(PRESET_ID);
-    vi.mocked(mock.capabilities.prompt_presets.remove).mockResolvedValue(undefined);
-
-    await controller.remove_prompt_preset(PRESET_ID);
-
-    expect(controller.state.prompt.presets).toEqual([]);
-    expect(controller.state.prompt.selected_preset_id).toBeNull();
-    expect(controller.state.prompt.draft).toBeNull();
   });
 
   it("bulk removes presets and clears the selection only if it was among the removed ids", async () => {

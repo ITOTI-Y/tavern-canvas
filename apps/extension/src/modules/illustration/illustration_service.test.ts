@@ -11,6 +11,7 @@ import type {
   HostAdapter,
   HostGenerationHandler,
   HostSwipeLocation,
+  HostWorldbookEntry,
   PresetGenerationRequest,
 } from "../../host/index.js";
 import { IllustrationService, MessageChangedError } from "./illustration_service.js";
@@ -25,6 +26,7 @@ const SETTINGS: IllustrationSettings = {
   max_chat_history: 4,
   max_images_per_message: 2,
   prompt_preset_id: null,
+  world_info: { mode: "chat" },
 };
 
 class MemoryHost {
@@ -33,6 +35,7 @@ class MemoryHost {
   readonly records = new Map<string, unknown>();
   readonly generation_handlers = new Set<HostGenerationHandler>();
   readonly generate_calls: PresetGenerationRequest[] = [];
+  readonly worldbooks = new Map<string, readonly HostWorldbookEntry[]>();
   analysis_reply = JSON.stringify({
     illustrations: [{ paragraph: 1, scene: "rain", tags: "rain, window", characters: [] }],
   });
@@ -88,6 +91,8 @@ class MemoryHost {
       this.generate_calls.push(request);
       return Promise.resolve({ content: this.analysis_reply, reasoning: null });
     },
+    list_worldbooks: () => [...this.worldbooks.keys()],
+    read_worldbook: (name: string) => Promise.resolve(this.worldbooks.get(name) ?? []),
     stop_generation: () => undefined,
     sync_regex_scripts: () => Promise.resolve(false),
     translate_deepl: () => Promise.reject(new Error("not used")),
@@ -125,7 +130,7 @@ function create_service(
     settings: () => options.settings ?? SETTINGS,
     auto_generation_enabled: () => options.auto ?? false,
     prompt_context: () =>
-      Promise.resolve({ preset: null, library: { characters: [], outfits: [] } }),
+      Promise.resolve({ preset: null, library: { characters: [], outfits: [], loras: [] } }),
     build_request: (input) =>
       Promise.resolve({ prompt: input.positive_prompt } as unknown as ImageGenerationRequest),
     build_edit_request: (edit) =>
@@ -171,7 +176,45 @@ describe("IllustrationService.analyze", () => {
     ]);
     expect(host.text).toBe(`${REPLY}\n<!--tc-image:slot_0001-->`);
     expect(service.read(LOCATION)).toEqual(record);
-    expect(host.generate_calls[0]).toMatchObject({ preset_name: "in_use", max_chat_history: 4 });
+    expect(host.generate_calls[0]).toMatchObject({
+      preset_name: "in_use",
+      max_chat_history: 4,
+      world_info: { kind: "chat" },
+    });
+  });
+
+  it("replaces the chat's world info with the entries one book activates for this reply", async () => {
+    const host = new MemoryHost();
+    host.worldbooks.set("Town", [
+      {
+        enabled: true,
+        strategy: "selective" as const,
+        keys: ["door"],
+        secondary_logic: "and_any" as const,
+        secondary_keys: [],
+        order: 1,
+        content: "Doors in the old town are painted blue.",
+      },
+      {
+        enabled: true,
+        strategy: "selective",
+        keys: ["dragon"],
+        secondary_logic: "and_any",
+        secondary_keys: [],
+        order: 0,
+        content: "Dragons sleep under the hill.",
+      },
+    ]);
+    const { service } = create_service(host, {
+      settings: { ...SETTINGS, world_info: { mode: "worldbook", worldbook: "Town" } },
+    });
+
+    await service.analyze(3);
+
+    expect(host.generate_calls[0]?.world_info).toEqual({
+      kind: "replace",
+      text: "Doors in the old town are painted blue.",
+    });
   });
 
   it("returns an analyzed swipe without asking the model again", async () => {

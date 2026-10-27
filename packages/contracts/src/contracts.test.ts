@@ -470,6 +470,7 @@ describe("initial settings and capability contracts", () => {
       max_chat_history: 4,
       max_images_per_message: 2,
       prompt_preset_id: null,
+      world_info: { mode: "chat" },
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     gateway: {
@@ -604,6 +605,7 @@ describe("strict public object boundaries", () => {
       max_chat_history: 4,
       max_images_per_message: 2,
       prompt_preset_id: null,
+      world_info: { mode: "chat" },
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     gateway: gateway_settings,

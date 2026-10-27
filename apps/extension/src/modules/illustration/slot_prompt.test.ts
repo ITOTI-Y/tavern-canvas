@@ -14,6 +14,7 @@ const ALICE = {
   name: "Alice",
   appearance: "1girl, silver hair, blue eyes",
   excluded_traits: "beard, beard",
+  reference: null,
 };
 const GALA = { id: "o1", name: "Gala", description: "red gown", character_id: "c1" };
 
