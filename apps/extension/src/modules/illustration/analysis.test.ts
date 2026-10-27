@@ -19,21 +19,39 @@ describe("build_analysis_input", () => {
       ],
       2,
       { characters: [], outfits: [], loras: [] },
+      "  ",
     );
 
     expect(input).toContain("Choose at most 2 paragraphs");
     expect(input).toContain("[0] First.\n[1] Second.");
     expect(input).not.toContain("stored tags");
+    expect(input).not.toContain("User guidance");
+  });
+
+  it("passes the user's guidance before the paragraphs", () => {
+    const input = build_analysis_input(
+      [{ index: 0, text: "Hi.", line: 0 }],
+      1,
+      { characters: [], outfits: [], loras: [] },
+      " watercolor, summer evening ",
+    );
+
+    expect(input).toMatch(/User guidance[^\n]*\nwatercolor, summer evening\n\nParagraphs:/u);
   });
 
   it("names library characters and outfits so the model leaves their looks out", () => {
-    const input = build_analysis_input([{ index: 0, text: "Hi.", line: 0 }], 1, {
-      characters: [
-        test_character({ id: "c1", name: "Seraphina", appearance: { hair: ["pink hair"] } }),
-      ],
-      outfits: [test_outfit({ id: "o1", name: "Forest cloak", character_id: "c1" })],
-      loras: [],
-    });
+    const input = build_analysis_input(
+      [{ index: 0, text: "Hi.", line: 0 }],
+      1,
+      {
+        characters: [
+          test_character({ id: "c1", name: "Seraphina", appearance: { hair: ["pink hair"] } }),
+        ],
+        outfits: [test_outfit({ id: "o1", name: "Forest cloak", character_id: "c1" })],
+        loras: [],
+      },
+      "",
+    );
 
     expect(input).toContain("never hair, eyes, face, body or clothing");
     expect(input).toContain("- character: Seraphina");

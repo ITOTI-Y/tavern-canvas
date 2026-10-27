@@ -121,6 +121,8 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           prompt_preset_id: null,
           world_info: { mode: "chat" },
           wardrobe_model: null,
+          analysis_guidance: "",
+          wardrobe_guidance: "",
         },
         translation: { deepl_endpoint: "free", glossary: [] },
         gateway: {
@@ -265,6 +267,8 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
     prompt_preset_id: null,
     world_info: { mode: "chat" },
     wardrobe_model: null,
+    analysis_guidance: "",
+    wardrobe_guidance: "",
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: {

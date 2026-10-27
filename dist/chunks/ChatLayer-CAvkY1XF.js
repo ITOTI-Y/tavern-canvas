@@ -8,7 +8,7 @@ import { t as B } from "./AppDialog-CzDoJQTe.js";
 import { t as ee } from "./trash-2-B6ZXZcor.js";
 import { t as te } from "./upload-CQtsg_mB.js";
 import { t as ne } from "./x-CDKrptQJ.js";
-import { a as V, n as H } from "./analysis-GV7upnOJ.js";
+import { n as V, o as H } from "./analysis-k9L6Vc0c.js";
 import { n as U } from "./deferred_stylesheets-BpS7LWkd.js";
 import { c as W, n as re, o as ie, s as G } from "./library_match-U5kHYoiF.js";
 import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
@@ -859,7 +859,7 @@ var He = ["for"], Ue = [
 				a.value = {
 					status: "failed",
 					message: e instanceof Error ? e.message : String(e),
-					excerpt: e instanceof H ? e.excerpt : null
+					excerpt: e instanceof V ? e.excerpt : null
 				};
 			}
 		}
@@ -1450,7 +1450,7 @@ function _t(e) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
 		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${pt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(V(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(H(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}

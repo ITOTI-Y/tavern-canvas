@@ -90,4 +90,31 @@ describe("assemble_slot_prompt", () => {
       "boy, black hair, armor, standing",
     ]);
   });
+
+  it("takes the analysis subject for a library character stored as other", () => {
+    const prompt = assemble_slot_prompt({
+      preset: null,
+      library: {
+        characters: [
+          {
+            character: test_character({ id: "c2", name: "Yu", subject: "other" }),
+            outfit_tags: [],
+          },
+          { character: ALICE, outfit_tags: [] },
+        ],
+        outfit_names: [],
+      },
+      characters: [
+        { name: "Yu", tags: "boy, standing" },
+        { name: "Alice", tags: "boy, sitting" },
+      ],
+      scene_tags: "corridor",
+    });
+
+    expect(prompt.positive_prompt).toBe("1girl, 1boy, corridor");
+    expect(prompt.character_prompts.map((character) => character.prompt)).toEqual([
+      "boy, standing",
+      "girl, silver hair, blue eyes, sitting",
+    ]);
+  });
 });

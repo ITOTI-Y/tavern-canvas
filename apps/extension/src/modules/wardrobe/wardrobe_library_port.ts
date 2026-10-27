@@ -61,7 +61,14 @@ export function create_wardrobe_library_port(assets: AssetsCapability): Wardrobe
       const filled = Object.fromEntries(
         Object.entries(addition.slots).map(([slot, tags]) => [slot, join_tags(tags)]),
       );
-      await assets.save("character", { ...record, payload: { ...record.payload, ...filled } });
+      await assets.save("character", {
+        ...record,
+        payload: {
+          ...record.payload,
+          ...filled,
+          ...(addition.subject === null ? {} : { subject: addition.subject }),
+        },
+      });
     },
   };
 }

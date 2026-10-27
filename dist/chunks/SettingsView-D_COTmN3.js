@@ -2,19 +2,19 @@ import { a as e } from "./ids-stC4fUL8.js";
 import { i as t, o as n } from "./novelai-Ckd0H4Ml.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
 import { n as a, t as o } from "./novelai_defaults-CoeHYmzC.js";
-import { a as s, n as c, o as l, r as u } from "./http_acknowledgment-CSrNHiim.js";
+import { a as s, n as c, o as l, r as u } from "./http_acknowledgment-DvPfaNgR.js";
 import { A as d, F as f, G as p, N as m, V as h, W as g, _, a as v, b as y, ct as b, et as x, g as S, h as C, m as w, n as T, p as E, pt as D, s as O, u as k, ut as A, v as j, x as M, y as N } from "./vue-i18n-DUz2Gjn8.js";
 import { n as P, t as F } from "./AppIcon-Cnhzrx9o.js";
-import { n as I, t as L } from "./StateSurface-BA0Ffiwe.js";
-import { t as R } from "./AppDialog-CzDoJQTe.js";
-import { t as z } from "./FieldGroup-BYtqLDde.js";
-import { n as B } from "./deferred_stylesheets-BpS7LWkd.js";
+import { n as I, t as ee } from "./StateSurface-BA0Ffiwe.js";
+import { t as L } from "./AppDialog-CzDoJQTe.js";
+import { t as R } from "./FieldGroup-BYtqLDde.js";
+import { n as z } from "./deferred_stylesheets-BpS7LWkd.js";
 import "./browser_secret_vault-CnTo7PwU.js";
-import { n as ee, t as te } from "./novelai_request_defaults-B0sJ9ANr.js";
-import { t as V } from "./AppCheckbox-CTxQ1oVE.js";
-import { n as H, t as U } from "./NumberStepper-BaD6Y0DB.js";
-import { t as W } from "./AppSelect-BdnjEPS_.js";
-import { t as ne } from "./ConfirmDialog-3SJceF8v.js";
+import { n as B, t as te } from "./novelai_request_defaults-B0sJ9ANr.js";
+import { t as ne } from "./AppCheckbox-CTxQ1oVE.js";
+import { n as V, t as H } from "./NumberStepper-BaD6Y0DB.js";
+import { t as U } from "./AppSelect-BdnjEPS_.js";
+import { t as W } from "./ConfirmDialog-3SJceF8v.js";
 import { t as G } from "./PromptTagChips-2I2ArwXq.js";
 import { t as K } from "./AppSwitch-DGomz9dg.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/cable.js
@@ -69,46 +69,47 @@ var q = P("cable", [
 		key: "p32p05"
 	}]
 ]), X = {
-	view: "_view_recet_7",
-	onboarding: "_onboarding_recet_16",
-	onboarding_icon: "_onboarding_icon_recet_25",
-	onboarding_label: "_onboarding_label_recet_37",
-	onboarding_title: "_onboarding_title_recet_44",
-	onboarding_description: "_onboarding_description_recet_51",
-	section: "_section_recet_70",
-	section_header: "_section_header_recet_79",
-	section_title: "_section_title_recet_89",
-	row: "_row_recet_95",
-	row_label: "_row_label_recet_104",
-	row_value: "_row_value_recet_112",
-	profile_row: "_profile_row_recet_76",
-	profile_identity: "_profile_identity_recet_120",
-	profile_name: "_profile_name_recet_144",
-	profile_meta: "_profile_meta_recet_151",
-	profile_actions: "_profile_actions_recet_161",
-	badge: "_badge_recet_169",
-	form_grid: "_form_grid_recet_178",
-	status_text: "_status_text_recet_184",
-	risk_banner: "_risk_banner_recet_204",
-	risk_banner_title: "_risk_banner_title_recet_218",
-	risk_banner_description: "_risk_banner_description_recet_230",
-	risk_banner_actions: "_risk_banner_actions_recet_237",
-	acknowledged_note: "_acknowledged_note_recet_243",
-	description: "_description_recet_251",
-	actions_row: "_actions_row_recet_258",
-	vault_mode_row: "_vault_mode_row_recet_264",
-	vault_controls: "_vault_controls_recet_280",
-	vault_unlocked_actions: "_vault_unlocked_actions_recet_291",
-	text_input: "_text_input_recet_298",
-	layout: "_layout_recet_314",
-	section_nav: "_section_nav_recet_320",
-	section_nav_item: "_section_nav_item_recet_328",
-	section_content: "_section_content_recet_341",
-	prompt_tag_row: "_prompt_tag_row_recet_359"
+	view: "_view_1rqoj_7",
+	onboarding: "_onboarding_1rqoj_16",
+	onboarding_icon: "_onboarding_icon_1rqoj_25",
+	onboarding_label: "_onboarding_label_1rqoj_37",
+	onboarding_title: "_onboarding_title_1rqoj_44",
+	onboarding_description: "_onboarding_description_1rqoj_51",
+	section: "_section_1rqoj_70",
+	section_header: "_section_header_1rqoj_79",
+	section_title: "_section_title_1rqoj_89",
+	row: "_row_1rqoj_95",
+	row_label: "_row_label_1rqoj_104",
+	row_value: "_row_value_1rqoj_112",
+	profile_row: "_profile_row_1rqoj_76",
+	profile_identity: "_profile_identity_1rqoj_120",
+	profile_name: "_profile_name_1rqoj_144",
+	profile_meta: "_profile_meta_1rqoj_151",
+	profile_actions: "_profile_actions_1rqoj_161",
+	badge: "_badge_1rqoj_169",
+	form_grid: "_form_grid_1rqoj_178",
+	status_text: "_status_text_1rqoj_184",
+	risk_banner: "_risk_banner_1rqoj_204",
+	risk_banner_title: "_risk_banner_title_1rqoj_218",
+	risk_banner_description: "_risk_banner_description_1rqoj_230",
+	risk_banner_actions: "_risk_banner_actions_1rqoj_237",
+	acknowledged_note: "_acknowledged_note_1rqoj_243",
+	description: "_description_1rqoj_251",
+	actions_row: "_actions_row_1rqoj_258",
+	vault_mode_row: "_vault_mode_row_1rqoj_264",
+	vault_controls: "_vault_controls_1rqoj_280",
+	vault_unlocked_actions: "_vault_unlocked_actions_1rqoj_291",
+	text_input: "_text_input_1rqoj_298",
+	text_area: "_text_area_1rqoj_308",
+	layout: "_layout_1rqoj_327",
+	section_nav: "_section_nav_1rqoj_333",
+	section_nav_item: "_section_nav_item_1rqoj_341",
+	section_content: "_section_content_1rqoj_354",
+	prompt_tag_row: "_prompt_tag_row_1rqoj_372"
 };
 //#endregion
 //#region src/ui/views/settings/settings_styles.ts
-B("settings", "._view_recet_7{flex-direction:column;gap:32px;width:min(100%,920px);margin:0 auto;padding:24px;display:flex}._onboarding_recet_16{background-color:var(--tc-surface-raised);border:1px solid var(--tc-divider);grid-template-columns:48px minmax(0,1fr);gap:16px;padding:24px;display:grid}._onboarding_icon_recet_25{width:48px;height:48px;color:var(--tc-accent);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;display:flex}._onboarding_label_recet_37{color:var(--tc-accent);margin-bottom:4px;font-size:12px;font-weight:650}._onboarding_title_recet_44{color:var(--tc-text);font-size:22px;font-weight:680;line-height:1.2}._onboarding_description_recet_51{max-width:62ch;color:var(--tc-text-muted);margin-top:8px;line-height:1.55}@media (width<=639px){._view_recet_7{gap:24px;padding:20px 16px}._onboarding_recet_16{grid-template-columns:minmax(0,1fr);padding:20px}}._section_recet_70{flex-direction:column;min-width:0;display:flex}._section_header_recet_79{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;display:flex}._section_title_recet_89{color:var(--tc-text);font-size:14px;font-weight:650}._row_recet_95{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._row_label_recet_104{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_recet_112{color:var(--tc-text);flex:none}._profile_row_recet_76{border-top:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._profile_identity_recet_120{flex-direction:column;flex:12rem;gap:2px;min-width:0;display:flex}._profile_name_recet_144{color:var(--tc-text);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_recet_151{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._profile_actions_recet_161{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;display:flex}._badge_recet_169{border:1px solid var(--tc-accent);border-radius:var(--tc-radius-status);color:var(--tc-accent);flex:none;padding:2px 8px;font-size:11px}._form_grid_recet_178{flex-direction:column;gap:16px;display:flex}._status_text_recet_184{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:inline-flex}._status_text_recet_184[data-tone=success]{color:var(--tc-success)}._status_text_recet_184[data-tone=warning]{color:var(--tc-warning)}._status_text_recet_184[data-tone=error]{color:var(--tc-error)}._risk_banner_recet_204{border:1px solid var(--tc-warning);border-radius:var(--tc-radius-field);background-color:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._risk_banner_recet_204[data-severity=error]{border-color:var(--tc-error)}._risk_banner_title_recet_218{color:var(--tc-warning);align-items:center;gap:6px;font-weight:600;display:flex}._risk_banner_recet_204[data-severity=error] ._risk_banner_title_recet_218{color:var(--tc-error)}._risk_banner_description_recet_230{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:12px}._risk_banner_actions_recet_237{align-items:center;gap:8px;display:flex}._acknowledged_note_recet_243{color:var(--tc-success);align-items:center;gap:6px;font-size:12px;display:flex}._description_recet_251{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._actions_row_recet_258{align-items:center;gap:12px;padding-top:8px;display:flex}._vault_mode_row_recet_264{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;display:flex}._vault_mode_row_recet_264 ._profile_meta_recet_151{white-space:normal;text-overflow:clip;line-height:1.45;overflow:visible}._vault_controls_recet_280{gap:14px;width:min(100%,520px);padding-top:16px;display:grid}._vault_controls_recet_280>button{width:fit-content}._vault_unlocked_actions_recet_291{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._text_input_recet_298{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;height:36px;color:var(--tc-text);border-color:var(--tc-divider);padding:0 10px}._text_input_recet_298:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._layout_recet_314{grid-template-columns:184px minmax(0,1fr);min-height:100%;display:grid}._section_nav_recet_320{border-inline-end:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding:16px 8px;display:flex}._section_nav_item_recet_328{border-radius:var(--tc-radius-field);color:var(--tc-text-muted);text-align:start;white-space:nowrap;padding:8px 12px}._section_nav_item_recet_328[data-selected=true]{color:var(--tc-accent);background-color:var(--tc-surface-raised)}._section_content_recet_341{min-width:0}@media (width<=767px){._layout_recet_314{grid-template-columns:minmax(0,1fr)}._section_nav_recet_320{border-inline-end:none;border-bottom:1px solid var(--tc-divider);flex-direction:row;padding:8px;overflow-x:auto}}._prompt_tag_row_recet_359{flex-wrap:wrap;gap:6px;margin-top:4px;display:flex}");
+z("settings", "._view_1rqoj_7{flex-direction:column;gap:32px;width:min(100%,920px);margin:0 auto;padding:24px;display:flex}._onboarding_1rqoj_16{background-color:var(--tc-surface-raised);border:1px solid var(--tc-divider);grid-template-columns:48px minmax(0,1fr);gap:16px;padding:24px;display:grid}._onboarding_icon_1rqoj_25{width:48px;height:48px;color:var(--tc-accent);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;display:flex}._onboarding_label_1rqoj_37{color:var(--tc-accent);margin-bottom:4px;font-size:12px;font-weight:650}._onboarding_title_1rqoj_44{color:var(--tc-text);font-size:22px;font-weight:680;line-height:1.2}._onboarding_description_1rqoj_51{max-width:62ch;color:var(--tc-text-muted);margin-top:8px;line-height:1.55}@media (width<=639px){._view_1rqoj_7{gap:24px;padding:20px 16px}._onboarding_1rqoj_16{grid-template-columns:minmax(0,1fr);padding:20px}}._section_1rqoj_70{flex-direction:column;min-width:0;display:flex}._section_header_1rqoj_79{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;display:flex}._section_title_1rqoj_89{color:var(--tc-text);font-size:14px;font-weight:650}._row_1rqoj_95{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._row_label_1rqoj_104{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_1rqoj_112{color:var(--tc-text);flex:none}._profile_row_1rqoj_76{border-top:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._profile_identity_1rqoj_120{flex-direction:column;flex:12rem;gap:2px;min-width:0;display:flex}._profile_name_1rqoj_144{color:var(--tc-text);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_1rqoj_151{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._profile_actions_1rqoj_161{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;display:flex}._badge_1rqoj_169{border:1px solid var(--tc-accent);border-radius:var(--tc-radius-status);color:var(--tc-accent);flex:none;padding:2px 8px;font-size:11px}._form_grid_1rqoj_178{flex-direction:column;gap:16px;display:flex}._status_text_1rqoj_184{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:inline-flex}._status_text_1rqoj_184[data-tone=success]{color:var(--tc-success)}._status_text_1rqoj_184[data-tone=warning]{color:var(--tc-warning)}._status_text_1rqoj_184[data-tone=error]{color:var(--tc-error)}._risk_banner_1rqoj_204{border:1px solid var(--tc-warning);border-radius:var(--tc-radius-field);background-color:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._risk_banner_1rqoj_204[data-severity=error]{border-color:var(--tc-error)}._risk_banner_title_1rqoj_218{color:var(--tc-warning);align-items:center;gap:6px;font-weight:600;display:flex}._risk_banner_1rqoj_204[data-severity=error] ._risk_banner_title_1rqoj_218{color:var(--tc-error)}._risk_banner_description_1rqoj_230{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:12px}._risk_banner_actions_1rqoj_237{align-items:center;gap:8px;display:flex}._acknowledged_note_1rqoj_243{color:var(--tc-success);align-items:center;gap:6px;font-size:12px;display:flex}._description_1rqoj_251{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._actions_row_1rqoj_258{align-items:center;gap:12px;padding-top:8px;display:flex}._vault_mode_row_1rqoj_264{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;display:flex}._vault_mode_row_1rqoj_264 ._profile_meta_1rqoj_151{white-space:normal;text-overflow:clip;line-height:1.45;overflow:visible}._vault_controls_1rqoj_280{gap:14px;width:min(100%,520px);padding-top:16px;display:grid}._vault_controls_1rqoj_280>button{width:fit-content}._vault_unlocked_actions_1rqoj_291{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._text_input_1rqoj_298{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;height:36px;color:var(--tc-text);border-color:var(--tc-divider);padding:0 10px}._text_area_1rqoj_308{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;min-height:72px;color:var(--tc-text);border-color:var(--tc-divider);font:inherit;resize:vertical;padding:8px 10px}._text_area_1rqoj_308:focus-visible,._text_input_1rqoj_298:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._layout_1rqoj_327{grid-template-columns:184px minmax(0,1fr);min-height:100%;display:grid}._section_nav_1rqoj_333{border-inline-end:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding:16px 8px;display:flex}._section_nav_item_1rqoj_341{border-radius:var(--tc-radius-field);color:var(--tc-text-muted);text-align:start;white-space:nowrap;padding:8px 12px}._section_nav_item_1rqoj_341[data-selected=true]{color:var(--tc-accent);background-color:var(--tc-surface-raised)}._section_content_1rqoj_354{min-width:0}@media (width<=767px){._layout_1rqoj_327{grid-template-columns:minmax(0,1fr)}._section_nav_1rqoj_333{border-inline-end:none;border-bottom:1px solid var(--tc-divider);flex-direction:row;padding:8px;overflow-x:auto}}._prompt_tag_row_1rqoj_372{flex-wrap:wrap;gap:6px;margin-top:4px;display:flex}");
 var Z = X, re = /* @__PURE__ */ M({
 	__name: "AppearanceSettings",
 	props: {
@@ -168,7 +169,7 @@ var Z = X, re = /* @__PURE__ */ M({
 			class: A(b(Z).section),
 			"data-testid": "appearance-settings"
 		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.appearance")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.theme_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.theme_label")), 3), N(V, {
 				"model-value": e.settings?.ui.color_mode ?? "system",
 				options: a.value,
 				label: b(n)("settings.appearance.theme_label"),
@@ -178,7 +179,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"options",
 				"label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.language_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.language_label")), 3), N(V, {
 				"model-value": e.settings?.locale ?? "auto",
 				options: o.value,
 				label: b(n)("settings.appearance.language_label"),
@@ -188,7 +189,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"options",
 				"label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.inspector_width_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.inspector_width_label")), 3), N(H, {
 				"model-value": e.settings?.ui.inspector_width ?? 320,
 				label: b(n)("settings.appearance.inspector_width_label"),
 				min: 240,
@@ -319,7 +320,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				class: A(b(Z).status_text),
 				"data-tone": e.vaultStatus.state === "unlocked" ? "success" : void 0
 			}, D(u.value), 11, Q)) : S("", !0)], 2),
-			w("div", { class: A(b(Z).vault_mode_row) }, [w("div", { class: A(b(Z).profile_identity) }, [w("span", { class: A(b(Z).profile_name) }, D(b(n)("settings.credential_storage.mode_label")), 3), w("span", { class: A(b(Z).profile_meta) }, D(b(n)("settings.credential_storage.mode_hint")), 3)], 2), N(H, {
+			w("div", { class: A(b(Z).vault_mode_row) }, [w("div", { class: A(b(Z).profile_identity) }, [w("span", { class: A(b(Z).profile_name) }, D(b(n)("settings.credential_storage.mode_label")), 3), w("span", { class: A(b(Z).profile_meta) }, D(b(n)("settings.credential_storage.mode_hint")), 3)], 2), N(V, {
 				modelValue: l.value,
 				"onUpdate:modelValue": f[0] ||= (e) => l.value = e,
 				options: c.value,
@@ -340,7 +341,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"data-tone": "error",
 				role: "alert"
 			}, D(d.value), 3)) : e.vaultStatus.state === "uninitialized" ? (m(), _(k, { key: 1 }, [
-				N(z, {
+				N(R, {
 					label: b(n)("settings.credential_storage.passphrase_label"),
 					hint: b(n)("settings.credential_storage.passphrase_hint", { count: b(12) }),
 					required: ""
@@ -356,7 +357,7 @@ var Z = X, re = /* @__PURE__ */ M({
 					}, null, 10, ie), [[v, r.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
-				N(z, {
+				N(R, {
 					label: b(n)("settings.credential_storage.confirm_passphrase_label"),
 					required: ""
 				}, {
@@ -376,7 +377,7 @@ var Z = X, re = /* @__PURE__ */ M({
 					pending: a.value,
 					onClick: C
 				}, null, 8, ["label", "pending"])
-			], 64)) : e.vaultStatus.state === "locked" ? (m(), _(k, { key: 2 }, [N(z, {
+			], 64)) : e.vaultStatus.state === "locked" ? (m(), _(k, { key: 2 }, [N(R, {
 				label: b(n)("settings.credential_storage.passphrase_label"),
 				hint: b(n)("settings.credential_storage.unlock_hint"),
 				required: ""
@@ -414,7 +415,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"data-tone": "error",
 				role: "alert"
 			}, D(o.value), 3)) : S("", !0)], 2)) : S("", !0),
-			N(ne, {
+			N(W, {
 				open: s.value,
 				title: b(n)("settings.credential_storage.reset_confirm_title"),
 				description: b(n)("settings.credential_storage.reset_confirm_description"),
@@ -536,7 +537,7 @@ var Z = X, re = /* @__PURE__ */ M({
 			class: A(b(Z).section),
 			"data-testid": "data-settings"
 		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.data")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.data.vocabulary_channel_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.data.vocabulary_channel_label")), 3), N(V, {
 				"model-value": e.vocabularyUpdateChannel ?? "bundled",
 				options: i,
 				label: b(n)("settings.data.vocabulary_channel_label"),
@@ -699,7 +700,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				}
 			}
 		}
-		async function L() {
+		async function ee() {
 			let e = f.value.trim();
 			if (O.value = null, !(e.length === 0 || y.value)) {
 				y.value = !0;
@@ -712,7 +713,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				}
 			}
 		}
-		async function R() {
+		async function L() {
 			if (!y.value) {
 				y.value = !0, O.value = null;
 				try {
@@ -724,15 +725,15 @@ var Z = X, re = /* @__PURE__ */ M({
 				}
 			}
 		}
-		function B() {
+		function z() {
 			t.controller.test_diagnostics_connection();
 		}
-		let ee = E(() => t.connectionTestCommand.status === "pending");
+		let B = E(() => t.connectionTestCommand.status === "pending");
 		return (t, r) => (m(), _("div", {
 			class: A(b(Z).section),
 			"data-testid": "gateway-settings"
 		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.gateway")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
-			N(z, {
+			N(R, {
 				label: b(n)("settings.gateway.endpoint_label"),
 				hint: b(n)("settings.gateway.endpoint_hint"),
 				error: a.value
@@ -781,10 +782,10 @@ var Z = X, re = /* @__PURE__ */ M({
 			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.gateway.protocol_label")), 3), N(I, {
 				label: b(n)("settings.gateway.detect_action"),
 				variant: "secondary",
-				pending: ee.value,
-				onClick: B
+				pending: B.value,
+				onClick: z
 			}, null, 8, ["label", "pending"])], 2),
-			N(z, { label: b(n)("settings.gateway.token_secret_label") }, {
+			N(R, { label: b(n)("settings.gateway.token_secret_label") }, {
 				default: g(({ fieldId: t }) => [w("span", {
 					id: t,
 					class: A(b(Z).row_value),
@@ -792,7 +793,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				}, D(e.settings?.gateway.token_secret_id ?? b(n)("settings.gateway.token_not_set")), 11, fe)]),
 				_: 1
 			}, 8, ["label"]),
-			N(z, {
+			N(R, {
 				label: b(n)("settings.gateway.token_label"),
 				hint: b(n)("settings.gateway.token_hint"),
 				error: O.value
@@ -817,7 +818,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				pending: y.value,
 				disabled: f.value.trim().length === 0,
 				"data-testid": "gateway-token-save",
-				onClick: L
+				onClick: ee
 			}, null, 8, [
 				"label",
 				"pending",
@@ -828,7 +829,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				variant: "secondary",
 				pending: y.value,
 				"data-testid": "gateway-token-clear",
-				onClick: R
+				onClick: L
 			}, null, 8, ["label", "pending"])) : S("", !0)], 2)
 		], 2)], 2));
 	}
@@ -837,11 +838,21 @@ var Z = X, re = /* @__PURE__ */ M({
 	"placeholder",
 	"aria-describedby",
 	"disabled"
-], ge = ["id", "aria-describedby"], _e = ["id", "aria-describedby"], ve = ["id", "aria-describedby"], ye = ["id", "aria-describedby"], be = ["id", "aria-describedby"], xe = [
+], ge = [
+	"id",
+	"placeholder",
+	"aria-describedby",
+	"disabled"
+], _e = ["id", "aria-describedby"], ve = ["id", "aria-describedby"], ye = ["id", "aria-describedby"], be = ["id", "aria-describedby"], xe = ["id", "aria-describedby"], Se = [
 	"id",
 	"aria-describedby",
 	"disabled"
-], Se = "in_use", Ce = "none", we = /* @__PURE__ */ M({
+], Ce = [
+	"id",
+	"placeholder",
+	"aria-describedby",
+	"disabled"
+], we = "in_use", Te = "none", Ee = /* @__PURE__ */ M({
 	__name: "IllustrationSettings",
 	props: {
 		settings: {},
@@ -860,17 +871,17 @@ var Z = X, re = /* @__PURE__ */ M({
 				...e
 			} });
 		}
-		let o = x(""), s = x(""), c = x(""), l = x(""), u = x(""), f = x("");
+		let o = x(""), s = x(""), c = x(""), l = x(""), u = x(""), f = x(""), y = x(""), C = x("");
 		h(r, (e) => {
-			o.value = e === null || e.preset_name === Se ? "" : e.preset_name, f.value = e?.wardrobe_model ?? "", e?.connection.kind === "proxy_preset" ? (s.value = e.connection.proxy_preset, c.value = e.connection.model ?? "") : e?.connection.kind === "custom" && (l.value = e.connection.api_url, u.value = e.connection.model);
+			o.value = e === null || e.preset_name === we ? "" : e.preset_name, f.value = e?.wardrobe_model ?? "", y.value = e?.analysis_guidance ?? "", C.value = e?.wardrobe_guidance ?? "", e?.connection.kind === "proxy_preset" ? (s.value = e.connection.proxy_preset, c.value = e.connection.model ?? "") : e?.connection.kind === "custom" && (l.value = e.connection.api_url, u.value = e.connection.model);
 		}, { immediate: !0 });
-		function y() {
+		function O() {
 			a({ wardrobe_model: f.value.trim() || null });
 		}
-		function C() {
-			a({ preset_name: o.value.trim() || Se });
+		function j() {
+			a({ preset_name: o.value.trim() || we });
 		}
-		let O = E(() => [
+		let M = E(() => [
 			{
 				value: "current",
 				label: n("settings.illustration.connection_current")
@@ -884,7 +895,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				label: n("settings.illustration.connection_custom")
 			}
 		]);
-		function j() {
+		function P() {
 			let e = s.value.trim();
 			if (e === "") return null;
 			let t = c.value.trim();
@@ -894,7 +905,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				model: t === "" ? null : t
 			};
 		}
-		function M() {
+		function F() {
 			let e = l.value.trim(), t = u.value.trim();
 			return t === "" || !URL.canParse(e) || !/^https?:$/u.test(new URL(e).protocol) ? null : {
 				kind: "custom",
@@ -902,66 +913,66 @@ var Z = X, re = /* @__PURE__ */ M({
 				model: t
 			};
 		}
-		let P = E(() => V.value === "custom" && l.value.trim() !== "" && M() === null);
-		function F() {
-			let e = M();
+		let ee = E(() => G.value === "custom" && l.value.trim() !== "" && F() === null);
+		function L() {
+			let e = F();
 			e !== null && a({ connection: e });
 		}
-		let L = x(""), R = x("idle");
-		async function B() {
-			let e = L.value.trim();
+		let z = x(""), B = x("idle");
+		async function te() {
+			let e = z.value.trim();
 			if (e !== "") {
-				R.value = "saving";
+				B.value = "saving";
 				try {
-					await t.controller.set_analysis_key(e), L.value = "", R.value = "saved";
+					await t.controller.set_analysis_key(e), z.value = "", B.value = "saved";
 				} catch {
-					R.value = "failed";
+					B.value = "failed";
 				}
 			}
 		}
-		async function ee() {
-			R.value = "saving";
+		async function ne() {
+			B.value = "saving";
 			try {
-				await t.controller.clear_analysis_key(), R.value = "cleared";
+				await t.controller.clear_analysis_key(), B.value = "cleared";
 			} catch {
-				R.value = "failed";
+				B.value = "failed";
 			}
 		}
-		let te = E(() => {
-			switch (R.value) {
+		let W = E(() => {
+			switch (B.value) {
 				case "saved": return n("settings.illustration.custom_key_saved");
 				case "cleared": return n("settings.illustration.custom_key_cleared");
 				case "failed": return n("settings.illustration.custom_key_failed");
 				case "idle":
 				case "saving": return "";
 			}
-		}), V = x(r.value?.connection.kind ?? "current");
+		}), G = x(r.value?.connection.kind ?? "current");
 		h(() => r.value?.connection.kind, (e) => {
-			e !== void 0 && (V.value = e);
+			e !== void 0 && (G.value = e);
 		});
-		function ne(e) {
-			if (e === "current") V.value = "current", a({ connection: { kind: "current" } });
+		function q(e) {
+			if (e === "current") G.value = "current", a({ connection: { kind: "current" } });
 			else if (e === "proxy_preset") {
-				V.value = "proxy_preset";
-				let e = j();
+				G.value = "proxy_preset";
+				let e = P();
 				e !== null && a({ connection: e });
-			} else e === "custom" && (V.value = "custom", F());
+			} else e === "custom" && (G.value = "custom", L());
 		}
-		function G() {
-			let e = j();
+		function J() {
+			let e = P();
 			e !== null && a({ connection: e });
 		}
-		let q = E(() => [{
-			value: Ce,
+		let Y = E(() => [{
+			value: Te,
 			label: n("settings.illustration.prompt_preset_none")
 		}, ...t.promptPresets.map((e) => ({
 			value: e.id,
 			label: e.display_name
 		}))]);
-		function J(e) {
+		function X(e) {
 			a({ prompt_preset_id: t.promptPresets.find((t) => t.id === e)?.id ?? null });
 		}
-		let Y = E(() => [
+		let re = E(() => [
 			{
 				value: "chat",
 				label: n("settings.illustration.world_info_chat")
@@ -974,29 +985,29 @@ var Z = X, re = /* @__PURE__ */ M({
 				value: "off",
 				label: n("settings.illustration.world_info_off")
 			}
-		]), X = x(r.value?.world_info.mode ?? "chat");
+		]), Q = x(r.value?.world_info.mode ?? "chat");
 		h(() => r.value?.world_info.mode, (e) => {
-			e !== void 0 && (X.value = e);
+			e !== void 0 && (Q.value = e);
 		});
-		let re = x([]), Q = x(!1);
-		async function ie() {
+		let ie = x([]), $ = x(!1);
+		async function ae() {
 			try {
-				re.value = await t.controller.list_worldbooks(), Q.value = !1;
+				ie.value = await t.controller.list_worldbooks(), $.value = !1;
 			} catch {
-				Q.value = !0;
+				$.value = !0;
 			}
 		}
 		d(() => {
-			X.value === "worldbook" && ie();
+			Q.value === "worldbook" && ae();
 		});
-		let $ = E(() => r.value?.world_info.mode === "worldbook" ? r.value.world_info.worldbook : void 0), ae = E(() => [.../* @__PURE__ */ new Set([...re.value, ...$.value === void 0 ? [] : [$.value]])].map((e) => ({
+		let oe = E(() => r.value?.world_info.mode === "worldbook" ? r.value.world_info.worldbook : void 0), se = E(() => [.../* @__PURE__ */ new Set([...ie.value, ...oe.value === void 0 ? [] : [oe.value]])].map((e) => ({
 			value: e,
 			label: e
 		})));
-		function oe(e) {
-			e === "chat" || e === "off" ? (X.value = e, a({ world_info: { mode: e } })) : e === "worldbook" && (X.value = e, ie());
+		function ce(e) {
+			e === "chat" || e === "off" ? (Q.value = e, a({ world_info: { mode: e } })) : e === "worldbook" && (Q.value = e, ae());
 		}
-		function se(e) {
+		function le(e) {
 			a({ world_info: {
 				mode: "worldbook",
 				worldbook: e
@@ -1017,119 +1028,137 @@ var Z = X, re = /* @__PURE__ */ M({
 				"disabled"
 			]),
 			w("p", { class: A(b(Z).description) }, D(b(n)("settings.illustration.auto_generation_hint")), 3),
-			N(z, {
+			N(R, {
+				label: b(n)("settings.illustration.analysis_guidance_label"),
+				hint: b(n)("settings.illustration.analysis_guidance_hint")
+			}, {
+				default: g(({ fieldId: t, describedBy: r }) => [p(w("textarea", {
+					id: t,
+					"onUpdate:modelValue": d[1] ||= (e) => y.value = e,
+					rows: "3",
+					maxlength: "2000",
+					placeholder: b(n)("settings.illustration.analysis_guidance_placeholder"),
+					"aria-describedby": r,
+					class: A(b(Z).text_area),
+					disabled: !e.settings,
+					"data-testid": "analysis-guidance-input",
+					onBlur: d[2] ||= (e) => a({ analysis_guidance: y.value.trim() })
+				}, null, 42, he), [[v, y.value]])]),
+				_: 1
+			}, 8, ["label", "hint"]),
+			N(R, {
 				label: b(n)("settings.illustration.preset_label"),
 				hint: b(n)("settings.illustration.preset_hint")
 			}, {
 				default: g(({ fieldId: t, describedBy: r }) => [p(w("input", {
 					id: t,
-					"onUpdate:modelValue": d[1] ||= (e) => o.value = e,
+					"onUpdate:modelValue": d[3] ||= (e) => o.value = e,
 					type: "text",
 					placeholder: b(n)("settings.illustration.preset_placeholder"),
 					"aria-describedby": r,
 					class: A(b(Z).text_input),
 					disabled: !e.settings,
 					"data-testid": "analysis-preset-input",
-					onBlur: C
-				}, null, 42, he), [[v, o.value]])]),
+					onBlur: j
+				}, null, 42, ge), [[v, o.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.connection_label")), 3), N(H, {
-				"model-value": V.value,
-				options: O.value,
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.connection_label")), 3), N(V, {
+				"model-value": G.value,
+				options: M.value,
 				label: b(n)("settings.illustration.connection_label"),
 				disabled: !e.settings,
-				"onUpdate:modelValue": ne
+				"onUpdate:modelValue": q
 			}, null, 8, [
 				"model-value",
 				"options",
 				"label",
 				"disabled"
 			])], 2),
-			V.value === "proxy_preset" ? (m(), _(k, { key: 0 }, [N(z, {
+			G.value === "proxy_preset" ? (m(), _(k, { key: 0 }, [N(R, {
 				label: b(n)("settings.illustration.proxy_preset_label"),
 				hint: b(n)("settings.illustration.proxy_preset_hint")
 			}, {
 				default: g(({ fieldId: e, describedBy: t }) => [p(w("input", {
 					id: e,
-					"onUpdate:modelValue": d[2] ||= (e) => s.value = e,
+					"onUpdate:modelValue": d[4] ||= (e) => s.value = e,
 					type: "text",
 					"aria-describedby": t,
 					class: A(b(Z).text_input),
 					"data-testid": "analysis-proxy-preset-input",
-					onBlur: G
-				}, null, 42, ge), [[v, s.value]])]),
+					onBlur: J
+				}, null, 42, _e), [[v, s.value]])]),
 				_: 1
-			}, 8, ["label", "hint"]), N(z, {
+			}, 8, ["label", "hint"]), N(R, {
 				label: b(n)("settings.illustration.proxy_model_label"),
 				hint: b(n)("settings.illustration.proxy_model_hint")
 			}, {
 				default: g(({ fieldId: e, describedBy: t }) => [p(w("input", {
 					id: e,
-					"onUpdate:modelValue": d[3] ||= (e) => c.value = e,
+					"onUpdate:modelValue": d[5] ||= (e) => c.value = e,
 					type: "text",
 					"aria-describedby": t,
 					class: A(b(Z).text_input),
-					onBlur: G
-				}, null, 42, _e), [[v, c.value]])]),
+					onBlur: J
+				}, null, 42, ve), [[v, c.value]])]),
 				_: 1
 			}, 8, ["label", "hint"])], 64)) : S("", !0),
-			V.value === "custom" ? (m(), _(k, { key: 1 }, [
-				N(z, {
+			G.value === "custom" ? (m(), _(k, { key: 1 }, [
+				N(R, {
 					label: b(n)("settings.illustration.custom_url_label"),
 					hint: b(n)("settings.illustration.custom_url_hint"),
-					error: P.value ? b(n)("settings.illustration.custom_invalid") : null
+					error: ee.value ? b(n)("settings.illustration.custom_invalid") : null
 				}, {
 					default: g(({ fieldId: e, describedBy: t }) => [p(w("input", {
 						id: e,
-						"onUpdate:modelValue": d[4] ||= (e) => l.value = e,
+						"onUpdate:modelValue": d[6] ||= (e) => l.value = e,
 						type: "url",
 						placeholder: "https://",
 						"aria-describedby": t,
 						class: A(b(Z).text_input),
 						"data-testid": "analysis-custom-url-input",
-						onBlur: F
-					}, null, 42, ve), [[v, l.value]])]),
+						onBlur: L
+					}, null, 42, ye), [[v, l.value]])]),
 					_: 1
 				}, 8, [
 					"label",
 					"hint",
 					"error"
 				]),
-				N(z, { label: b(n)("settings.illustration.custom_model_label") }, {
+				N(R, { label: b(n)("settings.illustration.custom_model_label") }, {
 					default: g(({ fieldId: e, describedBy: t }) => [p(w("input", {
 						id: e,
-						"onUpdate:modelValue": d[5] ||= (e) => u.value = e,
+						"onUpdate:modelValue": d[7] ||= (e) => u.value = e,
 						type: "text",
 						"aria-describedby": t,
 						class: A(b(Z).text_input),
 						"data-testid": "analysis-custom-model-input",
-						onBlur: F
-					}, null, 42, ye), [[v, u.value]])]),
+						onBlur: L
+					}, null, 42, be), [[v, u.value]])]),
 					_: 1
 				}, 8, ["label"]),
-				N(z, {
+				N(R, {
 					label: b(n)("settings.illustration.custom_key_label"),
 					hint: b(n)("settings.illustration.custom_key_hint")
 				}, {
 					default: g(({ fieldId: e, describedBy: t }) => [p(w("input", {
 						id: e,
-						"onUpdate:modelValue": d[6] ||= (e) => L.value = e,
+						"onUpdate:modelValue": d[8] ||= (e) => z.value = e,
 						type: "password",
 						autocomplete: "off",
 						"aria-describedby": t,
 						class: A(b(Z).text_input),
 						"data-testid": "analysis-custom-key-input"
-					}, null, 10, be), [[v, L.value]])]),
+					}, null, 10, xe), [[v, z.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
 				w("div", { class: A(b(Z).actions_row) }, [
 					N(I, {
 						label: b(n)("settings.illustration.custom_key_save"),
 						variant: "primary",
-						pending: R.value === "saving",
-						disabled: L.value.trim() === "",
-						onClick: B
+						pending: B.value === "saving",
+						disabled: z.value.trim() === "",
+						onClick: te
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1137,31 +1166,49 @@ var Z = X, re = /* @__PURE__ */ M({
 					]),
 					N(I, {
 						label: b(n)("settings.illustration.custom_key_clear"),
-						onClick: ee
+						onClick: ne
 					}, null, 8, ["label"]),
 					w("span", {
 						class: A(b(Z).status_text),
 						role: "status"
-					}, D(te.value), 3)
+					}, D(W.value), 3)
 				], 2)
 			], 64)) : S("", !0),
-			N(z, {
+			N(R, {
 				label: b(n)("settings.illustration.wardrobe_model_label"),
-				hint: V.value === "current" ? b(n)("settings.illustration.wardrobe_model_current_hint") : b(n)("settings.illustration.wardrobe_model_hint")
+				hint: G.value === "current" ? b(n)("settings.illustration.wardrobe_model_current_hint") : b(n)("settings.illustration.wardrobe_model_hint")
 			}, {
 				default: g(({ fieldId: t, describedBy: n }) => [p(w("input", {
 					id: t,
-					"onUpdate:modelValue": d[7] ||= (e) => f.value = e,
+					"onUpdate:modelValue": d[9] ||= (e) => f.value = e,
 					type: "text",
 					"aria-describedby": n,
 					class: A(b(Z).text_input),
-					disabled: !e.settings || V.value === "current",
+					disabled: !e.settings || G.value === "current",
 					"data-testid": "wardrobe-model-input",
-					onBlur: y
-				}, null, 42, xe), [[v, f.value]])]),
+					onBlur: O
+				}, null, 42, Se), [[v, f.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.chat_history_label")), 3), N(U, {
+			N(R, {
+				label: b(n)("settings.illustration.wardrobe_guidance_label"),
+				hint: b(n)("settings.illustration.wardrobe_guidance_hint")
+			}, {
+				default: g(({ fieldId: t, describedBy: r }) => [p(w("textarea", {
+					id: t,
+					"onUpdate:modelValue": d[10] ||= (e) => C.value = e,
+					rows: "3",
+					maxlength: "2000",
+					placeholder: b(n)("settings.illustration.wardrobe_guidance_placeholder"),
+					"aria-describedby": r,
+					class: A(b(Z).text_area),
+					disabled: !e.settings,
+					"data-testid": "wardrobe-guidance-input",
+					onBlur: d[11] ||= (e) => a({ wardrobe_guidance: C.value.trim() })
+				}, null, 42, Ce), [[v, C.value]])]),
+				_: 1
+			}, 8, ["label", "hint"]),
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.chat_history_label")), 3), N(H, {
 				"model-value": r.value?.max_chat_history,
 				label: b(n)("settings.illustration.chat_history_label"),
 				min: 0,
@@ -1169,7 +1216,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"increment-label": b(n)("common.actions.increase"),
 				"decrement-label": b(n)("common.actions.decrease"),
 				disabled: !e.settings,
-				"onUpdate:modelValue": d[8] ||= (e) => a({ max_chat_history: e })
+				"onUpdate:modelValue": d[12] ||= (e) => a({ max_chat_history: e })
 			}, null, 8, [
 				"model-value",
 				"label",
@@ -1177,12 +1224,12 @@ var Z = X, re = /* @__PURE__ */ M({
 				"decrement-label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.world_info_label")), 3), N(H, {
-				"model-value": X.value,
-				options: Y.value,
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.world_info_label")), 3), N(V, {
+				"model-value": Q.value,
+				options: re.value,
 				label: b(n)("settings.illustration.world_info_label"),
 				disabled: !e.settings,
-				"onUpdate:modelValue": oe
+				"onUpdate:modelValue": ce
 			}, null, 8, [
 				"model-value",
 				"options",
@@ -1190,23 +1237,23 @@ var Z = X, re = /* @__PURE__ */ M({
 				"disabled"
 			])], 2),
 			w("p", { class: A(b(Z).description) }, D(b(n)("settings.illustration.world_info_hint")), 3),
-			X.value === "worldbook" ? (m(), _(k, { key: 2 }, [w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.worldbook_label")), 3), N(W, {
-				"model-value": $.value,
-				options: ae.value,
+			Q.value === "worldbook" ? (m(), _(k, { key: 2 }, [w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.worldbook_label")), 3), N(U, {
+				"model-value": oe.value,
+				options: se.value,
 				placeholder: b(n)("settings.illustration.worldbook_placeholder"),
 				"aria-label": b(n)("settings.illustration.worldbook_label"),
-				"onUpdate:modelValue": se
+				"onUpdate:modelValue": le
 			}, null, 8, [
 				"model-value",
 				"options",
 				"placeholder",
 				"aria-label"
-			])], 2), Q.value ? (m(), _("p", {
+			])], 2), $.value ? (m(), _("p", {
 				key: 0,
 				class: A(b(Z).description),
 				role: "alert"
 			}, D(b(n)("settings.illustration.worldbook_unavailable")), 3)) : S("", !0)], 64)) : S("", !0),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.max_images_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.max_images_label")), 3), N(H, {
 				"model-value": r.value?.max_images_per_message,
 				label: b(n)("settings.illustration.max_images_label"),
 				min: 1,
@@ -1214,7 +1261,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"increment-label": b(n)("common.actions.increase"),
 				"decrement-label": b(n)("common.actions.decrease"),
 				disabled: !e.settings,
-				"onUpdate:modelValue": d[9] ||= (e) => a({ max_images_per_message: e })
+				"onUpdate:modelValue": d[13] ||= (e) => a({ max_images_per_message: e })
 			}, null, 8, [
 				"model-value",
 				"label",
@@ -1222,13 +1269,13 @@ var Z = X, re = /* @__PURE__ */ M({
 				"decrement-label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.prompt_preset_label")), 3), N(W, {
-				"model-value": r.value?.prompt_preset_id ?? Ce,
-				options: q.value,
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.prompt_preset_label")), 3), N(U, {
+				"model-value": r.value?.prompt_preset_id ?? Te,
+				options: Y.value,
 				placeholder: b(n)("settings.illustration.prompt_preset_label"),
 				"aria-label": b(n)("settings.illustration.prompt_preset_label"),
 				disabled: !e.settings,
-				"onUpdate:modelValue": J
+				"onUpdate:modelValue": X
 			}, null, 8, [
 				"model-value",
 				"options",
@@ -1236,7 +1283,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"aria-label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.concurrency_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.concurrency_label")), 3), N(H, {
 				"model-value": e.settings?.global_concurrency,
 				label: b(n)("settings.illustration.concurrency_label"),
 				min: 1,
@@ -1244,7 +1291,7 @@ var Z = X, re = /* @__PURE__ */ M({
 				"increment-label": b(n)("common.actions.increase"),
 				"decrement-label": b(n)("common.actions.decrease"),
 				disabled: !e.settings,
-				"onUpdate:modelValue": d[10] ||= (e) => i({ global_concurrency: e })
+				"onUpdate:modelValue": d[14] ||= (e) => i({ global_concurrency: e })
 			}, null, 8, [
 				"model-value",
 				"label",
@@ -1254,7 +1301,7 @@ var Z = X, re = /* @__PURE__ */ M({
 			])], 2)
 		], 2)], 2));
 	}
-}), Te = {
+}), De = {
 	k_euler: "Euler",
 	k_euler_ancestral: "Euler Ancestral",
 	k_dpmpp_2s_ancestral: "DPM++ 2S Ancestral",
@@ -1262,13 +1309,13 @@ var Z = X, re = /* @__PURE__ */ M({
 	k_dpmpp_2m: "DPM++ 2M",
 	k_dpmpp_sde: "DPM++ SDE",
 	ddim_v3: "DDIM"
-}, Ee = {
+}, Oe = {
 	native: "Native",
 	karras: "Karras",
 	exponential: "Exponential",
 	polyexponential: "Polyexponential"
 };
-function De(e, t) {
+function ke(e, t) {
 	switch (t) {
 		case "vibe_transfer": return e("settings.novelai.ignored_vibe_transfer");
 		case "smea": return e("settings.novelai.ignored_smea");
@@ -1280,7 +1327,7 @@ function De(e, t) {
 }
 //#endregion
 //#region src/ui/views/settings/NovelAiSettings.vue?vue&type=script&setup=true&lang.ts
-var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
+var Ae = "https://novelai.net/image", je = /* @__PURE__ */ M({
 	__name: "NovelAiSettings",
 	props: {
 		profile: {},
@@ -1294,7 +1341,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 		});
 		function u() {
 			if (i.profile.novelai_defaults !== null) return i.profile.novelai_defaults;
-			let e = ee(l.value);
+			let e = B(l.value);
 			return {
 				width: e.width,
 				height: e.height,
@@ -1323,7 +1370,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 			let e = r(l.value);
 			return e === null ? [] : a(e.profile, p.value);
 		}), O = x(null), M = x(null), P = x(!1), F = x(!1);
-		async function L() {
+		async function ee() {
 			F.value = !0, M.value = null, P.value = !1;
 			try {
 				O.value = await i.controller.load_novelai_account();
@@ -1333,19 +1380,19 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				F.value = !1;
 			}
 		}
-		let R = x([]);
+		let L = x([]);
 		d(async () => {
 			try {
-				R.value = (await i.controller.load_novelai_models()).filter((e) => e.profile.selectable);
+				L.value = (await i.controller.load_novelai_models()).filter((e) => e.profile.selectable);
 			} catch {
-				R.value = [];
+				L.value = [];
 			}
 		});
-		let z = E(() => R.value.map((e) => ({
+		let R = E(() => L.value.map((e) => ({
 			value: e.profile.model_id,
 			label: e.profile.display_name
 		})));
-		async function B(e) {
+		async function z(e) {
 			await i.controller.save_provider_profile({
 				id: i.profile.id,
 				provider_id: i.profile.provider_id,
@@ -1356,12 +1403,12 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				updated_at: i.profile.updated_at
 			});
 		}
-		let H = n.options.map((e) => ({
+		let V = n.options.map((e) => ({
 			value: e,
-			label: Te[e]
-		})), ne = t.options.map((e) => ({
+			label: De[e]
+		})), W = t.options.map((e) => ({
 			value: e,
-			label: Ee[e]
+			label: Oe[e]
 		}));
 		function G(e, t, n) {
 			t.includes(n) && g({ [e]: n });
@@ -1387,13 +1434,13 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 			w("div", { class: A(b(Z).actions_row) }, [N(I, {
 				label: b(s)("settings.novelai.refresh_account"),
 				pending: F.value,
-				onClick: L
+				onClick: ee
 			}, null, 8, ["label", "pending"]), O.value === null ? P.value ? (m(), _("span", {
 				key: 1,
 				class: A(b(Z).status_text),
 				"data-testid": "novelai-account-unreachable"
 			}, [j(D(b(s)("settings.novelai.account_unreachable")) + " ", 1), w("a", {
-				href: Oe,
+				href: Ae,
 				target: "_blank",
 				rel: "noopener noreferrer"
 			}, D(b(s)("settings.novelai.account_open_site")), 1)], 2)) : M.value === null ? S("", !0) : (m(), _("span", {
@@ -1408,19 +1455,19 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				anlas: O.value.anlas,
 				expires: b(c)(new Date(O.value.expires_at), "short_date")
 			})), 3))], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.model_label")), 3), N(W, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.model_label")), 3), N(U, {
 				"model-value": l.value,
-				options: z.value,
+				options: R.value,
 				placeholder: l.value,
 				"aria-label": b(s)("settings.novelai.model_label"),
-				"onUpdate:modelValue": i[0] ||= (e) => void B(e)
+				"onUpdate:modelValue": i[0] ||= (e) => void z(e)
 			}, null, 8, [
 				"model-value",
 				"options",
 				"placeholder",
 				"aria-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.width_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.width_label")), 3), N(H, {
 				"model-value": p.value.width,
 				label: b(s)("settings.novelai.width_label"),
 				min: 64,
@@ -1435,7 +1482,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.height_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.height_label")), 3), N(H, {
 				"model-value": p.value.height,
 				label: b(s)("settings.novelai.height_label"),
 				min: 64,
@@ -1450,7 +1497,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.steps_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.steps_label")), 3), N(H, {
 				"model-value": p.value.steps,
 				label: b(s)("settings.novelai.steps_label"),
 				min: 1,
@@ -1464,7 +1511,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.scale_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.scale_label")), 3), N(H, {
 				"model-value": p.value.scale,
 				label: b(s)("settings.novelai.scale_label"),
 				min: 0,
@@ -1479,7 +1526,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.cfg_rescale_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.cfg_rescale_label")), 3), N(H, {
 				"model-value": p.value.cfg_rescale,
 				label: b(s)("settings.novelai.cfg_rescale_label"),
 				min: 0,
@@ -1494,9 +1541,9 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.sampler_label")), 3), N(W, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.sampler_label")), 3), N(U, {
 				"model-value": p.value.sampler,
-				options: b(H),
+				options: b(V),
 				placeholder: b(s)("settings.novelai.sampler_label"),
 				"aria-label": b(s)("settings.novelai.sampler_label"),
 				"onUpdate:modelValue": i[6] ||= (e) => G("sampler", b(n).options, e)
@@ -1506,9 +1553,9 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				"placeholder",
 				"aria-label"
 			])], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.noise_schedule_label")), 3), N(W, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.noise_schedule_label")), 3), N(U, {
 				"model-value": p.value.noise_schedule,
-				options: b(ne),
+				options: b(W),
 				placeholder: b(s)("settings.novelai.noise_schedule_label"),
 				"aria-label": b(s)("settings.novelai.noise_schedule_label"),
 				"onUpdate:modelValue": i[7] ||= (e) => G("noise_schedule", b(t).options, e)
@@ -1538,7 +1585,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 				key: 0,
 				class: A(b(Z).description)
 			}, D(b(s)("settings.novelai.vibes_empty")), 3)) : S("", !0),
-			(m(!0), _(k, null, f(q.value, (e) => (m(), C(V, {
+			(m(!0), _(k, null, f(q.value, (e) => (m(), C(ne, {
 				key: e.id,
 				"model-value": p.value.vibe_asset_ids.includes(e.id),
 				label: e.display_name,
@@ -1555,7 +1602,7 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 			}, [w("p", { class: A(b(Z).risk_banner_title) }, D(b(s)("settings.novelai.ignored_title")), 3), (m(!0), _(k, null, f(y.value, (e) => (m(), _("p", {
 				key: e,
 				class: A(b(Z).risk_banner_description)
-			}, D(b(De)(b(s), e)), 3))), 128))], 2)) : S("", !0),
+			}, D(b(ke)(b(s), e)), 3))), 128))], 2)) : S("", !0),
 			v.value === null ? S("", !0) : (m(), _("p", {
 				key: 2,
 				class: A(b(Z).status_text),
@@ -1577,14 +1624,14 @@ var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 			}, D(Y.value === "saved" ? b(s)("settings.novelai.saved") : Y.value === "failed" ? b(s)("settings.novelai.save_failed") : ""), 3)], 2)
 		], 2)], 2));
 	}
-}), Ae = [
+}), Me = [
 	"sd_webui",
 	"novelai",
 	"comfyui",
 	"openai_image",
 	"google_image"
 ];
-function je(e, t) {
+function Ne(e, t) {
 	switch (t) {
 		case "sd_webui": return e("settings.provider_profiles.provider_types.sd_webui");
 		case "novelai": return e("settings.provider_profiles.provider_types.novelai");
@@ -1595,7 +1642,7 @@ function je(e, t) {
 }
 //#endregion
 //#region src/ui/views/settings/ProviderProfiles.vue?vue&type=script&setup=true&lang.ts
-var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = /* @__PURE__ */ M({
+var Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = ["id", "aria-describedby"], Le = ["id", "aria-describedby"], Re = /* @__PURE__ */ M({
 	__name: "ProviderProfiles",
 	props: {
 		profiles: {},
@@ -1611,19 +1658,19 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				save: (e, t) => n.controller.save_prompt_tags(e, t)
 			};
 		}
-		let { t: a } = T(), o = x(!1), s = x(null), c = x(!1), l = x(null), u = x(null), d = x(!1), h = x(null), y = x(""), O = x(!1), j = x(null), M = x(/* @__PURE__ */ new Map()), P = Ae.map((e) => ({
+		let { t: a } = T(), o = x(!1), s = x(null), c = x(!1), l = x(null), u = x(null), d = x(!1), h = x(null), y = x(""), O = x(!1), j = x(null), M = x(/* @__PURE__ */ new Map()), P = Me.map((e) => ({
 			value: e,
-			label: je(a, e)
+			label: Ne(a, e)
 		})), F = E({
 			get: () => s.value?.provider_id ?? "sd_webui",
 			set: (e) => {
-				s.value && (s.value.provider_id = e, s.value.workflow_id = "", e === "novelai" && !B.has(s.value.model_id) && (s.value.model_id = te));
+				s.value && (s.value.provider_id = e, s.value.workflow_id = "", e === "novelai" && !z.has(s.value.model_id) && (s.value.model_id = te));
 			}
-		}), B = new Set(i.map((e) => e.model_id)), ee = i.filter((e) => e.selectable).map((e) => ({
+		}), z = new Set(i.map((e) => e.model_id)), B = i.filter((e) => e.selectable).map((e) => ({
 			value: e.model_id,
 			label: e.display_name
 		}));
-		function V() {
+		function ne() {
 			s.value = {
 				id: crypto.randomUUID(),
 				is_new: !0,
@@ -1634,7 +1681,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				is_default: n.profiles.length === 0
 			}, l.value = null, o.value = !0;
 		}
-		function H(e) {
+		function V(e) {
 			s.value = {
 				id: e.id,
 				is_new: !1,
@@ -1645,7 +1692,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				is_default: e.is_default
 			}, l.value = null, o.value = !0;
 		}
-		function U() {
+		function H() {
 			o.value = !1, s.value = null, l.value = null;
 		}
 		async function q() {
@@ -1666,7 +1713,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					workflow_id: t.provider_id === "comfyui" && o?.success === !0 ? o.data : null,
 					is_default: t.is_default,
 					updated_at: (/* @__PURE__ */ new Date()).toISOString()
-				}), U();
+				}), H();
 			} catch {
 				l.value = a("errors.unexpected");
 			} finally {
@@ -1746,9 +1793,9 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(a)("settings.sections.provider_profiles")), 3), N(I, {
 				label: b(a)("settings.provider_profiles.add_action"),
 				variant: t.profiles.length === 0 ? "primary" : "secondary",
-				onClick: V
+				onClick: ne
 			}, null, 8, ["label", "variant"])], 2),
-			N(L, {
+			N(ee, {
 				status: t.profiles.length === 0 ? "empty" : "ready",
 				"empty-message": b(a)("settings.provider_profiles.empty_description")
 			}, {
@@ -1758,7 +1805,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					"data-testid": "provider-profile-row"
 				}, [w("div", { class: A(b(Z).profile_identity) }, [
 					w("span", { class: A(b(Z).profile_name) }, D(e.display_name), 3),
-					w("span", { class: A(b(Z).profile_meta) }, D(b(je)(b(a), e.provider_id)), 3),
+					w("span", { class: A(b(Z).profile_meta) }, D(b(Ne)(b(a), e.provider_id)), 3),
 					X(e.provider_id) ? (m(), _("span", {
 						key: 0,
 						class: A(b(Z).profile_meta)
@@ -1805,7 +1852,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					N(I, {
 						label: b(a)("common.actions.edit"),
 						variant: "secondary",
-						onClick: (t) => H(e)
+						onClick: (t) => V(e)
 					}, null, 8, ["label", "onClick"]),
 					N(I, {
 						label: b(a)("common.actions.delete"),
@@ -1815,17 +1862,17 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				], 2)], 2))), 128))])]),
 				_: 1
 			}, 8, ["status", "empty-message"]),
-			N(R, {
+			N(L, {
 				open: o.value,
 				title: s.value?.is_new ? b(a)("settings.provider_profiles.dialog_add_title") : b(a)("settings.provider_profiles.dialog_edit_title"),
 				"close-label": b(a)("common.actions.close"),
-				"onUpdate:open": n[6] ||= (e) => !e && U()
+				"onUpdate:open": n[6] ||= (e) => !e && H()
 			}, {
 				default: g(() => [s.value ? (m(), _("div", {
 					key: 0,
 					class: A(b(Z).form_grid)
 				}, [
-					N(z, {
+					N(R, {
 						label: b(a)("common.labels.name"),
 						required: ""
 					}, {
@@ -1835,14 +1882,14 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 							type: "text",
 							"aria-describedby": t,
 							class: A(b(Z).text_input)
-						}, null, 10, Me), [[v, s.value.display_name]])]),
+						}, null, 10, Pe), [[v, s.value.display_name]])]),
 						_: 1
 					}, 8, ["label"]),
-					N(z, {
+					N(R, {
 						label: b(a)("settings.provider_profiles.provider_label"),
 						required: ""
 					}, {
-						default: g(({ fieldId: e }) => [N(W, {
+						default: g(({ fieldId: e }) => [N(U, {
 							id: e,
 							modelValue: F.value,
 							"onUpdate:modelValue": n[1] ||= (e) => F.value = e,
@@ -1856,16 +1903,16 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 						])]),
 						_: 1
 					}, 8, ["label"]),
-					s.value.provider_id === "novelai" ? (m(), C(z, {
+					s.value.provider_id === "novelai" ? (m(), C(R, {
 						key: 0,
 						label: b(a)("settings.provider_profiles.model_label"),
 						required: ""
 					}, {
-						default: g(({ fieldId: e }) => [N(W, {
+						default: g(({ fieldId: e }) => [N(U, {
 							id: e,
 							modelValue: s.value.model_id,
 							"onUpdate:modelValue": n[2] ||= (e) => s.value.model_id = e,
-							options: b(ee),
+							options: b(B),
 							placeholder: b(a)("settings.provider_profiles.model_label")
 						}, null, 8, [
 							"id",
@@ -1874,7 +1921,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 							"placeholder"
 						])]),
 						_: 1
-					}, 8, ["label"])) : (m(), C(z, {
+					}, 8, ["label"])) : (m(), C(R, {
 						key: 1,
 						label: b(a)("settings.provider_profiles.model_label"),
 						required: ""
@@ -1886,10 +1933,10 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 							"aria-describedby": t,
 							class: A(b(Z).text_input),
 							"data-testid": "provider-model-input"
-						}, null, 10, Ne), [[v, s.value.model_id]])]),
+						}, null, 10, Fe), [[v, s.value.model_id]])]),
 						_: 1
 					}, 8, ["label"])),
-					s.value.provider_id === "comfyui" ? (m(), C(z, {
+					s.value.provider_id === "comfyui" ? (m(), C(R, {
 						key: 2,
 						label: b(a)("settings.provider_profiles.workflow_label"),
 						required: ""
@@ -1901,7 +1948,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 							"aria-describedby": t,
 							class: A(b(Z).text_input),
 							"data-testid": "provider-workflow-input"
-						}, null, 10, Pe), [[v, s.value.workflow_id]])]),
+						}, null, 10, Ie), [[v, s.value.workflow_id]])]),
 						_: 1
 					}, 8, ["label"])) : S("", !0),
 					N(K, {
@@ -1921,7 +1968,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					}, null, 8, ["label", "pending"]), N(I, {
 						label: b(a)("common.actions.cancel"),
 						variant: "secondary",
-						onClick: U
+						onClick: H
 					}, null, 8, ["label"])], 2)
 				], 2)) : S("", !0)]),
 				_: 1
@@ -1930,14 +1977,14 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				"title",
 				"close-label"
 			]),
-			N(R, {
+			N(L, {
 				open: h.value !== null,
 				title: b(a)("settings.provider_profiles.credential_dialog_title", { name: h.value?.display_name ?? "" }),
 				description: b(a)("settings.provider_profiles.credential_dialog_description"),
 				"close-label": b(a)("common.actions.close"),
 				"onUpdate:open": n[8] ||= (e) => !e && Q()
 			}, {
-				default: g(() => [w("div", { class: A(b(Z).form_grid) }, [N(z, {
+				default: g(() => [w("div", { class: A(b(Z).form_grid) }, [N(R, {
 					label: b(a)("settings.provider_profiles.credential_label"),
 					error: j.value,
 					required: ""
@@ -1950,7 +1997,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 						"aria-describedby": t,
 						class: A(b(Z).text_input),
 						"data-testid": "provider-credential-input"
-					}, null, 10, Fe), [[v, y.value]])]),
+					}, null, 10, Le), [[v, y.value]])]),
 					_: 1
 				}, 8, ["label", "error"]), w("div", { class: A(b(Z).actions_row) }, [N(I, {
 					label: b(a)("common.actions.save"),
@@ -1968,7 +2015,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				"description",
 				"close-label"
 			]),
-			N(ne, {
+			N(W, {
 				open: u.value !== null,
 				title: b(a)("settings.provider_profiles.remove_confirm_title", { name: u.value?.display_name ?? "" }),
 				description: b(a)("settings.provider_profiles.remove_confirm_description"),
@@ -1987,15 +2034,15 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			])
 		], 2));
 	}
-}), Le = ["id", "aria-describedby"], Re = [
+}), ze = ["id", "aria-describedby"], Be = [
 	"onUpdate:modelValue",
 	"aria-label",
 	"placeholder"
-], ze = [
+], Ve = [
 	"onUpdate:modelValue",
 	"aria-label",
 	"placeholder"
-], Be = 200, Ve = /* @__PURE__ */ M({
+], He = 200, Ue = /* @__PURE__ */ M({
 	__name: "TranslationSettings",
 	props: {
 		settings: {},
@@ -2052,7 +2099,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			y.value = (e ?? []).map((e) => ({ ...e }));
 		}, { immediate: !0 });
 		function S() {
-			y.value.length < Be && y.value.push({
+			y.value.length < He && y.value.push({
 				source: "",
 				target: ""
 			});
@@ -2071,7 +2118,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			"data-testid": "translation-settings"
 		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.nav.translation")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
 			w("p", { class: A(b(Z).description) }, D(b(n)("settings.translation.description")), 3),
-			N(z, {
+			N(R, {
 				label: b(n)("settings.translation.key_label"),
 				hint: b(n)("settings.translation.key_hint")
 			}, {
@@ -2083,7 +2130,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					"aria-describedby": t,
 					class: A(b(Z).text_input),
 					"data-testid": "deepl-key-input"
-				}, null, 10, Le), [[v, s.value]])]),
+				}, null, 10, ze), [[v, s.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]),
 			w("div", { class: A(b(Z).actions_row) }, [
@@ -2107,7 +2154,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					role: "status"
 				}, D(d.value), 3)
 			], 2),
-			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.translation.endpoint_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.translation.endpoint_label")), 3), N(V, {
 				"model-value": r.value?.deepl_endpoint ?? "free",
 				options: a.value,
 				label: b(n)("settings.translation.endpoint_label"),
@@ -2133,7 +2180,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					"aria-label": b(n)("settings.translation.glossary_source"),
 					placeholder: b(n)("settings.translation.glossary_source"),
 					class: A(b(Z).text_input)
-				}, null, 10, Re), [[v, e.source]]),
+				}, null, 10, Be), [[v, e.source]]),
 				p(w("input", {
 					"onUpdate:modelValue": (t) => e.target = t,
 					type: "text",
@@ -2141,7 +2188,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 					"aria-label": b(n)("settings.translation.glossary_target"),
 					placeholder: b(n)("settings.translation.glossary_target"),
 					class: A(b(Z).text_input)
-				}, null, 10, ze), [[v, e.target]]),
+				}, null, 10, Ve), [[v, e.target]]),
 				N(I, {
 					label: b(n)("settings.translation.glossary_remove"),
 					onClick: (e) => C(t)
@@ -2149,7 +2196,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			], 2))), 128)),
 			w("div", { class: A(b(Z).actions_row) }, [N(I, {
 				label: b(n)("settings.translation.glossary_add"),
-				disabled: y.value.length >= Be,
+				disabled: y.value.length >= He,
 				onClick: S
 			}, null, 8, ["label", "disabled"]), N(I, {
 				label: b(n)("settings.translation.glossary_save"),
@@ -2159,18 +2206,18 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			}, null, 8, ["label", "disabled"])], 2)
 		], 2)], 2));
 	}
-}), He = ["aria-label"], Ue = [
+}), We = ["aria-label"], Ge = [
 	"data-selected",
 	"aria-current",
 	"onClick"
-], We = { class: "tc-visually-hidden" }, Ge = /* @__PURE__ */ M({
+], Ke = { class: "tc-visually-hidden" }, qe = /* @__PURE__ */ M({
 	__name: "SettingsView",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-ntAO_5Zx.js")), n = y(() => import("./AssetsView-BYkNLWyL.js")), r = y(() => import("./PromptTagPresetPanel-DvSvv4nC.js")), i = y(() => import("./DiagnosticsView-u8qVA-QO.js")), a = e, { t: o } = T(), s = [
+		let t = y(() => import("./PromptView-ntAO_5Zx.js")), n = y(() => import("./AssetsView-BYkNLWyL.js")), r = y(() => import("./PromptTagPresetPanel-DvSvv4nC.js")), i = y(() => import("./DiagnosticsView-J7D1BhyG.js")), a = e, { t: o } = T(), s = [
 			"illustration",
 			"providers",
 			"translation",
@@ -2209,7 +2256,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 			"data-selected": t === l.value,
 			"aria-current": t === l.value ? "page" : void 0,
 			onClick: (n) => e.controller.set_settings_section(t)
-		}, D(c(t)), 11, Ue)), 64))], 10, He), w("div", { class: A(b(Z).section_content) }, [l.value === "prompts" ? (m(), _(k, { key: 0 }, [N(b(t), {
+		}, D(c(t)), 11, Ge)), 64))], 10, We), w("div", { class: A(b(Z).section_content) }, [l.value === "prompts" ? (m(), _(k, { key: 0 }, [N(b(t), {
 			state: e.state,
 			"test-regex": d,
 			onSelectPreset: p[0] ||= (t) => void e.controller.select_prompt_preset(t),
@@ -2236,7 +2283,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 		}, null, 8, ["state", "controller"])) : (m(), _("div", {
 			key: 3,
 			class: A(b(Z).view)
-		}, [w("h1", We, D(c(l.value)), 1), l.value === "illustration" ? (m(), C(we, {
+		}, [w("h1", Ke, D(c(l.value)), 1), l.value === "illustration" ? (m(), C(Ee, {
 			key: 0,
 			settings: e.state.settings.settings,
 			"prompt-presets": e.state.prompt.presets,
@@ -2265,7 +2312,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				}, D(b(o)("settings.onboarding.title")), 3),
 				w("p", { class: A(b(Z).onboarding_description) }, D(b(o)("settings.onboarding.description")), 3)
 			])], 2)) : S("", !0),
-			N(Ie, {
+			N(Re, {
 				profiles: e.state.generation.profiles,
 				"prompt-tag-presets": e.state.assets.records.prompt_tag,
 				controller: e.controller
@@ -2274,7 +2321,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				"prompt-tag-presets",
 				"controller"
 			]),
-			u.value === null ? S("", !0) : (m(), C(ke, {
+			u.value === null ? S("", !0) : (m(), C(je, {
 				key: 1,
 				profile: u.value,
 				vibes: e.state.assets.records.vibe,
@@ -2284,7 +2331,7 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 				"vibes",
 				"controller"
 			]))
-		], 64)) : l.value === "translation" ? (m(), C(Ve, {
+		], 64)) : l.value === "translation" ? (m(), C(Ue, {
 			key: 2,
 			settings: e.state.settings.settings,
 			controller: e.controller
@@ -2319,4 +2366,4 @@ var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id"
 	}
 });
 //#endregion
-export { Ge as default };
+export { qe as default };

@@ -59,7 +59,9 @@ var y = t().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	max_images_per_message: c().int().min(1).max(8),
 	prompt_preset_id: d.nullable(),
 	world_info: C.default({ mode: "chat" }),
-	wardrobe_model: t().trim().min(1).max(200).nullable().default(null)
+	wardrobe_model: t().trim().min(1).max(200).nullable().default(null),
+	analysis_guidance: t().max(2e3).default(""),
+	wardrobe_guidance: t().max(2e3).default("")
 }), T = r({
 	source: t().trim().min(1).max(32),
 	target: t().trim().min(1).max(128)

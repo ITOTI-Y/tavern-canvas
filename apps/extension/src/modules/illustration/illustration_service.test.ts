@@ -15,7 +15,11 @@ import type {
   PresetGenerationRequest,
 } from "../../host/index.js";
 import { WardrobeService } from "../wardrobe/wardrobe_service.js";
-import { IllustrationService, MessageChangedError } from "./illustration_service.js";
+import {
+  IllustrationService,
+  MessageChangedError,
+  create_wardrobe_runner,
+} from "./illustration_service.js";
 
 const REPLY = "She opened the door.\n\nRain fell outside.";
 const IMAGE_ID = "01906f4e-5f1c-7a2a-8d73-cc3a51abf1ed";
@@ -29,6 +33,8 @@ const SETTINGS: IllustrationSettings = {
   prompt_preset_id: null,
   world_info: { mode: "chat" },
   wardrobe_model: null,
+  analysis_guidance: "",
+  wardrobe_guidance: "",
 };
 
 class MemoryHost {
@@ -460,5 +466,34 @@ describe("IllustrationService automatic generation", () => {
     await Promise.resolve();
 
     expect(host.generate_calls).toHaveLength(0);
+  });
+});
+
+describe("create_wardrobe_runner", () => {
+  it("appends the wardrobe guidance and leaves out the illustration guidance", async () => {
+    const requests: PresetGenerationRequest[] = [];
+    const host = {
+      generate_with_preset: (request: PresetGenerationRequest) => {
+        requests.push(request);
+        return Promise.resolve({ content: "{}", reasoning: null });
+      },
+    } as unknown as HostAdapter;
+    const run = create_wardrobe_runner({
+      host,
+      settings: () => ({
+        ...SETTINGS,
+        analysis_guidance: "watercolor",
+        wardrobe_guidance: "summer clothing",
+      }),
+      resolve_analysis_key: () => Promise.resolve(""),
+      new_generation_id: () => "g1",
+    });
+
+    await run("[Inkwell wardrobe update]", { name: "tavern_canvas_wardrobe", value: {} });
+
+    expect(requests[0]?.user_input).toMatch(
+      /^\[Inkwell wardrobe update\]\n\nUser guidance[^\n]*\nsummer clothing$/u,
+    );
+    expect(requests[0]?.user_input).not.toContain("watercolor");
   });
 });

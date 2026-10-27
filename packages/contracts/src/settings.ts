@@ -97,6 +97,10 @@ export const IllustrationSettingsSchema = z.strictObject({
   world_info: AnalysisWorldInfoSchema.default({ mode: "chat" }),
   /** Model for the per-reply wardrobe update; `null` uses the analysis connection's model. */
   wardrobe_model: z.string().trim().min(1).max(200).nullable().default(null),
+  /** The user's direction on style and setting, sent with every paragraph analysis. */
+  analysis_guidance: z.string().max(2000).default(""),
+  /** The user's direction on clothing, sent with every wardrobe update. */
+  wardrobe_guidance: z.string().max(2000).default(""),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

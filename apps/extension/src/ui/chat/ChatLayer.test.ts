@@ -103,6 +103,8 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       prompt_preset_id: null,
       world_info: { mode: "chat" },
       wardrobe_model: null,
+      analysis_guidance: "",
+      wardrobe_guidance: "",
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>

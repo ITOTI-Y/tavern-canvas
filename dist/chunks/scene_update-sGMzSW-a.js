@@ -56,6 +56,14 @@ var v = {
 				additionalProperties: !1
 			}),
 			appearance_additions: _(g(l)),
+			subject: {
+				type: ["string", "null"],
+				enum: [
+					"girl",
+					"boy",
+					null
+				]
+			},
 			wearing_changed: { type: "boolean" },
 			outfit_id: { type: ["string", "null"] },
 			new_outfit: _(v),
@@ -86,6 +94,7 @@ var v = {
 			"name",
 			"new_character",
 			"appearance_additions",
+			"subject",
 			"wearing_changed",
 			"outfit_id",
 			"new_outfit",
@@ -135,6 +144,7 @@ var C = e({
 		outfit: C.nullable().catch(null)
 	}).nullable().catch(null),
 	appearance_additions: S(l).nullable().catch(null),
+	subject: a(["girl", "boy"]).nullable().catch(null),
 	wearing_changed: n().catch(!1),
 	outfit_id: t().nullable().catch(null),
 	new_outfit: C.nullable().catch(null),
@@ -171,7 +181,8 @@ function O(e, t, n) {
 		`- id ${e.id}: ${e.name}`,
 		e.aliases.length > 0 ? `, also called ${e.aliases.join(" / ")}` : "",
 		i === void 0 ? "; outfit not yet known" : `; wears outfit ${i.id} (${i.name}): ${c(d(r, n.outfits))}`,
-		a.length > 0 ? `; appearance slots still empty: ${a.join(", ")}` : ""
+		a.length > 0 ? `; appearance slots still empty: ${a.join(", ")}` : "",
+		e.subject === "other" ? "; subject not yet known" : ""
 	].join("");
 }
 function k(e, t, n) {
@@ -184,8 +195,10 @@ function A(e, t, n, r) {
 		"Track what each named character wears across the story. Read the latest reply and return one entry for every named character who appears in it or is clearly present. Skip unnamed people.",
 		"- ref: the id listed for this exact character below, or null for a named character not listed; never another character's id",
 		"- name: the name as written in the story",
-		"- new_character: only when ref is null: subject (girl, boy or other), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
+		"- new_character: only when ref is null: subject (see Subject), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
 		"- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
+		"- subject: for a known character whose subject is not yet known, girl or boy when the story shows it; otherwise null",
+		"Subject: girl for a woman or girl, boy for a man or boy, judged from pronouns such as 他 / 她 or he / she, how others address them, the name and the description. other only for a character without a gender, such as a creature or a machine.",
 		"- wearing_changed: true only when the reply changes what the character wears or their passing state; when false the other wearing fields are ignored",
 		"- outfit_id: the known outfit now worn, or null with new_outfit filled for clothing that matches no known outfit",
 		"- overrides: slots of that outfit the reply changes, with the new tags, or removed true when taken off",
@@ -259,10 +272,11 @@ function I(e, t, n, r) {
 		let e = F(t, n.characters), o;
 		if (e !== void 0) {
 			o = e.id;
-			let n = l.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t)), r = N(t.appearance_additions, n);
-			Object.keys(r).length > 0 && c.push({
+			let n = l.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t)), r = N(t.appearance_additions, n), i = e.subject === "other" ? t.subject : null;
+			(Object.keys(r).length > 0 || i !== null) && c.push({
 				character_id: o,
-				slots: r
+				slots: r,
+				subject: i
 			});
 		} else {
 			let e = t.new_character ?? {

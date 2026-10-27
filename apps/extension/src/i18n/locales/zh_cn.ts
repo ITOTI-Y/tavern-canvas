@@ -405,6 +405,14 @@ const settings = {
   illustration: {
     auto_generation_label: "每条回复后自动配图",
     auto_generation_hint: "关闭时，可点击回复旁的配图按钮选择段落，确认后再生成。",
+    analysis_guidance_label: "配图引导",
+    analysis_guidance_hint:
+      "填写画风、场景或时代等要求，每次段落分析都会附上这段文字。与回复中明确写出的内容冲突时，以回复为准。",
+    analysis_guidance_placeholder: "例如：水彩画风，现代都市，夏日傍晚",
+    wardrobe_guidance_label: "服装引导",
+    wardrobe_guidance_hint:
+      "填写服装选择上的要求，每次服装判断都会附上这段文字。与回复中明确写出的内容冲突时，以回复为准。",
+    wardrobe_guidance_placeholder: "例如：当代日常便装，夏季衣着轻薄",
     preset_label: "段落分析使用的 SillyTavern 预设",
     preset_placeholder: "当前预设",
     preset_hint:

@@ -38,8 +38,18 @@ function c(e) {
 	return t;
 }
 //#endregion
+//#region src/modules/illustration/user_guidance.ts
+function l(e) {
+	let t = e.trim();
+	return t === "" ? [] : [
+		"",
+		"User guidance (follow it wherever the story leaves room; what the story states still wins):",
+		t
+	];
+}
+//#endregion
 //#region src/modules/illustration/analysis.ts
-var l = {
+var u = {
 	name: "tavern_canvas_illustrations",
 	value: {
 		type: "object",
@@ -77,7 +87,7 @@ var l = {
 		additionalProperties: !1
 	}
 };
-function u(e) {
+function d(e) {
 	if (e.characters.length === 0 && e.outfits.length === 0) return [];
 	let t = new Map(e.characters.map((e) => [e.id, e.name]));
 	return [
@@ -90,22 +100,23 @@ function u(e) {
 		})
 	];
 }
-function d(e, t, n) {
+function f(e, t, n, r) {
 	return [
 		"[Inkwell illustration request]",
 		`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
 		"- paragraph: the paragraph number",
 		"- scene: one sentence describing what the picture shows",
 		"- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
-		"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl, boy or other (no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
+		"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
 		"Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.",
-		...u(n),
+		...d(n),
+		...l(r),
 		"",
 		"Paragraphs:",
 		...e.map((e) => `[${String(e.index)}] ${e.text}`)
 	].join("\n");
 }
-var f = t({
+var p = t({
 	paragraph: i().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	tags: e([n(), r(n()).transform((e) => e.join(", "))]),
@@ -113,13 +124,13 @@ var f = t({
 		name: n().trim().min(1).max(120),
 		tags: n().trim()
 	})).max(16)
-}), p = t({ illustrations: r(f) }), m = class extends Error {
+}), m = t({ illustrations: r(p) }), h = class extends Error {
 	excerpt;
 	constructor(e, t) {
 		super(e), this.name = "AnalysisParseError", this.excerpt = t.slice(0, 400);
 	}
 };
-function h(e, t, n) {
+function g(e, t, n) {
 	for (let r of a(e, "illustrations")) {
 		let e;
 		try {
@@ -127,12 +138,12 @@ function h(e, t, n) {
 		} catch {
 			continue;
 		}
-		let i = p.safeParse(e);
+		let i = m.safeParse(e);
 		if (!i.success) continue;
 		let a = /* @__PURE__ */ new Set();
 		return i.data.illustrations.filter((e) => e.paragraph >= t || a.has(e.paragraph) ? !1 : (a.add(e.paragraph), !0)).slice(0, n);
 	}
-	throw new m("The analysis reply contains no illustrations JSON object", e);
+	throw new h("The analysis reply contains no illustrations JSON object", e);
 }
 //#endregion
-export { c as a, h as i, m as n, d as r, l as t };
+export { l as a, g as i, h as n, c as o, f as r, u as t };

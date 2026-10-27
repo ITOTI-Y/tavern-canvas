@@ -57,7 +57,12 @@ The analysis runs through a SillyTavern chat completion preset, by default the o
 loaded, over the current API, a proxy preset, or a custom OpenAI compatible API. The illustration
 settings also choose how much chat history and which world info the analysis sees: the world info
 SillyTavern activates for the current chat (the default), the entries one chosen book activates for
-the analyzed reply, or none.
+the analyzed reply, or none. Two separate text boxes, Illustration guidance and Wardrobe guidance,
+carry standing direction such as art style, season, era, or place: the first is appended to every
+paragraph analysis, the second to every wardrobe update, and what the reply states takes precedence.
+
+NovelAI accepts one image generation per account at a time and answers a second with 429, so
+NovelAI images are generated one after another whatever the concurrency setting says.
 
 Each chosen paragraph gets an image slot below it. A slot keeps every image generated for it, with
 regenerate, prompt editing and paging between images. For NovelAI images a slot also offers image

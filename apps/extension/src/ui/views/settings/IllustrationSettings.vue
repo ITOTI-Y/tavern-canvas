@@ -47,6 +47,8 @@ const proxy_model_draft = ref("");
 const custom_url_draft = ref("");
 const custom_model_draft = ref("");
 const wardrobe_model_draft = ref("");
+const analysis_guidance_draft = ref("");
+const wardrobe_guidance_draft = ref("");
 
 watch(
   illustration,
@@ -54,6 +56,8 @@ watch(
     preset_name_draft.value =
       current === null || current.preset_name === CURRENT_PRESET ? "" : current.preset_name;
     wardrobe_model_draft.value = current?.wardrobe_model ?? "";
+    analysis_guidance_draft.value = current?.analysis_guidance ?? "";
+    wardrobe_guidance_draft.value = current?.wardrobe_guidance ?? "";
     if (current?.connection.kind === "proxy_preset") {
       proxy_preset_draft.value = current.connection.proxy_preset;
       proxy_model_draft.value = current.connection.model ?? "";
@@ -277,6 +281,26 @@ function set_worldbook(worldbook: string): void {
       <p :class="styles.description">{{ t("settings.illustration.auto_generation_hint") }}</p>
 
       <FieldGroup
+        :label="t('settings.illustration.analysis_guidance_label')"
+        :hint="t('settings.illustration.analysis_guidance_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <textarea
+            :id="fieldId"
+            v-model="analysis_guidance_draft"
+            rows="3"
+            maxlength="2000"
+            :placeholder="t('settings.illustration.analysis_guidance_placeholder')"
+            :aria-describedby="describedBy"
+            :class="styles.text_area"
+            :disabled="!settings"
+            data-testid="analysis-guidance-input"
+            @blur="update_illustration({ analysis_guidance: analysis_guidance_draft.trim() })"
+          />
+        </template>
+      </FieldGroup>
+
+      <FieldGroup
         :label="t('settings.illustration.preset_label')"
         :hint="t('settings.illustration.preset_hint')"
       >
@@ -417,6 +441,25 @@ function set_worldbook(worldbook: string): void {
             :disabled="!settings || connection_kind === 'current'"
             data-testid="wardrobe-model-input"
             @blur="save_wardrobe_model"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup
+        :label="t('settings.illustration.wardrobe_guidance_label')"
+        :hint="t('settings.illustration.wardrobe_guidance_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <textarea
+            :id="fieldId"
+            v-model="wardrobe_guidance_draft"
+            rows="3"
+            maxlength="2000"
+            :placeholder="t('settings.illustration.wardrobe_guidance_placeholder')"
+            :aria-describedby="describedBy"
+            :class="styles.text_area"
+            :disabled="!settings"
+            data-testid="wardrobe-guidance-input"
+            @blur="update_illustration({ wardrobe_guidance: wardrobe_guidance_draft.trim() })"
           />
         </template>
       </FieldGroup>

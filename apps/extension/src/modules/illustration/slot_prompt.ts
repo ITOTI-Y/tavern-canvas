@@ -124,7 +124,8 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
     const own = split_subject(drop_outfit_names(own_tags, input.library.outfit_names));
     drafts.push({
       name: entry.character.name,
-      subject: entry.character.subject,
+      subject:
+        entry.character.subject === "other" ? (own.subject ?? "other") : entry.character.subject,
       prompt: join_prompt_parts([
         appearance_tags(entry.character, own.rest !== ""),
         join_prompt_parts(entry.outfit_tags),

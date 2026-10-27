@@ -32,6 +32,7 @@ import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
+import { guidance_lines } from "./user_guidance.js";
 import { activate_worldbook } from "./worldbook.js";
 
 export interface SlotPromptContext {
@@ -191,7 +192,13 @@ async function run_wardrobe_request(
 export function create_wardrobe_runner(
   deps: WardrobeRunnerDeps,
 ): (input: string, json_schema: HostJsonSchema) => Promise<string> {
-  return (input, json_schema) => run_wardrobe_request(deps, input, json_schema, null);
+  return (input, json_schema) =>
+    run_wardrobe_request(
+      deps,
+      [input, ...guidance_lines(deps.settings().wardrobe_guidance)].join("\n"),
+      json_schema,
+      null,
+    );
 }
 
 /** Loaded on demand: it needs the NovelAI model table, which stays out of the initial bundle. */
@@ -322,6 +329,7 @@ export class IllustrationService {
           paragraphs,
           settings.max_images_per_message,
           context.library,
+          settings.analysis_guidance,
         ),
         max_chat_history: settings.max_chat_history,
         connection: await to_host_connection(settings.connection, this.#deps.resolve_analysis_key),

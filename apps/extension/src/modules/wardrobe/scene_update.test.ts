@@ -44,6 +44,7 @@ function entry(fields: Partial<SceneUpdateEntry> & { readonly name: string }): S
     ref: null,
     new_character: null,
     appearance_additions: null,
+    subject: null,
     wearing_changed: false,
     outfit_id: null,
     new_outfit: null,
@@ -154,7 +155,29 @@ describe("apply_scene_update", () => {
       new_id,
     );
     expect(applied.appearance_additions).toEqual([
-      { character_id: "c1", slots: { makeup: ["lipstick"] } },
+      { character_id: "c1", slots: { makeup: ["lipstick"] }, subject: null },
+    ]);
+  });
+
+  it("corrects only a subject the library holds as other", () => {
+    const library: WardrobeLibrary = {
+      characters: [
+        test_character({ id: "c4", name: "Chen", subject: "other" }),
+        test_character({ id: "c5", name: "Ye", subject: "girl" }),
+      ],
+      outfits: [],
+    };
+    const applied = apply_scene_update(
+      update(
+        entry({ ref: "c4", name: "Chen", subject: "girl" }),
+        entry({ ref: "c5", name: "Ye", subject: "boy" }),
+      ),
+      [],
+      library,
+      new_id,
+    );
+    expect(applied.appearance_additions).toEqual([
+      { character_id: "c4", slots: {}, subject: "girl" },
     ]);
   });
 

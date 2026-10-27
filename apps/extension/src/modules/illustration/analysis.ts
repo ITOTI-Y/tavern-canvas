@@ -4,6 +4,7 @@ import type { HostJsonSchema } from "../../host/index.js";
 import { json_candidates } from "./model_json.js";
 import type { SlotLibrary } from "./library_match.js";
 import type { Paragraph } from "./slot_markers.js";
+import { guidance_lines } from "./user_guidance.js";
 
 export interface ProposedCharacter {
   readonly name: string;
@@ -73,6 +74,7 @@ export function build_analysis_input(
   paragraphs: readonly Paragraph[],
   max_images: number,
   library: SlotLibrary,
+  guidance: string,
 ): string {
   return [
     "[Inkwell illustration request]",
@@ -80,9 +82,10 @@ export function build_analysis_input(
     "- paragraph: the paragraph number",
     "- scene: one sentence describing what the picture shows",
     "- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
-    "- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl, boy or other (no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
+    "- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
     'Reply with only a JSON object of the form {"illustrations":[...]}. Use an empty array when nothing should be illustrated.',
     ...library_lines(library),
+    ...guidance_lines(guidance),
     "",
     "Paragraphs:",
     ...paragraphs.map((paragraph) => `[${String(paragraph.index)}] ${paragraph.text}`),

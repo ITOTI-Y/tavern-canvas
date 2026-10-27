@@ -586,6 +586,7 @@ export async function compose_studio_capabilities(
               job_id_source: { next: () => crypto.randomUUID() },
               time_source: new SystemJobTimeSource(),
               global_concurrency: settings_adapter?.get_settings().global_concurrency ?? 1,
+              provider_concurrency: PROVIDER_CONCURRENCY,
             });
             teardown.push(timeline.observe_jobs(queue));
             const generation_capability = create_generation_capability({
@@ -912,6 +913,8 @@ export function create_provider_transport(
 }
 
 const NOVELAI_PREPARATION_TIMEOUT_MS = 120_000;
+// NovelAI answers 429 to a second image generation running on the same account.
+const PROVIDER_CONCURRENCY = { novelai: 1 } as const;
 
 const ANALYSIS_KEY_UNREADABLE =
   "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";

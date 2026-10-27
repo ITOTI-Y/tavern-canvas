@@ -60,6 +60,7 @@ const CHARACTERS_SCHEMA = {
         additionalProperties: false,
       }),
       appearance_additions: nullable(slots_schema(APPEARANCE_SLOTS)),
+      subject: { type: ["string", "null"], enum: ["girl", "boy", null] },
       wearing_changed: { type: "boolean" },
       outfit_id: { type: ["string", "null"] },
       new_outfit: nullable(OUTFIT_OBJECT),
@@ -83,6 +84,7 @@ const CHARACTERS_SCHEMA = {
       "name",
       "new_character",
       "appearance_additions",
+      "subject",
       "wearing_changed",
       "outfit_id",
       "new_outfit",
@@ -145,6 +147,7 @@ const EntrySchema = z.object({
     .nullable()
     .catch(null),
   appearance_additions: slot_record(APPEARANCE_SLOTS).nullable().catch(null),
+  subject: z.enum(["girl", "boy"]).nullable().catch(null),
   wearing_changed: z.boolean().catch(false),
   outfit_id: z.string().nullable().catch(null),
   new_outfit: OutfitSchema.nullable().catch(null),
@@ -210,6 +213,7 @@ function describe_character(
       ? "; outfit not yet known"
       : `; wears outfit ${outfit.id} (${outfit.name}): ${join_tags(wearing_tags(wearing, library.outfits))}`,
     empty.length > 0 ? `; appearance slots still empty: ${empty.join(", ")}` : "",
+    character.subject === "other" ? "; subject not yet known" : "",
   ].join("");
 }
 
@@ -239,8 +243,10 @@ export function build_scene_update_input(
     "Track what each named character wears across the story. Read the latest reply and return one entry for every named character who appears in it or is clearly present. Skip unnamed people.",
     "- ref: the id listed for this exact character below, or null for a named character not listed; never another character's id",
     "- name: the name as written in the story",
-    "- new_character: only when ref is null: subject (girl, boy or other), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
+    "- new_character: only when ref is null: subject (see Subject), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
     "- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
+    "- subject: for a known character whose subject is not yet known, girl or boy when the story shows it; otherwise null",
+    "Subject: girl for a woman or girl, boy for a man or boy, judged from pronouns such as 他 / 她 or he / she, how others address them, the name and the description. other only for a character without a gender, such as a creature or a machine.",
     "- wearing_changed: true only when the reply changes what the character wears or their passing state; when false the other wearing fields are ignored",
     "- outfit_id: the known outfit now worn, or null with new_outfit filled for clothing that matches no known outfit",
     "- overrides: slots of that outfit the reply changes, with the new tags, or removed true when taken off",
@@ -295,6 +301,8 @@ export interface OutfitDraft {
 export interface AppearanceAddition {
   readonly character_id: string;
   readonly slots: Readonly<Partial<Record<AppearanceSlot, readonly string[]>>>;
+  /** Set only when the library had the subject as other. */
+  readonly subject: "girl" | "boy" | null;
 }
 
 export interface AppliedSceneUpdate {
@@ -385,8 +393,9 @@ export function apply_scene_update(
         (slot) => known.appearance[slot].length === 0 && !known.locked_fields.includes(slot),
       );
       const slots = clean_slots(entry.appearance_additions, fillable);
-      if (Object.keys(slots).length > 0) {
-        appearance_additions.push({ character_id, slots });
+      const subject = known.subject === "other" ? entry.subject : null;
+      if (Object.keys(slots).length > 0 || subject !== null) {
+        appearance_additions.push({ character_id, slots, subject });
       }
     } else {
       const created = entry.new_character ?? {

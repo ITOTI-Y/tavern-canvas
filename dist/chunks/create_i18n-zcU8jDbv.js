@@ -413,6 +413,12 @@ var o = {
 		illustration: {
 			auto_generation_label: "Illustrate every reply automatically",
 			auto_generation_hint: "When off, use the image button beside a reply to choose paragraphs and confirm before generating.",
+			analysis_guidance_label: "Illustration guidance",
+			analysis_guidance_hint: "Style, setting, or era for the pictures, sent with every paragraph analysis. Where the reply states otherwise, the reply wins.",
+			analysis_guidance_placeholder: "e.g. watercolor, modern city, summer evening",
+			wardrobe_guidance_label: "Wardrobe guidance",
+			wardrobe_guidance_hint: "Direction for the clothing the wardrobe update picks, sent with every wardrobe update. Where the reply states otherwise, the reply wins.",
+			wardrobe_guidance_placeholder: "e.g. contemporary casual wear, light clothing for summer",
 			preset_label: "SillyTavern preset for the analysis",
 			preset_placeholder: "Current preset",
 			preset_hint: "Leave empty to use the preset loaded in SillyTavern. The analysis request goes through this preset as is, including any jailbreak, obfuscation, or output format it applies.",
@@ -778,7 +784,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-dRzoUMc_.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DD_XZCQ1.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

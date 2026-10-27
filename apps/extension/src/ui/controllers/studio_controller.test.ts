@@ -89,6 +89,8 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     prompt_preset_id: null,
     world_info: { mode: "chat" },
     wardrobe_model: null,
+    analysis_guidance: "",
+    wardrobe_guidance: "",
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
