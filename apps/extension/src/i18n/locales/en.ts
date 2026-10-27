@@ -2,7 +2,7 @@ const app = {
   name: "Inkwell",
   version_label: "Version {version}",
   entry_description:
-    "Illustrates chat replies with generated images. Settings, the gallery and image services are in the Inkwell window.",
+    "Illustrates chat replies with generated images. Settings, the gallery, and image providers are in the Inkwell window.",
   open_action: "Open Inkwell",
   unsupported_host: {
     title: "JS Slash Runner update required",
@@ -24,7 +24,7 @@ const app = {
 };
 
 const nav = {
-  assets: "Assets",
+  assets: "Library",
   gallery: "Gallery",
   settings: "Settings",
   inspector_expand: "Expand inspector",
@@ -58,7 +58,7 @@ const common = {
   inspector: {
     title: "Inspector",
     empty_title: "Nothing selected",
-    empty_description: "Select a job, image, or asset to see its details here.",
+    empty_description: "Select a job, image, or library entry to see its details here.",
     selection: {
       id_label: "ID",
       kind_gallery_record: "Gallery image",
@@ -122,7 +122,8 @@ const prompt = {
     replacement_label: "Replacement",
     replacement_placeholder: "Replacement text",
     empty_title: "No replacement rules yet",
-    empty_description: "Add a rule to substitute matched text before it reaches the provider.",
+    empty_description:
+      "Add a rule to substitute matched text before it reaches the image provider.",
   },
   regex_rules: {
     title: "Regex rules",
@@ -136,7 +137,7 @@ const prompt = {
     invalid_pattern: "This is not a valid regular expression: {message}",
     empty_title: "No regex rules yet",
     empty_description:
-      "Add a rule to transform text with a regular expression before it reaches the provider.",
+      "Add a rule to transform text with a regular expression before it reaches the image provider.",
   },
   builder: {
     title: "Prompt builder",
@@ -149,7 +150,7 @@ const assets = {
     characters: "Characters",
     outfits: "Outfits",
     lora: "LoRA",
-    vibe: "Vibe",
+    vibe: "Vibe transfer",
     workflow: "Workflow",
   },
   vocabulary: {
@@ -187,7 +188,7 @@ const assets = {
       expression: "Default expression",
       features: "Features",
     },
-    subject_label: "Subject",
+    subject_label: "Gender",
     subject_girl: "Female",
     subject_boy: "Male",
     subject_other: "Other",
@@ -204,7 +205,7 @@ const assets = {
     reference_send_label: "Send with NovelAI requests that show this character",
     reference_mode_label: "Use as",
     reference_mode_hint:
-      "Precise reference works on V4.5 only, costs 5 extra Anlas per image and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
+      "Precise reference works on V4.5 only, costs 5 extra Anlas per image, and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
     reference_mode_vibe: "Vibe transfer",
     reference_mode_img2img: "Image to image",
     reference_mode_precise: "Precise reference",
@@ -252,7 +253,7 @@ const assets = {
     strength_label: "Strength",
     information_extracted_label: "Information extracted",
     image_label: "Image",
-    image_hint: "Resized to at most 1536 px and stored with the group.",
+    image_hint: "Scaled so the long edge is at most 1536 px and saved with the group.",
     image_unreadable: "This file could not be read as an image.",
   },
   workflow: {
@@ -282,8 +283,7 @@ const assets = {
     "The wardrobe update created this entry from this chat; it appears in this chat only.",
   import_to_global_action: "Import to the global library",
   delete_confirm_title: "Delete {name}?",
-  delete_confirm_description:
-    "This removes it from your asset library permanently and cannot be undone.",
+  delete_confirm_description: "This removes it from the library permanently and cannot be undone.",
 };
 
 const gallery = {
@@ -345,7 +345,7 @@ const diagnostics = {
       main_generation_events: "Main generation events",
       preset_generation: "Preset generation",
       message_swipe_metadata: "Message swipe records",
-      tavern_regex: "Tavern regex scripts",
+      tavern_regex: "SillyTavern regex scripts",
       tavern_helper: "JS Slash Runner",
       gateway_protocol: "Gateway protocol",
     },
@@ -358,7 +358,7 @@ const diagnostics = {
   connection_tests: {
     title: "Connection tests",
     run_action: "Run tests",
-    idle: "No connection test has run yet. A test sends one probe request to the current provider profile.",
+    idle: "No connection test has run yet. A test sends one probe request to the current image provider profile.",
     running: "Running connection tests",
     latency_label: "{ms} ms",
   },
@@ -378,7 +378,7 @@ const diagnostics = {
     quota_label: "Quota",
     quota_unavailable: "Storage estimate is unavailable on this host.",
     quota_high_pressure:
-      "Storage usage is close to the browser quota. Free space in Gallery or Assets.",
+      "Storage usage is close to the browser quota. Free space in Gallery or Library.",
     cache_references_label: "Cached references",
     cache_references_unavailable: "Cache reference count is unavailable on this host.",
   },
@@ -409,7 +409,7 @@ const settings = {
     preset_label: "SillyTavern preset for the analysis",
     preset_placeholder: "Current preset",
     preset_hint:
-      "Leave empty to use the preset loaded in SillyTavern. The analysis request goes through this preset as is, including any jailbreak, obfuscation or output format it applies; choosing and maintaining it is up to you.",
+      "Leave empty to use the preset loaded in SillyTavern. The analysis request goes through this preset as is, including any jailbreak, obfuscation, or output format it applies.",
     connection_label: "Analysis connection",
     connection_current: "SillyTavern's current API",
     connection_proxy_preset: "Proxy preset",
@@ -443,11 +443,11 @@ const settings = {
     world_info_worldbook: "One book",
     world_info_off: "None",
     world_info_hint:
-      "The current chat's books are what SillyTavern activates from the chat, including global, character and chat books. With one book, only its constant entries and the entries the analyzed reply's keywords activate are sent, in place of what SillyTavern activates.",
+      "The current chat's books are what SillyTavern activates from the chat, including global, character, and chat books. With one book, only its constant entries and the entries the analyzed reply's keywords activate are sent, in place of what SillyTavern activates.",
     worldbook_label: "Book",
     worldbook_placeholder: "Choose a book",
-    worldbook_unavailable: "The book list could not be read. JS-Slash-Runner must be enabled.",
-    max_images_label: "Images per reply at most",
+    worldbook_unavailable: "The book list could not be read. JS Slash Runner must be enabled.",
+    max_images_label: "Maximum images per reply",
     prompt_preset_label: "Prompt preset for image prompts",
     prompt_preset_none: "None",
     concurrency_label: "Images generated at the same time",
@@ -493,7 +493,8 @@ const settings = {
     dyn_label: "SMEA DYN",
     variety_label: "Variety+",
     vibes_title: "Vibe transfer",
-    vibes_empty: "No NovelAI vibe group with an image yet. Add one under Library.",
+    vibes_empty:
+      "No NovelAI vibe transfer group with an image yet. Add one under Library > Vibe transfer.",
     ignored_title: "The selected model ignores these settings:",
     ignored_vibe_transfer: "vibe transfer",
     ignored_smea: "SMEA",
@@ -510,22 +511,22 @@ const settings = {
     label: "First connection",
     title: "Set up the service that will generate your images",
     description:
-      "Create a provider profile first. Add a Gateway endpoint only when your provider uses one, then run the connection test.",
+      "Create an image provider profile first. Add a Gateway endpoint only when the provider is reached through one, then run the connection test.",
   },
   sections: {
     credential_storage: "Credential storage",
-    provider_profiles: "Provider profiles",
+    provider_profiles: "Image provider profiles",
     gateway: "Gateway",
     appearance: "Appearance",
     data: "Data",
   },
   provider_profiles: {
-    empty_description: "Add a provider profile to connect an image generation backend.",
-    add_action: "Add provider profile",
+    empty_description: "Add an image provider profile to connect an image generation backend.",
+    add_action: "Add image provider profile",
     connection_test_action: "Test connection",
-    dialog_add_title: "Add provider profile",
-    dialog_edit_title: "Edit provider profile",
-    provider_label: "Provider",
+    dialog_add_title: "Add image provider profile",
+    dialog_edit_title: "Edit image provider profile",
+    provider_label: "Provider type",
     model_label: "Model",
     workflow_label: "ComfyUI workflow ID",
     set_credential_action: "Set API key",
@@ -547,7 +548,7 @@ const settings = {
     set_default_action: "Set as default",
     remove_confirm_title: "Remove {name}?",
     remove_confirm_description:
-      "This disconnects the provider profile from Inkwell. Jobs already submitted are not affected.",
+      "This removes the image provider profile from Inkwell. Jobs already submitted are not affected.",
   },
   credential_storage: {
     mode_label: "Storage backend",
@@ -555,8 +556,8 @@ const settings = {
       "Applies to image provider, analysis API, and Gateway credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
     modes: {
       browser_device: "This device",
-      host: "SillyTavern vault",
-      browser_encrypted: "Encrypted browser",
+      host: "SillyTavern secret store",
+      browser_encrypted: "Encrypted browser vault",
     },
     states: {
       unavailable: "Unavailable",
@@ -576,7 +577,7 @@ const settings = {
     reset_action: "Reset vault",
     reset_confirm_title: "Reset encrypted browser vault?",
     reset_confirm_description:
-      "All browser-encrypted credentials will be deleted permanently. Existing profile references will remain.",
+      "All credentials in the encrypted browser vault are deleted permanently. References to them in existing profiles remain.",
     passphrase_too_short: "Use at least {count} characters.",
     passphrase_mismatch: "The passphrases do not match.",
     invalid_passphrase: "The passphrase is incorrect.",
@@ -590,7 +591,7 @@ const settings = {
     detect_action: "Detect protocol",
     token_secret_label: "Token secret reference",
     token_not_set: "No token configured",
-    endpoint_hint: "The Gateway endpoint your provider profiles connect through.",
+    endpoint_hint: "The Gateway endpoint image provider profiles connect through.",
     token_label: "Gateway access token",
     token_hint:
       "The bearer token configured for this Gateway. It is written to the selected credential storage backend; Inkwell keeps only its reference.",
@@ -649,7 +650,7 @@ const errors = {
   gateway_incompatible: "The Gateway at {origin} reports an incompatible protocol version.",
   gateway_offline: "The Gateway at {origin} is not reachable.",
   connection_test_failed: "Connection test failed: {code}",
-  unexpected: "Something went wrong. Check Diagnostics for details.",
+  unexpected: "An unexpected error occurred. Check Diagnostics for details.",
 };
 
 const confirmations = {
@@ -659,7 +660,7 @@ const confirmations = {
   },
   discard_unsaved: {
     title: "Discard unsaved changes?",
-    description: "Your edits are not saved yet. Leaving now discards them.",
+    description: "The edits are not saved yet. Leaving now discards them.",
     stay_action: "Keep editing",
     discard_action: "Discard changes",
   },
@@ -668,7 +669,7 @@ const confirmations = {
 const chat = {
   message_button: "Illustrate this reply",
   analysis_running: "Choosing paragraphs to illustrate…",
-  wardrobe_failed: "The wardrobe update failed; this reply keeps the previous outfits: {reason}",
+  wardrobe_failed: "The wardrobe update failed, so this reply keeps the previous outfits: {reason}",
   analysis_failed: "Paragraph analysis failed: {reason}",
   slot: {
     generate: "Generate",
@@ -687,15 +688,15 @@ const chat = {
     retry: "Analyze again",
     no_slots: "The analysis found no paragraph worth illustrating.",
     parse_failed_hint:
-      "The model did not return the requested JSON. Your preset may impose its own output format or obfuscate replies; try another preset in the illustration settings.",
+      "The model did not return the requested JSON. The preset may impose its own output format or obfuscate replies; choose another preset in the illustration settings.",
     translate_to_tags: "Translate to English tags",
     read_in_chinese: "Read in Chinese",
     base_prompt: "Shared prompt (scene and style)",
     character_prompt: "{name}",
-    outfit_label: "Outfit of {name}",
-    outfit_none: "No outfit",
-    outfit_conditions: "Passing states, such as wet clothes",
-    positive_prompt: "Prompt",
+    outfit_label: "{name}'s outfit",
+    outfit_none: "No outfit chosen",
+    outfit_conditions: "Temporary states, such as wet clothes",
+    positive_prompt: "Positive prompt",
     negative_prompt: "Negative prompt",
     cost_anlas: "About {anlas} Anlas",
     cost_free: "Free with Opus",
@@ -785,7 +786,7 @@ const prompt_tags = {
   disable: "Turn off",
   panel_title: "Quality tags and UC presets",
   panel_description:
-    "Saved presets appear next to NovelAI's built-in ones in the chips beside the prompt boxes and work with every image provider. Quality tags go after the positive prompt; UC presets go before the negative prompt.",
+    "Saved presets appear next to NovelAI's built-in ones in the chips beside the prompt boxes and apply to every image provider. Quality tags go after the positive prompt; UC presets go before the negative prompt.",
   empty_title: "No saved presets yet",
   empty_description:
     "Save a set of quality or negative tags you use often, then pick it for any image provider profile.",

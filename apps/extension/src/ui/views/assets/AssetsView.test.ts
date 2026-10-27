@@ -439,7 +439,7 @@ describe("LoRA metadata panel", () => {
 describe("Vibe/reference group panel", () => {
   it("hides NovelAI-only strength fields when the source is switched to Google", async () => {
     mount_assets_view();
-    await click_tab("Vibe");
+    await click_tab("Vibe transfer");
     await dom().find('button[aria-label="Add group"]').trigger("click");
     expect(dom().text()).toContain("Strength");
     const radios = dom().findAll('[role="radio"]');

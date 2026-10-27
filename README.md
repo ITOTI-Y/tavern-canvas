@@ -64,14 +64,14 @@ to image, inpainting, 2x upscaling and the Director tools.
 
 **Settings > Library** holds what prompts reuse across requests.
 
-| Tab        | Content                                                                        |
-| ---------- | ------------------------------------------------------------------------------ |
-| Vocabulary | Tag packages for tag search and Chinese-to-tag translation                     |
-| Characters | Aliases, appearance tags by slot, excluded traits, default outfit, reference   |
-| Outfits    | Outfit tags by slot, optionally linked to a character                          |
-| LoRA       | SD WebUI LoRA file name, weight and trigger words, linked to a character       |
-| Vibe       | NovelAI vibe transfer images, chosen per NovelAI profile under Image providers |
-| Workflow   | ComfyUI workflow JSON with its placeholder mapping                             |
+| Tab           | Content                                                                        |
+| ------------- | ------------------------------------------------------------------------------ |
+| Vocabulary    | Tag packages for tag search and Chinese-to-tag translation                     |
+| Characters    | Aliases, appearance tags by slot, excluded traits, default outfit, reference   |
+| Outfits       | Outfit tags by slot, optionally linked to a character                          |
+| LoRA          | SD WebUI LoRA file name, weight and trigger words, linked to a character       |
+| Vibe transfer | NovelAI vibe transfer images, chosen per NovelAI profile under Image providers |
+| Workflow      | ComfyUI workflow JSON with its placeholder mapping                             |
 
 A character's appearance is split into eight slots: age, body, skin, hair, eyes, makeup, expression
 and other features. An outfit is split into slots such as headwear, top, bottom, full body,

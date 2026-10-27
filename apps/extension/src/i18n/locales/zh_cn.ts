@@ -8,11 +8,11 @@ const app = {
   unsupported_host: {
     title: "需要更新 JS Slash Runner",
     description:
-      "Inkwell需要 JS Slash Runner {required_version} 或更高版本，当前安装的版本是 {current_version}。",
+      "Inkwell 需要 JS Slash Runner {required_version} 或更高版本，当前安装的版本是 {current_version}。",
     update_action: "查看更新说明",
   },
   fatal_error: {
-    title: "Inkwell未能启动",
+    title: "Inkwell 未能启动",
     description: "运行时初始化失败，请重新加载 SillyTavern，然后在诊断页查看详情。",
     reload_action: "重新加载 SillyTavern",
   },
@@ -23,7 +23,7 @@ const app = {
 };
 
 const nav = {
-  assets: "资产",
+  assets: "素材库",
   gallery: "图库",
   settings: "设置",
   inspector_expand: "展开检查器",
@@ -57,7 +57,7 @@ const common = {
   inspector: {
     title: "检查器",
     empty_title: "未选择内容",
-    empty_description: "选择一个任务、图片或资产即可在此查看详情。",
+    empty_description: "选择一个任务、图片或素材即可在此查看详情。",
     selection: {
       id_label: "ID",
       kind_gallery_record: "图库图片",
@@ -120,7 +120,7 @@ const prompt = {
     replacement_label: "替换为",
     replacement_placeholder: "替换后的文本",
     empty_title: "还没有替换规则",
-    empty_description: "添加一条规则，在提示词发送给 provider 之前替换匹配到的文本。",
+    empty_description: "添加一条规则，在提示词发送给图像服务之前替换匹配到的文本。",
   },
   regex_rules: {
     title: "正则规则",
@@ -133,7 +133,7 @@ const prompt = {
     test_result_label: "测试结果",
     invalid_pattern: "这不是一个有效的正则表达式：{message}",
     empty_title: "还没有正则规则",
-    empty_description: "添加一条规则，在提示词发送给 provider 之前用正则表达式转换文本。",
+    empty_description: "添加一条规则，在提示词发送给图像服务之前用正则表达式转换文本。",
   },
   builder: {
     title: "提示词构建器",
@@ -146,7 +146,7 @@ const assets = {
     characters: "角色",
     outfits: "服装",
     lora: "LoRA",
-    vibe: "Vibe",
+    vibe: "氛围迁移",
     workflow: "工作流",
   },
   vocabulary: {
@@ -167,7 +167,7 @@ const assets = {
   characters: {
     empty_title: "还没有保存角色",
     empty_description:
-      "保存角色的外貌标签后，回复中出现该角色时会自动使用；段落分析也会从回复中自动建立角色。",
+      "保存角色的外貌标签后，回复中出现该角色时会自动使用；服装判断也会从回复中自动建立角色。",
     add_action: "添加角色",
     aliases_label: "别名",
     aliases_hint: "故事里对该角色的其他称呼，用逗号分隔；出现这些称呼时同样识别为该角色。",
@@ -181,7 +181,7 @@ const assets = {
       expression: "默认表情",
       features: "特征",
     },
-    subject_label: "主体",
+    subject_label: "性别",
     subject_girl: "女性",
     subject_boy: "男性",
     subject_other: "其他",
@@ -189,7 +189,7 @@ const assets = {
     default_outfit_first: "使用第一套关联服装",
     excluded_traits_label: "排除特征",
     excluded_traits_hint:
-      "该角色不应出现的标签，例如其他角色的尖耳；生成时作为该角色自己的负面提示词。",
+      "该角色不应出现的标签，例如其他角色的尖耳；生成时作为该角色自己的负向提示词。",
     reference_image_label: "参考图",
     reference_image_hint: "长边缩小到 1536 px 以内后随角色保存。",
     reference_image_unreadable: "无法将该文件读取为图片。",
@@ -208,12 +208,12 @@ const assets = {
       "按部位保存服装标签并关联到角色；角色在剧情中更衣时，服装判断会自动切换或新建服装。",
     add_action: "添加服装",
     slots: {
-      full_body: "整件",
+      full_body: "连身装",
       outerwear: "外套",
       top: "上衣",
       bottom: "下装",
-      legwear: "袜类",
-      footwear: "鞋",
+      legwear: "腿部",
+      footwear: "鞋履",
       headwear: "头饰",
       accessories: "配饰",
     },
@@ -234,12 +234,11 @@ const assets = {
     trigger_words_label: "触发词",
   },
   vibe: {
-    empty_title: "还没有 Vibe 或参考图分组",
-    empty_description:
-      "添加一个 NovelAI Vibe Transfer 分组或 Google 参考图分组，即可在多次请求中复用。",
+    empty_title: "还没有氛围迁移或参考图分组",
+    empty_description: "添加一个 NovelAI 氛围迁移分组或 Google 参考图分组，即可在多次请求中复用。",
     add_action: "添加分组",
     provider_label: "来源",
-    provider_novelai: "NovelAI Vibe Transfer",
+    provider_novelai: "NovelAI 氛围迁移",
     provider_google: "Google 参考图",
     notes_label: "备注",
     strength_label: "强度",
@@ -250,7 +249,7 @@ const assets = {
   },
   workflow: {
     empty_title: "还没有导入 ComfyUI 工作流",
-    empty_description: "导入一个工作流 JSON 文件，将其中的占位符映射到Inkwell的输入。",
+    empty_description: "导入一个工作流 JSON 文件，将其中的占位符映射到 Inkwell 的输入。",
     import_action: "导入工作流",
     placeholder_scan_action: "扫描占位符",
     edit_action: "编辑工作流",
@@ -258,10 +257,10 @@ const assets = {
     placeholder_unmapped: "未映射",
     target_positive_prompt: "正向提示词",
     target_negative_prompt: "负向提示词",
-    target_seed: "Seed",
+    target_seed: "随机种子",
     target_width: "宽度",
     target_height: "高度",
-    target_steps: "Steps",
+    target_steps: "步数",
   },
   random_selection_action: "随机选择",
   reorder_hint: "拖拽以调整顺序",
@@ -272,9 +271,9 @@ const assets = {
   scope_label: "范围",
   chat_scope_label: "仅本聊天",
   chat_scope_note: "该条目由服装判断从本聊天中建立，只在本聊天中出现。",
-  import_to_global_action: "导入全局角色库",
+  import_to_global_action: "导入全局素材库",
   delete_confirm_title: "删除 {name}？",
-  delete_confirm_description: "此操作会将其从资产库中永久删除，且无法撤销。",
+  delete_confirm_description: "此操作会将其从素材库中永久删除，且无法撤销。",
 };
 
 const gallery = {
@@ -282,7 +281,7 @@ const gallery = {
   empty_description: "为聊天回复配图后，生成的图片会出现在这里。",
   filters: {
     title: "筛选",
-    provider_label: "Provider",
+    provider_label: "图像服务",
     date_range_label: "时间范围",
     pinned_only_label: "仅显示置顶",
     orphaned_only_label: "仅显示孤立图片",
@@ -295,8 +294,8 @@ const gallery = {
   thumbnail_failed: "缩略图不可用",
   metadata_inspector: {
     title: "生成参数",
-    seed_label: "Seed",
-    provider_label: "Provider",
+    seed_label: "随机种子",
+    provider_label: "图像服务",
     model_label: "模型",
     prompt_label: "提示词",
     copy_action: "复制参数",
@@ -331,8 +330,8 @@ const diagnostics = {
     capabilities: {
       main_generation_events: "主生成事件",
       preset_generation: "预设生成",
-      message_swipe_metadata: "消息滑动页记录",
-      tavern_regex: "酒馆正则",
+      message_swipe_metadata: "候选回复记录",
+      tavern_regex: "SillyTavern 正则脚本",
       tavern_helper: "JS Slash Runner",
       gateway_protocol: "Gateway 协议",
     },
@@ -345,7 +344,7 @@ const diagnostics = {
   connection_tests: {
     title: "连接测试",
     run_action: "运行测试",
-    idle: "尚未运行连接测试。测试会向当前 provider 配置发起一次探测请求。",
+    idle: "尚未运行连接测试。测试会向当前图像服务配置发送一次探测请求。",
     running: "正在运行连接测试",
     latency_label: "{ms} 毫秒",
   },
@@ -356,7 +355,7 @@ const diagnostics = {
     time_label: "时间",
     event_label: "事件",
     module_label: "模块",
-    provider_label: "Provider",
+    provider_label: "图像服务",
     count_label: "{n} 条事件 | {n} 条事件",
   },
   storage_usage: {
@@ -364,7 +363,7 @@ const diagnostics = {
     estimate_label: "估计占用",
     quota_label: "配额",
     quota_unavailable: "当前宿主无法提供存储估算。",
-    quota_high_pressure: "存储占用已接近浏览器配额，请在图库或资产库中释放空间。",
+    quota_high_pressure: "存储占用已接近浏览器配额，请在图库或素材库中释放空间。",
     cache_references_label: "缓存引用数",
     cache_references_unavailable: "当前宿主无法提供缓存引用数。",
   },
@@ -394,12 +393,12 @@ const settings = {
     preset_label: "段落分析使用的 SillyTavern 预设",
     preset_placeholder: "当前预设",
     preset_hint:
-      "留空则使用 SillyTavern 当前加载的预设。分析请求会原样经过该预设，包括其中的破限、混淆和输出格式要求；预设的选择与维护由使用者自行负责。",
+      "留空则使用 SillyTavern 当前加载的预设。分析请求会原样经过该预设，其中的破限、混淆和输出格式要求同样生效。",
     connection_label: "分析连接",
     connection_current: "SillyTavern 当前 API",
     connection_proxy_preset: "代理预设",
     proxy_preset_label: "代理预设名称",
-    proxy_preset_hint: "与 SillyTavern 聊天补全设置中保存的代理预设名称完全一致。",
+    proxy_preset_hint: "填写 SillyTavern 聊天补全设置中保存的代理预设名称，须与其完全一致。",
     proxy_model_label: "模型",
     connection_custom: "自定义 API",
     custom_url_label: "API 地址",
@@ -427,10 +426,10 @@ const settings = {
     world_info_worldbook: "指定世界书",
     world_info_off: "不使用",
     world_info_hint:
-      "当前聊天的世界书由 SillyTavern 按聊天记录激活，包括全局、角色和聊天绑定的世界书。指定世界书时只发送被待分析回复的关键词激活的条目和常驻条目，并替换掉 SillyTavern 自己激活的条目。",
+      "当前聊天的世界书由 SillyTavern 按聊天记录激活，包括全局、角色和聊天绑定的世界书。指定世界书时只发送被待分析回复的关键词激活的条目和常驻条目，并替换 SillyTavern 自己激活的条目。",
     worldbook_label: "使用的世界书",
     worldbook_placeholder: "选择世界书",
-    worldbook_unavailable: "无法读取世界书列表，需要启用 JS-Slash-Runner。",
+    worldbook_unavailable: "无法读取世界书列表，需要启用 JS Slash Runner。",
     max_images_label: "每条回复最多配图数",
     prompt_preset_label: "图片提示词使用的提示词预设",
     prompt_preset_none: "不使用",
@@ -438,7 +437,7 @@ const settings = {
   },
   translation: {
     description:
-      "翻译经 SillyTavern 的 DeepL 接口转发，因为 DeepL 不接受来自浏览器页面的请求。术语库和词表中的中文译名优先替换，剩下的部分才发给 DeepL。",
+      "翻译经 SillyTavern 的 DeepL 接口转发，因为 DeepL 不接受来自浏览器页面的请求。术语库和词库中的中文译名优先替换，剩下的部分才发给 DeepL。",
     key_label: "DeepL 密钥",
     key_hint:
       "保存在 SillyTavern 密钥库中，与 SillyTavern 自带的翻译扩展共用。免费版与付费版密钥使用不同的接口。",
@@ -477,7 +476,7 @@ const settings = {
     dyn_label: "SMEA DYN",
     variety_label: "Variety+",
     vibes_title: "氛围迁移",
-    vibes_empty: "还没有带图片的 NovelAI 氛围组，可在素材库中添加。",
+    vibes_empty: "还没有带图片的 NovelAI 氛围迁移分组，可在素材库的氛围迁移分页中添加。",
     ignored_title: "当前模型会忽略以下设置：",
     ignored_vibe_transfer: "氛围迁移",
     ignored_smea: "SMEA",
@@ -494,22 +493,22 @@ const settings = {
     label: "首次连接",
     title: "配置用于生成图片的服务",
     description:
-      "先创建 provider 配置。仅当 provider 需要 Gateway 时再填写端点，最后运行连接测试。",
+      "先添加图像服务配置；只有服务需要经 Gateway 访问时才填写 Gateway 地址，最后运行连接测试。",
   },
   sections: {
     credential_storage: "密钥存储",
-    provider_profiles: "Provider 配置",
+    provider_profiles: "图像服务配置",
     gateway: "Gateway",
     appearance: "外观",
     data: "数据",
   },
   provider_profiles: {
-    empty_description: "添加一个 provider 配置以连接图像生成后端。",
-    add_action: "添加 provider 配置",
+    empty_description: "添加一个图像服务配置，用于连接图像生成后端。",
+    add_action: "添加图像服务配置",
     connection_test_action: "测试连接",
-    dialog_add_title: "添加 provider 配置",
-    dialog_edit_title: "编辑 provider 配置",
-    provider_label: "Provider",
+    dialog_add_title: "添加图像服务配置",
+    dialog_edit_title: "编辑图像服务配置",
+    provider_label: "服务类型",
     model_label: "模型",
     workflow_label: "ComfyUI 工作流 ID",
     set_credential_action: "设置 API 密钥",
@@ -517,7 +516,7 @@ const settings = {
     credential_set: "已配置 API 密钥",
     credential_unset: "尚未配置 API 密钥",
     credential_dialog_title: "设置 {name} 的 API 密钥",
-    credential_dialog_description: "密钥将写入当前选择的密钥存储，Inkwell只保留引用。",
+    credential_dialog_description: "密钥写入当前选择的密钥存储，Inkwell 只保留其引用。",
     credential_label: "API 密钥",
     provider_types: {
       sd_webui: "SD WebUI",
@@ -529,7 +528,7 @@ const settings = {
     default_badge: "默认",
     set_default_action: "设为默认",
     remove_confirm_title: "移除 {name}？",
-    remove_confirm_description: "此操作会将该 provider 配置从Inkwell中断开，已提交的任务不受影响。",
+    remove_confirm_description: "此操作会从 Inkwell 中移除该图像服务配置，已提交的任务不受影响。",
   },
   credential_storage: {
     mode_label: "存储后端",
@@ -568,21 +567,21 @@ const settings = {
     endpoint_label: "Gateway 地址",
     protocol_label: "协议",
     detect_action: "检测协议",
-    token_secret_label: "Token 密钥引用",
-    token_not_set: "尚未配置 token",
-    endpoint_hint: "你的 provider 配置将通过这个 Gateway 地址连接。",
-    token_label: "Gateway 访问 token",
-    token_hint: "该 Gateway 的 bearer token。它会写入当前选择的密钥存储，Inkwell只保留引用。",
-    token_save_action: "保存 token",
-    token_clear_action: "清除 token",
+    token_secret_label: "令牌的密钥引用",
+    token_not_set: "尚未配置令牌",
+    endpoint_hint: "图像服务配置经由该 Gateway 地址连接。",
+    token_label: "Gateway 访问令牌",
+    token_hint: "该 Gateway 的 Bearer 令牌，写入当前选择的密钥存储，Inkwell 只保留其引用。",
+    token_save_action: "保存令牌",
+    token_clear_action: "清除令牌",
   },
   http_risk: {
     warning_title: "此连接未加密",
     warning_description_local:
-      "{origin} 在回环地址或私有网络中使用明文 HTTP，流量不会离开本地网络，但未加密。",
+      "{origin} 在回环地址或私有网络中使用明文 HTTP。流量留在本地网络内，但没有加密。",
     error_description_public:
-      "{origin} 在公网或未识别的主机上使用明文 HTTP，token、提示词与图片将以明文传输，存在被截获的风险。",
-    disclosure: "在这个连接上，token、提示词与图片都会以明文传输。",
+      "{origin} 在公网或未识别的主机上使用明文 HTTP，令牌、提示词和图片以明文传输，可能被截获。",
+    disclosure: "在这个连接上，令牌、提示词和图片都以明文传输。",
     continue_action: "仍要继续",
     acknowledged_label: "已针对此来源确认",
   },
@@ -628,7 +627,7 @@ const errors = {
   gateway_incompatible: "位于 {origin} 的 Gateway 协议版本不兼容。",
   gateway_offline: "无法连接到位于 {origin} 的 Gateway。",
   connection_test_failed: "连接测试失败：{code}",
-  unexpected: "出现了一个问题，请到诊断页查看详情。",
+  unexpected: "发生了未预期的错误，请到诊断页查看详情。",
 };
 
 const confirmations = {
@@ -638,7 +637,7 @@ const confirmations = {
   },
   discard_unsaved: {
     title: "放弃未保存的修改？",
-    description: "你的修改还没有保存，现在离开会丢失这些内容。",
+    description: "修改尚未保存，现在离开会丢失这些修改。",
     stay_action: "继续编辑",
     discard_action: "放弃修改",
   },
@@ -657,7 +656,7 @@ const chat = {
     next: "下一张",
     generating: "生成中…",
     interrupted: "页面刷新中断了生成",
-    image_missing: "画廊中已没有这张图片",
+    image_missing: "图库中已没有这张图片",
     failed: "生成失败：{reason}",
   },
   dialog: {
@@ -672,10 +671,10 @@ const chat = {
     base_prompt: "共享提示词（场景与画风）",
     character_prompt: "{name}",
     outfit_label: "{name} 的服装",
-    outfit_none: "无服装",
+    outfit_none: "未指定服装",
     outfit_conditions: "临时状态，例如湿衣服",
-    positive_prompt: "提示词",
-    negative_prompt: "负面提示词",
+    positive_prompt: "正向提示词",
+    negative_prompt: "负向提示词",
     cost_anlas: "约 {anlas} Anlas",
     cost_free: "Opus 免费",
     cost_rejected: "请求过大，NovelAI 会拒绝",
@@ -765,7 +764,7 @@ const prompt_tags = {
   panel_description:
     "自定义的预设与 NovelAI 内置预设一起出现在提示词框旁的标签按钮中，可用于任何图像服务。质量标签加在正向提示词末尾，UC 预设加在负向提示词前面。",
   empty_title: "还没有自定义预设",
-  empty_description: "保存一组常用的质量标签或负面标签，之后可在每个图像服务配置中选用。",
+  empty_description: "保存一组常用的质量标签或负向标签，之后可在每个图像服务配置中选用。",
   add_action: "添加预设",
   kind_label: "类型",
   kind_quality: "质量标签",
