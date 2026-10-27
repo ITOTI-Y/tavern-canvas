@@ -120,6 +120,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           max_images_per_message: 2,
           prompt_preset_id: null,
           world_info: { mode: "chat" },
+          wardrobe_model: null,
         },
         translation: { deepl_endpoint: "free", glossary: [] },
         gateway: {
@@ -263,6 +264,7 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
     max_images_per_message: 2,
     prompt_preset_id: null,
     world_info: { mode: "chat" },
+    wardrobe_model: null,
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: {

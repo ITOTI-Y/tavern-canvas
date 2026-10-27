@@ -231,7 +231,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
   it("shows the composed empty state when there are no characters yet", () => {
     mount_assets_view();
     expect(dom().text()).toContain("No characters saved yet");
-    expect(dom().text()).toContain("Create a character profile");
+    expect(dom().text()).toContain("Saved appearance tags are used");
   });
 
   it("creating a character calls save_asset with the entered name and fields", async () => {
@@ -239,8 +239,12 @@ describe("Character panel CRUD and destructive confirmation", () => {
     await dom().find('button[aria-label="Add character"]').trigger("click");
     const name_input = dom().find('input[placeholder="Name"]');
     await name_input.setValue("Kaede");
-    const appearance = dom().findAll("textarea")[0];
-    await appearance?.setValue("Tall, silver hair");
+    const hair_label = dom()
+      .findAll("label")
+      .find((label) => label.text().trim() === "Hair");
+    await dom()
+      .find(`[id="${hair_label?.attributes("for") ?? ""}"]`)
+      .setValue("silver hair, long hair");
     await dom().find('button[type="submit"]').trigger("click");
     await flushPromises();
 
@@ -249,7 +253,11 @@ describe("Character panel CRUD and destructive confirmation", () => {
       expect.objectContaining({
         category: "character",
         display_name: "Kaede",
-        payload: expect.objectContaining({ appearance: "Tall, silver hair" }),
+        payload: expect.objectContaining({
+          hair: "silver hair, long hair",
+          origin: "user",
+          locked_fields: "hair",
+        }),
       }),
     );
   });

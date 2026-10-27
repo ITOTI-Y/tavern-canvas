@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { OUTFIT_SLOTS } from "@tavern-canvas/contracts";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppButton from "../../components/AppButton.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
@@ -11,7 +13,10 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
 import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
+import styles from "./assets.module.css";
+import { use_chat_scope } from "./chat_scope.js";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
+import { outfit_slot_label } from "./wardrobe_labels.js";
 
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
@@ -22,22 +27,42 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const FIELDS = computed<readonly AssetFieldSpec[]>(() => [
-  { key: "description", label: t("assets.outfits.description_label"), kind: "textarea" },
+const FIELDS = computed<readonly AssetFieldSpec[]>(() =>
+  OUTFIT_SLOTS.map((slot) => ({ key: slot, label: outfit_slot_label(t, slot), kind: "text" })),
+);
+
+const SUMMARY_FIELDS = computed<readonly AssetSummaryFieldSpec[]>(() => [
+  { key: "scope_label", label: t("assets.scope_label") },
 ]);
 
-const SUMMARY_FIELDS: readonly AssetSummaryFieldSpec[] = [];
+const { visible } = use_chat_scope(
+  () => props.records,
+  () => t("assets.chat_scope_label"),
+);
+const { visible: visible_characters } = use_chat_scope(
+  () => props.characterRecords,
+  () => t("assets.chat_scope_label"),
+);
 
 const panel = use_asset_category_panel(
   "outfit",
   props.controller,
   () => FIELDS.value,
   () => t("errors.validation_required"),
-  ["character_id"],
+  ["character_id", "origin", "chat_id"],
 );
 
+const bound_to_chat = computed(
+  () => typeof panel.values.chat_id === "string" && panel.values.chat_id !== "",
+);
+
+async function import_to_global(): Promise<void> {
+  panel.values.chat_id = "";
+  await panel.save();
+}
+
 const character_options = computed<readonly AppSelectOption[]>(() =>
-  props.characterRecords.map((record) => ({ value: record.id, label: record.display_name })),
+  visible_characters.value.map((record) => ({ value: record.id, label: record.display_name })),
 );
 
 const selected_character_id = computed<string | undefined>(() => {
@@ -56,7 +81,7 @@ const delete_confirm_title = (record_name: string): string =>
 <template>
   <div>
     <AssetCategoryList
-      :records="records"
+      :records="visible"
       :summary-fields="SUMMARY_FIELDS"
       :loading="loading"
       :search-label="t('common.actions.search')"
@@ -118,6 +143,10 @@ const delete_confirm_title = (record_name: string): string =>
         @cancel="panel.close_dialog"
       >
         <template #extra-fields>
+          <p v-if="bound_to_chat" :class="styles.chat_scope_note">
+            {{ t("assets.chat_scope_note") }}
+            <AppButton :label="t('assets.import_to_global_action')" @click="import_to_global" />
+          </p>
           <FieldGroup :label="t('assets.outfits.character_label')">
             <template #default="{ fieldId, describedBy }">
               <AppSelect

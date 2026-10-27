@@ -1,9 +1,10 @@
-import type { SlotCharacterPrompt } from "@tavern-canvas/contracts";
+import { APPEARANCE_SLOTS, type SlotCharacterPrompt } from "@tavern-canvas/contracts";
 
 import { apply_regex_rules, type RegexRule } from "../prompt/regex_transform.js";
 import { deduplicate_tags, get_base_tag, join_prompt_parts } from "../prompt/tag_normalizer.js";
 import type { ProposedCharacter } from "./analysis.js";
-import type { LibraryMatch } from "./library_match.js";
+import type { WardrobeCharacter } from "../wardrobe/wardrobe_library.js";
+import { is_named, type LibraryMatch } from "./library_match.js";
 
 export interface SlotPromptPreset {
   readonly fixed_positive_prompt: string;
@@ -58,10 +59,6 @@ function count_tags(subjects: readonly Subject[]): string {
     .join(", ");
 }
 
-function same_name(left: string, right: string): boolean {
-  return left.trim().toLowerCase() === right.trim().toLowerCase();
-}
-
 function replace_tags(prompt: string, rules: SlotPromptPreset["replacement_rules"]): string {
   const replacements = new Map<string, string>();
   for (const rule of rules) {
@@ -82,7 +79,19 @@ function apply_preset(prompt: string, preset: SlotPromptPreset | null): string {
   return deduplicate_tags(apply_regex_rules(replaced, preset.regex_rules).text);
 }
 
-/** Outfit names are library keys, not image tags; the outfit's own description is added instead. */
+/**
+ * Appearance tags in slot order. The stored expression is only a default, used when the analysis
+ * gave the character no tags of its own.
+ */
+function appearance_tags(character: WardrobeCharacter, has_own_tags: boolean): string {
+  return join_prompt_parts(
+    APPEARANCE_SLOTS.filter((slot) => slot !== "expression" || !has_own_tags).flatMap(
+      (slot) => character.appearance[slot],
+    ),
+  );
+}
+
+/** Outfit names are library keys, not image tags; the outfit's own tags are added instead. */
 function drop_outfit_names(tags: string, outfit_names: readonly string[]): string {
   const names = new Set(outfit_names.map((name) => name.trim().toLowerCase()));
   return join_prompt_parts(
@@ -112,17 +121,20 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
       return;
     }
     used.add(entry.character.id);
-    const appearance = split_subject(entry.character.appearance);
     const own = split_subject(drop_outfit_names(own_tags, input.library.outfit_names));
     drafts.push({
       name: entry.character.name,
-      subject: appearance.subject ?? own.subject,
-      prompt: join_prompt_parts([appearance.rest, entry.outfit?.description, own.rest]),
-      negative_prompt: entry.character.excluded_traits,
+      subject: entry.character.subject,
+      prompt: join_prompt_parts([
+        appearance_tags(entry.character, own.rest !== ""),
+        join_prompt_parts(entry.outfit_tags),
+        own.rest,
+      ]),
+      negative_prompt: join_prompt_parts(entry.character.excluded_traits),
     });
   };
   for (const proposed of input.characters) {
-    const index = library.findIndex((entry) => same_name(entry.character.name, proposed.name));
+    const index = library.findIndex((entry) => is_named(entry.character, proposed.name));
     if (index !== -1) {
       add_library(index, proposed.tags);
       continue;
@@ -146,19 +158,18 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
 
 /**
  * Each character in the picture gets its own NovelAI character prompt (library appearance and
- * outfit, then that character's pose and action), so traits stay on the right person. The base
+ * the outfit the wardrobe snapshot records, then that character's pose and action), so traits stay on the right person. The base
  * prompt keeps the preset's fixed tags, the subject count and the shared scene tags. Without
  * characters everything stays in the base prompt.
  */
 export function assemble_slot_prompt(input: SlotPromptInput): SlotPrompt {
   const preset = input.preset;
   const drafts = character_drafts(input);
-  const loose = input.library.loose_outfits.map((outfit) => outfit.description);
   const negative_prompt = deduplicate_tags(preset?.fixed_negative_prompt ?? "");
   if (drafts.length === 0) {
     return {
       positive_prompt: apply_preset(
-        join_prompt_parts([preset?.fixed_positive_prompt, ...loose, input.scene_tags]),
+        join_prompt_parts([preset?.fixed_positive_prompt, input.scene_tags]),
         preset,
       ),
       negative_prompt,
@@ -171,7 +182,6 @@ export function assemble_slot_prompt(input: SlotPromptInput): SlotPrompt {
       join_prompt_parts([
         preset?.fixed_positive_prompt,
         count_tags(subjects),
-        ...loose,
         split_subject(input.scene_tags).rest,
       ]),
       preset,

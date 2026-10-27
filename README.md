@@ -67,17 +67,36 @@ to image, inpainting, 2x upscaling and the Director tools.
 | Tab        | Content                                                                        |
 | ---------- | ------------------------------------------------------------------------------ |
 | Vocabulary | Tag packages for tag search and Chinese-to-tag translation                     |
-| Characters | Appearance tags, excluded traits, notes, and an optional reference image       |
-| Outfits    | Outfit tags, optionally linked to a character                                  |
+| Characters | Aliases, appearance tags by slot, excluded traits, default outfit, reference   |
+| Outfits    | Outfit tags by slot, optionally linked to a character                          |
 | LoRA       | SD WebUI LoRA file name, weight and trigger words, linked to a character       |
 | Vibe       | NovelAI vibe transfer images, chosen per NovelAI profile under Image providers |
 | Workflow   | ComfyUI workflow JSON with its placeholder mapping                             |
 
-When a paragraph names a library character, or the analysis reports one, the character's
-appearance replaces whatever the model wrote about its looks, and the outfit the paragraph names, or
-else the character's first linked outfit, is added. On NovelAI V4 and later each character gets its
-own character prompt with its excluded traits as that character's negative prompt, which keeps
-several characters from blending.
+A character's appearance is split into eight slots: age, body, skin, hair, eyes, makeup, expression
+and other features. An outfit is split into slots such as headwear, top, bottom, full body,
+outerwear, legwear, footwear and accessories. When a paragraph names a library character or one of
+its aliases, or the analysis reports one, the character's appearance replaces whatever the model
+wrote about its looks, and the outfit the character currently wears is added. On NovelAI V4 and
+later each character gets its own character prompt with its excluded traits as that character's
+negative prompt, which keeps several characters from blending.
+
+### Wardrobe tracking
+
+After every new assistant reply, a short structured request through the analysis preset records
+what each character wears in that reply: the outfit, slots taken off or replaced, and passing
+states such as wet clothes. The record is stored on the reply's swipe, and a reply without its own
+record inherits the latest earlier one, so an outfit change carries forward until the story changes
+it again. A character the chat has not recorded yet starts in its default outfit, or else its first
+linked outfit. The request uses the analysis connection; **Settings > Illustration > Wardrobe
+update model** can name a different model when the connection is not the current SillyTavern API.
+
+The same request creates library entries for named characters and outfits the library lacks. These
+entries are marked as created by the analysis and belong to the current chat only; their edit form
+has a button that moves them into the global library. The model may fill an empty appearance slot
+of a known character, but never one the user has edited. The illustrate dialog shows an outfit
+picker and a passing states field under each library character's prompt; a correction there
+rewrites the prompts and is saved as the reply's record.
 
 A character's reference image is sent only when its "send with NovelAI requests" box is ticked, and
 then in the use chosen for it:

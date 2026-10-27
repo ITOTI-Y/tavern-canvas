@@ -172,14 +172,30 @@ const assets = {
   characters: {
     empty_title: "No characters saved yet",
     empty_description:
-      "Create a character profile to reuse names, appearance, and context across prompts.",
+      "Saved appearance tags are used whenever the character appears in a reply; the wardrobe update also creates characters from replies.",
     add_action: "Add character",
-    role_label: "Role",
-    appearance_label: "Appearance",
+    aliases_label: "Aliases",
+    aliases_hint:
+      "Other names the story uses for this character, separated by commas; they are matched like the name.",
+    appearance: {
+      age: "Age",
+      body: "Body",
+      skin: "Skin",
+      hair: "Hair",
+      eyes: "Eyes",
+      makeup: "Makeup",
+      expression: "Default expression",
+      features: "Features",
+    },
+    subject_label: "Subject",
+    subject_girl: "Female",
+    subject_boy: "Male",
+    subject_other: "Other",
+    default_outfit_label: "Default outfit",
+    default_outfit_first: "First linked outfit",
     excluded_traits_label: "Excluded traits",
     excluded_traits_hint:
       "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",
-    context_notes_label: "Character context",
     reference_image_label: "Reference image",
     reference_image_hint:
       "Scaled so the long edge is at most 1536 px and saved with the character.",
@@ -195,9 +211,19 @@ const assets = {
   },
   outfits: {
     empty_title: "No outfits saved yet",
-    empty_description: "Add an outfit to a character to reuse it across generations.",
+    empty_description:
+      "Save outfit tags per slot and link them to a character; when the story changes clothes, the wardrobe update switches or creates outfits.",
     add_action: "Add outfit",
-    description_label: "Description",
+    slots: {
+      full_body: "Full body",
+      outerwear: "Outerwear",
+      top: "Top",
+      bottom: "Bottom",
+      legwear: "Legwear",
+      footwear: "Footwear",
+      headwear: "Headwear",
+      accessories: "Accessories",
+    },
     character_label: "Character",
     character_placeholder: "Select a character",
   },
@@ -250,6 +276,11 @@ const assets = {
   move_down_action: "Move down",
   drag_handle_label: "Drag to reorder",
   form_dialog_description: "Fields marked * are required.",
+  scope_label: "Scope",
+  chat_scope_label: "This chat only",
+  chat_scope_note:
+    "The wardrobe update created this entry from this chat; it appears in this chat only.",
+  import_to_global_action: "Import to the global library",
   delete_confirm_title: "Delete {name}?",
   delete_confirm_description:
     "This removes it from your asset library permanently and cannot be undone.",
@@ -402,6 +433,11 @@ const settings = {
     custom_key_cleared: "Key removed.",
     custom_key_failed: "The key could not be changed.",
     chat_history_label: "Chat messages sent with the analysis",
+    wardrobe_model_label: "Wardrobe update model",
+    wardrobe_model_hint:
+      "The wardrobe update runs once per reply. Leave empty to use the analysis connection's model, or name a cheaper one.",
+    wardrobe_model_current_hint:
+      "With SillyTavern's current API no separate model can be named; the wardrobe update uses the current one.",
     world_info_label: "World info",
     world_info_chat: "Current chat's books",
     world_info_worldbook: "One book",
@@ -632,6 +668,7 @@ const confirmations = {
 const chat = {
   message_button: "Illustrate this reply",
   analysis_running: "Choosing paragraphs to illustrate…",
+  wardrobe_failed: "The wardrobe update failed; this reply keeps the previous outfits: {reason}",
   analysis_failed: "Paragraph analysis failed: {reason}",
   slot: {
     generate: "Generate",
@@ -655,6 +692,9 @@ const chat = {
     read_in_chinese: "Read in Chinese",
     base_prompt: "Shared prompt (scene and style)",
     character_prompt: "{name}",
+    outfit_label: "Outfit of {name}",
+    outfit_none: "No outfit",
+    outfit_conditions: "Passing states, such as wet clothes",
     positive_prompt: "Prompt",
     negative_prompt: "Negative prompt",
     cost_anlas: "About {anlas} Anlas",

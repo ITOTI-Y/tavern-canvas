@@ -2,16 +2,15 @@ import type { AssetId, ImageGenerationRequest } from "@tavern-canvas/contracts";
 import { describe, expect, it } from "vitest";
 
 import { attach_character_loras, attach_character_references } from "./character_assets.js";
-import type { CharacterReferenceMode, LibraryCharacter } from "./library_match.js";
+import type { CharacterReferenceMode, WardrobeCharacter } from "../wardrobe/wardrobe_library.js";
+import { test_character } from "../wardrobe/wardrobe_test_fixtures.js";
 
-function character(id: string, mode: CharacterReferenceMode | null): LibraryCharacter {
-  return {
+function character(id: string, mode: CharacterReferenceMode | null): WardrobeCharacter {
+  return test_character({
     id,
     name: id,
-    appearance: "",
-    excluded_traits: "",
     reference: mode === null ? null : { image: `data:image/jpeg;base64,${id}`, mode },
-  };
+  });
 }
 
 function novelai(model_id: string, extra: Record<string, unknown> = {}): ImageGenerationRequest {

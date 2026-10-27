@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, provide, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StartupStatus } from "../bootstrap/startup_error.js";
@@ -10,6 +10,7 @@ import {
 } from "../host/index.js";
 import type { IllustrationService } from "../modules/illustration/illustration_service.js";
 import type { PromptTranslator } from "../modules/translation/prompt_translator.js";
+import { ACTIVE_CHAT_ID_KEY } from "./contracts/portal_keys.js";
 import type { PromptTagsPort } from "./contracts/prompt_tags_port.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
@@ -65,6 +66,14 @@ const studio =
         initial_color_mode,
       })
     : null;
+
+const chat_host = studio === null ? null : (props.host ?? null);
+const active_chat_id = ref<string | null>(chat_host?.get_active_chat_id() ?? null);
+const stop_chat_watch = chat_host?.subscribe_chat_change((event) => {
+  active_chat_id.value = event.chat_id;
+});
+onBeforeUnmount(() => stop_chat_watch?.());
+provide(ACTIVE_CHAT_ID_KEY, active_chat_id);
 
 const prompt_tags = computed<PromptTagsPort>(() => {
   const state = studio?.state.value;

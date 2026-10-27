@@ -5,7 +5,8 @@ import {
 } from "@tavern-canvas/contracts";
 
 import { join_prompt_parts } from "../prompt/tag_normalizer.js";
-import type { LibraryCharacter, LibraryLora } from "./library_match.js";
+import type { WardrobeCharacter } from "../wardrobe/wardrobe_library.js";
+import type { LibraryLora } from "./library_match.js";
 
 const MAX_LORA_TOKENS = 16;
 const MAX_VIBES = 16;
@@ -24,7 +25,7 @@ export interface ReferenceImagePort {
  */
 export function attach_character_loras(
   request: ImageGenerationRequest,
-  characters: readonly LibraryCharacter[],
+  characters: readonly WardrobeCharacter[],
   loras: readonly LibraryLora[],
 ): ImageGenerationRequest {
   if (request.provider_id !== "sd_webui") {
@@ -55,7 +56,7 @@ export function attach_character_loras(
  */
 export async function attach_character_references(
   request: ImageGenerationRequest,
-  characters: readonly LibraryCharacter[],
+  characters: readonly WardrobeCharacter[],
   port: ReferenceImagePort,
 ): Promise<ImageGenerationRequest> {
   if (request.provider_id !== "novelai" || request.action !== "generate") {

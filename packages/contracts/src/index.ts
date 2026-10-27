@@ -67,6 +67,15 @@ export type {
   SlotCharacterPrompt,
   SwipeIllustrations,
 } from "./message.js";
+export {
+  APPEARANCE_SLOTS,
+  AppearanceSlotSchema,
+  OUTFIT_SLOTS,
+  OutfitSlotSchema,
+  SwipeWardrobeSchema,
+  WearingSchema,
+} from "./wardrobe.js";
+export type { AppearanceSlot, OutfitSlot, SwipeWardrobe, Wearing } from "./wardrobe.js";
 
 export {
   PROVIDER_CREDENTIAL_KIND,

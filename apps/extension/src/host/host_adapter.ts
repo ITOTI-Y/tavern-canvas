@@ -117,7 +117,8 @@ export type DeepLEndpoint = "free" | "pro";
 export interface HostAdapter {
   readonly capabilities: CapabilityMatrix;
   get_locale(): string;
-  get_active_chat_id(): string;
+  /** `null` while no chat is open. */
+  get_active_chat_id(): string | null;
   get_active_chat(): Promise<HostChatSnapshot>;
   subscribe_generation(handler: HostGenerationHandler): () => void;
   subscribe_chat_change(handler: HostChatChangeHandler): () => void;
@@ -131,6 +132,9 @@ export interface HostAdapter {
   /** Reads the extension's record from the swipe's `extra`; `null` when absent or the chat is not active. */
   read_swipe_record(location: HostSwipeLocation): unknown;
   write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void>;
+  /** The wardrobe snapshot kept beside the illustration record, under its own key. */
+  read_swipe_wardrobe(location: HostSwipeLocation): unknown;
+  write_swipe_wardrobe(location: HostSwipeLocation, record: unknown): Promise<void>;
   /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;

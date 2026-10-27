@@ -50,7 +50,7 @@ export class CompositeHostAdapter implements HostAdapter {
     return this.#sillytavern.get_locale();
   }
 
-  get_active_chat_id(): string {
+  get_active_chat_id(): string | null {
     return this.#sillytavern.get_active_chat_id();
   }
 
@@ -106,6 +106,14 @@ export class CompositeHostAdapter implements HostAdapter {
 
   write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void> {
     return this.#sillytavern.write_swipe_record(location, record);
+  }
+
+  read_swipe_wardrobe(location: HostSwipeLocation): unknown {
+    return this.#sillytavern.read_swipe_wardrobe(location);
+  }
+
+  write_swipe_wardrobe(location: HostSwipeLocation, record: unknown): Promise<void> {
+    return this.#sillytavern.write_swipe_wardrobe(location, record);
   }
 
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean> {
@@ -175,8 +183,12 @@ export function create_composite_host(
     () => (sillytavern_global as { getContext(): SillyTavernContextSurface }).getContext(),
     fetch_ as typeof fetch,
   );
-  const helper = new TavernHelperHost(helper_surface as TavernHelperSurface, () =>
-    sillytavern.get_active_chat_id(),
-  );
+  const helper = new TavernHelperHost(helper_surface as TavernHelperSurface, () => {
+    const chat_id = sillytavern.get_active_chat_id();
+    if (chat_id === null) {
+      throw new Error("No chat is open");
+    }
+    return chat_id;
+  });
   return new CompositeHostAdapter(capabilities, helper, sillytavern, surface);
 }

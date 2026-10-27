@@ -88,7 +88,7 @@ describe("tavern_canvas_v3 schema", () => {
     await deleteDB(fresh_name);
   });
 
-  it("upgrades an installed v2 database, keeping its rows and dropping removed stores", async () => {
+  it("upgrades an installed v2 database, keeping its rows, rebuilding newer stores and dropping removed ones", async () => {
     const name = "tavern_canvas_v3_upgrade_v2_to_v3";
     const v2_store_names = store_names.filter(
       (store_name) => STORE_DEFINITIONS[store_name].since_version <= 2,
@@ -112,9 +112,10 @@ describe("tavern_canvas_v3 schema", () => {
           database.createObjectStore(removed, { keyPath: "record_key" });
         }
         database.createObjectStore("migration_journal", { keyPath: "migration_id" });
+        database.createObjectStore("character_profiles", { keyPath: "record_key" });
       },
     });
-    await v2_database.put("character_profiles", {
+    const row = {
       schema_version: 1,
       id: "11111111-1111-4111-8111-111111111111",
       namespace: "primary",
@@ -122,7 +123,9 @@ describe("tavern_canvas_v3 schema", () => {
       created_at: "2026-08-05T00:00:00.000Z",
       updated_at: "2026-08-05T00:00:00.000Z",
       payload: { survived: true },
-    });
+    };
+    await v2_database.put("prompt_presets", row);
+    await v2_database.put("character_profiles", row);
     v2_database.close();
 
     const upgraded = await openDB<DBSchema>(name, DATABASE_VERSION, { upgrade: upgrade_database });
@@ -135,8 +138,9 @@ describe("tavern_canvas_v3 schema", () => {
       [...STORE_DEFINITIONS.prompt_tag_presets.indexes].sort(),
     );
     await expect(
-      upgraded.get("character_profiles", "primary:11111111-1111-4111-8111-111111111111"),
+      upgraded.get("prompt_presets", "primary:11111111-1111-4111-8111-111111111111"),
     ).resolves.toMatchObject({ payload: { survived: true } });
+    await expect(upgraded.count("character_profiles")).resolves.toBe(0);
 
     upgraded.close();
     await deleteDB(name);

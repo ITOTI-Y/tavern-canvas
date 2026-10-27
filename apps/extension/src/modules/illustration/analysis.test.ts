@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { test_character, test_outfit } from "../wardrobe/wardrobe_test_fixtures.js";
 import { AnalysisParseError, build_analysis_input, parse_analysis_output } from "./analysis.js";
 
 const PROPOSAL = {
@@ -28,15 +29,9 @@ describe("build_analysis_input", () => {
   it("names library characters and outfits so the model leaves their looks out", () => {
     const input = build_analysis_input([{ index: 0, text: "Hi.", line: 0 }], 1, {
       characters: [
-        {
-          id: "c1",
-          name: "Seraphina",
-          appearance: "pink hair",
-          excluded_traits: "",
-          reference: null,
-        },
+        test_character({ id: "c1", name: "Seraphina", appearance: { hair: ["pink hair"] } }),
       ],
-      outfits: [{ id: "o1", name: "Forest cloak", description: "green cloak", character_id: "c1" }],
+      outfits: [test_outfit({ id: "o1", name: "Forest cloak", character_id: "c1" })],
       loras: [],
     });
 

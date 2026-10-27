@@ -11,6 +11,7 @@ export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => vo
 
 /** The key under a message's `extra` (and each `swipe_info[i].extra`) that holds TavernCanvas data. */
 export const TAVERN_CANVAS_EXTRA_KEY = "tavern_canvas";
+const WARDROBE_EXTRA_KEY = "tavern_canvas_wardrobe";
 
 export interface SillyTavernEventSource {
   on(event_name: string, listener: SillyTavernEventListener): void;
@@ -183,11 +184,9 @@ export class SillyTavernHost {
     );
   }
 
-  get_active_chat_id(): string {
-    return read_nonempty_string(
-      this.#get_context().getCurrentChatId(),
-      "SillyTavern returned an invalid active chat ID",
-    );
+  get_active_chat_id(): string | null {
+    const chat_id = this.#get_context().getCurrentChatId();
+    return typeof chat_id === "string" && chat_id.trim().length > 0 ? chat_id : null;
   }
 
   #listen(listeners: readonly (readonly [EventTypeName, SillyTavernEventListener])[]): () => void {
@@ -304,8 +303,16 @@ export class SillyTavernHost {
   }
 
   read_swipe_record(location: HostSwipeLocation): unknown {
+    return this.#read_extra(location, TAVERN_CANVAS_EXTRA_KEY);
+  }
+
+  read_swipe_wardrobe(location: HostSwipeLocation): unknown {
+    return this.#read_extra(location, WARDROBE_EXTRA_KEY);
+  }
+
+  #read_extra(location: HostSwipeLocation, key: string): unknown {
     const extra = this.#find_extra(location, false);
-    const record = extra?.[TAVERN_CANVAS_EXTRA_KEY];
+    const record = extra?.[key];
     return record === undefined ? null : structuredClone(record);
   }
 
@@ -328,14 +335,22 @@ export class SillyTavernHost {
     return response.text();
   }
 
-  async write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void> {
+  write_swipe_record(location: HostSwipeLocation, record: unknown): Promise<void> {
+    return this.#write_extra(location, TAVERN_CANVAS_EXTRA_KEY, record);
+  }
+
+  write_swipe_wardrobe(location: HostSwipeLocation, record: unknown): Promise<void> {
+    return this.#write_extra(location, WARDROBE_EXTRA_KEY, record);
+  }
+
+  async #write_extra(location: HostSwipeLocation, key: string, record: unknown): Promise<void> {
     const extra = this.#find_extra(location, true);
     if (extra === null) {
       throw new Error(
         `Chat ${location.chat_id} message ${String(location.message_id)} swipe ${String(location.swipe_id)} is not available`,
       );
     }
-    extra[TAVERN_CANVAS_EXTRA_KEY] = structuredClone(record);
+    extra[key] = structuredClone(record);
     await this.#get_context().saveChat();
   }
 }

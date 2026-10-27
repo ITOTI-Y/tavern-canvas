@@ -164,6 +164,9 @@ onBeforeUnmount(() => {
       <template v-if="target.notice.status === 'running'">{{
         t("chat.analysis_running")
       }}</template>
+      <template v-else-if="target.notice.status === 'wardrobe_failed'">{{
+        t("chat.wardrobe_failed", { reason: target.notice.message })
+      }}</template>
       <template v-else>
         <div>{{ t("chat.analysis_failed", { reason: target.notice.message }) }}</div>
         <pre v-if="target.notice.excerpt !== null" :class="styles.excerpt">{{

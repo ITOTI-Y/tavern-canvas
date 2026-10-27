@@ -412,3 +412,13 @@
   border-radius: var(--tc-radius-image);
   object-fit: contain;
 }
+
+.chat_scope_note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--tc-text-muted);
+  font-size: 12px;
+}

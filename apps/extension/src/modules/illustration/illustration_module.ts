@@ -9,7 +9,8 @@ import type {
   PromptPresetsCapability,
 } from "../../ui/contracts/ui_capabilities.js";
 import type { IllustrationService, SlotPromptContext } from "./illustration_service.js";
-import type { CharacterReference, SlotLibrary } from "./library_match.js";
+import { read_character, read_outfit, visible_in_chat } from "../wardrobe/wardrobe_library.js";
+import type { SlotLibrary } from "./library_match.js";
 import { SLOT_REGEX_SCRIPTS } from "./slot_markers.js";
 
 const SLOT_ID_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
@@ -19,37 +20,22 @@ export function new_slot_id(): string {
   return [...bytes].map((byte) => SLOT_ID_ALPHABET[byte % 64] ?? "_").join("");
 }
 
-function read_reference(payload: Readonly<Record<string, unknown>>): CharacterReference | null {
-  const { reference_image: image, reference_send: send, reference_mode: mode } = payload;
-  if (typeof image !== "string" || image === "" || send !== 1) {
-    return null;
-  }
-  return mode === "img2img" || mode === "precise" ? { image, mode } : { image, mode: "vibe" };
-}
-
-/** Every stored character, outfit and LoRA, in library order. */
-export async function load_slot_library(assets: AssetsCapability): Promise<SlotLibrary> {
-  return slot_library_of(await assets.load());
+/** The global library and the entries bound to this chat, in library order. */
+export async function load_slot_library(
+  assets: AssetsCapability,
+  chat_id: string,
+): Promise<SlotLibrary> {
+  return slot_library_of(await assets.load(), chat_id);
 }
 
 export function slot_library_of(
   catalog: Readonly<Record<AssetCategory, readonly AssetRecordSummary[]>>,
+  chat_id: string | null,
 ): SlotLibrary {
   const text = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
   return {
-    characters: catalog.character.map((record) => ({
-      id: record.id,
-      name: record.display_name,
-      appearance: text(record.payload.appearance),
-      excluded_traits: text(record.payload.excluded_traits),
-      reference: read_reference(record.payload),
-    })),
-    outfits: catalog.outfit.map((record) => ({
-      id: record.id,
-      name: record.display_name,
-      description: text(record.payload.description),
-      character_id: text(record.payload.character_id) || null,
-    })),
+    characters: visible_in_chat(catalog.character.map(read_character), chat_id),
+    outfits: visible_in_chat(catalog.outfit.map(read_outfit), chat_id),
     loras: catalog.lora.flatMap((record) => {
       const character_id = text(record.payload.character_id);
       return character_id === ""
@@ -66,15 +52,16 @@ export function slot_library_of(
   };
 }
 
-/** The preset chosen in the illustration settings and the whole library. */
+/** The preset chosen in the illustration settings and the library this chat sees. */
 export async function load_slot_prompt_context(
   prompt_presets: PromptPresetsCapability,
   assets: AssetsCapability,
   prompt_preset_id: Uuid | null,
+  chat_id: string,
 ): Promise<SlotPromptContext> {
   const [preset, library] = await Promise.all([
     prompt_preset_id === null ? null : prompt_presets.load_draft(prompt_preset_id),
-    load_slot_library(assets),
+    load_slot_library(assets, chat_id),
   ]);
   return { preset, library };
 }

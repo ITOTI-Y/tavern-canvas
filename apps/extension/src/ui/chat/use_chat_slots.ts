@@ -14,7 +14,8 @@ export interface SlotTarget {
 
 export type AnalysisNotice =
   | { readonly status: "running" }
-  | { readonly status: "failed"; readonly message: string; readonly excerpt: string | null };
+  | { readonly status: "failed"; readonly message: string; readonly excerpt: string | null }
+  | { readonly status: "wardrobe_failed"; readonly message: string };
 
 export interface AnalysisNoticeTarget {
   readonly key: string;
@@ -49,6 +50,7 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
   const notices = shallowRef<readonly AnalysisNoticeTarget[]>([]);
   const targets_by_message = new Map<number, readonly SlotTarget[]>();
   const notice_by_location = new Map<string, AnalysisNotice>();
+  const wardrobe_notice_by_location = new Map<string, AnalysisNotice>();
   const unsubscribes: (() => void)[] = [];
   let rescan_timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -113,8 +115,14 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
 
   function publish(): void {
     targets.value = [...targets_by_message.values()].flat();
-    notices.value = [...notice_by_location.entries()].flatMap(([key, notice]) => {
-      const message_id = Number(key.split(":").at(-2));
+    const entries = [
+      ...[...notice_by_location.entries()].map(([key, notice]) => [key, key, notice] as const),
+      ...[...wardrobe_notice_by_location.entries()].map(
+        ([key, notice]) => [`wardrobe:${key}`, key, notice] as const,
+      ),
+    ];
+    notices.value = entries.flatMap(([key, location, notice]) => {
+      const message_id = Number(location.split(":").at(-2));
       const text_element = host.find_message_element(message_id);
       return text_element === null ? [] : [{ key, element: notice_element(text_element), notice }];
     });
@@ -169,11 +177,17 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
       }),
       host.subscribe_chat_rendered(() => {
         notice_by_location.clear();
+        wardrobe_notice_by_location.clear();
         schedule_scan_all();
       }),
       service.subscribe((event) => {
         const key = location_key(event.location);
-        if (event.type === "analysis_started") {
+        if (event.type === "wardrobe_failed") {
+          wardrobe_notice_by_location.set(key, {
+            status: "wardrobe_failed",
+            message: event.message,
+          });
+        } else if (event.type === "analysis_started") {
           notice_by_location.set(key, { status: "running" });
         } else if (event.type === "analysis_failed") {
           notice_by_location.set(key, {

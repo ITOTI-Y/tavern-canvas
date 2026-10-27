@@ -40,7 +40,12 @@ import {
   type GeneratedImageStoreDeps,
   type ImageStorePort,
 } from "../modules/media/media_command_service.js";
-import { IllustrationService } from "../modules/illustration/illustration_service.js";
+import {
+  IllustrationService,
+  create_wardrobe_runner,
+} from "../modules/illustration/illustration_service.js";
+import { create_wardrobe_library_port } from "../modules/wardrobe/wardrobe_library_port.js";
+import { WardrobeService } from "../modules/wardrobe/wardrobe_service.js";
 import {
   IllustrationModule,
   load_slot_prompt_context,
@@ -595,17 +600,39 @@ export async function compose_studio_capabilities(
               ...(prepare_request === null ? {} : { prepare_request }),
             });
             if (settings_adapter !== null) {
+              const resolve_analysis_key = (): Promise<string> => {
+                if (secret_resolver === null) {
+                  return Promise.reject(new Error(ANALYSIS_KEY_UNREADABLE));
+                }
+                return secret_resolver.resolve_secret(
+                  derive_analysis_credential_reference(
+                    settings_adapter.get_settings().active_namespace,
+                  ),
+                );
+              };
               illustrations = new IllustrationService({
                 host,
                 settings: () => settings_adapter.get_settings().illustration,
                 auto_generation_enabled: () =>
                   settings_adapter.get_settings().auto_generation_enabled,
-                prompt_context: () =>
+                prompt_context: (chat_id) =>
                   load_slot_prompt_context(
                     prompt_presets,
                     assets,
                     settings_adapter.get_settings().illustration.prompt_preset_id,
+                    chat_id,
                   ),
+                wardrobe: new WardrobeService({
+                  host,
+                  library: create_wardrobe_library_port(assets),
+                  run: create_wardrobe_runner({
+                    host,
+                    settings: () => settings_adapter.get_settings().illustration,
+                    resolve_analysis_key,
+                    new_generation_id: () => crypto.randomUUID(),
+                  }),
+                  new_id: () => crypto.randomUUID(),
+                }),
                 async build_request({ positive_prompt, negative_prompt, character_prompts }) {
                   const profile = await require_active_profile();
                   const [{ build_generation_request }, assets_module, tags_module, catalog] =
@@ -615,7 +642,7 @@ export async function compose_studio_capabilities(
                       import("../modules/illustration/prompt_tags.js"),
                       assets.load(),
                     ]);
-                  const library = slot_library_of(catalog);
+                  const library = slot_library_of(catalog, host.get_active_chat_id());
                   const with_prompt_tags = (built: ImageGenerationRequest) =>
                     tags_module.inject_prompt_tags(
                       built,
@@ -739,16 +766,7 @@ export async function compose_studio_capabilities(
                   );
                 },
                 edits_available: () => last_provider_id === "novelai",
-                resolve_analysis_key() {
-                  if (secret_resolver === null) {
-                    throw new Error(ANALYSIS_KEY_UNREADABLE);
-                  }
-                  return secret_resolver.resolve_secret(
-                    derive_analysis_credential_reference(
-                      settings_adapter.get_settings().active_namespace,
-                    ),
-                  );
-                },
+                resolve_analysis_key,
                 async submit(request) {
                   const profile = await require_active_profile();
                   // Job errors carry only a code, so a missing credential is reported here instead.

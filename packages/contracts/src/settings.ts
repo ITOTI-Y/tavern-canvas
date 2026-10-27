@@ -95,6 +95,8 @@ export const IllustrationSettingsSchema = z.strictObject({
   max_images_per_message: z.number().int().min(1).max(8),
   prompt_preset_id: UuidSchema.nullable(),
   world_info: AnalysisWorldInfoSchema.default({ mode: "chat" }),
+  /** Model for the per-reply wardrobe update; `null` uses the analysis connection's model. */
+  wardrobe_model: z.string().trim().min(1).max(200).nullable().default(null),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

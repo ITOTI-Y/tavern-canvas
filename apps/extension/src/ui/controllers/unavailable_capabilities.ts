@@ -65,6 +65,7 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
     max_images_per_message: 2,
     prompt_preset_id: null,
     world_info: { mode: "chat" },
+    wardrobe_model: null,
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },

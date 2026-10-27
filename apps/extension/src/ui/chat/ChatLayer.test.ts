@@ -12,6 +12,7 @@ import { createI18n } from "vue-i18n";
 import type { HostAdapter } from "../../host/index.js";
 import { en_messages } from "../../i18n/locales/en.js";
 import { IllustrationService } from "../../modules/illustration/illustration_service.js";
+import { WardrobeService } from "../../modules/wardrobe/wardrobe_service.js";
 import type { GalleryCapability, NovelAiCapability } from "../contracts/ui_capabilities.js";
 import ChatLayer from "./ChatLayer.vue";
 
@@ -83,6 +84,8 @@ function create_host(text_element: HTMLElement): HostAdapter {
     list_worldbooks: () => [],
     read_worldbook: () => Promise.resolve([]),
     translate_deepl: () => Promise.reject(new Error("not used")),
+    read_swipe_wardrobe: () => null,
+    write_swipe_wardrobe: () => Promise.resolve(),
   };
 }
 
@@ -99,10 +102,22 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       max_images_per_message: 2,
       prompt_preset_id: null,
       world_info: { mode: "chat" },
+      wardrobe_model: null,
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>
       Promise.resolve({ preset: null, library: { characters: [], outfits: [], loras: [] } }),
+    wardrobe: new WardrobeService({
+      host,
+      library: {
+        load: () => Promise.resolve({ characters: [], outfits: [] }),
+        create_character: () => Promise.resolve(),
+        create_outfit: () => Promise.resolve(),
+        add_appearance: () => Promise.resolve(),
+      },
+      run: () => Promise.resolve(JSON.stringify({ characters: [] })),
+      new_id: () => "id-1",
+    }),
     build_request: () => Promise.reject(new Error("no provider profile")),
     build_edit_request: (edit) =>
       Promise.resolve({ provider_id: "sd_webui", prompt: edit.kind } as ImageGenerationRequest),

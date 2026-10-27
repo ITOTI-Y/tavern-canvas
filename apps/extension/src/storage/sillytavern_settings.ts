@@ -42,6 +42,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
     max_images_per_message: 2,
     prompt_preset_id: null,
     world_info: { mode: "chat" },
+    wardrobe_model: null,
   },
   translation: {
     deepl_endpoint: "free",

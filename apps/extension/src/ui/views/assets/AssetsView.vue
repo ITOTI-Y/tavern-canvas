@@ -81,6 +81,7 @@ const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN"
       <TabsContent value="character" :class="styles.tabsContent">
         <CharacterPanel
           :records="state.assets.records.character"
+          :outfit-records="state.assets.records.outfit"
           :loading="assets_loading"
           :controller="controller"
         />

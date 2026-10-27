@@ -14,6 +14,7 @@ import type {
   HostWorldbookEntry,
   PresetGenerationRequest,
 } from "../../host/index.js";
+import { WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { IllustrationService, MessageChangedError } from "./illustration_service.js";
 
 const REPLY = "She opened the door.\n\nRain fell outside.";
@@ -27,12 +28,14 @@ const SETTINGS: IllustrationSettings = {
   max_images_per_message: 2,
   prompt_preset_id: null,
   world_info: { mode: "chat" },
+  wardrobe_model: null,
 };
 
 class MemoryHost {
   chat_id = "chat-1";
   text = REPLY;
   readonly records = new Map<string, unknown>();
+  readonly wardrobes = new Map<string, unknown>();
   readonly generation_handlers = new Set<HostGenerationHandler>();
   readonly generate_calls: PresetGenerationRequest[] = [];
   readonly worldbooks = new Map<string, readonly HostWorldbookEntry[]>();
@@ -75,6 +78,12 @@ class MemoryHost {
         return Promise.reject(new Error("not available"));
       }
       this.records.set(this.#key(location), structuredClone(record));
+      return Promise.resolve();
+    },
+    read_swipe_wardrobe: (location: HostSwipeLocation) =>
+      this.wardrobes.get(this.#key(location)) ?? null,
+    write_swipe_wardrobe: (location: HostSwipeLocation, record: unknown) => {
+      this.wardrobes.set(this.#key(location), structuredClone(record));
       return Promise.resolve();
     },
     replace_message_text: (_message_id: number, expected: string, next: string) => {
@@ -131,6 +140,17 @@ function create_service(
     auto_generation_enabled: () => options.auto ?? false,
     prompt_context: () =>
       Promise.resolve({ preset: null, library: { characters: [], outfits: [], loras: [] } }),
+    wardrobe: new WardrobeService({
+      host: host.adapter,
+      library: {
+        load: () => Promise.resolve({ characters: [], outfits: [] }),
+        create_character: () => Promise.resolve(),
+        create_outfit: () => Promise.resolve(),
+        add_appearance: () => Promise.resolve(),
+      },
+      run: () => Promise.resolve(JSON.stringify({ characters: [] })),
+      new_id: () => "id-1",
+    }),
     build_request: (input) =>
       Promise.resolve({ prompt: input.positive_prompt } as unknown as ImageGenerationRequest),
     build_edit_request: (edit) =>
@@ -343,6 +363,22 @@ describe("IllustrationService automatic generation", () => {
     );
 
     await vi.waitFor(() => expect(submit).toHaveBeenCalledOnce());
+  });
+
+  it("drops the records a new swipe copied from the previous one before analyzing it", async () => {
+    const host = new MemoryHost();
+    const { service } = create_service(host, { auto: true });
+    const copied = { schema_version: 2, slots: [] };
+    await host.adapter.write_swipe_record(LOCATION, copied);
+    await host.adapter.write_swipe_wardrobe(LOCATION, { schema_version: 1, wearing: [] });
+
+    host.emit(
+      { phase: "started", generation_type: "swipe", dry_run: false },
+      { phase: "ended", message_id: 3 },
+    );
+
+    await vi.waitFor(() => expect(service.read(LOCATION)?.slots).toHaveLength(1));
+    expect(host.generate_calls).toHaveLength(1);
   });
 
   it("ignores quiet generations, including its own analysis call", async () => {

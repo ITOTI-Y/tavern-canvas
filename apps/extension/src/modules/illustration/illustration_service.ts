@@ -8,6 +8,7 @@ import {
   type RequestId,
   type SwipeIllustrations,
   type SlotCharacterPrompt,
+  type Wearing,
 } from "@tavern-canvas/contracts";
 import type { GenerationJobSnapshot } from "@tavern-canvas/core";
 
@@ -15,6 +16,7 @@ import type {
   HostAdapter,
   HostGenerationConnection,
   HostGenerationEvent,
+  HostJsonSchema,
   HostSwipeLocation,
   HostWorldInfo,
 } from "../../host/index.js";
@@ -27,6 +29,7 @@ import {
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
+import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
 import { activate_worldbook } from "./worldbook.js";
 
@@ -51,7 +54,8 @@ export interface IllustrationServiceDeps {
   readonly host: HostAdapter;
   readonly settings: () => IllustrationSettings;
   readonly auto_generation_enabled: () => boolean;
-  readonly prompt_context: () => Promise<SlotPromptContext>;
+  readonly prompt_context: (chat_id: string) => Promise<SlotPromptContext>;
+  readonly wardrobe: WardrobeService;
   /** Builds the request the active provider profile would receive for these prompts. */
   readonly build_request: (input: SlotGenerationInput) => Promise<ImageGenerationRequest>;
   /** Builds a quick-edit request for the active profile; throws when its provider cannot edit. */
@@ -75,6 +79,11 @@ export type IllustrationEvent =
       readonly location: HostSwipeLocation;
       readonly message: string;
       readonly excerpt: string | null;
+    }
+  | {
+      readonly type: "wardrobe_failed";
+      readonly location: HostSwipeLocation;
+      readonly message: string;
     };
 
 /** The active swipe's text changed between reading it and writing the markers. */
@@ -139,6 +148,41 @@ async function to_host_world_info(
         text: activate_worldbook(await host.read_worldbook(world_info.worldbook), text),
       };
   }
+}
+
+export interface WardrobeRunnerDeps {
+  readonly host: HostAdapter;
+  readonly settings: () => IllustrationSettings;
+  readonly resolve_analysis_key: () => Promise<string>;
+  readonly new_generation_id: () => string;
+}
+
+/**
+ * Runs the wardrobe request through the analysis preset and connection, with the chosen wardrobe
+ * model where the connection names one. It sends no chat history and no world info: the request
+ * carries the reply and the state it needs.
+ */
+export function create_wardrobe_runner(
+  deps: WardrobeRunnerDeps,
+): (input: string, json_schema: HostJsonSchema) => Promise<string> {
+  return async (input, json_schema) => {
+    const settings = deps.settings();
+    const model = settings.wardrobe_model;
+    const connection =
+      model === null || settings.connection.kind === "current"
+        ? settings.connection
+        : { ...settings.connection, model };
+    const result = await deps.host.generate_with_preset({
+      generation_id: deps.new_generation_id(),
+      preset_name: settings.preset_name,
+      user_input: input,
+      max_chat_history: 0,
+      connection: await to_host_connection(connection, deps.resolve_analysis_key),
+      json_schema,
+      world_info: { kind: "replace", text: "" },
+    });
+    return result.content;
+  };
 }
 
 /** Loaded on demand: it needs the NovelAI model table, which stays out of the initial bundle. */
@@ -260,7 +304,8 @@ export class IllustrationService {
     const settings = this.#deps.settings();
     const record: SwipeIllustrations = { schema_version: 2, slots: [] };
     if (paragraphs.length > 0) {
-      const context = await this.#deps.prompt_context();
+      const snapshot = await this.#wardrobe_snapshot(location);
+      const context = await this.#deps.prompt_context(location.chat_id);
       const result = await this.#deps.host.generate_with_preset({
         generation_id: this.#deps.new_generation_id(),
         preset_name: settings.preset_name,
@@ -285,6 +330,7 @@ export class IllustrationService {
             `${paragraphs[proposal.paragraph]?.text ?? ""}\n${proposal.scene}`,
             proposal.characters.map((character) => character.name),
             context.library,
+            snapshot,
           );
           const prompt = assemble_slot_prompt({
             preset: context.preset,
@@ -514,22 +560,62 @@ export class IllustrationService {
     }
     const generation_type = this.#last_generation_type;
     this.#last_generation_type = null;
-    if (
-      generation_type === null ||
-      !ILLUSTRATED_GENERATION_TYPES.has(generation_type) ||
-      !this.#deps.auto_generation_enabled()
-    ) {
+    if (generation_type === null || !ILLUSTRATED_GENERATION_TYPES.has(generation_type)) {
       return;
     }
-    void this.analyze(event.message_id)
-      .then(async (record) => {
+    void this.active_location(event.message_id)
+      .then(async (location) => {
+        if (generation_type === "swipe") {
+          // A new swipe starts with a copy of the previous swipe's extra, records included.
+          await this.#deps.host.write_swipe_record(location, null);
+          await this.#deps.host.write_swipe_wardrobe(location, null);
+        }
+        await this.#wardrobe_snapshot(location);
+        if (!this.#deps.auto_generation_enabled()) {
+          return;
+        }
+        const record = await this.analyze(event.message_id);
         if (record.slots.length > 0) {
           await this.generate_missing(await this.active_location(event.message_id));
         }
       })
       .catch(() => {
-        // Surfaced to the chat UI through the analysis_failed event.
+        // Surfaced to the chat UI through the analysis_failed and wardrobe_failed events.
       });
+  }
+
+  /**
+   * The reply's wardrobe snapshot, running the wardrobe update when the reply has none. A failed
+   * update is reported and the reply falls back to what it inherits.
+   */
+  async #wardrobe_snapshot(location: HostSwipeLocation): Promise<readonly Wearing[]> {
+    const own = this.#deps.wardrobe.read(location);
+    if (own !== null) {
+      return own;
+    }
+    try {
+      return await this.#deps.wardrobe.update(location.message_id);
+    } catch (error) {
+      this.#emit({ type: "wardrobe_failed", location, message: error_message(error) });
+      return this.#deps.wardrobe.current(location.message_id);
+    }
+  }
+
+  /** The library this chat sees and the reply's wardrobe snapshot, for correcting outfits. */
+  async wardrobe_view(location: HostSwipeLocation): Promise<{
+    readonly library: SlotLibrary;
+    readonly snapshot: readonly Wearing[];
+  }> {
+    const [context, snapshot] = await Promise.all([
+      this.#deps.prompt_context(location.chat_id),
+      this.#deps.wardrobe.current(location.message_id),
+    ]);
+    return { library: context.library, snapshot };
+  }
+
+  /** Records a corrected outfit on this reply; later replies inherit it. */
+  set_wearing(location: HostSwipeLocation, wearing: Wearing): Promise<void> {
+    return this.#deps.wardrobe.set_wearing(location, wearing);
   }
 
   #emit(event: IllustrationEvent): void {

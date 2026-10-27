@@ -1,51 +1,119 @@
 <script setup lang="ts">
+import { APPEARANCE_SLOTS } from "@tavern-canvas/contracts";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { split_tags } from "../../../modules/wardrobe/wardrobe_library.js";
 import AppButton from "../../components/AppButton.vue";
 import AppCheckbox from "../../components/AppCheckbox.vue";
 import AppDialog from "../../components/AppDialog.vue";
+import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
+import { drop_undefined } from "../../components/_prop_utils.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import SegmentedControl, {
   type SegmentedControlOption,
 } from "../../components/SegmentedControl.vue";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
-import type { AssetFieldSpec } from "./asset_field_schema.js";
+import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
 import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import styles from "./assets.module.css";
+import { use_chat_scope } from "./chat_scope.js";
 import { read_reference_image } from "./reference_image.js";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
+import { appearance_slot_label } from "./wardrobe_labels.js";
 
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
+  readonly outfitRecords: readonly AssetRecordSummary[];
   readonly loading: boolean;
   readonly controller: StudioController;
 }>();
 
 const { t } = useI18n();
+const NO_OUTFIT = "none";
+
+const { visible } = use_chat_scope(
+  () => props.records,
+  () => t("assets.chat_scope_label"),
+);
 
 const FIELDS = computed<readonly AssetFieldSpec[]>(() => [
-  { key: "role_label", label: t("assets.characters.role_label"), kind: "text" },
-  { key: "appearance", label: t("assets.characters.appearance_label"), kind: "textarea" },
+  {
+    key: "aliases",
+    label: t("assets.characters.aliases_label"),
+    kind: "text",
+    hint: t("assets.characters.aliases_hint"),
+  },
+  ...APPEARANCE_SLOTS.map((slot): AssetFieldSpec => ({
+    key: slot,
+    label: appearance_slot_label(t, slot),
+    kind: "text",
+  })),
   {
     key: "excluded_traits",
     label: t("assets.characters.excluded_traits_label"),
     kind: "text",
     hint: t("assets.characters.excluded_traits_hint"),
   },
-  { key: "context_notes", label: t("assets.characters.context_notes_label"), kind: "textarea" },
 ]);
 
-const REFERENCE_KEYS = ["reference_image", "reference_send", "reference_mode"] as const;
+const SUMMARY_FIELDS = computed<readonly AssetSummaryFieldSpec[]>(() => [
+  { key: "scope_label", label: t("assets.scope_label") },
+]);
+
+const PRESERVED_KEYS = [
+  "subject",
+  "default_outfit_id",
+  "reference_image",
+  "reference_send",
+  "reference_mode",
+  "origin",
+  "locked_fields",
+  "chat_id",
+  "created_from_message_id",
+] as const;
 
 const panel = use_asset_category_panel(
   "character",
   props.controller,
   () => FIELDS.value,
   () => t("errors.validation_required"),
-  REFERENCE_KEYS,
+  PRESERVED_KEYS,
+);
+
+const subject_options = computed<readonly SegmentedControlOption[]>(() => [
+  { value: "girl", label: t("assets.characters.subject_girl") },
+  { value: "boy", label: t("assets.characters.subject_boy") },
+  { value: "other", label: t("assets.characters.subject_other") },
+]);
+const subject = computed(() =>
+  panel.values.subject === "boy" || panel.values.subject === "other"
+    ? panel.values.subject
+    : "girl",
+);
+
+const outfit_options = computed<readonly AppSelectOption[]>(() => {
+  const id = panel.editing_record.value?.id;
+  return [
+    { value: NO_OUTFIT, label: t("assets.characters.default_outfit_first") },
+    ...props.outfitRecords
+      .filter((record) => {
+        const owner = record.payload.character_id;
+        return typeof owner !== "string" || owner === "" || owner === id;
+      })
+      .map((record) => ({ value: record.id, label: record.display_name })),
+  ];
+});
+const default_outfit = computed(() =>
+  typeof panel.values.default_outfit_id === "string" && panel.values.default_outfit_id !== ""
+    ? panel.values.default_outfit_id
+    : NO_OUTFIT,
+);
+
+const bound_to_chat = computed(
+  () => typeof panel.values.chat_id === "string" && panel.values.chat_id !== "",
 );
 
 const reference_mode_options = computed<readonly SegmentedControlOption[]>(() => [
@@ -79,9 +147,28 @@ async function choose_reference_image(event: Event): Promise<void> {
 }
 
 function remove_reference_image(): void {
-  for (const key of REFERENCE_KEYS) {
+  for (const key of ["reference_image", "reference_send", "reference_mode"]) {
     Reflect.deleteProperty(panel.values, key);
   }
+}
+
+/** Appearance slots the user changed are locked, so the wardrobe update never refills them. */
+async function save(): Promise<void> {
+  const previous = panel.editing_record.value?.payload ?? {};
+  const changed = APPEARANCE_SLOTS.filter(
+    (slot) =>
+      split_tags(panel.values[slot]).join(",") !==
+      split_tags(typeof previous[slot] === "string" ? previous[slot] : "").join(","),
+  );
+  const locked = new Set([...split_tags(panel.values.locked_fields), ...changed]);
+  panel.values.locked_fields = [...locked].join(", ");
+  panel.values.origin = typeof panel.values.origin === "string" ? panel.values.origin : "user";
+  await panel.save();
+}
+
+async function import_to_global(): Promise<void> {
+  panel.values.chat_id = "";
+  await save();
 }
 
 const delete_confirm_title = (record_name: string): string =>
@@ -91,8 +178,8 @@ const delete_confirm_title = (record_name: string): string =>
 <template>
   <div>
     <AssetCategoryList
-      :records="records"
-      :summary-fields="[]"
+      :records="visible"
+      :summary-fields="SUMMARY_FIELDS"
       :loading="loading"
       :search-label="t('common.actions.search')"
       :search-placeholder="t('common.actions.search')"
@@ -149,10 +236,42 @@ const delete_confirm_title = (record_name: string): string =>
           }
         "
         @update:values="(next) => replace_values(panel.values, next)"
-        @save="panel.save"
+        @save="save"
         @cancel="panel.close_dialog"
       >
         <template #extra-fields>
+          <p v-if="bound_to_chat" :class="styles.chat_scope_note">
+            {{ t("assets.chat_scope_note") }}
+            <AppButton
+              :label="t('assets.import_to_global_action')"
+              data-testid="import-to-global"
+              @click="import_to_global"
+            />
+          </p>
+          <FieldGroup :label="t('assets.characters.subject_label')">
+            <template #default>
+              <SegmentedControl
+                :model-value="subject"
+                :options="subject_options"
+                :label="t('assets.characters.subject_label')"
+                @update:model-value="(value) => (panel.values.subject = value)"
+              />
+            </template>
+          </FieldGroup>
+          <FieldGroup :label="t('assets.characters.default_outfit_label')">
+            <template #default="{ fieldId, describedBy }">
+              <AppSelect
+                :id="fieldId"
+                :model-value="default_outfit"
+                :options="outfit_options"
+                :placeholder="t('assets.characters.default_outfit_label')"
+                v-bind="drop_undefined({ describedBy })"
+                @update:model-value="
+                  (value) => (panel.values.default_outfit_id = value === NO_OUTFIT ? '' : value)
+                "
+              />
+            </template>
+          </FieldGroup>
           <FieldGroup
             :label="t('assets.characters.reference_image_label')"
             :hint="t('assets.characters.reference_image_hint')"

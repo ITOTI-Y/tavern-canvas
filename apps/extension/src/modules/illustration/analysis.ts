@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import type { HostJsonSchema } from "../../host/index.js";
+import { json_candidates } from "./model_json.js";
 import type { SlotLibrary } from "./library_match.js";
 import type { Paragraph } from "./slot_markers.js";
 
@@ -56,8 +57,11 @@ function library_lines(library: SlotLibrary): readonly string[] {
   const owner = new Map(library.characters.map((character) => [character.id, character.name]));
   return [
     "",
-    "Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing, and never an outfit name; use exactly the name shown.",
-    ...library.characters.map((character) => `- character: ${character.name}`),
+    "Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing, and never an outfit name; use exactly the name shown, not an alias.",
+    ...library.characters.map(
+      (character) =>
+        `- character: ${character.name}${character.aliases.length > 0 ? ` (also called ${character.aliases.join(", ")})` : ""}`,
+    ),
     ...library.outfits.map((outfit) => {
       const worn_by = outfit.character_id === null ? undefined : owner.get(outfit.character_id);
       return `- outfit: ${outfit.name}${worn_by === undefined ? "" : ` (worn by ${worn_by})`}`;
@@ -107,47 +111,13 @@ export class AnalysisParseError extends Error {
   }
 }
 
-const REASONING_BLOCK_PATTERN = /<(think|thinking|reasoning)>[\s\S]*?<\/\1>/giu;
-const FENCED_JSON_PATTERN = /```(?:json)?\s*([\s\S]*?)```/giu;
-
-function last_balanced_object(text: string): string | null {
-  for (let end = text.lastIndexOf("}"); end >= 0; end = text.lastIndexOf("}", end - 1)) {
-    let depth = 0;
-    for (let start = end; start >= 0; start -= 1) {
-      const character = text[start];
-      if (character === "}") {
-        depth += 1;
-      } else if (character === "{") {
-        depth -= 1;
-        if (depth === 0) {
-          const candidate = text.slice(start, end + 1);
-          if (candidate.includes('"illustrations"')) {
-            return candidate;
-          }
-          break;
-        }
-      }
-    }
-  }
-  return null;
-}
-
-function candidate_texts(raw: string): readonly string[] {
-  const without_reasoning = raw.replace(REASONING_BLOCK_PATTERN, "").trim();
-  const fenced = [...without_reasoning.matchAll(FENCED_JSON_PATTERN)]
-    .map((match) => (match[1] ?? "").trim())
-    .reverse();
-  const balanced = last_balanced_object(without_reasoning);
-  return [without_reasoning, ...fenced, ...(balanced === null ? [] : [balanced])];
-}
-
 /** Structured output when the backend honored the schema; otherwise the JSON is dug out of the text. */
 export function parse_analysis_output(
   raw: string,
   paragraph_count: number,
   max_images: number,
 ): readonly IllustrationProposal[] {
-  for (const candidate of candidate_texts(raw)) {
+  for (const candidate of json_candidates(raw, "illustrations")) {
     let value: unknown;
     try {
       value = JSON.parse(candidate);

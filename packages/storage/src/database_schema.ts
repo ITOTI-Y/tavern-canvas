@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 8 as const;
+export const DATABASE_VERSION = 9 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 export const STORE_DEFINITIONS = {
@@ -29,7 +29,7 @@ export const STORE_DEFINITIONS = {
   character_profiles: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
-    since_version: 1,
+    since_version: 9,
   },
   regex_rules: {
     key_path: "record_key",
@@ -74,7 +74,7 @@ export const STORE_DEFINITIONS = {
   outfit_profiles: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
-    since_version: 5,
+    since_version: 9,
   },
   lora_profiles: {
     key_path: "record_key",
@@ -604,6 +604,10 @@ export function upgrade_database(
   ][]) {
     if (definition.since_version <= old_version) {
       continue;
+    }
+    // A store whose version is newer than the database is rebuilt empty, dropping its old rows.
+    if (database.objectStoreNames.contains(store_name)) {
+      database.deleteObjectStore(store_name);
     }
     const store = database.createObjectStore(store_name, { keyPath: definition.key_path });
     for (const index_name of definition.indexes) {

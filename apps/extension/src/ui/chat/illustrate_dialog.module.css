@@ -94,3 +94,20 @@
   justify-content: flex-end;
   margin-top: -4px;
 }
+
+.outfit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.conditions {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-surface);
+  color: var(--tc-text);
+}

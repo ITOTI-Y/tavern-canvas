@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { NovelAiCostEstimate, SlotCharacterPrompt } from "@tavern-canvas/contracts";
+import type { NovelAiCostEstimate, SlotCharacterPrompt, Wearing } from "@tavern-canvas/contracts";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { HostSwipeLocation } from "../../host/index.js";
 import { AnalysisParseError } from "../../modules/illustration/analysis.js";
+import { is_named, type SlotLibrary } from "../../modules/illustration/library_match.js";
+import { replace_outfit_tags, wearing_of, wearing_tags } from "../../modules/wardrobe/wearing.js";
 import type { IllustrationService } from "../../modules/illustration/illustration_service.js";
 import type { PromptTranslator } from "../../modules/translation/prompt_translator.js";
 import AppButton from "../components/AppButton.vue";
@@ -15,6 +17,7 @@ import type { PromptTagsPort } from "../contracts/prompt_tags_port.js";
 import type { NovelAiCapability } from "../contracts/ui_capabilities.js";
 import styles from "./illustrate_dialog.module.css";
 import type { IllustrateRequest } from "./illustrate_request.js";
+import OutfitPicker from "./OutfitPicker.vue";
 import PromptTagChips from "./PromptTagChips.vue";
 
 interface SlotDraft {
@@ -53,6 +56,57 @@ const state = ref<DialogState>({ status: "analyzing" });
 const drafts = ref<SlotDraft[]>([]);
 const submitting = ref(false);
 const submit_error = ref<string | null>(null);
+const wardrobe = ref<{ library: SlotLibrary; snapshot: readonly Wearing[] } | null>(null);
+
+function library_character(name: string) {
+  return wardrobe.value?.library.characters.find((character) => is_named(character, name)) ?? null;
+}
+
+/** The picker's data for a library character, as a list of zero or one for `v-for`. */
+function outfit_views(name: string) {
+  const view = wardrobe.value;
+  const character = library_character(name);
+  return view === null || character === null
+    ? []
+    : [
+        {
+          character,
+          wearing: wearing_of(character, view.snapshot, view.library.outfits),
+          outfits: view.library.outfits,
+        },
+      ];
+}
+
+function wearing_for(name: string): Wearing | null {
+  const view = wardrobe.value;
+  const character = library_character(name);
+  return view === null || character === null
+    ? null
+    : wearing_of(character, view.snapshot, view.library.outfits);
+}
+
+/** Saves the corrected outfit on this reply and swaps the outfit tags in every draft's prompt. */
+async function change_wearing(name: string, next: Wearing): Promise<void> {
+  const view = wardrobe.value;
+  const previous = wearing_for(name);
+  if (view === null || previous === null || state.value.status !== "ready") {
+    return;
+  }
+  const old_tags = wearing_tags(previous, view.library.outfits);
+  const new_tags = wearing_tags(next, view.library.outfits);
+  for (const draft of drafts.value) {
+    for (const character of draft.character_prompts) {
+      if (character.name === name) {
+        character.prompt = replace_outfit_tags(character.prompt, old_tags, new_tags);
+      }
+    }
+  }
+  wardrobe.value = {
+    ...view,
+    snapshot: [...view.snapshot.filter((item) => item.character_id !== next.character_id), next],
+  };
+  await props.service.set_wearing(state.value.location, next);
+}
 
 const selected = computed(() => drafts.value.filter((draft) => draft.selected));
 const total_anlas = computed(() => {
@@ -80,6 +134,7 @@ async function estimate(location: HostSwipeLocation, draft: SlotDraft): Promise<
 async function load(request: IllustrateRequest): Promise<void> {
   state.value = { status: "analyzing" };
   drafts.value = [];
+  wardrobe.value = null;
   submit_error.value = null;
   try {
     const record = await props.service.analyze(request.message_id);
@@ -99,6 +154,7 @@ async function load(request: IllustrateRequest): Promise<void> {
         reading: null,
         translation_error: null,
       }));
+    wardrobe.value = await props.service.wardrobe_view(location);
     state.value = { status: "ready", location };
     await Promise.all(drafts.value.map((draft) => estimate(location, draft)));
   } catch (error) {
@@ -224,15 +280,20 @@ function update_open(open: boolean): void {
           <div :class="styles.chips">
             <PromptTagChips :port="promptTags" kind="quality" />
           </div>
-          <label
-            v-for="character in draft.character_prompts"
-            :key="character.name"
-            :class="styles.label"
-            data-testid="character-prompt"
-          >
-            {{ t("chat.dialog.character_prompt", { name: character.name }) }}
-            <textarea v-model="character.prompt" :class="styles.prompt" />
-          </label>
+          <template v-for="character in draft.character_prompts" :key="character.name">
+            <label :class="styles.label" data-testid="character-prompt">
+              {{ t("chat.dialog.character_prompt", { name: character.name }) }}
+              <textarea v-model="character.prompt" :class="styles.prompt" />
+            </label>
+            <OutfitPicker
+              v-for="view in outfit_views(character.name)"
+              :key="view.character.id"
+              :character="view.character"
+              :wearing="view.wearing"
+              :outfits="view.outfits"
+              @change="(next) => void change_wearing(character.name, next)"
+            />
+          </template>
           <div v-if="translator !== null" :class="styles.meta">
             <span>
               <AppButton

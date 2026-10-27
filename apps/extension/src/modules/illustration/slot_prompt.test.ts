@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { test_character } from "../wardrobe/wardrobe_test_fixtures.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
 
 const PRESET: SlotPromptPreset = {
@@ -9,21 +10,19 @@ const PRESET: SlotPromptPreset = {
   regex_rules: [{ id: "r1", pattern: "night", flags: "g", replacement: "night sky" }],
 };
 
-const ALICE = {
+const ALICE = test_character({
   id: "c1",
   name: "Alice",
-  appearance: "1girl, silver hair, blue eyes",
-  excluded_traits: "beard, beard",
-  reference: null,
-};
-const GALA = { id: "o1", name: "Gala", description: "red gown", character_id: "c1" };
+  appearance: { hair: ["silver hair"], eyes: ["blue eyes"], expression: ["calm"] },
+  excluded_traits: ["beard", "beard"],
+});
 
 describe("assemble_slot_prompt", () => {
   it("keeps everything in one prompt when nobody is in the picture", () => {
     expect(
       assemble_slot_prompt({
         preset: PRESET,
-        library: { characters: [], loose_outfits: [], outfit_names: [] },
+        library: { characters: [], outfit_names: [] },
         characters: [],
         scene_tags: "door, night, best quality",
       }),
@@ -38,8 +37,7 @@ describe("assemble_slot_prompt", () => {
     const prompt = assemble_slot_prompt({
       preset: PRESET,
       library: {
-        characters: [{ character: ALICE, outfit: GALA }],
-        loose_outfits: [],
+        characters: [{ character: ALICE, outfit_tags: ["red gown"] }],
         outfit_names: [],
       },
       characters: [{ name: "alice", tags: "girl, standing, door, smile" }],
@@ -60,8 +58,7 @@ describe("assemble_slot_prompt", () => {
     const prompt = assemble_slot_prompt({
       preset: null,
       library: {
-        characters: [{ character: ALICE, outfit: GALA }],
-        loose_outfits: [],
+        characters: [{ character: ALICE, outfit_tags: ["red gown"] }],
         outfit_names: ["Gala", "Forest cloak"],
       },
       characters: [{ name: "Alice", tags: "forest cloak, wearing gala, waving" }],
@@ -77,8 +74,7 @@ describe("assemble_slot_prompt", () => {
     const prompt = assemble_slot_prompt({
       preset: null,
       library: {
-        characters: [{ character: ALICE, outfit: null }],
-        loose_outfits: [],
+        characters: [{ character: ALICE, outfit_tags: [] }],
         outfit_names: [],
       },
       characters: [

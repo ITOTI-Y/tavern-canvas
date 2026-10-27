@@ -46,12 +46,14 @@ const proxy_preset_draft = ref("");
 const proxy_model_draft = ref("");
 const custom_url_draft = ref("");
 const custom_model_draft = ref("");
+const wardrobe_model_draft = ref("");
 
 watch(
   illustration,
   (current) => {
     preset_name_draft.value =
       current === null || current.preset_name === CURRENT_PRESET ? "" : current.preset_name;
+    wardrobe_model_draft.value = current?.wardrobe_model ?? "";
     if (current?.connection.kind === "proxy_preset") {
       proxy_preset_draft.value = current.connection.proxy_preset;
       proxy_model_draft.value = current.connection.model ?? "";
@@ -62,6 +64,10 @@ watch(
   },
   { immediate: true },
 );
+
+function save_wardrobe_model(): void {
+  update_illustration({ wardrobe_model: wardrobe_model_draft.value.trim() || null });
+}
 
 function save_preset_name(): void {
   update_illustration({ preset_name: preset_name_draft.value.trim() || CURRENT_PRESET });
@@ -393,6 +399,27 @@ function set_worldbook(worldbook: string): void {
         </div>
       </template>
 
+      <FieldGroup
+        :label="t('settings.illustration.wardrobe_model_label')"
+        :hint="
+          connection_kind === 'current'
+            ? t('settings.illustration.wardrobe_model_current_hint')
+            : t('settings.illustration.wardrobe_model_hint')
+        "
+      >
+        <template #default="{ fieldId, describedBy }">
+          <input
+            :id="fieldId"
+            v-model="wardrobe_model_draft"
+            type="text"
+            :aria-describedby="describedBy"
+            :class="styles.text_input"
+            :disabled="!settings || connection_kind === 'current'"
+            data-testid="wardrobe-model-input"
+            @blur="save_wardrobe_model"
+          />
+        </template>
+      </FieldGroup>
       <div :class="styles.row">
         <span :class="styles.row_label">{{ t("settings.illustration.chat_history_label") }}</span>
         <NumberStepper

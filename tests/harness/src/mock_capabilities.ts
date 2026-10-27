@@ -300,6 +300,7 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
       max_images_per_message: 2,
       prompt_preset_id: null,
       world_info: { mode: "chat" },
+      wardrobe_model: null,
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     gateway: {
