@@ -112,13 +112,15 @@ export class WardrobeService {
       {
         apply_scene_update,
         build_scene_update_input,
+        characters_needing_outfit,
         parse_scene_update,
-        SCENE_UPDATE_JSON_SCHEMA,
+        scene_update_json_schema,
       },
     ] = await Promise.all([this.#deps.library.load(location.chat_id), import("./scene_update.js")]);
+    const needs_outfit = characters_needing_outfit(reply, previous, library);
     const raw = await this.#deps.run(
       build_scene_update_input(user_message, reply, previous, library),
-      SCENE_UPDATE_JSON_SCHEMA,
+      scene_update_json_schema(needs_outfit.map((character) => character.id)),
     );
     const applied = apply_scene_update(
       parse_scene_update(raw),

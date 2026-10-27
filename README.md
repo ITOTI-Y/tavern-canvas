@@ -88,7 +88,9 @@ what each character wears in that reply: the outfit, slots taken off or replaced
 states such as wet clothes. The record is stored on the reply's swipe, and a reply without its own
 record inherits the latest earlier one, so an outfit change carries forward until the story changes
 it again. A character the chat has not recorded yet starts in its default outfit, or else its first
-linked outfit. The request uses the analysis connection; **Settings > Illustration > Wardrobe
+linked outfit. When the reply names a character that has no outfit at all, the request's schema
+requires the model to return what that character wears, from the story or its character
+description, and that becomes the character's first outfit. The request uses the analysis connection; **Settings > Illustration > Wardrobe
 update model** can name a different model when the connection is not the current SillyTavern API.
 
 The same request creates library entries for named characters and outfits the library lacks. These

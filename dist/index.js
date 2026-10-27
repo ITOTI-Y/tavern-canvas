@@ -3360,11 +3360,11 @@ var Ri = class {
 		});
 	}
 	async #n(e, t) {
-		let n = e.messages.find((e) => e.message_id === t.message_id)?.swipes[t.swipe_id]?.content ?? "", r = [...e.messages].filter((e) => e.message_id < t.message_id).reverse().find((e) => e.role === "user")?.swipes.at(0)?.content ?? null, i = this.inherited(e, t.message_id), [a, { apply_scene_update: o, build_scene_update_input: s, parse_scene_update: c, SCENE_UPDATE_JSON_SCHEMA: l }] = await Promise.all([this.#e.library.load(t.chat_id), import("./chunks/scene_update-DvhQgRDl.js")]), u = o(c(await this.#e.run(s(r, n, i, a), l)), i, a, this.#e.new_id);
-		for (let e of u.new_outfits) await this.#e.library.create_outfit(e, t.chat_id);
-		for (let e of u.new_characters) await this.#e.library.create_character(e, t);
-		for (let e of u.appearance_additions) await this.#e.library.add_appearance(e);
-		return await this.#r(t, u.wearing), u.wearing;
+		let n = e.messages.find((e) => e.message_id === t.message_id)?.swipes[t.swipe_id]?.content ?? "", r = [...e.messages].filter((e) => e.message_id < t.message_id).reverse().find((e) => e.role === "user")?.swipes.at(0)?.content ?? null, i = this.inherited(e, t.message_id), [a, { apply_scene_update: o, build_scene_update_input: s, characters_needing_outfit: c, parse_scene_update: l, scene_update_json_schema: u }] = await Promise.all([this.#e.library.load(t.chat_id), import("./chunks/scene_update-DwwRobIw.js")]), d = c(n, i, a), f = o(l(await this.#e.run(s(r, n, i, a), u(d.map((e) => e.id)))), i, a, this.#e.new_id);
+		for (let e of f.new_outfits) await this.#e.library.create_outfit(e, t.chat_id);
+		for (let e of f.new_characters) await this.#e.library.create_character(e, t);
+		for (let e of f.appearance_additions) await this.#e.library.add_appearance(e);
+		return await this.#r(t, f.wearing), f.wearing;
 	}
 	async set_wearing(e, t) {
 		let n = await this.#e.host.get_active_chat(), r = this.read(e) ?? this.inherited(n, e.message_id);

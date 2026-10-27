@@ -4,7 +4,10 @@ import { describe, expect, it } from "vitest";
 import {
   apply_scene_update,
   build_scene_update_input,
+  characters_needing_outfit,
   parse_scene_update,
+  scene_update_json_schema,
+  type SceneUpdate,
   type SceneUpdateEntry,
   type WardrobeLibrary,
 } from "./scene_update.js";
@@ -50,6 +53,10 @@ function entry(fields: Partial<SceneUpdateEntry> & { readonly name: string }): S
   };
 }
 
+function update(...characters: SceneUpdateEntry[]): SceneUpdate {
+  return { characters, initial_outfits: {} };
+}
+
 let sequence = 0;
 const new_id = () => `new-${String((sequence += 1))}`;
 
@@ -59,7 +66,7 @@ describe("apply_scene_update", () => {
       { character_id: "c1", outfit_id: "o1", overrides: {}, conditions: ["wet clothes"] },
     ];
     const applied = apply_scene_update(
-      [entry({ ref: "c1", name: "Seraphina" })],
+      update(entry({ ref: "c1", name: "Seraphina" })),
       previous,
       LIBRARY,
       new_id,
@@ -69,7 +76,7 @@ describe("apply_scene_update", () => {
 
   it("switches outfits, takes a slot off and replaces the passing states", () => {
     const applied = apply_scene_update(
-      [
+      update(
         entry({
           ref: "c1",
           name: "Seraphina",
@@ -78,7 +85,7 @@ describe("apply_scene_update", () => {
           overrides: [{ slot: "outerwear", tags: [], removed: true }],
           conditions: ["messy hair"],
         }),
-      ],
+      ),
       [{ character_id: "c1", outfit_id: "o2", overrides: {}, conditions: ["wet clothes"] }],
       LIBRARY,
       new_id,
@@ -96,17 +103,17 @@ describe("apply_scene_update", () => {
   it("creates a named character with its outfit and makes that outfit the default", () => {
     sequence = 0;
     const applied = apply_scene_update(
-      [
+      update(
         entry({
           name: "Kael",
           new_character: {
             subject: "boy",
             aliases: ["Kael", "the ranger"],
             appearance: { hair: ["black hair"], features: ["scar on cheek"] },
+            outfit: { name: "Ranger gear", slots: { outerwear: ["dark green cloak"] } },
           },
-          new_outfit: { name: "Ranger gear", slots: { outerwear: ["dark green cloak"] } },
         }),
-      ],
+      ),
       [],
       LIBRARY,
       new_id,
@@ -136,12 +143,12 @@ describe("apply_scene_update", () => {
 
   it("fills only empty, unlocked appearance slots of a known character", () => {
     const applied = apply_scene_update(
-      [
+      update(
         entry({
           name: "seraphina",
           appearance_additions: { hair: ["blonde hair"], eyes: ["red eyes"], makeup: ["lipstick"] },
         }),
-      ],
+      ),
       [],
       LIBRARY,
       new_id,
@@ -151,19 +158,23 @@ describe("apply_scene_update", () => {
     ]);
   });
 
-  it("records the first outfit of a known character even when nothing changed", () => {
+  it("gives a known character without an outfit the initial outfit the model returned", () => {
     sequence = 0;
     const library: WardrobeLibrary = {
-      characters: [test_character({ id: "c2", name: "Kael", subject: "boy" })],
+      characters: [
+        test_character({ id: "c2", name: "Kael", subject: "boy" }),
+        test_character({ id: "c3", name: "Mira" }),
+      ],
       outfits: [],
     };
     const applied = apply_scene_update(
-      [
-        entry({
-          name: "Kael",
-          new_outfit: { name: "Ranger gear", slots: { top: ["leather armor"] } },
-        }),
-      ],
+      {
+        characters: [entry({ ref: "c2", name: "Kael" })],
+        initial_outfits: {
+          c2: { name: "Ranger gear", slots: { top: ["leather armor"] } },
+          c3: { name: "Nothing", slots: { top: ["unknown"] } },
+        },
+      },
       [],
       library,
       new_id,
@@ -179,13 +190,13 @@ describe("apply_scene_update", () => {
   it("ignores an id that belongs to another character and drops placeholder tags", () => {
     sequence = 0;
     const applied = apply_scene_update(
-      [
+      update(
         entry({
           ref: "c1",
           name: "Yu",
           appearance_additions: { age: ["unknown"], skin: ["pale skin"], makeup: ["none"] },
         }),
-      ],
+      ),
       [],
       LIBRARY,
       new_id,
@@ -207,7 +218,10 @@ describe("apply_scene_update", () => {
 describe("parse_scene_update", () => {
   it("reads the JSON object out of reasoning and fills missing fields", () => {
     const raw = `<think>hmm</think>\n\`\`\`json\n${JSON.stringify({ characters: [{ ref: "c1", name: "Seraphina" }] })}\n\`\`\``;
-    expect(parse_scene_update(raw)).toEqual([entry({ ref: "c1", name: "Seraphina" })]);
+    expect(parse_scene_update(raw)).toEqual({
+      characters: [entry({ ref: "c1", name: "Seraphina" })],
+      initial_outfits: {},
+    });
   });
 });
 
@@ -227,6 +241,30 @@ describe("build_scene_update_input", () => {
     );
     expect(input).toContain("- id o2: Nightgown (Seraphina): nightgown");
     expect(input).toContain("Latest user message:\nChange for bed.");
+  });
+});
+
+describe("initial outfits", () => {
+  it("requires an outfit for each named character that wears none yet", () => {
+    const library: WardrobeLibrary = {
+      characters: [
+        ...LIBRARY.characters,
+        test_character({ id: "c2", name: "Kael", aliases: ["the ranger"] }),
+        test_character({ id: "c3", name: "Mira" }),
+      ],
+      outfits: LIBRARY.outfits,
+    };
+    const reply = "The ranger nods to Seraphina.";
+    expect(characters_needing_outfit(reply, [], library).map((character) => character.id)).toEqual([
+      "c2",
+    ]);
+    expect(build_scene_update_input(null, reply, [], library)).toContain(
+      "empty slots are not an answer):\n- id c2: Kael",
+    );
+    expect(scene_update_json_schema(["c2"]).value).toMatchObject({
+      required: ["characters", "initial_outfits"],
+      properties: { initial_outfits: { required: ["c2"] } },
+    });
   });
 });
 

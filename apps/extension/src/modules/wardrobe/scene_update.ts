@@ -34,71 +34,89 @@ function nullable(schema: Record<string, unknown>): Record<string, unknown> {
   return { anyOf: [schema, { type: "null" }] };
 }
 
-export const SCENE_UPDATE_JSON_SCHEMA: HostJsonSchema = {
-  name: "tavern_canvas_wardrobe",
-  value: {
+const OUTFIT_OBJECT = {
+  type: "object",
+  properties: { name: { type: "string" }, slots: slots_schema(OUTFIT_SLOTS) },
+  required: ["name", "slots"],
+  additionalProperties: false,
+} as const;
+
+const CHARACTERS_SCHEMA = {
+  type: "array",
+  items: {
     type: "object",
     properties: {
-      characters: {
+      ref: { type: ["string", "null"] },
+      name: { type: "string" },
+      new_character: nullable({
+        type: "object",
+        properties: {
+          subject: { type: "string", enum: ["girl", "boy", "other"] },
+          aliases: TAG_ARRAY,
+          appearance: slots_schema(APPEARANCE_SLOTS),
+          outfit: OUTFIT_OBJECT,
+        },
+        required: ["subject", "aliases", "appearance", "outfit"],
+        additionalProperties: false,
+      }),
+      appearance_additions: nullable(slots_schema(APPEARANCE_SLOTS)),
+      wearing_changed: { type: "boolean" },
+      outfit_id: { type: ["string", "null"] },
+      new_outfit: nullable(OUTFIT_OBJECT),
+      overrides: {
         type: "array",
         items: {
           type: "object",
           properties: {
-            ref: { type: ["string", "null"] },
-            name: { type: "string" },
-            new_character: nullable({
-              type: "object",
-              properties: {
-                subject: { type: "string", enum: ["girl", "boy", "other"] },
-                aliases: TAG_ARRAY,
-                appearance: slots_schema(APPEARANCE_SLOTS),
-              },
-              required: ["subject", "aliases", "appearance"],
-              additionalProperties: false,
-            }),
-            appearance_additions: nullable(slots_schema(APPEARANCE_SLOTS)),
-            wearing_changed: { type: "boolean" },
-            outfit_id: { type: ["string", "null"] },
-            new_outfit: nullable({
-              type: "object",
-              properties: { name: { type: "string" }, slots: slots_schema(OUTFIT_SLOTS) },
-              required: ["name", "slots"],
-              additionalProperties: false,
-            }),
-            overrides: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  slot: { type: "string", enum: [...OUTFIT_SLOTS] },
-                  tags: TAG_ARRAY,
-                  removed: { type: "boolean" },
-                },
-                required: ["slot", "tags", "removed"],
-                additionalProperties: false,
-              },
-            },
-            conditions: TAG_ARRAY,
+            slot: { type: "string", enum: [...OUTFIT_SLOTS] },
+            tags: TAG_ARRAY,
+            removed: { type: "boolean" },
           },
-          required: [
-            "ref",
-            "name",
-            "new_character",
-            "appearance_additions",
-            "wearing_changed",
-            "outfit_id",
-            "new_outfit",
-            "overrides",
-            "conditions",
-          ],
+          required: ["slot", "tags", "removed"],
           additionalProperties: false,
         },
       },
+      conditions: TAG_ARRAY,
     },
-    required: ["characters"],
+    required: [
+      "ref",
+      "name",
+      "new_character",
+      "appearance_additions",
+      "wearing_changed",
+      "outfit_id",
+      "new_outfit",
+      "overrides",
+      "conditions",
+    ],
     additionalProperties: false,
   },
 };
+
+/**
+ * Strict mode has no conditional requirements, so the outfits that must be returned are built into
+ * the schema: a new character carries its outfit, and `initial_outfits` requires one key per known
+ * character the reply names who has no outfit yet.
+ */
+export function scene_update_json_schema(needs_outfit: readonly string[]): HostJsonSchema {
+  return {
+    name: "tavern_canvas_wardrobe",
+    value: {
+      type: "object",
+      properties: {
+        characters: CHARACTERS_SCHEMA,
+        initial_outfits: {
+          type: "object",
+          properties: Object.fromEntries(needs_outfit.map((id) => [id, OUTFIT_OBJECT])),
+          required: [...needs_outfit],
+          additionalProperties: false,
+        },
+      },
+      required: ["characters", "initial_outfits"],
+      additionalProperties: false,
+    },
+  };
+}
 
 const Tags = z.array(z.string()).catch([]);
 
@@ -108,6 +126,12 @@ function slot_record<T extends string>(slots: readonly T[]) {
   ) as unknown as z.ZodType<Partial<Record<T, string[]>>>;
 }
 
+const OutfitSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  slots: slot_record(OUTFIT_SLOTS),
+});
+export type SceneOutfit = z.infer<typeof OutfitSchema>;
+
 const EntrySchema = z.object({
   ref: z.string().nullable().catch(null),
   name: z.string().trim().min(1).max(120),
@@ -116,16 +140,14 @@ const EntrySchema = z.object({
       subject: z.enum(["girl", "boy", "other"]).catch("other"),
       aliases: Tags.default([]),
       appearance: slot_record(APPEARANCE_SLOTS).default({}),
+      outfit: OutfitSchema.nullable().catch(null),
     })
     .nullable()
     .catch(null),
   appearance_additions: slot_record(APPEARANCE_SLOTS).nullable().catch(null),
   wearing_changed: z.boolean().catch(false),
   outfit_id: z.string().nullable().catch(null),
-  new_outfit: z
-    .object({ name: z.string().trim().min(1).max(120), slots: slot_record(OUTFIT_SLOTS) })
-    .nullable()
-    .catch(null),
+  new_outfit: OutfitSchema.nullable().catch(null),
   overrides: z
     .array(z.object({ slot: OutfitSlotSchema, tags: Tags.default([]), removed: z.boolean() }))
     .catch([]),
@@ -133,7 +155,15 @@ const EntrySchema = z.object({
 });
 export type SceneUpdateEntry = z.infer<typeof EntrySchema>;
 
-const OutputSchema = z.object({ characters: z.array(EntrySchema).max(32) });
+const OutputSchema = z.object({
+  characters: z.array(EntrySchema).max(32),
+  initial_outfits: z.record(z.string(), OutfitSchema.nullable().catch(null)).catch({}),
+});
+export interface SceneUpdate {
+  readonly characters: readonly SceneUpdateEntry[];
+  /** Keyed by the id of a known character that had no outfit. */
+  readonly initial_outfits: Readonly<Record<string, SceneOutfit | null>>;
+}
 
 export class SceneUpdateParseError extends Error {
   constructor(raw: string) {
@@ -142,7 +172,7 @@ export class SceneUpdateParseError extends Error {
   }
 }
 
-export function parse_scene_update(raw: string): readonly SceneUpdateEntry[] {
+export function parse_scene_update(raw: string): SceneUpdate {
   for (const candidate of json_candidates(raw, "characters")) {
     let value: unknown;
     try {
@@ -152,7 +182,7 @@ export function parse_scene_update(raw: string): readonly SceneUpdateEntry[] {
     }
     const parsed = OutputSchema.safeParse(value);
     if (parsed.success) {
-      return parsed.data.characters;
+      return parsed.data;
     }
   }
   throw new SceneUpdateParseError(raw);
@@ -176,10 +206,24 @@ function describe_character(
   return [
     `- id ${character.id}: ${character.name}`,
     character.aliases.length > 0 ? `, also called ${character.aliases.join(" / ")}` : "",
-    `; wears ${outfit === undefined ? "nothing recorded" : `outfit ${outfit.id} (${outfit.name})`}`,
-    `: ${join_tags(wearing_tags(wearing, library.outfits)) || "no tags"}`,
+    outfit === undefined
+      ? "; outfit not yet known"
+      : `; wears outfit ${outfit.id} (${outfit.name}): ${join_tags(wearing_tags(wearing, library.outfits))}`,
     empty.length > 0 ? `; appearance slots still empty: ${empty.join(", ")}` : "",
   ].join("");
+}
+
+/** Known characters the reply names who wear no outfit yet; the update must give each one. */
+export function characters_needing_outfit(
+  reply: string,
+  snapshot: readonly Wearing[],
+  library: WardrobeLibrary,
+): readonly WardrobeCharacter[] {
+  return library.characters.filter(
+    (character) =>
+      wearing_of(character, snapshot, library.outfits).outfit_id === null &&
+      [character.name, ...character.aliases].some((name) => mentions(reply, name)),
+  );
 }
 
 export function build_scene_update_input(
@@ -189,21 +233,30 @@ export function build_scene_update_input(
   library: WardrobeLibrary,
 ): string {
   const owner = new Map(library.characters.map((character) => [character.id, character.name]));
+  const needs_outfit = characters_needing_outfit(reply, snapshot, library);
   return [
     "[Inkwell wardrobe update]",
     "Track what each named character wears across the story. Read the latest reply and return one entry for every named character who appears in it or is clearly present. Skip unnamed people.",
     "- ref: the id listed for this exact character below, or null for a named character not listed; never another character's id",
     "- name: the name as written in the story",
-    "- new_character: only when ref is null: subject (girl, boy or other), aliases (other names used for them) and appearance tags per slot taken from what the story states; otherwise null",
+    "- new_character: only when ref is null: subject (girl, boy or other), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
     "- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
     "- wearing_changed: true only when the reply changes what the character wears or their passing state; when false the other wearing fields are ignored",
     "- outfit_id: the known outfit now worn, or null with new_outfit filled for clothing that matches no known outfit",
-    "- new_outfit: also fill it, even when wearing_changed is false, for a new character or one that wears nothing recorded, with the clothing the story or the character description gives them; otherwise null",
     "- overrides: slots of that outfit the reply changes, with the new tags, or removed true when taken off",
     "- conditions: the complete list of visible passing states of clothing or body now in effect, such as wet clothes, torn sleeve or messy hair; moods, actions and illness are not conditions; an empty list clears them",
     "All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
-    'Reply with only a JSON object of the form {"characters":[...]}. Use an empty array when no named character appears.',
+    "initial_outfits: one entry per id listed under Outfits needed, giving what that character wears now (see Outfit choice); an empty object when none are listed.",
+    "Outfit choice: take the clothing from the story, else from the character description; when neither states it, choose plausible clothing for the character's role, the setting and the era. Fill at least the top and bottom, or full_body, and give the outfit a short descriptive name.",
+    'Reply with only a JSON object of the form {"characters":[...],"initial_outfits":{...}}. Use an empty array when no named character appears.',
     "",
+    ...(needs_outfit.length === 0
+      ? []
+      : [
+          "Outfits needed (decide each one now; empty slots are not an answer):",
+          ...needs_outfit.map((character) => `- id ${character.id}: ${character.name}`),
+          "",
+        ]),
     "Known characters:",
     ...(library.characters.length === 0
       ? ["(none)"]
@@ -300,7 +353,7 @@ function find_known(
  * slots that are empty and unlocked.
  */
 export function apply_scene_update(
-  entries: readonly SceneUpdateEntry[],
+  update: SceneUpdate,
   previous: readonly Wearing[],
   library: WardrobeLibrary,
   new_id: () => string,
@@ -312,8 +365,18 @@ export function apply_scene_update(
   const known_outfit = (id: string | null) =>
     library.outfits.some((outfit) => outfit.id === id) ||
     new_outfits.some((outfit) => outfit.id === id);
+  /** `null` when the outfit has no tags left, so an empty answer creates nothing. */
+  const add_outfit = (outfit: SceneOutfit, character_id: string): string | null => {
+    const slots = clean_slots(outfit.slots, OUTFIT_SLOTS);
+    if (Object.keys(slots).length === 0) {
+      return null;
+    }
+    const id = new_id();
+    new_outfits.push({ id, name: outfit.name, character_id, slots });
+    return id;
+  };
 
-  for (const entry of entries) {
+  for (const entry of update.characters) {
     const known = find_known(entry, library.characters);
     let character_id: string;
     if (known !== undefined) {
@@ -347,20 +410,17 @@ export function apply_scene_update(
       (known === undefined
         ? { character_id, outfit_id: null, overrides: {}, conditions: [] }
         : initial_wearing(known, library.outfits));
-    const first_outfit = prior.outfit_id === null && entry.new_outfit !== null;
-    if (!entry.wearing_changed && !first_outfit) {
-      wearing.set(character_id, prior);
+    const first =
+      prior.outfit_id === null ? (entry.new_outfit ?? entry.new_character?.outfit ?? null) : null;
+    if (!entry.wearing_changed) {
+      const outfit_id = first === null ? null : add_outfit(first, character_id);
+      wearing.set(character_id, outfit_id === null ? prior : { ...prior, outfit_id });
       continue;
     }
     let outfit_id = known_outfit(entry.outfit_id) ? entry.outfit_id : prior.outfit_id;
-    if (entry.new_outfit !== null) {
-      outfit_id = new_id();
-      new_outfits.push({
-        id: outfit_id,
-        name: entry.new_outfit.name,
-        character_id,
-        slots: clean_slots(entry.new_outfit.slots, OUTFIT_SLOTS),
-      });
+    const introduced = entry.new_outfit ?? first;
+    if (introduced !== null) {
+      outfit_id = add_outfit(introduced, character_id) ?? outfit_id;
     }
     const overrides: Wearing["overrides"] = {};
     for (const override of entry.overrides) {
@@ -372,6 +432,18 @@ export function apply_scene_update(
       overrides,
       conditions: clean_tags(entry.conditions),
     });
+  }
+
+  for (const [character_id, outfit] of Object.entries(update.initial_outfits)) {
+    const character = library.characters.find((candidate) => candidate.id === character_id);
+    if (character === undefined || outfit === null) {
+      continue;
+    }
+    const current = wearing.get(character_id) ?? initial_wearing(character, library.outfits);
+    const outfit_id = current.outfit_id === null ? add_outfit(outfit, character_id) : null;
+    if (outfit_id !== null) {
+      wearing.set(character_id, { ...current, outfit_id });
+    }
   }
 
   const created = new Map(new_outfits.map((outfit) => [outfit.character_id, outfit.id]));
