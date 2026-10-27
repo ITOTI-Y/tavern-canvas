@@ -133,6 +133,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
     },
     new_slot_id: () => "slot_0002",
     new_generation_id: () => "generation-1",
+    wait: () => Promise.resolve(),
   });
   const gallery = {
     read_bytes: vi.fn(() => Promise.resolve(new Uint8Array([1, 2, 3]))),

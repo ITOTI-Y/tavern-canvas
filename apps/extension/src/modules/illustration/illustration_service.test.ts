@@ -49,6 +49,7 @@ class MemoryHost {
     illustrations: [{ paragraph: 1, scene: "rain", tags: "rain, window", characters: [] }],
   });
   edit_before_replace = false;
+  failures_before_reply = 0;
 
   readonly adapter = {
     capabilities: {},
@@ -104,6 +105,10 @@ class MemoryHost {
     },
     generate_with_preset: (request: PresetGenerationRequest) => {
       this.generate_calls.push(request);
+      if (this.failures_before_reply > 0) {
+        this.failures_before_reply -= 1;
+        return Promise.reject(new Error("upstream 502"));
+      }
       return Promise.resolve({ content: this.analysis_reply, reasoning: null });
     },
     list_worldbooks: () => [...this.worldbooks.keys()],
@@ -140,6 +145,7 @@ function create_service(
     mark_orphaned: vi.fn(() => Promise.resolve()),
   };
   const submit = vi.fn(() => Promise.resolve(REQUEST_ID));
+  let slot_sequence = 0;
   const service = new IllustrationService({
     host: host.adapter,
     settings: () => options.settings ?? SETTINGS,
@@ -165,8 +171,9 @@ function create_service(
     resolve_analysis_key: () => Promise.resolve("analysis-key"),
     submit,
     jobs,
-    new_slot_id: () => "slot_0001",
+    new_slot_id: () => `slot_${String((slot_sequence += 1)).padStart(4, "0")}`,
     new_generation_id: () => "generation-1",
+    wait: () => Promise.resolve(),
   });
   service.start();
   return {
@@ -191,6 +198,27 @@ function create_service(
 const LOCATION = { chat_id: "chat-1", message_id: 3, swipe_id: 0 };
 
 describe("IllustrationService.analyze", () => {
+  it("retries a failed analysis request before recording the slots", async () => {
+    const host = new MemoryHost();
+    host.failures_before_reply = 2;
+    const { service } = create_service(host);
+
+    const record = await service.analyze(3);
+
+    expect(host.generate_calls).toHaveLength(3);
+    expect(record.slots).toMatchObject([{ paragraph: 1, scene: "rain" }]);
+  });
+
+  it("reports the failure once every attempt failed", async () => {
+    const host = new MemoryHost();
+    host.failures_before_reply = 3;
+    const { service } = create_service(host);
+
+    await expect(service.analyze(3)).rejects.toThrow("upstream 502");
+    expect(host.generate_calls).toHaveLength(3);
+    expect(service.read(LOCATION)).toBeNull();
+  });
+
   it("records the chosen slots and writes a marker after the paragraph", async () => {
     const host = new MemoryHost();
     const { service } = create_service(host);
@@ -495,5 +523,33 @@ describe("create_wardrobe_runner", () => {
       /^\[Inkwell wardrobe update\]\n\nUser guidance[^\n]*\nsummer clothing$/u,
     );
     expect(requests[0]?.user_input).not.toContain("watercolor");
+  });
+});
+
+describe("IllustrationService.add_paragraphs", () => {
+  it("adds slots for the chosen paragraphs, keeping one the model left out", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({
+      illustrations: [{ paragraph: 0, scene: "door", tags: "door", characters: [] }],
+    });
+    const { service } = create_service(host);
+
+    expect((await service.open_paragraphs(LOCATION)).map((paragraph) => paragraph.index)).toEqual([
+      0, 1,
+    ]);
+    const slots = await service.add_paragraphs(LOCATION, [1, 0]);
+
+    expect(slots).toMatchObject([
+      { paragraph: 0, scene: "door", positive_prompt: "door" },
+      { paragraph: 1, scene: "Rain fell outside.", positive_prompt: "" },
+    ]);
+    expect(host.generate_calls[0]?.user_input).toContain(
+      "Illustrate exactly these paragraphs, one entry each: [0], [1].",
+    );
+    expect(host.text).toBe(
+      "She opened the door.\n<!--tc-image:slot_0001-->\n\nRain fell outside.\n<!--tc-image:slot_0002-->",
+    );
+    expect(service.read(LOCATION)?.slots).toHaveLength(2);
+    expect(await service.open_paragraphs(LOCATION)).toEqual([]);
   });
 });

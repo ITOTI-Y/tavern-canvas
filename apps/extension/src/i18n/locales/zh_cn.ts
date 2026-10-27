@@ -686,6 +686,10 @@ const chat = {
     title: "为回复配图",
     close: "关闭",
     retry: "重新分析",
+    pick_paragraphs: "自选段落（{count}）",
+    pick_paragraphs_hint:
+      "勾选要配图的段落，分析模型只为这些段落写提示词。模型漏掉的段落也会加入，提示词留空，可自行填写。",
+    add_paragraphs: "为所选段落写提示词（{count}）",
     no_slots: "分析结果中没有值得配图的段落。",
     parse_failed_hint:
       "模型没有返回所需的 JSON。所用预设可能规定了自己的输出格式或对回复做了混淆，可以在插图设置中换用其他预设。",

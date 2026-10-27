@@ -782,6 +782,7 @@ export async function compose_studio_capabilities(
                 jobs: queue,
                 new_slot_id,
                 new_generation_id: () => crypto.randomUUID(),
+                wait: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
               });
               modules.push(new IllustrationModule(illustrations, host));
             }

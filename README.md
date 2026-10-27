@@ -53,6 +53,12 @@ in it suggests vocabulary tags with their Chinese names; Tab or a click inserts 
 vocabulary takes about a minute to install the bundled tag package on first use, and suggestions
 appear once it is ready.
 
+The dialog also lists the reply's paragraphs that have no slot yet. Ticking some and choosing
+**Write prompts for the chosen paragraphs** asks the analysis model for those paragraphs only and
+adds them as new slots; a paragraph the model leaves out is added with empty prompts. A failed
+analysis request or an unparsable reply is retried after 2 and then 4 seconds; when all three
+attempts fail, the reply shows the reason with an **Analyze again** button.
+
 The analysis runs through a SillyTavern chat completion preset, by default the one currently
 loaded, over the current API, a proxy preset, or a custom OpenAI compatible API. The illustration
 settings also choose how much chat history and which world info the analysis sees: the world info

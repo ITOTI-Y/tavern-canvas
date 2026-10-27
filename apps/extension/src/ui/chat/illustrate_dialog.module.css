@@ -75,6 +75,31 @@
   font-size: 12px;
 }
 
+.picker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--tc-text-muted);
+  font-size: 13px;
+}
+
+.paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: stretch;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+}
+
 .footer {
   display: flex;
   flex-wrap: wrap;

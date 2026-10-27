@@ -119,6 +119,17 @@ function generate(location: HostSwipeLocation, slot_id: string): void {
   });
 }
 
+/** Automatic illustration runs again on its own; otherwise the dialog reopens for the user to confirm. */
+function retry_analysis(message_id: number): void {
+  if (props.service.auto_generation_enabled()) {
+    void props.service.illustrate(message_id).catch(() => {
+      // A second failure shows in the same notice.
+    });
+  } else {
+    dialog_request.value = { message_id, slot_id: null };
+  }
+}
+
 function select(location: HostSwipeLocation, slot_id: string, image_id: Uuid): void {
   void props.service.select_image(location, slot_id, image_id);
 }
@@ -175,6 +186,16 @@ onBeforeUnmount(() => {
           target.notice.excerpt
         }}</pre>
         <div v-if="target.notice.excerpt !== null">{{ t("chat.dialog.parse_failed_hint") }}</div>
+        <div :class="styles.notice_actions">
+          <button
+            type="button"
+            :class="styles.button"
+            data-testid="analysis-retry"
+            @click="retry_analysis(target.message_id)"
+          >
+            {{ t("chat.dialog.retry") }}
+          </button>
+        </div>
       </template>
     </div>
   </Teleport>

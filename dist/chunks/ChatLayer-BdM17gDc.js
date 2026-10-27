@@ -5,12 +5,12 @@ import { n as P } from "./portal_keys-B9C82xtk.js";
 import { n as F, t as I } from "./AppIcon-Cnhzrx9o.js";
 import { n as L, r as R, t as z } from "./StateSurface-BA0Ffiwe.js";
 import { t as B } from "./AppDialog-CzDoJQTe.js";
-import { t as ee } from "./trash-2-B6ZXZcor.js";
-import { t as te } from "./upload-CQtsg_mB.js";
-import { t as ne } from "./x-CDKrptQJ.js";
-import { n as V, o as H } from "./analysis-k9L6Vc0c.js";
-import { n as U } from "./deferred_stylesheets-BpS7LWkd.js";
-import { c as W, n as re, o as ie, s as G } from "./library_match-U5kHYoiF.js";
+import { t as V } from "./trash-2-B6ZXZcor.js";
+import { t as ee } from "./upload-CQtsg_mB.js";
+import { t as te } from "./x-CDKrptQJ.js";
+import { n as H, s as U } from "./analysis-Ln4bX9nK.js";
+import { n as W } from "./deferred_stylesheets-BpS7LWkd.js";
+import { c as ne, n as re, o as ie, s as G } from "./library_match-U5kHYoiF.js";
 import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
 import { r as se } from "./_prop_utils-CqbCYIc0.js";
 import { t as K } from "./AppCheckbox-CTxQ1oVE.js";
@@ -183,7 +183,7 @@ var me = F("book-open-text", [
 };
 //#endregion
 //#region src/ui/dialogs/dialogs_styles.ts
-U("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
+W("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
 var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = ["aria-label"], De = 32, Oe = 1, ke = 3, Ae = /* @__PURE__ */ M({
 	__name: "InpaintDialog",
 	props: {
@@ -232,7 +232,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 		function _(e) {
 			i("update:open", e);
 		}
-		let C = y(null), T = y(null), E = y(De), M = y(!1), F = y(Oe), z = y(n.initialPositivePrompt), B = y(n.initialNegativePrompt), V = y(.75), H = y(!1), U = y(!1), W = D(() => {
+		let C = y(null), T = y(null), E = y(De), M = y(!1), F = y(Oe), z = y(n.initialPositivePrompt), B = y(n.initialNegativePrompt), H = y(.75), U = y(!1), W = y(!1), ne = D(() => {
 			let e = n.maskWidth ?? n.bitmap.width, t = n.maskHeight ?? n.bitmap.height;
 			try {
 				return ae(n.bitmap.width, n.bitmap.height, e, t), null;
@@ -241,7 +241,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			}
 		}), re = D(() => n.bitmap.width / n.bitmap.height), ie = D(() => ({ "--tc-inpaint-aspect": String(re.value) })), G = null, K = null, q = [];
 		function Y() {
-			H.value = G?.can_undo() ?? !1, U.value = G?.can_redo() ?? !1;
+			U.value = G?.can_undo() ?? !1, W.value = G?.can_redo() ?? !1;
 		}
 		function me() {
 			G = new oe(n.bitmap.width, n.bitmap.height), Y();
@@ -318,12 +318,12 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			F.value = Math.max(Oe, F.value - .5);
 		}
 		function Le() {
-			G !== null && W.value === null && i("submit", {
+			G !== null && ne.value === null && i("submit", {
 				mask: G.export_binary_mask(),
 				brushSize: E.value,
 				positivePrompt: z.value,
 				negativePrompt: B.value,
-				denoiseStrength: V.value
+				denoiseStrength: H.value
 			});
 		}
 		return (t, n) => (c(), S(g(le), {
@@ -341,7 +341,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 							"aria-label": e.closeLabel
 						}, {
 							default: f(() => [N(I, {
-								icon: g(ne),
+								icon: g(te),
 								size: 18
 							}, null, 8, ["icon"])]),
 							_: 1
@@ -355,7 +355,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								N(J, {
 									icon: g(ye),
 									label: e.undoLabel,
-									disabled: !H.value,
+									disabled: !U.value,
 									onClick: Ne
 								}, null, 8, [
 									"icon",
@@ -365,7 +365,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								N(J, {
 									icon: g(_e),
 									label: e.redoLabel,
-									disabled: !U.value,
+									disabled: !W.value,
 									onClick: Pe
 								}, null, 8, [
 									"icon",
@@ -383,7 +383,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 									"pressed"
 								]),
 								N(J, {
-									icon: g(ee),
+									icon: g(V),
 									label: e.clearLabel,
 									destructive: "",
 									onClick: Fe
@@ -406,7 +406,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 									class: A(g(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
 								}, null, 2), N(J, {
-									icon: g(te),
+									icon: g(ee),
 									label: e.uploadLabel,
 									onClick: n[1] ||= (e) => i("upload-reference")
 								}, null, 8, ["icon", "label"])], 64)) : x("", !0)
@@ -432,11 +432,11 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								onPointerup: Q,
 								onPointercancel: Q
 							}, null, 36)], 6),
-							W.value ? (c(), p("p", {
+							ne.value ? (c(), p("p", {
 								key: 0,
 								class: A(g(Z).inpaintDimensionError),
 								role: "alert"
-							}, O(W.value), 3)) : x("", !0),
+							}, O(ne.value), 3)) : x("", !0),
 							w("div", { class: A(g(Z).inpaintBrushRow) }, [w("label", null, [j(O(e.brushSizeLabel) + " ", 1), s(w("input", {
 								"onUpdate:modelValue": n[2] ||= (e) => E.value = e,
 								type: "range",
@@ -460,7 +460,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								rows: "2"
 							}, null, 8, Te), [[m, B.value]])])], 2),
 							w("label", null, [j(O(e.denoiseLabel) + " ", 1), s(w("input", {
-								"onUpdate:modelValue": n[5] ||= (e) => V.value = e,
+								"onUpdate:modelValue": n[5] ||= (e) => H.value = e,
 								type: "range",
 								min: "0",
 								max: "1",
@@ -468,7 +468,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								"aria-label": e.denoiseLabel
 							}, null, 8, Ee), [[
 								m,
-								V.value,
+								H.value,
 								void 0,
 								{ number: !0 }
 							]])]),
@@ -477,7 +477,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								icon: g(ve),
 								variant: "primary",
 								pending: e.pending,
-								disabled: W.value !== null,
+								disabled: ne.value !== null,
 								onClick: Le
 							}, null, 8, [
 								"label",
@@ -495,24 +495,27 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 		}, 8, ["open"]));
 	}
 }), je = {
-	body: "_body_104uy_1",
-	slot: "_slot_104uy_9",
-	anchor: "_anchor_104uy_19",
-	scene: "_scene_104uy_27",
-	label: "_label_104uy_32",
-	prompt: "_prompt_104uy_40",
-	meta: "_meta_104uy_52",
-	error: "_error_104uy_61",
-	excerpt: "_excerpt_104uy_66",
-	footer: "_footer_104uy_78",
-	total: "_total_104uy_86",
-	chips: "_chips_104uy_92",
-	outfit: "_outfit_104uy_98",
-	conditions: "_conditions_104uy_105"
+	body: "_body_1szjx_1",
+	slot: "_slot_1szjx_9",
+	anchor: "_anchor_1szjx_19",
+	scene: "_scene_1szjx_27",
+	label: "_label_1szjx_32",
+	prompt: "_prompt_1szjx_40",
+	meta: "_meta_1szjx_52",
+	error: "_error_1szjx_61",
+	excerpt: "_excerpt_1szjx_66",
+	picker: "_picker_1szjx_78",
+	hint: "_hint_1szjx_85",
+	paragraphs: "_paragraphs_1szjx_91",
+	footer: "_footer_1szjx_103",
+	total: "_total_1szjx_111",
+	chips: "_chips_1szjx_117",
+	outfit: "_outfit_1szjx_123",
+	conditions: "_conditions_1szjx_130"
 };
 //#endregion
 //#region src/ui/chat/illustrate_dialog_styles.ts
-U("illustrate_dialog", "._body_104uy_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_104uy_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_104uy_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_104uy_27{margin:0;font-size:14px}._label_104uy_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_104uy_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_104uy_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_104uy_61{color:var(--tc-error);margin:0}._excerpt_104uy_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._footer_104uy_78{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_104uy_86{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_104uy_92{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_104uy_98{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_104uy_105{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
+W("illustrate_dialog", "._body_1szjx_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1szjx_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_1szjx_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_1szjx_27{margin:0;font-size:14px}._label_1szjx_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_1szjx_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_1szjx_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_1szjx_61{color:var(--tc-error);margin:0}._excerpt_1szjx_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._picker_1szjx_78{flex-direction:column;align-items:flex-start;gap:8px;display:flex}._hint_1szjx_85{color:var(--tc-text-muted);margin:0;font-size:13px}._paragraphs_1szjx_91{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;align-self:stretch;gap:6px;max-height:240px;padding:8px;display:flex;overflow-y:auto}._footer_1szjx_103{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_1szjx_111{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_1szjx_117{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_1szjx_123{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_1szjx_130{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
 var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ */ M({
 	__name: "OutfitPicker",
 	props: {
@@ -588,7 +591,7 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 };
 //#endregion
 //#region src/ui/chat/prompt_field_styles.ts
-U("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
+W("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
 var $ = Fe, Ie = /[,，]/u, Le = /[぀-ヿ㐀-鿿豈-﫿]/u, Re = /^(?:-?[\d.]+::)?[{[(]*/u;
 function ze(e, t) {
 	let n = e.slice(0, t), r = 0;
@@ -659,7 +662,7 @@ var He = ["for"], Ue = [
 			let i = Be(n.modelValue, b, t.tag);
 			R(), r("update:modelValue", i.value), await l(), f.value?.focus(), f.value?.setSelectionRange(i.caret, i.caret);
 		}
-		function ee(e) {
+		function V(e) {
 			let t = m.value.length;
 			if (t !== 0) if (e.key === "ArrowDown" || e.key === "ArrowUp") {
 				e.preventDefault();
@@ -667,10 +670,10 @@ var He = ["for"], Ue = [
 				_.value = (_.value + n + t) % t;
 			} else e.key === "Tab" || e.key === "Enter" && _.value >= 0 ? (e.preventDefault(), B(Math.max(_.value, 0))) : e.key === "Escape" && (e.stopPropagation(), R());
 		}
-		function te(e) {
+		function ee(e) {
 			r("update:modelValue", e.target.value), z();
 		}
-		async function ne() {
+		async function te() {
 			let e = n.translator;
 			if (e === null) return;
 			let t = ++I;
@@ -682,10 +685,10 @@ var He = ["for"], Ue = [
 				t === I && (P.value = L(e));
 			}
 		}
-		function V() {
-			D.value = !D.value, j.value = null, D.value ? ne() : I += 1;
+		function H() {
+			D.value = !D.value, j.value = null, D.value ? te() : I += 1;
 		}
-		async function H() {
+		async function U() {
 			let e = n.translator;
 			if (e !== null) {
 				M.value = !0, P.value = null;
@@ -699,7 +702,7 @@ var He = ["for"], Ue = [
 			}
 		}
 		return d(() => n.modelValue, () => {
-			D.value && (F !== null && clearTimeout(F), F = setTimeout(() => void ne(), qe));
+			D.value && (F !== null && clearTimeout(F), F = setTimeout(() => void te(), qe));
 		}), C(() => {
 			for (let e of [S, F]) e !== null && clearTimeout(e);
 		}), (t, n) => (c(), p("div", { class: A(g($).field) }, [
@@ -715,7 +718,7 @@ var He = ["for"], Ue = [
 				label: g(a)("chat.dialog.translate_to_tags"),
 				disabled: M.value,
 				"data-testid": "translate-to-tags",
-				onClick: H
+				onClick: U
 			}, null, 8, [
 				"icon",
 				"label",
@@ -726,7 +729,7 @@ var He = ["for"], Ue = [
 				label: g(a)("chat.dialog.read_in_chinese"),
 				pressed: D.value,
 				"data-testid": "read-in-chinese",
-				onClick: V
+				onClick: H
 			}, null, 8, [
 				"icon",
 				"label",
@@ -743,9 +746,9 @@ var He = ["for"], Ue = [
 				"aria-expanded": m.value.length > 0,
 				"aria-controls": u,
 				"aria-activedescendant": _.value >= 0 ? `${u}-${_.value}` : void 0,
-				onInput: te,
+				onInput: ee,
 				onClick: z,
-				onKeydown: ee,
+				onKeydown: V,
 				onBlur: R
 			}, null, 42, Ue),
 			m.value.length > 0 ? (c(), p("ul", {
@@ -785,7 +788,7 @@ var He = ["for"], Ue = [
 			}, O(P.value), 3))
 		], 2));
 	}
-}), Ye = { key: 0 }, Xe = /* @__PURE__ */ M({
+}), Ye = { key: 0 }, Xe = 120, Ze = /* @__PURE__ */ M({
 	__name: "IllustrateDialog",
 	props: {
 		request: {},
@@ -796,41 +799,59 @@ var He = ["for"], Ue = [
 	},
 	emits: ["close"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = T(), a = y({ status: "analyzing" }), s = y([]), l = y(!1), u = y(null), m = y(null);
-		function h(e) {
+		let n = e, r = t, { t: i } = T(), a = y({ status: "analyzing" }), s = y([]), l = y(!1), u = y(null), m = y(null), h = y([]), _ = y([]), v = y(!1), b = y(!1), C = y(null);
+		function E(e) {
+			return e.text.length > Xe ? `${e.text.slice(0, Xe)}…` : e.text;
+		}
+		function j(e, t) {
+			_.value = t ? [..._.value, e] : _.value.filter((t) => t !== e);
+		}
+		function M(e, t) {
+			return {
+				slot_id: e.slot_id,
+				anchor: e.anchor,
+				scene: e.scene,
+				selected: t,
+				positive_prompt: e.positive_prompt,
+				negative_prompt: e.negative_prompt,
+				character_prompts: e.character_prompts.map((e) => ({ ...e })),
+				estimate: null
+			};
+		}
+		function P(e) {
 			return m.value?.library.characters.find((t) => re(t, e)) ?? null;
 		}
-		function _(e) {
-			let t = m.value, n = h(e);
+		function F(e) {
+			let t = m.value, n = P(e);
 			return t === null || n === null ? [] : [{
 				character: n,
 				wearing: G(n, t.snapshot, t.library.outfits),
 				outfits: t.library.outfits
 			}];
 		}
-		function v(e) {
-			let t = m.value, n = h(e);
+		function I(e) {
+			let t = m.value, n = P(e);
 			return t === null || n === null ? null : G(n, t.snapshot, t.library.outfits);
 		}
-		async function b(e, t) {
-			let r = m.value, i = v(e);
+		async function R(e, t) {
+			let r = m.value, i = I(e);
 			if (r === null || i === null || a.value.status !== "ready") return;
-			let o = W(i, r.library.outfits), c = W(t, r.library.outfits);
+			let o = ne(i, r.library.outfits), c = ne(t, r.library.outfits);
 			for (let t of s.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ie(n.prompt, o, c));
 			m.value = {
 				...r,
 				snapshot: [...r.snapshot.filter((e) => e.character_id !== t.character_id), t]
 			}, await n.service.set_wearing(a.value.location, t);
 		}
-		let C = D(() => s.value.filter((e) => e.selected)), E = D(() => {
+		let V = D(() => s.value.filter((e) => e.selected)), ee = D(() => {
 			let e = 0;
-			for (let t of C.value) {
+			for (let t of V.value) {
 				if (t.estimate?.anlas === null || t.estimate === null) return null;
 				e += t.estimate.anlas;
 			}
 			return e;
 		});
-		async function j(e, t) {
+		async function te(e, t) {
 			try {
 				let r = await n.service.preview_request(e, t.slot_id, t);
 				r.provider_id === "novelai" && (t.estimate = await n.novelai.estimate_cost(r));
@@ -838,40 +859,47 @@ var He = ["for"], Ue = [
 				t.estimate = null;
 			}
 		}
-		async function M(e) {
-			a.value = { status: "analyzing" }, s.value = [], m.value = null, u.value = null;
+		async function U(e) {
+			a.value = { status: "analyzing" }, s.value = [], m.value = null, u.value = null, h.value = [], _.value = [], v.value = !1, C.value = null;
 			try {
 				let t = await n.service.analyze(e.message_id), r = await n.service.active_location(e.message_id);
-				s.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => ({
-					slot_id: t.slot_id,
-					anchor: t.anchor,
-					scene: t.scene,
-					selected: e.slot_id !== null || t.image_ids.length === 0,
-					positive_prompt: t.positive_prompt,
-					negative_prompt: t.negative_prompt,
-					character_prompts: t.character_prompts.map((e) => ({ ...e })),
-					estimate: null
-				})), m.value = await n.service.wardrobe_view(r), a.value = {
+				s.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => M(t, e.slot_id !== null || t.image_ids.length === 0)), m.value = await n.service.wardrobe_view(r), e.slot_id === null && (h.value = await n.service.open_paragraphs(r)), a.value = {
 					status: "ready",
 					location: r
-				}, await Promise.all(s.value.map((e) => j(r, e)));
+				}, await Promise.all(s.value.map((e) => te(r, e)));
 			} catch (e) {
 				a.value = {
 					status: "failed",
 					message: e instanceof Error ? e.message : String(e),
-					excerpt: e instanceof V ? e.excerpt : null
+					excerpt: e instanceof H ? e.excerpt : null
 				};
 			}
 		}
 		d(() => n.request, (e) => {
-			e !== null && M(e);
+			e !== null && U(e);
 		}, { immediate: !0 });
-		async function P() {
+		async function W() {
+			let e = a.value;
+			if (e.status === "ready" && _.value.length !== 0) {
+				b.value = !0, C.value = null;
+				try {
+					let t = await n.service.add_paragraphs(e.location, _.value), r = t.map((e) => M(e, !0));
+					s.value = [...s.value, ...r];
+					let i = new Set(t.map((e) => e.paragraph));
+					h.value = h.value.filter((e) => !i.has(e.index)), _.value = [], v.value = !1, await Promise.all(s.value.slice(-r.length).map((t) => te(e.location, t)));
+				} catch (e) {
+					C.value = e instanceof Error ? e.message : String(e);
+				} finally {
+					b.value = !1;
+				}
+			}
+		}
+		async function ae() {
 			let e = a.value;
 			if (e.status === "ready") {
 				l.value = !0, u.value = null;
 				try {
-					for (let t of C.value) await n.service.generate(e.location, t.slot_id, {
+					for (let t of V.value) await n.service.generate(e.location, t.slot_id, {
 						positive_prompt: t.positive_prompt,
 						negative_prompt: t.negative_prompt,
 						character_prompts: t.character_prompts.filter((e) => e.prompt.trim() !== "")
@@ -884,17 +912,17 @@ var He = ["for"], Ue = [
 				}
 			}
 		}
-		function F(e) {
+		function oe(e) {
 			return e.estimate === null ? "" : e.estimate.opus_free ? i("chat.dialog.cost_free") : e.estimate.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: e.estimate.anlas });
 		}
-		function I(e) {
+		function se(e) {
 			e || r("close");
 		}
 		return (t, n) => (c(), S(B, {
 			open: e.request !== null,
 			title: g(i)("chat.dialog.title"),
 			"close-label": g(i)("chat.dialog.close"),
-			"onUpdate:open": I
+			"onUpdate:open": se
 		}, {
 			default: f(() => [w("div", { class: A(g(Q).body) }, [a.value.status === "analyzing" ? (c(), S(z, {
 				key: 0,
@@ -906,7 +934,7 @@ var He = ["for"], Ue = [
 				w("div", { class: A(g(Q).footer) }, [N(L, {
 					label: g(i)("chat.dialog.retry"),
 					variant: "primary",
-					onClick: n[0] ||= (t) => e.request !== null && M(e.request)
+					onClick: n[0] ||= (t) => e.request !== null && U(e.request)
 				}, null, 8, ["label"])], 2)
 			], 64)) : (c(), p(k, { key: 2 }, [
 				s.value.length === 0 ? (c(), p("p", Ye, O(g(i)("chat.dialog.no_slots")), 1)) : x("", !0),
@@ -950,12 +978,12 @@ var He = ["for"], Ue = [
 						"onUpdate:modelValue",
 						"label",
 						"translator"
-					]), (c(!0), p(k, null, o(_(t.name), (e) => (c(), S(Pe, {
+					]), (c(!0), p(k, null, o(F(t.name), (e) => (c(), S(Pe, {
 						key: e.character.id,
 						character: e.character,
 						wearing: e.wearing,
 						outfits: e.outfits,
-						onChange: (e) => void b(t.name, e)
+						onChange: (e) => void R(t.name, e)
 					}, null, 8, [
 						"character",
 						"wearing",
@@ -977,27 +1005,63 @@ var He = ["for"], Ue = [
 						port: e.promptTags,
 						kind: "undesired_content"
 					}, null, 8, ["port"])], 2),
-					w("div", { class: A(g(Q).meta) }, [w("span", null, O(F(t)), 1)], 2)
+					w("div", { class: A(g(Q).meta) }, [w("span", null, O(oe(t)), 1)], 2)
 				], 2))), 128)),
-				u.value === null ? x("", !0) : (c(), p("p", {
+				h.value.length > 0 ? (c(), p("section", {
 					key: 1,
+					class: A(g(Q).picker)
+				}, [N(L, {
+					label: g(i)("chat.dialog.pick_paragraphs", { count: h.value.length }),
+					"aria-expanded": v.value,
+					"data-testid": "pick-paragraphs",
+					onClick: n[1] ||= (e) => v.value = !v.value
+				}, null, 8, ["label", "aria-expanded"]), v.value ? (c(), p(k, { key: 0 }, [
+					w("p", { class: A(g(Q).hint) }, O(g(i)("chat.dialog.pick_paragraphs_hint")), 3),
+					w("div", { class: A(g(Q).paragraphs) }, [(c(!0), p(k, null, o(h.value, (e) => (c(), S(K, {
+						key: e.index,
+						"model-value": _.value.includes(e.index),
+						label: E(e),
+						"onUpdate:modelValue": (t) => j(e.index, t === !0)
+					}, null, 8, [
+						"model-value",
+						"label",
+						"onUpdate:modelValue"
+					]))), 128))], 2),
+					C.value === null ? x("", !0) : (c(), p("p", {
+						key: 0,
+						class: A(g(Q).error)
+					}, O(C.value), 3)),
+					w("div", { class: A(g(Q).footer) }, [N(L, {
+						label: g(i)("chat.dialog.add_paragraphs", { count: _.value.length }),
+						pending: b.value,
+						disabled: _.value.length === 0,
+						"data-testid": "add-paragraphs",
+						onClick: W
+					}, null, 8, [
+						"label",
+						"pending",
+						"disabled"
+					])], 2)
+				], 64)) : x("", !0)], 2)) : x("", !0),
+				u.value === null ? x("", !0) : (c(), p("p", {
+					key: 2,
 					class: A(g(Q).error)
 				}, O(u.value), 3)),
 				w("div", { class: A(g(Q).footer) }, [
-					E.value !== null && C.value.length > 0 ? (c(), p("span", {
+					ee.value !== null && V.value.length > 0 ? (c(), p("span", {
 						key: 0,
 						class: A(g(Q).total)
-					}, O(g(i)("chat.dialog.total_anlas", { anlas: E.value })), 3)) : x("", !0),
+					}, O(g(i)("chat.dialog.total_anlas", { anlas: ee.value })), 3)) : x("", !0),
 					N(L, {
 						label: g(i)("chat.dialog.cancel"),
-						onClick: n[1] ||= (e) => r("close")
+						onClick: n[2] ||= (e) => r("close")
 					}, null, 8, ["label"]),
 					N(L, {
-						label: g(i)("chat.dialog.confirm", { count: C.value.length }),
+						label: g(i)("chat.dialog.confirm", { count: V.value.length }),
 						variant: "primary",
 						pending: l.value,
-						disabled: C.value.length === 0,
-						onClick: P
+						disabled: V.value.length === 0,
+						onClick: ae
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1015,7 +1079,7 @@ var He = ["for"], Ue = [
 });
 //#endregion
 //#region src/ui/chat/mask_png.ts
-async function Ze(e, t, n) {
+async function Qe(e, t, n) {
 	let r = new Uint8ClampedArray(t * n * 4);
 	for (let t = 0; t < e.length; t += 1) {
 		let n = e[t] === 255 ? 255 : 0;
@@ -1029,7 +1093,7 @@ async function Ze(e, t, n) {
 }
 //#endregion
 //#region src/ui/chat/quick_edit_labels.ts
-var Qe = [
+var $e = [
 	"lineart",
 	"sketch",
 	"colorize",
@@ -1037,7 +1101,7 @@ var Qe = [
 	"declutter",
 	"declutter-keep-bubbles",
 	"bg-removal"
-], $e = [
+], et = [
 	"neutral",
 	"happy",
 	"sad",
@@ -1063,7 +1127,7 @@ var Qe = [
 	"hurt",
 	"playful"
 ];
-function et(e, t) {
+function tt(e, t) {
 	switch (t) {
 		case "lineart": return e("chat.quick_edit.tools.lineart");
 		case "sketch": return e("chat.quick_edit.tools.sketch");
@@ -1074,7 +1138,7 @@ function et(e, t) {
 		case "bg-removal": return e("chat.quick_edit.tools.bg_removal");
 	}
 }
-function tt(e, t) {
+function nt(e, t) {
 	switch (t) {
 		case "neutral": return e("chat.quick_edit.emotions.neutral");
 		case "happy": return e("chat.quick_edit.emotions.happy");
@@ -1104,7 +1168,7 @@ function tt(e, t) {
 }
 //#endregion
 //#region src/ui/chat/QuickEditDialog.vue?vue&type=script&setup=true&lang.ts
-var nt = { key: 1 }, rt = /* @__PURE__ */ M({
+var rt = { key: 1 }, it = /* @__PURE__ */ M({
 	__name: "QuickEditDialog",
 	props: {
 		request: {},
@@ -1120,12 +1184,12 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 				case "upscale": return i("chat.quick_edit.upscale");
 				default: return i("chat.quick_edit.director");
 			}
-		}), I = D(() => Qe.map((e) => ({
-			value: e,
-			label: et(i, e)
-		}))), R = D(() => $e.map((e) => ({
+		}), I = D(() => $e.map((e) => ({
 			value: e,
 			label: tt(i, e)
+		}))), R = D(() => et.map((e) => ({
+			value: e,
+			label: nt(i, e)
 		})));
 		function z() {
 			let e = n.request;
@@ -1156,7 +1220,7 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 				case "inpaint": return null;
 			}
 		}
-		async function ee() {
+		async function V() {
 			let e = z();
 			if (C.value = null, e !== null) try {
 				let t = await n.service.preview_edit(e);
@@ -1174,7 +1238,7 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 						height: t.height
 					}, t.close();
 				}
-				await ee();
+				await V();
 			}
 		}, { immediate: !0 }), d([
 			l,
@@ -1182,16 +1246,16 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 			h,
 			v
 		], () => {
-			ee();
+			V();
 		});
-		let te = D(() => C.value === null ? "" : C.value.opus_free ? i("chat.dialog.cost_free") : C.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: C.value.anlas }));
-		function ne(e) {
-			u.value = Qe.find((t) => t === e) ?? u.value;
+		let ee = D(() => C.value === null ? "" : C.value.opus_free ? i("chat.dialog.cost_free") : C.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: C.value.anlas }));
+		function te(e) {
+			u.value = $e.find((t) => t === e) ?? u.value;
 		}
-		function V(e) {
-			h.value = $e.find((t) => t === e) ?? h.value;
+		function H(e) {
+			h.value = et.find((t) => t === e) ?? h.value;
 		}
-		async function H() {
+		async function U() {
 			let e = n.request, t = z();
 			if (e !== null && t !== null) {
 				E.value = !0, M.value = null;
@@ -1232,13 +1296,13 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 						void 0,
 						{ number: !0 }
 					]])], 2)
-				], 64)) : e.request?.kind === "upscale" ? (c(), p("p", nt, O(g(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (c(), p(k, { key: 2 }, [
+				], 64)) : e.request?.kind === "upscale" ? (c(), p("p", rt, O(g(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (c(), p(k, { key: 2 }, [
 					N(q, {
 						"model-value": u.value,
 						options: I.value,
 						placeholder: g(i)("chat.quick_edit.tool"),
 						"aria-label": g(i)("chat.quick_edit.tool"),
-						"onUpdate:modelValue": ne
+						"onUpdate:modelValue": te
 					}, null, 8, [
 						"model-value",
 						"options",
@@ -1251,7 +1315,7 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 						options: R.value,
 						placeholder: g(i)("chat.quick_edit.emotion"),
 						"aria-label": g(i)("chat.quick_edit.emotion"),
-						"onUpdate:modelValue": V
+						"onUpdate:modelValue": H
 					}, null, 8, [
 						"model-value",
 						"options",
@@ -1279,7 +1343,7 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 					class: A(g(Q).error)
 				}, O(M.value), 3)),
 				w("div", { class: A(g(Q).footer) }, [
-					w("span", { class: A(g(Q).total) }, O(te.value), 3),
+					w("span", { class: A(g(Q).total) }, O(ee.value), 3),
 					N(L, {
 						label: g(i)("chat.dialog.cancel"),
 						onClick: n[5] ||= (e) => r("close")
@@ -1289,7 +1353,7 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 						variant: "primary",
 						pending: E.value,
 						disabled: z() === null,
-						onClick: H
+						onClick: U
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1307,7 +1371,7 @@ var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 });
 //#endregion
 //#region src/ui/chat/slot_error_label.ts
-function it(t, n) {
+function at(t, n) {
 	let r = e.safeParse(n);
 	if (!r.success) return n;
 	switch (r.data) {
@@ -1323,7 +1387,7 @@ function it(t, n) {
 }
 //#endregion
 //#region src/ui/chat/SlotCard.vue?vue&type=script&setup=true&lang.ts
-var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "aria-label"], lt = ["disabled", "aria-label"], ut = ["disabled"], dt = ["disabled", "onClick"], ft = /* @__PURE__ */ M({
+var ot = ["src", "alt"], st = { key: 3 }, ct = { key: 4 }, lt = ["disabled", "aria-label"], ut = ["disabled", "aria-label"], dt = ["disabled"], ft = ["disabled", "onClick"], pt = /* @__PURE__ */ M({
 	__name: "SlotCard",
 	props: {
 		entry: {},
@@ -1379,7 +1443,7 @@ var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "ar
 				src: a.value,
 				alt: e.entry.scene,
 				onClick: n[0] ||= (t) => r("preview", e.entry.active_image_id)
-			}, null, 10, at)) : (c(), p("div", {
+			}, null, 10, ot)) : (c(), p("div", {
 				key: 1,
 				class: A(g(X).placeholder)
 			}, [e.pending ? (c(), p(k, { key: 0 }, [w("span", {
@@ -1388,10 +1452,10 @@ var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "ar
 			}, null, 2), w("span", null, O(g(i)("chat.slot.generating")), 1)], 64)) : s.value ? (c(), p("span", {
 				key: 1,
 				class: A(g(X).error)
-			}, O(g(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? u.value ? (c(), p("span", ot, O(g(i)("chat.slot.interrupted")), 1)) : (c(), p("span", st, O(e.entry.scene), 1)) : (c(), p("span", {
+			}, O(g(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? u.value ? (c(), p("span", st, O(g(i)("chat.slot.interrupted")), 1)) : (c(), p("span", ct, O(e.entry.scene), 1)) : (c(), p("span", {
 				key: 2,
 				class: A(g(X).error)
-			}, O(g(i)("chat.slot.failed", { reason: g(it)(g(i), e.entry.last_error) })), 3))], 2))], 2),
+			}, O(g(i)("chat.slot.failed", { reason: g(at)(g(i), e.entry.last_error) })), 3))], 2))], 2),
 			w("div", { class: A(g(X).toolbar) }, [
 				e.entry.image_ids.length > 1 ? (c(), p("span", {
 					key: 0,
@@ -1407,7 +1471,7 @@ var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "ar
 					disabled: l.value <= 0,
 					"aria-label": g(i)("chat.slot.previous"),
 					onClick: n[1] ||= (e) => m(-1)
-				}, " ‹ ", 10, ct)) : x("", !0),
+				}, " ‹ ", 10, lt)) : x("", !0),
 				e.entry.image_ids.length > 1 ? (c(), p("button", {
 					key: 3,
 					type: "button",
@@ -1415,13 +1479,13 @@ var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "ar
 					disabled: l.value >= e.entry.image_ids.length - 1,
 					"aria-label": g(i)("chat.slot.next"),
 					onClick: n[2] ||= (e) => m(1)
-				}, " › ", 10, lt)) : x("", !0),
+				}, " › ", 10, ut)) : x("", !0),
 				w("button", {
 					type: "button",
 					class: A(g(X).button),
 					disabled: e.pending,
 					onClick: n[3] ||= (e) => r("generate")
-				}, O(e.entry.image_ids.length === 0 ? g(i)("chat.slot.generate") : g(i)("chat.slot.regenerate")), 11, ut),
+				}, O(e.entry.image_ids.length === 0 ? g(i)("chat.slot.generate") : g(i)("chat.slot.regenerate")), 11, dt),
 				w("button", {
 					type: "button",
 					class: A(g(X).button),
@@ -1437,28 +1501,28 @@ var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "ar
 				class: A(g(X).button),
 				disabled: e.pending,
 				onClick: (n) => e.entry.active_image_id !== null && r("quick-edit", t.kind, e.entry.active_image_id)
-			}, O(t.label()), 11, dt)), 64))], 2)) : x("", !0)
+			}, O(t.label()), 11, ft)), 64))], 2)) : x("", !0)
 		], 2));
 	}
-}), pt = "data-tc-illustrate", mt = "data-tc-notice", ht = 50;
-function gt(e) {
+}), mt = "data-tc-illustrate", ht = "data-tc-notice", gt = 50;
+function _t(e) {
 	return `${e.chat_id}:${String(e.message_id)}:${String(e.swipe_id)}`;
 }
-function _t(e) {
+function vt(e) {
 	let { host: t, service: n } = e, i = E([]), a = E([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = /* @__PURE__ */ new Map(), l = [], u = null;
 	function d(t, n) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
-		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${pt}]`) !== null) return;
+		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${mt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(H(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(U(t.ownerDocument)), a.setAttribute(mt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}
 	function f(e) {
-		let t = e.parentElement?.querySelector(`:scope > [${mt}]`);
+		let t = e.parentElement?.querySelector(`:scope > [${ht}]`);
 		if (t != null) return t;
 		let n = e.ownerDocument.createElement("div");
-		return n.setAttribute(mt, ""), e.after(n), n;
+		return n.setAttribute(ht, ""), e.after(n), n;
 	}
 	function p(e) {
 		let r = t.find_message_element(e.message_id);
@@ -1471,7 +1535,7 @@ function _t(e) {
 		for (let t of r.querySelectorAll("[data-tc-slot]")) {
 			let n = i.find((e) => e.slot_id === t.dataset.tcSlot);
 			n !== void 0 && a.push({
-				key: `${gt(e)}:${n.slot_id}`,
+				key: `${_t(e)}:${n.slot_id}`,
 				element: t,
 				location: e,
 				slot: n
@@ -1494,6 +1558,7 @@ function _t(e) {
 			let i = Number(n.split(":").at(-2)), a = t.find_message_element(i);
 			return a === null ? [] : [{
 				key: e,
+				message_id: i,
 				element: f(a),
 				notice: r
 			}];
@@ -1522,7 +1587,7 @@ function _t(e) {
 	function _() {
 		u !== null && clearTimeout(u), u = setTimeout(() => {
 			u = null, g();
-		}, ht);
+		}, gt);
 	}
 	return r(() => {
 		l.push(t.subscribe_message_rendered((e) => {
@@ -1532,7 +1597,7 @@ function _t(e) {
 		}), t.subscribe_chat_rendered(() => {
 			s.clear(), c.clear(), _();
 		}), n.subscribe((e) => {
-			let t = gt(e.location);
+			let t = _t(e.location);
 			e.type === "wardrobe_failed" ? c.set(t, {
 				status: "wardrobe_failed",
 				message: e.message
@@ -1545,7 +1610,7 @@ function _t(e) {
 	}), C(() => {
 		for (let e of l.splice(0)) e();
 		u !== null && clearTimeout(u);
-		for (let e of document.querySelectorAll(`[${pt}], [${mt}]`)) e.remove();
+		for (let e of document.querySelectorAll(`[${mt}], [${ht}]`)) e.remove();
 	}), {
 		targets: i,
 		notices: a
@@ -1553,7 +1618,7 @@ function _t(e) {
 }
 //#endregion
 //#region src/ui/chat/use_image_urls.ts
-function vt(e) {
+function yt(e) {
 	let t = /* @__PURE__ */ new Map();
 	return C(() => {
 		for (let e of t.values()) e.then((e) => {
@@ -1567,7 +1632,7 @@ function vt(e) {
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
+var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1578,7 +1643,7 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 		promptTags: {}
 	},
 	setup(e) {
-		let t = e, { t: n } = T(), i = y(null), a = y(null), s = vt(t.gallery), l = y(null), u = E(null), d = y(!1);
+		let t = e, { t: n } = T(), i = y(null), a = y(null), s = yt(t.gallery), l = y(null), u = E(null), d = y(!1);
 		async function f(e) {
 			let n = await t.gallery.read_bytes(e);
 			return createImageBitmap(new Blob([new Uint8Array(n)]));
@@ -1613,7 +1678,7 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 					kind: "inpaint",
 					image_id: n.request.image_id,
 					source: r,
-					mask_png: await Ze(e.mask, r.width, r.height),
+					mask_png: await Qe(e.mask, r.width, r.height),
 					positive_prompt: e.positivePrompt,
 					negative_prompt: e.negativePrompt,
 					strength: e.denoiseStrength
@@ -1622,7 +1687,7 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 				d.value = !1, h();
 			}
 		}
-		let { targets: b, notices: D } = _t({
+		let { targets: b, notices: D } = vt({
 			host: t.host,
 			service: t.service,
 			button_label: () => n("chat.message_button"),
@@ -1639,24 +1704,30 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 		function P(e, n) {
 			t.service.generate(e, n).catch(() => {});
 		}
-		function F(e, n, r) {
+		function F(e) {
+			t.service.auto_generation_enabled() ? t.service.illustrate(e).catch(() => {}) : i.value = {
+				message_id: e,
+				slot_id: null
+			};
+		}
+		function I(e, n, r) {
 			t.service.select_image(e, n, r);
 		}
-		async function I(e) {
+		async function L(e) {
 			a.value = await s(e);
 		}
-		function L(e) {
+		function R(e) {
 			e.key === "Escape" && (a.value = null);
 		}
 		return r(() => {
-			document.addEventListener("keydown", L), t.translator?.prepare().catch(() => void 0);
+			document.addEventListener("keydown", R), t.translator?.prepare().catch(() => void 0);
 		}), C(() => {
-			document.removeEventListener("keydown", L);
+			document.removeEventListener("keydown", R);
 		}), (t, r) => (c(), p(k, null, [
 			(c(!0), p(k, null, o(g(b), (t) => (c(), S(_, {
 				key: t.key,
 				to: t.element
-			}, [N(ft, {
+			}, [N(pt, {
 				entry: t.slot,
 				pending: M(t.slot.pending_request_ids),
 				"load-image": g(s),
@@ -1666,8 +1737,8 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 					message_id: t.location.message_id,
 					slot_id: t.slot.slot_id
 				},
-				onSelect: (e) => F(t.location, t.slot.slot_id, e),
-				onPreview: I,
+				onSelect: (e) => I(t.location, t.slot.slot_id, e),
+				onPreview: L,
 				onQuickEdit: (e, n) => m(t.location, t.slot, e, n)
 			}, null, 8, [
 				"entry",
@@ -1688,7 +1759,13 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 					key: 0,
 					class: A(g(X).excerpt)
 				}, O(e.notice.excerpt), 3)),
-				e.notice.excerpt === null ? x("", !0) : (c(), p("div", yt, O(g(n)("chat.dialog.parse_failed_hint")), 1))
+				e.notice.excerpt === null ? x("", !0) : (c(), p("div", bt, O(g(n)("chat.dialog.parse_failed_hint")), 1)),
+				w("div", { class: A(g(X).notice_actions) }, [w("button", {
+					type: "button",
+					class: A(g(X).button),
+					"data-testid": "analysis-retry",
+					onClick: (t) => F(e.message_id)
+				}, O(g(n)("chat.dialog.retry")), 11, xt)], 2)
 			], 64))], 2)], 8, ["to"]))), 128)),
 			a.value === null ? x("", !0) : (c(), S(_, {
 				key: 0,
@@ -1700,8 +1777,8 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 			}, [w("img", {
 				src: a.value,
 				alt: ""
-			}, null, 8, bt)], 2)])),
-			N(Xe, {
+			}, null, 8, St)], 2)])),
+			N(Ze, {
 				request: i.value,
 				service: e.service,
 				novelai: e.novelai,
@@ -1715,7 +1792,7 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 				"translator",
 				"prompt-tags"
 			]),
-			N(rt, {
+			N(it, {
 				request: l.value,
 				service: e.service,
 				novelai: e.novelai,
@@ -1775,4 +1852,4 @@ var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 	}
 });
 //#endregion
-export { xt as default };
+export { Ct as default };

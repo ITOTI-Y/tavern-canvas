@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import type { NovelAiCostEstimate, SlotCharacterPrompt, Wearing } from "@tavern-canvas/contracts";
+import type {
+  IllustrationSlot,
+  NovelAiCostEstimate,
+  SlotCharacterPrompt,
+  Wearing,
+} from "@tavern-canvas/contracts";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { HostSwipeLocation } from "../../host/index.js";
 import { AnalysisParseError } from "../../modules/illustration/analysis.js";
 import { is_named, type SlotLibrary } from "../../modules/illustration/library_match.js";
+import type { Paragraph } from "../../modules/illustration/slot_markers.js";
 import { replace_outfit_tags, wearing_of, wearing_tags } from "../../modules/wardrobe/wearing.js";
 import type { IllustrationService } from "../../modules/illustration/illustration_service.js";
 import type { PromptTranslator } from "../../modules/translation/prompt_translator.js";
@@ -55,6 +61,38 @@ const drafts = ref<SlotDraft[]>([]);
 const submitting = ref(false);
 const submit_error = ref<string | null>(null);
 const wardrobe = ref<{ library: SlotLibrary; snapshot: readonly Wearing[] } | null>(null);
+const open_paragraphs = ref<readonly Paragraph[]>([]);
+const chosen = ref<readonly number[]>([]);
+const picker_open = ref(false);
+const adding = ref(false);
+const add_error = ref<string | null>(null);
+
+const PARAGRAPH_LABEL_LENGTH = 120;
+
+function paragraph_label(paragraph: Paragraph): string {
+  return paragraph.text.length > PARAGRAPH_LABEL_LENGTH
+    ? `${paragraph.text.slice(0, PARAGRAPH_LABEL_LENGTH)}…`
+    : paragraph.text;
+}
+
+function toggle_paragraph(index: number, on: boolean): void {
+  chosen.value = on
+    ? [...chosen.value, index]
+    : chosen.value.filter((candidate) => candidate !== index);
+}
+
+function to_draft(slot: IllustrationSlot, selected: boolean): SlotDraft {
+  return {
+    slot_id: slot.slot_id,
+    anchor: slot.anchor,
+    scene: slot.scene,
+    selected,
+    positive_prompt: slot.positive_prompt,
+    negative_prompt: slot.negative_prompt,
+    character_prompts: slot.character_prompts.map((character) => ({ ...character })),
+    estimate: null,
+  };
+}
 
 function library_character(name: string) {
   return wardrobe.value?.library.characters.find((character) => is_named(character, name)) ?? null;
@@ -134,22 +172,20 @@ async function load(request: IllustrateRequest): Promise<void> {
   drafts.value = [];
   wardrobe.value = null;
   submit_error.value = null;
+  open_paragraphs.value = [];
+  chosen.value = [];
+  picker_open.value = false;
+  add_error.value = null;
   try {
     const record = await props.service.analyze(request.message_id);
     const location = await props.service.active_location(request.message_id);
     drafts.value = record.slots
       .filter((slot) => request.slot_id === null || slot.slot_id === request.slot_id)
-      .map((slot) => ({
-        slot_id: slot.slot_id,
-        anchor: slot.anchor,
-        scene: slot.scene,
-        selected: request.slot_id !== null || slot.image_ids.length === 0,
-        positive_prompt: slot.positive_prompt,
-        negative_prompt: slot.negative_prompt,
-        character_prompts: slot.character_prompts.map((character) => ({ ...character })),
-        estimate: null,
-      }));
+      .map((slot) => to_draft(slot, request.slot_id !== null || slot.image_ids.length === 0));
     wardrobe.value = await props.service.wardrobe_view(location);
+    if (request.slot_id === null) {
+      open_paragraphs.value = await props.service.open_paragraphs(location);
+    }
     state.value = { status: "ready", location };
     await Promise.all(drafts.value.map((draft) => estimate(location, draft)));
   } catch (error) {
@@ -170,6 +206,34 @@ watch(
   },
   { immediate: true },
 );
+
+async function add_chosen(): Promise<void> {
+  const current = state.value;
+  if (current.status !== "ready" || chosen.value.length === 0) {
+    return;
+  }
+  adding.value = true;
+  add_error.value = null;
+  try {
+    const slots = await props.service.add_paragraphs(current.location, chosen.value);
+    const added = slots.map((slot) => to_draft(slot, true));
+    drafts.value = [...drafts.value, ...added];
+    const taken = new Set(slots.map((slot) => slot.paragraph));
+    open_paragraphs.value = open_paragraphs.value.filter(
+      (paragraph) => !taken.has(paragraph.index),
+    );
+    chosen.value = [];
+    picker_open.value = false;
+    // Estimate through the reactive proxies so each cost shows as soon as it arrives.
+    await Promise.all(
+      drafts.value.slice(-added.length).map((draft) => estimate(current.location, draft)),
+    );
+  } catch (error) {
+    add_error.value = error instanceof Error ? error.message : String(error);
+  } finally {
+    adding.value = false;
+  }
+}
 
 async function confirm(): Promise<void> {
   const current = state.value;
@@ -282,6 +346,36 @@ function update_open(open: boolean): void {
           <div :class="styles.meta">
             <span>{{ estimate_label(draft) }}</span>
           </div>
+        </section>
+        <section v-if="open_paragraphs.length > 0" :class="styles.picker">
+          <AppButton
+            :label="t('chat.dialog.pick_paragraphs', { count: open_paragraphs.length })"
+            :aria-expanded="picker_open"
+            data-testid="pick-paragraphs"
+            @click="picker_open = !picker_open"
+          />
+          <template v-if="picker_open">
+            <p :class="styles.hint">{{ t("chat.dialog.pick_paragraphs_hint") }}</p>
+            <div :class="styles.paragraphs">
+              <AppCheckbox
+                v-for="paragraph in open_paragraphs"
+                :key="paragraph.index"
+                :model-value="chosen.includes(paragraph.index)"
+                :label="paragraph_label(paragraph)"
+                @update:model-value="(on) => toggle_paragraph(paragraph.index, on === true)"
+              />
+            </div>
+            <p v-if="add_error !== null" :class="styles.error">{{ add_error }}</p>
+            <div :class="styles.footer">
+              <AppButton
+                :label="t('chat.dialog.add_paragraphs', { count: chosen.length })"
+                :pending="adding"
+                :disabled="chosen.length === 0"
+                data-testid="add-paragraphs"
+                @click="add_chosen"
+              />
+            </div>
+          </template>
         </section>
         <p v-if="submit_error !== null" :class="styles.error">{{ submit_error }}</p>
         <div :class="styles.footer">

@@ -24,10 +24,12 @@ import {
   ANALYSIS_JSON_SCHEMA,
   AnalysisParseError,
   build_analysis_input,
+  build_chosen_paragraphs_input,
   parse_analysis_output,
+  type IllustrationProposal,
 } from "./analysis.js";
 import type { SlotEdit } from "./slot_edits.js";
-import { insert_markers, split_paragraphs } from "./slot_markers.js";
+import { insert_markers, split_paragraphs, type Paragraph } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
@@ -71,7 +73,11 @@ export interface IllustrationServiceDeps {
   readonly jobs: IllustrationJobPort;
   readonly new_slot_id: () => string;
   readonly new_generation_id: () => string;
+  readonly wait: (milliseconds: number) => Promise<void>;
 }
+
+const ANALYSIS_ATTEMPTS = 3;
+const ANALYSIS_RETRY_DELAY_MS = 2_000;
 
 export type IllustrationEvent =
   | { readonly type: "slots_changed"; readonly location: HostSwipeLocation }
@@ -315,6 +321,18 @@ export class IllustrationService {
     }
   }
 
+  /** Analyzes the reply and generates every slot still without an image, as automatic illustration does. */
+  async illustrate(message_id: number): Promise<void> {
+    const record = await this.analyze(message_id);
+    if (record.slots.length > 0) {
+      await this.generate_missing(await this.active_location(message_id));
+    }
+  }
+
+  auto_generation_enabled(): boolean {
+    return this.#deps.auto_generation_enabled();
+  }
+
   async #analyze_text(location: HostSwipeLocation, text: string): Promise<SwipeIllustrations> {
     const paragraphs = split_paragraphs(text);
     const settings = this.#deps.settings();
@@ -322,61 +340,17 @@ export class IllustrationService {
     if (paragraphs.length > 0) {
       const snapshot = await this.#wardrobe_snapshot(location);
       const context = await this.#deps.prompt_context(location.chat_id);
-      const result = await this.#deps.host.generate_with_preset({
-        generation_id: this.#deps.new_generation_id(),
-        preset_name: settings.preset_name,
-        user_input: build_analysis_input(
+      const proposals = await this.#propose(
+        text,
+        build_analysis_input(
           paragraphs,
           settings.max_images_per_message,
           context.library,
           settings.analysis_guidance,
         ),
-        max_chat_history: settings.max_chat_history,
-        connection: await to_host_connection(settings.connection, this.#deps.resolve_analysis_key),
-        json_schema: ANALYSIS_JSON_SCHEMA,
-        world_info: await to_host_world_info(settings.world_info, text, this.#deps.host),
-        image: null,
-      });
-      const proposals = parse_analysis_output(
-        result.content,
-        paragraphs.length,
-        settings.max_images_per_message,
+        (raw) => parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message),
       );
-      record.slots.push(
-        ...proposals.map((proposal): IllustrationSlot => {
-          const library = match_library(
-            `${paragraphs[proposal.paragraph]?.text ?? ""}\n${proposal.scene}`,
-            proposal.characters.map((character) => character.name),
-            context.library,
-            snapshot,
-          );
-          const prompt = assemble_slot_prompt({
-            preset: context.preset,
-            library,
-            characters: proposal.characters,
-            scene_tags: proposal.tags,
-          });
-          return {
-            slot_id: this.#deps.new_slot_id(),
-            paragraph: proposal.paragraph,
-            anchor: (paragraphs[proposal.paragraph]?.text ?? "").slice(0, 400),
-            scene: proposal.scene,
-            characters: [
-              ...new Set([
-                ...proposal.characters.map((character) => character.name),
-                ...library.characters.map((entry) => entry.character.name),
-              ]),
-            ],
-            positive_prompt: prompt.positive_prompt,
-            negative_prompt: prompt.negative_prompt,
-            character_prompts: [...prompt.character_prompts],
-            image_ids: [],
-            active_image_id: null,
-            pending_request_ids: [],
-            last_error: null,
-          };
-        }),
-      );
+      record.slots.push(...this.#slots_for(paragraphs, proposals, context, snapshot));
     }
     // The record lands first so the re-render triggered by the text change already finds it.
     await this.#deps.host.write_swipe_record(location, record);
@@ -391,6 +365,163 @@ export class IllustrationService {
       }
     }
     return record;
+  }
+
+  /**
+   * Sends one analysis request and parses its reply, retrying both together: a failed request and a
+   * reply cut off mid-JSON usually succeed on another try.
+   */
+  async #propose(
+    text: string,
+    user_input: string,
+    parse: (raw: string) => readonly IllustrationProposal[],
+  ): Promise<readonly IllustrationProposal[]> {
+    const settings = this.#deps.settings();
+    const connection = await to_host_connection(
+      settings.connection,
+      this.#deps.resolve_analysis_key,
+    );
+    const world_info = await to_host_world_info(settings.world_info, text, this.#deps.host);
+    for (let attempt = 1; ; attempt += 1) {
+      try {
+        const result = await this.#deps.host.generate_with_preset({
+          generation_id: this.#deps.new_generation_id(),
+          preset_name: settings.preset_name,
+          user_input,
+          max_chat_history: settings.max_chat_history,
+          connection,
+          json_schema: ANALYSIS_JSON_SCHEMA,
+          world_info,
+          image: null,
+        });
+        return parse(result.content);
+      } catch (error) {
+        if (attempt >= ANALYSIS_ATTEMPTS) {
+          throw error;
+        }
+        await this.#deps.wait(ANALYSIS_RETRY_DELAY_MS * attempt);
+      }
+    }
+  }
+
+  #slots_for(
+    paragraphs: readonly Paragraph[],
+    proposals: readonly IllustrationProposal[],
+    context: SlotPromptContext,
+    snapshot: readonly Wearing[],
+  ): IllustrationSlot[] {
+    return proposals.map((proposal): IllustrationSlot => {
+      const library = match_library(
+        `${paragraphs[proposal.paragraph]?.text ?? ""}\n${proposal.scene}`,
+        proposal.characters.map((character) => character.name),
+        context.library,
+        snapshot,
+      );
+      const prompt = assemble_slot_prompt({
+        preset: context.preset,
+        library,
+        characters: proposal.characters,
+        scene_tags: proposal.tags,
+      });
+      return {
+        slot_id: this.#deps.new_slot_id(),
+        paragraph: proposal.paragraph,
+        anchor: (paragraphs[proposal.paragraph]?.text ?? "").slice(0, 400),
+        scene: proposal.scene,
+        characters: [
+          ...new Set([
+            ...proposal.characters.map((character) => character.name),
+            ...library.characters.map((entry) => entry.character.name),
+          ]),
+        ],
+        positive_prompt: prompt.positive_prompt,
+        negative_prompt: prompt.negative_prompt,
+        character_prompts: [...prompt.character_prompts],
+        image_ids: [],
+        active_image_id: null,
+        pending_request_ids: [],
+        last_error: null,
+      };
+    });
+  }
+
+  async #swipe_text(location: HostSwipeLocation): Promise<string> {
+    const chat = await this.#deps.host.get_active_chat();
+    const message = chat.messages.find((candidate) => candidate.message_id === location.message_id);
+    if (chat.chat_id !== location.chat_id || message?.active_swipe_id !== location.swipe_id) {
+      throw new MessageChangedError(location.message_id);
+    }
+    return message.swipes[location.swipe_id]?.content ?? "";
+  }
+
+  /** The reply's paragraphs that have no slot yet, for the user to pick from. */
+  async open_paragraphs(location: HostSwipeLocation): Promise<readonly Paragraph[]> {
+    const taken = new Set(this.read(location)?.slots.map((slot) => slot.paragraph) ?? []);
+    return split_paragraphs(await this.#swipe_text(location)).filter(
+      (paragraph) => !taken.has(paragraph.index),
+    );
+  }
+
+  /**
+   * Adds slots for the paragraphs the user picked, with prompts from the analysis model. A paragraph
+   * the model leaves out still gets a slot, with prompts for the user to write.
+   */
+  async add_paragraphs(
+    location: HostSwipeLocation,
+    chosen: readonly number[],
+  ): Promise<readonly IllustrationSlot[]> {
+    const text = await this.#swipe_text(location);
+    const paragraphs = split_paragraphs(text);
+    const previous = this.read(location);
+    const taken = new Set(previous?.slots.map((slot) => slot.paragraph) ?? []);
+    const wanted = [...new Set(chosen)]
+      .filter((index) => index < paragraphs.length && !taken.has(index))
+      .sort((left, right) => left - right);
+    if (wanted.length === 0) {
+      return [];
+    }
+    const settings = this.#deps.settings();
+    const snapshot = await this.#wardrobe_snapshot(location);
+    const context = await this.#deps.prompt_context(location.chat_id);
+    const proposals = await this.#propose(
+      text,
+      build_chosen_paragraphs_input(
+        paragraphs,
+        wanted,
+        context.library,
+        settings.analysis_guidance,
+      ),
+      (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
+    );
+    const by_paragraph = new Map(proposals.map((proposal) => [proposal.paragraph, proposal]));
+    const slots = this.#slots_for(
+      paragraphs,
+      wanted.map(
+        (index) =>
+          by_paragraph.get(index) ?? {
+            paragraph: index,
+            scene: (paragraphs[index]?.text ?? "").slice(0, 120),
+            tags: "",
+            characters: [],
+          },
+      ),
+      context,
+      snapshot,
+    );
+    await this.#deps.host.write_swipe_record(location, {
+      schema_version: 2,
+      slots: [...(previous?.slots ?? []), ...slots],
+    });
+    const marked = insert_markers(
+      text,
+      slots.map((slot) => ({ paragraph: slot.paragraph, slot_id: slot.slot_id })),
+    );
+    if (!(await this.#deps.host.replace_message_text(location.message_id, text, marked))) {
+      await this.#deps.host.write_swipe_record(location, previous);
+      throw new MessageChangedError(location.message_id);
+    }
+    this.#emit({ type: "slots_changed", location });
+    return slots;
   }
 
   /** The request a slot would submit, so its cost can be shown before confirming. */
@@ -643,12 +774,8 @@ export class IllustrationService {
           await this.#deps.host.write_swipe_wardrobe(location, null);
         }
         await this.#wardrobe_snapshot(location);
-        if (!this.#deps.auto_generation_enabled()) {
-          return;
-        }
-        const record = await this.analyze(event.message_id);
-        if (record.slots.length > 0) {
-          await this.generate_missing(await this.active_location(event.message_id));
+        if (this.#deps.auto_generation_enabled()) {
+          await this.illustrate(event.message_id);
         }
       })
       .catch(() => {

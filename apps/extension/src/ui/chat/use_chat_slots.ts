@@ -19,6 +19,7 @@ export type AnalysisNotice =
 
 export interface AnalysisNoticeTarget {
   readonly key: string;
+  readonly message_id: number;
   readonly element: HTMLElement;
   readonly notice: AnalysisNotice;
 }
@@ -124,7 +125,9 @@ export function use_chat_slots(options: ChatSlotsOptions): ChatSlots {
     notices.value = entries.flatMap(([key, location, notice]) => {
       const message_id = Number(location.split(":").at(-2));
       const text_element = host.find_message_element(message_id);
-      return text_element === null ? [] : [{ key, element: notice_element(text_element), notice }];
+      return text_element === null
+        ? []
+        : [{ key, message_id, element: notice_element(text_element), notice }];
     });
   }
 

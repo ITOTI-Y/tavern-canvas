@@ -709,6 +709,10 @@ const chat = {
     title: "Illustrate reply",
     close: "Close",
     retry: "Analyze again",
+    pick_paragraphs: "Choose paragraphs ({count})",
+    pick_paragraphs_hint:
+      "Tick the paragraphs to illustrate; the analysis model writes prompts for these only. A paragraph it leaves out is still added, with empty prompts for you to fill.",
+    add_paragraphs: "Write prompts for the chosen paragraphs ({count})",
     no_slots: "The analysis found no paragraph worth illustrating.",
     parse_failed_hint:
       "The model did not return the requested JSON. The preset may impose its own output format or obfuscate replies; choose another preset in the illustration settings.",
