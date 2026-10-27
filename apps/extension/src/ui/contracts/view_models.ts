@@ -1,9 +1,4 @@
-import type {
-  LlmConnectionProfile,
-  TavernCanvasSettings,
-  Uuid,
-  VocabularyCatalogEntry,
-} from "@tavern-canvas/contracts";
+import type { TavernCanvasSettings, Uuid, VocabularyCatalogEntry } from "@tavern-canvas/contracts";
 import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
 
 import type {
@@ -39,11 +34,6 @@ export interface GenerationViewModel {
   readonly profiles: readonly ProviderProfileSummary[];
   readonly active_profile_id: Uuid | null;
   readonly jobs: readonly GenerationJobSummary[];
-}
-
-export interface LlmConnectionsViewModel {
-  readonly connections: readonly LlmConnectionProfile[];
-  readonly selected_connection_id: Uuid | null;
 }
 
 export interface PromptViewModel {
@@ -115,7 +105,6 @@ export interface StudioState {
   loading: ReadonlySet<string>;
   failures: ReadonlyMap<string, UiFailure>;
   generation: GenerationViewModel;
-  llm_connections: LlmConnectionsViewModel;
   prompt: PromptViewModel;
   assets: AssetsViewModel;
   gallery: GalleryViewModel;

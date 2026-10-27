@@ -1,8 +1,5 @@
 import type {
   GenerationState,
-  LlmConnectionDraft,
-  LlmConnectionProfile,
-  LlmConnectionTestResult,
   NovelAiAccountStatus,
   NovelAiGenerationDefaults,
   PromptTagSelection,
@@ -22,7 +19,6 @@ import type {
   GalleryDomainEvent,
   GenerationDomainEvent,
   GenerationJobSummary,
-  LlmConnectionsDomainEvent,
   ProfileConnectionTestResult,
   ProfilesDomainEvent,
   ProviderProfileDraft,
@@ -49,7 +45,6 @@ import {
   type GenerationViewModel,
   type InspectorSelection,
   type InspectorViewModel,
-  type LlmConnectionsViewModel,
   type PromptViewModel,
   type SettingsSection,
   type SettingsViewModel,
@@ -143,17 +138,6 @@ export interface StudioController {
     category?: VocabularyCategory,
   ): Promise<VocabularySearchPageView>;
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView>;
-
-  select_llm_connection(connection_id: Uuid | null): void;
-  save_llm_connection(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
-  remove_llm_connection(connection_id: Uuid): Promise<void>;
-  /** The plaintext reaches only the credential backend; state holds the returned reference. */
-  set_llm_connection_credential(
-    connection_id: Uuid,
-    plaintext_value: string,
-  ): Promise<LlmConnectionProfile>;
-  clear_llm_connection_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
-  test_llm_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
 
   select_gallery_record(record_id: Uuid | null): void;
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array>;
@@ -264,10 +248,6 @@ function create_initial_state(
       active_profile_id: null,
       jobs: [],
     },
-    llm_connections: {
-      connections: [],
-      selected_connection_id: null,
-    },
     prompt: {
       presets: [],
       selected_preset_id: null,
@@ -353,10 +333,6 @@ class StudioControllerImpl implements StudioController {
       generation: { ...this.#state.generation, jobs },
       tasks: jobs_to_tasks(jobs),
     });
-  }
-
-  #patch_llm_connections(patch: Partial<LlmConnectionsViewModel>): void {
-    this.#patch({ llm_connections: { ...this.#state.llm_connections, ...patch } });
   }
 
   #patch_prompt(patch: Partial<PromptViewModel>): void {
@@ -454,27 +430,6 @@ class StudioControllerImpl implements StudioController {
     }
   }
 
-  #apply_llm_connections_event(event: LlmConnectionsDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "connection_upserted") {
-      this.#patch_llm_connections({
-        connections: upsert_by_id(
-          this.#state.llm_connections.connections,
-          event.connection,
-          (connection) => connection.id,
-        ),
-      });
-    } else {
-      this.#patch_llm_connections({
-        connections: this.#state.llm_connections.connections.filter(
-          (connection) => connection.id !== event.connection_id,
-        ),
-      });
-    }
-  }
-
   #apply_prompt_presets_event(event: PromptPresetsDomainEvent): void {
     if (this.#stopped) {
       return;
@@ -560,9 +515,6 @@ class StudioControllerImpl implements StudioController {
       this.#capabilities.profiles.subscribe((event) => {
         this.#apply_profiles_event(event);
       }),
-      this.#capabilities.llm_connections.subscribe((event) => {
-        this.#apply_llm_connections_event(event);
-      }),
       this.#capabilities.prompt_presets.subscribe((event) => {
         this.#apply_prompt_presets_event(event);
       }),
@@ -582,17 +534,6 @@ class StudioControllerImpl implements StudioController {
 
     await Promise.allSettled([
       ...this.#load_stored_records(),
-      this.#load_slice(
-        "llm_connections",
-        () => this.#capabilities.llm_connections.load(),
-        (connections) => {
-          this.#patch_llm_connections({
-            connections,
-            selected_connection_id:
-              this.#state.llm_connections.selected_connection_id ?? connections[0]?.id ?? null,
-          });
-        },
-      ),
       this.#load_slice(
         "diagnostics",
         () => this.#capabilities.diagnostics.load(),
@@ -1078,73 +1019,6 @@ class StudioControllerImpl implements StudioController {
 
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView> {
     return this.#capabilities.vocabulary.next_page(cursor);
-  }
-
-  select_llm_connection(connection_id: Uuid | null): void {
-    this.#patch_llm_connections({ selected_connection_id: connection_id });
-  }
-
-  async save_llm_connection(draft: LlmConnectionDraft): Promise<LlmConnectionProfile> {
-    const connection = await this.#capabilities.llm_connections.save(draft);
-    if (!this.#stopped) {
-      this.#upsert_llm_connection(connection);
-    }
-    return connection;
-  }
-
-  async remove_llm_connection(connection_id: Uuid): Promise<void> {
-    await this.#capabilities.llm_connections.remove(connection_id);
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_llm_connections({
-      connections: this.#state.llm_connections.connections.filter(
-        (connection) => connection.id !== connection_id,
-      ),
-      selected_connection_id:
-        this.#state.llm_connections.selected_connection_id === connection_id
-          ? null
-          : this.#state.llm_connections.selected_connection_id,
-    });
-  }
-
-  async set_llm_connection_credential(
-    connection_id: Uuid,
-    plaintext_value: string,
-  ): Promise<LlmConnectionProfile> {
-    const connection = await this.#capabilities.llm_connections.set_credential(
-      connection_id,
-      plaintext_value,
-    );
-    if (!this.#stopped) {
-      this.#upsert_llm_connection(connection);
-    }
-    return connection;
-  }
-
-  async clear_llm_connection_credential(connection_id: Uuid): Promise<LlmConnectionProfile> {
-    const connection = await this.#capabilities.llm_connections.clear_credential(connection_id);
-    if (!this.#stopped) {
-      this.#upsert_llm_connection(connection);
-    }
-    return connection;
-  }
-
-  test_llm_connection(connection_id: Uuid): Promise<LlmConnectionTestResult> {
-    return this.#capabilities.llm_connections.test_connection(connection_id);
-  }
-
-  #upsert_llm_connection(connection: LlmConnectionProfile): void {
-    const merged = upsert_by_id(
-      this.#state.llm_connections.connections,
-      connection,
-      (item) => item.id,
-    );
-    this.#patch_llm_connections({
-      connections: connection.is_default
-        ? merged.map((item) => (item.id === connection.id ? item : { ...item, is_default: false }))
-        : merged,
-    });
   }
 
   select_gallery_record(record_id: Uuid | null): void {

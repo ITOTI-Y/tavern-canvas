@@ -1,8 +1,6 @@
 import {
   list_novelai_models,
   type CapabilityMatrix,
-  type LlmConnectionProfile,
-  type LlmConnectionTestResult,
   type ProviderId,
   type TavernCanvasSettings,
   type Uuid,
@@ -23,7 +21,6 @@ import type {
   GenerationDomainEvent,
   GenerationJobSummary,
   GenerationSubmitCommand,
-  LlmConnectionsCapability,
   NovelAiCapability,
   ProfileConnectionTestResult,
   ProfilesCapability,
@@ -637,35 +634,6 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
   };
 }
 
-const LLM_CONNECTION_OPENAI: LlmConnectionProfile = {
-  id: "9a1f0a2c-1111-4a11-8a11-0b0c0d0e0f01",
-  display_name: "Studio text model",
-  provider_kind: "openai_compatible",
-  route: "/v1/chat/completions",
-  model_id: "gpt-4o-mini",
-  temperature: 0.7,
-  max_output_tokens: 2048,
-  is_default: true,
-  credential_reference:
-    "tavern_canvas:default:9a1f0a2c-1111-4a11-8a11-0b0c0d0e0f01:llm_profile_api_key",
-  created_at: "2026-08-01T09:00:00.000Z",
-  updated_at: "2026-08-06T18:20:00.000Z",
-};
-
-const LLM_CONNECTION_OLLAMA: LlmConnectionProfile = {
-  id: "9a1f0a2c-2222-4a22-8a22-0b0c0d0e0f02",
-  display_name: "Local Ollama",
-  provider_kind: "ollama",
-  route: "/api/chat",
-  model_id: "qwen2.5:14b",
-  temperature: 0.4,
-  max_output_tokens: 4096,
-  is_default: false,
-  credential_reference: null,
-  created_at: "2026-08-02T11:30:00.000Z",
-  updated_at: "2026-08-05T08:05:00.000Z",
-};
-
 function create_novelai_capability(): NovelAiCapability {
   return {
     load: () => Promise.resolve(list_novelai_models()),
@@ -688,64 +656,6 @@ function create_novelai_capability(): NovelAiCapability {
     refresh_models: () => Promise.resolve(list_novelai_models()),
     estimate_cost: () =>
       Promise.resolve({ anlas: 0, opus_free: true, per_image: 26, vibe_encoding: 0 }),
-  };
-}
-
-function create_llm_connections_capability(
-  initial: LlmConnectionProfile[],
-): LlmConnectionsCapability {
-  const connections = new Map(initial.map((connection) => [connection.id, connection]));
-  return {
-    load: () => Promise.resolve([...connections.values()]),
-    subscribe: () => () => {},
-    save: (draft) => {
-      const existing = connections.get(draft.id);
-      const saved: LlmConnectionProfile = {
-        ...draft,
-        credential_reference: existing?.credential_reference ?? null,
-        created_at: existing?.created_at ?? new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      connections.set(saved.id, saved);
-      return Promise.resolve(saved);
-    },
-    remove: (connection_id) => {
-      connections.delete(connection_id);
-      return Promise.resolve();
-    },
-    /** The mock keeps the plaintext exactly as long as the real capability does: not at all. */
-    set_credential: (connection_id) => {
-      const existing = connections.get(connection_id);
-      if (!existing) {
-        return Promise.reject(new Error("mock: unknown_llm_connection"));
-      }
-      const updated: LlmConnectionProfile = {
-        ...existing,
-        credential_reference: `tavern_canvas:default:${connection_id}:llm_profile_api_key`,
-      };
-      connections.set(connection_id, updated);
-      return Promise.resolve(updated);
-    },
-    clear_credential: (connection_id) => {
-      const existing = connections.get(connection_id);
-      if (!existing) {
-        return Promise.reject(new Error("mock: unknown_llm_connection"));
-      }
-      const updated: LlmConnectionProfile = { ...existing, credential_reference: null };
-      connections.set(connection_id, updated);
-      return Promise.resolve(updated);
-    },
-    test_connection: (connection_id): Promise<LlmConnectionTestResult> => {
-      const connection = connections.get(connection_id);
-      if (connection === undefined || connection.credential_reference === null) {
-        return Promise.resolve({ status: "failed", code: "auth_failed" });
-      }
-      return Promise.resolve({
-        status: "success",
-        latency_ms: 214,
-        model_id: connection.model_id,
-      });
-    },
   };
 }
 
@@ -974,7 +884,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     return {
       generation: { ...create_generation_capability([]), load: forever_pending },
       profiles: { ...create_profiles_capability([]), load: forever_pending },
-      llm_connections: { ...create_llm_connections_capability([]), load: forever_pending },
       prompt_presets: { ...create_prompt_presets_capability([], new Map()), load: forever_pending },
       assets: { ...create_assets_capability(EMPTY_ASSET_RECORDS), load: forever_pending },
       gallery: { ...create_gallery_capability([]), load: forever_pending },
@@ -994,10 +903,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       profiles: {
         ...create_profiles_capability([]),
         load: () => always_rejects("profiles_unavailable"),
-      },
-      llm_connections: {
-        ...create_llm_connections_capability([]),
-        load: () => always_rejects("llm_connections_unavailable"),
       },
       prompt_presets: {
         ...create_prompt_presets_capability([], new Map()),
@@ -1031,7 +936,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     return {
       generation: create_generation_capability([]),
       profiles: create_profiles_capability([]),
-      llm_connections: create_llm_connections_capability([]),
       prompt_presets: create_prompt_presets_capability([], new Map()),
       assets: create_assets_capability(EMPTY_ASSET_RECORDS),
       gallery: create_gallery_capability([]),
@@ -1046,10 +950,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     return {
       generation: create_generation_capability(build_jobs()),
       profiles: create_profiles_capability([PROFILE_SD, PROFILE_NOVELAI, PROFILE_COMFYUI]),
-      llm_connections: create_llm_connections_capability([
-        LLM_CONNECTION_OPENAI,
-        LLM_CONNECTION_OLLAMA,
-      ]),
       prompt_presets: create_prompt_presets_capability(
         [PRESET_SHORT, PRESET_LONG_NAME, PRESET_LONG_NAME_ZH],
         PRESET_DRAFTS,
@@ -1072,10 +972,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
   return {
     generation: create_generation_capability(build_jobs()),
     profiles: create_profiles_capability([PROFILE_SD, PROFILE_NOVELAI, PROFILE_COMFYUI]),
-    llm_connections: create_llm_connections_capability([
-      LLM_CONNECTION_OPENAI,
-      LLM_CONNECTION_OLLAMA,
-    ]),
     prompt_presets: create_prompt_presets_capability(
       [PRESET_SHORT, PRESET_LONG_NAME, PRESET_LONG_NAME_ZH],
       PRESET_DRAFTS,

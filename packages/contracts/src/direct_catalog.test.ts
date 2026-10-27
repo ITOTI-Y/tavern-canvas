@@ -2,13 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   DIRECT_IMAGE_ROUTE_CATALOG,
-  DIRECT_LLM_ROUTE_CATALOG,
   DirectRouteRejectedError,
   direct_image_catalog_entry,
-  direct_llm_catalog_entry,
   resolve_direct_url,
 } from "./direct_catalog.js";
-import { LLM_ROUTE_CATALOG, LlmProviderKindSchema } from "./llm_connection.js";
 import { ProviderIdSchema } from "./provider.js";
 
 const ARBITRARY_DESTINATIONS = [
@@ -26,10 +23,7 @@ const ARBITRARY_DESTINATIONS = [
 
 describe("direct route catalog", () => {
   it("exposes only HTTPS vendor origins with no path, query or credentials", () => {
-    const entries = [
-      ...Object.values(DIRECT_IMAGE_ROUTE_CATALOG),
-      ...Object.values(DIRECT_LLM_ROUTE_CATALOG),
-    ].filter((entry) => entry !== null);
+    const entries = Object.values(DIRECT_IMAGE_ROUTE_CATALOG).filter((entry) => entry !== null);
 
     for (const entry of entries) {
       const url = new URL(entry.origin);
@@ -72,24 +66,6 @@ describe("direct route catalog", () => {
       kind: "api_key",
       header: "x-goog-api-key",
     });
-    expect(direct_llm_catalog_entry("anthropic")?.auth).toEqual({
-      kind: "api_key",
-      header: "x-api-key",
-    });
-    expect(direct_llm_catalog_entry("ollama")?.auth).toEqual({ kind: "none" });
-  });
-
-  it("keeps every LLM catalog route reachable from its direct entry", () => {
-    for (const kind of LlmProviderKindSchema.options) {
-      const entry = direct_llm_catalog_entry(kind);
-      if (entry === null) {
-        continue;
-      }
-      const catalog = LLM_ROUTE_CATALOG[kind];
-      for (const route of [...catalog.completion_routes, catalog.models_route]) {
-        expect(entry.routes).toContain(route);
-      }
-    }
   });
 
   it("resolves a catalog route into an absolute vendor URL", () => {

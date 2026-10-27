@@ -63,7 +63,7 @@ import {
   type BrowserSecretVaultPort,
 } from "../storage/browser_secret_vault.js";
 import type { ProviderFetch } from "../transport/browser_fetch.js";
-import { DirectCloudTransport, DirectLlmTransport } from "../transport/direct_cloud_transport.js";
+import { DirectCloudTransport } from "../transport/direct_cloud_transport.js";
 import { LocalDirectTransport } from "../transport/local_direct_transport.js";
 import type { GatewayJobExecutorDeps } from "../transport/gateway_job_executor.js";
 import {
@@ -82,7 +82,6 @@ import { create_gallery_capability } from "./capabilities/gallery_capability.js"
 import { create_generation_capability } from "./capabilities/generation_capability.js";
 import { create_novelai_capability } from "./capabilities/novelai_capability.js";
 import { HostGenerationOriginSource } from "./capabilities/generation_context.js";
-import { create_llm_connections_capability } from "./capabilities/llm_connections_capability.js";
 import {
   VAULT_KEY_FIELD,
   adapter_profile_of,
@@ -149,8 +148,6 @@ const STORAGE_UNAVAILABLE =
 const HOST_UNAVAILABLE = "No usable SillyTavern + TavernHelper host pair was detected";
 const SETTINGS_HOST_UNAVAILABLE =
   "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair";
-const SECRET_VAULT_UNAVAILABLE =
-  "The selected credential storage backend cannot both store and reveal a credential";
 
 function default_estimate_storage(): Promise<{ usage?: number; quota?: number } | undefined> {
   return navigator.storage.estimate();
@@ -436,27 +433,6 @@ export async function compose_studio_capabilities(
           }),
         ),
     fallback.profiles,
-  );
-
-  const llm_connections = record(
-    "llm_connections",
-    repositories === null
-      ? unavailable(STORAGE_UNAVAILABLE)
-      : secrets === null || secret_resolver === null
-        ? unavailable(SECRET_VAULT_UNAVAILABLE)
-        : resolve_capability(() =>
-            create_llm_connections_capability({
-              repository: repositories.llm_connections,
-              namespace: namespace(),
-              secrets,
-              transport: new DirectLlmTransport({
-                secrets: secret_resolver,
-                ...(options.provider_fetch === undefined ? {} : { fetch: options.provider_fetch }),
-              }),
-              clock: now,
-            }),
-          ),
-    fallback.llm_connections,
   );
 
   const prompt_presets = record(
@@ -851,7 +827,6 @@ export async function compose_studio_capabilities(
       vocabulary,
       diagnostics,
       settings,
-      llm_connections,
       novelai,
     },
     resolutions,

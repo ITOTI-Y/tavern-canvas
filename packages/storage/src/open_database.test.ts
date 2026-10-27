@@ -103,10 +103,17 @@ describe("tavern_canvas_v3 schema", () => {
             store.createIndex(index_name, index_name);
           }
         }
-        database.createObjectStore("knowledge_entries", { keyPath: "record_key" });
+        for (const removed of [
+          "knowledge_entries",
+          "vocabularies",
+          "vocabulary_groups",
+          "legacy_preferences",
+        ]) {
+          database.createObjectStore(removed, { keyPath: "record_key" });
+        }
+        database.createObjectStore("migration_journal", { keyPath: "migration_id" });
       },
     });
-    expect([...v2_database.objectStoreNames]).not.toContain("llm_connections");
     await v2_database.put("character_profiles", {
       schema_version: 1,
       id: "11111111-1111-4111-8111-111111111111",
@@ -124,10 +131,9 @@ describe("tavern_canvas_v3 schema", () => {
     expect([...upgraded.objectStoreNames].sort()).toEqual([...store_names].sort());
     await expect(upgraded.count("novelai_vibe_encodings")).resolves.toBe(0);
     await expect(upgraded.count("provider_input_assets")).resolves.toBe(0);
-    expect([...upgraded.transaction("llm_connections").store.indexNames].sort()).toEqual(
-      [...STORE_DEFINITIONS.llm_connections.indexes].sort(),
+    expect([...upgraded.transaction("prompt_tag_presets").store.indexNames].sort()).toEqual(
+      [...STORE_DEFINITIONS.prompt_tag_presets.indexes].sort(),
     );
-    await expect(upgraded.count("llm_connections")).resolves.toBe(0);
     await expect(
       upgraded.get("character_profiles", "primary:11111111-1111-4111-8111-111111111111"),
     ).resolves.toMatchObject({ payload: { survived: true } });

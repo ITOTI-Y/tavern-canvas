@@ -34,9 +34,6 @@ const SKIPPED_DIRECTORY_NAMES = new Set([
   "test-results",
 ]);
 const ALLOWED_FIXTURE_PATHS = ["tests/fixtures/user_content/"];
-// Vendored tokenizer data pinned by SOURCE.json checksums; never hand-edit it. Its vocabulary spans
-// the full Unicode range, which the first-party-emoji rule matches.
-const ALLOWED_VENDORED_DATA_PATHS = ["apps/extension/public/tokenizers/novelai/"];
 const SOURCE_RULES: readonly SourceRule[] = [
   {
     rule_id: "remote-script",
@@ -70,7 +67,7 @@ function normalize_path(path: string): string {
 
 function is_allowed_fixture(file_path: string, repository_root: string): boolean {
   const relative_path = normalize_path(relative(repository_root, file_path));
-  return [...ALLOWED_FIXTURE_PATHS, ...ALLOWED_VENDORED_DATA_PATHS].some(
+  return ALLOWED_FIXTURE_PATHS.some(
     (allowed_path) =>
       relative_path.startsWith(allowed_path) || relative_path.includes(`/${allowed_path}`),
   );

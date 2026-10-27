@@ -2,9 +2,6 @@ import type {
   CapabilityMatrix,
   GenerationState,
   ImageGenerationRequest,
-  LlmConnectionDraft,
-  LlmConnectionProfile,
-  LlmConnectionTestResult,
   NovelAiAccountStatus,
   NovelAiCostEstimate,
   NovelAiRequest,
@@ -104,21 +101,6 @@ export interface ProfilesCapability {
 }
 
 // A credential is never part of a save payload; `set_credential` hands the plaintext straight to the credential backend.
-
-export type LlmConnectionsDomainEvent =
-  | { readonly type: "connection_upserted"; readonly connection: LlmConnectionProfile }
-  | { readonly type: "connection_removed"; readonly connection_id: Uuid };
-
-export interface LlmConnectionsCapability {
-  load(): Promise<readonly LlmConnectionProfile[]>;
-  subscribe(handler: (event: LlmConnectionsDomainEvent) => void): Unsubscribe;
-  save(draft: LlmConnectionDraft): Promise<LlmConnectionProfile>;
-  remove(connection_id: Uuid): Promise<void>;
-  /** Hands a plaintext credential to the selected backend; resolves with the reference-only view. */
-  set_credential(connection_id: Uuid, plaintext_value: string): Promise<LlmConnectionProfile>;
-  clear_credential(connection_id: Uuid): Promise<LlmConnectionProfile>;
-  test_connection(connection_id: Uuid): Promise<LlmConnectionTestResult>;
-}
 
 export interface NovelAiCapability {
   /** Tier, expiry and Anlas balance of the account behind the active NovelAI profile. */
@@ -380,7 +362,6 @@ export interface SettingsCapability {
 export interface StudioCapabilities {
   readonly generation: GenerationCapability;
   readonly profiles: ProfilesCapability;
-  readonly llm_connections: LlmConnectionsCapability;
   readonly novelai: NovelAiCapability;
   readonly prompt_presets: PromptPresetsCapability;
   readonly assets: AssetsCapability;

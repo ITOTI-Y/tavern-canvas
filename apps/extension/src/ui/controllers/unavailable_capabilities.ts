@@ -8,7 +8,6 @@ import type {
   DiagnosticsSnapshot,
   GalleryCapability,
   GenerationCapability,
-  LlmConnectionsCapability,
   NovelAiCapability,
   ProfilesCapability,
   PromptPresetsCapability,
@@ -105,16 +104,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     estimate_cost: unavailable_command,
   };
 
-  const llm_connections: LlmConnectionsCapability = {
-    load: () => Promise.resolve([]),
-    subscribe: no_subscription,
-    save: unavailable_command,
-    remove: unavailable_command,
-    set_credential: unavailable_command,
-    clear_credential: unavailable_command,
-    test_connection: unavailable_command,
-  };
-
   const prompt_presets: PromptPresetsCapability = {
     load: () => Promise.resolve([]),
     subscribe: no_subscription,
@@ -191,7 +180,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
   return {
     generation,
     profiles,
-    llm_connections,
     novelai,
     prompt_presets,
     assets,

@@ -139,7 +139,6 @@ describe("compose_studio_capabilities", () => {
         "diagnostics",
         "gallery",
         "generation",
-        "llm_connections",
         "novelai",
         "profiles",
         "prompt_presets",
@@ -160,7 +159,6 @@ describe("compose_studio_capabilities", () => {
       "gallery",
       "settings",
       "diagnostics",
-      "llm_connections",
       "novelai",
     ] as const) {
       expect(status_of(composition.resolutions, capability_id)).toBe("available");
@@ -182,7 +180,6 @@ describe("compose_studio_capabilities", () => {
       "gallery",
       "generation",
       "vocabulary",
-      "llm_connections",
       "novelai",
     ] as const) {
       const row = composition.resolutions.find((entry) => entry.capability_id === capability_id);
@@ -219,7 +216,7 @@ describe("compose_studio_capabilities", () => {
     });
 
     expect(composition.host).toBeNull();
-    expect(composition.resolutions).toHaveLength(10);
+    expect(composition.resolutions).toHaveLength(9);
     expect(status_of(composition.resolutions, "generation")).toBe("unavailable");
     // Diagnostics stays real so the shell can still explain why everything else is blocked.
     expect(status_of(composition.resolutions, "diagnostics")).toBe("available");
@@ -253,7 +250,7 @@ describe("compose_studio_capabilities", () => {
 
     const bundle = await composition.capabilities.diagnostics.export_support_bundle();
     expect(bundle.version).toBe("3.0.0-test");
-    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(10);
+    expect(bundle.redacted_settings.capability_resolutions).toHaveLength(9);
     expect(JSON.stringify(bundle.redacted_settings)).not.toContain("token_secret_id");
     await composition.dispose();
   });
@@ -323,56 +320,6 @@ describe("compose_studio_capabilities", () => {
       replacement_rules: [{ id: "r1", triggers: ["rain"], replacement: "storm" }],
       regex_rules: [{ id: "x1", pattern: "a", flags: "g", replacement: "b" }],
     });
-    await composition.dispose();
-  });
-
-  it("round-trips an LLM connection through the version 3 llm_connections store", async () => {
-    const composition = await compose();
-    const connection_id = "55555555-5555-4555-8555-555555555555";
-
-    const saved = await composition.capabilities.llm_connections.save({
-      id: connection_id,
-      display_name: "GPT",
-      provider_kind: "openai_compatible",
-      route: "/v1/chat/completions",
-      model_id: "gpt-5",
-      temperature: 0.7,
-      max_output_tokens: 2_048,
-      is_default: true,
-    });
-
-    expect(saved.credential_reference).toBeNull();
-    await expect(composition.capabilities.llm_connections.load()).resolves.toMatchObject([
-      { id: connection_id, display_name: "GPT", provider_kind: "openai_compatible" },
-    ]);
-    await composition.dispose();
-  });
-
-  it("stores an LLM credential by reference and never returns the plaintext", async () => {
-    const composition = await compose();
-    await composition.capabilities.settings.update({ credential_storage_mode: "host" });
-    const connection_id = "66666666-6666-4666-8666-666666666666";
-    await composition.capabilities.llm_connections.save({
-      id: connection_id,
-      display_name: "GPT",
-      provider_kind: "openai_compatible",
-      route: "/v1/chat/completions",
-      model_id: "gpt-5",
-      temperature: 0.7,
-      max_output_tokens: 2_048,
-      is_default: false,
-    });
-
-    const updated = await composition.capabilities.llm_connections.set_credential(
-      connection_id,
-      "sk-compose-canary",
-    );
-
-    expect(updated.credential_reference).toBe(
-      `tavern_canvas:primary:${connection_id}:llm_profile_api_key`,
-    );
-    const stored = await composition.capabilities.llm_connections.load();
-    expect(JSON.stringify(stored)).not.toContain("sk-compose-canary");
     await composition.dispose();
   });
 

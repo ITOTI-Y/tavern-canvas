@@ -50,9 +50,9 @@ describe("export_archive", () => {
     await repositories.image_records.create(NAMESPACE, image_record(IDS.first, first_sha256));
     await repositories.image_records.create(NAMESPACE, image_record(IDS.second, second_sha256));
     await repositories.image_records.create(NAMESPACE, image_record(IDS.third, second_sha256));
-    await repositories.legacy_preferences.create(
+    await repositories.outfit_profiles.create(
       NAMESPACE,
-      business_record(IDS.fourth, { payload: { theme_id: "夜间" } }),
+      business_record(IDS.fourth, { payload: { description: "夜间" } }),
     );
 
     const blob = await export_archive({
@@ -77,11 +77,8 @@ describe("export_archive", () => {
       "records/outfit_profiles.jsonl",
       "records/lora_profiles.jsonl",
       "records/prompt_tag_presets.jsonl",
-      "records/vocabularies.jsonl",
-      "records/vocabulary_groups.jsonl",
       "records/image_records.jsonl",
       "records/generation_jobs.jsonl",
-      "records/legacy_preferences.jsonl",
       `assets/${sorted_first}.png`,
       `assets/${sorted_second}.png`,
       "manifest.json",
@@ -110,17 +107,14 @@ describe("export_archive", () => {
     expect(manifest.schema_version).toBe(1);
     expect(manifest.record_counts.provider_profiles).toBe(2);
     expect(manifest.record_counts.image_records).toBe(3);
-    expect(manifest.record_counts.legacy_preferences).toBe(1);
+    expect(manifest.record_counts.outfit_profiles).toBe(1);
     expect(manifest.asset_count).toBe(2);
 
-    const legacy_preferences_text = await read_entry_text(
-      entries,
-      "records/legacy_preferences.jsonl",
-    );
-    const legacy_preferences_payload = (
-      JSON.parse(legacy_preferences_text.trim()) as { payload: { theme_id: string } }
+    const outfit_profiles_text = await read_entry_text(entries, "records/outfit_profiles.jsonl");
+    const outfit_payload = (
+      JSON.parse(outfit_profiles_text.trim()) as { payload: { description: string } }
     ).payload;
-    expect(legacy_preferences_payload.theme_id).toBe("夜间");
+    expect(outfit_payload.description).toBe("夜间");
     expect(manifest.excluded_secret_categories).toEqual(
       expect.arrayContaining(["gateway_token", "provider_credentials"]),
     );
@@ -164,11 +158,8 @@ describe("export_archive", () => {
         "records/outfit_profiles.jsonl",
         "records/lora_profiles.jsonl",
         "records/prompt_tag_presets.jsonl",
-        "records/vocabularies.jsonl",
-        "records/vocabulary_groups.jsonl",
         "records/image_records.jsonl",
         "records/generation_jobs.jsonl",
-        "records/legacy_preferences.jsonl",
       ].sort(),
     );
 

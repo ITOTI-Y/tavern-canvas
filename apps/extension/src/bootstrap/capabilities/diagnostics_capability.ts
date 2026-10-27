@@ -1,6 +1,5 @@
 import type { CapabilityMatrix, TavernCanvasSettings } from "@tavern-canvas/contracts";
 import type { GenerationJobSnapshot, ImageJobQueue } from "@tavern-canvas/core";
-import type { StorageEstimate } from "@tavern-canvas/storage";
 
 import type {
   ConnectionTestResult,
@@ -55,6 +54,11 @@ export class TaskTimeline {
       });
     });
   }
+}
+
+export interface StorageEstimate {
+  readonly usage?: number;
+  readonly quota?: number;
 }
 
 export interface DiagnosticsCapabilityDeps {

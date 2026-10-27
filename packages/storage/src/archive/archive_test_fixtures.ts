@@ -8,7 +8,6 @@ import {
   type ImageBlob,
   type ImageRecord,
   type NamespacedRecord,
-  type VocabularyGroup,
 } from "../database_schema.js";
 import type { GalleryImageRecord } from "../images/image_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
@@ -91,14 +90,6 @@ export function gallery_image_record(
     media_type: "image/png",
     quarantined: false,
   };
-}
-
-export function vocabulary_group_record(
-  id: string,
-  vocabulary_id: string,
-  namespace = NAMESPACE,
-): VocabularyGroup {
-  return business_record(id, { vocabulary_id }, namespace);
 }
 
 export function job_record(

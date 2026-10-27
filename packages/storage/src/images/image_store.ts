@@ -276,21 +276,3 @@ export async function read_image_bytes(
   }
   return outcome.bytes;
 }
-
-export async function touch_image_record(
-  database: IDBPDatabase<DBSchema>,
-  namespace: string,
-  id: string,
-  accessed_at: string,
-): Promise<GalleryImageRecord> {
-  const records = new GalleryImageRecordRepository(database);
-  return with_transaction(database, ["image_records"], async (transaction) => {
-    const existing = await records.get(namespace, id, transaction);
-    if (existing === null) {
-      throw new RepositoryNotFoundError("image_records", `${namespace}:${id}`);
-    }
-    const touched: GalleryImageRecord = { ...existing, last_accessed_at: accessed_at };
-    await records.update(namespace, touched, transaction);
-    return touched;
-  });
-}

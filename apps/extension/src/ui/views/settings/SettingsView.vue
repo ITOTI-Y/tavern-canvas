@@ -12,7 +12,6 @@ import CredentialStorageSettings from "./CredentialStorageSettings.vue";
 import DataSettings from "./DataSettings.vue";
 import GatewaySettings from "./GatewaySettings.vue";
 import IllustrationSettings from "./IllustrationSettings.vue";
-import LlmConnections from "./LlmConnections.vue";
 import NovelAiSettings from "./NovelAiSettings.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
 import styles from "./settings.module.css";
@@ -169,11 +168,6 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
           :controller="controller"
         />
         <template v-else-if="section === 'connections'">
-          <LlmConnections
-            :connections="state.llm_connections.connections"
-            :loading="state.loading.has('llm_connections')"
-            :controller="controller"
-          />
           <GatewaySettings
             :settings="state.settings.settings"
             :connection-test-command="state.diagnostics.connection_test_command"

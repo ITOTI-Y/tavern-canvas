@@ -84,7 +84,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       active_profile_id: null,
       jobs: [],
     },
-    llm_connections: { connections: [], selected_connection_id: null },
     prompt: {
       presets: [],
       selected_preset_id: null,

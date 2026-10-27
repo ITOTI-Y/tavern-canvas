@@ -21,7 +21,6 @@ import {
   make_asset_bytes,
   open_test_database,
   reset_test_database,
-  vocabulary_group_record,
 } from "./archive_test_fixtures.js";
 import {
   duplicate_first_central_directory_entry,
@@ -42,7 +41,6 @@ interface SeededArchive {
   readonly blob: Blob;
   readonly sha256: string;
   readonly image_id: string;
-  readonly vocabulary_id: string;
 }
 
 async function seed_and_export(database: IDBPDatabase<DBSchema>): Promise<SeededArchive> {
@@ -56,16 +54,7 @@ async function seed_and_export(database: IDBPDatabase<DBSchema>): Promise<Seeded
     NAMESPACE,
     business_record(IDS.fifth, { provider_id: "sd_webui" }),
   );
-  await repositories.vocabularies.create(NAMESPACE, business_record(IDS.second, {}));
-  await repositories.vocabulary_groups.create(
-    NAMESPACE,
-    vocabulary_group_record(IDS.third, IDS.second),
-  );
   await repositories.generation_jobs.create(NAMESPACE, job_record(IDS.fourth, [IDS.first]));
-  await repositories.legacy_preferences.create(
-    NAMESPACE,
-    business_record(IDS.fifth, { payload: { theme_id: "夜间" } }, NAMESPACE),
-  );
 
   const blob = await export_archive({
     database,
@@ -73,7 +62,7 @@ async function seed_and_export(database: IDBPDatabase<DBSchema>): Promise<Seeded
     extension_version: "3.0.0-alpha.1",
   });
 
-  return { blob, sha256: sha256_hex, image_id: IDS.first, vocabulary_id: IDS.second };
+  return { blob, sha256: sha256_hex, image_id: IDS.first };
 }
 
 async function read_json_entry<T>(blob: Blob, filename: string): Promise<T> {
@@ -122,12 +111,8 @@ describe("import_archive", () => {
     ]);
     const image_records = await repositories.image_records.list(OTHER);
     expect(image_records.map((record) => record.sha256)).toEqual([seeded.sha256]);
-    const vocabulary_groups = await repositories.vocabulary_groups.list(OTHER);
-    expect(vocabulary_groups[0]?.vocabulary_id).toBe(seeded.vocabulary_id);
     const jobs = await repositories.generation_jobs.list(OTHER);
     expect(jobs[0]?.image_ids).toEqual([seeded.image_id]);
-    const legacy_preferences = await repositories.legacy_preferences.list(OTHER);
-    expect(legacy_preferences[0]?.payload).toEqual({ theme_id: "夜间" });
 
     expect((await repositories.image_blobs.get(seeded.sha256))?.ref_count).toBe(2);
     expect(await repositories.provider_profiles.list(NAMESPACE)).toHaveLength(1);
@@ -361,22 +346,5 @@ describe("import_archive", () => {
     expect(staged_blob?.blob).toBeInstanceOf(Blob);
     expect((staged_blob?.blob as Blob).type).toBe("image/png");
     expect(result.asset_count).toBe(1);
-  });
-
-  it("rejects a vocabulary_groups entry referencing an unknown vocabulary", async () => {
-    const database = await open_test_database();
-    const repositories = create_business_repositories(database);
-    await repositories.vocabulary_groups.create(
-      NAMESPACE,
-      vocabulary_group_record(IDS.third, IDS.second),
-    );
-    const blob = await export_archive({
-      database,
-      namespace: NAMESPACE,
-      extension_version: "3.0.0-alpha.1",
-    });
-
-    const error = await expect_import_error(database, blob);
-    expect(error.reason).toBe("reference_mismatch");
   });
 });

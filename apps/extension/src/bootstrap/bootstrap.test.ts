@@ -184,7 +184,7 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("ready");
-    expect(handle.resolutions).toHaveLength(10);
+    expect(handle.resolutions).toHaveLength(9);
     expect(handle.resolutions.some((entry) => entry.status === "unavailable")).toBe(true);
     expect(handle.resolutions.every((entry) => entry.capability_id.length > 0)).toBe(true);
     expect(
@@ -211,7 +211,7 @@ describe("bootstrap_tavern_canvas", () => {
     });
 
     expect(handle.state).toBe("blocked");
-    expect(handle.resolutions).toHaveLength(10);
+    expect(handle.resolutions).toHaveLength(9);
     await handle.dispose();
   });
 });

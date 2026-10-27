@@ -1,6 +1,5 @@
 import {
   DirectRouteRejectedError,
-  direct_llm_catalog_entry,
   resolve_direct_url,
   type DirectRouteCatalogEntry,
 } from "@tavern-canvas/contracts";
@@ -15,10 +14,6 @@ import {
 } from "@tavern-canvas/providers";
 
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
-import type {
-  LlmTransportOperation,
-  LlmTransportPort,
-} from "../modules/llm/llm_connection_service.js";
 import { execute_bounded_fetch, type ProviderFetch } from "./browser_fetch.js";
 import {
   ProviderTransportBoundaryError,
@@ -101,56 +96,6 @@ export class DirectCloudTransport implements ProviderTransport {
       { method: "GET", signal: validated.signal },
       validated.max_bytes,
     );
-  }
-}
-
-export interface DirectLlmTransportOptions {
-  readonly secrets: SecretResolverPort;
-  readonly fetch?: ProviderFetch;
-}
-
-export class DirectLlmTransport implements LlmTransportPort {
-  readonly #secrets: SecretResolverPort;
-  readonly #fetch: ProviderFetch;
-
-  constructor(options: DirectLlmTransportOptions) {
-    this.#secrets = options.secrets;
-    this.#fetch = options.fetch ?? globalThis.fetch.bind(globalThis);
-  }
-
-  async execute(
-    operation: LlmTransportOperation,
-  ): Promise<{ readonly status: number; readonly body: Uint8Array }> {
-    const entry = direct_llm_catalog_entry(operation.provider_kind);
-    if (entry === null) {
-      throw new ProviderTransportBoundaryError(
-        "configuration",
-        "This LLM dialect has no direct route catalog entry",
-      );
-    }
-    const url = resolve_catalog_url(entry, operation.route);
-    const headers = await build_headers(
-      entry,
-      operation.credential_reference,
-      this.#secrets,
-      operation.body === undefined
-        ? { accept: "application/json" }
-        : { "content-type": "application/json", accept: "application/json" },
-    );
-    const response = await without_cause_chain(
-      execute_bounded_fetch(
-        this.#fetch,
-        url,
-        {
-          method: operation.method,
-          ...(operation.body === undefined ? {} : { body: new Uint8Array(operation.body).buffer }),
-          headers,
-          signal: operation.signal,
-        },
-        operation.max_response_bytes,
-      ),
-    );
-    return { status: response.status, body: response.body };
   }
 }
 

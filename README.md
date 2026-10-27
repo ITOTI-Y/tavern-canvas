@@ -260,7 +260,7 @@ To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
 ## Third party components
 
-Bundled dependencies, fonts, tokenizer assets, and vocabulary data sources are listed with their
+Bundled dependencies, fonts, and vocabulary data sources are listed with their
 licenses in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License

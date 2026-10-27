@@ -89,11 +89,7 @@ const status = {
   unknown: "未知",
 };
 
-const provider = {
-  credentials: {
-    not_stored_locally: "Token 保存在当前选择的密钥存储中，不会出现在Inkwell界面或导出文件里。",
-  },
-};
+const provider = {};
 
 const prompt = {
   preset_browser: {
@@ -468,7 +464,6 @@ const settings = {
   sections: {
     credential_storage: "密钥存储",
     provider_profiles: "Provider 配置",
-    llm_connections: "文本模型连接",
     gateway: "Gateway",
     appearance: "外观",
     data: "数据",
@@ -504,7 +499,7 @@ const settings = {
   credential_storage: {
     mode_label: "存储后端",
     mode_hint:
-      "应用于 Provider、文本模型和 Gateway 密钥。本机加密存储无需口令，在当前浏览器内加密保存；切换存储方式不会迁移已有密钥，需要重新填写。",
+      "应用于图像服务、分析 API 和 Gateway 的密钥。本机加密存储无需口令，在当前浏览器内加密保存；切换存储方式不会迁移已有密钥，需要重新填写。",
     modes: {
       browser_device: "本机加密存储",
       host: "SillyTavern 密钥库",
@@ -533,42 +528,6 @@ const settings = {
     unlock_required: "当前选择的密钥存储不可用或尚未解锁。",
     unavailable: "当前环境不支持浏览器加密存储。",
     error: "无法读取浏览器加密库。",
-  },
-  llm_connections: {
-    section_description:
-      "文本模型连接为助手和提示词构建提供语言模型能力。API 密钥使用当前选择的密钥存储。",
-    empty_description: "添加一个文本模型连接，助手和提示词构建才能调用语言模型。",
-    add_action: "添加文本模型连接",
-    dialog_add_title: "添加文本模型连接",
-    dialog_edit_title: "编辑文本模型连接",
-    dialog_description: "带 * 的字段为必填项。API 密钥需单独设置。",
-    provider_kind_label: "接口类型",
-    provider_kinds: {
-      openai_compatible: "OpenAI 兼容",
-      anthropic: "Anthropic",
-      google_generative: "Google Generative AI",
-      ollama: "Ollama",
-    },
-    route_label: "请求路径",
-    route_hint: "只能从该接口类型支持的路径中选择，地址由宿主提供。",
-    model_label: "模型",
-    model_hint: "该连接请求的模型标识，例如 gpt-4o-mini。",
-    temperature_label: "温度",
-    temperature_hint: "数值越低回复越稳定，越高变化越多。",
-    max_output_tokens_label: "最大输出 token 数",
-    default_badge: "默认",
-    set_default_action: "设为默认文本模型",
-    connection_test_action: "测试连接",
-    set_credential_action: "设置 API 密钥",
-    clear_credential_action: "移除 API 密钥",
-    credential_set: "已配置 API 密钥",
-    credential_unset: "尚未设置 API 密钥",
-    credential_dialog_title: "设置 API 密钥",
-    credential_dialog_description: "密钥将写入当前选择的密钥存储，Inkwell只保留引用。",
-    credential_label: "API 密钥",
-    remove_confirm_title: "移除 {name}？",
-    remove_confirm_description:
-      "此操作会将该文本模型从Inkwell中断开，已保存的 API 密钥仍留在对应的密钥存储中。",
   },
   gateway: {
     endpoint_label: "Gateway 地址",

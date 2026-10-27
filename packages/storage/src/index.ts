@@ -4,12 +4,8 @@ export {
   IMAGE_BLOB_SCHEMA,
   ImageBlobSchema,
   ImageRecordSchema,
-  LegacyPreferenceSchema,
-  LlmConnectionSchema,
   NovelAiVibeEncodingSchema,
   ProviderInputAssetSchema,
-  MIGRATION_JOURNAL_SCHEMA,
-  MigrationJournalSchema,
   NamespaceSchema,
   ProviderProfileSchema,
   RECORD_SCHEMAS,
@@ -39,12 +35,8 @@ export type {
   JsonValue,
   LoraProfile,
   PromptTagPreset,
-  LegacyPreference,
-  LlmConnection,
   NovelAiVibeEncoding,
   ProviderInputAsset,
-  MigrationJournal,
-  MigrationJournalRecord,
   NamespacedRecord,
   NamespacedStoreName,
   Namespace,
@@ -56,8 +48,6 @@ export type {
   Sha256,
   StoreName,
   Uuid,
-  Vocabulary,
-  VocabularyGroup,
   VocabularyPackage,
   VocabularyShard,
 } from "./database_schema.js";
@@ -86,18 +76,13 @@ export {
   ImageRecordRepository,
   LoraProfileRepository,
   PromptTagPresetRepository,
-  LegacyPreferenceRepository,
-  LlmConnectionRepository,
   NovelAiVibeEncodingRepository,
   ProviderInputAssetRepository,
-  MigrationJournalRepository,
   NovelAiVibeRepository,
   PromptPresetRepository,
   ProviderProfileRepository,
   RegexRuleRepository,
-  VocabularyGroupRepository,
   VocabularyPackageRepository,
-  VocabularyRepository,
   VocabularyShardRepository,
 } from "./repositories/business_repositories.js";
 export type {
@@ -140,28 +125,12 @@ export {
   read_image_blob,
   read_image_bytes,
   release_image_blob,
-  touch_image_record,
 } from "./images/image_store.js";
 export type {
   PutImageRecordInput,
   PutImageRecordMetadata,
   StoredImageBlob,
 } from "./images/image_store.js";
-
-export { attach_image, detach_image } from "./images/image_references.js";
-export type {
-  AttachImageInput,
-  AttachImageResult,
-  DetachImageInput,
-  DetachImageResult,
-} from "./images/image_references.js";
-
-export { run_lru_eviction } from "./images/lru_eviction.js";
-export type {
-  LruEvictionConfig,
-  LruEvictionResult,
-  StorageEstimate,
-} from "./images/lru_eviction.js";
 
 export {
   ASSET_DIRECTORY,

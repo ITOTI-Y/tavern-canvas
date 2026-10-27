@@ -90,12 +90,7 @@ const status = {
   unknown: "Unknown",
 };
 
-const provider = {
-  credentials: {
-    not_stored_locally:
-      "The token is kept in the selected credential storage and never appears in Inkwell UI or exports.",
-  },
-};
+const provider = {};
 
 const prompt = {
   preset_browser: {
@@ -484,7 +479,6 @@ const settings = {
   sections: {
     credential_storage: "Credential storage",
     provider_profiles: "Provider profiles",
-    llm_connections: "Text model connections",
     gateway: "Gateway",
     appearance: "Appearance",
     data: "Data",
@@ -522,7 +516,7 @@ const settings = {
   credential_storage: {
     mode_label: "Storage backend",
     mode_hint:
-      "Applies to Provider, text-model, and Gateway credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
+      "Applies to image provider, analysis API, and Gateway credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
     modes: {
       browser_device: "This device",
       host: "SillyTavern vault",
@@ -553,44 +547,6 @@ const settings = {
     unlock_required: "The selected credential storage is unavailable or locked.",
     unavailable: "Encrypted browser storage is unavailable in this environment.",
     error: "The encrypted browser vault could not be read.",
-  },
-  llm_connections: {
-    section_description:
-      "Text model connections power the assistant and prompt building. API keys use the selected credential storage backend.",
-    empty_description:
-      "Add a text model connection to let the assistant and prompt builder call a language model.",
-    add_action: "Add text model connection",
-    dialog_add_title: "Add text model connection",
-    dialog_edit_title: "Edit text model connection",
-    dialog_description: "Fields marked * are required. The API key is set separately.",
-    provider_kind_label: "API dialect",
-    provider_kinds: {
-      openai_compatible: "OpenAI compatible",
-      anthropic: "Anthropic",
-      google_generative: "Google Generative AI",
-      ollama: "Ollama",
-    },
-    route_label: "Request path",
-    route_hint: "Chosen from the paths this dialect supports. The host supplies the address.",
-    model_label: "Model",
-    model_hint: "The model identifier this connection requests, such as gpt-4o-mini.",
-    temperature_label: "Temperature",
-    temperature_hint: "Lower values give steadier replies, higher values give more variety.",
-    max_output_tokens_label: "Maximum output tokens",
-    default_badge: "Default",
-    set_default_action: "Use as the default text model",
-    connection_test_action: "Test connection",
-    set_credential_action: "Set API key",
-    clear_credential_action: "Remove API key",
-    credential_set: "API key configured",
-    credential_unset: "No API key stored",
-    credential_dialog_title: "Set API key",
-    credential_dialog_description:
-      "The key is written to the selected credential storage backend. Inkwell keeps only its reference.",
-    credential_label: "API key",
-    remove_confirm_title: "Remove {name}?",
-    remove_confirm_description:
-      "This disconnects the text model from Inkwell. The stored API key remains in its credential backend.",
   },
   gateway: {
     endpoint_label: "Gateway endpoint",

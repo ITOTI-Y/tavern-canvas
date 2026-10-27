@@ -22,14 +22,6 @@ These are the third party libraries whose code is present in the shipped `dist/`
 | `@zip.js/zip.js`        | 2.8.34  | BSD-3-Clause |
 | `@msgpack/msgpack`      | 3.1.3   | ISC          |
 
-### Declared dependencies absent from this release's bundle
-
-`apps/extension/package.json` also declares `marked` 18.0.9 (MIT), `dompurify` 3.4.13
-(MPL-2.0 OR Apache-2.0), and `@huggingface/transformers` 4.2.0 (Apache-2.0). All three are reached
-only through dynamic imports from modules that the 3.0.0 entry point does not pull in, and none of
-their code appears in the built `dist/` tree. They are listed here because they are declared
-dependencies a source build resolves, not because they ship in the archive.
-
 ## Gateway service dependencies
 
 The Gateway in `apps/gateway` is not part of the extension release archive. It is published in this
@@ -152,34 +144,6 @@ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 ```
-
-## NovelAI prompt tokenizer
-
-`dist/tokenizers/novelai/` contains tokenizer data files used for NovelAI prompt token budget
-counting. NovelAI has never published tokenizer weights for local use, so the legacy v2.8.1 code
-approximated the 512 token budget with a public T5 tokenizer. This release pins the same tokenizer
-and loads it from these bundled local assets rather than fetching it at runtime.
-
-| Field     | Value                                      |
-| --------- | ------------------------------------------ |
-| Model     | `Xenova/t5-small`                          |
-| Source    | https://huggingface.co/Xenova/t5-small     |
-| Revision  | `4e0d91096b13cb313b43a14f35fdbb311a6d9728` |
-| Retrieved | 2026-08-07                                 |
-| Contents  | `tokenizer.json`, `tokenizer_config.json`  |
-
-Model weights are deliberately excluded; only the tokenizer vocabulary and configuration ship.
-
-Recorded checksums:
-
-| File                    | Bytes     | SHA-256                                                            |
-| ----------------------- | --------- | ------------------------------------------------------------------ |
-| `tokenizer.json`        | 2,422,095 | `5f0ed8ab5b8cfa9812bb73752f1d80c292e52bcf5a87a144dc9ab2d251056cbb` |
-| `tokenizer_config.json` | 2,324     | `d1e7146101aa96282057f374aa9c3b260fba2109e5990edb1775d6efc70ffa3c` |
-
-The provenance record captured at download time, `apps/extension/public/tokenizers/novelai/SOURCE.json`,
-does not carry a license declaration for these files. Consult the upstream model card before reusing
-them outside this project.
 
 ## Vocabulary data
 

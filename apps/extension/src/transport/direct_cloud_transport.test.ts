@@ -7,7 +7,7 @@ import {
   type SecretResolverPort,
 } from "../host/sillytavern_secret_resolver.js";
 import type { ProviderFetch } from "./browser_fetch.js";
-import { DirectCloudTransport, DirectLlmTransport } from "./direct_cloud_transport.js";
+import { DirectCloudTransport } from "./direct_cloud_transport.js";
 import { ProviderTransportBoundaryError } from "./provider_operations.js";
 
 const REFERENCE = "tavern_canvas:primary:11111111-1111-4111-8111-111111111111:novelai_token";
@@ -239,24 +239,6 @@ describe("DirectCloudTransport: request posture", () => {
     ]);
   });
 
-  it("carries the vendor's required constants when the catalog names them", async () => {
-    const fetch_ = recording_fetch();
-    await new DirectLlmTransport({ secrets: secrets(), fetch: fetch_ }).execute({
-      provider_kind: "anthropic",
-      route: "/v1/messages",
-      method: "POST",
-      credential_reference: REFERENCE,
-      body: new TextEncoder().encode("{}"),
-      max_response_bytes: 10_000,
-      signal: new AbortController().signal,
-    });
-
-    const headers = headers_of(fetch_.calls[0]?.init ?? {});
-    expect(headers["anthropic-version"]).toBe("2023-06-01");
-    expect(headers["anthropic-dangerous-direct-browser-access"]).toBe("true");
-    expect(headers["x-api-key"]).toBe(PLAINTEXT);
-  });
-
   it("omits ambient cookies, refuses redirects and bypasses the cache", async () => {
     const fetch_ = recording_fetch();
     await image_transport("openai_image", { fetch: fetch_ }).execute(operation());
@@ -352,60 +334,6 @@ describe("DirectCloudTransport: remote assets", () => {
         url: "https://evil.example/img.png",
         allowed_origins: ["https://oaidalleapiprodscus.blob.core.windows.net"],
         max_bytes: 10_000,
-        signal: new AbortController().signal,
-      }),
-    ).rejects.toBeInstanceOf(ProviderTransportBoundaryError);
-    expect(fetch_.calls).toHaveLength(0);
-  });
-});
-
-describe("DirectLlmTransport", () => {
-  it("routes a catalog completion call to the catalog origin with a Bearer credential", async () => {
-    const fetch_ = recording_fetch();
-
-    await new DirectLlmTransport({ secrets: secrets(), fetch: fetch_ }).execute({
-      provider_kind: "openai_compatible",
-      route: "/v1/chat/completions",
-      method: "POST",
-      credential_reference: REFERENCE,
-      body: new TextEncoder().encode("{}"),
-      max_response_bytes: 10_000,
-      signal: new AbortController().signal,
-    });
-
-    expect(fetch_.calls[0]?.url).toBe("https://api.openai.com/v1/chat/completions");
-    expect(headers_of(fetch_.calls[0]?.init ?? {})).toMatchObject({
-      authorization: `Bearer ${PLAINTEXT}`,
-      "content-type": "application/json",
-    });
-  });
-
-  it("sends no auth header for a dialect the catalog marks credential-free", async () => {
-    const fetch_ = recording_fetch();
-
-    await new DirectLlmTransport({ secrets: secrets(), fetch: fetch_ }).execute({
-      provider_kind: "ollama",
-      route: "/api/tags",
-      method: "GET",
-      credential_reference: null,
-      max_response_bytes: 10_000,
-      signal: new AbortController().signal,
-    });
-
-    expect(headers_of(fetch_.calls[0]?.init ?? {}).authorization).toBeUndefined();
-    expect(fetch_.calls[0]?.url).toBe("http://127.0.0.1:11434/api/tags");
-  });
-
-  it("refuses a route outside the dialect's catalog", async () => {
-    const fetch_ = recording_fetch();
-
-    await expect(
-      new DirectLlmTransport({ secrets: secrets(), fetch: fetch_ }).execute({
-        provider_kind: "openai_compatible",
-        route: "/v1/messages",
-        method: "POST",
-        credential_reference: REFERENCE,
-        max_response_bytes: 10_000,
         signal: new AbortController().signal,
       }),
     ).rejects.toBeInstanceOf(ProviderTransportBoundaryError);

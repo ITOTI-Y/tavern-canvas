@@ -5,14 +5,12 @@ import { bytesToHex } from "@noble/hashes/utils.js";
 import { deleteDB } from "idb";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { DATABASE_NAME, type GenerationJob } from "../database_schema.js";
+import { DATABASE_NAME } from "../database_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
 import {
   ImageBlobRepository,
   ImageRecordRepository,
 } from "../repositories/business_repositories.js";
-import { with_transaction } from "../transaction.js";
-import { attach_image, detach_image } from "./image_references.js";
 import { type ImageRecordFields } from "./image_schema.js";
 import {
   delete_image_record,
@@ -21,7 +19,6 @@ import {
   ImageMediaTypeError,
   put_image,
   read_image_bytes,
-  touch_image_record,
   type PutImageRecordInput,
 } from "./image_store.js";
 
@@ -62,37 +59,6 @@ function put_input(overrides: Partial<PutImageRecordInput> = {}): PutImageRecord
     metadata: base_metadata(),
     ...overrides,
   };
-}
-
-async function seed_job(
-  database: Awaited<ReturnType<typeof open_database>>,
-): Promise<GenerationJob> {
-  const job: GenerationJob = {
-    schema_version: 1,
-    id: IDS.job,
-    namespace: NAMESPACE,
-    record_key: `${NAMESPACE}:${IDS.job}`,
-    created_at: NOW,
-    updated_at: NOW,
-    request_id: "44444444-4444-4444-8444-444444444444",
-    request_digest: "b".repeat(64),
-    generation_anchor: "a".repeat(64),
-    source_anchor: "c".repeat(64),
-    chat_id: "chat-1",
-    requested_swipe_id: 0,
-    provider_id: "sd_webui",
-    arguments: {
-      generation_anchor: "a".repeat(64),
-      scene_description: "A scene",
-    },
-    state: "completed",
-    error: null,
-    image_ids: [],
-  };
-  await with_transaction(database, ["generation_jobs"], async (transaction) => {
-    await transaction.objectStore("generation_jobs").add(job);
-  });
-  return job;
 }
 
 afterEach(async () => {
@@ -170,36 +136,6 @@ describe("image_store content addressing", () => {
     const second_deletion = await delete_image_record(database, NAMESPACE, IDS.second);
     expect(second_deletion.blob_deleted).toBe(true);
     expect(await blobs.get(first.sha256)).toBeNull();
-  });
-
-  it("attaches and detaches an image, updating the record, blob reference, and job in one transaction", async () => {
-    const database = await open_database();
-    await seed_job(database);
-
-    const attached = await attach_image(database, {
-      ...put_input(),
-      namespace: NAMESPACE,
-      job_id: IDS.job,
-    });
-    expect(attached.job.state).toBe("attached");
-    expect(attached.job.image_ids).toEqual([IDS.first]);
-
-    const blobs = new ImageBlobRepository(database);
-    expect((await blobs.get(attached.image_record.sha256))?.ref_count).toBe(1);
-
-    const detached = await detach_image(database, {
-      namespace: NAMESPACE,
-      id: IDS.first,
-      job_id: IDS.job,
-      updated_at: LATER,
-    });
-    expect(detached.blob_deleted).toBe(true);
-    expect(detached.job.state).toBe("orphaned");
-    expect(detached.job.image_ids).toEqual([]);
-    expect(await blobs.get(attached.image_record.sha256)).toBeNull();
-
-    const records = new GalleryImageRecordRepository(database);
-    expect(await records.get(NAMESPACE, IDS.first)).toBeNull();
   });
 
   it("quarantines matching records and reports a stable corruption error on hash mismatch", async () => {
@@ -351,13 +287,5 @@ describe("image_store content addressing", () => {
     expect(video.duration_ms).toBe(4_200);
     expect(video.poster_image_id).toBe(poster.id);
     expect(video.source_job_id).toBe(IDS.job);
-  });
-
-  it("touches last_accessed_at for LRU tracking", async () => {
-    const database = await open_database();
-    await put_image(database, NAMESPACE, put_input());
-
-    const touched = await touch_image_record(database, NAMESPACE, IDS.first, LATER);
-    expect(touched.last_accessed_at).toBe(LATER);
   });
 });

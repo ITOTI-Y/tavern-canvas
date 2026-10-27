@@ -83,8 +83,7 @@ export function collect_initial_assets(
   return { js_files: sort_files(js_files), css_files: sort_files(css_files) };
 }
 
-export type ForbiddenModuleId =
-  "tokenizer" | "gallery-detail" | "vocabulary-worker" | "non-default-locale";
+export type ForbiddenModuleId = "gallery-detail" | "vocabulary-worker" | "non-default-locale";
 
 interface ForbiddenModuleRule {
   readonly id: ForbiddenModuleId;
@@ -92,10 +91,6 @@ interface ForbiddenModuleRule {
 }
 
 const FORBIDDEN_MODULE_RULES: readonly ForbiddenModuleRule[] = [
-  {
-    id: "tokenizer",
-    pattern: /apps\/extension\/src\/modules\/novelai\/tokenizer\/|@huggingface\/transformers/u,
-  },
   // Detail surfaces only; ImageGrid, GalleryTile and BulkActionBar stay allowed.
   {
     id: "gallery-detail",

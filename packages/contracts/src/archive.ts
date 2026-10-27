@@ -13,11 +13,8 @@ export const ARCHIVE_RECORD_STORES = [
   "outfit_profiles",
   "lora_profiles",
   "prompt_tag_presets",
-  "vocabularies",
-  "vocabulary_groups",
   "image_records",
   "generation_jobs",
-  "legacy_preferences",
 ] as const;
 export type ArchiveRecordStore = (typeof ARCHIVE_RECORD_STORES)[number];
 export const ArchiveRecordStoreSchema = z.enum(ARCHIVE_RECORD_STORES);

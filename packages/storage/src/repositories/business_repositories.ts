@@ -14,16 +14,10 @@ import {
   LoraProfileSchema,
   type PromptTagPreset,
   PromptTagPresetSchema,
-  type LegacyPreference,
-  LegacyPreferenceSchema,
-  type LlmConnection,
-  LlmConnectionSchema,
   type NovelAiVibeEncoding,
   NovelAiVibeEncodingSchema,
   type ProviderInputAsset,
   ProviderInputAssetSchema,
-  type MigrationJournal,
-  MigrationJournalSchema,
   type NovelAiVibe,
   NovelAiVibeSchema,
   type PromptPreset,
@@ -32,14 +26,9 @@ import {
   ProviderProfileSchema,
   type RegexRule,
   RegexRuleSchema,
-  parse_json_value,
   Sha256Schema,
-  type Vocabulary,
-  VocabularyGroupSchema,
-  type VocabularyGroup,
   VocabularyPackageSchema,
   type VocabularyPackage,
-  VocabularySchema,
   VocabularyShardSchema,
   type VocabularyShard,
   type NamespacedRecord,
@@ -118,21 +107,6 @@ export class LoraProfileRepository extends IndexedDbRepository<"lora_profiles", 
   }
 }
 
-export class VocabularyRepository extends IndexedDbRepository<"vocabularies", Vocabulary> {
-  constructor(database: IDBPDatabase<DBSchema>) {
-    super(database, "vocabularies", VocabularySchema);
-  }
-}
-
-export class VocabularyGroupRepository extends IndexedDbRepository<
-  "vocabulary_groups",
-  VocabularyGroup
-> {
-  constructor(database: IDBPDatabase<DBSchema>) {
-    super(database, "vocabulary_groups", VocabularyGroupSchema);
-  }
-}
-
 export class VocabularyPackageRepository extends IndexedDbRepository<
   "vocabulary_packages",
   VocabularyPackage
@@ -156,23 +130,6 @@ export class VocabularyShardRepository extends IndexedDbRepository<
 export class ImageRecordRepository extends IndexedDbRepository<"image_records", ImageRecordUnion> {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "image_records", ImageRecordUnionSchema);
-  }
-}
-
-export class LegacyPreferenceRepository extends IndexedDbRepository<
-  "legacy_preferences",
-  LegacyPreference
-> {
-  constructor(database: IDBPDatabase<DBSchema>) {
-    super(database, "legacy_preferences", LegacyPreferenceSchema);
-  }
-}
-
-// Provider-secret rejection is enabled, so a plaintext key in `payload` fails the write; the vault
-// handle lives in `credential_reference`, which only accepts `tavern_canvas:`-prefixed references.
-export class LlmConnectionRepository extends IndexedDbRepository<"llm_connections", LlmConnection> {
-  constructor(database: IDBPDatabase<DBSchema>) {
-    super(database, "llm_connections", LlmConnectionSchema, true);
   }
 }
 
@@ -212,7 +169,7 @@ function is_constraint_error(error: unknown): boolean {
 
 async function run_read<T>(
   database: IDBPDatabase<DBSchema>,
-  store_name: "image_blobs" | "migration_journal",
+  store_name: "image_blobs",
   transaction: StorageTransaction | undefined,
   callback: (active_transaction: StorageTransaction) => Promise<T>,
 ): Promise<T> {
@@ -236,7 +193,7 @@ async function run_read<T>(
 
 async function run_write<T>(
   database: IDBPDatabase<DBSchema>,
-  store_name: "image_blobs" | "migration_journal",
+  store_name: "image_blobs",
   transaction: StorageTransaction | undefined,
   callback: (active_transaction: StorageWriteTransaction) => Promise<T>,
 ): Promise<T> {
@@ -365,138 +322,6 @@ export class ImageBlobRepository {
   }
 }
 
-export class MigrationJournalRepository {
-  constructor(private readonly database: IDBPDatabase<DBSchema>) {}
-
-  async get(
-    migration_id: string,
-    transaction?: StorageTransaction,
-  ): Promise<MigrationJournal | null> {
-    const key = this.key(migration_id);
-    return run_read(this.database, "migration_journal", transaction, async (active_transaction) => {
-      const raw = await active_transaction.objectStore("migration_journal").get(key);
-      if (raw === undefined) {
-        return null;
-      }
-      return this.validate(raw);
-    });
-  }
-
-  async list(transaction?: StorageTransaction): Promise<MigrationJournal[]> {
-    return run_read(this.database, "migration_journal", transaction, async (active_transaction) => {
-      const raw_records = await active_transaction.objectStore("migration_journal").getAll();
-      return raw_records
-        .map((raw) => this.validate(raw))
-        .sort((left, right) =>
-          left.migration_id < right.migration_id
-            ? -1
-            : left.migration_id > right.migration_id
-              ? 1
-              : 0,
-        );
-    });
-  }
-
-  async create(record: MigrationJournal, transaction?: StorageTransaction): Promise<void> {
-    const valid_record = this.prepare(record);
-    await run_write(this.database, "migration_journal", transaction, async (active_transaction) => {
-      try {
-        await active_transaction.objectStore("migration_journal").add(valid_record);
-      } catch (error) {
-        if (is_constraint_error(error)) {
-          throw new RepositoryDuplicateError("migration_journal", valid_record.migration_id);
-        }
-        throw error;
-      }
-    });
-  }
-
-  async update(record: MigrationJournal, transaction?: StorageTransaction): Promise<void> {
-    const valid_record = this.prepare(record);
-    await run_write(this.database, "migration_journal", transaction, async (active_transaction) => {
-      const store = active_transaction.objectStore("migration_journal");
-      if ((await store.get(valid_record.migration_id)) === undefined) {
-        throw new RepositoryNotFoundError("migration_journal", valid_record.migration_id);
-      }
-      await store.put(valid_record);
-    });
-  }
-
-  async put(record: MigrationJournal, transaction?: StorageTransaction): Promise<void> {
-    const valid_record = this.prepare(record);
-    await run_write(this.database, "migration_journal", transaction, async (active_transaction) => {
-      await active_transaction.objectStore("migration_journal").put(valid_record);
-    });
-  }
-
-  async delete(migration_id: string, transaction?: StorageTransaction): Promise<void> {
-    const key = this.key(migration_id);
-    await run_write(this.database, "migration_journal", transaction, async (active_transaction) => {
-      await active_transaction.objectStore("migration_journal").delete(key);
-    });
-  }
-
-  private key(migration_id: string): string {
-    const parsed = MigrationJournalSchema.shape.migration_id.safeParse(migration_id);
-    if (!parsed.success) {
-      throw new RepositoryValidationError(
-        "migration_id must be a nonempty bounded string",
-        parsed.error.issues,
-      );
-    }
-    return parsed.data;
-  }
-
-  private prepare(record: MigrationJournal): MigrationJournal {
-    const cloned = clone_boundary(record);
-    if (cloned.payload !== undefined) {
-      try {
-        cloned.payload = parse_json_value(cloned.payload);
-      } catch (error) {
-        throw new RepositoryValidationError(
-          error instanceof Error ? error.message : "Migration payload must be serializable JSON",
-        );
-      }
-    }
-    const parsed = MigrationJournalSchema.safeParse(cloned);
-    if (!parsed.success) {
-      throw new RepositoryValidationError(
-        "Migration journal failed schema validation",
-        parsed.error.issues,
-      );
-    }
-    return clone_boundary(parsed.data);
-  }
-
-  private validate(raw: unknown): MigrationJournal {
-    const cloned = clone_boundary(raw);
-    if (
-      typeof cloned === "object" &&
-      cloned !== null &&
-      "payload" in cloned &&
-      cloned.payload !== undefined
-    ) {
-      try {
-        parse_json_value(cloned.payload);
-      } catch (error) {
-        throw new RepositoryValidationError(
-          error instanceof Error
-            ? error.message
-            : "Stored migration payload must be serializable JSON",
-        );
-      }
-    }
-    const parsed = MigrationJournalSchema.safeParse(cloned);
-    if (!parsed.success) {
-      throw new RepositoryValidationError(
-        "Stored migration journal failed schema validation",
-        parsed.error.issues,
-      );
-    }
-    return clone_boundary(parsed.data);
-  }
-}
-
 export interface BusinessRepositories {
   provider_profiles: ProviderProfileRepository;
   prompt_presets: PromptPresetRepository;
@@ -507,16 +332,11 @@ export interface BusinessRepositories {
   regex_rules: RegexRuleRepository;
   lora_profiles: LoraProfileRepository;
   prompt_tag_presets: PromptTagPresetRepository;
-  vocabularies: VocabularyRepository;
-  vocabulary_groups: VocabularyGroupRepository;
   vocabulary_packages: VocabularyPackageRepository;
   vocabulary_shards: VocabularyShardRepository;
   image_records: ImageRecordRepository;
   image_blobs: ImageBlobRepository;
-  migration_journal: MigrationJournalRepository;
   generation_jobs: GenerationJobRepository;
-  legacy_preferences: LegacyPreferenceRepository;
-  llm_connections: LlmConnectionRepository;
   novelai_vibe_encodings: NovelAiVibeEncodingRepository;
   provider_input_assets: ProviderInputAssetRepository;
 }
@@ -534,16 +354,11 @@ export function create_business_repositories(
     regex_rules: new RegexRuleRepository(database),
     lora_profiles: new LoraProfileRepository(database),
     prompt_tag_presets: new PromptTagPresetRepository(database),
-    vocabularies: new VocabularyRepository(database),
-    vocabulary_groups: new VocabularyGroupRepository(database),
     vocabulary_packages: new VocabularyPackageRepository(database),
     vocabulary_shards: new VocabularyShardRepository(database),
     image_records: new ImageRecordRepository(database),
     image_blobs: new ImageBlobRepository(database),
-    migration_journal: new MigrationJournalRepository(database),
     generation_jobs: new GenerationJobRepository(database),
-    legacy_preferences: new LegacyPreferenceRepository(database),
-    llm_connections: new LlmConnectionRepository(database),
     novelai_vibe_encodings: new NovelAiVibeEncodingRepository(database),
     provider_input_assets: new ProviderInputAssetRepository(database),
   };

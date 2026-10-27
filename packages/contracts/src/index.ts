@@ -48,31 +48,11 @@ export type { AssetId, ImageId, JobId, RequestId, Uuid, VaultReference } from ".
 
 export {
   DIRECT_IMAGE_ROUTE_CATALOG,
-  DIRECT_LLM_ROUTE_CATALOG,
   DirectRouteRejectedError,
   direct_image_catalog_entry,
-  direct_llm_catalog_entry,
   resolve_direct_url,
 } from "./direct_catalog.js";
 export type { DirectAuthScheme, DirectRouteCatalogEntry } from "./direct_catalog.js";
-
-export {
-  LLM_CREDENTIAL_KIND,
-  LLM_ROUTE_CATALOG,
-  LlmConnectionDraftSchema,
-  LlmConnectionProfileSchema,
-  LlmProviderKindSchema,
-  derive_llm_credential_reference,
-  is_allowed_llm_route,
-  llm_completion_routes,
-} from "./llm_connection.js";
-export type {
-  LlmConnectionDraft,
-  LlmConnectionProfile,
-  LlmConnectionTestResult,
-  LlmProviderKind,
-  LlmRouteCatalogEntry,
-} from "./llm_connection.js";
 
 export {
   IllustrationSlotIdSchema,

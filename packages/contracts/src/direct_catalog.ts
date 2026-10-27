@@ -1,4 +1,3 @@
-import { LLM_ROUTE_CATALOG, type LlmProviderKind } from "./llm_connection.js";
 import type { ProviderId } from "./provider.js";
 
 // Browser-direct calls may only reach origins and paths listed in this file; no setting or
@@ -54,45 +53,6 @@ export const DIRECT_IMAGE_ROUTE_CATALOG: Readonly<
   },
 });
 
-function llm_routes(kind: LlmProviderKind): readonly `/${string}`[] {
-  const catalog = LLM_ROUTE_CATALOG[kind];
-  return Object.freeze([...catalog.completion_routes, catalog.models_route]);
-}
-
-// `openai_compatible` resolves to OpenAI itself: pointing it at an arbitrary server would be a
-// user-supplied origin. `ollama` is a loopback daemon and takes no credential.
-export const DIRECT_LLM_ROUTE_CATALOG: Readonly<
-  Record<LlmProviderKind, DirectRouteCatalogEntry | null>
-> = Object.freeze({
-  openai_compatible: {
-    origin: "https://api.openai.com",
-    routes: llm_routes("openai_compatible"),
-    auth: BEARER,
-    required_headers: NO_REQUIRED_HEADERS,
-  },
-  anthropic: {
-    origin: "https://api.anthropic.com",
-    routes: llm_routes("anthropic"),
-    auth: { kind: "api_key", header: "x-api-key" },
-    required_headers: Object.freeze({
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    }),
-  },
-  google_generative: {
-    origin: "https://generativelanguage.googleapis.com",
-    routes: llm_routes("google_generative"),
-    auth: BEARER,
-    required_headers: NO_REQUIRED_HEADERS,
-  },
-  ollama: {
-    origin: "http://127.0.0.1:11434",
-    routes: llm_routes("ollama"),
-    auth: { kind: "none" },
-    required_headers: NO_REQUIRED_HEADERS,
-  },
-});
-
 /** Carries no destination: echoing a rejected route would let attacker-supplied input into logs and error banners. */
 export class DirectRouteRejectedError extends Error {
   readonly code = "direct_route_rejected";
@@ -107,10 +67,6 @@ export function direct_image_catalog_entry(
   provider_id: ProviderId,
 ): DirectRouteCatalogEntry | null {
   return DIRECT_IMAGE_ROUTE_CATALOG[provider_id];
-}
-
-export function direct_llm_catalog_entry(kind: LlmProviderKind): DirectRouteCatalogEntry | null {
-  return DIRECT_LLM_ROUTE_CATALOG[kind];
 }
 
 /** Exact membership in `entry.routes`; prefixes, traversal, query strings and absolute URLs all fail. */

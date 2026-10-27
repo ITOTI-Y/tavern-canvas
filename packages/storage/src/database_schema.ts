@@ -2,7 +2,7 @@ import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 7 as const;
+export const DATABASE_VERSION = 8 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 export const STORE_DEFINITIONS = {
@@ -36,16 +36,6 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 1,
   },
-  vocabularies: {
-    key_path: "record_key",
-    indexes: ["namespace", "updated_at"],
-    since_version: 1,
-  },
-  vocabulary_groups: {
-    key_path: "record_key",
-    indexes: ["namespace", "vocabulary_id"],
-    since_version: 1,
-  },
   vocabulary_packages: {
     key_path: "record_key",
     indexes: ["namespace", "data_version", "state"],
@@ -70,21 +60,6 @@ export const STORE_DEFINITIONS = {
     key_path: "record_key",
     indexes: ["namespace", "request_id", "request_digest", "state", "updated_at"],
     since_version: 1,
-  },
-  migration_journal: {
-    key_path: "migration_id",
-    indexes: ["source_version", "state", "updated_at"],
-    since_version: 1,
-  },
-  legacy_preferences: {
-    key_path: "record_key",
-    indexes: ["namespace", "updated_at"],
-    since_version: 2,
-  },
-  llm_connections: {
-    key_path: "record_key",
-    indexes: ["namespace", "provider_kind", "updated_at"],
-    since_version: 3,
   },
   novelai_vibe_encodings: {
     key_path: "record_key",
@@ -114,10 +89,17 @@ export const STORE_DEFINITIONS = {
 } as const;
 
 /** Stores dropped from the schema; upgrades delete them from databases created before. */
-const REMOVED_STORES = ["knowledge_entries"] as const;
+const REMOVED_STORES = [
+  "knowledge_entries",
+  "vocabularies",
+  "vocabulary_groups",
+  "migration_journal",
+  "legacy_preferences",
+  "llm_connections",
+] as const;
 
 export type StoreName = keyof typeof STORE_DEFINITIONS;
-export type NamespacedStoreName = Exclude<StoreName, "image_blobs" | "migration_journal">;
+export type NamespacedStoreName = Exclude<StoreName, "image_blobs">;
 export type BusinessStoreName = Exclude<NamespacedStoreName, "generation_jobs">;
 
 export type JsonPrimitive = string | number | boolean | null;
@@ -199,14 +181,6 @@ export type PromptTagPreset = z.infer<typeof PromptTagPresetSchema>;
 export const RegexRuleSchema = namespaced_schema({});
 export type RegexRule = z.infer<typeof RegexRuleSchema>;
 
-export const VocabularySchema = namespaced_schema({});
-export type Vocabulary = z.infer<typeof VocabularySchema>;
-
-export const VocabularyGroupSchema = namespaced_schema({
-  vocabulary_id: UuidSchema,
-});
-export type VocabularyGroup = z.infer<typeof VocabularyGroupSchema>;
-
 export const VocabularyPackageSchema = namespaced_schema({
   data_version: data_version_schema,
   state: state_schema,
@@ -218,29 +192,6 @@ export const VocabularyShardSchema = namespaced_schema({
   kind: kind_schema,
 });
 export type VocabularyShard = z.infer<typeof VocabularyShardSchema>;
-
-// Structurally the bare `namespaced_schema({})` shape, added in database
-// version 2 to give v2's cosmetic theme/gesture/FAB preferences (no strict
-// v3 settings equivalent) a store of their own; see `legacy_preferences` in
-// `STORE_DEFINITIONS`.
-export const LegacyPreferenceSchema = namespaced_schema({});
-export type LegacyPreference = z.infer<typeof LegacyPreferenceSchema>;
-
-// Text-LLM connections, added in database version 3. `credential_reference` is a top-level
-// column rather than a payload field on purpose: payloads are swept by
-// `assert_safe_provider_payload`, which rejects every credential-shaped key, so the one value
-// that legitimately names a vault entry needs its own typed slot. The `tavern_canvas:` prefix
-// keeps that slot from accepting a raw provider key.
-export const LlmConnectionSchema = namespaced_schema({
-  provider_kind: z.string().min(1).max(64),
-  credential_reference: z
-    .string()
-    .min(1)
-    .max(256)
-    .regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u)
-    .nullable(),
-});
-export type LlmConnection = z.infer<typeof LlmConnectionSchema>;
 
 export const NovelAiVibeEncodingSchema = namespaced_schema({
   image_sha256: Sha256Schema,
@@ -331,15 +282,6 @@ export const GenerationJobSchema = namespaced_schema({
 });
 export type GenerationJob = z.infer<typeof GenerationJobSchema>;
 
-export const MigrationJournalSchema = z.strictObject({
-  migration_id: z.string().min(1).max(256),
-  source_version: z.number().int().nonnegative(),
-  state: z.string().min(1).max(64),
-  updated_at: TimestampSchema,
-  payload: json_value_schema.optional(),
-});
-export type MigrationJournal = z.infer<typeof MigrationJournalSchema>;
-
 export type NamespacedRecord = {
   schema_version: 1;
   id: string;
@@ -357,13 +299,9 @@ export type BusinessRecord =
   | NovelAiVibe
   | CharacterProfile
   | RegexRule
-  | Vocabulary
-  | VocabularyGroup
   | VocabularyPackage
   | VocabularyShard
   | ImageRecord
-  | LegacyPreference
-  | LlmConnection
   | NovelAiVibeEncoding
   | ProviderInputAsset
   | OutfitProfile
@@ -372,7 +310,6 @@ export type BusinessRecord =
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
-export type MigrationJournalRecord = MigrationJournal;
 
 export type RecordByStore = {
   provider_profiles: ProviderProfile;
@@ -381,16 +318,11 @@ export type RecordByStore = {
   novelai_vibes: NovelAiVibe;
   character_profiles: CharacterProfile;
   regex_rules: RegexRule;
-  vocabularies: Vocabulary;
-  vocabulary_groups: VocabularyGroup;
   vocabulary_packages: VocabularyPackage;
   vocabulary_shards: VocabularyShard;
   image_records: ImageRecord;
   image_blobs: ImageBlob;
   generation_jobs: GenerationJob;
-  migration_journal: MigrationJournal;
-  legacy_preferences: LegacyPreference;
-  llm_connections: LlmConnection;
   novelai_vibe_encodings: NovelAiVibeEncoding;
   provider_input_assets: ProviderInputAsset;
   outfit_profiles: OutfitProfile;
@@ -448,22 +380,6 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
-  vocabularies: {
-    key: string;
-    value: Vocabulary;
-    indexes: {
-      namespace: IDBValidKey;
-      updated_at: IDBValidKey;
-    };
-  };
-  vocabulary_groups: {
-    key: string;
-    value: VocabularyGroup;
-    indexes: {
-      namespace: IDBValidKey;
-      vocabulary_id: IDBValidKey;
-    };
-  };
   vocabulary_packages: {
     key: string;
     value: VocabularyPackage;
@@ -509,32 +425,6 @@ export interface DBSchema extends IdbDBSchema {
       request_id: IDBValidKey;
       request_digest: IDBValidKey;
       state: IDBValidKey;
-      updated_at: IDBValidKey;
-    };
-  };
-  migration_journal: {
-    key: string;
-    value: MigrationJournal;
-    indexes: {
-      source_version: IDBValidKey;
-      state: IDBValidKey;
-      updated_at: IDBValidKey;
-    };
-  };
-  legacy_preferences: {
-    key: string;
-    value: LegacyPreference;
-    indexes: {
-      namespace: IDBValidKey;
-      updated_at: IDBValidKey;
-    };
-  };
-  llm_connections: {
-    key: string;
-    value: LlmConnection;
-    indexes: {
-      namespace: IDBValidKey;
-      provider_kind: IDBValidKey;
       updated_at: IDBValidKey;
     };
   };
@@ -589,14 +479,10 @@ export const RECORD_SCHEMAS: {
   novelai_vibes: NovelAiVibeSchema,
   character_profiles: CharacterProfileSchema,
   regex_rules: RegexRuleSchema,
-  vocabularies: VocabularySchema,
-  vocabulary_groups: VocabularyGroupSchema,
   vocabulary_packages: VocabularyPackageSchema,
   vocabulary_shards: VocabularyShardSchema,
   image_records: ImageRecordSchema,
   generation_jobs: GenerationJobSchema,
-  legacy_preferences: LegacyPreferenceSchema,
-  llm_connections: LlmConnectionSchema,
   novelai_vibe_encodings: NovelAiVibeEncodingSchema,
   provider_input_assets: ProviderInputAssetSchema,
   outfit_profiles: OutfitProfileSchema,
@@ -605,7 +491,6 @@ export const RECORD_SCHEMAS: {
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;
-export const MIGRATION_JOURNAL_SCHEMA: z.ZodType<MigrationJournal> = MigrationJournalSchema;
 
 // `token(?!s)` excludes plural quantity fields such as `max_tokens` but still matches singular
 // credential keys (apitoken, accesstoken, refreshtoken).

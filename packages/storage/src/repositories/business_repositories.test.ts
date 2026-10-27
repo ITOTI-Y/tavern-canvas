@@ -9,7 +9,6 @@ import {
   type GenerationJobRecord,
   type ImageBlobRecord,
   type ImageRecord,
-  type MigrationJournalRecord,
 } from "../database_schema.js";
 import { dispose_database, open_database } from "../open_database.js";
 import { with_transaction } from "../transaction.js";
@@ -240,8 +239,7 @@ describe("all business stores", () => {
       "regex_rules",
       "outfit_profiles",
       "lora_profiles",
-      "vocabularies",
-      "vocabulary_groups",
+      "prompt_tag_presets",
       "vocabulary_packages",
       "vocabulary_shards",
       "image_records",
@@ -256,8 +254,7 @@ describe("all business stores", () => {
     ["character_profiles", { payload: { name: "A" } }],
     ["regex_rules", { payload: { pattern: "x", replacement: "y" } }],
     ["lora_profiles", { payload: { file_name: "a" } }],
-    ["vocabularies", { payload: { terms: [] } }],
-    ["vocabulary_groups", { vocabulary_id: IDS.first, payload: { name: "group" } }],
+    ["prompt_tag_presets", { payload: { kind: "quality", text: "a" } }],
     ["vocabulary_packages", { data_version: 1, state: "ready", payload: { entries: 1 } }],
     ["vocabulary_shards", { data_version: 1, kind: "terms", payload: { items: [] } }],
   ] as const)("round-trips %s", async (name, fields) => {
@@ -286,19 +283,6 @@ describe("all business stores", () => {
       ref_count: 1,
       byte_length: 3,
     });
-  });
-
-  it("supports migration journal values", async () => {
-    const { repositories } = await make_repositories();
-    const journal: MigrationJournalRecord = {
-      migration_id: "migration-1",
-      source_version: 2,
-      state: "running",
-      updated_at: NOW,
-      payload: { copied: 0 },
-    };
-    await repositories.migration_journal.put(journal);
-    expect(await repositories.migration_journal.get(journal.migration_id)).toEqual(journal);
   });
 });
 

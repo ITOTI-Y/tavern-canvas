@@ -17,7 +17,6 @@ import {
   type DBSchema,
   type GenerationJob,
   type NamespacedRecord,
-  type VocabularyGroup,
 } from "../database_schema.js";
 import {
   detect_image_media_type,
@@ -435,7 +434,6 @@ export async function import_archive(options: ImportArchiveOptions): Promise<Imp
     const manifest = manifest_read.manifest;
 
     const record_counts = create_empty_record_counts();
-    const vocabulary_ids = new Set<string>();
     const image_record_ids = new Set<string>();
     const referenced_asset_hashes = new Map<string, number>();
 
@@ -458,20 +456,7 @@ export async function import_archive(options: ImportArchiveOptions): Promise<Imp
         }
       });
 
-      if (store === "vocabularies") {
-        for (const record of staged) {
-          vocabulary_ids.add(record.id);
-        }
-      } else if (store === "vocabulary_groups") {
-        for (const record of staged as VocabularyGroup[]) {
-          if (!vocabulary_ids.has(record.vocabulary_id)) {
-            throw new ArchiveImportError(
-              "reference_mismatch",
-              `vocabulary_groups ${record.id} references a missing vocabulary ${record.vocabulary_id}`,
-            );
-          }
-        }
-      } else if (store === "image_records") {
+      if (store === "image_records") {
         for (const record of staged as ImageRecordUnion[]) {
           image_record_ids.add(record.id);
           referenced_asset_hashes.set(
