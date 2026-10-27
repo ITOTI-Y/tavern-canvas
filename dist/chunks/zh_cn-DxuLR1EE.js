@@ -54,9 +54,7 @@ var e = {
 			empty_description: "选择一个任务、图片或资产即可在此查看详情。",
 			selection: {
 				id_label: "ID",
-				kind_generation_job: "生成任务",
-				kind_gallery_record: "图库图片",
-				kind_asset: "资产"
+				kind_gallery_record: "图库图片"
 			}
 		},
 		notifications: {
@@ -104,13 +102,6 @@ var e = {
 			negative_label: "固定负向提示词",
 			negative_placeholder: "在生成的负向提示词前始终附加的文本"
 		},
-		quality_controls: {
-			title: "质量控制",
-			ucp_label: "通用构图提示词（UCP）",
-			ucp_description: "对该预设生成的每一次结果应用统一的构图提示词。",
-			aqt_label: "自动质量标签（AQT）",
-			aqt_description: "自动附加标准质量标签集合。"
-		},
 		replacement_rules: {
 			title: "替换规则",
 			add_action: "添加规则",
@@ -135,37 +126,15 @@ var e = {
 			empty_title: "还没有正则规则",
 			empty_description: "添加一条规则，在提示词发送给 provider 之前用正则表达式转换文本。"
 		},
-		builder: {
-			title: "提示词构建器",
-			context_preview_title: "上下文预览",
-			world_info_label: "World Info",
-			world_info_empty_description: "当前上下文没有激活的 World Info 条目。",
-			user_persona_label: "用户人设",
-			user_persona_empty_description: "当前上下文尚未关联用户人设。",
-			character_context_label: "角色上下文",
-			character_context_empty_description: "当前上下文尚未关联角色上下文。"
-		},
-		test_panel: {
-			title: "私有提示词测试",
-			run_action: "运行测试",
-			tools_disabled_note: "本次测试运行已禁用工具调用。",
-			running: "正在通过私有 LLM 通道运行提示词",
-			result_title: "结果",
-			input_label: "测试提示词",
-			input_placeholder: "输入要发送给私有 LLM 通道的提示词",
-			unavailable_description: "私有 LLM 通道尚未连接，暂时无法运行此测试。"
-		}
+		builder: { title: "提示词构建器" }
 	},
 	assets: {
 		tabs: {
 			vocabulary: "词库",
-			personas: "身份",
-			knowledge: "知识库",
 			characters: "角色",
 			outfits: "服装",
 			lora: "LoRA",
 			vibe: "Vibe",
-			reference: "参考图",
 			workflow: "工作流"
 		},
 		vocabulary: {
@@ -183,46 +152,6 @@ var e = {
 			nsfw_disclosure_label: "显示可能包含成人内容的词库包",
 			nsfw_disclosure_hint: "这些词库包不会自动安装，安装前请自行确认。"
 		},
-		personas: {
-			empty_description: "添加一个身份，为对话指定说话人，可以是你自己，也可以是助手。",
-			add_action: "添加身份",
-			role_label: "说话人",
-			roles: {
-				assistant: "助手",
-				user: "你"
-			},
-			description_label: "描述",
-			description_hint: "该身份的说话方式与行为特征，会作为系统提示的一部分发送。",
-			greeting_label: "开场白",
-			greeting_hint: "新对话开始时展示，留空则不展示。",
-			active_badge: "启用中",
-			active_toggle_label: "启用",
-			delete_confirm_description: "此操作会删除该身份及其描述，已产生的对话消息不受影响。"
-		},
-		knowledge: {
-			empty_description: "添加知识条目，当其关键词出现时，相关背景信息会自动注入提示词。",
-			add_action: "添加知识条目",
-			title_label: "标题",
-			source_type_label: "来源",
-			source_types: {
-				manual: "手动录入",
-				imported: "导入",
-				character: "来自角色"
-			},
-			content_label: "内容",
-			content_hint: "该条目被触发时注入提示词的正文。",
-			keywords_label: "关键词",
-			keywords_hint: "多个关键词用逗号分隔，留空则该条目始终可用。",
-			priority_label: "优先级",
-			priority_hint: "上下文长度不够时，优先级高的条目会被保留。",
-			priority_summary: "优先级 {priority}",
-			enabled_label: "启用",
-			select_label: "选择 {title}",
-			select_all_label: "全选",
-			bulk_delete_action: "删除选中的 {count} 条",
-			bulk_delete_confirm_title: "删除 {count} 条知识条目？",
-			delete_confirm_description: "此操作会删除该条目及其内容，提示词将立即不再包含它。"
-		},
 		characters: {
 			empty_title: "还没有保存角色",
 			empty_description: "创建一个角色档案，即可在多次生成中复用姓名、外观与上下文。",
@@ -232,8 +161,16 @@ var e = {
 			excluded_traits_label: "排除特征",
 			excluded_traits_hint: "该角色不应出现的标签，例如其他角色的尖耳；生成时作为该角色自己的负面提示词。",
 			context_notes_label: "角色上下文",
-			world_info_reference_label: "World Info 引用",
-			world_info_reference_hint: "标注该角色关联的 World Info 书或条目名称。"
+			reference_image_label: "参考图",
+			reference_image_hint: "长边缩小到 1536 px 以内后随角色保存。",
+			reference_image_unreadable: "无法将该文件读取为图片。",
+			reference_image_remove: "移除参考图",
+			reference_send_label: "用 NovelAI 出图且画面中有该角色时随请求发送",
+			reference_mode_label: "用途",
+			reference_mode_hint: "人物参考只支持 V4.5，每张图另加 5 Anlas，使用时不发送氛围迁移；多个角色都选人物参考时只发送第一个。氛围迁移不支持 V5。图生图以参考图为底图，多个角色都选图生图时只用第一个。",
+			reference_mode_vibe: "氛围迁移",
+			reference_mode_img2img: "图生图",
+			reference_mode_precise: "人物参考"
 		},
 		outfits: {
 			empty_title: "还没有保存服装",
@@ -244,9 +181,14 @@ var e = {
 			character_placeholder: "选择角色"
 		},
 		lora: {
-			empty_title: "还没有 LoRA 元数据",
-			empty_description: "添加一条 LoRA 记录，用于跟踪触发词与推荐权重。",
+			empty_title: "还没有 LoRA",
+			empty_description: "添加 LoRA 并关联到角色。用 SD WebUI 出图且画面中有该角色时，会自动附加 LoRA 和触发词。",
 			add_action: "添加 LoRA",
+			file_name_label: "文件名",
+			file_name_hint: "SD WebUI 中 LoRA 的文件名，不含扩展名，例如 seraphina_v2。",
+			character_label: "关联角色",
+			character_hint: "不关联角色的 LoRA 不会自动附加。",
+			character_placeholder: "选择角色",
 			weight_label: "权重",
 			trigger_words_label: "触发词"
 		},
@@ -263,13 +205,6 @@ var e = {
 			image_label: "图片",
 			image_hint: "长边缩小到 1536 px 以内后随该组保存。",
 			image_unreadable: "无法将该文件读取为图片。"
-		},
-		reference: {
-			empty_title: "还没有保存参考图",
-			empty_description: "在这里保存一张参考图，即可在多次生成中复用。",
-			add_action: "添加参考图",
-			source_url_label: "来源链接",
-			notes_label: "备注"
 		},
 		workflow: {
 			empty_title: "还没有导入 ComfyUI 工作流",
@@ -297,7 +232,7 @@ var e = {
 	},
 	gallery: {
 		empty_title: "还没有生成的图片",
-		empty_description: "在工作台生成一张图片，即可在这里查看。",
+		empty_description: "为聊天回复配图后，生成的图片会出现在这里。",
 		filters: {
 			title: "筛选",
 			provider_label: "Provider",
@@ -421,7 +356,7 @@ var e = {
 			custom_invalid: "请填写 http 或 https 地址和模型名。",
 			custom_model_label: "模型",
 			custom_key_label: "API 密钥",
-			custom_key_hint: "与 Inkwell 的其他凭据存放在一起。读取它需要在 SillyTavern 中开启 allowKeysExposure，或在“设置 > 连接”中改用加密的浏览器密钥库。",
+			custom_key_hint: "与 Inkwell 的其他凭据存放在同一后端。若在“设置 > 通用”中选择了 SillyTavern 密钥库，读取它需要在 SillyTavern 中开启 allowKeysExposure。",
 			custom_key_save: "保存密钥",
 			custom_key_clear: "移除密钥",
 			custom_key_saved: "密钥已保存。",
@@ -429,6 +364,14 @@ var e = {
 			custom_key_failed: "密钥修改失败。",
 			proxy_model_hint: "留空则使用代理预设中的模型。",
 			chat_history_label: "随分析发送的聊天记录条数",
+			world_info_label: "世界书",
+			world_info_chat: "当前聊天的世界书",
+			world_info_worldbook: "指定世界书",
+			world_info_off: "不使用",
+			world_info_hint: "当前聊天的世界书由 SillyTavern 按聊天记录激活，包括全局、角色和聊天绑定的世界书。指定世界书时只发送被待分析回复的关键词激活的条目和常驻条目，并替换掉 SillyTavern 自己激活的条目。",
+			worldbook_label: "使用的世界书",
+			worldbook_placeholder: "选择世界书",
+			worldbook_unavailable: "无法读取世界书列表，需要启用 JS-Slash-Runner。",
 			max_images_label: "每条回复最多配图数",
 			prompt_preset_label: "图片提示词使用的提示词预设",
 			prompt_preset_none: "不使用",
@@ -633,7 +576,7 @@ var e = {
 			language_zh_cn: "简体中文",
 			language_en: "English",
 			inspector_width_label: "检查器宽度",
-			optional_entry_label: "在扩展菜单中显示可选入口"
+			optional_entry_label: "显示悬浮入口按钮"
 		},
 		data: {
 			vocabulary_channel_label: "词库更新渠道",

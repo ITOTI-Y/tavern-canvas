@@ -1,5 +1,5 @@
 import { $ as e, A as t, C as n, D as r, F as i, G as a, N as o, T as s, V as c, W as l, _ as u, a as d, c as f, ct as p, dt as m, et as h, ft as g, g as _, h as v, j as y, m as b, n as x, p as S, pt as C, u as w, ut as T, v as E, x as D, y as O } from "./vue-i18n-DUz2Gjn8.js";
-import { n as k } from "./create_i18n-D8sKOo3r.js";
+import { n as k } from "./create_i18n--oHB5Ij5.js";
 import { n as A, t as j } from "./AppIcon-Cnhzrx9o.js";
 import { t as M } from "./check-BhrVRbkS.js";
 import { n as N, t as P } from "./download-DHgWv1wH.js";
@@ -7,12 +7,13 @@ import { n as F, t as ee } from "./StateSurface-Bo_sA18G.js";
 import { t as I } from "./trash-2-B6ZXZcor.js";
 import { t as L } from "./x-CDKrptQJ.js";
 import { t as te } from "./portal_keys-gQ1cWdMS.js";
-import { n as R, t as ne } from "./AppSelect-DJk9aRkS.js";
-import { a as z, i as B, l as re, o as ie, s as V, t as ae, u as oe } from "./_prop_utils-BsJwfjAZ.js";
-import { t as se } from "./ToastViewport-DoW6gPt4.js";
-import { n as H, t as ce } from "./AppSwitch-x2vuooAG.js";
+import { i as R, n as ne, t as re } from "./AppSelect-CIW6ICNh.js";
+import { a as z, c as B, i as ie, n as ae, r as V, s as oe } from "./Collection-C3W7ausR.js";
+import { t as se } from "./ToastViewport-BRi-IbT_.js";
+import { t as H } from "./ConfirmDialog-B3fuCaB9.js";
 import { t as U } from "./VirtualList-BEUmgiC-.js";
-import { t as W } from "./IconButton-BvRQHJyk.js";
+import { t as W } from "./IconButton-CKVrOjmk.js";
+import { t as ce } from "./AppSwitch-DlJak999.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/chevron-left.js
 var G = A("chevron-left", [["path", {
 	d: "m15 18-6-6 6-6",
@@ -680,15 +681,15 @@ var ze = ["src"], Be = /* @__PURE__ */ D({
 			i("update:open", e);
 		}
 		let D = s(te, void 0), k = S(() => D ? { to: D } : {});
-		return (t, r) => (o(), v(p(oe), {
+		return (t, r) => (o(), v(p(B), {
 			open: e.open,
 			"onUpdate:open": w
 		}, {
 			default: l(() => [
 				O(p(R), m(n(k.value)), {
-					default: l(() => [O(p(z), { class: T(p(J).previewOverlay) }, null, 8, ["class"]), O(p(V), { class: T(p(J).previewContent) }, {
+					default: l(() => [O(p(V), { class: T(p(J).previewOverlay) }, null, 8, ["class"]), O(p(z), { class: T(p(J).previewContent) }, {
 						default: l(() => [
-							O(p(B), { class: "tc-visually-hidden" }, {
+							O(p(ae), { class: "tc-visually-hidden" }, {
 								default: l(() => [E(C(e.metadataTitle), 1)]),
 								_: 1
 							}),
@@ -700,7 +701,7 @@ var ze = ["src"], Be = /* @__PURE__ */ D({
 								key: 0,
 								class: T(p(J).previewLayout)
 							}, [b("div", { class: T(p(J).previewMain) }, [b("div", { class: T(p(J).previewToolbar) }, [
-								O(p(re), {
+								O(p(oe), {
 									class: T(["tc-interactive", p(J).previewToolbarButton]),
 									"aria-label": e.closeLabel
 								}, {
@@ -899,16 +900,16 @@ var ze = ["src"], Be = /* @__PURE__ */ D({
 				R.value = R.value.filter((e) => e.id !== t);
 			}, 4e3);
 		}
-		function re(e) {
+		function ie(e) {
 			R.value = R.value.filter((t) => t.id !== e);
 		}
-		let ie = {
+		let ae = {
 			"image/png": "png",
 			"image/jpeg": "jpg",
 			"image/webp": "webp"
 		};
 		async function V(e) {
-			let t = await n.controller.read_gallery_bytes(e.id), r = ie[e.media_type] ?? "png", i = URL.createObjectURL(new Blob([new Uint8Array(t)], { type: e.media_type })), a = document.createElement("a");
+			let t = await n.controller.read_gallery_bytes(e.id), r = ae[e.media_type] ?? "png", i = URL.createObjectURL(new Blob([new Uint8Array(t)], { type: e.media_type })), a = document.createElement("a");
 			a.href = i, a.download = `${e.id}.${r}`, a.click(), URL.revokeObjectURL(i);
 		}
 		async function oe() {
@@ -964,7 +965,7 @@ var ze = ["src"], Be = /* @__PURE__ */ D({
 		return (e, n) => (o(), u("div", { class: T(p(J).galleryView) }, [
 			b("div", { class: T(p(J).filterBar) }, [
 				b("span", Ve, C(p(s)("gallery.filters.title")), 1),
-				(o(), v(ne, {
+				(o(), v(re, {
 					key: p(c),
 					"model-value": f.value,
 					options: A.value,
@@ -1030,7 +1031,7 @@ var ze = ["src"], Be = /* @__PURE__ */ D({
 					"select-label": p(s)("gallery.select_image_action"),
 					"open-label": p(s)("gallery.open_preview_action"),
 					ariaLabel: p(s)("nav.gallery")
-				}, p(ae)({
+				}, p(ne)({
 					widthOverride: t.gridWidthOverride,
 					heightOverride: t.gridHeightOverride
 				}), {
@@ -1150,7 +1151,7 @@ var ze = ["src"], Be = /* @__PURE__ */ D({
 				"viewport-label": p(s)("common.notifications.viewport_label"),
 				"announce-label": p(s)("common.notifications.announce_label"),
 				"close-label": p(s)("common.actions.close"),
-				onDismiss: re
+				onDismiss: ie
 			}, null, 8, [
 				"toasts",
 				"viewport-label",

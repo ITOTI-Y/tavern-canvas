@@ -1,13 +1,13 @@
 import { A as e, D as t, F as n, I as r, N as i, O as a, V as o, W as s, _ as c, at as l, c as u, ct as d, et as f, g as p, h as m, m as h, p as g, pt as _, s as v, u as y, ut as b, x, y as S } from "./vue-i18n-DUz2Gjn8.js";
 import { t as C } from "./AppIcon-Cnhzrx9o.js";
 import { r as w } from "./StateSurface-Bo_sA18G.js";
-import { a as T, i as ee, r as te } from "./AppDialog-DJhokkv1.js";
-import { n as E } from "./FieldGroup-LDtWeac7.js";
-import { a as ne, i as D, r as re } from "./AppSelect-DJk9aRkS.js";
-import { A as O, C as k, _ as A, c as j, d as M, i as N, j as P, k as F, m as I, p as ie, v as L, x as R } from "./Teleport-C7mDSUEl.js";
-import { o as z } from "./FocusScope-B2vRGnoX.js";
-import { c as ae } from "./PopperContent-a3U-C0mc.js";
-import { d as B, f as V, n as H, p as U, t as W } from "./_prop_utils-BsJwfjAZ.js";
+import { a as T, i as E, r as D } from "./AppDialog-BizR-VGE.js";
+import { n as O } from "./FieldGroup-LDtWeac7.js";
+import { a as k, c as ee, l as A, n as j, o as M, r as N, s as te } from "./AppSelect-CIW6ICNh.js";
+import { A as ne, C as P, _ as F, c as I, d as re, i as L, j as R, k as z, m as B, p as V, v as H, x as ie } from "./Teleport-C7mDSUEl.js";
+import { o as ae } from "./FocusScope-B2vRGnoX.js";
+import { c as U } from "./PopperContent-a3U-C0mc.js";
+import { l as W } from "./Collection-C3W7ausR.js";
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useComposing.js
 function G(e) {
 	let t = f(!1);
@@ -68,7 +68,7 @@ function K() {
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useLocale.js
 function oe(e) {
-	let t = M({ locale: f("en") });
+	let t = re({ locale: f("en") });
 	return g(() => e?.value || t.locale?.value || "en");
 }
 //#endregion
@@ -307,7 +307,7 @@ function be(e) {
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/NumberField/utils.js
 function xe(e) {
-	let { disabled: t } = e, n = f(), r = L(), i = () => window.clearTimeout(n.value), a = (e) => {
+	let { disabled: t } = e, n = f(), r = H(), i = () => window.clearTimeout(n.value), a = (e) => {
 		i(), !t.value && (r.trigger(), n.value = window.setTimeout(() => {
 			a(60);
 		}, e));
@@ -315,21 +315,21 @@ function xe(e) {
 		a(400);
 	}, s = () => {
 		i();
-	}, c = f(!1), l = g(() => ie(e.target)), u = (e) => {
+	}, c = f(!1), l = g(() => V(e.target)), u = (e) => {
 		e.button !== 0 || c.value || (e.preventDefault(), c.value = !0, o());
 	}, d = () => {
 		c.value = !1, s();
 	};
-	return R && (I(l || window, "pointerdown", u), I(window, "pointerup", d), I(window, "pointercancel", d)), {
+	return ie && (B(l || window, "pointerdown", u), B(window, "pointerup", d), B(window, "pointercancel", d)), {
 		isPressed: c,
 		onTrigger: r.on
 	};
 }
 function Se(e, t = f({})) {
-	return k(() => new ce(e.value, t.value));
+	return P(() => new ce(e.value, t.value));
 }
 function Ce(e, t = f({})) {
-	return k(() => new pe(e.value, t.value));
+	return P(() => new pe(e.value, t.value));
 }
 function Q(e, t, n) {
 	let r = e === "+" ? t + n : t - n;
@@ -341,7 +341,7 @@ function Q(e, t, n) {
 }
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/NumberField/NumberFieldRoot.js
-var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
+var [$, we] = /*#__PURE__*/ R("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 	inheritAttrs: !1,
 	__name: "NumberFieldRoot",
 	props: {
@@ -425,14 +425,14 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 	},
 	emits: ["update:modelValue"],
 	setup(e, { emit: n }) {
-		let a = e, o = n, { disabled: c, readonly: u, disableWheelChange: h, invertWheelChange: _, min: v, max: y, step: b, stepSnapping: x, formatOptions: S, id: C, locale: w } = l(a), T = A(a, "modelValue", o, {
+		let a = e, o = n, { disabled: c, readonly: u, disableWheelChange: h, invertWheelChange: _, min: v, max: y, step: b, stepSnapping: x, formatOptions: S, id: C, locale: w } = l(a), T = F(a, "modelValue", o, {
 			defaultValue: a.defaultValue,
 			passive: a.modelValue === void 0
-		}), { primitiveElement: ee, currentElement: te } = B(), E = oe(w), ne = U(te), O = f(), k = g(() => F(T.value) || isNaN(T.value) ? !1 : M("decrease", T.value) >= T.value), j = g(() => F(T.value) || isNaN(T.value) ? !1 : M("increase", T.value) <= T.value);
-		function M(e, t, n = 1) {
+		}), { primitiveElement: E, currentElement: D } = W(), O = oe(w), k = M(D), A = f(), j = g(() => z(T.value) || isNaN(T.value) ? !1 : P("decrease", T.value) >= T.value), ne = g(() => z(T.value) || isNaN(T.value) ? !1 : P("increase", T.value) <= T.value);
+		function P(e, t, n = 1) {
 			let r = b.value ?? 1, i = e === "increase" ? "+" : "-", a;
 			if (x.value && !isNaN(r)) {
-				let o = D(t, v.value, y.value, r);
+				let o = ee(t, v.value, y.value, r);
 				if (o === t) a = Q(i, t, r * n);
 				else {
 					let s = e === "increase" ? o > t ? o : Q("+", o, r) : o < t ? o : Q("-", o, r);
@@ -441,48 +441,48 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 			} else a = Q(i, t, r * n);
 			return q(a);
 		}
-		function P(e, t = 1) {
-			if (a.focusOnChange && O.value?.focus(), a.disabled || a.readonly) return;
-			let n = z.parse(O.value?.value ?? "");
+		function I(e, t = 1) {
+			if (a.focusOnChange && A.value?.focus(), a.disabled || a.readonly) return;
+			let n = H.parse(A.value?.value ?? "");
 			if (isNaN(n)) {
 				T.value = q(v.value ?? 0);
 				return;
 			}
-			T.value = M(e, n, t);
+			T.value = P(e, n, t);
 		}
-		function I(e = 1) {
-			P("increase", e);
+		function re(e = 1) {
+			I("increase", e);
 		}
-		function ie(e = 1) {
-			P("decrease", e);
+		function R(e = 1) {
+			I("decrease", e);
 		}
-		function L(e) {
+		function B(e) {
 			e === "min" && v.value !== void 0 ? T.value = q(v.value) : e === "max" && y.value !== void 0 && (T.value = q(y.value));
 		}
-		let R = Se(E, S), z = Ce(E, S), ae = g(() => R.resolvedOptions().maximumFractionDigits > 0 ? "decimal" : "numeric"), V = Se(E, S), W = g(() => F(T.value) || isNaN(T.value) ? "" : V.format(T.value));
+		let V = Se(O, S), H = Ce(O, S), ie = g(() => V.resolvedOptions().maximumFractionDigits > 0 ? "decimal" : "numeric"), ae = Se(O, S), U = g(() => z(T.value) || isNaN(T.value) ? "" : ae.format(T.value));
 		function G(e) {
-			return z.isValidPartialNumber(e, v.value, y.value);
+			return H.isValidPartialNumber(e, v.value, y.value);
 		}
 		function K(e) {
-			O.value && (O.value.value = e);
+			A.value && (A.value.value = e);
 		}
 		function q(e) {
 			let t;
-			return t = b.value === void 0 || isNaN(b.value) || !x.value ? re(e, v.value, y.value) : D(e, v.value, y.value, b.value), t = z.parse(R.format(t)), t;
+			return t = b.value === void 0 || isNaN(b.value) || !x.value ? te(e, v.value, y.value) : ee(e, v.value, y.value, b.value), t = H.parse(V.format(t)), t;
 		}
 		function J(e) {
-			let t = z.parse(e);
-			return T.value = isNaN(t) ? void 0 : q(t), e.length ? K(W.value) : K(e);
+			let t = H.parse(e);
+			return T.value = isNaN(t) ? void 0 : q(t), e.length ? K(U.value) : K(e);
 		}
 		return we({
 			modelValue: T,
-			handleDecrease: ie,
-			handleIncrease: I,
-			handleMinMaxValue: L,
-			inputMode: ae,
-			inputEl: O,
-			onInputElement: (e) => O.value = e,
-			textValue: W,
+			handleDecrease: R,
+			handleIncrease: re,
+			handleMinMaxValue: B,
+			inputMode: ie,
+			inputEl: A,
+			onInputElement: (e) => A.value = e,
+			textValue: U,
 			readonly: u,
 			validate: G,
 			applyInputValue: J,
@@ -491,12 +491,12 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 			invertWheelChange: _,
 			max: y,
 			min: v,
-			isDecreaseDisabled: k,
-			isIncreaseDisabled: j,
+			isDecreaseDisabled: j,
+			isIncreaseDisabled: ne,
 			id: C
-		}), (e, n) => (i(), m(d(N), t(e.$attrs, {
+		}), (e, n) => (i(), m(d(L), t(e.$attrs, {
 			ref_key: "primitiveElement",
-			ref: ee,
+			ref: E,
 			role: "group",
 			as: e.as,
 			"as-child": e.asChild,
@@ -505,9 +505,9 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 		}), {
 			default: s(() => [r(e.$slots, "default", {
 				modelValue: d(T),
-				textValue: W.value,
+				textValue: U.value,
 				readonly: d(u)
-			}), d(ne) && e.name ? (i(), m(d(H), {
+			}), d(k) && e.name ? (i(), m(d(N), {
 				key: 0,
 				type: "text",
 				value: d(T),
@@ -548,13 +548,13 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 		}
 	},
 	setup(e) {
-		let n = e, a = $(), o = g(() => a.disabled?.value || a.readonly.value || n.disabled || a.isDecreaseDisabled.value), { primitiveElement: c, currentElement: l } = B(), { isPressed: f, onTrigger: p } = xe({
+		let n = e, a = $(), o = g(() => a.disabled?.value || a.readonly.value || n.disabled || a.isDecreaseDisabled.value), { primitiveElement: c, currentElement: l } = W(), { isPressed: f, onTrigger: p } = xe({
 			target: l,
 			disabled: o
 		});
 		return p(() => {
 			a.handleDecrease();
-		}), (e, a) => (i(), m(d(N), t(n, {
+		}), (e, a) => (i(), m(d(L), t(n, {
 			ref_key: "primitiveElement",
 			ref: c,
 			tabindex: "-1",
@@ -594,13 +594,13 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 		}
 	},
 	setup(e) {
-		let n = e, a = $(), o = g(() => a.disabled?.value || a.readonly.value || n.disabled || a.isIncreaseDisabled.value), { primitiveElement: c, currentElement: l } = B(), { isPressed: f, onTrigger: p } = xe({
+		let n = e, a = $(), o = g(() => a.disabled?.value || a.readonly.value || n.disabled || a.isIncreaseDisabled.value), { primitiveElement: c, currentElement: l } = W(), { isPressed: f, onTrigger: p } = xe({
 			target: l,
 			disabled: o
 		});
 		return p(() => {
 			a.handleIncrease();
-		}), (e, a) => (i(), m(d(N), t(n, {
+		}), (e, a) => (i(), m(d(L), t(n, {
 			ref_key: "primitiveElement",
 			ref: c,
 			tabindex: "-1",
@@ -636,7 +636,7 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 		}
 	},
 	setup(n) {
-		let a = n, { primitiveElement: c, currentElement: l } = B(), u = $(), p = K(), { isComposing: h, handleCompositionStart: g, handleCompositionEnd: _ } = G();
+		let a = n, { primitiveElement: c, currentElement: l } = W(), u = $(), p = K(), { isComposing: h, handleCompositionStart: g, handleCompositionEnd: _ } = G();
 		function v(e) {
 			if (!(h.value || e.isComposing)) switch (e.key) {
 				case p.ARROW_UP:
@@ -661,7 +661,7 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 			}
 		}
 		function y(e) {
-			u.disableWheelChange.value || e.target === z() && (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || (e.preventDefault(), e.deltaY > 0 ? u.invertWheelChange.value ? u.handleDecrease() : u.handleIncrease() : e.deltaY < 0 && (u.invertWheelChange.value ? u.handleIncrease() : u.handleDecrease())));
+			u.disableWheelChange.value || e.target === ae() && (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || (e.preventDefault(), e.deltaY > 0 ? u.invertWheelChange.value ? u.handleDecrease() : u.handleIncrease() : e.deltaY < 0 && (u.invertWheelChange.value ? u.handleIncrease() : u.handleDecrease())));
 		}
 		e(() => {
 			u.onInputElement(l.value);
@@ -678,7 +678,7 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 				b.value = u.textValue.value;
 			});
 		}
-		return (e, n) => (i(), m(d(N), t(a, {
+		return (e, n) => (i(), m(d(L), t(a, {
 			id: d(u).id.value,
 			ref_key: "primitiveElement",
 			ref: c,
@@ -733,7 +733,7 @@ var [$, we] = /*#__PURE__*/ P("NumberFieldRoot"), Te = /* @__PURE__ */ x({
 	}
 }), ke = "radio.select";
 function Ae(e, t, n) {
-	O(ke, n, {
+	ne(ke, n, {
 		originalEvent: e,
 		value: t
 	});
@@ -782,13 +782,13 @@ var je = /* @__PURE__ */ x({
 	},
 	emits: ["update:checked", "select"],
 	setup(e, { emit: n }) {
-		let a = e, o = n, f = A(a, "checked", o, { passive: a.checked === void 0 }), { value: h } = l(a), { forwardRef: _, currentElement: v } = j(), b = U(v), x = V(), C = g(() => a.id && v.value ? document.querySelector(`[for="${a.id}"]`)?.innerText ?? a.value : void 0);
+		let a = e, o = n, f = F(a, "checked", o, { passive: a.checked === void 0 }), { value: h } = l(a), { forwardRef: _, currentElement: v } = I(), b = M(v), x = k(), C = g(() => a.id && v.value ? document.querySelector(`[for="${a.id}"]`)?.innerText ?? a.value : void 0);
 		function w(e) {
 			a.disabled || Ae(e, a.value, (e) => {
 				o("select", e), !e?.defaultPrevented && (f.value = !0, b.value && e.stopPropagation());
 			});
 		}
-		return (e, n) => (i(), c(y, null, [S(d(N), t({
+		return (e, n) => (i(), c(y, null, [S(d(L), t({
 			id: e.id,
 			ref: d(_),
 			role: "radio",
@@ -822,7 +822,7 @@ var je = /* @__PURE__ */ x({
 			"value",
 			"required",
 			"name"
-		]), d(b) && e.name ? (i(), m(d(H), t({
+		]), d(b) && e.name ? (i(), m(d(N), t({
 			key: 0,
 			type: "radio",
 			tabindex: "-1",
@@ -839,7 +839,7 @@ var je = /* @__PURE__ */ x({
 			"required"
 		])) : p("v-if", !0)], 64));
 	}
-}), [Me, Ne] = /*#__PURE__*/ P("RadioGroupRoot"), Pe = /* @__PURE__ */ x({
+}), [Me, Ne] = /*#__PURE__*/ R("RadioGroupRoot"), Pe = /* @__PURE__ */ x({
 	__name: "RadioGroupRoot",
 	props: {
 		modelValue: {
@@ -889,10 +889,10 @@ var je = /* @__PURE__ */ x({
 	},
 	emits: ["update:modelValue"],
 	setup(e, { emit: t }) {
-		let n = e, a = t, { forwardRef: o, currentElement: c } = j(), u = A(n, "modelValue", a, {
+		let n = e, a = t, { forwardRef: o, currentElement: c } = I(), u = F(n, "modelValue", a, {
 			defaultValue: n.defaultValue,
 			passive: n.modelValue === void 0
-		}), { disabled: f, loop: h, orientation: g, name: _, required: v, dir: y } = l(n), b = ae(y), x = U(c);
+		}), { disabled: f, loop: h, orientation: g, name: _, required: v, dir: y } = l(n), b = U(y), x = M(c);
 		return Ne({
 			modelValue: u,
 			changeModelValue: (e) => {
@@ -903,13 +903,13 @@ var je = /* @__PURE__ */ x({
 			orientation: g,
 			name: _?.value,
 			required: v
-		}), (e, t) => (i(), m(d(ee), {
+		}), (e, t) => (i(), m(d(E), {
 			"as-child": "",
 			orientation: d(g),
 			dir: d(b),
 			loop: d(h)
 		}, {
-			default: s(() => [S(d(N), {
+			default: s(() => [S(d(L), {
 				ref: d(o),
 				role: "radiogroup",
 				"data-disabled": d(f) ? "" : void 0,
@@ -919,7 +919,7 @@ var je = /* @__PURE__ */ x({
 				"aria-required": d(v),
 				dir: d(b)
 			}, {
-				default: s(() => [r(e.$slots, "default", { modelValue: d(u) }), d(x) && d(_) ? (i(), m(d(H), {
+				default: s(() => [r(e.$slots, "default", { modelValue: d(u) }), d(x) && d(_) ? (i(), m(d(N), {
 					key: 0,
 					required: d(v),
 					disabled: d(f),
@@ -947,7 +947,7 @@ var je = /* @__PURE__ */ x({
 			"loop"
 		]));
 	}
-}), [Fe, Ie] = /*#__PURE__*/ P("RadioGroupItem"), Le = /* @__PURE__ */ x({
+}), [Fe, Ie] = /*#__PURE__*/ R("RadioGroupItem"), Le = /* @__PURE__ */ x({
 	inheritAttrs: !1,
 	__name: "RadioGroupItem",
 	props: {
@@ -984,7 +984,7 @@ var je = /* @__PURE__ */ x({
 	},
 	emits: ["select"],
 	setup(e, { emit: n }) {
-		let a = e, o = n, { forwardRef: c, currentElement: l } = j(), p = Me(), h = g(() => p.disabled.value || a.disabled), _ = g(() => p.required.value || a.required), y = g(() => ne(p.modelValue?.value, a.value));
+		let a = e, o = n, { forwardRef: c, currentElement: l } = I(), p = Me(), h = g(() => p.disabled.value || a.disabled), _ = g(() => p.required.value || a.required), y = g(() => A(p.modelValue?.value, a.value));
 		Ie({
 			disabled: h,
 			checked: y
@@ -995,9 +995,9 @@ var je = /* @__PURE__ */ x({
 			"ArrowLeft",
 			"ArrowRight"
 		];
-		I("keydown", (e) => {
+		B("keydown", (e) => {
 			x.includes(e.key) && (b.value = !0);
-		}), I("keyup", () => {
+		}), B("keyup", () => {
 			b.value = !1;
 		});
 		function C() {
@@ -1005,8 +1005,8 @@ var je = /* @__PURE__ */ x({
 				b.value && l.value?.click();
 			}, 0);
 		}
-		let w = V();
-		return (e, n) => (i(), m(d(te), {
+		let w = k();
+		return (e, n) => (i(), m(d(D), {
 			checked: y.value,
 			disabled: h.value,
 			"as-child": "",
@@ -1047,75 +1047,6 @@ var je = /* @__PURE__ */ x({
 		]));
 	}
 }), Re = /* @__PURE__ */ x({
-	__name: "NumberStepper",
-	props: {
-		modelValue: {},
-		label: {},
-		incrementLabel: {},
-		decrementLabel: {},
-		min: { default: void 0 },
-		max: { default: void 0 },
-		step: { default: 1 },
-		disabled: {
-			type: Boolean,
-			default: !1
-		},
-		id: { default: void 0 },
-		describedBy: { default: void 0 }
-	},
-	emits: ["update:modelValue"],
-	setup(e, { emit: n }) {
-		let r = e, a = n;
-		function o(e) {
-			a("update:modelValue", e);
-		}
-		let c = g(() => W({
-			id: r.id,
-			min: r.min,
-			max: r.max
-		})), l = g(() => W({
-			"aria-label": r.label,
-			"aria-describedby": r.describedBy
-		}));
-		return (n, r) => (i(), m(d(Te), t(c.value, {
-			class: d(w).numberStepper,
-			"model-value": e.modelValue ?? null,
-			step: e.step,
-			disabled: e.disabled,
-			"onUpdate:modelValue": o
-		}), {
-			default: s(() => [
-				S(d(Ee), {
-					class: b(["tc-interactive", d(w).numberStepperButton]),
-					"aria-label": e.decrementLabel
-				}, {
-					default: s(() => [S(C, {
-						icon: d(T),
-						size: 14
-					}, null, 8, ["icon"])]),
-					_: 1
-				}, 8, ["class", "aria-label"]),
-				S(d(Oe), t(l.value, { class: ["tc-tabular-nums", d(w).numberStepperInput] }), null, 16, ["class"]),
-				S(d(De), {
-					class: b(["tc-interactive", d(w).numberStepperButton]),
-					"aria-label": e.incrementLabel
-				}, {
-					default: s(() => [S(C, {
-						icon: d(E),
-						size: 14
-					}, null, 8, ["icon"])]),
-					_: 1
-				}, 8, ["class", "aria-label"])
-			]),
-			_: 1
-		}, 16, [
-			"class",
-			"model-value",
-			"step",
-			"disabled"
-		]));
-	}
-}), ze = /* @__PURE__ */ x({
 	__name: "SegmentedControl",
 	props: {
 		modelValue: {},
@@ -1154,6 +1085,75 @@ var je = /* @__PURE__ */ x({
 			"model-value",
 			"disabled",
 			"aria-label"
+		]));
+	}
+}), ze = /* @__PURE__ */ x({
+	__name: "NumberStepper",
+	props: {
+		modelValue: {},
+		label: {},
+		incrementLabel: {},
+		decrementLabel: {},
+		min: { default: void 0 },
+		max: { default: void 0 },
+		step: { default: 1 },
+		disabled: {
+			type: Boolean,
+			default: !1
+		},
+		id: { default: void 0 },
+		describedBy: { default: void 0 }
+	},
+	emits: ["update:modelValue"],
+	setup(e, { emit: n }) {
+		let r = e, a = n;
+		function o(e) {
+			a("update:modelValue", e);
+		}
+		let c = g(() => j({
+			id: r.id,
+			min: r.min,
+			max: r.max
+		})), l = g(() => j({
+			"aria-label": r.label,
+			"aria-describedby": r.describedBy
+		}));
+		return (n, r) => (i(), m(d(Te), t(c.value, {
+			class: d(w).numberStepper,
+			"model-value": e.modelValue ?? null,
+			step: e.step,
+			disabled: e.disabled,
+			"onUpdate:modelValue": o
+		}), {
+			default: s(() => [
+				S(d(Ee), {
+					class: b(["tc-interactive", d(w).numberStepperButton]),
+					"aria-label": e.decrementLabel
+				}, {
+					default: s(() => [S(C, {
+						icon: d(T),
+						size: 14
+					}, null, 8, ["icon"])]),
+					_: 1
+				}, 8, ["class", "aria-label"]),
+				S(d(Oe), t(l.value, { class: ["tc-tabular-nums", d(w).numberStepperInput] }), null, 16, ["class"]),
+				S(d(De), {
+					class: b(["tc-interactive", d(w).numberStepperButton]),
+					"aria-label": e.incrementLabel
+				}, {
+					default: s(() => [S(C, {
+						icon: d(O),
+						size: 14
+					}, null, 8, ["icon"])]),
+					_: 1
+				}, 8, ["class", "aria-label"])
+			]),
+			_: 1
+		}, 16, [
+			"class",
+			"model-value",
+			"step",
+			"disabled"
 		]));
 	}
 });

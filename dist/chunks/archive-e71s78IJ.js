@@ -1,7 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
 import { T as n, b as r, g as i, l as a, m as o, s, v as c, y as l } from "./ids-DjWg1HG8.js";
-import { S as u } from "./job_repository-DWuHDMtL.js";
-import { c as d, i as f, s as p, u as m } from "./business_repositories-C3SmXgTK.js";
+import { S as u } from "./job_repository-BpPLSfp5.js";
+import { c as d, i as f, s as p, u as m } from "./business_repositories-D4kRK7n6.js";
 //#region ../../packages/contracts/src/archive.ts
 var h = "tavern-canvas-archive", g = [
 	"provider_profiles",
@@ -10,7 +10,8 @@ var h = "tavern-canvas-archive", g = [
 	"novelai_vibes",
 	"character_profiles",
 	"regex_rules",
-	"knowledge_entries",
+	"outfit_profiles",
+	"lora_profiles",
 	"vocabularies",
 	"vocabulary_groups",
 	"image_records",

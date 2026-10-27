@@ -1,18 +1,18 @@
-import { A as e, C as t, D as n, F as r, H as i, I as a, L as o, N as s, O as c, T as l, V as u, W as d, _ as f, at as p, c as m, ct as h, d as g, dt as _, et as v, ft as y, g as b, h as x, j as S, m as C, p as w, pt as T, u as E, ut as D, v as O, x as k, y as A } from "./vue-i18n-DUz2Gjn8.js";
-import { t as j } from "./AppIcon-Cnhzrx9o.js";
-import { t as M } from "./check-BhrVRbkS.js";
-import { t as ee } from "./chevron-down-Tu_8qTxg.js";
-import { r as N } from "./StateSurface-Bo_sA18G.js";
-import { t as te } from "./portal_keys-gQ1cWdMS.js";
-import { A as ne, _ as re, c as P, d as ie, g as ae, i as F, j as I, k as L, n as oe, o as se, p as ce, s as R, t as z, w as le, x as ue } from "./Teleport-C7mDSUEl.js";
-import { a as de, i as fe, o as B, t as pe } from "./FocusScope-B2vRGnoX.js";
-import { a as me, c as he, i as ge, o as _e, r as ve, s as V, t as ye } from "./PopperContent-a3U-C0mc.js";
-import { c as H, p as be, r as U, t as W } from "./_prop_utils-BsJwfjAZ.js";
+import { A as e, C as t, D as n, F as r, H as i, I as a, L as o, N as s, O as c, S as l, T as u, V as d, W as f, _ as p, at as m, c as h, ct as g, d as _, dt as v, et as y, ft as b, g as x, h as S, j as C, m as w, ot as T, p as E, pt as D, u as O, ut as k, v as A, x as j, y as M } from "./vue-i18n-DUz2Gjn8.js";
+import { t as N } from "./AppIcon-Cnhzrx9o.js";
+import { t as ee } from "./check-BhrVRbkS.js";
+import { t as te } from "./chevron-down-Tu_8qTxg.js";
+import { r as P } from "./StateSurface-Bo_sA18G.js";
+import { t as ne } from "./portal_keys-gQ1cWdMS.js";
+import { A as re, _ as F, c as I, d as ie, g as ae, i as L, j as R, k as oe, n as se, o as ce, p as le, s as ue, t as de, w as fe, x as pe } from "./Teleport-C7mDSUEl.js";
+import { a as me, i as he, o as z, t as ge } from "./FocusScope-B2vRGnoX.js";
+import { a as B, c as _e, i as ve, o as ye, r as be, s as V, t as xe } from "./PopperContent-a3U-C0mc.js";
+import { l as Se, o as H, t as U } from "./Collection-C3W7ausR.js";
 //#region ../../node_modules/.pnpm/ohash@2.0.11/node_modules/ohash/dist/shared/ohash.D__AXeF1.mjs
-function G(e) {
-	return typeof e == "string" ? `'${e}'` : new xe().serialize(e);
+function W(e) {
+	return typeof e == "string" ? `'${e}'` : new Ce().serialize(e);
 }
-var xe = /*@__PURE__*/ function() {
+var Ce = /*@__PURE__*/ function() {
 	class e {
 		#e = /* @__PURE__ */ new Map();
 		compare(e, t) {
@@ -109,15 +109,15 @@ var xe = /*@__PURE__*/ function() {
 	};
 	return e;
 }();
-function K(e, t) {
-	return e === t || G(e) === G(t);
+function G(e, t) {
+	return e === t || W(e) === W(t);
 }
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/clamp.js
-function q(e, t = -Infinity, n = Infinity) {
+function K(e, t = -Infinity, n = Infinity) {
 	return Math.min(n, Math.max(t, e));
 }
-function J(e, t) {
+function q(e, t) {
 	let n = e, r = t.toString(), i = r.indexOf("."), a = i >= 0 ? r.length - i : 0;
 	if (a > 0) {
 		let e = 10 ** a;
@@ -125,40 +125,51 @@ function J(e, t) {
 	}
 	return n;
 }
-function Se(e, t, n, r) {
+function we(e, t, n, r) {
 	t = Number(t), n = Number(n);
-	let i = (e - (Number.isNaN(t) ? 0 : t)) % r, a = J(Math.abs(i) * 2 >= r ? e + Math.sign(i) * (r - Math.abs(i)) : e - i, r);
-	return Number.isNaN(t) ? !Number.isNaN(n) && a > n && (a = Math.floor(J(n / r, r)) * r) : a < t ? a = t : !Number.isNaN(n) && a > n && (a = t + Math.floor(J((n - t) / r, r)) * r), a = J(a, r), a;
+	let i = (e - (Number.isNaN(t) ? 0 : t)) % r, a = q(Math.abs(i) * 2 >= r ? e + Math.sign(i) * (r - Math.abs(i)) : e - i, r);
+	return Number.isNaN(t) ? !Number.isNaN(n) && a > n && (a = Math.floor(q(n / r, r)) * r) : a < t ? a = t : !Number.isNaN(n) && a > n && (a = t + Math.floor(q((n - t) / r, r)) * r), a = q(a, r), a;
 }
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useFocusGuards.js
-var Y = 0;
-function Ce() {
+var J = 0;
+function Te() {
 	i((e) => {
-		if (!ue) return;
+		if (!pe) return;
 		let t = document.querySelectorAll("[data-reka-focus-guard]");
-		document.body.insertAdjacentElement("afterbegin", t[0] ?? we()), document.body.insertAdjacentElement("beforeend", t[1] ?? we()), Y++, e(() => {
-			Y === 1 && document.querySelectorAll("[data-reka-focus-guard]").forEach((e) => e.remove()), Y--;
+		document.body.insertAdjacentElement("afterbegin", t[0] ?? Ee()), document.body.insertAdjacentElement("beforeend", t[1] ?? Ee()), J++, e(() => {
+			J === 1 && document.querySelectorAll("[data-reka-focus-guard]").forEach((e) => e.remove()), J--;
 		});
 	});
 }
-function we() {
+function Ee() {
 	let e = document.createElement("span");
 	return e.setAttribute("data-reka-focus-guard", ""), e.tabIndex = 0, e.style.outline = "none", e.style.opacity = "0", e.style.position = "fixed", e.style.pointerEvents = "none", e;
 }
 //#endregion
+//#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useFormControl.js
+function De(e) {
+	return E(() => !T(e) || !!le(e)?.closest("form"));
+}
+//#endregion
+//#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useForwardScopeId.js
+function Oe() {
+	let e = l()?.vnode?.scopeId;
+	return e ? { [e]: "" } : {};
+}
+//#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useTypeahead.js
-function Te(e) {
-	let t = le("", 1e3);
+function ke(e) {
+	let t = fe("", 1e3);
 	return {
 		search: t,
 		handleTypeaheadSearch: (n, r) => {
 			if (t.value += n, e) e(n);
 			else {
-				let e = B(), n = r.map((e) => ({
+				let e = z(), n = r.map((e) => ({
 					...e,
 					textValue: e.value?.textValue ?? e.ref.textContent?.trim() ?? ""
-				})), i = n.find((t) => t.ref === e), a = De(n.map((e) => e.textValue), t.value, i?.textValue), o = n.find((e) => e.textValue === a);
+				})), i = n.find((t) => t.ref === e), a = je(n.map((e) => e.textValue), t.value, i?.textValue), o = n.find((e) => e.textValue === a);
 				return o && o.ref.focus(), o?.ref;
 			}
 		},
@@ -167,18 +178,18 @@ function Te(e) {
 		}
 	};
 }
-function Ee(e, t) {
+function Ae(e, t) {
 	return e.map((n, r) => e[(t + r) % e.length]);
 }
-function De(e, t, n) {
-	let r = t.length > 1 && Array.from(t).every((e) => e === t[0]) ? t[0] : t, i = n ? e.indexOf(n) : -1, a = Ee(e, Math.max(i, 0));
+function je(e, t, n) {
+	let r = t.length > 1 && Array.from(t).every((e) => e === t[0]) ? t[0] : t, i = n ? e.indexOf(n) : -1, a = Ae(e, Math.max(i, 0));
 	r.length === 1 && (a = a.filter((e) => e !== n));
 	let o = a.find((e) => e.toLowerCase().startsWith(r.toLowerCase()));
 	return o === n ? void 0 : o;
 }
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/Dialog/DialogPortal.js
-var Oe = /* @__PURE__ */ k({
+var Me = /* @__PURE__ */ j({
 	__name: "DialogPortal",
 	props: {
 		to: {
@@ -200,38 +211,145 @@ var Oe = /* @__PURE__ */ k({
 	},
 	setup(e) {
 		let n = e;
-		return (e, r) => (s(), x(h(z), _(t(n)), {
-			default: d(() => [a(e.$slots, "default")]),
+		return (e, r) => (s(), S(g(de), v(t(n)), {
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
 		}, 16));
+	}
+}), Ne = /* @__PURE__ */ j({
+	inheritAttrs: !1,
+	__name: "VisuallyHiddenInputBubble",
+	props: {
+		name: {
+			type: String,
+			required: !0
+		},
+		value: {
+			type: null,
+			required: !0
+		},
+		checked: {
+			type: Boolean,
+			required: !1,
+			default: void 0
+		},
+		required: {
+			type: Boolean,
+			required: !1
+		},
+		disabled: {
+			type: Boolean,
+			required: !1
+		},
+		feature: {
+			type: String,
+			required: !1,
+			default: "fully-hidden"
+		}
+	},
+	setup(e) {
+		let t = e, { primitiveElement: r, currentElement: i } = Se(), a = E(() => t.checked ?? t.value);
+		return d(a, (e, t) => {
+			if (!i.value) return;
+			let n = i.value, r = window.HTMLInputElement.prototype, a = Object.getOwnPropertyDescriptor(r, "value").set;
+			if (a && e !== t) {
+				let t = new Event("input", { bubbles: !0 }), r = new Event("change", { bubbles: !0 });
+				a.call(n, e), n.dispatchEvent(t), n.dispatchEvent(r);
+			}
+		}), (e, i) => (s(), S(B, n({
+			ref_key: "primitiveElement",
+			ref: r
+		}, {
+			...t,
+			...e.$attrs
+		}, { as: "input" }), null, 16));
+	}
+}), Pe = /* @__PURE__ */ j({
+	inheritAttrs: !1,
+	__name: "VisuallyHiddenInput",
+	props: {
+		name: {
+			type: String,
+			required: !0
+		},
+		value: {
+			type: null,
+			required: !0
+		},
+		checked: {
+			type: Boolean,
+			required: !1,
+			default: void 0
+		},
+		required: {
+			type: Boolean,
+			required: !1
+		},
+		disabled: {
+			type: Boolean,
+			required: !1
+		},
+		feature: {
+			type: String,
+			required: !1,
+			default: "fully-hidden"
+		}
+	},
+	setup(e) {
+		let t = e, i = E(() => typeof t.value == "object" && Array.isArray(t.value) && t.value.length === 0 && t.required), a = E(() => typeof t.value == "string" || typeof t.value == "number" || typeof t.value == "boolean" || t.value === null || t.value === void 0 ? [{
+			name: t.name,
+			value: t.value
+		}] : typeof t.value == "object" && Array.isArray(t.value) ? t.value.flatMap((e, n) => typeof e == "object" ? Object.entries(e).map(([e, r]) => ({
+			name: `${t.name}[${n}][${e}]`,
+			value: r
+		})) : {
+			name: `${t.name}[${n}]`,
+			value: e
+		}) : t.value !== null && typeof t.value == "object" && !Array.isArray(t.value) ? Object.entries(t.value).map(([e, n]) => ({
+			name: `${t.name}[${e}]`,
+			value: n
+		})) : []);
+		return (e, o) => (s(), p(O, null, [x(" We render single input if it's required "), i.value ? (s(), S(Ne, n({ key: e.name }, {
+			...t,
+			...e.$attrs
+		}, {
+			name: e.name,
+			value: e.value
+		}), null, 16, ["name", "value"])) : (s(!0), p(O, { key: 1 }, r(a.value, (r) => (s(), S(Ne, n({ key: r.name }, { ref_for: !0 }, {
+			...t,
+			...e.$attrs
+		}, {
+			name: r.name,
+			value: r.value
+		}), null, 16, ["name", "value"]))), 128))], 2112));
 	}
 });
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/shared/useNonce.js
-function ke(e) {
-	let t = ie({ nonce: v() });
-	return w(() => e?.value || t.nonce?.value);
+function Fe(e) {
+	let t = ie({ nonce: y() });
+	return E(() => e?.value || t.nonce?.value);
 }
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/Select/utils.js
-var Ae = [
+var Ie = [
 	" ",
 	"Enter",
 	"ArrowUp",
 	"ArrowDown"
-], je = [" ", "Enter"];
+], Le = [" ", "Enter"];
+function Y(e, t, n) {
+	return e === void 0 ? !1 : Array.isArray(e) ? e.some((e) => X(e, t, n)) : X(e, t, n);
+}
 function X(e, t, n) {
-	return e === void 0 ? !1 : Array.isArray(e) ? e.some((e) => Z(e, t, n)) : Z(e, t, n);
+	return e === void 0 || t === void 0 ? !1 : typeof e == "string" ? e === t : typeof n == "function" ? n(e, t) : typeof n == "string" ? e?.[n] === t?.[n] : G(e, t);
 }
-function Z(e, t, n) {
-	return e === void 0 || t === void 0 ? !1 : typeof e == "string" ? e === t : typeof n == "function" ? n(e, t) : typeof n == "string" ? e?.[n] === t?.[n] : K(e, t);
-}
-function Me(e) {
+function Re(e) {
 	return e == null || e === "" || Array.isArray(e) && e.length === 0;
 }
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/Select/SelectRoot.js
-var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ */ k({
+var ze = ["value"], [Z, Be] = /*#__PURE__*/ R("SelectRoot"), Ve = /* @__PURE__ */ j({
 	inheritAttrs: !1,
 	__name: "SelectRoot",
 	props: {
@@ -289,39 +407,39 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 	},
 	emits: ["update:modelValue", "update:open"],
 	setup(e, { emit: t }) {
-		let i = e, o = t, { required: c, disabled: l, multiple: u, dir: m } = p(i), g = re(i, "modelValue", o, {
+		let i = e, o = t, { required: c, disabled: l, multiple: u, dir: d } = m(i), h = F(i, "modelValue", o, {
 			defaultValue: i.defaultValue ?? (u.value ? [] : void 0),
 			passive: i.modelValue === void 0,
 			deep: !0
-		}), _ = re(i, "open", o, {
+		}), _ = F(i, "open", o, {
 			defaultValue: i.defaultOpen,
 			passive: i.open === void 0
-		}), y = v(), S = v(), C = v({
+		}), v = y(), b = y(), C = y({
 			x: 0,
 			y: 0
-		}), T = w(() => u.value && Array.isArray(g.value) ? g.value?.length === 0 : L(g.value));
+		}), w = E(() => u.value && Array.isArray(h.value) ? h.value?.length === 0 : oe(h.value));
 		U({ isProvider: !0 });
-		let D = he(m), O = be(y), k = v(/* @__PURE__ */ new Set()), A = w(() => Array.from(k.value).map((e) => e.value).join(";"));
+		let T = _e(d), D = De(v), k = y(/* @__PURE__ */ new Set()), A = E(() => Array.from(k.value).map((e) => e.value).join(";"));
 		function j(e) {
 			if (u.value) {
-				let t = Array.isArray(g.value) ? [...g.value] : [], n = t.findIndex((t) => Z(t, e, i.by));
-				n === -1 ? t.push(e) : t.splice(n, 1), g.value = [...t];
-			} else g.value = e;
+				let t = Array.isArray(h.value) ? [...h.value] : [], n = t.findIndex((t) => X(t, e, i.by));
+				n === -1 ? t.push(e) : t.splice(n, 1), h.value = [...t];
+			} else h.value = e;
 		}
 		function M(e) {
-			return Array.from(k.value).find((t) => X(e, t.value, i.by));
+			return Array.from(k.value).find((t) => Y(e, t.value, i.by));
 		}
-		return Pe({
-			triggerElement: y,
+		return Be({
+			triggerElement: v,
 			onTriggerChange: (e) => {
-				y.value = e;
+				v.value = e;
 			},
-			valueElement: S,
+			valueElement: b,
 			onValueElementChange: (e) => {
-				S.value = e;
+				b.value = e;
 			},
 			contentId: "",
-			modelValue: g,
+			modelValue: h,
 			onValueChange: j,
 			by: i.by,
 			open: _,
@@ -330,10 +448,10 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			onOpenChange: (e) => {
 				_.value = e;
 			},
-			dir: D,
+			dir: T,
 			triggerPointerDownPosRef: C,
 			disabled: l,
-			isEmptyModelValue: T,
+			isEmptyModelValue: w,
 			optionsSet: k,
 			onOptionAdd: (e) => {
 				let t = M(e.value);
@@ -343,25 +461,25 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 				let t = M(e.value);
 				t && k.value.delete(t);
 			}
-		}), (e, t) => (s(), x(h(ge), null, {
-			default: d(() => [a(e.$slots, "default", {
-				modelValue: h(g),
-				open: h(_)
-			}), h(O) && e.name ? (s(), x(Ie, {
+		}), (e, t) => (s(), S(g(ve), null, {
+			default: f(() => [a(e.$slots, "default", {
+				modelValue: g(h),
+				open: g(_)
+			}), g(D) && e.name ? (s(), S(He, {
 				key: A.value,
 				"aria-hidden": "true",
 				tabindex: "-1",
-				multiple: h(u),
-				required: h(c),
+				multiple: g(u),
+				required: g(c),
 				name: e.name,
 				autocomplete: e.autocomplete,
-				disabled: h(l),
-				value: h(g)
+				disabled: g(l),
+				value: g(h)
 			}, {
-				default: d(() => [h(L)(h(g)) ? (s(), f("option", {
+				default: f(() => [g(oe)(g(h)) ? (s(), p("option", {
 					key: 0,
 					value: e.nullableValue
-				}, null, 8, Ne)) : b("v-if", !0), (s(!0), f(E, null, r(Array.from(k.value), (e) => (s(), f("option", n({ key: e.value ?? "" }, { ref_for: !0 }, e), null, 16))), 128))]),
+				}, null, 8, ze)) : x("v-if", !0), (s(!0), p(O, null, r(Array.from(k.value), (e) => (s(), p("option", n({ key: e.value ?? "" }, { ref_for: !0 }, e), null, 16))), 128))]),
 				_: 1
 			}, 8, [
 				"multiple",
@@ -370,11 +488,11 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 				"autocomplete",
 				"disabled",
 				"value"
-			])) : b("v-if", !0)]),
+			])) : x("v-if", !0)]),
 			_: 3
 		}));
 	}
-}), Ie = /* @__PURE__ */ k({
+}), He = /* @__PURE__ */ j({
 	__name: "BubbleSelect",
 	props: {
 		autocomplete: {
@@ -415,8 +533,8 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(e) {
-		let t = e, r = v(), i = Q();
-		u(() => t.value, (e, t) => {
+		let t = e, r = y(), i = Z();
+		d(() => t.value, (e, t) => {
 			let n = window.HTMLSelectElement.prototype, i = Object.getOwnPropertyDescriptor(n, "value").set;
 			if (e !== t && i && r.value) {
 				let t = new Event("change", { bubbles: !0 });
@@ -426,15 +544,15 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		function o(e) {
 			i.onValueChange(e.target.value);
 		}
-		return (e, i) => (s(), x(h(me), { "as-child": "" }, {
-			default: d(() => [C("select", n({
+		return (e, i) => (s(), S(g(B), { "as-child": "" }, {
+			default: f(() => [w("select", n({
 				ref_key: "selectElement",
 				ref: r
 			}, t, { onInput: o }), [a(e.$slots, "default")], 16)]),
 			_: 3
 		}));
 	}
-}), Le = /* @__PURE__ */ k({
+}), Ue = /* @__PURE__ */ j({
 	__name: "SelectPopperPosition",
 	props: {
 		memoDependencies: {
@@ -530,7 +648,7 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 	},
 	setup(e) {
 		let t = V(e);
-		return (e, r) => (s(), x(h(ye), n(h(t), { style: {
+		return (e, r) => (s(), S(g(xe), n(g(t), { style: {
 			boxSizing: "border-box",
 			"--reka-select-content-transform-origin": "var(--reka-popper-transform-origin)",
 			"--reka-select-content-available-width": "var(--reka-popper-available-width)",
@@ -538,15 +656,15 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			"--reka-select-trigger-width": "var(--reka-popper-anchor-width)",
 			"--reka-select-trigger-height": "var(--reka-popper-anchor-height)"
 		} }), {
-			default: d(() => [a(e.$slots, "default")]),
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
 		}, 16));
 	}
-}), Re = {
+}), We = {
 	onViewportChange: () => {},
 	itemTextRefCallback: () => {},
 	itemRefCallback: () => {}
-}, [$, ze] = /*#__PURE__*/ I("SelectContent"), Be = /* @__PURE__ */ k({
+}, [Q, Ge] = /*#__PURE__*/ R("SelectContent"), Ke = /* @__PURE__ */ j({
 	__name: "SelectContentImpl",
 	props: {
 		position: {
@@ -660,41 +778,41 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		"pointerDownOutside"
 	],
 	setup(e, { emit: t }) {
-		let r = e, c = t, l = Q();
-		Ce(), de(r.bodyLock);
-		let { CollectionSlot: f, getItems: p } = U(), g = v();
-		fe(g);
-		let { search: _, handleTypeaheadSearch: y } = Te(), b = v(), S = v(), C = v(), T = v(!1), E = v(!1), D = v(!1);
+		let r = e, c = t, l = Z();
+		Te(), me(r.bodyLock);
+		let { CollectionSlot: u, getItems: p } = U(), m = y();
+		he(m);
+		let { search: _, handleTypeaheadSearch: v } = ke(), b = y(), x = y(), C = y(), w = y(!1), T = y(!1), D = y(!1);
 		function O() {
-			S.value && g.value && H([S.value, g.value]);
+			x.value && m.value && H([x.value, m.value]);
 		}
-		u(T, () => {
+		d(w, () => {
 			O();
 		});
-		let { onOpenChange: k, triggerPointerDownPosRef: j } = l;
+		let { onOpenChange: k, triggerPointerDownPosRef: A } = l;
 		i((e) => {
-			if (!g.value) return;
+			if (!m.value) return;
 			let t = {
 				x: 0,
 				y: 0
 			}, n = (e) => {
 				t = {
-					x: Math.abs(Math.round(e.pageX) - (j.value?.x ?? 0)),
-					y: Math.abs(Math.round(e.pageY) - (j.value?.y ?? 0))
+					x: Math.abs(Math.round(e.pageX) - (A.value?.x ?? 0)),
+					y: Math.abs(Math.round(e.pageY) - (A.value?.y ?? 0))
 				};
 			}, r = (e) => {
-				e.pointerType !== "touch" && (t.x <= 10 && t.y <= 10 ? e.preventDefault() : g.value?.contains(e.target) || k(!1), document.removeEventListener("pointermove", n), j.value = null);
+				e.pointerType !== "touch" && (t.x <= 10 && t.y <= 10 ? e.preventDefault() : m.value?.contains(e.target) || k(!1), document.removeEventListener("pointermove", n), A.value = null);
 			};
-			j.value !== null && (document.addEventListener("pointermove", n), document.addEventListener("pointerup", r, {
+			A.value !== null && (document.addEventListener("pointermove", n), document.addEventListener("pointerup", r, {
 				capture: !0,
 				once: !0
 			})), e(() => {
 				document.removeEventListener("pointermove", n), document.removeEventListener("pointerup", r, { capture: !0 });
 			});
 		});
-		function M(e) {
+		function j(e) {
 			let t = e.ctrlKey || e.altKey || e.metaKey;
-			if (e.key === "Tab" && e.preventDefault(), !t && e.key.length === 1 && y(e.key, p()), [
+			if (e.key === "Tab" && e.preventDefault(), !t && e.key.length === 1 && v(e.key, p()), [
 				"ArrowUp",
 				"ArrowDown",
 				"Home",
@@ -708,73 +826,73 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 				setTimeout(() => H(t)), e.preventDefault();
 			}
 		}
-		let ee = w(() => r.position === "popper" ? r : {}), N = V(ee.value);
-		return ze({
-			content: g,
+		let N = E(() => r.position === "popper" ? r : {}), ee = V(N.value);
+		return Ge({
+			content: m,
 			viewport: b,
 			onViewportChange: (e) => {
 				b.value = e;
 			},
 			itemRefCallback: (e, t, n) => {
-				let r = !E.value && !n, i = X(l.modelValue.value, t, l.by);
+				let r = !T.value && !n, i = Y(l.modelValue.value, t, l.by);
 				if (l.multiple.value) {
 					if (D.value) return;
-					(i || r) && (S.value = e, i && (D.value = !0));
-				} else (i || r) && (S.value = e);
-				r && (E.value = !0);
+					(i || r) && (x.value = e, i && (D.value = !0));
+				} else (i || r) && (x.value = e);
+				r && (T.value = !0);
 			},
-			selectedItem: S,
+			selectedItem: x,
 			selectedItemText: C,
 			onItemLeave: () => {
-				g.value?.focus();
+				m.value?.focus();
 			},
 			itemTextRefCallback: (e, t, n) => {
-				let r = !E.value && !n;
-				(X(l.modelValue.value, t, l.by) || r) && (C.value = e);
+				let r = !T.value && !n;
+				(Y(l.modelValue.value, t, l.by) || r) && (C.value = e);
 			},
 			focusSelectedItem: O,
 			position: r.position,
-			isPositioned: T,
+			isPositioned: w,
 			searchRef: _
-		}), (e, t) => (s(), x(h(f), null, {
-			default: d(() => [A(h(pe), {
+		}), (e, t) => (s(), S(g(u), null, {
+			default: f(() => [M(g(ge), {
 				"as-child": "",
-				onMountAutoFocus: t[6] ||= m(() => {}, ["prevent"]),
+				onMountAutoFocus: t[6] ||= h(() => {}, ["prevent"]),
 				onUnmountAutoFocus: t[7] ||= (e) => {
-					c("closeAutoFocus", e), !e.defaultPrevented && (h(l).triggerElement.value?.focus({ preventScroll: !0 }), e.preventDefault());
+					c("closeAutoFocus", e), !e.defaultPrevented && (g(l).triggerElement.value?.focus({ preventScroll: !0 }), e.preventDefault());
 				}
 			}, {
-				default: d(() => [A(h(oe), {
+				default: f(() => [M(g(se), {
 					"as-child": "",
 					"disable-outside-pointer-events": e.disableOutsidePointerEvents,
-					onFocusOutside: t[2] ||= m(() => {}, ["prevent"]),
-					onDismiss: t[3] ||= (e) => h(l).onOpenChange(!1),
+					onFocusOutside: t[2] ||= h(() => {}, ["prevent"]),
+					onDismiss: t[3] ||= (e) => g(l).onOpenChange(!1),
 					onEscapeKeyDown: t[4] ||= (e) => c("escapeKeyDown", e),
 					onPointerDownOutside: t[5] ||= (e) => c("pointerDownOutside", e)
 				}, {
-					default: d(() => [(s(), x(o(e.position === "popper" ? Le : Ue), n({
+					default: f(() => [(s(), S(o(e.position === "popper" ? Ue : Ye), n({
 						...e.$attrs,
-						...h(N)
+						...g(ee)
 					}, {
-						id: h(l).contentId,
+						id: g(l).contentId,
 						ref: (e) => {
 							if (!e) return;
-							let t = h(ce)(e);
-							t?.hasAttribute("data-reka-popper-content-wrapper") ? g.value = t.firstElementChild : g.value = t;
+							let t = g(le)(e);
+							t?.hasAttribute("data-reka-popper-content-wrapper") ? m.value = t.firstElementChild : m.value = t;
 						},
 						role: "listbox",
-						"data-state": h(l).open.value ? "open" : "closed",
-						dir: h(l).dir.value,
+						"data-state": g(l).open.value ? "open" : "closed",
+						dir: g(l).dir.value,
 						style: {
 							display: "flex",
 							flexDirection: "column",
 							outline: "none"
 						},
-						onContextmenu: t[0] ||= m(() => {}, ["prevent"]),
-						onPlaced: t[1] ||= (e) => T.value = !0,
-						onKeydown: M
+						onContextmenu: t[0] ||= h(() => {}, ["prevent"]),
+						onPlaced: t[1] ||= (e) => w.value = !0,
+						onKeydown: j
 					}), {
-						default: d(() => [a(e.$slots, "default")]),
+						default: f(() => [a(e.$slots, "default")]),
 						_: 3
 					}, 16, [
 						"id",
@@ -789,7 +907,7 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			_: 3
 		}));
 	}
-}), [Ve, He] = /*#__PURE__*/ I("SelectItemAlignedPosition"), Ue = /* @__PURE__ */ k({
+}), [qe, Je] = /*#__PURE__*/ R("SelectItemAlignedPosition"), Ye = /* @__PURE__ */ j({
 	inheritAttrs: !1,
 	__name: "SelectItemAlignedPosition",
 	props: {
@@ -804,15 +922,15 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 	},
 	emits: ["placed"],
 	setup(t, { emit: r }) {
-		let i = t, o = r, { getItems: l } = U(), u = Q(), p = $(), m = v(!1), g = v(!0), _ = v(), { forwardRef: b, currentElement: x } = P(), { viewport: S, selectedItem: C, selectedItemText: w, focusSelectedItem: T } = p;
+		let i = t, o = r, { getItems: l } = U(), u = Z(), d = Q(), m = y(!1), h = y(!0), _ = y(), { forwardRef: v, currentElement: x } = I(), { viewport: S, selectedItem: C, selectedItemText: w, focusSelectedItem: T } = d;
 		function E() {
 			if (u.triggerElement.value && u.valueElement.value && _.value && x.value && S?.value && C?.value && w?.value) {
 				let e = u.triggerElement.value.getBoundingClientRect(), t = x.value.getBoundingClientRect(), n = u.valueElement.value.getBoundingClientRect(), r = w.value.getBoundingClientRect();
 				if (u.dir.value !== "rtl") {
-					let i = r.left - t.left, a = n.left - i, o = e.left - a, s = e.width + o, c = Math.max(s, t.width), l = window.innerWidth - 10, u = q(a, 10, Math.max(10, l - c));
+					let i = r.left - t.left, a = n.left - i, o = e.left - a, s = e.width + o, c = Math.max(s, t.width), l = window.innerWidth - 10, u = K(a, 10, Math.max(10, l - c));
 					_.value.style.minWidth = `${s}px`, _.value.style.left = `${u}px`;
 				} else {
-					let i = t.right - r.right, a = window.innerWidth - n.right - i, o = window.innerWidth - e.right - a, s = e.width + o, c = Math.max(s, t.width), l = window.innerWidth - 10, u = q(a, 10, Math.max(10, l - c));
+					let i = t.right - r.right, a = window.innerWidth - n.right - i, o = window.innerWidth - e.right - a, s = e.width + o, c = Math.max(s, t.width), l = window.innerWidth - 10, u = K(a, 10, Math.max(10, l - c));
 					_.value.style.minWidth = `${s}px`, _.value.style.right = `${u}px`;
 				}
 				let i = l().map((e) => e.ref), a = window.innerHeight - 20, s = S.value.scrollHeight, c = window.getComputedStyle(x.value), d = Number.parseInt(c.borderTopWidth, 10), f = Number.parseInt(c.paddingTop, 10), p = Number.parseInt(c.borderBottomWidth, 10), h = Number.parseInt(c.paddingBottom, 10), g = d + f + s + h + p, v = Math.min(C.value.offsetHeight * 5, g), y = window.getComputedStyle(S.value), b = Number.parseInt(y.paddingTop, 10), T = Number.parseInt(y.paddingBottom, 10), E = e.top + e.height / 2 - 10, D = a - E, O = C.value.offsetHeight / 2, k = C.value.offsetTop + O, A = d + f + k, j = g - A;
@@ -830,30 +948,30 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 				_.value.style.margin = "10px 0", _.value.style.minHeight = `${v}px`, _.value.style.maxHeight = `${a}px`, o("placed"), requestAnimationFrame(() => m.value = !0);
 			}
 		}
-		let D = v("");
+		let D = y("");
 		e(async () => {
 			await c(), E(), x.value && (D.value = window.getComputedStyle(x.value).zIndex);
 		});
 		function O(e) {
-			e && g.value === !0 && (E(), T?.(), g.value = !1);
+			e && h.value === !0 && (E(), T?.(), h.value = !1);
 		}
 		return ae(u.triggerElement, () => {
 			E();
-		}), He({
+		}), Je({
 			contentWrapper: _,
 			shouldExpandOnScrollRef: m,
 			onScrollButtonChange: O
-		}), (e, t) => (s(), f("div", {
+		}), (e, t) => (s(), p("div", {
 			ref_key: "contentWrapperElement",
 			ref: _,
-			style: y({
+			style: b({
 				display: "flex",
 				flexDirection: "column",
 				position: "fixed",
 				zIndex: D.value
 			})
-		}, [A(h(F), n({
-			ref: h(b),
+		}, [M(g(L), n({
+			ref: g(v),
 			style: {
 				boxSizing: "border-box",
 				maxHeight: "100%"
@@ -862,11 +980,11 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			...e.$attrs,
 			...i
 		}), {
-			default: d(() => [a(e.$slots, "default")]),
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
 		}, 16)], 4));
 	}
-}), We = /* @__PURE__ */ k({
+}), Xe = /* @__PURE__ */ j({
 	inheritAttrs: !1,
 	__name: "SelectProvider",
 	props: { context: {
@@ -874,9 +992,9 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		required: !0
 	} },
 	setup(e) {
-		return Pe(e.context), ze(Re), (e, t) => a(e.$slots, "default");
+		return Be(e.context), Ge(We), (e, t) => a(e.$slots, "default");
 	}
-}), Ge = { key: 1 }, Ke = /* @__PURE__ */ k({
+}), Ze = { key: 1 }, Qe = /* @__PURE__ */ j({
 	inheritAttrs: !1,
 	__name: "SelectContent",
 	props: {
@@ -991,38 +1109,38 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		"pointerDownOutside"
 	],
 	setup(n, { emit: r }) {
-		let i = n, o = _e(i, r), c = Q(), l = v();
+		let i = n, o = ye(i, r), c = Z(), l = y();
 		e(() => {
 			l.value = new DocumentFragment();
 		});
-		let p = v(), m = w(() => i.forceMount || c.open.value), y = v(m.value), C;
-		function T() {
-			C &&= (clearTimeout(C), void 0);
+		let u = y(), m = E(() => i.forceMount || c.open.value), h = y(m.value), b;
+		function w() {
+			b &&= (clearTimeout(b), void 0);
 		}
-		return u(m, (e, t, n) => {
-			T(), C = setTimeout(() => {
-				y.value = m.value, C = void 0;
-			}), n(T);
-		}), S(T), (e, n) => m.value || y.value || p.value?.present ? (s(), x(h(se), {
+		return d(m, (e, t, n) => {
+			w(), b = setTimeout(() => {
+				h.value = m.value, b = void 0;
+			}), n(w);
+		}), C(w), (e, n) => m.value || h.value || u.value?.present ? (s(), S(g(ce), {
 			key: 0,
 			ref_key: "presenceRef",
-			ref: p,
+			ref: u,
 			present: m.value
 		}, {
-			default: d(() => [A(Be, _(t({
-				...h(o),
+			default: f(() => [M(Ke, v(t({
+				...g(o),
 				...e.$attrs
 			})), {
-				default: d(() => [a(e.$slots, "default")]),
+				default: f(() => [a(e.$slots, "default")]),
 				_: 3
 			}, 16)]),
 			_: 3
-		}, 8, ["present"])) : l.value ? (s(), f("div", Ge, [(s(), x(g, { to: l.value }, [A(We, { context: h(c) }, {
-			default: d(() => [a(e.$slots, "default")]),
+		}, 8, ["present"])) : l.value ? (s(), p("div", Ze, [(s(), S(_, { to: l.value }, [M(Xe, { context: g(c) }, {
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
-		}, 8, ["context"])], 8, ["to"]))])) : b("v-if", !0);
+		}, 8, ["context"])], 8, ["to"]))])) : x("v-if", !0);
 	}
-}), qe = /* @__PURE__ */ k({
+}), $e = /* @__PURE__ */ j({
 	__name: "SelectIcon",
 	props: {
 		asChild: {
@@ -1036,16 +1154,16 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(e) {
-		return (e, t) => (s(), x(h(F), {
+		return (e, t) => (s(), S(g(L), {
 			"aria-hidden": "true",
 			as: e.as,
 			"as-child": e.asChild
 		}, {
-			default: d(() => [a(e.$slots, "default", {}, () => [t[0] ||= O("▼")])]),
+			default: f(() => [a(e.$slots, "default", {}, () => [t[0] ||= A("▼")])]),
 			_: 3
 		}, 8, ["as", "as-child"]));
 	}
-}), [Je, Ye] = /*#__PURE__*/ I("SelectItem"), Xe = /* @__PURE__ */ k({
+}), [et, tt] = /*#__PURE__*/ R("SelectItem"), nt = /* @__PURE__ */ j({
 	__name: "SelectItem",
 	props: {
 		value: {
@@ -1071,63 +1189,63 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 	},
 	emits: ["select"],
 	setup(t, { emit: n }) {
-		let r = t, i = n, { disabled: o } = p(r), l = Q(), u = $(), { forwardRef: f, currentElement: g } = P(), { CollectionItem: _ } = U(), y = w(() => X(l.modelValue?.value, r.value, l.by)), b = v(!1), S = v(r.textValue ?? ""), C = R(void 0, "reka-select-item-text");
-		async function T(e) {
+		let r = t, i = n, { disabled: o } = m(r), l = Z(), u = Q(), { forwardRef: d, currentElement: p } = I(), { CollectionItem: _ } = U(), v = E(() => Y(l.modelValue?.value, r.value, l.by)), b = y(!1), x = y(r.textValue ?? ""), C = ue(void 0, "reka-select-item-text");
+		async function w(e) {
 			if (e.defaultPrevented) return;
 			let t = {
 				originalEvent: e,
 				value: r.value
 			};
-			ne("select.select", E, t);
+			re("select.select", T, t);
 		}
-		async function E(e) {
+		async function T(e) {
 			await c(), i("select", e), !e.defaultPrevented && (o.value || (l.onValueChange(r.value), l.multiple.value || l.onOpenChange(!1)));
 		}
 		async function D(e) {
 			await c(), !e.defaultPrevented && (o.value ? u.onItemLeave?.() : e.currentTarget?.focus({ preventScroll: !0 }));
 		}
 		async function O(e) {
-			await c(), !e.defaultPrevented && e.currentTarget === B() && u.onItemLeave?.();
+			await c(), !e.defaultPrevented && e.currentTarget === z() && u.onItemLeave?.();
 		}
 		async function k(e) {
-			await c(), !e.defaultPrevented && (u.searchRef?.value === "" || e.key !== " ") && (je.includes(e.key) && T(e), e.key === " " && e.preventDefault());
+			await c(), !e.defaultPrevented && (u.searchRef?.value === "" || e.key !== " ") && (Le.includes(e.key) && w(e), e.key === " " && e.preventDefault());
 		}
 		if (r.value === "") throw Error("A <SelectItem /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder.");
 		return e(() => {
-			g.value && u.itemRefCallback(g.value, r.value, r.disabled);
-		}), Ye({
+			p.value && u.itemRefCallback(p.value, r.value, r.disabled);
+		}), tt({
 			value: r.value,
 			disabled: o,
 			textId: C,
-			isSelected: y,
+			isSelected: v,
 			onItemTextChange: (e) => {
-				S.value = ((S.value || e?.textContent) ?? "").trim();
+				x.value = ((x.value || e?.textContent) ?? "").trim();
 			}
-		}), (e, t) => (s(), x(h(_), { value: { textValue: S.value } }, {
-			default: d(() => [A(h(F), {
-				ref: h(f),
+		}), (e, t) => (s(), S(g(_), { value: { textValue: x.value } }, {
+			default: f(() => [M(g(L), {
+				ref: g(d),
 				role: "option",
-				"aria-labelledby": h(C),
+				"aria-labelledby": g(C),
 				"data-highlighted": b.value ? "" : void 0,
-				"aria-selected": y.value,
-				"data-state": y.value ? "checked" : "unchecked",
-				"aria-disabled": h(o) || void 0,
-				"data-disabled": h(o) ? "" : void 0,
-				tabindex: h(o) ? void 0 : -1,
+				"aria-selected": v.value,
+				"data-state": v.value ? "checked" : "unchecked",
+				"aria-disabled": g(o) || void 0,
+				"data-disabled": g(o) ? "" : void 0,
+				tabindex: g(o) ? void 0 : -1,
 				as: e.as,
 				"as-child": e.asChild,
 				onFocus: t[0] ||= (e) => b.value = !0,
 				onBlur: t[1] ||= (e) => b.value = !1,
-				onPointerup: T,
+				onPointerup: w,
 				onPointerdown: t[2] ||= (e) => {
 					e.currentTarget.focus({ preventScroll: !0 });
 				},
-				onTouchend: t[3] ||= m(() => {}, ["prevent", "stop"]),
+				onTouchend: t[3] ||= h(() => {}, ["prevent", "stop"]),
 				onPointermove: D,
 				onPointerleave: O,
 				onKeydown: k
 			}, {
-				default: d(() => [a(e.$slots, "default")]),
+				default: f(() => [a(e.$slots, "default")]),
 				_: 3
 			}, 8, [
 				"aria-labelledby",
@@ -1143,7 +1261,7 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			_: 3
 		}, 8, ["value"]));
 	}
-}), Ze = /* @__PURE__ */ k({
+}), rt = /* @__PURE__ */ j({
 	__name: "SelectItemIndicator",
 	props: {
 		asChild: {
@@ -1157,16 +1275,16 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(e) {
-		let t = e, r = Je();
-		return (e, i) => h(r).isSelected.value ? (s(), x(h(F), n({
+		let t = e, r = et();
+		return (e, i) => g(r).isSelected.value ? (s(), S(g(L), n({
 			key: 0,
 			"aria-hidden": "true"
 		}, t), {
-			default: d(() => [a(e.$slots, "default")]),
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
-		}, 16)) : b("v-if", !0);
+		}, 16)) : x("v-if", !0);
 	}
-}), Qe = /* @__PURE__ */ k({
+}), it = /* @__PURE__ */ j({
 	inheritAttrs: !1,
 	__name: "SelectItemText",
 	props: {
@@ -1181,27 +1299,27 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(t) {
-		let r = t, i = Q(), o = $(), c = Je(), { forwardRef: l, currentElement: u } = P(), f = w(() => ({
+		let r = t, i = Z(), o = Q(), c = et(), { forwardRef: l, currentElement: u } = I(), d = E(() => ({
 			value: c.value,
 			disabled: c.disabled.value,
 			textContent: u.value?.textContent ?? c.value?.toString() ?? ""
 		}));
 		return e(() => {
-			u.value && (c.onItemTextChange(u.value), o.itemTextRefCallback(u.value, c.value, c.disabled.value), i.onOptionAdd(f.value));
-		}), S(() => {
-			i.onOptionRemove(f.value);
-		}), (e, t) => (s(), x(h(F), n({
-			id: h(c).textId,
-			ref: h(l)
+			u.value && (c.onItemTextChange(u.value), o.itemTextRefCallback(u.value, c.value, c.disabled.value), i.onOptionAdd(d.value));
+		}), C(() => {
+			i.onOptionRemove(d.value);
+		}), (e, t) => (s(), S(g(L), n({
+			id: g(c).textId,
+			ref: g(l)
 		}, {
 			...r,
 			...e.$attrs
 		}), {
-			default: d(() => [a(e.$slots, "default")]),
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
 		}, 16, ["id"]));
 	}
-}), $e = /* @__PURE__ */ k({
+}), at = /* @__PURE__ */ j({
 	__name: "SelectPortal",
 	props: {
 		to: {
@@ -1223,12 +1341,12 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 	},
 	setup(e) {
 		let n = e;
-		return (e, r) => (s(), x(h(z), _(t(n)), {
-			default: d(() => [a(e.$slots, "default")]),
+		return (e, r) => (s(), S(g(de), v(t(n)), {
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
 		}, 16));
 	}
-}), et = /* @__PURE__ */ k({
+}), ot = /* @__PURE__ */ j({
 	__name: "SelectTrigger",
 	props: {
 		disabled: {
@@ -1250,16 +1368,16 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(t) {
-		let n = t, r = Q(), { forwardRef: i, currentElement: o } = P(), c = w(() => r.disabled?.value || n.disabled);
-		r.contentId ||= R(void 0, "reka-select-content"), e(() => {
+		let n = t, r = Z(), { forwardRef: i, currentElement: o } = I(), c = E(() => r.disabled?.value || n.disabled);
+		r.contentId ||= ue(void 0, "reka-select-content"), e(() => {
 			r.onTriggerChange(o.value);
 		});
-		let { getItems: l } = U(), { search: u, handleTypeaheadSearch: f, resetTypeahead: p } = Te();
-		function g() {
+		let { getItems: l } = U(), { search: u, handleTypeaheadSearch: d, resetTypeahead: p } = ke();
+		function m() {
 			c.value || (r.onOpenChange(!0), p());
 		}
 		function _(e) {
-			g(), r.triggerPointerDownPosRef.value = {
+			m(), r.triggerPointerDownPosRef.value = {
 				x: Math.round(e.pageX),
 				y: Math.round(e.pageY)
 			};
@@ -1273,43 +1391,43 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			let t = e.target;
 			t.hasPointerCapture(e.pointerId) && t.releasePointerCapture(e.pointerId), v(e) && (_(e), y = !0);
 		}
-		function S(e) {
+		function x(e) {
 			v(e) && e.preventDefault();
 		}
 		function C(e) {
 			y || e.currentTarget?.focus(), y = !1;
 		}
-		return (e, t) => (s(), x(h(ve), {
+		return (e, t) => (s(), S(g(be), {
 			"as-child": "",
 			reference: e.reference
 		}, {
-			default: d(() => [A(h(F), {
-				ref: h(i),
+			default: f(() => [M(g(L), {
+				ref: g(i),
 				role: "combobox",
 				type: e.as === "button" ? "button" : void 0,
-				"aria-controls": h(r).contentId,
-				"aria-expanded": h(r).open.value || !1,
-				"aria-required": h(r).required?.value,
+				"aria-controls": g(r).contentId,
+				"aria-expanded": g(r).open.value || !1,
+				"aria-required": g(r).required?.value,
 				"aria-autocomplete": "none",
 				disabled: c.value,
-				dir: h(r)?.dir.value,
-				"data-state": h(r)?.open.value ? "open" : "closed",
+				dir: g(r)?.dir.value,
+				"data-state": g(r)?.open.value ? "open" : "closed",
 				"data-disabled": c.value ? "" : void 0,
-				"data-placeholder": h(Me)(h(r).modelValue?.value) ? "" : void 0,
+				"data-placeholder": g(Re)(g(r).modelValue?.value) ? "" : void 0,
 				"as-child": e.asChild,
 				as: e.as,
 				onClick: C,
 				onPointerdown: b,
-				onMousedown: S,
-				onPointerup: t[0] ||= m((e) => {
+				onMousedown: x,
+				onPointerup: t[0] ||= h((e) => {
 					e.pointerType === "touch" && _(e);
 				}, ["prevent"]),
 				onKeydown: t[1] ||= (e) => {
-					let t = h(u) !== "";
-					!(e.ctrlKey || e.altKey || e.metaKey) && e.key.length === 1 && t && e.key === " " || (h(f)(e.key, h(l)()), h(Ae).includes(e.key) && (g(), e.preventDefault()));
+					let t = g(u) !== "";
+					!(e.ctrlKey || e.altKey || e.metaKey) && e.key.length === 1 && t && e.key === " " || (g(d)(e.key, g(l)()), g(Ie).includes(e.key) && (m(), e.preventDefault()));
 				}
 			}, {
-				default: d(() => [a(e.$slots, "default")]),
+				default: f(() => [a(e.$slots, "default")]),
 				_: 3
 			}, 8, [
 				"type",
@@ -1327,7 +1445,7 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			_: 3
 		}, 8, ["reference"]));
 	}
-}), tt = /* @__PURE__ */ k({
+}), st = /* @__PURE__ */ j({
 	__name: "SelectValue",
 	props: {
 		placeholder: {
@@ -1346,25 +1464,25 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(t) {
-		let n = t, { forwardRef: r, currentElement: i } = P(), o = Q();
+		let n = t, { forwardRef: r, currentElement: i } = I(), o = Z();
 		e(() => {
 			o.valueElement = i;
 		});
-		let c = w(() => {
-			let e = [], t = Array.from(o.optionsSet.value), n = (e) => t.find((t) => X(e, t.value, o.by));
+		let c = E(() => {
+			let e = [], t = Array.from(o.optionsSet.value), n = (e) => t.find((t) => Y(e, t.value, o.by));
 			return e = Array.isArray(o.modelValue.value) ? o.modelValue.value.map((e) => n(e)?.textContent ?? "") : [n(o.modelValue.value)?.textContent ?? ""], e.filter(Boolean);
-		}), l = w(() => c.value.length ? c.value.join(", ") : n.placeholder);
-		return (e, t) => (s(), x(h(F), {
-			ref: h(r),
+		}), l = E(() => c.value.length ? c.value.join(", ") : n.placeholder);
+		return (e, t) => (s(), S(g(L), {
+			ref: g(r),
 			as: e.as,
 			"as-child": e.asChild,
 			style: { pointerEvents: "none" },
 			"data-placeholder": c.value.length ? void 0 : n.placeholder
 		}, {
-			default: d(() => [a(e.$slots, "default", {
+			default: f(() => [a(e.$slots, "default", {
 				selectedLabel: c.value,
-				modelValue: h(o).modelValue.value
-			}, () => [O(T(l.value), 1)])]),
+				modelValue: g(o).modelValue.value
+			}, () => [A(D(l.value), 1)])]),
 			_: 3
 		}, 8, [
 			"as",
@@ -1372,7 +1490,7 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			"data-placeholder"
 		]));
 	}
-}), nt = /* @__PURE__ */ k({
+}), ct = /* @__PURE__ */ j({
 	__name: "SelectViewport",
 	props: {
 		nonce: {
@@ -1389,15 +1507,15 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		}
 	},
 	setup(t) {
-		let r = t, { nonce: i } = p(r), o = ke(i), c = $(), l = c.position === "item-aligned" ? Ve() : void 0, { forwardRef: u, currentElement: m } = P();
+		let r = t, { nonce: i } = m(r), o = Fe(i), c = Q(), l = c.position === "item-aligned" ? qe() : void 0, { forwardRef: u, currentElement: d } = I();
 		e(() => {
-			c?.onViewportChange(m.value);
+			c?.onViewportChange(d.value);
 		});
-		let g = v(0);
+		let h = y(0);
 		function _(e) {
 			let t = e.currentTarget, { shouldExpandOnScrollRef: n, contentWrapper: r } = l ?? {};
 			if (n?.value && r?.value) {
-				let e = Math.abs(g.value - t.scrollTop);
+				let e = Math.abs(h.value - t.scrollTop);
 				if (e > 0) {
 					let n = window.innerHeight - 20, i = Number.parseFloat(r.value.style.minHeight), a = Number.parseFloat(r.value.style.height), o = Math.max(i, a);
 					if (o < n) {
@@ -1406,10 +1524,10 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 					}
 				}
 			}
-			g.value = t.scrollTop;
+			h.value = t.scrollTop;
 		}
-		return (e, t) => (s(), f(E, null, [A(h(F), n({
-			ref: h(u),
+		return (e, t) => (s(), p(O, null, [M(g(L), n({
+			ref: g(u),
 			"data-reka-select-viewport": "",
 			role: "presentation"
 		}, {
@@ -1423,18 +1541,31 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 			},
 			onScroll: _
 		}), {
-			default: d(() => [a(e.$slots, "default")]),
+			default: f(() => [a(e.$slots, "default")]),
 			_: 3
-		}, 16), A(h(F), {
+		}, 16), M(g(L), {
 			as: "style",
-			nonce: h(o)
+			nonce: g(o)
 		}, {
-			default: d(() => t[0] ||= [O(" /* Hide scrollbars cross-browser and enable momentum scroll for touch devices */ [data-reka-select-viewport] { scrollbar-width:none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; } [data-reka-select-viewport]::-webkit-scrollbar { display: none; } ")]),
+			default: f(() => t[0] ||= [A(" /* Hide scrollbars cross-browser and enable momentum scroll for touch devices */ [data-reka-select-viewport] { scrollbar-width:none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; } [data-reka-select-viewport]::-webkit-scrollbar { display: none; } ")]),
 			_: 1,
 			__: [0]
 		}, 8, ["nonce"])], 64));
 	}
-}), rt = /* @__PURE__ */ k({
+});
+//#endregion
+//#region src/ui/components/_prop_utils.ts
+function $(e) {
+	let t = {};
+	for (let n of Object.keys(e)) {
+		let r = e[n];
+		r !== void 0 && (t[n] = r);
+	}
+	return t;
+}
+//#endregion
+//#region src/ui/components/AppSelect.vue
+var lt = /* @__PURE__ */ j({
 	__name: "AppSelect",
 	props: {
 		modelValue: {},
@@ -1454,45 +1585,45 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 		function c(e) {
 			o("update:modelValue", e);
 		}
-		let u = l(te, void 0), p = w(() => u ? { to: u } : {}), m = w(() => W({
+		let l = u(ne, void 0), d = E(() => l ? { to: l } : {}), m = E(() => $({
 			id: a.id,
 			"aria-describedby": a.describedBy,
 			"aria-label": a.ariaLabel
-		})), g = w(() => W({ modelValue: a.modelValue }));
-		return (i, a) => (s(), x(h(Fe), n(g.value, {
+		})), h = E(() => $({ modelValue: a.modelValue }));
+		return (i, a) => (s(), S(g(Ve), n(h.value, {
 			disabled: e.disabled,
 			"onUpdate:modelValue": c
 		}), {
-			default: d(() => [A(h(et), n(m.value, { class: ["tc-interactive", h(N).selectTrigger] }), {
-				default: d(() => [A(h(tt), {
-					class: D(h(N).selectValue),
+			default: f(() => [M(g(ot), n(m.value, { class: ["tc-interactive", g(P).selectTrigger] }), {
+				default: f(() => [M(g(st), {
+					class: k(g(P).selectValue),
 					placeholder: e.placeholder
-				}, null, 8, ["class", "placeholder"]), A(h(qe), { "as-child": "" }, {
-					default: d(() => [A(j, {
-						icon: h(ee),
+				}, null, 8, ["class", "placeholder"]), M(g($e), { "as-child": "" }, {
+					default: f(() => [M(N, {
+						icon: g(te),
 						size: 16
 					}, null, 8, ["icon"])]),
 					_: 1
 				})]),
 				_: 1
-			}, 16, ["class"]), A(h($e), _(t(p.value)), {
-				default: d(() => [A(h(Ke), {
-					class: D(h(N).selectContent),
+			}, 16, ["class"]), M(g(at), v(t(d.value)), {
+				default: f(() => [M(g(Qe), {
+					class: k(g(P).selectContent),
 					"side-offset": 4,
 					position: "popper"
 				}, {
-					default: d(() => [A(h(nt), { class: D(h(N).selectViewport) }, {
-						default: d(() => [(s(!0), f(E, null, r(e.options, (e) => (s(), x(h(Xe), {
+					default: f(() => [M(g(ct), { class: k(g(P).selectViewport) }, {
+						default: f(() => [(s(!0), p(O, null, r(e.options, (e) => (s(), S(g(nt), {
 							key: e.value,
-							class: D(h(N).selectItem),
+							class: k(g(P).selectItem),
 							value: e.value
 						}, {
-							default: d(() => [A(h(Qe), { class: D(h(N).selectItemText) }, {
-								default: d(() => [O(T(e.label), 1)]),
+							default: f(() => [M(g(it), { class: k(g(P).selectItemText) }, {
+								default: f(() => [A(D(e.label), 1)]),
 								_: 2
-							}, 1032, ["class"]), A(h(Ze), { class: D(h(N).selectItemIndicator) }, {
-								default: d(() => [A(j, {
-									icon: h(M),
+							}, 1032, ["class"]), M(g(rt), { class: k(g(P).selectItemIndicator) }, {
+								default: f(() => [M(N, {
+									icon: g(ee),
 									size: 14
 								}, null, 8, ["icon"])]),
 								_: 1
@@ -1510,4 +1641,4 @@ var Ne = ["value"], [Q, Pe] = /*#__PURE__*/ I("SelectRoot"), Fe = /* @__PURE__ *
 	}
 });
 //#endregion
-export { K as a, Se as i, Oe as n, q as r, rt as t };
+export { Oe as a, we as c, Me as i, G as l, $ as n, De as o, Pe as r, K as s, lt as t };

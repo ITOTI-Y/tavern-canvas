@@ -2,16 +2,16 @@ import { i as e } from "./provider-Bp1QeoG9.js";
 import { A as t, C as n, F as r, G as i, N as a, T as o, V as s, W as c, _ as l, a as u, ct as d, d as f, dt as p, et as m, ft as h, g, h as _, k as v, m as y, n as b, nt as x, p as S, pt as C, u as w, ut as T, v as E, x as D, y as O } from "./vue-i18n-DUz2Gjn8.js";
 import { n as k, t as A } from "./AppIcon-Cnhzrx9o.js";
 import { n as j, r as M, t as N } from "./StateSurface-Bo_sA18G.js";
-import { n as P, t as F } from "./AppDialog-DJhokkv1.js";
+import { n as P, t as F } from "./AppDialog-BizR-VGE.js";
 import { t as I } from "./trash-2-B6ZXZcor.js";
 import { t as L } from "./upload-CQtsg_mB.js";
 import { t as ee } from "./x-CDKrptQJ.js";
 import { a as R, n as z } from "./analysis-D_QhEnPQ.js";
 import { t as te } from "./portal_keys-gQ1cWdMS.js";
 import { r as ne, t as re } from "./inpaint_session-BGEtfxwf.js";
-import { n as ie, t as B } from "./AppSelect-DJk9aRkS.js";
-import { a as ae, i as oe, l as se, o as ce, s as le, u as ue } from "./_prop_utils-BsJwfjAZ.js";
-import { t as V } from "./IconButton-BvRQHJyk.js";
+import { i as ie, t as B } from "./AppSelect-CIW6ICNh.js";
+import { a as ae, c as oe, i as se, n as ce, r as le, s as ue } from "./Collection-C3W7ausR.js";
+import { t as V } from "./IconButton-CKVrOjmk.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/eraser.js
 var de = k("eraser", [["path", {
 	d: "M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21",
@@ -115,27 +115,15 @@ var de = k("eraser", [["path", {
 	lightbox: "_lightbox_cjg26_115",
 	notice_actions: "_notice_actions_cjg26_133"
 }, U = {
-	paramsBody: "_paramsBody_1gvv4_10",
-	paramsDimensionRow: "_paramsDimensionRow_1gvv4_16",
-	paramsAspectRow: "_paramsAspectRow_1gvv4_25",
-	paramsAspectField: "_paramsAspectField_1gvv4_31",
-	editBody: "_editBody_1gvv4_37",
-	editTextareaWrap: "_editTextareaWrap_1gvv4_43",
-	editHighlightLayer: "_editHighlightLayer_1gvv4_47",
-	editHighlightMatch: "_editHighlightMatch_1gvv4_60",
-	editTextarea: "_editTextarea_1gvv4_43",
-	editTagActions: "_editTagActions_1gvv4_84",
-	editSubmenu: "_editSubmenu_1gvv4_89",
-	editFooter: "_editFooter_1gvv4_95",
-	inpaintDialogContent: "_inpaintDialogContent_1gvv4_107",
-	inpaintBody: "_inpaintBody_1gvv4_111",
-	inpaintCanvasFrame: "_inpaintCanvasFrame_1gvv4_121",
-	inpaintToolbar: "_inpaintToolbar_1gvv4_139",
-	inpaintToolbarDivider: "_inpaintToolbarDivider_1gvv4_146",
-	inpaintBrushRow: "_inpaintBrushRow_1gvv4_153",
-	inpaintPromptGrid: "_inpaintPromptGrid_1gvv4_163",
-	inpaintFooter: "_inpaintFooter_1gvv4_169",
-	inpaintDimensionError: "_inpaintDimensionError_1gvv4_175"
+	inpaintDialogContent: "_inpaintDialogContent_677ep_13",
+	inpaintBody: "_inpaintBody_677ep_17",
+	inpaintCanvasFrame: "_inpaintCanvasFrame_677ep_27",
+	inpaintToolbar: "_inpaintToolbar_677ep_45",
+	inpaintToolbarDivider: "_inpaintToolbarDivider_677ep_52",
+	inpaintBrushRow: "_inpaintBrushRow_677ep_59",
+	inpaintPromptGrid: "_inpaintPromptGrid_677ep_69",
+	inpaintFooter: "_inpaintFooter_677ep_75",
+	inpaintDimensionError: "_inpaintDimensionError_677ep_81"
 }, _e = ["aria-label"], ve = ["aria-label"], ye = ["aria-label"], be = ["aria-label"], xe = 32, Se = 1, Ce = 3, W = /* @__PURE__ */ D({
 	__name: "InpaintDialog",
 	props: {
@@ -278,17 +266,17 @@ var de = k("eraser", [["path", {
 				denoiseStrength: W.value
 			});
 		}
-		return (t, r) => (a(), _(d(ue), {
+		return (t, r) => (a(), _(d(oe), {
 			open: e.open,
 			"onUpdate:open": k
 		}, {
 			default: c(() => [O(d(ie), p(n(D.value)), {
-				default: c(() => [O(d(ae), { class: T(d(M).dialogOverlay) }, null, 8, ["class"]), O(d(le), { class: T([d(M).dialogContent, d(U).inpaintDialogContent]) }, {
+				default: c(() => [O(d(le), { class: T(d(M).dialogOverlay) }, null, 8, ["class"]), O(d(ae), { class: T([d(M).dialogContent, d(U).inpaintDialogContent]) }, {
 					default: c(() => [
-						y("header", { class: T(d(M).dialogHeader) }, [O(d(oe), { class: T(d(M).dialogTitle) }, {
+						y("header", { class: T(d(M).dialogHeader) }, [O(d(ce), { class: T(d(M).dialogTitle) }, {
 							default: c(() => [E(C(e.title), 1)]),
 							_: 1
-						}, 8, ["class"]), O(d(se), {
+						}, 8, ["class"]), O(d(ue), {
 							class: T(["tc-interactive", d(M).dialogClose]),
 							"aria-label": e.closeLabel
 						}, {
@@ -298,7 +286,7 @@ var de = k("eraser", [["path", {
 							}, null, 8, ["icon"])]),
 							_: 1
 						}, 8, ["class", "aria-label"])], 2),
-						O(d(ce), { class: "tc-visually-hidden" }, {
+						O(d(se), { class: "tc-visually-hidden" }, {
 							default: c(() => [E(C(e.title), 1)]),
 							_: 1
 						}),

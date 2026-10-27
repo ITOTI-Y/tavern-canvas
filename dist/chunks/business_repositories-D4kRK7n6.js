@@ -1,7 +1,7 @@
 import { S as e, b as t, g as n, s as r, u as i, w as a, y as o } from "./ids-DjWg1HG8.js";
 import { n as s } from "./generation-CPQjBKML.js";
 import { o as ee } from "./provider-Bp1QeoG9.js";
-import { A as c, C as te, D as l, E as u, M as d, O as f, _ as ne, a as p, b as m, c as h, d as g, f as _, g as v, h as y, i as b, j as x, k as re, l as ie, m as ae, o as S, p as oe, r as C, s as se, t as ce, u as w, v as T, w as E, x as D, y as O } from "./job_repository-DWuHDMtL.js";
+import { A as c, C as te, D as l, E as u, M as d, O as f, _ as ne, a as p, b as m, c as h, d as g, f as _, g as v, h as y, i as b, j as x, k as re, l as ie, m as ae, o as S, p as oe, r as C, s as se, t as ce, u as w, v as T, w as E, x as D, y as O } from "./job_repository-BpPLSfp5.js";
 import { n as k } from "./build-BtJLSgAU.js";
 //#region ../../packages/storage/src/open_database.ts
 var A = null, j = null;
@@ -22,7 +22,7 @@ function M(e) {
 	}), e.addEventListener("versionchange", n), i;
 }
 function N() {
-	return A === null ? (j === null && (j = k(ie, 5, { upgrade: d }).then((e) => {
+	return A === null ? (j === null && (j = k(ie, 6, { upgrade: d }).then((e) => {
 		let t = M(e);
 		return A = t, t;
 	}).finally(() => {
@@ -144,7 +144,7 @@ var ue = class extends C {
 	}
 }, _e = class extends C {
 	constructor(e) {
-		super(e, "knowledge_entries", _);
+		super(e, "lora_profiles", ae);
 	}
 }, ve = class extends C {
 	constructor(e) {
@@ -168,11 +168,11 @@ var ue = class extends C {
 	}
 }, xe = class extends C {
 	constructor(e) {
-		super(e, "legacy_preferences", oe);
+		super(e, "legacy_preferences", _);
 	}
 }, Se = class extends C {
 	constructor(e) {
-		super(e, "llm_connections", ae, !0);
+		super(e, "llm_connections", oe, !0);
 	}
 }, Ce = class extends C {
 	constructor(e) {
@@ -364,7 +364,7 @@ function Ee(e) {
 		character_profiles: new me(e),
 		outfit_profiles: new he(e),
 		regex_rules: new ge(e),
-		knowledge_entries: new _e(e),
+		lora_profiles: new _e(e),
 		vocabularies: new ve(e),
 		vocabulary_groups: new ye(e),
 		vocabulary_packages: new q(e),

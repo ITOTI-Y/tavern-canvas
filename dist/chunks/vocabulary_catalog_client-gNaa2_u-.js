@@ -2,8 +2,8 @@ import { n as e, t } from "./sha2-BGNex9vj.js";
 import { T as n, b as r, g as i, h as a, l as o, u as s, w as c, y as l } from "./ids-DjWg1HG8.js";
 import { r as u } from "./generation-CPQjBKML.js";
 import { c as d, i as ee, n as te, r as f } from "./vocabulary-BD4XUNJi.js";
-import { d as p } from "./business_repositories-C3SmXgTK.js";
-import { a as m, d as h, f as g, l as _, n as v, o as ne, r as re, t as ie } from "./package_store-CmsV9t_2.js";
+import { d as p } from "./business_repositories-D4kRK7n6.js";
+import { a as m, d as h, f as g, l as _, n as v, o as ne, r as re, t as ie } from "./package_store-D4A7hSyu.js";
 //#region ../../packages/contracts/src/vocabulary_catalog.ts
 var ae = r().trim().min(2).max(16).regex(/^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$/u), y = l({
 	en: r().trim().min(1).max(128),

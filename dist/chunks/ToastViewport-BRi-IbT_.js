@@ -6,7 +6,7 @@ import { t as M } from "./portal_keys-gQ1cWdMS.js";
 import { D as N, _ as P, c as F, f as I, h as ee, i as L, j as R, o as z, p as B, r as V, t as H, x as U } from "./Teleport-C7mDSUEl.js";
 import { n as W, o as G, r as te } from "./FocusScope-B2vRGnoX.js";
 import { a as K } from "./PopperContent-a3U-C0mc.js";
-import { r as q } from "./_prop_utils-BsJwfjAZ.js";
+import { t as q } from "./Collection-C3W7ausR.js";
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/DismissableLayer/DismissableLayerBranch.js
 var ne = /* @__PURE__ */ D({
 	__name: "DismissableLayerBranch",

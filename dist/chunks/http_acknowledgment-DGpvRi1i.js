@@ -44,19 +44,27 @@ var y = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 		api_url: d({ protocol: /^https?$/u }).max(500),
 		model: n().trim().min(1).max(200)
 	})
-]), C = f({
+]), C = r("mode", [
+	f({ mode: o("chat") }),
+	f({ mode: o("off") }),
+	f({
+		mode: o("worldbook"),
+		worldbook: n().trim().min(1).max(200)
+	})
+]), w = f({
 	preset_name: n().trim().min(1).max(200),
 	connection: S,
 	max_chat_history: i().int().min(0).max(20),
 	max_images_per_message: i().int().min(1).max(8),
-	prompt_preset_id: t.nullable()
-}), w = f({
+	prompt_preset_id: t.nullable(),
+	world_info: C.default({ mode: "chat" })
+}), T = f({
 	source: n().trim().min(1).max(32),
 	target: n().trim().min(1).max(128)
-}), T = f({
-	deepl_endpoint: c(["free", "pro"]),
-	glossary: a(w).max(200)
 }), E = f({
+	deepl_endpoint: c(["free", "pro"]),
+	glossary: a(T).max(200)
+}), D = f({
 	schema_version: o(1),
 	active_namespace: y,
 	locale: c([
@@ -69,12 +77,12 @@ var y = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	global_concurrency: i().int().min(1).max(4),
 	auto_generation_enabled: l(),
 	vocabulary_update_channel: c(["bundled", "remote"]),
-	illustration: C,
-	translation: T,
+	illustration: w,
+	translation: E,
 	gateway: m,
 	ui: x
-}), D = e({ offset: !1 });
-function O(e) {
+}), O = e({ offset: !1 });
+function k(e) {
 	let t;
 	try {
 		t = new URL(e);
@@ -84,31 +92,31 @@ function O(e) {
 	if (t.protocol !== "http:" && t.protocol !== "https:" || t.username.length > 0 || t.password.length > 0 || t.pathname !== "/" || t.search.length > 0 || t.hash.length > 0) throw TypeError("Endpoint must be an HTTP or HTTPS origin");
 	return p.parse(t.origin);
 }
-function k(e, t, n) {
-	let r = O(t);
-	return D.parse(n), Object.freeze({
+function A(e, t, n) {
+	let r = k(t);
+	return O.parse(n), Object.freeze({
 		...e,
 		[r]: n
 	});
 }
-function A(e, t) {
-	let n = e[O(t)];
-	return n !== void 0 && D.safeParse(n).success;
-}
-function j(e) {
-	let t = O(e);
-	return new URL(t).protocol === "http:";
+function j(e, t) {
+	let n = e[k(t)];
+	return n !== void 0 && O.safeParse(n).success;
 }
 function M(e) {
-	let t = new URL(O(e)).hostname.toLowerCase();
-	if (t === "localhost" || t === "[::1]") return "loopback";
-	let n = P(t);
-	return n === void 0 ? t.startsWith("[fc") || t.startsWith("[fd") || /^\[fe[89ab]/u.test(t) ? "private" : "public_or_unknown" : n[0] === 127 ? "loopback" : n[0] === 10 || n[0] === 172 && n[1] >= 16 && n[1] <= 31 || n[0] === 192 && n[1] === 168 || n[0] === 169 && n[1] === 254 ? "private" : "public_or_unknown";
+	let t = k(e);
+	return new URL(t).protocol === "http:";
 }
 function N(e) {
-	return M(e) === "loopback";
+	let t = new URL(k(e)).hostname.toLowerCase();
+	if (t === "localhost" || t === "[::1]") return "loopback";
+	let n = F(t);
+	return n === void 0 ? t.startsWith("[fc") || t.startsWith("[fd") || /^\[fe[89ab]/u.test(t) ? "private" : "public_or_unknown" : n[0] === 127 ? "loopback" : n[0] === 10 || n[0] === 172 && n[1] >= 16 && n[1] <= 31 || n[0] === 192 && n[1] === 168 || n[0] === 169 && n[1] === 254 ? "private" : "public_or_unknown";
 }
 function P(e) {
+	return N(e) === "loopback";
+}
+function F(e) {
 	let t = e.split(".");
 	if (t.length !== 4) return;
 	let n = t.map(Number);
@@ -122,4 +130,4 @@ function P(e) {
 	];
 }
 //#endregion
-export { O as a, m as c, v as d, _ as f, N as i, E as l, M as n, j as o, A as r, b as s, k as t, x as u };
+export { k as a, m as c, v as d, _ as f, P as i, D as l, N as n, M as o, j as r, b as s, A as t, x as u };

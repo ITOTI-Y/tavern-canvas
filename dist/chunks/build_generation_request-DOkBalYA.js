@@ -3,7 +3,7 @@ import { n as e } from "./novelai_request_defaults-B4CHIiJ8.js";
 var t = class extends Error {
 	code = "workbench_provider_unsupported";
 	constructor(e) {
-		super(`Workbench cannot build a generation request for provider "${e}" yet.`), this.name = "UnsupportedProviderError";
+		super(`Inkwell cannot build a generation request for provider "${e}" yet.`), this.name = "UnsupportedProviderError";
 	}
 }, n = [
 	"gpt-image-1",

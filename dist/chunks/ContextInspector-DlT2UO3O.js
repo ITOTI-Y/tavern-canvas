@@ -13,13 +13,7 @@ var f = [
 	},
 	emits: ["resize"],
 	setup(d, { emit: _ }) {
-		let v = d, y = _, { t: b } = o(), x = i(!1), S = s(() => {
-			let e = v.selection;
-			return e ? e.kind === "generation_job" ? b("common.inspector.selection.kind_generation_job") : e.kind === "gallery_record" ? b("common.inspector.selection.kind_gallery_record") : b("common.inspector.selection.kind_asset") : null;
-		}), C = s(() => {
-			let e = v.selection;
-			return e ? e.kind === "generation_job" ? e.job_id : e.kind === "gallery_record" ? e.record_id : e.asset_id : null;
-		});
+		let v = d, y = _, { t: b } = o(), x = i(!1), S = s(() => v.selection ? b("common.inspector.selection.kind_gallery_record") : null), C = s(() => v.selection?.record_id ?? null);
 		function w(e) {
 			return Math.min(h, Math.max(m, e));
 		}

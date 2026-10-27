@@ -1044,13 +1044,7 @@ var we = /* @__PURE__ */ w({
 		function v(e) {
 			e.preventDefault(), h?.focus(), h = null;
 		}
-		let w = y(() => {
-			let e = r.selection;
-			return e ? e.kind === "generation_job" ? l("common.inspector.selection.kind_generation_job") : e.kind === "gallery_record" ? l("common.inspector.selection.kind_gallery_record") : l("common.inspector.selection.kind_asset") : null;
-		}), O = y(() => {
-			let e = r.selection;
-			return e ? e.kind === "generation_job" ? e.job_id : e.kind === "gallery_record" ? e.record_id : e.asset_id : null;
-		});
+		let w = y(() => r.selection ? l("common.inspector.selection.kind_gallery_record") : null), O = y(() => r.selection?.record_id ?? null);
 		return (n, r) => (a(), m(u(ce), {
 			open: t.open,
 			modal: "",
