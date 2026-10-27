@@ -598,7 +598,7 @@ var e = {
 			vocabulary_import_error: "词库导入失败（{code}）。",
 			archive_export_action: "导出归档",
 			archive_import_action: "导入归档",
-			archive_import_description: "导入会将归档中的记录合并到当前命名空间，不会删除已有数据。"
+			archive_import_description: "导入会将归档中的记录合并到当前数据中，不会删除已有数据；与归档中 id 相同的记录会被归档版本替换。"
 		}
 	},
 	errors: {

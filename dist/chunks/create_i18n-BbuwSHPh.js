@@ -629,7 +629,7 @@ var o = {
 			vocabulary_import_error: "Vocabulary import failed ({code}).",
 			archive_export_action: "Export archive",
 			archive_import_action: "Import archive",
-			archive_import_description: "Importing merges records from the archive into this namespace. It never deletes existing data."
+			archive_import_description: "Importing merges records from the archive into your current data and never deletes existing data; a record with the same id as one in the archive is replaced by the archived version."
 		}
 	},
 	errors: {
@@ -755,7 +755,7 @@ var o = {
 			malformed_response: "the provider returned an unreadable response"
 		}
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DxuLR1EE.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-Fdypw4Mk.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

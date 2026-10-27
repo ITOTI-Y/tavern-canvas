@@ -499,7 +499,7 @@ var J = L("cable", [
 				h.value = !0, g.value = null;
 				try {
 					let e = await t.controller.export_settings_archive(), n = URL.createObjectURL(e), r = document.createElement("a");
-					r.href = n, r.download = "tavern-canvas-archive.json", r.click(), URL.revokeObjectURL(n);
+					r.href = n, r.download = "inkwell-archive.zip", r.click(), URL.revokeObjectURL(n);
 				} catch {
 					g.value = n("errors.unexpected");
 				} finally {
@@ -597,7 +597,7 @@ var J = L("cable", [
 					ref_key: "file_input",
 					ref: S,
 					type: "file",
-					accept: "application/json",
+					accept: ".zip,application/zip",
 					class: "tc-visually-hidden",
 					"aria-label": C(n)("settings.data.archive_import_action"),
 					"data-testid": "archive-import-input",
@@ -2615,7 +2615,7 @@ var Be = ["id", "aria-describedby"], Ve = ["id", "aria-describedby"], He = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = S(() => import("./PromptView-DNzJ_8ca.js")), n = S(() => import("./AssetsView-PePKTI5l.js")), r = S(() => import("./DiagnosticsView-Tue_RLev.js")), i = e, { t: a } = O(), o = [
+		let t = S(() => import("./PromptView-DNzJ_8ca.js")), n = S(() => import("./AssetsView-PePKTI5l.js")), r = S(() => import("./DiagnosticsView-83GQM6KY.js")), i = e, { t: a } = O(), o = [
 			"illustration",
 			"providers",
 			"translation",
