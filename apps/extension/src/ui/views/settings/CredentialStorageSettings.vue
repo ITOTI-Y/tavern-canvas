@@ -12,7 +12,7 @@ import {
   BROWSER_SECRET_MINIMUM_PASSPHRASE_LENGTH,
   type BrowserSecretVaultStatus,
 } from "../../../storage/browser_secret_vault.js";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly settings: TavernCanvasSettings | null;

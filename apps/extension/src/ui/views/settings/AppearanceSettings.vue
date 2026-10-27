@@ -7,7 +7,7 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import AppSwitch from "../../components/AppSwitch.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
 import SegmentedControl from "../../components/SegmentedControl.vue";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly settings: TavernCanvasSettings | null;

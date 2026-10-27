@@ -9,7 +9,7 @@ import type {
 } from "../../contracts/ui_capabilities.js";
 import AppButton from "../../components/AppButton.vue";
 import SegmentedControl from "../../components/SegmentedControl.vue";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly vocabularyUpdateChannel: VocabularyUpdateChannel | null;

@@ -10,7 +10,7 @@ import {
   type WardrobeOutfit,
 } from "../../modules/wardrobe/wardrobe_library.js";
 import AppSelect from "../components/AppSelect.vue";
-import styles from "./illustrate_dialog.module.css";
+import styles from "./illustrate_dialog_styles.js";
 
 const props = defineProps<{
   readonly character: WardrobeCharacter;

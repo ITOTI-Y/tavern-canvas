@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { CommandState } from "../../contracts/view_models.js";
 import type { ConnectionTestResult } from "../../contracts/ui_capabilities.js";
 import AppButton from "../../components/AppButton.vue";
-import styles from "./diagnostics.module.css";
+import styles from "./diagnostics_styles.js";
 
 const props = defineProps<{
   readonly command: CommandState<ConnectionTestResult>;

@@ -4,7 +4,7 @@ import { computed } from "vue";
 
 import AppIcon from "./AppIcon.vue";
 import AppTooltip from "./AppTooltip.vue";
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 const props = withDefaults(
   defineProps<{

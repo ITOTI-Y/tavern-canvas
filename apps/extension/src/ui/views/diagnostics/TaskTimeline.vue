@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { TaskTimelineEntry } from "../../contracts/ui_capabilities.js";
 import StateSurface from "../../components/StateSurface.vue";
 import VirtualList from "../../components/VirtualList.vue";
-import styles from "./diagnostics.module.css";
+import styles from "./diagnostics_styles.js";
 
 const props = defineProps<{
   readonly entries: readonly TaskTimelineEntry[];

@@ -8,8 +8,8 @@ import type {
   TagSuggestion,
 } from "../../modules/translation/prompt_translator.js";
 import IconButton from "../components/IconButton.vue";
-import dialog_styles from "./illustrate_dialog.module.css";
-import styles from "./prompt_field.module.css";
+import dialog_styles from "./illustrate_dialog_styles.js";
+import styles from "./prompt_field_styles.js";
 import { apply_suggestion, popularity_tier, token_at, type TagToken } from "./tag_completion.js";
 
 const SUGGEST_DELAY_MS = 150;

@@ -3,22 +3,23 @@ import { a as t, n } from "./wardrobe_library-CZLkOF9h.js";
 import { A as r, B as i, C as a, F as o, G as s, N as c, O as l, T as u, V as d, W as f, _ as p, a as m, c as h, ct as g, d as _, dt as v, et as y, ft as b, g as x, h as S, k as C, m as w, n as T, nt as E, p as D, pt as O, u as k, ut as A, v as j, x as M, y as N } from "./vue-i18n-DUz2Gjn8.js";
 import { n as P } from "./portal_keys-B9C82xtk.js";
 import { n as F, t as I } from "./AppIcon-Cnhzrx9o.js";
-import { n as L, r as R, t as z } from "./StateSurface-C9BHPFzJ.js";
-import { t as B } from "./AppDialog-C_45D_ty.js";
+import { n as L, r as R, t as z } from "./StateSurface-BA0Ffiwe.js";
+import { t as B } from "./AppDialog-CzDoJQTe.js";
 import { t as ee } from "./trash-2-B6ZXZcor.js";
 import { t as te } from "./upload-CQtsg_mB.js";
 import { t as ne } from "./x-CDKrptQJ.js";
 import { a as V, n as H } from "./analysis-GV7upnOJ.js";
-import { c as re, n as U, o as ie, s as ae } from "./library_match-U5kHYoiF.js";
-import { r as oe, t as se } from "./inpaint_session-wWdlKjTY.js";
-import { r as ce } from "./_prop_utils-CqbCYIc0.js";
-import { t as W } from "./AppCheckbox-Cn99zCIV.js";
-import { t as G } from "./AppSelect-DRHFSF1d.js";
-import { a as le, c as ue, i as de, n as fe, r as pe, s as me } from "./Collection-DWsxNExQ.js";
-import { t as K } from "./IconButton-bAUne4oi.js";
-import { t as q } from "./PromptTagChips-BGl7zt6A.js";
+import { n as U } from "./deferred_stylesheets-BpS7LWkd.js";
+import { c as W, n as re, o as ie, s as G } from "./library_match-U5kHYoiF.js";
+import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
+import { r as se } from "./_prop_utils-CqbCYIc0.js";
+import { t as K } from "./AppCheckbox-CTxQ1oVE.js";
+import { t as q } from "./AppSelect-BdnjEPS_.js";
+import { a as ce, c as le, i as ue, n as de, r as fe, s as pe } from "./Collection-DWsxNExQ.js";
+import { t as J } from "./IconButton-DPIesKAc.js";
+import { t as Y } from "./PromptTagChips-2I2ArwXq.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/book-open-text.js
-var J = F("book-open-text", [
+var me = F("book-open-text", [
 	["path", {
 		d: "M12 7v14",
 		key: "1akyts"
@@ -154,7 +155,7 @@ var J = F("book-open-text", [
 		y2: "11",
 		key: "durymu"
 	}]
-]), Y = {
+]), X = {
 	slot: "_slot_cjg26_3",
 	frame: "_frame_cjg26_10",
 	image: "_image_cjg26_18",
@@ -169,7 +170,7 @@ var J = F("book-open-text", [
 	excerpt: "_excerpt_cjg26_94",
 	lightbox: "_lightbox_cjg26_115",
 	notice_actions: "_notice_actions_cjg26_133"
-}, X = {
+}, Se = {
 	inpaintDialogContent: "_inpaintDialogContent_677ep_13",
 	inpaintBody: "_inpaintBody_677ep_17",
 	inpaintCanvasFrame: "_inpaintCanvasFrame_677ep_27",
@@ -179,7 +180,11 @@ var J = F("book-open-text", [
 	inpaintPromptGrid: "_inpaintPromptGrid_677ep_69",
 	inpaintFooter: "_inpaintFooter_677ep_75",
 	inpaintDimensionError: "_inpaintDimensionError_677ep_81"
-}, Se = ["aria-label"], Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 32, De = 1, Oe = 3, Z = /* @__PURE__ */ M({
+};
+//#endregion
+//#region src/ui/dialogs/dialogs_styles.ts
+U("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
+var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = ["aria-label"], De = 32, Oe = 1, ke = 3, Ae = /* @__PURE__ */ M({
 	__name: "InpaintDialog",
 	props: {
 		open: { type: Boolean },
@@ -227,31 +232,31 @@ var J = F("book-open-text", [
 		function _(e) {
 			i("update:open", e);
 		}
-		let C = y(null), T = y(null), E = y(Ee), M = y(!1), F = y(De), z = y(n.initialPositivePrompt), B = y(n.initialNegativePrompt), V = y(.75), H = y(!1), re = y(!1), U = D(() => {
+		let C = y(null), T = y(null), E = y(De), M = y(!1), F = y(Oe), z = y(n.initialPositivePrompt), B = y(n.initialNegativePrompt), V = y(.75), H = y(!1), U = y(!1), W = D(() => {
 			let e = n.maskWidth ?? n.bitmap.width, t = n.maskHeight ?? n.bitmap.height;
 			try {
-				return oe(n.bitmap.width, n.bitmap.height, e, t), null;
+				return ae(n.bitmap.width, n.bitmap.height, e, t), null;
 			} catch {
 				return n.dimensionErrorLabel;
 			}
-		}), ie = D(() => n.bitmap.width / n.bitmap.height), ae = D(() => ({ "--tc-inpaint-aspect": String(ie.value) })), W = null, G = null, q = [];
-		function J() {
-			H.value = W?.can_undo() ?? !1, re.value = W?.can_redo() ?? !1;
+		}), re = D(() => n.bitmap.width / n.bitmap.height), ie = D(() => ({ "--tc-inpaint-aspect": String(re.value) })), G = null, K = null, q = [];
+		function Y() {
+			H.value = G?.can_undo() ?? !1, U.value = G?.can_redo() ?? !1;
+		}
+		function me() {
+			G = new oe(n.bitmap.width, n.bitmap.height), Y();
 		}
 		function ge() {
-			W = new se(n.bitmap.width, n.bitmap.height), J();
-		}
-		function Y() {
 			let e = C.value;
 			e !== null && (e.width = n.bitmap.width, e.height = n.bitmap.height, e.getContext("2d")?.drawImage(n.bitmap, 0, 0));
 		}
-		function Z() {
+		function X() {
 			let e = T.value;
-			if (e === null || W === null) return;
-			e.width = W.width, e.height = W.height;
+			if (e === null || G === null) return;
+			e.width = G.width, e.height = G.height;
 			let t = e.getContext("2d");
 			if (t === null) return;
-			let n = W.mask, r = t.createImageData(W.width, W.height), [i, a, s, c] = o;
+			let n = G.mask, r = t.createImageData(G.width, G.height), [i, a, s, c] = o;
 			for (let e = 0; e < n.length; e += 1) {
 				let t = e * 4;
 				n[e] === 255 && (r.data[t] = i, r.data[t + 1] = a, r.data[t + 2] = s, r.data[t + 3] = c);
@@ -259,11 +264,11 @@ var J = F("book-open-text", [
 			t.putImageData(r, 0, 0);
 		}
 		r(() => {
-			ge(), Y(), Z();
+			me(), ge(), X();
 		}), d(() => n.bitmap, () => {
-			ge(), Y(), Z();
+			me(), ge(), X();
 		});
-		function Q(e) {
+		function Se(e) {
 			let t = T.value;
 			if (t === null) return null;
 			let n = t.getBoundingClientRect();
@@ -277,61 +282,61 @@ var J = F("book-open-text", [
 				y: (e.clientY - n.top) * i
 			};
 		}
-		function ke(e) {
-			if (G !== null) return;
-			let t = Q(e);
-			t !== null && (G = e.pointerId, e.currentTarget.setPointerCapture(e.pointerId), q = [t]);
-		}
 		function Ae(e) {
-			if (G !== e.pointerId) return;
-			let t = Q(e);
-			t !== null && q.push(t);
+			if (K !== null) return;
+			let t = Se(e);
+			t !== null && (K = e.pointerId, e.currentTarget.setPointerCapture(e.pointerId), q = [t]);
 		}
 		function je(e) {
-			G === e.pointerId && (G = null, $());
+			if (K !== e.pointerId) return;
+			let t = Se(e);
+			t !== null && q.push(t);
 		}
-		function $() {
-			if (W === null || q.length === 0) {
+		function Q(e) {
+			K === e.pointerId && (K = null, Me());
+		}
+		function Me() {
+			if (G === null || q.length === 0) {
 				q = [];
 				return;
 			}
-			W.stroke(q, E.value, M.value ? "erase" : "brush"), q = [], J(), Z();
-		}
-		function Me() {
-			W?.undo(), J(), Z();
+			G.stroke(q, E.value, M.value ? "erase" : "brush"), q = [], Y(), X();
 		}
 		function Ne() {
-			W?.redo(), J(), Z();
+			G?.undo(), Y(), X();
 		}
 		function Pe() {
-			W?.clear(), J(), Z();
+			G?.redo(), Y(), X();
 		}
 		function Fe() {
-			F.value = Math.min(Oe, F.value + .5);
+			G?.clear(), Y(), X();
+		}
+		function $() {
+			F.value = Math.min(ke, F.value + .5);
 		}
 		function Ie() {
-			F.value = Math.max(De, F.value - .5);
+			F.value = Math.max(Oe, F.value - .5);
 		}
 		function Le() {
-			W !== null && U.value === null && i("submit", {
-				mask: W.export_binary_mask(),
+			G !== null && W.value === null && i("submit", {
+				mask: G.export_binary_mask(),
 				brushSize: E.value,
 				positivePrompt: z.value,
 				negativePrompt: B.value,
 				denoiseStrength: V.value
 			});
 		}
-		return (t, n) => (c(), S(g(ue), {
+		return (t, n) => (c(), S(g(le), {
 			open: e.open,
 			"onUpdate:open": _
 		}, {
-			default: f(() => [N(g(ce), v(a(h.value)), {
-				default: f(() => [N(g(pe), { class: A(g(R).dialogOverlay) }, null, 8, ["class"]), N(g(le), { class: A([g(R).dialogContent, g(X).inpaintDialogContent]) }, {
+			default: f(() => [N(g(se), v(a(h.value)), {
+				default: f(() => [N(g(fe), { class: A(g(R).dialogOverlay) }, null, 8, ["class"]), N(g(ce), { class: A([g(R).dialogContent, g(Z).inpaintDialogContent]) }, {
 					default: f(() => [
-						w("header", { class: A(g(R).dialogHeader) }, [N(g(fe), { class: A(g(R).dialogTitle) }, {
+						w("header", { class: A(g(R).dialogHeader) }, [N(g(de), { class: A(g(R).dialogTitle) }, {
 							default: f(() => [j(O(e.title), 1)]),
 							_: 1
-						}, 8, ["class"]), N(g(me), {
+						}, 8, ["class"]), N(g(pe), {
 							class: A(["tc-interactive", g(R).dialogClose]),
 							"aria-label": e.closeLabel
 						}, {
@@ -341,33 +346,33 @@ var J = F("book-open-text", [
 							}, null, 8, ["icon"])]),
 							_: 1
 						}, 8, ["class", "aria-label"])], 2),
-						N(g(de), { class: "tc-visually-hidden" }, {
+						N(g(ue), { class: "tc-visually-hidden" }, {
 							default: f(() => [j(O(e.title), 1)]),
 							_: 1
 						}),
-						w("div", { class: A(g(X).inpaintBody) }, [
-							w("div", { class: A(g(X).inpaintToolbar) }, [
-								N(K, {
+						w("div", { class: A(g(Z).inpaintBody) }, [
+							w("div", { class: A(g(Z).inpaintToolbar) }, [
+								N(J, {
 									icon: g(ye),
 									label: e.undoLabel,
 									disabled: !H.value,
-									onClick: Me
-								}, null, 8, [
-									"icon",
-									"label",
-									"disabled"
-								]),
-								N(K, {
-									icon: g(_e),
-									label: e.redoLabel,
-									disabled: !re.value,
 									onClick: Ne
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								N(K, {
+								N(J, {
+									icon: g(_e),
+									label: e.redoLabel,
+									disabled: !U.value,
+									onClick: Pe
+								}, null, 8, [
+									"icon",
+									"label",
+									"disabled"
+								]),
+								N(J, {
 									icon: g(he),
 									label: e.eraseLabel,
 									pressed: M.value,
@@ -377,38 +382,38 @@ var J = F("book-open-text", [
 									"label",
 									"pressed"
 								]),
-								N(K, {
+								N(J, {
 									icon: g(ee),
 									label: e.clearLabel,
 									destructive: "",
-									onClick: Pe
+									onClick: Fe
 								}, null, 8, ["icon", "label"]),
 								w("span", {
-									class: A(g(X).inpaintToolbarDivider),
+									class: A(g(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
 								}, null, 2),
-								N(K, {
+								N(J, {
 									icon: g(xe),
 									label: e.zoomOutLabel,
 									onClick: Ie
 								}, null, 8, ["icon", "label"]),
-								N(K, {
+								N(J, {
 									icon: g(be),
 									label: e.zoomInLabel,
-									onClick: Fe
+									onClick: $
 								}, null, 8, ["icon", "label"]),
 								e.showUpload ? (c(), p(k, { key: 0 }, [w("span", {
-									class: A(g(X).inpaintToolbarDivider),
+									class: A(g(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
-								}, null, 2), N(K, {
+								}, null, 2), N(J, {
 									icon: g(te),
 									label: e.uploadLabel,
 									onClick: n[1] ||= (e) => i("upload-reference")
 								}, null, 8, ["icon", "label"])], 64)) : x("", !0)
 							], 2),
 							w("div", {
-								class: A(g(X).inpaintCanvasFrame),
-								style: b(ae.value)
+								class: A(g(Z).inpaintCanvasFrame),
+								style: b(ie.value)
 							}, [w("canvas", {
 								ref_key: "bitmap_canvas",
 								ref: C,
@@ -422,38 +427,38 @@ var J = F("book-open-text", [
 									touchAction: "none"
 								}),
 								"data-testid": "inpaint-mask-canvas",
-								onPointerdown: ke,
-								onPointermove: Ae,
-								onPointerup: je,
-								onPointercancel: je
+								onPointerdown: Ae,
+								onPointermove: je,
+								onPointerup: Q,
+								onPointercancel: Q
 							}, null, 36)], 6),
-							U.value ? (c(), p("p", {
+							W.value ? (c(), p("p", {
 								key: 0,
-								class: A(g(X).inpaintDimensionError),
+								class: A(g(Z).inpaintDimensionError),
 								role: "alert"
-							}, O(U.value), 3)) : x("", !0),
-							w("div", { class: A(g(X).inpaintBrushRow) }, [w("label", null, [j(O(e.brushSizeLabel) + " ", 1), s(w("input", {
+							}, O(W.value), 3)) : x("", !0),
+							w("div", { class: A(g(Z).inpaintBrushRow) }, [w("label", null, [j(O(e.brushSizeLabel) + " ", 1), s(w("input", {
 								"onUpdate:modelValue": n[2] ||= (e) => E.value = e,
 								type: "range",
 								min: "4",
 								max: "128",
 								step: "1",
 								"aria-label": e.brushSizeLabel
-							}, null, 8, Se), [[
+							}, null, 8, Ce), [[
 								m,
 								E.value,
 								void 0,
 								{ number: !0 }
 							]])])], 2),
-							w("div", { class: A(g(X).inpaintPromptGrid) }, [w("label", null, [j(O(e.positivePromptLabel) + " ", 1), s(w("textarea", {
+							w("div", { class: A(g(Z).inpaintPromptGrid) }, [w("label", null, [j(O(e.positivePromptLabel) + " ", 1), s(w("textarea", {
 								"onUpdate:modelValue": n[3] ||= (e) => z.value = e,
 								"aria-label": e.positivePromptLabel,
 								rows: "2"
-							}, null, 8, Ce), [[m, z.value]])]), w("label", null, [j(O(e.negativePromptLabel) + " ", 1), s(w("textarea", {
+							}, null, 8, we), [[m, z.value]])]), w("label", null, [j(O(e.negativePromptLabel) + " ", 1), s(w("textarea", {
 								"onUpdate:modelValue": n[4] ||= (e) => B.value = e,
 								"aria-label": e.negativePromptLabel,
 								rows: "2"
-							}, null, 8, we), [[m, B.value]])])], 2),
+							}, null, 8, Te), [[m, B.value]])])], 2),
 							w("label", null, [j(O(e.denoiseLabel) + " ", 1), s(w("input", {
 								"onUpdate:modelValue": n[5] ||= (e) => V.value = e,
 								type: "range",
@@ -461,18 +466,18 @@ var J = F("book-open-text", [
 								max: "1",
 								step: "0.01",
 								"aria-label": e.denoiseLabel
-							}, null, 8, Te), [[
+							}, null, 8, Ee), [[
 								m,
 								V.value,
 								void 0,
 								{ number: !0 }
 							]])]),
-							w("div", { class: A(g(X).inpaintFooter) }, [N(L, {
+							w("div", { class: A(g(Z).inpaintFooter) }, [N(L, {
 								label: e.generateLabel,
 								icon: g(ve),
 								variant: "primary",
 								pending: e.pending,
-								disabled: U.value !== null,
+								disabled: W.value !== null,
 								onClick: Le
 							}, null, 8, [
 								"label",
@@ -489,7 +494,7 @@ var J = F("book-open-text", [
 			_: 1
 		}, 8, ["open"]));
 	}
-}), Q = {
+}), je = {
 	body: "_body_104uy_1",
 	slot: "_slot_104uy_9",
 	anchor: "_anchor_104uy_19",
@@ -504,7 +509,11 @@ var J = F("book-open-text", [
 	chips: "_chips_104uy_92",
 	outfit: "_outfit_104uy_98",
 	conditions: "_conditions_104uy_105"
-}, ke = ["placeholder", "aria-label"], Ae = "none", je = /* @__PURE__ */ M({
+};
+//#endregion
+//#region src/ui/chat/illustrate_dialog_styles.ts
+U("illustrate_dialog", "._body_104uy_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_104uy_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_104uy_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_104uy_27{margin:0;font-size:14px}._label_104uy_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_104uy_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_104uy_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_104uy_61{color:var(--tc-error);margin:0}._excerpt_104uy_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._footer_104uy_78{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_104uy_86{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_104uy_92{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_104uy_98{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_104uy_105{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
+var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ */ M({
 	__name: "OutfitPicker",
 	props: {
 		character: {},
@@ -514,7 +523,7 @@ var J = F("book-open-text", [
 	emits: ["change"],
 	setup(e, { emit: r }) {
 		let i = e, a = r, { t: o } = T(), l = D(() => [{
-			value: Ae,
+			value: Ne,
 			label: o("chat.dialog.outfit_none")
 		}, ...i.outfits.filter((e) => e.character_id === null || e.character_id === i.character.id).map((e) => ({
 			value: e.id,
@@ -526,7 +535,7 @@ var J = F("book-open-text", [
 		function f(e) {
 			a("change", {
 				character_id: i.character.id,
-				outfit_id: e === Ae ? null : e,
+				outfit_id: e === Ne ? null : e,
 				overrides: {},
 				conditions: i.wearing.conditions
 			});
@@ -541,8 +550,8 @@ var J = F("book-open-text", [
 		return (t, n) => (c(), p("div", {
 			class: A(g(Q).outfit),
 			"data-testid": "outfit-picker"
-		}, [N(G, {
-			"model-value": e.wearing.outfit_id ?? Ae,
+		}, [N(q, {
+			"model-value": e.wearing.outfit_id ?? Ne,
 			options: l.value,
 			placeholder: g(o)("chat.dialog.outfit_label"),
 			"aria-label": g(o)("chat.dialog.outfit_label", { name: e.character.name }),
@@ -559,9 +568,9 @@ var J = F("book-open-text", [
 			placeholder: g(o)("chat.dialog.outfit_conditions"),
 			"aria-label": g(o)("chat.dialog.outfit_conditions"),
 			onBlur: h
-		}, null, 42, ke), [[m, u.value]])], 2));
+		}, null, 42, Me), [[m, u.value]])], 2));
 	}
-}), $ = {
+}), Fe = {
 	field: "_field_ad8ee_1",
 	header: "_header_ad8ee_7",
 	label: "_label_ad8ee_15",
@@ -576,42 +585,46 @@ var J = F("book-open-text", [
 	tier3: "_tier3_ad8ee_74",
 	hint: "_hint_ad8ee_79",
 	reading: "_reading_ad8ee_80"
-}, Me = /[,，]/u, Ne = /[぀-ヿ㐀-鿿豈-﫿]/u, Pe = /^(?:-?[\d.]+::)?[{[(]*/u;
-function Fe(e, t) {
+};
+//#endregion
+//#region src/ui/chat/prompt_field_styles.ts
+U("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
+var $ = Fe, Ie = /[,，]/u, Le = /[぀-ヿ㐀-鿿豈-﫿]/u, Re = /^(?:-?[\d.]+::)?[{[(]*/u;
+function ze(e, t) {
 	let n = e.slice(0, t), r = 0;
-	for (let e = n.length - 1; e >= 0; --e) if (Me.test(n.charAt(e))) {
+	for (let e = n.length - 1; e >= 0; --e) if (Ie.test(n.charAt(e))) {
 		r = e + 1;
 		break;
 	}
-	let i = e.slice(t).search(Me), a = i === -1 ? e.length : t + i, o = e.slice(r, t), s = o.length - o.trimStart().length, c = Pe.exec(o.trimStart())?.[0] ?? "", l = o.trim().slice(c.length).trim();
-	return (Ne.test(l) ? l.length >= 1 : l.length >= 2) ? {
+	let i = e.slice(t).search(Ie), a = i === -1 ? e.length : t + i, o = e.slice(r, t), s = o.length - o.trimStart().length, c = Re.exec(o.trimStart())?.[0] ?? "", l = o.trim().slice(c.length).trim();
+	return (Le.test(l) ? l.length >= 1 : l.length >= 2) ? {
 		start: r + s + c.length,
 		end: a,
 		query: l
 	} : null;
 }
-function Ie(e, t, n) {
+function Be(e, t, n) {
 	let r = e.slice(t.end).replace(/^[,，]?\s*/u, ""), i = `${e.slice(0, t.start)}${n}, `;
 	return {
 		value: `${i}${r}`,
 		caret: i.length
 	};
 }
-function Le(e) {
+function Ve(e) {
 	return e >= 1e5 ? 3 : e >= 1e4 ? 2 : +(e >= 1e3);
 }
 //#endregion
 //#region src/ui/chat/PromptField.vue?vue&type=script&setup=true&lang.ts
-var Re = ["for"], ze = [
+var He = ["for"], Ue = [
 	"id",
 	"value",
 	"aria-expanded",
 	"aria-activedescendant"
-], Be = ["aria-label"], Ve = [
+], We = ["aria-label"], Ge = [
 	"id",
 	"aria-selected",
 	"onMousedown"
-], He = 150, Ue = 800, We = /* @__PURE__ */ M({
+], Ke = 150, qe = 800, Je = /* @__PURE__ */ M({
 	__name: "PromptField",
 	props: {
 		modelValue: {},
@@ -629,7 +642,7 @@ var Re = ["for"], ze = [
 		}
 		function z() {
 			let e = f.value, t = n.translator;
-			if (S !== null && clearTimeout(S), b = e === null ? null : Fe(e.value, e.selectionStart), t === null || b === null) {
+			if (S !== null && clearTimeout(S), b = e === null ? null : ze(e.value, e.selectionStart), t === null || b === null) {
 				R();
 				return;
 			}
@@ -638,12 +651,12 @@ var Re = ["for"], ze = [
 				t.suggest(r).then((e) => {
 					i === E && (v.value = e === null, m.value = e ?? [], _.value = -1);
 				});
-			}, He);
+			}, Ke);
 		}
 		async function B(e) {
 			let t = m.value[e];
 			if (t === void 0 || b === null) return;
-			let i = Ie(n.modelValue, b, t.tag);
+			let i = Be(n.modelValue, b, t.tag);
 			R(), r("update:modelValue", i.value), await l(), f.value?.focus(), f.value?.setSelectionRange(i.caret, i.caret);
 		}
 		function ee(e) {
@@ -686,17 +699,17 @@ var Re = ["for"], ze = [
 			}
 		}
 		return d(() => n.modelValue, () => {
-			D.value && (F !== null && clearTimeout(F), F = setTimeout(() => void ne(), Ue));
+			D.value && (F !== null && clearTimeout(F), F = setTimeout(() => void ne(), qe));
 		}), C(() => {
 			for (let e of [S, F]) e !== null && clearTimeout(e);
 		}), (t, n) => (c(), p("div", { class: A(g($).field) }, [
 			w("div", { class: A(g($).header) }, [w("label", {
 				for: g(s),
 				class: A(g($).label)
-			}, O(e.label), 11, Re), e.translator === null ? x("", !0) : (c(), p("span", {
+			}, O(e.label), 11, He), e.translator === null ? x("", !0) : (c(), p("span", {
 				key: 0,
 				class: A(g($).tools)
-			}, [N(K, {
+			}, [N(J, {
 				icon: g(ge),
 				size: "sm",
 				label: g(a)("chat.dialog.translate_to_tags"),
@@ -707,8 +720,8 @@ var Re = ["for"], ze = [
 				"icon",
 				"label",
 				"disabled"
-			]), N(K, {
-				icon: g(J),
+			]), N(J, {
+				icon: g(me),
 				size: "sm",
 				label: g(a)("chat.dialog.read_in_chinese"),
 				pressed: D.value,
@@ -734,7 +747,7 @@ var Re = ["for"], ze = [
 				onClick: z,
 				onKeydown: ee,
 				onBlur: R
-			}, null, 42, ze),
+			}, null, 42, Ue),
 			m.value.length > 0 ? (c(), p("ul", {
 				key: 0,
 				id: u,
@@ -755,10 +768,10 @@ var Re = ["for"], ze = [
 					class: A(g($).translation)
 				}, O(e.translation), 3)),
 				w("span", {
-					class: A([g($).dot, g($)[`tier${g(Le)(e.popularity)}`]]),
+					class: A([g($).dot, g($)[`tier${g(Ve)(e.popularity)}`]]),
 					"aria-hidden": "true"
 				}, null, 2)
-			], 42, Ve))), 128))], 10, Be)) : v.value ? (c(), p("p", {
+			], 42, Ge))), 128))], 10, We)) : v.value ? (c(), p("p", {
 				key: 1,
 				class: A(g($).hint)
 			}, O(g(a)("chat.dialog.vocabulary_preparing")), 3)) : x("", !0),
@@ -772,7 +785,7 @@ var Re = ["for"], ze = [
 			}, O(P.value), 3))
 		], 2));
 	}
-}), Ge = { key: 0 }, Ke = /* @__PURE__ */ M({
+}), Ye = { key: 0 }, Xe = /* @__PURE__ */ M({
 	__name: "IllustrateDialog",
 	props: {
 		request: {},
@@ -785,24 +798,24 @@ var Re = ["for"], ze = [
 	setup(e, { emit: t }) {
 		let n = e, r = t, { t: i } = T(), a = y({ status: "analyzing" }), s = y([]), l = y(!1), u = y(null), m = y(null);
 		function h(e) {
-			return m.value?.library.characters.find((t) => U(t, e)) ?? null;
+			return m.value?.library.characters.find((t) => re(t, e)) ?? null;
 		}
 		function _(e) {
 			let t = m.value, n = h(e);
 			return t === null || n === null ? [] : [{
 				character: n,
-				wearing: ae(n, t.snapshot, t.library.outfits),
+				wearing: G(n, t.snapshot, t.library.outfits),
 				outfits: t.library.outfits
 			}];
 		}
 		function v(e) {
 			let t = m.value, n = h(e);
-			return t === null || n === null ? null : ae(n, t.snapshot, t.library.outfits);
+			return t === null || n === null ? null : G(n, t.snapshot, t.library.outfits);
 		}
 		async function b(e, t) {
 			let r = m.value, i = v(e);
 			if (r === null || i === null || a.value.status !== "ready") return;
-			let o = re(i, r.library.outfits), c = re(t, r.library.outfits);
+			let o = W(i, r.library.outfits), c = W(t, r.library.outfits);
 			for (let t of s.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ie(n.prompt, o, c));
 			m.value = {
 				...r,
@@ -896,12 +909,12 @@ var Re = ["for"], ze = [
 					onClick: n[0] ||= (t) => e.request !== null && M(e.request)
 				}, null, 8, ["label"])], 2)
 			], 64)) : (c(), p(k, { key: 2 }, [
-				s.value.length === 0 ? (c(), p("p", Ge, O(g(i)("chat.dialog.no_slots")), 1)) : x("", !0),
+				s.value.length === 0 ? (c(), p("p", Ye, O(g(i)("chat.dialog.no_slots")), 1)) : x("", !0),
 				(c(!0), p(k, null, o(s.value, (t) => (c(), p("section", {
 					key: t.slot_id,
 					class: A(g(Q).slot)
 				}, [
-					N(W, {
+					N(K, {
 						modelValue: t.selected,
 						"onUpdate:modelValue": (e) => t.selected = e,
 						label: t.scene
@@ -911,7 +924,7 @@ var Re = ["for"], ze = [
 						"label"
 					]),
 					w("blockquote", { class: A(g(Q).anchor) }, O(t.anchor), 3),
-					N(We, {
+					N(Je, {
 						modelValue: t.positive_prompt,
 						"onUpdate:modelValue": (e) => t.positive_prompt = e,
 						label: t.character_prompts.length > 0 ? g(i)("chat.dialog.base_prompt") : g(i)("chat.dialog.positive_prompt"),
@@ -922,11 +935,11 @@ var Re = ["for"], ze = [
 						"label",
 						"translator"
 					]),
-					w("div", { class: A(g(Q).chips) }, [N(q, {
+					w("div", { class: A(g(Q).chips) }, [N(Y, {
 						port: e.promptTags,
 						kind: "quality"
 					}, null, 8, ["port"])], 2),
-					(c(!0), p(k, null, o(t.character_prompts, (t) => (c(), p(k, { key: t.name }, [N(We, {
+					(c(!0), p(k, null, o(t.character_prompts, (t) => (c(), p(k, { key: t.name }, [N(Je, {
 						modelValue: t.prompt,
 						"onUpdate:modelValue": (e) => t.prompt = e,
 						label: g(i)("chat.dialog.character_prompt", { name: t.name }),
@@ -937,7 +950,7 @@ var Re = ["for"], ze = [
 						"onUpdate:modelValue",
 						"label",
 						"translator"
-					]), (c(!0), p(k, null, o(_(t.name), (e) => (c(), S(je, {
+					]), (c(!0), p(k, null, o(_(t.name), (e) => (c(), S(Pe, {
 						key: e.character.id,
 						character: e.character,
 						wearing: e.wearing,
@@ -949,7 +962,7 @@ var Re = ["for"], ze = [
 						"outfits",
 						"onChange"
 					]))), 128))], 64))), 128)),
-					N(We, {
+					N(Je, {
 						modelValue: t.negative_prompt,
 						"onUpdate:modelValue": (e) => t.negative_prompt = e,
 						label: g(i)("chat.dialog.negative_prompt"),
@@ -960,7 +973,7 @@ var Re = ["for"], ze = [
 						"label",
 						"translator"
 					]),
-					w("div", { class: A(g(Q).chips) }, [N(q, {
+					w("div", { class: A(g(Q).chips) }, [N(Y, {
 						port: e.promptTags,
 						kind: "undesired_content"
 					}, null, 8, ["port"])], 2),
@@ -1002,7 +1015,7 @@ var Re = ["for"], ze = [
 });
 //#endregion
 //#region src/ui/chat/mask_png.ts
-async function qe(e, t, n) {
+async function Ze(e, t, n) {
 	let r = new Uint8ClampedArray(t * n * 4);
 	for (let t = 0; t < e.length; t += 1) {
 		let n = e[t] === 255 ? 255 : 0;
@@ -1016,7 +1029,7 @@ async function qe(e, t, n) {
 }
 //#endregion
 //#region src/ui/chat/quick_edit_labels.ts
-var Je = [
+var Qe = [
 	"lineart",
 	"sketch",
 	"colorize",
@@ -1024,7 +1037,7 @@ var Je = [
 	"declutter",
 	"declutter-keep-bubbles",
 	"bg-removal"
-], Ye = [
+], $e = [
 	"neutral",
 	"happy",
 	"sad",
@@ -1050,7 +1063,7 @@ var Je = [
 	"hurt",
 	"playful"
 ];
-function Xe(e, t) {
+function et(e, t) {
 	switch (t) {
 		case "lineart": return e("chat.quick_edit.tools.lineart");
 		case "sketch": return e("chat.quick_edit.tools.sketch");
@@ -1061,7 +1074,7 @@ function Xe(e, t) {
 		case "bg-removal": return e("chat.quick_edit.tools.bg_removal");
 	}
 }
-function Ze(e, t) {
+function tt(e, t) {
 	switch (t) {
 		case "neutral": return e("chat.quick_edit.emotions.neutral");
 		case "happy": return e("chat.quick_edit.emotions.happy");
@@ -1091,7 +1104,7 @@ function Ze(e, t) {
 }
 //#endregion
 //#region src/ui/chat/QuickEditDialog.vue?vue&type=script&setup=true&lang.ts
-var Qe = { key: 1 }, $e = /* @__PURE__ */ M({
+var nt = { key: 1 }, rt = /* @__PURE__ */ M({
 	__name: "QuickEditDialog",
 	props: {
 		request: {},
@@ -1107,12 +1120,12 @@ var Qe = { key: 1 }, $e = /* @__PURE__ */ M({
 				case "upscale": return i("chat.quick_edit.upscale");
 				default: return i("chat.quick_edit.director");
 			}
-		}), I = D(() => Je.map((e) => ({
+		}), I = D(() => Qe.map((e) => ({
 			value: e,
-			label: Xe(i, e)
-		}))), R = D(() => Ye.map((e) => ({
+			label: et(i, e)
+		}))), R = D(() => $e.map((e) => ({
 			value: e,
-			label: Ze(i, e)
+			label: tt(i, e)
 		})));
 		function z() {
 			let e = n.request;
@@ -1173,10 +1186,10 @@ var Qe = { key: 1 }, $e = /* @__PURE__ */ M({
 		});
 		let te = D(() => C.value === null ? "" : C.value.opus_free ? i("chat.dialog.cost_free") : C.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: C.value.anlas }));
 		function ne(e) {
-			u.value = Je.find((t) => t === e) ?? u.value;
+			u.value = Qe.find((t) => t === e) ?? u.value;
 		}
 		function V(e) {
-			h.value = Ye.find((t) => t === e) ?? h.value;
+			h.value = $e.find((t) => t === e) ?? h.value;
 		}
 		async function H() {
 			let e = n.request, t = z();
@@ -1219,8 +1232,8 @@ var Qe = { key: 1 }, $e = /* @__PURE__ */ M({
 						void 0,
 						{ number: !0 }
 					]])], 2)
-				], 64)) : e.request?.kind === "upscale" ? (c(), p("p", Qe, O(g(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (c(), p(k, { key: 2 }, [
-					N(G, {
+				], 64)) : e.request?.kind === "upscale" ? (c(), p("p", nt, O(g(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (c(), p(k, { key: 2 }, [
+					N(q, {
 						"model-value": u.value,
 						options: I.value,
 						placeholder: g(i)("chat.quick_edit.tool"),
@@ -1232,7 +1245,7 @@ var Qe = { key: 1 }, $e = /* @__PURE__ */ M({
 						"placeholder",
 						"aria-label"
 					]),
-					u.value === "emotion" ? (c(), S(G, {
+					u.value === "emotion" ? (c(), S(q, {
 						key: 0,
 						"model-value": h.value,
 						options: R.value,
@@ -1294,7 +1307,7 @@ var Qe = { key: 1 }, $e = /* @__PURE__ */ M({
 });
 //#endregion
 //#region src/ui/chat/slot_error_label.ts
-function et(t, n) {
+function it(t, n) {
 	let r = e.safeParse(n);
 	if (!r.success) return n;
 	switch (r.data) {
@@ -1310,7 +1323,7 @@ function et(t, n) {
 }
 //#endregion
 //#region src/ui/chat/SlotCard.vue?vue&type=script&setup=true&lang.ts
-var tt = ["src", "alt"], nt = { key: 3 }, rt = { key: 4 }, it = ["disabled", "aria-label"], at = ["disabled", "aria-label"], ot = ["disabled"], st = ["disabled", "onClick"], ct = /* @__PURE__ */ M({
+var at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "aria-label"], lt = ["disabled", "aria-label"], ut = ["disabled"], dt = ["disabled", "onClick"], ft = /* @__PURE__ */ M({
 	__name: "SlotCard",
 	props: {
 		entry: {},
@@ -1357,95 +1370,95 @@ var tt = ["src", "alt"], nt = { key: 3 }, rt = { key: 4 }, it = ["disabled", "ar
 			t !== void 0 && r("select", t);
 		}
 		return (t, n) => (c(), p("div", {
-			class: A(g(Y).slot),
+			class: A(g(X).slot),
 			"data-tc-slot-card": ""
 		}, [
-			w("div", { class: A(g(Y).frame) }, [a.value !== null && e.entry.active_image_id !== null ? (c(), p("img", {
+			w("div", { class: A(g(X).frame) }, [a.value !== null && e.entry.active_image_id !== null ? (c(), p("img", {
 				key: 0,
-				class: A(g(Y).image),
+				class: A(g(X).image),
 				src: a.value,
 				alt: e.entry.scene,
 				onClick: n[0] ||= (t) => r("preview", e.entry.active_image_id)
-			}, null, 10, tt)) : (c(), p("div", {
+			}, null, 10, at)) : (c(), p("div", {
 				key: 1,
-				class: A(g(Y).placeholder)
+				class: A(g(X).placeholder)
 			}, [e.pending ? (c(), p(k, { key: 0 }, [w("span", {
-				class: A(g(Y).skeleton),
+				class: A(g(X).skeleton),
 				"aria-hidden": "true"
 			}, null, 2), w("span", null, O(g(i)("chat.slot.generating")), 1)], 64)) : s.value ? (c(), p("span", {
 				key: 1,
-				class: A(g(Y).error)
-			}, O(g(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? u.value ? (c(), p("span", nt, O(g(i)("chat.slot.interrupted")), 1)) : (c(), p("span", rt, O(e.entry.scene), 1)) : (c(), p("span", {
+				class: A(g(X).error)
+			}, O(g(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? u.value ? (c(), p("span", ot, O(g(i)("chat.slot.interrupted")), 1)) : (c(), p("span", st, O(e.entry.scene), 1)) : (c(), p("span", {
 				key: 2,
-				class: A(g(Y).error)
-			}, O(g(i)("chat.slot.failed", { reason: g(et)(g(i), e.entry.last_error) })), 3))], 2))], 2),
-			w("div", { class: A(g(Y).toolbar) }, [
+				class: A(g(X).error)
+			}, O(g(i)("chat.slot.failed", { reason: g(it)(g(i), e.entry.last_error) })), 3))], 2))], 2),
+			w("div", { class: A(g(X).toolbar) }, [
 				e.entry.image_ids.length > 1 ? (c(), p("span", {
 					key: 0,
-					class: A(g(Y).counter)
+					class: A(g(X).counter)
 				}, O(l.value + 1) + " / " + O(e.entry.image_ids.length), 3)) : (c(), p("span", {
 					key: 1,
-					class: A(g(Y).counter)
+					class: A(g(X).counter)
 				}, null, 2)),
 				e.entry.image_ids.length > 1 ? (c(), p("button", {
 					key: 2,
 					type: "button",
-					class: A(g(Y).button),
+					class: A(g(X).button),
 					disabled: l.value <= 0,
 					"aria-label": g(i)("chat.slot.previous"),
 					onClick: n[1] ||= (e) => m(-1)
-				}, " ‹ ", 10, it)) : x("", !0),
+				}, " ‹ ", 10, ct)) : x("", !0),
 				e.entry.image_ids.length > 1 ? (c(), p("button", {
 					key: 3,
 					type: "button",
-					class: A(g(Y).button),
+					class: A(g(X).button),
 					disabled: l.value >= e.entry.image_ids.length - 1,
 					"aria-label": g(i)("chat.slot.next"),
 					onClick: n[2] ||= (e) => m(1)
-				}, " › ", 10, at)) : x("", !0),
+				}, " › ", 10, lt)) : x("", !0),
 				w("button", {
 					type: "button",
-					class: A(g(Y).button),
+					class: A(g(X).button),
 					disabled: e.pending,
 					onClick: n[3] ||= (e) => r("generate")
-				}, O(e.entry.image_ids.length === 0 ? g(i)("chat.slot.generate") : g(i)("chat.slot.regenerate")), 11, ot),
+				}, O(e.entry.image_ids.length === 0 ? g(i)("chat.slot.generate") : g(i)("chat.slot.regenerate")), 11, ut),
 				w("button", {
 					type: "button",
-					class: A(g(Y).button),
+					class: A(g(X).button),
 					onClick: n[4] ||= (e) => r("edit")
 				}, O(g(i)("chat.slot.edit")), 3)
 			], 2),
 			e.canEdit && e.entry.active_image_id !== null ? (c(), p("div", {
 				key: 0,
-				class: A(g(Y).toolbar)
+				class: A(g(X).toolbar)
 			}, [(c(), p(k, null, o(f, (t) => w("button", {
 				key: t.kind,
 				type: "button",
-				class: A(g(Y).button),
+				class: A(g(X).button),
 				disabled: e.pending,
 				onClick: (n) => e.entry.active_image_id !== null && r("quick-edit", t.kind, e.entry.active_image_id)
-			}, O(t.label()), 11, st)), 64))], 2)) : x("", !0)
+			}, O(t.label()), 11, dt)), 64))], 2)) : x("", !0)
 		], 2));
 	}
-}), lt = "data-tc-illustrate", ut = "data-tc-notice", dt = 50;
-function ft(e) {
+}), pt = "data-tc-illustrate", mt = "data-tc-notice", ht = 50;
+function gt(e) {
 	return `${e.chat_id}:${String(e.message_id)}:${String(e.swipe_id)}`;
 }
-function pt(e) {
+function _t(e) {
 	let { host: t, service: n } = e, i = E([]), a = E([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = /* @__PURE__ */ new Map(), l = [], u = null;
 	function d(t, n) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
-		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${lt}]`) !== null) return;
+		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${pt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(V(t.ownerDocument)), a.setAttribute(lt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(V(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}
 	function f(e) {
-		let t = e.parentElement?.querySelector(`:scope > [${ut}]`);
+		let t = e.parentElement?.querySelector(`:scope > [${mt}]`);
 		if (t != null) return t;
 		let n = e.ownerDocument.createElement("div");
-		return n.setAttribute(ut, ""), e.after(n), n;
+		return n.setAttribute(mt, ""), e.after(n), n;
 	}
 	function p(e) {
 		let r = t.find_message_element(e.message_id);
@@ -1458,7 +1471,7 @@ function pt(e) {
 		for (let t of r.querySelectorAll("[data-tc-slot]")) {
 			let n = i.find((e) => e.slot_id === t.dataset.tcSlot);
 			n !== void 0 && a.push({
-				key: `${ft(e)}:${n.slot_id}`,
+				key: `${gt(e)}:${n.slot_id}`,
 				element: t,
 				location: e,
 				slot: n
@@ -1509,7 +1522,7 @@ function pt(e) {
 	function _() {
 		u !== null && clearTimeout(u), u = setTimeout(() => {
 			u = null, g();
-		}, dt);
+		}, ht);
 	}
 	return r(() => {
 		l.push(t.subscribe_message_rendered((e) => {
@@ -1519,7 +1532,7 @@ function pt(e) {
 		}), t.subscribe_chat_rendered(() => {
 			s.clear(), c.clear(), _();
 		}), n.subscribe((e) => {
-			let t = ft(e.location);
+			let t = gt(e.location);
 			e.type === "wardrobe_failed" ? c.set(t, {
 				status: "wardrobe_failed",
 				message: e.message
@@ -1532,7 +1545,7 @@ function pt(e) {
 	}), C(() => {
 		for (let e of l.splice(0)) e();
 		u !== null && clearTimeout(u);
-		for (let e of document.querySelectorAll(`[${lt}], [${ut}]`)) e.remove();
+		for (let e of document.querySelectorAll(`[${pt}], [${mt}]`)) e.remove();
 	}), {
 		targets: i,
 		notices: a
@@ -1540,7 +1553,7 @@ function pt(e) {
 }
 //#endregion
 //#region src/ui/chat/use_image_urls.ts
-function mt(e) {
+function vt(e) {
 	let t = /* @__PURE__ */ new Map();
 	return C(() => {
 		for (let e of t.values()) e.then((e) => {
@@ -1554,7 +1567,7 @@ function mt(e) {
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
+var yt = { key: 1 }, bt = ["src"], xt = /* @__PURE__ */ M({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1565,7 +1578,7 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 		promptTags: {}
 	},
 	setup(e) {
-		let t = e, { t: n } = T(), i = y(null), a = y(null), s = mt(t.gallery), l = y(null), u = E(null), d = y(!1);
+		let t = e, { t: n } = T(), i = y(null), a = y(null), s = vt(t.gallery), l = y(null), u = E(null), d = y(!1);
 		async function f(e) {
 			let n = await t.gallery.read_bytes(e);
 			return createImageBitmap(new Blob([new Uint8Array(n)]));
@@ -1600,7 +1613,7 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 					kind: "inpaint",
 					image_id: n.request.image_id,
 					source: r,
-					mask_png: await qe(e.mask, r.width, r.height),
+					mask_png: await Ze(e.mask, r.width, r.height),
 					positive_prompt: e.positivePrompt,
 					negative_prompt: e.negativePrompt,
 					strength: e.denoiseStrength
@@ -1609,7 +1622,7 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 				d.value = !1, h();
 			}
 		}
-		let { targets: b, notices: D } = pt({
+		let { targets: b, notices: D } = _t({
 			host: t.host,
 			service: t.service,
 			button_label: () => n("chat.message_button"),
@@ -1643,7 +1656,7 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 			(c(!0), p(k, null, o(g(b), (t) => (c(), S(_, {
 				key: t.key,
 				to: t.element
-			}, [N(ct, {
+			}, [N(ft, {
 				entry: t.slot,
 				pending: M(t.slot.pending_request_ids),
 				"load-image": g(s),
@@ -1669,26 +1682,26 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 			(c(!0), p(k, null, o(g(D), (e) => (c(), S(_, {
 				key: e.key,
 				to: e.element
-			}, [w("div", { class: A(g(Y).notice) }, [e.notice.status === "running" ? (c(), p(k, { key: 0 }, [j(O(g(n)("chat.analysis_running")), 1)], 64)) : e.notice.status === "wardrobe_failed" ? (c(), p(k, { key: 1 }, [j(O(g(n)("chat.wardrobe_failed", { reason: e.notice.message })), 1)], 64)) : (c(), p(k, { key: 2 }, [
+			}, [w("div", { class: A(g(X).notice) }, [e.notice.status === "running" ? (c(), p(k, { key: 0 }, [j(O(g(n)("chat.analysis_running")), 1)], 64)) : e.notice.status === "wardrobe_failed" ? (c(), p(k, { key: 1 }, [j(O(g(n)("chat.wardrobe_failed", { reason: e.notice.message })), 1)], 64)) : (c(), p(k, { key: 2 }, [
 				w("div", null, O(g(n)("chat.analysis_failed", { reason: e.notice.message })), 1),
 				e.notice.excerpt === null ? x("", !0) : (c(), p("pre", {
 					key: 0,
-					class: A(g(Y).excerpt)
+					class: A(g(X).excerpt)
 				}, O(e.notice.excerpt), 3)),
-				e.notice.excerpt === null ? x("", !0) : (c(), p("div", ht, O(g(n)("chat.dialog.parse_failed_hint")), 1))
+				e.notice.excerpt === null ? x("", !0) : (c(), p("div", yt, O(g(n)("chat.dialog.parse_failed_hint")), 1))
 			], 64))], 2)], 8, ["to"]))), 128)),
 			a.value === null ? x("", !0) : (c(), S(_, {
 				key: 0,
 				to: "body"
 			}, [w("div", {
-				class: A(g(Y).lightbox),
+				class: A(g(X).lightbox),
 				role: "dialog",
 				onClick: r[0] ||= (e) => a.value = null
 			}, [w("img", {
 				src: a.value,
 				alt: ""
-			}, null, 8, gt)], 2)])),
-			N(Ke, {
+			}, null, 8, bt)], 2)])),
+			N(Xe, {
 				request: i.value,
 				service: e.service,
 				novelai: e.novelai,
@@ -1702,7 +1715,7 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 				"translator",
 				"prompt-tags"
 			]),
-			N($e, {
+			N(rt, {
 				request: l.value,
 				service: e.service,
 				novelai: e.novelai,
@@ -1713,7 +1726,7 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 				"service",
 				"novelai"
 			]),
-			u.value === null ? x("", !0) : (c(), S(Z, {
+			u.value === null ? x("", !0) : (c(), S(Ae, {
 				key: 1,
 				open: !0,
 				bitmap: u.value.bitmap,
@@ -1762,4 +1775,4 @@ var ht = { key: 1 }, gt = ["src"], _t = /* @__PURE__ */ M({
 	}
 });
 //#endregion
-export { _t as default };
+export { xt as default };

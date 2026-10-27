@@ -9,7 +9,7 @@ import AppButton from "../components/AppButton.vue";
 import AppDialog from "../components/AppDialog.vue";
 import AppSelect from "../components/AppSelect.vue";
 import type { NovelAiCapability } from "../contracts/ui_capabilities.js";
-import styles from "./illustrate_dialog.module.css";
+import styles from "./illustrate_dialog_styles.js";
 import type { QuickEditRequest } from "./quick_edit_request.js";
 import { AUGMENT_TOOLS, augment_tool_label, EMOTIONS, emotion_label } from "./quick_edit_labels.js";
 

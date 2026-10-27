@@ -6,7 +6,7 @@ import { useI18n } from "vue-i18n";
 import type { AssetCategory } from "../../contracts/ui_capabilities.js";
 import type { StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 import CharacterPanel from "./CharacterPanel.vue";
 import LoraPanel from "./LoraPanel.vue";
 import OutfitPanel from "./OutfitPanel.vue";

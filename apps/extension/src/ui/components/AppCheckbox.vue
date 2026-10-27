@@ -3,7 +3,7 @@ import { Check, Minus } from "lucide-vue-next";
 import { CheckboxIndicator, CheckboxRoot } from "reka-ui";
 
 import AppIcon from "./AppIcon.vue";
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 withDefaults(
   defineProps<{

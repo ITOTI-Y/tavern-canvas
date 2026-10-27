@@ -14,7 +14,7 @@ import GatewaySettings from "./GatewaySettings.vue";
 import IllustrationSettings from "./IllustrationSettings.vue";
 import NovelAiSettings from "./NovelAiSettings.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 import TranslationSettings from "./TranslationSettings.vue";
 
 const PromptView = defineAsyncComponent(() => import("../prompt/PromptView.vue"));

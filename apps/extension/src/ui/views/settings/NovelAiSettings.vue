@@ -28,7 +28,7 @@ import type {
 } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import { ignored_parameter_label, NOISE_SCHEDULE_NAMES, SAMPLER_NAMES } from "./novelai_labels.js";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly profile: ProviderProfileSummary;

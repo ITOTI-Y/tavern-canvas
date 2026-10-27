@@ -10,7 +10,7 @@ import {
 import { computed, inject } from "vue";
 
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 withDefaults(
   defineProps<{

@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 
 import AppIcon from "../../components/AppIcon.vue";
 import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
-import styles from "./gallery.module.css";
+import styles from "./gallery_styles.js";
 import { use_gallery_object_url } from "./use_gallery_object_url.js";
 
 const props = defineProps<{

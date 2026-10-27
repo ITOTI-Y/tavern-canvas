@@ -1,3 +1,5 @@
+import { attach_deferred_stylesheets } from "./styles/deferred_stylesheets.js";
+
 export { PORTAL_TARGET_KEY } from "./contracts/portal_keys.js";
 
 export interface ShadowRootSurface {
@@ -28,6 +30,7 @@ export function create_shadow_root(document_: Document, stylesheet: string): Sha
   shadow_root.append(portal_element);
 
   document_.body.append(host_element);
+  const detach_deferred_stylesheets = attach_deferred_stylesheets(shadow_root);
 
   return {
     host_element,
@@ -35,6 +38,7 @@ export function create_shadow_root(document_: Document, stylesheet: string): Sha
     app_element,
     portal_element,
     remove() {
+      detach_deferred_stylesheets();
       host_element.remove();
     },
   };

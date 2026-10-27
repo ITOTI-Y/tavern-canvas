@@ -9,7 +9,7 @@ import AppIcon from "../../components/AppIcon.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { CommandState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 
 /** Catalog entries matching /nsfw|adult|explicit/ are opt-in: hidden behind a collapsed disclosure and never preselected. */
 const props = defineProps<{

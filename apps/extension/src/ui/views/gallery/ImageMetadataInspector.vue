@@ -5,7 +5,7 @@ import { ref } from "vue";
 import AppButton from "../../components/AppButton.vue";
 import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { ExtractedGenerationParameters } from "./image_metadata.js";
-import styles from "./gallery.module.css";
+import styles from "./gallery_styles.js";
 
 const props = defineProps<{
   readonly record: GalleryRecordSummary;

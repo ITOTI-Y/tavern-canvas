@@ -6,7 +6,7 @@ import { drop_undefined } from "../../components/_prop_utils.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
 import type { AssetFieldSpec, AssetFormValues } from "./asset_field_schema.js";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 
 const props = defineProps<{
   readonly nameLabel: string;

@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 
 import AppIcon from "../../components/AppIcon.vue";
 import { CAPABILITY_MATRIX_IDS, capability_label } from "./capability_labels.js";
-import styles from "./diagnostics.module.css";
+import styles from "./diagnostics_styles.js";
 
 defineProps<{
   readonly matrix: CapabilityMatrix;

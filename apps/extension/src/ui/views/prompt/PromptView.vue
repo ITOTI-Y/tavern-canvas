@@ -12,7 +12,7 @@ import type { PromptPresetDraft, PromptRegexRule } from "../../contracts/ui_capa
 import type { CommandState, StudioState } from "../../contracts/view_models.js";
 import PresetBrowser from "./PresetBrowser.vue";
 import PromptBuilder from "./PromptBuilder.vue";
-import styles from "./prompt.module.css";
+import styles from "./prompt_styles.js";
 import RegexRules from "./RegexRules.vue";
 import ReplacementRules from "./ReplacementRules.vue";
 import { use_toasts } from "./use_toasts.js";

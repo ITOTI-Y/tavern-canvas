@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { format_byte_size } from "../../../i18n/create_i18n.js";
-import styles from "./diagnostics.module.css";
+import styles from "./diagnostics_styles.js";
 
 const props = defineProps<{
   readonly usageBytes: number | null;

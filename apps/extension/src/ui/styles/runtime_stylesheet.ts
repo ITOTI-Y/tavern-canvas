@@ -1,20 +1,14 @@
 import tokens_stylesheet from "./tokens.css?inline";
 import base_stylesheet from "./base.css?inline";
 import utilities_stylesheet from "./utilities.css?inline";
-import components_stylesheet from "../components/components.module.css?inline";
-import illustrate_dialog_stylesheet from "../chat/illustrate_dialog.module.css?inline";
-import prompt_field_stylesheet from "../chat/prompt_field.module.css?inline";
-import dialogs_stylesheet from "../dialogs/dialogs.module.css?inline";
 import experience_stylesheet from "../experience/experience.module.css?inline";
 import floating_window_stylesheet from "../experience/floating_window.module.css?inline";
 import shell_stylesheet from "../shell/shell.module.css?inline";
-import assets_view_stylesheet from "../views/assets/assets.module.css?inline";
-import diagnostics_view_stylesheet from "../views/diagnostics/diagnostics.module.css?inline";
-import gallery_view_stylesheet from "../views/gallery/gallery.module.css?inline";
-import prompt_view_stylesheet from "../views/prompt/prompt.module.css?inline";
-import settings_view_stylesheet from "../views/settings/settings.module.css?inline";
 
-/** Shadow DOM does not inherit page stylesheets: every first-party CSS Module must be imported here, or its rules never reach the shadow root. */
+/**
+ * Shadow DOM does not inherit page stylesheets: every first-party CSS Module must either be imported
+ * here or be registered through `deferred_stylesheets.ts`, or its rules never reach the shadow root.
+ */
 const ASSET_URL_MARKER_PATTERN = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
 
 /** Replaces `renderBuiltUrl` asset markers with absolute URLs resolved from `import.meta.url`, since the stylesheet is injected as text. */
@@ -30,17 +24,8 @@ export const FIRST_PARTY_STYLESHEET = resolve_asset_urls(
     tokens_stylesheet,
     base_stylesheet,
     utilities_stylesheet,
-    components_stylesheet,
     experience_stylesheet,
-    dialogs_stylesheet,
-    illustrate_dialog_stylesheet,
-    prompt_field_stylesheet,
     floating_window_stylesheet,
     shell_stylesheet,
-    assets_view_stylesheet,
-    gallery_view_stylesheet,
-    prompt_view_stylesheet,
-    diagnostics_view_stylesheet,
-    settings_view_stylesheet,
   ].join("\n"),
 );

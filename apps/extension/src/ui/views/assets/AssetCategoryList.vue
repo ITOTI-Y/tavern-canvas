@@ -10,7 +10,7 @@ import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import { summarize_payload, type AssetSummaryFieldSpec } from "./asset_field_schema.js";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];

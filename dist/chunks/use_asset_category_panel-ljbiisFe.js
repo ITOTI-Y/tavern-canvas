@@ -2,16 +2,17 @@ import { $ as e, D as t, F as n, G as r, I as i, N as a, W as o, _ as s, a as c,
 import { n as b, t as x } from "./AppIcon-Cnhzrx9o.js";
 import { t as S } from "./chevron-down-Tu_8qTxg.js";
 import { t as C } from "./chevron-up-D4TetO-M.js";
-import { n as w, t as T } from "./StateSurface-C9BHPFzJ.js";
-import { n as E, t as D } from "./FieldGroup-BT7DUBzO.js";
+import { n as w, t as T } from "./StateSurface-BA0Ffiwe.js";
+import { n as E, t as D } from "./FieldGroup-BYtqLDde.js";
 import { t as O } from "./shuffle-BAB9O4dE.js";
 import { t as k } from "./trash-2-B6ZXZcor.js";
-import { t as A } from "./_prop_utils-CqbCYIc0.js";
-import { t as j } from "./NumberStepper-yBDRmZKZ.js";
-import { t as M } from "./ConfirmDialog-Bfd4oNMk.js";
-import { t as N } from "./IconButton-bAUne4oi.js";
+import { n as A } from "./deferred_stylesheets-BpS7LWkd.js";
+import { t as j } from "./_prop_utils-CqbCYIc0.js";
+import { t as M } from "./NumberStepper-BaD6Y0DB.js";
+import { t as N } from "./ConfirmDialog-3SJceF8v.js";
+import { t as P } from "./IconButton-DPIesKAc.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/grip-vertical.js
-var P = b("grip-vertical", [
+var F = b("grip-vertical", [
 	["circle", {
 		cx: "9",
 		cy: "12",
@@ -48,7 +49,7 @@ var P = b("grip-vertical", [
 		r: "1",
 		key: "f4zoj3"
 	}]
-]), F = {
+]), I = {
 	assetsView: "_assetsView_1u3zs_10",
 	tabsList: "_tabsList_1u3zs_23",
 	tabsTrigger: "_tabsTrigger_1u3zs_31",
@@ -101,28 +102,32 @@ var P = b("grip-vertical", [
 	reference_composer: "_reference_composer_1u3zs_443"
 };
 //#endregion
+//#region src/ui/views/assets/assets_styles.ts
+A("assets", "._assetsView_1u3zs_10{flex-direction:column;gap:16px;height:100%;min-height:0;padding:16px;display:flex}._tabsList_1u3zs_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;gap:4px;padding-bottom:0;display:flex}._tabsTrigger_1u3zs_31{border-radius:var(--tc-radius-field) var(--tc-radius-field) 0 0;color:var(--tc-text-muted);transition:color var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out;background-color:#0000;border:1px solid #0000;border-bottom-width:2px;padding:8px 14px;font-size:13px;font-weight:500}._tabsTrigger_1u3zs_31:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._tabsTrigger_1u3zs_31[data-state=active]{color:var(--tc-accent);border-bottom-color:var(--tc-accent)}._tabsContent_1u3zs_55{flex:1;min-height:0;overflow-y:auto}._tabsContent_1u3zs_55:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._categoryList_1u3zs_70{flex-direction:column;gap:12px;padding:12px 0;display:flex}._categoryToolbar_1u3zs_77{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._searchInput_1u3zs_84{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:160px;color:var(--tc-text);flex:1;padding:8px 12px;font-size:13px}._searchInput_1u3zs_84:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reorderHint_1u3zs_100{color:var(--tc-text-muted);font-size:12px}._emptyDescription_1u3zs_105{color:var(--tc-text-muted);font-size:13px}._cardGrid_1u3zs_110{flex-direction:column;gap:8px;display:flex}._assetCard_1u3zs_120{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);flex-wrap:wrap;align-items:center;gap:8px;padding:6px 8px;display:flex}._assetCard_1u3zs_120[data-dragging]{border-color:var(--tc-accent)}._dragHandle_1u3zs_135{color:var(--tc-text-muted);cursor:grab;flex:none;padding:4px;display:inline-flex}._assetCardMain_1u3zs_147{border-radius:var(--tc-radius-field);text-align:left;min-width:0;transition:background-color var(--tc-motion-fast) ease-out;background-color:#0000;flex-direction:column;flex:160px;align-items:flex-start;gap:2px;padding:2px 4px;display:flex}._assetCardMain_1u3zs_147:hover{background-color:var(--tc-surface-raised)}._assetCardName_1u3zs_165{color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;max-width:100%;font-size:13px;font-weight:500;overflow:hidden}._assetCardSummary_1u3zs_175{color:var(--tc-text-muted);flex-wrap:wrap;gap:8px;font-size:12px;display:flex}._assetCardSummaryPart_1u3zs_183{white-space:nowrap}._assetCardActions_1u3zs_187{flex:none;align-items:center;gap:8px;margin-left:auto;display:flex}._form_1u3zs_199{flex-direction:column;gap:14px;display:flex}._textInput_1u3zs_205,._textArea_1u3zs_206{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;color:var(--tc-text);padding:8px 10px;font-family:inherit;font-size:13px}._textArea_1u3zs_206{resize:vertical;min-height:72px}._textInput_1u3zs_205:focus-visible,._textArea_1u3zs_206:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._formError_1u3zs_228{color:var(--tc-error);margin:0;font-size:12px}._formActions_1u3zs_234{justify-content:flex-end;gap:8px;display:flex}._vocabularyPanel_1u3zs_244{flex-direction:column;gap:20px;display:flex}._vocabularySearchRow_1u3zs_250{gap:8px;display:flex}._searchResultsList_1u3zs_255{flex-direction:column;gap:4px;display:flex}._searchResultRow_1u3zs_261{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:baseline;gap:12px;padding:8px 4px;display:flex}._searchResultTag_1u3zs_270{color:var(--tc-text);font-size:13px}._searchResultTranslation_1u3zs_275{color:var(--tc-text-muted);font-size:12px}._loadMoreRow_1u3zs_280{justify-content:center;padding-top:4px;display:flex}._sectionTitle_1u3zs_286{color:var(--tc-text);font-size:13px;font-weight:600}._catalogList_1u3zs_292{flex-direction:column;gap:8px;display:flex}._catalogEntry_1u3zs_298{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;display:flex}._catalogEntryInfo_1u3zs_307{flex-direction:column;gap:2px;min-width:0;display:flex}._catalogEntryName_1u3zs_314{color:var(--tc-text);font-size:13px;font-weight:500}._catalogEntryMeta_1u3zs_320{color:var(--tc-text-muted);font-size:12px}._bundledBadge_1u3zs_325{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);color:var(--tc-text-muted);align-items:center;padding:2px 6px;font-size:11px;display:inline-flex}._nsfwSection_1u3zs_335{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:8px 12px}._nsfwToggle_1u3zs_341{color:var(--tc-text-muted);background:0 0;align-items:center;gap:6px;padding:4px 0;font-size:12px;display:flex}._nsfwNotice_1u3zs_351{color:var(--tc-text-muted);padding:8px 0 0;font-size:12px}._installProgress_1u3zs_357{color:var(--tc-text-muted);font-size:12px}._workflowToolbarRow_1u3zs_366{flex-wrap:wrap;gap:8px;display:flex}._placeholderList_1u3zs_372{flex-direction:column;gap:8px;display:flex}._placeholderRow_1u3zs_378{align-items:center;gap:8px;display:flex}._placeholderKey_1u3zs_384{width:40%;color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;flex:none;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;overflow:hidden}._hiddenFileInput_1u3zs_395{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}._reference_thumbnail_1u3zs_407{border-radius:var(--tc-radius-image);object-fit:contain;max-width:160px;max-height:160px;margin-bottom:8px;display:block}._chat_scope_note_1u3zs_416{color:var(--tc-text-muted);flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:12px;display:flex}._reference_1u3zs_407{flex-wrap:wrap;align-items:flex-end;gap:12px;display:flex}._reference_1u3zs_407 ._reference_thumbnail_1u3zs_407{margin-bottom:0}._reference_actions_1u3zs_437{flex-wrap:wrap;gap:8px;display:flex}._reference_composer_1u3zs_443{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;gap:8px;padding:12px;display:flex}");
+var L = I;
+//#endregion
 //#region src/ui/views/assets/asset_field_schema.ts
-function I(e, t) {
+function R(e, t) {
 	let n = e[t.key];
 	return t.kind === "number" ? typeof n == "number" ? n : 0 : typeof n == "string" ? n : "";
 }
-function L(e, t) {
+function z(e, t) {
 	let n = {};
-	for (let r of e) n[r.key] = t ? I(t.payload, r) : r.kind === "number" ? 0 : "";
+	for (let r of e) n[r.key] = t ? R(t.payload, r) : r.kind === "number" ? 0 : "";
 	return n;
 }
-function R(e) {
-	return L(e, null);
+function B(e) {
+	return z(e, null);
 }
-function z(e) {
+function V(e) {
 	return typeof e == "string" || typeof e == "number" || typeof e == "boolean" ? String(e) : null;
 }
-function B(e, t) {
+function H(e, t) {
 	let n = [];
 	for (let r of t) {
 		let t = e[r.key];
 		if (t == null || t === "") continue;
-		let i = z(t);
+		let i = V(t);
 		i !== null && n.push({
 			label: r.label,
 			value: i,
@@ -133,15 +138,15 @@ function B(e, t) {
 }
 //#endregion
 //#region src/ui/views/assets/AssetCategoryList.vue?vue&type=script&setup=true&lang.ts
-var V = ["for"], H = [
+var U = ["for"], W = [
 	"id",
 	"placeholder",
 	"aria-label"
-], U = [
+], G = [
 	"data-dragging",
 	"onDragstart",
 	"onDrop"
-], W = ["aria-label"], G = ["aria-label", "onClick"], K = /* @__PURE__ */ v({
+], K = ["aria-label"], q = ["aria-label", "onClick"], J = /* @__PURE__ */ v({
 	__name: "AssetCategoryList",
 	props: {
 		records: {},
@@ -176,10 +181,10 @@ var V = ["for"], H = [
 			let e = v.value.trim().toLowerCase();
 			return e === "" ? i.records : i.records.filter((t) => t.display_name.toLowerCase().includes(e));
 		}), j = m(() => i.loading ? "loading" : i.records.length === 0 ? "empty" : "ready");
-		function I(e) {
-			return B(e.payload, i.summaryFields);
+		function M(e) {
+			return H(e.payload, i.summaryFields);
 		}
-		function L(e) {
+		function I(e) {
 			b.value = e;
 		}
 		function R() {
@@ -191,12 +196,12 @@ var V = ["for"], H = [
 			let a = [...i.records], [o] = a.splice(n, 1);
 			o !== void 0 && (a.splice(r, 0, o), f("reorder", a.map((e) => e.id)));
 		}
-		function K() {
+		function B() {
 			if (i.records.length === 0) return;
 			let e = Math.floor(Math.random() * i.records.length), t = i.records[e];
 			t && f("random-select", t);
 		}
-		function q(e, t) {
+		function V(e, t) {
 			D.value = e, t.dataTransfer?.setData("text/plain", e), t.dataTransfer && (t.dataTransfer.effectAllowed = "move");
 		}
 		function J(e) {
@@ -211,25 +216,25 @@ var V = ["for"], H = [
 			let o = [...i.records], [s] = o.splice(r, 1);
 			s !== void 0 && (o.splice(a, 0, s), f("reorder", o.map((e) => e.id)));
 		}
-		return (t, i) => (a(), s("div", { class: _(l(F).categoryList) }, [
-			p("div", { class: _(l(F).categoryToolbar) }, [
+		return (t, i) => (a(), s("div", { class: _(l(L).categoryList) }, [
+			p("div", { class: _(l(L).categoryToolbar) }, [
 				p("label", {
 					class: "tc-visually-hidden",
 					for: `${e.searchLabel}-search`
-				}, h(e.searchLabel), 9, V),
+				}, h(e.searchLabel), 9, U),
 				r(p("input", {
 					id: `${e.searchLabel}-search`,
 					"onUpdate:modelValue": i[0] ||= (e) => v.value = e,
 					type: "text",
-					class: _(l(F).searchInput),
+					class: _(l(L).searchInput),
 					placeholder: e.searchPlaceholder,
 					"aria-label": e.searchLabel
-				}, null, 10, H), [[c, v.value]]),
+				}, null, 10, W), [[c, v.value]]),
 				y(w, {
 					label: e.randomLabel,
 					icon: l(O),
 					variant: "secondary",
-					onClick: K
+					onClick: B
 				}, null, 8, ["label", "icon"]),
 				y(w, {
 					label: e.addLabel,
@@ -240,50 +245,50 @@ var V = ["for"], H = [
 			], 2),
 			e.records.length > 1 ? (a(), s("p", {
 				key: 0,
-				class: _(l(F).reorderHint)
+				class: _(l(L).reorderHint)
 			}, h(e.reorderHint), 3)) : d("", !0),
 			y(T, {
 				status: j.value,
 				"empty-title": e.emptyTitle,
 				"min-height": "120px"
 			}, {
-				action: o(() => [p("p", { class: _(l(F).emptyDescription) }, h(e.emptyDescription), 3), y(w, {
+				action: o(() => [p("p", { class: _(l(L).emptyDescription) }, h(e.emptyDescription), 3), y(w, {
 					label: e.addLabel,
 					icon: l(E),
 					variant: "primary",
 					onClick: i[2] ||= (e) => f("add")
 				}, null, 8, ["label", "icon"])]),
-				default: o(() => [p("ul", { class: _(l(F).cardGrid) }, [(a(!0), s(g, null, n(A.value, (t) => (a(), s("li", {
+				default: o(() => [p("ul", { class: _(l(L).cardGrid) }, [(a(!0), s(g, null, n(A.value, (t) => (a(), s("li", {
 					key: t.id,
-					class: _(l(F).assetCard),
+					class: _(l(L).assetCard),
 					draggable: "true",
 					"data-dragging": D.value === t.id ? "" : null,
-					onDragstart: (e) => q(t.id, e),
+					onDragstart: (e) => V(t.id, e),
 					onDragover: J,
 					onDrop: (e) => Y(t.id, e)
 				}, [
 					p("span", {
-						class: _(l(F).dragHandle),
+						class: _(l(L).dragHandle),
 						"aria-label": e.dragHandleLabel,
 						"aria-hidden": "true"
 					}, [y(x, {
-						icon: l(P),
+						icon: l(F),
 						size: 16
-					}, null, 8, ["icon"])], 10, W),
+					}, null, 8, ["icon"])], 10, K),
 					p("button", {
 						type: "button",
-						class: _(l(F).assetCardMain),
+						class: _(l(L).assetCardMain),
 						"aria-label": `${e.editLabel}: ${t.display_name}`,
 						onClick: (e) => f("edit", t)
-					}, [p("span", { class: _(l(F).assetCardName) }, h(t.display_name), 3), I(t).length > 0 ? (a(), s("span", {
+					}, [p("span", { class: _(l(L).assetCardName) }, h(t.display_name), 3), M(t).length > 0 ? (a(), s("span", {
 						key: 0,
-						class: _(l(F).assetCardSummary)
-					}, [(a(!0), s(g, null, n(I(t), (e) => (a(), s("span", {
+						class: _(l(L).assetCardSummary)
+					}, [(a(!0), s(g, null, n(M(t), (e) => (a(), s("span", {
 						key: e.label,
-						class: _([l(F).assetCardSummaryPart, e.numeric && "tc-tabular-nums"])
-					}, h(e.label) + ": " + h(e.value), 3))), 128))], 2)) : d("", !0)], 10, G),
-					p("div", { class: _(l(F).assetCardActions) }, [
-						y(N, {
+						class: _([l(L).assetCardSummaryPart, e.numeric && "tc-tabular-nums"])
+					}, h(e.label) + ": " + h(e.value), 3))), 128))], 2)) : d("", !0)], 10, q),
+					p("div", { class: _(l(L).assetCardActions) }, [
+						y(P, {
 							icon: l(C),
 							size: "sm",
 							label: e.moveUpLabel,
@@ -293,7 +298,7 @@ var V = ["for"], H = [
 							"label",
 							"onClick"
 						]),
-						y(N, {
+						y(P, {
 							icon: l(S),
 							size: "sm",
 							label: e.moveDownLabel,
@@ -303,22 +308,22 @@ var V = ["for"], H = [
 							"label",
 							"onClick"
 						]),
-						y(N, {
+						y(P, {
 							icon: l(k),
 							size: "sm",
 							destructive: "",
 							label: e.deleteLabel,
-							onClick: (e) => L(t)
+							onClick: (e) => I(t)
 						}, null, 8, [
 							"icon",
 							"label",
 							"onClick"
 						])
 					], 2)
-				], 42, U))), 128))], 2)]),
+				], 42, G))), 128))], 2)]),
 				_: 1
 			}, 8, ["status", "empty-title"]),
-			y(M, {
+			y(N, {
 				open: b.value !== null,
 				title: b.value ? e.deleteConfirmTitle(b.value.display_name) : "",
 				description: e.deleteConfirmDescription,
@@ -337,23 +342,23 @@ var V = ["for"], H = [
 			])
 		], 2));
 	}
-}), q = [
+}), Y = [
 	"id",
 	"placeholder",
 	"value",
 	"aria-describedby",
 	"aria-invalid"
-], J = [
+], X = [
 	"id",
 	"value",
 	"aria-describedby",
 	"onInput"
-], Y = [
+], Z = [
 	"id",
 	"value",
 	"aria-describedby",
 	"onInput"
-], X = /* @__PURE__ */ v({
+], Q = /* @__PURE__ */ v({
 	__name: "AssetRecordForm",
 	props: {
 		nameLabel: {},
@@ -394,7 +399,7 @@ var V = ["for"], H = [
 		}
 		let S = m(() => c.pending);
 		return (r, c) => (a(), s("form", {
-			class: _(l(F).form),
+			class: _(l(L).form),
 			onSubmit: x
 		}, [
 			i(r.$slots, "leading-fields"),
@@ -405,36 +410,36 @@ var V = ["for"], H = [
 			}, {
 				default: o(({ fieldId: t, describedBy: n, invalid: r }) => [p("input", {
 					id: t,
-					class: _(l(F).textInput),
+					class: _(l(L).textInput),
 					type: "text",
 					placeholder: e.namePlaceholder,
 					value: e.name,
 					"aria-describedby": n,
 					"aria-invalid": r,
 					onInput: c[0] ||= (e) => u("update:name", e.target.value)
-				}, null, 42, q)]),
+				}, null, 42, Y)]),
 				_: 1
 			}, 8, ["label", "error"]),
 			(a(!0), s(g, null, n(e.fields, (n) => (a(), f(D, t({
 				key: n.key,
 				label: n.label
-			}, { ref_for: !0 }, l(A)({ hint: n.hint })), {
+			}, { ref_for: !0 }, l(j)({ hint: n.hint })), {
 				default: o(({ fieldId: r, describedBy: i }) => [n.kind === "text" ? (a(), s("input", {
 					key: 0,
 					id: r,
-					class: _(l(F).textInput),
+					class: _(l(L).textInput),
 					type: "text",
 					value: e.values[n.key],
 					"aria-describedby": i,
 					onInput: (e) => v(n.key, e.target.value)
-				}, null, 42, J)) : n.kind === "textarea" ? (a(), s("textarea", {
+				}, null, 42, X)) : n.kind === "textarea" ? (a(), s("textarea", {
 					key: 1,
 					id: r,
-					class: _(l(F).textArea),
+					class: _(l(L).textArea),
 					value: e.values[n.key],
 					"aria-describedby": i,
 					onInput: (e) => v(n.key, e.target.value)
-				}, null, 42, Y)) : (a(), f(j, t({
+				}, null, 42, Z)) : (a(), f(M, t({
 					key: 2,
 					id: r,
 					"model-value": typeof e.values[n.key] == "number" ? e.values[n.key] : 0,
@@ -442,7 +447,7 @@ var V = ["for"], H = [
 					step: n.step ?? 1,
 					"decrement-label": e.decrementLabel,
 					"increment-label": e.incrementLabel
-				}, { ref_for: !0 }, l(A)({
+				}, { ref_for: !0 }, l(j)({
 					min: n.min,
 					max: n.max,
 					describedBy: i
@@ -460,10 +465,10 @@ var V = ["for"], H = [
 			i(r.$slots, "extra-fields"),
 			e.saveError ? (a(), s("p", {
 				key: 0,
-				class: _(l(F).formError),
+				class: _(l(L).formError),
 				role: "alert"
 			}, h(e.saveError), 3)) : d("", !0),
-			p("div", { class: _(l(F).formActions) }, [y(w, {
+			p("div", { class: _(l(L).formActions) }, [y(w, {
 				label: e.cancelLabel,
 				variant: "secondary",
 				type: "button",
@@ -479,10 +484,10 @@ var V = ["for"], H = [
 });
 //#endregion
 //#region src/ui/views/assets/use_asset_category_panel.ts
-function Z(t, n, r, i, a = []) {
+function ee(t, n, r, i, a = []) {
 	let o = u(!1), s = u(null), c = u(crypto.randomUUID()), l = u(""), d = u(null), f = u(null), p = e({}), m = u(!1);
 	function h() {
-		s.value = null, c.value = crypto.randomUUID(), l.value = "", d.value = null, f.value = null, Q(p, R(r())), o.value = !0;
+		s.value = null, c.value = crypto.randomUUID(), l.value = "", d.value = null, f.value = null, $(p, B(r())), o.value = !0;
 	}
 	function g(e) {
 		s.value = e, c.value = e.id, l.value = e.display_name, d.value = null, f.value = null;
@@ -491,8 +496,8 @@ function Z(t, n, r, i, a = []) {
 			let r = e.payload[n];
 			(typeof r == "string" || typeof r == "number") && (t[n] = r);
 		}
-		Q(p, {
-			...L(r(), e),
+		$(p, {
+			...z(r(), e),
 			...t
 		}), o.value = !0;
 	}
@@ -548,9 +553,9 @@ function Z(t, n, r, i, a = []) {
 		random_select: x
 	};
 }
-function Q(e, t) {
+function $(e, t) {
 	for (let t of Object.keys(e)) Reflect.deleteProperty(e, t);
 	Object.assign(e, t);
 }
 //#endregion
-export { F as a, K as i, Z as n, X as r, Q as t };
+export { L as a, J as i, ee as n, Q as r, $ as t };

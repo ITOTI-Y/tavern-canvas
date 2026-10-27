@@ -24,14 +24,14 @@ import { computed, inject, onMounted, ref, watch } from "vue";
 import AppButton from "../components/AppButton.vue";
 import AppIcon from "../components/AppIcon.vue";
 import IconButton from "../components/IconButton.vue";
-import component_styles from "../components/components.module.css";
+import component_styles from "../components/components_styles.js";
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 import {
   InpaintMaskSession,
   validate_mask_dimensions,
   type MaskPoint,
 } from "../../modules/media/inpaint_session.js";
-import styles from "./dialogs.module.css";
+import styles from "./dialogs_styles.js";
 
 const props = withDefaults(
   defineProps<{

@@ -13,7 +13,7 @@ import type { AssetFieldSpec, AssetSummaryFieldSpec } from "../assets/asset_fiel
 import AssetCategoryList from "../assets/AssetCategoryList.vue";
 import AssetRecordForm from "../assets/AssetRecordForm.vue";
 import { replace_values, use_asset_category_panel } from "../assets/use_asset_category_panel.js";
-import styles from "./prompt.module.css";
+import styles from "./prompt_styles.js";
 
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];

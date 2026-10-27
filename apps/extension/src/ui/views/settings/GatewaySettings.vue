@@ -16,7 +16,7 @@ import {
   normalize_http_origin,
   requires_http_acknowledgment,
 } from "../../../transport/http_acknowledgment.js";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly settings: TavernCanvasSettings | null;

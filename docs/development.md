@@ -86,6 +86,15 @@ dependency and hands the new text to every subscriber, each of which writes it b
 `<style>` element it owns. Entries import the stylesheet from that module instead of from
 `runtime_stylesheet.ts` directly, which is what keeps it the single importer.
 
+`runtime_stylesheet.ts` holds only the stylesheets the shell needs on first paint. A CSS Module used
+only by lazily loaded components (the shared controls, the chat dialogs and the settings, library,
+prompt, diagnostics and gallery views) is imported through a sibling `*_styles.ts`, which registers
+its `?inline` text with `ui/styles/deferred_stylesheets.ts` when its chunk first loads. That module
+writes one `<style>` per sheet, in a fixed order after the first-party one, into every Shadow Root
+`create_shadow_root` makes. Sheets are keyed, so a wrapper that runs again overwrites its existing
+`<style>` instead of adding a second one. A new CSS Module goes in one of the two places, or its
+rules never reach the Shadow Root.
+
 `import.meta.hot` is statically undefined in a production build, so that whole module drops out of
 `dist/` through tree shaking.
 

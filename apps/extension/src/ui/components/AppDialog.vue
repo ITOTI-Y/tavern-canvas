@@ -13,7 +13,7 @@ import { computed, inject } from "vue";
 
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
 import AppIcon from "./AppIcon.vue";
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 defineProps<{
   readonly open: boolean;

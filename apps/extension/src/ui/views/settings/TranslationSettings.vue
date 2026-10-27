@@ -11,7 +11,7 @@ import AppButton from "../../components/AppButton.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import SegmentedControl from "../../components/SegmentedControl.vue";
 import type { StudioController } from "../../controllers/studio_controller.js";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly settings: TavernCanvasSettings | null;

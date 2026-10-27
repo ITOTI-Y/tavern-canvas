@@ -11,7 +11,7 @@ import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec } from "./asset_field_schema.js";
 import AssetCategoryList from "./AssetCategoryList.vue";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 import { use_asset_category_panel } from "./use_asset_category_panel.js";
 import {
   scan_workflow_placeholders,

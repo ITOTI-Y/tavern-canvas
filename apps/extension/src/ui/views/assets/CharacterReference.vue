@@ -10,7 +10,7 @@ import SegmentedControl, {
   type SegmentedControlOption,
 } from "../../components/SegmentedControl.vue";
 import { REFERENCE_IMAGE_KEY } from "../../contracts/portal_keys.js";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 import { read_reference_image } from "./reference_image.js";
 
 const props = defineProps<{

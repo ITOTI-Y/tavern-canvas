@@ -13,7 +13,7 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
 import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
-import styles from "./assets.module.css";
+import styles from "./assets_styles.js";
 import { use_chat_scope } from "./chat_scope.js";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 import { outfit_slot_label } from "./wardrobe_labels.js";

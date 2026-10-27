@@ -14,7 +14,7 @@ import type { StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import { format_byte_size } from "../../../i18n/create_i18n.js";
 import BulkActionBar from "./BulkActionBar.vue";
-import styles from "./gallery.module.css";
+import styles from "./gallery_styles.js";
 import ImageGrid from "./ImageGrid.vue";
 import ImagePreviewDialog from "./ImagePreviewDialog.vue";
 

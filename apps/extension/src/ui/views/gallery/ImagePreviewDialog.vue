@@ -25,7 +25,7 @@ import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import IconButton from "../../components/IconButton.vue";
 import { PORTAL_TARGET_KEY } from "../../contracts/portal_keys.js";
 import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
-import styles from "./gallery.module.css";
+import styles from "./gallery_styles.js";
 import ImageMetadataInspector from "./ImageMetadataInspector.vue";
 import {
   extract_generation_parameters,

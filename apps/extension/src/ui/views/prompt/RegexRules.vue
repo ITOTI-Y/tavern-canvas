@@ -9,7 +9,7 @@ import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { PromptRegexRule } from "../../contracts/ui_capabilities.js";
 import type { CommandState } from "../../contracts/view_models.js";
-import styles from "./prompt.module.css";
+import styles from "./prompt_styles.js";
 
 const props = defineProps<{
   readonly rules: readonly PromptRegexRule[];

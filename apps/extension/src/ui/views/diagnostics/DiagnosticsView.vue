@@ -7,7 +7,7 @@ import type { StudioState } from "../../contracts/view_models.js";
 import AppButton from "../../components/AppButton.vue";
 import CapabilityMatrix from "./CapabilityMatrix.vue";
 import ConnectionTests from "./ConnectionTests.vue";
-import styles from "./diagnostics.module.css";
+import styles from "./diagnostics_styles.js";
 import StorageUsage from "./StorageUsage.vue";
 import TaskTimeline from "./TaskTimeline.vue";
 

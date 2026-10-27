@@ -24,7 +24,7 @@ import FieldGroup from "../../components/FieldGroup.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import PromptTagChips from "../../chat/PromptTagChips.vue";
 import { PROVIDER_IDS, provider_type_label } from "./provider_labels.js";
-import styles from "./settings.module.css";
+import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly profiles: readonly ProviderProfileSummary[];

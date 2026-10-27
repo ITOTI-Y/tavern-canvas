@@ -2,7 +2,7 @@
 import { useVirtualizer } from "@tanstack/vue-virtual";
 import { computed, ref } from "vue";
 
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 const props = withDefaults(
   defineProps<{

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 withDefaults(
   defineProps<{

@@ -15,7 +15,7 @@ import AppDialog from "../components/AppDialog.vue";
 import StateSurface from "../components/StateSurface.vue";
 import type { PromptTagsPort } from "../contracts/prompt_tags_port.js";
 import type { NovelAiCapability } from "../contracts/ui_capabilities.js";
-import styles from "./illustrate_dialog.module.css";
+import styles from "./illustrate_dialog_styles.js";
 import type { IllustrateRequest } from "./illustrate_request.js";
 import OutfitPicker from "./OutfitPicker.vue";
 import PromptField from "./PromptField.vue";

@@ -4,7 +4,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
 import VirtualList from "../../components/VirtualList.vue";
 import { layout_justified_rows, type LayoutRow } from "./image_layout.js";
-import styles from "./gallery.module.css";
+import styles from "./gallery_styles.js";
 import GalleryTile from "./GalleryTile.vue";
 
 const ROW_HEIGHT = 176;

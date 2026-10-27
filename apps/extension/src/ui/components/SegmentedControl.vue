@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RadioGroupItem, RadioGroupRoot } from "reka-ui";
 
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 export interface SegmentedControlOption {
   readonly value: string;

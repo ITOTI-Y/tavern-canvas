@@ -3,7 +3,7 @@ import { Download, Trash2, Unlink, X } from "lucide-vue-next";
 
 import AppButton from "../../components/AppButton.vue";
 import IconButton from "../../components/IconButton.vue";
-import styles from "./gallery.module.css";
+import styles from "./gallery_styles.js";
 
 defineProps<{
   readonly selectedCountLabel: string;

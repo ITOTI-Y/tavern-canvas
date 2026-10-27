@@ -7,7 +7,7 @@ import FieldGroup from "../../components/FieldGroup.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import type { PromptReplacementRule } from "../../contracts/ui_capabilities.js";
-import styles from "./prompt.module.css";
+import styles from "./prompt_styles.js";
 
 const props = defineProps<{
   readonly rules: readonly PromptReplacementRule[];

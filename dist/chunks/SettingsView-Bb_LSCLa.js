@@ -5,19 +5,20 @@ import { n as a, t as o } from "./novelai_defaults-CoeHYmzC.js";
 import { a as s, n as c, o as l, r as u } from "./http_acknowledgment-CSrNHiim.js";
 import { A as d, F as f, G as p, N as m, V as h, W as g, _, a as v, b as y, ct as b, et as x, g as S, h as C, m as w, n as T, p as E, pt as D, s as O, u as k, ut as A, v as j, x as M, y as N } from "./vue-i18n-DUz2Gjn8.js";
 import { n as P, t as F } from "./AppIcon-Cnhzrx9o.js";
-import { n as I, t as L } from "./StateSurface-C9BHPFzJ.js";
-import { t as R } from "./AppDialog-C_45D_ty.js";
-import { t as z } from "./FieldGroup-BT7DUBzO.js";
+import { n as I, t as L } from "./StateSurface-BA0Ffiwe.js";
+import { t as R } from "./AppDialog-CzDoJQTe.js";
+import { t as z } from "./FieldGroup-BYtqLDde.js";
+import { n as B } from "./deferred_stylesheets-BpS7LWkd.js";
 import "./browser_secret_vault-CnTo7PwU.js";
-import { n as B, t as ee } from "./novelai_request_defaults-B0sJ9ANr.js";
-import { t as te } from "./AppCheckbox-Cn99zCIV.js";
-import { n as V, t as H } from "./NumberStepper-yBDRmZKZ.js";
-import { t as U } from "./AppSelect-DRHFSF1d.js";
-import { t as W } from "./ConfirmDialog-Bfd4oNMk.js";
-import { t as ne } from "./PromptTagChips-BGl7zt6A.js";
-import { t as G } from "./AppSwitch-ClFwVatq.js";
+import { n as ee, t as te } from "./novelai_request_defaults-B0sJ9ANr.js";
+import { t as V } from "./AppCheckbox-CTxQ1oVE.js";
+import { n as H, t as U } from "./NumberStepper-BaD6Y0DB.js";
+import { t as W } from "./AppSelect-BdnjEPS_.js";
+import { t as ne } from "./ConfirmDialog-3SJceF8v.js";
+import { t as G } from "./PromptTagChips-2I2ArwXq.js";
+import { t as K } from "./AppSwitch-DGomz9dg.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/cable.js
-var K = P("cable", [
+var q = P("cable", [
 	["path", {
 		d: "M17 19a1 1 0 0 1-1-1v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a1 1 0 0 1-1 1z",
 		key: "trhst0"
@@ -46,7 +47,7 @@ var K = P("cable", [
 		d: "M7 5V3",
 		key: "1t1388"
 	}]
-]), q = P("circle-check", [["circle", {
+]), J = P("circle-check", [["circle", {
 	cx: "12",
 	cy: "12",
 	r: "10",
@@ -54,7 +55,7 @@ var K = P("cable", [
 }], ["path", {
 	d: "m9 12 2 2 4-4",
 	key: "dzmm74"
-}]]), J = P("triangle-alert", [
+}]]), Y = P("triangle-alert", [
 	["path", {
 		d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
 		key: "wmoenq"
@@ -67,7 +68,7 @@ var K = P("cable", [
 		d: "M12 17h.01",
 		key: "p32p05"
 	}]
-]), Y = {
+]), X = {
 	view: "_view_recet_7",
 	onboarding: "_onboarding_recet_16",
 	onboarding_icon: "_onboarding_icon_recet_25",
@@ -104,7 +105,11 @@ var K = P("cable", [
 	section_nav_item: "_section_nav_item_recet_328",
 	section_content: "_section_content_recet_341",
 	prompt_tag_row: "_prompt_tag_row_recet_359"
-}, X = /* @__PURE__ */ M({
+};
+//#endregion
+//#region src/ui/views/settings/settings_styles.ts
+B("settings", "._view_recet_7{flex-direction:column;gap:32px;width:min(100%,920px);margin:0 auto;padding:24px;display:flex}._onboarding_recet_16{background-color:var(--tc-surface-raised);border:1px solid var(--tc-divider);grid-template-columns:48px minmax(0,1fr);gap:16px;padding:24px;display:grid}._onboarding_icon_recet_25{width:48px;height:48px;color:var(--tc-accent);background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);justify-content:center;align-items:center;display:flex}._onboarding_label_recet_37{color:var(--tc-accent);margin-bottom:4px;font-size:12px;font-weight:650}._onboarding_title_recet_44{color:var(--tc-text);font-size:22px;font-weight:680;line-height:1.2}._onboarding_description_recet_51{max-width:62ch;color:var(--tc-text-muted);margin-top:8px;line-height:1.55}@media (width<=639px){._view_recet_7{gap:24px;padding:20px 16px}._onboarding_recet_16{grid-template-columns:minmax(0,1fr);padding:20px}}._section_recet_70{flex-direction:column;min-width:0;display:flex}._section_header_recet_79{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px;display:flex}._section_title_recet_89{color:var(--tc-text);font-size:14px;font-weight:650}._row_recet_95{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._row_label_recet_104{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_recet_112{color:var(--tc-text);flex:none}._profile_row_recet_76{border-top:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;display:flex}._profile_identity_recet_120{flex-direction:column;flex:12rem;gap:2px;min-width:0;display:flex}._profile_name_recet_144{color:var(--tc-text);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_recet_151{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;font-size:12px;overflow:hidden}._profile_actions_recet_161{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;display:flex}._badge_recet_169{border:1px solid var(--tc-accent);border-radius:var(--tc-radius-status);color:var(--tc-accent);flex:none;padding:2px 8px;font-size:11px}._form_grid_recet_178{flex-direction:column;gap:16px;display:flex}._status_text_recet_184{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:inline-flex}._status_text_recet_184[data-tone=success]{color:var(--tc-success)}._status_text_recet_184[data-tone=warning]{color:var(--tc-warning)}._status_text_recet_184[data-tone=error]{color:var(--tc-error)}._risk_banner_recet_204{border:1px solid var(--tc-warning);border-radius:var(--tc-radius-field);background-color:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._risk_banner_recet_204[data-severity=error]{border-color:var(--tc-error)}._risk_banner_title_recet_218{color:var(--tc-warning);align-items:center;gap:6px;font-weight:600;display:flex}._risk_banner_recet_204[data-severity=error] ._risk_banner_title_recet_218{color:var(--tc-error)}._risk_banner_description_recet_230{color:var(--tc-text);overflow-wrap:anywhere;margin:0;font-size:12px}._risk_banner_actions_recet_237{align-items:center;gap:8px;display:flex}._acknowledged_note_recet_243{color:var(--tc-success);align-items:center;gap:6px;font-size:12px;display:flex}._description_recet_251{color:var(--tc-text-muted);overflow-wrap:anywhere;margin:0;font-size:12px}._actions_row_recet_258{align-items:center;gap:12px;padding-top:8px;display:flex}._vault_mode_row_recet_264{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;display:flex}._vault_mode_row_recet_264 ._profile_meta_recet_151{white-space:normal;text-overflow:clip;line-height:1.45;overflow:visible}._vault_controls_recet_280{gap:14px;width:min(100%,520px);padding-top:16px;display:grid}._vault_controls_recet_280>button{width:fit-content}._vault_unlocked_actions_recet_291{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._text_input_recet_298{border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;height:36px;color:var(--tc-text);border-color:var(--tc-divider);padding:0 10px}._text_input_recet_298:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._layout_recet_314{grid-template-columns:184px minmax(0,1fr);min-height:100%;display:grid}._section_nav_recet_320{border-inline-end:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding:16px 8px;display:flex}._section_nav_item_recet_328{border-radius:var(--tc-radius-field);color:var(--tc-text-muted);text-align:start;white-space:nowrap;padding:8px 12px}._section_nav_item_recet_328[data-selected=true]{color:var(--tc-accent);background-color:var(--tc-surface-raised)}._section_content_recet_341{min-width:0}@media (width<=767px){._layout_recet_314{grid-template-columns:minmax(0,1fr)}._section_nav_recet_320{border-inline-end:none;border-bottom:1px solid var(--tc-divider);flex-direction:row;padding:8px;overflow-x:auto}}._prompt_tag_row_recet_359{flex-wrap:wrap;gap:6px;margin-top:4px;display:flex}");
+var Z = X, re = /* @__PURE__ */ M({
 	__name: "AppearanceSettings",
 	props: {
 		settings: {},
@@ -160,10 +165,10 @@ var K = P("cable", [
 			t.controller.set_inspector_width(e), i({ inspector_width: e });
 		}
 		return (t, r) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "appearance-settings"
-		}, [w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(n)("settings.sections.appearance")), 3)], 2), w("div", { class: A(b(Y).form_grid) }, [
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.appearance.theme_label")), 3), N(V, {
+		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.appearance")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.theme_label")), 3), N(H, {
 				"model-value": e.settings?.ui.color_mode ?? "system",
 				options: a.value,
 				label: b(n)("settings.appearance.theme_label"),
@@ -173,7 +178,7 @@ var K = P("cable", [
 				"options",
 				"label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.appearance.language_label")), 3), N(V, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.language_label")), 3), N(H, {
 				"model-value": e.settings?.locale ?? "auto",
 				options: o.value,
 				label: b(n)("settings.appearance.language_label"),
@@ -183,7 +188,7 @@ var K = P("cable", [
 				"options",
 				"label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.appearance.inspector_width_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.appearance.inspector_width_label")), 3), N(U, {
 				"model-value": e.settings?.ui.inspector_width ?? 320,
 				label: b(n)("settings.appearance.inspector_width_label"),
 				min: 240,
@@ -198,7 +203,7 @@ var K = P("cable", [
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			N(G, {
+			N(K, {
 				"model-value": e.settings?.ui.optional_entry_enabled ?? !1,
 				label: b(n)("settings.appearance.optional_entry_label"),
 				disabled: !e.settings,
@@ -210,7 +215,7 @@ var K = P("cable", [
 			])
 		], 2)], 2));
 	}
-}), Z = ["data-tone"], re = ["id", "aria-describedby"], Q = ["id", "aria-describedby"], ie = ["id", "aria-describedby"], $ = /* @__PURE__ */ M({
+}), Q = ["data-tone"], ie = ["id", "aria-describedby"], $ = ["id", "aria-describedby"], ae = ["id", "aria-describedby"], oe = /* @__PURE__ */ M({
 	__name: "CredentialStorageSettings",
 	props: {
 		settings: {},
@@ -306,15 +311,15 @@ var K = P("cable", [
 			}
 		}
 		return (t, f) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "credential-storage-settings"
 		}, [
-			w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(n)("settings.sections.credential_storage")), 3), l.value === "browser_encrypted" ? (m(), _("span", {
+			w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.credential_storage")), 3), l.value === "browser_encrypted" ? (m(), _("span", {
 				key: 0,
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				"data-tone": e.vaultStatus.state === "unlocked" ? "success" : void 0
-			}, D(u.value), 11, Z)) : S("", !0)], 2),
-			w("div", { class: A(b(Y).vault_mode_row) }, [w("div", { class: A(b(Y).profile_identity) }, [w("span", { class: A(b(Y).profile_name) }, D(b(n)("settings.credential_storage.mode_label")), 3), w("span", { class: A(b(Y).profile_meta) }, D(b(n)("settings.credential_storage.mode_hint")), 3)], 2), N(V, {
+			}, D(u.value), 11, Q)) : S("", !0)], 2),
+			w("div", { class: A(b(Z).vault_mode_row) }, [w("div", { class: A(b(Z).profile_identity) }, [w("span", { class: A(b(Z).profile_name) }, D(b(n)("settings.credential_storage.mode_label")), 3), w("span", { class: A(b(Z).profile_meta) }, D(b(n)("settings.credential_storage.mode_hint")), 3)], 2), N(H, {
 				modelValue: l.value,
 				"onUpdate:modelValue": f[0] ||= (e) => l.value = e,
 				options: c.value,
@@ -328,10 +333,10 @@ var K = P("cable", [
 			])], 2),
 			l.value === "browser_encrypted" ? (m(), _("div", {
 				key: 0,
-				class: A(b(Y).vault_controls)
+				class: A(b(Z).vault_controls)
 			}, [e.vaultStatus.state === "unavailable" || e.vaultStatus.state === "error" ? (m(), _("p", {
 				key: 0,
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				"data-tone": "error",
 				role: "alert"
 			}, D(d.value), 3)) : e.vaultStatus.state === "uninitialized" ? (m(), _(k, { key: 1 }, [
@@ -346,9 +351,9 @@ var K = P("cable", [
 						type: "password",
 						autocomplete: "new-password",
 						"aria-describedby": t,
-						class: A(b(Y).text_input),
+						class: A(b(Z).text_input),
 						"data-testid": "browser-vault-passphrase"
-					}, null, 10, re), [[v, r.value]])]),
+					}, null, 10, ie), [[v, r.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
 				N(z, {
@@ -361,9 +366,9 @@ var K = P("cable", [
 						type: "password",
 						autocomplete: "new-password",
 						"aria-describedby": t,
-						class: A(b(Y).text_input),
+						class: A(b(Z).text_input),
 						"data-testid": "browser-vault-passphrase-confirmation"
-					}, null, 10, Q), [[v, i.value]])]),
+					}, null, 10, $), [[v, i.value]])]),
 					_: 1
 				}, 8, ["label"]),
 				N(I, {
@@ -382,10 +387,10 @@ var K = P("cable", [
 					type: "password",
 					autocomplete: "current-password",
 					"aria-describedby": t,
-					class: A(b(Y).text_input),
+					class: A(b(Z).text_input),
 					"data-testid": "browser-vault-passphrase",
 					onKeydown: O(j, ["enter"])
-				}, null, 42, ie), [[v, r.value]])]),
+				}, null, 42, ae), [[v, r.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]), N(I, {
 				label: b(n)("settings.credential_storage.unlock_action"),
@@ -393,7 +398,7 @@ var K = P("cable", [
 				onClick: j
 			}, null, 8, ["label", "pending"])], 64)) : (m(), _("div", {
 				key: 3,
-				class: A(b(Y).vault_unlocked_actions)
+				class: A(b(Z).vault_unlocked_actions)
 			}, [N(I, {
 				label: b(n)("settings.credential_storage.lock_action"),
 				variant: "secondary",
@@ -405,11 +410,11 @@ var K = P("cable", [
 				onClick: f[4] ||= (e) => s.value = !0
 			}, null, 8, ["label"])], 2)), o.value ? (m(), _("p", {
 				key: 4,
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				"data-tone": "error",
 				role: "alert"
 			}, D(o.value), 3)) : S("", !0)], 2)) : S("", !0),
-			N(W, {
+			N(ne, {
 				open: s.value,
 				title: b(n)("settings.credential_storage.reset_confirm_title"),
 				description: b(n)("settings.credential_storage.reset_confirm_description"),
@@ -428,7 +433,7 @@ var K = P("cable", [
 			])
 		], 2));
 	}
-}), ae = ["aria-label"], oe = ["aria-label"], se = /* @__PURE__ */ M({
+}), se = ["aria-label"], ce = ["aria-label"], le = /* @__PURE__ */ M({
 	__name: "DataSettings",
 	props: {
 		vocabularyUpdateChannel: {},
@@ -528,10 +533,10 @@ var K = P("cable", [
 			}
 		}
 		return (t, l) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "data-settings"
-		}, [w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(n)("settings.sections.data")), 3)], 2), w("div", { class: A(b(Y).form_grid) }, [
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.data.vocabulary_channel_label")), 3), N(V, {
+		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.data")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.data.vocabulary_channel_label")), 3), N(H, {
 				"model-value": e.vocabularyUpdateChannel ?? "bundled",
 				options: i,
 				label: b(n)("settings.data.vocabulary_channel_label"),
@@ -542,7 +547,7 @@ var K = P("cable", [
 				"label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Y).actions_row) }, [
+			w("div", { class: A(b(Z).actions_row) }, [
 				N(I, {
 					label: b(n)("settings.data.vocabulary_import.action"),
 					variant: "secondary",
@@ -564,27 +569,27 @@ var K = P("cable", [
 					"aria-label": b(n)("settings.data.vocabulary_import.action"),
 					"data-testid": "vocabulary-import-input",
 					onChange: p
-				}, null, 40, ae)
+				}, null, 40, se)
 			], 2),
-			w("p", { class: A(b(Y).description) }, D(b(n)("settings.data.vocabulary_import.description")), 3),
+			w("p", { class: A(b(Z).description) }, D(b(n)("settings.data.vocabulary_import.description")), 3),
 			h.value ? (m(), _("p", {
 				key: 0,
-				class: A([b(Y).status_text, b(Y).description]),
+				class: A([b(Z).status_text, b(Z).description]),
 				"data-testid": "vocabulary-import-progress"
 			}, D(h.value), 3)) : S("", !0),
 			s.value ? (m(), _("p", {
 				key: 1,
-				class: A([b(Y).status_text, b(Y).description]),
+				class: A([b(Z).status_text, b(Z).description]),
 				"data-tone": "success",
 				"data-testid": "vocabulary-import-success"
 			}, D(b(n)("settings.data.vocabulary_import.success")), 3)) : S("", !0),
 			c.value ? (m(), _("p", {
 				key: 2,
-				class: A([b(Y).status_text, b(Y).description]),
+				class: A([b(Z).status_text, b(Z).description]),
 				"data-tone": "error",
 				"data-testid": "vocabulary-import-error"
 			}, D(c.value), 3)) : S("", !0),
-			w("div", { class: A(b(Y).actions_row) }, [
+			w("div", { class: A(b(Z).actions_row) }, [
 				N(I, {
 					label: b(n)("settings.data.archive_export_action"),
 					pending: g.value,
@@ -605,22 +610,22 @@ var K = P("cable", [
 					"aria-label": b(n)("settings.data.archive_import_action"),
 					"data-testid": "archive-import-input",
 					onChange: P
-				}, null, 40, oe)
+				}, null, 40, ce)
 			], 2),
-			w("p", { class: A(b(Y).description) }, D(b(n)("settings.data.archive_import_description")), 3),
+			w("p", { class: A(b(Z).description) }, D(b(n)("settings.data.archive_import_description")), 3),
 			v.value ? (m(), _("p", {
 				key: 3,
-				class: A([b(Y).status_text, b(Y).description]),
+				class: A([b(Z).status_text, b(Z).description]),
 				"data-tone": "error"
 			}, D(v.value), 3)) : S("", !0),
 			k.value ? (m(), _("p", {
 				key: 4,
-				class: A([b(Y).status_text, b(Y).description]),
+				class: A([b(Z).status_text, b(Z).description]),
 				"data-tone": "error"
 			}, D(k.value), 3)) : S("", !0)
 		], 2)], 2));
 	}
-}), ce = ["id", "aria-describedby"], le = ["data-severity"], ue = ["id"], de = ["id", "aria-describedby"], fe = /* @__PURE__ */ M({
+}), ue = ["id", "aria-describedby"], de = ["data-severity"], fe = ["id"], pe = ["id", "aria-describedby"], me = /* @__PURE__ */ M({
 	__name: "GatewaySettings",
 	props: {
 		settings: {},
@@ -724,9 +729,9 @@ var K = P("cable", [
 		}
 		let ee = E(() => t.connectionTestCommand.status === "pending");
 		return (t, r) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "gateway-settings"
-		}, [w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(n)("settings.sections.gateway")), 3)], 2), w("div", { class: A(b(Y).form_grid) }, [
+		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.sections.gateway")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
 			N(z, {
 				label: b(n)("settings.gateway.endpoint_label"),
 				hint: b(n)("settings.gateway.endpoint_hint"),
@@ -737,10 +742,10 @@ var K = P("cable", [
 					"onUpdate:modelValue": r[0] ||= (e) => i.value = e,
 					type: "text",
 					"aria-describedby": t,
-					class: A(b(Y).text_input),
+					class: A(b(Z).text_input),
 					"data-testid": "gateway-endpoint-input",
 					onBlur: M
-				}, null, 42, ce), [[v, i.value]])]),
+				}, null, 42, ue), [[v, i.value]])]),
 				_: 1
 			}, 8, [
 				"label",
@@ -749,31 +754,31 @@ var K = P("cable", [
 			]),
 			k.value && !k.value.acknowledged ? (m(), _("div", {
 				key: 0,
-				class: A(b(Y).risk_banner),
+				class: A(b(Z).risk_banner),
 				"data-severity": k.value.severity,
 				"data-testid": "http-risk-banner",
 				role: "alert"
 			}, [
-				w("div", { class: A(b(Y).risk_banner_title) }, [N(F, {
-					icon: b(J),
+				w("div", { class: A(b(Z).risk_banner_title) }, [N(F, {
+					icon: b(Y),
 					size: 16
 				}, null, 8, ["icon"]), j(" " + D(b(n)("settings.http_risk.warning_title")), 1)], 2),
-				w("p", { class: A(b(Y).risk_banner_description) }, D(k.value.severity === "error" ? b(n)("settings.http_risk.error_description_public", { origin: k.value.origin }) : b(n)("settings.http_risk.warning_description_local", { origin: k.value.origin })), 3),
-				w("p", { class: A(b(Y).risk_banner_description) }, D(b(n)("settings.http_risk.disclosure")), 3),
-				w("div", { class: A(b(Y).risk_banner_actions) }, [N(I, {
+				w("p", { class: A(b(Z).risk_banner_description) }, D(k.value.severity === "error" ? b(n)("settings.http_risk.error_description_public", { origin: k.value.origin }) : b(n)("settings.http_risk.warning_description_local", { origin: k.value.origin })), 3),
+				w("p", { class: A(b(Z).risk_banner_description) }, D(b(n)("settings.http_risk.disclosure")), 3),
+				w("div", { class: A(b(Z).risk_banner_actions) }, [N(I, {
 					label: b(n)("settings.http_risk.continue_action"),
 					pending: d.value,
 					onClick: P
 				}, null, 8, ["label", "pending"])], 2)
-			], 10, le)) : k.value && k.value.acknowledged ? (m(), _("div", {
+			], 10, de)) : k.value && k.value.acknowledged ? (m(), _("div", {
 				key: 1,
-				class: A(b(Y).acknowledged_note),
+				class: A(b(Z).acknowledged_note),
 				"data-testid": "http-risk-acknowledged"
 			}, [N(F, {
-				icon: b(q),
+				icon: b(J),
 				size: 14
 			}, null, 8, ["icon"]), j(" " + D(b(n)("settings.http_risk.acknowledged_label")), 1)], 2)) : S("", !0),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.gateway.protocol_label")), 3), N(I, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.gateway.protocol_label")), 3), N(I, {
 				label: b(n)("settings.gateway.detect_action"),
 				variant: "secondary",
 				pending: ee.value,
@@ -782,9 +787,9 @@ var K = P("cable", [
 			N(z, { label: b(n)("settings.gateway.token_secret_label") }, {
 				default: g(({ fieldId: t }) => [w("span", {
 					id: t,
-					class: A(b(Y).row_value),
+					class: A(b(Z).row_value),
 					"data-testid": "gateway-token-reference"
-				}, D(e.settings?.gateway.token_secret_id ?? b(n)("settings.gateway.token_not_set")), 11, ue)]),
+				}, D(e.settings?.gateway.token_secret_id ?? b(n)("settings.gateway.token_not_set")), 11, fe)]),
 				_: 1
 			}, 8, ["label"]),
 			N(z, {
@@ -798,16 +803,16 @@ var K = P("cable", [
 					type: "password",
 					autocomplete: "off",
 					"aria-describedby": t,
-					class: A(b(Y).text_input),
+					class: A(b(Z).text_input),
 					"data-testid": "gateway-token-input"
-				}, null, 10, de), [[v, f.value]])]),
+				}, null, 10, pe), [[v, f.value]])]),
 				_: 1
 			}, 8, [
 				"label",
 				"hint",
 				"error"
 			]),
-			w("div", { class: A(b(Y).row) }, [N(I, {
+			w("div", { class: A(b(Z).row) }, [N(I, {
 				label: b(n)("settings.gateway.token_save_action"),
 				pending: y.value,
 				disabled: f.value.trim().length === 0,
@@ -827,16 +832,16 @@ var K = P("cable", [
 			}, null, 8, ["label", "pending"])) : S("", !0)], 2)
 		], 2)], 2));
 	}
-}), pe = [
+}), he = [
 	"id",
 	"placeholder",
 	"aria-describedby",
 	"disabled"
-], me = ["id", "aria-describedby"], he = ["id", "aria-describedby"], ge = ["id", "aria-describedby"], _e = ["id", "aria-describedby"], ve = ["id", "aria-describedby"], ye = [
+], ge = ["id", "aria-describedby"], _e = ["id", "aria-describedby"], ve = ["id", "aria-describedby"], ye = ["id", "aria-describedby"], be = ["id", "aria-describedby"], xe = [
 	"id",
 	"aria-describedby",
 	"disabled"
-], be = "in_use", xe = "none", Se = /* @__PURE__ */ M({
+], Se = "in_use", Ce = "none", we = /* @__PURE__ */ M({
 	__name: "IllustrationSettings",
 	props: {
 		settings: {},
@@ -857,13 +862,13 @@ var K = P("cable", [
 		}
 		let o = x(""), s = x(""), c = x(""), l = x(""), u = x(""), f = x("");
 		h(r, (e) => {
-			o.value = e === null || e.preset_name === be ? "" : e.preset_name, f.value = e?.wardrobe_model ?? "", e?.connection.kind === "proxy_preset" ? (s.value = e.connection.proxy_preset, c.value = e.connection.model ?? "") : e?.connection.kind === "custom" && (l.value = e.connection.api_url, u.value = e.connection.model);
+			o.value = e === null || e.preset_name === Se ? "" : e.preset_name, f.value = e?.wardrobe_model ?? "", e?.connection.kind === "proxy_preset" ? (s.value = e.connection.proxy_preset, c.value = e.connection.model ?? "") : e?.connection.kind === "custom" && (l.value = e.connection.api_url, u.value = e.connection.model);
 		}, { immediate: !0 });
 		function y() {
 			a({ wardrobe_model: f.value.trim() || null });
 		}
 		function C() {
-			a({ preset_name: o.value.trim() || be });
+			a({ preset_name: o.value.trim() || Se });
 		}
 		let O = E(() => [
 			{
@@ -897,7 +902,7 @@ var K = P("cable", [
 				model: t
 			};
 		}
-		let P = E(() => W.value === "custom" && l.value.trim() !== "" && M() === null);
+		let P = E(() => V.value === "custom" && l.value.trim() !== "" && M() === null);
 		function F() {
 			let e = M();
 			e !== null && a({ connection: e });
@@ -930,24 +935,24 @@ var K = P("cable", [
 				case "idle":
 				case "saving": return "";
 			}
-		}), W = x(r.value?.connection.kind ?? "current");
+		}), V = x(r.value?.connection.kind ?? "current");
 		h(() => r.value?.connection.kind, (e) => {
-			e !== void 0 && (W.value = e);
+			e !== void 0 && (V.value = e);
 		});
 		function ne(e) {
-			if (e === "current") W.value = "current", a({ connection: { kind: "current" } });
+			if (e === "current") V.value = "current", a({ connection: { kind: "current" } });
 			else if (e === "proxy_preset") {
-				W.value = "proxy_preset";
+				V.value = "proxy_preset";
 				let e = j();
 				e !== null && a({ connection: e });
-			} else e === "custom" && (W.value = "custom", F());
+			} else e === "custom" && (V.value = "custom", F());
 		}
-		function K() {
+		function G() {
 			let e = j();
 			e !== null && a({ connection: e });
 		}
 		let q = E(() => [{
-			value: xe,
+			value: Ce,
 			label: n("settings.illustration.prompt_preset_none")
 		}, ...t.promptPresets.map((e) => ({
 			value: e.id,
@@ -956,7 +961,7 @@ var K = P("cable", [
 		function J(e) {
 			a({ prompt_preset_id: t.promptPresets.find((t) => t.id === e)?.id ?? null });
 		}
-		let X = E(() => [
+		let Y = E(() => [
 			{
 				value: "chat",
 				label: n("settings.illustration.world_info_chat")
@@ -969,9 +974,9 @@ var K = P("cable", [
 				value: "off",
 				label: n("settings.illustration.world_info_off")
 			}
-		]), Z = x(r.value?.world_info.mode ?? "chat");
+		]), X = x(r.value?.world_info.mode ?? "chat");
 		h(() => r.value?.world_info.mode, (e) => {
-			e !== void 0 && (Z.value = e);
+			e !== void 0 && (X.value = e);
 		});
 		let re = x([]), Q = x(!1);
 		async function ie() {
@@ -982,14 +987,14 @@ var K = P("cable", [
 			}
 		}
 		d(() => {
-			Z.value === "worldbook" && ie();
+			X.value === "worldbook" && ie();
 		});
 		let $ = E(() => r.value?.world_info.mode === "worldbook" ? r.value.world_info.worldbook : void 0), ae = E(() => [.../* @__PURE__ */ new Set([...re.value, ...$.value === void 0 ? [] : [$.value]])].map((e) => ({
 			value: e,
 			label: e
 		})));
 		function oe(e) {
-			e === "chat" || e === "off" ? (Z.value = e, a({ world_info: { mode: e } })) : e === "worldbook" && (Z.value = e, ie());
+			e === "chat" || e === "off" ? (X.value = e, a({ world_info: { mode: e } })) : e === "worldbook" && (X.value = e, ie());
 		}
 		function se(e) {
 			a({ world_info: {
@@ -998,10 +1003,10 @@ var K = P("cable", [
 			} });
 		}
 		return (t, d) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "illustration-settings"
-		}, [w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(n)("settings.nav.illustration")), 3)], 2), w("div", { class: A(b(Y).form_grid) }, [
-			N(G, {
+		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.nav.illustration")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
+			N(K, {
 				"model-value": e.settings?.auto_generation_enabled ?? !1,
 				label: b(n)("settings.illustration.auto_generation_label"),
 				disabled: !e.settings,
@@ -1011,7 +1016,7 @@ var K = P("cable", [
 				"label",
 				"disabled"
 			]),
-			w("p", { class: A(b(Y).description) }, D(b(n)("settings.illustration.auto_generation_hint")), 3),
+			w("p", { class: A(b(Z).description) }, D(b(n)("settings.illustration.auto_generation_hint")), 3),
 			N(z, {
 				label: b(n)("settings.illustration.preset_label"),
 				hint: b(n)("settings.illustration.preset_hint")
@@ -1022,15 +1027,15 @@ var K = P("cable", [
 					type: "text",
 					placeholder: b(n)("settings.illustration.preset_placeholder"),
 					"aria-describedby": r,
-					class: A(b(Y).text_input),
+					class: A(b(Z).text_input),
 					disabled: !e.settings,
 					"data-testid": "analysis-preset-input",
 					onBlur: C
-				}, null, 42, pe), [[v, o.value]])]),
+				}, null, 42, he), [[v, o.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.connection_label")), 3), N(V, {
-				"model-value": W.value,
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.connection_label")), 3), N(H, {
+				"model-value": V.value,
 				options: O.value,
 				label: b(n)("settings.illustration.connection_label"),
 				disabled: !e.settings,
@@ -1041,7 +1046,7 @@ var K = P("cable", [
 				"label",
 				"disabled"
 			])], 2),
-			W.value === "proxy_preset" ? (m(), _(k, { key: 0 }, [N(z, {
+			V.value === "proxy_preset" ? (m(), _(k, { key: 0 }, [N(z, {
 				label: b(n)("settings.illustration.proxy_preset_label"),
 				hint: b(n)("settings.illustration.proxy_preset_hint")
 			}, {
@@ -1050,10 +1055,10 @@ var K = P("cable", [
 					"onUpdate:modelValue": d[2] ||= (e) => s.value = e,
 					type: "text",
 					"aria-describedby": t,
-					class: A(b(Y).text_input),
+					class: A(b(Z).text_input),
 					"data-testid": "analysis-proxy-preset-input",
-					onBlur: K
-				}, null, 42, me), [[v, s.value]])]),
+					onBlur: G
+				}, null, 42, ge), [[v, s.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]), N(z, {
 				label: b(n)("settings.illustration.proxy_model_label"),
@@ -1064,12 +1069,12 @@ var K = P("cable", [
 					"onUpdate:modelValue": d[3] ||= (e) => c.value = e,
 					type: "text",
 					"aria-describedby": t,
-					class: A(b(Y).text_input),
-					onBlur: K
-				}, null, 42, he), [[v, c.value]])]),
+					class: A(b(Z).text_input),
+					onBlur: G
+				}, null, 42, _e), [[v, c.value]])]),
 				_: 1
 			}, 8, ["label", "hint"])], 64)) : S("", !0),
-			W.value === "custom" ? (m(), _(k, { key: 1 }, [
+			V.value === "custom" ? (m(), _(k, { key: 1 }, [
 				N(z, {
 					label: b(n)("settings.illustration.custom_url_label"),
 					hint: b(n)("settings.illustration.custom_url_hint"),
@@ -1081,10 +1086,10 @@ var K = P("cable", [
 						type: "url",
 						placeholder: "https://",
 						"aria-describedby": t,
-						class: A(b(Y).text_input),
+						class: A(b(Z).text_input),
 						"data-testid": "analysis-custom-url-input",
 						onBlur: F
-					}, null, 42, ge), [[v, l.value]])]),
+					}, null, 42, ve), [[v, l.value]])]),
 					_: 1
 				}, 8, [
 					"label",
@@ -1097,10 +1102,10 @@ var K = P("cable", [
 						"onUpdate:modelValue": d[5] ||= (e) => u.value = e,
 						type: "text",
 						"aria-describedby": t,
-						class: A(b(Y).text_input),
+						class: A(b(Z).text_input),
 						"data-testid": "analysis-custom-model-input",
 						onBlur: F
-					}, null, 42, _e), [[v, u.value]])]),
+					}, null, 42, ye), [[v, u.value]])]),
 					_: 1
 				}, 8, ["label"]),
 				N(z, {
@@ -1113,12 +1118,12 @@ var K = P("cable", [
 						type: "password",
 						autocomplete: "off",
 						"aria-describedby": t,
-						class: A(b(Y).text_input),
+						class: A(b(Z).text_input),
 						"data-testid": "analysis-custom-key-input"
-					}, null, 10, ve), [[v, L.value]])]),
+					}, null, 10, be), [[v, L.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
-				w("div", { class: A(b(Y).actions_row) }, [
+				w("div", { class: A(b(Z).actions_row) }, [
 					N(I, {
 						label: b(n)("settings.illustration.custom_key_save"),
 						variant: "primary",
@@ -1135,28 +1140,28 @@ var K = P("cable", [
 						onClick: ee
 					}, null, 8, ["label"]),
 					w("span", {
-						class: A(b(Y).status_text),
+						class: A(b(Z).status_text),
 						role: "status"
 					}, D(te.value), 3)
 				], 2)
 			], 64)) : S("", !0),
 			N(z, {
 				label: b(n)("settings.illustration.wardrobe_model_label"),
-				hint: W.value === "current" ? b(n)("settings.illustration.wardrobe_model_current_hint") : b(n)("settings.illustration.wardrobe_model_hint")
+				hint: V.value === "current" ? b(n)("settings.illustration.wardrobe_model_current_hint") : b(n)("settings.illustration.wardrobe_model_hint")
 			}, {
 				default: g(({ fieldId: t, describedBy: n }) => [p(w("input", {
 					id: t,
 					"onUpdate:modelValue": d[7] ||= (e) => f.value = e,
 					type: "text",
 					"aria-describedby": n,
-					class: A(b(Y).text_input),
-					disabled: !e.settings || W.value === "current",
+					class: A(b(Z).text_input),
+					disabled: !e.settings || V.value === "current",
 					"data-testid": "wardrobe-model-input",
 					onBlur: y
-				}, null, 42, ye), [[v, f.value]])]),
+				}, null, 42, xe), [[v, f.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.chat_history_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.chat_history_label")), 3), N(U, {
 				"model-value": r.value?.max_chat_history,
 				label: b(n)("settings.illustration.chat_history_label"),
 				min: 0,
@@ -1172,9 +1177,9 @@ var K = P("cable", [
 				"decrement-label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.world_info_label")), 3), N(V, {
-				"model-value": Z.value,
-				options: X.value,
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.world_info_label")), 3), N(H, {
+				"model-value": X.value,
+				options: Y.value,
 				label: b(n)("settings.illustration.world_info_label"),
 				disabled: !e.settings,
 				"onUpdate:modelValue": oe
@@ -1184,8 +1189,8 @@ var K = P("cable", [
 				"label",
 				"disabled"
 			])], 2),
-			w("p", { class: A(b(Y).description) }, D(b(n)("settings.illustration.world_info_hint")), 3),
-			Z.value === "worldbook" ? (m(), _(k, { key: 2 }, [w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.worldbook_label")), 3), N(U, {
+			w("p", { class: A(b(Z).description) }, D(b(n)("settings.illustration.world_info_hint")), 3),
+			X.value === "worldbook" ? (m(), _(k, { key: 2 }, [w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.worldbook_label")), 3), N(W, {
 				"model-value": $.value,
 				options: ae.value,
 				placeholder: b(n)("settings.illustration.worldbook_placeholder"),
@@ -1198,10 +1203,10 @@ var K = P("cable", [
 				"aria-label"
 			])], 2), Q.value ? (m(), _("p", {
 				key: 0,
-				class: A(b(Y).description),
+				class: A(b(Z).description),
 				role: "alert"
 			}, D(b(n)("settings.illustration.worldbook_unavailable")), 3)) : S("", !0)], 64)) : S("", !0),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.max_images_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.max_images_label")), 3), N(U, {
 				"model-value": r.value?.max_images_per_message,
 				label: b(n)("settings.illustration.max_images_label"),
 				min: 1,
@@ -1217,8 +1222,8 @@ var K = P("cable", [
 				"decrement-label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.prompt_preset_label")), 3), N(U, {
-				"model-value": r.value?.prompt_preset_id ?? xe,
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.prompt_preset_label")), 3), N(W, {
+				"model-value": r.value?.prompt_preset_id ?? Ce,
 				options: q.value,
 				placeholder: b(n)("settings.illustration.prompt_preset_label"),
 				"aria-label": b(n)("settings.illustration.prompt_preset_label"),
@@ -1231,7 +1236,7 @@ var K = P("cable", [
 				"aria-label",
 				"disabled"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.illustration.concurrency_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.illustration.concurrency_label")), 3), N(U, {
 				"model-value": e.settings?.global_concurrency,
 				label: b(n)("settings.illustration.concurrency_label"),
 				min: 1,
@@ -1249,7 +1254,7 @@ var K = P("cable", [
 			])], 2)
 		], 2)], 2));
 	}
-}), Ce = {
+}), Te = {
 	k_euler: "Euler",
 	k_euler_ancestral: "Euler Ancestral",
 	k_dpmpp_2s_ancestral: "DPM++ 2S Ancestral",
@@ -1257,13 +1262,13 @@ var K = P("cable", [
 	k_dpmpp_2m: "DPM++ 2M",
 	k_dpmpp_sde: "DPM++ SDE",
 	ddim_v3: "DDIM"
-}, we = {
+}, Ee = {
 	native: "Native",
 	karras: "Karras",
 	exponential: "Exponential",
 	polyexponential: "Polyexponential"
 };
-function Te(e, t) {
+function De(e, t) {
 	switch (t) {
 		case "vibe_transfer": return e("settings.novelai.ignored_vibe_transfer");
 		case "smea": return e("settings.novelai.ignored_smea");
@@ -1275,7 +1280,7 @@ function Te(e, t) {
 }
 //#endregion
 //#region src/ui/views/settings/NovelAiSettings.vue?vue&type=script&setup=true&lang.ts
-var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
+var Oe = "https://novelai.net/image", ke = /* @__PURE__ */ M({
 	__name: "NovelAiSettings",
 	props: {
 		profile: {},
@@ -1285,11 +1290,11 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 	setup(e) {
 		let i = e, { t: s, d: c } = T(), l = E(() => {
 			let e = i.profile.model_id;
-			return e != null && r(e) !== null ? e : ee;
+			return e != null && r(e) !== null ? e : te;
 		});
 		function u() {
 			if (i.profile.novelai_defaults !== null) return i.profile.novelai_defaults;
-			let e = B(l.value);
+			let e = ee(l.value);
 			return {
 				width: e.width,
 				height: e.height,
@@ -1340,7 +1345,7 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 			value: e.profile.model_id,
 			label: e.profile.display_name
 		})));
-		async function V(e) {
+		async function B(e) {
 			await i.controller.save_provider_profile({
 				id: i.profile.id,
 				provider_id: i.profile.provider_id,
@@ -1351,14 +1356,14 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 				updated_at: i.profile.updated_at
 			});
 		}
-		let W = n.options.map((e) => ({
+		let H = n.options.map((e) => ({
 			value: e,
-			label: Ce[e]
+			label: Te[e]
 		})), ne = t.options.map((e) => ({
 			value: e,
-			label: we[e]
+			label: Ee[e]
 		}));
-		function K(e, t, n) {
+		function G(e, t, n) {
 			t.includes(n) && g({ [e]: n });
 		}
 		let q = E(() => i.vibes.filter((e) => typeof e.payload.image == "string" && (e.payload.provider === void 0 || e.payload.provider === "novelai")));
@@ -1366,56 +1371,56 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 			let n = p.value.vibe_asset_ids.filter((t) => t !== e);
 			g({ vibe_asset_ids: t ? [...n, e].slice(0, 16) : n });
 		}
-		let X = x("idle");
-		async function Z() {
-			X.value = "saving";
+		let Y = x("idle");
+		async function X() {
+			Y.value = "saving";
 			try {
-				await i.controller.save_novelai_defaults(i.profile.id, p.value), X.value = "saved";
+				await i.controller.save_novelai_defaults(i.profile.id, p.value), Y.value = "saved";
 			} catch {
-				X.value = "failed";
+				Y.value = "failed";
 			}
 		}
 		return (r, i) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "novelai-settings"
-		}, [w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(s)("settings.novelai.title", { name: e.profile.display_name })), 3)], 2), w("div", { class: A(b(Y).form_grid) }, [
-			w("div", { class: A(b(Y).actions_row) }, [N(I, {
+		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(s)("settings.novelai.title", { name: e.profile.display_name })), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
+			w("div", { class: A(b(Z).actions_row) }, [N(I, {
 				label: b(s)("settings.novelai.refresh_account"),
 				pending: F.value,
 				onClick: L
 			}, null, 8, ["label", "pending"]), O.value === null ? P.value ? (m(), _("span", {
 				key: 1,
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				"data-testid": "novelai-account-unreachable"
 			}, [j(D(b(s)("settings.novelai.account_unreachable")) + " ", 1), w("a", {
-				href: Ee,
+				href: Oe,
 				target: "_blank",
 				rel: "noopener noreferrer"
 			}, D(b(s)("settings.novelai.account_open_site")), 1)], 2)) : M.value === null ? S("", !0) : (m(), _("span", {
 				key: 2,
-				class: A(b(Y).status_text)
+				class: A(b(Z).status_text)
 			}, D(M.value), 3)) : (m(), _("span", {
 				key: 0,
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				"data-testid": "novelai-account"
 			}, D(b(s)("settings.novelai.account_summary", {
 				tier: O.value.tier,
 				anlas: O.value.anlas,
 				expires: b(c)(new Date(O.value.expires_at), "short_date")
 			})), 3))], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.model_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.model_label")), 3), N(W, {
 				"model-value": l.value,
 				options: z.value,
 				placeholder: l.value,
 				"aria-label": b(s)("settings.novelai.model_label"),
-				"onUpdate:modelValue": i[0] ||= (e) => void V(e)
+				"onUpdate:modelValue": i[0] ||= (e) => void B(e)
 			}, null, 8, [
 				"model-value",
 				"options",
 				"placeholder",
 				"aria-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.width_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.width_label")), 3), N(U, {
 				"model-value": p.value.width,
 				label: b(s)("settings.novelai.width_label"),
 				min: 64,
@@ -1430,7 +1435,7 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.height_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.height_label")), 3), N(U, {
 				"model-value": p.value.height,
 				label: b(s)("settings.novelai.height_label"),
 				min: 64,
@@ -1445,7 +1450,7 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.steps_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.steps_label")), 3), N(U, {
 				"model-value": p.value.steps,
 				label: b(s)("settings.novelai.steps_label"),
 				min: 1,
@@ -1459,7 +1464,7 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.scale_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.scale_label")), 3), N(U, {
 				"model-value": p.value.scale,
 				label: b(s)("settings.novelai.scale_label"),
 				min: 0,
@@ -1474,7 +1479,7 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.cfg_rescale_label")), 3), N(H, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.cfg_rescale_label")), 3), N(U, {
 				"model-value": p.value.cfg_rescale,
 				label: b(s)("settings.novelai.cfg_rescale_label"),
 				min: 0,
@@ -1489,51 +1494,51 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.sampler_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.sampler_label")), 3), N(W, {
 				"model-value": p.value.sampler,
-				options: b(W),
+				options: b(H),
 				placeholder: b(s)("settings.novelai.sampler_label"),
 				"aria-label": b(s)("settings.novelai.sampler_label"),
-				"onUpdate:modelValue": i[6] ||= (e) => K("sampler", b(n).options, e)
+				"onUpdate:modelValue": i[6] ||= (e) => G("sampler", b(n).options, e)
 			}, null, 8, [
 				"model-value",
 				"options",
 				"placeholder",
 				"aria-label"
 			])], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(s)("settings.novelai.noise_schedule_label")), 3), N(U, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(s)("settings.novelai.noise_schedule_label")), 3), N(W, {
 				"model-value": p.value.noise_schedule,
 				options: b(ne),
 				placeholder: b(s)("settings.novelai.noise_schedule_label"),
 				"aria-label": b(s)("settings.novelai.noise_schedule_label"),
-				"onUpdate:modelValue": i[7] ||= (e) => K("noise_schedule", b(t).options, e)
+				"onUpdate:modelValue": i[7] ||= (e) => G("noise_schedule", b(t).options, e)
 			}, null, 8, [
 				"model-value",
 				"options",
 				"placeholder",
 				"aria-label"
 			])], 2),
-			N(G, {
+			N(K, {
 				"model-value": p.value.smea,
 				label: b(s)("settings.novelai.smea_label"),
 				"onUpdate:modelValue": i[8] ||= (e) => g({ smea: e })
 			}, null, 8, ["model-value", "label"]),
-			N(G, {
+			N(K, {
 				"model-value": p.value.dyn,
 				label: b(s)("settings.novelai.dyn_label"),
 				"onUpdate:modelValue": i[9] ||= (e) => g({ dyn: e })
 			}, null, 8, ["model-value", "label"]),
-			N(G, {
+			N(K, {
 				"model-value": p.value.variety_plus,
 				label: b(s)("settings.novelai.variety_label"),
 				"onUpdate:modelValue": i[10] ||= (e) => g({ variety_plus: e })
 			}, null, 8, ["model-value", "label"]),
-			w("h3", { class: A(b(Y).section_title) }, D(b(s)("settings.novelai.vibes_title")), 3),
+			w("h3", { class: A(b(Z).section_title) }, D(b(s)("settings.novelai.vibes_title")), 3),
 			q.value.length === 0 ? (m(), _("p", {
 				key: 0,
-				class: A(b(Y).description)
+				class: A(b(Z).description)
 			}, D(b(s)("settings.novelai.vibes_empty")), 3)) : S("", !0),
-			(m(!0), _(k, null, f(q.value, (e) => (m(), C(te, {
+			(m(!0), _(k, null, f(q.value, (e) => (m(), C(V, {
 				key: e.id,
 				"model-value": p.value.vibe_asset_ids.includes(e.id),
 				label: e.display_name,
@@ -1545,41 +1550,41 @@ var Ee = "https://novelai.net/image", De = /* @__PURE__ */ M({
 			]))), 128)),
 			y.value.length > 0 ? (m(), _("div", {
 				key: 1,
-				class: A(b(Y).risk_banner),
+				class: A(b(Z).risk_banner),
 				"data-testid": "novelai-ignored"
-			}, [w("p", { class: A(b(Y).risk_banner_title) }, D(b(s)("settings.novelai.ignored_title")), 3), (m(!0), _(k, null, f(y.value, (e) => (m(), _("p", {
+			}, [w("p", { class: A(b(Z).risk_banner_title) }, D(b(s)("settings.novelai.ignored_title")), 3), (m(!0), _(k, null, f(y.value, (e) => (m(), _("p", {
 				key: e,
-				class: A(b(Y).risk_banner_description)
-			}, D(b(Te)(b(s), e)), 3))), 128))], 2)) : S("", !0),
+				class: A(b(Z).risk_banner_description)
+			}, D(b(De)(b(s), e)), 3))), 128))], 2)) : S("", !0),
 			v.value === null ? S("", !0) : (m(), _("p", {
 				key: 2,
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				role: "alert"
 			}, D(v.value), 3)),
-			w("div", { class: A(b(Y).actions_row) }, [N(I, {
+			w("div", { class: A(b(Z).actions_row) }, [N(I, {
 				label: b(s)("settings.novelai.save"),
 				variant: "primary",
-				pending: X.value === "saving",
+				pending: Y.value === "saving",
 				disabled: v.value !== null,
-				onClick: Z
+				onClick: X
 			}, null, 8, [
 				"label",
 				"pending",
 				"disabled"
 			]), w("span", {
-				class: A(b(Y).status_text),
+				class: A(b(Z).status_text),
 				role: "status"
-			}, D(X.value === "saved" ? b(s)("settings.novelai.saved") : X.value === "failed" ? b(s)("settings.novelai.save_failed") : ""), 3)], 2)
+			}, D(Y.value === "saved" ? b(s)("settings.novelai.saved") : Y.value === "failed" ? b(s)("settings.novelai.save_failed") : ""), 3)], 2)
 		], 2)], 2));
 	}
-}), Oe = [
+}), Ae = [
 	"sd_webui",
 	"novelai",
 	"comfyui",
 	"openai_image",
 	"google_image"
 ];
-function ke(e, t) {
+function je(e, t) {
 	switch (t) {
 		case "sd_webui": return e("settings.provider_profiles.provider_types.sd_webui");
 		case "novelai": return e("settings.provider_profiles.provider_types.novelai");
@@ -1590,7 +1595,7 @@ function ke(e, t) {
 }
 //#endregion
 //#region src/ui/views/settings/ProviderProfiles.vue?vue&type=script&setup=true&lang.ts
-var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = /* @__PURE__ */ M({
+var Me = ["id", "aria-describedby"], Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = /* @__PURE__ */ M({
 	__name: "ProviderProfiles",
 	props: {
 		profiles: {},
@@ -1606,15 +1611,15 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				save: (e, t) => n.controller.save_prompt_tags(e, t)
 			};
 		}
-		let { t: a } = T(), o = x(!1), s = x(null), c = x(!1), l = x(null), u = x(null), d = x(!1), h = x(null), y = x(""), O = x(!1), j = x(null), M = x(/* @__PURE__ */ new Map()), P = Oe.map((e) => ({
+		let { t: a } = T(), o = x(!1), s = x(null), c = x(!1), l = x(null), u = x(null), d = x(!1), h = x(null), y = x(""), O = x(!1), j = x(null), M = x(/* @__PURE__ */ new Map()), P = Ae.map((e) => ({
 			value: e,
-			label: ke(a, e)
+			label: je(a, e)
 		})), F = E({
 			get: () => s.value?.provider_id ?? "sd_webui",
 			set: (e) => {
-				s.value && (s.value.provider_id = e, s.value.workflow_id = "", e === "novelai" && !B.has(s.value.model_id) && (s.value.model_id = ee));
+				s.value && (s.value.provider_id = e, s.value.workflow_id = "", e === "novelai" && !B.has(s.value.model_id) && (s.value.model_id = te));
 			}
-		}), B = new Set(i.map((e) => e.model_id)), te = i.filter((e) => e.selectable).map((e) => ({
+		}), B = new Set(i.map((e) => e.model_id)), ee = i.filter((e) => e.selectable).map((e) => ({
 			value: e.model_id,
 			label: e.display_name
 		}));
@@ -1640,7 +1645,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				is_default: e.is_default
 			}, l.value = null, o.value = !0;
 		}
-		function K() {
+		function U() {
 			o.value = !1, s.value = null, l.value = null;
 		}
 		async function q() {
@@ -1661,7 +1666,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 					workflow_id: t.provider_id === "comfyui" && o?.success === !0 ? o.data : null,
 					is_default: t.is_default,
 					updated_at: (/* @__PURE__ */ new Date()).toISOString()
-				}), K();
+				}), U();
 			} catch {
 				l.value = a("errors.unexpected");
 			} finally {
@@ -1671,7 +1676,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 		function J(e) {
 			u.value = e;
 		}
-		async function X() {
+		async function Y() {
 			let e = u.value;
 			if (!(!e || d.value)) {
 				d.value = !0;
@@ -1682,7 +1687,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				}
 			}
 		}
-		function Z(e) {
+		function X(e) {
 			return e === "novelai" || e === "openai_image" || e === "google_image";
 		}
 		function re(e) {
@@ -1735,10 +1740,10 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			M.value = new Map(M.value);
 		}
 		return (e, n) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "provider-profiles"
 		}, [
-			w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(a)("settings.sections.provider_profiles")), 3), N(I, {
+			w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(a)("settings.sections.provider_profiles")), 3), N(I, {
 				label: b(a)("settings.provider_profiles.add_action"),
 				variant: t.profiles.length === 0 ? "primary" : "secondary",
 				onClick: V
@@ -1749,31 +1754,31 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			}, {
 				default: g(() => [w("div", null, [(m(!0), _(k, null, f(t.profiles, (e) => (m(), _("div", {
 					key: e.id,
-					class: A(b(Y).profile_row),
+					class: A(b(Z).profile_row),
 					"data-testid": "provider-profile-row"
-				}, [w("div", { class: A(b(Y).profile_identity) }, [
-					w("span", { class: A(b(Y).profile_name) }, D(e.display_name), 3),
-					w("span", { class: A(b(Y).profile_meta) }, D(b(ke)(b(a), e.provider_id)), 3),
-					Z(e.provider_id) ? (m(), _("span", {
+				}, [w("div", { class: A(b(Z).profile_identity) }, [
+					w("span", { class: A(b(Z).profile_name) }, D(e.display_name), 3),
+					w("span", { class: A(b(Z).profile_meta) }, D(b(je)(b(a), e.provider_id)), 3),
+					X(e.provider_id) ? (m(), _("span", {
 						key: 0,
-						class: A(b(Y).profile_meta)
+						class: A(b(Z).profile_meta)
 					}, D(e.credential_reference ? b(a)("settings.provider_profiles.credential_set") : b(a)("settings.provider_profiles.credential_unset")), 3)) : S("", !0),
 					M.value.get(e.id)?.label ? (m(), _("span", {
 						key: 1,
-						class: A(b(Y).profile_meta),
+						class: A(b(Z).profile_meta),
 						"data-testid": "profile-test-result"
 					}, D(M.value.get(e.id)?.label), 3)) : S("", !0),
-					w("div", { class: A(b(Y).prompt_tag_row) }, [N(ne, {
+					w("div", { class: A(b(Z).prompt_tag_row) }, [N(G, {
 						port: r(e),
 						kind: "quality"
-					}, null, 8, ["port"]), N(ne, {
+					}, null, 8, ["port"]), N(G, {
 						port: r(e),
 						kind: "undesired_content"
 					}, null, 8, ["port"])], 2)
-				], 2), w("div", { class: A(b(Y).profile_actions) }, [
+				], 2), w("div", { class: A(b(Z).profile_actions) }, [
 					e.is_default ? (m(), _("span", {
 						key: 0,
-						class: A(b(Y).badge)
+						class: A(b(Z).badge)
 					}, D(b(a)("settings.provider_profiles.default_badge")), 3)) : S("", !0),
 					N(I, {
 						label: b(a)("settings.provider_profiles.connection_test_action"),
@@ -1785,13 +1790,13 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 						"pending",
 						"onClick"
 					]),
-					Z(e.provider_id) ? (m(), C(I, {
+					X(e.provider_id) ? (m(), C(I, {
 						key: 1,
 						label: b(a)("settings.provider_profiles.set_credential_action"),
 						variant: "secondary",
 						onClick: (t) => re(e)
 					}, null, 8, ["label", "onClick"])) : S("", !0),
-					Z(e.provider_id) && e.credential_reference !== null ? (m(), C(I, {
+					X(e.provider_id) && e.credential_reference !== null ? (m(), C(I, {
 						key: 2,
 						label: b(a)("settings.provider_profiles.clear_credential_action"),
 						variant: "secondary",
@@ -1814,11 +1819,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				open: o.value,
 				title: s.value?.is_new ? b(a)("settings.provider_profiles.dialog_add_title") : b(a)("settings.provider_profiles.dialog_edit_title"),
 				"close-label": b(a)("common.actions.close"),
-				"onUpdate:open": n[6] ||= (e) => !e && K()
+				"onUpdate:open": n[6] ||= (e) => !e && U()
 			}, {
 				default: g(() => [s.value ? (m(), _("div", {
 					key: 0,
-					class: A(b(Y).form_grid)
+					class: A(b(Z).form_grid)
 				}, [
 					N(z, {
 						label: b(a)("common.labels.name"),
@@ -1829,15 +1834,15 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 							"onUpdate:modelValue": n[0] ||= (e) => s.value.display_name = e,
 							type: "text",
 							"aria-describedby": t,
-							class: A(b(Y).text_input)
-						}, null, 10, Ae), [[v, s.value.display_name]])]),
+							class: A(b(Z).text_input)
+						}, null, 10, Me), [[v, s.value.display_name]])]),
 						_: 1
 					}, 8, ["label"]),
 					N(z, {
 						label: b(a)("settings.provider_profiles.provider_label"),
 						required: ""
 					}, {
-						default: g(({ fieldId: e }) => [N(U, {
+						default: g(({ fieldId: e }) => [N(W, {
 							id: e,
 							modelValue: F.value,
 							"onUpdate:modelValue": n[1] ||= (e) => F.value = e,
@@ -1856,11 +1861,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 						label: b(a)("settings.provider_profiles.model_label"),
 						required: ""
 					}, {
-						default: g(({ fieldId: e }) => [N(U, {
+						default: g(({ fieldId: e }) => [N(W, {
 							id: e,
 							modelValue: s.value.model_id,
 							"onUpdate:modelValue": n[2] ||= (e) => s.value.model_id = e,
-							options: b(te),
+							options: b(ee),
 							placeholder: b(a)("settings.provider_profiles.model_label")
 						}, null, 8, [
 							"id",
@@ -1879,9 +1884,9 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 							"onUpdate:modelValue": n[3] ||= (e) => s.value.model_id = e,
 							type: "text",
 							"aria-describedby": t,
-							class: A(b(Y).text_input),
+							class: A(b(Z).text_input),
 							"data-testid": "provider-model-input"
-						}, null, 10, je), [[v, s.value.model_id]])]),
+						}, null, 10, Ne), [[v, s.value.model_id]])]),
 						_: 1
 					}, 8, ["label"])),
 					s.value.provider_id === "comfyui" ? (m(), C(z, {
@@ -1894,29 +1899,29 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 							"onUpdate:modelValue": n[4] ||= (e) => s.value.workflow_id = e,
 							type: "text",
 							"aria-describedby": t,
-							class: A(b(Y).text_input),
+							class: A(b(Z).text_input),
 							"data-testid": "provider-workflow-input"
-						}, null, 10, Me), [[v, s.value.workflow_id]])]),
+						}, null, 10, Pe), [[v, s.value.workflow_id]])]),
 						_: 1
 					}, 8, ["label"])) : S("", !0),
-					N(G, {
+					N(K, {
 						modelValue: s.value.is_default,
 						"onUpdate:modelValue": n[5] ||= (e) => s.value.is_default = e,
 						label: b(a)("settings.provider_profiles.set_default_action")
 					}, null, 8, ["modelValue", "label"]),
 					l.value ? (m(), _("p", {
 						key: 3,
-						class: A([b(Y).status_text, b(Y).description]),
+						class: A([b(Z).status_text, b(Z).description]),
 						"data-tone": "error"
 					}, D(l.value), 3)) : S("", !0),
-					w("div", { class: A(b(Y).actions_row) }, [N(I, {
+					w("div", { class: A(b(Z).actions_row) }, [N(I, {
 						label: b(a)("common.actions.save"),
 						pending: c.value,
 						onClick: q
 					}, null, 8, ["label", "pending"]), N(I, {
 						label: b(a)("common.actions.cancel"),
 						variant: "secondary",
-						onClick: K
+						onClick: U
 					}, null, 8, ["label"])], 2)
 				], 2)) : S("", !0)]),
 				_: 1
@@ -1932,7 +1937,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"close-label": b(a)("common.actions.close"),
 				"onUpdate:open": n[8] ||= (e) => !e && Q()
 			}, {
-				default: g(() => [w("div", { class: A(b(Y).form_grid) }, [N(z, {
+				default: g(() => [w("div", { class: A(b(Z).form_grid) }, [N(z, {
 					label: b(a)("settings.provider_profiles.credential_label"),
 					error: j.value,
 					required: ""
@@ -1943,11 +1948,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 						type: "password",
 						autocomplete: "new-password",
 						"aria-describedby": t,
-						class: A(b(Y).text_input),
+						class: A(b(Z).text_input),
 						"data-testid": "provider-credential-input"
-					}, null, 10, Ne), [[v, y.value]])]),
+					}, null, 10, Fe), [[v, y.value]])]),
 					_: 1
-				}, 8, ["label", "error"]), w("div", { class: A(b(Y).actions_row) }, [N(I, {
+				}, 8, ["label", "error"]), w("div", { class: A(b(Z).actions_row) }, [N(I, {
 					label: b(a)("common.actions.save"),
 					pending: O.value,
 					onClick: ie
@@ -1963,7 +1968,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"description",
 				"close-label"
 			]),
-			N(W, {
+			N(ne, {
 				open: u.value !== null,
 				title: b(a)("settings.provider_profiles.remove_confirm_title", { name: u.value?.display_name ?? "" }),
 				description: b(a)("settings.provider_profiles.remove_confirm_description"),
@@ -1971,7 +1976,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"cancel-label": b(a)("confirmations.destructive.default_cancel_action"),
 				pending: d.value,
 				"onUpdate:open": n[9] ||= (e) => !e && (u.value = null),
-				onConfirm: X
+				onConfirm: Y
 			}, null, 8, [
 				"open",
 				"title",
@@ -1982,15 +1987,15 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			])
 		], 2));
 	}
-}), Fe = ["id", "aria-describedby"], Ie = [
+}), Le = ["id", "aria-describedby"], Re = [
 	"onUpdate:modelValue",
 	"aria-label",
 	"placeholder"
-], Le = [
+], ze = [
 	"onUpdate:modelValue",
 	"aria-label",
 	"placeholder"
-], Re = 200, ze = /* @__PURE__ */ M({
+], Be = 200, Ve = /* @__PURE__ */ M({
 	__name: "TranslationSettings",
 	props: {
 		settings: {},
@@ -2047,7 +2052,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			y.value = (e ?? []).map((e) => ({ ...e }));
 		}, { immediate: !0 });
 		function S() {
-			y.value.length < Re && y.value.push({
+			y.value.length < Be && y.value.push({
 				source: "",
 				target: ""
 			});
@@ -2062,10 +2067,10 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			})).filter((e) => e.source !== "" && e.target !== "") });
 		}
 		return (t, i) => (m(), _("div", {
-			class: A(b(Y).section),
+			class: A(b(Z).section),
 			"data-testid": "translation-settings"
-		}, [w("div", { class: A(b(Y).section_header) }, [w("h2", { class: A(b(Y).section_title) }, D(b(n)("settings.nav.translation")), 3)], 2), w("div", { class: A(b(Y).form_grid) }, [
-			w("p", { class: A(b(Y).description) }, D(b(n)("settings.translation.description")), 3),
+		}, [w("div", { class: A(b(Z).section_header) }, [w("h2", { class: A(b(Z).section_title) }, D(b(n)("settings.nav.translation")), 3)], 2), w("div", { class: A(b(Z).form_grid) }, [
+			w("p", { class: A(b(Z).description) }, D(b(n)("settings.translation.description")), 3),
 			N(z, {
 				label: b(n)("settings.translation.key_label"),
 				hint: b(n)("settings.translation.key_hint")
@@ -2076,12 +2081,12 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 					type: "password",
 					autocomplete: "off",
 					"aria-describedby": t,
-					class: A(b(Y).text_input),
+					class: A(b(Z).text_input),
 					"data-testid": "deepl-key-input"
-				}, null, 10, Fe), [[v, s.value]])]),
+				}, null, 10, Le), [[v, s.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]),
-			w("div", { class: A(b(Y).actions_row) }, [
+			w("div", { class: A(b(Z).actions_row) }, [
 				N(I, {
 					label: b(n)("settings.translation.key_save"),
 					variant: "primary",
@@ -2098,11 +2103,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 					onClick: u
 				}, null, 8, ["label"]),
 				w("span", {
-					class: A(b(Y).status_text),
+					class: A(b(Z).status_text),
 					role: "status"
 				}, D(d.value), 3)
 			], 2),
-			w("div", { class: A(b(Y).row) }, [w("span", { class: A(b(Y).row_label) }, D(b(n)("settings.translation.endpoint_label")), 3), N(V, {
+			w("div", { class: A(b(Z).row) }, [w("span", { class: A(b(Z).row_label) }, D(b(n)("settings.translation.endpoint_label")), 3), N(H, {
 				"model-value": r.value?.deepl_endpoint ?? "free",
 				options: a.value,
 				label: b(n)("settings.translation.endpoint_label"),
@@ -2114,11 +2119,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"label",
 				"disabled"
 			])], 2),
-			w("h3", { class: A(b(Y).section_title) }, D(b(n)("settings.translation.glossary_title")), 3),
-			w("p", { class: A(b(Y).description) }, D(b(n)("settings.translation.glossary_description")), 3),
+			w("h3", { class: A(b(Z).section_title) }, D(b(n)("settings.translation.glossary_title")), 3),
+			w("p", { class: A(b(Z).description) }, D(b(n)("settings.translation.glossary_description")), 3),
 			(m(!0), _(k, null, f(y.value, (e, t) => (m(), _("div", {
 				key: t,
-				class: A(b(Y).actions_row),
+				class: A(b(Z).actions_row),
 				"data-testid": "glossary-row"
 			}, [
 				p(w("input", {
@@ -2127,24 +2132,24 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 					maxlength: "32",
 					"aria-label": b(n)("settings.translation.glossary_source"),
 					placeholder: b(n)("settings.translation.glossary_source"),
-					class: A(b(Y).text_input)
-				}, null, 10, Ie), [[v, e.source]]),
+					class: A(b(Z).text_input)
+				}, null, 10, Re), [[v, e.source]]),
 				p(w("input", {
 					"onUpdate:modelValue": (t) => e.target = t,
 					type: "text",
 					maxlength: "128",
 					"aria-label": b(n)("settings.translation.glossary_target"),
 					placeholder: b(n)("settings.translation.glossary_target"),
-					class: A(b(Y).text_input)
-				}, null, 10, Le), [[v, e.target]]),
+					class: A(b(Z).text_input)
+				}, null, 10, ze), [[v, e.target]]),
 				N(I, {
 					label: b(n)("settings.translation.glossary_remove"),
 					onClick: (e) => C(t)
 				}, null, 8, ["label", "onClick"])
 			], 2))), 128)),
-			w("div", { class: A(b(Y).actions_row) }, [N(I, {
+			w("div", { class: A(b(Z).actions_row) }, [N(I, {
 				label: b(n)("settings.translation.glossary_add"),
-				disabled: y.value.length >= Re,
+				disabled: y.value.length >= Be,
 				onClick: S
 			}, null, 8, ["label", "disabled"]), N(I, {
 				label: b(n)("settings.translation.glossary_save"),
@@ -2154,18 +2159,18 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			}, null, 8, ["label", "disabled"])], 2)
 		], 2)], 2));
 	}
-}), Be = ["aria-label"], Ve = [
+}), He = ["aria-label"], Ue = [
 	"data-selected",
 	"aria-current",
 	"onClick"
-], He = { class: "tc-visually-hidden" }, Ue = /* @__PURE__ */ M({
+], We = { class: "tc-visually-hidden" }, Ge = /* @__PURE__ */ M({
 	__name: "SettingsView",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-CAxIBLDh.js")), n = y(() => import("./AssetsView-CXnX5zzT.js")), r = y(() => import("./PromptTagPresetPanel-ChoVal8C.js")), i = y(() => import("./DiagnosticsView-BCTmh18F.js")), a = e, { t: o } = T(), s = [
+		let t = y(() => import("./PromptView-ntAO_5Zx.js")), n = y(() => import("./AssetsView-BYkNLWyL.js")), r = y(() => import("./PromptTagPresetPanel-DvSvv4nC.js")), i = y(() => import("./DiagnosticsView-u8qVA-QO.js")), a = e, { t: o } = T(), s = [
 			"illustration",
 			"providers",
 			"translation",
@@ -2192,19 +2197,19 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			return a.controller.test_prompt_regex(e, t);
 		}
 		return (a, p) => (m(), _("div", {
-			class: A(b(Y).layout),
+			class: A(b(Z).layout),
 			"data-testid": "settings-view"
 		}, [w("nav", {
-			class: A(b(Y).section_nav),
+			class: A(b(Z).section_nav),
 			"aria-label": b(o)("nav.settings")
 		}, [(m(), _(k, null, f(s, (t) => w("button", {
 			key: t,
 			type: "button",
-			class: A(["tc-interactive", b(Y).section_nav_item]),
+			class: A(["tc-interactive", b(Z).section_nav_item]),
 			"data-selected": t === l.value,
 			"aria-current": t === l.value ? "page" : void 0,
 			onClick: (n) => e.controller.set_settings_section(t)
-		}, D(c(t)), 11, Ve)), 64))], 10, Be), w("div", { class: A(b(Y).section_content) }, [l.value === "prompts" ? (m(), _(k, { key: 0 }, [N(b(t), {
+		}, D(c(t)), 11, Ue)), 64))], 10, He), w("div", { class: A(b(Z).section_content) }, [l.value === "prompts" ? (m(), _(k, { key: 0 }, [N(b(t), {
 			state: e.state,
 			"test-regex": d,
 			onSelectPreset: p[0] ||= (t) => void e.controller.select_prompt_preset(t),
@@ -2230,8 +2235,8 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			controller: e.controller
 		}, null, 8, ["state", "controller"])) : (m(), _("div", {
 			key: 3,
-			class: A(b(Y).view)
-		}, [w("h1", He, D(c(l.value)), 1), l.value === "illustration" ? (m(), C(Se, {
+			class: A(b(Z).view)
+		}, [w("h1", We, D(c(l.value)), 1), l.value === "illustration" ? (m(), C(we, {
 			key: 0,
 			settings: e.state.settings.settings,
 			"prompt-presets": e.state.prompt.presets,
@@ -2243,24 +2248,24 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 		])) : l.value === "providers" ? (m(), _(k, { key: 1 }, [
 			e.state.generation.profiles.length === 0 ? (m(), _("section", {
 				key: 0,
-				class: A(b(Y).onboarding),
+				class: A(b(Z).onboarding),
 				"data-testid": "settings-onboarding",
 				"aria-labelledby": "settings-onboarding-title"
 			}, [w("div", {
-				class: A(b(Y).onboarding_icon),
+				class: A(b(Z).onboarding_icon),
 				"aria-hidden": "true"
 			}, [N(F, {
-				icon: b(K),
+				icon: b(q),
 				size: 22
 			}, null, 8, ["icon"])], 2), w("div", null, [
-				w("p", { class: A(b(Y).onboarding_label) }, D(b(o)("settings.onboarding.label")), 3),
+				w("p", { class: A(b(Z).onboarding_label) }, D(b(o)("settings.onboarding.label")), 3),
 				w("h2", {
 					id: "settings-onboarding-title",
-					class: A(b(Y).onboarding_title)
+					class: A(b(Z).onboarding_title)
 				}, D(b(o)("settings.onboarding.title")), 3),
-				w("p", { class: A(b(Y).onboarding_description) }, D(b(o)("settings.onboarding.description")), 3)
+				w("p", { class: A(b(Z).onboarding_description) }, D(b(o)("settings.onboarding.description")), 3)
 			])], 2)) : S("", !0),
-			N(Pe, {
+			N(Ie, {
 				profiles: e.state.generation.profiles,
 				"prompt-tag-presets": e.state.assets.records.prompt_tag,
 				controller: e.controller
@@ -2269,7 +2274,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"prompt-tag-presets",
 				"controller"
 			]),
-			u.value === null ? S("", !0) : (m(), C(De, {
+			u.value === null ? S("", !0) : (m(), C(ke, {
 				key: 1,
 				profile: u.value,
 				vibes: e.state.assets.records.vibe,
@@ -2279,11 +2284,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"vibes",
 				"controller"
 			]))
-		], 64)) : l.value === "translation" ? (m(), C(ze, {
+		], 64)) : l.value === "translation" ? (m(), C(Ve, {
 			key: 2,
 			settings: e.state.settings.settings,
 			controller: e.controller
-		}, null, 8, ["settings", "controller"])) : l.value === "connections" ? (m(), C(fe, {
+		}, null, 8, ["settings", "controller"])) : l.value === "connections" ? (m(), C(me, {
 			key: 3,
 			settings: e.state.settings.settings,
 			"connection-test-command": e.state.diagnostics.connection_test_command,
@@ -2293,11 +2298,11 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 			"connection-test-command",
 			"controller"
 		])) : l.value === "general" ? (m(), _(k, { key: 4 }, [
-			N(X, {
+			N(re, {
 				settings: e.state.settings.settings,
 				controller: e.controller
 			}, null, 8, ["settings", "controller"]),
-			N($, {
+			N(oe, {
 				settings: e.state.settings.settings,
 				"vault-status": e.state.settings.browser_secret_vault,
 				controller: e.controller
@@ -2306,7 +2311,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 				"vault-status",
 				"controller"
 			]),
-			N(se, {
+			N(le, {
 				"vocabulary-update-channel": e.state.settings.vocabulary_update_channel,
 				controller: e.controller
 			}, null, 8, ["vocabulary-update-channel", "controller"])
@@ -2314,4 +2319,4 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 	}
 });
 //#endregion
-export { Ue as default };
+export { Ge as default };

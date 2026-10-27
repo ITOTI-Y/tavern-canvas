@@ -3,7 +3,7 @@ import { SwitchRoot, SwitchThumb } from "reka-ui";
 import { computed } from "vue";
 
 import { drop_undefined } from "./_prop_utils.js";
-import styles from "./components.module.css";
+import styles from "./components_styles.js";
 
 const props = withDefaults(
   defineProps<{
