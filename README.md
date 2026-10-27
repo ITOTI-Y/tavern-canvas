@@ -124,8 +124,8 @@ reference is followed by an offer to read the outfit from it: the wardrobe updat
 accept images, sorts the clothing into outfit slots, and the outfit becomes the character's default.
 An uploaded reference is followed by an offer to read the whole character from it: the same model
 fills the appearance fields that are still empty and a gender left unset or "other", and saves the clothing as the
-default outfit. The model reads only the attached image, so the preset it uses must have "Send inline
-images" turned on. The reference is sent only when its "send with
+default outfit. The image is always sent, whatever the preset's inline media setting, and a model or
+provider without image input fails with its own error. The reference is sent only when its "send with
 NovelAI requests" box is ticked, and then in the use chosen for it:
 
 - **Vibe transfer** adds the image as a vibe reference. V5 models have no vibe transfer, so the

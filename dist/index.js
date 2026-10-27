@@ -1009,7 +1009,6 @@ var Nn = class {
 		}], { refresh: "affected" }), !0);
 	}
 	async generate_with_preset(e) {
-		e.image !== null && this.#r(e.preset_name);
 		let t = An(e.connection);
 		return Tn(await this.#e.generate({
 			generation_id: e.generation_id,
@@ -1029,12 +1028,8 @@ var Nn = class {
 				...e.json_schema,
 				strict: !0
 			} },
-			...e.image === null ? {} : { image: e.image }
+			...e.image === null ? {} : { image: [e.image] }
 		}));
-	}
-	#r(e) {
-		let t = this.#e.getPreset?.(e), n = typeof t == "object" && t && "settings" in t ? t.settings : null;
-		if (typeof n == "object" && n && "allow_sending_images" in n && n.allow_sending_images === "disabled") throw Error(`The SillyTavern preset "${e}" does not send images; turn on "Send inline images" in it`);
 	}
 	list_worldbooks() {
 		let e = this.#e.getWorldbookNames();
