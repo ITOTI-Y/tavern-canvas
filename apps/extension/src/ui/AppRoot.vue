@@ -87,6 +87,7 @@ provide(
           return new Blob([new Uint8Array(await gallery.read_bytes(image_id))]);
         },
         read_outfit: (image) => illustrations.read_outfit(image),
+        read_character: (image) => illustrations.read_character(image),
       },
 );
 

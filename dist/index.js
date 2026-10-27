@@ -9,7 +9,7 @@ import { c as x, i as S, n as C, o as w, r as ee, s as te, u as ne } from "./chu
 import { a as re, c as T, d as ie, f as ae, i as oe, l as E, o as se, r as ce, s as le, t as ue, u as de } from "./chunks/http_acknowledgment-DvPfaNgR.js";
 import { i as fe, n as pe, o as me, r as he, s as ge, t as _e } from "./chunks/media_command_service-U2z67TUK.js";
 import { A as D, F as ve, H as ye, I as be, N as O, O as xe, P as Se, Q as Ce, V as we, W as Te, Z as Ee, _ as k, b as De, ct as A, et as j, ft as Oe, g as M, h as N, i as ke, k as Ae, m as P, n as je, nt as Me, p as F, pt as I, rt as Ne, u as Pe, ut as L, x as R, y as Fe } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as Ie } from "./chunks/create_i18n-BAasGNnM.js";
+import { t as Ie } from "./chunks/create_i18n-DVG2w8QE.js";
 import { n as Le, r as Re, t as ze } from "./chunks/portal_keys-B9C82xtk.js";
 import { n as Be, t as Ve } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { t as He } from "./chunks/chevron-down-Tu_8qTxg.js";
@@ -2353,7 +2353,7 @@ var Wr = {
 		controller: {}
 	},
 	setup(e) {
-		let t = De(() => import("./chunks/GalleryView-BDUZhgpZ.js")), n = De(() => import("./chunks/SettingsView-De-FDk3i.js"));
+		let t = De(() => import("./chunks/GalleryView-bu8Ltat0.js")), n = De(() => import("./chunks/SettingsView-BBwWnS9o.js"));
 		return (r, i) => e.state.route === "gallery" ? (O(), N(A(t), {
 			key: 0,
 			state: e.state,
@@ -2616,7 +2616,8 @@ var Wr = {
 				});
 				return new Blob([new Uint8Array(await h.read_bytes(t))]);
 			},
-			read_outfit: (e) => m.read_outfit(e)
+			read_outfit: (e) => m.read_outfit(e),
+			read_character: (e) => m.read_character(e)
 		});
 		let g = F(() => {
 			let e = u?.state.value, t = e?.settings.settings?.active_provider_profile_id ?? null;
@@ -3230,7 +3231,11 @@ var Ui = class {
 		}
 	}
 	async read_outfit(e) {
-		let { OUTFIT_FROM_IMAGE_INPUT: t, OUTFIT_FROM_IMAGE_JSON_SCHEMA: n, parse_outfit_from_image: r } = await import("./chunks/outfit_from_image-B0w4O-6w.js");
+		let { OUTFIT_FROM_IMAGE_INPUT: t, OUTFIT_FROM_IMAGE_JSON_SCHEMA: n, parse_outfit_from_image: r } = await import("./chunks/outfit_from_image-aZxP79fv.js");
+		return r(await zi(this.#e, t, n, e));
+	}
+	async read_character(e) {
+		let { CHARACTER_FROM_IMAGE_INPUT: t, CHARACTER_FROM_IMAGE_JSON_SCHEMA: n, parse_character_from_image: r } = await import("./chunks/character_from_image-Czhse_Ub.js");
 		return r(await zi(this.#e, t, n, e));
 	}
 	async generate(e, t, n) {
@@ -3482,7 +3487,7 @@ var Ki = class {
 		});
 	}
 	async #n(e, t) {
-		let n = e.messages.find((e) => e.message_id === t.message_id)?.swipes[t.swipe_id]?.content ?? "", r = [...e.messages].filter((e) => e.message_id < t.message_id).reverse().find((e) => e.role === "user")?.swipes.at(0)?.content ?? null, i = this.inherited(e, t.message_id), [a, { apply_scene_update: o, build_scene_update_input: s, characters_needing_outfit: c, parse_scene_update: l, scene_update_json_schema: u }] = await Promise.all([this.#e.library.load(t.chat_id), import("./chunks/scene_update-sGMzSW-a.js")]), d = c(n, i, a), f = o(l(await this.#e.run(s(r, n, i, a), u(d.map((e) => e.id)))), i, a, this.#e.new_id);
+		let n = e.messages.find((e) => e.message_id === t.message_id)?.swipes[t.swipe_id]?.content ?? "", r = [...e.messages].filter((e) => e.message_id < t.message_id).reverse().find((e) => e.role === "user")?.swipes.at(0)?.content ?? null, i = this.inherited(e, t.message_id), [a, { apply_scene_update: o, build_scene_update_input: s, characters_needing_outfit: c, parse_scene_update: l, scene_update_json_schema: u }] = await Promise.all([this.#e.library.load(t.chat_id), import("./chunks/scene_update-BpFKfjxS.js")]), d = c(n, i, a), f = o(l(await this.#e.run(s(r, n, i, a), u(d.map((e) => e.id)))), i, a, this.#e.new_id);
 		for (let e of f.new_outfits) await this.#e.library.create_outfit(e, t.chat_id);
 		for (let e of f.new_characters) await this.#e.library.create_character(e, t);
 		for (let e of f.appearance_additions) await this.#e.library.add_appearance(e);

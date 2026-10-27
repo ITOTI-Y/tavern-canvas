@@ -454,6 +454,61 @@ describe("IllustrationService.read_outfit", () => {
   });
 });
 
+describe("IllustrationService.read_character", () => {
+  it("sends the image with the character schema and returns subject, appearance and outfit", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({
+      subject: "girl",
+      appearance: { hair: ["long hair", "pink hair"], eyes: ["blue eyes"], makeup: ["none"] },
+      outfit: {
+        name: "School uniform",
+        slots: { top: ["sailor shirt"], bottom: ["pleated skirt"] },
+      },
+    });
+    const { service } = create_service(host);
+
+    const character = await service.read_character("data:image/png;base64,AAAA");
+
+    expect(host.generate_calls[0]).toMatchObject({
+      image: "data:image/png;base64,AAAA",
+      json_schema: { name: "tavern_canvas_character" },
+    });
+    expect(character).toEqual({
+      subject: "girl",
+      appearance: { hair: ["long hair", "pink hair"], eyes: ["blue eyes"] },
+      outfit: {
+        name: "School uniform",
+        slots: { top: ["sailor shirt"], bottom: ["pleated skirt"] },
+      },
+    });
+  });
+
+  it("returns no outfit for an image without clothing", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({
+      subject: "boy",
+      appearance: { hair: ["short hair"] },
+      outfit: { name: "None", slots: {} },
+    });
+    const { service } = create_service(host);
+
+    const character = await service.read_character("data:image/png;base64,AAAA");
+
+    expect(character.outfit).toBeNull();
+    expect(character.subject).toBe("boy");
+  });
+
+  it("fails when the model reads nothing", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({ subject: "girl", appearance: {}, outfit: null });
+    const { service } = create_service(host);
+
+    await expect(service.read_character("data:image/png;base64,AAAA")).rejects.toThrow(
+      "no character tags",
+    );
+  });
+});
+
 describe("IllustrationService automatic generation", () => {
   it("analyzes and generates after a normal reply when enabled", async () => {
     const host = new MemoryHost();

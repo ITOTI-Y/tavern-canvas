@@ -122,7 +122,7 @@ export function scene_update_json_schema(needs_outfit: readonly string[]): HostJ
 
 const Tags = z.array(z.string()).catch([]);
 
-function slot_record<T extends string>(slots: readonly T[]) {
+export function slot_record<T extends string>(slots: readonly T[]) {
   return z.object(
     Object.fromEntries(slots.map((slot) => [slot, Tags.default([])])),
   ) as unknown as z.ZodType<Partial<Record<T, string[]>>>;

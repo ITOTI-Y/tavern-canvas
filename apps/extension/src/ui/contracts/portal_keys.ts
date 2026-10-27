@@ -1,5 +1,6 @@
 import type { InjectionKey, Ref } from "vue";
 
+import type { CharacterTags } from "../../modules/wardrobe/character_from_image.js";
 import type { OutfitTags } from "../../modules/wardrobe/outfit_from_image.js";
 
 /** Reka portals must render into the Shadow Root's portal element, never `document.body`. */
@@ -10,7 +11,7 @@ export const ACTIVE_CHAT_ID_KEY: InjectionKey<Readonly<Ref<string | null>>> = Sy
   "tavern-canvas-active-chat-id",
 );
 
-/** Generates a character's reference image and reads the outfit it shows. */
+/** Generates a character's reference image and reads the character or outfit an image shows. */
 export interface ReferenceImagePort {
   /** Uses the active provider profile. */
   generate(prompt: {
@@ -19,6 +20,8 @@ export interface ReferenceImagePort {
   }): Promise<Blob>;
   /** Uses the wardrobe model, which must accept images; `image` is a data URL. */
   read_outfit(image: string): Promise<OutfitTags>;
+  /** Like `read_outfit`, also reading the subject and appearance. */
+  read_character(image: string): Promise<CharacterTags>;
 }
 
 /** `null` when no chat host is attached, since generation runs through the chat illustration service. */

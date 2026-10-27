@@ -339,4 +339,4 @@ function I(e, t, n, r) {
 	};
 }
 //#endregion
-export { C as OutfitSchema, E as SceneUpdateParseError, I as apply_scene_update, A as build_scene_update_input, k as characters_needing_outfit, N as clean_slots, D as parse_scene_update, b as scene_update_json_schema, g as slots_schema };
+export { C as OutfitSchema, E as SceneUpdateParseError, I as apply_scene_update, A as build_scene_update_input, k as characters_needing_outfit, N as clean_slots, D as parse_scene_update, b as scene_update_json_schema, S as slot_record, g as slots_schema };

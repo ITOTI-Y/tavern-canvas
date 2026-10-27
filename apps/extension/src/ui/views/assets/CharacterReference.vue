@@ -27,6 +27,8 @@ const emit = defineEmits<{
   "update:mode": [mode: CharacterReferenceMode];
   /** A newly generated reference, after `update:image` carried it. */
   generated: [image: string];
+  /** A newly uploaded reference, after `update:image` carried it. */
+  uploaded: [image: string];
 }>();
 
 const { t } = useI18n();
@@ -52,11 +54,15 @@ async function choose_file(event: Event): Promise<void> {
     return;
   }
   error.value = null;
+  let image: string;
   try {
-    emit("update:image", await read_reference_image(file));
+    image = await read_reference_image(file);
   } catch {
     error.value = t("assets.characters.reference_image_unreadable");
+    return;
   }
+  emit("update:image", image);
+  emit("uploaded", image);
 }
 
 function start_composing(): void {

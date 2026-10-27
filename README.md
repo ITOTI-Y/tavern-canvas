@@ -122,7 +122,10 @@ provider profile from an editable prompt built from the character's gender, appe
 outfit, framed as a full-body view on a white background. When the character has no outfit yet, a generated
 reference is followed by an offer to read the outfit from it: the wardrobe update model, which must
 accept images, sorts the clothing into outfit slots, and the outfit becomes the character's default.
-The reference is sent only when its "send with
+An uploaded reference is followed by an offer to read the whole character from it: the same model
+fills the appearance fields that are still empty and a gender left unset or "other", and saves the clothing as the
+default outfit. The model reads only the attached image, so the preset it uses must have "Send inline
+images" turned on. The reference is sent only when its "send with
 NovelAI requests" box is ticked, and then in the use chosen for it:
 
 - **Vibe transfer** adds the image as a vibe reference. V5 models have no vibe transfer, so the

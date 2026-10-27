@@ -9,6 +9,7 @@ import {
   split_tags,
   type CharacterReferenceMode,
 } from "../../../modules/wardrobe/wardrobe_library.js";
+import type { OutfitTags } from "../../../modules/wardrobe/outfit_from_image.js";
 import AppButton from "../../components/AppButton.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
@@ -159,7 +160,26 @@ function offer_outfit(image: string): void {
   }
 }
 
-/** Saves the outfit the model reads from the reference, linked to this character and its default. */
+/** Saves an outfit read from the reference, linked to this character and set as its default. */
+async function save_default_outfit(outfit: OutfitTags): Promise<void> {
+  const id = crypto.randomUUID();
+  await props.controller.save_asset("outfit", {
+    id,
+    category: "outfit",
+    record_key: id,
+    display_name: outfit.name,
+    payload: {
+      ...Object.fromEntries(
+        OUTFIT_SLOTS.map((slot) => [slot, join_tags(outfit.slots[slot] ?? [])]),
+      ),
+      character_id: panel.record_id.value,
+      origin: "analysis",
+      chat_id: typeof panel.values.chat_id === "string" ? panel.values.chat_id : "",
+    },
+  });
+  panel.values.default_outfit_id = id;
+}
+
 async function create_outfit_from_reference(): Promise<void> {
   const image = outfit_offer.value;
   if (image === null || reference_port === null) {
@@ -168,23 +188,7 @@ async function create_outfit_from_reference(): Promise<void> {
   outfit_pending.value = true;
   outfit_error.value = null;
   try {
-    const outfit = await reference_port.read_outfit(image);
-    const id = crypto.randomUUID();
-    await props.controller.save_asset("outfit", {
-      id,
-      category: "outfit",
-      record_key: id,
-      display_name: outfit.name,
-      payload: {
-        ...Object.fromEntries(
-          OUTFIT_SLOTS.map((slot) => [slot, join_tags(outfit.slots[slot] ?? [])]),
-        ),
-        character_id: panel.record_id.value,
-        origin: "analysis",
-        chat_id: typeof panel.values.chat_id === "string" ? panel.values.chat_id : "",
-      },
-    });
-    panel.values.default_outfit_id = id;
+    await save_default_outfit(await reference_port.read_outfit(image));
   } catch (cause) {
     outfit_error.value = t("assets.characters.outfit_from_reference_failed", {
       reason: cause instanceof Error ? cause.message : String(cause),
@@ -192,6 +196,51 @@ async function create_outfit_from_reference(): Promise<void> {
   } finally {
     outfit_pending.value = false;
     outfit_offer.value = null;
+  }
+}
+
+/** The uploaded reference waiting for the user to decide whether to read the character from it. */
+const character_offer = ref<string | null>(null);
+const character_pending = ref(false);
+
+function offer_character(image: string): void {
+  if (reference_port !== null) {
+    character_offer.value = image;
+  }
+}
+
+/**
+ * Fills the appearance slots still empty and an unset subject from what the model reads, so the
+ * user's own entries stay, and saves the clothing as the default outfit.
+ */
+async function fill_character_from_reference(): Promise<void> {
+  const image = character_offer.value;
+  if (image === null || reference_port === null) {
+    return;
+  }
+  character_pending.value = true;
+  outfit_error.value = null;
+  try {
+    const character = await reference_port.read_character(image);
+    for (const slot of APPEARANCE_SLOTS) {
+      const tags = character.appearance[slot];
+      if (tags !== undefined && split_tags(panel.values[slot]).length === 0) {
+        panel.values[slot] = join_tags(tags);
+      }
+    }
+    if (panel.values.subject !== "girl" && panel.values.subject !== "boy") {
+      panel.values.subject = character.subject;
+    }
+    if (character.outfit !== null) {
+      await save_default_outfit(character.outfit);
+    }
+  } catch (cause) {
+    outfit_error.value = t("assets.characters.character_from_reference_failed", {
+      reason: cause instanceof Error ? cause.message : String(cause),
+    });
+  } finally {
+    character_pending.value = false;
+    character_offer.value = null;
   }
 }
 
@@ -319,6 +368,7 @@ const delete_confirm_title = (record_name: string): string =>
             @update:send="(send) => (panel.values.reference_send = send ? 1 : 0)"
             @update:mode="(mode) => (panel.values.reference_mode = mode)"
             @generated="offer_outfit"
+            @uploaded="offer_character"
           />
           <p v-if="outfit_error !== null" :class="styles.formError" role="alert">
             {{ outfit_error }}
@@ -374,6 +424,21 @@ const delete_confirm_title = (record_name: string): string =>
         }
       "
       @confirm="create_outfit_from_reference"
+    />
+    <ConfirmDialog
+      :open="character_offer !== null"
+      :title="t('assets.characters.character_from_reference_title')"
+      :description="t('assets.characters.character_from_reference_description')"
+      :confirm-label="t('assets.characters.character_from_reference_confirm')"
+      :cancel-label="t('assets.characters.character_from_reference_cancel')"
+      :pending="character_pending"
+      :destructive="false"
+      @update:open="
+        (open) => {
+          if (!open && !character_pending) character_offer = null;
+        }
+      "
+      @confirm="fill_character_from_reference"
     />
   </div>
 </template>

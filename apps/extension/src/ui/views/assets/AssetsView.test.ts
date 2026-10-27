@@ -5,10 +5,15 @@ import { createI18n } from "vue-i18n";
 import type { Uuid, VocabularyCatalogEntry } from "@tavern-canvas/contracts";
 import { en_messages } from "../../../i18n/locales/en.js";
 import { zh_cn_messages } from "../../../i18n/locales/zh_cn.js";
+import { REFERENCE_IMAGE_KEY, type ReferenceImagePort } from "../../contracts/portal_keys.js";
 import type { AssetCategory, AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import { IDLE_COMMAND_STATE, type StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import AssetsView from "./AssetsView.vue";
+
+vi.mock("./reference_image.js", () => ({
+  read_reference_image: () => Promise.resolve("data:image/png;base64,AAAA"),
+}));
 
 function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioState {
   return {
@@ -159,6 +164,7 @@ function make_catalog_entry(
 
 interface MountOptions {
   readonly state?: StudioState;
+  readonly reference?: ReferenceImagePort;
 }
 
 function mount_assets_view(options: MountOptions = {}) {
@@ -175,7 +181,7 @@ function mount_assets_view(options: MountOptions = {}) {
     props: { state, controller },
     global: {
       plugins: [i18n],
-      provide: {},
+      provide: { [REFERENCE_IMAGE_KEY as symbol]: options.reference ?? null },
     },
     attachTo: document.body,
   });
@@ -385,6 +391,69 @@ describe("Character panel CRUD and destructive confirmation", () => {
     await search_inputs[0]?.setValue("Alpha");
     expect(dom().text()).toContain("Alpha");
     expect(dom().text()).not.toContain("Beta");
+  });
+});
+
+describe("Character panel reference reading", () => {
+  it("fills empty fields and the default outfit from an uploaded reference", async () => {
+    const read_character = vi.fn<ReferenceImagePort["read_character"]>(() =>
+      Promise.resolve({
+        subject: "boy",
+        appearance: { hair: ["short hair", "black hair"], eyes: ["red eyes"] },
+        outfit: { name: "Black coat", slots: { outerwear: ["black coat"] } },
+      }),
+    );
+    const { controller } = mount_assets_view({
+      reference: { generate: vi.fn(), read_outfit: vi.fn(), read_character },
+    });
+    await dom().find('button[aria-label="Add character"]').trigger("click");
+    await dom().find('input[placeholder="Name"]').setValue("Ren");
+    const field = (name: string) =>
+      dom().find<HTMLInputElement>(
+        `[id="${
+          dom()
+            .findAll("label")
+            .find((label) => label.text().trim() === name)
+            ?.attributes("for") ?? ""
+        }"]`,
+      );
+    await field("Eyes").setValue("golden eyes");
+    const input = dom().find<HTMLInputElement>('[data-testid="character-reference-input"]');
+    const file = new File([new Uint8Array([1])], "ren.png", { type: "image/png" });
+    Object.defineProperty(input.element, "files", { value: [file], configurable: true });
+    await input.trigger("change");
+    await flushPromises();
+    const confirm = dom()
+      .findAll("button")
+      .find((button) => button.text() === "Read and fill in");
+    await confirm?.trigger("click");
+    await flushPromises();
+
+    expect(read_character).toHaveBeenCalledWith("data:image/png;base64,AAAA");
+    expect(field("Hair").element.value).toBe("short hair, black hair");
+    expect(field("Eyes").element.value).toBe("golden eyes");
+    expect(controller.save_asset).toHaveBeenCalledWith(
+      "outfit",
+      expect.objectContaining({
+        display_name: "Black coat",
+        payload: expect.objectContaining({ outerwear: "black coat", origin: "analysis" }),
+      }),
+    );
+    const outfit_id = vi.mocked(controller.save_asset).mock.calls[0]?.[1].id;
+
+    await dom().find('button[type="submit"]').trigger("click");
+    await flushPromises();
+    expect(controller.save_asset).toHaveBeenLastCalledWith(
+      "character",
+      expect.objectContaining({
+        display_name: "Ren",
+        payload: expect.objectContaining({
+          subject: "boy",
+          hair: "short hair, black hair",
+          default_outfit_id: outfit_id,
+        }),
+      }),
+    );
   });
 });
 

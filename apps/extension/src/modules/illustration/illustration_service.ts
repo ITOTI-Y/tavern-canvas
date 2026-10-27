@@ -31,6 +31,7 @@ import {
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs, type Paragraph } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
+import type { CharacterTags } from "../wardrobe/character_from_image.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
@@ -590,6 +591,22 @@ export class IllustrationService {
       image,
     );
     return parse_outfit_from_image(raw);
+  }
+
+  /** The subject, appearance and clothing in an image, read by the wardrobe model like `read_outfit`. */
+  async read_character(image: string): Promise<CharacterTags> {
+    const {
+      CHARACTER_FROM_IMAGE_INPUT,
+      CHARACTER_FROM_IMAGE_JSON_SCHEMA,
+      parse_character_from_image,
+    } = await import("../wardrobe/character_from_image.js");
+    const raw = await run_wardrobe_request(
+      this.#deps,
+      CHARACTER_FROM_IMAGE_INPUT,
+      CHARACTER_FROM_IMAGE_JSON_SCHEMA,
+      image,
+    );
+    return parse_character_from_image(raw);
   }
 
   async generate(

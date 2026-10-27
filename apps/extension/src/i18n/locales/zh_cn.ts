@@ -209,6 +209,12 @@ const assets = {
     outfit_from_reference_confirm: "生成服装",
     outfit_from_reference_cancel: "暂不生成",
     outfit_from_reference_failed: "服装生成失败：{reason}",
+    character_from_reference_title: "根据参考图填写角色？",
+    character_from_reference_description:
+      "让服装判断使用的模型识别图中角色的性别、外观和衣着：外观只填入目前为空的栏目，性别尚未选择时一并填写，衣着保存为一套服装并设为默认服装。该模型需要支持图片输入。",
+    character_from_reference_confirm: "识别并填写",
+    character_from_reference_cancel: "暂不识别",
+    character_from_reference_failed: "角色识别失败：{reason}",
     reference_send_label: "用 NovelAI 出图且画面中有该角色时随请求发送",
     reference_mode_label: "用途",
     reference_mode_hint:

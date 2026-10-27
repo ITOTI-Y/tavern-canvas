@@ -217,6 +217,12 @@ const assets = {
     outfit_from_reference_confirm: "Create outfit",
     outfit_from_reference_cancel: "Not now",
     outfit_from_reference_failed: "The outfit could not be created: {reason}",
+    character_from_reference_title: "Fill in the character from the reference?",
+    character_from_reference_description:
+      "The wardrobe model reads the subject, appearance and clothing in the image. Appearance goes only into fields that are still empty, the subject is set when none was chosen, and the clothing is saved as an outfit and made the default. The model must accept images.",
+    character_from_reference_confirm: "Read and fill in",
+    character_from_reference_cancel: "Not now",
+    character_from_reference_failed: "The character could not be read: {reason}",
     reference_send_label: "Send with NovelAI requests that show this character",
     reference_mode_label: "Use as",
     reference_mode_hint:

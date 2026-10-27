@@ -224,6 +224,11 @@ var o = {
 			outfit_from_reference_confirm: "Create outfit",
 			outfit_from_reference_cancel: "Not now",
 			outfit_from_reference_failed: "The outfit could not be created: {reason}",
+			character_from_reference_title: "Fill in the character from the reference?",
+			character_from_reference_description: "The wardrobe model reads the subject, appearance and clothing in the image. Appearance goes only into fields that are still empty, the subject is set when none was chosen, and the clothing is saved as an outfit and made the default. The model must accept images.",
+			character_from_reference_confirm: "Read and fill in",
+			character_from_reference_cancel: "Not now",
+			character_from_reference_failed: "The character could not be read: {reason}",
 			reference_send_label: "Send with NovelAI requests that show this character",
 			reference_mode_label: "Use as",
 			reference_mode_hint: "Precise reference works on V4.5 only, costs 5 extra Anlas per image, and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
@@ -787,7 +792,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-C_7ApsAl.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-Cu3AK4V0.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2
