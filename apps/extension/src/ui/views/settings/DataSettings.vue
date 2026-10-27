@@ -128,7 +128,7 @@ async function export_archive(): Promise<void> {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "tavern-canvas-archive.json";
+    anchor.download = "inkwell-archive.zip";
     anchor.click();
     URL.revokeObjectURL(url);
   } catch {
@@ -248,7 +248,7 @@ async function handle_import_file(event: Event): Promise<void> {
         <input
           ref="file_input"
           type="file"
-          accept="application/json"
+          accept=".zip,application/zip"
           class="tc-visually-hidden"
           :aria-label="t('settings.data.archive_import_action')"
           data-testid="archive-import-input"

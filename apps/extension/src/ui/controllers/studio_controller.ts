@@ -576,6 +576,42 @@ class StudioControllerImpl implements StudioController {
     ];
 
     await Promise.allSettled([
+      ...this.#load_stored_records(),
+      this.#load_slice(
+        "llm_connections",
+        () => this.#capabilities.llm_connections.load(),
+        (connections) => {
+          this.#patch_llm_connections({
+            connections,
+            selected_connection_id:
+              this.#state.llm_connections.selected_connection_id ?? connections[0]?.id ?? null,
+          });
+        },
+      ),
+      this.#load_slice(
+        "diagnostics",
+        () => this.#capabilities.diagnostics.load(),
+        (snapshot) => {
+          this.#patch_diagnostics({ snapshot });
+        },
+      ),
+      this.#load_slice(
+        "settings",
+        () => this.#capabilities.settings.load(),
+        (snapshot) => {
+          this.#patch_settings({
+            settings: snapshot.settings,
+            vocabulary_update_channel: snapshot.vocabulary_update_channel,
+            browser_secret_vault: snapshot.browser_secret_vault,
+          });
+        },
+      ),
+    ]);
+  }
+
+  /** The slices read from IndexedDB, which an archive import can change. */
+  #load_stored_records(): Promise<void>[] {
+    return [
       this.#load_slice(
         "generation",
         () => this.#capabilities.generation.load(),
@@ -590,17 +626,6 @@ class StudioControllerImpl implements StudioController {
           this.#patch_generation({
             profiles,
             active_profile_id: this.#state.generation.active_profile_id ?? profiles[0]?.id ?? null,
-          });
-        },
-      ),
-      this.#load_slice(
-        "llm_connections",
-        () => this.#capabilities.llm_connections.load(),
-        (connections) => {
-          this.#patch_llm_connections({
-            connections,
-            selected_connection_id:
-              this.#state.llm_connections.selected_connection_id ?? connections[0]?.id ?? null,
           });
         },
       ),
@@ -625,25 +650,7 @@ class StudioControllerImpl implements StudioController {
           this.#patch_gallery({ records });
         },
       ),
-      this.#load_slice(
-        "diagnostics",
-        () => this.#capabilities.diagnostics.load(),
-        (snapshot) => {
-          this.#patch_diagnostics({ snapshot });
-        },
-      ),
-      this.#load_slice(
-        "settings",
-        () => this.#capabilities.settings.load(),
-        (snapshot) => {
-          this.#patch_settings({
-            settings: snapshot.settings,
-            vocabulary_update_channel: snapshot.vocabulary_update_channel,
-            browser_secret_vault: snapshot.browser_secret_vault,
-          });
-        },
-      ),
-    ]);
+    ];
   }
 
   stop(): Promise<void> {
@@ -992,8 +999,9 @@ class StudioControllerImpl implements StudioController {
     return this.#capabilities.settings.export_archive();
   }
 
-  import_settings_archive(archive: Blob): Promise<void> {
-    return this.#capabilities.settings.import_archive(archive);
+  async import_settings_archive(archive: Blob): Promise<void> {
+    await this.#capabilities.settings.import_archive(archive);
+    await Promise.allSettled(this.#load_stored_records());
   }
 
   set_active_asset_category(category: AssetCategory): void {

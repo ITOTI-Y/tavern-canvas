@@ -99,7 +99,7 @@ test.describe("Studio workflow: archive export/import", () => {
       page.waitForEvent("download"),
       page.getByRole("button", { name: "Export archive" }).click(),
     ]);
-    expect(download.suggestedFilename()).toBe("tavern-canvas-archive.json");
+    expect(download.suggestedFilename()).toBe("inkwell-archive.zip");
 
     await page.setInputFiles('[data-testid="archive-import-input"]', {
       name: "archive.json",

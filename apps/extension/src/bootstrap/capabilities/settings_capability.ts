@@ -236,7 +236,11 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
     },
     async import_archive(archive) {
       const { import_archive } = await import("@tavern-canvas/storage/archive");
-      await import_archive({ database: require_database(deps.database), archive });
+      await import_archive({
+        database: require_database(deps.database),
+        archive,
+        namespace: deps.settings.get_settings().active_namespace,
+      });
     },
   };
 }

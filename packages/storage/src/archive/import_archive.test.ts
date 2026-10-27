@@ -31,6 +31,8 @@ import {
 import { export_archive } from "./export_archive.js";
 import { ArchiveImportError, import_archive } from "./import_archive.js";
 
+const OTHER = "restored";
+
 afterEach(async () => {
   vi.restoreAllMocks();
   await reset_test_database();
@@ -87,6 +89,7 @@ async function expect_import_error(
   const rejection: unknown = await import_archive({
     database,
     archive,
+    namespace: OTHER,
     ...(signal === undefined ? {} : { signal }),
   }).catch((error: unknown) => error);
   expect(rejection).toBeInstanceOf(ArchiveImportError);
@@ -103,44 +106,55 @@ async function build_minimal_archive(entries: Record<string, Uint8Array | string
 }
 
 describe("import_archive", () => {
-  it("stages a verified round trip without activating or mutating the active namespace", async () => {
+  it("merges a verified archive into the target namespace and leaves the source untouched", async () => {
     const database = await open_test_database();
     const seeded = await seed_and_export(database);
     const repositories = create_business_repositories(database);
 
-    const result = await import_archive({ database, archive: seeded.blob });
+    const result = await import_archive({ database, archive: seeded.blob, namespace: OTHER });
 
-    expect(result.namespace).toMatch(/^import:/);
     expect(result.asset_count).toBe(1);
     expect(result.manifest.record_counts.provider_profiles).toBe(1);
 
-    const staged_provider_profiles = await repositories.provider_profiles.list(result.namespace);
-    expect(staged_provider_profiles.map((record) => record.id)).toEqual([IDS.fifth]);
-    expect(staged_provider_profiles[0]?.namespace).toBe(result.namespace);
+    const provider_profiles = await repositories.provider_profiles.list(OTHER);
+    expect(provider_profiles.map((record) => [record.id, record.namespace])).toEqual([
+      [IDS.fifth, OTHER],
+    ]);
+    const image_records = await repositories.image_records.list(OTHER);
+    expect(image_records.map((record) => record.sha256)).toEqual([seeded.sha256]);
+    const vocabulary_groups = await repositories.vocabulary_groups.list(OTHER);
+    expect(vocabulary_groups[0]?.vocabulary_id).toBe(seeded.vocabulary_id);
+    const jobs = await repositories.generation_jobs.list(OTHER);
+    expect(jobs[0]?.image_ids).toEqual([seeded.image_id]);
+    const legacy_preferences = await repositories.legacy_preferences.list(OTHER);
+    expect(legacy_preferences[0]?.payload).toEqual({ theme_id: "夜间" });
 
-    const staged_image_records = await repositories.image_records.list(result.namespace);
-    expect(staged_image_records.map((record) => record.sha256)).toEqual([seeded.sha256]);
-
-    const staged_vocabulary_groups = await repositories.vocabulary_groups.list(result.namespace);
-    expect(staged_vocabulary_groups[0]?.vocabulary_id).toBe(seeded.vocabulary_id);
-
-    const staged_jobs = await repositories.generation_jobs.list(result.namespace);
-    expect(staged_jobs[0]?.image_ids).toEqual([seeded.image_id]);
-
-    const staged_legacy_preferences = await repositories.legacy_preferences.list(result.namespace);
-    expect(staged_legacy_preferences).toHaveLength(1);
-    expect(staged_legacy_preferences[0]?.payload).toEqual({ theme_id: "夜间" });
-    expect(result.manifest.record_counts.legacy_preferences).toBe(1);
-
-    const merged_blob = await repositories.image_blobs.get(seeded.sha256);
-    expect(merged_blob?.ref_count).toBe(2);
-
-    const marker = await repositories.migration_journal.get(result.namespace);
-    expect(marker?.state).toBe("import_ready");
-    expect(marker?.source_version).toBe(1);
-    expect(marker?.payload).toMatchObject({ asset_count: 1 });
-
+    expect((await repositories.image_blobs.get(seeded.sha256))?.ref_count).toBe(2);
     expect(await repositories.provider_profiles.list(NAMESPACE)).toHaveLength(1);
+  });
+
+  it("replaces records with the same id and keeps an image blob counted once", async () => {
+    const database = await open_test_database();
+    const seeded = await seed_and_export(database);
+    const repositories = create_business_repositories(database);
+    const exported = await repositories.provider_profiles.get(NAMESPACE, IDS.fifth);
+    if (exported === null) {
+      throw new Error("the seeded provider profile is missing");
+    }
+    await repositories.provider_profiles.put(NAMESPACE, {
+      ...exported,
+      payload: { edited_after_export: true },
+    });
+    await repositories.prompt_presets.create(NAMESPACE, business_record(IDS.first, {}));
+
+    await import_archive({ database, archive: seeded.blob, namespace: NAMESPACE });
+
+    const provider_profiles = await repositories.provider_profiles.list(NAMESPACE);
+    expect(provider_profiles).toHaveLength(1);
+    expect(provider_profiles[0]?.payload).not.toEqual({ edited_after_export: true });
+    expect(await repositories.prompt_presets.list(NAMESPACE)).toHaveLength(1);
+    expect(await repositories.image_records.list(NAMESPACE)).toHaveLength(1);
+    expect((await repositories.image_blobs.get(seeded.sha256))?.ref_count).toBe(1);
   });
 
   it("rejects a checksum mismatch and rolls back everything staged before it", async () => {
@@ -158,7 +172,6 @@ describe("import_archive", () => {
     const staging_namespace = error.namespace ?? "";
     expect(await repositories.provider_profiles.list(staging_namespace)).toHaveLength(0);
     expect(await repositories.image_records.list(staging_namespace)).toHaveLength(0);
-    expect(await repositories.migration_journal.get(staging_namespace)).toBeNull();
     expect((await repositories.image_blobs.get(seeded.sha256))?.ref_count).toBe(1);
   });
 
@@ -264,7 +277,6 @@ describe("import_archive", () => {
 
     const staging_namespace = error.namespace ?? "";
     expect(await repositories.provider_profiles.list(staging_namespace)).toHaveLength(0);
-    expect(await repositories.migration_journal.get(staging_namespace)).toBeNull();
     expect(await repositories.provider_profiles.list(NAMESPACE)).toHaveLength(1);
     expect((await repositories.image_blobs.get(seeded.sha256))?.ref_count).toBe(1);
   });
@@ -288,7 +300,11 @@ describe("import_archive", () => {
     await reset_test_database();
     const fresh_database = await open_test_database();
 
-    const result = await import_archive({ database: fresh_database, archive: blob });
+    const result = await import_archive({
+      database: fresh_database,
+      archive: blob,
+      namespace: NAMESPACE,
+    });
     expect(result.asset_count).toBe(1);
 
     const fresh_repositories = create_business_repositories(fresh_database);
@@ -318,11 +334,11 @@ describe("import_archive", () => {
       extension_version: "3.0.0-alpha.1",
     });
 
-    const result = await import_archive({ database, archive: blob });
+    const result = await import_archive({ database, archive: blob, namespace: OTHER });
     expect(result.asset_count).toBe(2);
     expect(result.manifest.record_counts.image_records).toBe(2);
 
-    const staged = await repositories.image_records.list(result.namespace);
+    const staged = await repositories.image_records.list(OTHER);
     expect(staged.map((record) => record.id).sort()).toEqual([IDS.first, IDS.second].sort());
     const staged_gallery_row = staged.find((record) => record.id === IDS.second);
     expect(staged_gallery_row).toMatchObject({ media_type: "image/png", quarantined: false });
@@ -334,7 +350,11 @@ describe("import_archive", () => {
     await reset_test_database();
     const fresh_database = await open_test_database();
 
-    const result = await import_archive({ database: fresh_database, archive: seeded.blob });
+    const result = await import_archive({
+      database: fresh_database,
+      archive: seeded.blob,
+      namespace: NAMESPACE,
+    });
 
     const fresh_repositories = create_business_repositories(fresh_database);
     const staged_blob = await fresh_repositories.image_blobs.get(seeded.sha256);

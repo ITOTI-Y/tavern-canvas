@@ -16,7 +16,6 @@ import {
   RECORD_SCHEMAS,
   type DBSchema,
   type GenerationJob,
-  type MigrationJournal,
   type NamespacedRecord,
   type VocabularyGroup,
 } from "../database_schema.js";
@@ -25,6 +24,7 @@ import {
   ImageRecordUnionSchema,
   type ImageRecordUnion,
 } from "../images/image_schema.js";
+import { release_image_blob } from "../images/image_store.js";
 import {
   create_business_repositories,
   type BusinessRepositories,
@@ -75,11 +75,12 @@ export class ArchiveImportError extends Error {
 export interface ImportArchiveOptions {
   readonly database: IDBPDatabase<DBSchema>;
   readonly archive: Blob | ArrayBuffer;
+  /** The namespace the archive's records are merged into. */
+  readonly namespace: string;
   readonly signal?: AbortSignal;
 }
 
 export interface ImportArchiveResult {
-  readonly namespace: string;
   readonly manifest: ArchiveManifest;
   readonly asset_count: number;
 }
@@ -316,6 +317,45 @@ async function rollback_staged_records(
   }
 }
 
+/**
+ * Moves every staged record into the target namespace in one transaction. A record replaces the
+ * target record with the same id; a replaced image record gives up its blob reference.
+ */
+async function merge_staged_records(
+  database: IDBPDatabase<DBSchema>,
+  repositories: BusinessRepositories,
+  staging_namespace: string,
+  target_namespace: string,
+): Promise<void> {
+  await with_transaction(
+    database,
+    [...ARCHIVE_RECORD_STORES, "image_blobs"],
+    async (transaction) => {
+      for (const store of ARCHIVE_RECORD_STORES) {
+        const repository = repositories[store];
+        for (const record of await repository.list(staging_namespace, transaction)) {
+          if (store === "image_records") {
+            const replaced = await repositories.image_records.get(
+              target_namespace,
+              record.id,
+              transaction,
+            );
+            if (replaced !== null) {
+              await release_image_blob(transaction, repositories.image_blobs, replaced.sha256);
+            }
+          }
+          await repository.put(
+            target_namespace,
+            restage_record(record, target_namespace) as never,
+            transaction,
+          );
+          await repository.delete(staging_namespace, record.id, transaction);
+        }
+      }
+    },
+  );
+}
+
 async function rollback_image_blobs(
   repository: ImageBlobRepository,
   blob_deltas: ReadonlyMap<string, BlobDelta>,
@@ -335,8 +375,8 @@ async function rollback_image_blobs(
   }
 }
 
-// Never touches the active namespace (switch_active_namespace() promotes it); any failure or
-// cancellation sweeps the staging namespace before rejecting.
+// Records are staged in a namespace of their own and merged only after the whole archive has been
+// verified; any failure or cancellation sweeps the staging namespace before rejecting.
 export async function import_archive(options: ImportArchiveOptions): Promise<ImportArchiveResult> {
   const { database, signal } = options;
   const zip = await load_zip_module();
@@ -512,21 +552,11 @@ export async function import_archive(options: ImportArchiveOptions): Promise<Imp
       );
     }
 
-    const marker: MigrationJournal = {
-      migration_id: namespace,
-      source_version: ARCHIVE_SCHEMA_VERSION,
-      state: "import_ready",
-      updated_at: new Date().toISOString(),
-      payload: {
-        record_counts,
-        asset_count,
-        extension_version: manifest.extension_version,
-      },
-    };
-    await repositories.migration_journal.create(marker);
+    assert_not_aborted(signal);
+    await merge_staged_records(database, repositories, namespace, options.namespace);
 
     await close_quietly(zip_reader);
-    return { namespace, manifest, asset_count };
+    return { manifest, asset_count };
   } catch (error) {
     await rollback_staged_records(database, repositories, namespace);
     await rollback_image_blobs(repositories.image_blobs, blob_deltas);

@@ -567,6 +567,30 @@ function build_prompt_draft(overrides: Partial<PromptPresetDraft> = {}): PromptP
   };
 }
 
+describe("create_studio_controller: archive import", () => {
+  it("reloads the stored slices once an archive has been imported", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+    const record = {
+      id: "33333333-3333-4333-8333-333333333333",
+      category: "character" as const,
+      record_key: "primary:33333333-3333-4333-8333-333333333333",
+      display_name: "Seraphina",
+      updated_at: "2026-10-27T00:00:00.000Z",
+      payload: {},
+    };
+    mock.assets.load.mockResolvedValueOnce({ ...EMPTY_ASSET_RECORDS, character: [record] });
+
+    await controller.import_settings_archive(new Blob());
+
+    expect(mock.capabilities.settings.import_archive).toHaveBeenCalledOnce();
+    expect(controller.state.assets.records.character).toEqual([record]);
+  });
+});
+
 describe("create_studio_controller: prompt and provider profile commands", () => {
   it("selects and persists a newly saved default provider profile", async () => {
     const mock = build_mock_studio();

@@ -394,6 +394,27 @@ describe("compose_studio_capabilities", () => {
     expect(records.character).toEqual([]);
     await composition.dispose();
   });
+
+  it("brings back records from an exported archive into the active data", async () => {
+    const composition = await compose();
+    const { assets, settings } = composition.capabilities;
+    await assets.save("character", {
+      id: "33333333-3333-4333-8333-333333333333",
+      category: "character",
+      record_key: "",
+      display_name: "Seraphina",
+      payload: { appearance: "pink hair" },
+    });
+    const archive = await settings.export_archive();
+    await assets.remove("character", "33333333-3333-4333-8333-333333333333");
+
+    await settings.import_archive(archive);
+
+    expect((await assets.load()).character).toMatchObject([
+      { display_name: "Seraphina", payload: { appearance: "pink hair" } },
+    ]);
+    await composition.dispose();
+  });
 });
 
 describe("create_provider_transport", () => {

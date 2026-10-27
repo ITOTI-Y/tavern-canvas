@@ -659,7 +659,7 @@ const settings = {
     archive_export_action: "Export archive",
     archive_import_action: "Import archive",
     archive_import_description:
-      "Importing merges records from the archive into this namespace. It never deletes existing data.",
+      "Importing merges records from the archive into your current data and never deletes existing data; a record with the same id as one in the archive is replaced by the archived version.",
   },
 };
 

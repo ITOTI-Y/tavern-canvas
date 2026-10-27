@@ -210,8 +210,10 @@ record store, and content addressed image assets. Credentials, Gateway tokens, l
 bundles are excluded. The archive covers the active namespace only, not the Gateway's own state,
 which is documented in [docs/gateway.md](docs/gateway.md).
 
-Importing an archive verifies it and stages its records in a separate namespace. The extension does
-not switch to that namespace yet, so imported records do not appear in the Studio.
+Importing an archive merges its records into the active namespace and never deletes existing data;
+a record with the same id as an archived one is replaced by the archived version. Every record and
+asset is verified against the checksums in a staging namespace first, so a damaged or cancelled
+import leaves the current data unchanged.
 
 ## Building from source
 
