@@ -134,6 +134,7 @@ export interface VocabularyWorkerLike {
   postMessage(message: unknown): void;
   terminate(): void;
   addEventListener(type: "message", handler: (event: { data: unknown }) => void): void;
+  addEventListener(type: "error", handler: (event: { readonly message: string }) => void): void;
 }
 
 export interface StudioComposition {

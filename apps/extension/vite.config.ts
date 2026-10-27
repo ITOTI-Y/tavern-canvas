@@ -6,6 +6,9 @@ import { defineConfig } from "vite";
 import package_metadata from "../../package.json" with { type: "json" };
 
 export default defineConfig(({ mode }) => ({
+  // The extension is served from a subdirectory of the host, so emitted URLs such as the Worker's
+  // must resolve against the importing chunk instead of the site root.
+  base: "./",
   plugins: [vue()],
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),

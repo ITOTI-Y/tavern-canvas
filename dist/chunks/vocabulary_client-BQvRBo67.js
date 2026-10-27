@@ -114,7 +114,9 @@ var P = class {
 	constructor(e) {
 		this.#t = e.debounce_ms ?? j, this.#e = e.create_worker(), this.#e.addEventListener("message", (e) => {
 			this.#h(e.data);
-		}), this.#l = crypto.randomUUID(), this.#y({
+		}), this.#e.addEventListener("error", (e) => {
+			this.#g(new M("package_unavailable", e.message));
+		}), this.#l = crypto.randomUUID(), this.#b({
 			type: "initialize",
 			request_id: this.#l
 		});
@@ -133,6 +135,29 @@ var P = class {
 			}, this.#t);
 		});
 	}
+	async lookup(e) {
+		await this.ready(), this.#p();
+		let t = crypto.randomUUID();
+		return new Promise((n, r) => {
+			this.#n.set(t, {
+				resolve: n,
+				reject: r
+			}), this.#b({
+				type: "query",
+				request_id: t,
+				query: e
+			});
+		});
+	}
+	get is_ready() {
+		return this.#r;
+	}
+	get has_failed() {
+		return this.#u !== null;
+	}
+	async ready() {
+		this.#p(), this.#r || await this.#m(), this.#p();
+	}
 	async next_page(e) {
 		this.#p(), this.#r || await this.#m(), this.#p();
 		let t = crypto.randomUUID();
@@ -140,7 +165,7 @@ var P = class {
 			this.#n.set(t, {
 				resolve: n,
 				reject: r
-			}), this.#y({
+			}), this.#b({
 				type: "next_page",
 				request_id: t,
 				cursor: e
@@ -173,7 +198,7 @@ var P = class {
 			resolve: r,
 			reject: i,
 			...n.on_partial === void 0 ? {} : { on_partial: n.on_partial }
-		}), this.#y({
+		}), this.#b({
 			type: "query",
 			request_id: a,
 			query: t,
@@ -182,7 +207,7 @@ var P = class {
 	}
 	#f() {
 		let e = this.#s;
-		this.#s = null, this.#o !== null && (clearTimeout(this.#o), this.#o = null), e !== null && (e.request_id !== null && (this.#n.delete(e.request_id), this.#y({
+		this.#s = null, this.#o !== null && (clearTimeout(this.#o), this.#o = null), e !== null && (e.request_id !== null && (this.#n.delete(e.request_id), this.#b({
 			type: "cancel",
 			request_id: crypto.randomUUID(),
 			target_request_id: e.request_id
@@ -204,11 +229,11 @@ var P = class {
 		if (!t.success) return;
 		let n = t.data;
 		if (n.type === "ready") {
-			this.#r = !0, this.#_();
+			this.#r = !0, this.#v();
 			return;
 		}
 		if (n.type === "error" && n.request_id === this.#l) {
-			this.#u = new M(n.code, n.message), this.#v(this.#u);
+			this.#g(new M(n.code, n.message));
 			return;
 		}
 		let r = this.#n.get(n.request_id);
@@ -221,30 +246,35 @@ var P = class {
 				return;
 			case "progress": return;
 			case "complete":
-				this.#g(n.request_id), r.resolve({
+				this.#_(n.request_id), r.resolve({
 					results: n.results,
 					next_cursor: n.next_cursor
 				});
 				return;
 			case "error":
-				this.#g(n.request_id), r.reject(new M(n.code, n.message));
+				this.#_(n.request_id), r.reject(new M(n.code, n.message));
 				return;
 		}
 	}
 	#g(e) {
+		this.#u = e, this.#y(e);
+		for (let t of this.#n.values()) t.reject(e);
+		this.#n.clear(), this.#s = null;
+	}
+	#_(e) {
 		this.#n.delete(e), this.#s?.request_id === e && (this.#s = null);
 	}
-	#_() {
+	#v() {
 		let e = this.#i;
 		this.#i = [];
 		for (let t of e) t.resolve();
 	}
-	#v(e) {
+	#y(e) {
 		let t = this.#i;
 		this.#i = [];
 		for (let n of t) n.reject(e);
 	}
-	#y(e) {
+	#b(e) {
 		this.#e.postMessage(e);
 	}
 };

@@ -18,6 +18,7 @@ import type { NovelAiCapability } from "../contracts/ui_capabilities.js";
 import styles from "./illustrate_dialog.module.css";
 import type { IllustrateRequest } from "./illustrate_request.js";
 import OutfitPicker from "./OutfitPicker.vue";
+import PromptField from "./PromptField.vue";
 import PromptTagChips from "./PromptTagChips.vue";
 
 interface SlotDraft {
@@ -29,9 +30,6 @@ interface SlotDraft {
   negative_prompt: string;
   character_prompts: { -readonly [Key in keyof SlotCharacterPrompt]: SlotCharacterPrompt[Key] }[];
   estimate: NovelAiCostEstimate | null;
-  translating: boolean;
-  reading: string | null;
-  translation_error: string | null;
 }
 
 type DialogState =
@@ -150,9 +148,6 @@ async function load(request: IllustrateRequest): Promise<void> {
         negative_prompt: slot.negative_prompt,
         character_prompts: slot.character_prompts.map((character) => ({ ...character })),
         estimate: null,
-        translating: false,
-        reading: null,
-        translation_error: null,
       }));
     wardrobe.value = await props.service.wardrobe_view(location);
     state.value = { status: "ready", location };
@@ -175,27 +170,6 @@ watch(
   },
   { immediate: true },
 );
-
-async function translate(draft: SlotDraft, direction: "to_tags" | "read"): Promise<void> {
-  const translator = props.translator;
-  if (translator === null) {
-    return;
-  }
-  draft.translating = true;
-  draft.translation_error = null;
-  try {
-    if (direction === "to_tags") {
-      draft.positive_prompt = await translator.to_tags(draft.positive_prompt);
-      draft.reading = null;
-    } else {
-      draft.reading = await translator.read_in_chinese(draft.positive_prompt);
-    }
-  } catch (error) {
-    draft.translation_error = error instanceof Error ? error.message : String(error);
-  } finally {
-    draft.translating = false;
-  }
-}
 
 async function confirm(): Promise<void> {
   const current = state.value;
@@ -269,22 +243,25 @@ function update_open(open: boolean): void {
         <section v-for="draft in drafts" :key="draft.slot_id" :class="styles.slot">
           <AppCheckbox v-model="draft.selected" :label="draft.scene" />
           <blockquote :class="styles.anchor">{{ draft.anchor }}</blockquote>
-          <label :class="styles.label">
-            {{
+          <PromptField
+            v-model="draft.positive_prompt"
+            :label="
               draft.character_prompts.length > 0
-                ? t("chat.dialog.base_prompt")
-                : t("chat.dialog.positive_prompt")
-            }}
-            <textarea v-model="draft.positive_prompt" :class="styles.prompt" />
-          </label>
+                ? t('chat.dialog.base_prompt')
+                : t('chat.dialog.positive_prompt')
+            "
+            :translator="translator"
+          />
           <div :class="styles.chips">
             <PromptTagChips :port="promptTags" kind="quality" />
           </div>
           <template v-for="character in draft.character_prompts" :key="character.name">
-            <label :class="styles.label" data-testid="character-prompt">
-              {{ t("chat.dialog.character_prompt", { name: character.name }) }}
-              <textarea v-model="character.prompt" :class="styles.prompt" />
-            </label>
+            <PromptField
+              v-model="character.prompt"
+              :label="t('chat.dialog.character_prompt', { name: character.name })"
+              :translator="translator"
+              data-testid="character-prompt"
+            />
             <OutfitPicker
               v-for="view in outfit_views(character.name)"
               :key="view.character.id"
@@ -294,28 +271,11 @@ function update_open(open: boolean): void {
               @change="(next) => void change_wearing(character.name, next)"
             />
           </template>
-          <div v-if="translator !== null" :class="styles.meta">
-            <span>
-              <AppButton
-                :label="t('chat.dialog.translate_to_tags')"
-                :pending="draft.translating"
-                @click="translate(draft, 'to_tags')"
-              />
-              <AppButton
-                :label="t('chat.dialog.read_in_chinese')"
-                :pending="draft.translating"
-                @click="translate(draft, 'read')"
-              />
-            </span>
-          </div>
-          <p v-if="draft.reading !== null" :class="styles.anchor">{{ draft.reading }}</p>
-          <p v-if="draft.translation_error !== null" :class="styles.error">
-            {{ draft.translation_error }}
-          </p>
-          <label :class="styles.label">
-            {{ t("chat.dialog.negative_prompt") }}
-            <textarea v-model="draft.negative_prompt" :class="styles.prompt" />
-          </label>
+          <PromptField
+            v-model="draft.negative_prompt"
+            :label="t('chat.dialog.negative_prompt')"
+            :translator="translator"
+          />
           <div :class="styles.chips">
             <PromptTagChips :port="promptTags" kind="undesired_content" />
           </div>

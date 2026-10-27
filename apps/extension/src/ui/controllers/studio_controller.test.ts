@@ -202,6 +202,8 @@ function build_mock_studio() {
   const vocabulary: VocabularyCapability = {
     load: vocabulary_load,
     search: vi.fn(),
+    lookup: vi.fn(),
+    prepare: vi.fn(),
     next_page: vi.fn(),
     install: vi.fn(),
     cancel_install: vi.fn(),

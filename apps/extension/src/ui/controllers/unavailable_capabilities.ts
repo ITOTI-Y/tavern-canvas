@@ -137,6 +137,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
   const vocabulary: VocabularyCapability = {
     load: () => Promise.resolve([]),
     search: unavailable_command,
+    lookup: () => Promise.resolve(null),
+    prepare: unavailable_command,
     next_page: unavailable_command,
     install: unavailable_command,
     cancel_install: () => {},

@@ -754,25 +754,28 @@ function create_assets_capability(
 }
 
 function create_vocabulary_capability(): VocabularyCapability {
+  const search = (query: string): Promise<VocabularySearchPageView> =>
+    Promise.resolve({
+      results:
+        query.trim() === ""
+          ? []
+          : [
+              {
+                record_id: 1,
+                display_text: query.trim(),
+                category: "general",
+                popularity: 50,
+                match_kind: "prefix",
+                score: 1,
+              },
+            ],
+      next_cursor: null,
+    });
   return {
     load: () => Promise.resolve(VOCABULARY_CATALOG),
-    search: (query): Promise<VocabularySearchPageView> =>
-      Promise.resolve({
-        results:
-          query.trim() === ""
-            ? []
-            : [
-                {
-                  record_id: 1,
-                  display_text: query.trim(),
-                  category: "general",
-                  popularity: 50,
-                  match_kind: "prefix",
-                  score: 1,
-                },
-              ],
-        next_cursor: null,
-      }),
+    search,
+    lookup: search,
+    prepare: () => Promise.resolve(),
     next_page: () => Promise.resolve({ results: [], next_cursor: null }),
     install: () => Promise.resolve(),
     cancel_install: () => {},

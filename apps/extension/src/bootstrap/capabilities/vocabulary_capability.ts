@@ -64,6 +64,13 @@ export function create_vocabulary_capability(deps: VocabularyCapabilityDeps): Vo
     async search(query, category) {
       return (await active_client()).search(query, category === undefined ? {} : { category });
     },
+    async lookup(query) {
+      const instance = await active_client();
+      return instance.is_ready || instance.has_failed ? instance.lookup(query) : null;
+    },
+    async prepare() {
+      await (await active_client()).ready();
+    },
     async next_page(cursor) {
       return (await active_client()).next_page(cursor);
     },

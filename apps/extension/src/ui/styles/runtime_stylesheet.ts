@@ -3,6 +3,7 @@ import base_stylesheet from "./base.css?inline";
 import utilities_stylesheet from "./utilities.css?inline";
 import components_stylesheet from "../components/components.module.css?inline";
 import illustrate_dialog_stylesheet from "../chat/illustrate_dialog.module.css?inline";
+import prompt_field_stylesheet from "../chat/prompt_field.module.css?inline";
 import dialogs_stylesheet from "../dialogs/dialogs.module.css?inline";
 import experience_stylesheet from "../experience/experience.module.css?inline";
 import floating_window_stylesheet from "../experience/floating_window.module.css?inline";
@@ -33,6 +34,7 @@ export const FIRST_PARTY_STYLESHEET = resolve_asset_urls(
     experience_stylesheet,
     dialogs_stylesheet,
     illustrate_dialog_stylesheet,
+    prompt_field_stylesheet,
     floating_window_stylesheet,
     shell_stylesheet,
     assets_view_stylesheet,

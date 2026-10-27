@@ -146,6 +146,8 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       translator: {
         to_tags: (prompt: string) => Promise.resolve(`${prompt}, smile`),
         read_in_chinese: () => Promise.resolve("一个女孩，门"),
+        suggest: () => Promise.resolve([]),
+        prepare: () => Promise.resolve(),
       },
     },
     global: { plugins: [i18n] },
@@ -186,10 +188,11 @@ describe("ChatLayer", () => {
     expect(prompts).toEqual(["1girl, door", "lowres"]);
     expect(host.generate_with_preset).not.toHaveBeenCalled();
 
-    const translate = [...document.querySelectorAll('[role="dialog"] button')].find(
-      (element) => element.textContent?.trim() === "Translate to English tags",
-    );
-    (translate as HTMLButtonElement | undefined)?.click();
+    document
+      .querySelector<HTMLButtonElement>(
+        '[role="dialog"] button[aria-label="Translate to English tags"]',
+      )
+      ?.click();
     await flushPromises();
     expect(document.querySelector("textarea")?.value).toBe("1girl, door, smile");
 

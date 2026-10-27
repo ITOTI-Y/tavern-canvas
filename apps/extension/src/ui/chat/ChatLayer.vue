@@ -135,6 +135,8 @@ function close_preview_on_escape(event: KeyboardEvent): void {
 
 onMounted(() => {
   document.addEventListener("keydown", close_preview_on_escape);
+  // A failure shows later as missing suggestions and readings that fall back to DeepL.
+  props.translator?.prepare().catch(() => undefined);
 });
 onBeforeUnmount(() => {
   document.removeEventListener("keydown", close_preview_on_escape);

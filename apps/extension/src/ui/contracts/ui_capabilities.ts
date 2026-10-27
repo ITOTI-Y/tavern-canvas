@@ -261,6 +261,13 @@ export type VocabularyImportProgressView =
 export interface VocabularyCapability {
   load(): Promise<readonly VocabularyCatalogEntry[]>;
   search(query: string, category?: VocabularyCategory): Promise<VocabularySearchPageView>;
+  /**
+   * One query that runs alongside others; `null` while the search Worker is still opening its
+   * package, which on first use means installing the bundled one and takes about a minute.
+   */
+  lookup(query: string): Promise<VocabularySearchPageView | null>;
+  /** Starts the search Worker so its first-use install runs before anyone waits on it. */
+  prepare(): Promise<void>;
   next_page(cursor: string): Promise<VocabularySearchPageView>;
   /** A live VocabularyClient Worker does not see a package installed mid-session; recreate the search session after this resolves. */
   install(

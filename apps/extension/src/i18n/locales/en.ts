@@ -691,6 +691,10 @@ const chat = {
       "The model did not return the requested JSON. The preset may impose its own output format or obfuscate replies; choose another preset in the illustration settings.",
     translate_to_tags: "Translate to English tags",
     read_in_chinese: "Read in Chinese",
+    reading_pending: "Reading…",
+    suggestions_label: "Tag suggestions",
+    vocabulary_preparing:
+      "The vocabulary takes about a minute to prepare on first use; tag suggestions appear once it is ready.",
     base_prompt: "Shared prompt (scene and style)",
     character_prompt: "{name}",
     outfit_label: "{name}'s outfit",

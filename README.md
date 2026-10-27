@@ -47,8 +47,11 @@ Root on `#tavern-canvas-root`.
 With **Settings > Illustration > Illustrate every reply automatically** on, every new assistant
 reply is analyzed and its images are generated without further input. With it off, each reply gets
 an illustrate button; it opens a dialog listing the paragraphs the analysis chose, where the
-prompts can be edited, Chinese text can be translated to tags, and the NovelAI cost is shown before
-anything is generated.
+prompts can be edited and the NovelAI cost is shown before anything is generated. Each prompt box
+has icons that translate its Chinese text to tags and show a Chinese reading of its tags, and typing
+in it suggests vocabulary tags with their Chinese names; Tab or a click inserts a suggestion. The
+vocabulary takes about a minute to install the bundled tag package on first use, and suggestions
+appear once it is ready.
 
 The analysis runs through a SillyTavern chat completion preset, by default the one currently
 loaded, over the current API, a proxy preset, or a custom OpenAI compatible API. The illustration

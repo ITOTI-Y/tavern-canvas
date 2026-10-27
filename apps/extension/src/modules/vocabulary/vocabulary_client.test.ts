@@ -15,6 +15,7 @@ class FakeWorker implements VocabularyWorkerHandle {
   readonly posted: VocabularyWorkerRequest[] = [];
   terminated = false;
   readonly #handlers: ((event: { data: unknown }) => void)[] = [];
+  readonly #error_handlers: ((event: { readonly message: string }) => void)[] = [];
 
   postMessage(message: unknown): void {
     this.posted.push(message as VocabularyWorkerRequest);
@@ -24,8 +25,19 @@ class FakeWorker implements VocabularyWorkerHandle {
     this.terminated = true;
   }
 
-  addEventListener(_type: "message", handler: (event: { data: unknown }) => void): void {
-    this.#handlers.push(handler);
+  addEventListener(type: "message", handler: (event: { data: unknown }) => void): void;
+  addEventListener(type: "error", handler: (event: { readonly message: string }) => void): void;
+  addEventListener(
+    type: "message" | "error",
+    handler: ((event: { data: unknown }) => void) & ((event: { readonly message: string }) => void),
+  ): void {
+    (type === "message" ? this.#handlers : this.#error_handlers).push(handler);
+  }
+
+  fail(message: string): void {
+    for (const handler of this.#error_handlers) {
+      handler({ message });
+    }
   }
 
   emit(response: VocabularyWorkerResponse): void {
@@ -71,6 +83,40 @@ afterEach(() => {
 });
 
 describe("VocabularyClient", () => {
+  it("rejects waiting lookups when the Worker script fails to load", async () => {
+    const worker = new FakeWorker();
+    const client = new VocabularyClient({ create_worker: () => worker });
+
+    const lookup = client.lookup("girl");
+    worker.fail("404 Not Found");
+
+    await expect(lookup).rejects.toMatchObject({ code: "package_unavailable" });
+    await expect(client.lookup("river")).rejects.toMatchObject({ code: "package_unavailable" });
+  });
+
+  it("runs several lookups at once without one cancelling another", async () => {
+    const { client, worker } = ready_client();
+
+    const first = client.lookup("girl");
+    const second = client.lookup("river");
+    await Promise.resolve();
+    await Promise.resolve();
+    const queries = worker.posted.filter((entry) => entry.type === "query");
+    expect(queries.map((entry) => entry.query)).toEqual(["girl", "river"]);
+    for (const [index, query] of queries.entries()) {
+      worker.emit({
+        type: "complete",
+        request_id: query.request_id,
+        results: [result(index + 1, query.query)],
+        next_cursor: null,
+      });
+    }
+
+    await expect(first).resolves.toMatchObject({ results: [{ display_text: "girl" }] });
+    await expect(second).resolves.toMatchObject({ results: [{ display_text: "river" }] });
+    expect(worker.posted.some((entry) => entry.type === "cancel")).toBe(false);
+  });
+
   it("debounces search() calls by 120ms, sending only the last query", () => {
     vi.useFakeTimers();
     const { client, worker } = ready_client();

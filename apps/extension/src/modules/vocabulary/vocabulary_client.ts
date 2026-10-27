@@ -26,6 +26,8 @@ export interface VocabularyWorkerHandle {
   postMessage(message: unknown): void;
   terminate(): void;
   addEventListener(type: "message", handler: (event: { data: unknown }) => void): void;
+  /** Fires when the Worker script cannot be loaded or throws, after which it never answers. */
+  addEventListener(type: "error", handler: (event: { readonly message: string }) => void): void;
 }
 
 export interface VocabularySearchOptions {
@@ -79,6 +81,9 @@ export class VocabularyClient {
     this.#worker.addEventListener("message", (event) => {
       this.#handle_message(event.data);
     });
+    this.#worker.addEventListener("error", (event) => {
+      this.#fail(new VocabularySearchError("package_unavailable", event.message));
+    });
     this.#initialize_request_id = crypto.randomUUID();
     this.#post({ type: "initialize", request_id: this.#initialize_request_id });
   }
@@ -98,6 +103,39 @@ export class VocabularyClient {
         void this.#dispatch_query(generation, query, options, resolve, reject);
       }, this.#debounce_ms);
     });
+  }
+
+  /**
+   * One lookup that neither debounces nor supersedes other queries, so several can run at once,
+   * unlike `search`, which serves a single search box.
+   */
+  async lookup(query: string): Promise<VocabularySearchPage> {
+    await this.ready();
+    this.#throw_if_disposed();
+    const request_id = crypto.randomUUID();
+    return new Promise<VocabularySearchPage>((resolve, reject) => {
+      this.#pending.set(request_id, { resolve, reject });
+      this.#post({ type: "query", request_id, query });
+    });
+  }
+
+  /** `false` until the Worker has opened its package; the first run installs the bundled one. */
+  get is_ready(): boolean {
+    return this.#ready;
+  }
+
+  /** The Worker failed to load or to open a package, so every query rejects. */
+  get has_failed(): boolean {
+    return this.#init_error !== null;
+  }
+
+  /** Resolves once the Worker reports ready; rejects when it could not open a package. */
+  async ready(): Promise<void> {
+    this.#throw_if_disposed();
+    if (!this.#ready) {
+      await this.#ensure_ready();
+    }
+    this.#throw_if_disposed();
   }
 
   async next_page(cursor: string): Promise<VocabularySearchPage> {
@@ -233,8 +271,7 @@ export class VocabularyClient {
 
     if (response.type === "error" && response.request_id === this.#initialize_request_id) {
       // Response to the constructor's own `initialize` request, which is not in `#pending`; without this branch it is dropped and waiters hang.
-      this.#init_error = new VocabularySearchError(response.code, response.message);
-      this.#reject_ready_waiters(this.#init_error);
+      this.#fail(new VocabularySearchError(response.code, response.message));
       return;
     }
 
@@ -258,6 +295,17 @@ export class VocabularyClient {
         pending.reject(new VocabularySearchError(response.code, response.message));
         return;
     }
+  }
+
+  /** Rejects everything waiting on a Worker that will not answer, and every later query. */
+  #fail(error: VocabularySearchError): void {
+    this.#init_error = error;
+    this.#reject_ready_waiters(error);
+    for (const pending of this.#pending.values()) {
+      pending.reject(error);
+    }
+    this.#pending.clear();
+    this.#active = null;
   }
 
   #settle(request_id: string): void {
