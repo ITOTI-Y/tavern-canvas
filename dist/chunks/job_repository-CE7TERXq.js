@@ -1,6 +1,6 @@
-import { S as e, T as t, b as n, c as r, d as i, g as a, l as o, m as s, p as c, s as l, u, v as ee, y as d } from "./ids-DjWg1HG8.js";
+import { S as e, T as t, b as n, c as r, d as i, g as a, l as o, m as s, p as c, s as l, u, v as d, y as f } from "./ids-DjWg1HG8.js";
 //#region ../../packages/storage/src/database_schema.ts
-var te = "tavern_canvas_v3", ne = {
+var ee = "tavern_canvas_v3", p = {
 	provider_profiles: {
 		key_path: "record_key",
 		indexes: [
@@ -33,16 +33,6 @@ var te = "tavern_canvas_v3", ne = {
 	regex_rules: {
 		key_path: "record_key",
 		indexes: ["namespace", "updated_at"],
-		since_version: 1
-	},
-	vocabularies: {
-		key_path: "record_key",
-		indexes: ["namespace", "updated_at"],
-		since_version: 1
-	},
-	vocabulary_groups: {
-		key_path: "record_key",
-		indexes: ["namespace", "vocabulary_id"],
 		since_version: 1
 	},
 	vocabulary_packages: {
@@ -90,29 +80,6 @@ var te = "tavern_canvas_v3", ne = {
 		],
 		since_version: 1
 	},
-	migration_journal: {
-		key_path: "migration_id",
-		indexes: [
-			"source_version",
-			"state",
-			"updated_at"
-		],
-		since_version: 1
-	},
-	legacy_preferences: {
-		key_path: "record_key",
-		indexes: ["namespace", "updated_at"],
-		since_version: 2
-	},
-	llm_connections: {
-		key_path: "record_key",
-		indexes: [
-			"namespace",
-			"provider_kind",
-			"updated_at"
-		],
-		since_version: 3
-	},
 	novelai_vibe_encodings: {
 		key_path: "record_key",
 		indexes: ["namespace", "updated_at"],
@@ -138,67 +105,71 @@ var te = "tavern_canvas_v3", ne = {
 		indexes: ["namespace", "updated_at"],
 		since_version: 7
 	}
-}, f = ["knowledge_entries"], p = c(() => e([
+}, m = [
+	"knowledge_entries",
+	"vocabularies",
+	"vocabulary_groups",
+	"migration_journal",
+	"legacy_preferences",
+	"llm_connections"
+], h = c(() => e([
 	n(),
 	a(),
 	u(),
 	r(),
-	o(p),
-	ee(n(), p)
-])), m = n().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), h = n().regex(/^[a-f0-9]{64}$/u), g = t({ offset: !0 }), _ = n().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), re = {
+	o(h),
+	d(n(), h)
+])), g = n().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), _ = n().regex(/^[a-f0-9]{64}$/u), v = t({ offset: !0 }), y = n().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), te = {
 	schema_version: s(1),
-	id: m,
-	namespace: _,
+	id: g,
+	namespace: y,
 	record_key: n().min(1),
-	created_at: g,
-	updated_at: g,
-	payload: p.optional()
+	created_at: v,
+	updated_at: v,
+	payload: h.optional()
 };
-function v(e) {
-	return d({
-		...re,
+function b(e) {
+	return f({
+		...te,
 		...e
 	});
 }
-var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)]), ie = n().min(1).max(64), ae = n().min(1).max(128), x = v({ provider_id: y }), S = v({}), C = v({}), w = v({}), T = v({}), E = v({}), D = v({}), O = v({}), k = v({}), A = v({}), j = v({ vocabulary_id: m }), M = v({
-	data_version: b,
-	state: ie
-}), N = v({
-	data_version: b,
-	kind: ae
-}), P = v({}), F = v({
-	provider_kind: n().min(1).max(64),
-	credential_reference: n().min(1).max(256).regex(/^tavern_canvas:[A-Za-z0-9_.:-]+$/u).nullable()
-}), I = v({
-	image_sha256: h,
+var x = n().min(1).max(128), S = e([a().int().nonnegative(), n().min(1).max(128)]), C = n().min(1).max(64), ne = n().min(1).max(128), w = b({ provider_id: x }), T = b({}), E = b({}), D = b({}), O = b({}), k = b({}), A = b({}), j = b({}), M = b({}), N = b({
+	data_version: S,
+	state: C
+}), P = b({
+	data_version: S,
+	kind: ne
+}), F = b({
+	image_sha256: _,
 	model_id: n().min(1).max(128),
 	information_extracted: a().min(0).max(1),
 	encoding: n().min(1).max(4e7)
-}), L = v({
-	sha256: h,
-	last_accessed_at: g,
+}), I = b({
+	sha256: _,
+	last_accessed_at: v,
 	pinned: u()
-}), R = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), z = d({
-	sha256: h,
+}), L = i((e) => typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer, "expected a Blob or ArrayBuffer"), R = f({
+	sha256: _,
 	ref_count: a().int().nonnegative(),
 	byte_length: a().int().nonnegative(),
-	blob: R
-}), B = v({
+	blob: L
+}), z = b({
 	media_type: l([
 		"image/png",
 		"image/jpeg",
 		"image/webp"
 	]),
 	byte_length: a().int().positive(),
-	blob: R
-}), oe = d({
-	generation_anchor: h,
+	blob: L
+}), re = f({
+	generation_anchor: _,
 	scene_description: n().trim().min(1).max(12e3),
 	negative_constraints: n().trim().max(4e3).optional(),
 	context_turns: a().int().min(0).max(12).optional(),
-	style_preset_id: m.optional(),
+	style_preset_id: g.optional(),
 	image_count: a().int().min(1).max(4).optional()
-}), se = d({
+}), ie = f({
 	code: l([
 		"auth_failed",
 		"rate_limited",
@@ -212,15 +183,15 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 	retryable: u(),
 	retry_after_ms: a().int().nonnegative().optional(),
 	status_code: a().int().min(100).max(599).optional()
-}), V = v({
-	request_id: m,
-	request_digest: h,
-	generation_anchor: h,
-	source_anchor: h,
+}), B = b({
+	request_id: g,
+	request_digest: _,
+	generation_anchor: _,
+	source_anchor: _,
 	chat_id: n().min(1).max(512),
 	requested_swipe_id: a().int().nonnegative(),
-	provider_id: y,
-	arguments: oe,
+	provider_id: x,
+	arguments: re,
 	state: l([
 		"queued",
 		"preparing",
@@ -232,37 +203,27 @@ var y = n().min(1).max(128), b = e([a().int().nonnegative(), n().min(1).max(128)
 		"attached",
 		"orphaned"
 	]),
-	error: se.nullable(),
-	image_ids: o(m),
+	error: ie.nullable(),
+	image_ids: o(g),
 	automatic: u().optional()
-}), ce = d({
-	migration_id: n().min(1).max(256),
-	source_version: a().int().nonnegative(),
-	state: n().min(1).max(64),
-	updated_at: g,
-	payload: p.optional()
-}), H = {
-	provider_profiles: x,
-	prompt_presets: S,
-	comfy_workflows: C,
-	novelai_vibes: w,
-	character_profiles: T,
-	regex_rules: k,
-	vocabularies: A,
-	vocabulary_groups: j,
-	vocabulary_packages: M,
-	vocabulary_shards: N,
-	image_records: L,
-	generation_jobs: V,
-	legacy_preferences: P,
-	llm_connections: F,
-	novelai_vibe_encodings: I,
-	provider_input_assets: B,
-	outfit_profiles: E,
-	lora_profiles: D,
-	prompt_tag_presets: O
-}, U = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
-function W(e, t, n) {
+}), V = {
+	provider_profiles: w,
+	prompt_presets: T,
+	comfy_workflows: E,
+	novelai_vibes: D,
+	character_profiles: O,
+	regex_rules: M,
+	vocabulary_packages: N,
+	vocabulary_shards: P,
+	image_records: I,
+	generation_jobs: B,
+	novelai_vibe_encodings: F,
+	provider_input_assets: z,
+	outfit_profiles: k,
+	lora_profiles: A,
+	prompt_tag_presets: j
+}, H = /(credential|secret|token(?!s)|authorization|auth|header|apikey|password|passwd|privatekey|accesskey|refreshtoken)/u;
+function U(e, t, n) {
 	if (e !== null && typeof e != "string" && typeof e != "boolean") {
 		if (typeof e == "number") {
 			if (Number.isFinite(e)) return;
@@ -271,22 +232,22 @@ function W(e, t, n) {
 		if (typeof e != "object") throw TypeError(`${t} must be JSON serializable`);
 		if (typeof Blob < "u" && e instanceof Blob || e instanceof ArrayBuffer || e instanceof Date || e instanceof Map || e instanceof Set) throw TypeError(`${t} must not contain structured non-JSON values`);
 		if (n.has(e)) throw TypeError(`${t} must not contain cycles`);
-		if (n.add(e), Array.isArray(e)) for (let [r, i] of e.entries()) W(i, `${t}[${String(r)}]`, n);
+		if (n.add(e), Array.isArray(e)) for (let [r, i] of e.entries()) U(i, `${t}[${String(r)}]`, n);
 		else {
 			if (Object.getPrototypeOf(e) !== Object.prototype && Object.getPrototypeOf(e) !== null) throw TypeError(`${t} must contain plain objects`);
 			for (let r of Reflect.ownKeys(e)) {
 				if (typeof r != "string") throw TypeError(`${t} must not contain symbol keys`);
-				W(e[r], `${t}.${r}`, n);
+				U(e[r], `${t}.${r}`, n);
 			}
 		}
 		n.delete(e);
 	}
 }
-function G(e) {
-	return W(e, "payload", /* @__PURE__ */ new WeakSet()), p.parse(e);
+function W(e) {
+	return U(e, "payload", /* @__PURE__ */ new WeakSet()), h.parse(e);
 }
-function K(e) {
-	let t = G(e), n = (e, t) => {
+function G(e) {
+	let t = W(e), n = (e, t) => {
 		if (Array.isArray(e)) {
 			e.forEach((e, r) => {
 				n(e, `${t}[${String(r)}]`);
@@ -295,19 +256,19 @@ function K(e) {
 		}
 		if (typeof e == "object" && e) for (let [r, i] of Object.entries(e)) {
 			let e = r.toLowerCase().replace(/[^a-z0-9]/gu, "");
-			if (U.test(e)) throw TypeError(`${t}.${r} contains a credential-like field`);
+			if (H.test(e)) throw TypeError(`${t}.${r} contains a credential-like field`);
 			n(i, `${t}.${r}`);
 		}
 	};
 	n(t, "payload");
 }
-function q(e, t, n) {
-	if (_.parse(e), m.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
+function K(e, t, n) {
+	if (y.parse(e), g.parse(t), n !== `${e}:${t}`) throw TypeError("record_key must equal namespace + ':' + id");
 }
-function le(e, t, n, r, i) {
-	if (!(t >= 7)) {
-		for (let t of f) e.objectStoreNames.contains(t) && e.deleteObjectStore(t);
-		for (let [n, r] of Object.entries(ne)) {
+function q(e, t, n, r, i) {
+	if (!(t >= 8)) {
+		for (let t of m) e.objectStoreNames.contains(t) && e.deleteObjectStore(t);
+		for (let [n, r] of Object.entries(p)) {
 			if (r.since_version <= t) continue;
 			let i = e.createObjectStore(n, { keyPath: r.key_path });
 			for (let e of r.indexes) i.createIndex(e, e);
@@ -337,10 +298,10 @@ function Z(e) {
 		throw new J(`Value cannot cross the structured-clone boundary: ${e instanceof Error ? e.message : String(e)}`);
 	}
 }
-function ue(e) {
+function ae(e) {
 	return e instanceof Error && e.name === "ConstraintError";
 }
-function de(e) {
+function oe(e) {
 	if (e.mode === "readonly") throw TypeError("A readwrite transaction is required for this repository method");
 }
 var Q = class {
@@ -348,7 +309,7 @@ var Q = class {
 	store_name;
 	schema;
 	rejects_provider_secrets;
-	constructor(e, t, n = H[t], r = !1) {
+	constructor(e, t, n = V[t], r = !1) {
 		this.database = e, this.store_name = t, this.schema = n, this.rejects_provider_secrets = r;
 	}
 	async get(e, t, n) {
@@ -359,7 +320,7 @@ var Q = class {
 		});
 	}
 	async list(e, t) {
-		let n = _.parse(e);
+		let n = y.parse(e);
 		return this.run_read(t, async (e) => {
 			let t = (await this.store(e).index("namespace").getAll(n)).map((e) => this.validate_loaded(e));
 			return t.sort((e, t) => e.id < t.id ? -1 : +(e.id > t.id)), t;
@@ -371,7 +332,7 @@ var Q = class {
 			try {
 				await this.store(e).add(r);
 			} catch (e) {
-				throw ue(e) ? new Y(this.store_name, r.record_key) : e;
+				throw ae(e) ? new Y(this.store_name, r.record_key) : e;
 			}
 		});
 	}
@@ -399,45 +360,45 @@ var Q = class {
 		return e.objectStore(this.store_name);
 	}
 	record_key(e, t) {
-		return `${_.parse(e)}:${m.parse(t)}`;
+		return `${y.parse(e)}:${g.parse(t)}`;
 	}
 	prepare_record(e, t) {
-		let n = _.parse(e), r = Z(t);
+		let n = y.parse(e), r = Z(t);
 		if (r.namespace !== void 0 && r.namespace !== n) throw new J("Record namespace does not match the method namespace");
 		if (typeof r.id != "string") throw new J("Record id must be a UUID");
-		let i = m.safeParse(r.id);
+		let i = g.safeParse(r.id);
 		if (!i.success) throw new J("Record id must be a UUID", i.error.issues);
 		let a = `${n}:${i.data}`;
 		if (r.record_key !== void 0 && r.record_key !== a) throw new J("Record key does not match namespace and id");
 		if (r.namespace = n, r.record_key = a, Object.hasOwn(r, "payload") && r.payload === void 0) throw new J("Payload must be serializable JSON");
 		if (r.payload !== void 0) {
 			try {
-				r.payload = G(r.payload);
+				r.payload = W(r.payload);
 			} catch (e) {
 				throw new J(e instanceof Error ? e.message : "Payload must be serializable JSON");
 			}
 			if (this.rejects_provider_secrets) try {
-				K(r.payload);
+				G(r.payload);
 			} catch (e) {
 				throw new J(e instanceof Error ? e.message : "Provider payload contains a secret");
 			}
 		}
 		let o = this.schema.safeParse(r);
 		if (!o.success) throw new J("Record failed schema validation", o.error.issues);
-		return q(o.data.namespace, o.data.id, o.data.record_key), Z(o.data);
+		return K(o.data.namespace, o.data.id, o.data.record_key), Z(o.data);
 	}
 	validate_loaded(e) {
 		let t = Z(e);
 		if (typeof t == "object" && t && Object.hasOwn(t, "payload") && t.payload === void 0) throw new J("Stored payload must be serializable JSON");
 		if (typeof t == "object" && t && "payload" in t && t.payload !== void 0) try {
-			G(t.payload);
+			W(t.payload);
 		} catch (e) {
 			throw new J(e instanceof Error ? e.message : "Stored payload must be serializable JSON");
 		}
 		let n = this.schema.safeParse(t);
 		if (!n.success) throw new J("Stored record failed schema validation", n.error.issues);
 		try {
-			q(n.data.namespace, n.data.id, n.data.record_key), this.rejects_provider_secrets && n.data.payload !== void 0 && K(n.data.payload);
+			K(n.data.namespace, n.data.id, n.data.record_key), this.rejects_provider_secrets && n.data.payload !== void 0 && G(n.data.payload);
 		} catch (e) {
 			throw new J(e instanceof Error ? e.message : "Stored record failed derived-key validation");
 		}
@@ -457,7 +418,7 @@ var Q = class {
 		}
 	}
 	async run_write(e, t) {
-		if (e !== void 0) return de(e), t(e);
+		if (e !== void 0) return oe(e), t(e);
 		let n = this.database.transaction(this.store_name, "readwrite");
 		try {
 			let e = await t(n);
@@ -474,11 +435,11 @@ var Q = class {
 	}
 }, $ = class extends Q {
 	constructor(e) {
-		super(e, "generation_jobs", V);
+		super(e, "generation_jobs", B);
 	}
 };
-function fe(e) {
+function se(e) {
 	return new $(e);
 }
 //#endregion
-export { A, H as C, m as D, g as E, G as M, le as N, j as O, x as S, h as T, w as _, X as a, O as b, C as c, L as d, P as f, I as g, ce as h, Y as i, N as j, M as k, te as l, D as m, fe as n, J as o, F as p, Q as r, T as s, $ as t, z as u, E as v, k as w, B as x, S as y };
+export { v as C, W as D, P as E, q as O, _ as S, N as T, j as _, X as a, V as b, E as c, I as d, A as f, T as g, k as h, Y as i, ee as l, D as m, se as n, J as o, F as p, Q as r, O as s, $ as t, R as u, z as v, g as w, M as x, w as y };
