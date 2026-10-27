@@ -194,6 +194,15 @@ const assets = {
     reference_image_hint: "长边缩小到 1536 px 以内后随角色保存。",
     reference_image_unreadable: "无法将该文件读取为图片。",
     reference_image_remove: "移除参考图",
+    reference_upload: "上传图片",
+    reference_generate: "生成参考图",
+    reference_generate_hint:
+      "用当前默认的图像服务配置生成一张全身参考图。提示词由性别、外观和默认服装组成，生成前可以修改；生成结果同时保存在图库中。",
+    reference_prompt_label: "正向提示词",
+    reference_negative_label: "负向提示词",
+    reference_generate_submit: "生成",
+    reference_regenerate_submit: "重新生成并替换",
+    reference_generate_failed: "参考图生成失败：{reason}",
     reference_send_label: "用 NovelAI 出图且画面中有该角色时随请求发送",
     reference_mode_label: "用途",
     reference_mode_hint:

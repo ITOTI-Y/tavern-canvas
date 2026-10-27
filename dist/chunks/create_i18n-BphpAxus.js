@@ -211,6 +211,14 @@ var o = {
 			reference_image_hint: "Scaled so the long edge is at most 1536 px and saved with the character.",
 			reference_image_unreadable: "This file could not be read as an image.",
 			reference_image_remove: "Remove reference image",
+			reference_upload: "Upload image",
+			reference_generate: "Generate reference",
+			reference_generate_hint: "Generates a full-body reference with the default image provider profile. The prompt is built from the gender, appearance, and default outfit and can be edited first; the result is also kept in Gallery.",
+			reference_prompt_label: "Positive prompt",
+			reference_negative_label: "Negative prompt",
+			reference_generate_submit: "Generate",
+			reference_regenerate_submit: "Regenerate and replace",
+			reference_generate_failed: "The reference image could not be generated: {reason}",
 			reference_send_label: "Send with NovelAI requests that show this character",
 			reference_mode_label: "Use as",
 			reference_mode_hint: "Precise reference works on V4.5 only, costs 5 extra Anlas per image, and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
@@ -765,7 +773,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-Bdq_5ulc.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-Blye3xam.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

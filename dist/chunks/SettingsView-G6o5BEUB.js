@@ -6,15 +6,15 @@ import { a as s, n as c, o as l, r as u } from "./http_acknowledgment-CSrNHiim.j
 import { A as d, F as f, G as p, N as m, V as h, W as g, _, a as v, b as y, ct as b, et as x, g as S, h as C, m as w, n as T, p as E, pt as D, s as O, u as k, ut as A, v as j, x as M, y as N } from "./vue-i18n-DUz2Gjn8.js";
 import { n as P, t as F } from "./AppIcon-Cnhzrx9o.js";
 import { n as I, t as L } from "./StateSurface-C9BHPFzJ.js";
-import { t as R } from "./AppDialog-DAUL3Hew.js";
+import { t as R } from "./AppDialog-C_45D_ty.js";
 import { t as z } from "./FieldGroup-BT7DUBzO.js";
 import "./browser_secret_vault-CnTo7PwU.js";
 import { n as B, t as ee } from "./novelai_request_defaults-B0sJ9ANr.js";
-import { t as te } from "./AppCheckbox-DhrQWrHZ.js";
-import { n as V, t as H } from "./NumberStepper-DKrPnJBN.js";
-import { t as U } from "./AppSelect-BledsuNR.js";
-import { t as W } from "./ConfirmDialog-BYLVl12S.js";
-import { t as ne } from "./PromptTagChips-Lt4-U2Fu.js";
+import { t as te } from "./AppCheckbox-Cn99zCIV.js";
+import { n as V, t as H } from "./NumberStepper-yBDRmZKZ.js";
+import { t as U } from "./AppSelect-DRHFSF1d.js";
+import { t as W } from "./ConfirmDialog-CFpyjXKp.js";
+import { t as ne } from "./PromptTagChips-BGl7zt6A.js";
 import { t as G } from "./AppSwitch-ClFwVatq.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/cable.js
 var K = P("cable", [
@@ -2165,7 +2165,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-BrOKsrAh.js")), n = y(() => import("./AssetsView-BC4sH5Jb.js")), r = y(() => import("./PromptTagPresetPanel-CF1Wgo0Q.js")), i = y(() => import("./DiagnosticsView-DMyBeil3.js")), a = e, { t: o } = T(), s = [
+		let t = y(() => import("./PromptView-BTjQ9Lrk.js")), n = y(() => import("./AssetsView-ChVTSnx5.js")), r = y(() => import("./PromptTagPresetPanel-DIlwLDAt.js")), i = y(() => import("./DiagnosticsView-Ga2gixiD.js")), a = e, { t: o } = T(), s = [
 			"illustration",
 			"providers",
 			"translation",

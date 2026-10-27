@@ -202,6 +202,15 @@ const assets = {
       "Scaled so the long edge is at most 1536 px and saved with the character.",
     reference_image_unreadable: "This file could not be read as an image.",
     reference_image_remove: "Remove reference image",
+    reference_upload: "Upload image",
+    reference_generate: "Generate reference",
+    reference_generate_hint:
+      "Generates a full-body reference with the default image provider profile. The prompt is built from the gender, appearance, and default outfit and can be edited first; the result is also kept in Gallery.",
+    reference_prompt_label: "Positive prompt",
+    reference_negative_label: "Negative prompt",
+    reference_generate_submit: "Generate",
+    reference_regenerate_submit: "Regenerate and replace",
+    reference_generate_failed: "The reference image could not be generated: {reason}",
     reference_send_label: "Send with NovelAI requests that show this character",
     reference_mode_label: "Use as",
     reference_mode_hint:

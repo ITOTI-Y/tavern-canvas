@@ -3,7 +3,7 @@ import { F as t, N as n, W as r, _ as i, ct as a, h as o, m as s, n as c, p as l
 import { t as g } from "./AppIcon-Cnhzrx9o.js";
 import { n as _, t as v } from "./route_nav-BrwZiRD4.js";
 import { a as y, i as b, n as x, r as S, t as C } from "./TooltipTrigger-BnuHMefy.js";
-import { t as w } from "./use_portal_target-BR47385C.js";
+import { t as w } from "./use_portal_target-B1sQl01g.js";
 //#region src/ui/shell/DesktopIconRail.vue?vue&type=script&setup=true&lang.ts
 var T = [
 	"data-selected",

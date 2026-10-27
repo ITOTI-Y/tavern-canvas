@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { APPEARANCE_SLOTS } from "@tavern-canvas/contracts";
-import { computed, ref } from "vue";
+import { APPEARANCE_SLOTS, OUTFIT_SLOTS } from "@tavern-canvas/contracts";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { split_tags } from "../../../modules/wardrobe/wardrobe_library.js";
+import {
+  join_tags,
+  read_outfit,
+  split_tags,
+  type CharacterReferenceMode,
+} from "../../../modules/wardrobe/wardrobe_library.js";
 import AppButton from "../../components/AppButton.vue";
-import AppCheckbox from "../../components/AppCheckbox.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
@@ -20,7 +24,7 @@ import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import styles from "./assets.module.css";
 import { use_chat_scope } from "./chat_scope.js";
-import { read_reference_image } from "./reference_image.js";
+import CharacterReference from "./CharacterReference.vue";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
 import { appearance_slot_label } from "./wardrobe_labels.js";
 
@@ -116,41 +120,54 @@ const bound_to_chat = computed(
   () => typeof panel.values.chat_id === "string" && panel.values.chat_id !== "",
 );
 
-const reference_mode_options = computed<readonly SegmentedControlOption[]>(() => [
-  { value: "vibe", label: t("assets.characters.reference_mode_vibe") },
-  { value: "img2img", label: t("assets.characters.reference_mode_img2img") },
-  { value: "precise", label: t("assets.characters.reference_mode_precise") },
-]);
-
-const image_error = ref<string | null>(null);
 const reference_image = computed(() =>
   typeof panel.values.reference_image === "string" && panel.values.reference_image !== ""
     ? panel.values.reference_image
     : null,
 );
-const reference_mode = computed(() =>
-  typeof panel.values.reference_mode === "string" ? panel.values.reference_mode : "vibe",
+const reference_mode = computed<CharacterReferenceMode>(() =>
+  panel.values.reference_mode === "img2img" || panel.values.reference_mode === "precise"
+    ? panel.values.reference_mode
+    : "vibe",
 );
 
-async function choose_reference_image(event: Event): Promise<void> {
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (file === undefined) {
+function set_reference_image(image: string | null): void {
+  if (image === null) {
+    for (const key of ["reference_image", "reference_send", "reference_mode"]) {
+      Reflect.deleteProperty(panel.values, key);
+    }
     return;
   }
-  image_error.value = null;
-  try {
-    panel.values.reference_image = await read_reference_image(file);
-    panel.values.reference_mode = reference_mode.value;
-  } catch {
-    image_error.value = t("assets.characters.reference_image_unreadable");
-  }
+  panel.values.reference_image = image;
+  panel.values.reference_mode = reference_mode.value;
 }
 
-function remove_reference_image(): void {
-  for (const key of ["reference_image", "reference_send", "reference_mode"]) {
-    Reflect.deleteProperty(panel.values, key);
-  }
-}
+const SUBJECT_TAGS = { girl: "1girl", boy: "1boy", other: "" } as const;
+/** A clear, full-figure view on a plain background, which reference and vibe transfer use best. */
+const REFERENCE_COMPOSITION =
+  "solo, full body, standing, looking at viewer, simple background, white background";
+
+/** The default outfit's tags: the chosen one, else the first outfit linked to this character. */
+const default_outfit_tags = computed(() => {
+  const id = panel.editing_record.value?.id;
+  const outfits = props.outfitRecords.map(read_outfit);
+  const outfit =
+    outfits.find((candidate) => candidate.id === panel.values.default_outfit_id) ??
+    outfits.find((candidate) => id !== undefined && candidate.character_id === id);
+  return outfit === undefined ? [] : OUTFIT_SLOTS.flatMap((slot) => outfit.slots[slot]);
+});
+
+const reference_prompt = computed(() => ({
+  positive_prompt: join_tags(
+    [
+      SUBJECT_TAGS[subject.value],
+      REFERENCE_COMPOSITION,
+      ...APPEARANCE_SLOTS.flatMap((slot) => split_tags(panel.values[slot])),
+      ...default_outfit_tags.value,
+    ].filter((tag) => tag !== ""),
+  ),
+  negative_prompt: join_tags(split_tags(panel.values.excluded_traits)),
+}));
 
 /** Appearance slots the user changed are locked, so the wardrobe update never refills them. */
 async function save(): Promise<void> {
@@ -239,6 +256,17 @@ const delete_confirm_title = (record_name: string): string =>
         @save="save"
         @cancel="panel.close_dialog"
       >
+        <template #leading-fields>
+          <CharacterReference
+            :image="reference_image"
+            :send="panel.values.reference_send === 1"
+            :mode="reference_mode"
+            :default-prompt="reference_prompt"
+            @update:image="set_reference_image"
+            @update:send="(send) => (panel.values.reference_send = send ? 1 : 0)"
+            @update:mode="(mode) => (panel.values.reference_mode = mode)"
+          />
+        </template>
         <template #extra-fields>
           <p v-if="bound_to_chat" :class="styles.chat_scope_note">
             {{ t("assets.chat_scope_note") }}
@@ -272,53 +300,6 @@ const delete_confirm_title = (record_name: string): string =>
               />
             </template>
           </FieldGroup>
-          <FieldGroup
-            :label="t('assets.characters.reference_image_label')"
-            :hint="t('assets.characters.reference_image_hint')"
-            :error="image_error"
-          >
-            <template #default="{ fieldId, describedBy }">
-              <img
-                v-if="reference_image !== null"
-                :src="reference_image"
-                :alt="t('assets.characters.reference_image_label')"
-                :class="styles.reference_thumbnail"
-              />
-              <input
-                :id="fieldId"
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                :aria-describedby="describedBy"
-                data-testid="character-reference-input"
-                @change="choose_reference_image"
-              />
-              <AppButton
-                v-if="reference_image !== null"
-                :label="t('assets.characters.reference_image_remove')"
-                @click="remove_reference_image"
-              />
-            </template>
-          </FieldGroup>
-          <template v-if="reference_image !== null">
-            <AppCheckbox
-              :model-value="panel.values.reference_send === 1"
-              :label="t('assets.characters.reference_send_label')"
-              @update:model-value="(send) => (panel.values.reference_send = send ? 1 : 0)"
-            />
-            <FieldGroup
-              :label="t('assets.characters.reference_mode_label')"
-              :hint="t('assets.characters.reference_mode_hint')"
-            >
-              <template #default>
-                <SegmentedControl
-                  :model-value="reference_mode"
-                  :options="reference_mode_options"
-                  :label="t('assets.characters.reference_mode_label')"
-                  @update:model-value="(mode) => (panel.values.reference_mode = mode)"
-                />
-              </template>
-            </FieldGroup>
-          </template>
         </template>
       </AssetRecordForm>
     </AppDialog>

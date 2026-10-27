@@ -103,8 +103,10 @@ of a known character, but never one the user has edited. The illustrate dialog s
 picker and a passing states field under each library character's prompt; a correction there
 rewrites the prompts and is saved as the reply's record.
 
-A character's reference image is sent only when its "send with NovelAI requests" box is ticked, and
-then in the use chosen for it:
+A character's reference image, at the top of its form, is uploaded or generated with the default image
+provider profile from an editable prompt built from the character's gender, appearance, and default
+outfit, framed as a full-body view on a white background. It is sent only when its "send with
+NovelAI requests" box is ticked, and then in the use chosen for it:
 
 - **Vibe transfer** adds the image as a vibe reference. V5 models have no vibe transfer, so the
   image is skipped there.

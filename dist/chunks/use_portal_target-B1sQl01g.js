@@ -1,5 +1,5 @@
 import { T as e } from "./vue-i18n-DUz2Gjn8.js";
-import { n as t } from "./portal_keys-BFbEhMBO.js";
+import { n as t } from "./portal_keys-B9C82xtk.js";
 //#region src/ui/shell/use_portal_target.ts
 function n() {
 	let n = e(t);

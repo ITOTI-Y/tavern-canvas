@@ -48,6 +48,8 @@ const is_pending = computed(() => props.pending);
 
 <template>
   <form :class="styles.form" @submit="handle_submit">
+    <slot name="leading-fields" />
+
     <FieldGroup :label="nameLabel" :error="nameError" required>
       <template #default="{ fieldId, describedBy, invalid }">
         <input

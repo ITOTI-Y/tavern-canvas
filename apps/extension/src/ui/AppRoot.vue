@@ -10,7 +10,7 @@ import {
 } from "../host/index.js";
 import type { IllustrationService } from "../modules/illustration/illustration_service.js";
 import type { PromptTranslator } from "../modules/translation/prompt_translator.js";
-import { ACTIVE_CHAT_ID_KEY } from "./contracts/portal_keys.js";
+import { ACTIVE_CHAT_ID_KEY, REFERENCE_IMAGE_KEY } from "./contracts/portal_keys.js";
 import type { PromptTagsPort } from "./contracts/prompt_tags_port.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
@@ -74,6 +74,20 @@ const stop_chat_watch = chat_host?.subscribe_chat_change((event) => {
 });
 onBeforeUnmount(() => stop_chat_watch?.());
 provide(ACTIVE_CHAT_ID_KEY, active_chat_id);
+
+const illustrations = studio === null ? null : (props.illustrations ?? null);
+const gallery = props.capabilities?.gallery;
+provide(
+  REFERENCE_IMAGE_KEY,
+  illustrations === null || gallery === undefined
+    ? null
+    : {
+        async generate(prompt) {
+          const image_id = await illustrations.generate_image({ ...prompt, character_prompts: [] });
+          return new Blob([new Uint8Array(await gallery.read_bytes(image_id))]);
+        },
+      },
+);
 
 const prompt_tags = computed<PromptTagsPort>(() => {
   const state = studio?.state.value;

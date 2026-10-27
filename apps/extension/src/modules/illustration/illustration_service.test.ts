@@ -352,6 +352,41 @@ describe("IllustrationService quick edits", () => {
   });
 });
 
+describe("IllustrationService.generate_image", () => {
+  it("submits one request outside any slot and resolves with the finished image", async () => {
+    const host = new MemoryHost();
+    const { service, submit, jobs, finish } = create_service(host);
+
+    const image = service.generate_image({
+      positive_prompt: "1girl, solo, full body",
+      negative_prompt: "",
+      character_prompts: [],
+    });
+    await vi.waitFor(() => expect(submit).toHaveBeenCalledOnce());
+    await Promise.resolve();
+    finish("completed");
+
+    await expect(image).resolves.toBe(IMAGE_ID);
+    expect(jobs.mark_attached).toHaveBeenCalledWith("job-1");
+  });
+
+  it("rejects with the job's error code when generation fails", async () => {
+    const host = new MemoryHost();
+    const { service, submit, finish } = create_service(host);
+
+    const image = service.generate_image({
+      positive_prompt: "1girl",
+      negative_prompt: "",
+      character_prompts: [],
+    });
+    await vi.waitFor(() => expect(submit).toHaveBeenCalledOnce());
+    await Promise.resolve();
+    finish("failed");
+
+    await expect(image).rejects.toThrow("rate_limited");
+  });
+});
+
 describe("IllustrationService automatic generation", () => {
   it("analyzes and generates after a normal reply when enabled", async () => {
     const host = new MemoryHost();

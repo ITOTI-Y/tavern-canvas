@@ -422,3 +422,29 @@
   color: var(--tc-text-muted);
   font-size: 12px;
 }
+
+.reference {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.reference .reference_thumbnail {
+  margin-bottom: 0;
+}
+
+.reference_actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reference_composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-field);
+}

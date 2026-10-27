@@ -389,6 +389,44 @@ export class IllustrationService {
     return with_character_prompts(await this.#deps.build_request(input), input.character_prompts);
   }
 
+  /**
+   * Generates one image outside any chat slot, such as a character's reference image, through the
+   * active provider profile; resolves with the gallery image id once the job finishes.
+   */
+  async generate_image(input: SlotGenerationInput): Promise<string> {
+    const request = await this.#build_slot_request(input);
+    const finished = new Map<string, GenerationJobSnapshot>();
+    let request_id: string | null = null;
+    let settle: ((job: GenerationJobSnapshot) => void) | null = null;
+    const stop = this.#deps.jobs.subscribe((job) => {
+      if (job.state !== "completed" && job.state !== "failed" && job.state !== "cancelled") {
+        return;
+      }
+      if (job.request_id === request_id) {
+        settle?.(job);
+      } else {
+        finished.set(job.request_id, job);
+      }
+    });
+    try {
+      const submitted = await this.#deps.submit(request);
+      request_id = submitted;
+      const job =
+        finished.get(submitted) ??
+        (await new Promise<GenerationJobSnapshot>((resolve) => {
+          settle = resolve;
+        }));
+      const image_id = job.state === "completed" ? job.image_ids.at(-1) : undefined;
+      if (image_id === undefined) {
+        throw new Error(job.state === "cancelled" ? "cancelled" : (job.error?.code ?? "failed"));
+      }
+      await this.#deps.jobs.mark_attached(job.job_id);
+      return image_id;
+    } finally {
+      stop();
+    }
+  }
+
   async generate(
     location: HostSwipeLocation,
     slot_id: string,

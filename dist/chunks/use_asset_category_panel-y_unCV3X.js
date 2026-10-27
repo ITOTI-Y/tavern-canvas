@@ -7,9 +7,9 @@ import { n as E, t as D } from "./FieldGroup-BT7DUBzO.js";
 import { t as O } from "./shuffle-BAB9O4dE.js";
 import { t as k } from "./trash-2-B6ZXZcor.js";
 import { t as A } from "./_prop_utils-CqbCYIc0.js";
-import { t as j } from "./NumberStepper-DKrPnJBN.js";
-import { t as M } from "./ConfirmDialog-BYLVl12S.js";
-import { t as N } from "./IconButton-BxdEmVS2.js";
+import { t as j } from "./NumberStepper-yBDRmZKZ.js";
+import { t as M } from "./ConfirmDialog-CFpyjXKp.js";
+import { t as N } from "./IconButton-bAUne4oi.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/grip-vertical.js
 var P = b("grip-vertical", [
 	["circle", {
@@ -49,53 +49,56 @@ var P = b("grip-vertical", [
 		key: "f4zoj3"
 	}]
 ]), F = {
-	assetsView: "_assetsView_1ndd4_10",
-	tabsList: "_tabsList_1ndd4_23",
-	tabsTrigger: "_tabsTrigger_1ndd4_31",
-	tabsContent: "_tabsContent_1ndd4_55",
-	categoryList: "_categoryList_1ndd4_70",
-	categoryToolbar: "_categoryToolbar_1ndd4_77",
-	searchInput: "_searchInput_1ndd4_84",
-	reorderHint: "_reorderHint_1ndd4_100",
-	emptyDescription: "_emptyDescription_1ndd4_105",
-	cardGrid: "_cardGrid_1ndd4_110",
-	assetCard: "_assetCard_1ndd4_120",
-	dragHandle: "_dragHandle_1ndd4_135",
-	assetCardMain: "_assetCardMain_1ndd4_147",
-	assetCardName: "_assetCardName_1ndd4_165",
-	assetCardSummary: "_assetCardSummary_1ndd4_175",
-	assetCardSummaryPart: "_assetCardSummaryPart_1ndd4_183",
-	assetCardActions: "_assetCardActions_1ndd4_187",
-	form: "_form_1ndd4_199",
-	textInput: "_textInput_1ndd4_205",
-	textArea: "_textArea_1ndd4_206",
-	formError: "_formError_1ndd4_228",
-	formActions: "_formActions_1ndd4_234",
-	vocabularyPanel: "_vocabularyPanel_1ndd4_244",
-	vocabularySearchRow: "_vocabularySearchRow_1ndd4_250",
-	searchResultsList: "_searchResultsList_1ndd4_255",
-	searchResultRow: "_searchResultRow_1ndd4_261",
-	searchResultTag: "_searchResultTag_1ndd4_270",
-	searchResultTranslation: "_searchResultTranslation_1ndd4_275",
-	loadMoreRow: "_loadMoreRow_1ndd4_280",
-	sectionTitle: "_sectionTitle_1ndd4_286",
-	catalogList: "_catalogList_1ndd4_292",
-	catalogEntry: "_catalogEntry_1ndd4_298",
-	catalogEntryInfo: "_catalogEntryInfo_1ndd4_307",
-	catalogEntryName: "_catalogEntryName_1ndd4_314",
-	catalogEntryMeta: "_catalogEntryMeta_1ndd4_320",
-	bundledBadge: "_bundledBadge_1ndd4_325",
-	nsfwSection: "_nsfwSection_1ndd4_335",
-	nsfwToggle: "_nsfwToggle_1ndd4_341",
-	nsfwNotice: "_nsfwNotice_1ndd4_351",
-	installProgress: "_installProgress_1ndd4_357",
-	workflowToolbarRow: "_workflowToolbarRow_1ndd4_366",
-	placeholderList: "_placeholderList_1ndd4_372",
-	placeholderRow: "_placeholderRow_1ndd4_378",
-	placeholderKey: "_placeholderKey_1ndd4_384",
-	hiddenFileInput: "_hiddenFileInput_1ndd4_395",
-	reference_thumbnail: "_reference_thumbnail_1ndd4_407",
-	chat_scope_note: "_chat_scope_note_1ndd4_416"
+	assetsView: "_assetsView_1u3zs_10",
+	tabsList: "_tabsList_1u3zs_23",
+	tabsTrigger: "_tabsTrigger_1u3zs_31",
+	tabsContent: "_tabsContent_1u3zs_55",
+	categoryList: "_categoryList_1u3zs_70",
+	categoryToolbar: "_categoryToolbar_1u3zs_77",
+	searchInput: "_searchInput_1u3zs_84",
+	reorderHint: "_reorderHint_1u3zs_100",
+	emptyDescription: "_emptyDescription_1u3zs_105",
+	cardGrid: "_cardGrid_1u3zs_110",
+	assetCard: "_assetCard_1u3zs_120",
+	dragHandle: "_dragHandle_1u3zs_135",
+	assetCardMain: "_assetCardMain_1u3zs_147",
+	assetCardName: "_assetCardName_1u3zs_165",
+	assetCardSummary: "_assetCardSummary_1u3zs_175",
+	assetCardSummaryPart: "_assetCardSummaryPart_1u3zs_183",
+	assetCardActions: "_assetCardActions_1u3zs_187",
+	form: "_form_1u3zs_199",
+	textInput: "_textInput_1u3zs_205",
+	textArea: "_textArea_1u3zs_206",
+	formError: "_formError_1u3zs_228",
+	formActions: "_formActions_1u3zs_234",
+	vocabularyPanel: "_vocabularyPanel_1u3zs_244",
+	vocabularySearchRow: "_vocabularySearchRow_1u3zs_250",
+	searchResultsList: "_searchResultsList_1u3zs_255",
+	searchResultRow: "_searchResultRow_1u3zs_261",
+	searchResultTag: "_searchResultTag_1u3zs_270",
+	searchResultTranslation: "_searchResultTranslation_1u3zs_275",
+	loadMoreRow: "_loadMoreRow_1u3zs_280",
+	sectionTitle: "_sectionTitle_1u3zs_286",
+	catalogList: "_catalogList_1u3zs_292",
+	catalogEntry: "_catalogEntry_1u3zs_298",
+	catalogEntryInfo: "_catalogEntryInfo_1u3zs_307",
+	catalogEntryName: "_catalogEntryName_1u3zs_314",
+	catalogEntryMeta: "_catalogEntryMeta_1u3zs_320",
+	bundledBadge: "_bundledBadge_1u3zs_325",
+	nsfwSection: "_nsfwSection_1u3zs_335",
+	nsfwToggle: "_nsfwToggle_1u3zs_341",
+	nsfwNotice: "_nsfwNotice_1u3zs_351",
+	installProgress: "_installProgress_1u3zs_357",
+	workflowToolbarRow: "_workflowToolbarRow_1u3zs_366",
+	placeholderList: "_placeholderList_1u3zs_372",
+	placeholderRow: "_placeholderRow_1u3zs_378",
+	placeholderKey: "_placeholderKey_1u3zs_384",
+	hiddenFileInput: "_hiddenFileInput_1u3zs_395",
+	reference_thumbnail: "_reference_thumbnail_1u3zs_407",
+	chat_scope_note: "_chat_scope_note_1u3zs_416",
+	reference: "_reference_1u3zs_407",
+	reference_actions: "_reference_actions_1u3zs_437",
+	reference_composer: "_reference_composer_1u3zs_443"
 };
 //#endregion
 //#region src/ui/views/assets/asset_field_schema.ts
@@ -394,6 +397,7 @@ var V = ["for"], H = [
 			class: _(l(F).form),
 			onSubmit: x
 		}, [
+			i(r.$slots, "leading-fields"),
 			y(D, {
 				label: e.nameLabel,
 				error: e.nameError,
