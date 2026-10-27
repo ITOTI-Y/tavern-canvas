@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppButton from "../../components/AppButton.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
@@ -39,7 +40,7 @@ const filter_date_to = ref("");
 const provider_options = computed<readonly AppSelectOption[]>(() => {
   const providers = new Set(props.state.gallery.records.map((record) => record.provider_id));
   return [
-    { value: ALL_PROVIDERS, label: t("common.actions.clear") },
+    { value: ALL_PROVIDERS, label: t("gallery.filters.all_providers") },
     ...[...providers].map((provider_id) => ({ value: provider_id, label: provider_id })),
   ];
 });
@@ -90,6 +91,24 @@ function toggle_select(record_id: string): void {
 
 function clear_selection(): void {
   selected_ids.clear();
+}
+
+const all_visible_selected = computed(
+  () =>
+    filtered_records.value.length > 0 &&
+    filtered_records.value.every((record) => selected_ids.has(record.id)),
+);
+
+/** Selects every image the filters show, or deselects them when all are already selected. */
+function toggle_select_all(): void {
+  const select = !all_visible_selected.value;
+  for (const record of filtered_records.value) {
+    if (select) {
+      selected_ids.add(record.id);
+    } else {
+      selected_ids.delete(record.id);
+    }
+  }
 }
 
 const selected_count_label = computed(() =>
@@ -262,6 +281,15 @@ const grid_status = computed(() => {
       <!-- eslint-enable vue/attribute-hyphenation -->
       <AppSwitch v-model="filter_pinned_only" :label="t('gallery.filters.pinned_only_label')" />
       <AppSwitch v-model="filter_orphaned_only" :label="t('gallery.filters.orphaned_only_label')" />
+      <AppButton
+        :label="
+          all_visible_selected ? t('common.actions.deselect_all') : t('common.actions.select_all')
+        "
+        :disabled="filtered_records.length === 0"
+        variant="secondary"
+        data-testid="gallery-select-all"
+        @click="toggle_select_all"
+      />
       <label :class="styles.dateFilterLabel">
         {{ t("gallery.filters.date_range_label") }}
         <input v-model="filter_date_from" type="date" :class="styles.dateInput" />

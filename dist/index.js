@@ -9,7 +9,7 @@ import { c as x, i as S, n as C, o as w, r as ee, s as te, u as ne } from "./chu
 import { a as re, c as T, d as ie, f as ae, i as oe, l as E, o as se, r as ce, s as le, t as ue, u as de } from "./chunks/http_acknowledgment-DvPfaNgR.js";
 import { i as fe, n as pe, o as me, r as he, s as ge, t as _e } from "./chunks/media_command_service-U2z67TUK.js";
 import { A as D, F as ve, H as ye, I as be, N as O, O as xe, P as Se, Q as Ce, V as we, W as Te, Z as Ee, _ as k, b as De, ct as A, et as j, ft as Oe, g as M, h as N, i as ke, k as Ae, m as P, n as je, nt as Me, p as F, pt as I, rt as Ne, u as Pe, ut as L, x as R, y as Fe } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as Ie } from "./chunks/create_i18n-DVG2w8QE.js";
+import { t as Ie } from "./chunks/create_i18n-D-8n5uLq.js";
 import { n as Le, r as Re, t as ze } from "./chunks/portal_keys-B9C82xtk.js";
 import { n as Be, t as Ve } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { t as He } from "./chunks/chevron-down-Tu_8qTxg.js";
@@ -2348,7 +2348,7 @@ var Wr = {
 		controller: {}
 	},
 	setup(e) {
-		let t = De(() => import("./chunks/GalleryView-bu8Ltat0.js")), n = De(() => import("./chunks/SettingsView-BBwWnS9o.js"));
+		let t = De(() => import("./chunks/GalleryView-DdYRf72N.js")), n = De(() => import("./chunks/SettingsView-DbMaZz8j.js"));
 		return (r, i) => e.state.route === "gallery" ? (O(), N(A(t), {
 			key: 0,
 			state: e.state,

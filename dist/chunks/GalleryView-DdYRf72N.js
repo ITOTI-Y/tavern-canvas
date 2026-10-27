@@ -1,29 +1,29 @@
-import { $ as e, A as t, C as n, D as r, F as i, G as a, N as o, T as s, V as c, W as l, _ as u, a as d, c as f, ct as p, dt as m, et as h, ft as g, g as _, h as v, j as y, m as b, n as x, p as S, pt as C, u as w, ut as T, v as E, x as D, y as O } from "./vue-i18n-DUz2Gjn8.js";
-import { n as ee } from "./create_i18n-DVG2w8QE.js";
+import { $ as e, A as t, C as n, D as r, F as i, G as a, N as o, T as s, V as c, W as l, _ as u, a as d, c as f, ct as p, dt as m, et as h, ft as g, g as _, h as v, j as y, m as b, n as x, p as S, pt as C, u as w, ut as T, v as ee, x as E, y as D } from "./vue-i18n-DUz2Gjn8.js";
+import { n as O } from "./create_i18n-D-8n5uLq.js";
 import { n as te } from "./portal_keys-B9C82xtk.js";
 import { n as k, t as A } from "./AppIcon-Cnhzrx9o.js";
 import { t as j } from "./check-BhrVRbkS.js";
-import { n as M, t as N } from "./download-DHgWv1wH.js";
-import { n as P, t as ne } from "./StateSurface-BA0Ffiwe.js";
-import { t as F } from "./trash-2-B6ZXZcor.js";
-import { t as I } from "./x-CDKrptQJ.js";
-import { n as L } from "./deferred_stylesheets-BpS7LWkd.js";
-import { r as R, t as re } from "./_prop_utils-CqbCYIc0.js";
-import { t as ie } from "./AppSelect-BdnjEPS_.js";
-import { a as z, c as ae, i as oe, n as B, r as se, s as V } from "./Collection-DWsxNExQ.js";
-import { t as ce } from "./ToastViewport-G0GgrUYw.js";
-import { t as H } from "./ConfirmDialog-3SJceF8v.js";
-import { t as U } from "./VirtualList-DRI7_qBR.js";
-import { t as W } from "./IconButton-DPIesKAc.js";
-import { t as le } from "./AppSwitch-DGomz9dg.js";
+import { n as ne, t as M } from "./download-DHgWv1wH.js";
+import { n as N, t as re } from "./StateSurface-BA0Ffiwe.js";
+import { t as P } from "./trash-2-B6ZXZcor.js";
+import { t as F } from "./x-CDKrptQJ.js";
+import { n as I } from "./deferred_stylesheets-BpS7LWkd.js";
+import { r as ie, t as ae } from "./_prop_utils-CqbCYIc0.js";
+import { t as oe } from "./AppSelect-BdnjEPS_.js";
+import { a as se, c as L, i as ce, n as R, r as le, s as ue } from "./Collection-DWsxNExQ.js";
+import { t as de } from "./ToastViewport-G0GgrUYw.js";
+import { t as z } from "./ConfirmDialog-3SJceF8v.js";
+import { t as B } from "./VirtualList-DRI7_qBR.js";
+import { t as V } from "./IconButton-DPIesKAc.js";
+import { t as fe } from "./AppSwitch-DGomz9dg.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/chevron-left.js
-var ue = k("chevron-left", [["path", {
+var H = k("chevron-left", [["path", {
 	d: "m15 18-6-6 6-6",
 	key: "1wnfg3"
-}]]), de = k("chevron-right", [["path", {
+}]]), U = k("chevron-right", [["path", {
 	d: "m9 18 6-6-6-6",
 	key: "mthhwq"
-}]]), fe = k("external-link", [
+}]]), W = k("external-link", [
 	["path", {
 		d: "M15 3h6v6",
 		key: "1q9fwt"
@@ -70,7 +70,7 @@ var ue = k("chevron-left", [["path", {
 		d: "M21 15V5a2 2 0 0 0-2-2H9",
 		key: "43el77"
 	}]
-]), G = k("pin-off", [
+]), me = k("pin-off", [
 	["path", {
 		d: "M12 17v5",
 		key: "bb1du9"
@@ -87,13 +87,13 @@ var ue = k("chevron-left", [["path", {
 		d: "M9 9v1.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h11",
 		key: "c9qhm2"
 	}]
-]), K = k("pin", [["path", {
+]), G = k("pin", [["path", {
 	d: "M12 17v5",
 	key: "bb1du9"
 }], ["path", {
 	d: "M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z",
 	key: "1nkz8b"
-}]]), me = k("unlink", [
+}]]), K = k("unlink", [
 	["path", {
 		d: "m18.84 12.25 1.72-1.71h-.02a5.004 5.004 0 0 0-.12-7.07 5.006 5.006 0 0 0-6.95 0l-1.72 1.71",
 		key: "yqzxt4"
@@ -176,8 +176,8 @@ var ue = k("chevron-left", [["path", {
 };
 //#endregion
 //#region src/ui/views/gallery/gallery_styles.ts
-L("gallery", "._galleryView_1wzts_10{flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._filterBar_1wzts_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;align-items:center;gap:16px;padding-bottom:12px;display:flex}._dateFilterLabel_1wzts_32{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:flex}._dateInput_1wzts_43{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);color:var(--tc-text);padding:6px 8px;font-size:12px}._cacheOccupancy_1wzts_52{color:var(--tc-text-muted);margin-left:auto;font-size:12px}._emptyDescription_1wzts_58{color:var(--tc-text-muted);font-size:13px}._skeletonGrid_1wzts_67{flex-wrap:wrap;gap:8px;display:flex}._skeletonTile_1wzts_73{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);width:176px;height:176px}._gridContainer_1wzts_84{flex:1;min-height:0}._gridRow_1wzts_89{display:flex}._tile_1wzts_93{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);flex:none;position:relative;overflow:hidden}._tile_1wzts_93[data-selected]{outline:2px solid var(--tc-accent);outline-offset:-2px}._tileButton_1wzts_106{width:100%;height:100%;padding:0;display:block}._tileSkeleton_1wzts_113{background-color:var(--tc-surface-raised);position:absolute;inset:0}._tileImage_1wzts_119{object-fit:cover;width:100%;height:100%;transition:opacity var(--tc-motion-normal) ease-out}._tileFallback_1wzts_126{color:var(--tc-text-muted);text-align:center;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:8px;font-size:11px;display:flex;position:absolute;inset:0}._tilePinnedBadge_1wzts_144{border-radius:var(--tc-radius-status);background-color:var(--tc-media-scrim);color:var(--tc-media-ink);justify-content:center;align-items:center;padding:3px;display:inline-flex;position:absolute;top:6px;left:6px}._tileSelectToggle_1wzts_157{border-radius:var(--tc-radius-status);border:1px solid var(--tc-media-ink);background-color:var(--tc-media-scrim);width:20px;height:20px;color:var(--tc-media-ink);transition:background-color var(--tc-motion-fast) ease-out;justify-content:center;align-items:center;display:inline-flex;position:absolute;top:6px;right:6px}._tileSelectToggle_1wzts_157[data-checked]{background-color:var(--tc-accent);color:var(--tc-on-accent)}._bulkActionBar_1wzts_184{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding-top:12px;display:flex}._bulkActionCount_1wzts_193{color:var(--tc-text);font-size:13px}._bulkActionButtons_1wzts_198{align-items:center;gap:8px;display:flex}._previewOverlay_1wzts_208{z-index:var(--tc-z-overlay);background-color:#111318b8;position:fixed;inset:0}._previewContent_1wzts_215{z-index:var(--tc-z-overlay);border-radius:var(--tc-radius-panel);background-color:var(--tc-surface);display:flex;position:fixed;inset:16px;overflow:hidden}._previewLayout_1wzts_225{width:100%;min-height:0;display:flex}._previewMain_1wzts_231{flex-direction:column;flex:1;min-width:0;display:flex}._previewToolbar_1wzts_238{border-bottom:1px solid var(--tc-divider);align-items:center;gap:4px;padding:8px;display:flex}._previewToolbarButton_1wzts_246{border-radius:var(--tc-radius-field);width:32px;height:32px;color:var(--tc-text);justify-content:center;align-items:center;display:inline-flex}._previewToolbarButton_1wzts_246:hover{background-color:var(--tc-surface-raised)}._previewToolbarSpacer_1wzts_260{flex:1}._previewImageArea_1wzts_264{flex:1;justify-content:center;align-items:center;gap:8px;min-height:0;padding:12px;display:flex;overflow:auto}._previewImageFrame_1wzts_275{flex:1;justify-content:center;align-items:center;height:100%;min-height:0;display:flex;position:relative}._previewImage_1wzts_264{border-radius:var(--tc-radius-image);object-fit:contain;touch-action:auto;max-width:100%;max-height:100%}._previewImageFallback_1wzts_293{color:var(--tc-text-muted);justify-content:center;align-items:center;padding:24px;font-size:13px;display:flex}._previewNavButton_1wzts_302{flex:none}._previewInspector_1wzts_306{border-left:1px solid var(--tc-divider);flex:none;width:320px;max-width:40vw;padding:16px;overflow-y:auto}._metadataInspector_1wzts_319{flex-direction:column;gap:12px;display:flex}._metadataTitle_1wzts_325{color:var(--tc-text);font-size:14px;font-weight:600}._metadataOrphanNotice_1wzts_331{color:var(--tc-warning);font-size:12px}._metadataList_1wzts_336{flex-direction:column;gap:8px;display:flex}._metadataRow_1wzts_342{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding-bottom:6px;font-size:12px;display:flex}._metadataRow_1wzts_342 dt{color:var(--tc-text-muted)}._metadataRow_1wzts_342 dd{color:var(--tc-text);margin:0}._metadataPrompt_1wzts_360{white-space:pre-wrap;overflow-wrap:anywhere}._metadataEmpty_1wzts_365{color:var(--tc-text-muted);font-size:12px}._metadataActions_1wzts_370{flex-wrap:wrap;gap:8px;display:flex}._metadataActionsHint_1wzts_376{color:var(--tc-text-muted);font-size:12px}@media (width<=959px){._previewContent_1wzts_215{border-radius:0;inset:0}._previewLayout_1wzts_225{flex-direction:column;overflow-y:auto}._previewMain_1wzts_231{flex:none}._previewToolbar_1wzts_238{z-index:1;background-color:var(--tc-surface);position:sticky;top:0}._previewImageArea_1wzts_264{min-height:45vh}._previewInspector_1wzts_306{border-left:none;border-top:1px solid var(--tc-divider);width:100%;max-width:100%}}");
-var q = he, ge = /* @__PURE__ */ D({
+I("gallery", "._galleryView_1wzts_10{flex-direction:column;gap:12px;height:100%;min-height:0;padding:16px;display:flex}._filterBar_1wzts_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;align-items:center;gap:16px;padding-bottom:12px;display:flex}._dateFilterLabel_1wzts_32{color:var(--tc-text-muted);align-items:center;gap:6px;font-size:12px;display:flex}._dateInput_1wzts_43{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);color:var(--tc-text);padding:6px 8px;font-size:12px}._cacheOccupancy_1wzts_52{color:var(--tc-text-muted);margin-left:auto;font-size:12px}._emptyDescription_1wzts_58{color:var(--tc-text-muted);font-size:13px}._skeletonGrid_1wzts_67{flex-wrap:wrap;gap:8px;display:flex}._skeletonTile_1wzts_73{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);width:176px;height:176px}._gridContainer_1wzts_84{flex:1;min-height:0}._gridRow_1wzts_89{display:flex}._tile_1wzts_93{border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);flex:none;position:relative;overflow:hidden}._tile_1wzts_93[data-selected]{outline:2px solid var(--tc-accent);outline-offset:-2px}._tileButton_1wzts_106{width:100%;height:100%;padding:0;display:block}._tileSkeleton_1wzts_113{background-color:var(--tc-surface-raised);position:absolute;inset:0}._tileImage_1wzts_119{object-fit:cover;width:100%;height:100%;transition:opacity var(--tc-motion-normal) ease-out}._tileFallback_1wzts_126{color:var(--tc-text-muted);text-align:center;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:8px;font-size:11px;display:flex;position:absolute;inset:0}._tilePinnedBadge_1wzts_144{border-radius:var(--tc-radius-status);background-color:var(--tc-media-scrim);color:var(--tc-media-ink);justify-content:center;align-items:center;padding:3px;display:inline-flex;position:absolute;top:6px;left:6px}._tileSelectToggle_1wzts_157{border-radius:var(--tc-radius-status);border:1px solid var(--tc-media-ink);background-color:var(--tc-media-scrim);width:20px;height:20px;color:var(--tc-media-ink);transition:background-color var(--tc-motion-fast) ease-out;justify-content:center;align-items:center;display:inline-flex;position:absolute;top:6px;right:6px}._tileSelectToggle_1wzts_157[data-checked]{background-color:var(--tc-accent);color:var(--tc-on-accent)}._bulkActionBar_1wzts_184{border-top:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding-top:12px;display:flex}._bulkActionCount_1wzts_193{color:var(--tc-text);font-size:13px}._bulkActionButtons_1wzts_198{align-items:center;gap:8px;display:flex}._previewOverlay_1wzts_208{z-index:var(--tc-z-overlay);background-color:#111318b8;position:fixed;inset:0}._previewContent_1wzts_215{z-index:var(--tc-z-overlay);border-radius:var(--tc-radius-panel);background-color:var(--tc-surface);display:flex;position:fixed;inset:16px;overflow:hidden}._previewLayout_1wzts_225{width:100%;min-height:0;display:flex}._previewMain_1wzts_231{flex-direction:column;flex:1;min-width:0;display:flex}._previewToolbar_1wzts_238{border-bottom:1px solid var(--tc-divider);align-items:center;gap:4px;padding:8px;display:flex}._previewToolbarButton_1wzts_246{border-radius:var(--tc-radius-field);width:32px;height:32px;color:var(--tc-text);justify-content:center;align-items:center;display:inline-flex}._previewToolbarButton_1wzts_246:hover{background-color:var(--tc-surface-raised)}._previewToolbarSpacer_1wzts_260{flex:1}._previewImageArea_1wzts_264{flex:1;justify-content:center;align-items:center;gap:8px;min-height:0;padding:12px;display:flex;overflow:auto}._previewImageFrame_1wzts_275{flex:1;justify-content:center;align-items:center;height:100%;min-height:0;display:flex;position:relative}._previewImage_1wzts_264{border-radius:var(--tc-radius-image);object-fit:contain;touch-action:auto;max-width:100%;max-height:100%}._previewImageFallback_1wzts_293{color:var(--tc-text-muted);justify-content:center;align-items:center;padding:24px;font-size:13px;display:flex}._previewNavButton_1wzts_302{flex:none}._previewInspector_1wzts_306{border-left:1px solid var(--tc-divider);flex:none;width:320px;max-width:40vw;padding:16px;overflow-y:auto}._metadataInspector_1wzts_319{flex-direction:column;gap:12px;display:flex}._metadataTitle_1wzts_325{color:var(--tc-text);font-size:14px;font-weight:600}._metadataOrphanNotice_1wzts_331{color:var(--tc-warning);font-size:12px}._metadataList_1wzts_336{flex-direction:column;gap:8px;display:flex}._metadataRow_1wzts_342{border-bottom:1px solid var(--tc-divider);flex-direction:column;gap:2px;padding-bottom:6px;font-size:12px;display:flex}._metadataRow_1wzts_342 dt{color:var(--tc-text-muted)}._metadataRow_1wzts_342 dd{color:var(--tc-text);margin:0}._metadataPrompt_1wzts_360{white-space:pre-wrap;overflow-wrap:anywhere}._metadataEmpty_1wzts_365{color:var(--tc-text-muted);font-size:12px}._metadataActions_1wzts_370{flex-wrap:wrap;gap:8px;display:flex}._metadataActionsHint_1wzts_376{color:var(--tc-text-muted);font-size:12px}@media (width<=959px){._previewContent_1wzts_215{border-radius:0;inset:0}._previewLayout_1wzts_225{flex-direction:column;overflow-y:auto}._previewMain_1wzts_231{flex:none}._previewToolbar_1wzts_238{z-index:1;background-color:var(--tc-surface);position:sticky;top:0}._previewImageArea_1wzts_264{min-height:45vh}._previewInspector_1wzts_306{border-left:none;border-top:1px solid var(--tc-divider);width:100%;max-width:100%}}");
+var q = he, ge = /* @__PURE__ */ E({
 	__name: "BulkActionBar",
 	props: {
 		selectedCountLabel: {},
@@ -196,21 +196,21 @@ var q = he, ge = /* @__PURE__ */ D({
 	setup(e, { emit: t }) {
 		let n = t;
 		return (t, r) => (o(), u("div", { class: T(p(q).bulkActionBar) }, [b("span", { class: T(["tc-tabular-nums", p(q).bulkActionCount]) }, C(e.selectedCountLabel), 3), b("div", { class: T(p(q).bulkActionButtons) }, [
-			O(P, {
+			D(N, {
 				label: e.downloadLabel,
-				icon: p(N),
+				icon: p(M),
 				variant: "secondary",
 				onClick: r[0] ||= (e) => n("download")
 			}, null, 8, ["label", "icon"]),
-			O(P, {
+			D(N, {
 				label: e.detachLabel,
-				icon: p(me),
+				icon: p(K),
 				variant: "secondary",
 				onClick: r[1] ||= (e) => n("detach")
 			}, null, 8, ["label", "icon"]),
-			O(P, {
+			D(N, {
 				label: e.deleteLabel,
-				icon: p(F),
+				icon: p(P),
 				variant: "destructive",
 				pending: e.pending,
 				onClick: r[2] ||= (e) => n("delete")
@@ -219,20 +219,20 @@ var q = he, ge = /* @__PURE__ */ D({
 				"icon",
 				"pending"
 			]),
-			O(W, {
-				icon: p(I),
+			D(V, {
+				icon: p(F),
 				label: e.clearLabel,
 				onClick: r[3] ||= (e) => n("clear")
 			}, null, 8, ["icon", "label"])
 		], 2)], 2));
 	}
-}), _e = 1, J = .35, Y = 3.5;
-function ve(e) {
+}), _e = 1, ve = .35, ye = 3.5;
+function be(e) {
 	if (e.width === null || e.height === null || e.width <= 0 || e.height <= 0) return _e;
 	let t = e.width / e.height;
-	return Math.min(Y, Math.max(J, t));
+	return Math.min(ye, Math.max(ve, t));
 }
-function ye(e, t, n, r) {
+function J(e, t, n, r) {
 	if (e.length === 0) return [];
 	let i = t > 0 ? t : n, a = [], o = [], s = 0;
 	function c() {
@@ -242,7 +242,7 @@ function ye(e, t, n, r) {
 		}), o = [], s = 0);
 	}
 	for (let t of e) {
-		let e = Math.round(n * ve(t)), a = s + (o.length > 0 ? r : 0) + e;
+		let e = Math.round(n * be(t)), a = s + (o.length > 0 ? r : 0) + e;
 		o.length > 0 && a > i ? (c(), o.push({
 			item: t,
 			pixel_width: e
@@ -255,7 +255,7 @@ function ye(e, t, n, r) {
 }
 //#endregion
 //#region src/ui/views/gallery/use_gallery_object_url.ts
-function X(e, t, n, r) {
+function Y(e, t, n, r) {
 	let i = h(null), a = h("idle"), o = h(null), s = 0;
 	function l() {
 		i.value !== null && (URL.revokeObjectURL(i.value), i.value = null), o.value = null;
@@ -284,11 +284,11 @@ function X(e, t, n, r) {
 }
 //#endregion
 //#region src/ui/views/gallery/GalleryTile.vue?vue&type=script&setup=true&lang.ts
-var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label"], we = [
+var xe = ["data-selected"], Se = ["aria-label"], Ce = ["src"], we = ["aria-label"], Te = [
 	"data-checked",
 	"aria-pressed",
 	"aria-label"
-], Te = /* @__PURE__ */ D({
+], Ee = /* @__PURE__ */ E({
 	__name: "GalleryTile",
 	props: {
 		record: {},
@@ -303,7 +303,7 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 	},
 	emits: ["open", "toggle-select"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { url: i, status: a } = X(S(() => n.record.id), S(() => n.record.media_type), h(!0), n.readBytes), s = h(!1);
+		let n = e, r = t, { url: i, status: a } = Y(S(() => n.record.id), S(() => n.record.media_type), h(!0), n.readBytes), s = h(!1);
 		return (t, n) => (o(), u("div", {
 			class: T(p(q).tile),
 			style: g({
@@ -331,22 +331,22 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 				style: g({ visibility: s.value ? "visible" : "hidden" }),
 				onLoad: n[0] ||= (e) => s.value = !0,
 				onError: n[1] ||= (e) => s.value = !1
-			}, null, 46, Se)) : p(a) === "error" ? (o(), u("div", {
+			}, null, 46, Ce)) : p(a) === "error" ? (o(), u("div", {
 				key: 2,
 				class: T(p(q).tileFallback)
-			}, [O(A, {
+			}, [D(A, {
 				icon: p(pe),
 				size: 20
-			}, null, 8, ["icon"]), b("span", null, C(e.thumbnailFailedLabel), 1)], 2)) : _("", !0)], 10, xe),
+			}, null, 8, ["icon"]), b("span", null, C(e.thumbnailFailedLabel), 1)], 2)) : _("", !0)], 10, Se),
 			e.record.pinned ? (o(), u("span", {
 				key: 0,
 				role: "img",
 				class: T(p(q).tilePinnedBadge),
 				"aria-label": e.pinnedLabel
-			}, [O(A, {
-				icon: p(K),
+			}, [D(A, {
+				icon: p(G),
 				size: 12
-			}, null, 8, ["icon"])], 10, Ce)) : _("", !0),
+			}, null, 8, ["icon"])], 10, we)) : _("", !0),
 			b("button", {
 				type: "button",
 				class: T(p(q).tileSelectToggle),
@@ -358,10 +358,10 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 				key: 0,
 				icon: p(j),
 				size: 14
-			}, null, 8, ["icon"])) : _("", !0)], 10, we)
-		], 14, be));
+			}, null, 8, ["icon"])) : _("", !0)], 10, Te)
+		], 14, xe));
 	}
-}), Ee = 176, De = 8, Oe = /* @__PURE__ */ D({
+}), De = 176, Oe = 8, ke = /* @__PURE__ */ E({
 	__name: "ImageGrid",
 	props: {
 		records: {},
@@ -388,7 +388,7 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 		y(() => {
 			f?.disconnect();
 		});
-		let x = S(() => ye(r.records, m.value, Ee, De));
+		let x = S(() => J(r.records, m.value, De, Oe));
 		function C(e) {
 			return e.key;
 		}
@@ -396,7 +396,7 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 			ref_key: "container",
 			ref: s,
 			class: T(p(q).gridContainer)
-		}, [b.value > 0 ? (o(), v(U, {
+		}, [b.value > 0 ? (o(), v(B, {
 			key: 0,
 			items: x.value,
 			"item-size": 184,
@@ -408,14 +408,14 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 				key: 0,
 				class: T(p(q).gridRow),
 				style: g({
-					height: `${Ee}px`,
-					gap: `${De}px`
+					height: `${De}px`,
+					gap: `${Oe}px`
 				})
-			}, [(o(!0), u(w, null, i(t.tiles, (t) => (o(), v(Te, {
+			}, [(o(!0), u(w, null, i(t.tiles, (t) => (o(), v(Ee, {
 				key: t.item.id,
 				record: t.item,
 				"pixel-width": t.pixel_width,
-				"row-height": Ee,
+				"row-height": De,
 				selected: e.selectedIds.has(t.item.id),
 				"read-bytes": e.readBytes,
 				"thumbnail-failed-label": e.thumbnailFailedLabel,
@@ -444,7 +444,7 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 			"ariaLabel"
 		])) : _("", !0)], 2));
 	}
-}), ke = { class: "tc-tabular-nums" }, Ae = { class: "tc-tabular-nums" }, je = /* @__PURE__ */ D({
+}), Ae = { class: "tc-tabular-nums" }, je = { class: "tc-tabular-nums" }, Me = /* @__PURE__ */ E({
 	__name: "ImageMetadataInspector",
 	props: {
 		record: {},
@@ -475,11 +475,11 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 				key: 0,
 				class: T(p(q).metadataOrphanNotice)
 			}, C(e.orphanLabel), 3)) : _("", !0),
-			b("dl", { class: T(p(q).metadataList) }, [b("div", { class: T(p(q).metadataRow) }, [b("dt", null, C(e.providerLabel), 1), b("dd", ke, C(e.record.provider_id), 1)], 2), e.parameters ? (o(), u(w, { key: 0 }, [
+			b("dl", { class: T(p(q).metadataList) }, [b("div", { class: T(p(q).metadataRow) }, [b("dt", null, C(e.providerLabel), 1), b("dd", Ae, C(e.record.provider_id), 1)], 2), e.parameters ? (o(), u(w, { key: 0 }, [
 				e.parameters.seed ? (o(), u("div", {
 					key: 0,
 					class: T(p(q).metadataRow)
-				}, [b("dt", null, C(e.seedLabel), 1), b("dd", Ae, C(e.parameters.seed), 1)], 2)) : _("", !0),
+				}, [b("dt", null, C(e.seedLabel), 1), b("dd", je, C(e.parameters.seed), 1)], 2)) : _("", !0),
 				e.parameters.model ? (o(), u("div", {
 					key: 1,
 					class: T(p(q).metadataRow)
@@ -493,16 +493,16 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 				key: 1,
 				class: T(p(q).metadataEmpty)
 			}, C(e.emptyDescription), 3)) : _("", !0),
-			e.parameters ? (o(), v(P, {
+			e.parameters ? (o(), v(N, {
 				key: 2,
 				label: i.value ? e.copiedLabel : e.copyLabel,
-				icon: i.value ? p(j) : p(M),
+				icon: i.value ? p(j) : p(ne),
 				variant: "secondary",
 				onClick: n[0] ||= () => void a()
 			}, null, 8, ["label", "icon"])) : _("", !0),
-			b("div", { class: T(p(q).metadataActions) }, [O(P, {
+			b("div", { class: T(p(q).metadataActions) }, [D(N, {
 				label: e.sourceMessageLabel,
-				icon: p(fe),
+				icon: p(W),
 				variant: "secondary",
 				disabled: e.record.source_message_id === null,
 				onClick: n[1] ||= (e) => r("open-source")
@@ -513,7 +513,7 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 			])], 2)
 		], 2));
 	}
-}), Me = [
+}), Ne = [
 	137,
 	80,
 	78,
@@ -523,57 +523,57 @@ var be = ["data-selected"], xe = ["aria-label"], Se = ["src"], Ce = ["aria-label
 	26,
 	10
 ];
-function Ne(e) {
+function Pe(e) {
 	let t = "";
 	for (let n of e) t += String.fromCharCode(n);
 	return t;
 }
-function Z(e, t) {
+function X(e, t) {
 	for (let n = t; n < e.length; n += 1) if (e[n] === 0) return n;
 	return -1;
 }
-function Pe(e, t, n) {
-	let r = Z(e, t);
+function Fe(e, t, n) {
+	let r = X(e, t);
 	return r === -1 || r >= n ? null : {
 		keyword: new TextDecoder("iso-8859-1").decode(e.subarray(t, r)),
 		text: new TextDecoder("iso-8859-1").decode(e.subarray(r + 1, n))
 	};
 }
-function Fe(e, t, n) {
-	let r = Z(e, t);
+function Ie(e, t, n) {
+	let r = X(e, t);
 	if (r === -1 || r + 2 >= n) return null;
 	let i = new TextDecoder("iso-8859-1").decode(e.subarray(t, r));
 	if ((e[r + 1] ?? 0) !== 0) return null;
-	let a = Z(e, r + 3);
+	let a = X(e, r + 3);
 	if (a === -1) return null;
-	let o = Z(e, a + 1);
+	let o = X(e, a + 1);
 	return o === -1 ? null : {
 		keyword: i,
 		text: new TextDecoder("utf-8").decode(e.subarray(o + 1, n))
 	};
 }
-function Ie(e) {
-	if (e.length < 8 || !Me.every((t, n) => e[n] === t)) return [];
+function Le(e) {
+	if (e.length < 8 || !Ne.every((t, n) => e[n] === t)) return [];
 	let t = new DataView(e.buffer, e.byteOffset, e.byteLength), n = [], r = 8;
 	for (; r + 8 <= e.length;) {
-		let i = t.getUint32(r, !1), a = Ne(e.subarray(r + 4, r + 8)), o = r + 8, s = o + i;
+		let i = t.getUint32(r, !1), a = Pe(e.subarray(r + 4, r + 8)), o = r + 8, s = o + i;
 		if (i < 0 || s + 4 > e.length) break;
 		if (a === "tEXt") {
-			let t = Pe(e, o, s);
+			let t = Fe(e, o, s);
 			t && n.push(t);
 		} else if (a === "iTXt") {
-			let t = Fe(e, o, s);
+			let t = Ie(e, o, s);
 			t && n.push(t);
 		} else if (a === "IEND") break;
 		r = s + 4;
 	}
 	return n;
 }
-function Q(e, t) {
+function Z(e, t) {
 	return e.find((e) => e.keyword.toLowerCase() === t.toLowerCase());
 }
-function Le(e) {
-	let t = Q(e, "parameters");
+function Re(e) {
+	let t = Z(e, "parameters");
 	if (!t) return null;
 	let n = t.text, r = /\r?\nNegative prompt:\s*/u.exec(n), i = r ? n.slice(0, r.index).trim() : null, a = r ? n.slice(r.index + r[0].length) : n, o = /\r?\nSteps:/u.exec(a), s = r ? (o ? a.slice(0, o.index) : a).trim() : null, c = /Seed:\s*(\d+)/u.exec(n), l = /Sampler:\s*([^,\n]+)/u.exec(n), u = /Steps:\s*(\d+)/u.exec(n), d = /Model:\s*([^,\n]+)/u.exec(n);
 	return {
@@ -587,11 +587,11 @@ function Le(e) {
 		raw_text: n
 	};
 }
-function $(e) {
+function Q(e) {
 	return typeof e == "string" ? e : typeof e == "number" ? String(e) : null;
 }
-function Re(e) {
-	let t = Q(e, "Comment"), n = Q(e, "Description");
+function ze(e) {
+	let t = Z(e, "Comment"), n = Z(e, "Description");
 	if (!t && !n) return null;
 	let r = {};
 	if (t) try {
@@ -603,17 +603,17 @@ function Re(e) {
 	let i = [n?.text, t?.text].filter(Boolean).join("\n");
 	return {
 		source: "novelai",
-		positive_prompt: n?.text ?? $(r.prompt),
-		negative_prompt: $(r.uc),
-		seed: $(r.seed),
-		sampler: $(r.sampler),
-		steps: $(r.steps),
+		positive_prompt: n?.text ?? Q(r.prompt),
+		negative_prompt: Q(r.uc),
+		seed: Q(r.seed),
+		sampler: Q(r.sampler),
+		steps: Q(r.steps),
 		model: null,
 		raw_text: i === "" ? t?.text ?? "" : i
 	};
 }
-function ze(e) {
-	let t = Q(e, "prompt") ?? Q(e, "workflow");
+function Be(e) {
+	let t = Z(e, "prompt") ?? Z(e, "workflow");
 	return t ? {
 		source: "comfyui",
 		positive_prompt: null,
@@ -625,13 +625,13 @@ function ze(e) {
 		raw_text: t.text
 	} : null;
 }
-function Be(e) {
-	let t = Ie(e);
-	return t.length === 0 ? null : Le(t) ?? Re(t) ?? ze(t);
+function Ve(e) {
+	let t = Le(e);
+	return t.length === 0 ? null : Re(t) ?? ze(t) ?? Be(t);
 }
 //#endregion
 //#region src/ui/views/gallery/ImagePreviewDialog.vue?vue&type=script&setup=true&lang.ts
-var Ve = ["src"], He = /* @__PURE__ */ D({
+var He = ["src"], Ue = /* @__PURE__ */ E({
 	__name: "ImagePreviewDialog",
 	props: {
 		open: { type: Boolean },
@@ -678,48 +678,48 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 		"copied"
 	],
 	setup(e, { emit: t }) {
-		let r = e, i = t, { url: a, status: d, bytes: f } = X(S(() => r.record?.id ?? ""), S(() => r.record?.media_type ?? "image/png"), S(() => r.open && r.record !== null), r.readBytes), g = h(null);
+		let r = e, i = t, { url: a, status: d, bytes: f } = Y(S(() => r.record?.id ?? ""), S(() => r.record?.media_type ?? "image/png"), S(() => r.open && r.record !== null), r.readBytes), g = h(null);
 		c(f, (e) => {
-			g.value = e ? Be(e) : null;
+			g.value = e ? Ve(e) : null;
 		});
 		let y = h(!1), x = h(!1);
 		function w(e) {
 			i("update:open", e);
 		}
-		let D = s(te, void 0), ee = S(() => D ? { to: D } : {});
-		return (t, r) => (o(), v(p(ae), {
+		let E = s(te, void 0), O = S(() => E ? { to: E } : {});
+		return (t, r) => (o(), v(p(L), {
 			open: e.open,
 			"onUpdate:open": w
 		}, {
 			default: l(() => [
-				O(p(R), m(n(ee.value)), {
-					default: l(() => [O(p(se), { class: T(p(q).previewOverlay) }, null, 8, ["class"]), O(p(z), { class: T(p(q).previewContent) }, {
+				D(p(ie), m(n(O.value)), {
+					default: l(() => [D(p(le), { class: T(p(q).previewOverlay) }, null, 8, ["class"]), D(p(se), { class: T(p(q).previewContent) }, {
 						default: l(() => [
-							O(p(B), { class: "tc-visually-hidden" }, {
-								default: l(() => [E(C(e.metadataTitle), 1)]),
+							D(p(R), { class: "tc-visually-hidden" }, {
+								default: l(() => [ee(C(e.metadataTitle), 1)]),
 								_: 1
 							}),
-							O(p(oe), { class: "tc-visually-hidden" }, {
-								default: l(() => [E(C(e.parametersEmptyDescription), 1)]),
+							D(p(ce), { class: "tc-visually-hidden" }, {
+								default: l(() => [ee(C(e.parametersEmptyDescription), 1)]),
 								_: 1
 							}),
 							e.record ? (o(), u("div", {
 								key: 0,
 								class: T(p(q).previewLayout)
 							}, [b("div", { class: T(p(q).previewMain) }, [b("div", { class: T(p(q).previewToolbar) }, [
-								O(p(V), {
+								D(p(ue), {
 									class: T(["tc-interactive", p(q).previewToolbarButton]),
 									"aria-label": e.closeLabel
 								}, {
-									default: l(() => [O(A, {
-										icon: p(I),
+									default: l(() => [D(A, {
+										icon: p(F),
 										size: 18
 									}, null, 8, ["icon"])]),
 									_: 1
 								}, 8, ["class", "aria-label"]),
 								b("div", { class: T(p(q).previewToolbarSpacer) }, null, 2),
-								O(W, {
-									icon: e.record.pinned ? p(G) : p(K),
+								D(V, {
+									icon: e.record.pinned ? p(me) : p(G),
 									label: e.record.pinned ? e.unpinLabel : e.pinLabel,
 									pressed: e.record.pinned,
 									onClick: r[0] ||= (e) => i("toggle-pin")
@@ -728,26 +728,26 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 									"label",
 									"pressed"
 								]),
-								O(W, {
-									icon: p(N),
+								D(V, {
+									icon: p(M),
 									label: e.downloadLabel,
 									onClick: r[1] ||= (e) => i("download")
 								}, null, 8, ["icon", "label"]),
-								O(W, {
-									icon: p(me),
+								D(V, {
+									icon: p(K),
 									label: e.detachLabel,
 									onClick: r[2] ||= (e) => y.value = !0
 								}, null, 8, ["icon", "label"]),
-								O(W, {
-									icon: p(F),
+								D(V, {
+									icon: p(P),
 									destructive: "",
 									label: e.deleteLabel,
 									onClick: r[3] ||= (e) => x.value = !0
 								}, null, 8, ["icon", "label"])
 							], 2), b("div", { class: T(p(q).previewImageArea) }, [
-								e.hasPrevious ? (o(), v(W, {
+								e.hasPrevious ? (o(), v(V, {
 									key: 0,
-									icon: p(ue),
+									icon: p(H),
 									label: e.previousLabel,
 									class: T(p(q).previewNavButton),
 									onClick: r[4] ||= (e) => i("previous")
@@ -762,7 +762,7 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 									class: T(p(q).previewImage),
 									alt: "",
 									decoding: "async"
-								}, null, 10, Ve)) : p(d) === "error" ? (o(), u("div", {
+								}, null, 10, He)) : p(d) === "error" ? (o(), u("div", {
 									key: 1,
 									class: T(p(q).previewImageFallback)
 								}, C(e.thumbnailFailedLabel), 3)) : (o(), u("div", {
@@ -770,9 +770,9 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 									class: T(p(q).tileSkeleton),
 									"aria-hidden": "true"
 								}, null, 2))], 2),
-								e.hasNext ? (o(), v(W, {
+								e.hasNext ? (o(), v(V, {
 									key: 1,
-									icon: p(de),
+									icon: p(U),
 									label: e.nextLabel,
 									class: T(p(q).previewNavButton),
 									onClick: r[5] ||= (e) => i("next")
@@ -781,7 +781,7 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 									"label",
 									"class"
 								])) : _("", !0)
-							], 2)], 2), b("div", { class: T(p(q).previewInspector) }, [O(je, {
+							], 2)], 2), b("div", { class: T(p(q).previewInspector) }, [D(Me, {
 								record: e.record,
 								parameters: g.value,
 								loading: p(d) === "loading",
@@ -817,7 +817,7 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 					}, 8, ["class"])]),
 					_: 1
 				}, 16),
-				O(H, {
+				D(z, {
 					open: y.value,
 					title: e.detachConfirmTitle,
 					description: e.detachConfirmDescription,
@@ -836,7 +836,7 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 					"confirm-label",
 					"cancel-label"
 				]),
-				O(H, {
+				D(z, {
 					open: x.value,
 					title: e.deleteConfirmTitle,
 					description: e.deleteConfirmDescription,
@@ -859,7 +859,7 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 			_: 1
 		}, 8, ["open"]));
 	}
-}), Ue = { class: "tc-visually-hidden" }, We = "all", Ge = /* @__PURE__ */ D({
+}), We = { class: "tc-visually-hidden" }, $ = "all", Ge = /* @__PURE__ */ E({
 	__name: "GalleryView",
 	props: {
 		state: {},
@@ -868,36 +868,41 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 		gridHeightOverride: {}
 	},
 	setup(t) {
-		let n = t, { t: s, locale: c } = x(), f = h(We), m = h(!1), g = h(!1), y = h(""), D = h(""), te = S(() => {
+		let n = t, { t: s, locale: c } = x(), f = h($), m = h(!1), g = h(!1), y = h(""), E = h(""), te = S(() => {
 			let e = new Set(n.state.gallery.records.map((e) => e.provider_id));
 			return [{
-				value: We,
-				label: s("common.actions.clear")
+				value: $,
+				label: s("gallery.filters.all_providers")
 			}, ...[...e].map((e) => ({
 				value: e,
 				label: e
 			}))];
 		});
 		function k(e) {
-			return !(f.value !== We && e.provider_id !== f.value || m.value && !e.pinned || g.value && !e.quarantined || y.value !== "" && e.created_at < y.value || D.value !== "" && e.created_at > `${D.value}T23:59:59.999Z`);
+			return !(f.value !== $ && e.provider_id !== f.value || m.value && !e.pinned || g.value && !e.quarantined || y.value !== "" && e.created_at < y.value || E.value !== "" && e.created_at > `${E.value}T23:59:59.999Z`);
 		}
-		let A = S(() => n.state.gallery.records.filter(k)), j = S(() => c.value === "zh-CN" ? "zh-CN" : "en"), M = S(() => {
+		let A = S(() => n.state.gallery.records.filter(k)), j = S(() => c.value === "zh-CN" ? "zh-CN" : "en"), ne = S(() => {
 			let e = n.state.diagnostics.snapshot;
 			return !e || e.storage_usage_bytes === null || e.storage_quota_bytes === null ? null : s("gallery.cache_occupancy.description", {
-				used: ee(e.storage_usage_bytes, j.value),
-				limit: ee(e.storage_quota_bytes, j.value)
+				used: O(e.storage_usage_bytes, j.value),
+				limit: O(e.storage_quota_bytes, j.value)
 			});
-		}), N = e(/* @__PURE__ */ new Set());
+		}), M = e(/* @__PURE__ */ new Set());
 		function P(e) {
-			N.has(e) ? N.delete(e) : N.add(e);
+			M.has(e) ? M.delete(e) : M.add(e);
 		}
 		function F() {
-			N.clear();
+			M.clear();
 		}
-		let I = S(() => s("gallery.selection.selected_count", N.size)), L = h([]), R = 0;
-		function z(e) {
-			R += 1;
-			let t = `gallery-toast-${String(R)}`;
+		let I = S(() => A.value.length > 0 && A.value.every((e) => M.has(e.id)));
+		function ie() {
+			let e = !I.value;
+			for (let t of A.value) e ? M.add(t.id) : M.delete(t.id);
+		}
+		let se = S(() => s("gallery.selection.selected_count", M.size)), L = h([]), ce = 0;
+		function R(e) {
+			ce += 1;
+			let t = `gallery-toast-${String(ce)}`;
 			L.value = [...L.value, {
 				id: t,
 				title: e,
@@ -906,72 +911,72 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 				L.value = L.value.filter((e) => e.id !== t);
 			}, 4e3);
 		}
-		function ae(e) {
+		function le(e) {
 			L.value = L.value.filter((t) => t.id !== e);
 		}
-		let oe = {
+		let ue = {
 			"image/png": "png",
 			"image/jpeg": "jpg",
 			"image/webp": "webp"
 		};
 		async function B(e) {
-			let t = await n.controller.read_gallery_bytes(e.id), r = oe[e.media_type] ?? "png", i = URL.createObjectURL(new Blob([new Uint8Array(t)], { type: e.media_type })), a = document.createElement("a");
+			let t = await n.controller.read_gallery_bytes(e.id), r = ue[e.media_type] ?? "png", i = URL.createObjectURL(new Blob([new Uint8Array(t)], { type: e.media_type })), a = document.createElement("a");
 			a.href = i, a.download = `${e.id}.${r}`, a.click(), URL.revokeObjectURL(i);
 		}
-		async function se() {
-			let e = A.value.filter((e) => N.has(e.id));
+		async function V() {
+			let e = A.value.filter((e) => M.has(e.id));
 			for (let t of e) await B(t);
 		}
-		let V = h(null), U = S(() => A.value.find((e) => e.id === V.value) ?? null), W = S(() => A.value.findIndex((e) => e.id === V.value)), ue = S(() => W.value > 0), de = S(() => W.value >= 0 && W.value < A.value.length - 1);
-		function fe(e) {
-			V.value = e, n.controller.select_gallery_record(e), n.controller.select_inspector_record({
+		let H = h(null), U = S(() => A.value.find((e) => e.id === H.value) ?? null), W = S(() => A.value.findIndex((e) => e.id === H.value)), pe = S(() => W.value > 0), me = S(() => W.value >= 0 && W.value < A.value.length - 1);
+		function G(e) {
+			H.value = e, n.controller.select_gallery_record(e), n.controller.select_inspector_record({
 				kind: "gallery_record",
 				record_id: e
 			});
 		}
-		function pe(e) {
-			e || (V.value = null, n.controller.select_gallery_record(null));
+		function K(e) {
+			e || (H.value = null, n.controller.select_gallery_record(null));
 		}
-		function G(e) {
+		function he(e) {
 			let t = W.value + e, n = A.value[t];
-			n && (V.value = n.id);
+			n && (H.value = n.id);
 		}
-		async function K() {
+		async function _e() {
 			let e = U.value;
 			if (e) switch (await n.controller.reveal_gallery_source(e.id)) {
 				case "revealed": return;
 				case "other_chat":
-					z(s("gallery.metadata_inspector.source_other_chat"));
+					R(s("gallery.metadata_inspector.source_other_chat"));
 					return;
 				case "not_found":
-					z(s("gallery.metadata_inspector.source_not_found"));
+					R(s("gallery.metadata_inspector.source_not_found"));
 					return;
 			}
 		}
-		async function me() {
+		async function ve() {
 			let e = U.value;
 			e && await n.controller.pin_gallery_record(e.id, !e.pinned);
 		}
-		async function he() {
+		async function ye() {
 			let e = U.value;
 			e && await n.controller.detach_gallery_record(e.id);
 		}
-		async function _e() {
+		async function be() {
 			let e = U.value;
-			e && (await n.controller.delete_gallery_record(e.id), V.value = null);
+			e && (await n.controller.delete_gallery_record(e.id), H.value = null);
 		}
 		let J = h(!1), Y = h(!1);
-		async function ve() {
-			J.value = !1, await n.controller.bulk_delete_gallery_records([...N]), F();
+		async function xe() {
+			J.value = !1, await n.controller.bulk_delete_gallery_records([...M]), F();
 		}
-		async function ye() {
-			Y.value = !1, await Promise.all([...N].map((e) => n.controller.detach_gallery_record(e))), F();
+		async function Se() {
+			Y.value = !1, await Promise.all([...M].map((e) => n.controller.detach_gallery_record(e))), F();
 		}
-		let X = (e) => n.controller.read_gallery_bytes(e), be = S(() => n.state.loading.has("gallery") ? "loading" : A.value.length === 0 ? "empty" : "ready");
+		let Ce = (e) => n.controller.read_gallery_bytes(e), we = S(() => n.state.loading.has("gallery") ? "loading" : A.value.length === 0 ? "empty" : "ready");
 		return (e, n) => (o(), u("div", { class: T(p(q).galleryView) }, [
 			b("div", { class: T(p(q).filterBar) }, [
-				b("span", Ue, C(p(s)("gallery.filters.title")), 1),
-				(o(), v(ie, {
+				b("span", We, C(p(s)("gallery.filters.title")), 1),
+				(o(), v(oe, {
 					key: p(c),
 					"model-value": f.value,
 					options: te.value,
@@ -986,36 +991,43 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 					"placeholder",
 					"ariaLabel"
 				])),
-				O(le, {
+				D(fe, {
 					modelValue: m.value,
 					"onUpdate:modelValue": n[1] ||= (e) => m.value = e,
 					label: p(s)("gallery.filters.pinned_only_label")
 				}, null, 8, ["modelValue", "label"]),
-				O(le, {
+				D(fe, {
 					modelValue: g.value,
 					"onUpdate:modelValue": n[2] ||= (e) => g.value = e,
 					label: p(s)("gallery.filters.orphaned_only_label")
 				}, null, 8, ["modelValue", "label"]),
+				D(N, {
+					label: I.value ? p(s)("common.actions.deselect_all") : p(s)("common.actions.select_all"),
+					disabled: A.value.length === 0,
+					variant: "secondary",
+					"data-testid": "gallery-select-all",
+					onClick: ie
+				}, null, 8, ["label", "disabled"]),
 				b("label", { class: T(p(q).dateFilterLabel) }, [
-					E(C(p(s)("gallery.filters.date_range_label")) + " ", 1),
+					ee(C(p(s)("gallery.filters.date_range_label")) + " ", 1),
 					a(b("input", {
 						"onUpdate:modelValue": n[3] ||= (e) => y.value = e,
 						type: "date",
 						class: T(p(q).dateInput)
 					}, null, 2), [[d, y.value]]),
 					a(b("input", {
-						"onUpdate:modelValue": n[4] ||= (e) => D.value = e,
+						"onUpdate:modelValue": n[4] ||= (e) => E.value = e,
 						type: "date",
 						class: T(p(q).dateInput)
-					}, null, 2), [[d, D.value]])
+					}, null, 2), [[d, E.value]])
 				], 2),
-				M.value ? (o(), u("span", {
+				ne.value ? (o(), u("span", {
 					key: 0,
 					class: T(["tc-tabular-nums", p(q).cacheOccupancy])
-				}, C(p(s)("gallery.cache_occupancy.label")) + ": " + C(M.value), 3)) : _("", !0)
+				}, C(p(s)("gallery.cache_occupancy.label")) + ": " + C(ne.value), 3)) : _("", !0)
 			], 2),
-			O(ne, {
-				status: be.value,
+			D(re, {
+				status: we.value,
 				"empty-title": p(s)("gallery.empty_title"),
 				"empty-message": p(s)("gallery.empty_description"),
 				"min-height": "240px"
@@ -1028,20 +1040,20 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 					class: T(p(q).skeletonTile)
 				}, null, 2)), 64))], 2)]),
 				action: l(() => [b("p", { class: T(p(q).emptyDescription) }, C(p(s)("gallery.empty_description")), 3)]),
-				default: l(() => [O(Oe, r({
+				default: l(() => [D(ke, r({
 					records: A.value,
-					"selected-ids": N,
-					"read-bytes": X,
+					"selected-ids": M,
+					"read-bytes": Ce,
 					"thumbnail-failed-label": p(s)("gallery.thumbnail_failed"),
 					"pinned-label": p(s)("gallery.pin_action"),
 					"select-label": p(s)("gallery.select_image_action"),
 					"open-label": p(s)("gallery.open_preview_action"),
 					ariaLabel: p(s)("nav.gallery")
-				}, p(re)({
+				}, p(ae)({
 					widthOverride: t.gridWidthOverride,
 					heightOverride: t.gridHeightOverride
 				}), {
-					onOpen: fe,
+					onOpen: G,
 					onToggleSelect: P
 				}), null, 16, [
 					"records",
@@ -1058,14 +1070,14 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 				"empty-title",
 				"empty-message"
 			]),
-			N.size > 0 ? (o(), v(ge, {
+			M.size > 0 ? (o(), v(ge, {
 				key: 0,
-				"selected-count-label": I.value,
+				"selected-count-label": se.value,
 				"download-label": p(s)("gallery.selection.download_action"),
 				"delete-label": p(s)("gallery.selection.delete_action"),
 				"detach-label": p(s)("gallery.selection.detach_action"),
 				"clear-label": p(s)("common.actions.deselect_all"),
-				onDownload: n[5] ||= () => void se(),
+				onDownload: n[5] ||= () => void V(),
 				onDelete: n[6] ||= (e) => J.value = !0,
 				onDetach: n[7] ||= (e) => Y.value = !0,
 				onClear: F
@@ -1076,12 +1088,12 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 				"detach-label",
 				"clear-label"
 			])) : _("", !0),
-			O(He, {
+			D(Ue, {
 				open: U.value !== null,
 				record: U.value,
-				"has-previous": ue.value,
-				"has-next": de.value,
-				"read-bytes": X,
+				"has-previous": pe.value,
+				"has-next": me.value,
+				"read-bytes": Ce,
 				"close-label": p(s)("common.actions.close"),
 				"previous-label": p(s)("common.actions.back"),
 				"next-label": p(s)("common.actions.next"),
@@ -1108,26 +1120,26 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 				"copied-label": p(s)("gallery.metadata_inspector.copied_toast"),
 				"parameters-empty-description": p(s)("gallery.metadata_inspector.parameters_unavailable"),
 				"source-message-label": p(s)("gallery.metadata_inspector.source_message_action"),
-				"onUpdate:open": pe,
-				onPrevious: n[8] ||= (e) => G(-1),
-				onNext: n[9] ||= (e) => G(1),
-				onTogglePin: n[10] ||= () => void me(),
+				"onUpdate:open": K,
+				onPrevious: n[8] ||= (e) => he(-1),
+				onNext: n[9] ||= (e) => he(1),
+				onTogglePin: n[10] ||= () => void ve(),
 				onDownload: n[11] ||= () => U.value && void B(U.value),
-				onDetach: n[12] ||= () => void he(),
-				onDelete: n[13] ||= () => void _e(),
-				onOpenSource: n[14] ||= () => void K(),
-				onCopied: n[15] ||= (e) => z(p(s)("gallery.metadata_inspector.copied_toast"))
+				onDetach: n[12] ||= () => void ye(),
+				onDelete: n[13] ||= () => void be(),
+				onOpenSource: n[14] ||= () => void _e(),
+				onCopied: n[15] ||= (e) => R(p(s)("gallery.metadata_inspector.copied_toast"))
 			}, null, 8, /* @__PURE__ */ "open.record.has-previous.has-next.close-label.previous-label.next-label.pin-label.unpin-label.download-label.detach-label.delete-label.detach-confirm-title.detach-confirm-description.delete-confirm-title.delete-confirm-description.detach-confirm-label.delete-confirm-label.cancel-label.thumbnail-failed-label.metadata-title.orphan-label.seed-label.provider-label.model-label.prompt-label.copy-label.copied-label.parameters-empty-description.source-message-label".split(".")),
-			O(H, {
+			D(z, {
 				open: J.value,
-				title: p(s)("gallery.selection.delete_confirm_title", N.size),
+				title: p(s)("gallery.selection.delete_confirm_title", M.size),
 				description: p(s)("gallery.selection.delete_confirm_description"),
 				"confirm-label": p(s)("confirmations.destructive.default_confirm_action"),
 				"cancel-label": p(s)("confirmations.destructive.default_cancel_action"),
 				"onUpdate:open": n[16] ||= (e) => {
 					J.value = e;
 				},
-				onConfirm: n[17] ||= () => void ve()
+				onConfirm: n[17] ||= () => void xe()
 			}, null, 8, [
 				"open",
 				"title",
@@ -1135,16 +1147,16 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 				"confirm-label",
 				"cancel-label"
 			]),
-			O(H, {
+			D(z, {
 				open: Y.value,
-				title: p(s)("gallery.selection.detach_confirm_title", N.size),
+				title: p(s)("gallery.selection.detach_confirm_title", M.size),
 				description: p(s)("gallery.selection.detach_confirm_description"),
 				"confirm-label": p(s)("gallery.selection.detach_action"),
 				"cancel-label": p(s)("confirmations.destructive.default_cancel_action"),
 				"onUpdate:open": n[18] ||= (e) => {
 					Y.value = e;
 				},
-				onConfirm: n[19] ||= () => void ye()
+				onConfirm: n[19] ||= () => void Se()
 			}, null, 8, [
 				"open",
 				"title",
@@ -1152,12 +1164,12 @@ var Ve = ["src"], He = /* @__PURE__ */ D({
 				"confirm-label",
 				"cancel-label"
 			]),
-			O(ce, {
+			D(de, {
 				toasts: L.value,
 				"viewport-label": p(s)("common.notifications.viewport_label"),
 				"announce-label": p(s)("common.notifications.announce_label"),
 				"close-label": p(s)("common.actions.close"),
-				onDismiss: ae
+				onDismiss: le
 			}, null, 8, [
 				"toasts",
 				"viewport-label",

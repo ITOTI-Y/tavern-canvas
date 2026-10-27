@@ -44,7 +44,7 @@ const common = {
     copied: "Copied",
     download: "Download",
     search: "Search",
-    clear: "Clear",
+    select_all: "Select all",
     deselect_all: "Deselect all",
     back: "Back",
     next: "Next",
@@ -313,6 +313,7 @@ const gallery = {
   filters: {
     title: "Filters",
     provider_label: "Provider",
+    all_providers: "All providers",
     date_range_label: "Date range",
     pinned_only_label: "Pinned only",
     orphaned_only_label: "Orphaned only",

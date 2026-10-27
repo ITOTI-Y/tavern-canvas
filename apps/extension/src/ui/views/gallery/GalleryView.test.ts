@@ -586,6 +586,44 @@ describe("preview dialog: parameter inspector, copy, source message, pin, detach
 });
 
 describe("multi-select and batch actions", () => {
+  it("select all picks only the filtered images and toggles back to deselect all", async () => {
+    const sd = make_record({
+      id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd" as Uuid,
+      provider_id: "sd_webui",
+    });
+    const nai = [
+      "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      "ffffffff-ffff-4fff-8fff-ffffffffffff",
+    ].map((id) => make_record({ id: id as Uuid, provider_id: "novelai" }));
+    const state = build_state({ records: [sd, ...nai] });
+    const { wrapper } = mount_gallery_view({ state });
+    wrapper.findComponent(AppSelect).vm.$emit("update:modelValue", "novelai");
+    await flushPromises();
+
+    const button = dom().find('[data-testid="gallery-select-all"]');
+    expect(button.text()).toBe("Select all");
+    await button.trigger("click");
+    await flushPromises();
+    expect(dom().text()).toContain("2 images selected");
+    expect(wrapper.findComponent(ImageGrid).props("selectedIds")).toEqual(
+      new Set(nai.map((record) => record.id)),
+    );
+    expect(button.text()).toBe("Deselect all");
+
+    await button.trigger("click");
+    await flushPromises();
+    expect(dom().text()).not.toContain("images selected");
+  });
+
+  it("labels the unfiltered provider option as all providers", () => {
+    const state = build_state({ records: [make_record()] });
+    const { wrapper } = mount_gallery_view({ state });
+    expect(wrapper.findComponent(AppSelect).props("options")[0]).toEqual({
+      value: "all",
+      label: "All providers",
+    });
+  });
+
   it("selecting two tiles shows the bulk action bar with the correct count", async () => {
     const a = make_record({ id: "99999999-9999-4999-8999-999999999999" as Uuid });
     const b = make_record({ id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" as Uuid });

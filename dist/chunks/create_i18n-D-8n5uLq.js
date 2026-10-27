@@ -70,7 +70,7 @@ var o = {
 			copied: "Copied",
 			download: "Download",
 			search: "Search",
-			clear: "Clear",
+			select_all: "Select all",
 			deselect_all: "Deselect all",
 			back: "Back",
 			next: "Next",
@@ -313,6 +313,7 @@ var o = {
 		filters: {
 			title: "Filters",
 			provider_label: "Provider",
+			all_providers: "All providers",
 			date_range_label: "Date range",
 			pinned_only_label: "Pinned only",
 			orphaned_only_label: "Orphaned only"
@@ -792,7 +793,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-Cu3AK4V0.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DruTHeUO.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

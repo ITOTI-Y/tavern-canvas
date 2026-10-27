@@ -39,7 +39,7 @@ var e = {
 			copied: "已复制",
 			download: "下载",
 			search: "搜索",
-			clear: "清空",
+			select_all: "全选",
 			deselect_all: "取消全选",
 			back: "返回",
 			next: "下一步",
@@ -282,6 +282,7 @@ var e = {
 		filters: {
 			title: "筛选",
 			provider_label: "图像服务",
+			all_providers: "全部图像服务",
 			date_range_label: "时间范围",
 			pinned_only_label: "仅显示置顶",
 			orphaned_only_label: "仅显示孤立图片"
