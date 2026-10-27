@@ -1,6 +1,6 @@
 # Development
 
-`pnpm build` writes the shipped runtime into `dist/`, and SillyTavern loads that file. Rebuilding
+`pnpm build` writes the shipped runtime into `dist/`, which SillyTavern and TauriTavern load. Rebuilding
 after every edit is the wrong loop for UI work: it discards the running Studio's state, so any
 change to a dialog, a scrolled list, or a half-filled form costs a rebuild plus the clicks to get
 back to where you were.
@@ -31,14 +31,16 @@ Two query parameters select state, the same way the Playwright suite does:
 &locale=en|zh-CN                              # default: en
 ```
 
-**`pnpm dev:host`** covers host adapters, the capability probe, the composition root, storage, and
-migration. It boots the shipped `bootstrap_tavern_canvas` against the fake host global object graph
-in `tests/harness/src/all_host_environment.ts`, backed by a real IndexedDB. Open
-http://localhost:5181/sillytavern_host.html, or `tauri_host.html` for the Tauri surface.
+**`pnpm dev:host`** covers host adapters, the capability probe, the composition root, and storage.
+It boots the shipped `bootstrap_tavern_canvas` against the fake host global object graph in
+`tests/harness/src/all_host_environment.ts`, backed by a real IndexedDB. Open
+http://localhost:5181/sillytavern_host.html for the Studio, or `chat_demo.html` for the chat
+illustration slots.
 
-Its query parameters are documented in `tests/harness/src/all_host_boot.ts`; the most useful are
-`?reset=1` for a clean database, `?legacy=v2` to boot against a v2 settings fixture, and
-`?helper=missing` to see the blocked-startup screen.
+Its query parameters are read in `tests/harness/src/all_host_boot.ts`: `?reset=1` starts from a
+clean database, `?helper=missing` shows the blocked-startup screen, `?secrets=sealed` simulates a
+host that refuses to reveal stored credentials, and `?gateway=<origin>` with `&ack=1` configures an
+acknowledged Gateway endpoint.
 
 **`pnpm dev:extension`** is the only one that exercises a real chat, a real TavernHelper, and real
 provider traffic. It is also the slowest loop to set up, so reach for it when the other two cannot
@@ -52,7 +54,7 @@ from the dev server rather than from a built file. Install it once:
 1. Copy `tools/dev_loader/` into SillyTavern's third-party extension directory as its own folder,
    e.g. `<SillyTavern>/data/<user>/extensions/tavern-canvas-dev/` — or symlink it, so edits to the
    loader itself do not need re-copying.
-2. Disable or remove the normal TavernCanvas extension. Both bootstrap into
+2. Disable or remove the installed Inkwell extension. Both bootstrap into
    `#tavern-canvas-root`, and the second one to load silently replaces the first one's element
    while the first one's Vue app, subscriptions, and database handles keep running.
 3. Run `pnpm dev:extension` in this repository.
@@ -109,13 +111,10 @@ Worth knowing before concluding that something is broken in production, or fixed
   SillyTavern's own styling. It does not happen in a build.
 - **Web Workers cannot start under `pnpm dev:extension`.** A Worker script must be same-origin,
   and there the page is SillyTavern's while the modules come from the dev server, so
-  `new Worker(new URL(..., import.meta.url))` throws `SecurityError`. Two call sites do this.
-  `dev_entry.ts` declines the vocabulary worker up front, which turns it into that capability's own
-  designed unavailable state with a reason visible in Diagnostics. The NovelAI tokenizer
-  (`tokenizer_service.ts`) has no injection point at the bootstrap layer, so the first
-  `count_tokens()` call throws despite that method's "never throws" contract; this only affects the
-  NovelAI prompt editor's live token-budget display. Both workers run normally under `pnpm dev` and
-  `pnpm dev:host`, where the page and the modules share an origin — debug worker-backed features
+  `new Worker(new URL(..., import.meta.url))` throws `SecurityError`. `dev_entry.ts` therefore
+  declines the vocabulary worker up front, which turns it into that capability's own designed
+  unavailable state with a reason visible in Diagnostics. The worker runs normally under `pnpm dev`
+  and `pnpm dev:host`, where the page and the modules share an origin; debug vocabulary search
   there.
 - **No bundle gates run.** `assert_bundle.mjs`, the bundle budget, and the first-party source
   policy all read `dist/`, which no dev server writes. Run `pnpm check` before trusting a change.

@@ -1,4 +1,4 @@
-# TavernCanvas Gateway
+# Inkwell Gateway
 
 The Gateway is a self hosted HTTP service that accepts image generation jobs, calls the configured
 image providers with credentials that never reach the browser, stores the resulting images, and
@@ -6,30 +6,32 @@ reports progress over Server Sent Events.
 
 ## Connecting the extension
 
-The 3.0.0 extension routes generation through the Gateway whenever one is configured. Under
-**Settings > Gateway** set two fields:
+The extension routes generation through the Gateway whenever one is configured. Under
+**Settings > Connections** set two fields:
 
 1. **Gateway endpoint** — the origin this service is reachable at. An `http://` origin has to be
    acknowledged once, per origin, before it is used.
 2. **Gateway access token** — one of the bearer tokens whose digest is in
-   `TAVERN_CANVAS_BEARER_TOKEN_HASHES`. The plaintext goes straight to SillyTavern's secret store;
-   the extension's settings keep only a reference and never render, export, or log the value.
+   `TAVERN_CANVAS_BEARER_TOKEN_HASHES`. The plaintext goes straight to the credential backend chosen
+   under **Settings > General**; the extension's settings keep only a reference and never render,
+   export, or log the value.
 
 With both set, every image job goes to this service and no provider credential is ever held by the
 browser. With an endpoint but no token, or with an unacknowledged cleartext origin, the extension's
 generation capability reports that exact reason in Diagnostics instead of generating.
 
-Reading the token back out of SillyTavern's secret store needs `allowKeysExposure: true` in
-SillyTavern's `config.yaml`, the same host flag a direct cloud call needs. The difference is what
-that flag exposes: with a Gateway, the only secret in the browser session is this service's bearer
-token, and every vendor API key stays here.
+With the SillyTavern secret store as the credential backend, reading the token back needs
+`allowKeysExposure: true` in SillyTavern's `config.yaml`, the same host flag a direct cloud call
+needs; the default on-device encrypted store and the passphrase vault need no host flag. Either way,
+the only secret in the browser session is this service's bearer token, and every vendor API key
+stays here.
 
 ### What the client does
 
 `apps/extension/src/transport/gateway_job_executor.ts` submits one `POST /v1/jobs` per generation,
 follows `GET /v1/jobs/{id}/events` over SSE with a bounded polling fallback, downloads each finished
 image from `GET /v1/assets/{id}/content`, and stores it exactly as a directly generated image is
-stored. Cancelling a job in the workbench sends `DELETE /v1/jobs/{id}`. The client names no provider
+stored. Cancelling a job sends `DELETE /v1/jobs/{id}`. The client names no provider
 URL and sends no provider credential; only this service's bearer token and the typed generation
 request cross the wire.
 

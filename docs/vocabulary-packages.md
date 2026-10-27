@@ -1,7 +1,7 @@
 # Vocabulary packages
 
-The tag autocomplete in TavernCanvas is backed by a versioned, sharded, integrity checked data
-package. One package ships inside the extension; others can be installed from a catalog. This
+The tag vocabulary in Inkwell, which backs tag search in the Library and the Chinese-to-tag
+translation in the illustration dialog, is a versioned, sharded, integrity checked data package. One package ships inside the extension; others can be installed from a catalog. This
 document describes the package format, where the data comes from, how updates work, and what happens
 when integrity checking fails.
 
@@ -190,7 +190,7 @@ bilingual display name and description, `data_version`, `record_count`, `compres
 1 MB and a manifest fetch to 8 MB.
 
 Fetching the catalog is deliberately deferred. The catalog client is dynamically imported on first
-use, and the catalog is loaded when the vocabulary panel is opened rather than at startup, so simply
+use, and the catalog is loaded when the Library's vocabulary tab is opened rather than at startup, so simply
 opening a chat never sends your IP address and extension version to a third party host. Entries
 flagged NSFW sit behind an explicit disclosure toggle and are never pre-selected or installed
 automatically.
@@ -209,7 +209,7 @@ UI fails.
 
 The import pipeline is implemented but **not wired to any UI in this release**. The Worker answers an
 `import_source` request with `import_source is not wired in this build`. The "Import package" button
-in the vocabulary panel installs a catalog entry rather than a local file.
+in the Library's vocabulary tab installs a catalog entry rather than a local file.
 
 For reference, the implemented pipeline accepts two formats. `tavern_canvas_jsonl` is newline
 delimited JSON, one record per line, skipping blank lines and collecting malformed lines as
