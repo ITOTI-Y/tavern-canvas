@@ -24,9 +24,12 @@ withDefaults(
     readonly confirmLabel: string;
     readonly cancelLabel: string;
     readonly pending?: boolean;
+    /** `false` for a confirmation that adds or changes something instead of removing it. */
+    readonly destructive?: boolean;
   }>(),
   {
     pending: false,
+    destructive: true,
   },
 );
 
@@ -67,7 +70,10 @@ const portal_props = computed(() => (portal_target ? { to: portal_target } : {})
           <button
             type="button"
             class="tc-interactive"
-            :class="[styles.appButton, styles.appButtonDestructive]"
+            :class="[
+              styles.appButton,
+              destructive ? styles.appButtonDestructive : styles.appButtonPrimary,
+            ]"
             :disabled="pending"
             :aria-busy="pending"
             :aria-label="confirmLabel"

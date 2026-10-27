@@ -219,6 +219,11 @@ var o = {
 			reference_generate_submit: "Generate",
 			reference_regenerate_submit: "Regenerate and replace",
 			reference_generate_failed: "The reference image could not be generated: {reason}",
+			outfit_from_reference_title: "Create an outfit from this reference?",
+			outfit_from_reference_description: "This character has no outfit yet. The wardrobe update model can read the clothing in the reference and save it as the character's default outfit; the model must accept images.",
+			outfit_from_reference_confirm: "Create outfit",
+			outfit_from_reference_cancel: "Not now",
+			outfit_from_reference_failed: "The outfit could not be created: {reason}",
 			reference_send_label: "Send with NovelAI requests that show this character",
 			reference_mode_label: "Use as",
 			reference_mode_hint: "Precise reference works on V4.5 only, costs 5 extra Anlas per image, and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
@@ -773,7 +778,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-Blye3xam.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-dRzoUMc_.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

@@ -13,7 +13,7 @@ import { n as B, t as ee } from "./novelai_request_defaults-B0sJ9ANr.js";
 import { t as te } from "./AppCheckbox-Cn99zCIV.js";
 import { n as V, t as H } from "./NumberStepper-yBDRmZKZ.js";
 import { t as U } from "./AppSelect-DRHFSF1d.js";
-import { t as W } from "./ConfirmDialog-CFpyjXKp.js";
+import { t as W } from "./ConfirmDialog-Bfd4oNMk.js";
 import { t as ne } from "./PromptTagChips-BGl7zt6A.js";
 import { t as G } from "./AppSwitch-ClFwVatq.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/cable.js
@@ -2165,7 +2165,7 @@ var Ae = ["id", "aria-describedby"], je = ["id", "aria-describedby"], Me = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-BTjQ9Lrk.js")), n = y(() => import("./AssetsView-ChVTSnx5.js")), r = y(() => import("./PromptTagPresetPanel-DIlwLDAt.js")), i = y(() => import("./DiagnosticsView-Ga2gixiD.js")), a = e, { t: o } = T(), s = [
+		let t = y(() => import("./PromptView-CAxIBLDh.js")), n = y(() => import("./AssetsView-CXnX5zzT.js")), r = y(() => import("./PromptTagPresetPanel-ChoVal8C.js")), i = y(() => import("./DiagnosticsView-BCTmh18F.js")), a = e, { t: o } = T(), s = [
 			"illustration",
 			"providers",
 			"translation",

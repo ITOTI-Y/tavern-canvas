@@ -29,6 +29,7 @@ import {
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs } from "./slot_markers.js";
 import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
+import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { match_library, type SlotLibrary } from "./library_match.js";
 import { activate_worldbook } from "./worldbook.js";
@@ -158,31 +159,39 @@ export interface WardrobeRunnerDeps {
 }
 
 /**
- * Runs the wardrobe request through the analysis preset and connection, with the chosen wardrobe
+ * Runs a wardrobe request through the analysis preset and connection, with the chosen wardrobe
  * model where the connection names one. It sends no chat history and no world info: the request
- * carries the reply and the state it needs.
+ * carries everything it needs.
  */
+async function run_wardrobe_request(
+  deps: WardrobeRunnerDeps,
+  input: string,
+  json_schema: HostJsonSchema,
+  image: string | null,
+): Promise<string> {
+  const settings = deps.settings();
+  const model = settings.wardrobe_model;
+  const connection =
+    model === null || settings.connection.kind === "current"
+      ? settings.connection
+      : { ...settings.connection, model };
+  const result = await deps.host.generate_with_preset({
+    generation_id: deps.new_generation_id(),
+    preset_name: settings.preset_name,
+    user_input: input,
+    max_chat_history: 0,
+    connection: await to_host_connection(connection, deps.resolve_analysis_key),
+    json_schema,
+    world_info: { kind: "replace", text: "" },
+    image,
+  });
+  return result.content;
+}
+
 export function create_wardrobe_runner(
   deps: WardrobeRunnerDeps,
 ): (input: string, json_schema: HostJsonSchema) => Promise<string> {
-  return async (input, json_schema) => {
-    const settings = deps.settings();
-    const model = settings.wardrobe_model;
-    const connection =
-      model === null || settings.connection.kind === "current"
-        ? settings.connection
-        : { ...settings.connection, model };
-    const result = await deps.host.generate_with_preset({
-      generation_id: deps.new_generation_id(),
-      preset_name: settings.preset_name,
-      user_input: input,
-      max_chat_history: 0,
-      connection: await to_host_connection(connection, deps.resolve_analysis_key),
-      json_schema,
-      world_info: { kind: "replace", text: "" },
-    });
-    return result.content;
-  };
+  return (input, json_schema) => run_wardrobe_request(deps, input, json_schema, null);
 }
 
 /** Loaded on demand: it needs the NovelAI model table, which stays out of the initial bundle. */
@@ -318,6 +327,7 @@ export class IllustrationService {
         connection: await to_host_connection(settings.connection, this.#deps.resolve_analysis_key),
         json_schema: ANALYSIS_JSON_SCHEMA,
         world_info: await to_host_world_info(settings.world_info, text, this.#deps.host),
+        image: null,
       });
       const proposals = parse_analysis_output(
         result.content,
@@ -425,6 +435,22 @@ export class IllustrationService {
     } finally {
       stop();
     }
+  }
+
+  /**
+   * The clothing in an image as outfit tags, read by the wardrobe model, which must accept images.
+   * `image` is a data URL.
+   */
+  async read_outfit(image: string): Promise<OutfitTags> {
+    const { OUTFIT_FROM_IMAGE_INPUT, OUTFIT_FROM_IMAGE_JSON_SCHEMA, parse_outfit_from_image } =
+      await import("../wardrobe/outfit_from_image.js");
+    const raw = await run_wardrobe_request(
+      this.#deps,
+      OUTFIT_FROM_IMAGE_INPUT,
+      OUTFIT_FROM_IMAGE_JSON_SCHEMA,
+      image,
+    );
+    return parse_outfit_from_image(raw);
   }
 
   async generate(

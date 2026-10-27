@@ -13,6 +13,8 @@ import {
 export interface AssetCategoryPanelController {
   readonly dialog_open: Ref<boolean>;
   readonly editing_record: Ref<AssetRecordSummary | null>;
+  /** The id the open record has or will be saved under, so other records can link to it first. */
+  readonly record_id: Ref<Uuid>;
   readonly name: Ref<string>;
   readonly name_error: Ref<string | null>;
   /** Why the last save failed, shown in the form instead of leaving it open without a word. */
@@ -38,6 +40,7 @@ export function use_asset_category_panel(
 ): AssetCategoryPanelController {
   const dialog_open = ref(false);
   const editing_record = ref<AssetRecordSummary | null>(null);
+  const record_id = ref<Uuid>(crypto.randomUUID());
   const name = ref("");
   const name_error = ref<string | null>(null);
   const save_error = ref<string | null>(null);
@@ -46,6 +49,7 @@ export function use_asset_category_panel(
 
   function open_create(): void {
     editing_record.value = null;
+    record_id.value = crypto.randomUUID();
     name.value = "";
     name_error.value = null;
     save_error.value = null;
@@ -55,6 +59,7 @@ export function use_asset_category_panel(
 
   function open_edit(record: AssetRecordSummary): void {
     editing_record.value = record;
+    record_id.value = record.id;
     name.value = record.display_name;
     name_error.value = null;
     save_error.value = null;
@@ -82,7 +87,7 @@ export function use_asset_category_panel(
     saving.value = true;
     save_error.value = null;
     try {
-      const id = editing_record.value?.id ?? crypto.randomUUID();
+      const id = record_id.value;
       await controller.save_asset(category, {
         id,
         category,
@@ -113,6 +118,7 @@ export function use_asset_category_panel(
   return {
     dialog_open,
     editing_record,
+    record_id,
     name,
     name_error,
     save_error,

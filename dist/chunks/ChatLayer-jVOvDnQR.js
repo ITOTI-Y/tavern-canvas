@@ -562,22 +562,20 @@ var J = F("book-open-text", [
 		}, null, 42, ke), [[m, u.value]])], 2));
 	}
 }), $ = {
-	field: "_field_cnnj5_1",
-	header: "_header_cnnj5_7",
-	label: "_label_cnnj5_15",
-	tools: "_tools_cnnj5_20",
-	prompt: "_prompt_cnnj5_25",
-	suggestions: "_suggestions_cnnj5_37",
-	suggestion: "_suggestion_cnnj5_37",
-	highlighted: "_highlighted_cnnj5_63",
-	translation: "_translation_cnnj5_67",
-	dot: "_dot_cnnj5_71",
-	tier1: "_tier1_cnnj5_78",
-	tier2: "_tier2_cnnj5_82",
-	tier3: "_tier3_cnnj5_86",
-	hint: "_hint_cnnj5_91",
-	reading: "_reading_cnnj5_92",
-	error: "_error_cnnj5_103"
+	field: "_field_ad8ee_1",
+	header: "_header_ad8ee_7",
+	label: "_label_ad8ee_15",
+	tools: "_tools_ad8ee_20",
+	suggestions: "_suggestions_ad8ee_25",
+	suggestion: "_suggestion_ad8ee_25",
+	highlighted: "_highlighted_ad8ee_51",
+	translation: "_translation_ad8ee_55",
+	dot: "_dot_ad8ee_59",
+	tier1: "_tier1_ad8ee_66",
+	tier2: "_tier2_ad8ee_70",
+	tier3: "_tier3_ad8ee_74",
+	hint: "_hint_ad8ee_79",
+	reading: "_reading_ad8ee_80"
 }, Me = /[,，]/u, Ne = /[぀-ヿ㐀-鿿豈-﫿]/u, Pe = /^(?:-?[\d.]+::)?[{[(]*/u;
 function Fe(e, t) {
 	let n = e.slice(0, t), r = 0;
@@ -726,7 +724,7 @@ var Re = ["for"], ze = [
 				ref_key: "textarea",
 				ref: f,
 				value: e.modelValue,
-				class: A(g($).prompt),
+				class: A(g(Q).prompt),
 				role: "combobox",
 				"aria-autocomplete": "list",
 				"aria-expanded": m.value.length > 0,
@@ -770,7 +768,7 @@ var Re = ["for"], ze = [
 			}, O(j.value ?? g(a)("chat.dialog.reading_pending")), 3)) : x("", !0),
 			P.value === null ? x("", !0) : (c(), p("p", {
 				key: 3,
-				class: A(g($).error)
+				class: A(g(Q).error)
 			}, O(P.value), 3))
 		], 2));
 	}

@@ -8,7 +8,7 @@ import { t as O } from "./shuffle-BAB9O4dE.js";
 import { t as k } from "./trash-2-B6ZXZcor.js";
 import { t as A } from "./_prop_utils-CqbCYIc0.js";
 import { t as j } from "./NumberStepper-yBDRmZKZ.js";
-import { t as M } from "./ConfirmDialog-CFpyjXKp.js";
+import { t as M } from "./ConfirmDialog-Bfd4oNMk.js";
 import { t as N } from "./IconButton-bAUne4oi.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/grip-vertical.js
 var P = b("grip-vertical", [
@@ -480,71 +480,72 @@ var V = ["for"], H = [
 //#endregion
 //#region src/ui/views/assets/use_asset_category_panel.ts
 function Z(t, n, r, i, a = []) {
-	let o = u(!1), s = u(null), c = u(""), l = u(null), d = u(null), f = e({}), p = u(!1);
-	function m() {
-		s.value = null, c.value = "", l.value = null, d.value = null, Q(f, R(r())), o.value = !0;
+	let o = u(!1), s = u(null), c = u(crypto.randomUUID()), l = u(""), d = u(null), f = u(null), p = e({}), m = u(!1);
+	function h() {
+		s.value = null, c.value = crypto.randomUUID(), l.value = "", d.value = null, f.value = null, Q(p, R(r())), o.value = !0;
 	}
-	function h(e) {
-		s.value = e, c.value = e.display_name, l.value = null, d.value = null;
+	function g(e) {
+		s.value = e, c.value = e.id, l.value = e.display_name, d.value = null, f.value = null;
 		let t = {};
 		for (let n of a) {
 			let r = e.payload[n];
 			(typeof r == "string" || typeof r == "number") && (t[n] = r);
 		}
-		Q(f, {
+		Q(p, {
 			...L(r(), e),
 			...t
 		}), o.value = !0;
 	}
-	function g() {
+	function _() {
 		o.value = !1;
 	}
-	async function _() {
-		let e = c.value.trim();
+	async function v() {
+		let e = l.value.trim();
 		if (e === "") {
-			l.value = i();
+			d.value = i();
 			return;
 		}
-		p.value = !0, d.value = null;
+		m.value = !0, f.value = null;
 		try {
-			let r = s.value?.id ?? crypto.randomUUID();
+			let r = c.value;
 			await n.save_asset(t, {
 				id: r,
 				category: t,
 				record_key: r,
 				display_name: e,
-				payload: { ...f }
+				payload: { ...p }
 			}), o.value = !1;
 		} catch (e) {
-			d.value = e instanceof Error ? e.message : String(e);
+			f.value = e instanceof Error ? e.message : String(e);
 		} finally {
-			p.value = !1;
+			m.value = !1;
 		}
 	}
-	function v(e) {
+	function y(e) {
 		n.remove_asset(t, e);
 	}
-	function y(e) {
+	function b(e) {
 		n.reorder_assets(t, e);
 	}
-	function b(e) {
-		h(e);
+	function x(e) {
+		g(e);
 	}
 	return {
 		dialog_open: o,
 		editing_record: s,
-		name: c,
-		name_error: l,
-		save_error: d,
-		values: f,
-		saving: p,
-		open_create: m,
-		open_edit: h,
-		close_dialog: g,
-		save: _,
-		remove: v,
-		reorder: y,
-		random_select: b
+		record_id: c,
+		name: l,
+		name_error: d,
+		save_error: f,
+		values: p,
+		saving: m,
+		open_create: h,
+		open_edit: g,
+		close_dialog: _,
+		save: v,
+		remove: y,
+		reorder: b,
+		random_select: x
 	};
 }
 function Q(e, t) {

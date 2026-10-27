@@ -387,6 +387,39 @@ describe("IllustrationService.generate_image", () => {
   });
 });
 
+describe("IllustrationService.read_outfit", () => {
+  it("sends the image with the outfit schema and returns the clothing it reads", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({
+      name: "Black sundress",
+      slots: { full_body: ["black sundress"], footwear: ["sandals"], headwear: ["unknown"] },
+    });
+    const { service } = create_service(host);
+
+    const outfit = await service.read_outfit("data:image/jpeg;base64,AAAA");
+
+    expect(host.generate_calls[0]).toMatchObject({
+      image: "data:image/jpeg;base64,AAAA",
+      max_chat_history: 0,
+      json_schema: { name: "tavern_canvas_outfit" },
+    });
+    expect(outfit).toEqual({
+      name: "Black sundress",
+      slots: { full_body: ["black sundress"], footwear: ["sandals"] },
+    });
+  });
+
+  it("fails when the model reads no clothing", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({ name: "Nothing", slots: {} });
+    const { service } = create_service(host);
+
+    await expect(service.read_outfit("data:image/jpeg;base64,AAAA")).rejects.toThrow(
+      "no outfit with clothing tags",
+    );
+  });
+});
+
 describe("IllustrationService automatic generation", () => {
   it("analyzes and generates after a normal reply when enabled", async () => {
     const host = new MemoryHost();

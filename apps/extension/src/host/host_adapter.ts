@@ -83,6 +83,8 @@ export interface PresetGenerationRequest {
   readonly connection: HostGenerationConnection;
   readonly json_schema: HostJsonSchema | null;
   readonly world_info: HostWorldInfo;
+  /** A data URL sent with the user input; the connection's model must accept images. */
+  readonly image: string | null;
 }
 
 export type HostWorldbookKey = string | { readonly source: string; readonly flags: string };

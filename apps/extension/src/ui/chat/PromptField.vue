@@ -8,6 +8,7 @@ import type {
   TagSuggestion,
 } from "../../modules/translation/prompt_translator.js";
 import IconButton from "../components/IconButton.vue";
+import dialog_styles from "./illustrate_dialog.module.css";
 import styles from "./prompt_field.module.css";
 import { apply_suggestion, popularity_tier, token_at, type TagToken } from "./tag_completion.js";
 
@@ -210,7 +211,7 @@ onBeforeUnmount(() => {
       :id="id"
       ref="textarea"
       :value="modelValue"
-      :class="styles.prompt"
+      :class="dialog_styles.prompt"
       role="combobox"
       aria-autocomplete="list"
       :aria-expanded="suggestions.length > 0"
@@ -251,6 +252,6 @@ onBeforeUnmount(() => {
     <p v-if="reading_on" :class="styles.reading">
       {{ reading ?? t("chat.dialog.reading_pending") }}
     </p>
-    <p v-if="error !== null" :class="styles.error">{{ error }}</p>
+    <p v-if="error !== null" :class="dialog_styles.error">{{ error }}</p>
   </div>
 </template>

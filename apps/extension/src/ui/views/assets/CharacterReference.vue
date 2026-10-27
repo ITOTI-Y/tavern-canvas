@@ -25,6 +25,8 @@ const emit = defineEmits<{
   "update:image": [image: string | null];
   "update:send": [send: boolean];
   "update:mode": [mode: CharacterReferenceMode];
+  /** A newly generated reference, after `update:image` carried it. */
+  generated: [image: string];
 }>();
 
 const { t } = useI18n();
@@ -75,7 +77,9 @@ async function generate(): Promise<void> {
       positive_prompt: positive_prompt.value,
       negative_prompt: negative_prompt.value,
     });
-    emit("update:image", await read_reference_image(blob));
+    const image = await read_reference_image(blob);
+    emit("update:image", image);
+    emit("generated", image);
     composing.value = false;
   } catch (cause) {
     error.value = t("assets.characters.reference_generate_failed", {

@@ -22,18 +22,6 @@
   gap: 2px;
 }
 
-.prompt {
-  min-height: 72px;
-  padding: 8px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background: var(--tc-surface);
-  color: var(--tc-text);
-  font: inherit;
-  font-size: 13px;
-  resize: vertical;
-}
-
 .suggestions {
   display: flex;
   flex-wrap: wrap;
@@ -98,9 +86,4 @@
 .reading {
   padding-inline-start: 10px;
   border-inline-start: 2px solid var(--tc-divider);
-}
-
-.error {
-  margin: 0;
-  color: var(--tc-error);
 }

@@ -26,7 +26,7 @@ function mount_reference(generator: ReferenceImagePort | null) {
 describe("CharacterReference", () => {
   it("generates a reference from the edited default prompt and offers it as the image", async () => {
     const generate = vi.fn(() => Promise.resolve(new Blob([new Uint8Array([1])])));
-    const wrapper = mount_reference({ generate });
+    const wrapper = mount_reference({ generate, read_outfit: vi.fn() });
 
     await wrapper.get('[data-testid="character-reference-generate"]').trigger("click");
     const [positive, negative] = wrapper.findAll("textarea");
@@ -41,6 +41,7 @@ describe("CharacterReference", () => {
       negative_prompt: "pointy ears",
     });
     expect(wrapper.emitted("update:image")).toEqual([["data:image/jpeg;base64,AAAA"]]);
+    expect(wrapper.emitted("generated")).toEqual([["data:image/jpeg;base64,AAAA"]]);
     expect(wrapper.find("textarea").exists()).toBe(false);
   });
 

@@ -58,6 +58,8 @@ export interface TavernHelperGenerateConfig {
     readonly value: Readonly<Record<string, unknown>>;
     readonly strict: true;
   };
+  /** A data URL or base64 string. */
+  readonly image?: string;
 }
 
 interface GlobalRegexOption {
@@ -74,6 +76,8 @@ export interface TavernHelperSurface {
   getWorldbookNames(): unknown;
   getWorldbook(worldbook_name: string): Promise<unknown>;
   stopGenerationById(generation_id: string): boolean;
+  /** Only consulted before a request that carries an image. */
+  getPreset?(preset_name: string): unknown;
   getTavernRegexes(option: GlobalRegexOption): TavernRegex[];
   replaceTavernRegexes(regexes: TavernRegex[], option: GlobalRegexOption): Promise<void>;
   retrieveDisplayedMessage(message_id: number): { get(index: number): HTMLElement | undefined };
@@ -361,6 +365,9 @@ export class TavernHelperHost {
   }
 
   async generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
+    if (request.image !== null) {
+      this.#require_image_sending(request.preset_name);
+    }
     const custom_api = to_custom_api(request.connection);
     const result = await this.#helper.generate({
       generation_id: request.generation_id,
@@ -383,8 +390,28 @@ export class TavernHelperHost {
       ...(request.json_schema === null
         ? {}
         : { json_schema: { ...request.json_schema, strict: true } }),
+      ...(request.image === null ? {} : { image: request.image }),
     });
     return read_generation_result(result);
+  }
+
+  /** A preset with inline images off drops the image silently, and the model then invents an answer. */
+  #require_image_sending(preset_name: string): void {
+    const preset = this.#helper.getPreset?.(preset_name);
+    const settings =
+      typeof preset === "object" && preset !== null && "settings" in preset
+        ? preset.settings
+        : null;
+    if (
+      typeof settings === "object" &&
+      settings !== null &&
+      "allow_sending_images" in settings &&
+      settings.allow_sending_images === "disabled"
+    ) {
+      throw new Error(
+        `The SillyTavern preset "${preset_name}" does not send images; turn on "Send inline images" in it`,
+      );
+    }
   }
 
   list_worldbooks(): readonly string[] {

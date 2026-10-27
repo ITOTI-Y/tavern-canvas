@@ -86,6 +86,7 @@ provide(
           const image_id = await illustrations.generate_image({ ...prompt, character_prompts: [] });
           return new Blob([new Uint8Array(await gallery.read_bytes(image_id))]);
         },
+        read_outfit: (image) => illustrations.read_outfit(image),
       },
 );
 

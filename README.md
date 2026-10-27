@@ -105,7 +105,10 @@ rewrites the prompts and is saved as the reply's record.
 
 A character's reference image, at the top of its form, is uploaded or generated with the default image
 provider profile from an editable prompt built from the character's gender, appearance, and default
-outfit, framed as a full-body view on a white background. It is sent only when its "send with
+outfit, framed as a full-body view on a white background. When the character has no outfit yet, a generated
+reference is followed by an offer to read the outfit from it: the wardrobe update model, which must
+accept images, sorts the clothing into outfit slots, and the outfit becomes the character's default.
+The reference is sent only when its "send with
 NovelAI requests" box is ticked, and then in the use chosen for it:
 
 - **Vibe transfer** adds the image as a vibe reference. V5 models have no vibe transfer, so the

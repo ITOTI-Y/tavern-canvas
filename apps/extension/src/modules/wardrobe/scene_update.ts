@@ -21,7 +21,7 @@ import { initial_wearing, wearing_of, wearing_tags } from "./wearing.js";
 
 const TAG_ARRAY = { type: "array", items: { type: "string" } } as const;
 
-function slots_schema(slots: readonly string[]): Record<string, unknown> {
+export function slots_schema(slots: readonly string[]): Record<string, unknown> {
   return {
     type: "object",
     properties: Object.fromEntries(slots.map((slot) => [slot, TAG_ARRAY])),
@@ -126,7 +126,7 @@ function slot_record<T extends string>(slots: readonly T[]) {
   ) as unknown as z.ZodType<Partial<Record<T, string[]>>>;
 }
 
-const OutfitSchema = z.object({
+export const OutfitSchema = z.object({
   name: z.string().trim().min(1).max(120),
   slots: slot_record(OUTFIT_SLOTS),
 });
@@ -316,7 +316,7 @@ function clean_tags(tags: readonly string[]): string[] {
   ];
 }
 
-function clean_slots<T extends string>(
+export function clean_slots<T extends string>(
   slots: Partial<Record<T, string[]>> | null,
   allowed: readonly T[],
 ): Partial<Record<T, readonly string[]>> {

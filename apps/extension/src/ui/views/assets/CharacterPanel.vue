@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { APPEARANCE_SLOTS, OUTFIT_SLOTS } from "@tavern-canvas/contracts";
-import { computed } from "vue";
+import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import {
@@ -11,12 +11,14 @@ import {
 } from "../../../modules/wardrobe/wardrobe_library.js";
 import AppButton from "../../components/AppButton.vue";
 import AppDialog from "../../components/AppDialog.vue";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import SegmentedControl, {
   type SegmentedControlOption,
 } from "../../components/SegmentedControl.vue";
+import { REFERENCE_IMAGE_KEY } from "../../contracts/portal_keys.js";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
@@ -99,7 +101,7 @@ const subject = computed(() =>
 );
 
 const outfit_options = computed<readonly AppSelectOption[]>(() => {
-  const id = panel.editing_record.value?.id;
+  const id = panel.record_id.value;
   return [
     { value: NO_OUTFIT, label: t("assets.characters.default_outfit_first") },
     ...props.outfitRecords
@@ -142,6 +144,57 @@ function set_reference_image(image: string | null): void {
   panel.values.reference_mode = reference_mode.value;
 }
 
+const reference_port = inject(REFERENCE_IMAGE_KEY, null);
+/** The generated reference waiting for the user to decide whether to read an outfit from it. */
+const outfit_offer = ref<string | null>(null);
+const outfit_pending = ref(false);
+const outfit_error = ref<string | null>(null);
+
+function offer_outfit(image: string): void {
+  const has_outfit = props.outfitRecords.some(
+    (record) => record.payload.character_id === panel.record_id.value,
+  );
+  if (!has_outfit) {
+    outfit_offer.value = image;
+  }
+}
+
+/** Saves the outfit the model reads from the reference, linked to this character and its default. */
+async function create_outfit_from_reference(): Promise<void> {
+  const image = outfit_offer.value;
+  if (image === null || reference_port === null) {
+    return;
+  }
+  outfit_pending.value = true;
+  outfit_error.value = null;
+  try {
+    const outfit = await reference_port.read_outfit(image);
+    const id = crypto.randomUUID();
+    await props.controller.save_asset("outfit", {
+      id,
+      category: "outfit",
+      record_key: id,
+      display_name: outfit.name,
+      payload: {
+        ...Object.fromEntries(
+          OUTFIT_SLOTS.map((slot) => [slot, join_tags(outfit.slots[slot] ?? [])]),
+        ),
+        character_id: panel.record_id.value,
+        origin: "analysis",
+        chat_id: typeof panel.values.chat_id === "string" ? panel.values.chat_id : "",
+      },
+    });
+    panel.values.default_outfit_id = id;
+  } catch (cause) {
+    outfit_error.value = t("assets.characters.outfit_from_reference_failed", {
+      reason: cause instanceof Error ? cause.message : String(cause),
+    });
+  } finally {
+    outfit_pending.value = false;
+    outfit_offer.value = null;
+  }
+}
+
 const SUBJECT_TAGS = { girl: "1girl", boy: "1boy", other: "" } as const;
 /** A clear, full-figure view on a plain background, which reference and vibe transfer use best. */
 const REFERENCE_COMPOSITION =
@@ -149,11 +202,11 @@ const REFERENCE_COMPOSITION =
 
 /** The default outfit's tags: the chosen one, else the first outfit linked to this character. */
 const default_outfit_tags = computed(() => {
-  const id = panel.editing_record.value?.id;
+  const id = panel.record_id.value;
   const outfits = props.outfitRecords.map(read_outfit);
   const outfit =
     outfits.find((candidate) => candidate.id === panel.values.default_outfit_id) ??
-    outfits.find((candidate) => id !== undefined && candidate.character_id === id);
+    outfits.find((candidate) => candidate.character_id === id);
   return outfit === undefined ? [] : OUTFIT_SLOTS.flatMap((slot) => outfit.slots[slot]);
 });
 
@@ -265,7 +318,11 @@ const delete_confirm_title = (record_name: string): string =>
             @update:image="set_reference_image"
             @update:send="(send) => (panel.values.reference_send = send ? 1 : 0)"
             @update:mode="(mode) => (panel.values.reference_mode = mode)"
+            @generated="offer_outfit"
           />
+          <p v-if="outfit_error !== null" :class="styles.formError" role="alert">
+            {{ outfit_error }}
+          </p>
         </template>
         <template #extra-fields>
           <p v-if="bound_to_chat" :class="styles.chat_scope_note">
@@ -303,5 +360,20 @@ const delete_confirm_title = (record_name: string): string =>
         </template>
       </AssetRecordForm>
     </AppDialog>
+    <ConfirmDialog
+      :open="outfit_offer !== null"
+      :title="t('assets.characters.outfit_from_reference_title')"
+      :description="t('assets.characters.outfit_from_reference_description')"
+      :confirm-label="t('assets.characters.outfit_from_reference_confirm')"
+      :cancel-label="t('assets.characters.outfit_from_reference_cancel')"
+      :pending="outfit_pending"
+      :destructive="false"
+      @update:open="
+        (open) => {
+          if (!open && !outfit_pending) outfit_offer = null;
+        }
+      "
+      @confirm="create_outfit_from_reference"
+    />
   </div>
 </template>

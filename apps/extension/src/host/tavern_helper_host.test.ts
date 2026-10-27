@@ -130,6 +130,7 @@ describe("TavernHelperHost", () => {
       },
       json_schema: { name: "illustrations", value: { type: "object" } },
       world_info: { kind: "chat" },
+      image: "data:image/jpeg;base64,AAAA",
     });
 
     expect(result).toEqual({ content: '{"a":1}', reasoning: "thinking" });
@@ -143,7 +144,29 @@ describe("TavernHelperHost", () => {
       should_return_reasoning: true,
       custom_api: { apiurl: "https://llm.example", key: "k", model: "m", source: "openai" },
       json_schema: { name: "illustrations", value: { type: "object" }, strict: true },
+      image: "data:image/jpeg;base64,AAAA",
     });
+  });
+
+  it("refuses to send an image through a preset that drops images", async () => {
+    const generate = vi.fn(() => Promise.resolve("{}"));
+    const getPreset = vi.fn(() => ({ settings: { allow_sending_images: "disabled" } }));
+    const host = new TavernHelperHost(create_helper({ generate, getPreset }), () => "chat-1");
+
+    await expect(
+      host.generate_with_preset({
+        generation_id: "g1",
+        preset_name: "in_use",
+        user_input: "read the outfit",
+        max_chat_history: 0,
+        connection: { kind: "current" },
+        json_schema: null,
+        world_info: { kind: "replace", text: "" },
+        image: "data:image/jpeg;base64,AAAA",
+      }),
+    ).rejects.toThrow("Send inline images");
+    expect(getPreset).toHaveBeenCalledWith("in_use");
+    expect(generate).not.toHaveBeenCalled();
   });
 
   it("replaces world info and depth entries when the analysis brings its own", async () => {
@@ -158,6 +181,7 @@ describe("TavernHelperHost", () => {
       connection: { kind: "current" },
       json_schema: null,
       world_info: { kind: "replace", text: "Doors are blue." },
+      image: null,
     });
 
     expect(generate).toHaveBeenCalledWith(

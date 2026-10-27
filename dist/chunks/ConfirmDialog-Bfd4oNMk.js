@@ -209,6 +209,10 @@ var [L, R] = /*#__PURE__*/ E("AlertDialogContent"), z = /* @__PURE__ */ b({
 		pending: {
 			type: Boolean,
 			default: !1
+		},
+		destructive: {
+			type: Boolean,
+			default: !0
 		}
 	},
 	emits: ["update:open", "confirm"],
@@ -244,7 +248,7 @@ var [L, R] = /*#__PURE__*/ E("AlertDialogContent"), z = /* @__PURE__ */ b({
 							_: 1
 						}, 8, ["class", "disabled"]), h("button", {
 							type: "button",
-							class: v(["tc-interactive", [u(T).appButton, u(T).appButtonDestructive]]),
+							class: v(["tc-interactive", [u(T).appButton, e.destructive ? u(T).appButtonDestructive : u(T).appButtonPrimary]]),
 							disabled: e.pending,
 							"aria-busy": e.pending,
 							"aria-label": e.confirmLabel,

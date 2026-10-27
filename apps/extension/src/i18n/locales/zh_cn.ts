@@ -203,6 +203,12 @@ const assets = {
     reference_generate_submit: "生成",
     reference_regenerate_submit: "重新生成并替换",
     reference_generate_failed: "参考图生成失败：{reason}",
+    outfit_from_reference_title: "根据参考图生成服装？",
+    outfit_from_reference_description:
+      "该角色还没有服装。可以让服装判断使用的模型识别参考图中的衣着，建立一套服装并设为默认服装；该模型需要支持图片输入。",
+    outfit_from_reference_confirm: "生成服装",
+    outfit_from_reference_cancel: "暂不生成",
+    outfit_from_reference_failed: "服装生成失败：{reason}",
     reference_send_label: "用 NovelAI 出图且画面中有该角色时随请求发送",
     reference_mode_label: "用途",
     reference_mode_hint:
