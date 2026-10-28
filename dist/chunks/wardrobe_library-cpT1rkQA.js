@@ -84,7 +84,14 @@ function b(e, t) {
 	return e.filter((e) => e.chat_id === null || e.chat_id === t);
 }
 function x(e, t) {
+	let n = b(e.character.map(v), t), r = new Set(n.map((e) => e.default_outfit_id));
+	return {
+		characters: n,
+		outfits: e.outfit.map(y).filter((e) => e.chat_id === null || e.chat_id === t || r.has(e.id))
+	};
+}
+function S(e, t) {
 	return t.find((t) => t.id === e.default_outfit_id) ?? t.find((t) => t.character_id === e.id) ?? null;
 }
 //#endregion
-export { p as a, s as c, y as i, c as l, m as n, b as o, v as r, l as s, x as t, f as u };
+export { p as a, c, y as i, f as l, m as n, l as o, x as r, s, S as t };

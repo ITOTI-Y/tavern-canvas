@@ -9,7 +9,7 @@ import type {
   PromptPresetsCapability,
 } from "../../ui/contracts/ui_capabilities.js";
 import type { IllustrationService, SlotPromptContext } from "./illustration_service.js";
-import { read_character, read_outfit, visible_in_chat } from "../wardrobe/wardrobe_library.js";
+import { library_in_chat } from "../wardrobe/wardrobe_library.js";
 import type { SlotLibrary } from "./library_match.js";
 import { SLOT_REGEX_SCRIPTS } from "./slot_markers.js";
 
@@ -34,8 +34,7 @@ export function slot_library_of(
 ): SlotLibrary {
   const text = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
   return {
-    characters: visible_in_chat(catalog.character.map(read_character), chat_id),
-    outfits: visible_in_chat(catalog.outfit.map(read_outfit), chat_id),
+    ...library_in_chat(catalog, chat_id),
     loras: catalog.lora.flatMap((record) => {
       const character_id = text(record.payload.character_id);
       return character_id === ""

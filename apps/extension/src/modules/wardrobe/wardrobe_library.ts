@@ -124,6 +124,30 @@ export function visible_in_chat<T extends { readonly chat_id: string | null }>(
   return entries.filter((entry) => entry.chat_id === null || entry.chat_id === chat_id);
 }
 
+/**
+ * The characters and outfits a chat sees. A visible character's default outfit is visible too, so a
+ * character made global keeps the outfit it was created with in every chat.
+ */
+export function library_in_chat(
+  catalog: {
+    readonly character: readonly AssetRecordSummary[];
+    readonly outfit: readonly AssetRecordSummary[];
+  },
+  chat_id: string | null,
+): {
+  readonly characters: readonly WardrobeCharacter[];
+  readonly outfits: readonly WardrobeOutfit[];
+} {
+  const characters = visible_in_chat(catalog.character.map(read_character), chat_id);
+  const defaults = new Set(characters.map((character) => character.default_outfit_id));
+  const outfits = catalog.outfit
+    .map(read_outfit)
+    .filter(
+      (outfit) => outfit.chat_id === null || outfit.chat_id === chat_id || defaults.has(outfit.id),
+    );
+  return { characters, outfits };
+}
+
 /** A character's outfit when nothing in the chat says otherwise: its chosen default, else its first. */
 export function default_outfit(
   character: WardrobeCharacter,

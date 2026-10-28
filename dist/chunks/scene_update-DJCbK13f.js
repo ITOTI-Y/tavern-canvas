@@ -1,6 +1,6 @@
 import { d as e, h as t, i as n, p as r, r as i, t as a } from "./schemas-DMBLWk59.js";
-import { c as o, l as s, n as c, s as l } from "./wardrobe_library-CZLkOF9h.js";
-import { a as u, c as d, i as f, l as p, s as m } from "./library_match-U5kHYoiF.js";
+import { c as o, n as s, o as c, s as l } from "./wardrobe_library-cpT1rkQA.js";
+import { a as u, c as d, i as f, l as p, s as m } from "./library_match-er4-CW2n.js";
 //#region src/modules/wardrobe/scene_update.ts
 var h = {
 	type: "array",
@@ -21,7 +21,7 @@ var v = {
 	type: "object",
 	properties: {
 		name: { type: "string" },
-		slots: g(o)
+		slots: g(l)
 	},
 	required: ["name", "slots"],
 	additionalProperties: !1
@@ -44,7 +44,7 @@ var v = {
 						]
 					},
 					aliases: h,
-					appearance: g(l),
+					appearance: g(c),
 					outfit: v
 				},
 				required: [
@@ -55,7 +55,7 @@ var v = {
 				],
 				additionalProperties: !1
 			}),
-			appearance_additions: _(g(l)),
+			appearance_additions: _(g(c)),
 			subject: {
 				type: ["string", "null"],
 				enum: [
@@ -74,7 +74,7 @@ var v = {
 					properties: {
 						slot: {
 							type: "string",
-							enum: [...o]
+							enum: [...l]
 						},
 						tags: h,
 						removed: { type: "boolean" }
@@ -129,7 +129,7 @@ function S(t) {
 }
 var C = e({
 	name: t().trim().min(1).max(120),
-	slots: S(o)
+	slots: S(l)
 }), w = e({
 	ref: t().nullable().catch(null),
 	name: t().trim().min(1).max(120),
@@ -140,16 +140,16 @@ var C = e({
 			"other"
 		]).catch("other"),
 		aliases: x.default([]),
-		appearance: S(l).default({}),
+		appearance: S(c).default({}),
 		outfit: C.nullable().catch(null)
 	}).nullable().catch(null),
-	appearance_additions: S(l).nullable().catch(null),
+	appearance_additions: S(c).nullable().catch(null),
 	subject: a(["girl", "boy"]).nullable().catch(null),
 	wearing_changed: n().catch(!1),
 	outfit_id: t().nullable().catch(null),
 	new_outfit: C.nullable().catch(null),
 	overrides: i(e({
-		slot: s,
+		slot: o,
 		tags: x.default([]),
 		removed: n()
 	})).catch([]),
@@ -176,11 +176,11 @@ function D(e) {
 	throw new E(e);
 }
 function O(e, t, n) {
-	let r = m(e, t, n.outfits), i = n.outfits.find((e) => e.id === r.outfit_id), a = l.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t));
+	let r = m(e, t, n.outfits), i = n.outfits.find((e) => e.id === r.outfit_id), a = c.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t));
 	return [
 		`- id ${e.id}: ${e.name}`,
 		e.aliases.length > 0 ? `, also called ${e.aliases.join(" / ")}` : "",
-		i === void 0 ? "; outfit not yet known" : `; wears outfit ${i.id} (${i.name}): ${c(d(r, n.outfits))}`,
+		i === void 0 ? "; outfit not yet known" : `; wears outfit ${i.id} (${i.name}): ${s(d(r, n.outfits))}`,
 		a.length > 0 ? `; appearance slots still empty: ${a.join(", ")}` : "",
 		e.subject === "other" ? "; subject not yet known" : ""
 	].join("");
@@ -219,7 +219,7 @@ function A(e, t, n, r) {
 		"Known outfits:",
 		...r.outfits.length === 0 ? ["(none)"] : r.outfits.map((e) => {
 			let t = e.character_id === null ? null : i.get(e.character_id);
-			return `- id ${e.id}: ${e.name}${t == null ? "" : ` (${t})`}: ${c(o.flatMap((t) => e.slots[t]))}`;
+			return `- id ${e.id}: ${e.name}${t == null ? "" : ` (${t})`}: ${s(l.flatMap((t) => e.slots[t]))}`;
 		}),
 		"",
 		...e === null ? [] : [
@@ -260,28 +260,28 @@ function I(e, t) {
 	return n !== void 0 && F(n, e.name) ? n : t.find((t) => P(t, e.name));
 }
 function L(e) {
-	return o.map((t) => [...new Set((e[t] ?? []).map((e) => e.toLowerCase()))].sort().join(",")).join("|");
+	return l.map((t) => [...new Set((e[t] ?? []).map((e) => e.toLowerCase()))].sort().join(",")).join("|");
 }
 function R(e, t, n, r) {
-	let i = new Map(t.map((e) => [e.character_id, e])), a = [], s = [], c = [], d = (e) => n.outfits.some((t) => t.id === e) || s.some((t) => t.id === e), f = (e, t) => {
-		let i = N(e.slots, o);
+	let i = new Map(t.map((e) => [e.character_id, e])), a = [], o = [], s = [], d = (e) => n.outfits.some((t) => t.id === e) || o.some((t) => t.id === e), f = (e, t) => {
+		let i = N(e.slots, l);
 		if (Object.keys(i).length === 0) return null;
-		let a = L(i), c = [...n.outfits, ...s].find((e) => e.character_id === t && L(e.slots) === a);
-		if (c !== void 0) return c.id;
-		let l = r();
-		return s.push({
-			id: l,
+		let a = L(i), s = [...n.outfits, ...o].find((e) => e.character_id === t && L(e.slots) === a);
+		if (s !== void 0) return s.id;
+		let c = r();
+		return o.push({
+			id: c,
 			name: e.name,
 			character_id: t,
 			slots: i
-		}), l;
+		}), c;
 	};
 	for (let t of e.characters) {
 		let e = I(t, n.characters), o;
 		if (e !== void 0) {
 			o = e.id;
-			let n = l.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t)), r = N(t.appearance_additions, n), i = e.subject === "other" ? t.subject : null;
-			(Object.keys(r).length > 0 || i !== null) && c.push({
+			let n = c.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t)), r = N(t.appearance_additions, n), i = e.subject === "other" ? t.subject : null;
+			(Object.keys(r).length > 0 || i !== null) && s.push({
 				character_id: o,
 				slots: r,
 				subject: i
@@ -297,25 +297,25 @@ function R(e, t, n, r) {
 				name: t.name,
 				aliases: e.aliases.filter((e) => e.trim() !== t.name),
 				subject: e.subject,
-				appearance: N(e.appearance, l),
+				appearance: N(e.appearance, c),
 				default_outfit_id: null
 			});
 		}
-		let s = i.get(o) ?? (e === void 0 ? {
+		let l = i.get(o) ?? (e === void 0 ? {
 			character_id: o,
 			outfit_id: null,
 			overrides: {},
 			conditions: []
-		} : u(e, n.outfits)), p = s.outfit_id === null ? t.new_outfit ?? t.new_character?.outfit ?? null : null;
+		} : u(e, n.outfits)), p = l.outfit_id === null ? t.new_outfit ?? t.new_character?.outfit ?? null : null;
 		if (!t.wearing_changed) {
 			let e = p === null ? null : f(p, o);
-			i.set(o, e === null ? s : {
-				...s,
+			i.set(o, e === null ? l : {
+				...l,
 				outfit_id: e
 			});
 			continue;
 		}
-		let m = d(t.outfit_id) ? t.outfit_id : s.outfit_id, h = t.new_outfit ?? p;
+		let m = d(t.outfit_id) ? t.outfit_id : l.outfit_id, h = t.new_outfit ?? p;
 		h !== null && (m = f(h, o) ?? m);
 		let g = {};
 		for (let e of t.overrides) g[e.slot] = e.removed ? "removed" : M(e.tags);
@@ -335,15 +335,15 @@ function R(e, t, n, r) {
 			outfit_id: o
 		});
 	}
-	let p = new Map(s.map((e) => [e.character_id, e.id]));
+	let p = new Map(o.map((e) => [e.character_id, e.id]));
 	return {
 		wearing: [...i.values()],
 		new_characters: a.map((e) => ({
 			...e,
 			default_outfit_id: p.get(e.id) ?? null
 		})),
-		new_outfits: s,
-		appearance_additions: c
+		new_outfits: o,
+		appearance_additions: s
 	};
 }
 //#endregion

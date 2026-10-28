@@ -1,18 +1,14 @@
 import { APPEARANCE_SLOTS, OUTFIT_SLOTS } from "@tavern-canvas/contracts";
 
 import type { AssetsCapability } from "../../ui/contracts/ui_capabilities.js";
-import { join_tags, read_character, read_outfit, visible_in_chat } from "./wardrobe_library.js";
+import { join_tags, library_in_chat } from "./wardrobe_library.js";
 import type { WardrobeLibraryPort } from "./wardrobe_service.js";
 
 /** Stores what the wardrobe update creates as library entries bound to the chat they came from. */
 export function create_wardrobe_library_port(assets: AssetsCapability): WardrobeLibraryPort {
   return {
     async load(chat_id) {
-      const catalog = await assets.load();
-      return {
-        characters: visible_in_chat(catalog.character.map(read_character), chat_id),
-        outfits: visible_in_chat(catalog.outfit.map(read_outfit), chat_id),
-      };
+      return library_in_chat(await assets.load(), chat_id);
     },
     async create_character(draft, created_from) {
       await assets.save("character", {

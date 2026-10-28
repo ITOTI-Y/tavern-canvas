@@ -1,7 +1,7 @@
 import { d as e, t } from "./schemas-DMBLWk59.js";
-import { c as n, s as r } from "./wardrobe_library-CZLkOF9h.js";
-import { l as i } from "./library_match-U5kHYoiF.js";
-import { OutfitSchema as a, clean_slots as o, slot_record as s, slots_schema as c } from "./scene_update-RfbMpEez.js";
+import { o as n, s as r } from "./wardrobe_library-cpT1rkQA.js";
+import { l as i } from "./library_match-er4-CW2n.js";
+import { OutfitSchema as a, clean_slots as o, slot_record as s, slots_schema as c } from "./scene_update-DJCbK13f.js";
 //#region src/modules/wardrobe/character_from_image.ts
 var l = {
 	name: "tavern_canvas_character",
@@ -16,12 +16,12 @@ var l = {
 					"other"
 				]
 			},
-			appearance: c(r),
+			appearance: c(n),
 			outfit: {
 				type: "object",
 				properties: {
 					name: { type: "string" },
-					slots: c(n)
+					slots: c(r)
 				},
 				required: ["name", "slots"],
 				additionalProperties: !1
@@ -48,7 +48,7 @@ var l = {
 		"boy",
 		"other"
 	]).catch("other"),
-	appearance: s(r).catch({}),
+	appearance: s(n).catch({}),
 	outfit: a.nullable().catch(null)
 });
 function f(e) {
@@ -61,7 +61,7 @@ function f(e) {
 		}
 		let i = d.safeParse(e);
 		if (!i.success) continue;
-		let a = o(i.data.appearance, r), s = o(i.data.outfit?.slots ?? null, n), c = i.data.outfit === null || Object.keys(s).length === 0 ? null : {
+		let a = o(i.data.appearance, n), s = o(i.data.outfit?.slots ?? null, r), c = i.data.outfit === null || Object.keys(s).length === 0 ? null : {
 			name: i.data.outfit.name,
 			slots: s
 		};

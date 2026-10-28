@@ -1,4 +1,4 @@
-import { a as e, c as t, i as n, n as r, s as i } from "./wardrobe_library-CZLkOF9h.js";
+import { a as e, i as t, n, o as r, s as i } from "./wardrobe_library-cpT1rkQA.js";
 import { A as a, D as o, F as s, G as c, I as l, N as u, T as d, V as f, W as p, _ as m, a as h, at as g, c as _, ct as v, et as y, ft as b, g as x, h as S, k as C, m as w, n as T, nt as E, p as D, pt as O, s as k, u as A, ut as j, v as M, x as N, y as P } from "./vue-i18n-DUz2Gjn8.js";
 import { r as F, t as I } from "./portal_keys-B9C82xtk.js";
 import { n as L, t as R } from "./AppIcon-Cnhzrx9o.js";
@@ -538,7 +538,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 				kind: "text",
 				hint: c("assets.characters.aliases_hint")
 			},
-			...i.map((e) => ({
+			...r.map((e) => ({
 				key: e,
 				label: Oe(c, e),
 				kind: "text"
@@ -604,19 +604,19 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			s.outfitRecords.some((e) => e.payload.character_id === g.record_id.value) || (I.value = e);
 		}
 		async function te(e) {
-			let n = crypto.randomUUID();
+			let t = crypto.randomUUID();
 			await s.controller.save_asset("outfit", {
-				id: n,
+				id: t,
 				category: "outfit",
-				record_key: n,
+				record_key: t,
 				display_name: e.name,
 				payload: {
-					...Object.fromEntries(t.map((t) => [t, r(e.slots[t] ?? [])])),
+					...Object.fromEntries(i.map((t) => [t, n(e.slots[t] ?? [])])),
 					character_id: g.record_id.value,
 					origin: "analysis",
 					chat_id: typeof g.values.chat_id == "string" ? g.values.chat_id : ""
 				}
-			}), g.values.default_outfit_id = n;
+			}), g.values.default_outfit_id = t;
 		}
 		async function ne() {
 			let e = I.value;
@@ -640,12 +640,12 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			if (t !== null && N !== null) {
 				K.value = !0, R.value = null;
 				try {
-					let n = await N.read_character(t);
-					for (let t of i) {
-						let i = n.appearance[t];
-						i !== void 0 && e(g.values[t]).length === 0 && (g.values[t] = r(i));
+					let i = await N.read_character(t);
+					for (let t of r) {
+						let r = i.appearance[t];
+						r !== void 0 && e(g.values[t]).length === 0 && (g.values[t] = n(r));
 					}
-					g.values.subject !== "girl" && g.values.subject !== "boy" && (g.values.subject = n.subject), n.outfit !== null && await te(n.outfit);
+					g.values.subject !== "girl" && g.values.subject !== "boy" && (g.values.subject = i.subject), i.outfit !== null && await te(i.outfit);
 				} catch (e) {
 					R.value = c("assets.characters.character_from_reference_failed", { reason: e instanceof Error ? e.message : String(e) });
 				} finally {
@@ -658,20 +658,20 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			boy: "1boy",
 			other: ""
 		}, se = D(() => {
-			let e = g.record_id.value, r = s.outfitRecords.map(n), i = r.find((e) => e.id === g.values.default_outfit_id) ?? r.find((t) => t.character_id === e);
-			return i === void 0 ? [] : t.flatMap((e) => i.slots[e]);
+			let e = g.record_id.value, n = s.outfitRecords.map(t), r = n.find((e) => e.id === g.values.default_outfit_id) ?? n.find((t) => t.character_id === e);
+			return r === void 0 ? [] : i.flatMap((e) => r.slots[e]);
 		}), ce = D(() => ({
-			positive_prompt: r([
+			positive_prompt: n([
 				ae[b.value],
 				je,
-				...i.flatMap((t) => e(g.values[t])),
+				...r.flatMap((t) => e(g.values[t])),
 				...se.value
 			].filter((e) => e !== "")),
-			negative_prompt: r(e(g.values.excluded_traits))
+			negative_prompt: n(e(g.values.excluded_traits))
 		}));
 		async function Y() {
-			let t = g.editing_record.value?.payload ?? {}, n = i.filter((n) => e(g.values[n]).join(",") !== e(typeof t[n] == "string" ? t[n] : "").join(",")), r = /* @__PURE__ */ new Set([...e(g.values.locked_fields), ...n]);
-			g.values.locked_fields = [...r].join(", "), g.values.origin = typeof g.values.origin == "string" ? g.values.origin : "user", await g.save();
+			let t = g.editing_record.value?.payload ?? {}, n = r.filter((n) => e(g.values[n]).join(",") !== e(typeof t[n] == "string" ? t[n] : "").join(",")), i = /* @__PURE__ */ new Set([...e(g.values.locked_fields), ...n]);
+			g.values.locked_fields = [...i].join(", "), g.values.origin = typeof g.values.origin == "string" ? g.values.origin : "user", await g.save();
 		}
 		async function X() {
 			g.values.chat_id = "", await Y();
@@ -1061,14 +1061,14 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 		controller: {}
 	},
 	setup(e) {
-		let n = e, { t: r } = T(), i = D(() => t.map((e) => ({
+		let t = e, { t: n } = T(), r = D(() => i.map((e) => ({
 			key: e,
-			label: ke(r, e),
+			label: ke(n, e),
 			kind: "text"
 		}))), a = D(() => [{
 			key: "scope_label",
-			label: r("assets.scope_label")
-		}]), { visible: s } = Ce(() => n.records, () => r("assets.chat_scope_label")), { visible: c } = Ce(() => n.characterRecords, () => r("assets.chat_scope_label")), l = H("outfit", n.controller, () => i.value, () => r("errors.validation_required"), [
+			label: n("assets.scope_label")
+		}]), { visible: s } = Ce(() => t.records, () => n("assets.chat_scope_label")), { visible: c } = Ce(() => t.characterRecords, () => n("assets.chat_scope_label")), l = H("outfit", t.controller, () => r.value, () => n("errors.validation_required"), [
 			"character_id",
 			"origin",
 			"chat_id"
@@ -1086,27 +1086,27 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 		function _(e) {
 			l.values.character_id = e;
 		}
-		let y = (e) => r("assets.delete_confirm_title", { name: e });
-		return (t, n) => (u(), m("div", null, [P(V, {
+		let y = (e) => n("assets.delete_confirm_title", { name: e });
+		return (t, i) => (u(), m("div", null, [P(V, {
 			records: v(s),
 			"summary-fields": a.value,
 			loading: e.loading,
-			"search-label": v(r)("common.actions.search"),
-			"search-placeholder": v(r)("common.actions.search"),
-			"empty-title": v(r)("assets.outfits.empty_title"),
-			"empty-description": v(r)("assets.outfits.empty_description"),
-			"add-label": v(r)("assets.outfits.add_action"),
-			"random-label": v(r)("assets.random_selection_action"),
-			"reorder-hint": v(r)("assets.reorder_hint"),
-			"edit-label": v(r)("common.actions.edit"),
-			"delete-label": v(r)("common.actions.delete"),
+			"search-label": v(n)("common.actions.search"),
+			"search-placeholder": v(n)("common.actions.search"),
+			"empty-title": v(n)("assets.outfits.empty_title"),
+			"empty-description": v(n)("assets.outfits.empty_description"),
+			"add-label": v(n)("assets.outfits.add_action"),
+			"random-label": v(n)("assets.random_selection_action"),
+			"reorder-hint": v(n)("assets.reorder_hint"),
+			"edit-label": v(n)("common.actions.edit"),
+			"delete-label": v(n)("common.actions.delete"),
 			"delete-confirm-title": y,
-			"delete-confirm-description": v(r)("assets.delete_confirm_description"),
-			"confirm-label": v(r)("confirmations.destructive.default_confirm_action"),
-			"cancel-label": v(r)("confirmations.destructive.default_cancel_action"),
-			"move-up-label": v(r)("assets.move_up_action"),
-			"move-down-label": v(r)("assets.move_down_action"),
-			"drag-handle-label": v(r)("assets.drag_handle_label"),
+			"delete-confirm-description": v(n)("assets.delete_confirm_description"),
+			"confirm-label": v(n)("confirmations.destructive.default_confirm_action"),
+			"cancel-label": v(n)("confirmations.destructive.default_cancel_action"),
+			"move-up-label": v(n)("assets.move_up_action"),
+			"move-down-label": v(n)("assets.move_down_action"),
+			"drag-handle-label": v(n)("assets.drag_handle_label"),
 			onAdd: v(l).open_create,
 			onEdit: v(l).open_edit,
 			onDelete: v(l).remove,
@@ -1138,45 +1138,45 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			"onRandomSelect"
 		]), P(q, {
 			open: v(l).dialog_open.value,
-			title: v(l).editing_record.value ? v(r)("common.actions.edit") : v(r)("assets.outfits.add_action"),
-			description: v(r)("assets.form_dialog_description"),
-			"close-label": v(r)("common.actions.close"),
-			"onUpdate:open": n[2] ||= (e) => {
+			title: v(l).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.outfits.add_action"),
+			description: v(n)("assets.form_dialog_description"),
+			"close-label": v(n)("common.actions.close"),
+			"onUpdate:open": i[2] ||= (e) => {
 				e || v(l).close_dialog();
 			}
 		}, {
 			default: p(() => [P(U, {
-				"name-label": v(r)("common.labels.name"),
-				"name-placeholder": v(r)("common.labels.name"),
+				"name-label": v(n)("common.labels.name"),
+				"name-placeholder": v(n)("common.labels.name"),
 				name: v(l).name.value,
 				"name-error": v(l).name_error.value,
 				"save-error": v(l).save_error.value,
-				fields: i.value,
+				fields: r.value,
 				values: v(l).values,
-				"save-label": v(r)("common.actions.save"),
-				"cancel-label": v(r)("common.actions.cancel"),
-				"decrement-label": v(r)("common.actions.decrease"),
-				"increment-label": v(r)("common.actions.increase"),
+				"save-label": v(n)("common.actions.save"),
+				"cancel-label": v(n)("common.actions.cancel"),
+				"decrement-label": v(n)("common.actions.decrease"),
+				"increment-label": v(n)("common.actions.increase"),
 				pending: v(l).saving.value,
-				"onUpdate:name": n[0] ||= (e) => {
+				"onUpdate:name": i[0] ||= (e) => {
 					v(l).name.value = e;
 				},
-				"onUpdate:values": n[1] ||= (e) => v(W)(v(l).values, e),
+				"onUpdate:values": i[1] ||= (e) => v(W)(v(l).values, e),
 				onSave: v(l).save,
 				onCancel: v(l).close_dialog
 			}, {
 				"extra-fields": p(() => [d.value ? (u(), m("p", {
 					key: 0,
 					class: j(v(B).chat_scope_note)
-				}, [M(O(v(r)("assets.chat_scope_note")) + " ", 1), P(G, {
-					label: v(r)("assets.import_to_global_action"),
+				}, [M(O(v(n)("assets.chat_scope_note")) + " ", 1), P(G, {
+					label: v(n)("assets.import_to_global_action"),
 					onClick: f
-				}, null, 8, ["label"])], 2)) : x("", !0), P(J, { label: v(r)("assets.outfits.character_label") }, {
+				}, null, 8, ["label"])], 2)) : x("", !0), P(J, { label: v(n)("assets.outfits.character_label") }, {
 					default: p(({ fieldId: e, describedBy: t }) => [P(Z, o({
 						id: e,
 						"model-value": g.value,
 						options: h.value,
-						placeholder: v(r)("assets.outfits.character_placeholder")
+						placeholder: v(n)("assets.outfits.character_placeholder")
 					}, v(oe)({ describedBy: t }), { "onUpdate:modelValue": _ }), null, 16, [
 						"id",
 						"model-value",
