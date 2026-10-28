@@ -241,7 +241,8 @@ var P = c([
 	"cancelled",
 	"malformed_response",
 	"not_configured",
-	"storage_failed"
+	"storage_failed",
+	"interrupted"
 ]), F = i({
 	code: P,
 	retryable: r(),

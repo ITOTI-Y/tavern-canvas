@@ -321,6 +321,7 @@ describe("provider boundary", () => {
       "malformed_response",
       "not_configured",
       "storage_failed",
+      "interrupted",
     ]);
   });
 

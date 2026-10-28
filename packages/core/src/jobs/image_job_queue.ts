@@ -108,6 +108,8 @@ function clone_job(job: GenerationJob): GenerationJob {
   };
 }
 
+const SETTLED_STATES: ReadonlySet<GenerationState> = new Set(["completed", "failed", "cancelled"]);
+
 function provider_error_from(error: unknown): ProviderError {
   if (error instanceof JobExecutorFailure) {
     return { ...error.provider_error };
@@ -328,14 +330,18 @@ export class ImageJobQueue {
         provider_id,
         (this.#running_by_provider.get(provider_id) ?? 0) + 1,
       );
-      void this.#execute(record).finally(() => {
-        this.#running_jobs -= 1;
-        this.#running_by_provider.set(
-          provider_id,
-          Math.max(0, (this.#running_by_provider.get(provider_id) ?? 1) - 1),
-        );
-        this.#schedule_drain();
-      });
+      void this.#execute(record)
+        .catch(() => {
+          this.#fail_unsaved(record);
+        })
+        .finally(() => {
+          this.#running_jobs -= 1;
+          this.#running_by_provider.set(
+            provider_id,
+            Math.max(0, (this.#running_by_provider.get(provider_id) ?? 1) - 1),
+          );
+          this.#schedule_drain();
+        });
     }
   }
 
@@ -446,10 +452,32 @@ export class ImageJobQueue {
   ): Promise<GenerationJobSnapshot> {
     transition_generation_job(draft, state, this.#time_source.now().toISOString());
     const snapshot = snapshot_generation_job(draft);
-    await this.#persistence.save(snapshot);
+    try {
+      await this.#persistence.save(snapshot);
+    } catch (error) {
+      // An outcome the record store cannot hold still reaches listeners, so nothing waits on it forever.
+      if (!SETTLED_STATES.has(state)) {
+        throw error;
+      }
+    }
     record.job = draft;
     this.#publish(snapshot);
     return snapshot;
+  }
+
+  /** Ends a job whose progress could not be saved, in memory only, and tries once more to save it. */
+  #fail_unsaved(record: JobRecord): void {
+    if (SETTLED_STATES.has(record.job.state)) {
+      return;
+    }
+    const draft = clone_job(record.job);
+    draft.state = "failed";
+    draft.updated_at = this.#time_source.now().toISOString();
+    draft.error = { code: "storage_failed", retryable: false };
+    record.job = draft;
+    const snapshot = snapshot_generation_job(draft);
+    this.#publish(snapshot);
+    void this.#persistence.save(snapshot).catch(() => undefined);
   }
 
   #serialize<T>(record: JobRecord, operation: () => Promise<T>): Promise<T> {

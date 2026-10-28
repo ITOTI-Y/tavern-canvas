@@ -792,6 +792,7 @@ const chat = {
     not_configured:
       "the image provider profile is incomplete: its API key is missing or unreadable, or its server address is invalid",
     storage_failed: "the image could not be saved to browser storage, which may be full",
+    interrupted: "the page was reloaded or closed before the job finished",
   },
 };
 

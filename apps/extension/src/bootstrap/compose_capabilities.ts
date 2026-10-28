@@ -57,7 +57,11 @@ import {
   TaskTimeline,
 } from "./capabilities/diagnostics_capability.js";
 import { create_gallery_capability } from "./capabilities/gallery_capability.js";
-import { create_generation_capability } from "./capabilities/generation_capability.js";
+import {
+  create_generation_capability,
+  settle_interrupted_jobs,
+} from "./capabilities/generation_capability.js";
+import { hold_page_lock } from "./page_lock.js";
 import { create_novelai_capability } from "./capabilities/novelai_capability.js";
 import { HostGenerationOriginSource } from "./capabilities/generation_context.js";
 import {
@@ -218,6 +222,16 @@ export async function compose_studio_capabilities(
   const secrets = secret_router.has_destination ? secret_router : null;
   const secret_resolver = secret_router.has_resolver ? secret_router : null;
   const repositories = database === null ? null : create_business_repositories(database);
+  const page_lock = await hold_page_lock(
+    (globals as { navigator?: { locks?: LockManager } }).navigator?.locks,
+    crypto.randomUUID(),
+  );
+  teardown.push(() => {
+    page_lock.release();
+  });
+  if (repositories !== null && page_lock.sole_page) {
+    await settle_interrupted_jobs(repositories.generation_jobs, namespace(), now());
+  }
   const timeline = new TaskTimeline();
   let provider_adapters: Promise<
     Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>

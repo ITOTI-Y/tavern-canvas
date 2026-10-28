@@ -1,5 +1,5 @@
 import { _ as e, d as t, h as n, r, u as i } from "./schemas-DMBLWk59.js";
-import { n as a } from "./provider-C7olz4RN.js";
+import { n as a } from "./provider-B-m_0o6I.js";
 import { l as o } from "./library_match-er4-CW2n.js";
 //#region src/ui/experience/host_image_icon.ts
 var s = "http://www.w3.org/2000/svg", c = [
@@ -54,6 +54,7 @@ function u(e, t) {
 		case "malformed_response": return e("chat.errors.malformed_response");
 		case "not_configured": return e("chat.errors.not_configured");
 		case "storage_failed": return e("chat.errors.storage_failed");
+		case "interrupted": return e("chat.errors.interrupted");
 	}
 }
 //#endregion

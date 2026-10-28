@@ -370,3 +370,29 @@ describe("ImageJobQueue", () => {
     expect(observed[0]?.state).toBe("queued");
   });
 });
+
+describe("ImageJobQueue persistence failures", () => {
+  it("still publishes a completed job whose record could not be saved", async () => {
+    const { queue, executor, persistence } = create_queue();
+    const job = await queue.enqueue(request(1, { automatic: false }));
+    await wait_for_starts(executor, 1);
+    vi.spyOn(persistence, "save").mockRejectedValue(new Error("QuotaExceededError"));
+
+    executor.complete(0);
+
+    const settled = await wait_for_state(queue, job.job_id, "completed");
+    expect(settled.image_ids).toEqual([image_id(0)]);
+  });
+
+  it("fails a job in memory when its progress cannot be saved", async () => {
+    const { queue, persistence } = create_queue();
+    const save = vi.spyOn(persistence, "save");
+    save.mockResolvedValueOnce();
+    save.mockRejectedValue(new Error("QuotaExceededError"));
+
+    const job = await queue.enqueue(request(1, { automatic: false }));
+
+    const failed = await wait_for_state(queue, job.job_id, "failed");
+    expect(failed.error).toEqual({ code: "storage_failed", retryable: false });
+  });
+});

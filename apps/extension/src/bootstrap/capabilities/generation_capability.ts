@@ -1,4 +1,4 @@
-import type { ImageGenerationRequest, RequestId } from "@tavern-canvas/contracts";
+import type { GenerationState, ImageGenerationRequest, RequestId } from "@tavern-canvas/contracts";
 import { ProviderIdSchema } from "@tavern-canvas/contracts";
 import type { GenerationJobSnapshot, ImageJobQueue } from "@tavern-canvas/core";
 import type { GenerationJob, GenerationJobRepository } from "@tavern-canvas/storage";
@@ -56,6 +56,34 @@ function record_to_summary(record: GenerationJob): GenerationJobSummary {
     error: record.error,
     submitted_at: record.created_at,
   };
+}
+
+const UNFINISHED_STATES: ReadonlySet<GenerationState> = new Set([
+  "queued",
+  "preparing",
+  "submitting",
+  "running",
+]);
+
+/**
+ * Marks jobs a closed page left unfinished as failed. The queue only runs jobs it enqueued itself,
+ * so call this only when no other open page could still be running them.
+ */
+export async function settle_interrupted_jobs(
+  jobs: GenerationJobRepository,
+  namespace: string,
+  now: string,
+): Promise<void> {
+  for (const record of await jobs.list(namespace)) {
+    if (UNFINISHED_STATES.has(record.state)) {
+      await jobs.put(namespace, {
+        ...record,
+        state: "failed",
+        error: { code: "interrupted", retryable: false },
+        updated_at: now,
+      });
+    }
+  }
 }
 
 export function create_generation_capability(deps: GenerationCapabilityDeps): GenerationCapability {

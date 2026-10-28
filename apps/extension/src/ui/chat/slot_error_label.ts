@@ -29,5 +29,7 @@ export function slot_error_label(t: Translate, error: string): string {
       return t("chat.errors.not_configured");
     case "storage_failed":
       return t("chat.errors.storage_failed");
+    case "interrupted":
+      return t("chat.errors.interrupted");
   }
 }

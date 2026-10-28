@@ -767,6 +767,7 @@ const chat = {
     malformed_response: "服务商返回了无法解析的结果",
     not_configured: "图像服务配置不完整：缺少或无法读取 API 密钥，或服务地址无效",
     storage_failed: "图片无法保存到浏览器存储，存储空间可能已满",
+    interrupted: "页面刷新或关闭时任务尚未完成",
   },
 };
 
