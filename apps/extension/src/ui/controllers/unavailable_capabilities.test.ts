@@ -25,7 +25,6 @@ describe("create_unavailable_capabilities", () => {
     await expect(capabilities.diagnostics.load()).resolves.toEqual({
       capability_matrix: {},
       helper_version: null,
-      protocol_version: null,
       storage_usage_bytes: null,
       storage_quota_bytes: null,
     });
@@ -59,9 +58,6 @@ describe("create_unavailable_capabilities", () => {
     const capabilities = create_unavailable_capabilities();
 
     await expect(capabilities.settings.update({})).rejects.toMatchObject({
-      code: CAPABILITY_NOT_IMPLEMENTED_CODE,
-    });
-    await expect(capabilities.diagnostics.test_connection()).rejects.toMatchObject({
       code: CAPABILITY_NOT_IMPLEMENTED_CODE,
     });
   });

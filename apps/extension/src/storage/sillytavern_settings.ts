@@ -1,6 +1,5 @@
 import {
   CredentialStorageModeSchema,
-  GatewaySettingsSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   type TavernCanvasSettings,
@@ -22,8 +21,13 @@ const DISALLOWED_SMALL_SETTINGS_CATEGORIES: ReadonlySet<string> = new Set([
   "logs",
 ]);
 
-const TOP_LEVEL_KEYS: ReadonlySet<string> = new Set(Object.keys(TavernCanvasSettingsSchema.shape));
-const GATEWAY_KEYS: ReadonlySet<string> = new Set(Object.keys(GatewaySettingsSchema.shape));
+// Fields earlier versions wrote; recovery drops them without a diagnostic.
+const RETIRED_KEYS: ReadonlySet<string> = new Set(["gateway"]);
+
+const TOP_LEVEL_KEYS: ReadonlySet<string> = new Set([
+  ...Object.keys(TavernCanvasSettingsSchema.shape),
+  ...RETIRED_KEYS,
+]);
 const UI_KEYS: ReadonlySet<string> = new Set(Object.keys(TavernCanvasUiSettingsSchema.shape));
 
 export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
@@ -49,11 +53,6 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
   translation: {
     deepl_endpoint: "free",
     glossary: [],
-  },
-  gateway: {
-    endpoint: null,
-    token_secret_id: null,
-    http_acknowledgments: {},
   },
   ui: {
     color_mode: "system",
@@ -133,70 +132,6 @@ function recover_field<T>(
   }
   diagnostics.push({ path, code: "invalid_value" });
   return fallback;
-}
-
-function recover_http_acknowledgments(
-  raw: unknown,
-  path: string,
-  diagnostics: SettingsDiagnostic[],
-): Record<string, string> {
-  if (!is_plain_record(raw)) {
-    if (raw !== undefined) {
-      diagnostics.push({ path, code: "invalid_value" });
-    }
-    return {};
-  }
-
-  const { keyType: key_schema, valueType: value_schema } =
-    GatewaySettingsSchema.shape.http_acknowledgments;
-  const result: Record<string, string> = {};
-  for (const [key, value] of Object.entries(raw)) {
-    const key_result = key_schema.safeParse(key);
-    const value_result = value_schema.safeParse(value);
-    if (key_result.success && value_result.success) {
-      result[key_result.data] = value_result.data;
-    } else {
-      diagnostics.push({ path: `${path}.${key}`, code: "invalid_value" });
-    }
-  }
-  return result;
-}
-
-function recover_gateway(
-  raw: unknown,
-  diagnostics: SettingsDiagnostic[],
-): TavernCanvasSettings["gateway"] {
-  const default_gateway = DEFAULT_TAVERN_CANVAS_SETTINGS.gateway;
-  if (!is_plain_record(raw)) {
-    if (raw !== undefined) {
-      diagnostics.push({ path: "gateway", code: "invalid_value" });
-    }
-    return { ...default_gateway };
-  }
-
-  report_unknown_fields(raw, GATEWAY_KEYS, "gateway", diagnostics);
-
-  return {
-    endpoint: recover_field(
-      GatewaySettingsSchema.shape.endpoint,
-      raw.endpoint,
-      default_gateway.endpoint,
-      "gateway.endpoint",
-      diagnostics,
-    ),
-    token_secret_id: recover_field(
-      GatewaySettingsSchema.shape.token_secret_id,
-      raw.token_secret_id,
-      default_gateway.token_secret_id,
-      "gateway.token_secret_id",
-      diagnostics,
-    ),
-    http_acknowledgments: recover_http_acknowledgments(
-      raw.http_acknowledgments,
-      "gateway.http_acknowledgments",
-      diagnostics,
-    ),
-  };
 }
 
 function recover_ui(raw: unknown, diagnostics: SettingsDiagnostic[]): TavernCanvasSettings["ui"] {
@@ -341,7 +276,6 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
             "translation",
             diagnostics,
           ),
-    gateway: recover_gateway(raw.gateway, diagnostics),
     ui: recover_ui(raw.ui, diagnostics),
   };
 }

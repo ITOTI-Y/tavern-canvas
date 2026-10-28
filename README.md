@@ -7,8 +7,7 @@ configure, and shows each image under its paragraph. The images are stored in th
 the message that produced them.
 
 The extension is a Vue application mounted in a Shadow Root. Its Studio has two views, Settings and
-Gallery. A separate self hosted Gateway service in this repository can carry generation so provider
-credentials never reach the browser; see [Providers and transports](#providers-and-transports).
+Gallery.
 
 ## Requirements
 
@@ -151,13 +150,12 @@ Five image providers have adapters:
 | `openai_image` | OpenAI Image | Cloud vendor              | Yes                 |
 | `google_image` | Google Image | Cloud vendor              | Yes                 |
 
-A configured Gateway endpoint carries every request; without one, the active profile's provider and
-endpoint decide which transport does.
+The active profile's provider and endpoint decide which transport carries a request.
 
 **Loopback providers.** `sd_webui` and `comfyui` are reached over a direct browser call to the
 `base_url` on the active profile. That URL must be a loopback address; a non loopback endpoint is
 rejected with `Direct provider endpoint must use a loopback address`. The profile form has no
-`base_url` field, so on a fresh install SD WebUI is used through the Gateway.
+`base_url` field yet, so SD WebUI cannot be set up from the Studio.
 
 **Cloud providers.** `novelai`, `openai_image`, and `google_image` are called directly from the
 browser to the vendor's own origin, with a credential from the credential backend. The routes and
@@ -215,27 +213,6 @@ A NovelAI profile starts with its model's Standard quality tags and Heavy UC; ot
 with both switched off. Your own presets are managed under **Settings > Prompt presets**. A NovelAI
 model that fixes its own UC preset keeps it, and no UC is injected there.
 
-### Routing generation through the Gateway
-
-The Gateway keeps provider credentials off the browser entirely. Configuring an endpoint under
-**Settings > Connections** is the opt in: a configured Gateway outranks every other transport, so
-all image generation goes through it and the vendor credentials stay on the Gateway host.
-
-Two settings make it work:
-
-1. The **Gateway endpoint**, an `http://` or `https://` origin.
-2. The **Gateway access token**, the bearer token the Gateway was configured with. The plaintext
-   goes straight to the credential backend; it is never shown, exported, or written to a support
-   bundle.
-
-If an endpoint is set with no token stored, generation reports
-`A Gateway endpoint is configured but no Gateway access token is stored` in Diagnostics, and an
-unacknowledged `http://` origin reports `Cleartext Gateway origin has not been acknowledged` until
-you acknowledge it. Clearing the endpoint returns generation to the direct transports.
-
-See [docs/gateway.md](docs/gateway.md) for the service's own configuration, security model, and
-operational procedures.
-
 ## TauriTavern
 
 TauriTavern is supported directly. When its chat DOM virtualization is on (TauriTavern settings,
@@ -253,23 +230,14 @@ the key `tavern_canvas`. Provider payloads are checked for credential shaped key
 any are found.
 
 There is no telemetry and no analytics. The only requests the extension makes are to the provider
-endpoints you configure or to the Gateway endpoint if one is set, plus the vocabulary catalog if you
-open the vocabulary tab; see [docs/vocabulary-packages.md](docs/vocabulary-packages.md). The
+endpoints you configure, plus the vocabulary catalog if you open the vocabulary tab; see [docs/vocabulary-packages.md](docs/vocabulary-packages.md). The
 support bundle in Diagnostics is generated locally, redacts settings, and is downloaded as a file.
-
-## Cleartext connections
-
-The Gateway client refuses to use an `http://` origin until you acknowledge that specific origin in
-settings. On an `http://` connection the request, the bearer token, and the generated images all
-cross the network in cleartext. A loopback origin keeps traffic on your own machine; any other host
-does not. Prefer HTTPS through a reverse proxy for anything beyond loopback.
 
 ## Backups
 
 **Settings > General** exports a ZIP archive containing a manifest, checksums, one JSONL file per
-record store, and content addressed image assets. Credentials, Gateway tokens, logs, and support
-bundles are excluded. The archive covers the active namespace only, not the Gateway's own state,
-which is documented in [docs/gateway.md](docs/gateway.md).
+record store, and content addressed image assets. Credentials, logs, and support bundles are
+excluded. The archive covers the active namespace only.
 
 Importing an archive merges its records into the active namespace and never deletes existing data;
 a record with the same id as an archived one is replaced by the archived version. Every record and

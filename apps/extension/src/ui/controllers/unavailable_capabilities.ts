@@ -44,7 +44,6 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
   capability_matrix: {},
   helper_version: null,
-  protocol_version: null,
   storage_usage_bytes: null,
   storage_quota_bytes: null,
 };
@@ -70,7 +69,6 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
     wardrobe_guidance: "",
   },
   translation: { deepl_endpoint: "free", glossary: [] },
-  gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
     inspector_width: 320,
@@ -150,7 +148,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
   const diagnostics: DiagnosticsCapability = {
     load: () => Promise.resolve(EMPTY_DIAGNOSTICS_SNAPSHOT),
     subscribe: no_subscription,
-    test_connection: unavailable_command,
     load_timeline: () => Promise.resolve([]),
     export_support_bundle: unavailable_command,
   };
@@ -164,9 +161,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
       } satisfies SettingsSnapshot),
     subscribe: no_subscription,
     update: unavailable_command,
-    acknowledge_http_origin: unavailable_command,
-    set_gateway_token: unavailable_command,
-    clear_gateway_token: unavailable_command,
     set_analysis_key: unavailable_command,
     list_worldbooks: unavailable_command,
     clear_analysis_key: unavailable_command,

@@ -79,7 +79,7 @@ describe("SillyTavernSecretDestination", () => {
     });
     const destination = new SillyTavernSecretDestination(context(), fetch_);
 
-    await destination.write_secret("tavern_canvas:ns:gateway_token", "sk-plaintext");
+    await destination.write_secret("tavern_canvas:ns:analysis_api_key", "sk-plaintext");
   });
 
   it("throws when the write endpoint returns a non-OK status, never treating a rejected write as success", async () => {

@@ -376,20 +376,11 @@ const diagnostics = {
       message_swipe_metadata: "Message swipe records",
       tavern_regex: "SillyTavern regex scripts",
       tavern_helper: "JS Slash Runner",
-      gateway_protocol: "Gateway protocol",
     },
   },
   versions: {
     title: "Versions",
     helper_label: "JS Slash Runner",
-    protocol_label: "Gateway protocol",
-  },
-  connection_tests: {
-    title: "Connection tests",
-    run_action: "Run tests",
-    idle: "No connection test has run yet. A test sends one probe request to the current image provider profile.",
-    running: "Running connection tests",
-    latency_label: "{ms} ms",
   },
   task_timeline: {
     title: "Task timeline",
@@ -427,7 +418,6 @@ const settings = {
     translation: "Translation",
     prompts: "Prompt presets",
     library: "Library",
-    connections: "Connections",
     general: "General",
     diagnostics: "Diagnostics",
   },
@@ -547,13 +537,11 @@ const settings = {
   onboarding: {
     label: "First connection",
     title: "Set up the service that will generate your images",
-    description:
-      "Create an image provider profile first. Add a Gateway endpoint only when the provider is reached through one, then run the connection test.",
+    description: "Create an image provider profile first, then run its connection test.",
   },
   sections: {
     credential_storage: "Credential storage",
     provider_profiles: "Image provider profiles",
-    gateway: "Gateway",
     appearance: "Appearance",
     data: "Data",
   },
@@ -561,6 +549,8 @@ const settings = {
     empty_description: "Add an image provider profile to connect an image generation backend.",
     add_action: "Add image provider profile",
     connection_test_action: "Test connection",
+    connection_test_latency: "{ms} ms",
+    connection_test_failed: "Connection test failed: {code}",
     dialog_add_title: "Add image provider profile",
     dialog_edit_title: "Edit image provider profile",
     provider_label: "Provider type",
@@ -590,7 +580,7 @@ const settings = {
   credential_storage: {
     mode_label: "Storage backend",
     mode_hint:
-      "Applies to image provider, analysis API, and Gateway credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
+      "Applies to image provider and analysis API credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
     modes: {
       browser_device: "This device",
       host: "SillyTavern secret store",
@@ -621,29 +611,6 @@ const settings = {
     unlock_required: "The selected credential storage is unavailable or locked.",
     unavailable: "Encrypted browser storage is unavailable in this environment.",
     error: "The encrypted browser vault could not be read.",
-  },
-  gateway: {
-    endpoint_label: "Gateway endpoint",
-    protocol_label: "Protocol",
-    detect_action: "Detect protocol",
-    token_secret_label: "Token secret reference",
-    token_not_set: "No token configured",
-    endpoint_hint: "The Gateway endpoint image provider profiles connect through.",
-    token_label: "Gateway access token",
-    token_hint:
-      "The bearer token configured for this Gateway. It is written to the selected credential storage backend; Inkwell keeps only its reference.",
-    token_save_action: "Save token",
-    token_clear_action: "Clear token",
-  },
-  http_risk: {
-    warning_title: "This connection is not encrypted",
-    warning_description_local:
-      "{origin} uses plain HTTP on a loopback or private network. Traffic stays on your local network but is not encrypted.",
-    error_description_public:
-      "{origin} uses plain HTTP on a public or unrecognized host. The token, prompts, and images travel in plaintext and can be intercepted.",
-    disclosure: "The token, prompts, and images travel in plaintext over this connection.",
-    continue_action: "Continue anyway",
-    acknowledged_label: "Acknowledged for this origin",
   },
   appearance: {
     theme_label: "Theme",
@@ -684,9 +651,6 @@ const settings = {
 
 const errors = {
   validation_required: "This field is required.",
-  gateway_incompatible: "The Gateway at {origin} reports an incompatible protocol version.",
-  gateway_offline: "The Gateway at {origin} is not reachable.",
-  connection_test_failed: "Connection test failed: {code}",
   unexpected: "An unexpected error occurred. Check Diagnostics for details.",
 };
 

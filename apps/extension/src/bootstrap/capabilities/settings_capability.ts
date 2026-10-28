@@ -1,6 +1,5 @@
 import {
   derive_analysis_credential_reference,
-  derive_gateway_credential_reference,
   type TavernCanvasSettings,
 } from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
@@ -11,7 +10,6 @@ import type {
   BrowserSecretVaultPort,
   BrowserSecretVaultStatus,
 } from "../../storage/browser_secret_vault.js";
-import { acknowledge_http_origin } from "../../transport/http_acknowledgment.js";
 import type {
   SettingsCapability,
   SettingsDomainEvent,
@@ -89,35 +87,7 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
     load: snapshot,
     subscribe: (handler) => events.subscribe(handler),
     update: (partial) => Promise.resolve(apply(partial)),
-    acknowledge_http_origin(origin) {
-      const current = deps.settings.get_settings();
-      apply({
-        gateway: {
-          ...current.gateway,
-          http_acknowledgments: acknowledge_http_origin(
-            current.gateway.http_acknowledgments,
-            origin,
-            new Date().toISOString(),
-          ),
-        },
-      });
-      return deps.settings.flush();
-    },
-    /** The plaintext token goes straight to the credential backend; settings keep only the reference, and no read path exists. */
-    async set_gateway_token(plaintext_value) {
-      if (plaintext_value.trim().length === 0) {
-        throw new TypeError("A Gateway token must not be blank");
-      }
-      if (deps.secrets === null) {
-        throw capability_unavailable_error(SECRET_DESTINATION_UNAVAILABLE);
-      }
-      const current = deps.settings.get_settings();
-      const reference = derive_gateway_credential_reference(current.active_namespace);
-      await deps.secrets.write_secret(reference, plaintext_value);
-      apply({ gateway: { ...current.gateway, token_secret_id: reference } });
-      return deps.settings.flush();
-    },
-    /** Like the Gateway token: the key goes to the credential backend and settings never hold it. */
+    /** The key goes straight to the credential backend; settings never hold it, and no read path exists. */
     async set_analysis_key(plaintext_value) {
       if (plaintext_value.trim().length === 0) {
         throw new TypeError("An API key must not be blank");
@@ -155,15 +125,6 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
         throw capability_unavailable_error(HOST_SECRETS_UNAVAILABLE);
       }
       await deps.host_secrets.delete_secret(DEEPL_SECRET_KEY);
-    },
-    async clear_gateway_token() {
-      const current = deps.settings.get_settings();
-      const reference = current.gateway.token_secret_id;
-      if (reference !== null) {
-        await deps.secrets?.delete_secret?.(reference);
-      }
-      apply({ gateway: { ...current.gateway, token_secret_id: null } });
-      return deps.settings.flush();
     },
     async initialize_browser_secret_vault(passphrase) {
       if (deps.browser_secret_vault === null) {

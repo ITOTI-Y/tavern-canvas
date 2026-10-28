@@ -2,7 +2,6 @@ import type { CapabilityMatrix, TavernCanvasSettings } from "@tavern-canvas/cont
 import type { GenerationJobSnapshot, ImageJobQueue } from "@tavern-canvas/core";
 
 import type {
-  ConnectionTestResult,
   DiagnosticsCapability,
   DiagnosticsDomainEvent,
   SupportBundle,
@@ -69,7 +68,6 @@ export interface DiagnosticsCapabilityDeps {
   readonly settings: () => TavernCanvasSettings | null;
   readonly estimate_storage: () => Promise<StorageEstimate | undefined>;
   readonly extension_version: string;
-  readonly probe_gateway: (() => Promise<ConnectionTestResult>) | null;
 }
 
 /** Exported settings have every value that could identify a host or a credential removed. */
@@ -82,8 +80,6 @@ function redact_settings(settings: TavernCanvasSettings | null): Readonly<Record
     locale: settings.locale,
     global_concurrency: settings.global_concurrency,
     auto_generation_enabled: settings.auto_generation_enabled,
-    gateway_configured: settings.gateway.endpoint !== null,
-    acknowledged_origin_count: Object.keys(settings.gateway.http_acknowledgments).length,
     ui: settings.ui,
   };
 }
@@ -105,21 +101,11 @@ export function create_diagnostics_capability(
       return {
         capability_matrix: deps.capability_matrix,
         helper_version: deps.helper_version,
-        protocol_version: null,
         storage_usage_bytes: estimate?.usage ?? null,
         storage_quota_bytes: estimate?.quota ?? null,
       };
     },
     subscribe: (handler) => deps.timeline.subscribe(handler),
-    test_connection() {
-      if (deps.probe_gateway === null) {
-        return Promise.resolve({
-          status: "failed",
-          code: "gateway_not_configured",
-        } satisfies ConnectionTestResult);
-      }
-      return deps.probe_gateway();
-    },
     load_timeline: () => Promise.resolve(deps.timeline.entries),
     export_support_bundle(): Promise<SupportBundle> {
       const timeline = deps.timeline.entries;

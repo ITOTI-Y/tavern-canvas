@@ -1,11 +1,6 @@
 import { direct_image_catalog_entry, type ProviderId } from "@tavern-canvas/contracts";
 
-import {
-  is_http_origin_acknowledged,
-  is_loopback_origin,
-  normalize_http_origin,
-  requires_http_acknowledgment,
-} from "./http_acknowledgment.js";
+import { is_loopback_origin, normalize_http_origin } from "./http_origin.js";
 
 /** `secrets_readable`: storing a credential and reading one back are granted separately, and only reading makes a direct call possible. */
 export interface DirectCloudCandidate {
@@ -15,14 +10,11 @@ export interface DirectCloudCandidate {
 }
 
 export interface TransportSelectionInput {
-  readonly gateway_endpoint: string | null;
-  readonly http_acknowledgments: Readonly<Record<string, string>>;
   readonly direct_provider_base_url: string | null;
   readonly direct_cloud: DirectCloudCandidate | null;
 }
 
 export type TransportSelection =
-  | { readonly kind: "gateway"; readonly endpoint: string }
   | {
       readonly kind: "direct_cloud";
       readonly provider_id: ProviderId;
@@ -37,21 +29,8 @@ export class TransportConfigurationError extends Error {
   }
 }
 
-/**
- * Fixed priority: `gateway` (configuring an endpoint is the opt-in to the higher-security route),
- * `direct_cloud` (needs a vault reference and a host that can resolve it), `local_direct`.
- */
+/** Fixed priority: `direct_cloud` (needs a vault reference and a host that can resolve it), then `local_direct`. */
 export function select_transport(input: TransportSelectionInput): TransportSelection {
-  if (input.gateway_endpoint !== null) {
-    const endpoint = normalize_or_configuration_error(input.gateway_endpoint);
-    if (
-      requires_http_acknowledgment(endpoint) &&
-      !is_http_origin_acknowledged(input.http_acknowledgments, endpoint)
-    ) {
-      throw new TransportConfigurationError("Cleartext Gateway origin has not been acknowledged");
-    }
-    return { kind: "gateway", endpoint };
-  }
   const direct_cloud = select_direct_cloud(input.direct_cloud);
   if (direct_cloud !== null) {
     return direct_cloud;
@@ -73,12 +52,12 @@ function select_direct_cloud(candidate: DirectCloudCandidate | null): TransportS
   }
   if (candidate.credential_reference === null) {
     throw new TransportConfigurationError(
-      "This provider needs a stored credential before it can be called directly; set one on the active profile or configure a Gateway",
+      "This provider needs a stored credential before it can be called directly; set one on the active profile",
     );
   }
   if (!candidate.secrets_readable) {
     throw new TransportConfigurationError(
-      "This host cannot reveal stored credentials, so a direct provider call is impossible; configure a Gateway instead",
+      "This host cannot reveal stored credentials, so a direct provider call is impossible; switch the credential storage to this device",
     );
   }
   return {

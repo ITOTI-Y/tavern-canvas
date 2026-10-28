@@ -282,7 +282,6 @@ export interface VocabularyCapability {
 export interface DiagnosticsSnapshot {
   readonly capability_matrix: CapabilityMatrix;
   readonly helper_version: string | null;
-  readonly protocol_version: string | null;
   readonly storage_usage_bytes: number | null;
   readonly storage_quota_bytes: number | null;
 }
@@ -300,10 +299,6 @@ export interface TaskTimelineEntry {
   readonly error_code: string | null;
 }
 
-export type ConnectionTestResult =
-  | { readonly status: "success"; readonly latency_ms: number }
-  | { readonly status: "failed"; readonly code: string };
-
 export interface SupportBundle {
   readonly version: string;
   readonly capability_matrix: CapabilityMatrix;
@@ -320,7 +315,6 @@ export type DiagnosticsDomainEvent = {
 export interface DiagnosticsCapability {
   load(): Promise<DiagnosticsSnapshot>;
   subscribe(handler: (event: DiagnosticsDomainEvent) => void): Unsubscribe;
-  test_connection(): Promise<ConnectionTestResult>;
   load_timeline(): Promise<readonly TaskTimelineEntry[]>;
   export_support_bundle(): Promise<SupportBundle>;
 }
@@ -342,11 +336,7 @@ export interface SettingsCapability {
   load(): Promise<SettingsSnapshot>;
   subscribe(handler: (event: SettingsDomainEvent) => void): Unsubscribe;
   update(partial: Partial<TavernCanvasSettings>): Promise<TavernCanvasSettings>;
-  acknowledge_http_origin(origin: string): Promise<void>;
-  /** Hands the Gateway bearer token to the selected backend; settings keep only its reference. */
-  set_gateway_token(plaintext_value: string): Promise<void>;
-  clear_gateway_token(): Promise<void>;
-  /** Hands the custom analysis API key to the selected backend, like the Gateway token. */
+  /** Hands the custom analysis API key to the selected backend; settings never hold it. */
   set_analysis_key(plaintext_value: string): Promise<void>;
   clear_analysis_key(): Promise<void>;
   /** Names of every SillyTavern world info book, for choosing the one paragraph analysis reads. */

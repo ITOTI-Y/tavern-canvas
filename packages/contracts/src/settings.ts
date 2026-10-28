@@ -18,21 +18,7 @@ export const NormalizedOriginSchema = z.url().check((context) => {
 });
 export type NormalizedOrigin = z.infer<typeof NormalizedOriginSchema>;
 
-export const GatewaySettingsSchema = z.strictObject({
-  endpoint: NormalizedOriginSchema.nullable(),
-  token_secret_id: z.string().min(1).nullable(),
-  http_acknowledgments: z.record(NormalizedOriginSchema, z.iso.datetime({ offset: false })),
-});
-export type GatewaySettings = z.infer<typeof GatewaySettingsSchema>;
-
-export const GATEWAY_CREDENTIAL_KIND = "gateway_access_token" as const;
 export const ANALYSIS_CREDENTIAL_KIND = "analysis_api_key" as const;
-
-// One Gateway bearer token per namespace; the token itself lives only in host secret storage and in
-// the `Authorization` header of a live request.
-export function derive_gateway_credential_reference(namespace: string): string {
-  return VaultReferenceSchema.parse(`tavern_canvas:${namespace}:${GATEWAY_CREDENTIAL_KIND}`);
-}
 
 /** The custom analysis API's key, one per namespace. */
 export function derive_analysis_credential_reference(namespace: string): string {
@@ -129,7 +115,6 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   vocabulary_update_channel: z.enum(["bundled", "remote"]),
   illustration: IllustrationSettingsSchema,
   translation: TranslationSettingsSchema,
-  gateway: GatewaySettingsSchema,
   ui: TavernCanvasUiSettingsSchema,
 });
 export type TavernCanvasSettings = z.infer<typeof TavernCanvasSettingsSchema>;

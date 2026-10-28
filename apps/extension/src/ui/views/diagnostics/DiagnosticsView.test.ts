@@ -5,7 +5,6 @@ import { defineComponent, h, markRaw, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
 import type {
-  ConnectionTestResult,
   DiagnosticsCapability,
   DiagnosticsSnapshot,
   StudioCapabilities,
@@ -41,13 +40,11 @@ const FULL_MATRIX = {
   message_swipe_metadata: { available: true },
   tavern_regex: { available: true },
   tavern_helper: { available: true },
-  gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
 };
 
 const SNAPSHOT: DiagnosticsSnapshot = {
   capability_matrix: FULL_MATRIX,
   helper_version: "4.11.1",
-  protocol_version: "1.0",
   storage_usage_bytes: 1_000_000,
   storage_quota_bytes: 10_000_000,
 };
@@ -100,7 +97,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     diagnostics: {
       snapshot: SNAPSHOT,
       timeline: [],
-      connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
     settings: {
@@ -125,11 +121,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           wardrobe_guidance: "",
         },
         translation: { deepl_endpoint: "free", glossary: [] },
-        gateway: {
-          endpoint: "https://gateway.example.test",
-          token_secret_id: SECRET_TOKEN_VALUE,
-          http_acknowledgments: {},
-        },
         ui: {
           color_mode: "system",
           inspector_width: 320,
@@ -205,11 +196,10 @@ describe("DiagnosticsView capability matrix", () => {
       build_controller(create_unavailable_capabilities()),
     );
     const rows = wrapper.findAll("[data-capability-id]");
-    expect(rows).toHaveLength(6);
+    expect(rows).toHaveLength(5);
     const ids = rows.map((row) => row.attributes("data-capability-id"));
-    expect(new Set(ids).size).toBe(6);
+    expect(new Set(ids).size).toBe(5);
     expect(wrapper.text()).toContain("JS Slash Runner");
-    expect(wrapper.text()).toContain("Gateway protocol");
   });
 
   it("renders unavailable capabilities distinctly from available ones", () => {
@@ -217,21 +207,20 @@ describe("DiagnosticsView capability matrix", () => {
       build_state(),
       build_controller(create_unavailable_capabilities()),
     );
-    const gateway_row = wrapper.get('[data-capability-id="gateway_protocol"]');
-    expect(gateway_row.find('[data-available="false"]').exists()).toBe(true);
+    const preset_row = wrapper.get('[data-capability-id="preset_generation"]');
+    expect(preset_row.find('[data-available="false"]').exists()).toBe(true);
     const helper_row = wrapper.get('[data-capability-id="tavern_helper"]');
     expect(helper_row.find('[data-available="true"]').exists()).toBe(true);
   });
 });
 
 describe("DiagnosticsView versions", () => {
-  it("shows helper and protocol versions", () => {
+  it("shows the helper version", () => {
     const { wrapper } = mount_view(
       build_state(),
       build_controller(create_unavailable_capabilities()),
     );
     expect(wrapper.text()).toContain("4.11.1");
-    expect(wrapper.text()).toContain("1.0");
   });
 
   it("falls back to an unknown label when the snapshot has no version yet", () => {
@@ -240,7 +229,6 @@ describe("DiagnosticsView versions", () => {
         diagnostics: {
           snapshot: null,
           timeline: [],
-          connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
       }),
@@ -250,7 +238,7 @@ describe("DiagnosticsView versions", () => {
   });
 });
 
-const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
+const SETTINGS: TavernCanvasSettings = {
   schema_version: 1 as const,
   active_namespace: "default",
   locale: "auto" as const,
@@ -271,11 +259,6 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
     wardrobe_guidance: "",
   },
   translation: { deepl_endpoint: "free", glossary: [] },
-  gateway: {
-    endpoint: "https://gateway.example.test",
-    token_secret_id: null,
-    http_acknowledgments: {},
-  },
   ui: {
     color_mode: "system" as const,
     inspector_width: 320,
@@ -284,77 +267,6 @@ const SETTINGS_WITH_GATEWAY: TavernCanvasSettings = {
   },
 };
 
-describe("DiagnosticsView connection test", () => {
-  function build_capabilities(result: () => Promise<ConnectionTestResult>): StudioCapabilities {
-    const capabilities = create_unavailable_capabilities();
-    const diagnostics: DiagnosticsCapability = {
-      load: () => Promise.resolve(SNAPSHOT),
-      subscribe: () => () => {},
-      test_connection: result,
-      load_timeline: () => Promise.resolve([]),
-      export_support_bundle: capabilities.diagnostics.export_support_bundle,
-    };
-    return {
-      ...capabilities,
-      diagnostics,
-      settings: {
-        ...capabilities.settings,
-        load: () =>
-          Promise.resolve({
-            settings: SETTINGS_WITH_GATEWAY,
-            vocabulary_update_channel: "bundled",
-            browser_secret_vault: { state: "unavailable", secret_count: 0 },
-          }),
-      },
-    };
-  }
-
-  it("runs a connection test and shows the success latency", async () => {
-    const capabilities = build_capabilities(() =>
-      Promise.resolve({ status: "success", latency_ms: 42 }),
-    );
-    const controller = build_controller(capabilities);
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    await wrapper.get('[data-testid="connection-tests"] button').trigger("click");
-    await nextTick();
-    await nextTick();
-
-    const result = wrapper.get('[data-testid="connection-test-result"]');
-    expect(result.text()).toContain("42");
-  });
-
-  it("shows a Gateway-specific failure message using the configured origin", async () => {
-    const capabilities = build_capabilities(() =>
-      Promise.resolve({ status: "failed", code: "gateway_offline" }),
-    );
-    const controller = build_controller(capabilities);
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    await wrapper.get('[data-testid="connection-tests"] button').trigger("click");
-    await nextTick();
-    await nextTick();
-
-    const result = wrapper.get('[data-testid="connection-test-result"]');
-    expect(result.text()).toContain("gateway.example.test");
-  });
-
-  it("shows a generic failure message for an unmapped error code", async () => {
-    const capabilities = build_capabilities(() =>
-      Promise.reject(Object.assign(new Error("boom"), { code: "capability_not_implemented" })),
-    );
-    const controller = build_controller(capabilities);
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    await wrapper.get('[data-testid="connection-tests"] button').trigger("click");
-    await nextTick();
-    await nextTick();
-
-    const result = wrapper.get('[data-testid="connection-test-result"]');
-    expect(result.text()).toContain("capability_not_implemented");
-  });
-});
-
 describe("DiagnosticsView task timeline", () => {
   it("shows a composed empty state with zero log entries", () => {
     const { wrapper } = mount_view(
@@ -362,7 +274,6 @@ describe("DiagnosticsView task timeline", () => {
         diagnostics: {
           snapshot: SNAPSHOT,
           timeline: [],
-          connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
       }),
@@ -379,7 +290,6 @@ describe("DiagnosticsView task timeline", () => {
         diagnostics: {
           snapshot: SNAPSHOT,
           timeline: build_timeline(1000),
-          connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
       }),
@@ -442,7 +352,6 @@ describe("DiagnosticsView storage usage", () => {
         diagnostics: {
           snapshot: { ...SNAPSHOT, storage_quota_bytes: null },
           timeline: [],
-          connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
       }),
@@ -461,7 +370,6 @@ describe("DiagnosticsView storage usage", () => {
             storage_quota_bytes: 10_000_000,
           },
           timeline: [],
-          connection_test_command: IDLE_COMMAND_STATE,
           support_bundle_command: IDLE_COMMAND_STATE,
         },
       }),
@@ -494,7 +402,6 @@ describe("DiagnosticsView support bundle export", () => {
     const diagnostics: DiagnosticsCapability = {
       load: () => Promise.resolve(SNAPSHOT),
       subscribe: () => () => {},
-      test_connection: capabilities.diagnostics.test_connection,
       load_timeline: () => Promise.resolve([]),
       export_support_bundle: () => Promise.resolve(BUNDLE),
     };
@@ -505,10 +412,7 @@ describe("DiagnosticsView support bundle export", () => {
         ...capabilities.settings,
         load: () =>
           Promise.resolve({
-            settings: {
-              ...SETTINGS_WITH_GATEWAY,
-              gateway: { ...SETTINGS_WITH_GATEWAY.gateway, token_secret_id: SECRET_TOKEN_VALUE },
-            },
+            settings: SETTINGS,
             vocabulary_update_channel: "bundled" as const,
             browser_secret_vault: { state: "unavailable" as const, secret_count: 0 },
           }),
@@ -552,14 +456,6 @@ describe("DiagnosticsView support bundle export", () => {
     ]) {
       expect(html).not.toContain(forbidden);
     }
-  });
-
-  it("never renders the live gateway token reference anywhere in Diagnostics, exported or not", () => {
-    const { wrapper } = mount_view(
-      build_state(),
-      build_controller(create_unavailable_capabilities()),
-    );
-    expect(wrapper.html()).not.toContain(SECRET_TOKEN_VALUE);
   });
 
   it("offers a file download once the bundle export succeeds", async () => {

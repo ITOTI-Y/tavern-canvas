@@ -84,7 +84,6 @@ export interface StudioController {
   ): Promise<void>;
   load_vocabulary_catalog(): Promise<void>;
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void>;
-  test_diagnostics_connection(): Promise<void>;
   export_support_bundle(): Promise<void>;
 
   load_diagnostics_timeline(): Promise<void>;
@@ -107,9 +106,6 @@ export interface StudioController {
   /** Tier and Anlas of the account behind the active NovelAI profile. */
   load_novelai_account(): Promise<NovelAiAccountStatus>;
   load_novelai_models(): Promise<readonly ResolvedNovelAiModel[]>;
-  acknowledge_http_origin(origin: string): Promise<void>;
-  set_gateway_token(plaintext_value: string): Promise<void>;
-  clear_gateway_token(): Promise<void>;
   set_deepl_key(plaintext_value: string): Promise<void>;
   clear_deepl_key(): Promise<void>;
   set_analysis_key(plaintext_value: string): Promise<void>;
@@ -274,7 +270,6 @@ function create_initial_state(
     diagnostics: {
       snapshot: null,
       timeline: [],
-      connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
     settings: {
@@ -758,16 +753,6 @@ class StudioControllerImpl implements StudioController {
     );
   }
 
-  test_diagnostics_connection(): Promise<void> {
-    return run_command(
-      () => this.#state.diagnostics.connection_test_command,
-      (next) => {
-        this.#patch_diagnostics({ connection_test_command: next });
-      },
-      () => this.#capabilities.diagnostics.test_connection(),
-    );
-  }
-
   export_support_bundle(): Promise<void> {
     return run_command(
       () => this.#state.diagnostics.support_bundle_command,
@@ -870,14 +855,6 @@ class StudioControllerImpl implements StudioController {
     return this.#capabilities.novelai.load();
   }
 
-  acknowledge_http_origin(origin: string): Promise<void> {
-    return this.#reload_settings(this.#capabilities.settings.acknowledge_http_origin(origin));
-  }
-
-  set_gateway_token(plaintext_value: string): Promise<void> {
-    return this.#reload_settings(this.#capabilities.settings.set_gateway_token(plaintext_value));
-  }
-
   set_deepl_key(plaintext_value: string): Promise<void> {
     return this.#capabilities.settings.set_deepl_key(plaintext_value);
   }
@@ -898,9 +875,6 @@ class StudioControllerImpl implements StudioController {
     return this.#capabilities.settings.clear_deepl_key();
   }
 
-  clear_gateway_token(): Promise<void> {
-    return this.#reload_settings(this.#capabilities.settings.clear_gateway_token());
-  }
   async initialize_browser_secret_vault(passphrase: string): Promise<void> {
     const status = await this.#capabilities.settings.initialize_browser_secret_vault(passphrase);
     if (!this.#stopped) {
@@ -927,19 +901,6 @@ class StudioControllerImpl implements StudioController {
     if (!this.#stopped) {
       this.#patch_settings({ browser_secret_vault: status });
     }
-  }
-
-  async #reload_settings(pending: Promise<void>): Promise<void> {
-    await pending;
-    const snapshot = await this.#capabilities.settings.load();
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_settings({
-      settings: snapshot.settings,
-      vocabulary_update_channel: snapshot.vocabulary_update_channel,
-      browser_secret_vault: snapshot.browser_secret_vault,
-    });
   }
 
   async set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void> {

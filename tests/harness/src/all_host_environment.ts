@@ -18,8 +18,6 @@ export interface HostEnvironmentOptions {
   /** Whether the host reveals stored credentials (SillyTavern's `allowKeysExposure`). */
   readonly secrets_readable: boolean;
   readonly active_provider_profile_id: string;
-  readonly gateway_endpoint: string | null;
-  readonly http_acknowledgments: Readonly<Record<string, string>>;
 }
 
 /** A message in SillyTavern's own `chat` format; TavernHelper's view is derived from it. */
@@ -174,11 +172,6 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         wardrobe_guidance: "",
       },
       translation: { deepl_endpoint: "free", glossary: [] },
-      gateway: {
-        endpoint: options.gateway_endpoint,
-        token_secret_id: null,
-        http_acknowledgments: options.http_acknowledgments,
-      },
       ui: {
         color_mode: "system",
         inspector_width: 320,

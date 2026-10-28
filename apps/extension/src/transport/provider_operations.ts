@@ -5,7 +5,7 @@ import {
   type ProviderTransportOperation,
 } from "@tavern-canvas/providers";
 
-import { normalize_http_origin } from "./http_acknowledgment.js";
+import { normalize_http_origin } from "./http_origin.js";
 
 export type ProviderTransportBoundaryErrorCode = "configuration" | "malformed_response";
 

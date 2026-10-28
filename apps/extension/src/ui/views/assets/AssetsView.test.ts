@@ -44,7 +44,6 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
     diagnostics: {
       snapshot: null,
       timeline: [],
-      connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
     settings: {
@@ -74,7 +73,6 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     install_vocabulary_package: vi.fn(() => Promise.resolve()),
     load_vocabulary_catalog: vi.fn(() => Promise.resolve()),
     update_settings: vi.fn(() => Promise.resolve()),
-    test_diagnostics_connection: vi.fn(() => Promise.resolve()),
     export_support_bundle: vi.fn(() => Promise.resolve()),
     set_active_asset_category: vi.fn(),
     save_asset: vi.fn(() => Promise.resolve()),
@@ -101,9 +99,6 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     test_provider_profile_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["test_provider_profile_connection"]>,
     ),
-    acknowledge_http_origin: vi.fn(() => Promise.resolve()),
-    set_gateway_token: vi.fn(() => Promise.resolve()),
-    clear_gateway_token: vi.fn(() => Promise.resolve()),
     set_analysis_key: vi.fn(() => Promise.resolve()),
     list_worldbooks: vi.fn(() => Promise.resolve([])),
     clear_analysis_key: vi.fn(() => Promise.resolve()),

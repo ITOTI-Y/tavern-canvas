@@ -122,7 +122,6 @@ function build_matrix(
       helper.version.state === "available",
       "TavernHelper version API is unavailable",
     ),
-    gateway_protocol: unavailable("Gateway protocol is not connected"),
   };
 }
 

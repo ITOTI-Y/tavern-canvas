@@ -22,7 +22,6 @@ const READY_PROBE: BootstrapProbeResult = {
     message_swipe_metadata: { available: true },
     tavern_regex: { available: true },
     tavern_helper: { available: true },
-    gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
   },
 };
 
@@ -235,16 +234,6 @@ describe("compose_studio_capabilities", () => {
     await composition.dispose();
   });
 
-  it("reports a failed connection test rather than a fake success when no gateway is configured", async () => {
-    const composition = await compose();
-
-    await expect(composition.capabilities.diagnostics.test_connection()).resolves.toEqual({
-      status: "failed",
-      code: "gateway_not_configured",
-    });
-    await composition.dispose();
-  });
-
   it("carries every capability resolution into the support bundle", async () => {
     const composition = await compose();
 
@@ -378,11 +367,5 @@ describe("create_provider_transport", () => {
     expect(() =>
       create_provider_transport({ kind: "local_direct", endpoint: "http://provider.example.com" }),
     ).toThrowError(/loopback/u);
-  });
-
-  it("refuses to drive the job executor from a transport it cannot honor", () => {
-    expect(() =>
-      create_provider_transport({ kind: "gateway", endpoint: "https://gateway.example" }),
-    ).toThrowError(/cannot drive the job executor/u);
   });
 });

@@ -47,7 +47,6 @@ const HOST_SETTINGS = {
   global_concurrency: 2,
   auto_generation_enabled: false,
   vocabulary_update_channel: "bundled",
-  gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
     inspector_width: 320,

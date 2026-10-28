@@ -73,7 +73,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     diagnostics: {
       snapshot: null,
       timeline: [],
-      connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
     settings: {

@@ -6,12 +6,11 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import type { StudioState } from "../../contracts/view_models.js";
 import AppButton from "../../components/AppButton.vue";
 import CapabilityMatrix from "./CapabilityMatrix.vue";
-import ConnectionTests from "./ConnectionTests.vue";
 import styles from "./diagnostics_styles.js";
 import StorageUsage from "./StorageUsage.vue";
 import TaskTimeline from "./TaskTimeline.vue";
 
-/** Never reads `gateway.token_secret_id` or any `secret_reference`: diagnostics must not render credential material. */
+/** Never reads any `secret_reference`: diagnostics must not render credential material. */
 const props = defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;
@@ -20,17 +19,12 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const snapshot = computed(() => props.state.diagnostics.snapshot);
-const gateway_endpoint = computed(() => props.state.settings.settings?.gateway.endpoint ?? null);
 const support_bundle_command = computed(() => props.state.diagnostics.support_bundle_command);
 const is_exporting = computed(() => support_bundle_command.value.status === "pending");
 
 onMounted(() => {
   void props.controller.load_diagnostics_timeline();
 });
-
-function run_connection_test(): void {
-  void props.controller.test_diagnostics_connection();
-}
 
 function export_bundle(): void {
   void props.controller.export_support_bundle();
@@ -63,21 +57,9 @@ function download_bundle(): void {
           {{ snapshot?.helper_version ?? t("status.unknown") }}
         </span>
       </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("diagnostics.versions.protocol_label") }}</span>
-        <span class="tc-tabular-nums" :class="styles.row_value">
-          {{ snapshot?.protocol_version ?? t("status.unknown") }}
-        </span>
-      </div>
     </div>
 
     <CapabilityMatrix :matrix="snapshot?.capability_matrix ?? {}" />
-
-    <ConnectionTests
-      :command="state.diagnostics.connection_test_command"
-      :gateway-endpoint="gateway_endpoint"
-      @run="run_connection_test"
-    />
 
     <TaskTimeline :entries="state.diagnostics.timeline" />
 

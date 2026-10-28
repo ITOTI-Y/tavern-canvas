@@ -11,7 +11,6 @@ import {
   BrowserRandomSource,
   ImageJobQueue,
   SystemJobTimeSource,
-  type JobExecutor,
   type RuntimeModule,
 } from "@tavern-canvas/core";
 import type {
@@ -70,7 +69,6 @@ import {
 import type { ProviderFetch } from "../transport/browser_fetch.js";
 import { DirectCloudTransport } from "../transport/direct_cloud_transport.js";
 import { LocalDirectTransport } from "../transport/local_direct_transport.js";
-import type { GatewayJobExecutorDeps } from "../transport/gateway_job_executor.js";
 import {
   select_transport,
   type DirectCloudCandidate,
@@ -501,16 +499,11 @@ export async function compose_studio_capabilities(
       : host === null
         ? unavailable(HOST_UNAVAILABLE)
         : resolve_capability(() => {
-            const gateway_settings = settings_adapter?.get_settings().gateway ?? null;
             const select = (profile: ActiveProfile | null): TransportSelection =>
               select_transport({
-                gateway_endpoint: gateway_settings?.endpoint ?? null,
-                http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
                 direct_provider_base_url: profile?.base_url ?? null,
                 direct_cloud: profile?.direct_cloud ?? null,
               });
-            // A Gateway endpoint fixes the route for the session; direct routes follow the active profile.
-            const gateway = gateway_settings?.endpoint == null ? null : select(null);
             const plans = new MediaExecutionPlanRegistry();
             const image_store: GeneratedImageStoreDeps = {
               store: create_image_store_port(database, namespace),
@@ -528,60 +521,43 @@ export async function compose_studio_capabilities(
               },
             };
             const queue = new ImageJobQueue({
-              executor:
-                gateway?.kind === "gateway"
-                  ? create_gateway_job_executor({
-                      ...image_store,
-                      endpoint: gateway.endpoint,
-                      http_acknowledgments: gateway_settings?.http_acknowledgments ?? {},
-                      access_token: require_gateway_token_source(
-                        gateway_settings?.token_secret_id ?? null,
-                        secret_resolver,
-                      ),
-                      plans,
-                      ...(options.provider_fetch === undefined
-                        ? {}
-                        : { fetch: options.provider_fetch }),
-                    })
-                  : new MediaJobExecutor({
-                      ...image_store,
-                      load_adapters: load_provider_adapters,
-                      profiles: {
-                        resolve: async (provider_id) => {
-                          const adapter = (await load_provider_adapters())[provider_id];
-                          const profile = await read_active_profile();
-                          if (adapter === undefined || profile?.provider_id !== provider_id) {
-                            throw new Error(
-                              `No stored provider profile is active for ${provider_id}`,
-                            );
-                          }
-                          return adapter.validate_profile(adapter_profile_of(profile.record));
-                        },
-                      },
-                      transport: live_transport(async () =>
-                        create_provider_transport(select(await read_active_profile()), {
-                          secrets: secret_resolver,
-                          ...(options.provider_fetch === undefined
-                            ? {}
-                            : { fetch: options.provider_fetch }),
-                        }),
-                      ),
-                      assets: provider_asset_reader ?? create_asset_reader(database, namespace),
-                      ...(load_novelai_runtime === null
-                        ? {}
-                        : {
-                            postprocess: async (request, outputs) =>
-                              request.provider_id === "novelai" && request.action === "infill"
-                                ? (await load_novelai_runtime()).finish(
-                                    request,
-                                    outputs,
-                                    AbortSignal.timeout(NOVELAI_PREPARATION_TIMEOUT_MS),
-                                  )
-                                : outputs,
-                          }),
-                      log: { write: () => {} },
-                      plans,
+              executor: new MediaJobExecutor({
+                ...image_store,
+                load_adapters: load_provider_adapters,
+                profiles: {
+                  resolve: async (provider_id) => {
+                    const adapter = (await load_provider_adapters())[provider_id];
+                    const profile = await read_active_profile();
+                    if (adapter === undefined || profile?.provider_id !== provider_id) {
+                      throw new Error(`No stored provider profile is active for ${provider_id}`);
+                    }
+                    return adapter.validate_profile(adapter_profile_of(profile.record));
+                  },
+                },
+                transport: live_transport(async () =>
+                  create_provider_transport(select(await read_active_profile()), {
+                    secrets: secret_resolver,
+                    ...(options.provider_fetch === undefined
+                      ? {}
+                      : { fetch: options.provider_fetch }),
+                  }),
+                ),
+                assets: provider_asset_reader ?? create_asset_reader(database, namespace),
+                ...(load_novelai_runtime === null
+                  ? {}
+                  : {
+                      postprocess: async (request, outputs) =>
+                        request.provider_id === "novelai" && request.action === "infill"
+                          ? (await load_novelai_runtime()).finish(
+                              request,
+                              outputs,
+                              AbortSignal.timeout(NOVELAI_PREPARATION_TIMEOUT_MS),
+                            )
+                          : outputs,
                     }),
+                log: { write: () => {} },
+                plans,
+              }),
               persistence: new IndexedDbJobPersistence(database, namespace()),
               job_id_source: { next: () => crypto.randomUUID() },
               time_source: new SystemJobTimeSource(),
@@ -832,7 +808,6 @@ export async function compose_studio_capabilities(
         settings: () => settings_adapter?.get_settings() ?? null,
         estimate_storage: options.estimate_storage ?? default_estimate_storage,
         extension_version,
-        probe_gateway: null,
       }),
     ),
     fallback.diagnostics,
@@ -880,7 +855,6 @@ export interface ProviderTransportDependencies {
   readonly fetch?: ProviderFetch;
 }
 
-/** `gateway` never arrives here: it is a job-level client served by `GatewayJobExecutor`. */
 export function create_provider_transport(
   selection: TransportSelection,
   dependencies: ProviderTransportDependencies = { secrets: null },
@@ -906,10 +880,6 @@ export function create_provider_transport(
         base_url: selection.endpoint,
         ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
       });
-    default:
-      throw new Error(
-        `The selected ${selection.kind} transport cannot drive the job executor; configure a loopback provider endpoint or a credentialed cloud profile`,
-      );
   }
 }
 
@@ -999,33 +969,4 @@ function create_novelai_transport(
     },
     { secrets, ...(fetch_ === undefined ? {} : { fetch: fetch_ }) },
   );
-}
-
-const GATEWAY_TOKEN_MISSING =
-  "A Gateway endpoint is configured but no Gateway access token is stored; set one in Settings > Gateway, or clear the endpoint to generate directly";
-const GATEWAY_TOKEN_UNREADABLE =
-  "This host cannot reveal stored credentials, so the Gateway access token cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml, or clear the Gateway endpoint to generate directly";
-
-function require_gateway_token_source(
-  token_secret_id: string | null,
-  secrets: SecretResolverPort | null,
-): () => Promise<string> {
-  if (token_secret_id === null) {
-    throw new Error(GATEWAY_TOKEN_MISSING);
-  }
-  if (secrets === null) {
-    throw new Error(GATEWAY_TOKEN_UNREADABLE);
-  }
-  return () => secrets.resolve_secret(token_secret_id);
-}
-
-function create_gateway_job_executor(deps: GatewayJobExecutorDeps): JobExecutor {
-  let loading: Promise<typeof import("../transport/gateway_job_executor.js")> | null = null;
-  return {
-    async execute(job, control) {
-      const { GatewayJobExecutor } = await (loading ??=
-        import("../transport/gateway_job_executor.js"));
-      return new GatewayJobExecutor(deps).execute(job, control);
-    },
-  };
 }

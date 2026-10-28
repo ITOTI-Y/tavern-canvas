@@ -241,8 +241,8 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
     const result = await props.controller.test_provider_profile_connection(profile.id);
     const label =
       result.status === "success"
-        ? `${t("status.success")} · ${t("diagnostics.connection_tests.latency_label", { ms: result.latency_ms })}`
-        : t("errors.connection_test_failed", { code: result.error.code });
+        ? `${t("status.success")} · ${t("settings.provider_profiles.connection_test_latency", { ms: result.latency_ms })}`
+        : t("settings.provider_profiles.connection_test_failed", { code: result.error.code });
     test_state.value.set(profile.id, { pending: false, label });
   } catch {
     test_state.value.set(profile.id, { pending: false, label: t("errors.unexpected") });

@@ -19,24 +19,6 @@ export type {
 } from "./generation.js";
 
 export {
-  GatewayCapabilitiesResponseSchema,
-  GatewayCreateJobRequestSchema,
-  GatewayJobEventSchema,
-  GatewayJobResponseSchema,
-  GatewayLimitsSchema,
-  GatewayProviderCapabilitiesSchema,
-  PROTOCOL_VERSION,
-} from "./gateway.js";
-export type {
-  GatewayCapabilitiesResponse,
-  GatewayCreateJobRequest,
-  GatewayJobEvent,
-  GatewayJobResponse,
-  GatewayLimits,
-  GatewayProviderCapabilities,
-} from "./gateway.js";
-
-export {
   AssetIdSchema,
   ImageIdSchema,
   JobIdSchema,
@@ -175,8 +157,6 @@ export {
   AnalysisConnectionSchema,
   AnalysisWorldInfoSchema,
   CredentialStorageModeSchema,
-  GATEWAY_CREDENTIAL_KIND,
-  GatewaySettingsSchema,
   GlossaryEntrySchema,
   IllustrationSettingsSchema,
   NormalizedOriginSchema,
@@ -184,13 +164,11 @@ export {
   TavernCanvasUiSettingsSchema,
   TranslationSettingsSchema,
   derive_analysis_credential_reference,
-  derive_gateway_credential_reference,
 } from "./settings.js";
 export type {
   AnalysisConnection,
   AnalysisWorldInfo,
   CredentialStorageMode,
-  GatewaySettings,
   GlossaryEntry,
   IllustrationSettings,
   NormalizedOrigin,

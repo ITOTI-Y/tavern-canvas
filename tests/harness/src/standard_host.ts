@@ -12,7 +12,6 @@ export const READY_PROBE: BootstrapProbeResult = {
     message_swipe_metadata: { available: true },
     tavern_regex: { available: true },
     tavern_helper: { available: true },
-    gateway_protocol: { available: false, reason: "Gateway protocol is not connected" },
   },
 };
 

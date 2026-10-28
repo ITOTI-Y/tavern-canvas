@@ -11,7 +11,7 @@ import {
   validate_provider_operation,
   validate_remote_operation,
 } from "./provider_operations.js";
-import { is_loopback_origin, normalize_http_origin } from "./http_acknowledgment.js";
+import { is_loopback_origin, normalize_http_origin } from "./http_origin.js";
 
 export type { ProviderFetch } from "./browser_fetch.js";
 

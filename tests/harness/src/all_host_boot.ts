@@ -47,16 +47,10 @@ async function boot(): Promise<void> {
   ]);
 
   const helper_parameter = params.get("helper") ?? "4.11.1";
-  const gateway_endpoint = params.get("gateway");
   const environment = create_host_environment({
     helper_version: helper_parameter === "missing" ? null : helper_parameter,
     secrets_readable: params.get("secrets") !== "sealed",
     active_provider_profile_id: PROFILE_ID,
-    gateway_endpoint,
-    http_acknowledgments:
-      params.get("ack") === "1" && gateway_endpoint !== null
-        ? { [new URL(gateway_endpoint).origin]: "2026-08-08T00:00:00.000Z" }
-        : {},
   });
 
   // Deletion must complete before open_database() runs, which a Playwright-side evaluate cannot order.

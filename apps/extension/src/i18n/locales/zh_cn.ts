@@ -362,20 +362,11 @@ const diagnostics = {
       message_swipe_metadata: "候选回复记录",
       tavern_regex: "SillyTavern 正则脚本",
       tavern_helper: "JS Slash Runner",
-      gateway_protocol: "Gateway 协议",
     },
   },
   versions: {
     title: "版本信息",
     helper_label: "JS Slash Runner",
-    protocol_label: "Gateway 协议",
-  },
-  connection_tests: {
-    title: "连接测试",
-    run_action: "运行测试",
-    idle: "尚未运行连接测试。测试会向当前图像服务配置发送一次探测请求。",
-    running: "正在运行连接测试",
-    latency_label: "{ms} 毫秒",
   },
   task_timeline: {
     title: "任务时间线",
@@ -412,7 +403,6 @@ const settings = {
     translation: "翻译",
     prompts: "提示词预设",
     library: "素材库",
-    connections: "连接",
     general: "通用",
     diagnostics: "诊断",
   },
@@ -529,13 +519,11 @@ const settings = {
   onboarding: {
     label: "首次连接",
     title: "配置用于生成图片的服务",
-    description:
-      "先添加图像服务配置；只有服务需要经 Gateway 访问时才填写 Gateway 地址，最后运行连接测试。",
+    description: "先添加图像服务配置，再运行连接测试。",
   },
   sections: {
     credential_storage: "密钥存储",
     provider_profiles: "图像服务配置",
-    gateway: "Gateway",
     appearance: "外观",
     data: "数据",
   },
@@ -543,6 +531,8 @@ const settings = {
     empty_description: "添加一个图像服务配置，用于连接图像生成后端。",
     add_action: "添加图像服务配置",
     connection_test_action: "测试连接",
+    connection_test_latency: "{ms} 毫秒",
+    connection_test_failed: "连接测试失败：{code}",
     dialog_add_title: "添加图像服务配置",
     dialog_edit_title: "编辑图像服务配置",
     provider_label: "服务类型",
@@ -570,7 +560,7 @@ const settings = {
   credential_storage: {
     mode_label: "存储后端",
     mode_hint:
-      "应用于图像服务、分析 API 和 Gateway 的密钥。本机加密存储无需口令，在当前浏览器内加密保存；切换存储方式不会迁移已有密钥，需要重新填写。",
+      "应用于图像服务和分析 API 的密钥。本机加密存储无需口令，在当前浏览器内加密保存；切换存储方式不会迁移已有密钥，需要重新填写。",
     modes: {
       browser_device: "本机加密存储",
       host: "SillyTavern 密钥库",
@@ -599,28 +589,6 @@ const settings = {
     unlock_required: "当前选择的密钥存储不可用或尚未解锁。",
     unavailable: "当前环境不支持浏览器加密存储。",
     error: "无法读取浏览器加密库。",
-  },
-  gateway: {
-    endpoint_label: "Gateway 地址",
-    protocol_label: "协议",
-    detect_action: "检测协议",
-    token_secret_label: "令牌的密钥引用",
-    token_not_set: "尚未配置令牌",
-    endpoint_hint: "图像服务配置经由该 Gateway 地址连接。",
-    token_label: "Gateway 访问令牌",
-    token_hint: "该 Gateway 的 Bearer 令牌，写入当前选择的密钥存储，Inkwell 只保留其引用。",
-    token_save_action: "保存令牌",
-    token_clear_action: "清除令牌",
-  },
-  http_risk: {
-    warning_title: "此连接未加密",
-    warning_description_local:
-      "{origin} 在回环地址或私有网络中使用明文 HTTP。流量留在本地网络内，但没有加密。",
-    error_description_public:
-      "{origin} 在公网或未识别的主机上使用明文 HTTP，令牌、提示词和图片以明文传输，可能被截获。",
-    disclosure: "在这个连接上，令牌、提示词和图片都以明文传输。",
-    continue_action: "仍要继续",
-    acknowledged_label: "已针对此来源确认",
   },
   appearance: {
     theme_label: "主题",
@@ -661,9 +629,6 @@ const settings = {
 
 const errors = {
   validation_required: "此项为必填。",
-  gateway_incompatible: "位于 {origin} 的 Gateway 协议版本不兼容。",
-  gateway_offline: "无法连接到位于 {origin} 的 Gateway。",
-  connection_test_failed: "连接测试失败：{code}",
   unexpected: "发生了未预期的错误，请到诊断页查看详情。",
 };
 

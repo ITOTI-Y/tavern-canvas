@@ -18,7 +18,5 @@ export function capability_label(t: Translate, id: CapabilityMatrixId): string {
       return t("diagnostics.capability_matrix.capabilities.tavern_regex");
     case "tavern_helper":
       return t("diagnostics.capability_matrix.capabilities.tavern_helper");
-    case "gateway_protocol":
-      return t("diagnostics.capability_matrix.capabilities.gateway_protocol");
   }
 }

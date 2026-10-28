@@ -42,9 +42,6 @@ jobs:
       - name: Run checks
         run: pnpm check
 
-      - name: Run Gateway tests
-        run: pnpm test:gateway
-
       - name: Run E2E tests
         run: pnpm test:e2e
 

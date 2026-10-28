@@ -38,9 +38,8 @@ http://localhost:5181/sillytavern_host.html for the Studio, or `chat_demo.html` 
 illustration slots.
 
 Its query parameters are read in `tests/harness/src/all_host_boot.ts`: `?reset=1` starts from a
-clean database, `?helper=missing` shows the blocked-startup screen, `?secrets=sealed` simulates a
-host that refuses to reveal stored credentials, and `?gateway=<origin>` with `&ack=1` configures an
-acknowledged Gateway endpoint.
+clean database, `?helper=missing` shows the blocked-startup screen, and `?secrets=sealed` simulates
+a host that refuses to reveal stored credentials.
 
 **`pnpm dev:extension`** is the only one that exercises a real chat, a real TavernHelper, and real
 provider traffic. It is also the slowest loop to set up, so reach for it when the other two cannot

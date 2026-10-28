@@ -10,7 +10,6 @@ import type { StudioController } from "../../controllers/studio_controller.js";
 import AppearanceSettings from "./AppearanceSettings.vue";
 import CredentialStorageSettings from "./CredentialStorageSettings.vue";
 import DataSettings from "./DataSettings.vue";
-import GatewaySettings from "./GatewaySettings.vue";
 import IllustrationSettings from "./IllustrationSettings.vue";
 import NovelAiSettings from "./NovelAiSettings.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
@@ -37,7 +36,6 @@ const SECTIONS: readonly SettingsSection[] = [
   "translation",
   "prompts",
   "library",
-  "connections",
   "general",
   "diagnostics",
 ];
@@ -55,8 +53,6 @@ function section_label(section: SettingsSection): string {
       return t("settings.nav.prompts");
     case "library":
       return t("settings.nav.library");
-    case "connections":
-      return t("settings.nav.connections");
     case "general":
       return t("settings.nav.general");
     case "diagnostics":
@@ -167,13 +163,6 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
           :settings="state.settings.settings"
           :controller="controller"
         />
-        <template v-else-if="section === 'connections'">
-          <GatewaySettings
-            :settings="state.settings.settings"
-            :connection-test-command="state.diagnostics.connection_test_command"
-            :controller="controller"
-          />
-        </template>
         <template v-else-if="section === 'general'">
           <AppearanceSettings :settings="state.settings.settings" :controller="controller" />
           <CredentialStorageSettings

@@ -93,7 +93,6 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     wardrobe_guidance: "",
   },
   translation: { deepl_endpoint: "free", glossary: [] },
-  gateway: { endpoint: null, token_secret_id: null, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
     inspector_width: 320,
@@ -114,7 +113,6 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
   capability_matrix: {},
   helper_version: null,
-  protocol_version: null,
   storage_usage_bytes: null,
   storage_quota_bytes: null,
 };
@@ -216,7 +214,6 @@ function build_mock_studio() {
   const diagnostics: DiagnosticsCapability = {
     load: diagnostics_harness.load,
     subscribe: diagnostics_harness.sub.subscribe,
-    test_connection: vi.fn(),
     load_timeline: vi.fn(),
     export_support_bundle: vi.fn(),
   };
@@ -226,9 +223,6 @@ function build_mock_studio() {
     load: settings_harness.load,
     subscribe: settings_harness.sub.subscribe,
     update: vi.fn(),
-    acknowledge_http_origin: vi.fn(),
-    set_gateway_token: vi.fn(),
-    clear_gateway_token: vi.fn(),
     set_analysis_key: vi.fn(() => Promise.resolve()),
     list_worldbooks: vi.fn(() => Promise.resolve([])),
     clear_analysis_key: vi.fn(() => Promise.resolve()),

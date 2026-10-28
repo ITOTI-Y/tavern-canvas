@@ -11,7 +11,6 @@ import type {
   ProviderProfileSummary,
   ProviderProfileDraft,
   SettingsCapability,
-  SettingsSnapshot,
   StudioCapabilities,
 } from "../../contracts/ui_capabilities.js";
 import {
@@ -34,7 +33,6 @@ const PROFILE_ID: Uuid = "11111111-1111-4111-8111-111111111111";
 const SECRET_TOKEN_VALUE = "sk-live-do-not-leak-1234567890";
 const SECRET_PROMPT = "1girl, masterpiece, best quality, do-not-leak-prompt-text";
 const SECRET_MESSAGE_CONTENT = "do-not-leak: the user said something private here";
-const TOKEN_REFERENCE = "secret-ref://gateway/primary-token";
 
 const DEFAULT_SETTINGS: TavernCanvasSettings = {
   schema_version: 1,
@@ -57,7 +55,6 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     wardrobe_guidance: "",
   },
   translation: { deepl_endpoint: "free", glossary: [] },
-  gateway: { endpoint: null, token_secret_id: TOKEN_REFERENCE, http_acknowledgments: {} },
   ui: {
     color_mode: "system",
     inspector_width: 320,
@@ -110,7 +107,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     diagnostics: {
       snapshot: null,
       timeline: [],
-      connection_test_command: IDLE_COMMAND_STATE,
       support_bundle_command: IDLE_COMMAND_STATE,
     },
     settings: {
@@ -472,219 +468,6 @@ describe("SettingsView credential storage", () => {
   });
 });
 
-describe("SettingsView gateway settings", () => {
-  beforeEach(() => {
-    current_section = "connections";
-  });
-
-  it("shows the token secret reference, never a raw secret value", () => {
-    const { wrapper } = mount_view(
-      build_state(),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const reference = wrapper.get('[data-testid="gateway-token-reference"]');
-    expect(reference.text()).toBe(TOKEN_REFERENCE);
-    expect(wrapper.html()).not.toContain(SECRET_TOKEN_VALUE);
-  });
-
-  it("warns without blocking for loopback HTTP and offers Continue", async () => {
-    const { wrapper } = mount_view(
-      build_state({
-        settings: {
-          settings: {
-            ...DEFAULT_SETTINGS,
-            gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "http://127.0.0.1:8000" },
-          },
-          vocabulary_update_channel: "bundled",
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-          update_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const banner = wrapper.get('[data-testid="http-risk-banner"]');
-    expect(banner.attributes("data-severity")).toBe("warning");
-    expect(banner.text()).toContain("token, prompts, and images travel in plaintext");
-    expect(banner.find("button").exists()).toBe(true);
-    expect(
-      wrapper.get('[data-testid="gateway-endpoint-input"]').attributes("disabled"),
-    ).toBeUndefined();
-  });
-
-  it("warns without blocking for private-network HTTP the same as loopback", () => {
-    const { wrapper } = mount_view(
-      build_state({
-        settings: {
-          settings: {
-            ...DEFAULT_SETTINGS,
-            gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "http://192.168.1.50:8000" },
-          },
-          vocabulary_update_channel: "bundled",
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-          update_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    expect(wrapper.get('[data-testid="http-risk-banner"]').attributes("data-severity")).toBe(
-      "warning",
-    );
-  });
-
-  it("shows error-colored risk for a public or unrecognized HTTP host, still without blocking", () => {
-    const { wrapper } = mount_view(
-      build_state({
-        settings: {
-          settings: {
-            ...DEFAULT_SETTINGS,
-            gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "http://gateway.example.com" },
-          },
-          vocabulary_update_channel: "bundled",
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-          update_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    const banner = wrapper.get('[data-testid="http-risk-banner"]');
-    expect(banner.attributes("data-severity")).toBe("error");
-    expect(banner.text()).toContain("token, prompts, and images travel in plaintext");
-  });
-
-  it("never shows a risk banner for HTTPS", () => {
-    const { wrapper } = mount_view(
-      build_state({
-        settings: {
-          settings: {
-            ...DEFAULT_SETTINGS,
-            gateway: { ...DEFAULT_SETTINGS.gateway, endpoint: "https://gateway.example.com" },
-          },
-          vocabulary_update_channel: "bundled",
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-          update_command: IDLE_COMMAND_STATE,
-        },
-      }),
-      build_controller(create_unavailable_capabilities()),
-    );
-    expect(wrapper.find('[data-testid="http-risk-banner"]').exists()).toBe(false);
-  });
-
-  it("hands a typed Gateway token to secret storage and renders only the returned reference", async () => {
-    const capabilities = create_unavailable_capabilities();
-    const stored: string[] = [];
-    let token_secret_id: string | null = null;
-    const settings: SettingsCapability = {
-      ...capabilities.settings,
-      load: (): Promise<SettingsSnapshot> =>
-        Promise.resolve({
-          settings: {
-            ...DEFAULT_SETTINGS,
-            gateway: { ...DEFAULT_SETTINGS.gateway, token_secret_id },
-          },
-          vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-            world_info: { mode: "chat" },
-            wardrobe_model: null,
-            analysis_guidance: "",
-            wardrobe_guidance: "",
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-        }),
-      set_gateway_token: (plaintext_value) => {
-        stored.push(plaintext_value);
-        token_secret_id = "tavern_canvas:default:gateway_access_token";
-        return Promise.resolve();
-      },
-    };
-    const controller = build_controller({ ...capabilities, settings });
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    const input = wrapper.get('[data-testid="gateway-token-input"]');
-    expect(input.attributes("type")).toBe("password");
-    await input.setValue(SECRET_TOKEN_VALUE);
-    await wrapper.get('[data-testid="gateway-token-save"]').trigger("click");
-    await nextTick();
-    await nextTick();
-    await nextTick();
-
-    expect(stored).toEqual([SECRET_TOKEN_VALUE]);
-    expect(wrapper.get('[data-testid="gateway-token-reference"]').text()).toBe(
-      "tavern_canvas:default:gateway_access_token",
-    );
-    expect(wrapper.html()).not.toContain(SECRET_TOKEN_VALUE);
-    expect((wrapper.get('[data-testid="gateway-token-input"]').element as HTMLInputElement).value) //
-      .toBe("");
-  });
-
-  it("acknowledges an HTTP origin, persists it per normalized origin, and keeps a nonblocking status visible", async () => {
-    const acknowledged: string[] = [];
-    const capabilities = create_unavailable_capabilities();
-    const origin_endpoint = "http://gateway.example.com";
-    let acknowledgments: Record<string, string> = {};
-    const settings: SettingsCapability = {
-      ...capabilities.settings,
-      load: (): Promise<SettingsSnapshot> =>
-        Promise.resolve({
-          settings: {
-            ...DEFAULT_SETTINGS,
-            gateway: {
-              ...DEFAULT_SETTINGS.gateway,
-              endpoint: origin_endpoint,
-              http_acknowledgments: acknowledgments,
-            },
-          },
-          vocabulary_update_channel: "bundled",
-          illustration: {
-            preset_name: "in_use",
-            connection: { kind: "current" },
-            max_chat_history: 4,
-            max_images_per_message: 2,
-            prompt_preset_id: null,
-            world_info: { mode: "chat" },
-            wardrobe_model: null,
-            analysis_guidance: "",
-            wardrobe_guidance: "",
-          },
-          translation: { deepl_endpoint: "free", glossary: [] },
-          browser_secret_vault: { state: "unavailable", secret_count: 0 },
-        }),
-      subscribe: () => () => {},
-      update: capabilities.settings.update,
-      acknowledge_http_origin: (origin) => {
-        acknowledged.push(origin);
-        acknowledgments = { ...acknowledgments, [origin]: "2026-08-07T00:00:00.000Z" };
-        return Promise.resolve();
-      },
-      set_gateway_token: capabilities.settings.set_gateway_token,
-      clear_gateway_token: capabilities.settings.clear_gateway_token,
-      set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
-      import_vocabulary_package: capabilities.settings.import_vocabulary_package,
-      cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,
-      export_archive: capabilities.settings.export_archive,
-      import_archive: capabilities.settings.import_archive,
-    };
-    const controller = build_controller({ ...capabilities, settings });
-    const { wrapper } = await mount_view_with_live_controller(controller);
-
-    expect(wrapper.find('[data-testid="http-risk-banner"]').exists()).toBe(true);
-    const continue_button = wrapper.get('[data-testid="http-risk-banner"] button');
-    await continue_button.trigger("click");
-    await nextTick();
-    await nextTick();
-    await nextTick();
-
-    expect(acknowledged).toEqual(["http://gateway.example.com"]);
-    expect(wrapper.find('[data-testid="http-risk-banner"]').exists()).toBe(false);
-    expect(wrapper.find('[data-testid="http-risk-acknowledged"]').exists()).toBe(true);
-  });
-});
-
 function recording_settings_capability(
   updates: Partial<TavernCanvasSettings>[],
 ): SettingsCapability {
@@ -860,9 +643,6 @@ describe("SettingsView appearance settings", () => {
         updates.push(partial);
         return Promise.resolve({ ...DEFAULT_SETTINGS, ...partial });
       },
-      acknowledge_http_origin: capabilities.settings.acknowledge_http_origin,
-      set_gateway_token: capabilities.settings.set_gateway_token,
-      clear_gateway_token: capabilities.settings.clear_gateway_token,
       set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
       import_vocabulary_package: capabilities.settings.import_vocabulary_package,
       cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,

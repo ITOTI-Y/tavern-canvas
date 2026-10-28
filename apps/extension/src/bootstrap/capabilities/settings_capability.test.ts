@@ -1,4 +1,4 @@
-import { derive_gateway_credential_reference } from "@tavern-canvas/contracts";
+import { derive_analysis_credential_reference } from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -61,7 +61,7 @@ function vocabulary_file(text: Promise<string>, name = "vocabulary.jsonl"): Blob
 }
 
 const VALID_IMPORT_TEXT = '{"tag":"hello","translation":"hello"}\n';
-const PLAINTEXT_TOKEN = "gateway-bearer-canary-value";
+const PLAINTEXT_TOKEN = "analysis-key-canary-value";
 
 class RecordingSecrets implements SecretDestinationPort {
   readonly writes: { reference: string; value: string }[] = [];
@@ -173,49 +173,46 @@ describe("vocabulary import operation lifecycle", () => {
   });
 });
 
-describe("gateway access token", () => {
-  it("writes the plaintext to the selected credential backend and keeps only the reference in settings", async () => {
+describe("analysis API key", () => {
+  it("writes the plaintext to the selected credential backend and keeps it out of settings", async () => {
     const secrets = new RecordingSecrets();
     const { capability } = create_capability(secrets);
 
-    await capability.set_gateway_token(PLAINTEXT_TOKEN);
+    await capability.set_analysis_key(PLAINTEXT_TOKEN);
     const snapshot = await capability.load();
 
-    const reference = derive_gateway_credential_reference(snapshot.settings.active_namespace);
+    const reference = derive_analysis_credential_reference(snapshot.settings.active_namespace);
     expect(secrets.writes).toEqual([{ reference, value: PLAINTEXT_TOKEN }]);
-    expect(snapshot.settings.gateway.token_secret_id).toBe(reference);
     expect(JSON.stringify(snapshot.settings)).not.toContain(PLAINTEXT_TOKEN);
   });
-  it("rejects a blank token without writing a vault entry", async () => {
+
+  it("rejects a blank key without writing a vault entry", async () => {
     const secrets = new RecordingSecrets();
     const { capability } = create_capability(secrets);
 
-    await expect(capability.set_gateway_token("   ")).rejects.toBeInstanceOf(TypeError);
+    await expect(capability.set_analysis_key("   ")).rejects.toBeInstanceOf(TypeError);
     expect(secrets.writes).toEqual([]);
   });
 
-  it("deletes the vault entry before clearing its settings reference", async () => {
+  it("deletes the vault entry on clear", async () => {
     const secrets = new RecordingSecrets();
     const { capability } = create_capability(secrets);
 
-    await capability.set_gateway_token(PLAINTEXT_TOKEN);
-    await capability.clear_gateway_token();
+    await capability.set_analysis_key(PLAINTEXT_TOKEN);
+    await capability.clear_analysis_key();
 
     const snapshot = await capability.load();
-    expect(snapshot.settings.gateway.token_secret_id).toBeNull();
     expect(secrets.deletes).toEqual([
-      derive_gateway_credential_reference(snapshot.settings.active_namespace),
+      derive_analysis_credential_reference(snapshot.settings.active_namespace),
     ]);
-    expect(secrets.writes).toHaveLength(1);
   });
 
-  it("refuses to store a token on a host with no secret vault", async () => {
+  it("refuses to store a key on a host with no secret vault", async () => {
     const { capability } = create_capability(null);
 
-    await expect(capability.set_gateway_token(PLAINTEXT_TOKEN)).rejects.toMatchObject({
+    await expect(capability.set_analysis_key(PLAINTEXT_TOKEN)).rejects.toMatchObject({
       code: CAPABILITY_UNAVAILABLE_CODE,
     });
-    expect((await capability.load()).settings.gateway.token_secret_id).toBeNull();
   });
 });
 

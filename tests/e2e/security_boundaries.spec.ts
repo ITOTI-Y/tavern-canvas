@@ -200,45 +200,6 @@ test.describe("diagnostics never carry user or credential data", () => {
   });
 });
 
-test.describe("cleartext HTTP disclosure is per origin and non-blocking", () => {
-  test("an unacknowledged cleartext origin is refused, and the same origin works once acknowledged", async ({
-    page,
-  }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const outcome = await page.evaluate(() =>
-      window.__TAVERN_CANVAS_E2E__.probes.http_acknowledgment("http://192.168.1.50:8787"),
-    );
-
-    expect(outcome.before).toContain("blocked:");
-    expect(outcome.after).toBe("gateway");
-  });
-
-  test("acknowledging one origin does not acknowledge another", async ({ page }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const outcome = await page.evaluate(async () => {
-      const surface = window.__TAVERN_CANVAS_E2E__;
-      const first = surface.probes.http_acknowledgment("http://192.168.1.50:8787");
-      const second = surface.probes.http_acknowledgment("http://192.168.1.51:8787");
-      await Promise.resolve();
-      return { first, second };
-    });
-
-    expect(outcome.first.before).toContain("blocked:");
-    expect(outcome.second.before).toContain("blocked:");
-  });
-
-  test("an HTTPS origin needs no acknowledgment at all", async ({ page }) => {
-    await open_host_page(page, "sillytavern_host.html");
-
-    const outcome = await page.evaluate(() =>
-      window.__TAVERN_CANVAS_E2E__.probes.http_acknowledgment("https://gateway.example"),
-    );
-    expect(outcome.before).toBe("gateway");
-  });
-});
-
 test.describe("the page stays inert", () => {
   test("a full production mount makes no remote runtime script, font, model or data request", async ({
     page,

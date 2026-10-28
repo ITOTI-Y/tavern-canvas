@@ -20,11 +20,6 @@ export interface ProviderOverrideOutcome {
   readonly request_headers: readonly Readonly<Record<string, string>>[];
 }
 
-export interface HttpAcknowledgmentOutcome {
-  readonly before: string;
-  readonly after: string;
-}
-
 export interface VocabularyUpdateOutcome {
   readonly listed_package_ids: readonly string[];
   readonly install_error: string | null;
@@ -32,58 +27,10 @@ export interface VocabularyUpdateOutcome {
   readonly active_package_after: string | null;
 }
 
-export interface GatewayJobOptions {
-  readonly request_id: string;
-  /** Truncate the SSE body after this many events, forcing the client's polling fallback. */
-  readonly drop_stream_after_events?: number;
-}
-
-export interface GatewayRunOutcome {
-  readonly state: string;
-  readonly polled: boolean;
-  readonly error: string | null;
-}
-
-export interface GatewayCancelOutcome {
-  readonly state: string;
-  readonly cancel_error: string | null;
-}
-
-export interface GatewayGenerationOutcome {
-  readonly image_ids: readonly string[];
-  readonly media_types: readonly string[];
-  readonly byte_lengths: readonly number[];
-  readonly marked_running: boolean;
-  readonly token_resolutions: number;
-  readonly error: string | null;
-}
-
 export interface SecurityProbes {
-  gateway_capabilities(origin: string, token: string): Promise<Record<string, unknown>>;
-  gateway_submit(
-    origin: string,
-    token: string,
-    options: GatewayJobOptions,
-  ): Promise<{ readonly job_id: string }>;
-  gateway_run(
-    origin: string,
-    token: string,
-    options: GatewayJobOptions,
-  ): Promise<GatewayRunOutcome>;
-  gateway_cancel(
-    origin: string,
-    token: string,
-    options: GatewayJobOptions,
-  ): Promise<GatewayCancelOutcome>;
-  gateway_generation(
-    origin: string,
-    token: string,
-    options: GatewayJobOptions,
-  ): Promise<GatewayGenerationOutcome>;
   vocabulary_update(): Promise<VocabularyUpdateOutcome>;
   provider_override(attempt: ProviderOverrideAttempt): Promise<ProviderOverrideOutcome>;
   render_workflow(workflow_json: string, values: Readonly<Record<string, unknown>>): string;
-  http_acknowledgment(endpoint: string): HttpAcknowledgmentOutcome;
 }
 
 export interface SecurityProbeOptions {
@@ -103,228 +50,19 @@ export async function create_security_probes(
     { compose_studio_capabilities },
     { probe_host_capabilities },
     { render_comfyui_workflow, validate_stored_comfyui_workflow },
-    { acknowledge_http_origin, is_http_origin_acknowledged },
-    { select_transport, TransportConfigurationError },
     { ProviderProfileRepository },
     { VocabularyCatalogClient },
     { VocabularyPackageStore },
-    { GatewayTransport },
-    { GatewayJobExecutor },
-    { MediaExecutionPlanRegistry },
   ] = await Promise.all([
     import("../../../apps/extension/src/bootstrap/compose_capabilities.js"),
     import("../../../apps/extension/src/host/index.js"),
     import("@tavern-canvas/providers"),
-    import("../../../apps/extension/src/transport/http_acknowledgment.js"),
-    import("../../../apps/extension/src/transport/transport_selector.js"),
     import("@tavern-canvas/storage"),
     import("../../../apps/extension/src/modules/vocabulary/vocabulary_catalog_client.js"),
     import("@tavern-canvas/vocabulary"),
-    import("../../../apps/extension/src/transport/gateway_transport.js"),
-    import("../../../apps/extension/src/transport/gateway_job_executor.js"),
-    import("../../../apps/extension/src/modules/media/media_command_service.js"),
   ]);
 
-  function instrumented_gateway_fetch(drop_after_events: number | undefined): {
-    readonly fetch_impl: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
-    poll_count(): number;
-  } {
-    let polls = 0;
-    return {
-      poll_count: () => polls,
-      fetch_impl: async (input, init) => {
-        const url =
-          typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-        const response = await globalThis.fetch(input, init);
-        if (!url.includes("/events")) {
-          if (/\/v1\/jobs\/[^/]+$/u.test(url) && (init?.method ?? "GET") === "GET") {
-            polls += 1;
-          }
-          return response;
-        }
-        if (drop_after_events === undefined || response.body === null) {
-          return response;
-        }
-        const reader = response.body.getReader();
-        let delivered = 0;
-        const truncated = new ReadableStream<Uint8Array>({
-          async pull(controller) {
-            if (delivered >= drop_after_events) {
-              await reader.cancel().catch(() => undefined);
-              controller.close();
-              return;
-            }
-            const chunk = await reader.read();
-            if (chunk.done) {
-              controller.close();
-              return;
-            }
-            delivered += 1;
-            controller.enqueue(chunk.value);
-          },
-        });
-        return new Response(truncated, { status: response.status, headers: response.headers });
-      },
-    };
-  }
-
-  function gateway_request(request_id: string): Record<string, unknown> {
-    return {
-      provider_id: "sd_webui",
-      request_id,
-      generation_anchor: "b".repeat(64),
-      prompt: "gateway e2e prompt",
-      output_count: 1,
-      mode: "txt2img",
-      model_id: "e2e-model",
-      sampler: "Euler",
-      scheduler: "Normal",
-      width: 64,
-      height: 64,
-      steps: 1,
-      cfg_scale: 1,
-      seed: 7,
-    };
-  }
-
-  function gateway_transport(
-    origin: string,
-    token: string,
-    fetch_impl?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
-  ): InstanceType<typeof GatewayTransport> {
-    return new GatewayTransport({
-      endpoint: origin,
-      access_token: token,
-      http_acknowledgments: { [new URL(origin).origin]: "2026-08-08T00:00:00.000Z" },
-      ...(fetch_impl === undefined ? {} : { fetch: fetch_impl }),
-    });
-  }
-
   return {
-    async gateway_capabilities(origin, token) {
-      const controller = new AbortController();
-      const document_ = await gateway_transport(origin, token).get_capabilities(controller.signal);
-      return document_;
-    },
-
-    async gateway_submit(origin, token, job_options) {
-      const controller = new AbortController();
-      const submitted = await gateway_transport(origin, token).submit(
-        gateway_request(job_options.request_id) as never,
-        controller.signal,
-      );
-      return { job_id: submitted.job_id };
-    },
-
-    async gateway_run(origin, token, job_options) {
-      const instrumented = instrumented_gateway_fetch(job_options.drop_stream_after_events);
-      const transport = gateway_transport(origin, token, instrumented.fetch_impl);
-      const controller = new AbortController();
-      try {
-        const finished = await transport.run(gateway_request(job_options.request_id) as never, {
-          signal: controller.signal,
-        });
-        return { state: finished.state, polled: instrumented.poll_count() > 0, error: null };
-      } catch (thrown) {
-        return { state: "threw", polled: instrumented.poll_count() > 0, error: String(thrown) };
-      }
-    },
-
-    async gateway_generation(origin, token, job_options) {
-      const plans = new MediaExecutionPlanRegistry();
-      plans.register(gateway_request(job_options.request_id) as never);
-      const stored: { id: string; bytes: Uint8Array; claimed_media_type: string }[] = [];
-      let token_resolutions = 0;
-      let marked_running = false;
-      const executor = new GatewayJobExecutor({
-        endpoint: origin,
-        http_acknowledgments: { [new URL(origin).origin]: "2026-08-08T00:00:00.000Z" },
-        access_token: () => {
-          token_resolutions += 1;
-          return Promise.resolve(token);
-        },
-        plans,
-        store: {
-          put_image: (input) => {
-            stored.push(input);
-            return Promise.resolve({ id: input.id });
-          },
-          read_image: () => Promise.resolve(null),
-        },
-        ids: { next: () => crypto.randomUUID() },
-        clock: { now: () => new Date().toISOString() },
-        resolve_source_message: (job) => ({
-          chat_id: job.chat_id,
-          message_id: String(job.requested_swipe_id),
-          swipe_id: job.requested_swipe_id,
-        }),
-      });
-
-      const job = {
-        job_id: crypto.randomUUID(),
-        request_id: job_options.request_id,
-        request_digest: "c".repeat(64),
-        generation_anchor: "b".repeat(64),
-        source_anchor: "d".repeat(64),
-        chat_id: "chat-a",
-        requested_swipe_id: 0,
-        provider_id: "sd_webui",
-        arguments: { generation_anchor: "b".repeat(64), scene_description: "gateway e2e prompt" },
-        state: "submitting",
-        created_at: "2026-08-08T00:00:00.000Z",
-        updated_at: "2026-08-08T00:00:00.000Z",
-        error: null,
-        image_ids: [],
-      } as const;
-
-      try {
-        const result = await executor.execute(job, {
-          signal: new AbortController().signal,
-          mark_running: () => {
-            marked_running = true;
-            return Promise.resolve();
-          },
-        });
-        return {
-          image_ids: [...result.image_ids],
-          media_types: stored.map((entry) => entry.claimed_media_type),
-          byte_lengths: stored.map((entry) => entry.bytes.byteLength),
-          marked_running,
-          token_resolutions,
-          error: null,
-        };
-      } catch (thrown) {
-        return {
-          image_ids: [],
-          media_types: [],
-          byte_lengths: [],
-          marked_running,
-          token_resolutions,
-          error: String(thrown),
-        };
-      }
-    },
-
-    async gateway_cancel(origin, token, job_options) {
-      const transport = gateway_transport(origin, token);
-      const controller = new AbortController();
-      const submitted = await transport.submit(
-        gateway_request(job_options.request_id) as never,
-        controller.signal,
-      );
-      let cancel_error: string | null = null;
-      try {
-        await transport.cancel(submitted.job_id, controller.signal);
-      } catch (thrown) {
-        cancel_error = String(thrown);
-      }
-      const response = await globalThis.fetch(`${origin}/v1/jobs/${submitted.job_id}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-      const body = (await response.json()) as { state?: unknown };
-      return { state: typeof body.state === "string" ? body.state : "unknown", cancel_error };
-    },
-
     async vocabulary_update() {
       const store = new VocabularyPackageStore(options.database, "vocabulary");
       const active_before = await store.find_active_or_confirmed();
@@ -477,30 +215,6 @@ export async function create_security_probes(
           values as unknown as Parameters<typeof render_comfyui_workflow>[1],
         ),
       );
-    },
-
-    http_acknowledgment(endpoint) {
-      const input = {
-        gateway_endpoint: endpoint,
-        http_acknowledgments: {} as Readonly<Record<string, string>>,
-        direct_provider_base_url: null,
-        direct_cloud: null,
-      };
-      const describe = (acknowledgments: Readonly<Record<string, string>>): string => {
-        try {
-          return select_transport({ ...input, http_acknowledgments: acknowledgments }).kind;
-        } catch (thrown) {
-          return thrown instanceof TransportConfigurationError
-            ? `blocked:${thrown.message}`
-            : `error:${String(thrown)}`;
-        }
-      };
-      const before = describe({});
-      const acknowledged = acknowledge_http_origin({}, endpoint, "2026-08-08T00:00:00.000Z");
-      if (!is_http_origin_acknowledged(acknowledged, endpoint)) {
-        throw new Error("acknowledgment did not record the origin");
-      }
-      return { before, after: describe(acknowledged) };
     },
   };
 }

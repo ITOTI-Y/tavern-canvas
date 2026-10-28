@@ -26,7 +26,7 @@ export default typescriptEslint.config(
         parser: typescriptEslint.parser,
         extraFileExtensions: [".vue"],
         projectService: {
-          allowDefaultProject: ["*.config.ts", "apps/gateway/vite.config.ts"],
+          allowDefaultProject: ["*.config.ts"],
         },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -87,7 +87,6 @@ export default typescriptEslint.config(
   {
     files: [
       "apps/extension/scripts/**/*.{cjs,js,mjs,ts}",
-      "apps/gateway/**/*.{cjs,js,mjs,ts}",
       "tools/**/*.{cjs,js,mjs,ts}",
       "tests/harness/**/*.{cjs,js,mjs}",
     ],

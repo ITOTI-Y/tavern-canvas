@@ -28,12 +28,7 @@ const wants_studio =
   !explicit_selection || requested_spec_paths.some((path) => path.includes("studio_"));
 const wants_media_dialogs =
   !explicit_selection || requested_spec_paths.some((path) => path.includes("media_dialogs_"));
-const ALL_HOST_SPEC_MARKERS = [
-  "full_standard_host",
-  "full_gateway",
-  "vocabulary_update",
-  "security_boundaries",
-];
+const ALL_HOST_SPEC_MARKERS = ["full_standard_host", "vocabulary_update", "security_boundaries"];
 const wants_all_host =
   !explicit_selection ||
   requested_spec_paths.some((path) =>
@@ -76,8 +71,7 @@ export default defineConfig({
     },
     {
       name: "all_host",
-      testMatch:
-        /(full_standard_host|full_gateway|vocabulary_update|security_boundaries)\.spec\.ts$/u,
+      testMatch: /(full_standard_host|vocabulary_update|security_boundaries)\.spec\.ts$/u,
       use: { ...devices["Desktop Chrome"], baseURL: ALL_HOST_HARNESS_URL },
     },
   ],

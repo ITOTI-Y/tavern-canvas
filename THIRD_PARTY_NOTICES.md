@@ -22,22 +22,6 @@ These are the third party libraries whose code is present in the shipped `dist/`
 | `@zip.js/zip.js`        | 2.8.34  | BSD-3-Clause |
 | `@msgpack/msgpack`      | 3.1.3   | ISC          |
 
-## Gateway service dependencies
-
-The Gateway in `apps/gateway` is not part of the extension release archive. It is published in this
-repository and depends on:
-
-| Package              | Version | License    |
-| -------------------- | ------- | ---------- |
-| `express`            | 5.2.1   | MIT        |
-| `express-rate-limit` | 8.6.2   | MIT        |
-| `helmet`             | 8.3.0   | MIT        |
-| `better-sqlite3`     | 13.0.2  | MIT        |
-| `pino`               | 10.3.1  | MIT        |
-| `file-type`          | 22.0.1  | MIT        |
-| `sharp`              | 0.35.3  | Apache-2.0 |
-| `zod`                | 4.4.3   | MIT        |
-
 ## Geist font
 
 `dist/geist_variable.woff2` is Geist Variable, self hosted so the extension never fetches a font from

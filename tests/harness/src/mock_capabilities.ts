@@ -11,7 +11,6 @@ import type {
   AssetCategory,
   AssetRecordSummary,
   AssetsCapability,
-  ConnectionTestResult,
   DiagnosticsCapability,
   DiagnosticsSnapshot,
   GalleryCapability,
@@ -247,13 +246,11 @@ const CAPABILITY_MATRIX: CapabilityMatrix = {
     available: false,
     reason: "Mock fixture: browser harness, not Tauri",
   },
-  gateway_protocol: { available: true },
 };
 
 const DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
   capability_matrix: CAPABILITY_MATRIX,
   helper_version: "4.9.1",
-  protocol_version: "1.2.0",
   storage_usage_bytes: 41_943_040,
   storage_quota_bytes: 2_147_483_648,
 };
@@ -283,7 +280,7 @@ const TIMELINE: readonly TaskTimelineEntry[] = [
   },
 ];
 
-function build_settings(with_http_warning: boolean): TavernCanvasSettings {
+function build_settings(): TavernCanvasSettings {
   return {
     schema_version: 1,
     active_namespace: "default",
@@ -305,11 +302,6 @@ function build_settings(with_http_warning: boolean): TavernCanvasSettings {
       wardrobe_guidance: "",
     },
     translation: { deepl_endpoint: "free", glossary: [] },
-    gateway: {
-      endpoint: with_http_warning ? "http://192.168.1.50:7860" : "https://gateway.example.invalid",
-      token_secret_id: "mock-secret-reference",
-      http_acknowledgments: {},
-    },
     ui: {
       color_mode: "system",
       inspector_width: 320,
@@ -798,8 +790,6 @@ function create_diagnostics_capability(): DiagnosticsCapability {
   return {
     load: () => Promise.resolve(DIAGNOSTICS_SNAPSHOT),
     subscribe: () => () => {},
-    test_connection: (): Promise<ConnectionTestResult> =>
-      Promise.resolve({ status: "success", latency_ms: 96 }),
     load_timeline: () => Promise.resolve(TIMELINE),
     export_support_bundle: (): Promise<SupportBundle> =>
       Promise.resolve({
@@ -830,35 +820,11 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       current = { ...current, ...partial };
       return Promise.resolve(current);
     },
-    acknowledge_http_origin: (origin) => {
-      current = {
-        ...current,
-        gateway: {
-          ...current.gateway,
-          http_acknowledgments: {
-            ...current.gateway.http_acknowledgments,
-            [origin]: new Date().toISOString(),
-          },
-        },
-      };
-      return Promise.resolve();
-    },
-    set_gateway_token: () => {
-      current = {
-        ...current,
-        gateway: { ...current.gateway, token_secret_id: "mock-secret-reference" },
-      };
-      return Promise.resolve();
-    },
     set_analysis_key: () => Promise.resolve(),
     list_worldbooks: () => Promise.resolve(["Mock world", "Mock city"]),
     clear_analysis_key: () => Promise.resolve(),
     set_deepl_key: () => Promise.resolve(),
     clear_deepl_key: () => Promise.resolve(),
-    clear_gateway_token: () => {
-      current = { ...current, gateway: { ...current.gateway, token_secret_id: null } };
-      return Promise.resolve();
-    },
     initialize_browser_secret_vault: () => {
       browser_secret_vault = { state: "unlocked", secret_count: 0 };
       return Promise.resolve(browser_secret_vault);
@@ -906,7 +872,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       vocabulary: { ...create_vocabulary_capability(), load: forever_pending },
       diagnostics: { ...create_diagnostics_capability(), load: forever_pending },
       novelai: create_novelai_capability(),
-      settings: { ...create_settings_capability(build_settings(false)), load: forever_pending },
+      settings: { ...create_settings_capability(build_settings()), load: forever_pending },
     };
   }
 
@@ -942,7 +908,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       },
       novelai: create_novelai_capability(),
       settings: {
-        ...create_settings_capability(build_settings(false)),
+        ...create_settings_capability(build_settings()),
         load: () => always_rejects("settings_unavailable"),
       },
     };
@@ -958,7 +924,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
       vocabulary: create_vocabulary_capability(),
       diagnostics: create_diagnostics_capability(),
       novelai: create_novelai_capability(),
-      settings: create_settings_capability(build_settings(false)),
+      settings: create_settings_capability(build_settings()),
     };
   }
 
@@ -981,7 +947,7 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
         load: () => always_rejects("diagnostics_unavailable"),
       },
       novelai: create_novelai_capability(),
-      settings: create_settings_capability(build_settings(true)),
+      settings: create_settings_capability(build_settings()),
     };
   }
 
@@ -997,6 +963,6 @@ export function create_mock_capabilities(scenario: ScenarioName): StudioCapabili
     vocabulary: create_vocabulary_capability(),
     diagnostics: create_diagnostics_capability(),
     novelai: create_novelai_capability(),
-    settings: create_settings_capability(build_settings(true)),
+    settings: create_settings_capability(build_settings()),
   };
 }

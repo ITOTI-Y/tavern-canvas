@@ -6,7 +6,6 @@ export const HOST_CAPABILITY_IDS = [
   "message_swipe_metadata",
   "tavern_regex",
   "tavern_helper",
-  "gateway_protocol",
 ] as const;
 
 export type HostCapabilityId = (typeof HOST_CAPABILITY_IDS)[number];

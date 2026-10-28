@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { TavernCanvasSettingsSchema, type TavernCanvasSettings } from "@tavern-canvas/contracts";
+import type { TavernCanvasSettings } from "@tavern-canvas/contracts";
 
 import {
   DEFAULT_TAVERN_CANVAS_SETTINGS,
@@ -9,16 +9,10 @@ import {
 } from "./sillytavern_settings.js";
 import type { ExtensionSettingsHost, SettingsScheduler } from "./settings_port.js";
 
-const ACKNOWLEDGED_AT = "2026-08-05T09:30:00.000Z";
-
 function settings(overrides: Partial<TavernCanvasSettings> = {}): TavernCanvasSettings {
   return {
     ...DEFAULT_TAVERN_CANVAS_SETTINGS,
     ...overrides,
-    gateway: {
-      ...DEFAULT_TAVERN_CANVAS_SETTINGS.gateway,
-      ...(overrides.gateway ?? {}),
-    },
     ui: {
       ...DEFAULT_TAVERN_CANVAS_SETTINGS.ui,
       ...(overrides.ui ?? {}),
@@ -123,36 +117,6 @@ describe("SillyTavern settings adapter", () => {
     expect(() => adapter.update_settings({ global_concurrency: 5 })).toThrow();
   });
 
-  it("uses normalized HTTP(S) origins as Gateway acknowledgment keys", () => {
-    const valid = settings({
-      gateway: {
-        ...DEFAULT_TAVERN_CANVAS_SETTINGS.gateway,
-        endpoint: "https://example.com",
-        http_acknowledgments: { "https://example.com": ACKNOWLEDGED_AT },
-      },
-    });
-    expect(TavernCanvasSettingsSchema.parse(valid)).toEqual(valid);
-
-    const host = create_host({
-      ...valid,
-      gateway: {
-        ...valid.gateway,
-        http_acknowledgments: {
-          "https://example.com": ACKNOWLEDGED_AT,
-          "HTTPS://EXAMPLE.COM/path": ACKNOWLEDGED_AT,
-        },
-      },
-    });
-    const adapter = create_sillytavern_settings(host);
-
-    expect(adapter.get_settings().gateway.http_acknowledgments).toEqual({
-      "https://example.com": ACKNOWLEDGED_AT,
-    });
-    expect(adapter.diagnostics.some(({ path }) => path.includes("http_acknowledgments"))).toBe(
-      true,
-    );
-  });
-
   it("recovers fields independently so valid siblings survive persisted corruption", () => {
     const host = create_host({
       ...settings({
@@ -160,10 +124,6 @@ describe("SillyTavern settings adapter", () => {
         locale: "zh-CN",
         global_concurrency: 3,
         auto_generation_enabled: false,
-        gateway: {
-          ...DEFAULT_TAVERN_CANVAS_SETTINGS.gateway,
-          endpoint: "https://example.com",
-        },
         ui: {
           ...DEFAULT_TAVERN_CANVAS_SETTINGS.ui,
           inspector_width: 420,
@@ -174,11 +134,6 @@ describe("SillyTavern settings adapter", () => {
       locale: "fr",
       global_concurrency: 9,
       auto_generation_enabled: "yes",
-      gateway: {
-        endpoint: "not-an-origin",
-        token_secret_id: "secret-ref",
-        http_acknowledgments: {},
-      },
       ui: {
         color_mode: "neon",
         inspector_width: 420,
@@ -194,11 +149,6 @@ describe("SillyTavern settings adapter", () => {
       locale: "auto",
       global_concurrency: 4,
       auto_generation_enabled: true,
-      gateway: {
-        endpoint: null,
-        token_secret_id: "secret-ref",
-        http_acknowledgments: {},
-      },
       ui: {
         inspector_width: 420,
       },
@@ -210,7 +160,6 @@ describe("SillyTavern settings adapter", () => {
         "locale",
         "global_concurrency",
         "auto_generation_enabled",
-        "gateway.endpoint",
         "ui.color_mode",
       ]),
     );
@@ -220,21 +169,32 @@ describe("SillyTavern settings adapter", () => {
     const host = create_host({
       ...settings(),
       unknown_option: true,
-      gateway: {
-        ...DEFAULT_TAVERN_CANVAS_SETTINGS.gateway,
-        unknown_gateway_option: "discard",
+      ui: {
+        ...DEFAULT_TAVERN_CANVAS_SETTINGS.ui,
+        unknown_ui_option: "discard",
       },
     });
     const adapter = create_sillytavern_settings(host);
 
     expect(adapter.get_settings()).not.toHaveProperty("unknown_option");
-    expect(adapter.get_settings().gateway).not.toHaveProperty("unknown_gateway_option");
+    expect(adapter.get_settings().ui).not.toHaveProperty("unknown_ui_option");
     expect(adapter.diagnostics).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ path: "unknown_option", code: "unknown_field" }),
-        expect.objectContaining({ path: "gateway.unknown_gateway_option", code: "unknown_field" }),
+        expect.objectContaining({ path: "ui.unknown_ui_option", code: "unknown_field" }),
       ]),
     );
+  });
+
+  it("drops the retired gateway field without a diagnostic", () => {
+    const host = create_host({
+      ...settings(),
+      gateway: { endpoint: "https://example.com", token_secret_id: null, http_acknowledgments: {} },
+    });
+    const adapter = create_sillytavern_settings(host);
+
+    expect(adapter.get_settings()).not.toHaveProperty("gateway");
+    expect(adapter.diagnostics).toEqual([]);
   });
 
   it.each(["profiles", "workflows", "image_data", "vocabulary_data", "logs"])(

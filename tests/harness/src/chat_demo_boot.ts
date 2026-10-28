@@ -91,8 +91,6 @@ async function boot(): Promise<void> {
     helper_version: "4.11.1",
     secrets_readable: true,
     active_provider_profile_id: PROFILE_ID,
-    gateway_endpoint: null,
-    http_acknowledgments: {},
   });
   const { control } = environment;
   const reply = control.chat_messages[1];

@@ -39,8 +39,6 @@ export interface HarnessScenario {
   readonly tools?: "none";
   readonly secrets?: "sealed";
   readonly legacy?: "v2";
-  readonly gateway?: string;
-  readonly ack?: "1";
   /**
    * `capabilities` stops after the composition root so a spec can drive the real capability ports;
    * the default runs the full bootstrap mount.

@@ -3,12 +3,7 @@ packages:
   - packages/*
   - tools/*
 allowBuilds:
-  # better-sqlite3 ships prebuilt binaries for every supported platform.
-  better-sqlite3: false
   esbuild: true
-  # sharp, used by the Gateway, ships prebuilt binaries through its @img packages.
-  sharp: false
   vue-demi: true
 minimumReleaseAgeExclude:
-  - express-rate-limit@8.6.2
   - tsx@4.23.9

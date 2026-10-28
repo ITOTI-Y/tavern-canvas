@@ -4,7 +4,6 @@ import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vaul
 import type {
   AssetCategory,
   AssetRecordSummary,
-  ConnectionTestResult,
   DiagnosticsSnapshot,
   GalleryRecordSummary,
   GenerationJobSummary,
@@ -59,7 +58,6 @@ export interface GalleryViewModel {
 export interface DiagnosticsViewModel {
   readonly snapshot: DiagnosticsSnapshot | null;
   readonly timeline: readonly TaskTimelineEntry[];
-  readonly connection_test_command: CommandState<ConnectionTestResult>;
   readonly support_bundle_command: CommandState<SupportBundle>;
 }
 
@@ -91,14 +89,7 @@ export interface TaskStripItemViewModel {
 }
 
 export type SettingsSection =
-  | "illustration"
-  | "providers"
-  | "translation"
-  | "prompts"
-  | "library"
-  | "connections"
-  | "general"
-  | "diagnostics";
+  "illustration" | "providers" | "translation" | "prompts" | "library" | "general" | "diagnostics";
 
 export interface StudioState {
   route: "settings" | "gallery";
