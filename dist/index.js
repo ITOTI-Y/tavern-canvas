@@ -2,31 +2,31 @@ import { t as e } from "./chunks/shell.module-d_8aga09.js";
 import { n as t, r as n, t as r } from "./chunks/sha2-BGNex9vj.js";
 import { c as i, d as a, h as o, i as s, m as c, r as l, t as u, u as d } from "./chunks/schemas-DMBLWk59.js";
 import { i as f, n as p, o as m, r as h } from "./chunks/ids-stC4fUL8.js";
-import { n as g, t as ee } from "./chunks/generation-C8k9E8Cm.js";
-import { l as _, n as v, o as y, r as b, s as x } from "./chunks/wardrobe_library-cpT1rkQA.js";
-import { a as S, i as C, r as te } from "./chunks/provider-B-m_0o6I.js";
-import { a as w, c as ne, i as re, l as ie, n as T, o as ae, r as oe, s as E, t as se } from "./chunks/http_origin-C2L4aQth.js";
-import { A as ce, F as le, H as ue, I as de, N as D, O as fe, P as pe, Q as me, V as he, W as ge, Z as _e, _ as O, b as ve, ct as k, et as A, ft as ye, g as j, h as M, i as be, k as xe, m as N, n as Se, nt as Ce, p as P, pt as F, rt as we, u as Te, ut as I, x as L, y as R } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as Ee } from "./chunks/create_i18n-HECv7MbV.js";
-import { n as De, r as Oe, t as ke } from "./chunks/portal_keys-B9C82xtk.js";
-import { n as Ae, t as je } from "./chunks/AppIcon-Cnhzrx9o.js";
-import { t as Me } from "./chunks/chevron-down-Tu_8qTxg.js";
-import { t as Ne } from "./chunks/chevron-up-D4TetO-M.js";
-import { n as Pe } from "./chunks/route_nav-BrwZiRD4.js";
-import { t as Fe } from "./chunks/trash-2-B6ZXZcor.js";
-import { t as Ie } from "./chunks/x-CDKrptQJ.js";
-import { a as Le, c as Re, d as ze, i as Be, l as Ve, n as He, o as Ue, r as We, s as Ge, t as Ke, u as qe } from "./chunks/analysis-DnEfx4yp.js";
-import { t as Je } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
-import { c as Ye, h as Xe, i as Ze, o as Qe } from "./chunks/business_repositories-Tf6NN3HM.js";
-import { i as $e, n as et, r as tt, t as nt } from "./chunks/image_store-xf71sJpt.js";
-import { a as rt, i as it, n as at, r as ot } from "./chunks/model_json-DNK3Va6h.js";
-import { a as st, i as ct, n as lt, o as ut, s as z } from "./chunks/provider_transport-ftw8OZD2.js";
-import { n as dt, r as B, t as ft } from "./chunks/tag_normalizer-CEAU4497.js";
-import { i as pt, r as mt } from "./chunks/browser_secret_vault-CnTo7PwU.js";
-import { t as ht } from "./chunks/_vocabulary_import_error-BOxujgW3.js";
-import { t as gt } from "./chunks/novelai_errors-Bve94MgO.js";
+import { n as g, t as _ } from "./chunks/generation-C8k9E8Cm.js";
+import { l as v, n as y, o as b, r as ee, s as te } from "./chunks/wardrobe_library-cpT1rkQA.js";
+import { a as x, i as S, r as ne } from "./chunks/provider-B-m_0o6I.js";
+import { a as C, c as re, i as ie, l as ae, n as w, o as oe, r as se, s as T, t as ce } from "./chunks/http_origin-C2L4aQth.js";
+import { A as le, F as ue, H as de, I as fe, N as E, O as pe, P as me, Q as he, V as ge, W as _e, Z as ve, _ as D, b as ye, ct as O, et as k, ft as be, g as A, h as j, i as xe, k as Se, m as M, n as Ce, nt as we, p as N, pt as P, rt as Te, u as Ee, ut as F, x as I, y as L } from "./chunks/vue-i18n-DUz2Gjn8.js";
+import { t as De } from "./chunks/create_i18n-HECv7MbV.js";
+import { n as Oe, r as ke, t as Ae } from "./chunks/portal_keys-B9C82xtk.js";
+import { n as je, t as Me } from "./chunks/AppIcon-Cnhzrx9o.js";
+import { t as Ne } from "./chunks/chevron-down-Tu_8qTxg.js";
+import { t as Pe } from "./chunks/chevron-up-D4TetO-M.js";
+import { n as Fe } from "./chunks/route_nav-BrwZiRD4.js";
+import { t as Ie } from "./chunks/trash-2-B6ZXZcor.js";
+import { t as Le } from "./chunks/x-CDKrptQJ.js";
+import { a as Re, c as ze, d as Be, i as Ve, l as He, n as Ue, o as We, r as Ge, s as Ke, t as qe, u as Je } from "./chunks/analysis-DnEfx4yp.js";
+import { t as Ye } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
+import { c as Xe, h as Ze, i as Qe, o as $e } from "./chunks/business_repositories-Tf6NN3HM.js";
+import { i as et, n as tt, r as nt, t as rt } from "./chunks/image_store-xf71sJpt.js";
+import { a as it, i as at, n as ot, r as st } from "./chunks/model_json-DNK3Va6h.js";
+import { a as ct, i as lt, n as ut, o as dt, s as R } from "./chunks/provider_transport-ftw8OZD2.js";
+import { n as ft, r as z, t as pt } from "./chunks/tag_normalizer-CEAU4497.js";
+import { i as mt, r as ht } from "./chunks/browser_secret_vault-CnTo7PwU.js";
+import { t as gt } from "./chunks/_vocabulary_import_error-BOxujgW3.js";
+import { t as _t } from "./chunks/novelai_errors-Bve94MgO.js";
 //#region ../../packages/core/src/capability_registry.ts
-var _t = class {
+var vt = class {
 	#e = /* @__PURE__ */ new Map();
 	register(e, t, n) {
 		let r = this.#e.get(e);
@@ -50,7 +50,7 @@ var _t = class {
 	remove_by_owner(e) {
 		for (let [t, n] of this.#e) n.owner_module_id === e && this.#e.delete(t);
 	}
-}, vt = class {
+}, yt = class {
 	#e = /* @__PURE__ */ new Map();
 	subscribe(e, t) {
 		let n = this.#e.get(e);
@@ -76,12 +76,12 @@ var _t = class {
 		}
 		return r;
 	}
-}, yt = class {
+}, bt = class {
 	#e = /* @__PURE__ */ new Map();
 	#t;
 	#n = [];
 	#r = "idle";
-	constructor(e, t = new _t(), n = new vt()) {
+	constructor(e, t = new vt(), n = new yt()) {
 		for (let t of e) {
 			if (this.#e.has(t.module_id)) throw Error(`Module "${t.module_id}" is registered more than once`);
 			this.#e.set(t.module_id, t);
@@ -162,49 +162,49 @@ var _t = class {
 		}
 		return this.#n.length = 0, e;
 	}
-}, bt = "Canonical JSON accepts only JSON data";
-function xt() {
-	throw TypeError(bt);
+}, xt = "Canonical JSON accepts only JSON data";
+function St() {
+	throw TypeError(xt);
 }
-function St(e) {
-	return typeof e == "number" && !Number.isFinite(e) ? xt() : JSON.stringify(e);
+function Ct(e) {
+	return typeof e == "number" && !Number.isFinite(e) ? St() : JSON.stringify(e);
 }
-function Ct(e, t) {
-	if (e === null || typeof e == "boolean" || typeof e == "number" || typeof e == "string") return St(e);
-	if (typeof e != "object") return xt();
+function wt(e, t) {
+	if (e === null || typeof e == "boolean" || typeof e == "number" || typeof e == "string") return Ct(e);
+	if (typeof e != "object") return St();
 	if (t.has(e)) throw TypeError("Canonical JSON cannot encode cyclic data");
 	t.add(e);
 	try {
 		if (Array.isArray(e)) {
-			if (Reflect.ownKeys(e).some((t) => typeof t != "string" || t !== "length" && (!/^\d+$/u.test(t) || Number(t) >= e.length || String(Number(t)) !== t))) return xt();
+			if (Reflect.ownKeys(e).some((t) => typeof t != "string" || t !== "length" && (!/^\d+$/u.test(t) || Number(t) >= e.length || String(Number(t)) !== t))) return St();
 			let n = [];
 			for (let r = 0; r < e.length; r += 1) {
-				if (!Object.prototype.hasOwnProperty.call(e, r)) return xt();
-				n.push(Ct(e[r], t));
+				if (!Object.prototype.hasOwnProperty.call(e, r)) return St();
+				n.push(wt(e[r], t));
 			}
 			return `[${n.join(",")}]`;
 		}
 		let n = Object.getPrototypeOf(e);
-		if (n !== Object.prototype && n !== null) return xt();
+		if (n !== Object.prototype && n !== null) return St();
 		let r = Reflect.ownKeys(e);
-		if (r.some((e) => typeof e != "string")) return xt();
+		if (r.some((e) => typeof e != "string")) return St();
 		let i = r.toSorted(), a = [];
 		for (let n of i) {
 			let r = Object.getOwnPropertyDescriptor(e, n);
-			if (r === void 0 || !r.enumerable || !("value" in r)) return xt();
-			a.push(`${St(n)}:${Ct(r.value, t)}`);
+			if (r === void 0 || !r.enumerable || !("value" in r)) return St();
+			a.push(`${Ct(n)}:${wt(r.value, t)}`);
 		}
 		return `{${a.join(",")}}`;
 	} finally {
 		t.delete(e);
 	}
 }
-function wt(e) {
-	return Ct(e, /* @__PURE__ */ new WeakSet());
+function Tt(e) {
+	return wt(e, /* @__PURE__ */ new WeakSet());
 }
 //#endregion
 //#region ../../packages/core/src/generation/anchors.ts
-var Tt = class {
+var Et = class {
 	#e;
 	constructor(e) {
 		if (e === void 0 || typeof e.getRandomValues != "function") throw Error("Secure random generation is unavailable");
@@ -216,23 +216,23 @@ var Tt = class {
 		return this.#e.getRandomValues(t), t;
 	}
 };
-function Et(e) {
+function Dt(e) {
 	return t(r(n(e)));
 }
-function Dt(e, n) {
-	let r = Et(wt(e)), i = n.bytes(32);
+function Ot(e, n) {
+	let r = Dt(Tt(e)), i = n.bytes(32);
 	if (i.length !== 32) throw Error("Random source must return exactly 32 bytes");
 	return {
 		source_anchor: r,
-		generation_anchor: Et(`${r}${t(i)}`)
+		generation_anchor: Dt(`${r}${t(i)}`)
 	};
 }
 //#endregion
 //#region ../../packages/contracts/src/direct_catalog.ts
-var Ot = Object.freeze({}), kt = {
+var kt = Object.freeze({}), At = {
 	kind: "bearer",
 	header: "authorization"
-}, At = Object.freeze({
+}, jt = Object.freeze({
 	sd_webui: null,
 	comfyui: null,
 	novelai: {
@@ -244,14 +244,14 @@ var Ot = Object.freeze({}), kt = {
 			"/ai/augment-image",
 			"/user/subscription"
 		],
-		auth: kt,
-		required_headers: Ot
+		auth: At,
+		required_headers: kt
 	},
 	openai_image: {
 		origin: "https://api.openai.com",
 		routes: ["/v1/images/generations", "/v1/images/edits"],
-		auth: kt,
-		required_headers: Ot
+		auth: At,
+		required_headers: kt
 	},
 	google_image: {
 		origin: "https://generativelanguage.googleapis.com",
@@ -260,52 +260,52 @@ var Ot = Object.freeze({}), kt = {
 			kind: "api_key",
 			header: "x-goog-api-key"
 		},
-		required_headers: Ot
+		required_headers: kt
 	}
-}), jt = class extends Error {
+}), Mt = class extends Error {
 	code = "direct_route_rejected";
 	constructor() {
 		super("The requested destination is not in the provider route catalog"), this.name = "DirectRouteRejectedError";
 	}
 };
-function Mt(e) {
-	return At[e];
+function Nt(e) {
+	return jt[e];
 }
-function Nt(e, t) {
-	if (!e.routes.includes(t)) throw new jt();
+function Pt(e, t) {
+	if (!e.routes.includes(t)) throw new Mt();
 	return `${e.origin}${t}`;
 }
 //#endregion
 //#region ../../packages/contracts/src/message.ts
-var Pt = o().regex(/^[A-Za-z0-9_-]{8,32}$/u), Ft = c({
+var Ft = o().regex(/^[A-Za-z0-9_-]{8,32}$/u), It = c({
 	name: o().trim().min(1).max(120),
 	prompt: o().trim().min(1).max(4e3),
 	negative_prompt: o().max(4e3)
-}), It = c({
-	slot_id: Pt,
+}), Lt = c({
+	slot_id: Ft,
 	paragraph: d().int().min(0),
 	anchor: o().max(400),
 	scene: o().max(2e3),
 	characters: l(o().trim().min(1).max(120)).max(16),
 	positive_prompt: o().max(8e3),
 	negative_prompt: o().max(8e3),
-	character_prompts: l(Ft).max(16),
+	character_prompts: l(It).max(16),
 	image_ids: l(p),
 	active_image_id: p.nullable(),
 	pending_request_ids: l(f),
 	last_error: o().max(500).nullable()
-}), Lt = c({
+}), Rt = c({
 	schema_version: i(2),
-	slots: l(It).max(16)
+	slots: l(Lt).max(16)
 });
 u(["quality", "undesired_content"]);
-var Rt = c({
+var zt = c({
 	enabled: s(),
 	preset_id: o().trim().min(1).max(200)
-}), zt = c({
-	quality: Rt,
-	undesired_content: Rt
 }), Bt = c({
+	quality: zt,
+	undesired_content: zt
+}), Vt = c({
 	schema_version: i(1),
 	chat_id: o().min(1).max(512),
 	active_swipes: l(a({
@@ -322,12 +322,12 @@ var Rt = c({
 		content_sha256: g,
 		swipe_id: d().int().nonnegative().nullable()
 	}))
-}), Vt = class {
+}), Ht = class {
 	now() {
 		return /* @__PURE__ */ new Date();
 	}
 };
-function V(e) {
+function B(e) {
 	let t = e.error === null ? null : Object.freeze({ ...e.error });
 	return Object.freeze({
 		job_id: e.job_id,
@@ -348,12 +348,12 @@ function V(e) {
 }
 //#endregion
 //#region ../../packages/core/src/jobs/job_executor.ts
-var H = class extends Error {
+var V = class extends Error {
 	provider_error;
 	constructor(e) {
-		super(`Job executor failed: ${e.code}`), this.name = "JobExecutorFailure", this.provider_error = Object.freeze(te.parse(e));
+		super(`Job executor failed: ${e.code}`), this.name = "JobExecutorFailure", this.provider_error = Object.freeze(ne.parse(e));
 	}
-}, Ht = {
+}, Ut = {
 	queued: ["preparing", "cancelled"],
 	preparing: [
 		"submitting",
@@ -376,7 +376,7 @@ var H = class extends Error {
 	cancelled: [],
 	attached: [],
 	orphaned: []
-}, Ut = class extends Error {
+}, Wt = class extends Error {
 	code = "invalid_generation_job_transition";
 	job_id;
 	prior_state;
@@ -385,19 +385,19 @@ var H = class extends Error {
 		super(`Job ${e} cannot transition from ${t} to ${n}`), this.name = "GenerationJobTransitionError", this.job_id = e, this.prior_state = t, this.attempted_state = n;
 	}
 };
-function Wt(e, t, n) {
+function Gt(e, t, n) {
 	let r = e.state;
 	if (r !== "cancelled" || t !== "cancelled") {
-		if (!Ht[r].includes(t)) throw new Ut(e.job_id, r, t);
+		if (!Ut[r].includes(t)) throw new Wt(e.job_id, r, t);
 		e.state = t, e.updated_at = n;
 	}
 }
-function Gt(e, t) {
+function Kt(e, t) {
 	if (!Number.isInteger(e) || e < 1) throw RangeError(`${t} must be a positive integer`);
 	return e;
 }
-function Kt(e) {
-	let t = g.parse(e.generation_anchor), n = Object.freeze(ee.parse(e.arguments));
+function qt(e) {
+	let t = g.parse(e.generation_anchor), n = Object.freeze(_.parse(e.arguments));
 	if (n.generation_anchor !== t) throw TypeError("Image job arguments must use the job generation anchor");
 	if (e.chat_id.trim().length === 0) throw TypeError("Image job chat ID must not be empty");
 	if (!Number.isInteger(e.requested_swipe_id) || e.requested_swipe_id < 0) throw RangeError("Image job requested swipe ID must be a non-negative integer");
@@ -407,16 +407,16 @@ function Kt(e) {
 		source_anchor: g.parse(e.source_anchor),
 		chat_id: e.chat_id,
 		requested_swipe_id: e.requested_swipe_id,
-		provider_id: C.parse(e.provider_id),
+		provider_id: S.parse(e.provider_id),
 		arguments: n,
 		automatic: e.automatic
 	};
 }
-function qt(e) {
-	let i = `${e.generation_anchor}${wt(e.arguments)}`;
+function Jt(e) {
+	let i = `${e.generation_anchor}${Tt(e.arguments)}`;
 	return t(r(n(i)));
 }
-function Jt(e) {
+function Yt(e) {
 	return {
 		...e,
 		arguments: { ...e.arguments },
@@ -424,18 +424,18 @@ function Jt(e) {
 		image_ids: [...e.image_ids]
 	};
 }
-var Yt = /* @__PURE__ */ new Set([
+var Xt = /* @__PURE__ */ new Set([
 	"completed",
 	"failed",
 	"cancelled"
 ]);
-function Xt(e) {
-	return e instanceof H ? { ...e.provider_error } : {
+function Zt(e) {
+	return e instanceof V ? { ...e.provider_error } : {
 		code: "provider_unavailable",
 		retryable: !1
 	};
 }
-var Zt = class {
+var Qt = class {
 	#e;
 	#t;
 	#n;
@@ -450,21 +450,21 @@ var Zt = class {
 	#d = /* @__PURE__ */ new Map();
 	#f = /* @__PURE__ */ new Map();
 	#p = /* @__PURE__ */ new Set();
-	#m = C.options;
+	#m = S.options;
 	#h = 0;
 	#g = 0;
 	#_ = !1;
 	#v = null;
 	#y = 0;
 	constructor(e) {
-		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Vt(), this.#i = Gt(e.global_concurrency ?? 4, "Global job concurrency");
+		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Ht(), this.#i = Kt(e.global_concurrency ?? 4, "Global job concurrency");
 		for (let t of this.#m) {
-			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : Gt(n, `Concurrency for ${t}`);
+			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : Kt(n, `Concurrency for ${t}`);
 			this.#a.set(t, r), this.#o.set(t, e.provider_start_interval_ms?.[t] ?? 0), this.#c.set(t, []), this.#l.set(t, 0);
 		}
 	}
 	enqueue(e) {
-		let t = Kt(e), n = qt(t);
+		let t = qt(e), n = Jt(t);
 		if (t.automatic) {
 			let e = this.#d.get(n);
 			if (e !== void 0) {
@@ -484,7 +484,7 @@ var Zt = class {
 	}
 	get(e) {
 		let t = this.#u.get(e);
-		return t === void 0 ? null : V(t.job);
+		return t === void 0 ? null : B(t.job);
 	}
 	subscribe(e) {
 		this.#p.add(e);
@@ -496,9 +496,9 @@ var Zt = class {
 	async cancel(e) {
 		let t = this.#u.get(e);
 		if (t === void 0) throw Error(`Generation job ${e} does not exist`);
-		if (t.job.state === "cancelled") return V(t.job);
+		if (t.job.state === "cancelled") return B(t.job);
 		t.cancel_requested = !0, t.controller.abort(), t.queued && this.#A(t);
-		let n = await this.#k(t, async () => (t.job.state !== "cancelled" && await this.#D(t, "cancelled"), V(t.job)));
+		let n = await this.#k(t, async () => (t.job.state !== "cancelled" && await this.#D(t, "cancelled"), B(t.job)));
 		return this.#S(), n;
 	}
 	mark_attached(e) {
@@ -509,7 +509,7 @@ var Zt = class {
 	}
 	#b(e, t) {
 		let n = this.#u.get(e);
-		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#k(n, async () => (n.job.state !== t && await this.#D(n, t), V(n.job)));
+		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#k(n, async () => (n.job.state !== t && await this.#D(n, t), B(n.job)));
 	}
 	async #x(e, t) {
 		let n = this.#r.now().toISOString(), r = {
@@ -527,7 +527,7 @@ var Zt = class {
 			updated_at: n,
 			error: null,
 			image_ids: []
-		}, i = V(r);
+		}, i = B(r);
 		await this.#t.save(i);
 		let a = {
 			job: r,
@@ -595,42 +595,42 @@ var Zt = class {
 			}
 		};
 		try {
-			let n = (await this.#e.execute(V(e.job), t)).image_ids.map((e) => p.parse(e));
-			if (n.length === 0) throw new H({
+			let n = (await this.#e.execute(B(e.job), t)).image_ids.map((e) => p.parse(e));
+			if (n.length === 0) throw new V({
 				code: "malformed_response",
 				retryable: !1
 			});
 			await this.#k(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
-				let t = Jt(e.job);
+				let t = Yt(e.job);
 				t.image_ids = n, await this.#D(e, "completed", t);
 			});
 		} catch (t) {
 			await this.#k(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
-				let n = Jt(e.job);
-				n.error = Xt(t), await this.#D(e, "failed", n);
+				let n = Yt(e.job);
+				n.error = Zt(t), await this.#D(e, "failed", n);
 			});
 		}
 	}
-	async #D(e, t, n = Jt(e.job)) {
-		Wt(n, t, this.#r.now().toISOString());
-		let r = V(n);
+	async #D(e, t, n = Yt(e.job)) {
+		Gt(n, t, this.#r.now().toISOString());
+		let r = B(n);
 		try {
 			await this.#t.save(r);
 		} catch (e) {
-			if (!Yt.has(t)) throw e;
+			if (!Xt.has(t)) throw e;
 		}
 		return e.job = n, this.#j(r), r;
 	}
 	#O(e) {
-		if (Yt.has(e.job.state)) return;
-		let t = Jt(e.job);
+		if (Xt.has(e.job.state)) return;
+		let t = Yt(e.job);
 		t.state = "failed", t.updated_at = this.#r.now().toISOString(), t.error = {
 			code: "storage_failed",
 			retryable: !1
 		}, e.job = t;
-		let n = V(t);
+		let n = B(t);
 		this.#j(n), this.#t.save(n).catch(() => void 0);
 	}
 	#k(e, t) {
@@ -646,54 +646,54 @@ var Zt = class {
 	#j(e) {
 		for (let t of this.#p) t(e);
 	}
-}, Qt = "tavern_canvas", $t = "tavern_canvas_wardrobe";
-function en(e) {
+}, $t = "tavern_canvas", en = "tavern_canvas_wardrobe";
+function tn(e) {
 	return e.bind(globalThis);
 }
-function tn(e) {
+function nn(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function nn(e) {
+function rn(e) {
 	if (typeof e != "object" || !e) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function U(e, t) {
+function H(e, t) {
 	try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function rn(e, t) {
-	let n = U(e, t);
+function an(e, t) {
+	let n = H(e, t);
 	if (typeof n == "function") try {
 		return Reflect.apply(n, e, []);
 	} catch {
 		return;
 	}
 }
-function an(e, t) {
-	let n = U(e, "eventSource"), r = U(e, "eventTypes");
-	return !tn(n) || !tn(r) ? !1 : typeof U(n, "on") == "function" && typeof U(n, "removeListener") == "function" && t.every((e) => {
-		let t = U(r, e);
+function on(e, t) {
+	let n = H(e, "eventSource"), r = H(e, "eventTypes");
+	return !nn(n) || !nn(r) ? !1 : typeof H(n, "on") == "function" && typeof H(n, "removeListener") == "function" && t.every((e) => {
+		let t = H(r, e);
 		return typeof t == "string" && t.length > 0;
 	});
 }
-function on(e) {
-	let t = tn(e) ? rn(e, "getContext") : void 0;
-	if (!tn(t)) return {
+function sn(e) {
+	let t = nn(e) ? an(e, "getContext") : void 0;
+	if (!nn(t)) return {
 		main_generation_events: !1,
 		message_swipe_metadata: !1
 	};
-	let n = rn(t, "getCurrentLocale");
+	let n = an(t, "getCurrentLocale");
 	return {
-		main_generation_events: typeof n == "string" && n.trim().length > 0 && an(t, [
+		main_generation_events: typeof n == "string" && n.trim().length > 0 && on(t, [
 			"GENERATION_STARTED",
 			"GENERATION_STOPPED",
 			"GENERATION_ENDED"
 		]),
-		message_swipe_metadata: typeof U(t, "getCurrentChatId") == "function" && Array.isArray(U(t, "chat")) && typeof U(t, "saveChat") == "function" && an(t, [
+		message_swipe_metadata: typeof H(t, "getCurrentChatId") == "function" && Array.isArray(H(t, "chat")) && typeof H(t, "saveChat") == "function" && on(t, [
 			"CHAT_CHANGED",
 			"MESSAGE_SWIPED",
 			"MESSAGE_UPDATED",
@@ -703,25 +703,25 @@ function on(e) {
 		])
 	};
 }
-function sn(e, t) {
+function cn(e, t) {
 	if (typeof e != "string" || e.trim().length === 0) throw Error(t);
 	return e;
 }
-function cn(e) {
-	if (!nn(e) || !Object.values(e).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
+function ln(e) {
+	if (!rn(e) || !Object.values(e).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
 	return { ...e };
 }
-function ln(e) {
+function un(e) {
 	return typeof e == "number" && Number.isInteger(e) && e >= 0 ? e : null;
 }
-var un = class {
+var dn = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t.bind(globalThis);
 	}
 	get_locale() {
-		return sn(this.#e().getCurrentLocale(), "SillyTavern returned an invalid locale");
+		return cn(this.#e().getCurrentLocale(), "SillyTavern returned an invalid locale");
 	}
 	get_active_chat_id() {
 		let e = this.#e().getCurrentChatId();
@@ -751,7 +751,7 @@ var un = class {
 				e({ phase: "stopped" });
 			}],
 			["GENERATION_ENDED", (t) => {
-				let n = ln(t);
+				let n = un(t);
 				n !== null && n > 0 && e({
 					phase: "ended",
 					message_id: n - 1
@@ -766,7 +766,7 @@ var un = class {
 	}
 	subscribe_message_rendered(e) {
 		let t = (t) => {
-			let n = ln(t);
+			let n = un(t);
 			n !== null && e(n);
 		};
 		return this.#n([
@@ -792,10 +792,10 @@ var un = class {
 		return i == null ? null : (i.extra === void 0 && t && (i.extra = {}), i.extra ?? null);
 	}
 	read_swipe_record(e) {
-		return this.#i(e, Qt);
+		return this.#i(e, $t);
 	}
 	read_swipe_wardrobe(e) {
-		return this.#i(e, $t);
+		return this.#i(e, en);
 	}
 	#i(e, t) {
 		let n = this.#r(e, !1)?.[t];
@@ -804,7 +804,7 @@ var un = class {
 	async translate_deepl(e, t, n) {
 		let r = await this.#t("/api/translate/deepl", {
 			method: "POST",
-			headers: cn(this.#e().getRequestHeaders()),
+			headers: ln(this.#e().getRequestHeaders()),
 			body: JSON.stringify({
 				text: e,
 				lang: t,
@@ -816,17 +816,17 @@ var un = class {
 		return r.text();
 	}
 	write_swipe_record(e, t) {
-		return this.#a(e, Qt, t);
+		return this.#a(e, $t, t);
 	}
 	write_swipe_wardrobe(e, t) {
-		return this.#a(e, $t, t);
+		return this.#a(e, en, t);
 	}
 	async #a(e, t, n) {
 		let r = this.#r(e, !0);
 		if (r === null) throw Error(`Chat ${e.chat_id} message ${String(e.message_id)} swipe ${String(e.swipe_id)} is not available`);
 		r[t] = structuredClone(n), await this.#e().saveChat();
 	}
-}, dn = {
+}, fn = {
 	message_swipe_metadata: ["getChatMessages", "setChatMessages"],
 	preset_generation: [
 		"generate",
@@ -840,25 +840,25 @@ var un = class {
 		"retrieveDisplayedMessage"
 	]
 };
-function fn(e) {
+function pn(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function pn(e) {
+function mn(e) {
 	if (typeof e != "object" || !e) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function mn(e, t) {
+function hn(e, t) {
 	try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function hn(e, t) {
-	return t.every((t) => typeof mn(e, t) == "function");
+function gn(e, t) {
+	return t.every((t) => typeof hn(e, t) == "function");
 }
-function gn(e) {
+function _n(e) {
 	let t;
 	try {
 		t = Reflect.get(e, "getTavernHelperVersion");
@@ -877,13 +877,13 @@ function gn(e) {
 		value: n
 	} : { state: "invalid" };
 }
-function _n(e) {
-	return fn(e) ? {
+function vn(e) {
+	return pn(e) ? {
 		detected: !0,
-		version: gn(e),
-		message_swipe_metadata: hn(e, dn.message_swipe_metadata),
-		preset_generation: hn(e, dn.preset_generation),
-		tavern_regex: hn(e, dn.tavern_regex)
+		version: _n(e),
+		message_swipe_metadata: gn(e, fn.message_swipe_metadata),
+		preset_generation: gn(e, fn.preset_generation),
+		tavern_regex: gn(e, fn.tavern_regex)
 	} : {
 		detected: e !== void 0,
 		version: e === void 0 ? { state: "missing" } : { state: "invalid" },
@@ -892,13 +892,13 @@ function _n(e) {
 		tavern_regex: !1
 	};
 }
-function vn(e) {
+function yn(e) {
 	return e === "system" || e === "assistant" || e === "user";
 }
-function yn(e) {
-	if (!pn(e)) throw Error("TavernHelper returned an invalid chat message");
+function bn(e) {
+	if (!mn(e)) throw Error("TavernHelper returned an invalid chat message");
 	let { message_id: t, name: n, role: r, is_hidden: i, swipe_id: a, swipes: o } = e;
-	if (typeof t != "number" || !Number.isInteger(t) || t < 0 || typeof n != "string" || !vn(r) || i !== void 0 && typeof i != "boolean" || typeof a != "number" || !Number.isInteger(a) || !Array.isArray(o) || !o.every((e) => typeof e == "string") || a < 0 || a >= o.length) throw Error(`TavernHelper returned an invalid chat message ${String(t)}`);
+	if (typeof t != "number" || !Number.isInteger(t) || t < 0 || typeof n != "string" || !yn(r) || i !== void 0 && typeof i != "boolean" || typeof a != "number" || !Number.isInteger(a) || !Array.isArray(o) || !o.every((e) => typeof e == "string") || a < 0 || a >= o.length) throw Error(`TavernHelper returned an invalid chat message ${String(t)}`);
 	return {
 		message_id: t,
 		name: n,
@@ -908,7 +908,7 @@ function yn(e) {
 		swipes: o
 	};
 }
-function bn(e) {
+function xn(e) {
 	return {
 		message_id: e.message_id,
 		name: e.name,
@@ -921,28 +921,28 @@ function bn(e) {
 		}))
 	};
 }
-function xn(e) {
+function Sn(e) {
 	if (typeof e == "string") return {
 		content: e,
 		reasoning: null
 	};
-	if (pn(e) && typeof e.content == "string") return {
+	if (mn(e) && typeof e.content == "string") return {
 		content: e.content,
 		reasoning: typeof e.reasoning == "string" && e.reasoning.length > 0 ? e.reasoning : null
 	};
 	throw Error("TavernHelper.generate returned neither text nor a detailed result");
 }
-var Sn = /* @__PURE__ */ new Set([
+var Cn = /* @__PURE__ */ new Set([
 	"and_any",
 	"and_all",
 	"not_all",
 	"not_any"
-]), Cn = /* @__PURE__ */ new Set([
+]), wn = /* @__PURE__ */ new Set([
 	"constant",
 	"selective",
 	"vectorized"
 ]);
-function wn(e) {
+function Tn(e) {
 	if (!Array.isArray(e)) throw Error("TavernHelper returned invalid world info keys");
 	return e.map((e) => {
 		if (typeof e == "string") return e;
@@ -953,21 +953,21 @@ function wn(e) {
 		throw Error("TavernHelper returned an invalid world info key");
 	});
 }
-function Tn(e) {
-	if (!pn(e) || !pn(e.strategy) || !pn(e.position)) throw Error("TavernHelper returned an invalid world info entry");
-	let { enabled: t, content: n, strategy: r, position: i } = e, a = r.keys_secondary, o = pn(a) ? a.logic ?? "and_any" : void 0;
-	if (typeof t != "boolean" || typeof n != "string" || typeof r.type != "string" || !Cn.has(r.type) || !pn(a) || typeof o != "string" || !Sn.has(o) || typeof i.order != "number") throw Error("TavernHelper returned an invalid world info entry");
+function En(e) {
+	if (!mn(e) || !mn(e.strategy) || !mn(e.position)) throw Error("TavernHelper returned an invalid world info entry");
+	let { enabled: t, content: n, strategy: r, position: i } = e, a = r.keys_secondary, o = mn(a) ? a.logic ?? "and_any" : void 0;
+	if (typeof t != "boolean" || typeof n != "string" || typeof r.type != "string" || !wn.has(r.type) || !mn(a) || typeof o != "string" || !Cn.has(o) || typeof i.order != "number") throw Error("TavernHelper returned an invalid world info entry");
 	return {
 		enabled: t,
 		strategy: r.type,
-		keys: wn(r.keys),
+		keys: Tn(r.keys),
 		secondary_logic: o,
-		secondary_keys: wn(a.keys),
+		secondary_keys: Tn(a.keys),
 		order: i.order,
 		content: n
 	};
 }
-function En(e) {
+function Dn(e) {
 	switch (e.kind) {
 		case "current": return;
 		case "proxy_preset": return e.model === null ? { proxy_preset: e.proxy_preset } : {
@@ -982,7 +982,7 @@ function En(e) {
 		};
 	}
 }
-function Dn(e) {
+function On(e) {
 	return {
 		id: e.id,
 		script_name: e.script_name,
@@ -1006,10 +1006,10 @@ function Dn(e) {
 		max_depth: null
 	};
 }
-function On(e, t) {
+function kn(e, t) {
 	return e.script_name === t.script_name && e.find_regex === t.find_regex && e.replace_string === t.replace_string && e.source.ai_output === t.source.ai_output && e.source.user_input === t.source.user_input && e.destination.display === t.destination.display && e.destination.prompt === t.destination.prompt && e.run_on_edit === t.run_on_edit;
 }
-var kn = class {
+var An = class {
 	#e;
 	#t;
 	constructor(e, t) {
@@ -1018,13 +1018,13 @@ var kn = class {
 	#n(e) {
 		let t = this.#e.getChatMessages(e, { include_swipes: !0 });
 		if (!Array.isArray(t)) throw Error("TavernHelper returned invalid chat messages");
-		return t.map(yn);
+		return t.map(bn);
 	}
 	get_active_chat() {
 		let e = this.#n("0-{{lastMessageId}}");
 		return Promise.resolve({
 			chat_id: this.#t(),
-			messages: e.map(bn)
+			messages: e.map(xn)
 		});
 	}
 	async replace_message_text(e, t, n) {
@@ -1035,8 +1035,8 @@ var kn = class {
 		}], { refresh: "affected" }), !0);
 	}
 	async generate_with_preset(e) {
-		let t = En(e.connection);
-		return xn(await this.#e.generate({
+		let t = Dn(e.connection);
+		return Sn(await this.#e.generate({
 			generation_id: e.generation_id,
 			preset_name: e.preset_name,
 			user_input: e.user_input,
@@ -1065,15 +1065,15 @@ var kn = class {
 	async read_worldbook(e) {
 		let t = await this.#e.getWorldbook(e);
 		if (!Array.isArray(t)) throw Error(`TavernHelper returned invalid entries for world info book ${e}`);
-		return t.map(Tn);
+		return t.map(En);
 	}
 	stop_generation(e) {
 		this.#e.stopGenerationById(e);
 	}
 	async sync_regex_scripts(e) {
-		let t = { type: "global" }, n = this.#e.getTavernRegexes(t), r = e.map(Dn).filter((e) => {
+		let t = { type: "global" }, n = this.#e.getTavernRegexes(t), r = e.map(On).filter((e) => {
 			let t = n.find((t) => t.id === e.id);
-			return t === void 0 || !On(t, e);
+			return t === void 0 || !kn(t, e);
 		});
 		if (r.length === 0) return !1;
 		let i = n.filter((e) => !r.some((t) => t.id === e.id));
@@ -1082,9 +1082,9 @@ var kn = class {
 	find_message_element(e) {
 		return this.#e.retrieveDisplayedMessage(e).get(0) ?? null;
 	}
-}, An = "4.11.1", jn = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
-function Mn(e) {
-	let t = jn.exec(e.trim());
+}, jn = "4.11.1", Mn = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
+function Nn(e) {
+	let t = Mn.exec(e.trim());
 	if (t === null) return null;
 	let [, n, r, i, a] = t;
 	return {
@@ -1094,68 +1094,68 @@ function Mn(e) {
 		prerelease: a ?? null
 	};
 }
-function Nn(e, t) {
+function Pn(e, t) {
 	let n = e.major - t.major || e.minor - t.minor || e.patch - t.patch;
 	return n === 0 ? e.prerelease === null : n > 0;
 }
-function Pn(e) {
-	let t = Mn(e), n = Mn(An);
-	return t === null || n === null ? "invalid" : Nn(t, n) ? "supported" : "unsupported";
+function Fn(e) {
+	let t = Nn(e), n = Nn(jn);
+	return t === null || n === null ? "invalid" : Pn(t, n) ? "supported" : "unsupported";
 }
-var Fn = [
+var In = [
 	"main_generation_events",
 	"preset_generation",
 	"message_swipe_metadata",
 	"tavern_regex",
 	"tavern_helper"
 ];
-function In(e) {
+function Ln(e) {
 	return {
 		available: !1,
 		reason: e
 	};
 }
-function Ln(e, t) {
-	return e ? { available: !0 } : In(t);
-}
 function Rn(e, t) {
+	return e ? { available: !0 } : Ln(t);
+}
+function zn(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function zn(e, t) {
+function Bn(e, t) {
 	return {
-		main_generation_events: Ln(t.main_generation_events, "SillyTavern generation event API is unavailable"),
-		preset_generation: Ln(e.preset_generation, "TavernHelper.generate, stopGenerationById or the world info functions are unavailable"),
-		message_swipe_metadata: Ln(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper or SillyTavern chat message API is unavailable"),
-		tavern_regex: Ln(e.tavern_regex, "TavernHelper regex or displayed message API is unavailable"),
-		tavern_helper: Ln(e.version.state === "available", "TavernHelper version API is unavailable")
+		main_generation_events: Rn(t.main_generation_events, "SillyTavern generation event API is unavailable"),
+		preset_generation: Rn(e.preset_generation, "TavernHelper.generate, stopGenerationById or the world info functions are unavailable"),
+		message_swipe_metadata: Rn(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper or SillyTavern chat message API is unavailable"),
+		tavern_regex: Rn(e.tavern_regex, "TavernHelper regex or displayed message API is unavailable"),
+		tavern_helper: Rn(e.version.state === "available", "TavernHelper version API is unavailable")
 	};
 }
-function Bn(e) {
-	return Fn.filter((t) => e[t]?.available !== !0);
-}
 function Vn(e) {
-	let t = _n(Rn(e, "TavernHelper")), n = zn(t, on(Rn(e, "SillyTavern")));
+	return In.filter((t) => e[t]?.available !== !0);
+}
+function Hn(e) {
+	let t = vn(zn(e, "TavernHelper")), n = Bn(t, sn(zn(e, "SillyTavern")));
 	if (!t.detected) return {
 		ready: !1,
 		error_code: "tavern_helper_missing",
-		missing_capabilities: Bn(n)
+		missing_capabilities: Vn(n)
 	};
 	let r = t.version;
 	if (r.state === "missing" || r.state === "threw") return {
 		ready: !1,
 		error_code: "helper_api_incomplete",
-		missing_capabilities: Bn(n)
+		missing_capabilities: Vn(n)
 	};
 	if (r.state === "invalid") return {
 		ready: !1,
 		error_code: "helper_version_invalid",
 		missing_capabilities: ["tavern_helper"]
 	};
-	let i = r.value, a = Pn(i);
+	let i = r.value, a = Fn(i);
 	if (a === "invalid") return {
 		ready: !1,
 		error_code: "helper_version_invalid",
@@ -1167,7 +1167,7 @@ function Vn(e) {
 		missing_capabilities: ["tavern_helper"],
 		current_version: i
 	};
-	let o = Bn(n);
+	let o = Vn(n);
 	return o.length > 0 ? {
 		ready: !1,
 		error_code: "helper_api_incomplete",
@@ -1180,27 +1180,27 @@ function Vn(e) {
 }
 //#endregion
 //#region src/ui/controllers/unavailable_capabilities.ts
-var Hn = "capability_not_implemented";
-function W() {
+var Un = "capability_not_implemented";
+function U() {
 	let e = /* @__PURE__ */ Error("This capability is not available in the current host");
-	return Object.defineProperty(e, "code", { value: Hn }), Promise.reject(e);
+	return Object.defineProperty(e, "code", { value: Un }), Promise.reject(e);
 }
-function Un() {
+function Wn() {
 	return () => {};
 }
-var Wn = {
+var Gn = {
 	character: [],
 	outfit: [],
 	lora: [],
 	vibe: [],
 	workflow: [],
 	prompt_tag: []
-}, Gn = {
+}, Kn = {
 	capability_matrix: {},
 	helper_version: null,
 	storage_usage_bytes: null,
 	storage_quota_bytes: null
-}, Kn = {
+}, qn = {
 	schema_version: 1,
 	active_namespace: "default",
 	locale: "auto",
@@ -1231,145 +1231,145 @@ var Wn = {
 		optional_entry_enabled: !1
 	}
 };
-function qn() {
+function Jn() {
 	return {
 		generation: {
 			load: () => Promise.resolve([]),
-			subscribe: Un,
-			submit: W,
-			cancel: W,
-			retry: W,
-			dismiss: W
+			subscribe: Wn,
+			submit: U,
+			cancel: U,
+			retry: U,
+			dismiss: U
 		},
 		profiles: {
 			load: () => Promise.resolve([]),
-			subscribe: Un,
-			save: W,
-			remove: W,
-			test_connection: W,
-			set_credential: W,
-			clear_credential: W,
-			save_novelai_defaults: W,
-			save_prompt_tags: W
+			subscribe: Wn,
+			save: U,
+			remove: U,
+			test_connection: U,
+			set_credential: U,
+			clear_credential: U,
+			save_novelai_defaults: U,
+			save_prompt_tags: U
 		},
 		novelai: {
-			get_account: W,
+			get_account: U,
 			load: () => Promise.resolve([]),
-			refresh_models: W,
-			estimate_cost: W
+			refresh_models: U,
+			estimate_cost: U
 		},
 		prompt_presets: {
 			load: () => Promise.resolve([]),
-			subscribe: Un,
-			load_draft: W,
-			save_draft: W,
-			remove: W,
-			bulk_remove: W,
-			test_regex: W
+			subscribe: Wn,
+			load_draft: U,
+			save_draft: U,
+			remove: U,
+			bulk_remove: U,
+			test_regex: U
 		},
 		assets: {
-			load: () => Promise.resolve(Wn),
-			subscribe: Un,
-			save: W,
-			remove: W,
-			reorder: W
+			load: () => Promise.resolve(Gn),
+			subscribe: Wn,
+			save: U,
+			remove: U,
+			reorder: U
 		},
 		gallery: {
 			load: () => Promise.resolve([]),
-			subscribe: Un,
-			read_bytes: W,
-			pin: W,
-			detach_from_message: W,
-			delete_record: W,
-			reveal_source: W,
-			bulk_delete: W
+			subscribe: Wn,
+			read_bytes: U,
+			pin: U,
+			detach_from_message: U,
+			delete_record: U,
+			reveal_source: U,
+			bulk_delete: U
 		},
 		vocabulary: {
 			load: () => Promise.resolve([]),
-			installed: W,
-			search: W,
+			installed: U,
+			search: U,
 			lookup: () => Promise.resolve(null),
-			prepare: W,
-			next_page: W,
-			install: W,
+			prepare: U,
+			next_page: U,
+			install: U,
 			cancel_install: () => {}
 		},
 		diagnostics: {
-			load: () => Promise.resolve(Gn),
-			subscribe: Un,
+			load: () => Promise.resolve(Kn),
+			subscribe: Wn,
 			load_timeline: () => Promise.resolve([]),
-			export_support_bundle: W
+			export_support_bundle: U
 		},
 		settings: {
 			load: () => Promise.resolve({
-				settings: Kn,
+				settings: qn,
 				vocabulary_update_channel: "bundled",
 				browser_secret_vault: {
 					state: "unavailable",
 					secret_count: 0
 				}
 			}),
-			subscribe: Un,
-			update: W,
-			set_analysis_key: W,
-			list_worldbooks: W,
-			clear_analysis_key: W,
-			set_deepl_key: W,
-			clear_deepl_key: W,
-			initialize_browser_secret_vault: W,
-			unlock_browser_secret_vault: W,
-			lock_browser_secret_vault: W,
-			reset_browser_secret_vault: W,
-			set_vocabulary_update_channel: W,
-			import_vocabulary_package: W,
+			subscribe: Wn,
+			update: U,
+			set_analysis_key: U,
+			list_worldbooks: U,
+			clear_analysis_key: U,
+			set_deepl_key: U,
+			clear_deepl_key: U,
+			initialize_browser_secret_vault: U,
+			unlock_browser_secret_vault: U,
+			lock_browser_secret_vault: U,
+			reset_browser_secret_vault: U,
+			set_vocabulary_update_channel: U,
+			import_vocabulary_package: U,
 			cancel_vocabulary_import: () => {},
-			export_archive: W,
-			import_archive: W
+			export_archive: U,
+			import_archive: U
 		}
 	};
 }
 //#endregion
 //#region src/ui/contracts/view_models.ts
-var Jn = { status: "idle" }, Yn = "capability_load_failed", Xn = "command_failed", Zn = /^[a-z][a-z0-9_]*$/u;
-function Qn(e, t) {
+var Yn = { status: "idle" }, Xn = "capability_load_failed", Zn = "command_failed", Qn = /^[a-z][a-z0-9_]*$/u;
+function $n(e, t) {
 	if (e instanceof Error) {
 		let t = e.code;
-		if (typeof t == "string" && Zn.test(t)) return { code: t };
+		if (typeof t == "string" && Qn.test(t)) return { code: t };
 	}
 	return { code: t };
 }
-function G(e, t, n) {
+function W(e, t, n) {
 	let r = n(t), i = e.findIndex((e) => n(e) === r);
 	if (i === -1) return [...e, t];
 	let a = [...e];
 	return a[i] = t, a;
 }
-var $n = /* @__PURE__ */ new Set([
+var er = /* @__PURE__ */ new Set([
 	"queued",
 	"preparing",
 	"submitting",
 	"running",
 	"failed"
 ]);
-function er(e) {
+function tr(e) {
 	return e === "failed" ? "error" : "pending";
 }
-function tr(e) {
+function nr(e) {
 	return e === "running" ? "status.running" : e === "failed" ? "status.failed" : "status.pending";
 }
-function nr(e) {
+function rr(e) {
 	return {
 		id: e.job_id,
-		label_code: tr(e.state),
-		status: er(e.state),
+		label_code: nr(e.state),
+		status: tr(e.state),
 		progress: e.state !== "failed" && e.image_count > 0 ? e.completed_image_ids.length / e.image_count : null,
 		error: e.state === "failed" ? e.error?.code ?? null : null
 	};
 }
-function rr(e) {
-	return e.filter((e) => $n.has(e.state)).map(nr);
+function ir(e) {
+	return e.filter((e) => er.has(e.state)).map(rr);
 }
-function ir(e, t, n) {
+function ar(e, t, n) {
 	return e().status === "pending" ? Promise.resolve() : (t({ status: "pending" }), n().then((e) => {
 		t({
 			status: "success",
@@ -1378,11 +1378,11 @@ function ir(e, t, n) {
 	}, (e) => {
 		t({
 			status: "error",
-			failure: Qn(e, Xn)
+			failure: $n(e, Zn)
 		});
 	}));
 }
-function ar(e, t, n) {
+function or(e, t, n) {
 	return {
 		route: e,
 		settings_section: "illustration",
@@ -1398,7 +1398,7 @@ function ar(e, t, n) {
 			presets: [],
 			selected_preset_id: null,
 			draft: null,
-			save_command: Jn
+			save_command: Yn
 		},
 		assets: {
 			active_category: "character",
@@ -1411,17 +1411,17 @@ function ar(e, t, n) {
 				prompt_tag: []
 			},
 			vocabulary_catalog: [],
-			vocabulary_install_command: Jn
+			vocabulary_install_command: Yn
 		},
 		gallery: {
 			records: [],
 			selected_record_id: null,
-			bulk_delete_command: Jn
+			bulk_delete_command: Yn
 		},
 		diagnostics: {
 			snapshot: null,
 			timeline: [],
-			support_bundle_command: Jn
+			support_bundle_command: Yn
 		},
 		settings: {
 			settings: null,
@@ -1430,7 +1430,7 @@ function ar(e, t, n) {
 				state: "unavailable",
 				secret_count: 0
 			},
-			update_command: Jn
+			update_command: Yn
 		},
 		inspector: {
 			collapsed: !1,
@@ -1440,34 +1440,34 @@ function ar(e, t, n) {
 		tasks: []
 	};
 }
-function or(e, t) {
-	let n = t.type === "job_updated" ? G(e.generation.jobs, t.job, (e) => e.job_id) : e.generation.jobs.filter((e) => e.job_id !== t.job_id);
+function sr(e, t) {
+	let n = t.type === "job_updated" ? W(e.generation.jobs, t.job, (e) => e.job_id) : e.generation.jobs.filter((e) => e.job_id !== t.job_id);
 	return {
 		generation: {
 			...e.generation,
 			jobs: n
 		},
-		tasks: rr(n)
+		tasks: ir(n)
 	};
 }
-function sr(e, t) {
-	let n = t.type === "profile_upserted" ? G(e.generation.profiles, t.profile, (e) => e.id) : e.generation.profiles.filter((e) => e.id !== t.profile_id);
+function cr(e, t) {
+	let n = t.type === "profile_upserted" ? W(e.generation.profiles, t.profile, (e) => e.id) : e.generation.profiles.filter((e) => e.id !== t.profile_id);
 	return { generation: {
 		...e.generation,
 		profiles: n
 	} };
 }
-function cr(e, t) {
-	let n = t.type === "preset_upserted" ? G(e.prompt.presets, t.preset, (e) => e.id) : e.prompt.presets.filter((e) => e.id !== t.preset_id);
+function lr(e, t) {
+	let n = t.type === "preset_upserted" ? W(e.prompt.presets, t.preset, (e) => e.id) : e.prompt.presets.filter((e) => e.id !== t.preset_id);
 	return { prompt: {
 		...e.prompt,
 		presets: n
 	} };
 }
-function lr(e, t) {
+function ur(e, t) {
 	let n = t.type === "asset_upserted" ? {
 		...e.assets.records,
-		[t.asset.category]: G(e.assets.records[t.asset.category], t.asset, (e) => e.id)
+		[t.asset.category]: W(e.assets.records[t.asset.category], t.asset, (e) => e.id)
 	} : {
 		...e.assets.records,
 		[t.category]: e.assets.records[t.category].filter((e) => e.id !== t.asset_id)
@@ -1477,20 +1477,20 @@ function lr(e, t) {
 		records: n
 	} };
 }
-function ur(e, t) {
-	let n = t.type === "record_upserted" ? G(e.gallery.records, t.record, (e) => e.id) : e.gallery.records.filter((e) => e.id !== t.record_id);
+function dr(e, t) {
+	let n = t.type === "record_upserted" ? W(e.gallery.records, t.record, (e) => e.id) : e.gallery.records.filter((e) => e.id !== t.record_id);
 	return { gallery: {
 		...e.gallery,
 		records: n
 	} };
 }
-function dr(e, t) {
+function fr(e, t) {
 	return { diagnostics: {
 		...e.diagnostics,
 		timeline: [...e.diagnostics.timeline, t.entry]
 	} };
 }
-function fr(e, t) {
+function pr(e, t) {
 	return { settings: {
 		...e.settings,
 		settings: t.settings
@@ -1498,7 +1498,7 @@ function fr(e, t) {
 }
 //#endregion
 //#region src/ui/controllers/studio_controller.ts
-var pr = class {
+var mr = class {
 	#e;
 	#t;
 	#n = /* @__PURE__ */ new Set();
@@ -1506,7 +1506,7 @@ var pr = class {
 	#i = !1;
 	#a = Promise.resolve();
 	constructor(e) {
-		this.#e = e.capabilities, this.#t = ar(e.initial_route ?? "settings", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
+		this.#e = e.capabilities, this.#t = or(e.initial_route ?? "settings", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
 	}
 	get state() {
 		return this.#t;
@@ -1537,7 +1537,7 @@ var pr = class {
 				...this.#t.generation,
 				jobs: e
 			},
-			tasks: rr(e)
+			tasks: ir(e)
 		});
 	}
 	#u(e) {
@@ -1588,31 +1588,31 @@ var pr = class {
 		return this.#g(e, !0), t().then((t) => {
 			this.#i || (n(t), this.#_(e, null));
 		}).catch((t) => {
-			this.#i || this.#_(e, Qn(t, Yn));
+			this.#i || this.#_(e, $n(t, Xn));
 		}).finally(() => {
 			this.#g(e, !1);
 		});
 	}
 	#y(e) {
-		this.#i || this.#s(or(this.#t, e));
-	}
-	#b(e) {
 		this.#i || this.#s(sr(this.#t, e));
 	}
-	#x(e) {
+	#b(e) {
 		this.#i || this.#s(cr(this.#t, e));
 	}
-	#S(e) {
+	#x(e) {
 		this.#i || this.#s(lr(this.#t, e));
 	}
-	#C(e) {
+	#S(e) {
 		this.#i || this.#s(ur(this.#t, e));
 	}
-	#w(e) {
+	#C(e) {
 		this.#i || this.#s(dr(this.#t, e));
 	}
-	#T(e) {
+	#w(e) {
 		this.#i || this.#s(fr(this.#t, e));
+	}
+	#T(e) {
+		this.#i || this.#s(pr(this.#t, e));
 	}
 	load_vocabulary_catalog() {
 		return this.#v("vocabulary", () => this.#e.vocabulary.load(), (e) => {
@@ -1744,18 +1744,18 @@ var pr = class {
 		return this.#e.prompt_presets.test_regex(e, t);
 	}
 	save_prompt_preset(e) {
-		return ir(() => this.#t.prompt.save_command, (e) => {
+		return ar(() => this.#t.prompt.save_command, (e) => {
 			this.#u({ save_command: e });
 		}, async () => {
 			let t = await this.#e.prompt_presets.save_draft(e);
 			return this.#u({
-				presets: G(this.#t.prompt.presets, t, (e) => e.id),
+				presets: W(this.#t.prompt.presets, t, (e) => e.id),
 				draft: null
 			}), t;
 		});
 	}
 	install_vocabulary_package(e, t) {
-		return ir(() => this.#t.assets.vocabulary_install_command, (e) => {
+		return ar(() => this.#t.assets.vocabulary_install_command, (e) => {
 			this.#d({ vocabulary_install_command: e });
 		}, () => this.#e.vocabulary.install(e, t));
 	}
@@ -1774,7 +1774,7 @@ var pr = class {
 		} catch (e) {
 			this.#m({ update_command: {
 				status: "error",
-				failure: Qn(e, Xn)
+				failure: $n(e, Zn)
 			} });
 		}
 	}
@@ -1789,7 +1789,7 @@ var pr = class {
 		}), this.#c({ profiles: r }), n.settings;
 	}
 	export_support_bundle() {
-		return ir(() => this.#t.diagnostics.support_bundle_command, (e) => {
+		return ar(() => this.#t.diagnostics.support_bundle_command, (e) => {
 			this.#p({ support_bundle_command: e });
 		}, () => this.#e.diagnostics.export_support_bundle());
 	}
@@ -1800,7 +1800,7 @@ var pr = class {
 	async save_provider_profile(e) {
 		let t = await this.#e.profiles.save(e), n = t.is_default || this.#t.generation.active_profile_id === null;
 		return n && await this.#e.settings.update({ active_provider_profile_id: t.id }), this.#i || this.#c({
-			profiles: G(this.#t.generation.profiles, t, (e) => e.id),
+			profiles: W(this.#t.generation.profiles, t, (e) => e.id),
 			...n ? { active_profile_id: t.id } : {}
 		}), t;
 	}
@@ -1812,19 +1812,19 @@ var pr = class {
 	}
 	async set_provider_profile_credential(e, t) {
 		let n = await this.#e.profiles.set_credential(e, t);
-		return this.#i || this.#c({ profiles: G(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#c({ profiles: W(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	async clear_provider_profile_credential(e) {
 		let t = await this.#e.profiles.clear_credential(e);
-		return this.#i || this.#c({ profiles: G(this.#t.generation.profiles, t, (e) => e.id) }), t;
+		return this.#i || this.#c({ profiles: W(this.#t.generation.profiles, t, (e) => e.id) }), t;
 	}
 	async save_novelai_defaults(e, t) {
 		let n = await this.#e.profiles.save_novelai_defaults(e, t);
-		return this.#i || this.#c({ profiles: G(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#c({ profiles: W(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	async save_prompt_tags(e, t) {
 		let n = await this.#e.profiles.save_prompt_tags(e, t);
-		return this.#i || this.#c({ profiles: G(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#c({ profiles: W(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	load_novelai_account() {
 		return this.#e.novelai.get_account();
@@ -1885,7 +1885,7 @@ var pr = class {
 		let n = await this.#e.assets.save(e, t);
 		this.#i || this.#d({ records: {
 			...this.#t.assets.records,
-			[e]: G(this.#t.assets.records[e], n, (e) => e.id)
+			[e]: W(this.#t.assets.records[e], n, (e) => e.id)
 		} });
 	}
 	async remove_asset(e, t) {
@@ -1943,7 +1943,7 @@ var pr = class {
 		await this.#e.generation.dismiss(e.map((e) => e.job_id));
 	}
 	bulk_delete_gallery_records(e) {
-		return ir(() => this.#t.gallery.bulk_delete_command, (e) => {
+		return ar(() => this.#t.gallery.bulk_delete_command, (e) => {
 			this.#f({ bulk_delete_command: e });
 		}, async () => {
 			await this.#e.gallery.bulk_delete(e);
@@ -1955,16 +1955,16 @@ var pr = class {
 		});
 	}
 };
-function mr(e) {
-	return new pr(e);
+function hr(e) {
+	return new mr(e);
 }
 //#endregion
 //#region src/ui/controllers/use_studio_controller.ts
-function hr(e) {
-	let t = _e(mr(e)), n = Ce(t.state), r = t.on_change(() => {
+function gr(e) {
+	let t = ve(hr(e)), n = we(t.state), r = t.on_change(() => {
 		n.value = t.state;
 	});
-	return t.start(), me(() => {
+	return t.start(), he(() => {
 		r(), t.stop();
 	}), {
 		controller: t,
@@ -1973,7 +1973,7 @@ function hr(e) {
 }
 //#endregion
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/image.js
-var gr = Ae("image", [
+var _r = je("image", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -1993,7 +1993,7 @@ var gr = Ae("image", [
 		d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21",
 		key: "1xmnt7"
 	}]
-]), _r = Ae("panel-right-close", [
+]), vr = je("panel-right-close", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2010,7 +2010,7 @@ var gr = Ae("image", [
 		d: "m8 9 3 3-3 3",
 		key: "12hl5m"
 	}]
-]), vr = Ae("panel-right-open", [
+]), yr = je("panel-right-open", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -2027,39 +2027,39 @@ var gr = Ae("image", [
 		d: "m10 15-3-3 3-3",
 		key: "1pgupc"
 	}]
-]), yr = ["image", "video"], br = /^(?:blob:|data:image\/|data:video\/)/u, xr = c({
-	kind: u(yr),
-	url: o().min(1).refine((e) => br.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
+]), br = ["image", "video"], xr = /^(?:blob:|data:image\/|data:video\/)/u, Sr = c({
+	kind: u(br),
+	url: o().min(1).refine((e) => xr.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
 });
-function Sr(e) {
-	let t = xr.safeParse(e);
+function Cr(e) {
+	let t = Sr.safeParse(e);
 	return t.success ? t.data : null;
 }
-function Cr(e, t) {
+function wr(e, t) {
 	let n = e[t];
 	return n === void 0 ? {
 		state: t,
 		asset: null
 	} : {
 		state: t,
-		asset: Sr(n)
+		asset: Cr(n)
 	};
 }
-var wr = 8;
-function Tr(e, t) {
-	let n = Math.max(wr, t.width - 56 - wr), r = Math.max(wr, t.height - 56 - wr);
+var Tr = 8;
+function Er(e, t) {
+	let n = Math.max(Tr, t.width - 56 - Tr), r = Math.max(Tr, t.height - 56 - Tr);
 	return {
-		x: Math.min(Math.max(e.x, wr), n),
-		y: Math.min(Math.max(e.y, wr), r)
+		x: Math.min(Math.max(e.x, Tr), n),
+		y: Math.min(Math.max(e.y, Tr), r)
 	};
 }
-function Er(e) {
-	return Tr({
+function Dr(e) {
+	return Er({
 		x: (e.width - 56) / 2,
 		y: (e.height - 56) / 2
 	}, e);
 }
-var Dr = class {
+var Or = class {
 	#e = /* @__PURE__ */ new Map();
 	get(e) {
 		return this.#e.get(e) ?? null;
@@ -2068,11 +2068,11 @@ var Dr = class {
 		this.#e.set(e, t);
 	}
 };
-function Or(e) {
-	let t = Sr(e);
+function kr(e) {
+	let t = Cr(e);
 	return t !== null && t.kind === "image" ? t : null;
 }
-var kr = class {
+var Ar = class {
 	#e;
 	#t;
 	#n = !1;
@@ -2090,7 +2090,7 @@ var kr = class {
 		this.#n = !0, this.#r = this.#t;
 	}
 	drag_to(e) {
-		this.#n && (this.#t = Tr(e, this.#e.get_viewport()));
+		this.#n && (this.#t = Er(e, this.#e.get_viewport()));
 	}
 	end_drag() {
 		let e = this.#n, t = this.#r;
@@ -2099,41 +2099,41 @@ var kr = class {
 		return { moved: n > 4 || r > 4 };
 	}
 	reset_position() {
-		this.#t = Er(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
+		this.#t = Dr(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
 	}
 	reflow() {
 		this.#t = this.#i();
 	}
 	#i() {
 		let e = this.#e.position_store.get(this.#e.get_viewport_bucket()), t = this.#e.get_viewport();
-		return e === null ? Er(t) : Tr(e, t);
+		return e === null ? Dr(t) : Er(e, t);
 	}
-}, Ar = "(min-width: 960px)";
-function jr() {
-	return typeof window > "u" || typeof window.matchMedia != "function" || window.matchMedia(Ar).matches;
+}, jr = "(min-width: 960px)";
+function Mr() {
+	return typeof window > "u" || typeof window.matchMedia != "function" || window.matchMedia(jr).matches;
 }
-function Mr(e) {
-	if (e !== void 0) return P(() => e);
-	let t = A(jr());
+function Nr(e) {
+	if (e !== void 0) return N(() => e);
+	let t = k(Mr());
 	if (typeof window < "u" && typeof window.matchMedia == "function") {
-		let e = window.matchMedia(Ar), n = (e) => {
+		let e = window.matchMedia(jr), n = (e) => {
 			t.value = e.matches;
 		};
-		e.addEventListener("change", n), me(() => {
+		e.addEventListener("change", n), he(() => {
 			e.removeEventListener("change", n);
 		});
 	}
-	return P(() => t.value ? "desktop" : "mobile");
+	return N(() => t.value ? "desktop" : "mobile");
 }
-var Nr = {
+var Pr = {
 	floatingEntry: "_floatingEntry_1k9dx_9",
 	floatingEntryDragging: "_floatingEntryDragging_1k9dx_31",
 	floatingEntryMedia: "_floatingEntryMedia_1k9dx_35"
-}, Pr = [
+}, Fr = [
 	"aria-label",
 	"data-dragging",
 	"data-media-state"
-], Fr = ["src"], Ir = ["src"], Lr = /* @__PURE__ */ L({
+], Ir = ["src"], Lr = ["src"], Rr = /* @__PURE__ */ I({
 	__name: "FloatingEntry",
 	props: {
 		enabled: { type: Boolean },
@@ -2145,7 +2145,7 @@ var Nr = {
 	},
 	emits: ["open"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, i = Mr(n.viewportOverride);
+		let n = e, r = t, i = Nr(n.viewportOverride);
 		function a() {
 			return typeof window > "u" ? {
 				width: 1280,
@@ -2155,31 +2155,31 @@ var Nr = {
 				height: window.innerHeight
 			};
 		}
-		let o = new kr({
-			position_store: we(n.positionStore) ?? _e(new Dr()),
+		let o = new Ar({
+			position_store: Te(n.positionStore) ?? ve(new Or()),
 			get_viewport: a,
 			get_viewport_bucket: () => i.value
-		}), s = A(o.position), c = A(o.dragging);
+		}), s = k(o.position), c = k(o.dragging);
 		function l() {
 			s.value = o.position, c.value = o.dragging;
 		}
-		he(i, () => {
+		ge(i, () => {
 			o.reflow(), l();
 		});
 		function u() {
 			o.reflow(), l();
 		}
-		ce(() => {
+		le(() => {
 			window.addEventListener("resize", u);
-		}), xe(() => {
+		}), Se(() => {
 			window.removeEventListener("resize", u);
 		});
-		let d = P(() => {
+		let d = N(() => {
 			let e = c.value ? "dragging" : n.mediaState;
 			return e === "idle" ? {
 				state: e,
-				asset: Or(n.mediaAssets.idle)
-			} : Cr(n.mediaAssets, e);
+				asset: kr(n.mediaAssets.idle)
+			} : wr(n.mediaAssets, e);
 		}), f = !1;
 		function p(e) {
 			let t = e.currentTarget;
@@ -2219,11 +2219,11 @@ var Nr = {
 		function h(e) {
 			(e.key === "Enter" || e.key === " ") && (e.preventDefault(), r("open"));
 		}
-		return (t, n) => e.enabled ? (D(), O("button", {
+		return (t, n) => e.enabled ? (E(), D("button", {
 			key: 0,
 			type: "button",
-			class: I(["tc-interactive", [k(Nr).floatingEntry, c.value && k(Nr).floatingEntryDragging]]),
-			style: ye({
+			class: F(["tc-interactive", [O(Pr).floatingEntry, c.value && O(Pr).floatingEntryDragging]]),
+			style: be({
 				left: `${s.value.x}px`,
 				top: `${s.value.y}px`
 			}),
@@ -2235,102 +2235,102 @@ var Nr = {
 			onPointerdown: p,
 			onClick: m,
 			onKeydown: h
-		}, [d.value.asset?.kind === "video" ? (D(), O("video", {
+		}, [d.value.asset?.kind === "video" ? (E(), D("video", {
 			key: 0,
-			class: I(k(Nr).floatingEntryMedia),
+			class: F(O(Pr).floatingEntryMedia),
 			src: d.value.asset.url,
 			autoplay: "",
 			muted: "",
 			loop: "",
 			playsinline: ""
-		}, null, 10, Fr)) : d.value.asset?.kind === "image" ? (D(), O("img", {
+		}, null, 10, Ir)) : d.value.asset?.kind === "image" ? (E(), D("img", {
 			key: 1,
-			class: I(k(Nr).floatingEntryMedia),
+			class: F(O(Pr).floatingEntryMedia),
 			src: d.value.asset.url,
 			alt: ""
-		}, null, 10, Ir)) : (D(), M(je, {
+		}, null, 10, Lr)) : (E(), j(Me, {
 			key: 2,
-			icon: k(gr)
-		}, null, 8, ["icon"]))], 46, Pr)) : j("", !0);
+			icon: O(_r)
+		}, null, 8, ["icon"]))], 46, Fr)) : A("", !0);
 	}
-}), Rr = "data-tavern-canvas-menu-entry";
-function zr(e, t) {
-	let n = A(!1), r = null;
-	return ce(() => {
+}), zr = "data-tavern-canvas-menu-entry";
+function Br(e, t) {
+	let n = k(!1), r = null;
+	return le(() => {
 		let i = document.getElementById("extensionsMenu");
 		if (i === null) return;
-		i.querySelector(`[${Rr}]`)?.remove(), r = document.createElement("div"), r.className = "list-group-item flex-container flexGap5 interactable", r.setAttribute(Rr, ""), r.setAttribute("role", "button"), r.tabIndex = 0;
+		i.querySelector(`[${zr}]`)?.remove(), r = document.createElement("div"), r.className = "list-group-item flex-container flexGap5 interactable", r.setAttribute(zr, ""), r.setAttribute("role", "button"), r.tabIndex = 0;
 		let a = document.createElement("div");
-		a.className = "extensionsMenuExtensionButton", a.append(ze(document));
+		a.className = "extensionsMenuExtensionButton", a.append(Be(document));
 		let o = document.createElement("span");
-		ue(() => {
+		de(() => {
 			o.textContent = e();
 		}), r.append(a, o), r.addEventListener("click", t), i.append(r), n.value = !0;
-	}), xe(() => {
+	}), Se(() => {
 		r?.remove();
 	}), n;
 }
 //#endregion
 //#region src/host/slash_command.ts
-var Br = "inkwell", Vr = !1;
-function Hr(e, t) {
-	if (Vr) return;
+var Vr = "inkwell", Hr = !1;
+function Ur(e, t) {
+	if (Hr) return;
 	let n = globalThis.SillyTavern?.getContext?.(), r = n?.SlashCommand?.fromProps?.({
-		name: Br,
+		name: Vr,
 		helpString: e,
 		returns: "nothing",
 		callback: () => (t(), "")
 	});
-	r !== void 0 && n?.SlashCommandParser?.addCommandObject !== void 0 && (n.SlashCommandParser.addCommandObject(r), Vr = !0);
+	r !== void 0 && n?.SlashCommandParser?.addCommandObject !== void 0 && (n.SlashCommandParser.addCommandObject(r), Hr = !0);
 }
 //#endregion
 //#region src/ui/experience/use_host_entry_points.ts
-var Ur = "data-tavern-canvas-settings";
-function Wr(e, t) {
+var Wr = "data-tavern-canvas-settings";
+function Gr(e, t) {
 	let n = null;
-	ce(() => {
-		Hr(e.description(), t);
+	le(() => {
+		Ur(e.description(), t);
 		let r = document.getElementById("extensions_settings2") ?? document.getElementById("extensions_settings");
 		if (r === null) return;
-		r.querySelector(`[${Ur}]`)?.remove(), n = document.createElement("div"), n.setAttribute(Ur, ""), n.className = "flex-container flexFlowColumn flexGap5";
+		r.querySelector(`[${Wr}]`)?.remove(), n = document.createElement("div"), n.setAttribute(Wr, ""), n.className = "flex-container flexFlowColumn flexGap5";
 		let i = document.createElement("b"), a = document.createElement("small"), o = document.createElement("div");
-		ue(() => {
+		de(() => {
 			i.textContent = e.name(), a.textContent = e.description(), o.textContent = e.open();
 		}), o.className = "menu_button interactable", o.setAttribute("role", "button"), o.tabIndex = 0, o.addEventListener("click", t), o.addEventListener("keydown", (e) => {
 			(e.key === "Enter" || e.key === " ") && (e.preventDefault(), t());
 		}), n.append(i, a, o), r.append(n);
-	}), xe(() => {
+	}), Se(() => {
 		n?.remove();
 	});
 }
-function Gr(e, t, n) {
+function Kr(e, t, n) {
 	let r = Math.max(20, t.width - n.width - 20), i = Math.max(20, t.height - n.height - 20);
 	return {
 		x: Math.min(Math.max(e.x, 20), r),
 		y: Math.min(Math.max(e.y, 20), i)
 	};
 }
-function Kr(e, t) {
-	return Gr({
+function qr(e, t) {
+	return Kr({
 		x: e.width - t.width - 20,
 		y: 64
 	}, e, t);
 }
-var qr = {
+var Jr = {
 	window: "_window_1rdvc_1",
 	"floating-window-enter": "_floating-window-enter_1rdvc_1"
-}, Jr = [
+}, Yr = [
 	"aria-label",
 	"data-positioned",
 	"data-dragging"
-], Yr = /* @__PURE__ */ L({
+], Xr = /* @__PURE__ */ I({
 	__name: "FloatingStudioWindow",
 	props: { label: {} },
 	setup(e) {
-		let t = e, n = A(null), r = A({
+		let t = e, n = k(null), r = k({
 			x: 0,
 			y: 0
-		}), i = A(!1), a = A(!1);
+		}), i = k(!1), a = k(!1);
 		function o() {
 			return {
 				width: window.innerWidth,
@@ -2348,7 +2348,7 @@ var qr = {
 			let e = n.value;
 			if (e === null || window.innerWidth < 960) return;
 			let t = o(), a = s(e);
-			r.value = i.value ? Gr(r.value, t, a) : Kr(t, a), i.value = !0;
+			r.value = i.value ? Kr(r.value, t, a) : qr(t, a), i.value = !0;
 		}
 		function l(e) {
 			let t = n.value, i = e.target;
@@ -2360,7 +2360,7 @@ var qr = {
 				y: e.clientY
 			}, u = r.value;
 			function d(e) {
-				r.value = Gr({
+				r.value = Kr({
 					x: u.x + e.clientX - l.x,
 					y: u.y + e.clientY - l.y
 				}, o(), s(c));
@@ -2379,15 +2379,15 @@ var qr = {
 		function u() {
 			c();
 		}
-		return ce(() => {
-			window.addEventListener("resize", u), fe(c);
-		}), xe(() => {
+		return le(() => {
+			window.addEventListener("resize", u), pe(c);
+		}), Se(() => {
 			window.removeEventListener("resize", u);
-		}), (e, o) => (D(), O("section", {
+		}), (e, o) => (E(), D("section", {
 			ref_key: "window_element",
 			ref: n,
-			class: I(k(qr).window),
-			style: ye({
+			class: F(O(Jr).window),
+			style: be({
 				"--tc-floating-window-x": `${r.value.x}px`,
 				"--tc-floating-window-y": `${r.value.y}px`
 			}),
@@ -2397,43 +2397,43 @@ var qr = {
 			"data-window-role": "studio",
 			role: "dialog",
 			onPointerdown: l
-		}, [de(e.$slots, "default")], 46, Jr));
+		}, [fe(e.$slots, "default")], 46, Yr));
 	}
-}), Xr = /* @__PURE__ */ L({
+}), Zr = /* @__PURE__ */ I({
 	__name: "PortalProvider",
 	props: { portalTarget: {} },
 	setup(e) {
 		let t = e;
 		if (t.portalTarget === document.body) throw Error("PortalProvider must never receive document.body as the portal target -- pass the Shadow Root's dedicated [data-shadow-role=\"portal\"] element instead.");
-		return pe(De, t.portalTarget), (e, t) => de(e.$slots, "default");
+		return me(Oe, t.portalTarget), (e, t) => fe(e.$slots, "default");
 	}
-}), Zr = /* @__PURE__ */ L({
+}), Qr = /* @__PURE__ */ I({
 	__name: "StudioWorkspace",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = ve(() => import("./chunks/GalleryView-DWYym_WS.js")), n = ve(() => import("./chunks/SettingsView-DJjW9CYg.js"));
-		return (r, i) => e.state.route === "gallery" ? (D(), M(k(t), {
+		let t = ye(() => import("./chunks/GalleryView-DWYym_WS.js")), n = ye(() => import("./chunks/SettingsView-DJjW9CYg.js"));
+		return (r, i) => e.state.route === "gallery" ? (E(), j(O(t), {
 			key: 0,
 			state: e.state,
 			controller: e.controller
-		}, null, 8, ["state", "controller"])) : (D(), M(k(n), {
+		}, null, 8, ["state", "controller"])) : (E(), j(O(n), {
 			key: 1,
 			state: e.state,
 			controller: e.controller
 		}, null, 8, ["state", "controller"]));
 	}
-}), Qr = ["aria-label", "title"], $r = ["aria-label", "aria-expanded"], ei = ["data-status"], ti = {
+}), $r = ["aria-label", "title"], ei = ["aria-label", "aria-expanded"], ti = ["data-status"], ni = {
 	key: 0,
 	class: "tc-tabular-nums"
-}, ni = /* @__PURE__ */ L({
+}, ri = /* @__PURE__ */ I({
 	__name: "TaskStrip",
 	props: { tasks: {} },
 	emits: ["clear-failed"],
 	setup(t, { emit: n }) {
-		let r = t, i = n, { t: a, n: o } = Se(), s = A(!0), c = {
+		let r = t, i = n, { t: a, n: o } = Ce(), s = k(!0), c = {
 			"status.loading": () => a("status.loading"),
 			"status.empty": () => a("status.empty"),
 			"status.partial": () => a("status.partial"),
@@ -2457,55 +2457,55 @@ var qr = {
 		}
 		function u(e) {
 			let t = l(e.label_code);
-			return e.error === null ? t : t + a("nav.task_strip_error", { reason: qe(a, e.error) });
+			return e.error === null ? t : t + a("nav.task_strip_error", { reason: Je(a, e.error) });
 		}
-		let d = P(() => r.tasks.some((e) => e.status === "error")), f = P(() => s.value ? a("nav.task_strip_collapse") : a("nav.task_strip_expand"));
+		let d = N(() => r.tasks.some((e) => e.status === "error")), f = N(() => s.value ? a("nav.task_strip_collapse") : a("nav.task_strip_expand"));
 		function p() {
 			s.value = !s.value;
 		}
-		return (t, n) => r.tasks.length > 0 ? (D(), O("div", {
+		return (t, n) => r.tasks.length > 0 ? (E(), D("div", {
 			key: 0,
-			class: I(k(e).task_strip)
-		}, [N("div", { class: I(k(e).task_strip_header) }, [
-			N("span", { class: I([k(e).task_strip_summary, "tc-tabular-nums"]) }, F(k(a)("nav.task_strip_count", r.tasks.length)), 3),
-			d.value ? (D(), O("button", {
+			class: F(O(e).task_strip)
+		}, [M("div", { class: F(O(e).task_strip_header) }, [
+			M("span", { class: F([O(e).task_strip_summary, "tc-tabular-nums"]) }, P(O(a)("nav.task_strip_count", r.tasks.length)), 3),
+			d.value ? (E(), D("button", {
 				key: 0,
 				type: "button",
-				class: I(["tc-interactive", k(e).icon_button]),
-				"aria-label": k(a)("nav.task_strip_clear_failed"),
-				title: k(a)("nav.task_strip_clear_failed"),
+				class: F(["tc-interactive", O(e).icon_button]),
+				"aria-label": O(a)("nav.task_strip_clear_failed"),
+				title: O(a)("nav.task_strip_clear_failed"),
 				"data-testid": "task-strip-clear-failed",
 				onClick: n[0] ||= (e) => i("clear-failed")
-			}, [R(je, {
-				icon: k(Fe),
+			}, [L(Me, {
+				icon: O(Ie),
 				size: 16
-			}, null, 8, ["icon"])], 10, Qr)) : j("", !0),
-			N("button", {
+			}, null, 8, ["icon"])], 10, $r)) : A("", !0),
+			M("button", {
 				type: "button",
-				class: I(["tc-interactive", k(e).icon_button]),
+				class: F(["tc-interactive", O(e).icon_button]),
 				"aria-label": f.value,
 				"aria-expanded": s.value,
 				onClick: p
-			}, [R(je, {
-				icon: s.value ? k(Me) : k(Ne),
+			}, [L(Me, {
+				icon: s.value ? O(Ne) : O(Pe),
 				size: 16
-			}, null, 8, ["icon"])], 10, $r)
-		], 2), s.value ? (D(), O("div", {
+			}, null, 8, ["icon"])], 10, ei)
+		], 2), s.value ? (E(), D("div", {
 			key: 0,
-			class: I(k(e).task_strip_list)
-		}, [(D(!0), O(Te, null, le(r.tasks, (t) => (D(), O("div", {
+			class: F(O(e).task_strip_list)
+		}, [(E(!0), D(Ee, null, ue(r.tasks, (t) => (E(), D("div", {
 			key: t.id,
-			class: I(k(e).task_chip)
+			class: F(O(e).task_chip)
 		}, [
-			N("span", {
-				class: I(k(e).task_chip_dot),
+			M("span", {
+				class: F(O(e).task_chip_dot),
 				"data-status": t.status
-			}, null, 10, ei),
-			N("span", { class: I(k(e).task_chip_label) }, F(u(t)), 3),
-			t.progress === null ? j("", !0) : (D(), O("span", ti, F(k(o)(t.progress, "percent")), 1))
-		], 2))), 128))], 2)) : j("", !0)], 2)) : j("", !0);
+			}, null, 10, ti),
+			M("span", { class: F(O(e).task_chip_label) }, P(u(t)), 3),
+			t.progress === null ? A("", !0) : (E(), D("span", ni, P(O(o)(t.progress, "percent")), 1))
+		], 2))), 128))], 2)) : A("", !0)], 2)) : A("", !0);
 	}
-}), ri = ["aria-label", "aria-pressed"], ii = ["aria-label", "title"], ai = /* @__PURE__ */ L({
+}), ii = ["aria-label", "aria-pressed"], ai = ["aria-label", "title"], oi = /* @__PURE__ */ I({
 	__name: "TopCommandBar",
 	props: {
 		route: {},
@@ -2514,44 +2514,44 @@ var qr = {
 	},
 	emits: ["set-inspector-collapsed", "close"],
 	setup(t, { emit: n }) {
-		let r = t, i = n, { t: a } = Se(), o = P(() => Pe(a, r.route)), s = P(() => r.inspectorCollapsed ? vr : _r), c = P(() => r.inspectorCollapsed ? a("nav.inspector_expand") : a("nav.inspector_collapse"));
+		let r = t, i = n, { t: a } = Ce(), o = N(() => Fe(a, r.route)), s = N(() => r.inspectorCollapsed ? yr : vr), c = N(() => r.inspectorCollapsed ? a("nav.inspector_expand") : a("nav.inspector_collapse"));
 		function l() {
 			i("set-inspector-collapsed", !r.inspectorCollapsed);
 		}
-		return (n, r) => (D(), O("header", {
-			class: I(k(e).top_bar),
+		return (n, r) => (E(), D("header", {
+			class: F(O(e).top_bar),
 			"data-window-drag-handle": ""
-		}, [N("div", { class: I(k(e).top_bar_start) }, [
-			N("span", { class: I(k(e).top_bar_brand) }, F(k(a)("app.name")), 3),
-			N("span", {
-				class: I(k(e).top_bar_divider),
+		}, [M("div", { class: F(O(e).top_bar_start) }, [
+			M("span", { class: F(O(e).top_bar_brand) }, P(O(a)("app.name")), 3),
+			M("span", {
+				class: F(O(e).top_bar_divider),
 				"aria-hidden": "true"
 			}, "/", 2),
-			N("span", { class: I(k(e).top_bar_title) }, F(o.value), 3)
-		], 2), N("div", { class: I(k(e).top_bar_end) }, [t.inspectorAvailable ? (D(), O("button", {
+			M("span", { class: F(O(e).top_bar_title) }, P(o.value), 3)
+		], 2), M("div", { class: F(O(e).top_bar_end) }, [t.inspectorAvailable ? (E(), D("button", {
 			key: 0,
 			type: "button",
-			class: I(["tc-interactive", k(e).icon_button]),
+			class: F(["tc-interactive", O(e).icon_button]),
 			"data-testid": "inspector-toggle",
 			"aria-label": c.value,
 			"aria-pressed": !t.inspectorCollapsed,
 			onClick: l
-		}, [R(je, {
+		}, [L(Me, {
 			icon: s.value,
 			size: 18
-		}, null, 8, ["icon"])], 10, ri)) : j("", !0), N("button", {
+		}, null, 8, ["icon"])], 10, ii)) : A("", !0), M("button", {
 			type: "button",
-			class: I(["tc-interactive", [k(e).icon_button, k(e).close_button]]),
+			class: F(["tc-interactive", [O(e).icon_button, O(e).close_button]]),
 			"data-testid": "studio-close",
-			"aria-label": k(a)("common.close"),
-			title: k(a)("common.close"),
+			"aria-label": O(a)("common.close"),
+			title: O(a)("common.close"),
 			onClick: r[0] ||= (e) => i("close")
-		}, [R(je, {
-			icon: k(Ie),
+		}, [L(Me, {
+			icon: O(Le),
 			size: 18
-		}, null, 8, ["icon"])], 10, ii)], 2)], 2));
+		}, null, 8, ["icon"])], 10, ai)], 2)], 2));
 	}
-}), oi = ["data-viewport", "data-inspector-collapsed"], si = ["aria-label"], ci = /* @__PURE__ */ L({
+}), si = ["data-viewport", "data-inspector-collapsed"], ci = ["aria-label"], li = /* @__PURE__ */ I({
 	__name: "StudioShell",
 	props: {
 		state: {},
@@ -2565,106 +2565,106 @@ var qr = {
 		"close"
 	],
 	setup(t, { emit: n }) {
-		let r = ve(() => import("./chunks/ContextInspector-DHmHO0pJ.js")), i = ve(() => import("./chunks/DesktopIconRail-Byxdm389.js")), a = ve(() => import("./chunks/InspectorSheet-DLWE-yyS.js")), o = ve(() => import("./chunks/MobileBottomNav-DkPYfWqj.js")), s = t, c = n, { t: l } = Se(), u = Mr(s.viewport), d = /* @__PURE__ */ new Set(["vocabulary"]), f = P(() => [...s.state.loading].some((e) => !d.has(e))), p = P(() => s.state.failures.size > 0), m = P(() => ({ "--tc-inspector-width": `${String(s.state.inspector.width)}px` })), h = A(!1), g = P(() => s.state.route === "gallery" || s.state.settings_section === "library"), ee = P(() => !g.value || s.state.inspector.collapsed), _ = P(() => u.value === "mobile" ? !h.value : ee.value);
-		function v(e) {
+		let r = ye(() => import("./chunks/ContextInspector-DHmHO0pJ.js")), i = ye(() => import("./chunks/DesktopIconRail-Byxdm389.js")), a = ye(() => import("./chunks/InspectorSheet-DLWE-yyS.js")), o = ye(() => import("./chunks/MobileBottomNav-DkPYfWqj.js")), s = t, c = n, { t: l } = Ce(), u = Nr(s.viewport), d = /* @__PURE__ */ new Set(["vocabulary"]), f = N(() => [...s.state.loading].some((e) => !d.has(e))), p = N(() => s.state.failures.size > 0), m = N(() => ({ "--tc-inspector-width": `${String(s.state.inspector.width)}px` })), h = k(!1), g = N(() => s.state.route === "gallery" || s.state.settings_section === "library"), _ = N(() => !g.value || s.state.inspector.collapsed), v = N(() => u.value === "mobile" ? !h.value : _.value);
+		function y(e) {
 			u.value === "mobile" && (h.value = !e), c("set-inspector-collapsed", e);
 		}
-		function y(e) {
+		function b(e) {
 			c("select-route", e);
 		}
-		return (t, n) => (D(), O("div", {
-			class: I(k(e).shell),
-			"data-viewport": k(u),
-			"data-inspector-collapsed": k(u) === "desktop" ? ee.value : null,
-			style: ye(m.value)
+		return (t, n) => (E(), D("div", {
+			class: F(O(e).shell),
+			"data-viewport": O(u),
+			"data-inspector-collapsed": O(u) === "desktop" ? _.value : null,
+			style: be(m.value)
 		}, [
-			R(ai, {
+			L(oi, {
 				route: s.state.route,
-				"inspector-collapsed": _.value,
+				"inspector-collapsed": v.value,
 				"inspector-available": g.value,
-				onSetInspectorCollapsed: v,
+				onSetInspectorCollapsed: y,
 				onClose: n[0] ||= (e) => c("close")
 			}, null, 8, [
 				"route",
 				"inspector-collapsed",
 				"inspector-available"
 			]),
-			k(u) === "desktop" ? (D(), M(k(i), {
+			O(u) === "desktop" ? (E(), j(O(i), {
 				key: 0,
 				route: s.state.route,
-				onSelect: y
-			}, null, 8, ["route"])) : j("", !0),
-			N("main", {
-				class: I(k(e).workspace),
+				onSelect: b
+			}, null, 8, ["route"])) : A("", !0),
+			M("main", {
+				class: F(O(e).workspace),
 				"data-testid": "workspace"
-			}, [p.value ? (D(), O("div", {
+			}, [p.value ? (E(), D("div", {
 				key: 0,
-				class: I(k(e).partial_banner),
+				class: F(O(e).partial_banner),
 				"data-testid": "partial-banner"
-			}, [N("div", null, [N("p", null, F(k(l)("app.partial_init.banner_title")), 1), N("p", null, F(k(l)("app.partial_init.banner_description")), 1)]), N("button", {
+			}, [M("div", null, [M("p", null, P(O(l)("app.partial_init.banner_title")), 1), M("p", null, P(O(l)("app.partial_init.banner_description")), 1)]), M("button", {
 				type: "button",
-				class: I(["tc-interactive", k(e).icon_button]),
+				class: F(["tc-interactive", O(e).icon_button]),
 				"data-testid": "partial-banner-diagnostics",
 				onClick: n[1] ||= (e) => s.controller.set_settings_section("diagnostics")
-			}, F(k(l)("settings.nav.diagnostics")), 3)], 2)) : j("", !0), f.value ? (D(), O("div", {
+			}, P(O(l)("settings.nav.diagnostics")), 3)], 2)) : A("", !0), f.value ? (E(), D("div", {
 				key: 1,
-				class: I(k(e).workspace_placeholder),
+				class: F(O(e).workspace_placeholder),
 				"data-testid": "workspace-skeleton",
 				role: "status",
-				"aria-label": k(l)("status.loading")
+				"aria-label": O(l)("status.loading")
 			}, [
-				N("div", {
-					class: I(k(e).skeleton_block),
+				M("div", {
+					class: F(O(e).skeleton_block),
 					style: {
 						width: "40%",
 						height: "20px"
 					}
 				}, null, 2),
-				N("div", {
-					class: I(k(e).skeleton_block),
+				M("div", {
+					class: F(O(e).skeleton_block),
 					style: {
 						width: "90%",
 						height: "14px",
 						"margin-top": "12px"
 					}
 				}, null, 2),
-				N("div", {
-					class: I(k(e).skeleton_block),
+				M("div", {
+					class: F(O(e).skeleton_block),
 					style: {
 						width: "75%",
 						height: "14px",
 						"margin-top": "8px"
 					}
 				}, null, 2)
-			], 10, si)) : (D(), M(Zr, {
+			], 10, ci)) : (E(), j(Qr, {
 				key: 2,
 				state: s.state,
 				controller: s.controller
 			}, null, 8, ["state", "controller"]))], 2),
-			k(u) === "desktop" && g.value && !s.state.inspector.collapsed ? (D(), M(k(r), {
+			O(u) === "desktop" && g.value && !s.state.inspector.collapsed ? (E(), j(O(r), {
 				key: 1,
 				width: s.state.inspector.width,
 				selection: s.state.inspector.selected_record,
 				onResize: n[2] ||= (e) => c("resize-inspector", e)
-			}, null, 8, ["width", "selection"])) : j("", !0),
-			R(ni, {
+			}, null, 8, ["width", "selection"])) : A("", !0),
+			L(ri, {
 				tasks: s.state.tasks,
 				onClearFailed: n[3] ||= () => void s.controller.dismiss_failed_tasks()
 			}, null, 8, ["tasks"]),
-			k(u) === "mobile" ? (D(), M(k(o), {
+			O(u) === "mobile" ? (E(), j(O(o), {
 				key: 2,
 				route: s.state.route,
-				onSelect: y
-			}, null, 8, ["route"])) : j("", !0),
-			k(u) === "mobile" && g.value ? (D(), M(k(a), {
+				onSelect: b
+			}, null, 8, ["route"])) : A("", !0),
+			O(u) === "mobile" && g.value ? (E(), j(O(a), {
 				key: 3,
 				open: h.value,
 				selection: s.state.inspector.selected_record,
-				"onUpdate:open": n[4] ||= (e) => v(!e)
-			}, null, 8, ["open", "selection"])) : j("", !0)
-		], 14, oi));
+				"onUpdate:open": n[4] ||= (e) => y(!e)
+			}, null, 8, ["open", "selection"])) : A("", !0)
+		], 14, si));
 	}
-}), li = ["href"], ui = /* @__PURE__ */ L({
+}), ui = ["href"], di = /* @__PURE__ */ I({
 	__name: "AppRoot",
 	props: {
 		status: {},
@@ -2678,21 +2678,21 @@ var qr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-DsxTK4D4.js")), { t: i } = Se();
+		let n = t, r = ye(() => import("./chunks/ChatLayer-DsxTK4D4.js")), { t: i } = Ce();
 		function a() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
 		let o = n.hostElement, s = a();
 		o.dataset.colorMode = s;
-		let c = P(() => n.probe.ready ? void 0 : n.probe.current_version), l = P(() => `${i("app.name")} ${i("app.version_label", { version: n.version })}`), u = n.status.state === "ready" ? hr({
-			capabilities: n.capabilities ?? qn(),
+		let c = N(() => n.probe.ready ? void 0 : n.probe.current_version), l = N(() => `${i("app.name")} ${i("app.version_label", { version: n.version })}`), u = n.status.state === "ready" ? gr({
+			capabilities: n.capabilities ?? Jn(),
 			initial_color_mode: s
-		}) : null, d = u === null ? null : n.host ?? null, f = A(d?.get_active_chat_id() ?? null), p = d?.subscribe_chat_change((e) => {
+		}) : null, d = u === null ? null : n.host ?? null, f = k(d?.get_active_chat_id() ?? null), p = d?.subscribe_chat_change((e) => {
 			f.value = e.chat_id;
 		});
-		xe(() => p?.()), pe(ke, f);
+		Se(() => p?.()), me(Ae, f);
 		let m = u === null ? null : n.illustrations ?? null, h = n.capabilities?.gallery;
-		pe(Oe, m === null || h === void 0 ? null : {
+		me(ke, m === null || h === void 0 ? null : {
 			async generate(e) {
 				let t = await m.generate_image({
 					...e,
@@ -2703,104 +2703,112 @@ var qr = {
 			read_outfit: (e) => m.read_outfit(e),
 			read_character: (e) => m.read_character(e)
 		});
-		let g = P(() => {
+		let g = N(() => {
 			let e = u?.state.value, t = e?.settings.settings?.active_provider_profile_id ?? null;
 			return {
 				profile: e?.generation.profiles.find((e) => e.id === t) ?? null,
 				custom_presets: e?.assets.records.prompt_tag ?? [],
 				save: (e, t) => u === null ? Promise.resolve() : u.controller.save_prompt_tags(e, t)
 			};
+		}), _ = k(s), v = typeof window > "u" || typeof window.matchMedia != "function" ? null : window.matchMedia("(prefers-color-scheme: dark)");
+		function y(e) {
+			_.value = e.matches ? "dark" : "light";
+		}
+		v?.addEventListener("change", y), Se(() => v?.removeEventListener("change", y));
+		let b = N(() => {
+			let e = u?.state.value.settings.settings?.ui.color_mode ?? "system";
+			return e === "system" ? _.value : e;
 		});
-		u && he(() => u.state.value.color_mode, (e) => {
+		ge(b, (e) => {
 			o.dataset.colorMode = e;
 		});
 		function ee(e) {
 			u?.controller.set_route(e);
 		}
-		function _(e) {
+		function te(e) {
 			u?.controller.set_inspector_collapsed(e);
 		}
-		function v(e) {
+		function x(e) {
 			u?.controller.set_inspector_width(e);
 		}
-		function y() {
+		function S() {
 			window.location.reload();
 		}
-		let b = A(!1), x = P(() => b.value), S = zr(() => i("app.name"), te);
-		Wr({
+		let ne = k(!1), C = N(() => ne.value), re = Br(() => i("app.name"), ae);
+		Gr({
 			name: () => i("app.name"),
 			description: () => i("app.entry_description"),
 			open: () => i("app.open_action")
-		}, te);
-		let C = P(() => !S.value || u?.state.value.settings.settings?.ui.optional_entry_enabled === !0);
-		he(x, (e) => {
+		}, ae);
+		let ie = N(() => !re.value || u?.state.value.settings.settings?.ui.optional_entry_enabled === !0);
+		ge(C, (e) => {
 			o.dataset.surfaceMode = e ? "studio" : "entry";
 		}, { immediate: !0 });
-		function te() {
-			b.value = !0;
+		function ae() {
+			ne.value = !0;
 		}
 		function w() {
-			b.value = !1;
+			ne.value = !1;
 		}
-		return (n, a) => (D(), M(Xr, { "portal-target": t.portalTarget }, {
-			default: ge(() => [t.status.state === "blocked" ? (D(), O("div", {
+		return (n, a) => (E(), j(Zr, { "portal-target": t.portalTarget }, {
+			default: _e(() => [t.status.state === "blocked" ? (E(), D("div", {
 				key: 0,
-				class: I(k(e).state_screen),
+				class: F(O(e).state_screen),
 				"data-startup-state": "blocked"
 			}, [
-				N("p", { class: I(k(e).state_screen_eyebrow) }, F(l.value), 3),
-				N("h1", { class: I(k(e).state_screen_title) }, F(k(i)("app.unsupported_host.title")), 3),
-				N("p", { class: I(k(e).state_screen_description) }, F(k(i)("app.unsupported_host.description", {
-					required_version: k(An),
-					current_version: c.value ?? k(i)("status.unknown")
+				M("p", { class: F(O(e).state_screen_eyebrow) }, P(l.value), 3),
+				M("h1", { class: F(O(e).state_screen_title) }, P(O(i)("app.unsupported_host.title")), 3),
+				M("p", { class: F(O(e).state_screen_description) }, P(O(i)("app.unsupported_host.description", {
+					required_version: O(jn),
+					current_version: c.value ?? O(i)("status.unknown")
 				})), 3),
-				N("a", {
-					class: I(["tc-interactive", k(e).state_screen_action]),
+				M("a", {
+					class: F(["tc-interactive", O(e).state_screen_action]),
 					href: t.status.update_url,
 					target: "_blank",
 					rel: "noreferrer"
-				}, F(k(i)("app.unsupported_host.update_action")), 11, li)
-			], 2)) : t.status.state === "failed" ? (D(), O("div", {
+				}, P(O(i)("app.unsupported_host.update_action")), 11, ui)
+			], 2)) : t.status.state === "failed" ? (E(), D("div", {
 				key: 1,
-				class: I(k(e).state_screen),
+				class: F(O(e).state_screen),
 				"data-startup-state": "failed"
 			}, [
-				N("p", { class: I(k(e).state_screen_eyebrow) }, F(l.value), 3),
-				N("h1", { class: I(k(e).state_screen_title) }, F(k(i)("app.fatal_error.title")), 3),
-				N("p", { class: I(k(e).state_screen_description) }, F(k(i)("app.fatal_error.description")), 3),
-				N("pre", {
-					class: I(k(e).state_screen_detail),
+				M("p", { class: F(O(e).state_screen_eyebrow) }, P(l.value), 3),
+				M("h1", { class: F(O(e).state_screen_title) }, P(O(i)("app.fatal_error.title")), 3),
+				M("p", { class: F(O(e).state_screen_description) }, P(O(i)("app.fatal_error.description")), 3),
+				M("pre", {
+					class: F(O(e).state_screen_detail),
 					"data-testid": "startup-error-detail"
-				}, F(t.status.detail), 3),
-				N("button", {
+				}, P(t.status.detail), 3),
+				M("button", {
 					type: "button",
-					class: I(["tc-interactive", k(e).state_screen_action]),
-					onClick: y
-				}, F(k(i)("app.fatal_error.reload_action")), 3)
-			], 2)) : k(u) ? (D(), O(Te, { key: 2 }, [
-				x.value ? (D(), M(Yr, {
+					class: F(["tc-interactive", O(e).state_screen_action]),
+					onClick: S
+				}, P(O(i)("app.fatal_error.reload_action")), 3)
+			], 2)) : O(u) ? (E(), D(Ee, { key: 2 }, [
+				C.value ? (E(), j(Xr, {
 					key: 0,
-					label: k(i)("app.name")
+					label: O(i)("app.name")
 				}, {
-					default: ge(() => [R(ci, {
-						state: k(u).state.value,
-						controller: k(u).controller,
+					default: _e(() => [L(li, {
+						state: O(u).state.value,
+						controller: O(u).controller,
 						onSelectRoute: ee,
-						onSetInspectorCollapsed: _,
-						onResizeInspector: v,
+						onSetInspectorCollapsed: te,
+						onResizeInspector: x,
 						onClose: w
 					}, null, 8, ["state", "controller"])]),
 					_: 1
-				}, 8, ["label"])) : j("", !0),
-				R(Lr, {
-					enabled: C.value && !x.value,
-					"open-label": k(i)("app.name"),
-					onOpen: te
+				}, 8, ["label"])) : A("", !0),
+				L(Rr, {
+					enabled: ie.value && !C.value,
+					"open-label": O(i)("app.name"),
+					onOpen: ae
 				}, null, 8, ["enabled", "open-label"]),
-				t.host && k(m) && t.capabilities ? (D(), M(k(r), {
+				t.host && O(m) && t.capabilities ? (E(), j(O(r), {
 					key: 1,
 					host: t.host,
-					service: k(m),
+					service: O(m),
 					gallery: t.capabilities.gallery,
 					novelai: t.capabilities.novelai,
 					translator: t.translator ?? null,
@@ -2812,22 +2820,22 @@ var qr = {
 					"novelai",
 					"translator",
 					"prompt-tags"
-				])) : j("", !0)
-			], 64)) : j("", !0)]),
+				])) : A("", !0)
+			], 64)) : A("", !0)]),
 			_: 1
 		}, 8, ["portal-target"]));
 	}
-}), di = "._slot_cjg26_3{max-width:min(100%,512px);color:var(--SmartThemeBodyColor,inherit);font-size:calc(var(--mainFontSize,1rem) * .9);margin:.5em 0}._frame_cjg26_10{border:1px solid var(--SmartThemeBorderColor,#80808066);background:var(--SmartThemeBlurTintColor,#00000026);border-radius:10px;position:relative;overflow:hidden}._image_cjg26_18{cursor:zoom-in;width:100%;height:auto;display:block}._placeholder_cjg26_25{text-align:center;opacity:.85;flex-direction:column;justify-content:center;align-items:center;gap:.5em;min-height:96px;padding:1em;display:flex}._error_cjg26_37{color:var(--SmartThemeQuoteColor,#e06c75)}._toolbar_cjg26_41{flex-wrap:wrap;align-items:center;gap:.25em;margin-top:.35em;display:flex}._counter_cjg26_49{font-variant-numeric:tabular-nums;opacity:.75;margin-inline-end:auto}._button_cjg26_55{border:1px solid var(--SmartThemeBorderColor,#80808066);color:inherit;font:inherit;cursor:pointer;background:0 0;border-radius:6px;align-items:center;gap:.35em;padding:.2em .6em;display:inline-flex}._button_cjg26_55:hover:not(:disabled){background:var(--SmartThemeBlurTintColor,#80808026)}._button_cjg26_55:disabled{cursor:default;opacity:.5}._skeleton_cjg26_77{opacity:.2;background:currentColor;border-radius:4px;width:60%;height:.8em;animation:1.4s ease-in-out infinite _pulse_cjg26_1}._notice_cjg26_86{border-inline-start:3px solid var(--SmartThemeQuoteColor,#e06c75);background:var(--SmartThemeBlurTintColor,#0000001a);font-size:calc(var(--mainFontSize,1rem) * .85);margin:.5em 0;padding:.5em .75em}._excerpt_cjg26_94{white-space:pre-wrap;opacity:.8;max-height:8em;margin:.35em 0 0;font-family:monospace;overflow:auto}@keyframes _pulse_cjg26_1{50%{opacity:.45}}@media (prefers-reduced-motion:reduce){._skeleton_cjg26_77{animation:none}}._lightbox_cjg26_115{z-index:9999;cursor:zoom-out;background:#000c;justify-content:center;align-items:center;padding:2vmin;display:flex;position:fixed;inset:0}._lightbox_cjg26_115 img{object-fit:contain;max-width:100%;max-height:100%}._notice_actions_cjg26_133{gap:.35em;margin-top:.35em;display:flex}", fi = "tavern-canvas-chat-style";
-function pi(e) {
-	e.getElementById(fi)?.remove();
+}), fi = "._slot_cjg26_3{max-width:min(100%,512px);color:var(--SmartThemeBodyColor,inherit);font-size:calc(var(--mainFontSize,1rem) * .9);margin:.5em 0}._frame_cjg26_10{border:1px solid var(--SmartThemeBorderColor,#80808066);background:var(--SmartThemeBlurTintColor,#00000026);border-radius:10px;position:relative;overflow:hidden}._image_cjg26_18{cursor:zoom-in;width:100%;height:auto;display:block}._placeholder_cjg26_25{text-align:center;opacity:.85;flex-direction:column;justify-content:center;align-items:center;gap:.5em;min-height:96px;padding:1em;display:flex}._error_cjg26_37{color:var(--SmartThemeQuoteColor,#e06c75)}._toolbar_cjg26_41{flex-wrap:wrap;align-items:center;gap:.25em;margin-top:.35em;display:flex}._counter_cjg26_49{font-variant-numeric:tabular-nums;opacity:.75;margin-inline-end:auto}._button_cjg26_55{border:1px solid var(--SmartThemeBorderColor,#80808066);color:inherit;font:inherit;cursor:pointer;background:0 0;border-radius:6px;align-items:center;gap:.35em;padding:.2em .6em;display:inline-flex}._button_cjg26_55:hover:not(:disabled){background:var(--SmartThemeBlurTintColor,#80808026)}._button_cjg26_55:disabled{cursor:default;opacity:.5}._skeleton_cjg26_77{opacity:.2;background:currentColor;border-radius:4px;width:60%;height:.8em;animation:1.4s ease-in-out infinite _pulse_cjg26_1}._notice_cjg26_86{border-inline-start:3px solid var(--SmartThemeQuoteColor,#e06c75);background:var(--SmartThemeBlurTintColor,#0000001a);font-size:calc(var(--mainFontSize,1rem) * .85);margin:.5em 0;padding:.5em .75em}._excerpt_cjg26_94{white-space:pre-wrap;opacity:.8;max-height:8em;margin:.35em 0 0;font-family:monospace;overflow:auto}@keyframes _pulse_cjg26_1{50%{opacity:.45}}@media (prefers-reduced-motion:reduce){._skeleton_cjg26_77{animation:none}}._lightbox_cjg26_115{z-index:9999;cursor:zoom-out;background:#000c;justify-content:center;align-items:center;padding:2vmin;display:flex;position:fixed;inset:0}._lightbox_cjg26_115 img{object-fit:contain;max-width:100%;max-height:100%}._notice_actions_cjg26_133{gap:.35em;margin-top:.35em;display:flex}", pi = "tavern-canvas-chat-style";
+function mi(e) {
+	e.getElementById(pi)?.remove();
 	let t = e.createElement("style");
-	return t.id = fi, t.textContent = di, e.head.append(t), () => {
+	return t.id = pi, t.textContent = fi, e.head.append(t), () => {
 		t.remove();
 	};
 }
 //#endregion
 //#region src/ui/create_shadow_root.ts
-function mi(e, t) {
+function hi(e, t) {
 	e.getElementById("tavern-canvas-root")?.remove();
 	let n = e.createElement("div");
 	n.id = "tavern-canvas-root";
@@ -2837,7 +2845,7 @@ function mi(e, t) {
 	a.dataset.shadowRole = "app", r.append(a);
 	let o = e.createElement("div");
 	o.dataset.shadowRole = "portal", r.append(o), e.body.append(n);
-	let s = Je(r);
+	let s = Ye(r);
 	return {
 		host_element: n,
 		shadow_root: r,
@@ -2850,12 +2858,12 @@ function mi(e, t) {
 }
 //#endregion
 //#region src/modules/illustration/worldbook.ts
-function hi(e, t) {
-	return typeof e == "string" ? rt(t, e) : new RegExp(e.source, e.flags.replace("g", "")).test(t);
-}
 function gi(e, t) {
+	return typeof e == "string" ? it(t, e) : new RegExp(e.source, e.flags.replace("g", "")).test(t);
+}
+function _i(e, t) {
 	if (e.secondary_keys.length === 0) return !0;
-	let n = e.secondary_keys.map((e) => hi(e, t));
+	let n = e.secondary_keys.map((e) => gi(e, t));
 	switch (e.secondary_logic) {
 		case "and_any": return n.some(Boolean);
 		case "and_all": return n.every(Boolean);
@@ -2863,27 +2871,27 @@ function gi(e, t) {
 		case "not_any": return !n.some(Boolean);
 	}
 }
-function _i(e, t) {
-	return e.filter((e) => e.enabled && e.content.trim() !== "" && (e.strategy === "constant" || e.strategy === "selective" && e.keys.some((e) => hi(e, t)) && gi(e, t))).sort((e, t) => e.order - t.order).map((e) => e.content.trim()).join("\n\n");
+function vi(e, t) {
+	return e.filter((e) => e.enabled && e.content.trim() !== "" && (e.strategy === "constant" || e.strategy === "selective" && e.keys.some((e) => gi(e, t)) && _i(e, t))).sort((e, t) => e.order - t.order).map((e) => e.content.trim()).join("\n\n");
 }
 //#endregion
 //#region src/modules/illustration/analysis_requests.ts
-var vi = 3, yi = 2e3, bi = 18e4, xi = class extends Error {
+var yi = 3, bi = 2e3, xi = 18e4, Si = class extends Error {
 	reason;
 	constructor(e) {
 		super(e === "cancelled" ? "Analysis was cancelled" : "Analysis timed out"), this.name = "AnalysisStoppedError", this.reason = e;
 	}
 };
-async function Si(e, t, n, r) {
+async function Ci(e, t, n, r) {
 	let i, a = () => {}, o = new Promise((n, o) => {
 		let s = (n) => {
-			e.stop_generation(t), o(new xi(n));
+			e.stop_generation(t), o(new Si(n));
 		};
 		a = () => {
 			s("cancelled");
 		}, i = setTimeout(() => {
 			s("timed_out");
-		}, bi), r.addEventListener("abort", a, { once: !0 });
+		}, xi), r.addEventListener("abort", a, { once: !0 });
 	});
 	try {
 		return await Promise.race([n, o]);
@@ -2891,7 +2899,7 @@ async function Si(e, t, n, r) {
 		clearTimeout(i), r.removeEventListener("abort", a);
 	}
 }
-async function Ci(e, t) {
+async function wi(e, t) {
 	switch (e.kind) {
 		case "current": return { kind: "current" };
 		case "proxy_preset": return {
@@ -2908,7 +2916,7 @@ async function Ci(e, t) {
 		};
 	}
 }
-async function wi(e, t, n) {
+async function Ti(e, t, n) {
 	switch (e.mode) {
 		case "chat": return { kind: "chat" };
 		case "off": return {
@@ -2917,11 +2925,11 @@ async function wi(e, t, n) {
 		};
 		case "worldbook": return {
 			kind: "replace",
-			text: _i(await n.read_worldbook(e.worldbook), t)
+			text: vi(await n.read_worldbook(e.worldbook), t)
 		};
 	}
 }
-async function Ti(e, t, n, r) {
+async function Ei(e, t, n, r) {
 	let i = e.settings(), a = i.wardrobe_model, o = a === null || i.connection.kind === "current" ? i.connection : {
 		...i.connection,
 		model: a
@@ -2931,7 +2939,7 @@ async function Ti(e, t, n, r) {
 		preset_name: i.preset_name,
 		user_input: t,
 		max_chat_history: 0,
-		connection: await Ci(o, e.resolve_analysis_key),
+		connection: await wi(o, e.resolve_analysis_key),
 		json_schema: n,
 		world_info: {
 			kind: "replace",
@@ -2940,16 +2948,16 @@ async function Ti(e, t, n, r) {
 		image: r
 	})).content;
 }
-function Ei(e) {
-	return (t, n) => Ti(e, [t, ...Ve(e.settings().wardrobe_guidance)].join("\n"), n, null);
+function Di(e) {
+	return (t, n) => Ei(e, [t, ...He(e.settings().wardrobe_guidance)].join("\n"), n, null);
 }
-async function Di(e, t, n, r) {
-	let i = e.settings(), a = await Ci(i.connection, e.resolve_analysis_key), o = await wi(i.world_info, t, e.host);
+async function Oi(e, t, n, r) {
+	let i = e.settings(), a = await wi(i.connection, e.resolve_analysis_key), o = await Ti(i.world_info, t, e.host);
 	for (let t = 1;; t += 1) {
-		if (r.aborted) throw new xi("cancelled");
+		if (r.aborted) throw new Si("cancelled");
 		let s = e.new_generation_id();
 		try {
-			let t = await Si(e.host, s, e.host.generate_with_preset({
+			let t = await Ci(e.host, s, e.host.generate_with_preset({
 				generation_id: s,
 				preset_name: i.preset_name,
 				user_input: n.user_input,
@@ -2961,21 +2969,21 @@ async function Di(e, t, n, r) {
 			}), r);
 			return n.parse(t.content);
 		} catch (n) {
-			if (t >= vi || n instanceof xi) throw n;
-			await e.wait(yi * t);
+			if (t >= yi || n instanceof Si) throw n;
+			await e.wait(bi * t);
 		}
 	}
 }
 //#endregion
 //#region src/modules/media/media_command_service.ts
-var Oi = class {
+var ki = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t;
 	}
 	async save(e) {
-		let t = Qe(this.#e), n = {
+		let t = $e(this.#e), n = {
 			schema_version: 1,
 			id: e.job_id,
 			namespace: this.#t,
@@ -2996,7 +3004,7 @@ var Oi = class {
 		};
 		await t.put(this.#t, n);
 	}
-}, ki = class {
+}, Ai = class {
 	#e = /* @__PURE__ */ new Map();
 	register(e) {
 		this.#e.set(e.request_id, e);
@@ -3006,7 +3014,7 @@ var Oi = class {
 		return this.#e.delete(e), t;
 	}
 };
-async function Ai(e, t, n) {
+async function ji(e, t, n) {
 	let r = e.resolve_source_message(t), i = [];
 	for (let a of n) {
 		let n = e.ids.next();
@@ -3024,19 +3032,19 @@ async function Ai(e, t, n) {
 	}
 	return i.map((e) => p.parse(e));
 }
-var ji = 1e3;
-function Mi(e) {
-	if (e instanceof z) return new H({
+var Mi = 1e3;
+function Ni(e) {
+	if (e instanceof R) return new V({
 		code: e.code === "configuration" ? "not_configured" : "malformed_response",
 		retryable: !1
 	});
 	if (e instanceof Error && "provider_error" in e) {
-		let t = te.safeParse(e.provider_error);
-		if (t.success) return new H(t.data);
+		let t = ne.safeParse(e.provider_error);
+		if (t.success) return new V(t.data);
 	}
 	return e;
 }
-var Ni = class {
+var Pi = class {
 	#e;
 	#t;
 	constructor(e) {
@@ -3044,7 +3052,7 @@ var Ni = class {
 	}
 	async execute(e, t) {
 		let n = this.#e.plans.take(e.request_id);
-		if (n === void 0) throw new H({
+		if (n === void 0) throw new V({
 			code: "invalid_request",
 			retryable: !1
 		});
@@ -3052,13 +3060,13 @@ var Ni = class {
 		try {
 			r = await this.#n(n, t);
 		} catch (e) {
-			throw Mi(e);
+			throw Ni(e);
 		}
 		let i = await this.#r(n, r), a;
 		try {
 			a = await this.#i(e, i);
 		} catch {
-			throw new H({
+			throw new V({
 				code: "storage_failed",
 				retryable: !1
 			});
@@ -3067,7 +3075,7 @@ var Ni = class {
 	}
 	async #n(e, t) {
 		let n = (await this.#e.load_adapters())[e.provider_id];
-		if (n === void 0) throw new H({
+		if (n === void 0) throw new V({
 			code: "provider_unavailable",
 			retryable: !1
 		});
@@ -3081,12 +3089,12 @@ var Ni = class {
 		await t.mark_running();
 		let i = await n.submit(r, e);
 		if (i.state === "completed") return i.output_assets;
-		let a = i.poll_after_ms ?? ji;
+		let a = i.poll_after_ms ?? Mi;
 		for (;;) {
 			await this.#t(a);
 			let e = await n.poll(r, i);
 			if (e.state === "completed") return e.output_assets;
-			if (e.state === "failed") throw new H(e.error);
+			if (e.state === "failed") throw new V(e.error);
 			a = e.poll_after_ms ?? a;
 		}
 	}
@@ -3094,16 +3102,16 @@ var Ni = class {
 		return this.#e.postprocess === void 0 ? Promise.resolve(t) : this.#e.postprocess(e, t);
 	}
 	#i(e, t) {
-		return Ai(this.#e, e, t.map((e) => ({
+		return ji(this.#e, e, t.map((e) => ({
 			bytes: e.bytes,
 			media_type: e.asset.media_type
 		})));
 	}
 };
-async function Pi(e, t, n) {
-	return e.plans.register(n), Fi(e.queue, t, n.request_id, n.provider_id);
+async function Fi(e, t, n) {
+	return e.plans.register(n), Ii(e.queue, t, n.request_id, n.provider_id);
 }
-async function Fi(e, t, n, r) {
+async function Ii(e, t, n, r) {
 	let i = {
 		request_id: n,
 		generation_anchor: t.generation_anchor,
@@ -3119,32 +3127,32 @@ async function Fi(e, t, n, r) {
 	};
 	return e.enqueue(i);
 }
-function Ii(e, t) {
+function Li(e, t) {
 	return e.queue.cancel(t);
 }
 //#endregion
 //#region src/modules/illustration/slot_markers.ts
-var Li = "[A-Za-z0-9_-]{8,32}", Ri = RegExp(`<!--tc-image:(${Li})-->`, "gu");
-function zi(e) {
+var Ri = "[A-Za-z0-9_-]{8,32}", zi = RegExp(`<!--tc-image:(${Ri})-->`, "gu");
+function Bi(e) {
 	return `<!--tc-image:${e}-->`;
 }
-var Bi = [{
+var Vi = [{
 	id: "tavern-canvas-image-slot-display",
 	script_name: "Inkwell image slot (display)",
-	find_regex: `/<!--tc-image:(${Li})-->/g`,
+	find_regex: `/<!--tc-image:(${Ri})-->/g`,
 	replace_string: "<div class=\"tavern-canvas-slot\" data-tc-slot=\"$1\"></div>",
 	destination: "display"
 }, {
 	id: "tavern-canvas-image-slot-prompt",
 	script_name: "Inkwell image slot (prompt)",
-	find_regex: `/\\n?<!--tc-image:${Li}-->/g`,
+	find_regex: `/\\n?<!--tc-image:${Ri}-->/g`,
 	replace_string: "",
 	destination: "prompt"
 }];
-function Vi(e) {
-	return [...e.matchAll(Ri)].map((e) => e[1] ?? "");
-}
 function Hi(e) {
+	return [...e.matchAll(zi)].map((e) => e[1] ?? "");
+}
+function Ui(e) {
 	let t = [], n = !1;
 	return e.split("\n").forEach((e, r) => {
 		let i = e.trim();
@@ -3152,26 +3160,26 @@ function Hi(e) {
 			n = !n;
 			return;
 		}
-		n || i.length === 0 || Vi(i).length > 0 || t.push({
+		n || i.length === 0 || Hi(i).length > 0 || t.push({
 			index: t.length,
 			text: i,
 			line: r
 		});
 	}), t;
 }
-function Ui(e, t) {
-	let n = Hi(e), r = /* @__PURE__ */ new Map();
+function Wi(e, t) {
+	let n = Ui(e), r = /* @__PURE__ */ new Map();
 	for (let e of t) {
 		let t = n[e.paragraph];
 		if (t === void 0) throw RangeError(`Paragraph ${String(e.paragraph)} does not exist`);
 		let i = r.get(t.line) ?? [];
-		i.push(zi(e.slot_id)), r.set(t.line, i);
+		i.push(Bi(e.slot_id)), r.set(t.line, i);
 	}
 	return e.split("\n").flatMap((e, t) => [e, ...r.get(t) ?? []]).join("\n");
 }
 //#endregion
 //#region src/modules/prompt/regex_transform.ts
-function Wi(e, t) {
+function Gi(e, t) {
 	try {
 		let n = new RegExp(t.pattern, t.flags);
 		return {
@@ -3185,10 +3193,10 @@ function Wi(e, t) {
 		};
 	}
 }
-function Gi(e, t) {
+function Ki(e, t) {
 	let n = e, r = [];
 	for (let e of t) {
-		let t = Wi(n, e);
+		let t = Gi(n, e);
 		n = t.text, t.error !== null && r.push({
 			rule_id: e.id,
 			error: t.error
@@ -3199,24 +3207,24 @@ function Gi(e, t) {
 		failures: r
 	};
 }
-function Ki(e, t) {
-	return Wi(t, e).text;
+function qi(e, t) {
+	return Gi(t, e).text;
 }
 //#endregion
 //#region src/modules/illustration/slot_prompt.ts
-var qi = /^(?:\d+)?(girl|boy|other)s?$/u;
-function Ji(e) {
+var Ji = /^(?:\d+)?(girl|boy|other)s?$/u;
+function Yi(e) {
 	let t = null, n = [];
 	for (let r of e.split(",")) {
-		let e = qi.exec(dt(r).toLowerCase());
+		let e = Ji.exec(ft(r).toLowerCase());
 		e === null ? n.push(r) : t ??= e[1];
 	}
 	return {
 		subject: t,
-		rest: B(n)
+		rest: z(n)
 	};
 }
-function Yi(e) {
+function Xi(e) {
 	return [
 		"girl",
 		"boy",
@@ -3226,50 +3234,50 @@ function Yi(e) {
 		return n === 0 ? "" : n === 1 ? `1${t}` : `${String(n)}${t}s`;
 	}).filter((e) => e !== "").join(", ");
 }
-function Xi(e, t) {
-	let n = /* @__PURE__ */ new Map();
-	for (let e of t) for (let t of e.triggers) n.set(dt(t), e.replacement);
-	return B(e.split(",").map((e) => n.get(dt(e)) ?? e));
-}
 function Zi(e, t) {
-	if (t === null) return ft(e);
-	let n = Xi(e, t.replacement_rules);
-	return ft(Gi(n, t.regex_rules).text);
+	let n = /* @__PURE__ */ new Map();
+	for (let e of t) for (let t of e.triggers) n.set(ft(t), e.replacement);
+	return z(e.split(",").map((e) => n.get(ft(e)) ?? e));
 }
 function Qi(e, t) {
-	return B(y.filter((e) => e !== "expression" || !t).flatMap((t) => e.appearance[t]));
+	if (t === null) return pt(e);
+	let n = Zi(e, t.replacement_rules);
+	return pt(Ki(n, t.regex_rules).text);
 }
 function $i(e, t) {
+	return z(b.filter((e) => e !== "expression" || !t).flatMap((t) => e.appearance[t]));
+}
+function ea(e, t) {
 	let n = new Set(t.map((e) => e.trim().toLowerCase()));
-	return B(e.split(",").filter((e) => {
-		let t = dt(e).toLowerCase().replace(/^wearing\s+/u, "");
+	return z(e.split(",").filter((e) => {
+		let t = ft(e).toLowerCase().replace(/^wearing\s+/u, "");
 		return !n.has(t);
 	}));
 }
-function ea(e) {
+function ta(e) {
 	let t = e.library.characters, n = [], r = /* @__PURE__ */ new Set(), i = (i, a) => {
 		let o = t[i];
 		if (o === void 0 || r.has(o.character.id)) return;
 		r.add(o.character.id);
-		let s = Ji($i(a, e.library.outfit_names));
+		let s = Yi(ea(a, e.library.outfit_names));
 		n.push({
 			name: o.character.name,
 			subject: o.character.subject === "other" ? s.subject ?? "other" : o.character.subject,
-			prompt: B([
-				Qi(o.character, s.rest !== ""),
-				B(o.outfit_tags),
+			prompt: z([
+				$i(o.character, s.rest !== ""),
+				z(o.outfit_tags),
 				s.rest
 			]),
-			negative_prompt: B(o.character.excluded_traits)
+			negative_prompt: z(o.character.excluded_traits)
 		});
 	};
 	for (let r of e.characters) {
-		let e = t.findIndex((e) => ot(e.character, r.name));
+		let e = t.findIndex((e) => st(e.character, r.name));
 		if (e !== -1) {
 			i(e, r.tags);
 			continue;
 		}
-		let a = Ji(r.tags);
+		let a = Yi(r.tags);
 		(a.subject !== null || a.rest !== "") && n.push({
 			name: r.name,
 			subject: a.subject,
@@ -3281,36 +3289,36 @@ function ea(e) {
 		i(t, "");
 	}), n;
 }
-function ta(e) {
-	let t = e.preset, n = ea(e), r = ft(t?.fixed_negative_prompt ?? "");
+function na(e) {
+	let t = e.preset, n = ta(e), r = pt(t?.fixed_negative_prompt ?? "");
 	if (n.length === 0) return {
-		positive_prompt: Zi(B([t?.fixed_positive_prompt, e.scene_tags]), t),
+		positive_prompt: Qi(z([t?.fixed_positive_prompt, e.scene_tags]), t),
 		negative_prompt: r,
 		character_prompts: []
 	};
 	let i = n.flatMap((e) => e.subject === null ? [] : [e.subject]);
 	return {
-		positive_prompt: Zi(B([
+		positive_prompt: Qi(z([
 			t?.fixed_positive_prompt,
-			Yi(i),
-			Ji(e.scene_tags).rest
+			Xi(i),
+			Yi(e.scene_tags).rest
 		]), t),
 		negative_prompt: r,
 		character_prompts: n.flatMap((e) => {
-			let n = Zi(B([e.subject, e.prompt]), t);
+			let n = Qi(z([e.subject, e.prompt]), t);
 			return n === "" ? [] : [{
 				name: e.name,
 				prompt: n,
-				negative_prompt: ft(e.negative_prompt)
+				negative_prompt: pt(e.negative_prompt)
 			}];
 		})
 	};
 }
 //#endregion
 //#region src/modules/illustration/proposal_slots.ts
-function na(e, t, n, r, i) {
+function ra(e, t, n, r, i) {
 	return t.map((t) => {
-		let a = it(`${e[t.paragraph]?.text ?? ""}\n${t.scene}`, t.characters.map((e) => e.name), n.library, r), o = ta({
+		let a = at(`${e[t.paragraph]?.text ?? ""}\n${t.scene}`, t.characters.map((e) => e.name), n.library, r), o = na({
 			preset: n.preset,
 			library: a,
 			characters: t.characters,
@@ -3334,24 +3342,24 @@ function na(e, t, n, r, i) {
 }
 //#endregion
 //#region src/modules/illustration/illustration_service.ts
-var ra = class extends Error {
+var ia = class extends Error {
 	constructor(e) {
 		super(`Message ${String(e)} changed while it was being analyzed`), this.name = "MessageChangedError";
 	}
-}, ia = /* @__PURE__ */ new Set([
+}, aa = /* @__PURE__ */ new Set([
 	"normal",
 	"swipe",
 	"regenerate",
 	"continue"
 ]);
-async function aa(e, t) {
+async function oa(e, t) {
 	let { attach_character_prompts: n } = await import("./chunks/character_prompts-BRu7L7wm.js");
 	return n(e, t);
 }
-function oa(e) {
+function sa(e) {
 	return (e instanceof Error ? e.message : String(e)).slice(0, 500);
 }
-var sa = class {
+var ca = class {
 	#e;
 	#t = /* @__PURE__ */ new Map();
 	#n = /* @__PURE__ */ new Set();
@@ -3377,7 +3385,7 @@ var sa = class {
 		};
 	}
 	read(e) {
-		let t = Lt.safeParse(this.#e.host.read_swipe_record(e));
+		let t = Rt.safeParse(this.#e.host.read_swipe_record(e));
 		return t.success ? t.data : null;
 	}
 	is_pending(e) {
@@ -3418,14 +3426,14 @@ var sa = class {
 				location: r
 			}), e;
 		} catch (e) {
-			throw e instanceof xi && e.reason === "cancelled" ? (this.#g({
+			throw e instanceof Si && e.reason === "cancelled" ? (this.#g({
 				type: "analysis_cancelled",
 				location: r
 			}), e) : (this.#g({
 				type: "analysis_failed",
 				location: r,
-				message: oa(e),
-				excerpt: e instanceof He ? e.excerpt : null
+				message: sa(e),
+				excerpt: e instanceof Ue ? e.excerpt : null
 			}), e);
 		} finally {
 			this.#r.delete(a);
@@ -3441,14 +3449,14 @@ var sa = class {
 		return this.#e.auto_generation_enabled();
 	}
 	async #o(e, t, n) {
-		let r = Hi(t), i = this.#e.settings(), a = {
+		let r = Ui(t), i = this.#e.settings(), a = {
 			schema_version: 2,
 			slots: []
 		};
 		if (r.length > 0) {
-			let o = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e) : null, s = await this.#e.prompt_context(e.chat_id), c = Be(r, i.max_images_per_message, s.library, i.analysis_guidance), l = (e) => Ge(e, r.length, i.max_images_per_message), { proposals: u, wardrobe_reply: d } = await Di(this.#e, t, o === null ? {
+			let o = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e) : null, s = await this.#e.prompt_context(e.chat_id), c = Ve(r, i.max_images_per_message, s.library, i.analysis_guidance), l = (e) => Ke(e, r.length, i.max_images_per_message), { proposals: u, wardrobe_reply: d } = await Oi(this.#e, t, o === null ? {
 				user_input: c,
-				json_schema: Ke,
+				json_schema: qe,
 				parse: (e) => ({
 					proposals: l(e),
 					wardrobe_reply: null
@@ -3458,44 +3466,44 @@ var sa = class {
 					c,
 					"",
 					o.input,
-					...Ve(i.wardrobe_guidance),
+					...He(i.wardrobe_guidance),
 					"",
-					We
+					Ge
 				].join("\n"),
-				json_schema: Ue(o.json_schema),
+				json_schema: We(o.json_schema),
 				parse: (e) => ({
 					proposals: l(e),
-					wardrobe_reply: Re(e)
+					wardrobe_reply: ze(e)
 				})
 			}, n), f = o === null ? await this.#h(e) : await this.#m(e, o, d);
-			a.slots.push(...na(r, u, s, f, this.#e.new_slot_id));
+			a.slots.push(...ra(r, u, s, f, this.#e.new_slot_id));
 		}
 		if (await this.#e.host.write_swipe_record(e, a), a.slots.length > 0) {
-			let n = Ui(t, a.slots.map((e) => ({
+			let n = Wi(t, a.slots.map((e) => ({
 				paragraph: e.paragraph,
 				slot_id: e.slot_id
 			})));
-			if (!await this.#e.host.replace_message_text(e.message_id, t, n)) throw await this.#e.host.write_swipe_record(e, null), new ra(e.message_id);
+			if (!await this.#e.host.replace_message_text(e.message_id, t, n)) throw await this.#e.host.write_swipe_record(e, null), new ia(e.message_id);
 		}
 		return a;
 	}
 	async #s(e) {
 		let t = await this.#e.host.get_active_chat(), n = t.messages.find((t) => t.message_id === e.message_id);
-		if (t.chat_id !== e.chat_id || n?.active_swipe_id !== e.swipe_id) throw new ra(e.message_id);
+		if (t.chat_id !== e.chat_id || n?.active_swipe_id !== e.swipe_id) throw new ia(e.message_id);
 		return n.swipes[e.swipe_id]?.content ?? "";
 	}
 	async open_paragraphs(e) {
 		let t = new Set(this.read(e)?.slots.map((e) => e.paragraph) ?? []);
-		return Hi(await this.#s(e)).filter((e) => !t.has(e.index));
+		return Ui(await this.#s(e)).filter((e) => !t.has(e.index));
 	}
 	async add_paragraphs(e, t) {
-		let n = await this.#s(e), r = Hi(n), i = this.read(e), a = new Set(i?.slots.map((e) => e.paragraph) ?? []), o = [...new Set(t)].filter((e) => e < r.length && !a.has(e)).sort((e, t) => e - t);
+		let n = await this.#s(e), r = Ui(n), i = this.read(e), a = new Set(i?.slots.map((e) => e.paragraph) ?? []), o = [...new Set(t)].filter((e) => e < r.length && !a.has(e)).sort((e, t) => e - t);
 		if (o.length === 0) return [];
-		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await Di(this.#e, n, {
-			user_input: Le(r, o, l.library, s.analysis_guidance),
-			json_schema: Ke,
-			parse: (e) => Ge(e, r.length, r.length)
-		}, new AbortController().signal), d = new Map(u.map((e) => [e.paragraph, e])), f = na(r, o.map((e) => d.get(e) ?? {
+		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await Oi(this.#e, n, {
+			user_input: Re(r, o, l.library, s.analysis_guidance),
+			json_schema: qe,
+			parse: (e) => Ke(e, r.length, r.length)
+		}, new AbortController().signal), d = new Map(u.map((e) => [e.paragraph, e])), f = ra(r, o.map((e) => d.get(e) ?? {
 			paragraph: e,
 			scene: (r[e]?.text ?? "").slice(0, 120),
 			tags: "",
@@ -3505,11 +3513,11 @@ var sa = class {
 			schema_version: 2,
 			slots: [...i?.slots ?? [], ...f]
 		});
-		let p = Ui(n, f.map((e) => ({
+		let p = Wi(n, f.map((e) => ({
 			paragraph: e.paragraph,
 			slot_id: e.slot_id
 		})));
-		if (!await this.#e.host.replace_message_text(e.message_id, n, p)) throw await this.#e.host.write_swipe_record(e, i), new ra(e.message_id);
+		if (!await this.#e.host.replace_message_text(e.message_id, n, p)) throw await this.#e.host.write_swipe_record(e, i), new ia(e.message_id);
 		return this.#g({
 			type: "slots_changed",
 			location: e
@@ -3520,7 +3528,7 @@ var sa = class {
 		return this.#c(n ?? r);
 	}
 	async #c(e) {
-		return aa(await this.#e.build_request(e), e.character_prompts);
+		return oa(await this.#e.build_request(e), e.character_prompts);
 	}
 	async generate_image(e) {
 		let t = await this.#c(e), n = /* @__PURE__ */ new Map(), r = null, i = null, a = this.#e.jobs.subscribe((e) => {
@@ -3540,11 +3548,11 @@ var sa = class {
 	}
 	async read_outfit(e) {
 		let { OUTFIT_FROM_IMAGE_INPUT: t, OUTFIT_FROM_IMAGE_JSON_SCHEMA: n, parse_outfit_from_image: r } = await import("./chunks/outfit_from_image-CVVCtwe6.js");
-		return r(await Ti(this.#e, t, n, e));
+		return r(await Ei(this.#e, t, n, e));
 	}
 	async read_character(e) {
 		let { CHARACTER_FROM_IMAGE_INPUT: t, CHARACTER_FROM_IMAGE_JSON_SCHEMA: n, parse_character_from_image: r } = await import("./chunks/character_from_image-CVgB9fk-.js");
-		return r(await Ti(this.#e, t, n, e));
+		return r(await Ei(this.#e, t, n, e));
 	}
 	async generate(e, t, n) {
 		let r = this.#u(e, t), i = {
@@ -3571,7 +3579,7 @@ var sa = class {
 	}
 	async edit(e, t, n) {
 		let r = this.#u(e, t), i = n.kind === "img2img" || n.kind === "inpaint" ? r.character_prompts : [];
-		await this.#l(e, t, async () => aa(await this.#e.build_edit_request(n), i));
+		await this.#l(e, t, async () => oa(await this.#e.build_edit_request(n), i));
 	}
 	async #l(e, t, n, r = (e) => e) {
 		let i;
@@ -3580,7 +3588,7 @@ var sa = class {
 		} catch (n) {
 			throw await this.#d(e, t, (e) => ({
 				...e,
-				last_error: oa(n)
+				last_error: sa(n)
 			})), n;
 		}
 		this.#t.set(i, {
@@ -3658,7 +3666,7 @@ var sa = class {
 			return;
 		}
 		let t = this.#i;
-		this.#i = null, !(t === null || !ia.has(t)) && this.active_location(e.message_id).then(async (n) => {
+		this.#i = null, !(t === null || !aa.has(t)) && this.active_location(e.message_id).then(async (n) => {
 			t === "swipe" && (await this.#e.host.write_swipe_record(n, null), await this.#e.host.write_swipe_wardrobe(n, null)), this.#e.auto_generation_enabled() ? await this.illustrate(e.message_id) : await this.#h(n);
 		}).catch(() => {});
 	}
@@ -3670,7 +3678,7 @@ var sa = class {
 			return this.#g({
 				type: "wardrobe_failed",
 				location: e,
-				message: oa(t)
+				message: sa(t)
 			}), this.#e.wardrobe.current(e.message_id);
 		}
 	}
@@ -3683,7 +3691,7 @@ var sa = class {
 			return this.#g({
 				type: "wardrobe_failed",
 				location: e,
-				message: oa(t)
+				message: sa(t)
 			}), this.#e.wardrobe.current(e.message_id);
 		}
 	}
@@ -3703,10 +3711,10 @@ var sa = class {
 };
 //#endregion
 //#region src/modules/wardrobe/wardrobe_library_port.ts
-function ca(e) {
+function la(e) {
 	return {
 		async load(t) {
-			return b(await e.load(), t);
+			return ee(await e.load(), t);
 		},
 		async create_character(t, n) {
 			await e.save("character", {
@@ -3715,9 +3723,9 @@ function ca(e) {
 				record_key: "",
 				display_name: t.name,
 				payload: {
-					aliases: v(t.aliases),
+					aliases: y(t.aliases),
 					subject: t.subject,
-					...Object.fromEntries(y.map((e) => [e, v(t.appearance[e] ?? [])])),
+					...Object.fromEntries(b.map((e) => [e, y(t.appearance[e] ?? [])])),
 					excluded_traits: "",
 					default_outfit_id: t.default_outfit_id ?? "",
 					origin: "analysis",
@@ -3735,7 +3743,7 @@ function ca(e) {
 				display_name: t.name,
 				payload: {
 					character_id: t.character_id,
-					...Object.fromEntries(x.map((e) => [e, v(t.slots[e] ?? [])])),
+					...Object.fromEntries(te.map((e) => [e, y(t.slots[e] ?? [])])),
 					origin: "analysis",
 					chat_id: n
 				}
@@ -3744,7 +3752,7 @@ function ca(e) {
 		async add_appearance(t) {
 			let n = (await e.load()).character.find((e) => e.id === t.character_id);
 			if (n === void 0) return;
-			let r = Object.fromEntries(Object.entries(t.slots).map(([e, t]) => [e, v(t)]));
+			let r = Object.fromEntries(Object.entries(t.slots).map(([e, t]) => [e, y(t)]));
 			await e.save("character", {
 				...n,
 				payload: {
@@ -3758,7 +3766,7 @@ function ca(e) {
 }
 //#endregion
 //#region src/modules/wardrobe/wardrobe_service.ts
-function la(e, t) {
+function ua(e, t) {
 	let n = e.messages.find((e) => e.message_id === t);
 	return n === void 0 ? null : {
 		chat_id: e.chat_id,
@@ -3766,14 +3774,14 @@ function la(e, t) {
 		swipe_id: n.active_swipe_id
 	};
 }
-var ua = class {
+var da = class {
 	#e;
 	#t = /* @__PURE__ */ new Map();
 	constructor(e) {
 		this.#e = e;
 	}
 	read(e) {
-		let t = _.safeParse(this.#e.host.read_swipe_wardrobe(e));
+		let t = v.safeParse(this.#e.host.read_swipe_wardrobe(e));
 		return t.success ? t.data.wearing : null;
 	}
 	inherited(e, t) {
@@ -3789,12 +3797,12 @@ var ua = class {
 		return [];
 	}
 	async current(e) {
-		let t = await this.#e.host.get_active_chat(), n = la(t, e);
+		let t = await this.#e.host.get_active_chat(), n = ua(t, e);
 		return (n === null ? null : this.read(n)) ?? this.inherited(t, e);
 	}
 	update(e) {
 		return this.#e.host.get_active_chat().then(async (t) => {
-			let n = la(t, e);
+			let n = ua(t, e);
 			if (n === null) throw Error(`Message ${String(e)} is not in the active chat`);
 			let r = `${n.chat_id}:${String(e)}:${String(n.swipe_id)}`, i = this.#t.get(r);
 			if (i !== void 0) return i;
@@ -3828,22 +3836,22 @@ var ua = class {
 		await this.#i(e, [...r.filter((e) => e.character_id !== t.character_id), t]);
 	}
 	#i(e, t) {
-		return this.#e.host.write_swipe_wardrobe(e, _.parse({
+		return this.#e.host.write_swipe_wardrobe(e, v.parse({
 			schema_version: 1,
 			wearing: t
 		}));
 	}
-}, da = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
-function fa() {
-	return [...crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(12))].map((e) => da[e % 64] ?? "_").join("");
+}, fa = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
+function pa() {
+	return [...crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(12))].map((e) => fa[e % 64] ?? "_").join("");
 }
-async function pa(e, t) {
-	return ma(await e.load(), t);
+async function ma(e, t) {
+	return ha(await e.load(), t);
 }
-function ma(e, t) {
+function ha(e, t) {
 	let n = (e) => typeof e == "string" ? e.trim() : "";
 	return {
-		...b(e, t),
+		...ee(e, t),
 		loras: e.lora.flatMap((e) => {
 			let t = n(e.payload.character_id);
 			return t === "" ? [] : [{
@@ -3855,14 +3863,14 @@ function ma(e, t) {
 		})
 	};
 }
-async function ha(e, t, n, r) {
-	let [i, a] = await Promise.all([n === null ? null : e.load_draft(n), pa(t, r)]);
+async function ga(e, t, n, r) {
+	let [i, a] = await Promise.all([n === null ? null : e.load_draft(n), ma(t, r)]);
 	return {
 		preset: i,
 		library: a
 	};
 }
-var ga = class {
+var _a = class {
 	module_id = "illustrations";
 	requires = [];
 	#e;
@@ -3876,7 +3884,7 @@ var ga = class {
 	}
 	async start() {
 		try {
-			await this.#t.sync_regex_scripts(Bi), this.#n = null;
+			await this.#t.sync_regex_scripts(Vi), this.#n = null;
 		} catch (e) {
 			this.#n = e instanceof Error ? e.message : String(e);
 		}
@@ -3885,45 +3893,45 @@ var ga = class {
 	stop() {
 		return this.#e.stop(), Promise.resolve();
 	}
-}, _a = /[぀-ヿ㐀-鿿豈-﫿]/u, va = /[,，、]/u;
-function ya(e) {
-	return e.split(va).map((e) => e.trim()).filter((e) => e.length > 0);
+}, va = /[぀-ヿ㐀-鿿豈-﫿]/u, ya = /[,，、]/u;
+function ba(e) {
+	return e.split(ya).map((e) => e.trim()).filter((e) => e.length > 0);
 }
-function ba(e, t) {
+function xa(e, t) {
 	return e.trim().toLowerCase() === t.trim().toLowerCase();
 }
-function xa(e) {
+function Sa(e) {
 	let t = e.trim().replace(/^-?[\d.]+::/u, "").replace(/::$/u, ""), n = /^\((.+):[\d.]+\)$/u.exec(t);
 	for (n?.[1] !== void 0 && (t = n[1]); /^[{[].*[}\]]$/u.test(t);) t = t.slice(1, -1);
 	return t.trim().toLowerCase();
 }
-function Sa(e) {
+function Ca(e) {
 	return e.trim().replace(/[.。]+$/u, "").toLowerCase();
 }
-async function Ca(e, t) {
-	let n = ya(e);
+async function wa(e, t) {
+	let n = ba(e);
 	return (await Promise.all(n.map(async (e) => {
-		if (!_a.test(e)) return e;
-		let n = t.glossary.find((t) => ba(t.source, e));
-		return n === void 0 ? await t.find_tag(e) ?? Sa(await t.deepl(e, "EN-US")) : n.target;
+		if (!va.test(e)) return e;
+		let n = t.glossary.find((t) => xa(t.source, e));
+		return n === void 0 ? await t.find_tag(e) ?? Ca(await t.deepl(e, "EN-US")) : n.target;
 	}))).join(", ");
 }
-async function wa(e, t) {
-	let n = ya(e);
+async function Ta(e, t) {
+	let n = ba(e);
 	return (await Promise.all(n.map(async (e) => {
-		if (_a.test(e)) return e;
-		let n = xa(e), r = t.glossary.find((e) => ba(e.target, n));
+		if (va.test(e)) return e;
+		let n = Sa(e), r = t.glossary.find((e) => xa(e.target, n));
 		return r === void 0 ? await t.find_translation(n) ?? (await t.deepl(n, "ZH")).trim() : r.source;
 	}))).join("，");
 }
 //#endregion
 //#region src/modules/translation/prompt_translator.ts
-var Ta = 10;
-function Ea(e) {
+var Ea = 10;
+function Da(e) {
 	let t = e.translation?.split("-")[0]?.trim() ?? "";
 	return t === "" ? null : t;
 }
-function Da(e) {
+function Oa(e) {
 	let t = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
 	async function r(n) {
 		let r = t.get(n);
@@ -3948,14 +3956,14 @@ function Da(e) {
 			},
 			async find_translation(e) {
 				let t = (await r(e))?.find((e) => e.match_kind === "exact");
-				return t === void 0 ? null : Ea(t);
+				return t === void 0 ? null : Da(t);
 			},
 			deepl: i
 		};
 	}
 	return {
-		to_tags: (e) => Ca(e, a()),
-		read_in_chinese: (e) => wa(e, a()),
+		to_tags: (e) => wa(e, a()),
+		read_in_chinese: (e) => Ta(e, a()),
 		async suggest(t) {
 			let n;
 			try {
@@ -3963,9 +3971,9 @@ function Da(e) {
 			} catch {
 				return [];
 			}
-			return n === null ? null : n.results.slice(0, Ta).map((e) => ({
+			return n === null ? null : n.results.slice(0, Ea).map((e) => ({
 				tag: e.display_text.replaceAll("_", " "),
-				translation: Ea(e),
+				translation: Da(e),
 				popularity: e.popularity
 			}));
 		},
@@ -3974,13 +3982,13 @@ function Da(e) {
 }
 //#endregion
 //#region src/storage/sillytavern_settings.ts
-var Oa = "tavern_canvas", ka = /* @__PURE__ */ new Set([
+var ka = "tavern_canvas", Aa = /* @__PURE__ */ new Set([
 	"profiles",
 	"workflows",
 	"image_data",
 	"vocabulary_data",
 	"logs"
-]), Aa = /* @__PURE__ */ new Set(["gateway"]), ja = /* @__PURE__ */ new Set([...Object.keys(w.shape), ...Aa]), Ma = new Set(Object.keys(ae.shape)), Na = {
+]), ja = /* @__PURE__ */ new Set(["gateway"]), Ma = /* @__PURE__ */ new Set([...Object.keys(C.shape), ...ja]), Na = new Set(Object.keys(oe.shape)), Pa = {
 	schema_version: 1,
 	active_namespace: "primary",
 	locale: "auto",
@@ -4011,92 +4019,92 @@ var Oa = "tavern_canvas", ka = /* @__PURE__ */ new Set([
 		optional_entry_enabled: !1
 	}
 };
-function Pa(e) {
+function Fa(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function Fa() {
-	return structuredClone(Na);
-}
-function Ia(e) {
-	return JSON.stringify(e);
+function Ia() {
+	return structuredClone(Pa);
 }
 function La(e) {
+	return JSON.stringify(e);
+}
+function Ra(e) {
 	try {
-		let t = Ia(e);
+		let t = La(e);
 		return t === void 0 ? 0 : new TextEncoder().encode(t).length;
 	} catch {
 		return null;
 	}
 }
-function Ra(e, t, n, r) {
+function za(e, t, n, r) {
 	for (let i of Object.keys(e)) {
 		if (t.has(i)) continue;
-		let e = n === "" ? i : `${n}.${i}`, a = ka.has(i) ? "disallowed_category" : "unknown_field";
+		let e = n === "" ? i : `${n}.${i}`, a = Aa.has(i) ? "disallowed_category" : "unknown_field";
 		r.push({
 			path: e,
 			code: a
 		});
 	}
 }
-function K(e, t, n, r, i) {
+function G(e, t, n, r, i) {
 	let a = e.safeParse(t);
 	return a.success ? a.data : (i.push({
 		path: r,
 		code: "invalid_value"
 	}), n);
 }
-function za(e, t, n, r, i) {
-	if (!Pa(t)) return t !== void 0 && i.push({
+function Ba(e, t, n, r, i) {
+	if (!Fa(t)) return t !== void 0 && i.push({
 		path: r,
 		code: "invalid_value"
 	}), structuredClone(n);
-	Ra(t, new Set(Object.keys(e)), r, i);
+	za(t, new Set(Object.keys(e)), r, i);
 	let a = {};
-	for (let o of Object.keys(e)) a[o] = K(e[o], t[o], structuredClone(n[o]), `${r}.${o}`, i);
+	for (let o of Object.keys(e)) a[o] = G(e[o], t[o], structuredClone(n[o]), `${r}.${o}`, i);
 	return a;
 }
-function Ba(e, t) {
-	let n = Na.ui;
-	return Pa(e) ? (Ra(e, Ma, "ui", t), {
-		color_mode: K(ae.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
-		inspector_width: K(ae.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
-		inspector_collapsed: K(ae.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
-		optional_entry_enabled: K(ae.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
+function Va(e, t) {
+	let n = Pa.ui;
+	return Fa(e) ? (za(e, Na, "ui", t), {
+		color_mode: G(oe.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
+		inspector_width: G(oe.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
+		inspector_collapsed: G(oe.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
+		optional_entry_enabled: G(oe.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
 	}) : (e !== void 0 && t.push({
 		path: "ui",
 		code: "invalid_value"
 	}), { ...n });
 }
-function Va(e, t) {
-	if (e === void 0) return Fa();
-	let n = La(e);
+function Ha(e, t) {
+	if (e === void 0) return Ia();
+	let n = Ra(e);
 	if (n === null || n > 65536) return t.push({
-		path: Oa,
+		path: ka,
 		code: n === null ? "invalid_value" : "serialized_size_exceeded"
-	}), Fa();
-	if (!Pa(e)) return t.push({
-		path: Oa,
+	}), Ia();
+	if (!Fa(e)) return t.push({
+		path: ka,
 		code: "invalid_value"
-	}), Fa();
-	Ra(e, ja, "", t);
-	let r = Na;
+	}), Ia();
+	za(e, Ma, "", t);
+	let r = Pa;
 	return {
-		schema_version: K(w.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
-		active_namespace: K(w.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
-		locale: K(w.shape.locale, e.locale, r.locale, "locale", t),
-		credential_storage_mode: K(oe, e.credential_storage_mode, r.credential_storage_mode, "credential_storage_mode", t),
-		active_provider_profile_id: K(w.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
-		global_concurrency: K(w.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
-		auto_generation_enabled: K(w.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
-		vocabulary_update_channel: K(w.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
-		illustration: za(re.shape, e.illustration, r.illustration, "illustration", t),
-		translation: za(E.shape, e.translation, r.translation, "translation", t),
-		ui: Ba(e.ui, t)
+		schema_version: G(C.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
+		active_namespace: G(C.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
+		locale: G(C.shape.locale, e.locale, r.locale, "locale", t),
+		credential_storage_mode: G(se, e.credential_storage_mode, r.credential_storage_mode, "credential_storage_mode", t),
+		active_provider_profile_id: G(C.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
+		global_concurrency: G(C.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
+		auto_generation_enabled: G(C.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
+		vocabulary_update_channel: G(C.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
+		illustration: Ba(ie.shape, e.illustration, r.illustration, "illustration", t),
+		translation: Ba(T.shape, e.translation, r.translation, "translation", t),
+		ui: Va(e.ui, t)
 	};
 }
-function Ha(e) {
-	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = Va(t[Oa], i);
-	t[Oa] = a;
+function Ua(e) {
+	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = Ha(t[ka], i);
+	t[ka] = a;
 	let o = !1, s = !1;
 	async function c() {
 		o && (o = !1, await n());
@@ -4107,7 +4115,7 @@ function Ha(e) {
 		}));
 	}
 	function u(e) {
-		return a = e, t[Oa] = a, o = !0, l(), a;
+		return a = e, t[ka] = a, o = !0, l(), a;
 	}
 	return {
 		diagnostics: i,
@@ -4119,10 +4127,10 @@ function Ha(e) {
 				...a,
 				...e
 			};
-			return u(w.parse(t));
+			return u(C.parse(t));
 		},
 		replace_settings(e) {
-			return u(w.parse(e));
+			return u(C.parse(e));
 		},
 		flush: c,
 		async stop() {
@@ -4132,7 +4140,7 @@ function Ha(e) {
 }
 //#endregion
 //#region src/host/sillytavern_secret_resolver.ts
-var Ua = class extends Error {
+var K = class extends Error {
 	code;
 	constructor(e, t) {
 		super(t), this.name = "SecretResolutionError", this.code = e;
@@ -4141,29 +4149,29 @@ var Ua = class extends Error {
 	#e;
 	#t;
 	constructor(e, t) {
-		this.#e = e, this.#t = en(t);
+		this.#e = e, this.#t = tn(t);
 	}
 	async resolve_secret(e) {
-		if (!m.safeParse(e).success) throw new Ua("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
+		if (!m.safeParse(e).success) throw new K("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
 		let t;
 		try {
 			t = await this.#t("/api/secrets/view", {
 				method: "POST",
-				headers: cn(this.#e.getRequestHeaders()),
+				headers: ln(this.#e.getRequestHeaders()),
 				body: JSON.stringify({})
 			});
 		} catch {
-			throw new Ua("unavailable", "The host secret vault could not be reached");
+			throw new K("unavailable", "The host secret vault could not be reached");
 		}
-		if (!t.ok) throw t.status === 403 ? new Ua("not_exposed", Wa) : t.status === 404 ? new Ua("not_found", "The host vault holds no such credential") : new Ua("unavailable", `The host secret vault answered with status ${String(t.status)}`);
+		if (!t.ok) throw t.status === 403 ? new K("not_exposed", Wa) : t.status === 404 ? new K("not_found", "The host vault holds no such credential") : new K("unavailable", `The host secret vault answered with status ${String(t.status)}`);
 		let n;
 		try {
 			n = await t.json();
 		} catch {
-			throw new Ua("unavailable", "The host secret vault returned an unreadable response");
+			throw new K("unavailable", "The host secret vault returned an unreadable response");
 		}
 		let r;
-		if (typeof n == "object" && n && !Array.isArray(n) && e in n && (r = Reflect.get(n, e)), typeof r != "string" || r.trim().length === 0) throw new Ua("not_found", "The host vault holds no such credential");
+		if (typeof n == "object" && n && !Array.isArray(n) && e in n && (r = Reflect.get(n, e)), typeof r != "string" || r.trim().length === 0) throw new K("not_found", "The host vault holds no such credential");
 		return r;
 	}
 };
@@ -4210,7 +4218,7 @@ var Ja = class {
 	}
 	async resolve_secret(e) {
 		let t = this.#o();
-		if (t === null) throw new Ua("unsupported_host", `${this.#s()} credential storage cannot reveal credentials`);
+		if (t === null) throw new K("unsupported_host", `${this.#s()} credential storage cannot reveal credentials`);
 		return t.resolve_secret(e);
 	}
 	#a() {
@@ -4234,7 +4242,7 @@ var Ja = class {
 			case "host": return "Host";
 		}
 	}
-}, Ya = class extends z {
+}, Ya = class extends R {
 	constructor(e, t) {
 		super("configuration", e, t), this.name = "TransportConfigurationError";
 	}
@@ -4244,7 +4252,7 @@ function Xa(e) {
 	if (t !== null) return t;
 	if (e.direct_provider_base_url !== null) {
 		let t = Qa(e.direct_provider_base_url);
-		if (!se(t)) throw new Ya("Direct provider endpoint must use a loopback address");
+		if (!ce(t)) throw new Ya("Direct provider endpoint must use a loopback address");
 		return {
 			kind: "local_direct",
 			endpoint: t
@@ -4253,7 +4261,7 @@ function Xa(e) {
 	throw new Ya("No provider transport is available");
 }
 function Za(e) {
-	if (e === null || Mt(e.provider_id) === null) return null;
+	if (e === null || Nt(e.provider_id) === null) return null;
 	if (e.credential_reference === null) throw new Ya("This provider needs a stored credential before it can be called directly; set one on the active profile");
 	if (!e.secrets_readable) throw new Ya("This host cannot reveal stored credentials, so a direct provider call is impossible; switch the credential storage to this device");
 	return {
@@ -4264,7 +4272,7 @@ function Za(e) {
 }
 function Qa(e) {
 	try {
-		return T(e);
+		return w(e);
 	} catch (e) {
 		throw new Ya("Transport endpoint is invalid", { cause: e });
 	}
@@ -4537,7 +4545,7 @@ function yo(e) {
 function bo(e) {
 	let t = yo(e);
 	if (t === null) return null;
-	let n = C.parse(e.provider_id);
+	let n = S.parse(e.provider_id);
 	return {
 		id: e.id,
 		provider_id: n,
@@ -4567,7 +4575,7 @@ function xo(e) {
 		});
 	}
 	async function i(n) {
-		await et(e.database, e.namespace(), n), t.emit({
+		await tt(e.database, e.namespace(), n), t.emit({
 			type: "record_removed",
 			record_id: n
 		});
@@ -4581,7 +4589,7 @@ function xo(e) {
 		},
 		subscribe: (e) => t.subscribe(e),
 		async read_bytes(t) {
-			let r = await n(t), i = await $e(e.database, r.sha256);
+			let r = await n(t), i = await et(e.database, r.sha256);
 			if (i === null) throw Q(`Gallery record ${t} has no stored bytes; the blob was evicted`);
 			return i;
 		},
@@ -4618,7 +4626,7 @@ function Co(e) {
 	return {
 		job_id: e.job_id,
 		request_id: e.request_id,
-		provider_id: C.parse(e.provider_id),
+		provider_id: S.parse(e.provider_id),
 		state: e.state,
 		image_count: So(e.arguments),
 		completed_image_ids: e.image_ids,
@@ -4630,7 +4638,7 @@ function wo(e) {
 	return {
 		job_id: e.id,
 		request_id: e.request_id,
-		provider_id: C.parse(e.provider_id),
+		provider_id: S.parse(e.provider_id),
 		state: e.state,
 		image_count: e.arguments.image_count ?? 1,
 		completed_image_ids: e.image_ids,
@@ -4664,7 +4672,7 @@ function Do(e) {
 		});
 	});
 	async function r(t) {
-		let r = e.prepare_request === void 0 ? t : await e.prepare_request(t), i = await e.origin.resolve(), a = await Pi({
+		let r = e.prepare_request === void 0 ? t : await e.prepare_request(t), i = await e.origin.resolve(), a = await Fi({
 			queue: e.queue,
 			plans: e.plans
 		}, {
@@ -4680,7 +4688,7 @@ function Do(e) {
 		subscribe: (e) => t.subscribe(e),
 		submit: (e) => r(e.request),
 		async cancel(t) {
-			return Co(await Ii({
+			return Co(await Li({
 				queue: e.queue,
 				plans: e.plans
 			}, t));
@@ -4739,7 +4747,7 @@ function No(e) {
 //#region src/bootstrap/capabilities/generation_context.ts
 var Po = "inkwell:library";
 function Fo(e) {
-	return Bt.parse({
+	return Vt.parse({
 		schema_version: 1,
 		chat_id: e.chat_id,
 		active_swipes: e.messages.map((e) => ({
@@ -4762,7 +4770,7 @@ var Io = class {
 	}
 	async resolve() {
 		if (this.#e.get_active_chat_id() === null) return this.#n();
-		let e = await this.#e.get_active_chat(), t = Dt(Fo(e), this.#t), n = e.messages.at(-1);
+		let e = await this.#e.get_active_chat(), t = Ot(Fo(e), this.#t), n = e.messages.at(-1);
 		return {
 			chat_id: e.chat_id,
 			requested_swipe_id: n?.active_swipe_id ?? 0,
@@ -4771,7 +4779,7 @@ var Io = class {
 		};
 	}
 	#n() {
-		let e = Dt(Bt.parse({
+		let e = Ot(Vt.parse({
 			schema_version: 1,
 			chat_id: Po,
 			active_swipes: [],
@@ -4789,8 +4797,8 @@ function Uo(e) {
 	return e === "sd_webui" || e === "comfyui";
 }
 function Wo(e) {
-	let t = T(e);
-	if (!se(t)) throw TypeError("A local provider address must be a loopback address");
+	let t = w(e);
+	if (!ce(t)) throw TypeError("A local provider address must be a loopback address");
 	return t;
 }
 function Go(e) {
@@ -4838,7 +4846,7 @@ function Jo(e) {
 	let t = q(e), n = $a(t[Bo]);
 	return {
 		id: e.id,
-		provider_id: C.parse(e.provider_id),
+		provider_id: S.parse(e.provider_id),
 		display_name: J(t, "display_name", e.id),
 		model_id: Go(ro(n, "model_allowlist")),
 		workflow_id: Go(ro(n, "workflow_allowlist")),
@@ -4851,11 +4859,11 @@ function Jo(e) {
 	};
 }
 function Yo(e) {
-	let t = zt.safeParse(q(e)[zo]);
+	let t = Bt.safeParse(q(e)[zo]);
 	return t.success ? t.data : null;
 }
 function Xo(e) {
-	let t = ie.safeParse(q(e)[Ro]);
+	let t = ae.safeParse(q(e)[Ro]);
 	return t.success ? t.data : null;
 }
 function Zo(e) {
@@ -4912,7 +4920,7 @@ function Zo(e) {
 		async set_credential(r, i) {
 			if (i.trim().length === 0) throw TypeError("A provider credential must not be blank");
 			if (e.secrets === null) throw Q("The selected credential storage backend is unavailable");
-			let a = await n(r), o = S(a.namespace, r);
+			let a = await n(r), o = x(a.namespace, r);
 			await e.secrets.write_secret(o, i);
 			let s = {
 				...a,
@@ -4937,7 +4945,7 @@ function Zo(e) {
 				updated_at: e.now(),
 				payload: Y({
 					...q(a),
-					[Ro]: ie.parse(i)
+					[Ro]: ae.parse(i)
 				})
 			};
 			await e.repository.put(a.namespace, o);
@@ -4953,7 +4961,7 @@ function Zo(e) {
 				updated_at: e.now(),
 				payload: Y({
 					...q(a),
-					[zo]: zt.parse(i)
+					[zo]: Bt.parse(i)
 				})
 			};
 			await e.repository.put(a.namespace, o);
@@ -4979,7 +4987,7 @@ function Zo(e) {
 			}), c;
 		},
 		async test_connection(t) {
-			let r = Date.now(), i = await n(t), a = C.parse(i.provider_id), o = (await e.load_adapters())[a];
+			let r = Date.now(), i = await n(t), a = S.parse(i.provider_id), o = (await e.load_adapters())[a];
 			if (o === void 0) return {
 				status: "failed",
 				error: {
@@ -4992,7 +5000,7 @@ function Zo(e) {
 			} catch (e) {
 				return {
 					status: "failed",
-					error: e instanceof st ? e.provider_error : {
+					error: e instanceof ct ? e.provider_error : {
 						code: "invalid_request",
 						retryable: !1
 					}
@@ -5099,7 +5107,7 @@ function ts(e) {
 		async bulk_remove(e) {
 			for (let t of e) await n(t);
 		},
-		test_regex: (e, t) => Promise.resolve(Ki(e, t))
+		test_regex: (e, t) => Promise.resolve(qi(e, t))
 	};
 }
 //#endregion
@@ -5142,14 +5150,14 @@ function ss(e) {
 		async set_analysis_key(t) {
 			if (t.trim().length === 0) throw TypeError("An API key must not be blank");
 			if (e.secrets === null) throw Q(ns);
-			await e.secrets.write_secret(ne(e.settings.get_settings().active_namespace), t.trim());
+			await e.secrets.write_secret(re(e.settings.get_settings().active_namespace), t.trim());
 		},
 		list_worldbooks() {
 			return e.list_worldbooks === null ? Promise.reject(Q(as)) : Promise.resolve(e.list_worldbooks());
 		},
 		async clear_analysis_key() {
 			if (e.secrets?.delete_secret === void 0) throw Q(ns);
-			await e.secrets.delete_secret(ne(e.settings.get_settings().active_namespace));
+			await e.secrets.delete_secret(re(e.settings.get_settings().active_namespace));
 		},
 		async set_deepl_key(t) {
 			if (e.host_secrets === null) throw Q(rs);
@@ -5179,7 +5187,7 @@ function ss(e) {
 			return i({ vocabulary_update_channel: t }), e.settings.flush();
 		},
 		async import_vocabulary_package(t, r) {
-			if (n !== null) throw new ht("vocabulary_import_busy", "A vocabulary import is already in progress");
+			if (n !== null) throw new gt("vocabulary_import_busy", "A vocabulary import is already in progress");
 			let i = {
 				cancelled: !1,
 				cancel() {
@@ -5287,7 +5295,7 @@ async function us(e) {
 		google_image: new n()
 	};
 	if (e !== null) {
-		let n = Ze(e);
+		let n = Qe(e);
 		o.comfyui = new t({ workflow_store: { async load(e) {
 			return (await n.comfy_workflows.get("primary", e))?.payload;
 		} } });
@@ -5295,11 +5303,11 @@ async function us(e) {
 	return o;
 }
 function ds(e, t) {
-	let n = new nt(e);
+	let n = new rt(e);
 	return { async read(r) {
 		let i = await n.get(t(), r);
 		if (i === null) throw Error(`Source asset ${r} is not in the image store`);
-		let a = await $e(e, i.sha256);
+		let a = await et(e, i.sha256);
 		if (a === null) throw Error(`Source asset ${r} has no stored bytes`);
 		if (i.media_type === "video/mp4") throw Error(`Source asset ${r} is a video and cannot be a provider input`);
 		return {
@@ -5310,7 +5318,7 @@ function ds(e, t) {
 	} };
 }
 function fs(e) {
-	return Ye.omit({
+	return Xe.omit({
 		media_type: !0,
 		quarantined: !0
 	}).parse(e);
@@ -5318,7 +5326,7 @@ function fs(e) {
 function ps(e, t) {
 	return {
 		async put_image(n) {
-			return { id: (await tt(e, t(), {
+			return { id: (await nt(e, t(), {
 				id: n.id,
 				bytes: n.bytes,
 				claimed_media_type: n.claimed_media_type,
@@ -5327,9 +5335,9 @@ function ps(e, t) {
 			})).id };
 		},
 		async read_image(n) {
-			let r = await new nt(e).get(t(), n);
+			let r = await new rt(e).get(t(), n);
 			if (r === null) return null;
-			let i = await $e(e, r.sha256);
+			let i = await et(e, r.sha256);
 			return i === null ? null : {
 				bytes: i,
 				media_type: r.media_type
@@ -5354,7 +5362,7 @@ function hs(e) {
 				import("./chunks/build_generation_request-BbaXLzyG.js"),
 				import("./chunks/character_assets-C_vsqVcv.js"),
 				e.assets.load()
-			]), c = await ms(i, s.prompt_tag), l = ma(s, e.active_chat_id()), u = at(r.map((e) => e.name), l), d = o.attach_character_loras(await a({
+			]), c = await ms(i, s.prompt_tag), l = ha(s, e.active_chat_id()), u = ot(r.map((e) => e.name), l), d = o.attach_character_loras(await a({
 				provider_id: i.provider_id,
 				positive_prompt: t,
 				negative_prompt: n,
@@ -5367,7 +5375,7 @@ function hs(e) {
 				import("./chunks/novelai_profile_defaults-CKb8rSMX.js"),
 				import("./chunks/reference_image-DYyYuujP.js").then((e) => e.n),
 				p.load_runtime()
-			]), ee = Xo(i.record), _ = ee === null ? d : await m(d, ee, {
+			]), _ = Xo(i.record), v = _ === null ? d : await m(d, _, {
 				store_input: (e) => g.store_input(e),
 				async load_vibe(t) {
 					let n = await p.repositories.novelai_vibes.get(e.namespace(), t), r = n === null ? {} : q(n);
@@ -5378,7 +5386,7 @@ function hs(e) {
 					} : null;
 				}
 			});
-			return c(await o.attach_character_references(_, u, { store_reference: (e) => g.store_input(h(e)) }));
+			return c(await o.attach_character_references(v, u, { store_reference: (e) => g.store_input(h(e)) }));
 		},
 		async build_edit_request(t) {
 			let n = await e.read_active_profile();
@@ -5414,14 +5422,14 @@ async function gs(e, t, n, r) {
 			redirect: "error"
 		});
 	} catch (e) {
-		throw n.signal?.aborted ? new DOMException("Provider request was aborted", "AbortError") : new ut({ cause: e });
+		throw n.signal?.aborted ? new DOMException("Provider request was aborted", "AbortError") : new dt({ cause: e });
 	}
 	let a = Number(i.headers.get("content-length"));
 	if (Number.isFinite(a) && a > r) {
 		if (i.body !== null) try {
 			await i.body.cancel();
 		} catch {}
-		throw new z("malformed_response", "Provider response exceeds the byte limit");
+		throw new R("malformed_response", "Provider response exceeds the byte limit");
 	}
 	let o = await _s(i.body, r, n.signal);
 	return {
@@ -5441,11 +5449,11 @@ async function _s(e, t, n) {
 				o = !0;
 				break;
 			}
-			if (a += s.byteLength, a > t) throw new z("malformed_response", "Provider response exceeds the byte limit");
+			if (a += s.byteLength, a > t) throw new R("malformed_response", "Provider response exceeds the byte limit");
 			i.push(s);
 		}
 	} catch (e) {
-		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof z ? e : new ut({ cause: e });
+		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof R ? e : new dt({ cause: e });
 	} finally {
 		if (!o) try {
 			await r.cancel();
@@ -5463,7 +5471,7 @@ function vs(e) {
 		if (!bs(e)) throw $("Provider operation is invalid");
 		let { route: t, method: n, body: r, max_request_bytes: i, content_type: a, accept: o, max_response_bytes: s, signal: c } = e, l = r === void 0 ? i === void 0 : typeof i == "number" && Number.isSafeInteger(i) && i > 0 && i <= 2e8;
 		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !xs(a) || !xs(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw $("Provider operation is invalid");
-		if (lt(t), r === void 0) return {
+		if (ut(t), r === void 0) return {
 			route: t,
 			method: n,
 			...a === void 0 ? {} : { content_type: a },
@@ -5483,7 +5491,7 @@ function vs(e) {
 			signal: c
 		};
 	} catch (e) {
-		throw e instanceof z ? e : $("Provider operation is invalid", e);
+		throw e instanceof R ? e : $("Provider operation is invalid", e);
 	}
 }
 function ys(e) {
@@ -5491,7 +5499,7 @@ function ys(e) {
 		if (!bs(e)) throw $("Remote provider asset operation is invalid");
 		let { url: t, allowed_origins: n, max_bytes: r, signal: i } = e;
 		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw $("Remote provider asset operation is invalid");
-		let a = new URL(t), o = n.map(T);
+		let a = new URL(t), o = n.map(w);
 		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw $("Remote provider asset URL is not allowlisted");
 		return {
 			url: a.href,
@@ -5500,7 +5508,7 @@ function ys(e) {
 			signal: i
 		};
 	} catch (e) {
-		throw e instanceof z ? e : $("Remote provider asset operation is invalid", e);
+		throw e instanceof R ? e : $("Remote provider asset operation is invalid", e);
 	}
 }
 function bs(e) {
@@ -5522,7 +5530,7 @@ function xs(e) {
 	return !0;
 }
 function $(e, t) {
-	return new z("configuration", e, t === void 0 ? void 0 : { cause: t });
+	return new R("configuration", e, t === void 0 ? void 0 : { cause: t });
 }
 //#endregion
 //#region src/transport/direct_cloud_transport.ts
@@ -5545,7 +5553,7 @@ var Ss = class {
 			headers: r,
 			signal: t.signal
 		}, t.max_response_bytes));
-		return this.#i?.write(ct({
+		return this.#i?.write(lt({
 			route: t.route,
 			method: t.method,
 			status_code: a.status,
@@ -5566,14 +5574,14 @@ async function Cs(e) {
 	try {
 		return await e;
 	} catch (e) {
-		throw e instanceof ut ? new ut() : e;
+		throw e instanceof dt ? new dt() : e;
 	}
 }
 function ws(e, t) {
 	try {
-		return Nt(e, t);
+		return Pt(e, t);
 	} catch (e) {
-		throw e instanceof jt ? new z("configuration", e.message) : e;
+		throw e instanceof Mt ? new R("configuration", e.message) : e;
 	}
 }
 async function Ts(e, t, n, r) {
@@ -5582,12 +5590,12 @@ async function Ts(e, t, n, r) {
 		...e.required_headers
 	};
 	if (e.auth.kind === "none") return i;
-	if (t === null) throw new z("configuration", "This provider requires a stored credential; the active profile names no vault reference");
+	if (t === null) throw new R("configuration", "This provider requires a stored credential; the active profile names no vault reference");
 	let a;
 	try {
 		a = await n.resolve_secret(t);
 	} catch (e) {
-		throw new z("configuration", Es(e));
+		throw new R("configuration", Es(e));
 	}
 	return i[e.auth.header] = e.auth.kind === "bearer" ? `Bearer ${a}` : a, i;
 }
@@ -5602,11 +5610,11 @@ var Ds = class {
 	constructor(e) {
 		let t;
 		try {
-			t = T(e.base_url);
+			t = w(e.base_url);
 		} catch (e) {
-			throw new z("configuration", "Direct provider base URL is invalid", { cause: e });
+			throw new R("configuration", "Direct provider base URL is invalid", { cause: e });
 		}
-		if (!se(t)) throw new z("configuration", "Direct provider base URL must use a loopback address");
+		if (!ce(t)) throw new R("configuration", "Direct provider base URL must use a loopback address");
 		this.#e = t, this.#t = e.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 	execute(e) {
@@ -5635,7 +5643,7 @@ function Os(e, t = { secrets: null }) {
 	let n = t.fetch;
 	switch (e.kind) {
 		case "direct_cloud": {
-			let r = Mt(e.provider_id);
+			let r = Nt(e.provider_id);
 			if (r === null || t.secrets === null) throw Error(`No direct route catalog entry and host credential resolver pair exists for ${e.provider_id}`);
 			return new Ss({
 				catalog_entry: r,
@@ -5651,7 +5659,7 @@ function Os(e, t = { secrets: null }) {
 	}
 }
 function ks(e, t) {
-	let n = C.safeParse(e.provider_id).data;
+	let n = S.safeParse(e.provider_id).data;
 	if (n === void 0) return null;
 	let r = q(e);
 	return {
@@ -5679,9 +5687,9 @@ function As(e) {
 	};
 }
 function js(e, t, n) {
-	if (e === null || e.provider_id !== "novelai") throw new gt("The active provider profile is not a NovelAI profile");
-	if (e.credential_reference === null) throw new gt("The active NovelAI profile has no stored token; set one in Settings > Providers");
-	if (!e.secrets_readable || t === null) throw new gt("This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml");
+	if (e === null || e.provider_id !== "novelai") throw new _t("The active provider profile is not a NovelAI profile");
+	if (e.credential_reference === null) throw new _t("The active NovelAI profile has no stored token; set one in Settings > Providers");
+	if (!e.secrets_readable || t === null) throw new _t("This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml");
 	return Os({
 		kind: "direct_cloud",
 		provider_id: "novelai",
@@ -5832,10 +5840,10 @@ function Rs(e, t) {
 	}
 }
 function zs(e, t, n) {
-	let r = Rs(e, "TavernHelper"), i = Rs(e, "SillyTavern"), a = Rs(e, "fetch"), o = _n(r), s = on(i);
+	let r = Rs(e, "TavernHelper"), i = Rs(e, "SillyTavern"), a = Rs(e, "fetch"), o = vn(r), s = sn(i);
 	if (!o.message_swipe_metadata || !o.preset_generation || !o.tavern_regex || !s.main_generation_events || !s.message_swipe_metadata || typeof a != "function") return null;
-	let c = new un(() => i.getContext(), a);
-	return new Ls(t, new kn(r, () => {
+	let c = new dn(() => i.getContext(), a);
+	return new Ls(t, new An(r, () => {
 		let e = c.get_active_chat_id();
 		if (e === null) throw Error("No chat is open");
 		return e;
@@ -5855,7 +5863,7 @@ var Hs = class {
 	#e;
 	#t;
 	constructor(e, t) {
-		this.#e = e, this.#t = en(t);
+		this.#e = e, this.#t = tn(t);
 	}
 	supports(e) {
 		return !0;
@@ -5863,7 +5871,7 @@ var Hs = class {
 	async write_secret(e, t) {
 		let n = await this.#t("/api/secrets/write", {
 			method: "POST",
-			headers: cn(this.#e.getRequestHeaders()),
+			headers: ln(this.#e.getRequestHeaders()),
 			body: JSON.stringify({
 				key: e,
 				value: t,
@@ -5875,7 +5883,7 @@ var Hs = class {
 	async delete_secret(e) {
 		let t = await this.#t("/api/secrets/delete", {
 			method: "POST",
-			headers: cn(this.#e.getRequestHeaders()),
+			headers: ln(this.#e.getRequestHeaders()),
 			body: JSON.stringify({ key: e })
 		});
 		if (!t.ok) throw Error(`SillyTavern secret deletion failed with status ${String(t.status)}`);
@@ -5883,7 +5891,7 @@ var Hs = class {
 	async probe_secret(e) {
 		let t = await this.#t("/api/secrets/view", {
 			method: "POST",
-			headers: cn(this.#e.getRequestHeaders()),
+			headers: ln(this.#e.getRequestHeaders()),
 			body: JSON.stringify({})
 		});
 		if (!t.ok) return !1;
@@ -5956,7 +5964,7 @@ function ic() {
 	), { type: "module" });
 }
 async function ac(e) {
-	let t = e.globals ?? globalThis, n = e.extension_version ?? "development", r = qn(), i = [], a = [];
+	let t = e.globals ?? globalThis, n = e.extension_version ?? "development", r = Jn(), i = [], a = [];
 	function o(e, t, n) {
 		if (i.push(_o(e, t)), t.status === "available") return t.value;
 		let r = t.reason;
@@ -5967,79 +5975,79 @@ async function ac(e) {
 	}
 	let s = e.probe.ready ? e.probe.matrix : {}, c = Xs(t, s), l = [], u = null;
 	try {
-		u = await (e.open_storage ?? Xe)();
+		u = await (e.open_storage ?? Ze)();
 	} catch {
 		u = null;
 	}
-	let d = qs(t), p = d === null ? null : Ha(d), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Js(t), ee = Ys(t), _;
+	let d = qs(t), p = d === null ? null : Ua(d), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Js(t), _ = Ys(t), v;
 	try {
-		_ = (e.create_browser_secret_vault ?? mt)(t);
+		v = (e.create_browser_secret_vault ?? ht)(t);
 	} catch {
-		_ = null;
+		v = null;
 	}
-	_ !== null && a.push(() => _.close());
-	let v = pt(t);
 	v !== null && a.push(() => v.close());
-	let y = new Ja({
+	let y = mt(t);
+	y !== null && a.push(() => y.close());
+	let b = new Ja({
 		mode: () => p?.get_settings().credential_storage_mode ?? "host",
 		host_destination: g,
-		host_resolver: ee,
-		browser_vault: _,
-		device_vault: v
-	}), b = y.has_destination ? y : null, x = y.has_resolver ? y : null, S = u === null ? null : Ze(u), C = await ko(t.navigator?.locks, crypto.randomUUID());
+		host_resolver: _,
+		browser_vault: v,
+		device_vault: y
+	}), ee = b.has_destination ? b : null, te = b.has_resolver ? b : null, x = u === null ? null : Qe(u), S = await ko(t.navigator?.locks, crypto.randomUUID());
 	a.push(() => {
-		C.release();
-	}), S !== null && C.sole_page && await Eo(S.generation_jobs, m(), h());
-	let te = new fo(), w = null, re = () => w ??= us(u), ie = null, T = async () => {
-		if (S === null || p === null) return null;
-		let e = p.get_settings().active_provider_profile_id, t = e === null ? null : await S.provider_profiles.get(m(), e).catch(() => null), n = t === null ? null : ks(t, x !== null);
-		return ie = n?.provider_id ?? null, n;
+		S.release();
+	}), x !== null && S.sole_page && await Eo(x.generation_jobs, m(), h());
+	let ne = new fo(), C = null, ie = () => C ??= us(u), ae = null, w = async () => {
+		if (x === null || p === null) return null;
+		let e = p.get_settings().active_provider_profile_id, t = e === null ? null : await x.provider_profiles.get(m(), e).catch(() => null), n = t === null ? null : ks(t, te !== null);
+		return ae = n?.provider_id ?? null, n;
 	};
-	await T();
-	let ae = async () => {
-		let e = await T();
+	await w();
+	let oe = async () => {
+		let e = await w();
 		if (e === null) throw Error("No provider profile is active; choose one in Settings");
 		return e;
-	}, oe = null, E = S === null || u === null ? null : () => oe ??= import("./chunks/novelai_runtime-D77u_P9t.js").then((t) => t.create_novelai_runtime({
-		vibe_encodings: S.novelai_vibe_encodings,
-		provider_inputs: S.provider_input_assets,
+	}, se = null, T = x === null || u === null ? null : () => se ??= import("./chunks/novelai_runtime-D77u_P9t.js").then((t) => t.create_novelai_runtime({
+		vibe_encodings: x.novelai_vibe_encodings,
+		provider_inputs: x.provider_input_assets,
 		namespace: m,
 		gallery_assets: ds(u, m),
-		transport: () => As(async () => js((await T())?.direct_cloud ?? null, x, e.provider_fetch)),
+		transport: () => As(async () => js((await w())?.direct_cloud ?? null, te, e.provider_fetch)),
 		fetch: e.provider_fetch ?? globalThis.fetch.bind(globalThis)
-	})), se = E === null || u === null ? null : { async read(e, t) {
+	})), ce = T === null || u === null ? null : { async read(e, t) {
 		try {
 			return await ds(u, m).read(e, t);
 		} catch {
-			return (await E()).assets.read(e, t);
+			return (await T()).assets.read(e, t);
 		}
-	} }, ce = E === null ? null : async (e) => e.provider_id === "novelai" ? (await E()).prepare(e, AbortSignal.timeout(ec)) : e, le = o("novelai", E === null ? X(Zs) : Z(() => No(async () => (await E()).service)), r.novelai), ue = o("settings", p === null ? X($s) : Z(() => ss({
+	} }, le = T === null ? null : async (e) => e.provider_id === "novelai" ? (await T()).prepare(e, AbortSignal.timeout(ec)) : e, ue = o("novelai", T === null ? X(Zs) : Z(() => No(async () => (await T()).service)), r.novelai), de = o("settings", p === null ? X($s) : Z(() => ss({
 		settings: p,
 		database: u,
 		extension_version: n,
-		secrets: b,
-		browser_secret_vault: _,
+		secrets: ee,
+		browser_secret_vault: v,
 		host_secrets: g,
 		list_worldbooks: c === null ? null : () => c.list_worldbooks()
-	})), r.settings), de = o("profiles", S === null ? X(Zs) : Z(() => Zo({
-		repository: S.provider_profiles,
+	})), r.settings), fe = o("profiles", x === null ? X(Zs) : Z(() => Zo({
+		repository: x.provider_profiles,
 		namespace: m,
-		load_adapters: re,
-		secrets: b,
-		credential_present: async (e) => b === null || (p?.get_settings().credential_storage_mode ?? "host") === "host" ? null : b.probe_secret(e),
+		load_adapters: ie,
+		secrets: ee,
+		credential_present: async (e) => ee === null || (p?.get_settings().credential_storage_mode ?? "host") === "host" ? null : ee.probe_secret(e),
 		now: h
-	})), r.profiles), D = o("prompt_presets", S === null ? X(Zs) : Z(() => ts({
-		repository: S.prompt_presets,
+	})), r.profiles), E = o("prompt_presets", x === null ? X(Zs) : Z(() => ts({
+		repository: x.prompt_presets,
 		namespace: m,
 		now: h,
 		new_id: () => crypto.randomUUID()
-	})), r.prompt_presets), fe = o("assets", S === null ? X(Zs) : Z(() => lo({
-		repositories: S,
+	})), r.prompt_presets), pe = o("assets", x === null ? X(Zs) : Z(() => lo({
+		repositories: x,
 		namespace: m,
 		now: h
-	})), r.assets), pe = o("gallery", u === null ? X(Zs) : Z(() => xo({
+	})), r.assets), me = o("gallery", u === null ? X(Zs) : Z(() => xo({
 		database: u,
-		repository: new nt(u),
+		repository: new rt(u),
 		namespace: m,
 		now: h,
 		reveal_message: c === null ? null : (e, t) => {
@@ -6050,65 +6058,65 @@ async function ac(e) {
 				block: "center"
 			}), "revealed");
 		}
-	})), r.gallery), me = null, he = o("generation", u === null ? X(Zs) : c === null ? X(Qs) : Z(() => {
+	})), r.gallery), he = null, ge = o("generation", u === null ? X(Zs) : c === null ? X(Qs) : Z(() => {
 		let t = (e) => Xa({
 			direct_provider_base_url: e?.base_url ?? null,
 			direct_cloud: e?.direct_cloud ?? null
-		}), n = new ki(), r = new Zt({
-			executor: new Ni({
+		}), n = new Ai(), r = new Qt({
+			executor: new Pi({
 				store: ps(u, m),
 				ids: { next: () => crypto.randomUUID() },
 				clock: { now: h },
 				resolve_source_message: (e) => {
-					let t = me?.source_of(e.request_id) ?? null;
+					let t = he?.source_of(e.request_id) ?? null;
 					return t === null ? null : {
 						chat_id: t.chat_id,
 						message_id: String(t.message_id),
 						swipe_id: t.swipe_id
 					};
 				},
-				load_adapters: re,
+				load_adapters: ie,
 				profiles: { resolve: async (e) => {
-					let t = (await re())[e], n = await T();
+					let t = (await ie())[e], n = await w();
 					if (t === void 0 || n?.provider_id !== e) throw Error(`No stored provider profile is active for ${e}`);
 					return t.validate_profile(qo(n.record));
 				} },
-				transport: As(async () => Os(t(await T()), {
-					secrets: x,
+				transport: As(async () => Os(t(await w()), {
+					secrets: te,
 					...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 				})),
-				assets: se ?? ds(u, m),
-				...E === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await E()).finish(e, t, AbortSignal.timeout(ec)) : t },
+				assets: ce ?? ds(u, m),
+				...T === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await T()).finish(e, t, AbortSignal.timeout(ec)) : t },
 				log: { write: () => {} },
 				plans: n
 			}),
-			persistence: new Oi(u, m()),
+			persistence: new ki(u, m()),
 			job_id_source: { next: () => crypto.randomUUID() },
-			time_source: new Vt(),
+			time_source: new Ht(),
 			global_concurrency: p?.get_settings().global_concurrency ?? 1,
 			provider_start_interval_ms: tc
 		});
-		a.push(te.observe_jobs(r));
+		a.push(ne.observe_jobs(r));
 		let i = Do({
 			queue: r,
 			plans: n,
-			jobs: Ze(u).generation_jobs,
+			jobs: Qe(u).generation_jobs,
 			namespace: m,
-			origin: new Io(c, new Tt(globalThis.crypto)),
+			origin: new Io(c, new Et(globalThis.crypto)),
 			new_request_id: () => f.parse(crypto.randomUUID()),
-			...ce === null ? {} : { prepare_request: ce }
+			...le === null ? {} : { prepare_request: le }
 		});
 		if (p !== null) {
-			let e = () => x === null ? Promise.reject(/* @__PURE__ */ Error(nc)) : x.resolve_secret(ne(p.get_settings().active_namespace));
-			me = new sa({
+			let e = () => te === null ? Promise.reject(/* @__PURE__ */ Error(nc)) : te.resolve_secret(re(p.get_settings().active_namespace));
+			he = new ca({
 				host: c,
 				settings: () => p.get_settings().illustration,
 				auto_generation_enabled: () => p.get_settings().auto_generation_enabled,
-				prompt_context: (e) => ha(D, fe, p.get_settings().illustration.prompt_preset_id, e),
-				wardrobe: new ua({
+				prompt_context: (e) => ga(E, pe, p.get_settings().illustration.prompt_preset_id, e),
+				wardrobe: new da({
 					host: c,
-					library: ca(fe),
-					run: Ei({
+					library: la(pe),
+					run: Di({
 						host: c,
 						settings: () => p.get_settings().illustration,
 						resolve_analysis_key: e,
@@ -6117,33 +6125,33 @@ async function ac(e) {
 					new_id: () => crypto.randomUUID()
 				}),
 				...hs({
-					assets: fe,
+					assets: pe,
 					active_chat_id: () => c.get_active_chat_id(),
-					read_active_profile: T,
-					require_active_profile: ae,
-					novelai: E === null || S === null ? null : {
-						load_runtime: E,
-						repositories: S
+					read_active_profile: w,
+					require_active_profile: oe,
+					novelai: T === null || x === null ? null : {
+						load_runtime: T,
+						repositories: x
 					},
 					namespace: m
 				}),
-				edits_available: () => ie === "novelai",
+				edits_available: () => ae === "novelai",
 				resolve_analysis_key: e,
 				async submit(e) {
-					let n = await ae();
+					let n = await oe();
 					return t(n), (await i.submit({
 						profile_id: n.record.id,
 						request: e
 					})).request_id;
 				},
 				jobs: r,
-				new_slot_id: fa,
+				new_slot_id: pa,
 				new_generation_id: () => crypto.randomUUID(),
 				wait: (e) => new Promise((t) => setTimeout(t, e))
-			}), l.push(new ga(me, c));
+			}), l.push(new _a(he, c));
 		}
 		return i;
-	}), r.generation), ge = e.create_vocabulary_worker === void 0 ? ic() : e.create_vocabulary_worker, _e = o("vocabulary", u === null ? X(Zs) : ge === null ? X("This host has no Worker constructor, so vocabulary search cannot run") : Z(() => ls({
+	}), r.generation), _e = e.create_vocabulary_worker === void 0 ? ic() : e.create_vocabulary_worker, ve = o("vocabulary", u === null ? X(Zs) : _e === null ? X("This host has no Worker constructor, so vocabulary search cannot run") : Z(() => ls({
 		async load_catalog() {
 			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-DYV_NPzZ.js");
 			return new e({
@@ -6153,7 +6161,7 @@ async function ac(e) {
 		},
 		async create_client() {
 			let { VocabularyClient: e } = await import("./chunks/vocabulary_client-CCQkWkkk.js");
-			return new e({ create_worker: ge });
+			return new e({ create_worker: _e });
 		},
 		async read_active_package() {
 			let { VocabularyPackageStore: e } = await import("./chunks/src-BzSC_ziC.js").then((e) => e.t), t = await new e(u, "vocabulary").find_active_or_confirmed();
@@ -6166,31 +6174,31 @@ async function ac(e) {
 	})), r.vocabulary);
 	return {
 		capabilities: {
-			generation: he,
-			profiles: de,
-			prompt_presets: D,
-			assets: fe,
-			gallery: pe,
-			vocabulary: _e,
+			generation: ge,
+			profiles: fe,
+			prompt_presets: E,
+			assets: pe,
+			gallery: me,
+			vocabulary: ve,
 			diagnostics: o("diagnostics", Z(() => mo({
 				capability_matrix: s,
 				helper_version: e.probe.ready ? e.probe.helper_version : null,
-				timeline: te,
+				timeline: ne,
 				resolutions: () => i,
 				settings: () => p?.get_settings() ?? null,
 				estimate_storage: e.estimate_storage ?? rc,
 				extension_version: n
 			})), r.diagnostics),
-			settings: ue,
-			novelai: le
+			settings: de,
+			novelai: ue
 		},
 		resolutions: i,
 		host: c,
-		illustrations: me,
-		translator: c === null || p === null ? null : Da({
+		illustrations: he,
+		translator: c === null || p === null ? null : Oa({
 			host: c,
 			settings: () => p.get_settings().translation,
-			vocabulary: _e
+			vocabulary: ve
 		}),
 		modules: l,
 		async dispose() {
@@ -6210,7 +6218,7 @@ function sc(e) {
 		title: "Inkwell ready",
 		message: `Connected through JS Slash Runner ${e.helper_version}.`
 	};
-	let t = `JS Slash Runner ${An} or newer is required.`;
+	let t = `JS Slash Runner ${jn} or newer is required.`;
 	switch (e.error_code) {
 		case "tavern_helper_missing": return {
 			state: "blocked",
@@ -6249,7 +6257,7 @@ function cc(e) {
 //#endregion
 //#region src/bootstrap/bootstrap.ts
 async function lc(e = {}) {
-	let t = e.document ?? document, n = e.globals ?? globalThis, r = Vn(n), i, a, o = null, s = null;
+	let t = e.document ?? document, n = e.globals ?? globalThis, r = Hn(n), i, a, o = null, s = null;
 	try {
 		o = await ac({
 			...e.composition,
@@ -6260,7 +6268,7 @@ async function lc(e = {}) {
 	} catch (e) {
 		console.error("[Inkwell] Startup failed while composing capabilities", e), s = e ?? /* @__PURE__ */ Error("Composition failed");
 	}
-	let c = r.ready ? new yt([...e.modules ?? [], ...o?.modules ?? []]) : void 0;
+	let c = r.ready ? new bt([...e.modules ?? [], ...o?.modules ?? []]) : void 0;
 	if (!r.ready) i = "blocked", a = sc(r);
 	else if (s !== null) i = "failed", a = cc(s);
 	else try {
@@ -6268,42 +6276,50 @@ async function lc(e = {}) {
 	} catch (e) {
 		console.error("[Inkwell] Startup failed while starting runtime modules", e), i = "failed", a = cc(e);
 	}
-	let l = mi(t, e.stylesheet ?? ""), u = Ee(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null);
-	u.apply_locale(d ?? "auto", typeof navigator > "u" ? "en" : navigator.language);
-	let f = be(ui, {
+	let l = hi(t, e.stylesheet ?? ""), u = De(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null), f = () => {
+		try {
+			return o?.host?.get_locale() ?? navigator.language;
+		} catch {
+			return navigator.language;
+		}
+	};
+	u.apply_locale(d ?? "auto", f());
+	let p = o?.capabilities.settings.subscribe((e) => {
+		u.apply_locale(e.settings.locale, f());
+	}), m = xe(di, {
 		status: a,
 		probe: r,
 		version: e.version ?? "development",
 		portalTarget: l.portal_element,
 		hostElement: l.host_element,
 		capabilities: o?.capabilities,
-		host: o?.host ? _e(o.host) : null,
-		illustrations: o?.illustrations ? _e(o.illustrations) : null,
+		host: o?.host ? ve(o.host) : null,
+		illustrations: o?.illustrations ? ve(o.illustrations) : null,
 		translator: o?.translator ?? null
 	});
-	f.config.errorHandler = (e, t, n) => {
+	m.config.errorHandler = (e, t, n) => {
 		console.error(`[Inkwell] Unhandled error in ${n}`, e);
 	};
-	let p = pi(t);
-	f.use(u.i18n), f.onUnmount(() => {
-		l.remove(), p();
+	let h = mi(t);
+	m.use(u.i18n), m.onUnmount(() => {
+		p?.(), l.remove(), h();
 	});
 	try {
-		f.mount(l.app_element);
+		m.mount(l.app_element);
 	} catch (e) {
 		throw l.remove(), await c?.stop_all(), e;
 	}
-	let m = !1;
+	let g = !1;
 	return {
 		state: i,
 		probe: r,
 		resolutions: o?.resolutions ?? [],
 		async dispose() {
-			if (m) return;
-			m = !0;
+			if (g) return;
+			g = !0;
 			let t = [];
 			try {
-				f.unmount();
+				m.unmount();
 			} catch (e) {
 				t.push(e);
 			}

@@ -95,10 +95,17 @@ export async function bootstrap_tavern_canvas(
     .load()
     .then((snapshot) => snapshot.settings.locale)
     .catch(() => null);
-  void locale_runtime.apply_locale(
-    persisted_locale ?? "auto",
-    typeof navigator === "undefined" ? "en" : navigator.language,
-  );
+  const host_locale = (): string => {
+    try {
+      return composition?.host?.get_locale() ?? navigator.language;
+    } catch {
+      return navigator.language;
+    }
+  };
+  void locale_runtime.apply_locale(persisted_locale ?? "auto", host_locale());
+  const stop_locale_watch = composition?.capabilities.settings.subscribe((event) => {
+    void locale_runtime.apply_locale(event.settings.locale, host_locale());
+  });
 
   const app = createApp(AppRoot, {
     status,
@@ -118,6 +125,7 @@ export async function bootstrap_tavern_canvas(
   const remove_chat_stylesheet = install_chat_stylesheet(document_);
   app.use(locale_runtime.i18n);
   app.onUnmount(() => {
+    stop_locale_watch?.();
     surface.remove();
     remove_chat_stylesheet();
   });

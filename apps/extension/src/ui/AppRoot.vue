@@ -102,14 +102,25 @@ const prompt_tags = computed<PromptTagsPort>(() => {
   };
 });
 
-if (studio) {
-  watch(
-    () => studio.state.value.color_mode,
-    (color_mode) => {
-      host_element.dataset.colorMode = color_mode;
-    },
-  );
+const system_color_mode = ref(initial_color_mode);
+const color_scheme_query =
+  typeof window === "undefined" || typeof window.matchMedia !== "function"
+    ? null
+    : window.matchMedia("(prefers-color-scheme: dark)");
+function on_color_scheme_change(event: MediaQueryListEvent): void {
+  system_color_mode.value = event.matches ? "dark" : "light";
 }
+color_scheme_query?.addEventListener("change", on_color_scheme_change);
+onBeforeUnmount(() => color_scheme_query?.removeEventListener("change", on_color_scheme_change));
+
+/** The theme chosen in Settings, or the system's when it is set to match the system. */
+const color_mode = computed(() => {
+  const preference = studio?.state.value.settings.settings?.ui.color_mode ?? "system";
+  return preference === "system" ? system_color_mode.value : preference;
+});
+watch(color_mode, (mode) => {
+  host_element.dataset.colorMode = mode;
+});
 
 function select_route(route: StudioRoute): void {
   studio?.controller.set_route(route);

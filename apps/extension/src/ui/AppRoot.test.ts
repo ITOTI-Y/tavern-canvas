@@ -208,6 +208,26 @@ describe("AppRoot normal studio state", () => {
     expect(host_element.dataset.surfaceMode).toBe("studio");
   });
 
+  it("applies the theme chosen in Settings over the system color scheme", async () => {
+    mock_matches(false);
+    const capabilities = create_unavailable_capabilities();
+    const snapshot = await capabilities.settings.load();
+    capabilities.settings.load = () =>
+      Promise.resolve({
+        ...snapshot,
+        settings: { ...snapshot.settings, ui: { ...snapshot.settings.ui, color_mode: "dark" } },
+      });
+    const { host_element } = mount_app_root({
+      status: { state: "ready", title: "ignored", message: "ignored" },
+      probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
+      capabilities,
+    });
+
+    await flushPromises();
+
+    expect(host_element.dataset.colorMode).toBe("dark");
+  });
+
   it("reflects the detected system color scheme onto the Shadow Root host element", () => {
     mock_matches(true);
     const { host_element } = mount_app_root({
