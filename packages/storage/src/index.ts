@@ -160,3 +160,4 @@ export type {
   ImportArchiveOptions,
   ImportArchiveResult,
 } from "./archive/import_archive.js";
+export { read_image_size, type ImageSize } from "./images/image_size.js";

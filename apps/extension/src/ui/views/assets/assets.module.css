@@ -85,7 +85,9 @@
   font-weight: var(--tc-font-weight-regular);
 }
 
+/* The switch sits right after its label instead of across the whole workspace. */
 .scopeSwitch {
+  display: flex;
   padding: var(--tc-space-2) var(--tc-panel-padding) 0;
 }
 

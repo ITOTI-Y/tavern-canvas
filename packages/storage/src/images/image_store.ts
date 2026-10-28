@@ -27,6 +27,7 @@ import {
   type ImageMediaType,
   type ImageRecordFields,
 } from "./image_schema.js";
+import { read_image_size } from "./image_size.js";
 
 export type {
   GalleryImageRecord,
@@ -191,6 +192,7 @@ export async function create_image_record(
     sha256: blob.sha256,
     last_accessed_at: input.created_at,
     pinned: input.pinned ?? false,
+    ...(input.metadata.width === undefined ? read_image_size(input.bytes) : null),
     ...input.metadata,
     media_type: blob.media_type,
     quarantined: false,

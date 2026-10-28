@@ -2071,7 +2071,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = _(() => import("./PromptView-8KTol-rr.js")), n = _(() => import("./PromptTagPresetPanel-DDEagKQH.js")), r = _(() => import("./DiagnosticsView-D3SaptSt.js")), i = e, { t: a } = T(), o = [
+		let t = _(() => import("./PromptView-8KTol-rr.js")), n = _(() => import("./PromptTagPresetPanel-LWBrlBM2.js")), r = _(() => import("./DiagnosticsView-D3SaptSt.js")), i = e, { t: a } = T(), o = [
 			"illustration",
 			"providers",
 			"translation",

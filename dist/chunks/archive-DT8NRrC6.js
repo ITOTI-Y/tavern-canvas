@@ -1,7 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
 import { c as n, h as r, m as i, p as a, r as o, t as s, u as c, x as l } from "./schemas-DMBLWk59.js";
 import { _ as u, i as d, l as f, m as p, u as m } from "./business_repositories-DrZf-uG8.js";
-import { s as h } from "./image_store-C5ZzltWX.js";
+import { s as h } from "./image_store-D1qjzarC.js";
 //#region ../../packages/contracts/src/archive.ts
 var g = "tavern-canvas-archive", _ = [
 	"provider_profiles",
