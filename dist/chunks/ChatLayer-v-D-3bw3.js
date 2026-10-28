@@ -910,7 +910,7 @@ var He = ["for"], Ue = [
 			return e.estimate === null ? "" : e.estimate.opus_free ? i("chat.dialog.cost_free") : e.estimate.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: e.estimate.anlas });
 		}
 		function ae(e) {
-			e || r("close");
+			e || (o.value.status === "analyzing" && n.request !== null && n.service.cancel_analysis(n.request.message_id), r("close"));
 		}
 		return (t, n) => (s(), x(ne, {
 			open: e.request !== null,
@@ -1607,7 +1607,7 @@ function vt(e) {
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var yt = { key: 1 }, bt = ["onClick"], xt = ["src"], St = /* @__PURE__ */ j({
+var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ j({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1725,22 +1725,27 @@ var yt = { key: 1 }, bt = ["onClick"], xt = ["src"], St = /* @__PURE__ */ j({
 				"onSelect",
 				"onQuickEdit"
 			])], 8, ["to"]))), 128)),
-			(s(!0), f(O, null, a(h(j), (e) => (s(), x(g, {
-				key: e.key,
-				to: e.element
-			}, [C("div", { class: k(h(X).notice) }, [e.notice.status === "running" ? (s(), f(O, { key: 0 }, [A(D(h(r)("chat.analysis_running")), 1)], 64)) : e.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: e.notice.message })), 1)], 64)) : (s(), f(O, { key: 2 }, [
-				C("div", null, D(h(r)("chat.analysis_failed", { reason: e.notice.message })), 1),
-				e.notice.excerpt === null ? b("", !0) : (s(), f("pre", {
+			(s(!0), f(O, null, a(h(j), (t) => (s(), x(g, {
+				key: t.key,
+				to: t.element
+			}, [C("div", { class: k(h(X).notice) }, [t.notice.status === "running" ? (s(), f(O, { key: 0 }, [C("div", null, D(h(r)("chat.analysis_running")), 1), C("div", { class: k(h(X).notice_actions) }, [C("button", {
+				type: "button",
+				class: k(h(X).button),
+				"data-testid": "analysis-cancel",
+				onClick: (n) => e.service.cancel_analysis(t.message_id)
+			}, D(h(r)("common.actions.cancel")), 11, yt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: t.notice.message })), 1)], 64)) : (s(), f(O, { key: 2 }, [
+				C("div", null, D(h(r)("chat.analysis_failed", { reason: t.notice.message })), 1),
+				t.notice.excerpt === null ? b("", !0) : (s(), f("pre", {
 					key: 0,
 					class: k(h(X).excerpt)
-				}, D(e.notice.excerpt), 3)),
-				e.notice.excerpt === null ? b("", !0) : (s(), f("div", yt, D(h(r)("chat.dialog.parse_failed_hint")), 1)),
+				}, D(t.notice.excerpt), 3)),
+				t.notice.excerpt === null ? b("", !0) : (s(), f("div", bt, D(h(r)("chat.dialog.parse_failed_hint")), 1)),
 				C("div", { class: k(h(X).notice_actions) }, [C("button", {
 					type: "button",
 					class: k(h(X).button),
 					"data-testid": "analysis-retry",
-					onClick: (t) => F(e.message_id)
-				}, D(h(r)("chat.dialog.retry")), 11, bt)], 2)
+					onClick: (e) => F(t.message_id)
+				}, D(h(r)("chat.dialog.retry")), 11, xt)], 2)
 			], 64))], 2)], 8, ["to"]))), 128)),
 			o.value === null ? b("", !0) : (s(), x(g, {
 				key: 0,
@@ -1752,7 +1757,7 @@ var yt = { key: 1 }, bt = ["onClick"], xt = ["src"], St = /* @__PURE__ */ j({
 			}, [C("img", {
 				src: o.value,
 				alt: ""
-			}, null, 8, xt)], 2)])),
+			}, null, 8, St)], 2)])),
 			M(Ze, {
 				request: i.value,
 				service: e.service,
@@ -1827,4 +1832,4 @@ var yt = { key: 1 }, bt = ["onClick"], xt = ["src"], St = /* @__PURE__ */ j({
 	}
 });
 //#endregion
-export { St as default };
+export { Ct as default };

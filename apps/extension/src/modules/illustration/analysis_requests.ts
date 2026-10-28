@@ -16,6 +16,48 @@ import { activate_worldbook } from "./worldbook.js";
 
 const ANALYSIS_ATTEMPTS = 3;
 const ANALYSIS_RETRY_DELAY_MS = 2_000;
+const ANALYSIS_TIMEOUT_MS = 180_000;
+
+/** The analysis request was stopped by the user or ran past its time limit; it is not retried. */
+export class AnalysisStoppedError extends Error {
+  readonly reason: "cancelled" | "timed_out";
+
+  constructor(reason: "cancelled" | "timed_out") {
+    super(reason === "cancelled" ? "Analysis was cancelled" : "Analysis timed out");
+    this.name = "AnalysisStoppedError";
+    this.reason = reason;
+  }
+}
+
+/** Settles with the generation, or stops it on the host when `signal` aborts or the time limit passes. */
+async function generate_until_stopped<T>(
+  host: HostAdapter,
+  generation_id: string,
+  generation: Promise<T>,
+  signal: AbortSignal,
+): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let on_abort = (): void => {};
+  const stopped = new Promise<never>((_resolve, reject) => {
+    const stop = (reason: "cancelled" | "timed_out"): void => {
+      host.stop_generation(generation_id);
+      reject(new AnalysisStoppedError(reason));
+    };
+    on_abort = () => {
+      stop("cancelled");
+    };
+    timer = setTimeout(() => {
+      stop("timed_out");
+    }, ANALYSIS_TIMEOUT_MS);
+    signal.addEventListener("abort", on_abort, { once: true });
+  });
+  try {
+    return await Promise.race([generation, stopped]);
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", on_abort);
+  }
+}
 
 async function to_host_connection(
   connection: AnalysisConnection,
@@ -126,25 +168,35 @@ export async function request_analysis(
   text: string,
   user_input: string,
   parse: (raw: string) => readonly IllustrationProposal[],
+  signal: AbortSignal,
 ): Promise<readonly IllustrationProposal[]> {
   const settings = deps.settings();
   const connection = await to_host_connection(settings.connection, deps.resolve_analysis_key);
   const world_info = await to_host_world_info(settings.world_info, text, deps.host);
   for (let attempt = 1; ; attempt += 1) {
+    if (signal.aborted) {
+      throw new AnalysisStoppedError("cancelled");
+    }
+    const generation_id = deps.new_generation_id();
     try {
-      const result = await deps.host.generate_with_preset({
-        generation_id: deps.new_generation_id(),
-        preset_name: settings.preset_name,
-        user_input,
-        max_chat_history: settings.max_chat_history,
-        connection,
-        json_schema: ANALYSIS_JSON_SCHEMA,
-        world_info,
-        image: null,
-      });
+      const result = await generate_until_stopped(
+        deps.host,
+        generation_id,
+        deps.host.generate_with_preset({
+          generation_id,
+          preset_name: settings.preset_name,
+          user_input,
+          max_chat_history: settings.max_chat_history,
+          connection,
+          json_schema: ANALYSIS_JSON_SCHEMA,
+          world_info,
+          image: null,
+        }),
+        signal,
+      );
       return parse(result.content);
     } catch (error) {
-      if (attempt >= ANALYSIS_ATTEMPTS) {
+      if (attempt >= ANALYSIS_ATTEMPTS || error instanceof AnalysisStoppedError) {
         throw error;
       }
       await deps.wait(ANALYSIS_RETRY_DELAY_MS * attempt);

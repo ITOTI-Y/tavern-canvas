@@ -174,9 +174,19 @@ onBeforeUnmount(() => {
   </Teleport>
   <Teleport v-for="target in notices" :key="target.key" :to="target.element">
     <div :class="styles.notice">
-      <template v-if="target.notice.status === 'running'">{{
-        t("chat.analysis_running")
-      }}</template>
+      <template v-if="target.notice.status === 'running'">
+        <div>{{ t("chat.analysis_running") }}</div>
+        <div :class="styles.notice_actions">
+          <button
+            type="button"
+            :class="styles.button"
+            data-testid="analysis-cancel"
+            @click="service.cancel_analysis(target.message_id)"
+          >
+            {{ t("common.actions.cancel") }}
+          </button>
+        </div>
+      </template>
       <template v-else-if="target.notice.status === 'wardrobe_failed'">{{
         t("chat.wardrobe_failed", { reason: target.notice.message })
       }}</template>

@@ -274,6 +274,9 @@ function estimate_label(draft: SlotDraft): string {
 
 function update_open(open: boolean): void {
   if (!open) {
+    if (state.value.status === "analyzing" && props.request !== null) {
+      props.service.cancel_analysis(props.request.message_id);
+    }
     emit("close");
   }
 }

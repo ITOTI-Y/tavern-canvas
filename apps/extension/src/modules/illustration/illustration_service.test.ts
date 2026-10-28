@@ -6,7 +6,7 @@ import {
 } from "@tavern-canvas/contracts";
 import { describe, expect, it, vi } from "vitest";
 import { reactive } from "vue";
-import { create_wardrobe_runner } from "./analysis_requests.js";
+import { AnalysisStoppedError, create_wardrobe_runner } from "./analysis_requests.js";
 
 import type {
   HostAdapter,
@@ -47,6 +47,8 @@ class MemoryHost {
   });
   edit_before_replace = false;
   failures_before_reply = 0;
+  hang_replies = false;
+  readonly stopped: string[] = [];
 
   readonly adapter = {
     capabilities: {},
@@ -102,6 +104,9 @@ class MemoryHost {
     },
     generate_with_preset: (request: PresetGenerationRequest) => {
       this.generate_calls.push(request);
+      if (this.hang_replies) {
+        return new Promise<never>(() => undefined);
+      }
       if (this.failures_before_reply > 0) {
         this.failures_before_reply -= 1;
         return Promise.reject(new Error("upstream 502"));
@@ -110,7 +115,9 @@ class MemoryHost {
     },
     list_worldbooks: () => [...this.worldbooks.keys()],
     read_worldbook: (name: string) => Promise.resolve(this.worldbooks.get(name) ?? []),
-    stop_generation: () => undefined,
+    stop_generation: (generation_id: string) => {
+      this.stopped.push(generation_id);
+    },
     sync_regex_scripts: () => Promise.resolve(false),
     translate_deepl: () => Promise.reject(new Error("not used")),
   } satisfies HostAdapter;
@@ -214,6 +221,42 @@ describe("IllustrationService.analyze", () => {
     await expect(service.analyze(3)).rejects.toThrow("upstream 502");
     expect(host.generate_calls).toHaveLength(3);
     expect(service.read(LOCATION)).toBeNull();
+  });
+
+  it("stops a cancelled analysis on the host without retrying it", async () => {
+    const host = new MemoryHost();
+    host.hang_replies = true;
+    const { service } = create_service(host);
+    const events: string[] = [];
+    service.subscribe((event) => events.push(event.type));
+
+    const analysis = service.analyze(3);
+    await vi.waitFor(() => expect(host.generate_calls).toHaveLength(1));
+    service.cancel_analysis(3);
+
+    await expect(analysis).rejects.toBeInstanceOf(AnalysisStoppedError);
+    expect(host.stopped).toEqual([host.generate_calls[0]?.generation_id]);
+    expect(host.generate_calls).toHaveLength(1);
+    expect(events).toEqual(["analysis_started", "analysis_cancelled"]);
+  });
+
+  it("gives up on an analysis that never answers", async () => {
+    vi.useFakeTimers();
+    try {
+      const host = new MemoryHost();
+      host.hang_replies = true;
+      const { service } = create_service(host);
+
+      const analysis = service.analyze(3);
+      const outcome = expect(analysis).rejects.toMatchObject({ reason: "timed_out" });
+      await vi.advanceTimersByTimeAsync(180_000);
+
+      await outcome;
+      expect(host.stopped).toHaveLength(1);
+      expect(host.generate_calls).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("records the chosen slots and writes a marker after the paragraph", async () => {

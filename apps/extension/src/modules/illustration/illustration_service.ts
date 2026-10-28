@@ -24,7 +24,11 @@ import type { CharacterTags } from "../wardrobe/character_from_image.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { type SlotLibrary } from "./library_match.js";
-import { request_analysis, run_wardrobe_request } from "./analysis_requests.js";
+import {
+  AnalysisStoppedError,
+  request_analysis,
+  run_wardrobe_request,
+} from "./analysis_requests.js";
 import { proposal_slots } from "./proposal_slots.js";
 
 export interface SlotPromptContext {
@@ -75,6 +79,7 @@ export type IllustrationEvent =
       readonly message: string;
       readonly excerpt: string | null;
     }
+  | { readonly type: "analysis_cancelled"; readonly location: HostSwipeLocation }
   | {
       readonly type: "wardrobe_failed";
       readonly location: HostSwipeLocation;
@@ -119,7 +124,7 @@ export class IllustrationService {
   readonly #deps: IllustrationServiceDeps;
   readonly #pending = new Map<string, PendingSlotJob>();
   readonly #listeners = new Set<(event: IllustrationEvent) => void>();
-  readonly #analyzing = new Set<string>();
+  readonly #analyzing = new Map<string, AbortController>();
   #last_generation_type: string | null = null;
   #unsubscribes: (() => void)[] = [];
 
@@ -194,16 +199,22 @@ export class IllustrationService {
     if (this.#analyzing.has(key)) {
       throw new Error(`Message ${String(message_id)} is already being analyzed`);
     }
-    this.#analyzing.add(key);
+    const controller = new AbortController();
+    this.#analyzing.set(key, controller);
     this.#emit({ type: "analysis_started", location });
     try {
       const record = await this.#analyze_text(
         location,
         message.swipes[location.swipe_id]?.content ?? "",
+        controller.signal,
       );
       this.#emit({ type: "slots_changed", location });
       return record;
     } catch (error) {
+      if (error instanceof AnalysisStoppedError && error.reason === "cancelled") {
+        this.#emit({ type: "analysis_cancelled", location });
+        throw error;
+      }
       this.#emit({
         type: "analysis_failed",
         location,
@@ -213,6 +224,15 @@ export class IllustrationService {
       throw error;
     } finally {
       this.#analyzing.delete(key);
+    }
+  }
+
+  /** Stops a running analysis of the message; the analysis rejects with `AnalysisStoppedError`. */
+  cancel_analysis(message_id: number): void {
+    for (const [key, controller] of this.#analyzing) {
+      if (key.split(":").at(-2) === String(message_id)) {
+        controller.abort();
+      }
     }
   }
 
@@ -228,7 +248,11 @@ export class IllustrationService {
     return this.#deps.auto_generation_enabled();
   }
 
-  async #analyze_text(location: HostSwipeLocation, text: string): Promise<SwipeIllustrations> {
+  async #analyze_text(
+    location: HostSwipeLocation,
+    text: string,
+    signal: AbortSignal,
+  ): Promise<SwipeIllustrations> {
     const paragraphs = split_paragraphs(text);
     const settings = this.#deps.settings();
     const record: SwipeIllustrations = { schema_version: 2, slots: [] };
@@ -245,6 +269,7 @@ export class IllustrationService {
           settings.analysis_guidance,
         ),
         (raw) => parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message),
+        signal,
       );
       record.slots.push(
         ...proposal_slots(paragraphs, proposals, context, snapshot, this.#deps.new_slot_id),
@@ -313,6 +338,7 @@ export class IllustrationService {
         settings.analysis_guidance,
       ),
       (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
+      new AbortController().signal,
     );
     const by_paragraph = new Map(proposals.map((proposal) => [proposal.paragraph, proposal]));
     const slots = proposal_slots(
