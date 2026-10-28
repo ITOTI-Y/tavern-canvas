@@ -24,8 +24,11 @@
   --tc-on-marker: #17171a;
 }
 
+/* One track that cannot grow past the card, so a long scene caption ellipsizes instead of
+   widening the bar beyond the image. */
 .slot {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--tc-space-1);
   margin: var(--tc-space-2) 0;
   max-width: min(100%, 560px);
