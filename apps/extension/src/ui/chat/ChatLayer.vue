@@ -16,6 +16,7 @@ import { encode_mask_png } from "./mask_png.js";
 import QuickEditDialog from "./QuickEditDialog.vue";
 import type { QuickEditKind, QuickEditRequest } from "./quick_edit_request.js";
 import SlotCard from "./SlotCard.vue";
+import ParagraphActions from "./ParagraphActions.vue";
 import { slot_error_label } from "./slot_error_label.js";
 import { use_chat_slots } from "./use_chat_slots.js";
 import { use_image_urls } from "./use_image_urls.js";
@@ -217,6 +218,10 @@ onBeforeUnmount(() => {
       <img :src="preview_url" alt="" />
     </div>
   </Teleport>
+  <ParagraphActions
+    :service="service"
+    @fallback="(message_id) => (dialog_request = { message_id, slot_id: null })"
+  />
   <IllustrateDialog
     :request="dialog_request"
     :service="service"

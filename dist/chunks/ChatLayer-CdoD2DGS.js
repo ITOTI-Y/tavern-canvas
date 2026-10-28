@@ -1,44 +1,88 @@
 import { a as e, n as t } from "./wardrobe_library-cpT1rkQA.js";
-import { A as n, C as r, G as i, H as a, I as o, K as s, O as c, P as l, T as u, V as d, _ as f, a as p, c as m, d as h, dt as g, ft as _, g as v, h as y, j as b, lt as x, m as S, mt as C, n as w, p as T, pt as E, rt as D, tt as O, u as k, v as A, x as j, y as M } from "./vue-i18n-L-BrQRnK.js";
-import { n as N } from "./portal_keys-DthxrmWp.js";
-import { n as P, t as F } from "./AppIcon-DkyxvN8k.js";
-import { i as I, n as L, r as R, t as z } from "./PromptTagChips-BSiYc5Q5.js";
-import { n as B, t as V } from "./StateSurface-X9aRtXAT.js";
-import { t as H } from "./AppSelect-D-2VXU1J.js";
-import { t as U } from "./components_styles-DHX8irr3.js";
-import { t as W } from "./AppCheckbox-qcV3D_N_.js";
-import { t as G } from "./trash-2-Dqlz-IWX.js";
-import { t as ee } from "./upload-BjktsLMj.js";
-import { t as te } from "./x-D7Ry5i_D.js";
-import { n as ne, u as re } from "./analysis-C1J50ZrG.js";
-import { n as ie } from "./deferred_stylesheets-BpS7LWkd.js";
-import { c as K, l as q, r as J, s as ae } from "./model_json-DNK3Va6h.js";
-import { r as oe, t as se } from "./inpaint_session-wWdlKjTY.js";
-import { a as ce, c as le, i as ue, n as de, r as fe, s as pe } from "./Collection-e6mvGbNy.js";
-import { t as me } from "./DialogPortal-BX3_tTUP.js";
+import { A as n, C as r, G as i, H as a, I as o, K as s, O as c, P as l, T as u, V as d, _ as f, a as p, c as m, d as h, dt as g, ft as _, g as v, h as y, j as b, lt as x, m as S, mt as C, n as w, p as T, pt as E, rt as D, s as O, tt as k, u as A, v as j, x as M, y as N } from "./vue-i18n-L-BrQRnK.js";
+import { n as P } from "./portal_keys-DthxrmWp.js";
+import { n as F, t as I } from "./AppIcon-DkyxvN8k.js";
+import { i as L, n as R, r as z, t as B } from "./PromptTagChips-BSiYc5Q5.js";
+import { n as V, t as H } from "./StateSurface-X9aRtXAT.js";
+import { t as U } from "./AppSelect-D-2VXU1J.js";
+import { n as W, t as G } from "./chevron-right-BQc8Oirg.js";
+import { t as ee } from "./image-plus-D7OOsWBN.js";
+import { t as K } from "./components_styles-DHX8irr3.js";
+import { t as q } from "./AppCheckbox-qcV3D_N_.js";
+import { t as te } from "./trash-2-Dqlz-IWX.js";
+import { t as ne } from "./upload-BjktsLMj.js";
+import { t as re } from "./x-D7Ry5i_D.js";
+import { n as ie, u as ae } from "./analysis-C1J50ZrG.js";
+import { n as J } from "./deferred_stylesheets-BpS7LWkd.js";
+import { c as oe, l as se, r as ce, s as le } from "./model_json-DNK3Va6h.js";
+import { r as ue, t as de } from "./inpaint_session-wWdlKjTY.js";
+import { a as fe, c as pe, i as me, n as he, r as ge, s as _e } from "./Collection-e6mvGbNy.js";
+import { t as ve } from "./DialogPortal-BX3_tTUP.js";
 import { t as Y } from "./IconButton-4U1H-LPK.js";
-import { t as he } from "./AppDialog-CwkMmVVL.js";
-import { t as ge } from "./slot_error_label-DVTxbQeB.js";
-//#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/eraser.js
-var _e = P("eraser", [["path", {
+import { t as ye } from "./AppDialog-CwkMmVVL.js";
+import { t as be } from "./slot_error_label-DVTxbQeB.js";
+//#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/ellipsis.js
+var xe = F("ellipsis", [
+	["circle", {
+		cx: "12",
+		cy: "12",
+		r: "1",
+		key: "41hilf"
+	}],
+	["circle", {
+		cx: "19",
+		cy: "12",
+		r: "1",
+		key: "1wjl8i"
+	}],
+	["circle", {
+		cx: "5",
+		cy: "12",
+		r: "1",
+		key: "1pcz8c"
+	}]
+]), Se = F("eraser", [["path", {
 	d: "M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21",
 	key: "g5wo59"
 }], ["path", {
 	d: "m5.082 11.09 8.828 8.828",
 	key: "1wx5vj"
-}]]), ve = P("redo-2", [["path", {
+}]]), Ce = F("pencil", [["path", {
+	d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
+	key: "1a8usu"
+}], ["path", {
+	d: "m15 5 4 4",
+	key: "1mk7zo"
+}]]), we = F("redo-2", [["path", {
 	d: "m15 14 5-5-5-5",
 	key: "12vg1m"
 }], ["path", {
 	d: "M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13",
 	key: "6uklza"
-}]]), ye = P("undo-2", [["path", {
+}]]), Te = F("refresh-cw", [
+	["path", {
+		d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8",
+		key: "v9h5vc"
+	}],
+	["path", {
+		d: "M21 3v5h-5",
+		key: "1q7to0"
+	}],
+	["path", {
+		d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16",
+		key: "3uifl3"
+	}],
+	["path", {
+		d: "M8 16H3v5",
+		key: "1cv678"
+	}]
+]), Ee = F("undo-2", [["path", {
 	d: "M9 14 4 9l5-5",
 	key: "102s5s"
 }], ["path", {
 	d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11",
 	key: "f3b9sd"
-}]]), be = P("zoom-in", [
+}]]), De = F("zoom-in", [
 	["circle", {
 		cx: "11",
 		cy: "11",
@@ -66,7 +110,7 @@ var _e = P("eraser", [["path", {
 		y2: "11",
 		key: "durymu"
 	}]
-]), xe = P("zoom-out", [
+]), Oe = F("zoom-out", [
 	["circle", {
 		cx: "11",
 		cy: "11",
@@ -88,21 +132,32 @@ var _e = P("eraser", [["path", {
 		key: "durymu"
 	}]
 ]), X = {
-	slot: "_slot_30v7n_7",
-	notice: "_notice_30v7n_8",
-	lightbox: "_lightbox_30v7n_9",
-	frame: "_frame_30v7n_32",
-	image: "_image_30v7n_39",
-	placeholder: "_placeholder_30v7n_46",
-	error: "_error_30v7n_58",
-	toolbar: "_toolbar_30v7n_62",
-	counter: "_counter_30v7n_69",
-	button: "_button_30v7n_77",
-	skeleton: "_skeleton_30v7n_114",
-	pulse: "_pulse_30v7n_1",
-	excerpt: "_excerpt_30v7n_132",
-	notice_actions: "_notice_actions_30v7n_171"
-}, Se = {
+	slot: "_slot_1ohzd_7",
+	notice: "_notice_1ohzd_8",
+	lightbox: "_lightbox_1ohzd_9",
+	paragraph_action: "_paragraph_action_1ohzd_10",
+	frame: "_frame_1ohzd_36",
+	image: "_image_1ohzd_43",
+	placeholder: "_placeholder_1ohzd_50",
+	error: "_error_1ohzd_62",
+	toolbar: "_toolbar_1ohzd_66",
+	status: "_status_1ohzd_73",
+	pager: "_pager_1ohzd_77",
+	counter: "_counter_1ohzd_83",
+	scene: "_scene_1ohzd_91",
+	actions: "_actions_1ohzd_101",
+	more: "_more_1ohzd_108",
+	menu: "_menu_1ohzd_112",
+	menu_item: "_menu_item_1ohzd_125",
+	button: "_button_1ohzd_150",
+	icon_button: "_icon_button_1ohzd_173",
+	skeleton: "_skeleton_1ohzd_188",
+	pulse: "_pulse_1ohzd_1",
+	excerpt: "_excerpt_1ohzd_206",
+	notice_actions: "_notice_actions_1ohzd_245",
+	button_label: "_button_label_1ohzd_259",
+	paragraph_highlight: "_paragraph_highlight_1ohzd_323"
+}, ke = {
 	inpaintDialogContent: "_inpaintDialogContent_jgxsf_13",
 	inpaintBody: "_inpaintBody_jgxsf_17",
 	inpaintCanvasFrame: "_inpaintCanvasFrame_jgxsf_27",
@@ -115,8 +170,8 @@ var _e = P("eraser", [["path", {
 };
 //#endregion
 //#region src/ui/dialogs/dialogs_styles.ts
-ie("dialogs", "._inpaintDialogContent_jgxsf_13{width:min(90vw,720px)}._inpaintBody_jgxsf_17{gap:var(--tc-space-3);flex-direction:column;width:100%;display:flex}._inpaintCanvasFrame_jgxsf_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_jgxsf_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_jgxsf_45{align-items:center;gap:var(--tc-space-1-5);flex-wrap:wrap;display:flex}._inpaintToolbarDivider_jgxsf_52{background-color:var(--tc-divider);width:1px;margin:0 var(--tc-space-1);align-self:stretch}._inpaintBrushRow_jgxsf_59{align-items:center;gap:var(--tc-space-3);display:flex}._inpaintBrushRow_jgxsf_59>*{flex:1}._inpaintPromptGrid_jgxsf_69{gap:var(--tc-space-3);grid-template-columns:1fr 1fr;display:grid}._inpaintFooter_jgxsf_75{justify-content:flex-end;gap:var(--tc-space-2);display:flex}._inpaintDimensionError_jgxsf_81{color:var(--tc-error);font-size:var(--tc-font-size-xs);margin:0}");
-var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = ["aria-label"], De = 32, Oe = 1, ke = 3, Ae = /* @__PURE__ */ j({
+J("dialogs", "._inpaintDialogContent_jgxsf_13{width:min(90vw,720px)}._inpaintBody_jgxsf_17{gap:var(--tc-space-3);flex-direction:column;width:100%;display:flex}._inpaintCanvasFrame_jgxsf_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_jgxsf_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_jgxsf_45{align-items:center;gap:var(--tc-space-1-5);flex-wrap:wrap;display:flex}._inpaintToolbarDivider_jgxsf_52{background-color:var(--tc-divider);width:1px;margin:0 var(--tc-space-1);align-self:stretch}._inpaintBrushRow_jgxsf_59{align-items:center;gap:var(--tc-space-3);display:flex}._inpaintBrushRow_jgxsf_59>*{flex:1}._inpaintPromptGrid_jgxsf_69{gap:var(--tc-space-3);grid-template-columns:1fr 1fr;display:grid}._inpaintFooter_jgxsf_75{justify-content:flex-end;gap:var(--tc-space-2);display:flex}._inpaintDimensionError_jgxsf_81{color:var(--tc-error);font-size:var(--tc-font-size-xs);margin:0}");
+var Z = ke, Ae = ["aria-label"], je = ["aria-label"], Me = ["aria-label"], Ne = ["aria-label"], Pe = 32, Fe = 1, Ie = 3, Le = /* @__PURE__ */ M({
 	__name: "InpaintDialog",
 	props: {
 		open: { type: Boolean },
@@ -160,35 +215,35 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			68,
 			68,
 			140
-		], d = u(N, void 0), m = T(() => d ? { to: d } : {});
+		], d = u(P, void 0), m = T(() => d ? { to: d } : {});
 		function h(e) {
 			o("update:open", e);
 		}
-		let w = O(null), D = O(null), j = O(De), P = O(!1), I = O(Oe), R = O(n.initialPositivePrompt), z = O(n.initialNegativePrompt), V = O(.75), H = O(!1), W = O(!1), ne = T(() => {
+		let w = k(null), D = k(null), O = k(Pe), M = k(!1), F = k(Fe), L = k(n.initialPositivePrompt), z = k(n.initialNegativePrompt), B = k(.75), H = k(!1), U = k(!1), W = T(() => {
 			let e = n.maskWidth ?? n.bitmap.width, t = n.maskHeight ?? n.bitmap.height;
 			try {
-				return oe(n.bitmap.width, n.bitmap.height, e, t), null;
+				return ue(n.bitmap.width, n.bitmap.height, e, t), null;
 			} catch {
 				return n.dimensionErrorLabel;
 			}
-		}), re = T(() => n.bitmap.width / n.bitmap.height), ie = T(() => ({ "--tc-inpaint-aspect": String(re.value) })), K = null, q = null, J = [];
-		function ae() {
-			H.value = K?.can_undo() ?? !1, W.value = K?.can_redo() ?? !1;
+		}), G = T(() => n.bitmap.width / n.bitmap.height), ee = T(() => ({ "--tc-inpaint-aspect": String(G.value) })), q = null, ie = null, ae = [];
+		function J() {
+			H.value = q?.can_undo() ?? !1, U.value = q?.can_redo() ?? !1;
 		}
-		function he() {
-			K = new se(n.bitmap.width, n.bitmap.height), ae();
+		function oe() {
+			q = new de(n.bitmap.width, n.bitmap.height), J();
 		}
-		function ge() {
+		function se() {
 			let e = w.value;
 			e !== null && (e.width = n.bitmap.width, e.height = n.bitmap.height, e.getContext("2d")?.drawImage(n.bitmap, 0, 0));
 		}
-		function X() {
+		function ce() {
 			let e = D.value;
-			if (e === null || K === null) return;
-			e.width = K.width, e.height = K.height;
+			if (e === null || q === null) return;
+			e.width = q.width, e.height = q.height;
 			let t = e.getContext("2d");
 			if (t === null) return;
-			let n = K.mask, r = t.createImageData(K.width, K.height), [i, a, o, s] = c;
+			let n = q.mask, r = t.createImageData(q.width, q.height), [i, a, o, s] = c;
 			for (let e = 0; e < n.length; e += 1) {
 				let t = e * 4;
 				n[e] === 255 && (r.data[t] = i, r.data[t + 1] = a, r.data[t + 2] = o, r.data[t + 3] = s);
@@ -196,11 +251,11 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			t.putImageData(r, 0, 0);
 		}
 		b(() => {
-			he(), ge(), X();
+			oe(), se(), ce();
 		}), a(() => n.bitmap, () => {
-			he(), ge(), X();
+			oe(), se(), ce();
 		});
-		function Se(e) {
+		function le(e) {
 			let t = D.value;
 			if (t === null) return null;
 			let n = t.getBoundingClientRect();
@@ -214,203 +269,203 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 				y: (e.clientY - n.top) * i
 			};
 		}
-		function Ae(e) {
-			if (q !== null) return;
-			let t = Se(e);
-			t !== null && (q = e.pointerId, e.currentTarget.setPointerCapture(e.pointerId), J = [t]);
+		function ye(e) {
+			if (ie !== null) return;
+			let t = le(e);
+			t !== null && (ie = e.pointerId, e.currentTarget.setPointerCapture(e.pointerId), ae = [t]);
 		}
-		function je(e) {
-			if (q !== e.pointerId) return;
-			let t = Se(e);
-			t !== null && J.push(t);
+		function be(e) {
+			if (ie !== e.pointerId) return;
+			let t = le(e);
+			t !== null && ae.push(t);
 		}
-		function Q(e) {
-			q === e.pointerId && (q = null, Me());
+		function xe(e) {
+			ie === e.pointerId && (ie = null, Ce());
 		}
-		function Me() {
-			if (K === null || J.length === 0) {
-				J = [];
+		function Ce() {
+			if (q === null || ae.length === 0) {
+				ae = [];
 				return;
 			}
-			K.stroke(J, j.value, P.value ? "erase" : "brush"), J = [], ae(), X();
+			q.stroke(ae, O.value, M.value ? "erase" : "brush"), ae = [], J(), ce();
 		}
-		function Ne() {
-			K?.undo(), ae(), X();
+		function Te() {
+			q?.undo(), J(), ce();
 		}
-		function Pe() {
-			K?.redo(), ae(), X();
+		function X() {
+			q?.redo(), J(), ce();
 		}
-		function Fe() {
-			K?.clear(), ae(), X();
-		}
-		function $() {
-			I.value = Math.min(ke, I.value + .5);
-		}
-		function Ie() {
-			I.value = Math.max(Oe, I.value - .5);
+		function ke() {
+			q?.clear(), J(), ce();
 		}
 		function Le() {
-			K !== null && ne.value === null && o("submit", {
-				mask: K.export_binary_mask(),
-				brushSize: j.value,
-				positivePrompt: R.value,
+			F.value = Math.min(Ie, F.value + .5);
+		}
+		function Re() {
+			F.value = Math.max(Fe, F.value - .5);
+		}
+		function Q() {
+			q !== null && W.value === null && o("submit", {
+				mask: q.export_binary_mask(),
+				brushSize: O.value,
+				positivePrompt: L.value,
 				negativePrompt: z.value,
-				denoiseStrength: V.value
+				denoiseStrength: B.value
 			});
 		}
-		return (t, n) => (l(), y(x(le), {
+		return (t, n) => (l(), y(x(pe), {
 			open: e.open,
 			"onUpdate:open": h
 		}, {
-			default: i(() => [M(x(me), _(r(m.value)), {
-				default: i(() => [M(x(fe), { class: g(x(U).dialogOverlay) }, null, 8, ["class"]), M(x(ce), { class: g([x(U).dialogContent, x(Z).inpaintDialogContent]) }, {
+			default: i(() => [N(x(ve), _(r(m.value)), {
+				default: i(() => [N(x(ge), { class: g(x(K).dialogOverlay) }, null, 8, ["class"]), N(x(fe), { class: g([x(K).dialogContent, x(Z).inpaintDialogContent]) }, {
 					default: i(() => [
-						S("header", { class: g(x(U).dialogHeader) }, [M(x(de), { class: g(x(U).dialogTitle) }, {
-							default: i(() => [A(C(e.title), 1)]),
+						S("header", { class: g(x(K).dialogHeader) }, [N(x(he), { class: g(x(K).dialogTitle) }, {
+							default: i(() => [j(C(e.title), 1)]),
 							_: 1
-						}, 8, ["class"]), M(x(pe), {
-							class: g(["tc-interactive", x(U).dialogClose]),
+						}, 8, ["class"]), N(x(_e), {
+							class: g(["tc-interactive", x(K).dialogClose]),
 							"aria-label": e.closeLabel
 						}, {
-							default: i(() => [M(F, {
-								icon: x(te),
+							default: i(() => [N(I, {
+								icon: x(re),
 								size: 18
 							}, null, 8, ["icon"])]),
 							_: 1
 						}, 8, ["class", "aria-label"])], 2),
-						M(x(ue), { class: "tc-visually-hidden" }, {
-							default: i(() => [A(C(e.title), 1)]),
+						N(x(me), { class: "tc-visually-hidden" }, {
+							default: i(() => [j(C(e.title), 1)]),
 							_: 1
 						}),
 						S("div", { class: g(x(Z).inpaintBody) }, [
 							S("div", { class: g(x(Z).inpaintToolbar) }, [
-								M(Y, {
-									icon: x(ye),
+								N(Y, {
+									icon: x(Ee),
 									label: e.undoLabel,
 									disabled: !H.value,
-									onClick: Ne
+									onClick: Te
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								M(Y, {
-									icon: x(ve),
+								N(Y, {
+									icon: x(we),
 									label: e.redoLabel,
-									disabled: !W.value,
-									onClick: Pe
+									disabled: !U.value,
+									onClick: X
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								M(Y, {
-									icon: x(_e),
+								N(Y, {
+									icon: x(Se),
 									label: e.eraseLabel,
-									pressed: P.value,
-									onClick: n[0] ||= (e) => P.value = !P.value
+									pressed: M.value,
+									onClick: n[0] ||= (e) => M.value = !M.value
 								}, null, 8, [
 									"icon",
 									"label",
 									"pressed"
 								]),
-								M(Y, {
-									icon: x(G),
+								N(Y, {
+									icon: x(te),
 									label: e.clearLabel,
 									destructive: "",
-									onClick: Fe
+									onClick: ke
 								}, null, 8, ["icon", "label"]),
 								S("span", {
 									class: g(x(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
 								}, null, 2),
-								M(Y, {
-									icon: x(xe),
+								N(Y, {
+									icon: x(Oe),
 									label: e.zoomOutLabel,
-									onClick: Ie
+									onClick: Re
 								}, null, 8, ["icon", "label"]),
-								M(Y, {
-									icon: x(be),
+								N(Y, {
+									icon: x(De),
 									label: e.zoomInLabel,
-									onClick: $
+									onClick: Le
 								}, null, 8, ["icon", "label"]),
-								e.showUpload ? (l(), f(k, { key: 0 }, [S("span", {
+								e.showUpload ? (l(), f(A, { key: 0 }, [S("span", {
 									class: g(x(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
-								}, null, 2), M(Y, {
-									icon: x(ee),
+								}, null, 2), N(Y, {
+									icon: x(ne),
 									label: e.uploadLabel,
 									onClick: n[1] ||= (e) => o("upload-reference")
 								}, null, 8, ["icon", "label"])], 64)) : v("", !0)
 							], 2),
 							S("div", {
 								class: g(x(Z).inpaintCanvasFrame),
-								style: E(ie.value)
+								style: E(ee.value)
 							}, [S("canvas", {
 								ref_key: "bitmap_canvas",
 								ref: w,
-								style: E({ transform: `scale(${I.value})` }),
+								style: E({ transform: `scale(${F.value})` }),
 								"data-testid": "inpaint-bitmap-canvas"
 							}, null, 4), S("canvas", {
 								ref_key: "mask_canvas",
 								ref: D,
 								style: E({
-									transform: `scale(${I.value})`,
+									transform: `scale(${F.value})`,
 									touchAction: "none"
 								}),
 								"data-testid": "inpaint-mask-canvas",
-								onPointerdown: Ae,
-								onPointermove: je,
-								onPointerup: Q,
-								onPointercancel: Q
+								onPointerdown: ye,
+								onPointermove: be,
+								onPointerup: xe,
+								onPointercancel: xe
 							}, null, 36)], 6),
-							ne.value ? (l(), f("p", {
+							W.value ? (l(), f("p", {
 								key: 0,
 								class: g(x(Z).inpaintDimensionError),
 								role: "alert"
-							}, C(ne.value), 3)) : v("", !0),
-							S("div", { class: g(x(Z).inpaintBrushRow) }, [S("label", null, [A(C(e.brushSizeLabel) + " ", 1), s(S("input", {
-								"onUpdate:modelValue": n[2] ||= (e) => j.value = e,
+							}, C(W.value), 3)) : v("", !0),
+							S("div", { class: g(x(Z).inpaintBrushRow) }, [S("label", null, [j(C(e.brushSizeLabel) + " ", 1), s(S("input", {
+								"onUpdate:modelValue": n[2] ||= (e) => O.value = e,
 								type: "range",
 								min: "4",
 								max: "128",
 								step: "1",
 								"aria-label": e.brushSizeLabel
-							}, null, 8, Ce), [[
+							}, null, 8, Ae), [[
 								p,
-								j.value,
+								O.value,
 								void 0,
 								{ number: !0 }
 							]])])], 2),
-							S("div", { class: g(x(Z).inpaintPromptGrid) }, [S("label", null, [A(C(e.positivePromptLabel) + " ", 1), s(S("textarea", {
-								"onUpdate:modelValue": n[3] ||= (e) => R.value = e,
+							S("div", { class: g(x(Z).inpaintPromptGrid) }, [S("label", null, [j(C(e.positivePromptLabel) + " ", 1), s(S("textarea", {
+								"onUpdate:modelValue": n[3] ||= (e) => L.value = e,
 								"aria-label": e.positivePromptLabel,
 								rows: "2"
-							}, null, 8, we), [[p, R.value]])]), S("label", null, [A(C(e.negativePromptLabel) + " ", 1), s(S("textarea", {
+							}, null, 8, je), [[p, L.value]])]), S("label", null, [j(C(e.negativePromptLabel) + " ", 1), s(S("textarea", {
 								"onUpdate:modelValue": n[4] ||= (e) => z.value = e,
 								"aria-label": e.negativePromptLabel,
 								rows: "2"
-							}, null, 8, Te), [[p, z.value]])])], 2),
-							S("label", null, [A(C(e.denoiseLabel) + " ", 1), s(S("input", {
-								"onUpdate:modelValue": n[5] ||= (e) => V.value = e,
+							}, null, 8, Me), [[p, z.value]])])], 2),
+							S("label", null, [j(C(e.denoiseLabel) + " ", 1), s(S("input", {
+								"onUpdate:modelValue": n[5] ||= (e) => B.value = e,
 								type: "range",
 								min: "0",
 								max: "1",
 								step: "0.01",
 								"aria-label": e.denoiseLabel
-							}, null, 8, Ee), [[
+							}, null, 8, Ne), [[
 								p,
-								V.value,
+								B.value,
 								void 0,
 								{ number: !0 }
 							]])]),
-							S("div", { class: g(x(Z).inpaintFooter) }, [M(B, {
+							S("div", { class: g(x(Z).inpaintFooter) }, [N(V, {
 								label: e.generateLabel,
-								icon: x(L),
+								icon: x(R),
 								variant: "primary",
 								pending: e.pending,
-								disabled: ne.value !== null,
-								onClick: Le
+								disabled: W.value !== null,
+								onClick: Q
 							}, null, 8, [
 								"label",
 								"icon",
@@ -426,7 +481,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			_: 1
 		}, 8, ["open"]));
 	}
-}), je = {
+}), Re = {
 	body: "_body_1hbp3_1",
 	slot: "_slot_1hbp3_9",
 	anchor: "_anchor_1hbp3_18",
@@ -447,8 +502,8 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 };
 //#endregion
 //#region src/ui/chat/illustrate_dialog_styles.ts
-ie("illustrate_dialog", "._body_1hbp3_1{gap:var(--tc-space-4);flex-direction:column;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1hbp3_9{gap:var(--tc-space-3);padding:var(--tc-space-4);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);flex-direction:column;display:flex}._anchor_1hbp3_18{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);margin:0;padding-inline-start:var(--tc-space-2)}._scene_1hbp3_26{font-size:var(--tc-font-size-md);margin:0}._label_1hbp3_31{gap:var(--tc-field-gap);font-size:var(--tc-label-font-size);font-weight:var(--tc-font-weight-medium);line-height:var(--tc-line-height-sm);color:var(--tc-text);flex-direction:column;display:flex}._prompt_1hbp3_41{font-size:var(--tc-font-size-sm)}._meta_1hbp3_46{justify-content:space-between;gap:var(--tc-space-2);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);flex-wrap:wrap;display:flex}._error_1hbp3_55{color:var(--tc-error);margin:0}._excerpt_1hbp3_60{max-height:160px;padding:var(--tc-space-3) var(--tc-space-4);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);white-space:pre-wrap;font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);margin:0;overflow:auto}._picker_1hbp3_72{align-items:flex-start;gap:var(--tc-space-2);flex-direction:column;display:flex}._hint_1hbp3_79{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);margin:0}._paragraphs_1hbp3_85{gap:var(--tc-space-1-5);max-height:240px;padding:var(--tc-space-3);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);flex-direction:column;align-self:stretch;display:flex;overflow-y:auto}._footer_1hbp3_97{justify-content:flex-end;align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._total_1hbp3_105{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);margin-inline-end:auto}._chips_1hbp3_111{margin-top:calc(-1 * var(--tc-space-1));justify-content:flex-end;display:flex}._outfit_1hbp3_117{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._conditions_1hbp3_124{flex:160px;width:auto}");
-var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ */ j({
+J("illustrate_dialog", "._body_1hbp3_1{gap:var(--tc-space-4);flex-direction:column;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1hbp3_9{gap:var(--tc-space-3);padding:var(--tc-space-4);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);flex-direction:column;display:flex}._anchor_1hbp3_18{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);margin:0;padding-inline-start:var(--tc-space-2)}._scene_1hbp3_26{font-size:var(--tc-font-size-md);margin:0}._label_1hbp3_31{gap:var(--tc-field-gap);font-size:var(--tc-label-font-size);font-weight:var(--tc-font-weight-medium);line-height:var(--tc-line-height-sm);color:var(--tc-text);flex-direction:column;display:flex}._prompt_1hbp3_41{font-size:var(--tc-font-size-sm)}._meta_1hbp3_46{justify-content:space-between;gap:var(--tc-space-2);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);flex-wrap:wrap;display:flex}._error_1hbp3_55{color:var(--tc-error);margin:0}._excerpt_1hbp3_60{max-height:160px;padding:var(--tc-space-3) var(--tc-space-4);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);white-space:pre-wrap;font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);margin:0;overflow:auto}._picker_1hbp3_72{align-items:flex-start;gap:var(--tc-space-2);flex-direction:column;display:flex}._hint_1hbp3_79{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);margin:0}._paragraphs_1hbp3_85{gap:var(--tc-space-1-5);max-height:240px;padding:var(--tc-space-3);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);flex-direction:column;align-self:stretch;display:flex;overflow-y:auto}._footer_1hbp3_97{justify-content:flex-end;align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._total_1hbp3_105{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);margin-inline-end:auto}._chips_1hbp3_111{margin-top:calc(-1 * var(--tc-space-1));justify-content:flex-end;display:flex}._outfit_1hbp3_117{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._conditions_1hbp3_124{flex:160px;width:auto}");
+var Q = Re, ze = ["placeholder", "aria-label"], Be = "none", Ve = /* @__PURE__ */ M({
 	__name: "OutfitPicker",
 	props: {
 		character: {},
@@ -458,19 +513,19 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 	emits: ["change"],
 	setup(n, { emit: r }) {
 		let i = n, o = r, { t: c } = w(), u = T(() => [{
-			value: Ne,
+			value: Be,
 			label: c("chat.dialog.outfit_none")
 		}, ...i.outfits.filter((e) => e.character_id === null || e.character_id === i.character.id).map((e) => ({
 			value: e.id,
 			label: e.name
-		}))]), d = O("");
+		}))]), d = k("");
 		a(() => i.wearing.conditions, (e) => {
 			d.value = t(e);
 		}, { immediate: !0 });
 		function m(e) {
 			o("change", {
 				character_id: i.character.id,
-				outfit_id: e === Ne ? null : e,
+				outfit_id: e === Be ? null : e,
 				overrides: {},
 				conditions: i.wearing.conditions
 			});
@@ -485,8 +540,8 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 		return (e, t) => (l(), f("div", {
 			class: g(x(Q).outfit),
 			"data-testid": "outfit-picker"
-		}, [M(H, {
-			"model-value": n.wearing.outfit_id ?? Ne,
+		}, [N(U, {
+			"model-value": n.wearing.outfit_id ?? Be,
 			options: u.value,
 			placeholder: x(c)("chat.dialog.outfit_label"),
 			"aria-label": x(c)("chat.dialog.outfit_label", { name: n.character.name }),
@@ -503,9 +558,9 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 			placeholder: x(c)("chat.dialog.outfit_conditions"),
 			"aria-label": x(c)("chat.dialog.outfit_conditions"),
 			onBlur: h
-		}, null, 42, Me), [[p, d.value]])], 2));
+		}, null, 42, ze), [[p, d.value]])], 2));
 	}
-}), Fe = {
+}), He = {
 	field: "_field_3spau_1",
 	header: "_header_3spau_7",
 	label: "_label_3spau_15",
@@ -523,43 +578,43 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 };
 //#endregion
 //#region src/ui/chat/prompt_field_styles.ts
-ie("prompt_field", "._field_3spau_1{gap:var(--tc-field-gap);flex-direction:column;display:flex}._header_3spau_7{justify-content:space-between;align-items:center;gap:var(--tc-space-2);min-height:var(--tc-control-height-sm);display:flex}._label_3spau_15{font-size:var(--tc-label-font-size);font-weight:var(--tc-font-weight-medium);line-height:var(--tc-line-height-sm);color:var(--tc-text)}._tools_3spau_22{gap:var(--tc-space-0-5);display:inline-flex}._suggestions_3spau_27{gap:var(--tc-space-1-5);padding:var(--tc-space-2);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-popover);background:var(--tc-surface);box-shadow:0 8px 24px var(--tc-shadow);flex-wrap:wrap;margin:0;list-style:none;display:flex}._suggestion_3spau_27{align-items:center;gap:var(--tc-space-1-5);height:var(--tc-chip-height);padding:0 var(--tc-chip-padding-x);border-radius:var(--tc-radius-chip);background:var(--tc-chip-bg);color:var(--tc-text);font-size:var(--tc-font-size-sm);cursor:pointer;border:1px solid #0000;display:inline-flex}._suggestion_3spau_27:hover{border-color:var(--tc-border-field)}._highlighted_3spau_58,._highlighted_3spau_58:hover{border-color:var(--tc-accent-border);background:var(--tc-accent-soft)}._translation_3spau_64{color:var(--tc-text-muted)}._dot_3spau_68{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_3spau_75{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_3spau_79{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_3spau_83{border-color:var(--tc-text);background:var(--tc-text)}._hint_3spau_88,._reading_3spau_89{font-size:var(--tc-font-size-sm);color:var(--tc-text-muted);margin:0}._reading_3spau_89{border-inline-start:2px solid var(--tc-divider);padding-inline-start:var(--tc-space-2)}");
-var $ = Fe, Ie = /[,，]/u, Le = /[぀-ヿ㐀-鿿豈-﫿]/u, Re = /^(?:-?[\d.]+::)?[{[(]*/u;
-function ze(e, t) {
+J("prompt_field", "._field_3spau_1{gap:var(--tc-field-gap);flex-direction:column;display:flex}._header_3spau_7{justify-content:space-between;align-items:center;gap:var(--tc-space-2);min-height:var(--tc-control-height-sm);display:flex}._label_3spau_15{font-size:var(--tc-label-font-size);font-weight:var(--tc-font-weight-medium);line-height:var(--tc-line-height-sm);color:var(--tc-text)}._tools_3spau_22{gap:var(--tc-space-0-5);display:inline-flex}._suggestions_3spau_27{gap:var(--tc-space-1-5);padding:var(--tc-space-2);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-popover);background:var(--tc-surface);box-shadow:0 8px 24px var(--tc-shadow);flex-wrap:wrap;margin:0;list-style:none;display:flex}._suggestion_3spau_27{align-items:center;gap:var(--tc-space-1-5);height:var(--tc-chip-height);padding:0 var(--tc-chip-padding-x);border-radius:var(--tc-radius-chip);background:var(--tc-chip-bg);color:var(--tc-text);font-size:var(--tc-font-size-sm);cursor:pointer;border:1px solid #0000;display:inline-flex}._suggestion_3spau_27:hover{border-color:var(--tc-border-field)}._highlighted_3spau_58,._highlighted_3spau_58:hover{border-color:var(--tc-accent-border);background:var(--tc-accent-soft)}._translation_3spau_64{color:var(--tc-text-muted)}._dot_3spau_68{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_3spau_75{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_3spau_79{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_3spau_83{border-color:var(--tc-text);background:var(--tc-text)}._hint_3spau_88,._reading_3spau_89{font-size:var(--tc-font-size-sm);color:var(--tc-text-muted);margin:0}._reading_3spau_89{border-inline-start:2px solid var(--tc-divider);padding-inline-start:var(--tc-space-2)}");
+var $ = He, Ue = /[,，]/u, We = /[぀-ヿ㐀-鿿豈-﫿]/u, Ge = /^(?:-?[\d.]+::)?[{[(]*/u;
+function Ke(e, t) {
 	let n = e.slice(0, t), r = 0;
-	for (let e = n.length - 1; e >= 0; --e) if (Ie.test(n.charAt(e))) {
+	for (let e = n.length - 1; e >= 0; --e) if (Ue.test(n.charAt(e))) {
 		r = e + 1;
 		break;
 	}
-	let i = e.slice(t).search(Ie), a = i === -1 ? e.length : t + i, o = e.slice(r, t), s = o.length - o.trimStart().length, c = Re.exec(o.trimStart())?.[0] ?? "", l = o.trim().slice(c.length).trim();
-	return (Le.test(l) ? l.length >= 1 : l.length >= 2) ? {
+	let i = e.slice(t).search(Ue), a = i === -1 ? e.length : t + i, o = e.slice(r, t), s = o.length - o.trimStart().length, c = Ge.exec(o.trimStart())?.[0] ?? "", l = o.trim().slice(c.length).trim();
+	return (We.test(l) ? l.length >= 1 : l.length >= 2) ? {
 		start: r + s + c.length,
 		end: a,
 		query: l
 	} : null;
 }
-function Be(e, t, n) {
+function qe(e, t, n) {
 	let r = e.slice(t.end).replace(/^[,，]?\s*/u, ""), i = `${e.slice(0, t.start)}${n}, `;
 	return {
 		value: `${i}${r}`,
 		caret: i.length
 	};
 }
-function Ve(e) {
+function Je(e) {
 	return e >= 1e5 ? 3 : e >= 1e4 ? 2 : +(e >= 1e3);
 }
 //#endregion
 //#region src/ui/chat/PromptField.vue?vue&type=script&setup=true&lang.ts
-var He = ["for"], Ue = [
+var Ye = ["for"], Xe = [
 	"id",
 	"value",
 	"aria-expanded",
 	"aria-activedescendant"
-], We = ["aria-label"], Ge = [
+], Ze = ["aria-label"], Qe = [
 	"id",
 	"aria-selected",
 	"onMousedown"
-], Ke = 150, qe = 800, Je = /* @__PURE__ */ j({
+], $e = 150, et = 800, tt = /* @__PURE__ */ M({
 	__name: "PromptField",
 	props: {
 		modelValue: {},
@@ -568,8 +623,8 @@ var He = ["for"], Ue = [
 	},
 	emits: ["update:modelValue"],
 	setup(e, { emit: t }) {
-		let r = e, i = t, { t: s } = w(), u = d(), p = `${u}-suggestions`, h = O(null), _ = O([]), y = O(-1), b = O(!1), T = null, E = null, D = 0, A = O(!1), j = O(null), N = O(!1), P = O(null), F = null, L = 0;
-		function z(e) {
+		let r = e, i = t, { t: s } = w(), u = d(), p = `${u}-suggestions`, h = k(null), _ = k([]), y = k(-1), b = k(!1), T = null, E = null, D = 0, O = k(!1), j = k(null), M = k(!1), P = k(null), F = null, I = 0;
+		function R(e) {
 			return e instanceof Error ? e.message : String(e);
 		}
 		function B() {
@@ -577,7 +632,7 @@ var He = ["for"], Ue = [
 		}
 		function V() {
 			let e = h.value, t = r.translator;
-			if (E !== null && clearTimeout(E), T = e === null ? null : ze(e.value, e.selectionStart), t === null || T === null) {
+			if (E !== null && clearTimeout(E), T = e === null ? null : Ke(e.value, e.selectionStart), t === null || T === null) {
 				B();
 				return;
 			}
@@ -586,12 +641,12 @@ var He = ["for"], Ue = [
 				t.suggest(n).then((e) => {
 					i === D && (b.value = e === null, _.value = e ?? [], y.value = -1);
 				});
-			}, Ke);
+			}, $e);
 		}
 		async function H(e) {
 			let t = _.value[e];
 			if (t === void 0 || T === null) return;
-			let n = Be(r.modelValue, T, t.tag);
+			let n = qe(r.modelValue, T, t.tag);
 			B(), i("update:modelValue", n.value), await c(), h.value?.focus(), h.value?.setSelectionRange(n.caret, n.caret);
 		}
 		function U(e) {
@@ -608,58 +663,58 @@ var He = ["for"], Ue = [
 		async function G() {
 			let e = r.translator;
 			if (e === null) return;
-			let t = ++L;
+			let t = ++I;
 			P.value = null;
 			try {
 				let n = await e.read_in_chinese(r.modelValue);
-				t === L && (j.value = n);
+				t === I && (j.value = n);
 			} catch (e) {
-				t === L && (P.value = z(e));
+				t === I && (P.value = R(e));
 			}
 		}
 		function ee() {
-			A.value = !A.value, j.value = null, A.value ? G() : L += 1;
+			O.value = !O.value, j.value = null, O.value ? G() : I += 1;
 		}
-		async function te() {
+		async function K() {
 			let e = r.translator;
 			if (e !== null) {
-				N.value = !0, P.value = null;
+				M.value = !0, P.value = null;
 				try {
 					i("update:modelValue", await e.to_tags(r.modelValue));
 				} catch (e) {
-					P.value = z(e);
+					P.value = R(e);
 				} finally {
-					N.value = !1;
+					M.value = !1;
 				}
 			}
 		}
 		return a(() => r.modelValue, () => {
-			A.value && (F !== null && clearTimeout(F), F = setTimeout(() => void G(), qe));
+			O.value && (F !== null && clearTimeout(F), F = setTimeout(() => void G(), et));
 		}), n(() => {
 			for (let e of [E, F]) e !== null && clearTimeout(e);
 		}), (t, n) => (l(), f("div", { class: g(x($).field) }, [
 			S("div", { class: g(x($).header) }, [S("label", {
 				for: x(u),
 				class: g(x($).label)
-			}, C(e.label), 11, He), e.translator === null ? v("", !0) : (l(), f("span", {
+			}, C(e.label), 11, Ye), e.translator === null ? v("", !0) : (l(), f("span", {
 				key: 0,
 				class: g(x($).tools)
-			}, [M(Y, {
-				icon: x(R),
+			}, [N(Y, {
+				icon: x(z),
 				size: "sm",
 				label: x(s)("chat.dialog.translate_to_tags"),
-				disabled: N.value,
+				disabled: M.value,
 				"data-testid": "translate-to-tags",
-				onClick: te
+				onClick: K
 			}, null, 8, [
 				"icon",
 				"label",
 				"disabled"
-			]), M(Y, {
-				icon: x(I),
+			]), N(Y, {
+				icon: x(L),
 				size: "sm",
 				label: x(s)("chat.dialog.read_in_chinese"),
-				pressed: A.value,
+				pressed: O.value,
 				"data-testid": "read-in-chinese",
 				onClick: ee
 			}, null, 8, [
@@ -682,14 +737,14 @@ var He = ["for"], Ue = [
 				onClick: V,
 				onKeydown: U,
 				onBlur: B
-			}, null, 42, Ue),
+			}, null, 42, Xe),
 			_.value.length > 0 ? (l(), f("ul", {
 				key: 0,
 				id: p,
 				role: "listbox",
 				"aria-label": x(s)("chat.dialog.suggestions_label"),
 				class: g(x($).suggestions)
-			}, [(l(!0), f(k, null, o(_.value, (e, t) => (l(), f("li", {
+			}, [(l(!0), f(A, null, o(_.value, (e, t) => (l(), f("li", {
 				id: `${p}-${t}`,
 				key: e.tag,
 				role: "option",
@@ -703,14 +758,14 @@ var He = ["for"], Ue = [
 					class: g(x($).translation)
 				}, C(e.translation), 3)),
 				S("span", {
-					class: g([x($).dot, x($)[`tier${x(Ve)(e.popularity)}`]]),
+					class: g([x($).dot, x($)[`tier${x(Je)(e.popularity)}`]]),
 					"aria-hidden": "true"
 				}, null, 2)
-			], 42, Ge))), 128))], 10, We)) : b.value ? (l(), f("p", {
+			], 42, Qe))), 128))], 10, Ze)) : b.value ? (l(), f("p", {
 				key: 1,
 				class: g(x($).hint)
 			}, C(x(s)("chat.dialog.vocabulary_preparing")), 3)) : v("", !0),
-			A.value ? (l(), f("p", {
+			O.value ? (l(), f("p", {
 				key: 2,
 				class: g(x($).reading)
 			}, C(j.value ?? x(s)("chat.dialog.reading_pending")), 3)) : v("", !0),
@@ -720,7 +775,7 @@ var He = ["for"], Ue = [
 			}, C(P.value), 3))
 		], 2));
 	}
-}), Ye = { key: 0 }, Xe = 120, Ze = /* @__PURE__ */ j({
+}), nt = { key: 0 }, rt = 120, it = /* @__PURE__ */ M({
 	__name: "IllustrateDialog",
 	props: {
 		request: {},
@@ -731,14 +786,14 @@ var He = ["for"], Ue = [
 	},
 	emits: ["close"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: s } = w(), c = O({ status: "analyzing" }), u = O([]), d = O(!1), p = O(null), m = O(null), h = O([]), _ = O([]), b = O(!1), E = O(!1), D = O(null);
-		function A(e) {
-			return e.text.length > Xe ? `${e.text.slice(0, Xe)}…` : e.text;
+		let n = e, r = t, { t: s } = w(), c = k({ status: "analyzing" }), u = k([]), d = k(!1), p = k(null), m = k(null), h = k([]), _ = k([]), b = k(!1), E = k(!1), D = k(null);
+		function O(e) {
+			return e.text.length > rt ? `${e.text.slice(0, rt)}…` : e.text;
 		}
 		function j(e, t) {
 			_.value = t ? [..._.value, e] : _.value.filter((t) => t !== e);
 		}
-		function N(e, t) {
+		function M(e, t) {
 			return {
 				slot_id: e.slot_id,
 				anchor: e.anchor,
@@ -751,31 +806,31 @@ var He = ["for"], Ue = [
 			};
 		}
 		function P(e) {
-			return m.value?.library.characters.find((t) => J(t, e)) ?? null;
+			return m.value?.library.characters.find((t) => ce(t, e)) ?? null;
 		}
 		function F(e) {
 			let t = m.value, n = P(e);
 			return t === null || n === null ? [] : [{
 				character: n,
-				wearing: K(n, t.snapshot, t.library.outfits),
+				wearing: oe(n, t.snapshot, t.library.outfits),
 				outfits: t.library.outfits
 			}];
 		}
 		function I(e) {
 			let t = m.value, n = P(e);
-			return t === null || n === null ? null : K(n, t.snapshot, t.library.outfits);
+			return t === null || n === null ? null : oe(n, t.snapshot, t.library.outfits);
 		}
 		async function L(e, t) {
 			let r = m.value, i = I(e);
 			if (r === null || i === null || c.value.status !== "ready") return;
-			let a = q(i, r.library.outfits), o = q(t, r.library.outfits);
-			for (let t of u.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ae(n.prompt, a, o));
+			let a = se(i, r.library.outfits), o = se(t, r.library.outfits);
+			for (let t of u.value) for (let n of t.character_prompts) n.name === e && (n.prompt = le(n.prompt, a, o));
 			m.value = {
 				...r,
 				snapshot: [...r.snapshot.filter((e) => e.character_id !== t.character_id), t]
 			}, await n.service.set_wearing(c.value.location, t);
 		}
-		let R = T(() => u.value.filter((e) => e.selected)), H = T(() => {
+		let R = T(() => u.value.filter((e) => e.selected)), z = T(() => {
 			let e = 0;
 			for (let t of R.value) {
 				if (t.estimate?.anlas === null || t.estimate === null) return null;
@@ -791,11 +846,11 @@ var He = ["for"], Ue = [
 				t.estimate = null;
 			}
 		}
-		async function G(e) {
+		async function W(e) {
 			c.value = { status: "analyzing" }, u.value = [], m.value = null, p.value = null, h.value = [], _.value = [], b.value = !1, D.value = null;
 			try {
 				let t = await n.service.analyze(e.message_id), r = await n.service.active_location(e.message_id);
-				u.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => N(t, e.slot_id !== null || t.image_ids.length === 0)), m.value = await n.service.wardrobe_view(r), e.slot_id === null && (h.value = await n.service.open_paragraphs(r)), c.value = {
+				u.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => M(t, e.slot_id !== null || t.image_ids.length === 0)), m.value = await n.service.wardrobe_view(r), e.slot_id === null && (h.value = await n.service.open_paragraphs(r)), c.value = {
 					status: "ready",
 					location: r
 				}, await Promise.all(u.value.map((e) => U(r, e)));
@@ -803,19 +858,19 @@ var He = ["for"], Ue = [
 				c.value = {
 					status: "failed",
 					message: e instanceof Error ? e.message : String(e),
-					excerpt: e instanceof ne ? e.excerpt : null
+					excerpt: e instanceof ie ? e.excerpt : null
 				};
 			}
 		}
 		a(() => n.request, (e) => {
-			e !== null && G(e);
+			e !== null && W(e);
 		}, { immediate: !0 });
-		async function ee() {
+		async function G() {
 			let e = c.value;
 			if (e.status === "ready" && _.value.length !== 0) {
 				E.value = !0, D.value = null;
 				try {
-					let t = await n.service.add_paragraphs(e.location, _.value), r = t.map((e) => N(e, !0));
+					let t = await n.service.add_paragraphs(e.location, _.value), r = t.map((e) => M(e, !0));
 					u.value = [...u.value, ...r];
 					let i = new Set(t.map((e) => e.paragraph));
 					h.value = h.value.filter((e) => !i.has(e.index)), _.value = [], b.value = !1, await Promise.all(u.value.slice(-r.length).map((t) => U(e.location, t)));
@@ -826,7 +881,7 @@ var He = ["for"], Ue = [
 				}
 			}
 		}
-		async function te() {
+		async function ee() {
 			let e = c.value;
 			if (e.status !== "ready") return;
 			d.value = !0, p.value = null;
@@ -848,37 +903,37 @@ var He = ["for"], Ue = [
 				d.value = !1;
 			}
 		}
-		function re(e) {
+		function K(e) {
 			return e.estimate === null ? "" : e.estimate.opus_free ? s("chat.dialog.cost_free") : e.estimate.anlas === null ? s("chat.dialog.cost_rejected") : s("chat.dialog.cost_anlas", { anlas: e.estimate.anlas });
 		}
-		function ie(e) {
+		function te(e) {
 			e || (c.value.status === "analyzing" && n.request !== null && n.service.cancel_analysis(n.request.message_id), r("close"));
 		}
-		return (t, n) => (l(), y(he, {
+		return (t, n) => (l(), y(ye, {
 			open: e.request !== null,
 			title: x(s)("chat.dialog.title"),
 			"close-label": x(s)("chat.dialog.close"),
-			"onUpdate:open": ie
+			"onUpdate:open": te
 		}, {
-			default: i(() => [S("div", { class: g(x(Q).body) }, [c.value.status === "analyzing" ? (l(), y(V, {
+			default: i(() => [S("div", { class: g(x(Q).body) }, [c.value.status === "analyzing" ? (l(), y(H, {
 				key: 0,
 				status: "loading",
 				"min-height": "160px"
-			})) : c.value.status === "failed" ? (l(), f(k, { key: 1 }, [
+			})) : c.value.status === "failed" ? (l(), f(A, { key: 1 }, [
 				S("p", { class: g(x(Q).error) }, C(c.value.message), 3),
-				c.value.excerpt === null ? v("", !0) : (l(), f(k, { key: 0 }, [S("p", null, C(x(s)("chat.dialog.parse_failed_hint")), 1), S("pre", { class: g(x(Q).excerpt) }, C(c.value.excerpt), 3)], 64)),
-				S("div", { class: g(x(Q).footer) }, [M(B, {
+				c.value.excerpt === null ? v("", !0) : (l(), f(A, { key: 0 }, [S("p", null, C(x(s)("chat.dialog.parse_failed_hint")), 1), S("pre", { class: g(x(Q).excerpt) }, C(c.value.excerpt), 3)], 64)),
+				S("div", { class: g(x(Q).footer) }, [N(V, {
 					label: x(s)("chat.dialog.retry"),
 					variant: "primary",
-					onClick: n[0] ||= (t) => e.request !== null && G(e.request)
+					onClick: n[0] ||= (t) => e.request !== null && W(e.request)
 				}, null, 8, ["label"])], 2)
-			], 64)) : (l(), f(k, { key: 2 }, [
-				u.value.length === 0 ? (l(), f("p", Ye, C(x(s)("chat.dialog.no_slots")), 1)) : v("", !0),
-				(l(!0), f(k, null, o(u.value, (t) => (l(), f("section", {
+			], 64)) : (l(), f(A, { key: 2 }, [
+				u.value.length === 0 ? (l(), f("p", nt, C(x(s)("chat.dialog.no_slots")), 1)) : v("", !0),
+				(l(!0), f(A, null, o(u.value, (t) => (l(), f("section", {
 					key: t.slot_id,
 					class: g(x(Q).slot)
 				}, [
-					M(W, {
+					N(q, {
 						modelValue: t.selected,
 						"onUpdate:modelValue": (e) => t.selected = e,
 						label: t.scene
@@ -888,7 +943,7 @@ var He = ["for"], Ue = [
 						"label"
 					]),
 					S("blockquote", { class: g(x(Q).anchor) }, C(t.anchor), 3),
-					M(Je, {
+					N(tt, {
 						modelValue: t.positive_prompt,
 						"onUpdate:modelValue": (e) => t.positive_prompt = e,
 						label: t.character_prompts.length > 0 ? x(s)("chat.dialog.base_prompt") : x(s)("chat.dialog.positive_prompt"),
@@ -899,11 +954,11 @@ var He = ["for"], Ue = [
 						"label",
 						"translator"
 					]),
-					S("div", { class: g(x(Q).chips) }, [M(z, {
+					S("div", { class: g(x(Q).chips) }, [N(B, {
 						port: e.promptTags,
 						kind: "quality"
 					}, null, 8, ["port"])], 2),
-					(l(!0), f(k, null, o(t.character_prompts, (t) => (l(), f(k, { key: t.name }, [M(Je, {
+					(l(!0), f(A, null, o(t.character_prompts, (t) => (l(), f(A, { key: t.name }, [N(tt, {
 						modelValue: t.prompt,
 						"onUpdate:modelValue": (e) => t.prompt = e,
 						label: x(s)("chat.dialog.character_prompt", { name: t.name }),
@@ -914,7 +969,7 @@ var He = ["for"], Ue = [
 						"onUpdate:modelValue",
 						"label",
 						"translator"
-					]), (l(!0), f(k, null, o(F(t.name), (e) => (l(), y(Pe, {
+					]), (l(!0), f(A, null, o(F(t.name), (e) => (l(), y(Ve, {
 						key: e.character.id,
 						character: e.character,
 						wearing: e.wearing,
@@ -926,7 +981,7 @@ var He = ["for"], Ue = [
 						"outfits",
 						"onChange"
 					]))), 128))], 64))), 128)),
-					M(Je, {
+					N(tt, {
 						modelValue: t.negative_prompt,
 						"onUpdate:modelValue": (e) => t.negative_prompt = e,
 						label: x(s)("chat.dialog.negative_prompt"),
@@ -937,26 +992,26 @@ var He = ["for"], Ue = [
 						"label",
 						"translator"
 					]),
-					S("div", { class: g(x(Q).chips) }, [M(z, {
+					S("div", { class: g(x(Q).chips) }, [N(B, {
 						port: e.promptTags,
 						kind: "undesired_content"
 					}, null, 8, ["port"])], 2),
-					S("div", { class: g(x(Q).meta) }, [S("span", null, C(re(t)), 1)], 2)
+					S("div", { class: g(x(Q).meta) }, [S("span", null, C(K(t)), 1)], 2)
 				], 2))), 128)),
 				h.value.length > 0 ? (l(), f("section", {
 					key: 1,
 					class: g(x(Q).picker)
-				}, [M(B, {
+				}, [N(V, {
 					label: x(s)("chat.dialog.pick_paragraphs", { count: h.value.length }),
 					"aria-expanded": b.value,
 					"data-testid": "pick-paragraphs",
 					onClick: n[1] ||= (e) => b.value = !b.value
-				}, null, 8, ["label", "aria-expanded"]), b.value ? (l(), f(k, { key: 0 }, [
+				}, null, 8, ["label", "aria-expanded"]), b.value ? (l(), f(A, { key: 0 }, [
 					S("p", { class: g(x(Q).hint) }, C(x(s)("chat.dialog.pick_paragraphs_hint")), 3),
-					S("div", { class: g(x(Q).paragraphs) }, [(l(!0), f(k, null, o(h.value, (e) => (l(), y(W, {
+					S("div", { class: g(x(Q).paragraphs) }, [(l(!0), f(A, null, o(h.value, (e) => (l(), y(q, {
 						key: e.index,
 						"model-value": _.value.includes(e.index),
-						label: A(e),
+						label: O(e),
 						"onUpdate:modelValue": (t) => j(e.index, t === !0)
 					}, null, 8, [
 						"model-value",
@@ -967,12 +1022,12 @@ var He = ["for"], Ue = [
 						key: 0,
 						class: g(x(Q).error)
 					}, C(D.value), 3)),
-					S("div", { class: g(x(Q).footer) }, [M(B, {
+					S("div", { class: g(x(Q).footer) }, [N(V, {
 						label: x(s)("chat.dialog.add_paragraphs", { count: _.value.length }),
 						pending: E.value,
 						disabled: _.value.length === 0,
 						"data-testid": "add-paragraphs",
-						onClick: ee
+						onClick: G
 					}, null, 8, [
 						"label",
 						"pending",
@@ -984,20 +1039,20 @@ var He = ["for"], Ue = [
 					class: g(x(Q).error)
 				}, C(p.value), 3)),
 				S("div", { class: g(x(Q).footer) }, [
-					H.value !== null && R.value.length > 0 ? (l(), f("span", {
+					z.value !== null && R.value.length > 0 ? (l(), f("span", {
 						key: 0,
 						class: g(x(Q).total)
-					}, C(x(s)("chat.dialog.total_anlas", { anlas: H.value })), 3)) : v("", !0),
-					M(B, {
+					}, C(x(s)("chat.dialog.total_anlas", { anlas: z.value })), 3)) : v("", !0),
+					N(V, {
 						label: x(s)("chat.dialog.cancel"),
 						onClick: n[2] ||= (e) => r("close")
 					}, null, 8, ["label"]),
-					M(B, {
+					N(V, {
 						label: x(s)("chat.dialog.confirm", { count: R.value.length }),
 						variant: "primary",
 						pending: d.value,
 						disabled: R.value.length === 0,
-						onClick: te
+						onClick: ee
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1015,7 +1070,7 @@ var He = ["for"], Ue = [
 });
 //#endregion
 //#region src/ui/chat/mask_png.ts
-async function Qe(e, t, n) {
+async function at(e, t, n) {
 	let r = new Uint8ClampedArray(t * n * 4);
 	for (let t = 0; t < e.length; t += 1) {
 		let n = e[t] === 255 ? 255 : 0;
@@ -1029,7 +1084,7 @@ async function Qe(e, t, n) {
 }
 //#endregion
 //#region src/ui/chat/quick_edit_labels.ts
-var $e = [
+var ot = [
 	"lineart",
 	"sketch",
 	"colorize",
@@ -1037,7 +1092,7 @@ var $e = [
 	"declutter",
 	"declutter-keep-bubbles",
 	"bg-removal"
-], et = [
+], st = [
 	"neutral",
 	"happy",
 	"sad",
@@ -1063,7 +1118,7 @@ var $e = [
 	"hurt",
 	"playful"
 ];
-function tt(e, t) {
+function ct(e, t) {
 	switch (t) {
 		case "lineart": return e("chat.quick_edit.tools.lineart");
 		case "sketch": return e("chat.quick_edit.tools.sketch");
@@ -1074,7 +1129,7 @@ function tt(e, t) {
 		case "bg-removal": return e("chat.quick_edit.tools.bg_removal");
 	}
 }
-function nt(e, t) {
+function lt(e, t) {
 	switch (t) {
 		case "neutral": return e("chat.quick_edit.emotions.neutral");
 		case "happy": return e("chat.quick_edit.emotions.happy");
@@ -1104,7 +1159,7 @@ function nt(e, t) {
 }
 //#endregion
 //#region src/ui/chat/QuickEditDialog.vue?vue&type=script&setup=true&lang.ts
-var rt = { key: 1 }, it = /* @__PURE__ */ j({
+var ut = { key: 1 }, dt = /* @__PURE__ */ M({
 	__name: "QuickEditDialog",
 	props: {
 		request: {},
@@ -1114,18 +1169,18 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 	},
 	emits: ["close"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: o } = w(), c = O(""), u = O(""), d = O(.6), m = O("lineart"), h = O("happy"), _ = O(""), b = O(0), E = O(null), D = O(null), j = O(!1), N = O(null), P = T(() => m.value === "colorize" || m.value === "emotion"), F = T(() => {
+		let n = e, r = t, { t: o } = w(), c = k(""), u = k(""), d = k(.6), m = k("lineart"), h = k("happy"), _ = k(""), b = k(0), E = k(null), D = k(null), O = k(!1), M = k(null), P = T(() => m.value === "colorize" || m.value === "emotion"), F = T(() => {
 			switch (n.request?.kind) {
 				case "img2img": return o("chat.quick_edit.img2img");
 				case "upscale": return o("chat.quick_edit.upscale");
 				default: return o("chat.quick_edit.director");
 			}
-		}), I = T(() => $e.map((e) => ({
+		}), I = T(() => ot.map((e) => ({
 			value: e,
-			label: tt(o, e)
-		}))), L = T(() => et.map((e) => ({
+			label: ct(o, e)
+		}))), L = T(() => st.map((e) => ({
 			value: e,
-			label: nt(o, e)
+			label: lt(o, e)
 		})));
 		function R() {
 			let e = n.request;
@@ -1167,7 +1222,7 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 		}
 		a(() => n.request, async (e) => {
 			if (e !== null) {
-				if (c.value = e.positive_prompt, u.value = e.negative_prompt, N.value = null, E.value = null, e.kind === "img2img") {
+				if (c.value = e.positive_prompt, u.value = e.negative_prompt, M.value = null, E.value = null, e.kind === "img2img") {
 					let t = await n.loadBitmap(e.image_id);
 					E.value = {
 						width: t.width,
@@ -1184,43 +1239,43 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 		], () => {
 			z();
 		});
-		let V = T(() => D.value === null ? "" : D.value.opus_free ? o("chat.dialog.cost_free") : D.value.anlas === null ? o("chat.dialog.cost_rejected") : o("chat.dialog.cost_anlas", { anlas: D.value.anlas }));
-		function U(e) {
-			m.value = $e.find((t) => t === e) ?? m.value;
+		let B = T(() => D.value === null ? "" : D.value.opus_free ? o("chat.dialog.cost_free") : D.value.anlas === null ? o("chat.dialog.cost_rejected") : o("chat.dialog.cost_anlas", { anlas: D.value.anlas }));
+		function H(e) {
+			m.value = ot.find((t) => t === e) ?? m.value;
 		}
 		function W(e) {
-			h.value = et.find((t) => t === e) ?? h.value;
+			h.value = st.find((t) => t === e) ?? h.value;
 		}
 		async function G() {
 			let e = n.request, t = R();
 			if (e !== null && t !== null) {
-				j.value = !0, N.value = null;
+				O.value = !0, M.value = null;
 				try {
 					await n.service.edit(e.location, e.slot_id, t), r("close");
 				} catch (e) {
-					N.value = e instanceof Error ? e.message : String(e);
+					M.value = e instanceof Error ? e.message : String(e);
 				} finally {
-					j.value = !1;
+					O.value = !1;
 				}
 			}
 		}
-		return (t, n) => (l(), y(he, {
+		return (t, n) => (l(), y(ye, {
 			open: e.request !== null && e.request.kind !== "inpaint",
 			title: F.value,
 			"close-label": x(o)("chat.dialog.close"),
 			"onUpdate:open": n[6] ||= (e) => !e && r("close")
 		}, {
 			default: i(() => [S("div", { class: g(x(Q).body) }, [
-				e.request?.kind === "img2img" ? (l(), f(k, { key: 0 }, [
-					S("label", { class: g(x(Q).label) }, [A(C(x(o)("chat.dialog.positive_prompt")) + " ", 1), s(S("textarea", {
+				e.request?.kind === "img2img" ? (l(), f(A, { key: 0 }, [
+					S("label", { class: g(x(Q).label) }, [j(C(x(o)("chat.dialog.positive_prompt")) + " ", 1), s(S("textarea", {
 						"onUpdate:modelValue": n[0] ||= (e) => c.value = e,
 						class: g(x(Q).prompt)
 					}, null, 2), [[p, c.value]])], 2),
-					S("label", { class: g(x(Q).label) }, [A(C(x(o)("chat.dialog.negative_prompt")) + " ", 1), s(S("textarea", {
+					S("label", { class: g(x(Q).label) }, [j(C(x(o)("chat.dialog.negative_prompt")) + " ", 1), s(S("textarea", {
 						"onUpdate:modelValue": n[1] ||= (e) => u.value = e,
 						class: g(x(Q).prompt)
 					}, null, 2), [[p, u.value]])], 2),
-					S("label", { class: g(x(Q).label) }, [A(C(x(o)("chat.quick_edit.strength", { value: d.value.toFixed(2) })) + " ", 1), s(S("input", {
+					S("label", { class: g(x(Q).label) }, [j(C(x(o)("chat.quick_edit.strength", { value: d.value.toFixed(2) })) + " ", 1), s(S("input", {
 						"onUpdate:modelValue": n[2] ||= (e) => d.value = e,
 						type: "range",
 						min: "0.01",
@@ -1232,20 +1287,20 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 						void 0,
 						{ number: !0 }
 					]])], 2)
-				], 64)) : e.request?.kind === "upscale" ? (l(), f("p", rt, C(x(o)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (l(), f(k, { key: 2 }, [
-					M(H, {
+				], 64)) : e.request?.kind === "upscale" ? (l(), f("p", ut, C(x(o)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (l(), f(A, { key: 2 }, [
+					N(U, {
 						"model-value": m.value,
 						options: I.value,
 						placeholder: x(o)("chat.quick_edit.tool"),
 						"aria-label": x(o)("chat.quick_edit.tool"),
-						"onUpdate:modelValue": U
+						"onUpdate:modelValue": H
 					}, null, 8, [
 						"model-value",
 						"options",
 						"placeholder",
 						"aria-label"
 					]),
-					m.value === "emotion" ? (l(), y(H, {
+					m.value === "emotion" ? (l(), y(U, {
 						key: 0,
 						"model-value": h.value,
 						options: L.value,
@@ -1258,10 +1313,10 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 						"placeholder",
 						"aria-label"
 					])) : v("", !0),
-					P.value ? (l(), f(k, { key: 1 }, [S("label", { class: g(x(Q).label) }, [A(C(x(o)("chat.quick_edit.tool_prompt")) + " ", 1), s(S("textarea", {
+					P.value ? (l(), f(A, { key: 1 }, [S("label", { class: g(x(Q).label) }, [j(C(x(o)("chat.quick_edit.tool_prompt")) + " ", 1), s(S("textarea", {
 						"onUpdate:modelValue": n[3] ||= (e) => _.value = e,
 						class: g(x(Q).prompt)
-					}, null, 2), [[p, _.value]])], 2), S("label", { class: g(x(Q).label) }, [A(C(x(o)("chat.quick_edit.defry", { value: b.value })) + " ", 1), s(S("input", {
+					}, null, 2), [[p, _.value]])], 2), S("label", { class: g(x(Q).label) }, [j(C(x(o)("chat.quick_edit.defry", { value: b.value })) + " ", 1), s(S("input", {
 						"onUpdate:modelValue": n[4] ||= (e) => b.value = e,
 						type: "range",
 						min: "0",
@@ -1274,20 +1329,20 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 						{ number: !0 }
 					]])], 2)], 64)) : v("", !0)
 				], 64)) : v("", !0),
-				N.value === null ? v("", !0) : (l(), f("p", {
+				M.value === null ? v("", !0) : (l(), f("p", {
 					key: 3,
 					class: g(x(Q).error)
-				}, C(N.value), 3)),
+				}, C(M.value), 3)),
 				S("div", { class: g(x(Q).footer) }, [
-					S("span", { class: g(x(Q).total) }, C(V.value), 3),
-					M(B, {
+					S("span", { class: g(x(Q).total) }, C(B.value), 3),
+					N(V, {
 						label: x(o)("chat.dialog.cancel"),
 						onClick: n[5] ||= (e) => r("close")
 					}, null, 8, ["label"]),
-					M(B, {
+					N(V, {
 						label: x(o)("chat.quick_edit.submit"),
 						variant: "primary",
-						pending: j.value,
+						pending: O.value,
 						disabled: R() === null,
 						onClick: G
 					}, null, 8, [
@@ -1304,7 +1359,7 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 			"close-label"
 		]));
 	}
-}), at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "aria-label"], lt = ["disabled", "aria-label"], ut = ["disabled"], dt = ["disabled", "onClick"], ft = /* @__PURE__ */ j({
+}), ft = ["src", "alt"], pt = ["disabled", "aria-label"], mt = ["disabled", "aria-label"], ht = ["title"], gt = ["disabled"], _t = ["aria-label", "aria-expanded"], vt = ["disabled", "onClick"], yt = /* @__PURE__ */ M({
 	__name: "SlotCard",
 	props: {
 		entry: {},
@@ -1320,126 +1375,326 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 		"quick-edit"
 	],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = w(), s = O(null), c = O(!1), u = T(() => n.entry.active_image_id === null ? -1 : n.entry.image_ids.indexOf(n.entry.active_image_id)), d = T(() => !n.pending && n.entry.pending_request_ids.length > 0);
-		a(() => n.entry.active_image_id, (e) => {
-			s.value = null, c.value = !1, e !== null && n.loadImage(e).then((t) => {
-				n.entry.active_image_id === e && (s.value = t);
+		let r = e, i = t, { t: s } = w(), c = k(null), u = k(!1), d = T(() => r.entry.active_image_id === null ? -1 : r.entry.image_ids.indexOf(r.entry.active_image_id)), p = T(() => !r.pending && r.entry.pending_request_ids.length > 0);
+		a(() => r.entry.active_image_id, (e) => {
+			c.value = null, u.value = !1, e !== null && r.loadImage(e).then((t) => {
+				r.entry.active_image_id === e && (c.value = t);
 			}, () => {
-				c.value = !0;
+				u.value = !0;
 			});
 		}, { immediate: !0 });
-		let p = [
+		let m = [
 			{
 				kind: "img2img",
-				label: () => i("chat.quick_edit.img2img")
+				label: () => s("chat.quick_edit.img2img")
 			},
 			{
 				kind: "inpaint",
-				label: () => i("chat.quick_edit.inpaint")
+				label: () => s("chat.quick_edit.inpaint")
 			},
 			{
 				kind: "upscale",
-				label: () => i("chat.quick_edit.upscale")
+				label: () => s("chat.quick_edit.upscale")
 			},
 			{
 				kind: "augment",
-				label: () => i("chat.quick_edit.director")
+				label: () => s("chat.quick_edit.director")
 			}
-		];
-		function m(e) {
-			let t = n.entry.image_ids[u.value + e];
-			t !== void 0 && r("select", t);
+		], h = k(!1), _ = k(null);
+		function y(e) {
+			e.target instanceof Node && !_.value?.contains(e.target) && (h.value = !1);
 		}
-		return (t, n) => (l(), f("div", {
+		a(h, (e) => {
+			e ? document.addEventListener("pointerdown", y) : document.removeEventListener("pointerdown", y);
+		}), n(() => {
+			document.removeEventListener("pointerdown", y);
+		});
+		function b(e) {
+			h.value = !1, r.entry.active_image_id !== null && i("quick-edit", e, r.entry.active_image_id);
+		}
+		function E(e) {
+			let t = r.entry.image_ids[d.value + e];
+			t !== void 0 && i("select", t);
+		}
+		return (t, n) => (l(), f("figure", {
 			class: g(x(X).slot),
 			"data-tc-slot-card": ""
-		}, [
-			S("div", { class: g(x(X).frame) }, [s.value !== null && e.entry.active_image_id !== null ? (l(), f("img", {
+		}, [S("div", { class: g(x(X).frame) }, [c.value !== null && e.entry.active_image_id !== null ? (l(), f("img", {
+			key: 0,
+			class: g(x(X).image),
+			src: c.value,
+			alt: e.entry.scene,
+			onClick: n[0] ||= (t) => i("preview", e.entry.active_image_id)
+		}, null, 10, ft)) : (l(), f("div", {
+			key: 1,
+			class: g(x(X).placeholder)
+		}, [e.pending ? (l(), f("span", {
+			key: 0,
+			class: g(x(X).skeleton),
+			"aria-hidden": "true"
+		}, null, 2)) : v("", !0), e.pending ? (l(), f("span", {
+			key: 1,
+			class: g(x(X).status)
+		}, C(x(s)("chat.slot.generating")), 3)) : u.value ? (l(), f("span", {
+			key: 2,
+			class: g([x(X).status, x(X).error])
+		}, C(x(s)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? p.value ? (l(), f("span", {
+			key: 4,
+			class: g(x(X).status)
+		}, C(x(s)("chat.slot.interrupted")), 3)) : v("", !0) : (l(), f("span", {
+			key: 3,
+			class: g([x(X).status, x(X).error])
+		}, C(x(s)("chat.slot.failed", { reason: x(be)(x(s), e.entry.last_error) })), 3))], 2))], 2), S("figcaption", { class: g(x(X).toolbar) }, [
+			e.entry.image_ids.length > 1 ? (l(), f("span", {
 				key: 0,
-				class: g(x(X).image),
-				src: s.value,
-				alt: e.entry.scene,
-				onClick: n[0] ||= (t) => r("preview", e.entry.active_image_id)
-			}, null, 10, at)) : (l(), f("div", {
-				key: 1,
-				class: g(x(X).placeholder)
-			}, [e.pending ? (l(), f(k, { key: 0 }, [S("span", {
-				class: g(x(X).skeleton),
-				"aria-hidden": "true"
-			}, null, 2), S("span", null, C(x(i)("chat.slot.generating")), 1)], 64)) : c.value ? (l(), f("span", {
-				key: 1,
-				class: g(x(X).error)
-			}, C(x(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? d.value ? (l(), f("span", ot, C(x(i)("chat.slot.interrupted")), 1)) : (l(), f("span", st, C(e.entry.scene), 1)) : (l(), f("span", {
-				key: 2,
-				class: g(x(X).error)
-			}, C(x(i)("chat.slot.failed", { reason: x(ge)(x(i), e.entry.last_error) })), 3))], 2))], 2),
-			S("div", { class: g(x(X).toolbar) }, [
-				e.entry.image_ids.length > 1 ? (l(), f("span", {
-					key: 0,
-					class: g(x(X).counter)
-				}, C(u.value + 1) + " / " + C(e.entry.image_ids.length), 3)) : (l(), f("span", {
-					key: 1,
-					class: g(x(X).counter)
-				}, null, 2)),
-				e.entry.image_ids.length > 1 ? (l(), f("button", {
-					key: 2,
+				class: g(x(X).pager)
+			}, [
+				S("button", {
 					type: "button",
-					class: g(x(X).button),
-					disabled: u.value <= 0,
-					"aria-label": x(i)("chat.slot.previous"),
-					onClick: n[1] ||= (e) => m(-1)
-				}, " ‹ ", 10, ct)) : v("", !0),
-				e.entry.image_ids.length > 1 ? (l(), f("button", {
-					key: 3,
+					class: g([x(X).button, x(X).icon_button]),
+					disabled: d.value <= 0,
+					"aria-label": x(s)("chat.slot.previous"),
+					onClick: n[1] ||= (e) => E(-1)
+				}, [N(I, {
+					icon: x(W),
+					size: 16
+				}, null, 8, ["icon"])], 10, pt),
+				S("span", { class: g(x(X).counter) }, C(d.value + 1) + " / " + C(e.entry.image_ids.length), 3),
+				S("button", {
 					type: "button",
-					class: g(x(X).button),
-					disabled: u.value >= e.entry.image_ids.length - 1,
-					"aria-label": x(i)("chat.slot.next"),
-					onClick: n[2] ||= (e) => m(1)
-				}, " › ", 10, lt)) : v("", !0),
+					class: g([x(X).button, x(X).icon_button]),
+					disabled: d.value >= e.entry.image_ids.length - 1,
+					"aria-label": x(s)("chat.slot.next"),
+					onClick: n[2] ||= (e) => E(1)
+				}, [N(I, {
+					icon: x(G),
+					size: 16
+				}, null, 8, ["icon"])], 10, mt)
+			], 2)) : v("", !0),
+			S("span", {
+				class: g(x(X).scene),
+				title: e.entry.scene
+			}, C(e.entry.scene), 11, ht),
+			S("span", { class: g(x(X).actions) }, [
 				S("button", {
 					type: "button",
 					class: g(x(X).button),
 					disabled: e.pending,
-					onClick: n[3] ||= (e) => r("generate")
-				}, C(e.entry.image_ids.length === 0 ? x(i)("chat.slot.generate") : x(i)("chat.slot.regenerate")), 11, ut),
+					onClick: n[3] ||= (e) => i("generate")
+				}, [N(I, {
+					icon: x(Te),
+					size: 16
+				}, null, 8, ["icon"]), S("span", { class: g(x(X).button_label) }, C(e.entry.image_ids.length === 0 ? x(s)("chat.slot.generate") : x(s)("chat.slot.regenerate")), 3)], 10, gt),
 				S("button", {
 					type: "button",
 					class: g(x(X).button),
-					onClick: n[4] ||= (e) => r("edit")
-				}, C(x(i)("chat.slot.edit")), 3)
-			], 2),
-			e.canEdit && e.entry.active_image_id !== null ? (l(), f("div", {
-				key: 0,
-				class: g(x(X).toolbar)
-			}, [(l(), f(k, null, o(p, (t) => S("button", {
-				key: t.kind,
-				type: "button",
-				class: g(x(X).button),
-				disabled: e.pending,
-				onClick: (n) => e.entry.active_image_id !== null && r("quick-edit", t.kind, e.entry.active_image_id)
-			}, C(t.label()), 11, dt)), 64))], 2)) : v("", !0)
-		], 2));
+					onClick: n[4] ||= (e) => i("edit")
+				}, [N(I, {
+					icon: x(Ce),
+					size: 16
+				}, null, 8, ["icon"]), S("span", { class: g(x(X).button_label) }, C(x(s)("chat.slot.edit")), 3)], 2),
+				e.canEdit && e.entry.active_image_id !== null ? (l(), f("span", {
+					key: 0,
+					ref_key: "menu_root",
+					ref: _,
+					class: g(x(X).more)
+				}, [S("button", {
+					type: "button",
+					class: g([x(X).button, x(X).icon_button]),
+					"aria-label": x(s)("chat.slot.more"),
+					"aria-haspopup": "menu",
+					"aria-expanded": h.value,
+					onClick: n[5] ||= (e) => h.value = !h.value,
+					onKeydown: n[6] ||= O((e) => h.value = !1, ["esc"])
+				}, [N(I, {
+					icon: x(xe),
+					size: 16
+				}, null, 8, ["icon"])], 42, _t), h.value ? (l(), f("span", {
+					key: 0,
+					role: "menu",
+					class: g(x(X).menu),
+					onKeydown: n[7] ||= O((e) => h.value = !1, ["esc"])
+				}, [(l(), f(A, null, o(m, (t) => S("button", {
+					key: t.kind,
+					type: "button",
+					role: "menuitem",
+					class: g(x(X).menu_item),
+					disabled: e.pending,
+					onClick: (e) => b(t.kind)
+				}, C(t.label()), 11, vt)), 64))], 34)) : v("", !0)], 2)) : v("", !0)
+			], 2)
+		], 2)], 2));
 	}
-}), pt = "data-tc-illustrate", mt = "data-tc-notice", ht = 50;
-function gt(e) {
+}), bt = ["aria-label", "title"], xt = 28, St = 8, Ct = 300, wt = /* @__PURE__ */ M({
+	__name: "ParagraphActions",
+	props: { service: {} },
+	emits: ["fallback"],
+	setup(e, { emit: t }) {
+		let r = e, i = t, { t: a } = w(), o = typeof matchMedia == "function" && matchMedia("(pointer: coarse)").matches, s = D(null), c = k(null), u = D(null), d = k(null), p = D(null), _ = k(null), S = k(null), O = null;
+		function A(e) {
+			let t = e instanceof Element ? e : e?.parentElement ?? null, n = t?.closest(".mes_text");
+			if (t === null || n == null) return null;
+			let r = n.closest(".mes");
+			if (r === null || r.getAttribute("is_user") === "true") return null;
+			let i = Number(r.getAttribute("mesid")), a = t;
+			for (; a.parentElement !== n;) {
+				if (a.parentElement === null || a === n) return null;
+				a = a.parentElement;
+			}
+			let o = a.matches("[data-tc-slot], [data-tc-notice]");
+			return !Number.isInteger(i) || o || !(a instanceof HTMLElement) || a.textContent.trim() === "" ? null : {
+				paragraph: a,
+				message_id: i
+			};
+		}
+		function M(e) {
+			return Math.min(Math.max(St, e), window.innerWidth - xt - St);
+		}
+		function P(e) {
+			if (o) {
+				let t = e.ownerDocument.createRange();
+				t.selectNodeContents(e);
+				let n = t.getClientRects(), r = n[n.length - 1];
+				if (r !== void 0) return {
+					top: r.top + (r.height - xt) / 2,
+					left: M(r.right + St / 2)
+				};
+			}
+			let t = e.getBoundingClientRect();
+			return {
+				top: t.top,
+				left: M(t.right + St)
+			};
+		}
+		function F(e) {
+			s.value?.paragraph.classList.remove(X.paragraph_highlight ?? ""), s.value = e, e?.paragraph.classList.add(X.paragraph_highlight ?? ""), c.value = e === null ? null : P(e.paragraph);
+		}
+		function L() {
+			O !== null && (clearTimeout(O), O = null);
+		}
+		function R(e) {
+			if (o || p.value !== null) return;
+			if (e.target instanceof Node && S.value?.contains(e.target)) {
+				L();
+				return;
+			}
+			let t = A(e.target);
+			t === null ? s.value !== null && O === null && (O = setTimeout(() => {
+				O = null, F(null);
+			}, Ct)) : (L(), t.paragraph !== s.value?.paragraph && F(t));
+		}
+		function z(e) {
+			!o || e.target instanceof Node && S.value?.contains(e.target) || F(A(e.target));
+		}
+		function B() {
+			let e = document.getSelection();
+			if (e === null || e.isCollapsed || e.rangeCount === 0) {
+				u.value = null, d.value = null;
+				return;
+			}
+			let t = A(e.anchorNode);
+			if (t === null || A(e.focusNode)?.message_id !== t.message_id) {
+				u.value = null, d.value = null;
+				return;
+			}
+			let n = e.getRangeAt(0).getBoundingClientRect();
+			u.value = t, d.value = {
+				top: n.top,
+				left: n.left + n.width / 2
+			};
+		}
+		function V() {
+			s.value !== null && (c.value = P(s.value.paragraph)), p.value !== null && (_.value = P(p.value.paragraph)), u.value !== null && B();
+		}
+		async function H(e) {
+			F(null), u.value = null, d.value = null, document.getSelection()?.removeAllRanges(), p.value = e, _.value = P(e.paragraph);
+			try {
+				let t = await r.service.paragraph_index_of(e.message_id, e.paragraph.textContent);
+				if (t === null) {
+					i("fallback", e.message_id);
+					return;
+				}
+				await r.service.illustrate_paragraph(e.message_id, t);
+			} catch {
+				i("fallback", e.message_id);
+			} finally {
+				p.value = null, _.value = null;
+			}
+		}
+		let U = T(() => c.value === null ? void 0 : {
+			top: `${String(c.value.top)}px`,
+			left: `${String(c.value.left)}px`
+		}), W = T(() => d.value === null ? void 0 : {
+			top: `${String(d.value.top)}px`,
+			left: `${String(d.value.left)}px`
+		}), G = T(() => _.value === null ? void 0 : {
+			top: `${String(_.value.top)}px`,
+			left: `${String(_.value.left)}px`
+		});
+		return b(() => {
+			document.addEventListener("pointerover", R), document.addEventListener("click", z), document.addEventListener("selectionchange", B), window.addEventListener("scroll", V, {
+				capture: !0,
+				passive: !0
+			}), window.addEventListener("resize", V, { passive: !0 });
+		}), n(() => {
+			L(), F(null), document.removeEventListener("pointerover", R), document.removeEventListener("click", z), document.removeEventListener("selectionchange", B), window.removeEventListener("scroll", V, { capture: !0 }), window.removeEventListener("resize", V);
+		}), (e, t) => (l(), y(h, { to: "body" }, [
+			s.value !== null && U.value !== void 0 ? (l(), f("button", {
+				key: 0,
+				ref_key: "hover_button",
+				ref: S,
+				type: "button",
+				class: g(x(X).paragraph_action),
+				style: E(U.value),
+				"aria-label": x(a)("chat.paragraph.illustrate"),
+				title: x(a)("chat.paragraph.illustrate"),
+				"data-testid": "paragraph-illustrate",
+				onClick: t[0] ||= (e) => H(s.value)
+			}, [N(I, {
+				icon: x(ee),
+				size: 16
+			}, null, 8, ["icon"])], 14, bt)) : v("", !0),
+			u.value !== null && W.value !== void 0 ? (l(), f("button", {
+				key: 1,
+				type: "button",
+				class: g(x(X).paragraph_action),
+				"data-kind": "selection",
+				style: E(W.value),
+				"data-testid": "selection-illustrate",
+				onMousedown: t[1] ||= m(() => {}, ["prevent"]),
+				onClick: t[2] ||= (e) => H(u.value)
+			}, [N(I, {
+				icon: x(ee),
+				size: 16
+			}, null, 8, ["icon"]), j(" " + C(x(a)("chat.paragraph.illustrate")), 1)], 38)) : v("", !0),
+			p.value !== null && G.value !== void 0 ? (l(), f("span", {
+				key: 2,
+				class: g(x(X).paragraph_action),
+				"data-kind": "status",
+				style: E(G.value),
+				role: "status"
+			}, C(x(a)("chat.paragraph.analyzing")), 7)) : v("", !0)
+		]));
+	}
+}), Tt = "data-tc-illustrate", Et = "data-tc-notice", Dt = 50;
+function Ot(e) {
 	return `${e.chat_id}:${String(e.message_id)}:${String(e.swipe_id)}`;
 }
-function _t(e) {
+function kt(e) {
 	let { host: t, service: r } = e, i = D([]), a = D([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = /* @__PURE__ */ new Map(), l = [], u = null;
 	function d(t, n) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
-		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${pt}]`) !== null) return;
+		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${Tt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(re(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(ae(t.ownerDocument)), a.setAttribute(Tt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}
 	function f(e) {
-		let t = e.parentElement?.querySelector(`:scope > [${mt}]`);
+		let t = e.parentElement?.querySelector(`:scope > [${Et}]`);
 		if (t != null) return t;
 		let n = e.ownerDocument.createElement("div");
-		return n.setAttribute(mt, ""), e.after(n), n;
+		return n.setAttribute(Et, ""), e.after(n), n;
 	}
 	function p(e) {
 		let n = t.find_message_element(e.message_id);
@@ -1452,7 +1707,7 @@ function _t(e) {
 		for (let t of n.querySelectorAll("[data-tc-slot]")) {
 			let n = i.find((e) => e.slot_id === t.dataset.tcSlot);
 			n !== void 0 && a.push({
-				key: `${gt(e)}:${n.slot_id}`,
+				key: `${Ot(e)}:${n.slot_id}`,
 				element: t,
 				location: e,
 				slot: n
@@ -1504,7 +1759,7 @@ function _t(e) {
 	function _() {
 		u !== null && clearTimeout(u), u = setTimeout(() => {
 			u = null, g();
-		}, ht);
+		}, Dt);
 	}
 	return b(() => {
 		l.push(t.subscribe_message_rendered((e) => {
@@ -1514,7 +1769,7 @@ function _t(e) {
 		}), t.subscribe_chat_rendered(() => {
 			s.clear(), c.clear(), _();
 		}), r.subscribe((e) => {
-			let t = gt(e.location);
+			let t = Ot(e.location);
 			e.type === "wardrobe_failed" ? c.set(t, {
 				status: "wardrobe_failed",
 				message: e.message
@@ -1527,7 +1782,7 @@ function _t(e) {
 	}), n(() => {
 		for (let e of l.splice(0)) e();
 		u !== null && clearTimeout(u);
-		for (let e of document.querySelectorAll(`[${pt}], [${mt}]`)) e.remove();
+		for (let e of document.querySelectorAll(`[${Tt}], [${Et}]`)) e.remove();
 	}), {
 		targets: i,
 		notices: a
@@ -1535,16 +1790,16 @@ function _t(e) {
 }
 //#endregion
 //#region src/ui/chat/use_image_urls.ts
-var vt = 64;
-function yt(e) {
+var At = 64;
+function jt(e) {
 	e.then((e) => {
 		URL.revokeObjectURL(e);
 	}, () => void 0);
 }
-function bt(e, t = vt) {
+function Mt(e, t = At) {
 	let r = /* @__PURE__ */ new Map();
 	return n(() => {
-		for (let e of r.values()) yt(e);
+		for (let e of r.values()) jt(e);
 		r.clear();
 	}), (n) => {
 		let i = r.get(n);
@@ -1553,14 +1808,14 @@ function bt(e, t = vt) {
 		r.set(n, a), a.catch(() => r.delete(n));
 		for (let [e, n] of r) {
 			if (r.size <= t) break;
-			r.delete(e), yt(n);
+			r.delete(e), jt(n);
 		}
 		return a;
 	};
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @__PURE__ */ j({
+var Nt = ["onClick"], Pt = { key: 1 }, Ft = ["onClick"], It = ["src"], Lt = /* @__PURE__ */ M({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1571,7 +1826,7 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 		promptTags: {}
 	},
 	setup(e) {
-		let t = e, { t: r } = w(), i = O(null), a = O(null), s = bt(t.gallery), c = O(null), u = D(null), d = O(!1);
+		let t = e, { t: r } = w(), i = k(null), a = k(null), s = Mt(t.gallery), c = k(null), u = D(null), d = k(!1);
 		async function p(e) {
 			let n = await t.gallery.read_bytes(e);
 			return createImageBitmap(new Blob([new Uint8Array(n)]));
@@ -1606,7 +1861,7 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 					kind: "inpaint",
 					image_id: n.request.image_id,
 					source: r,
-					mask_png: await Qe(e.mask, r.width, r.height),
+					mask_png: await at(e.mask, r.width, r.height),
 					positive_prompt: e.positivePrompt,
 					negative_prompt: e.negativePrompt,
 					strength: e.denoiseStrength
@@ -1615,7 +1870,7 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 				d.value = !1, _();
 			}
 		}
-		let { targets: E, notices: j } = _t({
+		let { targets: E, notices: O } = kt({
 			host: t.host,
 			service: t.service,
 			button_label: () => r("chat.message_button"),
@@ -1626,7 +1881,7 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 				};
 			}
 		});
-		function N(e) {
+		function M(e) {
 			return e.some((e) => t.service.is_pending(e));
 		}
 		function P(e, n) {
@@ -1651,13 +1906,13 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 			document.addEventListener("keydown", R), t.translator?.prepare().catch(() => void 0);
 		}), n(() => {
 			document.removeEventListener("keydown", R);
-		}), (t, n) => (l(), f(k, null, [
-			(l(!0), f(k, null, o(x(E), (t) => (l(), y(h, {
+		}), (t, n) => (l(), f(A, null, [
+			(l(!0), f(A, null, o(x(E), (t) => (l(), y(h, {
 				key: t.key,
 				to: t.element
-			}, [M(ft, {
+			}, [N(yt, {
 				entry: t.slot,
-				pending: N(t.slot.pending_request_ids),
+				pending: M(t.slot.pending_request_ids),
 				"load-image": x(s),
 				"can-edit": e.service.can_edit(),
 				onGenerate: (e) => P(t.location, t.slot.slot_id),
@@ -1678,27 +1933,27 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 				"onSelect",
 				"onQuickEdit"
 			])], 8, ["to"]))), 128)),
-			(l(!0), f(k, null, o(x(j), (t) => (l(), y(h, {
+			(l(!0), f(A, null, o(x(O), (t) => (l(), y(h, {
 				key: t.key,
 				to: t.element
-			}, [S("div", { class: g(x(X).notice) }, [t.notice.status === "running" ? (l(), f(k, { key: 0 }, [S("div", null, C(x(r)("chat.analysis_running")), 1), S("div", { class: g(x(X).notice_actions) }, [S("button", {
+			}, [S("div", { class: g(x(X).notice) }, [t.notice.status === "running" ? (l(), f(A, { key: 0 }, [S("div", null, C(x(r)("chat.analysis_running")), 1), S("div", { class: g(x(X).notice_actions) }, [S("button", {
 				type: "button",
 				class: g(x(X).button),
 				"data-testid": "analysis-cancel",
 				onClick: (n) => e.service.cancel_analysis(t.message_id)
-			}, C(x(r)("common.actions.cancel")), 11, xt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (l(), f(k, { key: 1 }, [A(C(x(r)("chat.wardrobe_failed", { reason: x(ge)(x(r), t.notice.message) })), 1)], 64)) : (l(), f(k, { key: 2 }, [
-				S("div", null, C(x(r)("chat.analysis_failed", { reason: x(ge)(x(r), t.notice.message) })), 1),
+			}, C(x(r)("common.actions.cancel")), 11, Nt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (l(), f(A, { key: 1 }, [j(C(x(r)("chat.wardrobe_failed", { reason: x(be)(x(r), t.notice.message) })), 1)], 64)) : (l(), f(A, { key: 2 }, [
+				S("div", null, C(x(r)("chat.analysis_failed", { reason: x(be)(x(r), t.notice.message) })), 1),
 				t.notice.excerpt === null ? v("", !0) : (l(), f("pre", {
 					key: 0,
 					class: g(x(X).excerpt)
 				}, C(t.notice.excerpt), 3)),
-				t.notice.excerpt === null ? v("", !0) : (l(), f("div", St, C(x(r)("chat.dialog.parse_failed_hint")), 1)),
+				t.notice.excerpt === null ? v("", !0) : (l(), f("div", Pt, C(x(r)("chat.dialog.parse_failed_hint")), 1)),
 				S("div", { class: g(x(X).notice_actions) }, [S("button", {
 					type: "button",
 					class: g(x(X).button),
 					"data-testid": "analysis-retry",
 					onClick: (e) => F(t.message_id)
-				}, C(x(r)("chat.dialog.retry")), 11, Ct)], 2)
+				}, C(x(r)("chat.dialog.retry")), 11, Ft)], 2)
 			], 64))], 2)], 8, ["to"]))), 128)),
 			a.value === null ? v("", !0) : (l(), y(h, {
 				key: 0,
@@ -1710,14 +1965,21 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 			}, [S("img", {
 				src: a.value,
 				alt: ""
-			}, null, 8, wt)], 2)])),
-			M(Ze, {
+			}, null, 8, It)], 2)])),
+			N(wt, {
+				service: e.service,
+				onFallback: n[1] ||= (e) => i.value = {
+					message_id: e,
+					slot_id: null
+				}
+			}, null, 8, ["service"]),
+			N(it, {
 				request: i.value,
 				service: e.service,
 				novelai: e.novelai,
 				translator: e.translator,
 				"prompt-tags": e.promptTags,
-				onClose: n[1] ||= (e) => i.value = null
+				onClose: n[2] ||= (e) => i.value = null
 			}, null, 8, [
 				"request",
 				"service",
@@ -1725,18 +1987,18 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 				"translator",
 				"prompt-tags"
 			]),
-			M(it, {
+			N(dt, {
 				request: c.value,
 				service: e.service,
 				novelai: e.novelai,
 				"load-bitmap": p,
-				onClose: n[2] ||= (e) => c.value = null
+				onClose: n[3] ||= (e) => c.value = null
 			}, null, 8, [
 				"request",
 				"service",
 				"novelai"
 			]),
-			u.value === null ? v("", !0) : (l(), y(Ae, {
+			u.value === null ? v("", !0) : (l(), y(Le, {
 				key: 1,
 				open: !0,
 				bitmap: u.value.bitmap,
@@ -1759,7 +2021,7 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 				pending: d.value,
 				"initial-positive-prompt": u.value.request.positive_prompt,
 				"initial-negative-prompt": u.value.request.negative_prompt,
-				"onUpdate:open": n[3] ||= (e) => !e && _(),
+				"onUpdate:open": n[4] ||= (e) => !e && _(),
 				onSubmit: T
 			}, null, 8, [
 				"bitmap",
@@ -1785,4 +2047,4 @@ var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @
 	}
 });
 //#endregion
-export { Tt as default };
+export { Lt as default };

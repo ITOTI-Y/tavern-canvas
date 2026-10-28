@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { IllustrationSlot, Uuid } from "@tavern-canvas/contracts";
-import { computed, ref, watch } from "vue";
+import { ChevronLeft, ChevronRight, Ellipsis, Pencil, RefreshCw } from "lucide-vue-next";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AppIcon from "../components/AppIcon.vue";
 import styles from "./chat.module.css";
 import type { QuickEditKind } from "./quick_edit_request.js";
 import { slot_error_label } from "./slot_error_label.js";
@@ -65,6 +67,33 @@ const QUICK_EDITS: readonly { readonly kind: QuickEditKind; readonly label: () =
   { kind: "augment", label: () => t("chat.quick_edit.director") },
 ];
 
+const menu_open = ref(false);
+const menu_root = ref<HTMLElement | null>(null);
+
+function close_menu_outside(event: PointerEvent): void {
+  if (event.target instanceof Node && !menu_root.value?.contains(event.target)) {
+    menu_open.value = false;
+  }
+}
+
+watch(menu_open, (open) => {
+  if (open) {
+    document.addEventListener("pointerdown", close_menu_outside);
+  } else {
+    document.removeEventListener("pointerdown", close_menu_outside);
+  }
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("pointerdown", close_menu_outside);
+});
+
+function quick_edit(kind: QuickEditKind): void {
+  menu_open.value = false;
+  if (props.entry.active_image_id !== null) {
+    emit("quick-edit", kind, props.entry.active_image_id);
+  }
+}
+
 function step(offset: number): void {
   const image_id = props.entry.image_ids[active_index.value + offset];
   if (image_id !== undefined) {
@@ -74,7 +103,7 @@ function step(offset: number): void {
 </script>
 
 <template>
-  <div :class="styles.slot" data-tc-slot-card>
+  <figure :class="styles.slot" data-tc-slot-card>
     <div :class="styles.frame">
       <img
         v-if="image_url !== null && entry.active_image_id !== null"
@@ -84,65 +113,78 @@ function step(offset: number): void {
         @click="emit('preview', entry.active_image_id)"
       />
       <div v-else :class="styles.placeholder">
-        <template v-if="pending">
-          <span :class="styles.skeleton" aria-hidden="true" />
-          <span>{{ t("chat.slot.generating") }}</span>
-        </template>
-        <span v-else-if="load_failed" :class="styles.error">{{
+        <span v-if="pending" :class="styles.skeleton" aria-hidden="true" />
+        <span v-if="pending" :class="styles.status">{{ t("chat.slot.generating") }}</span>
+        <span v-else-if="load_failed" :class="[styles.status, styles.error]">{{
           t("chat.slot.image_missing")
         }}</span>
-        <span v-else-if="entry.last_error !== null" :class="styles.error">
+        <span v-else-if="entry.last_error !== null" :class="[styles.status, styles.error]">
           {{ t("chat.slot.failed", { reason: slot_error_label(t, entry.last_error) }) }}
         </span>
-        <span v-else-if="interrupted">{{ t("chat.slot.interrupted") }}</span>
-        <span v-else>{{ entry.scene }}</span>
+        <span v-else-if="interrupted" :class="styles.status">{{ t("chat.slot.interrupted") }}</span>
       </div>
     </div>
-    <div :class="styles.toolbar">
-      <span v-if="entry.image_ids.length > 1" :class="styles.counter">
-        {{ active_index + 1 }} / {{ entry.image_ids.length }}
+    <figcaption :class="styles.toolbar">
+      <span v-if="entry.image_ids.length > 1" :class="styles.pager">
+        <button
+          type="button"
+          :class="[styles.button, styles.icon_button]"
+          :disabled="active_index <= 0"
+          :aria-label="t('chat.slot.previous')"
+          @click="step(-1)"
+        >
+          <AppIcon :icon="ChevronLeft" :size="16" />
+        </button>
+        <span :class="styles.counter">{{ active_index + 1 }} / {{ entry.image_ids.length }}</span>
+        <button
+          type="button"
+          :class="[styles.button, styles.icon_button]"
+          :disabled="active_index >= entry.image_ids.length - 1"
+          :aria-label="t('chat.slot.next')"
+          @click="step(1)"
+        >
+          <AppIcon :icon="ChevronRight" :size="16" />
+        </button>
       </span>
-      <span v-else :class="styles.counter" />
-      <button
-        v-if="entry.image_ids.length > 1"
-        type="button"
-        :class="styles.button"
-        :disabled="active_index <= 0"
-        :aria-label="t('chat.slot.previous')"
-        @click="step(-1)"
-      >
-        ‹
-      </button>
-      <button
-        v-if="entry.image_ids.length > 1"
-        type="button"
-        :class="styles.button"
-        :disabled="active_index >= entry.image_ids.length - 1"
-        :aria-label="t('chat.slot.next')"
-        @click="step(1)"
-      >
-        ›
-      </button>
-      <button type="button" :class="styles.button" :disabled="pending" @click="emit('generate')">
-        {{ entry.image_ids.length === 0 ? t("chat.slot.generate") : t("chat.slot.regenerate") }}
-      </button>
-      <button type="button" :class="styles.button" @click="emit('edit')">
-        {{ t("chat.slot.edit") }}
-      </button>
-    </div>
-    <div v-if="canEdit && entry.active_image_id !== null" :class="styles.toolbar">
-      <button
-        v-for="kind in QUICK_EDITS"
-        :key="kind.kind"
-        type="button"
-        :class="styles.button"
-        :disabled="pending"
-        @click="
-          entry.active_image_id !== null && emit('quick-edit', kind.kind, entry.active_image_id)
-        "
-      >
-        {{ kind.label() }}
-      </button>
-    </div>
-  </div>
+      <span :class="styles.scene" :title="entry.scene">{{ entry.scene }}</span>
+      <span :class="styles.actions">
+        <button type="button" :class="styles.button" :disabled="pending" @click="emit('generate')">
+          <AppIcon :icon="RefreshCw" :size="16" />
+          <span :class="styles.button_label">{{
+            entry.image_ids.length === 0 ? t("chat.slot.generate") : t("chat.slot.regenerate")
+          }}</span>
+        </button>
+        <button type="button" :class="styles.button" @click="emit('edit')">
+          <AppIcon :icon="Pencil" :size="16" />
+          <span :class="styles.button_label">{{ t("chat.slot.edit") }}</span>
+        </button>
+        <span v-if="canEdit && entry.active_image_id !== null" ref="menu_root" :class="styles.more">
+          <button
+            type="button"
+            :class="[styles.button, styles.icon_button]"
+            :aria-label="t('chat.slot.more')"
+            aria-haspopup="menu"
+            :aria-expanded="menu_open"
+            @click="menu_open = !menu_open"
+            @keydown.esc="menu_open = false"
+          >
+            <AppIcon :icon="Ellipsis" :size="16" />
+          </button>
+          <span v-if="menu_open" role="menu" :class="styles.menu" @keydown.esc="menu_open = false">
+            <button
+              v-for="kind in QUICK_EDITS"
+              :key="kind.kind"
+              type="button"
+              role="menuitem"
+              :class="styles.menu_item"
+              :disabled="pending"
+              @click="quick_edit(kind.kind)"
+            >
+              {{ kind.label() }}
+            </button>
+          </span>
+        </span>
+      </span>
+    </figcaption>
+  </figure>
 </template>

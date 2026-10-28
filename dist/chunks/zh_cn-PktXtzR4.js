@@ -651,10 +651,15 @@ var e = {
 		analysis_running: "正在选择需要配图的段落…",
 		wardrobe_failed: "服装判断失败，本条回复沿用上一条的服装：{reason}",
 		analysis_failed: "段落分析失败：{reason}",
+		paragraph: {
+			illustrate: "为此段配图",
+			analyzing: "正在分析这一段…"
+		},
 		slot: {
 			generate: "生成",
 			regenerate: "重新生成",
 			edit: "编辑提示词",
+			more: "更多操作",
 			previous: "上一张",
 			next: "下一张",
 			generating: "生成中…",

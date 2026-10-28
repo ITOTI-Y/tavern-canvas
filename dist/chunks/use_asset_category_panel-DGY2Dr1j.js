@@ -1,46 +1,24 @@
-import { A as e, C as t, D as n, G as r, I as i, K as a, L as o, M as s, P as c, T as l, V as u, _ as d, a as f, c as p, dt as m, et as h, ft as g, g as _, h as v, k as y, lt as b, m as x, mt as S, n as ee, p as C, s as w, tt as T, u as E, v as D, x as O, y as k } from "./vue-i18n-L-BrQRnK.js";
-import { i as A, n as j } from "./portal_keys-DthxrmWp.js";
-import { n as M, t as N } from "./AppIcon-DkyxvN8k.js";
-import { n as P, t as F } from "./StateSurface-X9aRtXAT.js";
+import { A as e, C as t, D as n, G as r, I as i, K as a, L as o, M as s, P as c, T as l, V as u, _ as d, a as f, c as p, dt as m, et as ee, ft as h, g, h as _, k as v, lt as y, m as b, mt as x, n as te, p as S, s as C, tt as w, u as T, v as E, x as D, y as O } from "./vue-i18n-L-BrQRnK.js";
+import { i as k, n as A } from "./portal_keys-DthxrmWp.js";
+import { n as j, t as M } from "./AppIcon-DkyxvN8k.js";
+import { n as N, t as P } from "./StateSurface-X9aRtXAT.js";
+import { t as F } from "./image-plus-D7OOsWBN.js";
 import { t as I } from "./components_styles-DHX8irr3.js";
 import { t as L } from "./AppCheckbox-qcV3D_N_.js";
 import { n as R, t as z } from "./FieldGroup-CViCiHLn.js";
 import { t as B } from "./shuffle-Bo5nqqvn.js";
 import { t as V } from "./trash-2-Dqlz-IWX.js";
-import { t as te } from "./x-D7Ry5i_D.js";
+import { t as ne } from "./x-D7Ry5i_D.js";
 import { n as H } from "./deferred_stylesheets-BpS7LWkd.js";
 import { t as U } from "./_prop_utils-O1SzpV_h.js";
 import { f as W } from "./Teleport-CquQcgiX.js";
 import { t as G } from "./NumberStepper-CeqkgodA.js";
 import { r as K } from "./PopperContent-BPSDCuaj.js";
-import { t as ne } from "./ConfirmDialog-DASvEQUq.js";
-import { i as q, n as re, r as ie, t as ae } from "./PopoverPortal-BFGvpcA5.js";
+import { t as q } from "./ConfirmDialog-DASvEQUq.js";
+import { i as J, n as re, r as ie, t as ae } from "./PopoverPortal-BFGvpcA5.js";
 import { t as oe } from "./IconButton-4U1H-LPK.js";
-//#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/image-plus.js
-var J = M("image-plus", [
-	["path", {
-		d: "M16 5h6",
-		key: "1vod17"
-	}],
-	["path", {
-		d: "M19 2v6",
-		key: "4bpg5p"
-	}],
-	["path", {
-		d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5",
-		key: "1ue2ih"
-	}],
-	["path", {
-		d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21",
-		key: "1xmnt7"
-	}],
-	["circle", {
-		cx: "9",
-		cy: "9",
-		r: "2",
-		key: "af1f0g"
-	}]
-]), Y = M("search", [["path", {
+//#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/search.js
+var Y = j("search", [["path", {
 	d: "m21 21-4.34-4.34",
 	key: "14j7rj"
 }], ["circle", {
@@ -48,7 +26,7 @@ var J = M("image-plus", [
 	cy: "11",
 	r: "8",
 	key: "4ej97u"
-}]]), se = /* @__PURE__ */ O({
+}]]), se = /* @__PURE__ */ D({
 	__name: "PopoverAnchor",
 	props: {
 		reference: {
@@ -67,12 +45,12 @@ var J = M("image-plus", [
 	setup(e) {
 		let n = e;
 		W();
-		let i = q();
-		return y(() => {
+		let i = J();
+		return v(() => {
 			i.hasCustomAnchor.value = !0;
 		}), s(() => {
 			i.hasCustomAnchor.value = !1;
-		}), (e, i) => (c(), v(b(K), g(t(n)), {
+		}), (e, i) => (c(), _(y(K), h(t(n)), {
 			default: r(() => [o(e.$slots, "default")]),
 			_: 3
 		}, 16));
@@ -199,7 +177,7 @@ var de = ["placeholder", "aria-label"], fe = [
 	"aria-keyshortcuts",
 	"onClick",
 	"onKeydown"
-], ge = 3, _e = /* @__PURE__ */ O({
+], ge = 3, _e = /* @__PURE__ */ D({
 	__name: "AssetCategoryList",
 	props: {
 		records: {},
@@ -230,39 +208,39 @@ var de = ["placeholder", "aria-label"], fe = [
 		"delete-many"
 	],
 	setup(e, { emit: t }) {
-		let n = e, o = t, { t: s } = ee(), l = T(""), u = T(null);
-		function g(e) {
+		let n = e, o = t, { t: s } = te(), l = w(""), u = w(null);
+		function h(e) {
 			return n.describe === void 0 ? { detail: ue(e.payload, n.summaryFields).map((e) => e.value).join(" · ") } : n.describe(e);
 		}
-		let y = C(() => n.records.map((e) => {
-			let t = g(e);
+		let v = S(() => n.records.map((e) => {
+			let t = h(e);
 			return {
 				record: e,
 				view: t,
 				tags: (t.tags ?? []).slice(0, ge)
 			};
-		})), D = C(() => {
+		})), E = S(() => {
 			let e = l.value.trim().toLowerCase();
-			return e === "" ? y.value : y.value.filter(({ record: t, view: n }) => [
+			return e === "" ? v.value : v.value.filter(({ record: t, view: n }) => [
 				t.display_name,
 				n.detail ?? "",
 				...n.tags ?? []
 			].some((t) => t.toLowerCase().includes(e)));
-		}), O = h(/* @__PURE__ */ new Set()), A = T(!1), j = C(() => n.records.filter((e) => O.has(e.id)).map((e) => e.id)), M = C(() => {
-			let e = D.value, t = e.filter(({ record: e }) => O.has(e.id)).length;
+		}), D = ee(/* @__PURE__ */ new Set()), k = w(!1), A = S(() => n.records.filter((e) => D.has(e.id)).map((e) => e.id)), j = S(() => {
+			let e = E.value, t = e.filter(({ record: e }) => D.has(e.id)).length;
 			return t === 0 ? !1 : t === e.length || "indeterminate";
 		});
 		function I(e, t) {
-			t ? O.add(e) : O.delete(e);
+			t ? D.add(e) : D.delete(e);
 		}
 		function z() {
-			let e = M.value !== !0;
-			for (let { record: t } of D.value) I(t.id, e);
+			let e = j.value !== !0;
+			for (let { record: t } of E.value) I(t.id, e);
 		}
-		function te() {
-			o("delete-many", j.value), O.clear(), A.value = !1;
+		function ne() {
+			o("delete-many", A.value), D.clear(), k.value = !1;
 		}
-		let H = C(() => n.loading ? "loading" : n.records.length === 0 ? "empty" : "ready");
+		let H = S(() => n.loading ? "loading" : n.records.length === 0 ? "empty" : "ready");
 		function U(e, t) {
 			let r = [...n.records], [i] = r.splice(e, 1);
 			i !== void 0 && (r.splice(t, 0, i), o("reorder", r.map((e) => e.id)));
@@ -279,56 +257,56 @@ var de = ["placeholder", "aria-label"], fe = [
 		function K(e, t) {
 			u.value = e, t.dataTransfer?.setData("text/plain", e), t.dataTransfer && (t.dataTransfer.effectAllowed = "move");
 		}
-		function q(e, t) {
+		function J(e, t) {
 			t.preventDefault();
 			let r = u.value;
 			if (u.value = null, !r || r === e) return;
 			let i = n.records.findIndex((e) => e.id === r), a = n.records.findIndex((t) => t.id === e);
 			i !== -1 && a !== -1 && U(i, a);
 		}
-		return (t, n) => (c(), d("div", { class: m(b(Z).categoryList) }, [
-			x("div", { class: m(b(Z).categoryToolbar) }, [
-				x("div", { class: m(b(Z).searchField) }, [k(N, {
-					icon: b(Y),
+		return (t, n) => (c(), d("div", { class: m(y(Z).categoryList) }, [
+			b("div", { class: m(y(Z).categoryToolbar) }, [
+				b("div", { class: m(y(Z).searchField) }, [O(M, {
+					icon: y(Y),
 					size: 16
-				}, null, 8, ["icon"]), a(x("input", {
+				}, null, 8, ["icon"]), a(b("input", {
 					"onUpdate:modelValue": n[0] ||= (e) => l.value = e,
 					type: "search",
-					class: m(b(Z).searchInput),
+					class: m(y(Z).searchInput),
 					placeholder: e.searchPlaceholder,
 					"aria-label": e.searchLabel
 				}, null, 10, de), [[f, l.value]])], 2),
-				k(P, {
+				O(N, {
 					label: e.randomLabel,
-					icon: b(B),
+					icon: y(B),
 					variant: "secondary",
-					class: m(b(Z).randomWide),
+					class: m(y(Z).randomWide),
 					onClick: G
 				}, null, 8, [
 					"label",
 					"icon",
 					"class"
 				]),
-				x("span", { class: m(b(Z).randomNarrow) }, [k(oe, {
-					icon: b(B),
+				b("span", { class: m(y(Z).randomNarrow) }, [O(oe, {
+					icon: y(B),
 					label: e.randomLabel,
 					onClick: G
 				}, null, 8, ["icon", "label"])], 2),
-				k(P, {
+				O(N, {
 					label: e.addLabel,
-					icon: b(R),
+					icon: y(R),
 					variant: "primary",
 					onClick: n[1] ||= (e) => o("add")
 				}, null, 8, ["label", "icon"])
 			], 2),
 			e.records.length > 0 ? (c(), d("div", {
 				key: 0,
-				class: m(b(Z).selectionBar)
+				class: m(y(Z).selectionBar)
 			}, [
-				k(L, {
-					"model-value": M.value,
-					label: b(s)("common.actions.select_all"),
-					disabled: D.value.length === 0,
+				O(L, {
+					"model-value": j.value,
+					label: y(s)("common.actions.select_all"),
+					disabled: E.value.length === 0,
 					"data-testid": "asset-select-all",
 					"onUpdate:modelValue": z
 				}, null, 8, [
@@ -336,81 +314,81 @@ var de = ["placeholder", "aria-label"], fe = [
 					"label",
 					"disabled"
 				]),
-				j.value.length > 0 ? (c(), d(E, { key: 0 }, [x("span", { class: m([b(Z).selectionCount, "tc-tabular-nums"]) }, S(b(s)("assets.selected_count", { n: j.value.length })), 3), k(P, {
-					label: b(s)("assets.delete_selected_action"),
-					icon: b(V),
+				A.value.length > 0 ? (c(), d(T, { key: 0 }, [b("span", { class: m([y(Z).selectionCount, "tc-tabular-nums"]) }, x(y(s)("assets.selected_count", { n: A.value.length })), 3), O(N, {
+					label: y(s)("assets.delete_selected_action"),
+					icon: y(V),
 					variant: "destructive",
 					"data-testid": "asset-delete-selected",
-					onClick: n[2] ||= (e) => A.value = !0
-				}, null, 8, ["label", "icon"])], 64)) : _("", !0),
+					onClick: n[2] ||= (e) => k.value = !0
+				}, null, 8, ["label", "icon"])], 64)) : g("", !0),
 				e.records.length > 1 ? (c(), d("span", {
 					key: 1,
-					class: m(b(Z).reorderHint)
-				}, S(e.reorderHint), 3)) : _("", !0)
-			], 2)) : _("", !0),
-			k(F, {
+					class: m(y(Z).reorderHint)
+				}, x(e.reorderHint), 3)) : g("", !0)
+			], 2)) : g("", !0),
+			O(P, {
 				status: H.value,
 				"empty-title": e.emptyTitle,
 				"min-height": "120px"
 			}, {
-				action: r(() => [x("p", { class: m(b(Z).emptyDescription) }, S(e.emptyDescription), 3), k(P, {
+				action: r(() => [b("p", { class: m(y(Z).emptyDescription) }, x(e.emptyDescription), 3), O(N, {
 					label: e.addLabel,
-					icon: b(R),
+					icon: y(R),
 					variant: "primary",
 					onClick: n[3] ||= (e) => o("add")
 				}, null, 8, ["label", "icon"])]),
-				default: r(() => [x("ul", { class: m(b(Z).cardGrid) }, [(c(!0), d(E, null, i(D.value, ({ record: t, view: r, tags: a }) => (c(), d("li", {
+				default: r(() => [b("ul", { class: m(y(Z).cardGrid) }, [(c(!0), d(T, null, i(E.value, ({ record: t, view: r, tags: a }) => (c(), d("li", {
 					key: t.id,
-					class: m(b(Z).assetCard),
+					class: m(y(Z).assetCard),
 					draggable: "true",
-					"data-selected": O.has(t.id) ? "true" : void 0,
+					"data-selected": D.has(t.id) ? "true" : void 0,
 					"data-active": t.id === e.activeId ? "true" : void 0,
 					"data-dragging": u.value === t.id ? "" : null,
 					"data-testid": "asset-card",
 					onDragstart: (e) => K(t.id, e),
 					onDragover: n[4] ||= p(() => {}, ["prevent"]),
-					onDrop: (e) => q(t.id, e)
+					onDrop: (e) => J(t.id, e)
 				}, [
-					r.thumbnail === void 0 ? _("", !0) : (c(), d("span", {
+					r.thumbnail === void 0 ? g("", !0) : (c(), d("span", {
 						key: 0,
-						class: m(b(Z).assetCardThumb),
+						class: m(y(Z).assetCardThumb),
 						"data-empty": r.thumbnail === null ? "" : void 0
-					}, [r.thumbnail === null ? (c(), v(N, {
+					}, [r.thumbnail === null ? (c(), _(M, {
 						key: 1,
-						icon: b(J),
+						icon: y(F),
 						size: 16
 					}, null, 8, ["icon"])) : (c(), d("img", {
 						key: 0,
 						src: r.thumbnail,
 						alt: ""
 					}, null, 8, me))], 10, pe)),
-					x("button", {
+					b("button", {
 						type: "button",
-						class: m(b(Z).assetCardMain),
+						class: m(y(Z).assetCardMain),
 						"aria-label": `${e.editLabel}: ${t.display_name}`,
 						"aria-keyshortcuts": e.records.length > 1 ? "Alt+ArrowUp Alt+ArrowDown" : void 0,
 						onClick: (e) => o("edit", t),
-						onKeydown: [w(p((e) => W(t.id, -1), ["alt", "prevent"]), ["up"]), w(p((e) => W(t.id, 1), ["alt", "prevent"]), ["down"])]
+						onKeydown: [C(p((e) => W(t.id, -1), ["alt", "prevent"]), ["up"]), C(p((e) => W(t.id, 1), ["alt", "prevent"]), ["down"])]
 					}, [
-						x("span", { class: m(b(Z).assetCardName) }, [x("span", { class: m(b(Z).assetCardNameText) }, S(t.display_name), 3), r.subtitle ? (c(), d("span", {
+						b("span", { class: m(y(Z).assetCardName) }, [b("span", { class: m(y(Z).assetCardNameText) }, x(t.display_name), 3), r.subtitle ? (c(), d("span", {
 							key: 0,
-							class: m(b(Z).assetCardSubtitle)
-						}, S(r.subtitle), 3)) : _("", !0)], 2),
+							class: m(y(Z).assetCardSubtitle)
+						}, x(r.subtitle), 3)) : g("", !0)], 2),
 						r.detail ? (c(), d("span", {
 							key: 0,
-							class: m(b(Z).assetCardDetail)
-						}, S(r.detail), 3)) : _("", !0),
+							class: m(y(Z).assetCardDetail)
+						}, x(r.detail), 3)) : g("", !0),
 						a.length > 0 ? (c(), d("span", {
 							key: 1,
-							class: m(b(Z).assetCardTags)
-						}, [(c(!0), d(E, null, i(a, (e) => (c(), d("span", {
+							class: m(y(Z).assetCardTags)
+						}, [(c(!0), d(T, null, i(a, (e) => (c(), d("span", {
 							key: e,
-							class: m(b(Z).cardTag)
-						}, S(e), 3))), 128))], 2)) : _("", !0)
+							class: m(y(Z).cardTag)
+						}, x(e), 3))), 128))], 2)) : g("", !0)
 					], 42, he),
-					x("span", { class: m(b(Z).assetCardCheck) }, [k(L, {
-						"model-value": O.has(t.id),
-						label: b(s)("assets.select_entry_action", { name: t.display_name }),
+					b("span", { class: m(y(Z).assetCardCheck) }, [O(L, {
+						"model-value": D.has(t.id),
+						label: y(s)("assets.select_entry_action", { name: t.display_name }),
 						"label-hidden": "",
 						"data-testid": "asset-select",
 						"onUpdate:modelValue": (e) => I(t.id, e)
@@ -422,16 +400,16 @@ var de = ["placeholder", "aria-label"], fe = [
 				], 42, fe))), 128))], 2)]),
 				_: 1
 			}, 8, ["status", "empty-title"]),
-			k(ne, {
-				open: A.value,
-				title: b(s)("assets.delete_selected_confirm_title", { n: j.value.length }),
+			O(q, {
+				open: k.value,
+				title: y(s)("assets.delete_selected_confirm_title", { n: A.value.length }),
 				description: e.deleteConfirmDescription,
 				"confirm-label": e.confirmLabel,
 				"cancel-label": e.cancelLabel,
 				"onUpdate:open": n[5] ||= (e) => {
-					e || (A.value = !1);
+					e || (k.value = !1);
 				},
-				onConfirm: te
+				onConfirm: ne
 			}, null, 8, [
 				"open",
 				"title",
@@ -454,7 +432,7 @@ var de = ["placeholder", "aria-label"], fe = [
 	"aria-selected",
 	"onMousedown",
 	"onMousemove"
-], Se = 150, Ce = /* @__PURE__ */ O({
+], Se = 150, Ce = /* @__PURE__ */ D({
 	__name: "TagInput",
 	props: {
 		modelValue: {},
@@ -463,105 +441,105 @@ var de = ["placeholder", "aria-label"], fe = [
 	},
 	emits: ["update:modelValue"],
 	setup(n, { emit: a }) {
-		let o = /[,，]/u, s = /[぀-ヿ㐀-鿿豈-﫿]/u, f = n, h = a, { t: _, locale: y } = ee(), w = l(A, null), O = l(j, void 0), M = C(() => O ? { to: O } : {}), P = `${u()}-suggestions`, F = T(null), L = T(""), R = T([]), z = T(0), B = null, V = 0, H = C(() => [...new Set(f.modelValue.split(o).map((e) => e.trim()).filter((e) => e !== ""))]), U = C(() => R.value.length > 0), W = C(() => new Intl.NumberFormat(y.value, {
+		let o = /[,，]/u, s = /[぀-ヿ㐀-鿿豈-﫿]/u, f = n, ee = a, { t: g, locale: v } = te(), C = l(k, null), D = l(A, void 0), j = S(() => D ? { to: D } : {}), N = `${u()}-suggestions`, P = w(null), F = w(""), L = w([]), R = w(0), z = null, B = 0, V = S(() => [...new Set(f.modelValue.split(o).map((e) => e.trim()).filter((e) => e !== ""))]), H = S(() => L.value.length > 0), U = S(() => new Intl.NumberFormat(v.value, {
 			notation: "compact",
 			maximumFractionDigits: 1
 		}));
+		function W(e) {
+			ee("update:modelValue", [...new Set(e)].join(", "));
+		}
 		function G(e) {
-			h("update:modelValue", [...new Set(e)].join(", "));
+			let t = e.map((e) => e.trim()).filter((e) => e !== "");
+			t.length > 0 && W([...V.value, ...t]);
 		}
 		function K(e) {
-			let t = e.map((e) => e.trim()).filter((e) => e !== "");
-			t.length > 0 && G([...H.value, ...t]);
-		}
-		function ne(e) {
-			G(H.value.filter((t) => t !== e)), F.value?.focus();
+			W(V.value.filter((t) => t !== e)), P.value?.focus();
 		}
 		function q() {
-			V += 1, B !== null && (clearTimeout(B), B = null), R.value = [], z.value = 0;
+			B += 1, z !== null && (clearTimeout(z), z = null), L.value = [], R.value = 0;
 		}
-		function oe() {
-			let e = L.value.trim(), t = s.test(e) ? e.length >= 1 : e.length >= 2;
-			if (w === null || !t) {
+		function J() {
+			let e = F.value.trim(), t = s.test(e) ? e.length >= 1 : e.length >= 2;
+			if (C === null || !t) {
 				q();
 				return;
 			}
-			B !== null && clearTimeout(B);
-			let n = ++V;
-			B = setTimeout(() => {
-				w.suggest(e).then((e) => {
-					n === V && (R.value = (e ?? []).filter((e) => !H.value.includes(e.tag)), z.value = 0);
+			z !== null && clearTimeout(z);
+			let n = ++B;
+			z = setTimeout(() => {
+				C.suggest(e).then((e) => {
+					n === B && (L.value = (e ?? []).filter((e) => !V.value.includes(e.tag)), R.value = 0);
 				});
 			}, Se);
 		}
-		function J(e) {
+		function oe(e) {
 			let t = e.target.value.split(o), n = t.pop() ?? "";
-			K(t), L.value = t.length > 0 ? n.trimStart() : n, oe();
+			G(t), F.value = t.length > 0 ? n.trimStart() : n, J();
 		}
 		function Y() {
-			K([L.value]), L.value = "", q();
+			G([F.value]), F.value = "", q();
 		}
 		function X(e) {
-			let t = R.value[e];
-			t !== void 0 && (K([t.tag]), L.value = "", q(), F.value?.focus());
+			let t = L.value[e];
+			t !== void 0 && (G([t.tag]), F.value = "", q(), P.value?.focus());
 		}
 		function Z(e) {
-			let t = R.value.length;
+			let t = L.value.length;
 			if ((e.key === "ArrowDown" || e.key === "ArrowUp") && t > 0) {
 				e.preventDefault();
 				let n = e.key === "ArrowDown" ? 1 : -1;
-				z.value = (z.value + n + t) % t;
-			} else e.key === "Enter" ? (e.preventDefault(), t > 0 ? X(z.value) : Y()) : e.key === "Escape" && t > 0 ? (e.stopPropagation(), q()) : e.key === "Backspace" && L.value === "" && H.value.length > 0 && G(H.value.slice(0, -1));
+				R.value = (R.value + n + t) % t;
+			} else e.key === "Enter" ? (e.preventDefault(), t > 0 ? X(R.value) : Y()) : e.key === "Escape" && t > 0 ? (e.stopPropagation(), q()) : e.key === "Backspace" && F.value === "" && V.value.length > 0 && W(V.value.slice(0, -1));
 		}
 		function Q(e) {
-			let t = L.value.trim().toLowerCase();
+			let t = F.value.trim().toLowerCase();
 			return e.toLowerCase().startsWith(t) && t !== "" ? [e.slice(0, t.length), e.slice(t.length)] : ["", e];
 		}
 		function $(e) {
-			e.target instanceof Node && F.value?.parentElement?.contains(e.target) && e.preventDefault();
+			e.target instanceof Node && P.value?.parentElement?.contains(e.target) && e.preventDefault();
 		}
-		return e(q), (e, a) => (c(), v(b(ie), {
-			open: U.value,
+		return e(q), (e, a) => (c(), _(y(ie), {
+			open: H.value,
 			"onUpdate:open": a[4] ||= (e) => !e && q()
 		}, {
-			default: r(() => [k(b(se), { "as-child": "" }, {
-				default: r(() => [x("div", {
-					class: m(b(I).tagInput),
-					onClick: a[0] ||= p((e) => F.value?.focus(), ["self"])
-				}, [(c(!0), d(E, null, i(H.value, (e) => (c(), d("span", {
+			default: r(() => [O(y(se), { "as-child": "" }, {
+				default: r(() => [b("div", {
+					class: m(y(I).tagInput),
+					onClick: a[0] ||= p((e) => P.value?.focus(), ["self"])
+				}, [(c(!0), d(T, null, i(V.value, (e) => (c(), d("span", {
 					key: e,
-					class: m(b(I).tagInputChip)
-				}, [D(S(e) + " ", 1), x("button", {
+					class: m(y(I).tagInputChip)
+				}, [E(x(e) + " ", 1), b("button", {
 					type: "button",
-					class: m(["tc-interactive", b(I).tagInputRemove]),
-					"aria-label": b(_)("common.tag_input.remove", { tag: e }),
-					onClick: (t) => ne(e)
-				}, [k(N, {
-					icon: b(te),
+					class: m(["tc-interactive", y(I).tagInputRemove]),
+					"aria-label": y(g)("common.tag_input.remove", { tag: e }),
+					onClick: (t) => K(e)
+				}, [O(M, {
+					icon: y(ne),
 					size: 12
-				}, null, 8, ["icon"])], 10, ve)], 2))), 128)), x("input", {
+				}, null, 8, ["icon"])], 10, ve)], 2))), 128)), b("input", {
 					id: n.id,
 					ref_key: "input",
-					ref: F,
-					value: L.value,
+					ref: P,
+					value: F.value,
 					type: "text",
 					autocomplete: "off",
-					class: m(b(I).tagInputField),
-					placeholder: b(_)("common.tag_input.placeholder"),
+					class: m(y(I).tagInputField),
+					placeholder: y(g)("common.tag_input.placeholder"),
 					role: "combobox",
 					"aria-autocomplete": "list",
-					"aria-expanded": U.value,
-					"aria-controls": U.value ? P : void 0,
-					"aria-activedescendant": U.value ? `${P}-${z.value}` : void 0,
+					"aria-expanded": H.value,
+					"aria-controls": H.value ? N : void 0,
+					"aria-activedescendant": H.value ? `${N}-${R.value}` : void 0,
 					"aria-describedby": n.describedBy,
-					onInput: J,
+					onInput: oe,
 					onKeydown: Z,
 					onBlur: Y
 				}, null, 42, ye)], 2)]),
 				_: 1
-			}), k(b(ae), g(t(M.value)), {
-				default: r(() => [k(b(re), {
-					class: m(b(I).tagInputPopover),
+			}), O(y(ae), h(t(j.value)), {
+				default: r(() => [O(y(re), {
+					class: m(y(I).tagInputPopover),
 					side: "bottom",
 					align: "start",
 					"side-offset": 4,
@@ -570,35 +548,35 @@ var de = ["placeholder", "aria-label"], fe = [
 					onPointerDownOutside: $,
 					onFocusOutside: a[3] ||= p(() => {}, ["prevent"])
 				}, {
-					default: r(() => [x("ul", {
-						id: P,
+					default: r(() => [b("ul", {
+						id: N,
 						role: "listbox",
-						"aria-label": b(_)("common.tag_input.suggestions_label"),
-						class: m(b(I).tagInputList)
-					}, [(c(!0), d(E, null, i(R.value, (e, t) => (c(), d("li", {
-						id: `${P}-${t}`,
+						"aria-label": y(g)("common.tag_input.suggestions_label"),
+						class: m(y(I).tagInputList)
+					}, [(c(!0), d(T, null, i(L.value, (e, t) => (c(), d("li", {
+						id: `${N}-${t}`,
 						key: e.tag,
 						role: "option",
-						"aria-selected": t === z.value,
-						class: m(b(I).tagInputOption),
+						"aria-selected": t === R.value,
+						class: m(y(I).tagInputOption),
 						onMousedown: p((e) => X(t), ["prevent"]),
-						onMousemove: (e) => z.value = t
+						onMousemove: (e) => R.value = t
 					}, [
-						x("span", { class: m(b(I).tagInputOptionTag) }, [x("b", null, S(Q(e.tag)[0]), 1), D(S(Q(e.tag)[1]), 1)], 2),
-						x("span", { class: m(b(I).tagInputOptionTranslation) }, S(e.translation ?? ""), 3),
-						x("span", { class: m([b(I).tagInputOptionCount, "tc-tabular-nums"]) }, S(W.value.format(e.popularity)), 3)
-					], 42, xe))), 128))], 10, be), x("div", {
-						class: m(b(I).tagInputHints),
+						b("span", { class: m(y(I).tagInputOptionTag) }, [b("b", null, x(Q(e.tag)[0]), 1), E(x(Q(e.tag)[1]), 1)], 2),
+						b("span", { class: m(y(I).tagInputOptionTranslation) }, x(e.translation ?? ""), 3),
+						b("span", { class: m([y(I).tagInputOptionCount, "tc-tabular-nums"]) }, x(U.value.format(e.popularity)), 3)
+					], 42, xe))), 128))], 10, be), b("div", {
+						class: m(y(I).tagInputHints),
 						"aria-hidden": "true"
 					}, [
-						x("span", null, [
-							a[5] ||= x("kbd", null, "↑", -1),
-							a[6] ||= D(),
-							a[7] ||= x("kbd", null, "↓", -1),
-							D(" " + S(b(_)("common.tag_input.hint_select")), 1)
+						b("span", null, [
+							a[5] ||= b("kbd", null, "↑", -1),
+							a[6] ||= E(),
+							a[7] ||= b("kbd", null, "↓", -1),
+							E(" " + x(y(g)("common.tag_input.hint_select")), 1)
 						]),
-						x("span", null, [a[8] ||= x("kbd", null, "Enter", -1), D(" " + S(b(_)("common.tag_input.hint_add")), 1)]),
-						x("span", null, [a[9] ||= x("kbd", null, "Esc", -1), D(" " + S(b(_)("common.tag_input.hint_close")), 1)])
+						b("span", null, [a[8] ||= b("kbd", null, "Enter", -1), E(" " + x(y(g)("common.tag_input.hint_add")), 1)]),
+						b("span", null, [a[9] ||= b("kbd", null, "Esc", -1), E(" " + x(y(g)("common.tag_input.hint_close")), 1)])
 					], 2)]),
 					_: 1
 				}, 8, ["class"])]),
@@ -623,7 +601,7 @@ var de = ["placeholder", "aria-label"], fe = [
 	"value",
 	"aria-describedby",
 	"onInput"
-], De = /* @__PURE__ */ O({
+], De = /* @__PURE__ */ D({
 	__name: "AssetRecordForm",
 	props: {
 		nameLabel: {},
@@ -662,20 +640,20 @@ var de = ["placeholder", "aria-label"], fe = [
 		function f(e) {
 			e.preventDefault(), s("save");
 		}
-		let p = C(() => a.pending);
+		let p = S(() => a.pending);
 		return (t, a) => (c(), d("form", {
-			class: m(b(Z).form),
+			class: m(y(Z).form),
 			onSubmit: f
 		}, [
 			o(t.$slots, "leading-fields"),
-			k(z, {
+			O(z, {
 				label: e.nameLabel,
 				error: e.nameError,
 				required: ""
 			}, {
-				default: r(({ fieldId: t, describedBy: n, invalid: r }) => [x("input", {
+				default: r(({ fieldId: t, describedBy: n, invalid: r }) => [b("input", {
 					id: t,
-					class: m(b(Z).textInput),
+					class: m(y(Z).textInput),
 					type: "text",
 					placeholder: e.namePlaceholder,
 					value: e.name,
@@ -685,34 +663,34 @@ var de = ["placeholder", "aria-label"], fe = [
 				}, null, 42, we)]),
 				_: 1
 			}, 8, ["label", "error"]),
-			(c(!0), d(E, null, i(e.fields, (t) => (c(), v(z, n({
+			(c(!0), d(T, null, i(e.fields, (t) => (c(), _(z, n({
 				key: t.key,
 				label: t.label
-			}, { ref_for: !0 }, b(U)({ hint: t.hint })), {
+			}, { ref_for: !0 }, y(U)({ hint: t.hint })), {
 				default: r(({ fieldId: r, describedBy: i }) => [t.kind === "text" ? (c(), d("input", {
 					key: 0,
 					id: r,
-					class: m(b(Z).textInput),
+					class: m(y(Z).textInput),
 					type: "text",
 					value: e.values[t.key],
 					"aria-describedby": i,
 					onInput: (e) => l(t.key, e.target.value)
-				}, null, 42, Te)) : t.kind === "tags" ? (c(), v(Ce, n({
+				}, null, 42, Te)) : t.kind === "tags" ? (c(), _(Ce, n({
 					key: 1,
 					id: r,
 					"model-value": String(e.values[t.key] ?? "")
-				}, { ref_for: !0 }, b(U)({ describedBy: i }), { "onUpdate:modelValue": (e) => l(t.key, e) }), null, 16, [
+				}, { ref_for: !0 }, y(U)({ describedBy: i }), { "onUpdate:modelValue": (e) => l(t.key, e) }), null, 16, [
 					"id",
 					"model-value",
 					"onUpdate:modelValue"
 				])) : t.kind === "textarea" ? (c(), d("textarea", {
 					key: 2,
 					id: r,
-					class: m(b(Z).textArea),
+					class: m(y(Z).textArea),
 					value: e.values[t.key],
 					"aria-describedby": i,
 					onInput: (e) => l(t.key, e.target.value)
-				}, null, 42, Ee)) : (c(), v(G, n({
+				}, null, 42, Ee)) : (c(), _(G, n({
 					key: 3,
 					id: r,
 					"model-value": typeof e.values[t.key] == "number" ? e.values[t.key] : 0,
@@ -720,7 +698,7 @@ var de = ["placeholder", "aria-label"], fe = [
 					step: t.step ?? 1,
 					"decrement-label": e.decrementLabel,
 					"increment-label": e.incrementLabel
-				}, { ref_for: !0 }, b(U)({
+				}, { ref_for: !0 }, y(U)({
 					min: t.min,
 					max: t.max,
 					describedBy: i
@@ -738,15 +716,15 @@ var de = ["placeholder", "aria-label"], fe = [
 			o(t.$slots, "extra-fields"),
 			e.saveError ? (c(), d("p", {
 				key: 0,
-				class: m(b(Z).formError),
+				class: m(y(Z).formError),
 				role: "alert"
-			}, S(e.saveError), 3)) : _("", !0),
-			x("div", { class: m(b(Z).formActions) }, [k(P, {
+			}, x(e.saveError), 3)) : g("", !0),
+			b("div", { class: m(y(Z).formActions) }, [O(N, {
 				label: e.cancelLabel,
 				variant: "ghost",
 				type: "button",
 				onClick: a[1] ||= (e) => s("cancel")
-			}, null, 8, ["label"]), k(P, {
+			}, null, 8, ["label"]), O(N, {
 				label: e.saveLabel,
 				variant: "primary",
 				type: "submit",
@@ -758,7 +736,7 @@ var de = ["placeholder", "aria-label"], fe = [
 //#endregion
 //#region src/ui/views/assets/use_asset_category_panel.ts
 function Oe(e, t, n, r, i = []) {
-	let a = T(!1), o = T(null), s = T(crypto.randomUUID()), c = T(""), l = T(null), u = T(null), d = h({}), f = T(!1);
+	let a = w(!1), o = w(null), s = w(crypto.randomUUID()), c = w(""), l = w(null), u = w(null), d = ee({}), f = w(!1);
 	function p() {
 		o.value = null, s.value = crypto.randomUUID(), c.value = "", l.value = null, u.value = null, ke(d, ce(n())), a.value = !0;
 	}
@@ -774,10 +752,10 @@ function Oe(e, t, n, r, i = []) {
 			...t
 		}), a.value = !0;
 	}
-	function g() {
+	function h() {
 		a.value = !1;
 	}
-	async function _() {
+	async function g() {
 		let n = c.value.trim();
 		if (n === "") {
 			l.value = r();
@@ -799,16 +777,16 @@ function Oe(e, t, n, r, i = []) {
 			f.value = !1;
 		}
 	}
-	function v(n) {
+	function _(n) {
 		t.remove_asset(e, n);
 	}
-	async function y(n) {
+	async function v(n) {
 		for (let r of n) await t.remove_asset(e, r);
 	}
-	function b(n) {
+	function y(n) {
 		t.reorder_assets(e, n);
 	}
-	function x(e) {
+	function b(e) {
 		m(e);
 	}
 	return {
@@ -822,12 +800,12 @@ function Oe(e, t, n, r, i = []) {
 		saving: f,
 		open_create: p,
 		open_edit: m,
-		close_dialog: g,
-		save: _,
-		remove: v,
-		remove_many: y,
-		reorder: b,
-		random_select: x
+		close_dialog: h,
+		save: g,
+		remove: _,
+		remove_many: v,
+		reorder: y,
+		random_select: b
 	};
 }
 function ke(e, t) {
@@ -835,4 +813,4 @@ function ke(e, t) {
 	Object.assign(e, t);
 }
 //#endregion
-export { Z as a, _e as i, Oe as n, J as o, De as r, ke as t };
+export { Z as a, _e as i, Oe as n, De as r, ke as t };

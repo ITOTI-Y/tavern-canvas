@@ -1,6 +1,6 @@
 import { G as e, P as t, _ as n, dt as r, lt as i, m as a, mt as o, n as s, p as c, x as l, y as u } from "./vue-i18n-L-BrQRnK.js";
-import { i as d, n as f, r as p, t as m } from "./use_asset_category_panel-C-u8Uyqp.js";
-import { t as h } from "./FieldGroup-CViCiHLn.js";
+import { t as d } from "./FieldGroup-CViCiHLn.js";
+import { i as f, n as p, r as m, t as h } from "./use_asset_category_panel-DGY2Dr1j.js";
 import { n as g } from "./NumberStepper-CeqkgodA.js";
 import { t as _ } from "./AppDialog-CwkMmVVL.js";
 import { t as v } from "./prompt_styles-DWDg4plB.js";
@@ -35,7 +35,7 @@ var y = /* @__PURE__ */ l({
 				...e.payload,
 				kind_label: e.payload.kind === "undesired_content" ? b("prompt_tags.kind_undesired") : b("prompt_tags.kind_quality")
 			}
-		}))), T = f("prompt_tag", y.controller, () => x.value, () => b("errors.validation_required"), ["kind"]);
+		}))), T = p("prompt_tag", y.controller, () => x.value, () => b("errors.validation_required"), ["kind"]);
 		function E() {
 			T.open_create(), T.values.kind = "quality";
 		}
@@ -45,7 +45,7 @@ var y = /* @__PURE__ */ l({
 		}, [
 			a("div", { class: r(i(v).section_header) }, [a("span", { class: r(i(v).section_title) }, o(i(b)("prompt_tags.panel_title")), 3)], 2),
 			a("p", { class: r(i(v).prompt_tag_description) }, o(i(b)("prompt_tags.panel_description")), 3),
-			u(d, {
+			u(f, {
 				records: w.value,
 				"summary-fields": S.value,
 				loading: l.loading,
@@ -93,7 +93,7 @@ var y = /* @__PURE__ */ l({
 					e || i(T).close_dialog();
 				}
 			}, {
-				default: e(() => [u(p, {
+				default: e(() => [u(m, {
 					"name-label": i(b)("common.labels.name"),
 					"name-placeholder": i(b)("common.labels.name"),
 					name: i(T).name.value,
@@ -109,11 +109,11 @@ var y = /* @__PURE__ */ l({
 					"onUpdate:name": c[2] ||= (e) => {
 						i(T).name.value = e;
 					},
-					"onUpdate:values": c[3] ||= (e) => i(m)(i(T).values, e),
+					"onUpdate:values": c[3] ||= (e) => i(h)(i(T).values, e),
 					onSave: i(T).save,
 					onCancel: i(T).close_dialog
 				}, {
-					"extra-fields": e(() => [u(h, { label: i(b)("prompt_tags.kind_label") }, {
+					"extra-fields": e(() => [u(d, { label: i(b)("prompt_tags.kind_label") }, {
 						default: e(() => [u(g, {
 							"model-value": i(T).values.kind === "undesired_content" ? "undesired_content" : "quality",
 							options: C.value,

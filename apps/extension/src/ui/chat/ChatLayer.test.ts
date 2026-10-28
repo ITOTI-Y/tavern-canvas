@@ -204,14 +204,35 @@ describe("ChatLayer", () => {
     expect(document.querySelector("[data-tc-illustrate]")).toBeNull();
   });
 
+  it("illustrates a hovered paragraph from the button beside it", async () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:slot-image");
+    const illustrate = vi
+      .spyOn(IllustrationService.prototype, "illustrate_paragraph")
+      .mockResolvedValue("slot_0001");
+    const { wrapper } = mount_layer();
+    await flushPromises();
+
+    document
+      .querySelector(".mes_text > p")
+      ?.dispatchEvent(new PointerEvent("pointerover", { bubbles: true }));
+    await flushPromises();
+    document.querySelector<HTMLButtonElement>('[data-testid="paragraph-illustrate"]')?.click();
+    await flushPromises();
+
+    expect(illustrate).toHaveBeenCalledWith(3, 0);
+    wrapper.unmount();
+  });
+
   it("offers quick edits only when the provider supports them and queues an upscale", async () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:slot-image");
     const without = mount_layer();
     await flushPromises();
-    expect(document.body.textContent).not.toContain("Upscale");
+    expect(document.querySelector('button[aria-label="More actions"]')).toBeNull();
     without.wrapper.unmount();
 
     const { wrapper, submit } = mount_layer({ edits: true });
+    await flushPromises();
+    document.querySelector<HTMLButtonElement>('button[aria-label="More actions"]')?.click();
     await flushPromises();
     const upscale = [...document.querySelectorAll("button")].find(
       (button) => button.textContent?.trim() === "Upscale",

@@ -720,10 +720,15 @@ const chat = {
   analysis_running: "Choosing paragraphs to illustrate…",
   wardrobe_failed: "The wardrobe update failed, so this reply keeps the previous outfits: {reason}",
   analysis_failed: "Paragraph analysis failed: {reason}",
+  paragraph: {
+    illustrate: "Illustrate this paragraph",
+    analyzing: "Analysing this paragraph…",
+  },
   slot: {
     generate: "Generate",
     regenerate: "Regenerate",
     edit: "Edit prompt",
+    more: "More actions",
     previous: "Previous image",
     next: "Next image",
     generating: "Generating…",

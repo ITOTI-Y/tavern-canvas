@@ -6,7 +6,8 @@
 
 .slot,
 .notice,
-.lightbox {
+.lightbox,
+.paragraph_action {
   --tc-space-0-5: 2px;
   --tc-space-1: 4px;
   --tc-space-1-5: 6px;
@@ -17,14 +18,17 @@
   --tc-control-gap: 6px;
   --tc-radius-control: 999px;
   --tc-radius-image: 6px;
+  --tc-radius-popover: 16px;
   --tc-motion-fast: 140ms;
+  --tc-marker: #f6d743;
+  --tc-on-marker: #17171a;
 }
 
 .slot {
   display: grid;
   gap: var(--tc-space-1);
   margin: var(--tc-space-2) 0;
-  max-width: min(100%, 512px);
+  max-width: min(100%, 560px);
   color: var(--SmartThemeBodyColor, inherit);
   font-size: calc(var(--mainFontSize, 1rem) * 0.9);
 }
@@ -45,7 +49,7 @@
 
 .placeholder {
   display: flex;
-  min-height: 96px;
+  aspect-ratio: 3 / 2;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -66,11 +70,80 @@
   gap: var(--tc-space-0-5);
 }
 
+.status {
+  font-size: 0.95em;
+}
+
+.pager {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tc-space-0-5);
+}
+
 .counter {
-  margin-inline: var(--tc-space-1) auto;
-  font-size: 0.9em;
+  min-width: 3.2em;
+  font-size: 0.85em;
   font-variant-numeric: tabular-nums;
+  text-align: center;
   opacity: 0.75;
+}
+
+.scene {
+  flex: 1 1 8em;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.85em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0.75;
+}
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tc-space-0-5);
+  margin-left: auto;
+}
+
+.more {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--tc-space-1));
+  z-index: 3;
+  display: grid;
+  min-width: 10em;
+  padding: var(--tc-space-1);
+  border-radius: var(--tc-radius-popover);
+  background: var(--SmartThemeChatTintColor, Canvas);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+}
+
+.menu_item {
+  height: var(--tc-control-height-sm);
+  padding: 0 var(--tc-space-3);
+  border: 0;
+  border-radius: var(--tc-radius-control);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.menu_item:hover:not(:disabled),
+.menu_item:focus-visible {
+  background: rgb(128 128 128 / 18%);
+  outline: none;
+}
+
+.menu_item:disabled {
+  cursor: default;
+  opacity: 0.5;
 }
 
 /* Ghost buttons only: the bar sits under the user's own artwork and should not compete with it. */
@@ -96,8 +169,9 @@
   background: var(--SmartThemeBlurTintColor, rgb(128 128 128 / 15%));
 }
 
-/* The pager's previous/next arrows are icon-only, so they are round. */
-.button[aria-label] {
+/* Icon-only buttons (pager arrows, more actions) are round. */
+.icon_button {
+  width: var(--tc-control-height-sm);
   padding: 0;
 }
 
@@ -173,4 +247,81 @@
   flex-wrap: wrap;
   gap: var(--tc-space-0-5);
   margin-top: var(--tc-space-1-5);
+}
+
+/* Narrow chat column: the scene caption takes its own line and the actions keep to icons. */
+@media (max-width: 600px) {
+  .scene {
+    flex-basis: 100%;
+    order: -1;
+  }
+
+  .button_label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .actions .button {
+    width: var(--tc-control-height-sm);
+    padding: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Paragraph actions: one floating button beside the hovered or tapped    */
+/* paragraph, and one above a text selection                              */
+/* ---------------------------------------------------------------------- */
+
+.paragraph_action {
+  position: fixed;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tc-control-gap);
+  height: var(--tc-control-height-sm);
+  min-width: var(--tc-control-height-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--tc-radius-control);
+  background: var(--tc-marker);
+  color: var(--tc-on-marker);
+  font: inherit;
+  font-size: calc(var(--mainFontSize, 1rem) * 0.85);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+  cursor: pointer;
+}
+
+.paragraph_action[data-kind="selection"],
+.paragraph_action[data-kind="status"] {
+  padding: 0 var(--tc-control-padding-x-sm);
+  background: #17171a;
+  color: #fafaf7;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
+}
+
+/* Centred above the selection. */
+.paragraph_action[data-kind="selection"] {
+  transform: translate(-50%, calc(-100% - var(--tc-space-2)));
+}
+
+/* Sits at the paragraph's right edge, so it grows to the left. */
+.paragraph_action[data-kind="status"] {
+  transform: translateX(-100%);
+  cursor: default;
+}
+
+.paragraph_action:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
+}
+
+.paragraph_highlight {
+  border-radius: 4px;
+  background: rgb(246 215 67 / 18%);
+  box-shadow: 0 0 0 4px rgb(246 215 67 / 18%);
 }
