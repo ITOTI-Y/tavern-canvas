@@ -1,7 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
 import { c as n, h as r, m as i, p as a, r as o, t as s, u as c, x as l } from "./schemas-DMBLWk59.js";
-import { c as u, h as d, i as f, l as p, p as m } from "./business_repositories-BYpljIBK.js";
-import { a as h } from "./image_store-CYMF-3dl.js";
+import { g as u, i as d, l as f, m as p, u as m } from "./business_repositories-Tf6NN3HM.js";
+import { a as h } from "./image_store-xf71sJpt.js";
 //#region ../../packages/contracts/src/archive.ts
 var g = "tavern-canvas-archive", _ = [
 	"provider_profiles",
@@ -148,7 +148,7 @@ async function H(e) {
 	return typeof Blob < "u" && e instanceof Blob ? new Uint8Array(await e.arrayBuffer()) : new Uint8Array(e);
 }
 async function U(e) {
-	let { database: t, namespace: n, extension_version: r, signal: i } = e, a = e.created_at ?? (/* @__PURE__ */ new Date()).toISOString(), o = f(t), s = new TextEncoder(), c = await R(), l = new c.ZipWriter(new c.BlobWriter("application/zip"), {
+	let { database: t, namespace: n, extension_version: r, signal: i } = e, a = e.created_at ?? (/* @__PURE__ */ new Date()).toISOString(), o = d(t), s = new TextEncoder(), c = await R(), l = new c.ZipWriter(new c.BlobWriter("application/zip"), {
 		level: 9,
 		...i === void 0 ? {} : { signal: i }
 	});
@@ -263,7 +263,7 @@ function Q(e, t, n) {
 	if (t.byteLength !== r.byte_length || P(t) !== r.sha256) throw new W("checksum_mismatch", `Checksum mismatch for ${e}`);
 }
 function ie(e) {
-	return e === "image_records" ? u : d[e];
+	return e === "image_records" ? f : u[e];
 }
 function ae(e, t, n) {
 	let r = new TextDecoder().decode(n);
@@ -291,7 +291,7 @@ function $(e, t) {
 async function oe(e, t, n, r, i) {
 	let a = await e.get(t);
 	if (a === null) {
-		let a = p(n), o = new Uint8Array(n);
+		let a = m(n), o = new Uint8Array(n);
 		await e.create({
 			sha256: t,
 			ref_count: r,
@@ -312,13 +312,13 @@ async function oe(e, t, n, r, i) {
 async function se(e, t, n) {
 	for (let r of _) {
 		let i = await t[r].list(n);
-		i.length !== 0 && await m(e, [r], async (e) => {
+		i.length !== 0 && await p(e, [r], async (e) => {
 			for (let a of i) await t[r].delete(n, a.id, e);
 		});
 	}
 }
 async function ce(e, t, n, r) {
-	await m(e, [..._, "image_blobs"], async (e) => {
+	await p(e, [..._, "image_blobs"], async (e) => {
 		for (let i of _) {
 			let a = t[i];
 			for (let o of await a.list(n, e)) {
@@ -358,11 +358,11 @@ async function ue(e) {
 		if (!te(e.filename)) throw await J(a), new W("unexpected_path", `Unexpected path in archive: ${e.filename}`);
 		s.set(e.filename, e);
 	}
-	let c = `import:${crypto.randomUUID()}`, l = f(t), u = /* @__PURE__ */ new Map();
+	let c = `import:${crypto.randomUUID()}`, l = d(t), u = /* @__PURE__ */ new Map();
 	try {
 		let r = await Z(s, n), i = await ne(s, n);
 		re(s, i), Q(C, r.bytes, i);
-		let o = r.manifest, d = F(), f = /* @__PURE__ */ new Set(), p = /* @__PURE__ */ new Map();
+		let o = r.manifest, d = F(), f = /* @__PURE__ */ new Set(), m = /* @__PURE__ */ new Map();
 		for (let e of _) {
 			K(n);
 			let r = D(e), a = s.get(r);
@@ -371,13 +371,13 @@ async function ue(e) {
 			Q(r, o, i);
 			let u = ae(e, r, o);
 			d[e] = u.length;
-			let h = u.map((e) => $(e, c));
-			if (await m(t, [e], async (t) => {
-				for (let n of h) await l[e].create(c, n, t);
-			}), e === "image_records") for (let e of h) f.add(e.id), p.set(e.sha256, (p.get(e.sha256) ?? 0) + 1);
-			else if (e === "generation_jobs") {
-				for (let e of h) for (let t of e.image_ids) if (!f.has(t)) throw new W("reference_mismatch", `generation_jobs ${e.id} references a missing image_record ${t}`);
-			}
+			let h = u.map((e) => $(e, c)), g = e === "generation_jobs" ? h.map((e) => ({
+				...e,
+				image_ids: e.image_ids.filter((e) => f.has(e))
+			})) : h;
+			if (await p(t, [e], async (t) => {
+				for (let n of g) await l[e].create(c, n, t);
+			}), e === "image_records") for (let e of g) f.add(e.id), m.set(e.sha256, (m.get(e.sha256) ?? 0) + 1);
 		}
 		let h = 0, g = /* @__PURE__ */ new Set();
 		for (let [e, t] of s) {
@@ -386,11 +386,11 @@ async function ue(e) {
 			K(n);
 			let a = await Y(t, n);
 			if (Q(e, a, i), P(a) !== r.sha256) throw new W("checksum_mismatch", `Asset content hash does not match its filename: ${e}`);
-			let o = p.get(r.sha256);
+			let o = m.get(r.sha256);
 			if (o === void 0) throw new W("reference_mismatch", `Asset is not referenced by any image_record: ${e}`);
 			await oe(l.image_blobs, r.sha256, a, o, u), g.add(r.sha256), h += 1;
 		}
-		for (let e of p.keys()) if (!g.has(e)) throw new W("missing_file", `image_records reference asset ${e} with no matching archive asset file`);
+		for (let e of m.keys()) if (!g.has(e)) throw new W("missing_file", `image_records reference asset ${e} with no matching archive asset file`);
 		for (let e of _) if (o.record_counts[e] !== d[e]) throw new W("count_mismatch", `Declared record count for ${e} does not match the archive contents`);
 		if (o.asset_count !== h) throw new W("count_mismatch", "Declared asset count does not match the archive contents");
 		return K(n), await ce(t, l, c, e.namespace), await J(a), {

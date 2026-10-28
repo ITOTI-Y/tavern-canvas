@@ -11,6 +11,8 @@ import {
   ImageBlobRepository,
   ImageRecordRepository,
 } from "../repositories/business_repositories.js";
+import { job_record } from "../archive/archive_test_fixtures.js";
+import { GenerationJobRepository } from "../repositories/job_repository.js";
 import { type ImageRecordFields } from "./image_schema.js";
 import {
   delete_image_record,
@@ -136,6 +138,18 @@ describe("image_store content addressing", () => {
     const second_deletion = await delete_image_record(database, NAMESPACE, IDS.second);
     expect(second_deletion.blob_deleted).toBe(true);
     expect(await blobs.get(first.sha256)).toBeNull();
+  });
+
+  it("removes a deleted image from the jobs that produced it", async () => {
+    const database = await open_database();
+    await put_image(database, NAMESPACE, put_input({ id: IDS.first, bytes: png_bytes(7) }));
+    await put_image(database, NAMESPACE, put_input({ id: IDS.second, bytes: png_bytes(8) }));
+    const jobs = new GenerationJobRepository(database);
+    await jobs.create(NAMESPACE, job_record(IDS.job, [IDS.first, IDS.second]));
+
+    await delete_image_record(database, NAMESPACE, IDS.first);
+
+    expect((await jobs.get(NAMESPACE, IDS.job))?.image_ids).toEqual([IDS.second]);
   });
 
   it("quarantines matching records and reports a stable corruption error on hash mismatch", async () => {

@@ -5,6 +5,7 @@ import type { IDBPDatabase } from "idb";
 import { Sha256Schema, type DBSchema, type ImageBlob, type Sha256 } from "../database_schema.js";
 import { IndexedDbRepository, RepositoryNotFoundError } from "../repository.js";
 import { ImageBlobRepository } from "../repositories/business_repositories.js";
+import { GenerationJobRepository } from "../repositories/job_repository.js";
 import {
   with_transaction,
   type StorageTransaction,
@@ -247,8 +248,24 @@ export async function delete_image_record(
 ): Promise<{ readonly sha256: Sha256; readonly blob_deleted: boolean }> {
   const records = new GalleryImageRecordRepository(database);
   const blobs = new ImageBlobRepository(database);
-  return with_transaction(database, IMAGE_STORES, (transaction) =>
-    delete_image_record_entry(transaction, records, blobs, namespace, id),
+  const jobs = new GenerationJobRepository(database);
+  return with_transaction(
+    database,
+    [...IMAGE_STORES, "generation_jobs"] as const,
+    async (transaction) => {
+      const outcome = await delete_image_record_entry(transaction, records, blobs, namespace, id);
+      // A job that still lists the image would fail archive import with reference_mismatch.
+      for (const job of await jobs.list(namespace, transaction)) {
+        if (job.image_ids.includes(id)) {
+          await jobs.put(
+            namespace,
+            { ...job, image_ids: job.image_ids.filter((image_id) => image_id !== id) },
+            transaction,
+          );
+        }
+      }
+      return outcome;
+    },
   );
 }
 

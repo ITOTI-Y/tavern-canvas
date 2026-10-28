@@ -17,8 +17,8 @@ import { t as Ne } from "./chunks/trash-2-B6ZXZcor.js";
 import { t as Pe } from "./chunks/x-CDKrptQJ.js";
 import { a as Fe, c as Ie, i as Le, n as Re, o as ze, r as Be, s as Ve, t as He } from "./chunks/analysis-BZjOoC79.js";
 import { t as Ue } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
-import { a as We, i as Ge, m as Ke, s as qe } from "./chunks/business_repositories-BYpljIBK.js";
-import { i as Je, n as Ye, r as Xe, t as Ze } from "./chunks/image_store-CYMF-3dl.js";
+import { c as We, h as Ge, i as Ke, o as qe } from "./chunks/business_repositories-Tf6NN3HM.js";
+import { i as Je, n as Ye, r as Xe, t as Ze } from "./chunks/image_store-xf71sJpt.js";
 import { i as Qe, n as $e, r as et, t as tt } from "./chunks/library_match-er4-CW2n.js";
 import { a as nt, i as rt, n as it, o as at, s as z } from "./chunks/provider_transport-ftw8OZD2.js";
 import { n as ot, r as B, t as st } from "./chunks/tag_normalizer-CEAU4497.js";
@@ -2924,7 +2924,7 @@ var bi = class {
 		this.#e = e, this.#t = t;
 	}
 	async save(e) {
-		let t = We(this.#e), n = {
+		let t = qe(this.#e), n = {
 			schema_version: 1,
 			id: e.job_id,
 			namespace: this.#t,
@@ -5069,7 +5069,7 @@ function Zo(e) {
 			}, a = null;
 			n = i;
 			try {
-				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-DLC9RIYL.js");
+				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-CA4Ogu6d.js");
 				a = o(e.database, t, r), n = a, i.cancelled && a.cancel(), await a.completed;
 			} finally {
 				(n === i || n === a) && (n = null);
@@ -5079,7 +5079,7 @@ function Zo(e) {
 			n?.cancel();
 		},
 		async export_archive() {
-			let { export_archive: t } = await import("./chunks/archive-D43VIVnz.js");
+			let { export_archive: t } = await import("./chunks/archive-yP6uFo_K.js");
 			return t({
 				database: Xo(e.database),
 				namespace: e.settings.get_settings().active_namespace,
@@ -5087,7 +5087,7 @@ function Zo(e) {
 			});
 		},
 		async import_archive(t) {
-			let { import_archive: n } = await import("./chunks/archive-D43VIVnz.js");
+			let { import_archive: n } = await import("./chunks/archive-yP6uFo_K.js");
 			await n({
 				database: Xo(e.database),
 				archive: t,
@@ -5165,7 +5165,7 @@ async function es(e) {
 		google_image: new n()
 	};
 	if (e !== null) {
-		let n = Ge(e);
+		let n = Ke(e);
 		o.comfyui = new t({ workflow_store: { async load(e) {
 			return (await n.comfy_workflows.get("primary", e))?.payload;
 		} } });
@@ -5188,7 +5188,7 @@ function ts(e, t) {
 	} };
 }
 function ns(e) {
-	return qe.omit({
+	return We.omit({
 		media_type: !0,
 		quarantined: !0
 	}).parse(e);
@@ -5845,7 +5845,7 @@ async function Xs(e) {
 	}
 	let s = e.probe.ready ? e.probe.matrix : {}, c = Vs(t, s), l = [], u = null;
 	try {
-		u = await (e.open_storage ?? Ke)();
+		u = await (e.open_storage ?? Ge)();
 	} catch {
 		u = null;
 	}
@@ -5864,7 +5864,7 @@ async function Xs(e) {
 		host_resolver: ee,
 		browser_vault: _,
 		device_vault: v
-	}), b = y.has_destination ? y : null, x = y.has_resolver ? y : null, S = u === null ? null : Ge(u), C = await yo(t.navigator?.locks, crypto.randomUUID());
+	}), b = y.has_destination ? y : null, x = y.has_resolver ? y : null, S = u === null ? null : Ke(u), C = await yo(t.navigator?.locks, crypto.randomUUID());
 	a.push(() => {
 		C.release();
 	}), S !== null && C.sole_page && await go(S.generation_jobs, m(), h());
@@ -5970,7 +5970,7 @@ async function Xs(e) {
 		let i = _o({
 			queue: r,
 			plans: n,
-			jobs: Ge(u).generation_jobs,
+			jobs: Ke(u).generation_jobs,
 			namespace: m,
 			origin: new Eo(c, new bt(globalThis.crypto)),
 			new_request_id: () => f.parse(crypto.randomUUID()),
@@ -6023,7 +6023,7 @@ async function Xs(e) {
 		return i;
 	}), r.generation), D = e.create_vocabulary_worker === void 0 ? Ys() : e.create_vocabulary_worker, O = o("vocabulary", u === null ? Z(Hs) : D === null ? Z("This host has no Worker constructor, so vocabulary search cannot run") : Q(() => $o({
 		async load_catalog() {
-			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-J8KjjoQT.js");
+			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-CV-I07iw.js");
 			return new e({
 				current_extension_version: n,
 				open_database_impl: () => Promise.resolve(u)

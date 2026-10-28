@@ -118,6 +118,29 @@ describe("import_archive", () => {
     expect(await repositories.provider_profiles.list(NAMESPACE)).toHaveLength(1);
   });
 
+  it("drops job references to images the archive does not contain", async () => {
+    const database = await open_test_database();
+    const repositories = create_business_repositories(database);
+    const asset_bytes = make_asset_bytes("kept-image");
+    const sha256_hex = compute_sha256_hex(asset_bytes);
+    await repositories.image_blobs.create(image_blob(sha256_hex, asset_bytes));
+    await repositories.image_records.create(NAMESPACE, image_record(IDS.first, sha256_hex));
+    await repositories.generation_jobs.create(
+      NAMESPACE,
+      job_record(IDS.fourth, [IDS.first, IDS.second]),
+    );
+    const blob = await export_archive({
+      database,
+      namespace: NAMESPACE,
+      extension_version: "3.0.0-alpha.1",
+    });
+
+    await import_archive({ database, archive: blob, namespace: OTHER });
+
+    const jobs = await repositories.generation_jobs.list(OTHER);
+    expect(jobs[0]?.image_ids).toEqual([IDS.first]);
+  });
+
   it("replaces records with the same id and keeps an image blob counted once", async () => {
     const database = await open_test_database();
     const seeded = await seed_and_export(database);

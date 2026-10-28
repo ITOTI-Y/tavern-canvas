@@ -448,7 +448,15 @@ export async function import_archive(options: ImportArchiveOptions): Promise<Imp
       verify_checksum(path, bytes, checksums);
       const records = parse_jsonl_records(store, path, bytes);
       record_counts[store] = records.length;
-      const staged = records.map((record) => restage_record(record, namespace));
+      const restaged = records.map((record) => restage_record(record, namespace));
+      // A job may still name an image deleted before the export; the stale reference is dropped.
+      const staged =
+        store === "generation_jobs"
+          ? (restaged as GenerationJob[]).map((record) => ({
+              ...record,
+              image_ids: record.image_ids.filter((image_id) => image_record_ids.has(image_id)),
+            }))
+          : restaged;
 
       await with_transaction(database, [store], async (transaction) => {
         for (const record of staged) {
@@ -463,17 +471,6 @@ export async function import_archive(options: ImportArchiveOptions): Promise<Imp
             record.sha256,
             (referenced_asset_hashes.get(record.sha256) ?? 0) + 1,
           );
-        }
-      } else if (store === "generation_jobs") {
-        for (const record of staged as GenerationJob[]) {
-          for (const image_id of record.image_ids) {
-            if (!image_record_ids.has(image_id)) {
-              throw new ArchiveImportError(
-                "reference_mismatch",
-                `generation_jobs ${record.id} references a missing image_record ${image_id}`,
-              );
-            }
-          }
         }
       }
     }

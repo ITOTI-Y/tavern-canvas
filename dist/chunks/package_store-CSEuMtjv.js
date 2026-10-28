@@ -1,7 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
 import { h as n, i as r, m as i, r as a, u as o } from "./schemas-DMBLWk59.js";
-import { c as s, i as c, l as ee, n as l, u } from "./vocabulary-BfEyI-lw.js";
-import { _ as d, n as f, p, r as te, v as m } from "./business_repositories-BYpljIBK.js";
+import { c as s, i as c, l, n as u, u as d } from "./vocabulary-BfEyI-lw.js";
+import { m as f, n as p, r as ee, v as te, y as m } from "./business_repositories-Tf6NN3HM.js";
 //#region ../../node_modules/.pnpm/@msgpack+msgpack@3.1.3/node_modules/@msgpack/msgpack/dist.esm/utils/utf8.mjs
 function h(e) {
 	let t = e.length, n = 0, r = 0;
@@ -237,13 +237,13 @@ var J = i({
 	record_count: o().int().nonnegative(),
 	compressed_size: o().int().nonnegative(),
 	minimum_extension_version: s,
-	shard_entries: a(ee),
+	shard_entries: a(l),
 	pinned: r(),
-	confirmed_at: d.optional()
+	confirmed_at: te.optional()
 }), Y = i({
 	package_record_id: n().min(1),
 	shard_id: n().min(1),
-	path: u,
+	path: d,
 	sha256: n().regex(/^[a-f0-9]{64}$/u),
 	byte_length: o().int().nonnegative(),
 	bytes_base64: n().min(1)
@@ -313,7 +313,7 @@ var ce = class {
 	cache_active_package;
 	active_package_cache = void 0;
 	constructor(e, t, n = {}) {
-		this.database = e, this.namespace = t, this.packages = new f(e), this.shards = new te(e), this.cache_active_package = n.cache_active_package ?? !1;
+		this.database = e, this.namespace = t, this.packages = new p(e), this.shards = new ee(e), this.cache_active_package = n.cache_active_package ?? !1;
 	}
 	invalidate_caches() {
 		this.invalidate_shard_index_cache(), this.invalidate_active_package_cache();
@@ -364,7 +364,7 @@ var ce = class {
 		await this.transition_state(e, "ready");
 	}
 	async activate(e) {
-		return p(this.database, ["vocabulary_packages"], async (t) => {
+		return f(this.database, ["vocabulary_packages"], async (t) => {
 			let n = await this.packages.list(this.namespace, t), r = null;
 			for (let i of n) i.id !== e && W.has(K(i.state)) && (await this.packages.update(this.namespace, {
 				...i,
@@ -385,7 +385,7 @@ var ce = class {
 		await this.transition_state(e, "confirmed", { confirmed_at: (/* @__PURE__ */ new Date()).toISOString() });
 	}
 	async reselect_prior_confirmed(e) {
-		return p(this.database, ["vocabulary_packages"], async (t) => {
+		return f(this.database, ["vocabulary_packages"], async (t) => {
 			let n = await this.packages.list(this.namespace, t), r = n.filter((t) => t.id !== e).map((e) => ({
 				record: e,
 				payload: X(e.payload)
@@ -405,7 +405,7 @@ var ce = class {
 	}
 	async rollback_staging(e) {
 		let t = await this.list_owned_shards(e);
-		await p(this.database, ["vocabulary_packages", "vocabulary_shards"], async (n) => {
+		await f(this.database, ["vocabulary_packages", "vocabulary_shards"], async (n) => {
 			for (let e of t) await this.shards.delete(this.namespace, e.id, n);
 			await this.packages.delete(this.namespace, e, n);
 		}), this.invalidate_shard_index_cache(), this.invalidate_active_package_cache();
@@ -415,7 +415,7 @@ var ce = class {
 			let t = X(e.payload), n = K(e.state);
 			return (n === "superseded" || n === "failed") && !t.pinned;
 		}), t = new Set(e.map((e) => e.id)), n = (await this.shards.list(this.namespace)).filter((e) => t.has(Z(e.payload).package_record_id));
-		return await p(this.database, ["vocabulary_packages", "vocabulary_shards"], async (t) => {
+		return await f(this.database, ["vocabulary_packages", "vocabulary_shards"], async (t) => {
 			for (let e of n) await this.shards.delete(this.namespace, e.id, t);
 			for (let n of e) await this.packages.delete(this.namespace, n.id, t);
 		}), this.invalidate_shard_index_cache(), this.invalidate_active_package_cache(), { deleted_package_ids: [...t] };
@@ -450,7 +450,7 @@ var ce = class {
 		return o;
 	}
 	async create_shard_record(e, t, n) {
-		let r = (/* @__PURE__ */ new Date()).toISOString(), i = crypto.randomUUID(), a = l.parse(t.kind), o = {
+		let r = (/* @__PURE__ */ new Date()).toISOString(), i = crypto.randomUUID(), a = u.parse(t.kind), o = {
 			schema_version: 1,
 			id: i,
 			namespace: this.namespace,
