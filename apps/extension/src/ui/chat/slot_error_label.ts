@@ -12,6 +12,8 @@ export function slot_error_label(t: Translate, error: string): string {
       return t("chat.errors.analysis_unparsable");
     case "message_changed":
       return t("chat.errors.message_changed");
+    case "no_chat_open":
+      return t("chat.errors.no_chat_open");
   }
   const code = ProviderErrorCodeSchema.safeParse(error);
   if (!code.success) {

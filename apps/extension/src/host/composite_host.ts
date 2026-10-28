@@ -190,7 +190,7 @@ export function create_composite_host(
   const helper = new TavernHelperHost(helper_surface as TavernHelperSurface, () => {
     const chat_id = sillytavern.get_active_chat_id();
     if (chat_id === null) {
-      throw new Error("No chat is open");
+      throw new Error("no_chat_open");
     }
     return chat_id;
   });

@@ -52,15 +52,15 @@ describe("create_i18n", () => {
 
 describe("format_byte_size", () => {
   it.each([
-    [0, "en", "0 bytes"],
-    [512, "en", "512 bytes"],
-    [1500, "en", "1.5 kilobytes"],
-    [2_500_000, "en", "2.5 megabytes"],
+    [0, "en", "0 B"],
+    [512, "en", "512 B"],
+    [1500, "en", "1.5 KB"],
+    [2_500_000, "en", "2.5 MB"],
   ] as const)("formats %d bytes for %s as %s", (byte_count, locale, expected) => {
     expect(format_byte_size(byte_count, locale)).toBe(expected);
   });
 
-  it("formats using Simplified Chinese unit words", () => {
-    expect(format_byte_size(1500, "zh-CN")).toBe("1.5千字节");
+  it("uses the same unit symbols in Simplified Chinese", () => {
+    expect(format_byte_size(51_400_000, "zh-CN")).toBe("51.4 MB");
   });
 });

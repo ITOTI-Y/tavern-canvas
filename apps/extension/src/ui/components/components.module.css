@@ -463,6 +463,15 @@
   font-size: var(--tc-control-font-size);
 }
 
+/* Field-like controls and list options keep their size when pressed; the shrink-and-return of
+   .tc-interactive read as the border growing when a dropdown closed. */
+.selectTrigger:active:not(:disabled),
+.promptTagTrigger:active:not(:disabled),
+.promptTagOption:active:not(:disabled),
+.segmentedControlItem:active:not(:disabled) {
+  transform: none;
+}
+
 .selectTrigger:hover:not(:disabled) {
   background-color: var(--tc-surface-raised);
 }
@@ -505,6 +514,7 @@
 
 .selectViewport {
   padding: var(--tc-space-1);
+  overscroll-behavior: contain;
 }
 
 .selectItem {
@@ -541,9 +551,10 @@
   color: var(--tc-accent-text);
 }
 
-.selectItem:focus-visible,
+/* The highlighted option shows by its background; an outline on the focused option read as a
+   heavier border on whichever item the list opened on. */
 .selectItem:focus {
-  outline-color: var(--tc-focus);
+  outline-color: transparent;
 }
 
 .selectItem[data-disabled] {
@@ -604,6 +615,52 @@
   inset: 0;
   z-index: var(--tc-z-overlay);
   background-color: var(--tc-media-scrim);
+}
+
+/* An image that enlarges on click; the button keeps the image's own size and corners. */
+.zoomTrigger {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  border-radius: var(--tc-radius-image);
+  background: none;
+  cursor: zoom-in;
+}
+
+.zoomTrigger:focus-visible {
+  outline: 2px solid var(--tc-focus);
+  outline-offset: 2px;
+}
+
+.zoomContent {
+  position: fixed;
+  inset: 0;
+  z-index: var(--tc-z-overlay);
+  display: grid;
+  place-items: center;
+  padding: var(--tc-space-6);
+  cursor: zoom-out;
+}
+
+.zoomImage {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--tc-radius-image);
+  object-fit: contain;
+  box-shadow: 0 18px 50px var(--tc-shadow);
+}
+
+.zoomClose {
+  position: absolute;
+  top: var(--tc-space-4);
+  right: var(--tc-space-4);
+  display: grid;
+  place-items: center;
+  width: var(--tc-control-height-md);
+  height: var(--tc-control-height-md);
+  border-radius: var(--tc-radius-control);
+  background-color: var(--tc-media-scrim);
+  color: var(--tc-media-ink);
 }
 
 .dialogContent {
@@ -931,6 +988,7 @@
   width: min(420px, 90vw);
   max-height: 360px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--tc-space-1);
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-popover);

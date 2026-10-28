@@ -126,6 +126,7 @@
   width: min(360px, calc(100vw - var(--tc-space-8)));
   max-height: 60dvh;
   overflow: auto;
+  overscroll-behavior: contain;
   background-color: var(--tc-surface);
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-popover);

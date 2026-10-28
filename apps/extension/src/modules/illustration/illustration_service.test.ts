@@ -349,7 +349,7 @@ describe("IllustrationService.analyze", () => {
       },
     ]);
     const { service } = create_service(host, {
-      settings: { ...SETTINGS, world_info: { mode: "worldbook", worldbook: "Town" } },
+      settings: { ...SETTINGS, world_info: { mode: "worldbook", worldbooks: ["Town"] } },
     });
 
     await service.analyze(3);

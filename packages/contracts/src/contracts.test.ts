@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  AnalysisWorldInfoSchema,
   BaseImageGenerationRequestSchema,
   CapabilityMatrixSchema,
   CapabilityStatusSchema,
@@ -452,6 +453,21 @@ describe("initial settings and capability contracts", () => {
         generation_events: { available: true, probe: "private" },
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("AnalysisWorldInfoSchema", () => {
+  it("reads a single saved book as a list of one", () => {
+    expect(AnalysisWorldInfoSchema.parse({ mode: "worldbook", worldbook: "Town" })).toEqual({
+      mode: "worldbook",
+      worldbooks: ["Town"],
+    });
+  });
+
+  it("requires at least one chosen book", () => {
+    expect(AnalysisWorldInfoSchema.safeParse({ mode: "worldbook", worldbooks: [] }).success).toBe(
+      false,
+    );
   });
 });
 

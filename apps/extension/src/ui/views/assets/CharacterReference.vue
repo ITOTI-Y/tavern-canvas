@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 
 import type { CharacterReferenceMode } from "../../../modules/wardrobe/wardrobe_library.js";
 import AppButton from "../../components/AppButton.vue";
+import ZoomableImage from "../../components/ZoomableImage.vue";
 import AppCheckbox from "../../components/AppCheckbox.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import SegmentedControl, {
@@ -105,11 +106,11 @@ async function generate(): Promise<void> {
   >
     <template #default>
       <div :class="styles.reference">
-        <img
+        <ZoomableImage
           v-if="image !== null"
           :src="image"
           :alt="t('assets.characters.reference_image_label')"
-          :class="styles.reference_thumbnail"
+          :image-class="styles.reference_thumbnail"
         />
         <div :class="styles.reference_actions">
           <input

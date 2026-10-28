@@ -550,7 +550,7 @@ describe("SettingsView illustration settings", () => {
     ]);
   });
 
-  it("lists the world info books when analysis should read one book, and can turn world info off", async () => {
+  it("lets analysis read several chosen books, and can turn world info off", async () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
     const capabilities = create_unavailable_capabilities();
     const settings = recording_settings_capability(updates);
@@ -569,7 +569,14 @@ describe("SettingsView illustration settings", () => {
     await radio("One book")?.trigger("click");
     await flushPromises();
     expect(list_worldbooks).toHaveBeenCalledOnce();
-    expect(wrapper.find('[role="combobox"][aria-label="Book"]').exists()).toBe(true);
+    const books = wrapper.get('[data-testid="worldbook-list"]').findAll('[role="checkbox"]');
+    expect(books).toHaveLength(2);
+    await books[0]?.trigger("click");
+    await flushPromises();
+    expect(updates.at(-1)?.illustration?.world_info).toEqual({
+      mode: "worldbook",
+      worldbooks: ["Town"],
+    });
 
     await radio("None")?.trigger("click");
     await nextTick();

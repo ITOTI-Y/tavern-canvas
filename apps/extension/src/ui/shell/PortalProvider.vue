@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { provide } from "vue";
+import { onBeforeUnmount, provide } from "vue";
 
 import { PORTAL_TARGET_KEY } from "../contracts/portal_keys.js";
+import { install_popup_scroll_lock } from "./popup_scroll_lock.js";
 
 const props = defineProps<{
   /** Portals under this subtree render into the Shadow Root's portal element, never `document.body`. */
@@ -16,6 +17,7 @@ if (props.portalTarget === document.body) {
 }
 
 provide(PORTAL_TARGET_KEY, props.portalTarget);
+onBeforeUnmount(install_popup_scroll_lock(props.portalTarget));
 </script>
 
 <template>

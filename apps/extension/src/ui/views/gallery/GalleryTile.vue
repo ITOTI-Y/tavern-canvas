@@ -62,6 +62,7 @@ onBeforeUnmount(() => {
   <li
     :class="styles.tile"
     :style="{ aspectRatio: aspect_ratio }"
+    :data-select-id="record.id"
     :data-selected="selected ? '' : null"
     :data-failed="failed ? '' : null"
   >
@@ -76,6 +77,7 @@ onBeforeUnmount(() => {
         :src="url"
         decoding="async"
         alt=""
+        draggable="false"
         :class="styles.tileImage"
         :data-decoded="decoded ? '' : null"
         @load="decoded = true"

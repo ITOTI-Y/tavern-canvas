@@ -11,6 +11,7 @@ import AppIcon from "../../components/AppIcon.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import IconButton from "../../components/IconButton.vue";
 import StateSurface from "../../components/StateSurface.vue";
+import { use_marquee_selection } from "../../components/use_marquee_selection.js";
 import { summarize_payload, type AssetSummaryFieldSpec } from "./asset_field_schema.js";
 import styles from "./assets_styles.js";
 
@@ -120,6 +121,20 @@ function toggle_select_all(): void {
   }
 }
 
+const root = ref<HTMLElement | null>(null);
+/** A box drawn from empty space selects the cards it touches; cards themselves drag to reorder. */
+const marquee = use_marquee_selection(root, {
+  start_on_items: false,
+  on_select: (ids, mode) => {
+    if (mode === "replace") {
+      selected.clear();
+    }
+    for (const id of ids) {
+      selected.add(id);
+    }
+  },
+});
+
 function confirm_bulk_delete(): void {
   emit("delete-many", selected_ids.value);
   selected.clear();
@@ -190,7 +205,23 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
 </script>
 
 <template>
-  <div :class="styles.categoryList">
+  <div
+    ref="root"
+    :class="styles.categoryList"
+    :data-marquee="marquee.box.value === null ? null : ''"
+    @pointerdown="marquee.on_pointerdown"
+  >
+    <div
+      v-if="marquee.box.value !== null"
+      :class="styles.marquee"
+      aria-hidden="true"
+      :style="{
+        left: `${String(marquee.box.value.left)}px`,
+        top: `${String(marquee.box.value.top)}px`,
+        width: `${String(marquee.box.value.width)}px`,
+        height: `${String(marquee.box.value.height)}px`,
+      }"
+    />
     <div :class="styles.categoryToolbar">
       <div :class="styles.searchField">
         <AppIcon :icon="Search" :size="16" />
@@ -249,6 +280,7 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
           :key="record.id"
           :class="styles.assetCard"
           draggable="true"
+          :data-select-id="record.id"
           :data-selected="selected.has(record.id) ? 'true' : undefined"
           :data-active="record.id === activeId ? 'true' : undefined"
           :data-dragging="dragged_id === record.id ? '' : null"

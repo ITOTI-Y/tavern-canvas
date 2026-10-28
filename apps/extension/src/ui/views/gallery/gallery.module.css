@@ -107,8 +107,23 @@
 
 /* The grid takes the height of its tallest column; each column positions its mounted tiles. */
 .masonry {
+  position: relative;
   display: flex;
   gap: var(--tc-tile-gap);
+}
+
+.masonry[data-marquee] {
+  user-select: none;
+}
+
+/* The selection box drawn while dragging across tiles. */
+.marquee {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid var(--tc-accent-border);
+  border-radius: 2px;
+  background-color: color-mix(in srgb, var(--tc-marker) 25%, transparent);
+  pointer-events: none;
 }
 
 .masonryColumn {

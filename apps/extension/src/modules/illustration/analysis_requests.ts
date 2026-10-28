@@ -93,11 +93,12 @@ async function to_host_world_info(
       return { kind: "chat" };
     case "off":
       return { kind: "replace", text: "" };
-    case "worldbook":
-      return {
-        kind: "replace",
-        text: activate_worldbook(await host.read_worldbook(world_info.worldbook), text),
-      };
+    case "worldbook": {
+      const books = await Promise.all(
+        world_info.worldbooks.map((name) => host.read_worldbook(name)),
+      );
+      return { kind: "replace", text: activate_worldbook(books.flat(), text) };
+    }
   }
 }
 

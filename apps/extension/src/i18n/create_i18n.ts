@@ -60,8 +60,8 @@ export function create_i18n(): LocaleRuntime {
   return { i18n, apply_locale };
 }
 
-// CLDR byte units are decimal (base 1000).
-const BYTE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"] as const;
+// Decimal units (base 1000), written as the usual symbols in every locale.
+const BYTE_UNITS = ["B", "KB", "MB", "GB", "TB"] as const;
 
 export function format_byte_size(byte_count: number, locale: SupportedLocale): string {
   let scaled = byte_count;
@@ -71,10 +71,8 @@ export function format_byte_size(byte_count: number, locale: SupportedLocale): s
     unit_index += 1;
   }
 
-  return new Intl.NumberFormat(locale, {
-    style: "unit",
-    unit: BYTE_UNITS[unit_index],
-    unitDisplay: "long",
+  const number = new Intl.NumberFormat(locale, {
     maximumFractionDigits: unit_index === 0 ? 0 : 1,
   }).format(scaled);
+  return `${number} ${BYTE_UNITS[unit_index] ?? "B"}`;
 }

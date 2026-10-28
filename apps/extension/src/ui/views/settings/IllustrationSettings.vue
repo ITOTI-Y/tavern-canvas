@@ -8,6 +8,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
+import AppCheckbox from "../../components/AppCheckbox.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
@@ -234,21 +235,16 @@ onMounted(() => {
   }
 });
 
-const selected_worldbook = computed(() =>
+const selected_worldbooks = computed<readonly string[]>(() =>
   illustration.value?.world_info.mode === "worldbook"
-    ? illustration.value.world_info.worldbook
-    : undefined,
+    ? illustration.value.world_info.worldbooks
+    : [],
 );
 
-/** A book renamed or deleted in SillyTavern stays selectable, so the setting is not lost silently. */
-const worldbook_options = computed(() =>
-  [
-    ...new Set([
-      ...worldbooks.value,
-      ...(selected_worldbook.value === undefined ? [] : [selected_worldbook.value]),
-    ]),
-  ].map((name) => ({ value: name, label: name })),
-);
+/** A book renamed or deleted in SillyTavern stays listed, so the setting is not lost silently. */
+const worldbook_names = computed(() => [
+  ...new Set([...worldbooks.value, ...selected_worldbooks.value]),
+]);
 
 function set_world_info_mode(value: string): void {
   if (value === "chat" || value === "off") {
@@ -260,8 +256,14 @@ function set_world_info_mode(value: string): void {
   }
 }
 
-function set_worldbook(worldbook: string): void {
-  update_illustration({ world_info: { mode: "worldbook", worldbook } });
+/** At least one book stays chosen; the mode switch is how world info is turned off. */
+function set_worldbook(name: string, chosen: boolean): void {
+  const next = chosen
+    ? [...selected_worldbooks.value, name]
+    : selected_worldbooks.value.filter((candidate) => candidate !== name);
+  if (next.length > 0) {
+    update_illustration({ world_info: { mode: "worldbook", worldbooks: next } });
+  }
 }
 </script>
 
@@ -276,42 +278,46 @@ function set_worldbook(worldbook: string): void {
         :disabled="!settings"
         @update:model-value="(value) => update({ auto_generation_enabled: value })"
       />
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>
-        <NumberStepper
-          :model-value="illustration?.max_images_per_message"
-          :label="t('settings.illustration.max_images_label')"
-          :min="1"
-          :max="8"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          :disabled="!settings"
-          @update:model-value="(value) => update_illustration({ max_images_per_message: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.illustration.prompt_preset_label") }}</span>
-        <AppSelect
-          :model-value="illustration?.prompt_preset_id ?? NO_PROMPT_PRESET"
-          :options="prompt_preset_options"
-          :placeholder="t('settings.illustration.prompt_preset_label')"
-          :aria-label="t('settings.illustration.prompt_preset_label')"
-          :disabled="!settings"
-          @update:model-value="set_prompt_preset"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.illustration.concurrency_label") }}</span>
-        <NumberStepper
-          :model-value="settings?.global_concurrency"
-          :label="t('settings.illustration.concurrency_label')"
-          :min="1"
-          :max="4"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          :disabled="!settings"
-          @update:model-value="(value) => update({ global_concurrency: value })"
-        />
+      <div :class="styles.field_grid">
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>
+          <NumberStepper
+            :model-value="illustration?.max_images_per_message"
+            :label="t('settings.illustration.max_images_label')"
+            :min="1"
+            :max="8"
+            :increment-label="t('common.actions.increase')"
+            :decrement-label="t('common.actions.decrease')"
+            :disabled="!settings"
+            @update:model-value="(value) => update_illustration({ max_images_per_message: value })"
+          />
+        </div>
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{
+            t("settings.illustration.prompt_preset_label")
+          }}</span>
+          <AppSelect
+            :model-value="illustration?.prompt_preset_id ?? NO_PROMPT_PRESET"
+            :options="prompt_preset_options"
+            :placeholder="t('settings.illustration.prompt_preset_label')"
+            :aria-label="t('settings.illustration.prompt_preset_label')"
+            :disabled="!settings"
+            @update:model-value="set_prompt_preset"
+          />
+        </div>
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.illustration.concurrency_label") }}</span>
+          <NumberStepper
+            :model-value="settings?.global_concurrency"
+            :label="t('settings.illustration.concurrency_label')"
+            :min="1"
+            :max="4"
+            :increment-label="t('common.actions.increase')"
+            :decrement-label="t('common.actions.decrease')"
+            :disabled="!settings"
+            @update:model-value="(value) => update({ global_concurrency: value })"
+          />
+        </div>
       </div>
     </section>
 
@@ -468,16 +474,22 @@ function set_worldbook(worldbook: string): void {
       </div>
       <p :class="styles.description">{{ t("settings.illustration.world_info_hint") }}</p>
       <template v-if="world_info_mode === 'worldbook'">
-        <div :class="styles.row">
-          <span :class="styles.row_label">{{ t("settings.illustration.worldbook_label") }}</span>
-          <AppSelect
-            :model-value="selected_worldbook"
-            :options="worldbook_options"
-            :placeholder="t('settings.illustration.worldbook_placeholder')"
-            :aria-label="t('settings.illustration.worldbook_label')"
-            @update:model-value="set_worldbook"
+        <fieldset :class="styles.check_list" data-testid="worldbook-list">
+          <legend :class="styles.row_label">
+            {{ t("settings.illustration.worldbook_label") }}
+          </legend>
+          <AppCheckbox
+            v-for="name in worldbook_names"
+            :key="name"
+            :model-value="selected_worldbooks.includes(name)"
+            :label="name"
+            :disabled="selected_worldbooks.length === 1 && selected_worldbooks.includes(name)"
+            @update:model-value="(chosen) => set_worldbook(name, chosen)"
           />
-        </div>
+          <p v-if="selected_worldbooks.length === 0" :class="styles.description">
+            {{ t("settings.illustration.worldbook_placeholder") }}
+          </p>
+        </fieldset>
         <p v-if="worldbooks_failed" :class="styles.description" role="alert">
           {{ t("settings.illustration.worldbook_unavailable") }}
         </p>

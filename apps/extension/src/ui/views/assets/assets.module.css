@@ -117,7 +117,7 @@
 .assetsBody {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  min-height: 100%;
 }
 
 .assetsBody[data-editing] {
@@ -135,6 +135,7 @@
 .editor {
   position: sticky;
   top: 0;
+  align-self: start;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -211,10 +212,27 @@
 /* AssetCategoryList                                                      */
 /* ---------------------------------------------------------------------- */
 
+/* Fills the rest of the list column, so a selection box can start below the last card. */
 .categoryList {
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--tc-space-3);
+}
+
+.categoryList[data-marquee] {
+  user-select: none;
+}
+
+/* The selection box drawn while dragging across cards. */
+.marquee {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid var(--tc-accent-border);
+  border-radius: 2px;
+  background-color: color-mix(in srgb, var(--tc-marker) 25%, transparent);
+  pointer-events: none;
 }
 
 .categoryToolbar {

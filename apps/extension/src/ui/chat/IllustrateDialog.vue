@@ -23,6 +23,7 @@ import type { PromptTagsPort } from "../contracts/prompt_tags_port.js";
 import type { NovelAiCapability } from "../contracts/ui_capabilities.js";
 import styles from "./illustrate_dialog_styles.js";
 import type { IllustrateRequest } from "./illustrate_request.js";
+import { slot_error_label } from "./slot_error_label.js";
 import OutfitPicker from "./OutfitPicker.vue";
 import PromptField from "./PromptField.vue";
 import PromptTagChips from "./PromptTagChips.vue";
@@ -191,7 +192,7 @@ async function load(request: IllustrateRequest): Promise<void> {
   } catch (error) {
     state.value = {
       status: "failed",
-      message: error instanceof Error ? error.message : String(error),
+      message: slot_error_label(t, error instanceof Error ? error.message : String(error)),
       excerpt: error instanceof AnalysisParseError ? error.excerpt : null,
     };
   }
@@ -229,7 +230,7 @@ async function add_chosen(): Promise<void> {
       drafts.value.slice(-added.length).map((draft) => estimate(current.location, draft)),
     );
   } catch (error) {
-    add_error.value = error instanceof Error ? error.message : String(error);
+    add_error.value = slot_error_label(t, error instanceof Error ? error.message : String(error));
   } finally {
     adding.value = false;
   }
@@ -262,7 +263,7 @@ async function confirm(): Promise<void> {
     submit_error.value = t("chat.dialog.submit_partial", {
       submitted,
       total,
-      reason: error instanceof Error ? error.message : String(error),
+      reason: slot_error_label(t, error instanceof Error ? error.message : String(error)),
     });
   } finally {
     submitting.value = false;

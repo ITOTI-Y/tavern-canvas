@@ -22,6 +22,7 @@ import AppCheckbox from "../../components/AppCheckbox.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
+import ImageSizeField from "./ImageSizeField.vue";
 import type {
   AssetRecordSummary,
   ProviderProfileSummary,
@@ -232,91 +233,73 @@ async function save(): Promise<void> {
         />
       </div>
 
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.width_label") }}</span>
-        <NumberStepper
-          :model-value="draft.width"
-          :label="t('settings.novelai.width_label')"
-          :min="64"
-          :max="2048"
-          :step="64"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          @update:model-value="(value) => patch({ width: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.height_label") }}</span>
-        <NumberStepper
-          :model-value="draft.height"
-          :label="t('settings.novelai.height_label')"
-          :min="64"
-          :max="2048"
-          :step="64"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          @update:model-value="(value) => patch({ height: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.steps_label") }}</span>
-        <NumberStepper
-          :model-value="draft.steps"
-          :label="t('settings.novelai.steps_label')"
-          :min="1"
-          :max="50"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          @update:model-value="(value) => patch({ steps: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.scale_label") }}</span>
-        <NumberStepper
-          :model-value="draft.scale"
-          :label="t('settings.novelai.scale_label')"
-          :min="0"
-          :max="10"
-          :step="0.1"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          @update:model-value="(value) => patch({ scale: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.cfg_rescale_label") }}</span>
-        <NumberStepper
-          :model-value="draft.cfg_rescale"
-          :label="t('settings.novelai.cfg_rescale_label')"
-          :min="0"
-          :max="1"
-          :step="0.02"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          @update:model-value="(value) => patch({ cfg_rescale: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.sampler_label") }}</span>
-        <AppSelect
-          :model-value="draft.sampler"
-          :options="sampler_options"
-          :placeholder="t('settings.novelai.sampler_label')"
-          :aria-label="t('settings.novelai.sampler_label')"
-          @update:model-value="(value) => set_enum('sampler', NovelAiSamplerSchema.options, value)"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.novelai.noise_schedule_label") }}</span>
-        <AppSelect
-          :model-value="draft.noise_schedule"
-          :options="noise_options"
-          :placeholder="t('settings.novelai.noise_schedule_label')"
-          :aria-label="t('settings.novelai.noise_schedule_label')"
-          @update:model-value="
-            (value) => set_enum('noise_schedule', NovelAiNoiseScheduleSchema.options, value)
-          "
-        />
+      <ImageSizeField
+        :model-value="{ width: draft.width, height: draft.height }"
+        @update:model-value="(size) => patch(size)"
+      />
+      <div :class="styles.field_grid">
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.novelai.steps_label") }}</span>
+          <NumberStepper
+            :model-value="draft.steps"
+            :label="t('settings.novelai.steps_label')"
+            :min="1"
+            :max="50"
+            :increment-label="t('common.actions.increase')"
+            :decrement-label="t('common.actions.decrease')"
+            @update:model-value="(value) => patch({ steps: value })"
+          />
+        </div>
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.novelai.scale_label") }}</span>
+          <NumberStepper
+            :model-value="draft.scale"
+            :label="t('settings.novelai.scale_label')"
+            :min="0"
+            :max="10"
+            :step="0.1"
+            :increment-label="t('common.actions.increase')"
+            :decrement-label="t('common.actions.decrease')"
+            @update:model-value="(value) => patch({ scale: value })"
+          />
+        </div>
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.novelai.cfg_rescale_label") }}</span>
+          <NumberStepper
+            :model-value="draft.cfg_rescale"
+            :label="t('settings.novelai.cfg_rescale_label')"
+            :min="0"
+            :max="1"
+            :step="0.02"
+            :increment-label="t('common.actions.increase')"
+            :decrement-label="t('common.actions.decrease')"
+            @update:model-value="(value) => patch({ cfg_rescale: value })"
+          />
+        </div>
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.novelai.sampler_label") }}</span>
+          <AppSelect
+            :model-value="draft.sampler"
+            :options="sampler_options"
+            :placeholder="t('settings.novelai.sampler_label')"
+            :aria-label="t('settings.novelai.sampler_label')"
+            @update:model-value="
+              (value) => set_enum('sampler', NovelAiSamplerSchema.options, value)
+            "
+          />
+        </div>
+        <div :class="styles.row">
+          <span :class="styles.row_label">{{ t("settings.novelai.noise_schedule_label") }}</span>
+          <AppSelect
+            :model-value="draft.noise_schedule"
+            :options="noise_options"
+            :placeholder="t('settings.novelai.noise_schedule_label')"
+            :aria-label="t('settings.novelai.noise_schedule_label')"
+            @update:model-value="
+              (value) => set_enum('noise_schedule', NovelAiNoiseScheduleSchema.options, value)
+            "
+          />
+        </div>
       </div>
       <AppSwitch
         :model-value="draft.smea"

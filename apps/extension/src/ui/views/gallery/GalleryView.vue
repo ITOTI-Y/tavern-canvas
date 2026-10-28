@@ -100,6 +100,16 @@ function toggle_select(record_id: string): void {
   }
 }
 
+/** A box drawn across tiles selects them, added to the current selection with a modifier held. */
+function select_ids(record_ids: readonly string[], mode: "add" | "replace"): void {
+  if (mode === "replace") {
+    selected_ids.clear();
+  }
+  for (const id of record_ids) {
+    selected_ids.add(id);
+  }
+}
+
 function clear_selection(): void {
   selected_ids.clear();
 }
@@ -391,6 +401,7 @@ const grid_status = computed(() => {
         v-bind="drop_undefined({ widthOverride: gridWidthOverride })"
         @open="open_preview"
         @toggle-select="toggle_select"
+        @select-ids="select_ids"
       />
       <!-- eslint-enable vue/attribute-hyphenation -->
     </StateSurface>

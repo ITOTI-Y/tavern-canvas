@@ -45,6 +45,7 @@ const common = {
     hint_close: "关闭",
   },
   actions: {
+    enlarge: "放大查看",
     save: "保存",
     cancel: "取消",
     close: "关闭",
@@ -421,6 +422,19 @@ const diagnostics = {
 };
 
 const settings = {
+  image_size: {
+    label: "图片尺寸",
+    portrait: "竖图",
+    landscape: "横图",
+    square: "方图",
+    portrait_large: "竖图（大）",
+    landscape_large: "横图（大）",
+    square_large: "方图（大）",
+    wallpaper_portrait: "竖版壁纸",
+    wallpaper_landscape: "横版壁纸",
+    custom: "自定义",
+    lock_ratio: "锁定宽高比",
+  },
   pane: {
     illustration: "段落分析、服装判断与自动配图。修改在离开输入框时自动保存。",
     providers: "生成图片的服务、密钥与默认参数。",
@@ -493,7 +507,7 @@ const settings = {
     world_info_hint:
       "当前聊天的世界书由 SillyTavern 按聊天记录激活，包括全局、角色和聊天绑定的世界书。指定世界书时只发送被待分析回复的关键词激活的条目和常驻条目，并替换 SillyTavern 自己激活的条目。",
     worldbook_label: "使用的世界书",
-    worldbook_placeholder: "选择世界书",
+    worldbook_placeholder: "勾选至少一本世界书。",
     worldbook_unavailable: "无法读取世界书列表，需要启用 JS Slash Runner。",
     max_images_label: "每条回复最多配图数",
     prompt_preset_label: "图片提示词使用的提示词预设",
@@ -815,6 +829,7 @@ const chat = {
     interrupted: "页面刷新或关闭时任务尚未完成",
     analysis_unparsable: "分析模型的回复中没有可用的 JSON",
     message_changed: "分析期间这条回复被修改或切换了候选",
+    no_chat_open: "没有打开的聊天，请先打开一个聊天",
   },
 };
 

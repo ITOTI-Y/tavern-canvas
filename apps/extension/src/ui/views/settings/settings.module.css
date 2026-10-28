@@ -183,6 +183,42 @@
   min-width: 0;
 }
 
+/* Short fields share rows two at a time where the form is wide enough, one per row otherwise. */
+.field_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--tc-form-row-gap) var(--tc-space-6);
+  align-items: start;
+}
+
+.check_list {
+  display: grid;
+  justify-items: start;
+  gap: var(--tc-space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.check_list > legend {
+  margin-bottom: var(--tc-field-gap);
+  padding: 0;
+}
+
+.image_size {
+  display: grid;
+  justify-items: start;
+  gap: var(--tc-field-gap);
+}
+
+.image_size_sides {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--tc-space-2) var(--tc-space-3);
+}
+
 .row_label {
   min-width: 0;
   color: var(--tc-text);

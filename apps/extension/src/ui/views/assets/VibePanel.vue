@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FieldGroup from "../../components/FieldGroup.vue";
+import ZoomableImage from "../../components/ZoomableImage.vue";
 import SegmentedControl, {
   type SegmentedControlOption,
 } from "../../components/SegmentedControl.vue";
@@ -183,11 +184,11 @@ function set_provider(value: string): void {
             :error="image_error"
           >
             <template #default="{ fieldId, describedBy }">
-              <img
+              <ZoomableImage
                 v-if="image_url !== null"
                 :src="image_url"
                 :alt="t('assets.vibe.image_label')"
-                :class="styles.reference_thumbnail"
+                :image-class="styles.reference_thumbnail"
               />
               <input
                 :id="fieldId"

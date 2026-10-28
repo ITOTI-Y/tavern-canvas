@@ -1,0 +1,895 @@
+import { t as e } from "./vue-i18n-L-BrQRnK.js";
+//#region src/i18n/locale_resolution.ts
+var t = "locale_load_failed", n = /* @__PURE__ */ new Set([
+	"zh-cn",
+	"zh-sg",
+	"zh-hans"
+]);
+function r(e) {
+	let t = e.trim().toLowerCase().replaceAll("_", "-");
+	return n.has(t) ? "zh-CN" : "en";
+}
+function i(e, t) {
+	return e === "auto" ? r(t) : e;
+}
+async function a(e, n, r) {
+	if (n === "en" || e.availableLocales.includes(n)) return e.locale.value = n, { locale: n };
+	let i = r[n];
+	if (i === void 0) return e.locale.value = "en", {
+		locale: "en",
+		error_code: t
+	};
+	try {
+		let t = await i();
+		return e.setLocaleMessage(n, t), e.locale.value = n, { locale: n };
+	} catch {
+		return e.locale.value = "en", {
+			locale: "en",
+			error_code: t
+		};
+	}
+}
+var o = {
+	app: {
+		name: "Inkwell",
+		version_label: "Version {version}",
+		entry_description: "Illustrates chat replies with generated images. Settings, the gallery, and image providers are in the Inkwell window.",
+		open_action: "Open Inkwell",
+		unsupported_host: {
+			title: "JS Slash Runner update required",
+			description: "Inkwell needs JS Slash Runner {required_version} or newer. The installed version is {current_version}.",
+			update_action: "Open update instructions"
+		},
+		fatal_error: {
+			title: "Inkwell could not start",
+			description: "Runtime initialization failed. The error is shown below; include it when reporting the problem. Browser console entries prefixed with [Inkwell] carry the full stack.",
+			reload_action: "Reload SillyTavern"
+		},
+		partial_init: {
+			banner_title: "Running with limited functionality",
+			banner_description: "Some data failed to load. Retry from Diagnostics or continue with what's available."
+		}
+	},
+	nav: {
+		library: "Library",
+		assets: "Library",
+		gallery: "Gallery",
+		settings: "Settings",
+		inspector_expand: "Expand inspector",
+		inspector_collapse: "Collapse inspector",
+		task_strip_clear_failed: "Clear failed tasks",
+		task_strip_error: ": {reason}",
+		task_strip_count: "{n} task | {n} tasks"
+	},
+	common: {
+		tag_input: {
+			placeholder: "Add a tag",
+			remove: "Remove {tag}",
+			suggestions_label: "Tag suggestions",
+			hint_select: "Select",
+			hint_add: "Add",
+			hint_close: "Close"
+		},
+		actions: {
+			enlarge: "Enlarge",
+			save: "Save",
+			cancel: "Cancel",
+			close: "Close",
+			delete: "Delete",
+			copy: "Copy",
+			copied: "Copied",
+			download: "Download",
+			search: "Search",
+			select_all: "Select all",
+			deselect_all: "Deselect all",
+			back: "Back",
+			next: "Next",
+			edit: "Edit",
+			increase: "Increase",
+			decrease: "Decrease"
+		},
+		labels: { name: "Name" },
+		inspector: {
+			title: "Inspector",
+			empty_title: "Nothing selected",
+			empty_description: "Select a job, image, or library entry to see its details here.",
+			selection: {
+				id_label: "ID",
+				kind_gallery_record: "Gallery image"
+			}
+		},
+		notifications: {
+			viewport_label: "Notifications",
+			announce_label: "Notification"
+		}
+	},
+	status: {
+		loading: "Loading",
+		empty: "Empty",
+		partial: "Partial",
+		error: "Error",
+		disabled: "Disabled",
+		success: "Success",
+		pending: "Pending",
+		running: "Running",
+		cancelled: "Cancelled",
+		completed: "Completed",
+		failed: "Failed",
+		retrying: "Retrying",
+		online: "Online",
+		offline: "Offline",
+		connected: "Connected",
+		blocked: "Blocked",
+		unknown: "Unknown"
+	},
+	provider: {},
+	prompt: {
+		preset_browser: {
+			title: "Presets",
+			search_placeholder: "Search presets",
+			empty_title: "No presets yet",
+			empty_description: "Create a preset from the prompt builder to reuse it across generations.",
+			bulk_delete_action: "Delete selected",
+			bulk_delete_confirm_title: "Delete {n} preset? | Delete {n} presets?",
+			bulk_delete_confirm_description: "This removes the selected presets permanently and cannot be undone.",
+			new_preset_action: "New preset",
+			random_group_action: "Pick random from group",
+			ungrouped_label: "Ungrouped",
+			load_error: "Presets failed to load."
+		},
+		fixed_prompts: {
+			positive_label: "Fixed positive prompt",
+			positive_placeholder: "Text always added before the generated positive prompt",
+			negative_label: "Fixed negative prompt",
+			negative_placeholder: "Text always added before the generated negative prompt"
+		},
+		replacement_rules: {
+			title: "Replacement rules",
+			add_action: "Add rule",
+			trigger_label: "Trigger",
+			trigger_placeholder: "Comma-separated triggers",
+			triggers_hint: "Separate multiple triggers with commas.",
+			replacement_label: "Replacement",
+			replacement_placeholder: "Replacement text",
+			empty_title: "No replacement rules yet",
+			empty_description: "Add a rule to substitute matched text before it reaches the image provider."
+		},
+		regex_rules: {
+			title: "Regex rules",
+			add_action: "Add regex rule",
+			pattern_label: "Pattern",
+			pattern_placeholder: "Regular expression pattern",
+			flags_label: "Flags",
+			test_input_label: "Test text",
+			test_action: "Test pattern",
+			test_result_label: "Test result",
+			invalid_pattern: "This is not a valid regular expression: {message}",
+			empty_title: "No regex rules yet",
+			empty_description: "Add a rule to transform text with a regular expression before it reaches the image provider."
+		},
+		builder: { title: "Prompt builder" }
+	},
+	assets: {
+		tabs: {
+			vocabulary: "Vocabulary",
+			characters: "Characters",
+			outfits: "Outfits",
+			lora: "LoRA",
+			vibe: "Vibe transfer",
+			workflow: "Workflow"
+		},
+		vocabulary: {
+			search_placeholder: "Search tags",
+			installed_title: "Current vocabulary",
+			installed_preparing: "Preparing the bundled vocabulary; the first time takes about a minute…",
+			installed_failed: "The vocabulary could not be opened, so search and completion are unavailable. Reload the page and try again.",
+			installed_none: "No vocabulary is available yet.",
+			no_results_title: "No matching tags",
+			no_results_description: "Try another keyword; Chinese and English both work.",
+			search_failed: "Search failed; the vocabulary may still be preparing",
+			updates_title: "Vocabulary updates",
+			no_updates_title: "The update channel offers no other packages",
+			no_updates_description: "The current vocabulary already powers search and completion.",
+			catalog_failed_code: "The update catalog could not be fetched (error code {code}). The bundled vocabulary is unaffected.",
+			tag_count: "{n} tag | {n} tags",
+			update_action: "Check for updates",
+			import_action: "Import package",
+			bundled_label: "Bundled",
+			progress_verifying_catalog_manifest: "Verifying catalog manifest",
+			progress_downloading: "Downloading package",
+			progress_verifying_package: "Verifying package",
+			progress_installing: "Installing package",
+			nsfw_disclosure_label: "Show packages that may include adult content",
+			nsfw_disclosure_hint: "These packages are never installed automatically. Review them before installing."
+		},
+		characters: {
+			empty_title: "No characters saved yet",
+			empty_description: "Saved appearance tags are used whenever the character appears in a reply; the wardrobe update also creates characters from replies.",
+			add_action: "Add character",
+			aliases_label: "Aliases",
+			aliases_hint: "Other names the story uses for this character, separated by commas; they are matched like the name.",
+			appearance: {
+				age: "Age",
+				body: "Body",
+				skin: "Skin",
+				hair: "Hair",
+				eyes: "Eyes",
+				makeup: "Makeup",
+				expression: "Default expression",
+				features: "Features"
+			},
+			subject_label: "Gender",
+			subject_girl: "Female",
+			subject_boy: "Male",
+			subject_other: "Other",
+			editor_description: "Used when a reply mentions “{name}” or an alias",
+			default_outfit_label: "Default outfit",
+			default_outfit_first: "First linked outfit",
+			excluded_traits_label: "Excluded traits",
+			excluded_traits_hint: "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",
+			reference_image_label: "Reference image",
+			reference_image_hint: "Scaled so the long edge is at most 1536 px and saved with the character.",
+			reference_image_unreadable: "This file could not be read as an image.",
+			reference_image_remove: "Remove reference image",
+			reference_upload: "Upload image",
+			reference_generate: "Generate reference",
+			reference_generate_hint: "Generates a full-body reference with the default image provider profile. The prompt is built from the gender, appearance, and default outfit and can be edited first; the result is also kept in Gallery.",
+			reference_prompt_label: "Positive prompt",
+			reference_negative_label: "Negative prompt",
+			reference_generate_submit: "Generate",
+			reference_regenerate_submit: "Regenerate and replace",
+			reference_generate_failed: "The reference image could not be generated: {reason}",
+			outfit_from_reference_title: "Create an outfit from this reference?",
+			outfit_from_reference_description: "This character has no outfit yet. The wardrobe update model can read the clothing in the reference and save it as the character's default outfit; the model must accept images.",
+			outfit_from_reference_confirm: "Create outfit",
+			outfit_from_reference_cancel: "Not now",
+			outfit_from_reference_failed: "The outfit could not be created: {reason}",
+			character_from_reference_title: "Fill in the character from the reference?",
+			character_from_reference_description: "The wardrobe model reads the subject, appearance and clothing in the image. Appearance goes only into fields that are still empty, the subject is set when none was chosen, and the clothing is saved as an outfit and made the default. The model must accept images.",
+			character_from_reference_confirm: "Read and fill in",
+			character_from_reference_cancel: "Not now",
+			character_from_reference_failed: "The character could not be read: {reason}",
+			reference_send_label: "Send with NovelAI requests that show this character",
+			reference_mode_label: "Use as",
+			reference_mode_hint: "Precise reference works on V4.5 only, costs 5 extra Anlas per image, and turns off vibe transfer; when several characters use it, only the first is sent. Vibe transfer is not available on V5. Image to image starts from the reference; when several characters use it, only the first is used.",
+			reference_mode_vibe: "Vibe transfer",
+			reference_mode_img2img: "Image to image",
+			reference_mode_precise: "Precise reference"
+		},
+		outfits: {
+			preview_label: "Preview",
+			preview_hint: "A full-figure picture generated from the outfit's tags, shown on its library card.",
+			preview_generate: "Generate a preview",
+			preview_regenerate: "Regenerate",
+			preview_remove: "Remove the preview",
+			preview_failed: "The preview could not be generated: {reason}",
+			empty_title: "No outfits saved yet",
+			empty_description: "Save outfit tags per slot and link them to a character; when the story changes clothes, the wardrobe update switches or creates outfits.",
+			add_action: "Add outfit",
+			slots: {
+				full_body: "Full body",
+				outerwear: "Outerwear",
+				top: "Top",
+				bottom: "Bottom",
+				legwear: "Legwear",
+				footwear: "Footwear",
+				headwear: "Headwear",
+				accessories: "Accessories"
+			},
+			character_label: "Character",
+			character_placeholder: "Select a character"
+		},
+		lora: {
+			empty_title: "No LoRA yet",
+			empty_description: "Add a LoRA and link it to a character. SD WebUI requests that show the character get the LoRA and its trigger words.",
+			add_action: "Add LoRA",
+			file_name_label: "File name",
+			file_name_hint: "The LoRA's file name in SD WebUI without the extension, such as seraphina_v2.",
+			character_label: "Character",
+			character_hint: "A LoRA linked to no character is never added automatically.",
+			character_placeholder: "Choose a character",
+			weight_label: "Weight",
+			trigger_words_label: "Trigger words"
+		},
+		vibe: {
+			empty_title: "No vibe or reference groups yet",
+			empty_description: "Add a NovelAI vibe transfer group or a Google reference group to reuse across requests.",
+			add_action: "Add group",
+			provider_label: "Source",
+			provider_novelai: "NovelAI vibe transfer",
+			provider_google: "Google reference",
+			notes_label: "Notes",
+			strength_label: "Strength",
+			information_extracted_label: "Information extracted",
+			image_label: "Image",
+			image_hint: "Scaled so the long edge is at most 1536 px and saved with the group.",
+			image_unreadable: "This file could not be read as an image."
+		},
+		workflow: {
+			empty_title: "No ComfyUI workflows imported yet",
+			empty_description: "Import a workflow JSON file to map its placeholders to Inkwell inputs.",
+			import_action: "Import workflow",
+			placeholder_scan_action: "Scan placeholders",
+			edit_action: "Edit workflow",
+			json_label: "Workflow JSON",
+			placeholder_unmapped: "Not mapped",
+			target_positive_prompt: "Positive prompt",
+			target_negative_prompt: "Negative prompt",
+			target_seed: "Seed",
+			target_width: "Width",
+			target_height: "Height",
+			target_steps: "Steps"
+		},
+		random_selection_action: "Pick random",
+		reorder_hint: "Drag a card to reorder",
+		form_dialog_description: "Fields marked * are required.",
+		scope_label: "Scope",
+		chat_scope_label: "This chat only",
+		other_chat_scope_label: "Other chat: {chat}",
+		show_all_chats_label: "Show entries from all chats",
+		select_entry_action: "Select {name}",
+		selected_count: "{n} selected",
+		delete_selected_action: "Delete selected",
+		delete_selected_confirm_title: "Delete the {n} selected entries?",
+		chat_scope_note: "The wardrobe update created this entry from this chat; it appears in this chat only.",
+		import_to_global_action: "Import to the global library",
+		delete_confirm_description: "This removes it from the library permanently and cannot be undone."
+	},
+	gallery: {
+		empty_title: "No generated images yet",
+		empty_description: "Images appear here once a chat reply has been illustrated.",
+		filters: {
+			title: "Filters",
+			provider_label: "Provider",
+			all_providers: "All providers",
+			date_range_label: "Date range",
+			range_all: "All time",
+			range_week: "Last 7 days",
+			range_month: "Last 30 days",
+			pinned_only_label: "Pinned only",
+			orphaned_only_label: "Orphaned only"
+		},
+		orphan_label: "Not attached to any message",
+		cache_occupancy: {
+			label: "Local cache usage",
+			description: "{used} of {limit} used"
+		},
+		thumbnail_failed: "Thumbnail unavailable",
+		metadata_inspector: {
+			title: "Parameters",
+			seed_label: "Seed",
+			provider_label: "Provider",
+			model_label: "Model",
+			prompt_label: "Prompt",
+			copy_action: "Copy parameters",
+			copied_toast: "Parameters copied",
+			source_message_action: "Go to source message",
+			source_other_chat: "The source message is in another chat; open that chat first.",
+			source_not_found: "The source message is not loaded; load earlier messages or check whether it was deleted.",
+			parameters_unavailable: "No embedded generation parameters were found in this image."
+		},
+		selection: {
+			selected_count: "{n} image selected | {n} images selected",
+			download_action: "Download selected",
+			delete_action: "Delete selected",
+			delete_confirm_title: "Delete {n} image? | Delete {n} images?",
+			delete_confirm_description: "This removes the selected images and their files permanently and cannot be undone.",
+			detach_action: "Detach from message",
+			detach_confirm_title: "Detach {n} image from this message? | Detach {n} images from this message?",
+			detach_confirm_description: "The image stays in Gallery but is no longer linked to this message."
+		},
+		pin_action: "Pin",
+		unpin_action: "Unpin",
+		download_action: "Download",
+		select_image_action: "Select image",
+		open_preview_action: "Open preview"
+	},
+	diagnostics: {
+		capability_matrix: {
+			title: "Capability matrix",
+			available: "Available",
+			unavailable: "Unavailable",
+			capabilities: {
+				main_generation_events: "Main generation events",
+				preset_generation: "Preset generation",
+				message_swipe_metadata: "Message swipe records",
+				tavern_regex: "SillyTavern regex scripts",
+				tavern_helper: "JS Slash Runner"
+			}
+		},
+		versions: {
+			title: "Versions",
+			helper_label: "JS Slash Runner"
+		},
+		task_timeline: {
+			title: "Task timeline",
+			empty_description: "Generation and sync activity appear here as they run.",
+			error_code_label: "Error code",
+			time_label: "Time",
+			event_label: "Event",
+			module_label: "Module",
+			provider_label: "Provider",
+			count_label: "{n} event | {n} events"
+		},
+		storage_usage: {
+			title: "Storage",
+			estimate_label: "Estimated usage",
+			quota_label: "Quota",
+			quota_unavailable: "Storage estimate is unavailable on this host.",
+			quota_high_pressure: "Storage usage is close to the browser quota. Free space in Gallery or Library.",
+			cache_references_label: "Cached references",
+			cache_references_unavailable: "Cache reference count is unavailable on this host."
+		},
+		support_bundle: {
+			title: "Support bundle",
+			description: "Includes the version, capability matrix, redacted settings, error codes, and task timeline. It never includes prompts, message content, secrets, or image names.",
+			export_action: "Export support bundle",
+			exported_toast: "Support bundle exported"
+		}
+	},
+	settings: {
+		image_size: {
+			label: "Image size",
+			portrait: "Portrait",
+			landscape: "Landscape",
+			square: "Square",
+			portrait_large: "Large portrait",
+			landscape_large: "Large landscape",
+			square_large: "Large square",
+			wallpaper_portrait: "Portrait wallpaper",
+			wallpaper_landscape: "Landscape wallpaper",
+			custom: "Custom",
+			lock_ratio: "Lock the aspect ratio"
+		},
+		pane: {
+			illustration: "Paragraph analysis, outfit tracking and automatic illustration. Changes save when you leave a field.",
+			providers: "The services that generate images, their keys and default parameters.",
+			translation: "The translation service and glossary used to turn Chinese prompts into English tags.",
+			prompts: "Presets, replacement rules and quality tags used to assemble image prompts.",
+			general: "Appearance, language, credential storage and data backup.",
+			diagnostics: "Host capabilities, the task log, storage use and support bundles."
+		},
+		groups: {
+			generation: "Generation",
+			analysis: "Analysis",
+			guidance: "Guidance"
+		},
+		saved: "Saved",
+		save_failed: "The settings could not be saved (error code {code}); the last change did not take effect. Try again.",
+		nav: {
+			illustration: "Illustration",
+			providers: "Image providers",
+			translation: "Translation",
+			prompts: "Prompt presets",
+			general: "General",
+			diagnostics: "Diagnostics"
+		},
+		illustration: {
+			auto_generation_label: "Illustrate every reply automatically",
+			auto_generation_hint: "When off, use the image button beside a reply to choose paragraphs and confirm before generating.",
+			analysis_guidance_label: "Illustration guidance",
+			analysis_guidance_hint: "Style, setting, or era for the pictures, sent with every paragraph analysis. Where the reply states otherwise, the reply wins.",
+			analysis_guidance_placeholder: "e.g. watercolor, modern city, summer evening",
+			wardrobe_guidance_label: "Wardrobe guidance",
+			wardrobe_guidance_hint: "Direction for the clothing the wardrobe update picks, sent with every wardrobe update. Where the reply states otherwise, the reply wins.",
+			wardrobe_guidance_placeholder: "e.g. contemporary casual wear, light clothing for summer",
+			preset_label: "SillyTavern preset for the analysis",
+			preset_placeholder: "Current preset",
+			preset_hint: "Leave empty to use the preset loaded in SillyTavern. The analysis request goes through this preset as is, including any jailbreak, obfuscation, or output format it applies.",
+			connection_label: "Analysis connection",
+			connection_current: "SillyTavern's current API",
+			connection_proxy_preset: "Proxy preset",
+			proxy_preset_label: "Proxy preset name",
+			proxy_preset_hint: "The exact name of a proxy preset saved in SillyTavern's chat completion settings.",
+			proxy_model_label: "Model",
+			proxy_model_hint: "Leave empty to keep the preset's model.",
+			connection_custom: "Custom API",
+			custom_url_label: "API URL",
+			custom_url_hint: "An OpenAI-compatible endpoint such as https://example.com/v1. SillyTavern's backend sends the request.",
+			custom_invalid: "Enter an http or https URL and a model.",
+			custom_model_label: "Model",
+			custom_key_label: "API key",
+			custom_key_hint: "Stored in the same backend as your other Inkwell credentials. With the SillyTavern secret store chosen under Settings > General, reading it back needs allowKeysExposure in SillyTavern.",
+			custom_key_save: "Save key",
+			custom_key_clear: "Remove key",
+			custom_key_saved: "Key saved.",
+			custom_key_cleared: "Key removed.",
+			custom_key_failed: "The key could not be changed.",
+			chat_history_label: "Chat messages sent with the analysis",
+			wardrobe_model_label: "Wardrobe update model",
+			wardrobe_model_hint: "The wardrobe update runs once per reply. Leave empty to use the analysis connection's model, or name a cheaper one.",
+			wardrobe_model_current_hint: "With SillyTavern's current API no separate model can be named; the wardrobe update uses the current one.",
+			world_info_label: "World info",
+			world_info_chat: "Current chat's books",
+			world_info_worldbook: "One book",
+			world_info_off: "None",
+			world_info_hint: "The current chat's books are what SillyTavern activates from the chat, including global, character, and chat books. With one book, only its constant entries and the entries the analyzed reply's keywords activate are sent, in place of what SillyTavern activates.",
+			worldbook_label: "Book",
+			worldbook_placeholder: "Tick at least one book.",
+			worldbook_unavailable: "The book list could not be read. JS Slash Runner must be enabled.",
+			max_images_label: "Maximum images per reply",
+			prompt_preset_label: "Prompt preset for image prompts",
+			prompt_preset_none: "None",
+			concurrency_label: "Images generated at the same time"
+		},
+		translation: {
+			description: "Translation runs through SillyTavern's DeepL route because DeepL does not accept requests from a browser page. Glossary terms and the vocabulary's Chinese names are applied first; only the rest is sent to DeepL.",
+			key_label: "DeepL key",
+			key_hint: "Stored in SillyTavern's secret store, shared with SillyTavern's own translate extension. Free and Pro keys use different endpoints.",
+			key_save: "Save key",
+			key_clear: "Remove key",
+			key_saved: "Key saved.",
+			key_cleared: "Key removed.",
+			key_failed: "SillyTavern did not accept the change.",
+			endpoint_label: "DeepL plan",
+			endpoint_free: "Free",
+			endpoint_pro: "Pro",
+			glossary_title: "Glossary",
+			glossary_description: "Each Chinese term is replaced by its tag before anything goes to DeepL.",
+			glossary_source: "Chinese term",
+			glossary_target: "Tag",
+			glossary_add: "Add term",
+			glossary_remove: "Remove",
+			glossary_save: "Save glossary"
+		},
+		novelai: {
+			title: "NovelAI defaults",
+			refresh_account: "Refresh account",
+			account_unreachable: "NovelAI's account API could not be reached (network failure or a blocked cross-origin request), so the Anlas balance is unknown.",
+			account_open_site: "Check it on NovelAI",
+			account_summary: "{tier} · {anlas} Anlas · renews {expires}",
+			model_label: "Model",
+			width_label: "Width",
+			height_label: "Height",
+			steps_label: "Steps",
+			scale_label: "Prompt guidance",
+			cfg_rescale_label: "Guidance rescale",
+			sampler_label: "Sampler",
+			noise_schedule_label: "Noise schedule",
+			smea_label: "SMEA",
+			dyn_label: "SMEA DYN",
+			variety_label: "Variety+",
+			vibes_title: "Vibe transfer",
+			vibes_empty: "No NovelAI vibe transfer group with an image yet. Add one under Library > Vibe transfer.",
+			ignored_title: "The selected model ignores these settings:",
+			ignored_vibe_transfer: "vibe transfer",
+			ignored_smea: "SMEA",
+			ignored_cfg_rescale: "guidance rescale",
+			ignored_variety_plus: "Variety+",
+			ignored_sampler: "sampler",
+			ignored_steps: "steps",
+			invalid_size: "Width and height must be multiples of 64 within the model's pixel limit.",
+			save: "Save defaults",
+			saved: "Defaults saved.",
+			save_failed: "The defaults could not be saved."
+		},
+		onboarding: {
+			label: "First connection",
+			title: "Set up the service that will generate your images",
+			description: "Create an image provider profile first, then run its connection test."
+		},
+		sections: {
+			credential_storage: "Credential storage",
+			provider_profiles: "Image provider profiles",
+			appearance: "Appearance",
+			data: "Data"
+		},
+		provider_profiles: {
+			empty_description: "Add an image provider profile to connect an image generation backend.",
+			add_action: "Add image provider profile",
+			connection_test_action: "Test connection",
+			connection_test_latency: "{ms} ms",
+			connection_test_failed: "Connection test failed: {code}",
+			dialog_add_title: "Add image provider profile",
+			dialog_edit_title: "Edit image provider profile",
+			provider_label: "Provider type",
+			model_label: "Model",
+			workflow_label: "ComfyUI workflow ID",
+			base_url_label: "Server address",
+			base_url_hint_sd_webui: "A loopback address such as http://127.0.0.1:7860. Start SD WebUI with --api and --cors-allow-origins=http://tauri.localhost so the page can reach it.",
+			base_url_hint_comfyui: "A loopback address such as http://127.0.0.1:8188. Start ComfyUI with --enable-cors-header so the page can reach it.",
+			base_url_invalid: "Enter a loopback address such as http://127.0.0.1:7860.",
+			set_credential_action: "Set API key",
+			clear_credential_action: "Remove API key",
+			credential_set: "API key configured",
+			credential_unset: "No API key configured",
+			credential_dialog_title: "Set API key for {name}",
+			credential_dialog_description: "The key is written to the selected credential storage backend. Inkwell keeps only its reference.",
+			credential_label: "API key",
+			provider_types: {
+				sd_webui: "SD WebUI",
+				novelai: "NovelAI",
+				comfyui: "ComfyUI",
+				openai_image: "OpenAI Image",
+				google_image: "Google Image"
+			},
+			default_badge: "Default",
+			set_default_action: "Set as default",
+			remove_confirm_title: "Remove {name}?",
+			remove_confirm_description: "This removes the image provider profile from Inkwell. Jobs already submitted are not affected."
+		},
+		credential_storage: {
+			mode_label: "Storage backend",
+			mode_hint: "Applies to image provider and analysis API credentials. This device encrypts keys in this browser without a passphrase; switching storage does not move keys, so enter them again.",
+			modes: {
+				browser_device: "This device",
+				host: "SillyTavern secret store",
+				browser_encrypted: "Encrypted browser vault"
+			},
+			states: {
+				unavailable: "Unavailable",
+				error: "Vault error",
+				uninitialized: "Not initialized",
+				locked: "Locked · {count} encrypted credential | Locked · {count} encrypted credentials",
+				unlocked: "Unlocked · {count} credential | Unlocked · {count} credentials"
+			},
+			passphrase_label: "Vault passphrase",
+			confirm_passphrase_label: "Confirm passphrase",
+			passphrase_hint: "At least {count} characters. The passphrase is required again after every reload.",
+			unlock_hint: "Unlocks credentials for this browser session.",
+			initialize_action: "Create encrypted vault",
+			unlock_action: "Unlock",
+			lock_action: "Lock",
+			reset_action: "Reset vault",
+			reset_confirm_title: "Reset encrypted browser vault?",
+			reset_confirm_description: "All credentials in the encrypted browser vault are deleted permanently. References to them in existing profiles remain.",
+			passphrase_too_short: "Use at least {count} characters.",
+			passphrase_mismatch: "The passphrases do not match.",
+			invalid_passphrase: "The passphrase is incorrect.",
+			unlock_required: "The selected credential storage is unavailable or locked.",
+			unavailable: "Encrypted browser storage is unavailable in this environment.",
+			error: "The encrypted browser vault could not be read."
+		},
+		appearance: {
+			theme_label: "Theme",
+			theme_system: "Match system",
+			theme_light: "Light",
+			theme_dark: "Dark",
+			language_label: "Language",
+			language_auto: "Match SillyTavern",
+			language_zh_cn: "Simplified Chinese",
+			language_en: "English",
+			inspector_width_label: "Inspector width",
+			optional_entry_label: "Show the floating entry button"
+		},
+		data: {
+			vocabulary_channel_label: "Vocabulary update channel",
+			vocabulary_channel_bundled: "Bundled baseline",
+			vocabulary_channel_https: "Remote update channel",
+			vocabulary_import: {
+				action: "Import local package",
+				cancel_action: "Cancel import",
+				description: "Import a local .jsonl, .ndjson, or legacy v2 .json vocabulary source.",
+				progress_reading: "Reading file: {received} / {total} bytes",
+				progress_batch: "Parsing batch {current} / {total}",
+				progress_indexing: "Building search indexes",
+				progress_staging: "Storing shard {current} / {total}",
+				progress_activating: "Activating package",
+				progress_complete: "Imported {count} records successfully",
+				progress_cancelled: "Import cancelled",
+				success: "Vocabulary package imported successfully."
+			},
+			vocabulary_import_error: "Vocabulary import failed ({code}).",
+			archive_export_action: "Export archive",
+			archive_import_action: "Import archive",
+			archive_import_description: "Importing merges records from the archive into your current data and never deletes existing data; a record with the same id as one in the archive is replaced by the archived version."
+		}
+	},
+	errors: {
+		validation_required: "This field is required.",
+		unexpected: "An unexpected error occurred. Check Diagnostics for details."
+	},
+	confirmations: {
+		destructive: {
+			default_confirm_action: "Delete",
+			default_cancel_action: "Cancel"
+		},
+		discard_unsaved: {
+			title: "Discard unsaved changes?",
+			description: "The edits are not saved yet. Leaving now discards them.",
+			stay_action: "Keep editing",
+			discard_action: "Discard changes"
+		}
+	},
+	chat: {
+		message_button: "Illustrate this reply",
+		analysis_running: "Choosing paragraphs to illustrate…",
+		wardrobe_failed: "The wardrobe update failed, so this reply keeps the previous outfits: {reason}",
+		analysis_failed: "Paragraph analysis failed: {reason}",
+		paragraph: {
+			illustrate: "Illustrate this paragraph",
+			analyzing: "Analysing this paragraph…"
+		},
+		slot: {
+			generate: "Generate",
+			regenerate: "Regenerate",
+			edit: "Edit prompt",
+			more: "More actions",
+			previous: "Previous image",
+			next: "Next image",
+			generating: "Generating…",
+			interrupted: "Generation was interrupted by a reload",
+			image_missing: "This image is no longer in the gallery",
+			failed: "Generation failed: {reason}"
+		},
+		dialog: {
+			title: "Illustrate reply",
+			submit_partial: "Submitted {submitted} of {total}; the next one failed: {reason}. Submitted slots are now unticked, so confirming again submits only the rest.",
+			close: "Close",
+			retry: "Analyze again",
+			pick_paragraphs: "Choose paragraphs ({count})",
+			pick_paragraphs_hint: "Tick the paragraphs to illustrate; the analysis model writes prompts for these only. A paragraph it leaves out is still added, with empty prompts for you to fill.",
+			add_paragraphs: "Write prompts for the chosen paragraphs ({count})",
+			no_slots: "The analysis found no paragraph worth illustrating.",
+			parse_failed_hint: "The model did not return the requested JSON. The preset may impose its own output format or obfuscate replies; choose another preset in the illustration settings.",
+			translate_to_tags: "Translate to English tags",
+			read_in_chinese: "Read in Chinese",
+			reading_pending: "Reading…",
+			suggestions_label: "Tag suggestions",
+			vocabulary_preparing: "The vocabulary takes about a minute to prepare on first use; tag suggestions appear once it is ready.",
+			base_prompt: "Shared prompt (scene and style)",
+			character_prompt: "{name}",
+			outfit_label: "{name}'s outfit",
+			outfit_none: "No outfit chosen",
+			outfit_conditions: "Temporary states, such as wet clothes",
+			positive_prompt: "Positive prompt",
+			negative_prompt: "Negative prompt",
+			cost_anlas: "About {anlas} Anlas",
+			cost_free: "Free with Opus",
+			cost_rejected: "NovelAI would reject this request as too large",
+			total_anlas: "Total about {anlas} Anlas",
+			cancel: "Cancel",
+			confirm: "Generate {count}"
+		},
+		quick_edit: {
+			img2img: "Image to image",
+			inpaint: "Inpaint",
+			upscale: "Upscale",
+			director: "Director tools",
+			submit: "Generate",
+			strength: "Strength {value}",
+			upscale_description: "Enlarges the image with NovelAI's upscaler; the source must be at most 1 megapixel.",
+			tool: "Tool",
+			emotion: "Emotion",
+			tool_prompt: "Extra prompt",
+			defry: "Defry {value}",
+			tools: {
+				lineart: "Line art",
+				sketch: "Sketch",
+				colorize: "Colorize",
+				emotion: "Change emotion",
+				declutter: "Declutter",
+				declutter_keep_bubbles: "Declutter, keep speech bubbles",
+				bg_removal: "Remove background"
+			},
+			emotions: {
+				neutral: "Neutral",
+				happy: "Happy",
+				sad: "Sad",
+				angry: "Angry",
+				scared: "Scared",
+				surprised: "Surprised",
+				tired: "Tired",
+				excited: "Excited",
+				nervous: "Nervous",
+				thinking: "Thinking",
+				confused: "Confused",
+				shy: "Shy",
+				disgusted: "Disgusted",
+				smug: "Smug",
+				bored: "Bored",
+				laughing: "Laughing",
+				irritated: "Irritated",
+				aroused: "Aroused",
+				embarrassed: "Embarrassed",
+				worried: "Worried",
+				love: "In love",
+				determined: "Determined",
+				hurt: "Hurt",
+				playful: "Playful"
+			}
+		},
+		inpaint: {
+			undo: "Undo",
+			redo: "Redo",
+			erase: "Eraser",
+			clear: "Clear mask",
+			zoom_in: "Zoom in",
+			zoom_out: "Zoom out",
+			brush_size: "Brush size",
+			strength: "Strength",
+			dimension_error: "The mask size does not match the image."
+		},
+		errors: {
+			auth_failed: "the provider rejected the credential",
+			rate_limited: "rate limited, try again later",
+			content_blocked: "blocked by the provider's content filter",
+			invalid_request: "the provider rejected the request",
+			provider_unavailable: "the provider is unavailable",
+			timed_out: "timed out",
+			cancelled: "cancelled",
+			malformed_response: "the provider returned an unreadable response",
+			not_configured: "the image provider profile is incomplete: its API key is missing or unreadable, or its server address is invalid",
+			storage_failed: "the image could not be saved to browser storage, which may be full",
+			interrupted: "the page was reloaded or closed before the job finished",
+			analysis_unparsable: "the analysis reply contained no usable JSON",
+			message_changed: "the reply was edited or swiped while it was being analyzed",
+			no_chat_open: "no chat is open; open a chat first"
+		}
+	},
+	prompt_tags: {
+		quality_prefix: "Quality tags: ",
+		undesired_prefix: "UC preset: ",
+		custom_group: "Custom",
+		missing: "Preset deleted",
+		enable: "Turn on",
+		disable: "Turn off",
+		panel_title: "Quality tags and UC presets",
+		panel_description: "Saved presets appear next to NovelAI's built-in ones in the chips beside the prompt boxes and apply to every image provider. Quality tags go after the positive prompt; UC presets go before the negative prompt.",
+		empty_title: "No saved presets yet",
+		empty_description: "Save a set of quality or negative tags you use often, then pick it for any image provider profile.",
+		add_action: "Add preset",
+		kind_label: "Type",
+		kind_quality: "Quality tags",
+		kind_undesired: "UC preset",
+		text_label: "Tags",
+		text_hint: "Separate tags with commas; they are injected as written."
+	}
+}, s = { "zh-CN": async () => (await import("./zh_cn-DyNVyyh3.js")).zh_cn_messages }, c = {
+	decimal: {
+		style: "decimal",
+		maximumFractionDigits: 2
+	},
+	percent: {
+		style: "percent",
+		maximumFractionDigits: 1
+	}
+}, l = {
+	short_date: {
+		year: "numeric",
+		month: "short",
+		day: "numeric"
+	},
+	short_time: {
+		hour: "2-digit",
+		minute: "2-digit"
+	}
+}, u = {
+	legacy: !1,
+	locale: "en",
+	fallbackLocale: "en",
+	messages: { en: o },
+	numberFormats: {
+		en: c,
+		"zh-CN": c
+	},
+	datetimeFormats: {
+		en: l,
+		"zh-CN": l
+	}
+};
+function d() {
+	let t = e(u);
+	async function n(e, n) {
+		let r = i(e, n);
+		return a(t.global, r, s);
+	}
+	return {
+		i18n: t,
+		apply_locale: n
+	};
+}
+var f = [
+	"B",
+	"KB",
+	"MB",
+	"GB",
+	"TB"
+];
+function p(e, t) {
+	let n = e, r = 0;
+	for (; Math.abs(n) >= 1e3 && r < f.length - 1;) n /= 1e3, r += 1;
+	return `${new Intl.NumberFormat(t, { maximumFractionDigits: r === 0 ? 0 : 1 }).format(n)} ${f[r] ?? "B"}`;
+}
+//#endregion
+export { p as n, d as t };

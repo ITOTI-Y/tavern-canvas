@@ -45,6 +45,7 @@ const common = {
     hint_close: "Close",
   },
   actions: {
+    enlarge: "Enlarge",
     save: "Save",
     cancel: "Cancel",
     close: "Close",
@@ -437,6 +438,19 @@ const diagnostics = {
 };
 
 const settings = {
+  image_size: {
+    label: "Image size",
+    portrait: "Portrait",
+    landscape: "Landscape",
+    square: "Square",
+    portrait_large: "Large portrait",
+    landscape_large: "Large landscape",
+    square_large: "Large square",
+    wallpaper_portrait: "Portrait wallpaper",
+    wallpaper_landscape: "Landscape wallpaper",
+    custom: "Custom",
+    lock_ratio: "Lock the aspect ratio",
+  },
   pane: {
     illustration:
       "Paragraph analysis, outfit tracking and automatic illustration. Changes save when you leave a field.",
@@ -514,7 +528,7 @@ const settings = {
     world_info_hint:
       "The current chat's books are what SillyTavern activates from the chat, including global, character, and chat books. With one book, only its constant entries and the entries the analyzed reply's keywords activate are sent, in place of what SillyTavern activates.",
     worldbook_label: "Book",
-    worldbook_placeholder: "Choose a book",
+    worldbook_placeholder: "Tick at least one book.",
     worldbook_unavailable: "The book list could not be read. JS Slash Runner must be enabled.",
     max_images_label: "Maximum images per reply",
     prompt_preset_label: "Prompt preset for image prompts",
@@ -844,6 +858,7 @@ const chat = {
     interrupted: "the page was reloaded or closed before the job finished",
     analysis_unparsable: "the analysis reply contained no usable JSON",
     message_changed: "the reply was edited or swiped while it was being analyzed",
+    no_chat_open: "no chat is open; open a chat first",
   },
 };
 

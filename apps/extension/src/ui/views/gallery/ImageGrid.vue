@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
+import { use_marquee_selection } from "../../components/use_marquee_selection.js";
 import type { GalleryRecordSummary } from "../../contracts/ui_capabilities.js";
 import { layout_masonry_columns, place_column } from "./image_layout.js";
 import styles from "./gallery_styles.js";
@@ -29,6 +30,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   open: [record_id: string];
   "toggle-select": [record_id: string];
+  "select-ids": [record_ids: readonly string[], mode: "add" | "replace"];
 }>();
 
 const container = ref<HTMLElement | null>(null);
@@ -37,6 +39,13 @@ const measured_width = ref(0);
 const visible = ref({ top: 0, bottom: 0 });
 let observer: ResizeObserver | null = null;
 let frame: number | null = null;
+
+const marquee = use_marquee_selection(container, {
+  start_on_items: true,
+  on_select: (ids, mode) => {
+    emit("select-ids", ids, mode);
+  },
+});
 
 function measure_visible(): void {
   frame = null;
@@ -115,7 +124,20 @@ const mounted_columns = computed(() => {
     :style="{ height: `${String(grid_height)}px` }"
     role="list"
     :aria-label="ariaLabel"
+    :data-marquee="marquee.box.value === null ? null : ''"
+    @pointerdown="marquee.on_pointerdown"
   >
+    <div
+      v-if="marquee.box.value !== null"
+      :class="styles.marquee"
+      aria-hidden="true"
+      :style="{
+        left: `${String(marquee.box.value.left)}px`,
+        top: `${String(marquee.box.value.top)}px`,
+        width: `${String(marquee.box.value.width)}px`,
+        height: `${String(marquee.box.value.height)}px`,
+      }"
+    />
     <ul
       v-for="(column, index) in mounted_columns"
       :key="index"

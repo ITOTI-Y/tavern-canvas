@@ -4,6 +4,7 @@ import { inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
+import ZoomableImage from "../../components/ZoomableImage.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import { REFERENCE_IMAGE_KEY } from "../../contracts/portal_keys.js";
 import styles from "./assets_styles.js";
@@ -51,11 +52,11 @@ async function generate(): Promise<void> {
   >
     <template #default>
       <div :class="styles.reference">
-        <img
+        <ZoomableImage
           v-if="image !== null"
           :src="image"
           :alt="t('assets.outfits.preview_label')"
-          :class="styles.reference_thumbnail"
+          :image-class="styles.reference_thumbnail"
         />
         <div :class="styles.reference_actions">
           <AppButton
