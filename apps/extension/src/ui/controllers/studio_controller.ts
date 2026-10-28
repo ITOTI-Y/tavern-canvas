@@ -1,5 +1,4 @@
 import type {
-  GenerationState,
   NovelAiAccountStatus,
   NovelAiGenerationDefaults,
   PromptTagSelection,
@@ -36,10 +35,8 @@ import type {
   VocabularyUpdateChannel,
 } from "../contracts/ui_capabilities.js";
 import {
-  IDLE_COMMAND_STATE,
   type AssetsViewModel,
   type ColorMode,
-  type CommandState,
   type DiagnosticsViewModel,
   type GalleryViewModel,
   type GenerationViewModel,
@@ -50,9 +47,24 @@ import {
   type SettingsViewModel,
   type StudioRoute,
   type StudioState,
-  type TaskStripItemViewModel,
   type UiFailure,
 } from "../contracts/view_models.js";
+
+import {
+  create_initial_state,
+  DEFAULT_FAILURE_CODE,
+  jobs_to_tasks,
+  reduce_assets_event,
+  reduce_diagnostics_event,
+  reduce_gallery_event,
+  reduce_generation_event,
+  reduce_profiles_event,
+  reduce_prompt_presets_event,
+  reduce_settings_event,
+  run_command,
+  to_ui_failure,
+  upsert_by_id,
+} from "./studio_state.js";
 
 export interface StudioControllerOptions {
   readonly capabilities: StudioCapabilities;
@@ -145,146 +157,6 @@ export interface StudioController {
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void>;
   /** Removes every failed job from the task strip and the job store. */
   dismiss_failed_tasks(): Promise<void>;
-}
-
-const DEFAULT_FAILURE_CODE = "capability_load_failed";
-const DEFAULT_COMMAND_FAILURE_CODE = "command_failed";
-const STABLE_CODE_PATTERN = /^[a-z][a-z0-9_]*$/u;
-
-function to_ui_failure(error: unknown, fallback_code: string): UiFailure {
-  if (error instanceof Error) {
-    const candidate = (error as { readonly code?: unknown }).code;
-    if (typeof candidate === "string" && STABLE_CODE_PATTERN.test(candidate)) {
-      return { code: candidate };
-    }
-  }
-  return { code: fallback_code };
-}
-
-function upsert_by_id<TItem>(
-  list: readonly TItem[],
-  item: TItem,
-  key: (item: TItem) => unknown,
-): readonly TItem[] {
-  const item_key = key(item);
-  const index = list.findIndex((existing) => key(existing) === item_key);
-  if (index === -1) {
-    return [...list, item];
-  }
-  const next = [...list];
-  next[index] = item;
-  return next;
-}
-
-const TASK_STRIP_STATES: ReadonlySet<GenerationState> = new Set([
-  "queued",
-  "preparing",
-  "submitting",
-  "running",
-  "failed",
-]);
-
-function job_to_task_status(state: GenerationState): TaskStripItemViewModel["status"] {
-  return state === "failed" ? "error" : "pending";
-}
-
-function job_to_task_label_code(state: GenerationState): string {
-  if (state === "running") {
-    return "status.running";
-  }
-  if (state === "failed") {
-    return "status.failed";
-  }
-  return "status.pending";
-}
-
-function job_to_task(job: GenerationJobSummary): TaskStripItemViewModel {
-  return {
-    id: job.job_id,
-    label_code: job_to_task_label_code(job.state),
-    status: job_to_task_status(job.state),
-    progress:
-      job.state !== "failed" && job.image_count > 0
-        ? job.completed_image_ids.length / job.image_count
-        : null,
-    error: job.state === "failed" ? (job.error?.code ?? null) : null,
-  };
-}
-
-function jobs_to_tasks(jobs: readonly GenerationJobSummary[]): readonly TaskStripItemViewModel[] {
-  return jobs.filter((job) => TASK_STRIP_STATES.has(job.state)).map(job_to_task);
-}
-
-function run_command<TResult>(
-  get_current: () => CommandState<TResult>,
-  set_next: (next: CommandState<TResult>) => void,
-  operation: () => Promise<TResult>,
-): Promise<void> {
-  if (get_current().status === "pending") {
-    return Promise.resolve();
-  }
-  set_next({ status: "pending" });
-  return operation().then(
-    (result) => {
-      set_next({ status: "success", result });
-    },
-    (error: unknown) => {
-      set_next({ status: "error", failure: to_ui_failure(error, DEFAULT_COMMAND_FAILURE_CODE) });
-    },
-  );
-}
-
-function create_initial_state(
-  route: StudioRoute,
-  color_mode: ColorMode,
-  inspector_width: number,
-): StudioState {
-  return {
-    route,
-    settings_section: "illustration",
-    color_mode,
-    loading: new Set(),
-    failures: new Map(),
-    generation: {
-      profiles: [],
-      active_profile_id: null,
-      jobs: [],
-    },
-    prompt: {
-      presets: [],
-      selected_preset_id: null,
-      draft: null,
-      save_command: IDLE_COMMAND_STATE,
-    },
-    assets: {
-      active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
-      vocabulary_catalog: [],
-      vocabulary_install_command: IDLE_COMMAND_STATE,
-    },
-    gallery: {
-      records: [],
-      selected_record_id: null,
-      bulk_delete_command: IDLE_COMMAND_STATE,
-    },
-    diagnostics: {
-      snapshot: null,
-      timeline: [],
-      support_bundle_command: IDLE_COMMAND_STATE,
-    },
-    settings: {
-      settings: null,
-      vocabulary_update_channel: null,
-      browser_secret_vault: { state: "unavailable", secret_count: 0 },
-      update_command: IDLE_COMMAND_STATE,
-    },
-    inspector: {
-      collapsed: false,
-      width: inspector_width,
-      selected_record: null,
-    },
-    tasks: [],
-  };
 }
 
 class StudioControllerImpl implements StudioController {
@@ -406,95 +278,45 @@ class StudioControllerImpl implements StudioController {
   }
 
   #apply_generation_event(event: GenerationDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "job_updated") {
-      this.#patch_jobs(upsert_by_id(this.#state.generation.jobs, event.job, (job) => job.job_id));
-    } else {
-      this.#patch_jobs(this.#state.generation.jobs.filter((job) => job.job_id !== event.job_id));
+    if (!this.#stopped) {
+      this.#patch(reduce_generation_event(this.#state, event));
     }
   }
 
   #apply_profiles_event(event: ProfilesDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "profile_upserted") {
-      this.#patch_generation({
-        profiles: upsert_by_id(this.#state.generation.profiles, event.profile, (p) => p.id),
-      });
-    } else {
-      this.#patch_generation({
-        profiles: this.#state.generation.profiles.filter((p) => p.id !== event.profile_id),
-      });
+    if (!this.#stopped) {
+      this.#patch(reduce_profiles_event(this.#state, event));
     }
   }
 
   #apply_prompt_presets_event(event: PromptPresetsDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "preset_upserted") {
-      this.#patch_prompt({
-        presets: upsert_by_id(this.#state.prompt.presets, event.preset, (p) => p.id),
-      });
-    } else {
-      this.#patch_prompt({
-        presets: this.#state.prompt.presets.filter((p) => p.id !== event.preset_id),
-      });
+    if (!this.#stopped) {
+      this.#patch(reduce_prompt_presets_event(this.#state, event));
     }
   }
 
   #apply_assets_event(event: AssetsDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "asset_upserted") {
-      const { category } = event.asset;
-      const records = {
-        ...this.#state.assets.records,
-        [category]: upsert_by_id(this.#state.assets.records[category], event.asset, (a) => a.id),
-      };
-      this.#patch_assets({ records });
-    } else {
-      const records = {
-        ...this.#state.assets.records,
-        [event.category]: this.#state.assets.records[event.category].filter(
-          (a) => a.id !== event.asset_id,
-        ),
-      };
-      this.#patch_assets({ records });
+    if (!this.#stopped) {
+      this.#patch(reduce_assets_event(this.#state, event));
     }
   }
 
   #apply_gallery_event(event: GalleryDomainEvent): void {
-    if (this.#stopped) {
-      return;
-    }
-    if (event.type === "record_upserted") {
-      this.#patch_gallery({
-        records: upsert_by_id(this.#state.gallery.records, event.record, (r) => r.id),
-      });
-    } else {
-      this.#patch_gallery({
-        records: this.#state.gallery.records.filter((r) => r.id !== event.record_id),
-      });
+    if (!this.#stopped) {
+      this.#patch(reduce_gallery_event(this.#state, event));
     }
   }
 
   #apply_diagnostics_event(event: DiagnosticsDomainEvent): void {
-    if (this.#stopped) {
-      return;
+    if (!this.#stopped) {
+      this.#patch(reduce_diagnostics_event(this.#state, event));
     }
-    this.#patch_diagnostics({ timeline: [...this.#state.diagnostics.timeline, event.entry] });
   }
 
   #apply_settings_event(event: SettingsDomainEvent): void {
-    if (this.#stopped) {
-      return;
+    if (!this.#stopped) {
+      this.#patch(reduce_settings_event(this.#state, event));
     }
-    this.#patch_settings({ settings: event.settings });
   }
 
   /** Not part of `start()`: the catalog is remote, and loading it eagerly would disclose the user's IP and extension version on every session. */
