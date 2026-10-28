@@ -210,6 +210,49 @@ describe("apply_scene_update", () => {
     ]);
   });
 
+  it("keeps a listed id when the story uses a shorter or fuller form of the name", () => {
+    const library: WardrobeLibrary = {
+      characters: [test_character({ id: "c6", name: "林小雨" })],
+      outfits: [test_outfit({ id: "o6", name: "Uniform", character_id: "c6", slots: {} })],
+    };
+    const applied = apply_scene_update(
+      update(entry({ ref: "c6", name: "小雨" }), entry({ name: "小雨的妈妈" })),
+      [],
+      library,
+      new_id,
+    );
+    expect(applied.new_characters.map((character) => character.name)).toEqual(["小雨的妈妈"]);
+    expect(applied.wearing[0]).toEqual({
+      character_id: "c6",
+      outfit_id: "o6",
+      overrides: {},
+      conditions: [],
+    });
+  });
+
+  it("reuses a known outfit that the model describes again tag for tag", () => {
+    const applied = apply_scene_update(
+      update(
+        entry({
+          ref: "c1",
+          name: "Seraphina",
+          wearing_changed: true,
+          new_outfit: {
+            name: "Cloak and dress",
+            slots: { top: ["White dress"], outerwear: ["green cloak"] },
+          },
+        }),
+      ),
+      [],
+      LIBRARY,
+      new_id,
+    );
+    expect(applied.new_outfits).toEqual([]);
+    expect(applied.wearing).toEqual([
+      { character_id: "c1", outfit_id: "o1", overrides: {}, conditions: [] },
+    ]);
+  });
+
   it("ignores an id that belongs to another character and drops placeholder tags", () => {
     sequence = 0;
     const applied = apply_scene_update(

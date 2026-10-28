@@ -193,14 +193,14 @@ function A(e, t, n, r) {
 	return [
 		"[Inkwell wardrobe update]",
 		"Track what each named character wears across the story. Read the latest reply and return one entry for every named character who appears in it or is clearly present. Skip unnamed people.",
-		"- ref: the id listed for this exact character below, or null for a named character not listed; never another character's id",
+		"- ref: the id listed for this exact character below, also when the story uses a shorter or fuller form of the listed name, or null for a named character not listed; never another character's id",
 		"- name: the name as written in the story",
 		"- new_character: only when ref is null: subject (see Subject), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
 		"- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
 		"- subject: for a known character whose subject is not yet known, girl or boy when the story shows it; otherwise null",
 		"Subject: girl for a woman or girl, boy for a man or boy, judged from pronouns such as 他 / 她 or he / she, how others address them, the name and the description. other only for a character without a gender, such as a creature or a machine.",
-		"- wearing_changed: true only when the reply changes what the character wears or their passing state; when false the other wearing fields are ignored",
-		"- outfit_id: the known outfit now worn, or null with new_outfit filled for clothing that matches no known outfit",
+		"- wearing_changed: true only when the reply changes what the character wears or their passing state; describing clothing they already wear is no change; when false the other wearing fields are ignored",
+		"- outfit_id: the known outfit now worn, chosen whenever the clothing broadly matches one of this character's outfits, with overrides for the parts that differ; null with new_outfit filled only for clothing unlike every known outfit",
 		"- overrides: slots of that outfit the reply changes, with the new tags, or removed true when taken off",
 		"- conditions: the complete list of visible passing states of clothing or body now in effect, such as wet clothes, torn sleeve or messy hair; moods, actions and illness are not conditions; an empty list clears them",
 		"All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
@@ -253,23 +253,31 @@ function P(e, t) {
 	return [e.name, ...e.aliases].some((e) => f(t, e) && f(e, t));
 }
 function F(e, t) {
-	let n = t.find((t) => t.id === e.ref);
-	return n !== void 0 && P(n, e.name) ? n : t.find((t) => P(t, e.name));
+	return [e.name, ...e.aliases].some((e) => f(t, e) || f(e, t));
 }
-function I(e, t, n, r) {
+function I(e, t) {
+	let n = t.find((t) => t.id === e.ref);
+	return n !== void 0 && F(n, e.name) ? n : t.find((t) => P(t, e.name));
+}
+function L(e) {
+	return o.map((t) => [...new Set((e[t] ?? []).map((e) => e.toLowerCase()))].sort().join(",")).join("|");
+}
+function R(e, t, n, r) {
 	let i = new Map(t.map((e) => [e.character_id, e])), a = [], s = [], c = [], d = (e) => n.outfits.some((t) => t.id === e) || s.some((t) => t.id === e), f = (e, t) => {
-		let n = N(e.slots, o);
-		if (Object.keys(n).length === 0) return null;
-		let i = r();
+		let i = N(e.slots, o);
+		if (Object.keys(i).length === 0) return null;
+		let a = L(i), c = [...n.outfits, ...s].find((e) => e.character_id === t && L(e.slots) === a);
+		if (c !== void 0) return c.id;
+		let l = r();
 		return s.push({
-			id: i,
+			id: l,
 			name: e.name,
 			character_id: t,
-			slots: n
-		}), i;
+			slots: i
+		}), l;
 	};
 	for (let t of e.characters) {
-		let e = F(t, n.characters), o;
+		let e = I(t, n.characters), o;
 		if (e !== void 0) {
 			o = e.id;
 			let n = l.filter((t) => e.appearance[t].length === 0 && !e.locked_fields.includes(t)), r = N(t.appearance_additions, n), i = e.subject === "other" ? t.subject : null;
@@ -339,4 +347,4 @@ function I(e, t, n, r) {
 	};
 }
 //#endregion
-export { C as OutfitSchema, E as SceneUpdateParseError, I as apply_scene_update, A as build_scene_update_input, k as characters_needing_outfit, N as clean_slots, D as parse_scene_update, b as scene_update_json_schema, S as slot_record, g as slots_schema };
+export { C as OutfitSchema, E as SceneUpdateParseError, R as apply_scene_update, A as build_scene_update_input, k as characters_needing_outfit, N as clean_slots, D as parse_scene_update, b as scene_update_json_schema, S as slot_record, g as slots_schema };

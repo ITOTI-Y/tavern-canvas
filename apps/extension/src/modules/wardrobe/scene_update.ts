@@ -241,14 +241,14 @@ export function build_scene_update_input(
   return [
     "[Inkwell wardrobe update]",
     "Track what each named character wears across the story. Read the latest reply and return one entry for every named character who appears in it or is clearly present. Skip unnamed people.",
-    "- ref: the id listed for this exact character below, or null for a named character not listed; never another character's id",
+    "- ref: the id listed for this exact character below, also when the story uses a shorter or fuller form of the listed name, or null for a named character not listed; never another character's id",
     "- name: the name as written in the story",
     "- new_character: only when ref is null: subject (see Subject), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
     "- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
     "- subject: for a known character whose subject is not yet known, girl or boy when the story shows it; otherwise null",
     "Subject: girl for a woman or girl, boy for a man or boy, judged from pronouns such as 他 / 她 or he / she, how others address them, the name and the description. other only for a character without a gender, such as a creature or a machine.",
-    "- wearing_changed: true only when the reply changes what the character wears or their passing state; when false the other wearing fields are ignored",
-    "- outfit_id: the known outfit now worn, or null with new_outfit filled for clothing that matches no known outfit",
+    "- wearing_changed: true only when the reply changes what the character wears or their passing state; describing clothing they already wear is no change; when false the other wearing fields are ignored",
+    "- outfit_id: the known outfit now worn, chosen whenever the clothing broadly matches one of this character's outfits, with overrides for the parts that differ; null with new_outfit filled only for clothing unlike every known outfit",
     "- overrides: slots of that outfit the reply changes, with the new tags, or removed true when taken off",
     "- conditions: the complete list of visible passing states of clothing or body now in effect, such as wet clothes, torn sleeve or messy hair; moods, actions and illness are not conditions; an empty list clears them",
     "All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
@@ -344,15 +344,32 @@ function is_called(character: WardrobeCharacter, name: string): boolean {
   );
 }
 
-/** Models sometimes pair a name with another character's id, so the id counts only when the name agrees. */
+/** One name contains the other, as with a given name and a full name. */
+function shares_name(character: WardrobeCharacter, name: string): boolean {
+  return [character.name, ...character.aliases].some(
+    (candidate) => mentions(name, candidate) || mentions(candidate, name),
+  );
+}
+
+/**
+ * Models sometimes pair a name with another character's id, so the id counts only when the names
+ * share a part; without a usable id, only the same name matches, since a CJK substring alone can
+ * name a different person.
+ */
 function find_known(
   entry: SceneUpdateEntry,
   characters: readonly WardrobeCharacter[],
 ): WardrobeCharacter | undefined {
   const by_ref = characters.find((character) => character.id === entry.ref);
-  return by_ref !== undefined && is_called(by_ref, entry.name)
+  return by_ref !== undefined && shares_name(by_ref, entry.name)
     ? by_ref
     : characters.find((character) => is_called(character, entry.name));
+}
+
+function slot_key(slots: Readonly<Partial<Record<OutfitSlot, readonly string[]>>>): string {
+  return OUTFIT_SLOTS.map((slot) =>
+    [...new Set((slots[slot] ?? []).map((tag) => tag.toLowerCase()))].sort().join(","),
+  ).join("|");
 }
 
 /**
@@ -373,11 +390,21 @@ export function apply_scene_update(
   const known_outfit = (id: string | null) =>
     library.outfits.some((outfit) => outfit.id === id) ||
     new_outfits.some((outfit) => outfit.id === id);
-  /** `null` when the outfit has no tags left, so an empty answer creates nothing. */
+  /**
+   * `null` when the outfit has no tags left, so an empty answer creates nothing; clothing that
+   * repeats one of the character's outfits tag for tag reuses that outfit.
+   */
   const add_outfit = (outfit: SceneOutfit, character_id: string): string | null => {
     const slots = clean_slots(outfit.slots, OUTFIT_SLOTS);
     if (Object.keys(slots).length === 0) {
       return null;
+    }
+    const key = slot_key(slots);
+    const same = [...library.outfits, ...new_outfits].find(
+      (candidate) => candidate.character_id === character_id && slot_key(candidate.slots) === key,
+    );
+    if (same !== undefined) {
+      return same.id;
     }
     const id = new_id();
     new_outfits.push({ id, name: outfit.name, character_id, slots });
