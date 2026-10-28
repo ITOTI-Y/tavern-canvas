@@ -53,7 +53,7 @@ export async function bootstrap_tavern_canvas(
   // Composed even on a blocked probe, so every capability resolves to unavailable with its own reason;
   // composition also decides which host-specific runtime modules exist.
   let composition: StudioComposition | null = null;
-  let composition_failed = false;
+  let composition_error: unknown = null;
   try {
     composition = await compose_studio_capabilities({
       ...options.composition,
@@ -61,8 +61,9 @@ export async function bootstrap_tavern_canvas(
       globals,
       extension_version: options.version ?? "development",
     });
-  } catch {
-    composition_failed = true;
+  } catch (error) {
+    console.error("[Inkwell] Startup failed while composing capabilities", error);
+    composition_error = error ?? new Error("Composition failed");
   }
 
   const runtime = probe.ready
@@ -72,17 +73,18 @@ export async function bootstrap_tavern_canvas(
   if (!probe.ready) {
     state = "blocked";
     status = status_from_probe(probe);
-  } else if (composition_failed) {
+  } else if (composition_error !== null) {
     state = "failed";
-    status = startup_failed_status();
+    status = startup_failed_status(composition_error);
   } else {
     try {
       await runtime?.start_all();
       state = "ready";
       status = status_from_probe(probe);
-    } catch {
+    } catch (error) {
+      console.error("[Inkwell] Startup failed while starting runtime modules", error);
       state = "failed";
-      status = startup_failed_status();
+      status = startup_failed_status(error);
     }
   }
 
@@ -110,6 +112,9 @@ export async function bootstrap_tavern_canvas(
     illustrations: composition?.illustrations ? markRaw(composition.illustrations) : null,
     translator: composition?.translator ?? null,
   });
+  app.config.errorHandler = (error, _instance, info) => {
+    console.error(`[Inkwell] Unhandled error in ${info}`, error);
+  };
   const remove_chat_stylesheet = install_chat_stylesheet(document_);
   app.use(locale_runtime.i18n);
   app.onUnmount(() => {

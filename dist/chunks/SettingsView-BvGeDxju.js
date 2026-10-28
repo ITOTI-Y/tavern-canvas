@@ -3170,7 +3170,7 @@ var Gt = ["id", "aria-describedby"], Kt = ["id", "aria-describedby"], qt = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = S(() => import("./PromptView-CYUgEK0h.js")), n = S(() => import("./AssetsView-DcP7qtu6.js")), r = S(() => import("./PromptTagPresetPanel-PdJv7m_c.js")), i = S(() => import("./DiagnosticsView-62pUIK8_.js")), a = e, { t: o } = k(), s = [
+		let t = S(() => import("./PromptView-CYUgEK0h.js")), n = S(() => import("./AssetsView-C7t2hJUk.js")), r = S(() => import("./PromptTagPresetPanel-BuKDBCWL.js")), i = S(() => import("./DiagnosticsView-DaR2xoHm.js")), a = e, { t: o } = k(), s = [
 			"illustration",
 			"providers",
 			"translation",

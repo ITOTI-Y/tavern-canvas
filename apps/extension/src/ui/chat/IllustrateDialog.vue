@@ -242,6 +242,8 @@ async function confirm(): Promise<void> {
   }
   submitting.value = true;
   submit_error.value = null;
+  const total = selected.value.length;
+  let submitted = 0;
   try {
     for (const draft of selected.value) {
       await props.service.generate(current.location, draft.slot_id, {
@@ -251,10 +253,17 @@ async function confirm(): Promise<void> {
           (character) => character.prompt.trim() !== "",
         ),
       });
+      // A queued slot is unticked so confirming again after a later failure does not pay for it twice.
+      draft.selected = false;
+      submitted += 1;
     }
     emit("close");
   } catch (error) {
-    submit_error.value = error instanceof Error ? error.message : String(error);
+    submit_error.value = t("chat.dialog.submit_partial", {
+      submitted,
+      total,
+      reason: error instanceof Error ? error.message : String(error),
+    });
   } finally {
     submitting.value = false;
   }

@@ -13,7 +13,8 @@ const app = {
   },
   fatal_error: {
     title: "Inkwell 未能启动",
-    description: "运行时初始化失败，请重新加载 SillyTavern，然后在诊断页查看详情。",
+    description:
+      "运行时初始化失败。下方是错误信息，反馈问题时请一并附上；浏览器控制台中带 [Inkwell] 前缀的记录包含完整调用栈。",
     reload_action: "重新加载 SillyTavern",
   },
   partial_init: {
@@ -669,6 +670,8 @@ const chat = {
   },
   dialog: {
     title: "为回复配图",
+    submit_partial:
+      "已提交 {submitted}/{total} 处，下一处提交失败：{reason}。已提交的配图已取消勾选，再次确认只会提交剩余部分。",
     close: "关闭",
     retry: "重新分析",
     pick_paragraphs: "自选段落（{count}）",

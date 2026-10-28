@@ -464,6 +464,20 @@
   border-radius: var(--tc-radius-field);
 }
 
+.state_screen_detail {
+  max-width: 100%;
+  margin: 0;
+  padding: 8px 12px;
+  overflow-x: auto;
+  border-radius: var(--tc-radius-field);
+  background: var(--tc-surface-raised);
+  color: var(--tc-text-muted);
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  user-select: text;
+}
+
 .state_screen_description {
   max-width: 56ch;
   color: var(--tc-text-muted);

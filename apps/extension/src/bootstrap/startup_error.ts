@@ -18,6 +18,8 @@ export type StartupStatus =
       readonly state: "failed";
       readonly title: string;
       readonly message: string;
+      /** The error's name and message, shown on the failure screen for bug reports. */
+      readonly detail: string;
     };
 
 export function status_from_probe(result: BootstrapProbeResult): StartupStatus {
@@ -62,11 +64,11 @@ export function status_from_probe(result: BootstrapProbeResult): StartupStatus {
   }
 }
 
-export function startup_failed_status(): StartupStatus {
+export function startup_failed_status(error: unknown): StartupStatus {
   return {
     state: "failed",
     title: "Inkwell could not start",
-    message:
-      "Runtime initialization failed. Reload SillyTavern after checking extension diagnostics.",
+    message: "Runtime initialization failed.",
+    detail: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
   };
 }

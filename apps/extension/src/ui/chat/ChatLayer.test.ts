@@ -227,4 +227,45 @@ describe("ChatLayer", () => {
     });
     wrapper.unmount();
   });
+
+  it("does not submit a slot again after a later slot in the same confirm failed", async () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:slot-image");
+    const second = {
+      ...SLOT,
+      slot_id: "slot_0002",
+      scene: "a cat",
+      image_ids: [],
+      active_image_id: null,
+    };
+    vi.spyOn(IllustrationService.prototype, "analyze").mockResolvedValue({
+      schema_version: 2,
+      slots: [{ ...SLOT, image_ids: [], active_image_id: null }, second],
+    });
+    const generate = vi
+      .spyOn(IllustrationService.prototype, "generate")
+      .mockResolvedValueOnce()
+      .mockRejectedValueOnce(new Error("upstream 502"))
+      .mockResolvedValue();
+    const { wrapper } = mount_layer();
+    await flushPromises();
+    document.querySelector<HTMLElement>(".extraMesButtons [data-tc-illustrate]")?.click();
+    await flushPromises();
+    const confirm = (): HTMLButtonElement | undefined =>
+      [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')].find((button) =>
+        button.textContent?.trim().startsWith("Generate"),
+      );
+
+    confirm()?.click();
+    await flushPromises();
+    expect(document.body.textContent).toContain("Submitted 1 of 2");
+    confirm()?.click();
+    await flushPromises();
+
+    expect(generate.mock.calls.map((call) => call[1])).toEqual([
+      "slot_0001",
+      "slot_0002",
+      "slot_0002",
+    ]);
+    wrapper.unmount();
+  });
 });

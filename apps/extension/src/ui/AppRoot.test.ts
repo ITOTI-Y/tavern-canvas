@@ -119,7 +119,7 @@ describe("AppRoot capability-blocked state", () => {
 });
 
 describe("AppRoot fatal bootstrap error state", () => {
-  it("shows a reload action and no operational controls", async () => {
+  it("shows the startup error, a reload action and no operational controls", async () => {
     mock_matches(false);
     const reload = vi.fn();
     vi.spyOn(window.location, "reload").mockImplementation(reload);
@@ -129,11 +129,15 @@ describe("AppRoot fatal bootstrap error state", () => {
         state: "failed",
         title: "ignored",
         message: "ignored",
+        detail: "TypeError: settings is undefined",
       },
       probe: { ready: true, matrix: {}, helper_version: "4.9.1" },
     });
 
     const screen = wrapper.get('[data-startup-state="failed"]');
+    expect(screen.get('[data-testid="startup-error-detail"]').text()).toBe(
+      "TypeError: settings is undefined",
+    );
     expect(wrapper.find("nav").exists()).toBe(false);
 
     await screen.get("button").trigger("click");

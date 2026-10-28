@@ -42,7 +42,7 @@ var o = {
 		},
 		fatal_error: {
 			title: "Inkwell could not start",
-			description: "Runtime initialization failed. Reload SillyTavern, then check Diagnostics for details.",
+			description: "Runtime initialization failed. The error is shown below; include it when reporting the problem. Browser console entries prefixed with [Inkwell] carry the full stack.",
 			reload_action: "Reload SillyTavern"
 		},
 		partial_init: {
@@ -658,6 +658,7 @@ var o = {
 		},
 		dialog: {
 			title: "Illustrate reply",
+			submit_partial: "Submitted {submitted} of {total}; the next one failed: {reason}. Submitted slots are now unticked, so confirming again submits only the rest.",
 			close: "Close",
 			retry: "Analyze again",
 			pick_paragraphs: "Choose paragraphs ({count})",
@@ -775,7 +776,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-wC2H6lVJ.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-iirAVd1C.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

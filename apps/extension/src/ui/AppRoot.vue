@@ -198,6 +198,9 @@ function close_studio(): void {
       <p :class="styles.state_screen_eyebrow">{{ eyebrow }}</p>
       <h1 :class="styles.state_screen_title">{{ t("app.fatal_error.title") }}</h1>
       <p :class="styles.state_screen_description">{{ t("app.fatal_error.description") }}</p>
+      <pre :class="styles.state_screen_detail" data-testid="startup-error-detail">{{
+        status.detail
+      }}</pre>
       <button
         type="button"
         class="tc-interactive"

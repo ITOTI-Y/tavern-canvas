@@ -890,20 +890,24 @@ var He = ["for"], Ue = [
 		}
 		async function W() {
 			let e = o.value;
-			if (e.status === "ready") {
-				l.value = !0, p.value = null;
-				try {
-					for (let t of R.value) await n.service.generate(e.location, t.slot_id, {
-						positive_prompt: t.positive_prompt,
-						negative_prompt: t.negative_prompt,
-						character_prompts: t.character_prompts.filter((e) => e.prompt.trim() !== "")
-					});
-					r("close");
-				} catch (e) {
-					p.value = e instanceof Error ? e.message : String(e);
-				} finally {
-					l.value = !1;
-				}
+			if (e.status !== "ready") return;
+			l.value = !0, p.value = null;
+			let t = R.value.length, a = 0;
+			try {
+				for (let t of R.value) await n.service.generate(e.location, t.slot_id, {
+					positive_prompt: t.positive_prompt,
+					negative_prompt: t.negative_prompt,
+					character_prompts: t.character_prompts.filter((e) => e.prompt.trim() !== "")
+				}), t.selected = !1, a += 1;
+				r("close");
+			} catch (e) {
+				p.value = i("chat.dialog.submit_partial", {
+					submitted: a,
+					total: t,
+					reason: e instanceof Error ? e.message : String(e)
+				});
+			} finally {
+				l.value = !1;
 			}
 		}
 		function te(e) {

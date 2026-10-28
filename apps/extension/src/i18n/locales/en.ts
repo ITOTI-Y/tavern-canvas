@@ -13,7 +13,7 @@ const app = {
   fatal_error: {
     title: "Inkwell could not start",
     description:
-      "Runtime initialization failed. Reload SillyTavern, then check Diagnostics for details.",
+      "Runtime initialization failed. The error is shown below; include it when reporting the problem. Browser console entries prefixed with [Inkwell] carry the full stack.",
     reload_action: "Reload SillyTavern",
   },
   partial_init: {
@@ -691,6 +691,8 @@ const chat = {
   },
   dialog: {
     title: "Illustrate reply",
+    submit_partial:
+      "Submitted {submitted} of {total}; the next one failed: {reason}. Submitted slots are now unticked, so confirming again submits only the rest.",
     close: "Close",
     retry: "Analyze again",
     pick_paragraphs: "Choose paragraphs ({count})",
