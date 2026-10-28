@@ -10,7 +10,7 @@ const props = withDefaults(
   defineProps<{
     readonly label: string;
     readonly icon?: Component | undefined;
-    readonly variant?: "primary" | "secondary" | "destructive";
+    readonly variant?: "primary" | "secondary" | "ghost" | "destructive";
     readonly pending?: boolean;
     readonly disabled?: boolean;
     readonly type?: "button" | "submit";
@@ -31,6 +31,7 @@ const emit = defineEmits<{
 const VARIANT_CLASSES = {
   primary: styles.appButtonPrimary,
   secondary: styles.appButtonSecondary,
+  ghost: styles.appButtonGhost,
   destructive: styles.appButtonDestructive,
 } as const;
 

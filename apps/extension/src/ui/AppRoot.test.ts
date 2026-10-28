@@ -13,8 +13,8 @@ import { create_unavailable_capabilities } from "./controllers/unavailable_capab
 
 beforeAll(async () => {
   await Promise.all([
+    import("./shell/StudioShell.vue"),
     import("./shell/ContextInspector.vue"),
-    import("./shell/DesktopIconRail.vue"),
     import("./shell/InspectorSheet.vue"),
     import("./shell/MobileBottomNav.vue"),
   ]);
@@ -159,7 +159,7 @@ describe("AppRoot normal studio state", () => {
 
     expect(wrapper.find('[data-startup-state="blocked"]').exists()).toBe(false);
     expect(wrapper.find('[data-startup-state="failed"]').exists()).toBe(false);
-    expect(wrapper.findAll('[data-testid="studio-rail"] > button')).toHaveLength(2);
+    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(3);
   });
 
   it("starts closed, opens from the entry and closes back to it", async () => {
@@ -173,6 +173,7 @@ describe("AppRoot normal studio state", () => {
     expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(false);
     await wrapper.get('[data-shadow-role="entry"]').trigger("click");
     expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(true);
+    await flushPromises();
     await wrapper.get('[data-testid="studio-close"]').trigger("click");
 
     expect(wrapper.find('[data-window-role="studio"]').exists()).toBe(false);
@@ -282,8 +283,7 @@ describe("AppRoot portal wiring", () => {
     await wrapper.get('[data-shadow-role="entry"]').trigger("click");
     await flushPromises();
 
-    const first_rail_button = wrapper.findAll('[data-testid="studio-rail"] > button')[0];
-    await first_rail_button?.trigger("focus");
+    await wrapper.get('[data-testid="studio-close"]').trigger("focus");
     await nextTick();
     await nextTick();
     await nextTick();

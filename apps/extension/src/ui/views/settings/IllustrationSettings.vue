@@ -266,59 +266,57 @@ function set_worldbook(worldbook: string): void {
 </script>
 
 <template>
-  <div :class="styles.section" data-testid="illustration-settings">
-    <div :class="styles.section_header">
-      <h2 :class="styles.section_title">{{ t("settings.nav.illustration") }}</h2>
-    </div>
-
-    <div :class="styles.form_grid">
+  <div :class="styles.groups" data-testid="illustration-settings">
+    <section :class="styles.section">
+      <h2 :class="styles.section_title">{{ t("settings.groups.generation") }}</h2>
       <AppSwitch
         :model-value="settings?.auto_generation_enabled ?? false"
         :label="t('settings.illustration.auto_generation_label')"
+        :description="t('settings.illustration.auto_generation_hint')"
         :disabled="!settings"
         @update:model-value="(value) => update({ auto_generation_enabled: value })"
       />
-      <p :class="styles.description">{{ t("settings.illustration.auto_generation_hint") }}</p>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>
+        <NumberStepper
+          :model-value="illustration?.max_images_per_message"
+          :label="t('settings.illustration.max_images_label')"
+          :min="1"
+          :max="8"
+          :increment-label="t('common.actions.increase')"
+          :decrement-label="t('common.actions.decrease')"
+          :disabled="!settings"
+          @update:model-value="(value) => update_illustration({ max_images_per_message: value })"
+        />
+      </div>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.prompt_preset_label") }}</span>
+        <AppSelect
+          :model-value="illustration?.prompt_preset_id ?? NO_PROMPT_PRESET"
+          :options="prompt_preset_options"
+          :placeholder="t('settings.illustration.prompt_preset_label')"
+          :aria-label="t('settings.illustration.prompt_preset_label')"
+          :disabled="!settings"
+          @update:model-value="set_prompt_preset"
+        />
+      </div>
+      <div :class="styles.row">
+        <span :class="styles.row_label">{{ t("settings.illustration.concurrency_label") }}</span>
+        <NumberStepper
+          :model-value="settings?.global_concurrency"
+          :label="t('settings.illustration.concurrency_label')"
+          :min="1"
+          :max="4"
+          :increment-label="t('common.actions.increase')"
+          :decrement-label="t('common.actions.decrease')"
+          :disabled="!settings"
+          @update:model-value="(value) => update({ global_concurrency: value })"
+        />
+      </div>
+    </section>
 
-      <FieldGroup
-        :label="t('settings.illustration.analysis_guidance_label')"
-        :hint="t('settings.illustration.analysis_guidance_hint')"
-      >
-        <template #default="{ fieldId, describedBy }">
-          <textarea
-            :id="fieldId"
-            v-model="analysis_guidance_draft"
-            rows="3"
-            maxlength="2000"
-            :placeholder="t('settings.illustration.analysis_guidance_placeholder')"
-            :aria-describedby="describedBy"
-            :class="styles.text_area"
-            :disabled="!settings"
-            data-testid="analysis-guidance-input"
-            @blur="update_illustration({ analysis_guidance: analysis_guidance_draft.trim() })"
-          />
-        </template>
-      </FieldGroup>
-
-      <FieldGroup
-        :label="t('settings.illustration.preset_label')"
-        :hint="t('settings.illustration.preset_hint')"
-      >
-        <template #default="{ fieldId, describedBy }">
-          <input
-            :id="fieldId"
-            v-model="preset_name_draft"
-            type="text"
-            :placeholder="t('settings.illustration.preset_placeholder')"
-            :aria-describedby="describedBy"
-            :class="styles.text_input"
-            :disabled="!settings"
-            data-testid="analysis-preset-input"
-            @blur="save_preset_name"
-          />
-        </template>
-      </FieldGroup>
-
+    <section :class="styles.section">
+      <h2 :class="styles.section_title">{{ t("settings.groups.analysis") }}</h2>
       <div :class="styles.row">
         <span :class="styles.row_label">{{ t("settings.illustration.connection_label") }}</span>
         <SegmentedControl
@@ -399,67 +397,49 @@ function set_worldbook(worldbook: string): void {
           :hint="t('settings.illustration.custom_key_hint')"
         >
           <template #default="{ fieldId, describedBy }">
-            <input
-              :id="fieldId"
-              v-model="key_draft"
-              type="password"
-              autocomplete="off"
-              :aria-describedby="describedBy"
-              :class="styles.text_input"
-              data-testid="analysis-custom-key-input"
-            />
+            <div :class="styles.input_row">
+              <input
+                :id="fieldId"
+                v-model="key_draft"
+                type="password"
+                autocomplete="off"
+                :aria-describedby="describedBy"
+                :class="styles.text_input"
+                data-testid="analysis-custom-key-input"
+              />
+              <AppButton
+                :label="t('settings.illustration.custom_key_save')"
+                :pending="key_status === 'saving'"
+                :disabled="key_draft.trim() === ''"
+                @click="save_key"
+              />
+            </div>
           </template>
         </FieldGroup>
         <div :class="styles.actions_row">
           <AppButton
-            :label="t('settings.illustration.custom_key_save')"
-            variant="primary"
-            :pending="key_status === 'saving'"
-            :disabled="key_draft.trim() === ''"
-            @click="save_key"
+            :label="t('settings.illustration.custom_key_clear')"
+            variant="ghost"
+            @click="clear_key"
           />
-          <AppButton :label="t('settings.illustration.custom_key_clear')" @click="clear_key" />
           <span :class="styles.status_text" role="status">{{ key_status_text }}</span>
         </div>
       </template>
-
       <FieldGroup
-        :label="t('settings.illustration.wardrobe_model_label')"
-        :hint="
-          connection_kind === 'current'
-            ? t('settings.illustration.wardrobe_model_current_hint')
-            : t('settings.illustration.wardrobe_model_hint')
-        "
+        :label="t('settings.illustration.preset_label')"
+        :hint="t('settings.illustration.preset_hint')"
       >
         <template #default="{ fieldId, describedBy }">
           <input
             :id="fieldId"
-            v-model="wardrobe_model_draft"
+            v-model="preset_name_draft"
             type="text"
+            :placeholder="t('settings.illustration.preset_placeholder')"
             :aria-describedby="describedBy"
             :class="styles.text_input"
-            :disabled="!settings || connection_kind === 'current'"
-            data-testid="wardrobe-model-input"
-            @blur="save_wardrobe_model"
-          />
-        </template>
-      </FieldGroup>
-      <FieldGroup
-        :label="t('settings.illustration.wardrobe_guidance_label')"
-        :hint="t('settings.illustration.wardrobe_guidance_hint')"
-      >
-        <template #default="{ fieldId, describedBy }">
-          <textarea
-            :id="fieldId"
-            v-model="wardrobe_guidance_draft"
-            rows="3"
-            maxlength="2000"
-            :placeholder="t('settings.illustration.wardrobe_guidance_placeholder')"
-            :aria-describedby="describedBy"
-            :class="styles.text_area"
             :disabled="!settings"
-            data-testid="wardrobe-guidance-input"
-            @blur="update_illustration({ wardrobe_guidance: wardrobe_guidance_draft.trim() })"
+            data-testid="analysis-preset-input"
+            @blur="save_preset_name"
           />
         </template>
       </FieldGroup>
@@ -502,43 +482,69 @@ function set_worldbook(worldbook: string): void {
           {{ t("settings.illustration.worldbook_unavailable") }}
         </p>
       </template>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>
-        <NumberStepper
-          :model-value="illustration?.max_images_per_message"
-          :label="t('settings.illustration.max_images_label')"
-          :min="1"
-          :max="8"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          :disabled="!settings"
-          @update:model-value="(value) => update_illustration({ max_images_per_message: value })"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.illustration.prompt_preset_label") }}</span>
-        <AppSelect
-          :model-value="illustration?.prompt_preset_id ?? NO_PROMPT_PRESET"
-          :options="prompt_preset_options"
-          :placeholder="t('settings.illustration.prompt_preset_label')"
-          :aria-label="t('settings.illustration.prompt_preset_label')"
-          :disabled="!settings"
-          @update:model-value="set_prompt_preset"
-        />
-      </div>
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.illustration.concurrency_label") }}</span>
-        <NumberStepper
-          :model-value="settings?.global_concurrency"
-          :label="t('settings.illustration.concurrency_label')"
-          :min="1"
-          :max="4"
-          :increment-label="t('common.actions.increase')"
-          :decrement-label="t('common.actions.decrease')"
-          :disabled="!settings"
-          @update:model-value="(value) => update({ global_concurrency: value })"
-        />
-      </div>
-    </div>
+      <FieldGroup
+        :label="t('settings.illustration.wardrobe_model_label')"
+        :hint="
+          connection_kind === 'current'
+            ? t('settings.illustration.wardrobe_model_current_hint')
+            : t('settings.illustration.wardrobe_model_hint')
+        "
+      >
+        <template #default="{ fieldId, describedBy }">
+          <input
+            :id="fieldId"
+            v-model="wardrobe_model_draft"
+            type="text"
+            :aria-describedby="describedBy"
+            :class="styles.text_input"
+            :disabled="!settings || connection_kind === 'current'"
+            data-testid="wardrobe-model-input"
+            @blur="save_wardrobe_model"
+          />
+        </template>
+      </FieldGroup>
+    </section>
+
+    <section :class="styles.section">
+      <h2 :class="styles.section_title">{{ t("settings.groups.guidance") }}</h2>
+      <FieldGroup
+        :label="t('settings.illustration.analysis_guidance_label')"
+        :hint="t('settings.illustration.analysis_guidance_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <textarea
+            :id="fieldId"
+            v-model="analysis_guidance_draft"
+            rows="3"
+            maxlength="2000"
+            :placeholder="t('settings.illustration.analysis_guidance_placeholder')"
+            :aria-describedby="describedBy"
+            :class="styles.text_area"
+            :disabled="!settings"
+            data-testid="analysis-guidance-input"
+            @blur="update_illustration({ analysis_guidance: analysis_guidance_draft.trim() })"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup
+        :label="t('settings.illustration.wardrobe_guidance_label')"
+        :hint="t('settings.illustration.wardrobe_guidance_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <textarea
+            :id="fieldId"
+            v-model="wardrobe_guidance_draft"
+            rows="3"
+            maxlength="2000"
+            :placeholder="t('settings.illustration.wardrobe_guidance_placeholder')"
+            :aria-describedby="describedBy"
+            :class="styles.text_area"
+            :disabled="!settings"
+            data-testid="wardrobe-guidance-input"
+            @blur="update_illustration({ wardrobe_guidance: wardrobe_guidance_draft.trim() })"
+          />
+        </template>
+      </FieldGroup>
+    </section>
   </div>
 </template>

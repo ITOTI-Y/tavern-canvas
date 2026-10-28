@@ -89,10 +89,10 @@ export interface TaskStripItemViewModel {
 }
 
 export type SettingsSection =
-  "illustration" | "providers" | "translation" | "prompts" | "library" | "general" | "diagnostics";
+  "illustration" | "providers" | "translation" | "prompts" | "general" | "diagnostics";
 
 export interface StudioState {
-  route: "settings" | "gallery";
+  route: "library" | "gallery" | "settings";
   settings_section: SettingsSection;
   color_mode: "light" | "dark";
   loading: ReadonlySet<string>;

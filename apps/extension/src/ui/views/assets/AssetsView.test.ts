@@ -17,8 +17,8 @@ vi.mock("./reference_image.js", () => ({
 
 function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioState {
   return {
-    route: "settings",
-    settings_section: "library",
+    route: "library",
+    settings_section: "illustration",
     color_mode: "light",
     loading: new Set(),
     failures: new Map(),

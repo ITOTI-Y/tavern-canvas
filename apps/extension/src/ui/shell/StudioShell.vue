@@ -6,12 +6,10 @@ import type { StudioRoute, StudioState } from "../contracts/view_models.js";
 import type { StudioController } from "../controllers/studio_controller.js";
 import styles from "./shell.module.css";
 import StudioWorkspace from "./StudioWorkspace.vue";
-import TaskStrip from "./TaskStrip.vue";
 import TopCommandBar from "./TopCommandBar.vue";
 import { use_shell_viewport, type ShellViewport } from "./use_shell_viewport.js";
 
 const ContextInspector = defineAsyncComponent(() => import("./ContextInspector.vue"));
-const DesktopIconRail = defineAsyncComponent(() => import("./DesktopIconRail.vue"));
 const InspectorSheet = defineAsyncComponent(() => import("./InspectorSheet.vue"));
 const MobileBottomNav = defineAsyncComponent(() => import("./MobileBottomNav.vue"));
 
@@ -44,7 +42,7 @@ const inspector_style = computed(() => ({
 const mobile_inspector_open = ref(false);
 
 const context_inspector_available = computed(
-  () => props.state.route === "gallery" || props.state.settings_section === "library",
+  () => props.state.route === "gallery" || props.state.route === "library",
 );
 const desktop_inspector_collapsed = computed(
   () => !context_inspector_available.value || props.state.inspector.collapsed,
@@ -75,16 +73,14 @@ function select_route(route: StudioRoute): void {
   >
     <TopCommandBar
       :route="props.state.route"
+      :tasks="props.state.tasks"
+      :show-tabs="viewport === 'desktop'"
       :inspector-collapsed="top_bar_inspector_collapsed"
       :inspector-available="context_inspector_available"
+      @select-route="select_route"
       @set-inspector-collapsed="handle_set_inspector_collapsed"
+      @clear-failed-tasks="() => void props.controller.dismiss_failed_tasks()"
       @close="emit('close')"
-    />
-
-    <DesktopIconRail
-      v-if="viewport === 'desktop'"
-      :route="props.state.route"
-      @select="select_route"
     />
 
     <main :class="styles.workspace" data-testid="workspace">
@@ -125,11 +121,6 @@ function select_route(route: StudioRoute): void {
       :width="props.state.inspector.width"
       :selection="props.state.inspector.selected_record"
       @resize="(width) => emit('resize-inspector', width)"
-    />
-
-    <TaskStrip
-      :tasks="props.state.tasks"
-      @clear-failed="() => void props.controller.dismiss_failed_tasks()"
     />
 
     <MobileBottomNav

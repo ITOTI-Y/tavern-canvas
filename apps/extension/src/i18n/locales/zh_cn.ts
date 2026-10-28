@@ -24,13 +24,12 @@ const app = {
 };
 
 const nav = {
+  library: "素材库",
   assets: "素材库",
   gallery: "图库",
   settings: "设置",
   inspector_expand: "展开检查器",
   inspector_collapse: "收起检查器",
-  task_strip_expand: "展开任务栏",
-  task_strip_collapse: "收起任务栏",
   task_strip_clear_failed: "清除失败任务",
   task_strip_error: "：{reason}",
   task_strip_count: "{n} 个任务 | {n} 个任务",
@@ -407,13 +406,26 @@ const diagnostics = {
 };
 
 const settings = {
+  pane: {
+    illustration: "段落分析、服装判断与自动配图。修改在离开输入框时自动保存。",
+    providers: "生成图片的服务、密钥与默认参数。",
+    translation: "把中文提示词转换为英文 tag 时使用的翻译服务与术语表。",
+    prompts: "组装图片提示词时使用的预设、替换规则与质量标签。",
+    general: "外观、语言、密钥存储与数据备份。",
+    diagnostics: "宿主能力、任务记录、存储占用与支持包。",
+  },
+  groups: {
+    generation: "生成",
+    analysis: "分析",
+    guidance: "引导",
+  },
+  saved: "已保存",
   save_failed: "设置未能保存（错误代码：{code}），刚才的修改没有生效，请重试。",
   nav: {
     illustration: "插图",
     providers: "图像服务",
     translation: "翻译",
     prompts: "提示词预设",
-    library: "素材库",
     general: "通用",
     diagnostics: "诊断",
   },

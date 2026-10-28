@@ -22,7 +22,6 @@ import { use_host_entry_points } from "./experience/use_host_entry_points.js";
 import FloatingStudioWindow from "./experience/FloatingStudioWindow.vue";
 import PortalProvider from "./shell/PortalProvider.vue";
 import styles from "./shell/shell.module.css";
-import StudioShell from "./shell/StudioShell.vue";
 
 const props = defineProps<{
   status: StartupStatus;
@@ -37,6 +36,7 @@ const props = defineProps<{
 }>();
 
 const ChatLayer = defineAsyncComponent(() => import("./chat/ChatLayer.vue"));
+const StudioShell = defineAsyncComponent(() => import("./shell/StudioShell.vue"));
 
 const { t } = useI18n();
 

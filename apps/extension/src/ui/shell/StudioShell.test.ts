@@ -62,7 +62,6 @@ beforeAll(async () => {
     import("../views/gallery/GalleryView.vue"),
     import("../views/settings/SettingsView.vue"),
     import("./ContextInspector.vue"),
-    import("./DesktopIconRail.vue"),
     import("./InspectorSheet.vue"),
     import("./MobileBottomNav.vue"),
   ]);
@@ -145,16 +144,13 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     return undefined;
   }
 
-  it("desktop: token-height top bar, 64px rail, fluid workspace, inspector clamped 320-400px, auto task strip", () => {
+  it("desktop: token-height top bar over a fluid workspace and an inspector clamped 320-400px", () => {
     const columns = declaration('.shell[data-viewport="desktop"]', "grid-template-columns");
     const rows = declaration('.shell[data-viewport="desktop"]', "grid-template-rows");
-    expect(columns).toBeDefined();
-    expect(rows).toBeDefined();
-    expect(columns).toMatch(/(?:^|\s)64px(?:\s|$)/u);
-    expect(columns).toMatch(/minmax\(0,\s*1fr\)/u);
-    expect(columns).toMatch(/clamp\(320px,\s*var\(--tc-inspector-width[^)]*\),\s*400px\)/u);
-    expect(rows?.split(/\s+/u)[0]).toBe("var(--tc-topbar-height)");
-    expect(rows?.trim().endsWith("auto")).toBe(true);
+    expect(columns).toMatch(
+      /^minmax\(0,\s*1fr\)\s+clamp\(320px,\s*var\(--tc-inspector-width[^)]*\),\s*400px\)$/u,
+    );
+    expect(rows).toMatch(/^var\(--tc-topbar-height\)\s+minmax\(0,\s*1fr\)$/u);
   });
 
   it("mobile: 100dvh, one content layer, token-height top bar row, safe-area padding on the bottom nav", () => {
@@ -167,109 +163,92 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     expect(safe_area).toMatch(/env\(safe-area-inset-bottom/u);
   });
 
-  it("mobile grid-template-areas reserves a taskstrip row, so .task_strip's grid-area actually resolves", () => {
+  it("mobile grid stacks top bar, workspace and bottom nav", () => {
     const areas = declaration('.shell[data-viewport="mobile"]', "grid-template-areas");
-    expect(areas).toMatch(/taskstrip/u);
+    expect(areas?.replace(/\s+/gu, " ")).toBe('"topbar" "workspace" "bottomnav"');
     const rows = declaration('.shell[data-viewport="mobile"]', "grid-template-rows");
     expect(rows).toMatch(
-      /^var\(--tc-topbar-height\)\s+minmax\(0,\s*1fr\)\s+auto\s+var\(--tc-bottomnav-height\)$/u,
+      /^var\(--tc-topbar-height\)\s+minmax\(0,\s*1fr\)\s+var\(--tc-bottomnav-height\)$/u,
     );
   });
 
-  it("desktop rail and mobile bottom-nav items declare fixed dimensions with no per-state override", () => {
-    expect(declaration(".rail_button", "width")).toBe("var(--tc-control-height-lg)");
-    expect(declaration(".rail_button", "height")).toBe("var(--tc-control-height-lg)");
-    expect(declaration('.rail_button[data-selected="true"]', "width")).toBeUndefined();
-    expect(declaration('.rail_button[data-selected="true"]', "height")).toBeUndefined();
+  it("route tabs keep one height in every state; the current tab only changes colour", () => {
+    expect(declaration(".top_tab", "height")).toBe("var(--tc-control-height-md)");
+    expect(
+      declaration('.top_tab[aria-current="page"],\n.top_tab[aria-current="page"]:hover', "height"),
+    ).toBeUndefined();
+    expect(
+      declaration(
+        '.top_tab[aria-current="page"],\n.top_tab[aria-current="page"]:hover',
+        "background-color",
+      ),
+    ).toBe("var(--tc-marker)");
   });
 
   it("long labels truncate instead of growing their container: ellipsis + nowrap + hidden overflow", () => {
-    for (const selector of [".task_chip_label", ".bottom_nav_item_label", ".top_bar_title"]) {
+    for (const selector of [".task_chip_label", ".bottom_nav_item_label"]) {
       expect(declaration(selector, "white-space"), selector).toBe("nowrap");
       expect(declaration(selector, "text-overflow"), selector).toBe("ellipsis");
       expect(declaration(selector, "overflow"), selector).toBe("hidden");
     }
-    expect(declaration(".task_chip", "max-width")).toBeDefined();
   });
 
-  it("top bar, rail and workspace share one unframed canvas; only the inspector floats as a panel", () => {
-    for (const selector of [".top_bar", ".rail", ".workspace"]) {
+  it("top bar and workspace share one unframed canvas; only the inspector floats as a panel", () => {
+    for (const selector of [".top_bar", ".workspace"]) {
       expect(declaration(selector, "background-color"), selector).toBe("var(--tc-canvas)");
       expect(declaration(selector, "border-radius"), selector).toBeUndefined();
     }
     expect(declaration(".inspector", "background-color")).toBe("var(--tc-surface)");
     expect(declaration(".inspector", "border-radius")).toBe("var(--tc-radius-panel)");
-    expect(declaration(".task_strip", "border-top")).toMatch(/^1px solid var\(--tc-divider\)$/u);
   });
 });
 
 describe("StudioShell desktop navigation", () => {
-  it("exposes settings and gallery in the rail with a visible selected state", async () => {
-    const { wrapper } = await mount_shell({ state: { route: "gallery" } });
-    const rail_buttons = wrapper.findAll('[data-testid="studio-rail"] > button');
-    expect(rail_buttons.map((button) => button.attributes("aria-label"))).toEqual([
-      "Settings",
-      "Gallery",
-    ]);
+  function tabs(wrapper: Awaited<ReturnType<typeof mount_shell>>["wrapper"]) {
+    return wrapper.findAll('[data-testid="studio-tabs"] > button');
+  }
 
-    const selected = wrapper.find('button[aria-current="page"]');
-    expect(selected.attributes("aria-label")).toBe("Gallery");
-    expect(selected.attributes("data-selected")).toBe("true");
+  it("shows library, gallery and settings as top-bar tabs with the current one marked", async () => {
+    const { wrapper } = await mount_shell({ state: { route: "gallery" } });
+    expect(tabs(wrapper).map((button) => button.text())).toEqual([
+      "Library",
+      "Gallery",
+      "Settings",
+    ]);
+    expect(wrapper.get('[data-testid="studio-tabs"] > [aria-current="page"]').text()).toBe(
+      "Gallery",
+    );
   });
 
   it("activates a route on click and reports it through select-route", async () => {
     const { wrapper } = await mount_shell({ state: { route: "settings" } });
-    const rail_buttons = wrapper.findAll('[data-testid="studio-rail"] > button');
-    const gallery_button = rail_buttons.find(
-      (button) => button.attributes("aria-label") === "Gallery",
-    );
-    expect(gallery_button).toBeDefined();
+    const library_tab = tabs(wrapper).find((button) => button.text() === "Library");
 
-    await gallery_button?.trigger("click");
+    await library_tab?.trigger("click");
 
-    expect(wrapper.emitted("select-route")).toEqual([["gallery"]]);
-  });
-
-  it("rail buttons are real <button> elements (native Enter/Space activation, no negative tabindex)", async () => {
-    const { wrapper } = await mount_shell();
-    for (const button of wrapper.findAll('[data-testid="studio-rail"] > button')) {
-      expect(button.element.tagName).toBe("BUTTON");
-      expect(button.attributes("tabindex")).not.toBe("-1");
-    }
+    expect(wrapper.emitted("select-route")).toEqual([["library"]]);
   });
 
   it("does not render the mobile bottom nav or inspector sheet on desktop", async () => {
     const { wrapper } = await mount_shell({ viewport: "desktop" });
+    expect(wrapper.find('[data-testid="studio-bottom-nav"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="inspector-sheet"]').exists()).toBe(false);
-  });
-
-  it("tooltips portal into the injected Shadow-Root portal element, never document.body", async () => {
-    const { wrapper, portal_target } = await mount_shell();
-    const first_rail_button = wrapper.findAll('[data-testid="studio-rail"] > button')[0];
-    await first_rail_button?.trigger("focus");
-    await nextTick();
-    await nextTick();
-    await nextTick();
-
-    const tooltip = portal_target.querySelector('[role="tooltip"]');
-    expect(tooltip).not.toBeNull();
-    expect(Array.from(document.body.children)).not.toContain(tooltip);
   });
 });
 
 describe("StudioShell mobile navigation", () => {
-  it("shows the settings and gallery routes in the bottom nav", async () => {
+  it("shows the three routes in the bottom nav", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile" });
     const items = wrapper.find('[data-testid="studio-bottom-nav"]').findAll("button");
-    expect(items.map((item) => item.text())).toEqual(["Settings", "Gallery"]);
+    expect(items.map((item) => item.text())).toEqual(["Library", "Gallery", "Settings"]);
   });
 
-  it("does not render the desktop rail or the persistent inspector column", async () => {
+  it("moves the routes out of the top bar and keeps the inspector toggle", async () => {
     const { wrapper } = await mount_shell({
       viewport: "mobile",
       state: { route: "gallery" },
     });
-    expect(wrapper.find(".rail, nav.rail").exists()).toBe(false);
+    expect(wrapper.find('[data-testid="studio-tabs"]').exists()).toBe(false);
     expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(true);
   });
 
@@ -285,7 +264,7 @@ describe("StudioShell mobile navigation", () => {
 });
 
 describe("StudioShell inspector", () => {
-  it("leaves the global inspector out of the settings sections other than the library", async () => {
+  it("leaves the global inspector out of the settings route", async () => {
     const { wrapper } = await mount_shell();
     expect(wrapper.find('[data-testid="inspector-toggle"]').exists()).toBe(false);
     expect(wrapper.find(".inspector, [class*=inspector_panel]").exists()).toBe(false);
@@ -403,25 +382,31 @@ describe("StudioShell inspector", () => {
   });
 });
 
-describe("StudioShell task strip", () => {
-  it("renders nothing when there are no tasks", async () => {
+describe("StudioShell task pill", () => {
+  const running_task = {
+    id: "job-1",
+    label_code: "status.running",
+    status: "pending",
+    progress: 0.5,
+    error: null,
+  } as const;
+
+  async function open_tasks(wrapper: Awaited<ReturnType<typeof mount_shell>>["wrapper"]) {
+    await wrapper.get('[data-testid="task-pill"]').trigger("click");
+    await nextTick();
+    await nextTick();
+  }
+
+  it("renders no pill when there are no tasks", async () => {
     const { wrapper } = await mount_shell({ state: { tasks: [] } });
-    expect(wrapper.find('[aria-label="Show tasks"], [aria-label="Hide tasks"]').exists()).toBe(
-      false,
-    );
+    expect(wrapper.find('[data-testid="task-pill"]').exists()).toBe(false);
   });
 
-  it("shows a chip per task with a semantic status dot, and can collapse/expand", async () => {
-    const { wrapper } = await mount_shell({
+  it("counts tasks on the pill and lists each with a semantic status dot in a portalled popover", async () => {
+    const { wrapper, portal_target } = await mount_shell({
       state: {
         tasks: [
-          {
-            id: "job-1",
-            label_code: "status.running",
-            status: "pending",
-            progress: 0.5,
-            error: null,
-          },
+          running_task,
           {
             id: "job-2",
             label_code: "status.completed",
@@ -432,24 +417,18 @@ describe("StudioShell task strip", () => {
         ],
       },
     });
+    expect(wrapper.get('[data-testid="task-pill"]').text()).toContain("2 tasks");
 
-    const dots = wrapper.findAll("[data-status]");
-    expect(dots).toHaveLength(2);
-    expect(dots[0]?.attributes("data-status")).toBe("pending");
-    expect(dots[1]?.attributes("data-status")).toBe("success");
+    await open_tasks(wrapper);
 
-    const collapse_button = wrapper.get('[aria-label="Hide tasks"]');
-    await collapse_button.trigger("click");
-    expect(wrapper.findAll("[data-status]")).toHaveLength(0);
-
-    const expand_button = wrapper.get('[aria-label="Show tasks"]');
-    await expand_button.trigger("click");
-    expect(wrapper.findAll("[data-status]")).toHaveLength(2);
-    expect(wrapper.text()).toContain("2 tasks");
+    const list = portal_target.querySelector('[data-testid="task-list"]');
+    expect(list).not.toBeNull();
+    const dots = Array.from(list?.querySelectorAll("[data-status]") ?? []);
+    expect(dots.map((dot) => dot.getAttribute("data-status"))).toEqual(["pending", "success"]);
   });
 
   it("names why a task failed and clears failed tasks through the controller", async () => {
-    const { wrapper, controller } = await mount_shell({
+    const { wrapper, portal_target, controller } = await mount_shell({
       state: {
         tasks: [
           {
@@ -464,44 +443,15 @@ describe("StudioShell task strip", () => {
     });
     const dismiss = vi.spyOn(controller, "dismiss_failed_tasks").mockResolvedValue();
 
-    expect(wrapper.text()).toContain("Failed: blocked by the provider's content filter");
-    expect(wrapper.text()).not.toContain("0%");
-    await wrapper.get('[data-testid="task-strip-clear-failed"]').trigger("click");
+    await open_tasks(wrapper);
+
+    const list = new DOMWrapper(
+      portal_target.querySelector('[data-testid="task-list"]') as Element,
+    );
+    expect(list.text()).toContain("Failed: blocked by the provider's content filter");
+    expect(list.text()).not.toContain("0%");
+    await list.get('[data-testid="task-strip-clear-failed"]').trigger("click");
     expect(dismiss).toHaveBeenCalledOnce();
-  });
-
-  it("changing a task's status text does not change the chip count or remove other chips", async () => {
-    const { wrapper } = await mount_shell({
-      state: {
-        tasks: [
-          {
-            id: "job-1",
-            label_code: "status.pending",
-            status: "pending",
-            progress: null,
-            error: null,
-          },
-        ],
-      },
-    });
-    expect(wrapper.findAll("[data-status]")).toHaveLength(1);
-
-    await wrapper.setProps({
-      state: build_state({
-        tasks: [
-          {
-            id: "job-1",
-            label_code: "status.completed",
-            status: "success",
-            progress: null,
-            error: null,
-          },
-        ],
-      }),
-    });
-
-    expect(wrapper.findAll("[data-status]")).toHaveLength(1);
-    expect(wrapper.get("[data-status]").attributes("data-status")).toBe("success");
   });
 });
 
@@ -522,7 +472,7 @@ describe("StudioShell shell-level states", () => {
     const banner = wrapper.find('[data-testid="partial-banner"]');
     expect(banner.exists()).toBe(true);
     expect(banner.text()).toContain("Running with limited functionality");
-    expect(wrapper.findAll('[data-testid="studio-rail"] > button')).toHaveLength(2);
+    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(3);
   });
 
   it("navigates to Diagnostics from the partial-initialization banner", async () => {
@@ -549,15 +499,15 @@ describe("StudioShell narrow and long locale labels", () => {
     };
     const { wrapper } = await mount_shell({ messages });
 
-    const buttons = wrapper.findAll('[data-testid="studio-rail"] > button');
-    expect(buttons).toHaveLength(2);
-    expect(buttons.some((button) => button.attributes("aria-label") === long_label)).toBe(true);
+    const buttons = wrapper.findAll('[data-testid="studio-tabs"] > button');
+    expect(buttons).toHaveLength(3);
+    expect(buttons.some((button) => button.text() === long_label)).toBe(true);
   });
 
   it("renders full zh-CN labels in the mobile bottom nav without dropping any item", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile", locale: "zh-CN" });
     const nav = wrapper.find('[data-testid="studio-bottom-nav"]');
     const items = nav.findAll("button");
-    expect(items.map((item) => item.text())).toEqual(["设置", "图库"]);
+    expect(items.map((item) => item.text())).toEqual(["素材库", "图库", "设置"]);
   });
 });

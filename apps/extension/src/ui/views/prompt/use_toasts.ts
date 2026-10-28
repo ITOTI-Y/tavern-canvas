@@ -5,6 +5,7 @@ export interface ToastItem {
   readonly title: string;
   readonly description?: string;
   readonly variant?: "info" | "success" | "error";
+  readonly duration?: number;
 }
 
 export function use_toasts() {

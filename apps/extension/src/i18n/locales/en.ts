@@ -24,13 +24,12 @@ const app = {
 };
 
 const nav = {
+  library: "Library",
   assets: "Library",
   gallery: "Gallery",
   settings: "Settings",
   inspector_expand: "Expand inspector",
   inspector_collapse: "Collapse inspector",
-  task_strip_expand: "Show tasks",
-  task_strip_collapse: "Hide tasks",
   task_strip_clear_failed: "Clear failed tasks",
   task_strip_error: ": {reason}",
   task_strip_count: "{n} task | {n} tasks",
@@ -422,6 +421,22 @@ const diagnostics = {
 };
 
 const settings = {
+  pane: {
+    illustration:
+      "Paragraph analysis, outfit tracking and automatic illustration. Changes save when you leave a field.",
+    providers: "The services that generate images, their keys and default parameters.",
+    translation:
+      "The translation service and glossary used to turn Chinese prompts into English tags.",
+    prompts: "Presets, replacement rules and quality tags used to assemble image prompts.",
+    general: "Appearance, language, credential storage and data backup.",
+    diagnostics: "Host capabilities, the task log, storage use and support bundles.",
+  },
+  groups: {
+    generation: "Generation",
+    analysis: "Analysis",
+    guidance: "Guidance",
+  },
+  saved: "Saved",
   save_failed:
     "The settings could not be saved (error code {code}); the last change did not take effect. Try again.",
   nav: {
@@ -429,7 +444,6 @@ const settings = {
     providers: "Image providers",
     translation: "Translation",
     prompts: "Prompt presets",
-    library: "Library",
     general: "General",
     diagnostics: "Diagnostics",
   },

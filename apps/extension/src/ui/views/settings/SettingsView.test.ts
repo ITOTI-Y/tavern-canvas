@@ -515,6 +515,20 @@ describe("SettingsView illustration settings", () => {
     expect(updates.some((update) => update.auto_generation_enabled === true)).toBe(true);
   });
 
+  it("announces a completed auto-save with a status toast", async () => {
+    const capabilities = create_unavailable_capabilities();
+    const controller = build_controller({
+      ...capabilities,
+      settings: recording_settings_capability([]),
+    });
+    const { wrapper, portal_target } = await mount_view_with_live_controller(controller);
+
+    await wrapper.get('[data-testid="illustration-settings"] [role="switch"]').trigger("click");
+    await flushPromises();
+
+    expect(portal_target.textContent).toContain("Saved");
+  });
+
   it("stores an empty analysis preset as the current preset and a typed name as is", async () => {
     const updates: Partial<TavernCanvasSettings>[] = [];
     const capabilities = create_unavailable_capabilities();

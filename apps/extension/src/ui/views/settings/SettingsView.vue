@@ -4,15 +4,15 @@ import {
   Cable,
   Image,
   Languages,
-  Layers,
   ScanSearch,
   SlidersHorizontal,
   Sparkles,
 } from "lucide-vue-next";
-import { type Component, computed, defineAsyncComponent } from "vue";
+import { type Component, computed, defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppIcon from "../../components/AppIcon.vue";
+import ToastViewport from "../../components/ToastViewport.vue";
 import type { PromptRegexRule } from "../../contracts/ui_capabilities.js";
 import type { SettingsSection, StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
@@ -24,9 +24,9 @@ import NovelAiSettings from "./NovelAiSettings.vue";
 import ProviderProfiles from "./ProviderProfiles.vue";
 import styles from "./settings_styles.js";
 import TranslationSettings from "./TranslationSettings.vue";
+import { use_toasts } from "../prompt/use_toasts.js";
 
 const PromptView = defineAsyncComponent(() => import("../prompt/PromptView.vue"));
-const AssetsView = defineAsyncComponent(() => import("../assets/AssetsView.vue"));
 const PromptTagPresetPanel = defineAsyncComponent(
   () => import("../prompt/PromptTagPresetPanel.vue"),
 );
@@ -44,7 +44,6 @@ const SECTIONS: readonly SettingsSection[] = [
   "providers",
   "translation",
   "prompts",
-  "library",
   "general",
   "diagnostics",
 ];
@@ -60,8 +59,6 @@ function section_label(section: SettingsSection): string {
       return t("settings.nav.translation");
     case "prompts":
       return t("settings.nav.prompts");
-    case "library":
-      return t("settings.nav.library");
     case "general":
       return t("settings.nav.general");
     case "diagnostics":
@@ -74,12 +71,39 @@ const SECTION_ICONS: Readonly<Record<SettingsSection, Component>> = {
   providers: Image,
   translation: Languages,
   prompts: BookOpenText,
-  library: Layers,
   general: SlidersHorizontal,
   diagnostics: ScanSearch,
 };
 
+/** One literal translate call per section; tools/locale_check forbids dynamic keys. */
+function section_description(item: SettingsSection): string {
+  switch (item) {
+    case "illustration":
+      return t("settings.pane.illustration");
+    case "providers":
+      return t("settings.pane.providers");
+    case "translation":
+      return t("settings.pane.translation");
+    case "prompts":
+      return t("settings.pane.prompts");
+    case "general":
+      return t("settings.pane.general");
+    case "diagnostics":
+      return t("settings.pane.diagnostics");
+  }
+}
+
 const section = computed(() => props.state.settings_section);
+
+const { toasts, push: push_toast, dismiss: dismiss_toast } = use_toasts();
+watch(
+  () => props.state.settings.update_command.status,
+  (status, previous) => {
+    if (status === "success" && previous === "pending") {
+      push_toast({ title: t("settings.saved"), variant: "success", duration: 1800 });
+    }
+  },
+);
 
 /** NovelAI parameters belong to the profile generation uses, which is the active one. */
 const active_novelai_profile = computed(
@@ -115,6 +139,10 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
     </nav>
 
     <div :class="styles.section_content">
+      <header :class="styles.pane_head">
+        <h1 :class="styles.pane_title">{{ section_label(section) }}</h1>
+        <p :class="styles.pane_description">{{ section_description(section) }}</p>
+      </header>
       <p
         v-if="state.settings.update_command.status === 'error'"
         :class="[styles.status_text, styles.description]"
@@ -140,14 +168,12 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
           :controller="controller"
         />
       </template>
-      <AssetsView v-else-if="section === 'library'" :state="state" :controller="controller" />
       <DiagnosticsView
         v-else-if="section === 'diagnostics'"
         :state="state"
         :controller="controller"
       />
       <div v-else :class="styles.view">
-        <h1 class="tc-visually-hidden">{{ section_label(section) }}</h1>
         <template v-if="section === 'illustration'">
           <IllustrationSettings
             :settings="state.settings.settings"
@@ -206,5 +232,13 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
         </template>
       </div>
     </div>
+
+    <ToastViewport
+      :toasts="toasts"
+      :viewport-label="t('common.notifications.viewport_label')"
+      :announce-label="t('common.notifications.announce_label')"
+      :close-label="t('common.actions.close')"
+      @dismiss="dismiss_toast"
+    />
   </div>
 </template>

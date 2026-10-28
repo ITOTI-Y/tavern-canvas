@@ -107,8 +107,8 @@ describe("StudioWorkspace", () => {
     expect(wrapper.find(selector).exists()).toBe(true);
   });
 
-  it("shows the library section", async () => {
-    const { wrapper } = await mount_workspace("settings", "library");
+  it("shows the library route", async () => {
+    const { wrapper } = await mount_workspace("library");
     expect(wrapper.text()).toContain("No characters saved yet");
   });
 

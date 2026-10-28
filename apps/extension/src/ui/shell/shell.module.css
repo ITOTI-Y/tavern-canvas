@@ -1,9 +1,8 @@
 /*
- * The Studio application shell: CSS grid for desktop, fixed tracks for mobile. Top bar, rail and
- * workspace share the one canvas; the inspector floats in it as a panel. Buttons/nav items reuse
- * utilities.css's `.tc-interactive` for hover and press feedback so their transition rules stay
- * centrally compliant with the motion contract. The current rail and bottom-nav item carries the
- * marker highlight.
+ * The Studio application shell: CSS grid for desktop, fixed tracks for mobile. The top bar carries
+ * the route tabs and shares the canvas with the workspace; the inspector floats in it as a panel.
+ * Buttons and nav items reuse utilities.css's `.tc-interactive` for hover and press feedback. The
+ * current tab, settings section and bottom-nav item carry the marker highlight.
  */
 
 .shell {
@@ -18,37 +17,33 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Desktop: fixed top bar, fixed 64px icon rail, fluid workspace, an inspector column clamped
- * between 320px and 400px around its persisted width, and a content-sized (auto) task strip row.
+ * Desktop: the top bar carries the route tabs; below it the workspace and an inspector column
+ * clamped between 320px and 400px around its persisted width.
  * --------------------------------------------------------------------------- */
 
 .shell[data-viewport="desktop"] {
-  grid-template-columns: 64px minmax(0, 1fr) clamp(320px, var(--tc-inspector-width, 320px), 400px);
-  grid-template-rows: var(--tc-topbar-height) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, var(--tc-inspector-width, 320px), 400px);
+  grid-template-rows: var(--tc-topbar-height) minmax(0, 1fr);
   grid-template-areas:
-    "topbar topbar topbar"
-    "rail workspace inspector"
-    "taskstrip taskstrip taskstrip";
+    "topbar topbar"
+    "workspace inspector";
 }
 
 .shell[data-viewport="desktop"][data-inspector-collapsed="true"] {
-  grid-template-columns: 64px minmax(0, 1fr) 0;
+  grid-template-columns: minmax(0, 1fr) 0;
 }
 
 /* ---------------------------------------------------------------------------
- * Mobile: one content layer (top bar, workspace, content-sized task strip, bottom nav) at 100dvh;
- * the inspector becomes a full-width sheet layered on top instead of a persistent column.
- * `taskstrip` mirrors desktop's own `auto` row, so `.task_strip`'s `grid-area` always matches a
- * named area and never falls into an implicit row that would break the fixed 100dvh layout.
+ * Mobile: top bar, workspace and bottom nav at 100dvh; the inspector becomes a full-width sheet
+ * layered on top instead of a persistent column.
  * --------------------------------------------------------------------------- */
 
 .shell[data-viewport="mobile"] {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: var(--tc-topbar-height) minmax(0, 1fr) auto var(--tc-bottomnav-height);
+  grid-template-rows: var(--tc-topbar-height) minmax(0, 1fr) var(--tc-bottomnav-height);
   grid-template-areas:
     "topbar"
     "workspace"
-    "taskstrip"
     "bottomnav";
   height: 100dvh;
 }
@@ -57,8 +52,7 @@
   grid-area: topbar;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--tc-space-2);
+  gap: var(--tc-space-3);
   min-width: 0;
   padding-inline: var(--tc-space-5) var(--tc-space-3);
   background-color: var(--tc-canvas);
@@ -66,16 +60,76 @@
   touch-action: none;
 }
 
-.top_bar_start,
 .top_bar_end {
   display: flex;
   align-items: center;
-  gap: var(--tc-space-2);
+  gap: var(--tc-space-1);
   min-width: 0;
+  margin-left: auto;
 }
 
-.top_bar_end {
+.top_tabs {
+  display: flex;
   gap: var(--tc-space-1);
+  margin-left: var(--tc-space-3);
+}
+
+.top_tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tc-control-gap);
+  height: var(--tc-control-height-md);
+  padding-inline: var(--tc-control-padding-x-md);
+  border-radius: var(--tc-radius-control);
+  color: var(--tc-text-muted);
+  font-size: var(--tc-control-font-size);
+  font-weight: var(--tc-font-weight-medium);
+}
+
+.top_tab:hover {
+  color: var(--tc-text);
+  background-color: var(--tc-surface-raised);
+}
+
+.top_tab[aria-current="page"],
+.top_tab[aria-current="page"]:hover {
+  color: var(--tc-on-marker);
+  background-color: var(--tc-marker);
+}
+
+.task_pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tc-space-1);
+  height: var(--tc-control-height-sm);
+  padding-inline: var(--tc-space-2);
+  border-radius: var(--tc-radius-control);
+  color: var(--tc-text-muted);
+  background-color: var(--tc-surface-raised);
+  font-size: var(--tc-font-size-sm);
+}
+
+.task_pill:hover {
+  color: var(--tc-text);
+}
+
+.task_pill_spin {
+  animation: tc-icon-rotate var(--tc-motion-normal) linear infinite;
+}
+
+.shell[data-viewport="mobile"] .task_pill_label {
+  display: none;
+}
+
+.task_popover {
+  z-index: var(--tc-z-overlay);
+  width: min(360px, calc(100vw - var(--tc-space-8)));
+  max-height: 60dvh;
+  overflow: auto;
+  background-color: var(--tc-surface);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-popover);
+  box-shadow: 0 12px 32px var(--tc-shadow);
 }
 
 .top_bar_brand {
@@ -96,20 +150,6 @@
   border-radius: var(--tc-radius-control);
   background-color: var(--tc-marker);
   color: var(--tc-on-marker);
-}
-
-.top_bar_divider {
-  flex: none;
-  color: var(--tc-text-placeholder);
-}
-
-.top_bar_title {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--tc-text-muted);
-  font-weight: var(--tc-font-weight-medium);
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .icon_button {
@@ -142,41 +182,6 @@
 .icon_button[data-selected="true"],
 .icon_button[aria-pressed="true"] {
   color: var(--tc-text);
-}
-
-.rail {
-  grid-area: rail;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--tc-space-1);
-  padding: var(--tc-space-2);
-  background-color: var(--tc-canvas);
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.rail_button {
-  position: relative;
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: var(--tc-control-height-lg);
-  height: var(--tc-control-height-lg);
-  color: var(--tc-text-muted);
-  border-radius: var(--tc-radius-control);
-}
-
-.rail_button:hover {
-  color: var(--tc-text);
-  background-color: var(--tc-surface-raised);
-}
-
-.rail_button[data-selected="true"],
-.rail_button[data-selected="true"]:hover {
-  color: var(--tc-on-marker);
-  background-color: var(--tc-marker);
 }
 
 .tooltip_content {
@@ -390,12 +395,9 @@
 }
 
 .task_strip {
-  grid-area: taskstrip;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background-color: var(--tc-canvas);
-  border-top: 1px solid var(--tc-divider);
 }
 
 .task_strip_header {
@@ -403,7 +405,7 @@
   flex: none;
   align-items: center;
   gap: var(--tc-space-1);
-  padding: var(--tc-space-1) var(--tc-space-3) var(--tc-space-1) var(--tc-space-5);
+  padding: var(--tc-space-2) var(--tc-space-2) var(--tc-space-1) var(--tc-space-4);
 }
 
 .task_strip_summary {
@@ -419,9 +421,9 @@
 
 .task_strip_list {
   display: flex;
-  gap: var(--tc-space-2);
-  padding: 0 var(--tc-space-5) var(--tc-space-3);
-  overflow-x: auto;
+  flex-direction: column;
+  gap: var(--tc-space-1);
+  padding: 0 var(--tc-space-3) var(--tc-space-3);
 }
 
 .task_chip {
@@ -430,7 +432,6 @@
   align-items: center;
   gap: var(--tc-space-1-5);
   height: var(--tc-control-height-sm);
-  max-width: 220px;
   padding-inline: var(--tc-space-2);
   color: var(--tc-text-muted);
   background-color: var(--tc-surface-raised);

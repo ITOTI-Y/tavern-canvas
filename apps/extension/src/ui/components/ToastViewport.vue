@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X } from "lucide-vue-next";
+import { Check, X } from "lucide-vue-next";
 import {
   ToastClose,
   ToastDescription,
@@ -20,6 +20,7 @@ export interface ToastItem {
   readonly title: string;
   readonly description?: string;
   readonly variant?: "info" | "success" | "error";
+  readonly duration?: number;
 }
 
 defineProps<{
@@ -28,6 +29,8 @@ defineProps<{
   readonly announceLabel: string;
   readonly closeLabel: string;
 }>();
+
+const DEFAULT_DURATION_MS = 5000;
 
 const emit = defineEmits<{
   dismiss: [id: string];
@@ -50,7 +53,7 @@ const portal_props = computed(() => (portal_target ? { to: portal_target } : {})
 </script>
 
 <template>
-  <ToastProvider :label="announceLabel" :duration="5000">
+  <ToastProvider :label="announceLabel" :duration="DEFAULT_DURATION_MS">
     <ToastPortal v-bind="portal_props">
       <RekaToastViewport class="tc-z-toast" :class="styles.toastViewport" :label="viewportLabel">
         <ToastRoot
@@ -59,8 +62,15 @@ const portal_props = computed(() => (portal_target ? { to: portal_target } : {})
           :class="[styles.toastRoot, VARIANT_CLASSES[toast.variant ?? 'info']]"
           :type="toast.variant === 'error' ? 'foreground' : 'background'"
           :open="true"
+          :duration="toast.duration ?? DEFAULT_DURATION_MS"
           @update:open="(open: boolean) => handle_open_change(toast.id, open)"
         >
+          <AppIcon
+            v-if="toast.variant === 'success' && !toast.description"
+            :icon="Check"
+            :size="16"
+            :class="styles.toastIcon"
+          />
           <ToastTitle :class="styles.toastTitle">{{ toast.title }}</ToastTitle>
           <ToastDescription v-if="toast.description" :class="styles.toastDescription">
             {{ toast.description }}

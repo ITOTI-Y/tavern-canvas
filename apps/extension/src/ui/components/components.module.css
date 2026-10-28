@@ -156,6 +156,15 @@
   background-color: var(--tc-surface-raised);
 }
 
+.appButtonGhost {
+  color: var(--tc-text-muted);
+}
+
+.appButtonGhost:hover:not(:disabled) {
+  background-color: var(--tc-surface-raised);
+  color: var(--tc-text);
+}
+
 .appButtonDestructive {
   color: var(--tc-error);
 }
@@ -796,8 +805,16 @@
 
 /* A title-only toast is one line, so it takes the full pill like every other control. */
 .toastRoot:not(:has(.toastDescription)) {
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--tc-space-2);
   border-radius: var(--tc-radius-control);
+}
+
+.toastIcon {
+  flex: none;
+  color: var(--tc-success-on-inverse);
+  stroke-width: 2.5;
 }
 
 .toastTitle {
@@ -832,10 +849,6 @@
 
 .toastClose:hover {
   opacity: 1;
-}
-
-.toastSuccess .toastTitle {
-  color: var(--tc-success-on-inverse);
 }
 
 .toastError {

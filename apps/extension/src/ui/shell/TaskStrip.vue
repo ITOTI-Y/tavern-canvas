@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronUp, Trash2 } from "lucide-vue-next";
-import { computed, ref } from "vue";
+import { Trash2 } from "lucide-vue-next";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { slot_error_label } from "../chat/slot_error_label.js";
@@ -17,7 +17,6 @@ const emit = defineEmits<{
 }>();
 
 const { t, n } = useI18n();
-const expanded = ref(true);
 
 // Literal translate calls are required by tools/locale_check's dynamic-key rule; an unknown code falls back to the raw code.
 const TASK_LABEL_RESOLVERS: Readonly<Record<string, () => string>> = {
@@ -52,18 +51,10 @@ function chip_label(item: TaskStripItemViewModel): string {
 }
 
 const has_failed = computed(() => props.tasks.some((item) => item.status === "error"));
-
-const toggle_label = computed(() =>
-  expanded.value ? t("nav.task_strip_collapse") : t("nav.task_strip_expand"),
-);
-
-function toggle(): void {
-  expanded.value = !expanded.value;
-}
 </script>
 
 <template>
-  <div v-if="props.tasks.length > 0" :class="styles.task_strip">
+  <div :class="styles.task_strip" data-testid="task-list">
     <div :class="styles.task_strip_header">
       <span :class="styles.task_strip_summary" class="tc-tabular-nums">
         {{ t("nav.task_strip_count", props.tasks.length) }}
@@ -80,18 +71,8 @@ function toggle(): void {
       >
         <AppIcon :icon="Trash2" :size="16" />
       </button>
-      <button
-        type="button"
-        class="tc-interactive"
-        :class="styles.icon_button"
-        :aria-label="toggle_label"
-        :aria-expanded="expanded"
-        @click="toggle"
-      >
-        <AppIcon :icon="expanded ? ChevronDown : ChevronUp" :size="16" />
-      </button>
     </div>
-    <div v-if="expanded" :class="styles.task_strip_list">
+    <div :class="styles.task_strip_list">
       <div v-for="item in props.tasks" :key="item.id" :class="styles.task_chip">
         <span :class="styles.task_chip_dot" :data-status="item.status" />
         <span :class="styles.task_chip_label">{{ chip_label(item) }}</span>
