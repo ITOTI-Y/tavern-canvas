@@ -51,6 +51,8 @@ export const ProviderErrorCodeSchema = z.enum([
   "timed_out",
   "cancelled",
   "malformed_response",
+  "not_configured",
+  "storage_failed",
 ]);
 export type ProviderErrorCode = z.infer<typeof ProviderErrorCodeSchema>;
 

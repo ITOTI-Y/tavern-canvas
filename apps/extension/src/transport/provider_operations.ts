@@ -1,23 +1,12 @@
 import {
   MAX_PROVIDER_REQUEST_BYTES,
+  ProviderTransportBoundaryError,
   assert_provider_route,
   type ProviderRemoteAssetOperation,
   type ProviderTransportOperation,
 } from "@tavern-canvas/providers";
 
 import { normalize_http_origin } from "./http_origin.js";
-
-export type ProviderTransportBoundaryErrorCode = "configuration" | "malformed_response";
-
-export class ProviderTransportBoundaryError extends Error {
-  readonly code: ProviderTransportBoundaryErrorCode;
-
-  constructor(code: ProviderTransportBoundaryErrorCode, message: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = "ProviderTransportBoundaryError";
-    this.code = code;
-  }
-}
 
 export function validate_provider_operation(operation: unknown): ProviderTransportOperation {
   try {

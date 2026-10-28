@@ -789,6 +789,9 @@ const chat = {
     timed_out: "timed out",
     cancelled: "cancelled",
     malformed_response: "the provider returned an unreadable response",
+    not_configured:
+      "the image provider profile is incomplete: its API key is missing or unreadable, or its server address is invalid",
+    storage_failed: "the image could not be saved to browser storage, which may be full",
   },
 };
 

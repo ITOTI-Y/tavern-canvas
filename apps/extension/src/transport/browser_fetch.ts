@@ -1,6 +1,6 @@
 import { ProviderNetworkError, type ProviderTransportResponse } from "@tavern-canvas/providers";
 
-import { ProviderTransportBoundaryError } from "./provider_operations.js";
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
 export type ProviderFetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 

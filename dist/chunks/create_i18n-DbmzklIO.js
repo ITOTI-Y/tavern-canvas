@@ -751,7 +751,9 @@ var o = {
 			provider_unavailable: "the provider is unavailable",
 			timed_out: "timed out",
 			cancelled: "cancelled",
-			malformed_response: "the provider returned an unreadable response"
+			malformed_response: "the provider returned an unreadable response",
+			not_configured: "the image provider profile is incomplete: its API key is missing or unreadable, or its server address is invalid",
+			storage_failed: "the image could not be saved to browser storage, which may be full"
 		}
 	},
 	prompt_tags: {
@@ -772,7 +774,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-NciTp8vi.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-D-6-V7X4.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

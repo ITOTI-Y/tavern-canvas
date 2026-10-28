@@ -1,9 +1,9 @@
 import { _ as e, a as t, c as n, h as r, i, m as a, n as o, p as ee, r as s, s as te, t as c, u as l, x as ne, y as re } from "./schemas-DMBLWk59.js";
 import { t as ie } from "./generation-C8k9E8Cm.js";
-import { i as ae } from "./provider-ByHYrbSK.js";
-import { n as oe } from "./build-BtJLSgAU.js";
+import { i as ae, r as oe } from "./provider-C7olz4RN.js";
+import { n as se } from "./build-BtJLSgAU.js";
 //#region ../../packages/storage/src/database_schema.ts
-var se = "tavern_canvas_v3", ce = {
+var ce = "tavern_canvas_v3", le = {
 	provider_profiles: {
 		key_path: "record_key",
 		indexes: [
@@ -108,7 +108,7 @@ var se = "tavern_canvas_v3", ce = {
 		indexes: ["namespace", "updated_at"],
 		since_version: 7
 	}
-}, le = [
+}, ue = [
 	"knowledge_entries",
 	"vocabularies",
 	"vocabulary_groups",
@@ -122,7 +122,7 @@ var se = "tavern_canvas_v3", ce = {
 	o(),
 	s(u),
 	ee(r(), u)
-])), d = r().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), f = r().regex(/^[a-f0-9]{64}$/u), p = ne({ offset: !0 }), m = r().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), ue = {
+])), d = r().regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u), f = r().regex(/^[a-f0-9]{64}$/u), p = ne({ offset: !0 }), m = r().min(1).max(128).refine((e) => e === e.trim(), "namespace must not have surrounding whitespace").refine((e) => !e.includes("\0"), "namespace must not contain NUL"), de = {
 	schema_version: n(1),
 	id: d,
 	namespace: m,
@@ -133,16 +133,16 @@ var se = "tavern_canvas_v3", ce = {
 };
 function h(e) {
 	return a({
-		...ue,
+		...de,
 		...e
 	});
 }
-var g = r().min(1).max(128), _ = e([l().int().nonnegative(), r().min(1).max(128)]), de = r().min(1).max(64), fe = r().min(1).max(128), v = h({ provider_id: g }), y = h({}), b = h({}), x = h({}), S = h({}), C = h({}), w = h({}), T = h({}), pe = h({}), me = h({
+var g = r().min(1).max(128), _ = e([l().int().nonnegative(), r().min(1).max(128)]), fe = r().min(1).max(64), pe = r().min(1).max(128), v = h({ provider_id: g }), y = h({}), b = h({}), x = h({}), S = h({}), C = h({}), w = h({}), T = h({}), me = h({}), he = h({
 	data_version: _,
-	state: de
-}), he = h({
+	state: fe
+}), ge = h({
 	data_version: _,
-	kind: fe
+	kind: pe
 }), E = h({
 	image_sha256: f,
 	model_id: r().min(1).max(128),
@@ -165,27 +165,13 @@ var g = r().min(1).max(128), _ = e([l().int().nonnegative(), r().min(1).max(128)
 	]),
 	byte_length: l().int().positive(),
 	blob: O
-}), ge = a({
+}), _e = a({
 	generation_anchor: f,
 	scene_description: r().trim().min(1).max(12e3),
 	negative_constraints: r().trim().max(4e3).optional(),
 	context_turns: l().int().min(0).max(12).optional(),
 	style_preset_id: d.optional(),
 	image_count: l().int().min(1).max(4).optional()
-}), _e = a({
-	code: c([
-		"auth_failed",
-		"rate_limited",
-		"content_blocked",
-		"invalid_request",
-		"provider_unavailable",
-		"timed_out",
-		"cancelled",
-		"malformed_response"
-	]),
-	retryable: i(),
-	retry_after_ms: l().int().nonnegative().optional(),
-	status_code: l().int().min(100).max(599).optional()
 }), j = h({
 	request_id: d,
 	request_digest: f,
@@ -194,7 +180,7 @@ var g = r().min(1).max(128), _ = e([l().int().nonnegative(), r().min(1).max(128)
 	chat_id: r().min(1).max(512),
 	requested_swipe_id: l().int().nonnegative(),
 	provider_id: g,
-	arguments: ge,
+	arguments: _e,
 	state: c([
 		"queued",
 		"preparing",
@@ -206,7 +192,7 @@ var g = r().min(1).max(128), _ = e([l().int().nonnegative(), r().min(1).max(128)
 		"attached",
 		"orphaned"
 	]),
-	error: _e.nullable(),
+	error: oe.nullable(),
 	image_ids: s(d),
 	automatic: i().optional()
 }), M = {
@@ -215,9 +201,9 @@ var g = r().min(1).max(128), _ = e([l().int().nonnegative(), r().min(1).max(128)
 	comfy_workflows: b,
 	novelai_vibes: x,
 	character_profiles: S,
-	regex_rules: pe,
-	vocabulary_packages: me,
-	vocabulary_shards: he,
+	regex_rules: me,
+	vocabulary_packages: he,
+	vocabulary_shards: ge,
 	image_records: D,
 	generation_jobs: j,
 	novelai_vibe_encodings: E,
@@ -270,8 +256,8 @@ function I(e, t, n) {
 }
 function ye(e, t, n, r, i) {
 	if (!(t >= 9)) {
-		for (let t of le) e.objectStoreNames.contains(t) && e.deleteObjectStore(t);
-		for (let [n, r] of Object.entries(ce)) {
+		for (let t of ue) e.objectStoreNames.contains(t) && e.deleteObjectStore(t);
+		for (let [n, r] of Object.entries(le)) {
 			if (r.since_version <= t) continue;
 			e.objectStoreNames.contains(n) && e.deleteObjectStore(n);
 			let i = e.createObjectStore(n, { keyPath: r.key_path });
@@ -299,7 +285,7 @@ function be(e) {
 	}), e.addEventListener("versionchange", n), i;
 }
 function z() {
-	return L === null ? (R === null && (R = oe(se, 9, { upgrade: ye }).then((e) => {
+	return L === null ? (R === null && (R = se(ce, 9, { upgrade: ye }).then((e) => {
 		let t = be(e);
 		return L = t, t;
 	}).finally(() => {
@@ -585,7 +571,7 @@ var Pe = class extends W {
 	}
 }, Be = class extends W {
 	constructor(e) {
-		super(e, "regex_rules", pe);
+		super(e, "regex_rules", me);
 	}
 }, Ve = class extends W {
 	constructor(e) {
@@ -597,11 +583,11 @@ var Pe = class extends W {
 	}
 }, X = class extends W {
 	constructor(e) {
-		super(e, "vocabulary_packages", me);
+		super(e, "vocabulary_packages", he);
 	}
 }, Z = class extends W {
 	constructor(e) {
-		super(e, "vocabulary_shards", he);
+		super(e, "vocabulary_shards", ge);
 	}
 }, Ue = class extends W {
 	constructor(e) {

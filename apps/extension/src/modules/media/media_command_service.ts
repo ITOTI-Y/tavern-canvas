@@ -25,6 +25,7 @@ import type {
   ProviderProfile,
   ProviderTransport,
 } from "@tavern-canvas/providers";
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import {
   create_generation_job_repository,
   type GenerationJob,
@@ -152,15 +153,21 @@ export async function persist_generated_images(
 
 const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
-/** The provider's 429 classification, which the queue only reads from a JobExecutorFailure. */
-function rate_limit_failure(error: unknown): JobExecutorFailure | null {
+/** The queue records only a JobExecutorFailure's code; any other error is stored as `provider_unavailable`. */
+function provider_failure(error: unknown): unknown {
+  if (error instanceof ProviderTransportBoundaryError) {
+    return new JobExecutorFailure({
+      code: error.code === "configuration" ? "not_configured" : "malformed_response",
+      retryable: false,
+    });
+  }
   if (error instanceof Error && "provider_error" in error) {
     const parsed = ProviderErrorSchema.safeParse(error.provider_error);
-    if (parsed.success && parsed.data.code === "rate_limited") {
+    if (parsed.success) {
       return new JobExecutorFailure(parsed.data);
     }
   }
-  return null;
+  return error;
 }
 
 export interface ProviderProfileResolver {
@@ -207,11 +214,16 @@ export class MediaJobExecutor implements JobExecutor {
     try {
       adapter_outputs = await this.#execute_adapter(request, control);
     } catch (error) {
-      throw rate_limit_failure(error) ?? error;
+      throw provider_failure(error);
     }
     const outputs = await this.#finish(request, adapter_outputs);
 
-    const image_ids = await this.#persist_outputs(job, outputs);
+    let image_ids: readonly string[];
+    try {
+      image_ids = await this.#persist_outputs(job, outputs);
+    } catch {
+      throw new JobExecutorFailure({ code: "storage_failed", retryable: false });
+    }
     return { image_ids };
   }
 

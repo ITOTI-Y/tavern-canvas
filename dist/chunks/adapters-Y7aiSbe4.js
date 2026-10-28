@@ -2,18 +2,18 @@ import { n as e, t } from "./sha2-BGNex9vj.js";
 import { _ as n, c as r, d as i, h as a, i as o, m as s, p as c, r as l, t as u, u as d, v as f, y as p } from "./schemas-DMBLWk59.js";
 import { t as m } from "./ids-stC4fUL8.js";
 import { a as h, c as g, s as _, u as v } from "./novelai-Dh4UVw5r.js";
-import { c as y, l as b, o as ee, s as x, t as S } from "./provider-ByHYrbSK.js";
+import { c as y, l as b, o as ee, s as x, t as S } from "./provider-C7olz4RN.js";
 import { i as C } from "./novelai_models-CXz0Nwhv.js";
 import { t as w } from "./novelai_prompt_presets-Cxcc0ebv.js";
-import { a as T, c as E, i as D, o as te, r as O, s as ne } from "./provider_transport-BuXjRit-.js";
+import { a as T, c as E, i as D, l as O, o as te, r as k } from "./provider_transport-Rt52LV_e.js";
 //#region ../../packages/contracts/src/providers/novelai_account.ts
-var re = d().int().nonnegative(), ie = i({
+var ne = d().int().nonnegative(), re = i({
 	tier: d().int().min(0).max(3),
 	active: o(),
 	expiresAt: d().int().nonnegative(),
 	trainingStepsLeft: i({
-		fixedTrainingStepsLeft: re,
-		purchasedTrainingSteps: re
+		fixedTrainingStepsLeft: ne,
+		purchasedTrainingSteps: ne
 	}),
 	usage: i({
 		percent: d(),
@@ -21,16 +21,16 @@ var re = d().int().nonnegative(), ie = i({
 		isNegative: o(),
 		timeUntilNextPercent: d().nonnegative()
 	}).optional()
-}), ae = [
+}), ie = [
 	"paper",
 	"tablet",
 	"scroll",
 	"opus"
 ];
-function oe(e) {
-	let t = ie.parse(e), n = t.trainingStepsLeft.fixedTrainingStepsLeft, r = t.trainingStepsLeft.purchasedTrainingSteps;
+function ae(e) {
+	let t = re.parse(e), n = t.trainingStepsLeft.fixedTrainingStepsLeft, r = t.trainingStepsLeft.purchasedTrainingSteps;
 	return {
-		tier: ae[t.tier] ?? "paper",
+		tier: ie[t.tier] ?? "paper",
 		tier_level: t.tier,
 		active: t.active,
 		expires_at: (/* @__PURE__ */ new Date(t.expiresAt * 1e3)).toISOString(),
@@ -47,7 +47,7 @@ function oe(e) {
 }
 //#endregion
 //#region ../../packages/providers/src/image_bytes.ts
-function k(e, t) {
+function A(e, t) {
 	let n = e.indexOf(","), r = e.startsWith("data:") ? n < 0 ? "" : e.slice(n + 1) : e;
 	if (r.length === 0 || r.length % 4 == 1 || !/^[A-Za-z0-9+/]*={0,2}$/u.test(r)) throw N();
 	let i;
@@ -59,18 +59,18 @@ function k(e, t) {
 	if (i.length === 0 || i.length > t) throw N();
 	return Uint8Array.from(i, (e) => e.charCodeAt(0));
 }
-function A(e) {
+function j(e) {
 	let t = "", n = 32768;
 	for (let r = 0; r < e.length; r += n) t += String.fromCharCode(...e.subarray(r, r + n));
 	return btoa(t);
 }
-function se(e) {
+function oe(e) {
 	if (e.length >= 8 && e[0] === 137 && e[1] === 80 && e[2] === 78 && e[3] === 71 && e[4] === 13 && e[5] === 10 && e[6] === 26 && e[7] === 10) return "image/png";
 	if (e.length >= 4 && e[0] === 255 && e[1] === 216 && e[2] === 255) return "image/jpeg";
 	if (e.length >= 12 && e[0] === 82 && e[1] === 73 && e[2] === 70 && e[3] === 70 && e[8] === 87 && e[9] === 69 && e[10] === 66 && e[11] === 80) return "image/webp";
 }
-function ce(n, r, i, a) {
-	let o = se(n);
+function se(n, r, i, a) {
+	let o = oe(n);
 	if (o === void 0 || !a.includes(o)) throw N();
 	let s = t(n), c = e(s), l = s.slice(0, 16);
 	l[6] = (l[6] ?? 0) & 15 | 80, l[8] = (l[8] ?? 0) & 63 | 128;
@@ -84,13 +84,13 @@ function ce(n, r, i, a) {
 		...i === void 0 ? {} : { height: i }
 	};
 }
-function j(e, t, n, r) {
+function M(e, t, n, r) {
 	return {
-		asset: ce(e, t, n, r),
+		asset: se(e, t, n, r),
 		bytes: e
 	};
 }
-function M(e, t) {
+function ce(e, t) {
 	return t === void 0 ? e : {
 		...e,
 		seed: t
@@ -199,7 +199,7 @@ async function z(e, t, n) {
 		try {
 			return await t(structuredClone(e), s);
 		} catch (e) {
-			let t = ne(e, n.signal);
+			let t = E(e, n.signal);
 			if (!t.provider_error.retryable || s >= r) throw t;
 			let c = Math.max(Math.min(t.provider_error.retry_after_ms ?? 0, o), ge(s, i, a, n.random));
 			try {
@@ -503,11 +503,11 @@ var Oe = s({
 				signal: e.signal
 			}, this.#t, this.#n, !0);
 			if (f += n.body.byteLength, f > i.max_response_bytes) throw N();
-			d.push(j(n.body, void 0, void 0, i.output_mime_type_allowlist));
+			d.push(M(n.body, void 0, void 0, i.output_mime_type_allowlist));
 		}
 		return {
 			state: "completed",
-			result: S.parse(M({
+			result: S.parse(ce({
 				request_id: r.request_id,
 				provider_id: "comfyui",
 				assets: d.map(({ asset: e }) => e)
@@ -538,7 +538,7 @@ var Oe = s({
 			route: "/queue",
 			method: "POST",
 			body: new TextEncoder().encode(JSON.stringify({ delete: [t.submission_id] })),
-			max_request_bytes: O(n.max_input_asset_bytes),
+			max_request_bytes: k(n.max_input_asset_bytes),
 			content_type: "application/json",
 			max_response_bytes: n.max_response_bytes,
 			signal: e.signal
@@ -555,7 +555,7 @@ async function Ie(e, t, n, r, i) {
 			asset: t
 		});
 	}
-	let s = O(n.max_input_asset_bytes), c = {};
+	let s = k(n.max_input_asset_bytes), c = {};
 	for (let { binding_name: o, asset: l } of a) {
 		let a = le({
 			type: "input",
@@ -629,7 +629,7 @@ async function G(e, t, n, r, i, a) {
 	try {
 		return await o(t, 0);
 	} catch (t) {
-		throw ne(t, e.signal);
+		throw E(t, e.signal);
 	}
 }
 function ze(e, t) {
@@ -640,7 +640,7 @@ function ze(e, t) {
 		status_code: 451
 	});
 	let n = L(e.headers["retry-after"] ?? null, t.now());
-	throw new T(E(e.status, {
+	throw new T(O(e.status, {
 		recoverable: Ne.has(e.status),
 		...n === void 0 ? {} : { retry_after_ms: n }
 	}));
@@ -755,10 +755,10 @@ var We = s({
 			a += o, i.push({
 				type: "image",
 				mime_type: n.media_type,
-				data: A(n.bytes)
+				data: j(n.bytes)
 			});
 		}
-		let o = O(r.max_input_asset_bytes), s = new TextEncoder().encode(JSON.stringify({
+		let o = k(r.max_input_asset_bytes), s = new TextEncoder().encode(JSON.stringify({
 			model: n.model_id,
 			input: i,
 			response_format: {
@@ -805,9 +805,9 @@ var We = s({
 			if (a.length !== 1) throw N();
 			let u = a[0];
 			if (u === void 0 || u.mime_type !== n.output_mime_type || u.data === void 0) throw N();
-			let d = k(u.data, r.max_response_bytes - l);
+			let d = A(u.data, r.max_response_bytes - l);
 			l += d.byteLength;
-			let f = j(d, void 0, void 0, r.output_mime_type_allowlist);
+			let f = M(d, void 0, void 0, r.output_mime_type_allowlist);
 			if (f.asset.media_type !== n.output_mime_type) throw N();
 			c.push(f);
 		}
@@ -832,7 +832,7 @@ var We = s({
 function Ye(e, t) {
 	if (e.status >= 200 && e.status < 300) return;
 	let n = L(e.headers["retry-after"] ?? null, t.now());
-	throw new T(E(e.status, {
+	throw new T(O(e.status, {
 		recoverable: qe.has(e.status),
 		...n === void 0 ? {} : { retry_after_ms: n }
 	}));
@@ -888,7 +888,7 @@ function ot(e, t) {
 		case "upscale": return {
 			route: "/ai/upscale",
 			body: {
-				image: A(X(t, e.image_asset_id).bytes),
+				image: j(X(t, e.image_asset_id).bytes),
 				model: et,
 				declared_blur_sigma: 0
 			}
@@ -900,7 +900,7 @@ function ot(e, t) {
 				use_new_shared_trial: !0,
 				width: e.width,
 				height: e.height,
-				image: A(X(t, e.image_asset_id).bytes),
+				image: j(X(t, e.image_asset_id).bytes),
 				...st(e)
 			}
 		};
@@ -1070,7 +1070,7 @@ function bt(e, t, n) {
 		}),
 		reference_strength_multiple: a
 	} : {
-		reference_image_multiple: r.map((e) => A(X(n, e.asset_id).bytes)),
+		reference_image_multiple: r.map((e) => j(X(n, e.asset_id).bytes)),
 		reference_strength_multiple: a,
 		reference_information_extracted_multiple: r.map((e) => e.information_extracted)
 	};
@@ -1080,7 +1080,7 @@ function xt(e, t, n) {
 	if (r.length === 0) return {};
 	if (!e.character_reference) throw P();
 	return {
-		director_reference_images: r.map((e) => A(X(n, e.asset_id).bytes)),
+		director_reference_images: r.map((e) => j(X(n, e.asset_id).bytes)),
 		director_reference_descriptions: r.map((e) => ({
 			caption: {
 				base_caption: at[e.description],
@@ -1097,15 +1097,15 @@ function St(e, t, n) {
 	switch (e.action) {
 		case "generate": return {};
 		case "img2img": return {
-			image: A(X(t, e.image_asset_id).bytes),
+			image: j(X(t, e.image_asset_id).bytes),
 			strength: e.strength,
 			noise: e.noise,
 			extra_noise_seed: n === 0 ? it : n - 1,
 			color_correct: !1
 		};
 		case "infill": return {
-			image: A(X(t, e.image_asset_id).bytes),
-			mask: A(X(t, e.mask_asset_id).bytes),
+			image: j(X(t, e.image_asset_id).bytes),
+			mask: j(X(t, e.mask_asset_id).bytes),
 			inpaintImg2ImgStrength: e.inpaint_strength,
 			...e.inpaint_strength === 1 ? {} : { img2img: {
 				strength: e.inpaint_strength,
@@ -1151,9 +1151,9 @@ async function Tt(e, t, n, r, i, a = ["image/png", "image/webp"]) {
 		else if (o.startsWith("multipart/")) s = { images: At(e, t, r, i) };
 		else throw N();
 		if (s.images.length !== n.output_count) throw N();
-		let c = s.images.map((e) => j(e, n.width, n.height, a));
+		let c = s.images.map((e) => M(e, n.width, n.height, a));
 		return {
-			result: S.parse(M({
+			result: S.parse(ce({
 				request_id: n.request_id,
 				provider_id: "novelai",
 				assets: c.map(({ asset: e }) => e)
@@ -1168,7 +1168,7 @@ function Et(e, t) {
 	let n = new TextDecoder("utf-8", { fatal: !0 }).decode(e), r = wt.parse(JSON.parse(n)).images;
 	if (r.sort((e, t) => e.index - t.index), r.some((e, t) => e.index !== t)) throw N();
 	let i = 0, a = r.map((e) => {
-		let n = k(e.image, t - i);
+		let n = A(e.image, t - i);
 		return i += n.byteLength, n;
 	}), o = r[0]?.seed;
 	return o === void 0 ? { images: a } : {
@@ -1322,7 +1322,7 @@ var Ft = {
 	async submit(e, t) {
 		let n = this.#n(zt(t)), r = Bt(e.profile);
 		if (_(n) && !r.model_allowlist.includes(n.model_id)) throw P();
-		let i = await Vt(e, n, r.max_input_asset_bytes), a = O(r.max_input_asset_bytes), o = await R(n, async (t, n) => {
+		let i = await Vt(e, n, r.max_input_asset_bytes), a = k(r.max_input_asset_bytes), o = await R(n, async (t, n) => {
 			let o = ot(t, i), s = this.#e.now(), c = await e.transport.execute({
 				route: o.route,
 				method: "POST",
@@ -1347,7 +1347,7 @@ var Ft = {
 			});
 			if (c.status < 200 || c.status >= 300) {
 				let e = L(c.headers["retry-after"] ?? null, this.#e.now());
-				throw new T(E(c.status, {
+				throw new T(O(c.status, {
 					recoverable: !1,
 					...e === void 0 ? {} : { retry_after_ms: e }
 				}));
@@ -1459,7 +1459,7 @@ var Ut = s({
 	async submit(e, t) {
 		let n = tn(t), r = nn(e.profile);
 		if (!r.model_allowlist.includes(n.model_id) || !r.output_mime_type_allowlist.includes(on(n.output_format))) throw P();
-		let i = O(r.max_input_asset_bytes), a = n.mode === "generate" ? Jt(n, e.signal, r.max_response_bytes, i) : await Yt(e, n, r.max_input_asset_bytes, r.max_response_bytes, i), o = await R(n, async (t, n) => {
+		let i = k(r.max_input_asset_bytes), a = n.mode === "generate" ? Jt(n, e.signal, r.max_response_bytes, i) : await Yt(e, n, r.max_input_asset_bytes, r.max_response_bytes, i), o = await R(n, async (t, n) => {
 			let r = this.#e.now(), i = await e.transport.execute(a);
 			return en(e, t.request_id, n, i, r, this.#e), Qt(i, this.#e), i;
 		}, {
@@ -1478,8 +1478,8 @@ var Ut = s({
 		let c = an(n.size), l = [], u = 0;
 		for (let t of s.data) {
 			let i;
-			if (i = "b64_json" in t ? k(t.b64_json, r.max_response_bytes - u) : await Zt(e, t.url, r, r.max_response_bytes - u, n, this.#t, this.#e), u += i.byteLength, u > r.max_response_bytes) throw N();
-			let a = j(i, c.width, c.height, r.output_mime_type_allowlist);
+			if (i = "b64_json" in t ? A(t.b64_json, r.max_response_bytes - u) : await Zt(e, t.url, r, r.max_response_bytes - u, n, this.#t, this.#e), u += i.byteLength, u > r.max_response_bytes) throw N();
+			let a = M(i, c.width, c.height, r.output_mime_type_allowlist);
 			if (a.asset.media_type !== on(n.output_format)) throw N();
 			l.push(a);
 		}
@@ -1605,7 +1605,7 @@ function Qt(e, t) {
 		status_code: e.status
 	});
 	let n = L(e.headers["retry-after"] ?? null, t.now());
-	throw new T(E(e.status, {
+	throw new T(O(e.status, {
 		recoverable: Kt.has(e.status),
 		...n === void 0 ? {} : { retry_after_ms: n }
 	}));
@@ -1678,7 +1678,7 @@ function cn(e, t) {
 		}))
 	] }), e.controlnet !== void 0 && e.controlnet.length > 0 && (a.controlnet = { args: e.controlnet.map((e) => ({
 		enabled: !0,
-		image: A(fn(t, e.asset_id).bytes),
+		image: j(fn(t, e.asset_id).bytes),
 		module: e.module,
 		model: e.model_id,
 		weight: e.weight,
@@ -1721,7 +1721,7 @@ function dn(e, t) {
 	if (e.mode !== "img2img") return {};
 	if (e.hires_fix !== void 0 || e.denoise_strength === void 0) throw P();
 	return {
-		init_images: [A(fn(t, e.input_asset_id).bytes)],
+		init_images: [j(fn(t, e.input_asset_id).bytes)],
 		denoising_strength: e.denoise_strength
 	};
 }
@@ -1754,11 +1754,11 @@ function _n(e, t, n, r = [
 		if (o.length !== t.output_count) throw N();
 		let c = t.hires_fix === void 0 ? t.width : Math.round(t.width * t.hires_fix.scale), l = t.hires_fix === void 0 ? t.height : Math.round(t.height * t.hires_fix.scale), u = 0, d = o.map((e) => {
 			if (typeof e != "string") throw N();
-			let t = k(e, n - u);
-			return u += t.byteLength, j(t, c, l, r);
+			let t = A(e, n - u);
+			return u += t.byteLength, M(t, c, l, r);
 		}), f = vn(s);
 		return {
-			result: S.parse(M({
+			result: S.parse(ce({
 				request_id: t.request_id,
 				provider_id: "sd_webui",
 				assets: d.map(({ asset: e }) => e)
@@ -1829,7 +1829,7 @@ var yn = s({
 	async submit(e, t) {
 		let n = Cn(t), r = wn(e.profile);
 		Tn(r, n);
-		let i = await En(e, n, r.max_input_asset_bytes), a = O(r.max_input_asset_bytes);
+		let i = await En(e, n, r.max_input_asset_bytes), a = k(r.max_input_asset_bytes);
 		return {
 			state: "completed",
 			..._n((await R(n, async (t, n) => {
@@ -1857,7 +1857,7 @@ var yn = s({
 				});
 				if (l.status < 200 || l.status >= 300) {
 					let e = L(l.headers["retry-after"] ?? null, this.#e.now());
-					throw new T(E(l.status, {
+					throw new T(O(l.status, {
 						recoverable: xn.has(l.status),
 						...e === void 0 ? {} : { retry_after_ms: e }
 					}));
@@ -1881,7 +1881,7 @@ var yn = s({
 			signal: e.signal,
 			max_response_bytes: n.max_response_bytes
 		});
-		if (r.status < 200 || r.status >= 300) throw new T(E(r.status));
+		if (r.status < 200 || r.status >= 300) throw new T(O(r.status));
 	}
 };
 function Cn(e) {
@@ -1915,7 +1915,7 @@ async function En(e, t, n) {
 //#region ../../packages/providers/src/novelai/novelai_client.ts
 var Dn = 65536, On = 8388608;
 function kn(e) {
-	if (e.status < 200 || e.status >= 300) throw new T(E(e.status, { recoverable: !1 }));
+	if (e.status < 200 || e.status >= 300) throw new T(O(e.status, { recoverable: !1 }));
 }
 async function An(e, t) {
 	let n = await e.execute({
@@ -1927,7 +1927,7 @@ async function An(e, t) {
 	});
 	kn(n);
 	try {
-		return oe(JSON.parse(new TextDecoder().decode(n.body)));
+		return ae(JSON.parse(new TextDecoder().decode(n.body)));
 	} catch {
 		throw N();
 	}
@@ -1935,7 +1935,7 @@ async function An(e, t) {
 async function jn(e, t) {
 	if (t.image.byteLength === 0) throw P();
 	let n = new TextEncoder().encode(JSON.stringify({
-		image: A(t.image),
+		image: j(t.image),
 		information_extracted: t.information_extracted,
 		model: t.model_id
 	})), r = await e.execute({
@@ -1949,7 +1949,7 @@ async function jn(e, t) {
 		signal: t.signal
 	});
 	if (kn(r), r.body.byteLength === 0) throw N();
-	return A(r.body);
+	return j(r.body);
 }
 //#endregion
 export { Fe as ComfyUiAdapter, Je as GoogleImageAdapter, Rt as NovelAiAdapter, qt as OpenAiImageAdapter, Sn as SdWebuiAdapter, jn as encode_novelai_vibe, An as fetch_novelai_account };

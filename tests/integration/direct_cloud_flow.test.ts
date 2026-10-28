@@ -304,7 +304,7 @@ describe("direct cloud generation flow", () => {
     });
     const failed = await wait_for_state(harness.capabilities, submitted.job_id, "failed");
 
-    expect(failed.error).toEqual({ code: "provider_unavailable", retryable: false });
+    expect(failed.error).toEqual({ code: "not_configured", retryable: false });
     expect(harness.requests).toEqual([]);
     await harness.composition.dispose();
   });

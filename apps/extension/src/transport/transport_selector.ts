@@ -1,4 +1,5 @@
 import { direct_image_catalog_entry, type ProviderId } from "@tavern-canvas/contracts";
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
 import { is_loopback_origin, normalize_http_origin } from "./http_origin.js";
 
@@ -22,9 +23,9 @@ export type TransportSelection =
     }
   | { readonly kind: "local_direct"; readonly endpoint: string };
 
-export class TransportConfigurationError extends Error {
+export class TransportConfigurationError extends ProviderTransportBoundaryError {
   constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
+    super("configuration", message, options);
     this.name = "TransportConfigurationError";
   }
 }

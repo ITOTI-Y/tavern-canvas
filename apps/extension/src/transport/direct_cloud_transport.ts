@@ -1,3 +1,4 @@
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import {
   DirectRouteRejectedError,
   resolve_direct_url,
@@ -15,11 +16,7 @@ import {
 
 import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
 import { execute_bounded_fetch, type ProviderFetch } from "./browser_fetch.js";
-import {
-  ProviderTransportBoundaryError,
-  validate_provider_operation,
-  validate_remote_operation,
-} from "./provider_operations.js";
+import { validate_provider_operation, validate_remote_operation } from "./provider_operations.js";
 
 export interface DirectCloudTransportOptions {
   readonly catalog_entry: DirectRouteCatalogEntry;

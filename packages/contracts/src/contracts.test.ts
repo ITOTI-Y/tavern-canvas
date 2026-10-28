@@ -319,6 +319,8 @@ describe("provider boundary", () => {
       "timed_out",
       "cancelled",
       "malformed_response",
+      "not_configured",
+      "storage_failed",
     ]);
   });
 

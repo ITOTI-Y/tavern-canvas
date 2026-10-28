@@ -8,7 +8,7 @@ import {
 } from "../host/sillytavern_secret_resolver.js";
 import type { ProviderFetch } from "./browser_fetch.js";
 import { DirectCloudTransport } from "./direct_cloud_transport.js";
-import { ProviderTransportBoundaryError } from "./provider_operations.js";
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
 const REFERENCE = "tavern_canvas:primary:11111111-1111-4111-8111-111111111111:novelai_token";
 const PLAINTEXT = "sk-plaintext-canary-value";

@@ -19,6 +19,19 @@ export class ProviderAdapterError extends Error {
   }
 }
 
+export type ProviderTransportBoundaryErrorCode = "configuration" | "malformed_response";
+
+/** Raised by a transport before or after the network call; `configuration` means the call cannot be made as the profile is set up. */
+export class ProviderTransportBoundaryError extends Error {
+  readonly code: ProviderTransportBoundaryErrorCode;
+
+  constructor(code: ProviderTransportBoundaryErrorCode, message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ProviderTransportBoundaryError";
+    this.code = code;
+  }
+}
+
 export class ProviderNetworkError extends Error {
   constructor(options?: ErrorOptions) {
     super("Provider network request failed", options);
@@ -68,6 +81,9 @@ export function normalize_provider_failure(
   }
   if (is_dom_error(error, "TimeoutError")) {
     return new ProviderAdapterError({ code: "timed_out", retryable: true });
+  }
+  if (error instanceof ProviderTransportBoundaryError && error.code === "configuration") {
+    return new ProviderAdapterError({ code: "not_configured", retryable: false });
   }
   if (error instanceof ProviderNetworkError) {
     return new ProviderAdapterError({ code: "provider_unavailable", retryable: true });

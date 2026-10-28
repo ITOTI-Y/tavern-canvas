@@ -720,7 +720,9 @@ var e = {
 			provider_unavailable: "服务商不可用",
 			timed_out: "超时",
 			cancelled: "已取消",
-			malformed_response: "服务商返回了无法解析的结果"
+			malformed_response: "服务商返回了无法解析的结果",
+			not_configured: "图像服务配置不完整：缺少或无法读取 API 密钥，或服务地址无效",
+			storage_failed: "图片无法保存到浏览器存储，存储空间可能已满"
 		}
 	},
 	prompt_tags: {

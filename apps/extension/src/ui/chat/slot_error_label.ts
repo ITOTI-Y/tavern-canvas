@@ -25,5 +25,9 @@ export function slot_error_label(t: Translate, error: string): string {
       return t("chat.errors.cancelled");
     case "malformed_response":
       return t("chat.errors.malformed_response");
+    case "not_configured":
+      return t("chat.errors.not_configured");
+    case "storage_failed":
+      return t("chat.errors.storage_failed");
   }
 }

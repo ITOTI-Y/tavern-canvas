@@ -1,3 +1,4 @@
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import type {
   ProviderRemoteAssetOperation,
   ProviderTransport,
@@ -6,11 +7,7 @@ import type {
 } from "@tavern-canvas/providers";
 
 import { execute_bounded_fetch, type ProviderFetch } from "./browser_fetch.js";
-import {
-  ProviderTransportBoundaryError,
-  validate_provider_operation,
-  validate_remote_operation,
-} from "./provider_operations.js";
+import { validate_provider_operation, validate_remote_operation } from "./provider_operations.js";
 import { is_loopback_origin, normalize_http_origin } from "./http_origin.js";
 
 export type { ProviderFetch } from "./browser_fetch.js";

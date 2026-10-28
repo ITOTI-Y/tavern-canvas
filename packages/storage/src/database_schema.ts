@@ -1,4 +1,5 @@
 import type { DBSchema as IdbDBSchema, IDBPDatabase, IDBPTransaction } from "idb";
+import { ProviderErrorSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
@@ -240,22 +241,6 @@ const generation_arguments_schema = z.strictObject({
   image_count: z.number().int().min(1).max(4).optional(),
 });
 
-const provider_error_schema = z.strictObject({
-  code: z.enum([
-    "auth_failed",
-    "rate_limited",
-    "content_blocked",
-    "invalid_request",
-    "provider_unavailable",
-    "timed_out",
-    "cancelled",
-    "malformed_response",
-  ]),
-  retryable: z.boolean(),
-  retry_after_ms: z.number().int().nonnegative().optional(),
-  status_code: z.number().int().min(100).max(599).optional(),
-});
-
 export const GenerationJobSchema = namespaced_schema({
   request_id: UuidSchema,
   request_digest: Sha256Schema,
@@ -276,7 +261,7 @@ export const GenerationJobSchema = namespaced_schema({
     "attached",
     "orphaned",
   ]),
-  error: provider_error_schema.nullable(),
+  error: ProviderErrorSchema.nullable(),
   image_ids: z.array(UuidSchema),
   automatic: z.boolean().optional(),
 });

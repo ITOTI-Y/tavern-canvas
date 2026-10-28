@@ -1,3 +1,4 @@
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import type {
   ProviderRemoteAssetOperation,
   ProviderTransportOperation,
@@ -6,11 +7,7 @@ import type {
 import { describe, expect, it } from "vitest";
 
 import { LocalDirectTransport } from "./local_direct_transport.js";
-import {
-  ProviderTransportBoundaryError,
-  validate_provider_operation,
-  validate_remote_operation,
-} from "./provider_operations.js";
+import { validate_provider_operation, validate_remote_operation } from "./provider_operations.js";
 
 const operation: ProviderTransportOperation = {
   route: "/v1/images/generations",

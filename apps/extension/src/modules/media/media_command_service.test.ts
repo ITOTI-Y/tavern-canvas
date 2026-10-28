@@ -18,7 +18,7 @@ import type {
   ProviderTransport,
   ProviderTransportResponse,
 } from "@tavern-canvas/providers";
-import { ProviderAdapterError } from "@tavern-canvas/providers";
+import { ProviderAdapterError, ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import { describe, expect, it, vi } from "vitest";
 
 import { build_novelai_inpaint_request } from "./inpaint_session.js";
@@ -514,5 +514,41 @@ describe("rate-limited submissions", () => {
     const job = await submit_manual_generation(harness.deps, base(), sd_request());
     await wait_for_state(harness.queue, job.job_id, "failed");
     expect(harness.queue.get(job.job_id)?.error?.code).toBe("rate_limited");
+  });
+});
+
+describe("provider failures", () => {
+  it.each(["auth_failed", "content_blocked", "invalid_request", "not_configured"] as const)(
+    "reports %s instead of provider_unavailable",
+    async (code) => {
+      const harness = create_harness();
+      harness.adapter.reject_next(new ProviderAdapterError({ code, retryable: false }));
+
+      const job = await submit_manual_generation(harness.deps, base(), sd_request());
+      await wait_for_state(harness.queue, job.job_id, "failed");
+      expect(harness.queue.get(job.job_id)?.error?.code).toBe(code);
+    },
+  );
+
+  it("reports a transport that cannot make the call as configured as not_configured", async () => {
+    const harness = create_harness();
+    harness.adapter.reject_next(
+      new ProviderTransportBoundaryError("configuration", "no stored credential"),
+    );
+
+    const job = await submit_manual_generation(harness.deps, base(), sd_request());
+    await wait_for_state(harness.queue, job.job_id, "failed");
+    expect(harness.queue.get(job.job_id)?.error?.code).toBe("not_configured");
+  });
+
+  it("reports an image that could not be saved as storage_failed", async () => {
+    const harness = create_harness();
+    vi.spyOn(harness.store, "put_image").mockRejectedValue(
+      new DOMException("Quota exceeded", "QuotaExceededError"),
+    );
+
+    const job = await submit_manual_generation(harness.deps, base(), sd_request());
+    await wait_for_state(harness.queue, job.job_id, "failed");
+    expect(harness.queue.get(job.job_id)?.error?.code).toBe("storage_failed");
   });
 });

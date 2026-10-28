@@ -36,6 +36,8 @@ export {
   normalize_provider_failure,
   ProviderAdapterError,
   ProviderNetworkError,
+  ProviderTransportBoundaryError,
+  type ProviderTransportBoundaryErrorCode,
   provider_error_from_status,
   type ProviderStatusErrorOptions,
 } from "./provider_error.js";
