@@ -121,6 +121,8 @@ export interface HostAdapter {
   /** `null` while no chat is open. */
   get_active_chat_id(): string | null;
   get_active_chat(): Promise<HostChatSnapshot>;
+  /** The active swipe of one message of the open chat, without reading the rest of the chat. */
+  get_active_swipe_id(message_id: number): number | null;
   subscribe_generation(handler: HostGenerationHandler): () => void;
   subscribe_chat_change(handler: HostChatChangeHandler): () => void;
   /** Fires for every message whose DOM was rebuilt: rendered, updated, edited, swiped or remounted. */

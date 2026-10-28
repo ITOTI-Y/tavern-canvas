@@ -1602,21 +1602,32 @@ function _t(e) {
 }
 //#endregion
 //#region src/ui/chat/use_image_urls.ts
-function vt(e) {
-	let t = /* @__PURE__ */ new Map();
+var vt = 64;
+function yt(e) {
+	e.then((e) => {
+		URL.revokeObjectURL(e);
+	}, () => void 0);
+}
+function bt(e, t = vt) {
+	let n = /* @__PURE__ */ new Map();
 	return S(() => {
-		for (let e of t.values()) e.then((e) => {
-			URL.revokeObjectURL(e);
-		});
-		t.clear();
-	}), (n) => {
-		let r = t.get(n);
-		return r === void 0 && (r = e.read_bytes(n).then((e) => URL.createObjectURL(new Blob([new Uint8Array(e)]))), t.set(n, r), r.catch(() => t.delete(n))), r;
+		for (let e of n.values()) yt(e);
+		n.clear();
+	}), (r) => {
+		let i = n.get(r);
+		if (i !== void 0) return n.delete(r), n.set(r, i), i;
+		let a = e.read_bytes(r).then((e) => URL.createObjectURL(new Blob([new Uint8Array(e)])));
+		n.set(r, a), a.catch(() => n.delete(r));
+		for (let [e, r] of n) {
+			if (n.size <= t) break;
+			n.delete(e), yt(r);
+		}
+		return a;
 	};
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ j({
+var xt = ["onClick"], St = { key: 1 }, Ct = ["onClick"], wt = ["src"], Tt = /* @__PURE__ */ j({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1627,7 +1638,7 @@ var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @
 		promptTags: {}
 	},
 	setup(e) {
-		let t = e, { t: r } = w(), i = v(null), o = v(null), c = vt(t.gallery), l = v(null), u = T(null), d = v(!1);
+		let t = e, { t: r } = w(), i = v(null), o = v(null), c = bt(t.gallery), l = v(null), u = T(null), d = v(!1);
 		async function p(e) {
 			let n = await t.gallery.read_bytes(e);
 			return createImageBitmap(new Blob([new Uint8Array(n)]));
@@ -1742,19 +1753,19 @@ var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @
 				class: k(h(X).button),
 				"data-testid": "analysis-cancel",
 				onClick: (n) => e.service.cancel_analysis(t.message_id)
-			}, D(h(r)("common.actions.cancel")), 11, yt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: h(W)(h(r), t.notice.message) })), 1)], 64)) : (s(), f(O, { key: 2 }, [
+			}, D(h(r)("common.actions.cancel")), 11, xt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: h(W)(h(r), t.notice.message) })), 1)], 64)) : (s(), f(O, { key: 2 }, [
 				C("div", null, D(h(r)("chat.analysis_failed", { reason: h(W)(h(r), t.notice.message) })), 1),
 				t.notice.excerpt === null ? b("", !0) : (s(), f("pre", {
 					key: 0,
 					class: k(h(X).excerpt)
 				}, D(t.notice.excerpt), 3)),
-				t.notice.excerpt === null ? b("", !0) : (s(), f("div", bt, D(h(r)("chat.dialog.parse_failed_hint")), 1)),
+				t.notice.excerpt === null ? b("", !0) : (s(), f("div", St, D(h(r)("chat.dialog.parse_failed_hint")), 1)),
 				C("div", { class: k(h(X).notice_actions) }, [C("button", {
 					type: "button",
 					class: k(h(X).button),
 					"data-testid": "analysis-retry",
 					onClick: (e) => F(t.message_id)
-				}, D(h(r)("chat.dialog.retry")), 11, xt)], 2)
+				}, D(h(r)("chat.dialog.retry")), 11, Ct)], 2)
 			], 64))], 2)], 8, ["to"]))), 128)),
 			o.value === null ? b("", !0) : (s(), x(g, {
 				key: 0,
@@ -1766,7 +1777,7 @@ var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @
 			}, [C("img", {
 				src: o.value,
 				alt: ""
-			}, null, 8, St)], 2)])),
+			}, null, 8, wt)], 2)])),
 			M(Ze, {
 				request: i.value,
 				service: e.service,
@@ -1841,4 +1852,4 @@ var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @
 	}
 });
 //#endregion
-export { Ct as default };
+export { Tt as default };

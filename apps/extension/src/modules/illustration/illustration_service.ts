@@ -196,13 +196,14 @@ export class IllustrationService {
     return this.#pending.get(request_id)?.location ?? null;
   }
 
-  async active_location(message_id: number): Promise<HostSwipeLocation> {
-    const chat = await this.#deps.host.get_active_chat();
-    const message = chat.messages.find((candidate) => candidate.message_id === message_id);
-    if (message === undefined) {
-      throw new Error(`Message ${String(message_id)} is not in the active chat`);
+  /** Reads only this message: it runs on every message render. */
+  active_location(message_id: number): Promise<HostSwipeLocation> {
+    const chat_id = this.#deps.host.get_active_chat_id();
+    const swipe_id = chat_id === null ? null : this.#deps.host.get_active_swipe_id(message_id);
+    if (chat_id === null || swipe_id === null) {
+      return Promise.reject(new Error(`Message ${String(message_id)} is not in the active chat`));
     }
-    return { chat_id: chat.chat_id, message_id, swipe_id: message.active_swipe_id };
+    return Promise.resolve({ chat_id, message_id, swipe_id });
   }
 
   /** Picks paragraphs, writes their slot records and markers; an analyzed swipe is returned as is. */

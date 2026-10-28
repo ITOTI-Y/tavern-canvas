@@ -55,6 +55,7 @@ function create_host(text_element: HTMLElement): HostAdapter {
     capabilities: {},
     get_locale: () => "en",
     get_active_chat_id: () => "chat-1",
+    get_active_swipe_id: (message_id: number) => (message_id === 3 ? 0 : null),
     get_active_chat: () =>
       Promise.resolve({
         chat_id: "chat-1",

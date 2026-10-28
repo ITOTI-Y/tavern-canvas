@@ -1020,6 +1020,9 @@ var An = class {
 		if (!Array.isArray(t)) throw Error("TavernHelper returned invalid chat messages");
 		return t.map(bn);
 	}
+	get_active_swipe_id(e) {
+		return this.#n(e)[0]?.swipe_id ?? null;
+	}
 	get_active_chat() {
 		let e = this.#n("0-{{lastMessageId}}");
 		return Promise.resolve({
@@ -2678,7 +2681,7 @@ var Jr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ye(() => import("./chunks/ChatLayer-De_gjhqX.js")), { t: i } = Ce();
+		let n = t, r = ye(() => import("./chunks/ChatLayer-CSjmT4cE.js")), { t: i } = Ce();
 		function a() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -3394,14 +3397,13 @@ var ca = class {
 	source_of(e) {
 		return this.#t.get(e)?.location ?? null;
 	}
-	async active_location(e) {
-		let t = await this.#e.host.get_active_chat(), n = t.messages.find((t) => t.message_id === e);
-		if (n === void 0) throw Error(`Message ${String(e)} is not in the active chat`);
-		return {
-			chat_id: t.chat_id,
+	active_location(e) {
+		let t = this.#e.host.get_active_chat_id(), n = t === null ? null : this.#e.host.get_active_swipe_id(e);
+		return t === null || n === null ? Promise.reject(/* @__PURE__ */ Error(`Message ${String(e)} is not in the active chat`)) : Promise.resolve({
+			chat_id: t,
 			message_id: e,
-			swipe_id: n.active_swipe_id
-		};
+			swipe_id: n
+		});
 	}
 	async analyze(e) {
 		let t = await this.#e.host.get_active_chat(), n = t.messages.find((t) => t.message_id === e);
@@ -5772,6 +5774,9 @@ var Is = new Ns(), Ls = class {
 	}
 	get_active_chat() {
 		return this.#e.get_active_chat();
+	}
+	get_active_swipe_id(e) {
+		return this.#e.get_active_swipe_id(e);
 	}
 	subscribe_generation(e) {
 		return this.#t.subscribe_generation(e);

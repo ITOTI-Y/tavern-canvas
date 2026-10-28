@@ -58,6 +58,10 @@ export class CompositeHostAdapter implements HostAdapter {
     return this.#helper.get_active_chat();
   }
 
+  get_active_swipe_id(message_id: number): number | null {
+    return this.#helper.get_active_swipe_id(message_id);
+  }
+
   subscribe_generation(handler: HostGenerationHandler): () => void {
     return this.#sillytavern.subscribe_generation(handler);
   }

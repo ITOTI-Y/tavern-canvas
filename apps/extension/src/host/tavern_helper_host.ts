@@ -348,6 +348,10 @@ export class TavernHelperHost {
     return messages.map(validate_chat_message);
   }
 
+  get_active_swipe_id(message_id: number): number | null {
+    return this.#read_messages(message_id)[0]?.swipe_id ?? null;
+  }
+
   get_active_chat(): Promise<HostChatSnapshot> {
     const messages = this.#read_messages("0-{{lastMessageId}}");
     return Promise.resolve({

@@ -55,6 +55,7 @@ class MemoryHost {
     capabilities: {},
     get_locale: () => "en",
     get_active_chat_id: () => this.chat_id,
+    get_active_swipe_id: (message_id: number) => (message_id === 3 ? 0 : null),
     get_active_chat: () =>
       Promise.resolve({
         chat_id: this.chat_id,
@@ -396,6 +397,18 @@ describe("IllustrationService.analyze", () => {
 
     await expect(service.analyze(3)).rejects.toThrow(MessageChangedError);
     expect(service.read(LOCATION)).toBeNull();
+  });
+});
+
+describe("IllustrationService.active_location", () => {
+  it("locates a message's active swipe without reading the whole chat", async () => {
+    const host = new MemoryHost();
+    const { service } = create_service(host);
+    const read_chat = vi.spyOn(host.adapter, "get_active_chat");
+
+    await expect(service.active_location(3)).resolves.toEqual(LOCATION);
+    await expect(service.active_location(9)).rejects.toThrow("not in the active chat");
+    expect(read_chat).not.toHaveBeenCalled();
   });
 });
 
