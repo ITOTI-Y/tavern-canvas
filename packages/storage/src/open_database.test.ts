@@ -42,6 +42,33 @@ describe("tavern_canvas_v3 schema", () => {
     }
   });
 
+  it("keeps existing rows on upgrade, adds missing indexes, and empties only stores with a later reset_version", async () => {
+    const name = "tavern_canvas_v3_upgrade_keeps_rows";
+    const v8 = await openDB(name, 8, {
+      upgrade(database) {
+        database.createObjectStore("provider_profiles", { keyPath: "record_key" });
+        database.createObjectStore("character_profiles", { keyPath: "record_key" });
+      },
+    });
+    await v8.put("provider_profiles", { record_key: "primary:kept", namespace: "primary" });
+    await v8.put("character_profiles", { record_key: "primary:old", namespace: "primary" });
+    v8.close();
+
+    const upgraded = await openDB<DBSchema>(name, DATABASE_VERSION, {
+      upgrade: upgrade_database,
+    });
+
+    expect(await upgraded.count("provider_profiles")).toBe(1);
+    expect(await upgraded.count("character_profiles")).toBe(0);
+    const transaction = upgraded.transaction("provider_profiles", "readonly");
+    expect([...transaction.store.indexNames].sort()).toEqual(
+      [...STORE_DEFINITIONS.provider_profiles.indexes].sort(),
+    );
+    await transaction.done;
+    upgraded.close();
+    await deleteDB(name);
+  });
+
   it("upgrades a v1 database to v2 with the same schema as a fresh v2 install", async () => {
     const upgraded_name = "tavern_canvas_v3_upgrade_v1_to_v2";
     const fresh_name = "tavern_canvas_v3_fresh_v2_install";
@@ -112,7 +139,6 @@ describe("tavern_canvas_v3 schema", () => {
           database.createObjectStore(removed, { keyPath: "record_key" });
         }
         database.createObjectStore("migration_journal", { keyPath: "migration_id" });
-        database.createObjectStore("character_profiles", { keyPath: "record_key" });
       },
     });
     const row = {

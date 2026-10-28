@@ -6,6 +6,15 @@ export const DATABASE_NAME = "tavern_canvas_v3" as const;
 export const DATABASE_VERSION = 9 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
+interface StoreDefinition {
+  readonly key_path: string;
+  readonly indexes: readonly string[];
+  /** The database version that first created the store. */
+  readonly since_version: number;
+  /** Upgrading from an earlier version empties the store. */
+  readonly reset_version?: number;
+}
+
 export const STORE_DEFINITIONS = {
   provider_profiles: {
     key_path: "record_key",
@@ -30,7 +39,8 @@ export const STORE_DEFINITIONS = {
   character_profiles: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
-    since_version: 9,
+    since_version: 1,
+    reset_version: 9,
   },
   regex_rules: {
     key_path: "record_key",
@@ -75,7 +85,8 @@ export const STORE_DEFINITIONS = {
   outfit_profiles: {
     key_path: "record_key",
     indexes: ["namespace", "updated_at"],
-    since_version: 9,
+    since_version: 5,
+    reset_version: 9,
   },
   lora_profiles: {
     key_path: "record_key",
@@ -87,7 +98,7 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 7,
   },
-} as const;
+} as const satisfies Record<string, StoreDefinition>;
 
 /** Stores dropped from the schema; upgrades delete them from databases created before. */
 const REMOVED_STORES = [
@@ -572,7 +583,7 @@ export function upgrade_database(
   database: IDBPDatabase<DBSchema>,
   old_version: number,
   _new_version: number | null,
-  _transaction: IDBPTransaction<DBSchema, StoreName[], "versionchange">,
+  transaction: IDBPTransaction<DBSchema, StoreName[], "versionchange">,
   _event: IDBVersionChangeEvent,
 ): void {
   if (old_version >= DATABASE_VERSION) {
@@ -585,18 +596,26 @@ export function upgrade_database(
   }
   for (const [store_name, definition] of Object.entries(STORE_DEFINITIONS) as [
     StoreName,
-    (typeof STORE_DEFINITIONS)[StoreName],
+    StoreDefinition,
   ][]) {
-    if (definition.since_version <= old_version) {
-      continue;
-    }
-    // A store whose version is newer than the database is rebuilt empty, dropping its old rows.
-    if (database.objectStoreNames.contains(store_name)) {
+    const exists = database.objectStoreNames.contains(store_name);
+    // Only an explicit reset_version drops rows; it marks a release whose rows the code can no longer read.
+    const reset = exists && (definition.reset_version ?? 0) > old_version;
+    if (reset) {
       database.deleteObjectStore(store_name);
     }
-    const store = database.createObjectStore(store_name, { keyPath: definition.key_path });
+    if (!exists || reset) {
+      const store = database.createObjectStore(store_name, { keyPath: definition.key_path });
+      for (const index_name of definition.indexes) {
+        store.createIndex(index_name as never, index_name);
+      }
+      continue;
+    }
+    const store = transaction.objectStore(store_name);
     for (const index_name of definition.indexes) {
-      store.createIndex(index_name as never, index_name);
+      if (!store.indexNames.contains(index_name as never)) {
+        store.createIndex(index_name as never, index_name);
+      }
     }
   }
 }

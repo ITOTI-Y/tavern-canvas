@@ -17,8 +17,8 @@ import { t as Ie } from "./chunks/trash-2-B6ZXZcor.js";
 import { t as Le } from "./chunks/x-CDKrptQJ.js";
 import { a as Re, c as ze, d as Be, i as Ve, l as He, n as Ue, o as We, r as Ge, s as Ke, t as qe, u as Je } from "./chunks/analysis-CGk4eXw5.js";
 import { t as Ye } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
-import { c as Xe, h as Ze, i as Qe, o as $e } from "./chunks/business_repositories-Tf6NN3HM.js";
-import { i as et, n as tt, r as nt, t as rt } from "./chunks/image_store-xf71sJpt.js";
+import { c as Xe, h as Ze, i as Qe, o as $e } from "./chunks/business_repositories-D2L2WCl0.js";
+import { i as et, n as tt, r as nt, t as rt } from "./chunks/image_store-CRQMKjKR.js";
 import { a as it, i as at, n as ot, r as st } from "./chunks/model_json-DNK3Va6h.js";
 import { a as ct, i as lt, n as ut, o as dt, s as R } from "./chunks/provider_transport-ftw8OZD2.js";
 import { n as ft, r as z, t as pt } from "./chunks/tag_normalizer-CEAU4497.js";
@@ -5198,7 +5198,7 @@ function ss(e) {
 			}, a = null;
 			n = i;
 			try {
-				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-6picZUMm.js");
+				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-DaoaWZ6w.js");
 				a = o(e.database, t, r), n = a, i.cancelled && a.cancel(), await a.completed;
 			} finally {
 				(n === i || n === a) && (n = null);
@@ -5208,7 +5208,7 @@ function ss(e) {
 			n?.cancel();
 		},
 		async export_archive() {
-			let { export_archive: t } = await import("./chunks/archive-yP6uFo_K.js");
+			let { export_archive: t } = await import("./chunks/archive-CB0k42aN.js");
 			return t({
 				database: os(e.database),
 				namespace: e.settings.get_settings().active_namespace,
@@ -5216,7 +5216,7 @@ function ss(e) {
 			});
 		},
 		async import_archive(t) {
-			let { import_archive: n } = await import("./chunks/archive-yP6uFo_K.js");
+			let { import_archive: n } = await import("./chunks/archive-CB0k42aN.js");
 			await n({
 				database: os(e.database),
 				archive: t,
@@ -6158,7 +6158,7 @@ async function ac(e) {
 		return i;
 	}), r.generation), _e = e.create_vocabulary_worker === void 0 ? ic() : e.create_vocabulary_worker, ve = o("vocabulary", u === null ? X(Zs) : _e === null ? X("This host has no Worker constructor, so vocabulary search cannot run") : Z(() => ls({
 		async load_catalog() {
-			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-DYV_NPzZ.js");
+			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-L-1FfoDs.js");
 			return new e({
 				current_extension_version: n,
 				open_database_impl: () => Promise.resolve(u)
@@ -6169,7 +6169,7 @@ async function ac(e) {
 			return new e({ create_worker: _e });
 		},
 		async read_active_package() {
-			let { VocabularyPackageStore: e } = await import("./chunks/src-BzSC_ziC.js").then((e) => e.t), t = await new e(u, "vocabulary").find_active_or_confirmed();
+			let { VocabularyPackageStore: e } = await import("./chunks/src-C0h0INdA.js").then((e) => e.t), t = await new e(u, "vocabulary").find_active_or_confirmed();
 			return t === null ? null : {
 				package_id: t.manifest.package_id,
 				data_version: t.manifest.data_version,
