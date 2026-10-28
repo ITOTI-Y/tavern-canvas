@@ -8,9 +8,9 @@ import type { BootstrapProbeResult } from "../host/index.js";
 import type { CapabilityId } from "../ui/contracts/ui_capabilities.js";
 import {
   compose_studio_capabilities,
-  create_provider_transport,
   type ComposeCapabilitiesOptions,
 } from "./compose_capabilities.js";
+import { create_provider_transport } from "./provider_transports.js";
 import { CAPABILITY_UNAVAILABLE_CODE } from "./capability_resolution.js";
 
 const READY_PROBE: BootstrapProbeResult = {

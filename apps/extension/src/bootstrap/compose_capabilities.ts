@@ -1,9 +1,6 @@
 import {
   derive_analysis_credential_reference,
-  ProviderIdSchema,
   RequestIdSchema,
-  Sha256Schema,
-  direct_image_catalog_entry,
   type ImageGenerationRequest,
   type ProviderId,
 } from "@tavern-canvas/contracts";
@@ -13,20 +10,11 @@ import {
   SystemJobTimeSource,
   type RuntimeModule,
 } from "@tavern-canvas/core";
-import type {
-  ProviderAdapter,
-  ProviderAssetReader,
-  ProviderTransport,
-} from "@tavern-canvas/providers";
+import type { ProviderAdapter, ProviderAssetReader } from "@tavern-canvas/providers";
 import {
   create_business_repositories,
   GalleryImageRecordRepository,
-  ImageRecordFieldsSchema,
   open_database,
-  put_image,
-  read_image_bytes,
-  type ProviderProfile,
-  type PutImageRecordMetadata,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
 
@@ -37,7 +25,6 @@ import {
   MediaExecutionPlanRegistry,
   MediaJobExecutor,
   type GeneratedImageStoreDeps,
-  type ImageStorePort,
 } from "../modules/media/media_command_service.js";
 import {
   IllustrationService,
@@ -48,11 +35,8 @@ import { WardrobeService } from "../modules/wardrobe/wardrobe_service.js";
 import {
   IllustrationModule,
   load_slot_prompt_context,
-  slot_library_of,
   new_slot_id,
 } from "../modules/illustration/illustration_module.js";
-import { find_characters } from "../modules/illustration/library_match.js";
-import { NovelAiServiceUnavailableError } from "../modules/novelai/novelai_errors.js";
 import {
   create_prompt_translator,
   type PromptTranslator,
@@ -60,20 +44,13 @@ import {
 import type { NovelAiRuntime } from "../modules/novelai/novelai_runtime.js";
 import { create_sillytavern_settings } from "../storage/sillytavern_settings.js";
 import { SecretBackendRouter } from "../host/secret_backend_router.js";
-import type { SecretResolverPort } from "../host/sillytavern_secret_resolver.js";
 import {
   create_browser_secret_vault,
   create_device_secret_vault,
   type BrowserSecretVaultPort,
 } from "../storage/browser_secret_vault.js";
 import type { ProviderFetch } from "../transport/browser_fetch.js";
-import { DirectCloudTransport } from "../transport/direct_cloud_transport.js";
-import { LocalDirectTransport } from "../transport/local_direct_transport.js";
-import {
-  select_transport,
-  type DirectCloudCandidate,
-  type TransportSelection,
-} from "../transport/transport_selector.js";
+import { select_transport, type TransportSelection } from "../transport/transport_selector.js";
 import type { CapabilityId, StudioCapabilities } from "../ui/contracts/ui_capabilities.js";
 import { create_unavailable_capabilities } from "../ui/controllers/unavailable_capabilities.js";
 import { create_assets_capability } from "./capabilities/assets_capability.js";
@@ -86,22 +63,25 @@ import { create_generation_capability } from "./capabilities/generation_capabili
 import { create_novelai_capability } from "./capabilities/novelai_capability.js";
 import { HostGenerationOriginSource } from "./capabilities/generation_context.js";
 import {
-  VAULT_KEY_FIELD,
   adapter_profile_of,
   create_profiles_capability,
-  read_novelai_defaults,
-  read_prompt_tags,
 } from "./capabilities/profiles_capability.js";
 import { create_prompt_presets_capability } from "./capabilities/prompt_presets_capability.js";
 import { create_settings_capability } from "./capabilities/settings_capability.js";
-import {
-  as_record,
-  read_array,
-  read_number,
-  read_optional_string,
-  read_payload,
-} from "./capabilities/_records.js";
 import { create_vocabulary_capability } from "./capabilities/vocabulary_capability.js";
+import {
+  build_provider_adapters,
+  create_asset_reader,
+  create_image_store_port,
+} from "./image_store_ports.js";
+import { create_illustration_request_builders } from "./illustration_requests.js";
+import {
+  create_novelai_transport,
+  create_provider_transport,
+  describe_active_profile,
+  live_transport,
+  type ActiveProfile,
+} from "./provider_transports.js";
 import {
   capability_unavailable_error,
   resolve_capability,
@@ -153,6 +133,13 @@ const HOST_UNAVAILABLE = "No usable SillyTavern + TavernHelper host pair was det
 const SETTINGS_HOST_UNAVAILABLE =
   "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair";
 
+const NOVELAI_PREPARATION_TIMEOUT_MS = 120_000;
+// NovelAI answers 429 to image requests that arrive together on one account; spacing them avoids it.
+const PROVIDER_START_INTERVAL_MS = { novelai: 1_500 } as const;
+
+const ANALYSIS_KEY_UNREADABLE =
+  "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
+
 function default_estimate_storage(): Promise<{ usage?: number; quota?: number } | undefined> {
   return navigator.storage.estimate();
 }
@@ -163,85 +150,6 @@ function default_vocabulary_worker_factory(): (() => VocabularyWorkerLike) | nul
   }
   return () =>
     new Worker(new URL("../workers/vocabulary_worker.js", import.meta.url), { type: "module" });
-}
-
-async function build_provider_adapters(
-  database: StorageDatabase | null,
-): Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>> {
-  const { ComfyUiAdapter, GoogleImageAdapter, NovelAiAdapter, OpenAiImageAdapter, SdWebuiAdapter } =
-    await import("@tavern-canvas/providers/adapters");
-  const adapters: Record<string, ProviderAdapter<ImageGenerationRequest>> = {
-    novelai: new NovelAiAdapter(),
-    sd_webui: new SdWebuiAdapter(),
-    openai_image: new OpenAiImageAdapter(),
-    google_image: new GoogleImageAdapter(),
-  };
-  if (database !== null) {
-    const repositories = create_business_repositories(database);
-    adapters.comfyui = new ComfyUiAdapter({
-      workflow_store: {
-        async load(workflow_id) {
-          const record = await repositories.comfy_workflows.get("primary", workflow_id);
-          return record?.payload;
-        },
-      },
-    });
-  }
-  return adapters;
-}
-
-function create_asset_reader(
-  database: StorageDatabase,
-  namespace: () => string,
-): ProviderAssetReader {
-  const records = new GalleryImageRecordRepository(database);
-  return {
-    async read(asset_id) {
-      const record = await records.get(namespace(), asset_id);
-      if (record === null) {
-        throw new Error(`Source asset ${asset_id} is not in the image store`);
-      }
-      const bytes = await read_image_bytes(database, record.sha256);
-      if (bytes === null) {
-        throw new Error(`Source asset ${asset_id} has no stored bytes`);
-      }
-      if (record.media_type === "video/mp4") {
-        throw new Error(`Source asset ${asset_id} is a video and cannot be a provider input`);
-      }
-      return { asset_id, media_type: record.media_type, bytes };
-    },
-  };
-}
-
-function to_image_metadata(metadata: Readonly<Record<string, unknown>>): PutImageRecordMetadata {
-  return ImageRecordFieldsSchema.omit({ media_type: true, quarantined: true }).parse(metadata);
-}
-
-function create_image_store_port(
-  database: StorageDatabase,
-  namespace: () => string,
-): ImageStorePort {
-  return {
-    async put_image(input) {
-      const record = await put_image(database, namespace(), {
-        id: input.id,
-        bytes: input.bytes,
-        claimed_media_type: input.claimed_media_type,
-        created_at: input.created_at,
-        metadata: to_image_metadata(input.metadata),
-      });
-      return { id: record.id };
-    },
-    async read_image(id) {
-      const records = new GalleryImageRecordRepository(database);
-      const record = await records.get(namespace(), id);
-      if (record === null) {
-        return null;
-      }
-      const bytes = await read_image_bytes(database, record.sha256);
-      return bytes === null ? null : { bytes, media_type: record.media_type };
-    },
-  };
 }
 
 export async function compose_studio_capabilities(
@@ -611,138 +519,17 @@ export async function compose_studio_capabilities(
                   }),
                   new_id: () => crypto.randomUUID(),
                 }),
-                async build_request({ positive_prompt, negative_prompt, character_prompts }) {
-                  const profile = await require_active_profile();
-                  const [{ build_generation_request }, assets_module, tags_module, catalog] =
-                    await Promise.all([
-                      import("../modules/generation/build_generation_request.js"),
-                      import("../modules/illustration/character_assets.js"),
-                      import("../modules/illustration/prompt_tags.js"),
-                      assets.load(),
-                    ]);
-                  const library = slot_library_of(catalog, host.get_active_chat_id());
-                  const with_prompt_tags = (built: ImageGenerationRequest) =>
-                    tags_module.inject_prompt_tags(
-                      built,
-                      tags_module.effective_prompt_tags({
-                        provider_id: profile.provider_id,
-                        model_id: profile.model_id,
-                        prompt_tags: read_prompt_tags(profile.record),
-                      }),
-                      tags_module.prompt_tag_presets(catalog.prompt_tag),
-                    );
-                  const characters = find_characters(
-                    character_prompts.map((character) => character.name),
-                    library,
-                  );
-                  const request = assets_module.attach_character_loras(
-                    await build_generation_request(
-                      {
-                        provider_id: profile.provider_id,
-                        positive_prompt,
-                        negative_prompt,
-                        image_count: 1,
-                        references: [],
-                        ...(profile.model_id === null ? {} : { model_id: profile.model_id }),
-                      },
-                      RequestIdSchema.parse(crypto.randomUUID()),
-                    ),
-                    characters,
-                    library.loras,
-                  );
-                  if (
-                    request.provider_id !== "novelai" ||
-                    request.action !== "generate" ||
-                    load_novelai_runtime === null ||
-                    repositories === null
-                  ) {
-                    return with_prompt_tags(request);
-                  }
-                  const [{ apply_novelai_defaults }, { reference_image_bytes }, runtime] =
-                    await Promise.all([
-                      import("../modules/novelai/novelai_profile_defaults.js"),
-                      import("../ui/views/assets/reference_image.js"),
-                      load_novelai_runtime(),
-                    ]);
-                  const defaults = read_novelai_defaults(profile.record);
-                  const configured =
-                    defaults === null
-                      ? request
-                      : await apply_novelai_defaults(request, defaults, {
-                          store_input: (bytes) => runtime.store_input(bytes),
-                          async load_vibe(vibe_id) {
-                            const record = await repositories.novelai_vibes.get(
-                              namespace(),
-                              vibe_id,
-                            );
-                            const payload = record === null ? {} : read_payload(record);
-                            return typeof payload.image === "string"
-                              ? {
-                                  image_bytes: reference_image_bytes(payload.image),
-                                  strength: read_number(payload, "strength", 0.6),
-                                  information_extracted: read_number(
-                                    payload,
-                                    "information_extracted",
-                                    1,
-                                  ),
-                                }
-                              : null;
-                          },
-                        });
-                  return with_prompt_tags(
-                    await assets_module.attach_character_references(configured, characters, {
-                      store_reference: (data_url) =>
-                        runtime.store_input(reference_image_bytes(data_url)),
-                    }),
-                  );
-                },
-                async build_edit_request(edit) {
-                  const profile = await read_active_profile();
-                  if (profile?.provider_id !== "novelai" || load_novelai_runtime === null) {
-                    throw new Error("Quick edits need an active NovelAI provider profile");
-                  }
-                  const [
-                    { build_novelai_edit_request },
-                    { compute_generation_anchor },
-                    { DEFAULT_NOVELAI_MODEL_ID },
-                    tags_module,
-                    catalog,
-                  ] = await Promise.all([
-                    import("../modules/illustration/slot_edits.js"),
-                    import("../modules/generation/build_generation_request.js"),
-                    import("../modules/novelai/novelai_request_defaults.js"),
-                    import("../modules/illustration/prompt_tags.js"),
-                    assets.load(),
-                  ]);
-                  const with_prompt_tags = (built: ImageGenerationRequest) =>
-                    tags_module.inject_prompt_tags(
-                      built,
-                      tags_module.effective_prompt_tags({
-                        provider_id: profile.provider_id,
-                        model_id: profile.model_id,
-                        prompt_tags: read_prompt_tags(profile.record),
-                      }),
-                      tags_module.prompt_tag_presets(catalog.prompt_tag),
-                    );
-                  const request_id = RequestIdSchema.parse(crypto.randomUUID());
-                  const context = {
-                    request_id,
-                    generation_anchor: Sha256Schema.parse(
-                      await compute_generation_anchor(request_id),
-                    ),
-                    model_id: profile.model_id ?? DEFAULT_NOVELAI_MODEL_ID,
-                  };
-                  if (edit.kind !== "inpaint") {
-                    return with_prompt_tags(build_novelai_edit_request(edit, context));
-                  }
-                  const runtime = await load_novelai_runtime();
-                  return with_prompt_tags(
-                    build_novelai_edit_request(edit, {
-                      ...context,
-                      mask_asset_id: await runtime.store_input(edit.mask_png),
-                    }),
-                  );
-                },
+                ...create_illustration_request_builders({
+                  assets,
+                  active_chat_id: () => host.get_active_chat_id(),
+                  read_active_profile,
+                  require_active_profile,
+                  novelai:
+                    load_novelai_runtime === null || repositories === null
+                      ? null
+                      : { load_runtime: load_novelai_runtime, repositories },
+                  namespace,
+                }),
                 edits_available: () => last_provider_id === "novelai",
                 resolve_analysis_key,
                 async submit(request) {
@@ -848,125 +635,4 @@ export async function compose_studio_capabilities(
       await settings_adapter?.stop();
     },
   };
-}
-
-export interface ProviderTransportDependencies {
-  readonly secrets: SecretResolverPort | null;
-  readonly fetch?: ProviderFetch;
-}
-
-export function create_provider_transport(
-  selection: TransportSelection,
-  dependencies: ProviderTransportDependencies = { secrets: null },
-): ProviderTransport {
-  const fetch_ = dependencies.fetch;
-  switch (selection.kind) {
-    case "direct_cloud": {
-      const catalog_entry = direct_image_catalog_entry(selection.provider_id);
-      if (catalog_entry === null || dependencies.secrets === null) {
-        throw new Error(
-          `No direct route catalog entry and host credential resolver pair exists for ${selection.provider_id}`,
-        );
-      }
-      return new DirectCloudTransport({
-        catalog_entry,
-        credential_reference: selection.credential_reference,
-        secrets: dependencies.secrets,
-        ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
-      });
-    }
-    case "local_direct":
-      return new LocalDirectTransport({
-        base_url: selection.endpoint,
-        ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
-      });
-  }
-}
-
-const NOVELAI_PREPARATION_TIMEOUT_MS = 120_000;
-// NovelAI answers 429 to image requests that arrive together on one account; spacing them avoids it.
-const PROVIDER_START_INTERVAL_MS = { novelai: 1_500 } as const;
-
-const ANALYSIS_KEY_UNREADABLE =
-  "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
-
-interface ActiveProfile {
-  readonly record: ProviderProfile;
-  readonly provider_id: ProviderId;
-  readonly model_id: string | null;
-  /** Only reaches `LocalDirectTransport`, which requires a loopback origin; cloud origins come from the code-owned route catalog. */
-  readonly base_url: string | null;
-  readonly direct_cloud: DirectCloudCandidate;
-}
-
-function describe_active_profile(
-  record: ProviderProfile,
-  secrets_readable: boolean,
-): ActiveProfile | null {
-  const provider_id = ProviderIdSchema.safeParse(record.provider_id).data;
-  if (provider_id === undefined) {
-    return null;
-  }
-  const payload = read_payload(record);
-  return {
-    record,
-    provider_id,
-    model_id:
-      read_array(as_record(payload.provider_profile), "model_allowlist").find(
-        (model): model is string => typeof model === "string",
-      ) ?? null,
-    base_url: read_optional_string(payload, "base_url"),
-    direct_cloud: {
-      provider_id,
-      credential_reference: read_optional_string(payload, VAULT_KEY_FIELD),
-      secrets_readable,
-    },
-  };
-}
-
-/** Builds the underlying transport per call, so a profile switch takes effect on the next request. */
-function live_transport(resolve: () => Promise<ProviderTransport>): ProviderTransport {
-  return {
-    async execute(operation) {
-      return (await resolve()).execute(operation);
-    },
-    async fetch_remote_asset(operation) {
-      const transport = await resolve();
-      if (transport.fetch_remote_asset === undefined) {
-        throw new Error("The active provider transport cannot fetch remote assets");
-      }
-      return transport.fetch_remote_asset(operation);
-    },
-  };
-}
-
-/** Account lookups and vibe encoding always go straight to NovelAI with the active profile's credential. */
-function create_novelai_transport(
-  candidate: DirectCloudCandidate | null,
-  secrets: SecretResolverPort | null,
-  fetch_: ProviderFetch | undefined,
-): ProviderTransport {
-  if (candidate === null || candidate.provider_id !== "novelai") {
-    throw new NovelAiServiceUnavailableError(
-      "The active provider profile is not a NovelAI profile",
-    );
-  }
-  if (candidate.credential_reference === null) {
-    throw new NovelAiServiceUnavailableError(
-      "The active NovelAI profile has no stored token; set one in Settings > Providers",
-    );
-  }
-  if (!candidate.secrets_readable || secrets === null) {
-    throw new NovelAiServiceUnavailableError(
-      "This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml",
-    );
-  }
-  return create_provider_transport(
-    {
-      kind: "direct_cloud",
-      provider_id: "novelai",
-      credential_reference: candidate.credential_reference,
-    },
-    { secrets, ...(fetch_ === undefined ? {} : { fetch: fetch_ }) },
-  );
 }
