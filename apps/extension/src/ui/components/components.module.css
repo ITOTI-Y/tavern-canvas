@@ -993,3 +993,168 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
+
+/* ---------------------------------------------------------------------- */
+/* TagInput: chips and a draft field in one pill, suggestions in a popover */
+/* ---------------------------------------------------------------------- */
+
+.tagInput {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--tc-space-1);
+  min-height: var(--tc-control-height-md);
+  padding: calc((var(--tc-control-height-md) - var(--tc-chip-height)) / 2 - 1px)
+    calc((var(--tc-control-height-md) - var(--tc-chip-height)) / 2 + 2px);
+  border: 1px solid var(--tc-border-field);
+  border-radius: var(--tc-radius-taginput);
+  background-color: var(--tc-field-bg);
+  cursor: text;
+}
+
+.tagInput:focus-within {
+  outline: 2px solid var(--tc-focus);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.tagInputChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tc-space-1);
+  height: var(--tc-chip-height);
+  padding: 0 var(--tc-chip-padding-x);
+  border-radius: var(--tc-radius-chip);
+  background-color: var(--tc-chip-bg);
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-sm);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tagInputRemove {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-right: -4px;
+  border-radius: var(--tc-radius-chip);
+  color: var(--tc-text-muted);
+}
+
+.tagInputRemove:hover {
+  background-color: var(--tc-surface-sunken);
+  color: var(--tc-text);
+}
+
+.tagInputField {
+  flex: 1 0 6em;
+  min-width: 0;
+  height: var(--tc-chip-height);
+  padding: 0 var(--tc-space-1);
+  border: 0;
+  background: transparent;
+  color: var(--tc-text);
+  font: inherit;
+  font-size: var(--tc-control-font-size);
+}
+
+.tagInputField:focus {
+  outline: none;
+}
+
+.tagInputField::placeholder {
+  color: var(--tc-text-placeholder);
+}
+
+.tagInputPopover {
+  z-index: var(--tc-z-overlay);
+  width: var(--reka-popover-trigger-width);
+  padding: var(--tc-space-1);
+  border: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-popover);
+  background-color: var(--tc-surface);
+  box-shadow:
+    0 8px 24px var(--tc-shadow),
+    0 1px 3px var(--tc-shadow);
+}
+
+/* Four rows show at once (three and a half on touch, so the cut row hints at scrolling). */
+.tagInputList {
+  max-height: calc(var(--tc-control-height-md) * 4);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+.tagInputOption {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
+  gap: var(--tc-space-3);
+  align-items: center;
+  height: var(--tc-control-height-md);
+  padding: 0 var(--tc-space-2);
+  border-radius: var(--tc-radius-option);
+  color: var(--tc-text);
+  font-size: var(--tc-control-font-size);
+  cursor: pointer;
+}
+
+.tagInputOption[aria-selected="true"] {
+  background-color: var(--tc-accent-soft);
+}
+
+.tagInputOptionTag {
+  white-space: nowrap;
+}
+
+.tagInputOptionTag b {
+  font-weight: var(--tc-font-weight-semibold);
+}
+
+.tagInputOptionTranslation {
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tagInputOptionCount {
+  color: var(--tc-text-muted);
+  font-family: var(--tc-font-mono);
+  font-size: var(--tc-font-size-xs);
+}
+
+.tagInputHints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  margin-top: var(--tc-space-1);
+  padding: var(--tc-space-2) var(--tc-space-2) var(--tc-space-1);
+  border-top: 1px solid var(--tc-divider);
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+}
+
+.tagInputHints kbd {
+  padding: 0 4px;
+  border: 1px solid var(--tc-divider);
+  border-radius: 3px;
+  background-color: var(--tc-surface-raised);
+  font-family: var(--tc-font-mono);
+  font-size: 11px;
+}
+
+@media (pointer: coarse) {
+  .tagInputList {
+    max-height: calc(var(--tc-control-height-md) * 3.5);
+  }
+
+  .tagInputHints {
+    display: none;
+  }
+}

@@ -3,15 +3,16 @@ import { OUTFIT_SLOTS } from "@tavern-canvas/contracts";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { split_tags } from "../../../modules/wardrobe/wardrobe_library.js";
 import AppButton from "../../components/AppButton.vue";
-import AppDialog from "../../components/AppDialog.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
-import AssetCategoryList from "./AssetCategoryList.vue";
+import AssetCategoryList, { type AssetCardView } from "./AssetCategoryList.vue";
+import AssetEditorPanel from "./AssetEditorPanel.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import styles from "./assets_styles.js";
 import { use_chat_scope } from "./chat_scope.js";
@@ -29,7 +30,7 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const FIELDS = computed<readonly AssetFieldSpec[]>(() =>
-  OUTFIT_SLOTS.map((slot) => ({ key: slot, label: outfit_slot_label(t, slot), kind: "text" })),
+  OUTFIT_SLOTS.map((slot) => ({ key: slot, label: outfit_slot_label(t, slot), kind: "tags" })),
 );
 
 const SUMMARY_FIELDS = computed<readonly AssetSummaryFieldSpec[]>(() => [
@@ -56,6 +57,19 @@ const visible = computed(() =>
       : { ...record, payload: { ...record.payload, owner_label: owner.display_name } };
   }),
 );
+function payload_text(record: AssetRecordSummary, key: string): string {
+  const value = record.payload[key];
+  return typeof value === "string" ? value : "";
+}
+
+function describe_outfit(record: AssetRecordSummary): AssetCardView {
+  return {
+    subtitle: payload_text(record, "owner_label"),
+    detail: payload_text(record, "scope_label"),
+    tags: OUTFIT_SLOTS.flatMap((slot) => split_tags(payload_text(record, slot))),
+  };
+}
+
 const { visible: visible_characters } = use_chat_scope(
   () => props.characterRecords,
   () => ({
@@ -93,45 +107,42 @@ const selected_character_id = computed<string | undefined>(() => {
 function set_character_id(character_id: string): void {
   panel.values.character_id = character_id;
 }
-
-const delete_confirm_title = (record_name: string): string =>
-  t("assets.delete_confirm_title", { name: record_name });
 </script>
 
 <template>
-  <div>
-    <AssetCategoryList
-      :records="visible"
-      :summary-fields="SUMMARY_FIELDS"
-      :loading="loading"
-      :search-label="t('common.actions.search')"
-      :search-placeholder="t('common.actions.search')"
-      :empty-title="t('assets.outfits.empty_title')"
-      :empty-description="t('assets.outfits.empty_description')"
-      :add-label="t('assets.outfits.add_action')"
-      :random-label="t('assets.random_selection_action')"
-      :reorder-hint="t('assets.reorder_hint')"
-      :edit-label="t('common.actions.edit')"
-      :delete-label="t('common.actions.delete')"
-      :delete-confirm-title="delete_confirm_title"
-      :delete-confirm-description="t('assets.delete_confirm_description')"
-      :confirm-label="t('confirmations.destructive.default_confirm_action')"
-      :cancel-label="t('confirmations.destructive.default_cancel_action')"
-      :move-up-label="t('assets.move_up_action')"
-      :move-down-label="t('assets.move_down_action')"
-      :drag-handle-label="t('assets.drag_handle_label')"
-      @add="panel.open_create"
-      @edit="panel.open_edit"
-      @delete="panel.remove"
-      @delete-many="(ids) => void panel.remove_many(ids)"
-      @reorder="panel.reorder"
-      @random-select="panel.random_select"
-    />
+  <div :class="styles.assetsBody" :data-editing="panel.dialog_open.value ? '' : undefined">
+    <div :class="styles.assetsMain">
+      <AssetCategoryList
+        :active-id="panel.dialog_open.value ? panel.record_id.value : null"
+        :describe="describe_outfit"
+        :records="visible"
+        :summary-fields="SUMMARY_FIELDS"
+        :loading="loading"
+        :search-label="t('common.actions.search')"
+        :search-placeholder="t('common.actions.search')"
+        :empty-title="t('assets.outfits.empty_title')"
+        :empty-description="t('assets.outfits.empty_description')"
+        :add-label="t('assets.outfits.add_action')"
+        :random-label="t('assets.random_selection_action')"
+        :reorder-hint="t('assets.reorder_hint')"
+        :edit-label="t('common.actions.edit')"
+        :delete-confirm-description="t('assets.delete_confirm_description')"
+        :confirm-label="t('confirmations.destructive.default_confirm_action')"
+        :cancel-label="t('confirmations.destructive.default_cancel_action')"
+        @add="panel.open_create"
+        @edit="panel.open_edit"
+        @delete-many="(ids) => void panel.remove_many(ids)"
+        @reorder="panel.reorder"
+        @random-select="panel.random_select"
+      />
+    </div>
 
-    <AppDialog
+    <AssetEditorPanel
       :open="panel.dialog_open.value"
       :title="
-        panel.editing_record.value ? t('common.actions.edit') : t('assets.outfits.add_action')
+        panel.editing_record.value
+          ? panel.editing_record.value.display_name
+          : t('assets.outfits.add_action')
       "
       :description="t('assets.form_dialog_description')"
       :close-label="t('common.actions.close')"
@@ -182,6 +193,6 @@ const delete_confirm_title = (record_name: string): string =>
           </FieldGroup>
         </template>
       </AssetRecordForm>
-    </AppDialog>
+    </AssetEditorPanel>
   </div>
 </template>

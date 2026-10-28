@@ -1,6 +1,6 @@
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 
-export type AssetFieldKind = "text" | "textarea" | "number";
+export type AssetFieldKind = "text" | "tags" | "textarea" | "number";
 
 export interface AssetFieldSpec {
   readonly key: string;

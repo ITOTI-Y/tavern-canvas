@@ -5,6 +5,7 @@ import AppButton from "../../components/AppButton.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
+import TagInput from "../../components/TagInput.vue";
 import type { AssetFieldSpec, AssetFormValues } from "./asset_field_schema.js";
 import styles from "./assets_styles.js";
 
@@ -81,6 +82,13 @@ const is_pending = computed(() => props.pending);
           :aria-describedby="describedBy"
           @input="update_text_field(field.key, ($event.target as HTMLInputElement).value)"
         />
+        <TagInput
+          v-else-if="field.kind === 'tags'"
+          :id="fieldId"
+          :model-value="String(values[field.key] ?? '')"
+          v-bind="drop_undefined({ describedBy })"
+          @update:model-value="update_text_field(field.key, $event)"
+        />
         <textarea
           v-else-if="field.kind === 'textarea'"
           :id="fieldId"
@@ -107,7 +115,7 @@ const is_pending = computed(() => props.pending);
 
     <p v-if="saveError" :class="styles.formError" role="alert">{{ saveError }}</p>
     <div :class="styles.formActions">
-      <AppButton :label="cancelLabel" variant="secondary" type="button" @click="emit('cancel')" />
+      <AppButton :label="cancelLabel" variant="ghost" type="button" @click="emit('cancel')" />
       <AppButton :label="saveLabel" variant="primary" type="submit" :pending="is_pending" />
     </div>
   </form>

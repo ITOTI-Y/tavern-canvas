@@ -1,5 +1,6 @@
 import type { InjectionKey, Ref } from "vue";
 
+import type { PromptTranslator } from "../../modules/translation/prompt_translator.js";
 import type { CharacterTags } from "../../modules/wardrobe/character_from_image.js";
 import type { OutfitTags } from "../../modules/wardrobe/outfit_from_image.js";
 
@@ -27,4 +28,9 @@ export interface ReferenceImagePort {
 /** `null` when no chat host is attached, since generation runs through the chat illustration service. */
 export const REFERENCE_IMAGE_KEY: InjectionKey<ReferenceImagePort | null> = Symbol(
   "tavern-canvas-reference-image",
+);
+
+/** Vocabulary tag suggestions for tag fields, Chinese queries included; `null` without a vocabulary. */
+export const TAG_SUGGESTIONS_KEY: InjectionKey<Pick<PromptTranslator, "suggest"> | null> = Symbol(
+  "tavern-canvas-tag-suggestions",
 );

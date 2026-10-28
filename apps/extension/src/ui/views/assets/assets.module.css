@@ -1,26 +1,34 @@
 /*
- * Scoped styles for the Assets view. Tokens only (apps/extension/src/ui/styles/tokens.css). Asset
- * records are the one sanctioned card use (repeated/draggable records), each a single flat card
- * with --tc-radius-card; a selected card takes the soft marker. The current tab is underlined with
- * the marker stroke.
+ * Scoped styles for the library. Tokens only (apps/extension/src/ui/styles/tokens.css). Category
+ * tabs run along the top, the current one underlined with the marker stroke. Under them the record
+ * list and, while a record is open, the editor panel beside it (below it on a narrow workspace).
+ * Records are the one sanctioned card use: a flat card with --tc-radius-card; a checked card takes
+ * the soft marker and the card open in the editor an ink outline.
  */
 
 .assetsView {
   display: flex;
   flex-direction: column;
-  gap: var(--tc-space-4);
   height: 100%;
   min-height: 0;
-  padding: var(--tc-space-2) var(--tc-panel-padding) var(--tc-panel-padding);
 }
 
 /* ---------------------------------------------------------------------- */
 /* Tabs (Reka TabsRoot/TabsList/TabsTrigger/TabsContent)                   */
 /* ---------------------------------------------------------------------- */
 
+.tabsRoot {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .tabsList {
   display: flex;
+  flex: none;
   gap: var(--tc-space-3);
+  padding: 0 var(--tc-panel-padding);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -30,9 +38,9 @@
   display: inline-flex;
   flex: none;
   align-items: center;
+  gap: var(--tc-space-1-5);
   height: var(--tc-control-height-lg);
   padding: 0 var(--tc-space-2);
-  border: 1px solid transparent;
   border-radius: var(--tc-radius-control);
   background-color: transparent;
   color: var(--tc-text-muted);
@@ -49,7 +57,7 @@
 
 .tabsTrigger[data-state="active"] {
   color: var(--tc-text);
-  font-weight: var(--tc-font-weight-semibold);
+  font-weight: 700;
 }
 
 /* The marker stroke sits behind the label's lower half, slightly tilted like a hand-drawn line. */
@@ -71,13 +79,19 @@
   outline-offset: -2px;
 }
 
+.tabsCount {
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+  font-weight: var(--tc-font-weight-regular);
+}
+
+.scopeSwitch {
+  padding: var(--tc-space-2) var(--tc-panel-padding) 0;
+}
+
 .tabsContent {
-  display: flex;
   flex: 1;
-  flex-direction: column;
-  gap: var(--tc-space-3);
   min-height: 0;
-  padding-top: var(--tc-space-3);
   overflow-y: auto;
 }
 
@@ -87,7 +101,108 @@
 
 .tabsContent:focus-visible {
   outline: 2px solid var(--tc-focus);
+  outline-offset: -2px;
+}
+
+.vocabularyContent {
+  padding: var(--tc-space-3) var(--tc-panel-padding) var(--tc-panel-padding);
+}
+
+/* ---------------------------------------------------------------------- */
+/* List beside the editor panel                                           */
+/* ---------------------------------------------------------------------- */
+
+.assetsBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.assetsBody[data-editing] {
+  grid-template-columns: minmax(0, 1fr) var(--tc-inspector-width);
+}
+
+.assetsMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tc-space-3);
+  min-width: 0;
+  padding: var(--tc-space-3) var(--tc-panel-padding) var(--tc-panel-padding);
+}
+
+.editor {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-height: 100%;
+  margin: var(--tc-space-3) var(--tc-space-4) var(--tc-space-4) 0;
+  overflow-y: auto;
+  border-radius: var(--tc-radius-panel);
+  background-color: var(--tc-surface);
+  box-shadow: 0 0 0 1px var(--tc-divider);
+}
+
+.editor:focus-visible {
+  outline: 2px solid var(--tc-focus);
   outline-offset: 2px;
+}
+
+.editorHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--tc-space-3);
+  align-items: center;
+  padding: var(--tc-panel-padding) var(--tc-panel-padding) 0;
+}
+
+.editorHead > :first-child:not(.editorThumb) {
+  grid-column: 1 / 3;
+}
+
+.editorThumb {
+  display: grid;
+  place-items: center;
+  width: var(--tc-control-height-lg);
+  height: var(--tc-control-height-lg);
+  overflow: hidden;
+  border-radius: var(--tc-radius-control);
+  background-color: var(--tc-surface-sunken);
+}
+
+.editorThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.editorHeading {
+  display: grid;
+  gap: var(--tc-space-0-5);
+  min-width: 0;
+}
+
+.editorTitle {
+  margin: 0;
+  overflow: hidden;
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.editorDescription {
+  margin: 0;
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
+}
+
+.editorBody {
+  padding: var(--tc-panel-padding);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -107,10 +222,29 @@
   gap: var(--tc-space-2);
 }
 
+.searchField {
+  position: relative;
+  display: block;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.searchField > svg {
+  position: absolute;
+  top: 50%;
+  left: var(--tc-field-padding-x);
+  color: var(--tc-text-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
 .searchInput {
   composes: tc-field from global;
-  flex: 1 1 200px;
-  width: auto;
+  padding-left: calc(var(--tc-field-padding-x) + 16px + var(--tc-space-2));
+}
+
+.randomNarrow {
+  display: none;
 }
 
 .reorderHint {
@@ -122,105 +256,6 @@
 .emptyDescription {
   color: var(--tc-text-muted);
   font-size: var(--tc-font-size-sm);
-}
-
-.cardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--tc-card-min), 1fr));
-  gap: var(--tc-space-3);
-}
-
-/* The card is draggable as a whole, so the grip icon stays hidden; the selection checkbox sits in
-   the top-right corner and the reorder/delete actions wrap under the name. */
-.assetCard {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--tc-space-1);
-  min-width: 0;
-  padding: var(--tc-space-3);
-  border-radius: var(--tc-radius-card);
-  background-color: var(--tc-surface);
-  box-shadow: 0 0 0 1px var(--tc-divider);
-  transition: background-color var(--tc-motion-fast) ease;
-}
-
-.assetCard:has(.assetCardCheckbox:checked) {
-  background-color: var(--tc-accent-soft);
-  box-shadow: 0 0 0 1px var(--tc-accent-border);
-}
-
-.assetCard[data-dragging] {
-  box-shadow: 0 0 0 2px var(--tc-accent);
-}
-
-.dragHandle {
-  display: none;
-}
-
-/* `min-width: 0` lets the name ellipsize: a flex item's automatic minimum size is its content, so
-   without it the nowrap title sets the column's floor and pushes the actions out of the card. */
-.assetCardMain {
-  display: flex;
-  flex: 1 1 100%;
-  min-width: 0;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--tc-space-1);
-  padding: var(--tc-space-1) var(--tc-space-8) var(--tc-space-1) var(--tc-space-1);
-  border-radius: calc(var(--tc-radius-card) - var(--tc-space-2));
-  background-color: transparent;
-  text-align: left;
-  transition: background-color var(--tc-motion-fast) ease-out;
-}
-
-.assetCardMain:hover {
-  background-color: var(--tc-surface-raised);
-}
-
-.assetCardName {
-  max-width: 100%;
-  overflow: hidden;
-  color: var(--tc-text);
-  font-size: var(--tc-font-size-lg);
-  font-weight: var(--tc-font-weight-semibold);
-  line-height: var(--tc-line-height-lg);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.assetCardSummary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--tc-space-0-5) var(--tc-space-2);
-  color: var(--tc-text-muted);
-  font-size: var(--tc-font-size-xs);
-  line-height: var(--tc-line-height-xs);
-}
-
-.assetCardSummaryPart {
-  white-space: nowrap;
-}
-
-.assetCardActions {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: var(--tc-space-0-5);
-  margin-left: auto;
-}
-
-.assetCardCheckbox {
-  position: absolute;
-  top: var(--tc-space-3);
-  right: var(--tc-space-3);
-  flex: none;
-  width: var(--tc-check-size);
-  height: var(--tc-check-size);
-  margin: 0;
-  accent-color: var(--tc-accent);
-  cursor: pointer;
 }
 
 .selectionBar {
@@ -235,6 +270,141 @@
   height: var(--tc-control-height-sm);
   padding: 0 var(--tc-control-padding-x-sm);
   font-size: var(--tc-font-size-sm);
+}
+
+.selectionCount {
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-sm);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--tc-card-min), 1fr));
+  gap: var(--tc-space-3);
+}
+
+/* The whole card drags; the checkbox sits in the top-right corner and the rest opens the editor. */
+.assetCard {
+  position: relative;
+  display: flex;
+  gap: var(--tc-space-3);
+  min-width: 0;
+  padding: var(--tc-space-3);
+  border-radius: var(--tc-radius-card);
+  background-color: var(--tc-surface);
+  box-shadow: 0 0 0 1px var(--tc-divider);
+  transition: background-color var(--tc-motion-fast) ease;
+}
+
+.assetCard[data-selected="true"] {
+  background-color: var(--tc-accent-soft);
+  box-shadow: 0 0 0 1px var(--tc-accent-border);
+}
+
+.assetCard[data-active="true"] {
+  outline: 2px solid var(--tc-text);
+  outline-offset: 2px;
+}
+
+.assetCard[data-dragging] {
+  box-shadow: 0 0 0 2px var(--tc-accent);
+}
+
+.assetCardThumb {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 72px;
+  height: 96px;
+  overflow: hidden;
+  border-radius: var(--tc-radius-image);
+  background-color: var(--tc-surface-sunken);
+  color: var(--tc-text-muted);
+}
+
+.assetCardThumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* `min-width: 0` lets the name ellipsize instead of pushing the checkbox out of the card. */
+.assetCardMain {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--tc-space-1);
+  min-width: 0;
+  padding: 0 var(--tc-space-8) 0 0;
+  background-color: transparent;
+  text-align: left;
+}
+
+.assetCardMain:focus-visible {
+  outline: 2px solid var(--tc-focus);
+  outline-offset: 4px;
+  border-radius: var(--tc-radius-image);
+}
+
+.assetCardName {
+  display: flex;
+  align-items: baseline;
+  gap: var(--tc-space-2);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.assetCardNameText {
+  overflow: hidden;
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.assetCardSubtitle {
+  flex: none;
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+}
+
+.assetCardDetail {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.assetCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-1);
+  margin-top: var(--tc-space-1);
+}
+
+.cardTag {
+  display: inline-flex;
+  align-items: center;
+  height: var(--tc-chip-height-sm);
+  padding: 0 var(--tc-space-2);
+  border-radius: var(--tc-radius-chip);
+  background-color: var(--tc-chip-bg);
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+  white-space: nowrap;
+}
+
+.assetCardCheck {
+  position: absolute;
+  top: var(--tc-space-2);
+  right: var(--tc-space-2);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -272,18 +442,6 @@
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: var(--tc-space-2);
-}
-
-/* Every action before the final (primary) one reads as a ghost button, as in the editor footer. */
-.formActions > button:not(:last-child) {
-  border-color: transparent;
-  background-color: transparent;
-  color: var(--tc-text-muted);
-}
-
-.formActions > button:not(:last-child):hover:not(:disabled) {
-  background-color: var(--tc-surface-raised);
-  color: var(--tc-text);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -503,11 +661,49 @@
 }
 
 @container studio-workspace (max-width: 640px) {
-  .assetsView {
-    padding: var(--tc-space-2) var(--tc-space-4) var(--tc-space-4);
+  .tabsList,
+  .scopeSwitch {
+    padding-inline: var(--tc-space-4);
   }
 
-  .reorderHint {
+  .vocabularyContent,
+  .assetsMain {
+    padding: var(--tc-space-3) var(--tc-space-4) var(--tc-space-4);
+  }
+
+  .assetsBody[data-editing] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editor {
+    position: static;
+    max-height: none;
+    margin: 0;
+    border-top: 1px solid var(--tc-divider);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .editorHead,
+  .editorBody {
+    padding-inline: var(--tc-space-4);
+  }
+
+  .reorderHint,
+  .randomWide {
     display: none;
+  }
+
+  .randomNarrow {
+    display: inline-flex;
+  }
+
+  .searchField {
+    flex-basis: 100px;
+  }
+
+  .assetCardThumb {
+    width: 56px;
+    height: 76px;
   }
 }

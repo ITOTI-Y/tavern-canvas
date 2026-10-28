@@ -41,9 +41,7 @@ const inspector_style = computed(() => ({
 
 const mobile_inspector_open = ref(false);
 
-const context_inspector_available = computed(
-  () => props.state.route === "gallery" || props.state.route === "library",
-);
+const context_inspector_available = computed(() => props.state.route === "gallery");
 const desktop_inspector_collapsed = computed(
   () => !context_inspector_available.value || props.state.inspector.collapsed,
 );

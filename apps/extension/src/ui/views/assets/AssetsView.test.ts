@@ -190,6 +190,10 @@ function dom(): DOMWrapper<HTMLElement> {
   return new DOMWrapper(document.body);
 }
 
+async function check_card(index: number): Promise<void> {
+  await dom().findAll('[data-testid="asset-select"] [role="checkbox"]')[index]?.trigger("click");
+}
+
 afterEach(() => {
   document.body.innerHTML = "";
   vi.useRealTimers();
@@ -198,7 +202,7 @@ afterEach(() => {
 async function click_tab(label: string): Promise<void> {
   const tab = dom()
     .findAll('[role="tab"]')
-    .find((candidate) => candidate.text() === label);
+    .find((candidate) => candidate.text().replace(/\s*\d+$/u, "") === label);
   if (!tab) {
     throw new Error(`No tab found with label "${label}"`);
   }
@@ -245,9 +249,9 @@ describe("Character panel CRUD and destructive confirmation", () => {
     const hair_label = dom()
       .findAll("label")
       .find((label) => label.text().trim() === "Hair");
-    await dom()
-      .find(`[id="${hair_label?.attributes("for") ?? ""}"]`)
-      .setValue("silver hair, long hair");
+    const hair_input = dom().find(`[id="${hair_label?.attributes("for") ?? ""}"]`);
+    await hair_input.setValue("silver hair, long hair");
+    await hair_input.trigger("keydown", { key: "Enter" });
     await dom().find('button[type="submit"]').trigger("click");
     await flushPromises();
 
@@ -295,7 +299,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
     expect(name_input.element.value).toBe("Kaede");
   });
 
-  it("deleting a character requires confirmation before remove_asset is called", async () => {
+  it("deleting a checked character requires confirmation before remove_asset is called", async () => {
     const record = make_record("character", "22222222-2222-4222-8222-222222222222", "Kaede");
     const state = build_state({
       records: {
@@ -309,7 +313,8 @@ describe("Character panel CRUD and destructive confirmation", () => {
     });
     const { controller } = mount_assets_view({ state });
 
-    await dom().find('button[aria-label="Delete"]').trigger("click");
+    await check_card(0);
+    await dom().find('[data-testid="asset-delete-selected"]').trigger("click");
     expect(controller.remove_asset).not.toHaveBeenCalled();
 
     await dom().find('[role="alertdialog"] button[aria-label="Delete"]').trigger("click");
@@ -330,7 +335,8 @@ describe("Character panel CRUD and destructive confirmation", () => {
       },
     });
     const { controller } = mount_assets_view({ state });
-    await dom().find('button[aria-label="Delete"]').trigger("click");
+    await check_card(0);
+    await dom().find('[data-testid="asset-delete-selected"]').trigger("click");
     const cancel_button = dom()
       .findAll('[role="alertdialog"] button')
       .find((candidate) => candidate.text() === "Cancel");
@@ -339,7 +345,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
     expect(controller.remove_asset).not.toHaveBeenCalled();
   });
 
-  it("moving a record down calls reorder_assets with the new order", async () => {
+  it("Alt+ArrowDown on a card calls reorder_assets with the new order", async () => {
     const first = make_record("character", "44444444-4444-4444-8444-444444444444", "First");
     const second = make_record("character", "55555555-5555-4555-8555-555555555555", "Second");
     const state = build_state({
@@ -353,8 +359,10 @@ describe("Character panel CRUD and destructive confirmation", () => {
       },
     });
     const { controller } = mount_assets_view({ state });
-    const move_down_buttons = dom().findAll('button[aria-label="Move down"]');
-    await move_down_buttons[0]?.trigger("click");
+    await dom().find('button[aria-label="Edit: First"]').trigger("keydown", {
+      key: "ArrowDown",
+      altKey: true,
+    });
     await flushPromises();
     expect(controller.reorder_assets).toHaveBeenCalledWith("character", [second.id, first.id]);
   });
@@ -400,11 +408,10 @@ describe("Library multi-select", () => {
       records: { character: records, outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
     });
     const { controller } = mount_assets_view({ state });
-    const boxes = dom().findAll('[data-testid="asset-select"]');
-    await boxes[0]?.setValue(true);
-    await boxes[2]?.setValue(true);
+    await check_card(0);
+    await check_card(2);
+    expect(dom().text()).toContain("2 selected");
     const delete_button = dom().find('[data-testid="asset-delete-selected"]');
-    expect(delete_button.text()).toContain("2");
 
     await delete_button.trigger("click");
     expect(controller.remove_asset).not.toHaveBeenCalled();
@@ -425,8 +432,8 @@ describe("Library multi-select", () => {
     });
     mount_assets_view({ state });
     await dom().find('input[aria-label="Search"]').setValue("Alpha");
-    await dom().find('[data-testid="asset-select-all"]').trigger("click");
-    expect(dom().find('[data-testid="asset-delete-selected"]').text()).toContain("1");
+    await dom().find('[data-testid="asset-select-all"] [role="checkbox"]').trigger("click");
+    expect(dom().text()).toContain("1 selected");
   });
 });
 
@@ -485,6 +492,7 @@ describe("Character panel reference reading", () => {
         }"]`,
       );
     await field("Eyes").setValue("golden eyes");
+    await field("Eyes").trigger("keydown", { key: "Enter" });
     const input = dom().find<HTMLInputElement>('[data-testid="character-reference-input"]');
     const file = new File([new Uint8Array([1])], "ren.png", { type: "image/png" });
     Object.defineProperty(input.element, "files", { value: [file], configurable: true });
@@ -497,8 +505,10 @@ describe("Character panel reference reading", () => {
     await flushPromises();
 
     expect(read_character).toHaveBeenCalledWith("data:image/png;base64,AAAA");
-    expect(field("Hair").element.value).toBe("short hair, black hair");
-    expect(field("Eyes").element.value).toBe("golden eyes");
+    const chips = (name: string) => field(name).element.parentElement?.textContent ?? "";
+    expect(chips("Hair")).toContain("short hair");
+    expect(chips("Hair")).toContain("black hair");
+    expect(chips("Eyes")).toContain("golden eyes");
     expect(controller.save_asset).toHaveBeenCalledWith(
       "outfit",
       expect.objectContaining({
@@ -553,7 +563,7 @@ describe("LoRA metadata panel", () => {
     await dom().find('button[aria-label="Add LoRA"]').trigger("click");
     await dom().find('input[placeholder="Name"]').setValue("Detail LoRA");
     const [, file_name_input, trigger_words_input] = dom().findAll(
-      '[role="dialog"] input[type="text"]',
+      '[data-testid="asset-editor"] input[type="text"]',
     );
     await file_name_input?.setValue("detail_v1");
     await trigger_words_input?.setValue("detailed, sharp focus");

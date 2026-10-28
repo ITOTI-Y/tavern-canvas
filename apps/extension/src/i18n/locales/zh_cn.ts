@@ -36,6 +36,14 @@ const nav = {
 };
 
 const common = {
+  tag_input: {
+    placeholder: "添加标签",
+    remove: "移除 {tag}",
+    suggestions_label: "标签建议",
+    hint_select: "选择",
+    hint_add: "添加",
+    hint_close: "关闭",
+  },
   actions: {
     save: "保存",
     cancel: "取消",
@@ -196,6 +204,7 @@ const assets = {
     subject_girl: "女性",
     subject_boy: "男性",
     subject_other: "其他",
+    editor_description: "回复里出现“{name}”或别名时套用",
     default_outfit_label: "默认服装",
     default_outfit_first: "使用第一套关联服装",
     excluded_traits_label: "排除特征",
@@ -295,21 +304,18 @@ const assets = {
     target_steps: "步数",
   },
   random_selection_action: "随机选择",
-  reorder_hint: "拖拽以调整顺序",
-  move_up_action: "上移",
-  move_down_action: "下移",
-  drag_handle_label: "拖拽以调整顺序",
+  reorder_hint: "拖动卡片调整顺序",
   form_dialog_description: "标有 * 的字段为必填项。",
   scope_label: "范围",
   chat_scope_label: "仅本聊天",
   other_chat_scope_label: "其他聊天：{chat}",
   show_all_chats_label: "显示所有聊天的条目",
   select_entry_action: "选择 {name}",
-  delete_selected_action: "删除所选（{n}）",
+  selected_count: "已选 {n} 项",
+  delete_selected_action: "删除所选",
   delete_selected_confirm_title: "删除所选的 {n} 个条目？",
   chat_scope_note: "该条目由服装判断从本聊天中建立，只在本聊天中出现。",
   import_to_global_action: "导入全局素材库",
-  delete_confirm_title: "删除 {name}？",
   delete_confirm_description: "此操作会将其从素材库中永久删除，且无法撤销。",
 };
 

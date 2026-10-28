@@ -67,9 +67,6 @@ function open_create(): void {
   panel.open_create();
   panel.values.kind = "quality";
 }
-
-const delete_confirm_title = (record_name: string): string =>
-  t("assets.delete_confirm_title", { name: record_name });
 </script>
 
 <template>
@@ -90,17 +87,12 @@ const delete_confirm_title = (record_name: string): string =>
       :random-label="t('assets.random_selection_action')"
       :reorder-hint="t('assets.reorder_hint')"
       :edit-label="t('common.actions.edit')"
-      :delete-label="t('common.actions.delete')"
-      :delete-confirm-title="delete_confirm_title"
       :delete-confirm-description="t('assets.delete_confirm_description')"
       :confirm-label="t('confirmations.destructive.default_confirm_action')"
       :cancel-label="t('confirmations.destructive.default_cancel_action')"
-      :move-up-label="t('assets.move_up_action')"
-      :move-down-label="t('assets.move_down_action')"
-      :drag-handle-label="t('assets.drag_handle_label')"
       @add="open_create"
       @edit="panel.open_edit"
-      @delete="panel.remove"
+      @delete-many="(ids) => void panel.remove_many(ids)"
       @reorder="panel.reorder"
       @random-select="panel.random_select"
     />

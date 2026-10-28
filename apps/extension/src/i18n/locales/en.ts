@@ -36,6 +36,14 @@ const nav = {
 };
 
 const common = {
+  tag_input: {
+    placeholder: "Add a tag",
+    remove: "Remove {tag}",
+    suggestions_label: "Tag suggestions",
+    hint_select: "Select",
+    hint_add: "Add",
+    hint_close: "Close",
+  },
   actions: {
     save: "Save",
     cancel: "Cancel",
@@ -203,6 +211,7 @@ const assets = {
     subject_girl: "Female",
     subject_boy: "Male",
     subject_other: "Other",
+    editor_description: "Used when a reply mentions “{name}” or an alias",
     default_outfit_label: "Default outfit",
     default_outfit_first: "First linked outfit",
     excluded_traits_label: "Excluded traits",
@@ -304,22 +313,19 @@ const assets = {
     target_steps: "Steps",
   },
   random_selection_action: "Pick random",
-  reorder_hint: "Drag to reorder",
-  move_up_action: "Move up",
-  move_down_action: "Move down",
-  drag_handle_label: "Drag to reorder",
+  reorder_hint: "Drag a card to reorder",
   form_dialog_description: "Fields marked * are required.",
   scope_label: "Scope",
   chat_scope_label: "This chat only",
   other_chat_scope_label: "Other chat: {chat}",
   show_all_chats_label: "Show entries from all chats",
   select_entry_action: "Select {name}",
-  delete_selected_action: "Delete selected ({n})",
+  selected_count: "{n} selected",
+  delete_selected_action: "Delete selected",
   delete_selected_confirm_title: "Delete the {n} selected entries?",
   chat_scope_note:
     "The wardrobe update created this entry from this chat; it appears in this chat only.",
   import_to_global_action: "Import to the global library",
-  delete_confirm_title: "Delete {name}?",
   delete_confirm_description: "This removes it from the library permanently and cannot be undone.",
 };
 

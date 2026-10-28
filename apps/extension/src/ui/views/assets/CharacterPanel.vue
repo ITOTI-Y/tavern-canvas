@@ -11,7 +11,6 @@ import {
 } from "../../../modules/wardrobe/wardrobe_library.js";
 import type { OutfitTags } from "../../../modules/wardrobe/outfit_from_image.js";
 import AppButton from "../../components/AppButton.vue";
-import AppDialog from "../../components/AppDialog.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
@@ -23,7 +22,8 @@ import { REFERENCE_IMAGE_KEY } from "../../contracts/portal_keys.js";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema.js";
-import AssetCategoryList from "./AssetCategoryList.vue";
+import AssetCategoryList, { type AssetCardView } from "./AssetCategoryList.vue";
+import AssetEditorPanel from "./AssetEditorPanel.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
 import styles from "./assets_styles.js";
 import { use_chat_scope } from "./chat_scope.js";
@@ -61,12 +61,12 @@ const FIELDS = computed<readonly AssetFieldSpec[]>(() => [
   ...APPEARANCE_SLOTS.map((slot): AssetFieldSpec => ({
     key: slot,
     label: appearance_slot_label(t, slot),
-    kind: "text",
+    kind: "tags",
   })),
   {
     key: "excluded_traits",
     label: t("assets.characters.excluded_traits_label"),
-    kind: "text",
+    kind: "tags",
     hint: t("assets.characters.excluded_traits_hint"),
   },
 ]);
@@ -250,6 +250,35 @@ async function fill_character_from_reference(): Promise<void> {
 }
 
 const SUBJECT_TAGS = { girl: "1girl", boy: "1boy", other: "" } as const;
+
+function payload_text(record: AssetRecordSummary, key: string): string {
+  const value = record.payload[key];
+  return typeof value === "string" ? value : "";
+}
+
+function subject_label(value: string): string {
+  if (value === "boy") {
+    return t("assets.characters.subject_boy");
+  }
+  return value === "other"
+    ? t("assets.characters.subject_other")
+    : t("assets.characters.subject_girl");
+}
+
+function describe_character(record: AssetRecordSummary): AssetCardView {
+  const image = payload_text(record, "reference_image");
+  return {
+    thumbnail: image === "" ? null : image,
+    subtitle: subject_label(payload_text(record, "subject")),
+    detail: [
+      split_tags(payload_text(record, "aliases")).join("、"),
+      payload_text(record, "scope_label"),
+    ]
+      .filter((part) => part !== "")
+      .join(" · "),
+    tags: APPEARANCE_SLOTS.flatMap((slot) => split_tags(payload_text(record, slot))),
+  };
+}
 /** A clear, full-figure view on a plain background, which reference and vibe transfer use best. */
 const REFERENCE_COMPOSITION =
   "solo, full body, standing, looking at viewer, simple background, white background";
@@ -294,47 +323,51 @@ async function import_to_global(): Promise<void> {
   panel.values.chat_id = "";
   await save();
 }
-
-const delete_confirm_title = (record_name: string): string =>
-  t("assets.delete_confirm_title", { name: record_name });
 </script>
 
 <template>
-  <div>
-    <AssetCategoryList
-      :records="visible"
-      :summary-fields="SUMMARY_FIELDS"
-      :loading="loading"
-      :search-label="t('common.actions.search')"
-      :search-placeholder="t('common.actions.search')"
-      :empty-title="t('assets.characters.empty_title')"
-      :empty-description="t('assets.characters.empty_description')"
-      :add-label="t('assets.characters.add_action')"
-      :random-label="t('assets.random_selection_action')"
-      :reorder-hint="t('assets.reorder_hint')"
-      :edit-label="t('common.actions.edit')"
-      :delete-label="t('common.actions.delete')"
-      :delete-confirm-title="delete_confirm_title"
-      :delete-confirm-description="t('assets.delete_confirm_description')"
-      :confirm-label="t('confirmations.destructive.default_confirm_action')"
-      :cancel-label="t('confirmations.destructive.default_cancel_action')"
-      :move-up-label="t('assets.move_up_action')"
-      :move-down-label="t('assets.move_down_action')"
-      :drag-handle-label="t('assets.drag_handle_label')"
-      @add="panel.open_create"
-      @edit="panel.open_edit"
-      @delete="panel.remove"
-      @delete-many="(ids) => void panel.remove_many(ids)"
-      @reorder="panel.reorder"
-      @random-select="panel.random_select"
-    />
+  <div :class="styles.assetsBody" :data-editing="panel.dialog_open.value ? '' : undefined">
+    <div :class="styles.assetsMain">
+      <AssetCategoryList
+        :active-id="panel.dialog_open.value ? panel.record_id.value : null"
+        :describe="describe_character"
+        :records="visible"
+        :summary-fields="SUMMARY_FIELDS"
+        :loading="loading"
+        :search-label="t('common.actions.search')"
+        :search-placeholder="t('common.actions.search')"
+        :empty-title="t('assets.characters.empty_title')"
+        :empty-description="t('assets.characters.empty_description')"
+        :add-label="t('assets.characters.add_action')"
+        :random-label="t('assets.random_selection_action')"
+        :reorder-hint="t('assets.reorder_hint')"
+        :edit-label="t('common.actions.edit')"
+        :delete-confirm-description="t('assets.delete_confirm_description')"
+        :confirm-label="t('confirmations.destructive.default_confirm_action')"
+        :cancel-label="t('confirmations.destructive.default_cancel_action')"
+        @add="panel.open_create"
+        @edit="panel.open_edit"
+        @delete-many="(ids) => void panel.remove_many(ids)"
+        @reorder="panel.reorder"
+        @random-select="panel.random_select"
+      />
+    </div>
 
-    <AppDialog
+    <AssetEditorPanel
       :open="panel.dialog_open.value"
       :title="
-        panel.editing_record.value ? t('common.actions.edit') : t('assets.characters.add_action')
+        panel.editing_record.value
+          ? panel.editing_record.value.display_name
+          : t('assets.characters.add_action')
       "
-      :description="t('assets.form_dialog_description')"
+      :description="
+        panel.editing_record.value
+          ? t('assets.characters.editor_description', {
+              name: panel.editing_record.value.display_name,
+            })
+          : t('assets.form_dialog_description')
+      "
+      :thumbnail="reference_image"
       :close-label="t('common.actions.close')"
       @update:open="
         (open) => {
@@ -379,16 +412,6 @@ const delete_confirm_title = (record_name: string): string =>
           <p v-if="outfit_error !== null" :class="styles.formError" role="alert">
             {{ outfit_error }}
           </p>
-        </template>
-        <template #extra-fields>
-          <p v-if="bound_to_chat" :class="styles.chat_scope_note">
-            {{ t("assets.chat_scope_note") }}
-            <AppButton
-              :label="t('assets.import_to_global_action')"
-              data-testid="import-to-global"
-              @click="import_to_global"
-            />
-          </p>
           <FieldGroup :label="t('assets.characters.subject_label')">
             <template #default>
               <SegmentedControl
@@ -399,6 +422,16 @@ const delete_confirm_title = (record_name: string): string =>
               />
             </template>
           </FieldGroup>
+        </template>
+        <template #extra-fields>
+          <p v-if="bound_to_chat" :class="styles.chat_scope_note">
+            {{ t("assets.chat_scope_note") }}
+            <AppButton
+              :label="t('assets.import_to_global_action')"
+              data-testid="import-to-global"
+              @click="import_to_global"
+            />
+          </p>
           <FieldGroup :label="t('assets.characters.default_outfit_label')">
             <template #default="{ fieldId, describedBy }">
               <AppSelect
@@ -415,7 +448,7 @@ const delete_confirm_title = (record_name: string): string =>
           </FieldGroup>
         </template>
       </AssetRecordForm>
-    </AppDialog>
+    </AssetEditorPanel>
     <ConfirmDialog
       :open="outfit_offer !== null"
       :title="t('assets.characters.outfit_from_reference_title')"
