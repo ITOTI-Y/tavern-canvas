@@ -1527,24 +1527,28 @@ var ut = { key: 1 }, dt = /* @__PURE__ */ M({
 	}
 }), bt = ["aria-label", "title"], xt = 28, St = 8, Ct = 300, wt = /* @__PURE__ */ M({
 	__name: "ParagraphActions",
-	props: { service: {} },
+	props: {
+		host: {},
+		service: {}
+	},
 	emits: ["fallback"],
 	setup(e, { emit: t }) {
 		let r = e, i = t, { t: a } = w(), o = typeof matchMedia == "function" && matchMedia("(pointer: coarse)").matches, s = D(null), c = k(null), u = D(null), d = k(null), p = D(null), _ = k(null), S = k(null), O = null;
 		function A(e) {
+			if (r.host.get_active_chat_id() === null) return null;
 			let t = e instanceof Element ? e : e?.parentElement ?? null, n = t?.closest(".mes_text");
 			if (t === null || n == null) return null;
-			let r = n.closest(".mes");
-			if (r === null || r.getAttribute("is_user") === "true") return null;
-			let i = Number(r.getAttribute("mesid")), a = t;
-			for (; a.parentElement !== n;) {
-				if (a.parentElement === null || a === n) return null;
-				a = a.parentElement;
+			let i = n.closest(".mes");
+			if (i === null || i.getAttribute("is_user") === "true") return null;
+			let a = Number(i.getAttribute("mesid")), o = t;
+			for (; o.parentElement !== n;) {
+				if (o.parentElement === null || o === n) return null;
+				o = o.parentElement;
 			}
-			let o = a.matches("[data-tc-slot], [data-tc-notice]");
-			return !Number.isInteger(i) || o || !(a instanceof HTMLElement) || a.textContent.trim() === "" ? null : {
-				paragraph: a,
-				message_id: i
+			let s = o.matches("[data-tc-slot], [data-tc-notice]");
+			return !Number.isInteger(a) || s || !(o instanceof HTMLElement) || o.textContent.trim() === "" ? null : {
+				paragraph: o,
+				message_id: a
 			};
 		}
 		function M(e) {
@@ -1967,12 +1971,13 @@ var Nt = ["onClick"], Pt = { key: 1 }, Ft = ["onClick"], It = ["src"], Lt = /* @
 				alt: ""
 			}, null, 8, It)], 2)])),
 			N(wt, {
+				host: e.host,
 				service: e.service,
 				onFallback: n[1] ||= (e) => i.value = {
 					message_id: e,
 					slot_id: null
 				}
-			}, null, 8, ["service"]),
+			}, null, 8, ["host", "service"]),
 			N(it, {
 				request: i.value,
 				service: e.service,

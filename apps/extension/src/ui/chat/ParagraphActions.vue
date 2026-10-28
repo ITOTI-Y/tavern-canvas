@@ -3,11 +3,13 @@ import { ImagePlus } from "lucide-vue-next";
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 
+import type { HostAdapter } from "../../host/index.js";
 import type { IllustrationService } from "../../modules/illustration/illustration_service.js";
 import AppIcon from "../components/AppIcon.vue";
 import styles from "./chat.module.css";
 
 const props = defineProps<{
+  readonly host: HostAdapter;
   readonly service: IllustrationService;
 }>();
 
@@ -44,6 +46,10 @@ let hide_timer: ReturnType<typeof setTimeout> | null = null;
 
 /** The block of an assistant reply's text that holds `node`, skipping Inkwell's own cards. */
 function paragraph_of(node: Node | null): ParagraphTarget | null {
+  // The welcome screen shows replies that belong to no chat, so they cannot be illustrated.
+  if (props.host.get_active_chat_id() === null) {
+    return null;
+  }
   const element = node instanceof Element ? node : (node?.parentElement ?? null);
   const text = element?.closest(".mes_text");
   if (element === null || text === null || text === undefined) {

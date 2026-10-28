@@ -223,6 +223,21 @@ describe("ChatLayer", () => {
     wrapper.unmount();
   });
 
+  it("shows no paragraph button while no chat is open", async () => {
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:slot-image");
+    const { wrapper, host } = mount_layer();
+    await flushPromises();
+    host.get_active_chat_id = () => null;
+
+    document
+      .querySelector(".mes_text > p")
+      ?.dispatchEvent(new PointerEvent("pointerover", { bubbles: true }));
+    await flushPromises();
+
+    expect(document.querySelector('[data-testid="paragraph-illustrate"]')).toBeNull();
+    wrapper.unmount();
+  });
+
   it("offers quick edits only when the provider supports them and queues an upscale", async () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:slot-image");
     const without = mount_layer();

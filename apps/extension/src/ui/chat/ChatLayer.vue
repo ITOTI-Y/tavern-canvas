@@ -219,6 +219,7 @@ onBeforeUnmount(() => {
     </div>
   </Teleport>
   <ParagraphActions
+    :host="host"
     :service="service"
     @fallback="(message_id) => (dialog_request = { message_id, slot_id: null })"
   />
