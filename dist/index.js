@@ -7,7 +7,7 @@ import { l as v, n as y, o as b, r as ee, s as te } from "./chunks/wardrobe_libr
 import { a as x, i as S, r as ne } from "./chunks/provider-B-m_0o6I.js";
 import { a as C, c as re, i as ie, l as ae, n as w, o as oe, r as se, s as T, t as ce } from "./chunks/http_origin-C2L4aQth.js";
 import { A as le, F as ue, H as de, I as fe, N as E, O as pe, P as me, Q as he, V as ge, W as _e, Z as ve, _ as D, b as ye, ct as O, et as k, ft as be, g as A, h as j, i as xe, k as Se, m as M, n as Ce, nt as we, p as N, pt as P, rt as Te, u as Ee, ut as F, x as I, y as L } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as De } from "./chunks/create_i18n-HECv7MbV.js";
+import { t as De } from "./chunks/create_i18n-DjM6eXkr.js";
 import { n as Oe, r as ke, t as Ae } from "./chunks/portal_keys-B9C82xtk.js";
 import { n as je, t as Me } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { t as Ne } from "./chunks/chevron-down-Tu_8qTxg.js";
@@ -15,7 +15,7 @@ import { t as Pe } from "./chunks/chevron-up-D4TetO-M.js";
 import { n as Fe } from "./chunks/route_nav-BrwZiRD4.js";
 import { t as Ie } from "./chunks/trash-2-B6ZXZcor.js";
 import { t as Le } from "./chunks/x-CDKrptQJ.js";
-import { a as Re, c as ze, d as Be, i as Ve, l as He, n as Ue, o as We, r as Ge, s as Ke, t as qe, u as Je } from "./chunks/analysis-DnEfx4yp.js";
+import { a as Re, c as ze, d as Be, i as Ve, l as He, n as Ue, o as We, r as Ge, s as Ke, t as qe, u as Je } from "./chunks/analysis-CGk4eXw5.js";
 import { t as Ye } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
 import { c as Xe, h as Ze, i as Qe, o as $e } from "./chunks/business_repositories-Tf6NN3HM.js";
 import { i as et, n as tt, r as nt, t as rt } from "./chunks/image_store-xf71sJpt.js";
@@ -2414,7 +2414,7 @@ var Jr = {
 		controller: {}
 	},
 	setup(e) {
-		let t = ye(() => import("./chunks/GalleryView-DWYym_WS.js")), n = ye(() => import("./chunks/SettingsView-DJjW9CYg.js"));
+		let t = ye(() => import("./chunks/GalleryView-Cuc-tP92.js")), n = ye(() => import("./chunks/SettingsView-BUoTOoST.js"));
 		return (r, i) => e.state.route === "gallery" ? (E(), j(O(t), {
 			key: 0,
 			state: e.state,
@@ -2678,7 +2678,7 @@ var Jr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ye(() => import("./chunks/ChatLayer-DsxTK4D4.js")), { t: i } = Ce();
+		let n = t, r = ye(() => import("./chunks/ChatLayer-De_gjhqX.js")), { t: i } = Ce();
 		function a() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -3357,7 +3357,7 @@ async function oa(e, t) {
 	return n(e, t);
 }
 function sa(e) {
-	return (e instanceof Error ? e.message : String(e)).slice(0, 500);
+	return e instanceof R && e.code === "configuration" ? "not_configured" : e instanceof Ue ? "analysis_unparsable" : e instanceof Si ? e.reason : e instanceof ia ? "message_changed" : (e instanceof Error ? e.message : String(e)).slice(0, 500);
 }
 var ca = class {
 	#e;

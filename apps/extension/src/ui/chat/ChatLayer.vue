@@ -16,6 +16,7 @@ import { encode_mask_png } from "./mask_png.js";
 import QuickEditDialog from "./QuickEditDialog.vue";
 import type { QuickEditKind, QuickEditRequest } from "./quick_edit_request.js";
 import SlotCard from "./SlotCard.vue";
+import { slot_error_label } from "./slot_error_label.js";
 import { use_chat_slots } from "./use_chat_slots.js";
 import { use_image_urls } from "./use_image_urls.js";
 
@@ -188,10 +189,12 @@ onBeforeUnmount(() => {
         </div>
       </template>
       <template v-else-if="target.notice.status === 'wardrobe_failed'">{{
-        t("chat.wardrobe_failed", { reason: target.notice.message })
+        t("chat.wardrobe_failed", { reason: slot_error_label(t, target.notice.message) })
       }}</template>
       <template v-else>
-        <div>{{ t("chat.analysis_failed", { reason: target.notice.message }) }}</div>
+        <div>
+          {{ t("chat.analysis_failed", { reason: slot_error_label(t, target.notice.message) }) }}
+        </div>
         <pre v-if="target.notice.excerpt !== null" :class="styles.excerpt">{{
           target.notice.excerpt
         }}</pre>

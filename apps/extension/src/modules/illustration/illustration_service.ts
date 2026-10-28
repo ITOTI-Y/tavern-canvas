@@ -9,6 +9,7 @@ import {
   type Wearing,
 } from "@tavern-canvas/contracts";
 import type { GenerationJobSnapshot } from "@tavern-canvas/core";
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
 import type { HostAdapter, HostGenerationEvent, HostSwipeLocation } from "../../host/index.js";
 import {
@@ -121,7 +122,23 @@ async function with_character_prompts(
   return attach_character_prompts(request, prompts);
 }
 
+/**
+ * A stable code for failures the UI translates, else the error's own message. The result is
+ * stored on slots in the chat file and shown in chat notices.
+ */
 function error_message(error: unknown): string {
+  if (error instanceof ProviderTransportBoundaryError && error.code === "configuration") {
+    return "not_configured";
+  }
+  if (error instanceof AnalysisParseError) {
+    return "analysis_unparsable";
+  }
+  if (error instanceof AnalysisStoppedError) {
+    return error.reason;
+  }
+  if (error instanceof MessageChangedError) {
+    return "message_changed";
+  }
   return (error instanceof Error ? error.message : String(error)).slice(0, 500);
 }
 

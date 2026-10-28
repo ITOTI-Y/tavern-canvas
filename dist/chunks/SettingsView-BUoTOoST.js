@@ -2021,7 +2021,7 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = _(() => import("./PromptView-ntAO_5Zx.js")), n = _(() => import("./AssetsView-D1fEEvzk.js")), r = _(() => import("./PromptTagPresetPanel-OVFqkC2M.js")), i = _(() => import("./DiagnosticsView-Bc9V41Vv.js")), a = e, { t: o } = C(), s = [
+		let t = _(() => import("./PromptView-ntAO_5Zx.js")), n = _(() => import("./AssetsView-D1fEEvzk.js")), r = _(() => import("./PromptTagPresetPanel-OVFqkC2M.js")), i = _(() => import("./DiagnosticsView-DTLd_vb7.js")), a = e, { t: o } = C(), s = [
 			"illustration",
 			"providers",
 			"translation",

@@ -41,6 +41,10 @@ function l(e) {
 //#endregion
 //#region src/ui/chat/slot_error_label.ts
 function u(e, t) {
+	switch (t) {
+		case "analysis_unparsable": return e("chat.errors.analysis_unparsable");
+		case "message_changed": return e("chat.errors.message_changed");
+	}
 	let n = a.safeParse(t);
 	if (!n.success) return t;
 	switch (n.data) {

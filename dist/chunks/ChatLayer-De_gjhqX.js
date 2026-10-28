@@ -7,7 +7,7 @@ import { t as z } from "./AppDialog-CzDoJQTe.js";
 import { t as B } from "./trash-2-B6ZXZcor.js";
 import { t as V } from "./upload-CQtsg_mB.js";
 import { t as ee } from "./x-CDKrptQJ.js";
-import { d as H, n as U, u as W } from "./analysis-DnEfx4yp.js";
+import { d as H, n as U, u as W } from "./analysis-CGk4eXw5.js";
 import { n as te } from "./deferred_stylesheets-BpS7LWkd.js";
 import { c as ne, l as re, r as ie, s as G } from "./model_json-DNK3Va6h.js";
 import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
@@ -1742,8 +1742,8 @@ var yt = ["onClick"], bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @
 				class: k(h(X).button),
 				"data-testid": "analysis-cancel",
 				onClick: (n) => e.service.cancel_analysis(t.message_id)
-			}, D(h(r)("common.actions.cancel")), 11, yt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: t.notice.message })), 1)], 64)) : (s(), f(O, { key: 2 }, [
-				C("div", null, D(h(r)("chat.analysis_failed", { reason: t.notice.message })), 1),
+			}, D(h(r)("common.actions.cancel")), 11, yt)], 2)], 64)) : t.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: h(W)(h(r), t.notice.message) })), 1)], 64)) : (s(), f(O, { key: 2 }, [
+				C("div", null, D(h(r)("chat.analysis_failed", { reason: h(W)(h(r), t.notice.message) })), 1),
 				t.notice.excerpt === null ? b("", !0) : (s(), f("pre", {
 					key: 0,
 					class: k(h(X).excerpt)

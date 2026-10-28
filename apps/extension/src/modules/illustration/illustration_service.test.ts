@@ -4,6 +4,7 @@ import {
   type IllustrationSettings,
   type ImageGenerationRequest,
 } from "@tavern-canvas/contracts";
+import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import { describe, expect, it, vi } from "vitest";
 import { reactive } from "vue";
 import { AnalysisStoppedError, create_wardrobe_runner } from "./analysis_requests.js";
@@ -413,6 +414,22 @@ describe("IllustrationService image jobs", () => {
     expect(service.read(LOCATION)?.slots[0]?.character_prompts).toEqual([
       { name: "Alice", prompt: "girl, smile", negative_prompt: "" },
     ]);
+  });
+
+  it("stores a stable code, not English text, when a profile cannot make the call", async () => {
+    const host = new MemoryHost();
+    const { service, submit } = create_service(host);
+    await service.analyze(3);
+    submit.mockRejectedValueOnce(
+      new ProviderTransportBoundaryError(
+        "configuration",
+        "This provider needs a stored credential",
+      ),
+    );
+
+    await expect(service.generate(LOCATION, "slot_0001")).rejects.toThrow();
+
+    expect(service.read(LOCATION)?.slots[0]?.last_error).toBe("not_configured");
   });
 
   it("adds a finished image to its slot and marks the job attached", async () => {

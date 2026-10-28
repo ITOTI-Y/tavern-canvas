@@ -2,8 +2,17 @@ import { ProviderErrorCodeSchema } from "@tavern-canvas/contracts";
 
 type Translate = (key: string) => string;
 
-/** A slot error is either a provider error code or the message of a submission that never queued. */
+/**
+ * A slot or notice error is a provider error code, an illustration failure code, or the message of
+ * a failure that has no code.
+ */
 export function slot_error_label(t: Translate, error: string): string {
+  switch (error) {
+    case "analysis_unparsable":
+      return t("chat.errors.analysis_unparsable");
+    case "message_changed":
+      return t("chat.errors.message_changed");
+  }
   const code = ProviderErrorCodeSchema.safeParse(error);
   if (!code.success) {
     return error;
