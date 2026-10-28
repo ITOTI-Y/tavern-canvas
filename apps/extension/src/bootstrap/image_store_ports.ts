@@ -12,6 +12,31 @@ import {
 
 import type { ImageStorePort } from "../modules/media/media_command_service.js";
 
+/** Longest side of a gallery or library thumbnail, in pixels. */
+const THUMBNAIL_EDGE = 384;
+
+/** Scales an image to a WebP no larger than THUMBNAIL_EDGE on its longest side. */
+export async function make_webp_thumbnail(
+  bytes: Uint8Array,
+  media_type: string,
+): Promise<Uint8Array> {
+  const bitmap = await createImageBitmap(new Blob([new Uint8Array(bytes)], { type: media_type }));
+  const scale = Math.min(1, THUMBNAIL_EDGE / Math.max(bitmap.width, bitmap.height));
+  const canvas = new OffscreenCanvas(
+    Math.max(1, Math.round(bitmap.width * scale)),
+    Math.max(1, Math.round(bitmap.height * scale)),
+  );
+  const context = canvas.getContext("2d");
+  if (context === null) {
+    bitmap.close();
+    throw new Error("This browser cannot draw thumbnails");
+  }
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await canvas.convertToBlob({ type: "image/webp", quality: 0.82 });
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
 export async function build_provider_adapters(
   database: StorageDatabase | null,
 ): Promise<Partial<Record<ProviderId, ProviderAdapter<ImageGenerationRequest>>>> {

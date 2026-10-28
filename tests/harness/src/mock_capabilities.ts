@@ -523,6 +523,12 @@ function create_gallery_capability(
         required(BITMAP_FIXTURES[0], "bitmap fixture 0");
       return read_bitmap_fixture_bytes(fixture);
     },
+    read_thumbnail: async (record_id) => {
+      const fixture =
+        GALLERY_RECORD_TO_FIXTURE.get(record_id) ??
+        required(BITMAP_FIXTURES[0], "bitmap fixture 0");
+      return read_bitmap_fixture_bytes(fixture);
+    },
     pin: (record_id, pinned) => {
       const record = records.get(record_id);
       if (!record) {

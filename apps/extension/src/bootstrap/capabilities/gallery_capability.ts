@@ -2,7 +2,9 @@ import type { ProviderId, Uuid } from "@tavern-canvas/contracts";
 import { ProviderIdSchema } from "@tavern-canvas/contracts";
 import {
   delete_image_record,
+  put_image_thumbnail,
   read_image_bytes,
+  read_image_thumbnail,
   type GalleryImageRecord,
   type GalleryImageRecordRepository,
   type StorageDatabase,
@@ -25,6 +27,8 @@ export interface GalleryCapabilityDeps {
   readonly now: () => string;
   /** Scrolls the chat to a message; `null` when no host chat is available. */
   readonly reveal_message: ((chat_id: string, message_id: number) => SourceRevealOutcome) | null;
+  /** Scales image bytes down to a WebP preview. */
+  readonly make_thumbnail: (bytes: Uint8Array, media_type: string) => Promise<Uint8Array>;
 }
 
 /** Video records have no grid representation and are filtered out instead of coerced into an image type. */
@@ -102,6 +106,22 @@ export function create_gallery_capability(deps: GalleryCapabilityDeps): GalleryC
         );
       }
       return bytes;
+    },
+    async read_thumbnail(record_id) {
+      const record = await read(record_id);
+      const stored = await read_image_thumbnail(deps.database, record.sha256);
+      if (stored !== null) {
+        return stored.bytes;
+      }
+      const bytes = await read_image_bytes(deps.database, record.sha256);
+      if (bytes === null) {
+        throw capability_unavailable_error(
+          `Gallery record ${record_id} has no stored bytes; the blob was evicted`,
+        );
+      }
+      const thumbnail = await deps.make_thumbnail(bytes, record.media_type);
+      await put_image_thumbnail(deps.database, record.sha256, thumbnail, "image/webp");
+      return thumbnail;
     },
     async pin(record_id, pinned) {
       const record = await read(record_id);

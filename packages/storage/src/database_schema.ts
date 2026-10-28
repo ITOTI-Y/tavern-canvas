@@ -3,7 +3,7 @@ import { ProviderErrorSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 9 as const;
+export const DATABASE_VERSION = 10 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 interface StoreDefinition {
@@ -67,6 +67,11 @@ export const STORE_DEFINITIONS = {
     indexes: ["ref_count", "byte_length"],
     since_version: 1,
   },
+  image_thumbnails: {
+    key_path: "sha256",
+    indexes: [],
+    since_version: 10,
+  },
   generation_jobs: {
     key_path: "record_key",
     indexes: ["namespace", "request_id", "request_digest", "state", "updated_at"],
@@ -111,7 +116,7 @@ const REMOVED_STORES = [
 ] as const;
 
 export type StoreName = keyof typeof STORE_DEFINITIONS;
-export type NamespacedStoreName = Exclude<StoreName, "image_blobs">;
+export type NamespacedStoreName = Exclude<StoreName, "image_blobs" | "image_thumbnails">;
 export type BusinessStoreName = Exclude<NamespacedStoreName, "generation_jobs">;
 
 export type JsonPrimitive = string | number | boolean | null;
@@ -234,6 +239,14 @@ export const ImageBlobSchema = z.strictObject({
 });
 export type ImageBlob = z.infer<typeof ImageBlobSchema>;
 
+/** A small preview of an image blob, keyed by the full image's digest and deleted with it. */
+export const ImageThumbnailSchema = z.strictObject({
+  sha256: Sha256Schema,
+  media_type: z.enum(["image/webp", "image/jpeg", "image/png"]),
+  blob: image_blob_data_schema,
+});
+export type ImageThumbnail = z.infer<typeof ImageThumbnailSchema>;
+
 // Provider inputs derived from gallery images (resized, padded or binarised). They live outside
 // `image_records` so they never appear in the gallery and LRU eviction never counts them.
 export const ProviderInputAssetSchema = namespaced_schema({
@@ -318,6 +331,7 @@ export type RecordByStore = {
   vocabulary_shards: VocabularyShard;
   image_records: ImageRecord;
   image_blobs: ImageBlob;
+  image_thumbnails: ImageThumbnail;
   generation_jobs: GenerationJob;
   novelai_vibe_encodings: NovelAiVibeEncoding;
   provider_input_assets: ProviderInputAsset;
@@ -412,6 +426,10 @@ export interface DBSchema extends IdbDBSchema {
       ref_count: IDBValidKey;
       byte_length: IDBValidKey;
     };
+  };
+  image_thumbnails: {
+    key: string;
+    value: ImageThumbnail;
   };
   generation_jobs: {
     key: string;

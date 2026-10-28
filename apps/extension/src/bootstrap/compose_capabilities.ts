@@ -75,6 +75,7 @@ import {
   build_provider_adapters,
   create_asset_reader,
   create_image_store_port,
+  make_webp_thumbnail,
 } from "./image_store_ports.js";
 import { create_illustration_request_builders } from "./illustration_requests.js";
 import {
@@ -392,6 +393,7 @@ export async function compose_studio_capabilities(
             repository: new GalleryImageRecordRepository(database),
             namespace,
             now,
+            make_thumbnail: make_webp_thumbnail,
             reveal_message:
               host === null
                 ? null

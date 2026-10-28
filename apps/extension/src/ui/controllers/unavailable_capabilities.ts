@@ -128,6 +128,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     load: () => Promise.resolve([]),
     subscribe: no_subscription,
     read_bytes: unavailable_command,
+    read_thumbnail: unavailable_command,
     pin: unavailable_command,
     detach_from_message: unavailable_command,
     delete_record: unavailable_command,

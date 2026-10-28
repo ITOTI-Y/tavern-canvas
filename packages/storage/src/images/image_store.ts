@@ -2,7 +2,14 @@ import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
 import type { IDBPDatabase } from "idb";
 
-import { Sha256Schema, type DBSchema, type ImageBlob, type Sha256 } from "../database_schema.js";
+import {
+  ImageThumbnailSchema,
+  Sha256Schema,
+  type DBSchema,
+  type ImageBlob,
+  type ImageThumbnail,
+  type Sha256,
+} from "../database_schema.js";
 import { IndexedDbRepository, RepositoryNotFoundError } from "../repository.js";
 import { ImageBlobRepository } from "../repositories/business_repositories.js";
 import { GenerationJobRepository } from "../repositories/job_repository.js";
@@ -28,7 +35,7 @@ export type {
   SourceMessageIdentity,
 } from "./image_schema.js";
 
-const IMAGE_STORES = ["image_records", "image_blobs"] as const;
+const IMAGE_STORES = ["image_records", "image_blobs", "image_thumbnails"] as const;
 
 export class ImageCorruptionError extends Error {
   readonly code = "image_hash_mismatch" as const;
@@ -141,6 +148,7 @@ export async function release_image_blob(
   }
   if (existing.ref_count <= 1) {
     await blobs.delete(key, transaction);
+    await transaction.objectStore("image_thumbnails").delete(key);
     return true;
   }
   await blobs.put({ ...existing, ref_count: existing.ref_count - 1 }, transaction);
@@ -267,6 +275,44 @@ export async function delete_image_record(
       return outcome;
     },
   );
+}
+
+/** The stored thumbnail of an image blob, or `null` when none has been made yet. */
+export async function read_image_thumbnail(
+  database: IDBPDatabase<DBSchema>,
+  sha256_value: string,
+): Promise<{
+  readonly bytes: Uint8Array;
+  readonly media_type: ImageThumbnail["media_type"];
+} | null> {
+  const stored = await database.get("image_thumbnails", Sha256Schema.parse(sha256_value));
+  if (stored === undefined) {
+    return null;
+  }
+  const thumbnail = ImageThumbnailSchema.parse(stored);
+  return { bytes: await to_bytes(thumbnail.blob), media_type: thumbnail.media_type };
+}
+
+/** Stores a thumbnail while its image blob exists; a thumbnail for a deleted image is dropped. */
+export async function put_image_thumbnail(
+  database: IDBPDatabase<DBSchema>,
+  sha256_value: string,
+  bytes: Uint8Array,
+  media_type: ImageThumbnail["media_type"],
+): Promise<void> {
+  const sha256_key = Sha256Schema.parse(sha256_value);
+  await with_transaction(database, ["image_blobs", "image_thumbnails"], async (transaction) => {
+    if ((await transaction.objectStore("image_blobs").get(sha256_key)) === undefined) {
+      return;
+    }
+    await transaction.objectStore("image_thumbnails").put(
+      ImageThumbnailSchema.parse({
+        sha256: sha256_key,
+        media_type,
+        blob: new Blob([new Uint8Array(bytes)], { type: media_type }),
+      }),
+    );
+  });
 }
 
 export async function read_image_bytes(

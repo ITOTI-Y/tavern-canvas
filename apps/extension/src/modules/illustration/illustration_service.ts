@@ -23,7 +23,12 @@ import {
   wardrobe_reply_of,
 } from "./analysis.js";
 import type { SlotEdit } from "./slot_edits.js";
-import { insert_markers, split_paragraphs, type Paragraph } from "./slot_markers.js";
+import {
+  insert_markers,
+  paragraph_index_of,
+  split_paragraphs,
+  type Paragraph,
+} from "./slot_markers.js";
 import { type SlotPromptPreset } from "./slot_prompt.js";
 import type { CharacterTags } from "../wardrobe/character_from_image.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
@@ -349,6 +354,27 @@ export class IllustrationService {
       throw new MessageChangedError(location.message_id);
     }
     return message.swipes[location.swipe_id]?.content ?? "";
+  }
+
+  /** The paragraph of this message a piece of its rendered text belongs to, or `null`. */
+  async paragraph_index_of(message_id: number, rendered: string): Promise<number | null> {
+    const location = await this.active_location(message_id);
+    return paragraph_index_of(split_paragraphs(await this.#swipe_text(location)), rendered);
+  }
+
+  /**
+   * Illustrates one paragraph right away: its existing slot, or a new one whose prompts come from
+   * an analysis of that paragraph alone.
+   */
+  async illustrate_paragraph(message_id: number, paragraph: number): Promise<string> {
+    const location = await this.active_location(message_id);
+    const existing = this.read(location)?.slots.find((slot) => slot.paragraph === paragraph);
+    const slot = existing ?? (await this.add_paragraphs(location, [paragraph]))[0];
+    if (slot === undefined) {
+      throw new RangeError(`Message ${String(message_id)} has no paragraph ${String(paragraph)}`);
+    }
+    await this.generate(location, slot.slot_id);
+    return slot.slot_id;
   }
 
   /** The reply's paragraphs that have no slot yet, for the user to pick from. */

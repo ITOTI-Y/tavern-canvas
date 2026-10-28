@@ -192,6 +192,7 @@ function build_mock_studio() {
     load: gallery_harness.load,
     subscribe: gallery_harness.sub.subscribe,
     read_bytes: vi.fn(),
+    read_thumbnail: vi.fn(),
     pin: vi.fn(),
     detach_from_message: vi.fn(),
     delete_record: vi.fn(),

@@ -20,7 +20,9 @@ import {
   ImageCorruptionError,
   ImageMediaTypeError,
   put_image,
+  put_image_thumbnail,
   read_image_bytes,
+  read_image_thumbnail,
   type PutImageRecordInput,
 } from "./image_store.js";
 
@@ -138,6 +140,24 @@ describe("image_store content addressing", () => {
     const second_deletion = await delete_image_record(database, NAMESPACE, IDS.second);
     expect(second_deletion.blob_deleted).toBe(true);
     expect(await blobs.get(first.sha256)).toBeNull();
+  });
+
+  it("stores a thumbnail per image blob and deletes it with the blob", async () => {
+    const database = await open_database();
+    const record = await put_image(database, NAMESPACE, put_input({ bytes: png_bytes(9, 9) }));
+    const preview = Uint8Array.from([1, 2, 3, 4]);
+
+    expect(await read_image_thumbnail(database, record.sha256)).toBeNull();
+    await put_image_thumbnail(database, record.sha256, preview, "image/webp");
+    expect(await read_image_thumbnail(database, record.sha256)).toEqual({
+      bytes: preview,
+      media_type: "image/webp",
+    });
+
+    await delete_image_record(database, NAMESPACE, IDS.first);
+    expect(await read_image_thumbnail(database, record.sha256)).toBeNull();
+    await put_image_thumbnail(database, record.sha256, preview, "image/webp");
+    expect(await read_image_thumbnail(database, record.sha256)).toBeNull();
   });
 
   it("removes a deleted image from the jobs that produced it", async () => {

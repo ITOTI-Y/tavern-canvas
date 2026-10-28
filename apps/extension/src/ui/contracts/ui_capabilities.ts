@@ -213,6 +213,8 @@ export interface GalleryCapability {
   load(): Promise<readonly GalleryRecordSummary[]>;
   subscribe(handler: (event: GalleryDomainEvent) => void): Unsubscribe;
   read_bytes(record_id: Uuid): Promise<Uint8Array>;
+  /** A small preview of the image, made and stored on first request. */
+  read_thumbnail(record_id: Uuid): Promise<Uint8Array>;
   pin(record_id: Uuid, pinned: boolean): Promise<void>;
   /** Detaching from a message and deleting the record are distinct confirmed actions. */
   detach_from_message(record_id: Uuid): Promise<void>;

@@ -37,6 +37,35 @@ export interface Paragraph {
 }
 
 /** Non-empty lines outside fenced code blocks; status panels and code are never illustrated. */
+/** Letters and digits only, so rendered text and its Markdown source compare equal. */
+function comparable(text: string): string {
+  return text.toLowerCase().replace(/[\p{P}\p{S}\s]/gu, "");
+}
+
+/**
+ * The paragraph a piece of rendered text belongs to: the one containing the longest of its first
+ * 24, 12 or 6 comparable characters, so a selection running into the next paragraph still lands
+ * where it starts. `null` when no paragraph matches.
+ */
+export function paragraph_index_of(
+  paragraphs: readonly Paragraph[],
+  rendered: string,
+): number | null {
+  const needle = comparable(rendered);
+  if (needle.length === 0) {
+    return null;
+  }
+  const texts = paragraphs.map((paragraph) => comparable(paragraph.text));
+  for (const length of [24, 12, 6]) {
+    const head = needle.slice(0, length);
+    const found = texts.findIndex((text) => text.includes(head));
+    if (found !== -1) {
+      return paragraphs[found]?.index ?? null;
+    }
+  }
+  return null;
+}
+
 export function split_paragraphs(text: string): readonly Paragraph[] {
   const paragraphs: Paragraph[] = [];
   let in_fence = false;

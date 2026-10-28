@@ -123,7 +123,9 @@ export {
   put_image,
   put_image_blob,
   read_image_blob,
+  put_image_thumbnail,
   read_image_bytes,
+  read_image_thumbnail,
   release_image_blob,
 } from "./images/image_store.js";
 export type {

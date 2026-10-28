@@ -4,6 +4,7 @@ import {
   find_slot_ids,
   insert_markers,
   SLOT_REGEX_SCRIPTS,
+  paragraph_index_of,
   slot_marker,
   split_paragraphs,
 } from "./slot_markers.js";
@@ -69,5 +70,32 @@ describe("SLOT_REGEX_SCRIPTS", () => {
       'Line.\n<div class="tavern-canvas-slot" data-tc-slot="slot_0001"></div>\nNext.',
     );
     expect(marked.replace(regex_of(prompt.find_regex), prompt.replace_string)).toBe("Line.\nNext.");
+  });
+});
+
+describe("paragraph_index_of", () => {
+  const paragraphs = split_paragraphs(
+    [
+      "*She opened the door*, slowly.",
+      "",
+      '"Rain," he said. It fell **hard** outside.',
+      "",
+      "她笑了笑。",
+    ].join("\n"),
+  );
+
+  it("finds the paragraph of rendered text that lost its Markdown", () => {
+    expect(paragraph_index_of(paragraphs, "She opened the door, slowly.")).toBe(0);
+    expect(paragraph_index_of(paragraphs, "It fell hard outside")).toBe(1);
+    expect(paragraph_index_of(paragraphs, "她笑了")).toBe(2);
+  });
+
+  it("matches a selection spanning several paragraphs to the first it starts in", () => {
+    expect(paragraph_index_of(paragraphs, "slowly. Rain, he said.")).toBe(0);
+  });
+
+  it("returns null for text that is not in the reply", () => {
+    expect(paragraph_index_of(paragraphs, "Something else entirely")).toBeNull();
+    expect(paragraph_index_of(paragraphs, "  …  ")).toBeNull();
   });
 });

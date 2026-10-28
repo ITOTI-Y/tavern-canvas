@@ -400,6 +400,26 @@ describe("IllustrationService.analyze", () => {
   });
 });
 
+describe("IllustrationService.illustrate_paragraph", () => {
+  it("adds a slot for one paragraph, generates it, and reuses the slot next time", async () => {
+    const host = new MemoryHost();
+    host.wardrobes.set("3:0", { schema_version: 1, wearing: [] });
+    const { service, submit } = create_service(host);
+
+    await expect(service.paragraph_index_of(3, "She opened the door")).resolves.toBe(0);
+    const slot_id = await service.illustrate_paragraph(3, 0);
+
+    expect(service.read(LOCATION)?.slots).toMatchObject([{ slot_id, paragraph: 0 }]);
+    expect(host.text).toContain(`<!--tc-image:${slot_id}-->`);
+    expect(submit).toHaveBeenCalledTimes(1);
+    const analysis_calls = host.generate_calls.length;
+
+    await expect(service.illustrate_paragraph(3, 0)).resolves.toBe(slot_id);
+    expect(host.generate_calls).toHaveLength(analysis_calls);
+    expect(submit).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("IllustrationService.active_location", () => {
   it("locates a message's active swipe without reading the whole chat", async () => {
     const host = new MemoryHost();

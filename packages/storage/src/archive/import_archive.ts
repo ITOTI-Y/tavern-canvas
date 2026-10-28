@@ -328,7 +328,7 @@ async function merge_staged_records(
 ): Promise<void> {
   await with_transaction(
     database,
-    [...ARCHIVE_RECORD_STORES, "image_blobs"],
+    [...ARCHIVE_RECORD_STORES, "image_blobs", "image_thumbnails"],
     async (transaction) => {
       for (const store of ARCHIVE_RECORD_STORES) {
         const repository = repositories[store];
