@@ -413,6 +413,7 @@ var o = {
 		}
 	},
 	settings: {
+		save_failed: "The settings could not be saved (error code {code}); the last change did not take effect. Try again.",
 		nav: {
 			illustration: "Illustration",
 			providers: "Image providers",
@@ -785,7 +786,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-gt-0iQVx.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-Dfj35ST0.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

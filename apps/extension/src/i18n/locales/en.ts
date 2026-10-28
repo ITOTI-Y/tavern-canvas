@@ -422,6 +422,8 @@ const diagnostics = {
 };
 
 const settings = {
+  save_failed:
+    "The settings could not be saved (error code {code}); the last change did not take effect. Try again.",
   nav: {
     illustration: "Illustration",
     providers: "Image providers",

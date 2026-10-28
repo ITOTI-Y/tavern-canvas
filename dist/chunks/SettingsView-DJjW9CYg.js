@@ -1,7 +1,7 @@
 import { a as e } from "./ids-stC4fUL8.js";
 import { i as t, o as n } from "./novelai-Dh4UVw5r.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { c as a, n as o, s, t as c } from "./http_origin-NLkLJD5s.js";
+import { l as a, n as o, t as s, u as c } from "./http_origin-C2L4aQth.js";
 import { A as l, F as u, G as d, N as f, V as p, W as m, _ as h, a as g, b as _, ct as v, et as y, g as b, h as x, m as S, n as C, p as w, pt as T, s as E, u as D, ut as O, v as k, x as A, y as j } from "./vue-i18n-DUz2Gjn8.js";
 import { n as M, t as N } from "./AppIcon-Cnhzrx9o.js";
 import { n as P, t as F } from "./StateSurface-BA0Ffiwe.js";
@@ -1106,7 +1106,7 @@ var xe = "https://novelai.net/image", Se = /* @__PURE__ */ A({
 		controller: {}
 	},
 	setup(e) {
-		let i = e, { t: o, d: c } = C(), d = w(() => {
+		let i = e, { t: o, d: s } = C(), d = w(() => {
 			let e = i.profile.model_id;
 			return e != null && r(e) !== null ? e : B;
 		});
@@ -1137,9 +1137,9 @@ var xe = "https://novelai.net/image", Se = /* @__PURE__ */ A({
 				...e
 			};
 		}
-		let E = w(() => s.safeParse(g.value).success ? null : o("settings.novelai.invalid_size")), A = w(() => {
+		let E = w(() => a.safeParse(g.value).success ? null : o("settings.novelai.invalid_size")), A = w(() => {
 			let e = r(d.value);
-			return e === null ? [] : a(e.profile, g.value);
+			return e === null ? [] : c(e.profile, g.value);
 		}), M = y(null), N = y(null), F = y(!1), I = y(!1);
 		async function L() {
 			I.value = !0, N.value = null, F.value = !1;
@@ -1225,7 +1225,7 @@ var xe = "https://novelai.net/image", Se = /* @__PURE__ */ A({
 			}, T(v(o)("settings.novelai.account_summary", {
 				tier: M.value.tier,
 				anlas: M.value.anlas,
-				expires: v(c)(new Date(M.value.expires_at), "short_date")
+				expires: v(s)(new Date(M.value.expires_at), "short_date")
 			})), 3))], 2),
 			S("div", { class: O(v(q).row) }, [S("span", { class: O(v(q).row_label) }, T(v(o)("settings.novelai.model_label")), 3), j(W, {
 				"model-value": d.value,
@@ -1430,7 +1430,7 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 				save: (e, t) => n.controller.save_prompt_tags(e, t)
 			};
 		}
-		let { t: a } = C(), s = y(!1), l = y(null), p = y(!1), _ = y(null), E = y(null), k = y(!1), A = y(null), M = y(""), N = y(!1), R = y(null), z = y(/* @__PURE__ */ new Map()), V = Ce.map((e) => ({
+		let { t: a } = C(), c = y(!1), l = y(null), p = y(!1), _ = y(null), E = y(null), k = y(!1), A = y(null), M = y(""), N = y(!1), R = y(null), z = y(/* @__PURE__ */ new Map()), V = Ce.map((e) => ({
 			value: e,
 			label: we(a, e)
 		})), H = w({
@@ -1445,7 +1445,7 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 		function J(e) {
 			try {
 				let t = o(e.trim());
-				return c(t) ? t : null;
+				return s(t) ? t : null;
 			} catch {
 				return null;
 			}
@@ -1460,7 +1460,7 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 				workflow_id: "",
 				base_url: Ae,
 				is_default: n.profiles.length === 0
-			}, _.value = null, s.value = !0;
+			}, _.value = null, c.value = !0;
 		}
 		function X(e) {
 			l.value = {
@@ -1472,10 +1472,10 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 				workflow_id: e.workflow_id ?? "",
 				base_url: e.base_url ?? "",
 				is_default: e.is_default
-			}, _.value = null, s.value = !0;
+			}, _.value = null, c.value = !0;
 		}
 		function Z() {
-			s.value = !1, l.value = null, _.value = null;
+			c.value = !1, l.value = null, _.value = null;
 		}
 		async function re() {
 			let t = l.value;
@@ -1651,7 +1651,7 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 				_: 1
 			}, 8, ["status", "empty-message"]),
 			j(I, {
-				open: s.value,
+				open: c.value,
 				title: l.value?.is_new ? v(a)("settings.provider_profiles.dialog_add_title") : v(a)("settings.provider_profiles.dialog_edit_title"),
 				"close-label": v(a)("common.actions.close"),
 				"onUpdate:open": n[7] ||= (e) => !e && Z()
@@ -2021,7 +2021,7 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = _(() => import("./PromptView-ntAO_5Zx.js")), n = _(() => import("./AssetsView-D1fEEvzk.js")), r = _(() => import("./PromptTagPresetPanel-OVFqkC2M.js")), i = _(() => import("./DiagnosticsView-CXx9aUjC.js")), a = e, { t: o } = C(), s = [
+		let t = _(() => import("./PromptView-ntAO_5Zx.js")), n = _(() => import("./AssetsView-D1fEEvzk.js")), r = _(() => import("./PromptTagPresetPanel-OVFqkC2M.js")), i = _(() => import("./DiagnosticsView-Bc9V41Vv.js")), a = e, { t: o } = C(), s = [
 			"illustration",
 			"providers",
 			"translation",
@@ -2058,7 +2058,13 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 			"data-selected": t === l.value,
 			"aria-current": t === l.value ? "page" : void 0,
 			onClick: (n) => e.controller.set_settings_section(t)
-		}, T(c(t)), 11, ze)), 64))], 10, Re), S("div", { class: O(v(q).section_content) }, [l.value === "prompts" ? (f(), h(D, { key: 0 }, [j(v(t), {
+		}, T(c(t)), 11, ze)), 64))], 10, Re), S("div", { class: O(v(q).section_content) }, [e.state.settings.update_command.status === "error" ? (f(), h("p", {
+			key: 0,
+			class: O([v(q).status_text, v(q).description]),
+			"data-tone": "error",
+			role: "alert",
+			"data-testid": "settings-save-failed"
+		}, T(v(o)("settings.save_failed", { code: e.state.settings.update_command.failure.code })), 3)) : b("", !0), l.value === "prompts" ? (f(), h(D, { key: 1 }, [j(v(t), {
 			state: e.state,
 			"test-regex": p,
 			onSelectPreset: m[0] ||= (t) => void e.controller.select_prompt_preset(t),
@@ -2075,15 +2081,15 @@ var Te = ["id", "aria-describedby"], Ee = ["id", "aria-describedby"], De = ["id"
 			"loading",
 			"controller"
 		])], 64)) : l.value === "library" ? (f(), x(v(n), {
-			key: 1,
-			state: e.state,
-			controller: e.controller
-		}, null, 8, ["state", "controller"])) : l.value === "diagnostics" ? (f(), x(v(i), {
 			key: 2,
 			state: e.state,
 			controller: e.controller
-		}, null, 8, ["state", "controller"])) : (f(), h("div", {
+		}, null, 8, ["state", "controller"])) : l.value === "diagnostics" ? (f(), x(v(i), {
 			key: 3,
+			state: e.state,
+			controller: e.controller
+		}, null, 8, ["state", "controller"])) : (f(), h("div", {
+			key: 4,
 			class: O(v(q).view)
 		}, [S("h1", Be, T(c(l.value)), 1), l.value === "illustration" ? (f(), x(_e, {
 			key: 0,

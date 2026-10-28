@@ -407,6 +407,7 @@ const diagnostics = {
 };
 
 const settings = {
+  save_failed: "设置未能保存（错误代码：{code}），刚才的修改没有生效，请重试。",
   nav: {
     illustration: "插图",
     providers: "图像服务",

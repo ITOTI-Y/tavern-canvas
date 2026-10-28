@@ -677,6 +677,46 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
     });
   });
 
+  it("applies a settings change made while another is still saving", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+    vi.mocked(mock.capabilities.settings.update).mockImplementation((partial) =>
+      Promise.resolve({ ...DEFAULT_SETTINGS, ...partial }),
+    );
+
+    await Promise.all([
+      controller.update_settings({ global_concurrency: 2 }),
+      controller.update_settings({ auto_generation_enabled: true }),
+    ]);
+
+    expect(mock.capabilities.settings.update).toHaveBeenCalledTimes(2);
+    expect(mock.capabilities.settings.update).toHaveBeenLastCalledWith({
+      auto_generation_enabled: true,
+    });
+    expect(controller.state.settings.update_command.status).toBe("success");
+  });
+
+  it("keeps a failed settings save visible as an error", async () => {
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+    vi.mocked(mock.capabilities.settings.update).mockRejectedValue(
+      Object.assign(new Error("quota"), { code: "settings_save_failed" }),
+    );
+
+    await controller.update_settings({ global_concurrency: 2 });
+
+    expect(controller.state.settings.update_command).toEqual({
+      status: "error",
+      failure: { code: "settings_save_failed" },
+    });
+  });
+
   it("selects a prompt preset by loading its draft, then keeps edits local until save", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });

@@ -95,6 +95,15 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
     </nav>
 
     <div :class="styles.section_content">
+      <p
+        v-if="state.settings.update_command.status === 'error'"
+        :class="[styles.status_text, styles.description]"
+        data-tone="error"
+        role="alert"
+        data-testid="settings-save-failed"
+      >
+        {{ t("settings.save_failed", { code: state.settings.update_command.failure.code }) }}
+      </p>
       <template v-if="section === 'prompts'">
         <PromptView
           :state="state"

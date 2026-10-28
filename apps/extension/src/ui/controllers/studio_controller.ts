@@ -53,6 +53,7 @@ import {
 
 import {
   create_initial_state,
+  DEFAULT_COMMAND_FAILURE_CODE,
   DEFAULT_FAILURE_CODE,
   jobs_to_tasks,
   reduce_assets_event,
@@ -167,6 +168,7 @@ class StudioControllerImpl implements StudioController {
   readonly #listeners = new Set<() => void>();
   #unsubscribes: readonly Unsubscribe[] = [];
   #stopped = false;
+  #settings_queue: Promise<void> = Promise.resolve();
 
   constructor(options: StudioControllerOptions) {
     this.#capabilities = options.capabilities;
@@ -549,32 +551,46 @@ class StudioControllerImpl implements StudioController {
     );
   }
 
+  /** Updates run one after another, so a change made while another is saving is never dropped. */
   update_settings(partial: Partial<TavernCanvasSettings>): Promise<void> {
-    return run_command(
-      () => this.#state.settings.update_command,
-      (next) => {
-        this.#patch_settings({ update_command: next });
-      },
-      async () => {
-        const settings = await this.#capabilities.settings.update(partial);
-        if (partial.credential_storage_mode === undefined) {
-          this.#patch_settings({ settings });
-          return settings;
-        }
-        const [snapshot, profiles] = await Promise.all([
-          this.#capabilities.settings.load(),
-          // Credential presence is checked against the newly selected backend.
-          this.#capabilities.profiles.load(),
-        ]);
-        this.#patch_settings({
-          settings: snapshot.settings,
-          vocabulary_update_channel: snapshot.vocabulary_update_channel,
-          browser_secret_vault: snapshot.browser_secret_vault,
-        });
-        this.#patch_generation({ profiles });
-        return snapshot.settings;
-      },
-    );
+    const run = this.#settings_queue.then(() => this.#apply_settings(partial));
+    this.#settings_queue = run;
+    return run;
+  }
+
+  async #apply_settings(partial: Partial<TavernCanvasSettings>): Promise<void> {
+    this.#patch_settings({ update_command: { status: "pending" } });
+    try {
+      const settings = await this.#save_settings(partial);
+      this.#patch_settings({ update_command: { status: "success", result: settings } });
+    } catch (error) {
+      this.#patch_settings({
+        update_command: {
+          status: "error",
+          failure: to_ui_failure(error, DEFAULT_COMMAND_FAILURE_CODE),
+        },
+      });
+    }
+  }
+
+  async #save_settings(partial: Partial<TavernCanvasSettings>): Promise<TavernCanvasSettings> {
+    const settings = await this.#capabilities.settings.update(partial);
+    if (partial.credential_storage_mode === undefined) {
+      this.#patch_settings({ settings });
+      return settings;
+    }
+    const [snapshot, profiles] = await Promise.all([
+      this.#capabilities.settings.load(),
+      // Credential presence is checked against the newly selected backend.
+      this.#capabilities.profiles.load(),
+    ]);
+    this.#patch_settings({
+      settings: snapshot.settings,
+      vocabulary_update_channel: snapshot.vocabulary_update_channel,
+      browser_secret_vault: snapshot.browser_secret_vault,
+    });
+    this.#patch_generation({ profiles });
+    return snapshot.settings;
   }
 
   export_support_bundle(): Promise<void> {

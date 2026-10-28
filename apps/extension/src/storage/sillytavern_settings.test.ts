@@ -186,6 +186,27 @@ describe("SillyTavern settings adapter", () => {
     );
   });
 
+  it("keeps the valid fields of a nested block when one of its fields is invalid", () => {
+    const host = create_host({
+      ...settings(),
+      illustration: {
+        ...DEFAULT_TAVERN_CANVAS_SETTINGS.illustration,
+        max_images_per_message: 3,
+        max_chat_history: -1,
+      },
+    });
+    const adapter = create_sillytavern_settings(host);
+
+    expect(adapter.get_settings().illustration.max_images_per_message).toBe(3);
+    expect(adapter.get_settings().illustration.max_chat_history).toBe(
+      DEFAULT_TAVERN_CANVAS_SETTINGS.illustration.max_chat_history,
+    );
+    expect(adapter.diagnostics).toContainEqual({
+      path: "illustration.max_chat_history",
+      code: "invalid_value",
+    });
+  });
+
   it("drops the retired gateway field without a diagnostic", () => {
     const host = create_host({
       ...settings(),

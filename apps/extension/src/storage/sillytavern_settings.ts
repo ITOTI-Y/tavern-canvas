@@ -1,5 +1,7 @@
 import {
   CredentialStorageModeSchema,
+  IllustrationSettingsSchema,
+  TranslationSettingsSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   type TavernCanvasSettings,
@@ -134,6 +136,34 @@ function recover_field<T>(
   return fallback;
 }
 
+/** Recovers each field of a nested object on its own, so one invalid field keeps its valid siblings. */
+function recover_fields<T extends Record<string, unknown>>(
+  shape: { readonly [K in keyof T]: z.ZodType<T[K]> },
+  raw: unknown,
+  defaults: T,
+  path: string,
+  diagnostics: SettingsDiagnostic[],
+): T {
+  if (!is_plain_record(raw)) {
+    if (raw !== undefined) {
+      diagnostics.push({ path, code: "invalid_value" });
+    }
+    return structuredClone(defaults);
+  }
+  report_unknown_fields(raw, new Set(Object.keys(shape)), path, diagnostics);
+  const recovered: Partial<T> = {};
+  for (const key of Object.keys(shape) as (keyof T & string)[]) {
+    recovered[key] = recover_field(
+      shape[key],
+      raw[key],
+      structuredClone(defaults[key]),
+      `${path}.${key}`,
+      diagnostics,
+    );
+  }
+  return recovered as T;
+}
+
 function recover_ui(raw: unknown, diagnostics: SettingsDiagnostic[]): TavernCanvasSettings["ui"] {
   const default_ui = DEFAULT_TAVERN_CANVAS_SETTINGS.ui;
   if (!is_plain_record(raw)) {
@@ -256,26 +286,20 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
       "vocabulary_update_channel",
       diagnostics,
     ),
-    illustration:
-      raw.illustration === undefined
-        ? structuredClone(defaults.illustration)
-        : recover_field(
-            TavernCanvasSettingsSchema.shape.illustration,
-            raw.illustration,
-            structuredClone(defaults.illustration),
-            "illustration",
-            diagnostics,
-          ),
-    translation:
-      raw.translation === undefined
-        ? structuredClone(defaults.translation)
-        : recover_field(
-            TavernCanvasSettingsSchema.shape.translation,
-            raw.translation,
-            structuredClone(defaults.translation),
-            "translation",
-            diagnostics,
-          ),
+    illustration: recover_fields<TavernCanvasSettings["illustration"]>(
+      IllustrationSettingsSchema.shape,
+      raw.illustration,
+      defaults.illustration,
+      "illustration",
+      diagnostics,
+    ),
+    translation: recover_fields<TavernCanvasSettings["translation"]>(
+      TranslationSettingsSchema.shape,
+      raw.translation,
+      defaults.translation,
+      "translation",
+      diagnostics,
+    ),
     ui: recover_ui(raw.ui, diagnostics),
   };
 }
