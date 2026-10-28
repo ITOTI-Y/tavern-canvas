@@ -534,6 +534,10 @@ var o = {
 			provider_label: "Provider type",
 			model_label: "Model",
 			workflow_label: "ComfyUI workflow ID",
+			base_url_label: "Server address",
+			base_url_hint_sd_webui: "A loopback address such as http://127.0.0.1:7860. Start SD WebUI with --api and --cors-allow-origins=http://tauri.localhost so the page can reach it.",
+			base_url_hint_comfyui: "A loopback address such as http://127.0.0.1:8188. Start ComfyUI with --enable-cors-header so the page can reach it.",
+			base_url_invalid: "Enter a loopback address such as http://127.0.0.1:7860.",
 			set_credential_action: "Set API key",
 			clear_credential_action: "Remove API key",
 			credential_set: "API key configured",
@@ -768,7 +772,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-Cha2FFKD.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-NciTp8vi.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

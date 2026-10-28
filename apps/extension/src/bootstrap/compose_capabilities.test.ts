@@ -254,6 +254,7 @@ describe("compose_studio_capabilities", () => {
       provider_id: "sd_webui",
       display_name: "Local SD",
       model_id: "sdxl-base",
+      base_url: "http://127.0.0.1:7860",
       workflow_id: null,
       is_default: true,
       updated_at: "",
@@ -284,6 +285,34 @@ describe("compose_studio_capabilities", () => {
     );
     const cleared = await composition.capabilities.profiles.clear_credential(profile_id);
     expect(cleared.credential_reference).toBeNull();
+    await composition.dispose();
+  });
+
+  it("stores a local provider's loopback address and rejects any other host", async () => {
+    const composition = await compose();
+    const draft = {
+      id: "11111111-1111-4111-8111-111111111111",
+      provider_id: "sd_webui" as const,
+      display_name: "Local SD",
+      model_id: "sdxl-base",
+      base_url: "HTTP://127.0.0.1:7860",
+      workflow_id: null,
+      is_default: true,
+      updated_at: "",
+    };
+
+    const saved = await composition.capabilities.profiles.save(draft);
+    expect(saved.base_url).toBe("http://127.0.0.1:7860");
+    await expect(
+      composition.capabilities.profiles.save({ ...draft, base_url: "http://192.168.1.10:7860" }),
+    ).rejects.toThrowError(/loopback/u);
+
+    const cloud = await composition.capabilities.profiles.save({
+      ...draft,
+      provider_id: "novelai",
+      model_id: "nai-diffusion-4-5-full",
+    });
+    expect(cloud.base_url).toBeNull();
     await composition.dispose();
   });
 

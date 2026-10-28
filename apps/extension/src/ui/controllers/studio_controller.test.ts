@@ -614,6 +614,7 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
       id: PROFILE_ID,
       provider_id: "novelai",
       display_name: "NovelAI",
+      base_url: null,
       model_id: "nai-diffusion-4-5-full",
       workflow_id: null,
       is_default: true,

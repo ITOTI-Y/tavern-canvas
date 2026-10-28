@@ -154,8 +154,10 @@ The active profile's provider and endpoint decide which transport carries a requ
 
 **Loopback providers.** `sd_webui` and `comfyui` are reached over a direct browser call to the
 `base_url` on the active profile. That URL must be a loopback address; a non loopback endpoint is
-rejected with `Direct provider endpoint must use a loopback address`. The profile form has no
-`base_url` field yet, so SD WebUI cannot be set up from the Studio.
+rejected with `Direct provider endpoint must use a loopback address`. Set it in the profile's
+**Server address** field. The browser enforces CORS on these calls, so start SD WebUI with
+`--api --cors-allow-origins=http://tauri.localhost` and ComfyUI with `--enable-cors-header`; in
+standard SillyTavern, allow the origin SillyTavern is served from instead.
 
 **Cloud providers.** `novelai`, `openai_image`, and `google_image` are called directly from the
 browser to the vendor's own origin, with a credential from the credential backend. The routes and

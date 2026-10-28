@@ -23,6 +23,7 @@ import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import PromptTagChips from "../../chat/PromptTagChips.vue";
+import { is_loopback_origin, normalize_http_origin } from "../../../transport/http_origin.js";
 import { PROVIDER_IDS, provider_type_label } from "./provider_labels.js";
 import styles from "./settings_styles.js";
 
@@ -49,6 +50,7 @@ interface DraftForm {
   display_name: string;
   model_id: string;
   workflow_id: string;
+  base_url: string;
   is_default: boolean;
 }
 
@@ -79,6 +81,7 @@ const provider_id_model = computed<string>({
     if (draft.value) {
       draft.value.provider_id = value as ProviderId;
       draft.value.workflow_id = "";
+      draft.value.base_url = value === "comfyui" ? DEFAULT_COMFYUI_URL : DEFAULT_SD_WEBUI_URL;
       if (value === "novelai" && !NOVELAI_MODEL_IDS.has(draft.value.model_id)) {
         draft.value.model_id = DEFAULT_NOVELAI_MODEL_ID;
       }
@@ -93,6 +96,22 @@ const novelai_model_options = NOVELAI_MODEL_PROFILES.filter((profile) => profile
   (profile) => ({ value: profile.model_id, label: profile.display_name }),
 );
 
+const DEFAULT_SD_WEBUI_URL = "http://127.0.0.1:7860";
+const DEFAULT_COMFYUI_URL = "http://127.0.0.1:8188";
+
+const is_local_draft = computed(
+  () => draft.value?.provider_id === "sd_webui" || draft.value?.provider_id === "comfyui",
+);
+
+function loopback_origin(value: string): string | null {
+  try {
+    const origin = normalize_http_origin(value.trim());
+    return is_loopback_origin(origin) ? origin : null;
+  } catch {
+    return null;
+  }
+}
+
 function open_add_dialog(): void {
   draft.value = {
     id: crypto.randomUUID(),
@@ -101,6 +120,7 @@ function open_add_dialog(): void {
     display_name: "",
     model_id: "",
     workflow_id: "",
+    base_url: DEFAULT_SD_WEBUI_URL,
     is_default: props.profiles.length === 0,
   };
   save_error.value = null;
@@ -115,6 +135,7 @@ function open_edit_dialog(profile: ProviderProfileSummary): void {
     display_name: profile.display_name,
     model_id: profile.model_id ?? "",
     workflow_id: profile.workflow_id ?? "",
+    base_url: profile.base_url ?? "",
     is_default: profile.is_default,
   };
   save_error.value = null;
@@ -144,6 +165,11 @@ async function submit_draft(): Promise<void> {
     save_error.value = t("errors.validation_required");
     return;
   }
+  const base_url = is_local_draft.value ? loopback_origin(current.base_url) : null;
+  if (is_local_draft.value && base_url === null) {
+    save_error.value = t("settings.provider_profiles.base_url_invalid");
+    return;
+  }
   save_pending.value = true;
   save_error.value = null;
   try {
@@ -156,6 +182,7 @@ async function submit_draft(): Promise<void> {
         current.provider_id === "comfyui" && workflow_id?.success === true
           ? workflow_id.data
           : null,
+      base_url,
       is_default: current.is_default,
       updated_at: new Date().toISOString(),
     });
@@ -395,6 +422,27 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               :aria-describedby="describedBy"
               :class="styles.text_input"
               data-testid="provider-model-input"
+            />
+          </template>
+        </FieldGroup>
+        <FieldGroup
+          v-if="is_local_draft"
+          :label="t('settings.provider_profiles.base_url_label')"
+          :hint="
+            draft.provider_id === 'comfyui'
+              ? t('settings.provider_profiles.base_url_hint_comfyui')
+              : t('settings.provider_profiles.base_url_hint_sd_webui')
+          "
+          required
+        >
+          <template #default="{ fieldId, describedBy }">
+            <input
+              :id="fieldId"
+              v-model="draft.base_url"
+              type="url"
+              :aria-describedby="describedBy"
+              :class="styles.text_input"
+              data-testid="provider-base-url-input"
             />
           </template>
         </FieldGroup>

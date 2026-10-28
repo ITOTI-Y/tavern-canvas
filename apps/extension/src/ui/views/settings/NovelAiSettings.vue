@@ -132,6 +132,7 @@ async function set_model(value: string): Promise<void> {
     display_name: props.profile.display_name,
     model_id: value,
     workflow_id: props.profile.workflow_id ?? null,
+    base_url: props.profile.base_url ?? null,
     is_default: props.profile.is_default,
     updated_at: props.profile.updated_at,
   });

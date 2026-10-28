@@ -6,7 +6,7 @@ import { i as z, n as B, r as ee, t as V } from "./AppSelect-CRHyq1ex.js";
 import { t as te } from "./chevron-down-Tu_8qTxg.js";
 import { t as ne } from "./chevron-up-D4TetO-M.js";
 import { n as H, t as U } from "./download-DHgWv1wH.js";
-import { a as W, i as G, n as K, r as q, t as J } from "./use_asset_category_panel-AQZEi_G9.js";
+import { a as W, i as G, n as K, r as q, t as J } from "./use_asset_category_panel-B0d8HxrN.js";
 import { a as re, i as ie, n as Y, r as ae } from "./PromptTagChips-DuVZRo9M.js";
 import { t as X } from "./FieldGroup-5lMIUNw6.js";
 import { t as oe } from "./upload-CQtsg_mB.js";
@@ -14,7 +14,7 @@ import { M as se, _ as ce, c as Z, i as le, o as ue, s as de } from "./Teleport-
 import { c as fe } from "./PopperContent-8IQaFABb.js";
 import { n as pe, t as me } from "./ConfirmDialog-CcAJItG1.js";
 import { t as he } from "./reference_image-DYyYuujP.js";
-import { r as ge } from "./SettingsView-Cdf2OsZY.js";
+import { r as ge } from "./SettingsView-BWl78LhW.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/scan-search.js
 var _e = L("scan-search", [
 	["path", {

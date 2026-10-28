@@ -1,5 +1,5 @@
 import { A as e, F as t, N as n, W as r, _ as i, ct as a, g as o, h as s, m as c, n as l, p as u, pt as d, u as f, ut as p, v as m, x as h, y as g } from "./vue-i18n-DUz2Gjn8.js";
-import { n as _ } from "./create_i18n-DW9mI9yd.js";
+import { n as _ } from "./create_i18n-BSjBcZFg.js";
 import { t as v } from "./AppIcon-Cnhzrx9o.js";
 import { C as y, i as b, r as x } from "./AppSelect-CRHyq1ex.js";
 import { t as S } from "./x-CDKrptQJ.js";

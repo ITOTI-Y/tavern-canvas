@@ -53,7 +53,7 @@ https://github.com/ITOTI-Y/tavern-canvas
 3. 在配置行中单击“设置 API 密钥”。明文只交给当前选择的密钥存储方式。
 4. 在要使用的配置上单击“设为默认”，配图请求使用默认配置。
 
-可用于聊天配图的服务包括 NovelAI、OpenAI Image、Google Image 和 SD WebUI。ComfyUI 有适配器和工作流素材，但当前不能用于聊天配图。SD WebUI 直连只接受回环地址，例如 `http://127.0.0.1:7860`；配置表单暂时没有 `base_url` 字段，因此还无法在工作室中配置 SD WebUI。
+可用于聊天配图的服务包括 NovelAI、OpenAI Image、Google Image 和 SD WebUI。ComfyUI 有适配器和工作流素材，但当前不能用于聊天配图。SD WebUI 与 ComfyUI 由页面直接访问，配置中的“服务地址”只接受回环地址，例如 `http://127.0.0.1:7860`。浏览器会对这类请求做跨域检查，因此 SD WebUI 需要以 `--api --cors-allow-origins=http://tauri.localhost` 启动，ComfyUI 需要以 `--enable-cors-header` 启动；在标准 SillyTavern 中，把允许的来源换成 SillyTavern 页面的地址。
 
 ### 3.3 NovelAI 参数与账户
 

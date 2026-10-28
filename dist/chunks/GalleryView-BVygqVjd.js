@@ -1,5 +1,5 @@
 import { $ as e, A as t, C as n, D as r, F as i, G as a, N as o, T as s, V as c, W as l, _ as u, a as d, c as f, ct as p, dt as m, et as h, ft as g, g as _, h as v, j as y, m as b, n as x, p as S, pt as C, u as w, ut as T, v as E, x as D, y as O } from "./vue-i18n-DUz2Gjn8.js";
-import { n as k } from "./create_i18n-DW9mI9yd.js";
+import { n as k } from "./create_i18n-BSjBcZFg.js";
 import { n as ee } from "./portal_keys-B9C82xtk.js";
 import { n as A, t as j } from "./AppIcon-Cnhzrx9o.js";
 import { C as M, c as N, d as P, f as te, i as F, l as I, m as ne, n as re, p as ie, r as ae, t as oe, u as se } from "./AppSelect-CRHyq1ex.js";

@@ -9,7 +9,7 @@ import { t as A } from "./trash-2-B6ZXZcor.js";
 import { n as j } from "./deferred_stylesheets-BpS7LWkd.js";
 import { t as M } from "./ConfirmDialog-CcAJItG1.js";
 import { t as N } from "./IconButton-Cyu85S4F.js";
-import { n as P } from "./SettingsView-Cdf2OsZY.js";
+import { n as P } from "./SettingsView-BWl78LhW.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/grip-vertical.js
 var te = x("grip-vertical", [
 	["circle", {

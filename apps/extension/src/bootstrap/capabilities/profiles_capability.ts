@@ -13,6 +13,7 @@ import { ProviderAdapterError, type ProviderAdapter } from "@tavern-canvas/provi
 import type { ProviderProfile, ProviderProfileRepository } from "@tavern-canvas/storage";
 
 import type { SecretDestinationPort } from "../../host/secret_destination.js";
+import { is_loopback_origin, normalize_http_origin } from "../../transport/http_origin.js";
 import type {
   ProfileConnectionTestResult,
   ProfilesCapability,
@@ -57,6 +58,21 @@ export interface ProfilesCapabilityDeps {
 }
 
 const DEFAULT_MAX_BYTES = 20_000_000;
+
+/** Read by the transport selector, which sends these profiles over `LocalDirectTransport`. */
+const BASE_URL_FIELD = "base_url";
+
+function is_local_provider(provider_id: ProviderId): boolean {
+  return provider_id === "sd_webui" || provider_id === "comfyui";
+}
+
+function loopback_origin(value: string): string {
+  const origin = normalize_http_origin(value);
+  if (!is_loopback_origin(origin)) {
+    throw new TypeError("A local provider address must be a loopback address");
+  }
+  return origin;
+}
 
 function first_string(values: readonly unknown[]): string | null {
   const value = values[0];
@@ -117,6 +133,7 @@ function to_summary(record: ProviderProfile): ProviderProfileSummary {
     display_name: read_string(payload, "display_name", record.id),
     model_id: first_string(read_array(adapter_profile, "model_allowlist")),
     workflow_id: first_string(read_array(adapter_profile, "workflow_allowlist")),
+    base_url: typeof payload[BASE_URL_FIELD] === "string" ? payload[BASE_URL_FIELD] : null,
     is_default: read_boolean(payload, "is_default", false),
     credential_reference:
       typeof payload[VAULT_KEY_FIELD] === "string" ? payload[VAULT_KEY_FIELD] : null,
@@ -171,7 +188,7 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
       const namespace = deps.namespace();
       const existing = await deps.repository.get(namespace, draft.id);
       const now = deps.now();
-      const payload = {
+      const payload: Record<string, unknown> = {
         ...read_payload(existing ?? ({ payload: {} } as ProviderProfile)),
         display_name: draft.display_name,
         is_default: draft.is_default,
@@ -179,6 +196,11 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
       };
       if (existing !== null && existing.provider_id !== draft.provider_id) {
         Reflect.deleteProperty(payload, VAULT_KEY_FIELD);
+      }
+      if (is_local_provider(draft.provider_id) && draft.base_url !== null) {
+        payload[BASE_URL_FIELD] = loopback_origin(draft.base_url);
+      } else {
+        Reflect.deleteProperty(payload, BASE_URL_FIELD);
       }
       const record: ProviderProfile = {
         schema_version: 1,
@@ -188,7 +210,7 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
         created_at: existing?.created_at ?? now,
         updated_at: now,
         provider_id: draft.provider_id,
-        payload,
+        payload: to_json_value(payload),
       };
       const adapter = (await deps.load_adapters())[draft.provider_id];
       if (adapter === undefined) {

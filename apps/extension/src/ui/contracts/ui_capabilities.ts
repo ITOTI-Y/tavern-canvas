@@ -57,6 +57,8 @@ export interface ProviderProfileSummary {
   readonly display_name: string;
   readonly model_id?: string | null;
   readonly workflow_id?: string | null;
+  /** The loopback origin of an SD WebUI or ComfyUI server. */
+  readonly base_url?: string | null;
   readonly is_default: boolean;
   readonly credential_reference: string | null;
   readonly updated_at: string;
@@ -72,6 +74,7 @@ export interface ProviderProfileDraft {
   readonly display_name: string;
   readonly model_id: string;
   readonly workflow_id: string | null;
+  readonly base_url: string | null;
   readonly is_default: boolean;
   readonly updated_at: string;
 }
