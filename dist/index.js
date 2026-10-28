@@ -2353,7 +2353,7 @@ var zr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-CdoD2DGS.js")), i = ve(() => import("./chunks/StudioShell-DkvQxigp.js")), { t: a } = we();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-CdoD2DGS.js")), i = ve(() => import("./chunks/StudioShell-BNmjJRBB.js")), { t: a } = we();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}

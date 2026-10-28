@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
@@ -40,23 +40,6 @@ function make_record(overrides: Partial<GalleryRecordSummary> = {}): GalleryReco
 afterEach(() => {
   document.body.innerHTML = "";
   vi.restoreAllMocks();
-  vi.unstubAllGlobals();
-});
-
-/** Every tile counts as on screen, so it reads its image straight away. */
-class VisibleIntersectionObserver {
-  readonly #callback: (entries: { isIntersecting: boolean }[]) => void;
-  constructor(callback: (entries: { isIntersecting: boolean }[]) => void) {
-    this.#callback = callback;
-  }
-  observe(): void {
-    this.#callback([{ isIntersecting: true }]);
-  }
-  disconnect(): void {}
-}
-
-beforeEach(() => {
-  vi.stubGlobal("IntersectionObserver", VisibleIntersectionObserver);
 });
 
 describe("GalleryTile: stable dimensions before load, object URL lifecycle, failed fallback", () => {
@@ -374,6 +357,27 @@ describe("tile images", () => {
     expect(controller.read_gallery_thumbnail).toHaveBeenCalledWith(record.id);
     expect(controller.read_gallery_bytes).toHaveBeenCalledWith(record.id);
     expect(dom().find("img").exists()).toBe(true);
+  });
+});
+
+describe("virtualized grid", () => {
+  it("mounts only the tiles near the viewport and reads only their images", async () => {
+    const records = Array.from({ length: 300 }, (_, index) =>
+      make_record({
+        id: `00000000-0000-4000-8000-${String(index).padStart(12, "0")}` as Uuid,
+        width: 512,
+        height: 512,
+      }),
+    );
+    const state = build_state({ records });
+    const controller = build_controller(state);
+    mount_gallery_view({ state, controller });
+    await flushPromises();
+
+    const mounted = dom().findAll('[role="listitem"]').length;
+    expect(mounted).toBeGreaterThan(0);
+    expect(mounted).toBeLessThan(100);
+    expect(vi.mocked(controller.read_gallery_thumbnail).mock.calls).toHaveLength(mounted);
   });
 });
 

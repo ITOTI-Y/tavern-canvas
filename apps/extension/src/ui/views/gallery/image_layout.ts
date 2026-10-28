@@ -8,7 +8,8 @@ const DEFAULT_ASPECT_RATIO = 1;
 const MIN_ASPECT_RATIO = 0.35;
 const MAX_ASPECT_RATIO = 3.5;
 
-function aspect_ratio(item: LayoutSourceItem): number {
+/** Width over height, clamped so a panorama or a sliver still gets a usable tile. */
+export function aspect_ratio(item: LayoutSourceItem): number {
   if (item.width === null || item.height === null || item.width <= 0 || item.height <= 0) {
     return DEFAULT_ASPECT_RATIO;
   }
@@ -38,4 +39,31 @@ export function layout_masonry_columns<TItem extends LayoutSourceItem>(
     heights[shortest] = (heights[shortest] ?? 0) + 1 / aspect_ratio(item);
   }
   return columns;
+}
+
+export interface PlacedTile<TItem> {
+  readonly item: TItem;
+  readonly top: number;
+  readonly height: number;
+}
+
+export interface PlacedColumn<TItem> {
+  readonly tiles: readonly PlacedTile<TItem>[];
+  readonly height: number;
+}
+
+/** Each tile's offset and height in pixels within a column `width` wide, tiles `gap` apart. */
+export function place_column<TItem extends LayoutSourceItem>(
+  items: readonly TItem[],
+  width: number,
+  gap: number,
+): PlacedColumn<TItem> {
+  const tiles: PlacedTile<TItem>[] = [];
+  let top = 0;
+  for (const item of items) {
+    const height = width / aspect_ratio(item);
+    tiles.push({ item, top, height });
+    top += height + gap;
+  }
+  return { tiles, height: Math.max(0, top - gap) };
 }

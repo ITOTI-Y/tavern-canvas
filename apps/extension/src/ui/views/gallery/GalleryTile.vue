@@ -9,7 +9,7 @@ import styles from "./gallery_styles.js";
 const props = defineProps<{
   readonly record: GalleryRecordSummary;
   readonly selected: boolean;
-  /** The tile's picture, read only once the tile scrolls near the viewport. */
+  /** The tile's picture, read when the tile mounts; the grid mounts only tiles near the viewport. */
   readonly readImage: (record: GalleryRecordSummary) => Promise<Blob>;
   readonly thumbnailFailedLabel: string;
   readonly pinnedLabel: string;
@@ -22,11 +22,9 @@ const emit = defineEmits<{
   "toggle-select": [];
 }>();
 
-const root = ref<HTMLElement | null>(null);
 const url = ref<string | null>(null);
 const failed = ref(false);
 const decoded = ref(false);
-let observer: IntersectionObserver | null = null;
 let disposed = false;
 
 /** Reserves the image's box before it loads, so the columns never reflow. */
@@ -49,25 +47,11 @@ async function load(): Promise<void> {
 }
 
 onMounted(() => {
-  if (typeof IntersectionObserver === "undefined" || root.value === null) {
-    void load();
-    return;
-  }
-  observer = new IntersectionObserver(
-    (entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        observer?.disconnect();
-        void load();
-      }
-    },
-    { rootMargin: "400px" },
-  );
-  observer.observe(root.value);
+  void load();
 });
 
 onBeforeUnmount(() => {
   disposed = true;
-  observer?.disconnect();
   if (url.value !== null) {
     URL.revokeObjectURL(url.value);
   }
@@ -76,7 +60,6 @@ onBeforeUnmount(() => {
 
 <template>
   <li
-    ref="root"
     :class="styles.tile"
     :style="{ aspectRatio: aspect_ratio }"
     :data-selected="selected ? '' : null"

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { layout_masonry_columns, type LayoutSourceItem } from "./image_layout.js";
+import { layout_masonry_columns, place_column, type LayoutSourceItem } from "./image_layout.js";
 
 function item(id: string, width: number | null, height: number | null): LayoutSourceItem {
   return { id, width, height };
@@ -32,5 +32,20 @@ describe("layout_masonry_columns", () => {
 
   it("uses at least one column", () => {
     expect(ids(layout_masonry_columns([item("a", 1, 1)], 0))).toEqual([["a"]]);
+  });
+});
+
+describe("place_column", () => {
+  it("stacks tiles at their aspect-ratio height with the gap between them", () => {
+    const column = place_column([item("a", 200, 100), item("b", 100, 200)], 100, 10);
+    expect(column.tiles.map(({ top, height }) => [top, height])).toEqual([
+      [0, 50],
+      [60, 200],
+    ]);
+    expect(column.height).toBe(260);
+  });
+
+  it("has no height without tiles", () => {
+    expect(place_column([], 100, 10).height).toBe(0);
   });
 });
