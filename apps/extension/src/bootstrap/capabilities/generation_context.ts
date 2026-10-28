@@ -17,6 +17,9 @@ export interface GenerationOrigin {
   readonly source_anchor: Sha256;
 }
 
+/** Stands in for the chat of a generation started with no chat open, such as a library preview; no message binds to it. */
+export const LIBRARY_CHAT_ID = "inkwell:library";
+
 /** A manual submission gets the same anchors as an automatic tool call, so it binds to a message through the same `MessageBinder` path. */
 export interface GenerationOriginSource {
   resolve(): Promise<GenerationOrigin>;
@@ -56,6 +59,9 @@ export class HostGenerationOriginSource implements GenerationOriginSource {
   }
 
   async resolve(): Promise<GenerationOrigin> {
+    if (this.#host.get_active_chat_id() === null) {
+      return this.#library_origin();
+    }
     const snapshot = await this.#host.get_active_chat();
     const source_context = to_source_context(snapshot);
     const anchors = create_generation_anchors(source_context, this.#random);
@@ -63,6 +69,24 @@ export class HostGenerationOriginSource implements GenerationOriginSource {
     return {
       chat_id: snapshot.chat_id,
       requested_swipe_id: last_message?.active_swipe_id ?? 0,
+      generation_anchor: anchors.generation_anchor,
+      source_anchor: anchors.source_anchor,
+    };
+  }
+
+  #library_origin(): GenerationOrigin {
+    const anchors = create_generation_anchors(
+      SourceContextSchema.parse({
+        schema_version: 1,
+        chat_id: LIBRARY_CHAT_ID,
+        active_swipes: [],
+        messages: [],
+      }),
+      this.#random,
+    );
+    return {
+      chat_id: LIBRARY_CHAT_ID,
+      requested_swipe_id: 0,
       generation_anchor: anchors.generation_anchor,
       source_anchor: anchors.source_anchor,
     };
