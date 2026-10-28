@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import type { AssetCategory } from "../../contracts/ui_capabilities.js";
 import type { StudioState } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
+import AppSwitch from "../../components/AppSwitch.vue";
 import styles from "./assets_styles.js";
 import CharacterPanel from "./CharacterPanel.vue";
 import LoraPanel from "./LoraPanel.vue";
@@ -32,6 +33,7 @@ const ASSET_CATEGORY_TABS: ReadonlySet<string> = new Set([
 ]);
 
 const active_tab = ref<AssetsTab>(props.state.assets.active_category);
+const show_all_chats = ref(false);
 
 function select_tab(value: string): void {
   active_tab.value = value as AssetsTab;
@@ -79,19 +81,23 @@ const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN"
         />
       </TabsContent>
       <TabsContent value="character" :class="styles.tabsContent">
+        <AppSwitch v-model="show_all_chats" :label="t('assets.show_all_chats_label')" />
         <CharacterPanel
           :records="state.assets.records.character"
           :outfit-records="state.assets.records.outfit"
           :loading="assets_loading"
           :controller="controller"
+          :show-all-chats="show_all_chats"
         />
       </TabsContent>
       <TabsContent value="outfit" :class="styles.tabsContent">
+        <AppSwitch v-model="show_all_chats" :label="t('assets.show_all_chats_label')" />
         <OutfitPanel
           :records="state.assets.records.outfit"
           :character-records="state.assets.records.character"
           :loading="assets_loading"
           :controller="controller"
+          :show-all-chats="show_all_chats"
         />
       </TabsContent>
       <TabsContent value="lora" :class="styles.tabsContent">

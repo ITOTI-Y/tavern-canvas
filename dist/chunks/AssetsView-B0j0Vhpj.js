@@ -17,9 +17,10 @@ import { n as fe } from "./NumberStepper-BaD6Y0DB.js";
 import { c as pe } from "./PopperContent-8IQaFABb.js";
 import { t as Z } from "./AppSelect-BdnjEPS_.js";
 import { t as me } from "./ConfirmDialog-3SJceF8v.js";
-import { t as he } from "./reference_image-DYyYuujP.js";
+import { t as he } from "./AppSwitch-DGomz9dg.js";
+import { t as ge } from "./reference_image-DYyYuujP.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/scan-search.js
-var ge = L("scan-search", [
+var _e = L("scan-search", [
 	["path", {
 		d: "M3 7V5a2 2 0 0 1 2-2h2",
 		key: "aa7l1z"
@@ -46,7 +47,7 @@ var ge = L("scan-search", [
 		d: "m16 16-1.9-1.9",
 		key: "1dq9hf"
 	}]
-]), [_e, ve] = /*#__PURE__*/ se("TabsRoot"), ye = /* @__PURE__ */ N({
+]), [ve, ye] = /*#__PURE__*/ se("TabsRoot"), be = /* @__PURE__ */ N({
 	__name: "TabsRoot",
 	props: {
 		defaultValue: {
@@ -93,7 +94,7 @@ var ge = L("scan-search", [
 			defaultValue: n.defaultValue,
 			passive: n.modelValue === void 0
 		}), d = y(), f = E(/* @__PURE__ */ new Set());
-		return ve({
+		return ye({
 			modelValue: c,
 			changeModelValue: (e) => {
 				c.value = e;
@@ -130,10 +131,10 @@ var ge = L("scan-search", [
 });
 //#endregion
 //#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/Tabs/utils.js
-function be(e, t) {
+function xe(e, t) {
 	return `${e}-trigger-${t}`;
 }
-function xe(e, t) {
+function Se(e, t) {
 	return `${e}-content-${t}`;
 }
 //#endregion
@@ -159,7 +160,7 @@ var Q = /* @__PURE__ */ N({
 		}
 	},
 	setup(e) {
-		let t = e, { forwardRef: n } = Y(), r = _e(), i = D(() => be(r.baseId, t.value)), o = D(() => xe(r.baseId, t.value)), s = D(() => t.value === r.modelValue.value), c = y(s.value);
+		let t = e, { forwardRef: n } = Y(), r = ve(), i = D(() => xe(r.baseId, t.value)), o = D(() => Se(r.baseId, t.value)), s = D(() => t.value === r.modelValue.value), c = y(s.value);
 		return a(() => {
 			r.registerContent(t.value), requestAnimationFrame(() => {
 				c.value = !1;
@@ -198,7 +199,7 @@ var Q = /* @__PURE__ */ N({
 			_: 3
 		}, 8, ["present"]));
 	}
-}), Se = /* @__PURE__ */ N({
+}), Ce = /* @__PURE__ */ N({
 	__name: "TabsList",
 	props: {
 		loop: {
@@ -216,7 +217,7 @@ var Q = /* @__PURE__ */ N({
 		}
 	},
 	setup(e) {
-		let { loop: t } = g(e), { forwardRef: n, currentElement: r } = Y(), i = _e();
+		let { loop: t } = g(e), { forwardRef: n, currentElement: r } = Y(), i = ve();
 		return i.tabsList = r, (e, r) => (u(), S(v(ie), {
 			"as-child": "",
 			orientation: v(i).orientation.value,
@@ -267,7 +268,7 @@ var Q = /* @__PURE__ */ N({
 		}
 	},
 	setup(e) {
-		let t = e, { forwardRef: n } = Y(), r = _e(), i = D(() => be(r.baseId, t.value)), a = D(() => r.contentIds.value.has(t.value) ? xe(r.baseId, t.value) : void 0), o = D(() => t.value === r.modelValue.value);
+		let t = e, { forwardRef: n } = Y(), r = ve(), i = D(() => xe(r.baseId, t.value)), a = D(() => r.contentIds.value.has(t.value) ? Se(r.baseId, t.value) : void 0), o = D(() => t.value === r.modelValue.value);
 		return (e, t) => (u(), S(v(re), {
 			"as-child": "",
 			focusable: !e.disabled,
@@ -315,17 +316,23 @@ var Q = /* @__PURE__ */ N({
 });
 //#endregion
 //#region src/ui/views/assets/chat_scope.ts
-function Ce(e, t) {
-	let n = d(I, y(null));
+function we(e, t, n = () => !1) {
+	let r = d(I, y(null));
 	return {
-		active_chat_id: n,
+		active_chat_id: r,
 		visible: D(() => e().flatMap((e) => {
-			let r = e.payload.chat_id;
-			return typeof r != "string" || r === "" ? [e] : r === n.value ? [{
+			let i = e.payload.chat_id;
+			return typeof i != "string" || i === "" ? [e] : i === r.value ? [{
 				...e,
 				payload: {
 					...e.payload,
-					scope_label: t()
+					scope_label: t().this_chat
+				}
+			}] : n() ? [{
+				...e,
+				payload: {
+					...e.payload,
+					scope_label: t().other_chat(i)
 				}
 			}] : [];
 		}))
@@ -333,7 +340,7 @@ function Ce(e, t) {
 }
 //#endregion
 //#region src/ui/views/assets/CharacterReference.vue?vue&type=script&setup=true&lang.ts
-var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
+var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 	__name: "CharacterReference",
 	props: {
 		image: {},
@@ -369,7 +376,7 @@ var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
 			s.value = null;
 			let a;
 			try {
-				a = await he(n);
+				a = await ge(n);
 			} catch {
 				s.value = i("assets.characters.reference_image_unreadable");
 				return;
@@ -386,7 +393,7 @@ var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
 					let e = await a.generate({
 						positive_prompt: g.value,
 						negative_prompt: _.value
-					}), t = await he(e);
+					}), t = await ge(e);
 					r("update:image", t), r("generated", t), l.value = !1;
 				} catch (e) {
 					s.value = i("assets.characters.reference_generate_failed", { reason: e instanceof Error ? e.message : String(e) });
@@ -406,7 +413,7 @@ var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
 					src: e.image,
 					alt: v(i)("assets.characters.reference_image_label"),
 					class: j(v(B).reference_thumbnail)
-				}, null, 10, we)), w("div", { class: j(v(B).reference_actions) }, [
+				}, null, 10, Te)), w("div", { class: j(v(B).reference_actions) }, [
 					w("input", {
 						ref_key: "file_input",
 						ref: o,
@@ -449,7 +456,7 @@ var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
 						id: e,
 						"onUpdate:modelValue": n[2] ||= (e) => g.value = e,
 						class: j(v(B).textArea)
-					}, null, 10, Te), [[h, g.value]])]),
+					}, null, 10, Ee), [[h, g.value]])]),
 					_: 1
 				}, 8, ["label"]),
 				P(J, { label: v(i)("assets.characters.reference_negative_label") }, {
@@ -457,7 +464,7 @@ var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
 						id: e,
 						"onUpdate:modelValue": n[3] ||= (e) => _.value = e,
 						class: j(v(B).textArea)
-					}, null, 10, Ee), [[h, _.value]])]),
+					}, null, 10, De), [[h, _.value]])]),
 					_: 1
 				}, 8, ["label"]),
 				w("div", { class: j(v(B).reference_actions) }, [P(G, {
@@ -496,7 +503,7 @@ var we = ["src", "alt"], Te = ["id"], Ee = ["id"], De = /* @__PURE__ */ N({
 });
 //#endregion
 //#region src/ui/views/assets/wardrobe_labels.ts
-function Oe(e, t) {
+function ke(e, t) {
 	switch (t) {
 		case "age": return e("assets.characters.appearance.age");
 		case "body": return e("assets.characters.appearance.body");
@@ -508,7 +515,7 @@ function Oe(e, t) {
 		case "features": return e("assets.characters.appearance.features");
 	}
 }
-function ke(e, t) {
+function Ae(e, t) {
 	switch (t) {
 		case "full_body": return e("assets.outfits.slots.full_body");
 		case "outerwear": return e("assets.outfits.slots.outerwear");
@@ -522,16 +529,20 @@ function ke(e, t) {
 }
 //#endregion
 //#region src/ui/views/assets/CharacterPanel.vue?vue&type=script&setup=true&lang.ts
-var Ae = "none", je = "solo, full body, standing, looking at viewer, simple background, white background", Me = /* @__PURE__ */ N({
+var je = "none", Me = "solo, full body, standing, looking at viewer, simple background, white background", Ne = /* @__PURE__ */ N({
 	__name: "CharacterPanel",
 	props: {
 		records: {},
 		outfitRecords: {},
 		loading: { type: Boolean },
-		controller: {}
+		controller: {},
+		showAllChats: { type: Boolean }
 	},
 	setup(a) {
-		let s = a, { t: c } = T(), { visible: l } = Ce(() => s.records, () => c("assets.chat_scope_label")), f = D(() => [
+		let s = a, { t: c } = T(), { visible: l } = we(() => s.records, () => ({
+			this_chat: c("assets.chat_scope_label"),
+			other_chat: (e) => c("assets.other_chat_scope_label", { chat: e })
+		}), () => s.showAllChats), f = D(() => [
 			{
 				key: "aliases",
 				label: c("assets.characters.aliases_label"),
@@ -540,7 +551,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			},
 			...r.map((e) => ({
 				key: e,
-				label: Oe(c, e),
+				label: ke(c, e),
 				kind: "text"
 			})),
 			{
@@ -578,7 +589,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 		]), b = D(() => g.values.subject === "boy" || g.values.subject === "other" ? g.values.subject : "girl"), S = D(() => {
 			let e = g.record_id.value;
 			return [{
-				value: Ae,
+				value: je,
 				label: c("assets.characters.default_outfit_first")
 			}, ...s.outfitRecords.filter((t) => {
 				let n = t.payload.character_id;
@@ -587,7 +598,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 				value: e.id,
 				label: e.display_name
 			}))];
-		}), C = D(() => typeof g.values.default_outfit_id == "string" && g.values.default_outfit_id !== "" ? g.values.default_outfit_id : Ae), w = D(() => typeof g.values.chat_id == "string" && g.values.chat_id !== ""), E = D(() => typeof g.values.reference_image == "string" && g.values.reference_image !== "" ? g.values.reference_image : null), k = D(() => g.values.reference_mode === "img2img" || g.values.reference_mode === "precise" ? g.values.reference_mode : "vibe");
+		}), C = D(() => typeof g.values.default_outfit_id == "string" && g.values.default_outfit_id !== "" ? g.values.default_outfit_id : je), w = D(() => typeof g.values.chat_id == "string" && g.values.chat_id !== ""), E = D(() => typeof g.values.reference_image == "string" && g.values.reference_image !== "" ? g.values.reference_image : null), k = D(() => g.values.reference_mode === "img2img" || g.values.reference_mode === "precise" ? g.values.reference_mode : "vibe");
 		function A(e) {
 			if (e === null) {
 				for (let e of [
@@ -663,7 +674,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 		}), ce = D(() => ({
 			positive_prompt: n([
 				ae[b.value],
-				je,
+				Me,
 				...r.flatMap((t) => e(g.values[t])),
 				...se.value
 			].filter((e) => e !== "")),
@@ -757,7 +768,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 					onSave: Y,
 					onCancel: v(g).close_dialog
 				}, {
-					"leading-fields": p(() => [P(De, {
+					"leading-fields": p(() => [P(Oe, {
 						image: E.value,
 						send: v(g).values.reference_send === 1,
 						mode: k.value,
@@ -805,7 +816,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 								"model-value": C.value,
 								options: S.value,
 								placeholder: v(c)("assets.characters.default_outfit_label")
-							}, v(oe)({ describedBy: n }), { "onUpdate:modelValue": t[3] ||= (e) => v(g).values.default_outfit_id = e === Ae ? "" : e }), null, 16, [
+							}, v(oe)({ describedBy: n }), { "onUpdate:modelValue": t[3] ||= (e) => v(g).values.default_outfit_id = e === je ? "" : e }), null, 16, [
 								"id",
 								"model-value",
 								"options",
@@ -879,7 +890,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			])
 		]));
 	}
-}), Ne = /* @__PURE__ */ N({
+}), Pe = /* @__PURE__ */ N({
 	__name: "LoraPanel",
 	props: {
 		records: {},
@@ -1052,43 +1063,62 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			"close-label"
 		])]));
 	}
-}), Pe = /* @__PURE__ */ N({
+}), Fe = /* @__PURE__ */ N({
 	__name: "OutfitPanel",
 	props: {
 		records: {},
 		characterRecords: {},
 		loading: { type: Boolean },
-		controller: {}
+		controller: {},
+		showAllChats: { type: Boolean }
 	},
 	setup(e) {
 		let t = e, { t: n } = T(), r = D(() => i.map((e) => ({
 			key: e,
-			label: ke(n, e),
+			label: Ae(n, e),
 			kind: "text"
 		}))), a = D(() => [{
+			key: "owner_label",
+			label: n("assets.outfits.character_label")
+		}, {
 			key: "scope_label",
 			label: n("assets.scope_label")
-		}]), { visible: s } = Ce(() => t.records, () => n("assets.chat_scope_label")), { visible: c } = Ce(() => t.characterRecords, () => n("assets.chat_scope_label")), l = H("outfit", t.controller, () => r.value, () => n("errors.validation_required"), [
+		}]), { visible: s } = we(() => t.records, () => ({
+			this_chat: n("assets.chat_scope_label"),
+			other_chat: (e) => n("assets.other_chat_scope_label", { chat: e })
+		}), () => t.showAllChats), c = D(() => s.value.map((e) => {
+			let n = t.characterRecords.find((t) => t.id === e.payload.character_id);
+			return n === void 0 ? e : {
+				...e,
+				payload: {
+					...e.payload,
+					owner_label: n.display_name
+				}
+			};
+		})), { visible: l } = we(() => t.characterRecords, () => ({
+			this_chat: n("assets.chat_scope_label"),
+			other_chat: (e) => n("assets.other_chat_scope_label", { chat: e })
+		})), d = H("outfit", t.controller, () => r.value, () => n("errors.validation_required"), [
 			"character_id",
 			"origin",
 			"chat_id"
-		]), d = D(() => typeof l.values.chat_id == "string" && l.values.chat_id !== "");
-		async function f() {
-			l.values.chat_id = "", await l.save();
+		]), f = D(() => typeof d.values.chat_id == "string" && d.values.chat_id !== "");
+		async function h() {
+			d.values.chat_id = "", await d.save();
 		}
-		let h = D(() => c.value.map((e) => ({
+		let g = D(() => l.value.map((e) => ({
 			value: e.id,
 			label: e.display_name
-		}))), g = D(() => {
-			let e = l.values.character_id;
+		}))), _ = D(() => {
+			let e = d.values.character_id;
 			return typeof e == "string" && e !== "" ? e : void 0;
 		});
-		function _(e) {
-			l.values.character_id = e;
+		function y(e) {
+			d.values.character_id = e;
 		}
-		let y = (e) => n("assets.delete_confirm_title", { name: e });
+		let b = (e) => n("assets.delete_confirm_title", { name: e });
 		return (t, i) => (u(), m("div", null, [P(V, {
-			records: v(s),
+			records: c.value,
 			"summary-fields": a.value,
 			loading: e.loading,
 			"search-label": v(n)("common.actions.search"),
@@ -1100,18 +1130,18 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			"reorder-hint": v(n)("assets.reorder_hint"),
 			"edit-label": v(n)("common.actions.edit"),
 			"delete-label": v(n)("common.actions.delete"),
-			"delete-confirm-title": y,
+			"delete-confirm-title": b,
 			"delete-confirm-description": v(n)("assets.delete_confirm_description"),
 			"confirm-label": v(n)("confirmations.destructive.default_confirm_action"),
 			"cancel-label": v(n)("confirmations.destructive.default_cancel_action"),
 			"move-up-label": v(n)("assets.move_up_action"),
 			"move-down-label": v(n)("assets.move_down_action"),
 			"drag-handle-label": v(n)("assets.drag_handle_label"),
-			onAdd: v(l).open_create,
-			onEdit: v(l).open_edit,
-			onDelete: v(l).remove,
-			onReorder: v(l).reorder,
-			onRandomSelect: v(l).random_select
+			onAdd: v(d).open_create,
+			onEdit: v(d).open_edit,
+			onDelete: v(d).remove,
+			onReorder: v(d).reorder,
+			onRandomSelect: v(d).random_select
 		}, null, 8, [
 			"records",
 			"summary-fields",
@@ -1137,47 +1167,47 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			"onReorder",
 			"onRandomSelect"
 		]), P(q, {
-			open: v(l).dialog_open.value,
-			title: v(l).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.outfits.add_action"),
+			open: v(d).dialog_open.value,
+			title: v(d).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.outfits.add_action"),
 			description: v(n)("assets.form_dialog_description"),
 			"close-label": v(n)("common.actions.close"),
 			"onUpdate:open": i[2] ||= (e) => {
-				e || v(l).close_dialog();
+				e || v(d).close_dialog();
 			}
 		}, {
 			default: p(() => [P(U, {
 				"name-label": v(n)("common.labels.name"),
 				"name-placeholder": v(n)("common.labels.name"),
-				name: v(l).name.value,
-				"name-error": v(l).name_error.value,
-				"save-error": v(l).save_error.value,
+				name: v(d).name.value,
+				"name-error": v(d).name_error.value,
+				"save-error": v(d).save_error.value,
 				fields: r.value,
-				values: v(l).values,
+				values: v(d).values,
 				"save-label": v(n)("common.actions.save"),
 				"cancel-label": v(n)("common.actions.cancel"),
 				"decrement-label": v(n)("common.actions.decrease"),
 				"increment-label": v(n)("common.actions.increase"),
-				pending: v(l).saving.value,
+				pending: v(d).saving.value,
 				"onUpdate:name": i[0] ||= (e) => {
-					v(l).name.value = e;
+					v(d).name.value = e;
 				},
-				"onUpdate:values": i[1] ||= (e) => v(W)(v(l).values, e),
-				onSave: v(l).save,
-				onCancel: v(l).close_dialog
+				"onUpdate:values": i[1] ||= (e) => v(W)(v(d).values, e),
+				onSave: v(d).save,
+				onCancel: v(d).close_dialog
 			}, {
-				"extra-fields": p(() => [d.value ? (u(), m("p", {
+				"extra-fields": p(() => [f.value ? (u(), m("p", {
 					key: 0,
 					class: j(v(B).chat_scope_note)
 				}, [M(O(v(n)("assets.chat_scope_note")) + " ", 1), P(G, {
 					label: v(n)("assets.import_to_global_action"),
-					onClick: f
+					onClick: h
 				}, null, 8, ["label"])], 2)) : x("", !0), P(J, { label: v(n)("assets.outfits.character_label") }, {
 					default: p(({ fieldId: e, describedBy: t }) => [P(Z, o({
 						id: e,
-						"model-value": g.value,
-						options: h.value,
+						"model-value": _.value,
+						options: g.value,
 						placeholder: v(n)("assets.outfits.character_placeholder")
-					}, v(oe)({ describedBy: t }), { "onUpdate:modelValue": _ }), null, 16, [
+					}, v(oe)({ describedBy: t }), { "onUpdate:modelValue": y }), null, 16, [
 						"id",
 						"model-value",
 						"options",
@@ -1210,7 +1240,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			"close-label"
 		])]));
 	}
-}), Fe = ["src", "alt"], Ie = ["id", "aria-describedby"], Le = "novelai", Re = "google", ze = /* @__PURE__ */ N({
+}), Ie = ["src", "alt"], Le = ["id", "aria-describedby"], Re = "novelai", ze = "google", Be = /* @__PURE__ */ N({
 	__name: "VibePanel",
 	props: {
 		records: {},
@@ -1219,10 +1249,10 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 	},
 	setup(e) {
 		let t = e, { t: n } = T(), r = D(() => [{
-			value: Le,
+			value: Re,
 			label: n("assets.vibe.provider_novelai")
 		}, {
-			value: Re,
+			value: ze,
 			label: n("assets.vibe.provider_google")
 		}]), i = D(() => {
 			let e = [{
@@ -1230,7 +1260,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 				label: n("assets.vibe.notes_label"),
 				kind: "textarea"
 			}];
-			return o.values.provider !== Re && e.push({
+			return o.values.provider !== ze && e.push({
 				key: "strength",
 				label: n("assets.vibe.strength_label"),
 				kind: "number",
@@ -1255,13 +1285,13 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			if (t !== void 0) {
 				s.value = null;
 				try {
-					o.values.image = await he(t);
+					o.values.image = await ge(t);
 				} catch {
 					s.value = n("assets.vibe.image_unreadable");
 				}
 			}
 		}
-		let d = D(() => typeof o.values.provider == "string" && o.values.provider !== "" ? o.values.provider : Le);
+		let d = D(() => typeof o.values.provider == "string" && o.values.provider !== "" ? o.values.provider : Re);
 		function f(e) {
 			o.values.provider = e;
 		}
@@ -1353,14 +1383,14 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 						src: c.value,
 						alt: v(n)("assets.vibe.image_label"),
 						class: j(v(B).reference_thumbnail)
-					}, null, 10, Fe)), w("input", {
+					}, null, 10, Ie)), w("input", {
 						id: e,
 						type: "file",
 						accept: "image/png,image/jpeg,image/webp",
 						"aria-describedby": t,
 						"data-testid": "vibe-image-input",
 						onChange: l
-					}, null, 40, Ie)]),
+					}, null, 40, Le)]),
 					_: 1
 				}, 8, [
 					"label",
@@ -1404,10 +1434,10 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			"close-label"
 		])]));
 	}
-}), Be = {
+}), Ve = {
 	class: "tc-visually-hidden",
 	for: "vocabulary-search-input"
-}, Ve = ["placeholder"], He = ["aria-expanded"], Ue = /* @__PURE__ */ N({
+}, He = ["placeholder"], Ue = ["aria-expanded"], We = /* @__PURE__ */ N({
 	__name: "VocabularyPanel",
 	props: {
 		catalog: {},
@@ -1484,13 +1514,13 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 		return (e, t) => (u(), m("div", { class: j(v(B).vocabularyPanel) }, [
 			w("section", null, [
 				w("p", { class: j(v(B).sectionTitle) }, O(v(n)("assets.vocabulary.search_placeholder")), 3),
-				w("div", { class: j(v(B).vocabularySearchRow) }, [w("label", Be, O(v(n)("assets.vocabulary.search_placeholder")), 1), c(w("input", {
+				w("div", { class: j(v(B).vocabularySearchRow) }, [w("label", Ve, O(v(n)("assets.vocabulary.search_placeholder")), 1), c(w("input", {
 					id: "vocabulary-search-input",
 					"onUpdate:modelValue": t[0] ||= (e) => k.value = e,
 					type: "text",
 					class: j(v(B).searchInput),
 					placeholder: v(n)("assets.vocabulary.search_placeholder")
-				}, null, 10, Ve), [[h, k.value]])], 2),
+				}, null, 10, He), [[h, k.value]])], 2),
 				P(K, {
 					status: q.value,
 					"empty-title": v(n)("assets.vocabulary.empty_title"),
@@ -1585,7 +1615,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			}, [P(R, {
 				icon: d.value ? v(te) : v(ee),
 				size: 14
-			}, null, 8, ["icon"]), M(" " + O(v(n)("assets.vocabulary.nsfw_disclosure_label")), 1)], 10, He), d.value ? (u(), m("div", {
+			}, null, 8, ["icon"]), M(" " + O(v(n)("assets.vocabulary.nsfw_disclosure_label")), 1)], 10, Ue), d.value ? (u(), m("div", {
 				key: 1,
 				class: j(v(B).catalogList)
 			}, [w("p", { class: j(v(B).nsfwNotice) }, O(v(n)("assets.vocabulary.nsfw_disclosure_hint")), 3), (u(!0), m(A, null, s(l.value, (e) => (u(), m("div", {
@@ -1608,7 +1638,7 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 			}, O(v(n)("assets.vocabulary.nsfw_disclosure_hint")), 3))], 2)) : x("", !0)
 		], 2));
 	}
-}), We = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/gu, Ge = [
+}), Ge = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/gu, Ke = [
 	"positive_prompt",
 	"negative_prompt",
 	"seed",
@@ -1616,9 +1646,9 @@ var Ae = "none", je = "solo, full body, standing, looking at viewer, simple back
 	"height",
 	"steps"
 ];
-function Ke(e) {
+function qe(e) {
 	let t = /* @__PURE__ */ new Set();
-	for (let n of e.matchAll(We)) {
+	for (let n of e.matchAll(Ge)) {
 		let e = n[1];
 		e !== void 0 && t.add(e);
 	}
@@ -1626,13 +1656,13 @@ function Ke(e) {
 }
 //#endregion
 //#region src/ui/views/assets/WorkflowPanel.vue?vue&type=script&setup=true&lang.ts
-var qe = ["aria-label"], Je = [
+var Je = ["aria-label"], Ye = [
 	"id",
 	"placeholder",
 	"value",
 	"aria-describedby",
 	"aria-invalid"
-], Ye = ["id", "value"], Xe = "unmapped", Ze = "{{", Qe = "}}", $e = /* @__PURE__ */ N({
+], Xe = ["id", "value"], Ze = "unmapped", Qe = "{{", $e = "}}", et = /* @__PURE__ */ N({
 	__name: "WorkflowPanel",
 	props: {
 		records: {},
@@ -1656,9 +1686,9 @@ var qe = ["aria-label"], Je = [
 			}
 		}
 		let d = D(() => [{
-			value: Xe,
+			value: Ze,
 			label: n("assets.workflow.placeholder_unmapped")
-		}, ...Ge.map((e) => ({
+		}, ...Ke.map((e) => ({
 			value: e,
 			label: l(e)
 		}))]);
@@ -1683,7 +1713,7 @@ var qe = ["aria-label"], Je = [
 			e ? g(e.payload) : c.value = [];
 		}, { immediate: !0 });
 		function b() {
-			let e = Ke(h()), t = new Map(c.value.map((e) => [e.name, e.target]));
+			let e = qe(h()), t = new Map(c.value.map((e) => [e.name, e.target]));
 			c.value = e.map((e) => ({
 				name: e,
 				target: t.get(e) ?? ""
@@ -1691,19 +1721,19 @@ var qe = ["aria-label"], Je = [
 		}
 		function C(e, t) {
 			let n = c.value.find((t) => t.name === e);
-			n && (n.target = t === Xe ? "" : t);
+			n && (n.target = t === Ze ? "" : t);
 		}
 		function E() {
 			o.value?.click();
 		}
 		function k(e) {
-			return `${Ze}${e}${Qe}`;
+			return `${Qe}${e}${$e}`;
 		}
 		async function M(e) {
 			let t = e.target, n = t.files?.[0];
 			if (t.value = "", !n) return;
 			let r = await n.text();
-			a.open_create(), a.name.value = n.name.replace(/\.json$/iu, ""), a.values.workflow_json = r, c.value = Ke(r).map((e) => ({
+			a.open_create(), a.name.value = n.name.replace(/\.json$/iu, ""), a.values.workflow_json = r, c.value = qe(r).map((e) => ({
 				name: e,
 				target: ""
 			}));
@@ -1728,7 +1758,7 @@ var qe = ["aria-label"], Je = [
 				accept: "application/json,.json",
 				"aria-label": v(n)("assets.workflow.import_action"),
 				onChange: i[0] ||= (e) => void M(e)
-			}, null, 42, qe)], 2),
+			}, null, 42, Je)], 2),
 			P(V, {
 				records: e.records,
 				"summary-fields": [],
@@ -1804,7 +1834,7 @@ var qe = ["aria-label"], Je = [
 							"aria-describedby": t,
 							"aria-invalid": r,
 							onInput: i[1] ||= (e) => v(a).name.value = e.target.value
-						}, null, 42, Je)]),
+						}, null, 42, Ye)]),
 						_: 1
 					}, 8, ["label", "error"]),
 					P(J, { label: v(n)("assets.workflow.json_label") }, {
@@ -1817,12 +1847,12 @@ var qe = ["aria-label"], Je = [
 							},
 							value: h(),
 							onInput: i[2] ||= (e) => v(a).values.workflow_json = e.target.value
-						}, null, 42, Ye)]),
+						}, null, 42, Xe)]),
 						_: 1
 					}, 8, ["label"]),
 					P(G, {
 						label: v(n)("assets.workflow.placeholder_scan_action"),
-						icon: v(ge),
+						icon: v(_e),
 						variant: "secondary",
 						type: "button",
 						onClick: b
@@ -1835,7 +1865,7 @@ var qe = ["aria-label"], Je = [
 						class: j(v(B).placeholderRow)
 					}, [w("span", { class: j(v(B).placeholderKey) }, O(k(e.name)), 3), (u(), S(Z, {
 						key: v(r),
-						"model-value": e.target === "" ? Xe : e.target,
+						"model-value": e.target === "" ? Ze : e.target,
 						options: d.value,
 						placeholder: v(n)("assets.workflow.placeholder_unmapped"),
 						ariaLabel: e.name,
@@ -1868,7 +1898,7 @@ var qe = ["aria-label"], Je = [
 			])
 		]));
 	}
-}), et = /* @__PURE__ */ N({
+}), tt = /* @__PURE__ */ N({
 	__name: "AssetsView",
 	props: {
 		state: {},
@@ -1881,17 +1911,17 @@ var qe = ["aria-label"], Je = [
 			"lora",
 			"vibe",
 			"workflow"
-		]), a = y(t.state.assets.active_category);
-		function o(e) {
+		]), a = y(t.state.assets.active_category), o = y(!1);
+		function s(e) {
 			a.value = e, i.has(e) && t.controller.set_active_asset_category(e);
 		}
-		let s = D(() => t.state.loading.has("assets")), c = D(() => t.state.loading.has("vocabulary")), l = D(() => r.value === "zh-CN" ? "zh-CN" : "en");
-		return (t, r) => (u(), m("div", { class: j(v(B).assetsView) }, [P(v(ye), {
+		let c = D(() => t.state.loading.has("assets")), l = D(() => t.state.loading.has("vocabulary")), d = D(() => r.value === "zh-CN" ? "zh-CN" : "en");
+		return (t, r) => (u(), m("div", { class: j(v(B).assetsView) }, [P(v(be), {
 			"model-value": a.value,
-			"onUpdate:modelValue": o
+			"onUpdate:modelValue": s
 		}, {
 			default: p(() => [
-				P(v(Se), {
+				P(v(Ce), {
 					class: j(v(B).tabsList),
 					"aria-label": v(n)("nav.assets")
 				}, {
@@ -1945,12 +1975,12 @@ var qe = ["aria-label"], Je = [
 					value: "vocabulary",
 					class: j(v(B).tabsContent)
 				}, {
-					default: p(() => [P(Ue, {
+					default: p(() => [P(We, {
 						catalog: e.state.assets.vocabulary_catalog,
 						"install-command": e.state.assets.vocabulary_install_command,
-						loading: c.value,
+						loading: l.value,
 						controller: e.controller,
-						locale: l.value
+						locale: d.value
 					}, null, 8, [
 						"catalog",
 						"install-command",
@@ -1964,16 +1994,22 @@ var qe = ["aria-label"], Je = [
 					value: "character",
 					class: j(v(B).tabsContent)
 				}, {
-					default: p(() => [P(Me, {
+					default: p(() => [P(he, {
+						modelValue: o.value,
+						"onUpdate:modelValue": r[0] ||= (e) => o.value = e,
+						label: v(n)("assets.show_all_chats_label")
+					}, null, 8, ["modelValue", "label"]), P(Ne, {
 						records: e.state.assets.records.character,
 						"outfit-records": e.state.assets.records.outfit,
-						loading: s.value,
-						controller: e.controller
+						loading: c.value,
+						controller: e.controller,
+						"show-all-chats": o.value
 					}, null, 8, [
 						"records",
 						"outfit-records",
 						"loading",
-						"controller"
+						"controller",
+						"show-all-chats"
 					])]),
 					_: 1
 				}, 8, ["class"]),
@@ -1981,16 +2017,22 @@ var qe = ["aria-label"], Je = [
 					value: "outfit",
 					class: j(v(B).tabsContent)
 				}, {
-					default: p(() => [P(Pe, {
+					default: p(() => [P(he, {
+						modelValue: o.value,
+						"onUpdate:modelValue": r[1] ||= (e) => o.value = e,
+						label: v(n)("assets.show_all_chats_label")
+					}, null, 8, ["modelValue", "label"]), P(Fe, {
 						records: e.state.assets.records.outfit,
 						"character-records": e.state.assets.records.character,
-						loading: s.value,
-						controller: e.controller
+						loading: c.value,
+						controller: e.controller,
+						"show-all-chats": o.value
 					}, null, 8, [
 						"records",
 						"character-records",
 						"loading",
-						"controller"
+						"controller",
+						"show-all-chats"
 					])]),
 					_: 1
 				}, 8, ["class"]),
@@ -1998,10 +2040,10 @@ var qe = ["aria-label"], Je = [
 					value: "lora",
 					class: j(v(B).tabsContent)
 				}, {
-					default: p(() => [P(Ne, {
+					default: p(() => [P(Pe, {
 						records: e.state.assets.records.lora,
 						"character-records": e.state.assets.records.character,
-						loading: s.value,
+						loading: c.value,
 						controller: e.controller
 					}, null, 8, [
 						"records",
@@ -2015,9 +2057,9 @@ var qe = ["aria-label"], Je = [
 					value: "vibe",
 					class: j(v(B).tabsContent)
 				}, {
-					default: p(() => [P(ze, {
+					default: p(() => [P(Be, {
 						records: e.state.assets.records.vibe,
-						loading: s.value,
+						loading: c.value,
 						controller: e.controller
 					}, null, 8, [
 						"records",
@@ -2030,9 +2072,9 @@ var qe = ["aria-label"], Je = [
 					value: "workflow",
 					class: j(v(B).tabsContent)
 				}, {
-					default: p(() => [P($e, {
+					default: p(() => [P(et, {
 						records: e.state.assets.records.workflow,
-						loading: s.value,
+						loading: c.value,
 						controller: e.controller
 					}, null, 8, [
 						"records",
@@ -2047,4 +2089,4 @@ var qe = ["aria-label"], Je = [
 	}
 });
 //#endregion
-export { et as default };
+export { tt as default };

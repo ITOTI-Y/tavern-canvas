@@ -454,7 +454,11 @@ export function apply_scene_update(
       continue;
     }
     let outfit_id = known_outfit(entry.outfit_id) ? entry.outfit_id : prior.outfit_id;
-    const introduced = entry.new_outfit ?? first;
+    // On a known character's first appearance in the chat the model only sees the outfit it starts
+    // in, and tends to describe the story's clothing as a new outfit instead of keeping it.
+    const first_appearance = known !== undefined && !wearing.has(character_id);
+    const introduced =
+      first_appearance && prior.outfit_id !== null ? null : (entry.new_outfit ?? first);
     if (introduced !== null) {
       outfit_id = add_outfit(introduced, character_id) ?? outfit_id;
     }

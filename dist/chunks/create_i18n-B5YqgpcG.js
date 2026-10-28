@@ -302,6 +302,8 @@ var o = {
 		form_dialog_description: "Fields marked * are required.",
 		scope_label: "Scope",
 		chat_scope_label: "This chat only",
+		other_chat_scope_label: "Other chat: {chat}",
+		show_all_chats_label: "Show entries from all chats",
 		chat_scope_note: "The wardrobe update created this entry from this chat; it appears in this chat only.",
 		import_to_global_action: "Import to the global library",
 		delete_confirm_title: "Delete {name}?",
@@ -793,7 +795,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DruTHeUO.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-BcgVfSMo.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

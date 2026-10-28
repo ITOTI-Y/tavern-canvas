@@ -253,6 +253,27 @@ describe("apply_scene_update", () => {
     ]);
   });
 
+  it("keeps a known character's outfit on its first appearance in the chat", () => {
+    sequence = 0;
+    const changed = entry({
+      ref: "c1",
+      name: "Seraphina",
+      wearing_changed: true,
+      new_outfit: { name: "Worn sweater", slots: { top: ["sweater"], bottom: ["jeans"] } },
+      conditions: ["torn clothes"],
+    });
+
+    const first = apply_scene_update(update(changed), [], LIBRARY, new_id);
+    expect(first.new_outfits).toEqual([]);
+    expect(first.wearing).toEqual([
+      { character_id: "c1", outfit_id: "o1", overrides: {}, conditions: ["torn clothes"] },
+    ]);
+
+    const later = apply_scene_update(update(changed), first.wearing, LIBRARY, new_id);
+    expect(later.new_outfits.map((outfit) => outfit.name)).toEqual(["Worn sweater"]);
+    expect(later.wearing[0]?.outfit_id).toBe("new-1");
+  });
+
   it("ignores an id that belongs to another character and drops placeholder tags", () => {
     sequence = 0;
     const applied = apply_scene_update(

@@ -23,6 +23,7 @@ const props = defineProps<{
   readonly characterRecords: readonly AssetRecordSummary[];
   readonly loading: boolean;
   readonly controller: StudioController;
+  readonly showAllChats: boolean;
 }>();
 
 const { t } = useI18n();
@@ -32,16 +33,35 @@ const FIELDS = computed<readonly AssetFieldSpec[]>(() =>
 );
 
 const SUMMARY_FIELDS = computed<readonly AssetSummaryFieldSpec[]>(() => [
+  { key: "owner_label", label: t("assets.outfits.character_label") },
   { key: "scope_label", label: t("assets.scope_label") },
 ]);
 
-const { visible } = use_chat_scope(
+const { visible: scoped } = use_chat_scope(
   () => props.records,
-  () => t("assets.chat_scope_label"),
+  () => ({
+    this_chat: t("assets.chat_scope_label"),
+    other_chat: (chat) => t("assets.other_chat_scope_label", { chat }),
+  }),
+  () => props.showAllChats,
+);
+/** Each outfit with the name of its character, for the list summary. */
+const visible = computed(() =>
+  scoped.value.map((record) => {
+    const owner = props.characterRecords.find(
+      (character) => character.id === record.payload.character_id,
+    );
+    return owner === undefined
+      ? record
+      : { ...record, payload: { ...record.payload, owner_label: owner.display_name } };
+  }),
 );
 const { visible: visible_characters } = use_chat_scope(
   () => props.characterRecords,
-  () => t("assets.chat_scope_label"),
+  () => ({
+    this_chat: t("assets.chat_scope_label"),
+    other_chat: (chat) => t("assets.other_chat_scope_label", { chat }),
+  }),
 );
 
 const panel = use_asset_category_panel(

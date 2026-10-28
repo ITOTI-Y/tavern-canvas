@@ -394,6 +394,37 @@ describe("Character panel CRUD and destructive confirmation", () => {
   });
 });
 
+describe("Library entries of other chats", () => {
+  it("lists them with their chat only when all chats are shown, with each outfit's character", async () => {
+    const character = make_record("character", "12121212-1212-4121-8121-121212121212", "Shiqi", {
+      chat_id: "Old chat",
+    });
+    const outfit = make_record("outfit", "34343434-3434-4343-8343-343434343434", "Worn sweater", {
+      chat_id: "Old chat",
+      character_id: character.id,
+    });
+    const state = build_state({
+      records: {
+        character: [character],
+        outfit: [outfit],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+      },
+    });
+    mount_assets_view({ state });
+    await click_tab("Outfits");
+    expect(dom().text()).not.toContain("Worn sweater");
+
+    await dom().find('button[role="switch"]').trigger("click");
+    await flushPromises();
+    expect(dom().text()).toContain("Worn sweater");
+    expect(dom().text()).toContain("Other chat: Old chat");
+    expect(dom().text()).toContain("Shiqi");
+  });
+});
+
 describe("Character panel reference reading", () => {
   it("fills empty fields and the default outfit from an uploaded reference", async () => {
     const read_character = vi.fn<ReferenceImagePort["read_character"]>(() =>

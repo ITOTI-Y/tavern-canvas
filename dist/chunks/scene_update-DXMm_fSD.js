@@ -315,7 +315,7 @@ function R(e, t, n, r) {
 			});
 			continue;
 		}
-		let m = d(t.outfit_id) ? t.outfit_id : l.outfit_id, h = t.new_outfit ?? p;
+		let m = d(t.outfit_id) ? t.outfit_id : l.outfit_id, h = e !== void 0 && !i.has(o) && l.outfit_id !== null ? null : t.new_outfit ?? p;
 		h !== null && (m = f(h, o) ?? m);
 		let g = {};
 		for (let e of t.overrides) g[e.slot] = e.removed ? "removed" : M(e.tags);

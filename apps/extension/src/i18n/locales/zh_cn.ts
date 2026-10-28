@@ -291,6 +291,8 @@ const assets = {
   form_dialog_description: "标有 * 的字段为必填项。",
   scope_label: "范围",
   chat_scope_label: "仅本聊天",
+  other_chat_scope_label: "其他聊天：{chat}",
+  show_all_chats_label: "显示所有聊天的条目",
   chat_scope_note: "该条目由服装判断从本聊天中建立，只在本聊天中出现。",
   import_to_global_action: "导入全局素材库",
   delete_confirm_title: "删除 {name}？",

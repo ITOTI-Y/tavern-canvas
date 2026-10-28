@@ -2217,7 +2217,7 @@ var Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-ntAO_5Zx.js")), n = y(() => import("./AssetsView-Binevq-h.js")), r = y(() => import("./PromptTagPresetPanel-DvSvv4nC.js")), i = y(() => import("./DiagnosticsView-O6sS1VH-.js")), a = e, { t: o } = T(), s = [
+		let t = y(() => import("./PromptView-ntAO_5Zx.js")), n = y(() => import("./AssetsView-B0j0Vhpj.js")), r = y(() => import("./PromptTagPresetPanel-DvSvv4nC.js")), i = y(() => import("./DiagnosticsView-BjFw4NAA.js")), a = e, { t: o } = T(), s = [
 			"illustration",
 			"providers",
 			"translation",

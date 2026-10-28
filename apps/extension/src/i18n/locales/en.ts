@@ -300,6 +300,8 @@ const assets = {
   form_dialog_description: "Fields marked * are required.",
   scope_label: "Scope",
   chat_scope_label: "This chat only",
+  other_chat_scope_label: "Other chat: {chat}",
+  show_all_chats_label: "Show entries from all chats",
   chat_scope_note:
     "The wardrobe update created this entry from this chat; it appears in this chat only.",
   import_to_global_action: "Import to the global library",

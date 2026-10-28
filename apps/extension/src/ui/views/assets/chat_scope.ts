@@ -4,12 +4,14 @@ import { ACTIVE_CHAT_ID_KEY } from "../../contracts/portal_keys.js";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 
 /**
- * Global entries plus the ones bound to the active chat, each with a `scope_label` payload field
- * for the list summary. Entries bound to another chat are left out.
+ * Global entries plus the ones bound to the active chat, each chat-bound entry with a
+ * `scope_label` payload field for the list summary. Entries bound to another chat are listed only
+ * when `show_all` is on, labelled with that chat's id, so they can still be found and deleted.
  */
 export function use_chat_scope(
   records: () => readonly AssetRecordSummary[],
-  chat_label: () => string,
+  labels: () => { readonly this_chat: string; readonly other_chat: (chat_id: string) => string },
+  show_all: () => boolean = () => false,
 ): {
   readonly active_chat_id: Readonly<{ value: string | null }>;
   readonly visible: ComputedRef<readonly AssetRecordSummary[]>;
@@ -21,8 +23,11 @@ export function use_chat_scope(
       if (typeof chat_id !== "string" || chat_id === "") {
         return [record];
       }
-      return chat_id === active_chat_id.value
-        ? [{ ...record, payload: { ...record.payload, scope_label: chat_label() } }]
+      if (chat_id === active_chat_id.value) {
+        return [{ ...record, payload: { ...record.payload, scope_label: labels().this_chat } }];
+      }
+      return show_all()
+        ? [{ ...record, payload: { ...record.payload, scope_label: labels().other_chat(chat_id) } }]
         : [];
     }),
   );

@@ -1,7 +1,7 @@
 import { d as e, t } from "./schemas-DMBLWk59.js";
 import { o as n, s as r } from "./wardrobe_library-cpT1rkQA.js";
 import { l as i } from "./library_match-er4-CW2n.js";
-import { OutfitSchema as a, clean_slots as o, slot_record as s, slots_schema as c } from "./scene_update-DJCbK13f.js";
+import { OutfitSchema as a, clean_slots as o, slot_record as s, slots_schema as c } from "./scene_update-DXMm_fSD.js";
 //#region src/modules/wardrobe/character_from_image.ts
 var l = {
 	name: "tavern_canvas_character",

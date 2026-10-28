@@ -36,6 +36,7 @@ const props = defineProps<{
   readonly outfitRecords: readonly AssetRecordSummary[];
   readonly loading: boolean;
   readonly controller: StudioController;
+  readonly showAllChats: boolean;
 }>();
 
 const { t } = useI18n();
@@ -43,7 +44,11 @@ const NO_OUTFIT = "none";
 
 const { visible } = use_chat_scope(
   () => props.records,
-  () => t("assets.chat_scope_label"),
+  () => ({
+    this_chat: t("assets.chat_scope_label"),
+    other_chat: (chat) => t("assets.other_chat_scope_label", { chat }),
+  }),
+  () => props.showAllChats,
 );
 
 const FIELDS = computed<readonly AssetFieldSpec[]>(() => [
