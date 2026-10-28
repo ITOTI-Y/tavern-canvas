@@ -99,5 +99,15 @@ export function create_generation_capability(deps: GenerationCapabilityDeps): Ge
       }
       return submit_request({ ...request, request_id: deps.new_request_id() });
     },
+    async dismiss(job_ids) {
+      for (const job_id of job_ids) {
+        const record = await deps.jobs.get(deps.namespace(), job_id);
+        if (record?.state !== "failed" && record?.state !== "cancelled") {
+          continue;
+        }
+        await deps.jobs.delete(deps.namespace(), job_id);
+        events.emit({ type: "job_removed", job_id });
+      }
+    },
   };
 }

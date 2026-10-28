@@ -5,7 +5,7 @@ import { n as L, t as R } from "./AppIcon-Cnhzrx9o.js";
 import { t as ee } from "./chevron-down-Tu_8qTxg.js";
 import { t as te } from "./chevron-up-D4TetO-M.js";
 import { n as ne, t as z } from "./download-DHgWv1wH.js";
-import { a as B, i as V, n as H, r as U, t as W } from "./use_asset_category_panel-ljbiisFe.js";
+import { a as B, i as V, n as H, r as U, t as W } from "./use_asset_category_panel-BqBdmyjM.js";
 import { n as G, t as K } from "./StateSurface-BA0Ffiwe.js";
 import { n as re, r as ie, t as q } from "./AppDialog-CzDoJQTe.js";
 import { t as J } from "./FieldGroup-BYtqLDde.js";
@@ -712,6 +712,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				onAdd: v(g).open_create,
 				onEdit: v(g).open_edit,
 				onDelete: v(g).remove,
+				onDeleteMany: t[0] ||= (e) => void v(g).remove_many(e),
 				onReorder: v(g).reorder,
 				onRandomSelect: v(g).random_select
 			}, null, 8, [
@@ -744,7 +745,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				title: v(g).editing_record.value ? v(c)("common.actions.edit") : v(c)("assets.characters.add_action"),
 				description: v(c)("assets.form_dialog_description"),
 				"close-label": v(c)("common.actions.close"),
-				"onUpdate:open": t[6] ||= (e) => {
+				"onUpdate:open": t[7] ||= (e) => {
 					e || v(g).close_dialog();
 				}
 			}, {
@@ -761,10 +762,10 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 					"decrement-label": v(c)("common.actions.decrease"),
 					"increment-label": v(c)("common.actions.increase"),
 					pending: v(g).saving.value,
-					"onUpdate:name": t[4] ||= (e) => {
+					"onUpdate:name": t[5] ||= (e) => {
 						v(g).name.value = e;
 					},
-					"onUpdate:values": t[5] ||= (e) => v(W)(v(g).values, e),
+					"onUpdate:values": t[6] ||= (e) => v(W)(v(g).values, e),
 					onSave: Y,
 					onCancel: v(g).close_dialog
 				}, {
@@ -774,8 +775,8 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 						mode: k.value,
 						"default-prompt": ce.value,
 						"onUpdate:image": A,
-						"onUpdate:send": t[0] ||= (e) => v(g).values.reference_send = +!!e,
-						"onUpdate:mode": t[1] ||= (e) => v(g).values.reference_mode = e,
+						"onUpdate:send": t[1] ||= (e) => v(g).values.reference_send = +!!e,
+						"onUpdate:mode": t[2] ||= (e) => v(g).values.reference_mode = e,
 						onGenerated: ee,
 						onUploaded: re
 					}, null, 8, [
@@ -802,7 +803,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 								"model-value": b.value,
 								options: _.value,
 								label: v(c)("assets.characters.subject_label"),
-								"onUpdate:modelValue": t[2] ||= (e) => v(g).values.subject = e
+								"onUpdate:modelValue": t[3] ||= (e) => v(g).values.subject = e
 							}, null, 8, [
 								"model-value",
 								"options",
@@ -816,7 +817,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 								"model-value": C.value,
 								options: S.value,
 								placeholder: v(c)("assets.characters.default_outfit_label")
-							}, v(oe)({ describedBy: n }), { "onUpdate:modelValue": t[3] ||= (e) => v(g).values.default_outfit_id = e === je ? "" : e }), null, 16, [
+							}, v(oe)({ describedBy: n }), { "onUpdate:modelValue": t[4] ||= (e) => v(g).values.default_outfit_id = e === je ? "" : e }), null, 16, [
 								"id",
 								"model-value",
 								"options",
@@ -856,7 +857,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"cancel-label": v(c)("assets.characters.outfit_from_reference_cancel"),
 				pending: L.value,
 				destructive: !1,
-				"onUpdate:open": t[7] ||= (e) => {
+				"onUpdate:open": t[8] ||= (e) => {
 					!e && !L.value && (I.value = null);
 				},
 				onConfirm: ne
@@ -876,7 +877,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"cancel-label": v(c)("assets.characters.character_from_reference_cancel"),
 				pending: K.value,
 				destructive: !1,
-				"onUpdate:open": t[8] ||= (e) => {
+				"onUpdate:open": t[9] ||= (e) => {
 					!e && !K.value && (z.value = null);
 				},
 				onConfirm: ie
@@ -968,6 +969,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			onAdd: s,
 			onEdit: v(a).open_edit,
 			onDelete: v(a).remove,
+			onDeleteMany: f[0] ||= (e) => void v(a).remove_many(e),
 			onReorder: v(a).reorder,
 			onRandomSelect: v(a).random_select
 		}, null, 8, [
@@ -997,7 +999,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			title: v(a).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.lora.add_action"),
 			description: v(n)("assets.form_dialog_description"),
 			"close-label": v(n)("common.actions.close"),
-			"onUpdate:open": f[3] ||= (e) => {
+			"onUpdate:open": f[4] ||= (e) => {
 				e || v(a).close_dialog();
 			}
 		}, {
@@ -1014,10 +1016,10 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"decrement-label": v(n)("common.actions.decrease"),
 				"increment-label": v(n)("common.actions.increase"),
 				pending: v(a).saving.value,
-				"onUpdate:name": f[1] ||= (e) => {
+				"onUpdate:name": f[2] ||= (e) => {
 					v(a).name.value = e;
 				},
-				"onUpdate:values": f[2] ||= (e) => v(W)(v(a).values, e),
+				"onUpdate:values": f[3] ||= (e) => v(W)(v(a).values, e),
 				onSave: v(a).save,
 				onCancel: v(a).close_dialog
 			}, {
@@ -1030,7 +1032,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 						"model-value": l.value,
 						options: c.value,
 						placeholder: v(n)("assets.lora.character_placeholder")
-					}, v(oe)({ describedBy: t }), { "onUpdate:modelValue": f[0] ||= (e) => v(a).values.character_id = e }), null, 16, [
+					}, v(oe)({ describedBy: t }), { "onUpdate:modelValue": f[1] ||= (e) => v(a).values.character_id = e }), null, 16, [
 						"id",
 						"model-value",
 						"options",
@@ -1140,6 +1142,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			onAdd: v(d).open_create,
 			onEdit: v(d).open_edit,
 			onDelete: v(d).remove,
+			onDeleteMany: i[0] ||= (e) => void v(d).remove_many(e),
 			onReorder: v(d).reorder,
 			onRandomSelect: v(d).random_select
 		}, null, 8, [
@@ -1171,7 +1174,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			title: v(d).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.outfits.add_action"),
 			description: v(n)("assets.form_dialog_description"),
 			"close-label": v(n)("common.actions.close"),
-			"onUpdate:open": i[2] ||= (e) => {
+			"onUpdate:open": i[3] ||= (e) => {
 				e || v(d).close_dialog();
 			}
 		}, {
@@ -1188,10 +1191,10 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"decrement-label": v(n)("common.actions.decrease"),
 				"increment-label": v(n)("common.actions.increase"),
 				pending: v(d).saving.value,
-				"onUpdate:name": i[0] ||= (e) => {
+				"onUpdate:name": i[1] ||= (e) => {
 					v(d).name.value = e;
 				},
-				"onUpdate:values": i[1] ||= (e) => v(W)(v(d).values, e),
+				"onUpdate:values": i[2] ||= (e) => v(W)(v(d).values, e),
 				onSave: v(d).save,
 				onCancel: v(d).close_dialog
 			}, {
@@ -1319,6 +1322,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			onAdd: v(o).open_create,
 			onEdit: v(o).open_edit,
 			onDelete: v(o).remove,
+			onDeleteMany: g[0] ||= (e) => void v(o).remove_many(e),
 			onReorder: v(o).reorder,
 			onRandomSelect: v(o).random_select
 		}, null, 8, [
@@ -1349,7 +1353,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			title: v(o).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.vibe.add_action"),
 			description: v(n)("assets.form_dialog_description"),
 			"close-label": v(n)("common.actions.close"),
-			"onUpdate:open": g[2] ||= (e) => {
+			"onUpdate:open": g[3] ||= (e) => {
 				e || v(o).close_dialog();
 			}
 		}, {
@@ -1366,10 +1370,10 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"decrement-label": v(n)("common.actions.decrease"),
 				"increment-label": v(n)("common.actions.increase"),
 				pending: v(o).saving.value,
-				"onUpdate:name": g[0] ||= (e) => {
+				"onUpdate:name": g[1] ||= (e) => {
 					v(o).name.value = e;
 				},
-				"onUpdate:values": g[1] ||= (e) => v(W)(v(o).values, e),
+				"onUpdate:values": g[2] ||= (e) => v(W)(v(o).values, e),
 				onSave: v(o).save,
 				onCancel: v(o).close_dialog
 			}, {
@@ -1782,6 +1786,7 @@ var Je = ["aria-label"], Ye = [
 				onAdd: E,
 				onEdit: v(a).open_edit,
 				onDelete: v(a).remove,
+				onDeleteMany: i[1] ||= (e) => void v(a).remove_many(e),
 				onReorder: v(a).reorder,
 				onRandomSelect: v(a).random_select
 			}, null, 8, [
@@ -1812,13 +1817,13 @@ var Je = ["aria-label"], Ye = [
 				title: v(n)("assets.workflow.edit_action"),
 				description: v(n)("assets.form_dialog_description"),
 				"close-label": v(n)("common.actions.close"),
-				"onUpdate:open": i[4] ||= (e) => {
+				"onUpdate:open": i[5] ||= (e) => {
 					e || v(a).close_dialog();
 				}
 			}, {
 				default: p(() => [w("form", {
 					class: j(v(B).form),
-					onSubmit: i[3] ||= _(() => void N(), ["prevent"])
+					onSubmit: i[4] ||= _(() => void N(), ["prevent"])
 				}, [
 					P(J, {
 						label: v(n)("common.labels.name"),
@@ -1833,7 +1838,7 @@ var Je = ["aria-label"], Ye = [
 							value: v(a).name.value,
 							"aria-describedby": t,
 							"aria-invalid": r,
-							onInput: i[1] ||= (e) => v(a).name.value = e.target.value
+							onInput: i[2] ||= (e) => v(a).name.value = e.target.value
 						}, null, 42, Ye)]),
 						_: 1
 					}, 8, ["label", "error"]),
@@ -1846,7 +1851,7 @@ var Je = ["aria-label"], Ye = [
 								"font-family": "ui-monospace, monospace"
 							},
 							value: h(),
-							onInput: i[2] ||= (e) => v(a).values.workflow_json = e.target.value
+							onInput: i[3] ||= (e) => v(a).values.workflow_json = e.target.value
 						}, null, 42, Xe)]),
 						_: 1
 					}, 8, ["label"]),

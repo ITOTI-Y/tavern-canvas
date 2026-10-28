@@ -1,7 +1,8 @@
 import { _ as e, d as t, h as n, r, u as i } from "./schemas-DMBLWk59.js";
-import { l as a } from "./library_match-er4-CW2n.js";
+import { i as a } from "./provider-Ctw4medr.js";
+import { l as o } from "./library_match-er4-CW2n.js";
 //#region src/ui/experience/host_image_icon.ts
-var o = "http://www.w3.org/2000/svg", s = [
+var s = "http://www.w3.org/2000/svg", c = [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -17,8 +18,8 @@ var o = "http://www.w3.org/2000/svg", s = [
 	}],
 	["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" }]
 ];
-function c(e) {
-	let t = e.createElementNS(o, "svg");
+function l(e) {
+	let t = e.createElementNS(s, "svg");
 	for (let [e, n] of Object.entries({
 		viewBox: "0 0 24 24",
 		width: "1em",
@@ -30,16 +31,32 @@ function c(e) {
 		"stroke-linejoin": "round",
 		"aria-hidden": "true"
 	})) t.setAttribute(e, n);
-	for (let [n, r] of s) {
-		let i = e.createElementNS(o, n);
+	for (let [n, r] of c) {
+		let i = e.createElementNS(s, n);
 		for (let [e, t] of Object.entries(r)) i.setAttribute(e, t);
 		t.append(i);
 	}
 	return t;
 }
 //#endregion
+//#region src/ui/chat/slot_error_label.ts
+function u(e, t) {
+	let n = a.safeParse(t);
+	if (!n.success) return t;
+	switch (n.data) {
+		case "auth_failed": return e("chat.errors.auth_failed");
+		case "rate_limited": return e("chat.errors.rate_limited");
+		case "content_blocked": return e("chat.errors.content_blocked");
+		case "invalid_request": return e("chat.errors.invalid_request");
+		case "provider_unavailable": return e("chat.errors.provider_unavailable");
+		case "timed_out": return e("chat.errors.timed_out");
+		case "cancelled": return e("chat.errors.cancelled");
+		case "malformed_response": return e("chat.errors.malformed_response");
+	}
+}
+//#endregion
 //#region src/modules/illustration/user_guidance.ts
-function l(e) {
+function d(e) {
 	let t = e.trim();
 	return t === "" ? [] : [
 		"",
@@ -49,7 +66,7 @@ function l(e) {
 }
 //#endregion
 //#region src/modules/illustration/analysis.ts
-var u = {
+var f = {
 	name: "tavern_canvas_illustrations",
 	value: {
 		type: "object",
@@ -87,7 +104,7 @@ var u = {
 		additionalProperties: !1
 	}
 };
-function d(e) {
+function p(e) {
 	if (e.characters.length === 0 && e.outfits.length === 0) return [];
 	let t = new Map(e.characters.map((e) => [e.id, e.name]));
 	return [
@@ -100,7 +117,7 @@ function d(e) {
 		})
 	];
 }
-function f(e, t, n, r, i) {
+function m(e, t, n, r, i) {
 	return [
 		"[Inkwell illustration request]",
 		e,
@@ -109,20 +126,20 @@ function f(e, t, n, r, i) {
 		"- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
 		"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
 		t,
-		...d(r),
-		...l(i),
+		...p(r),
+		...d(i),
 		"",
 		"Paragraphs:",
 		...n.map((e) => `[${String(e.index)}] ${e.text}`)
 	].join("\n");
 }
-function p(e, t, n, r) {
-	return f(`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.", e, n, r);
+function h(e, t, n, r) {
+	return m(`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.", e, n, r);
 }
-function m(e, t, n, r) {
-	return f(`Read the latest reply below, split into numbered paragraphs. Illustrate exactly these paragraphs, one entry each: ${t.map((e) => `[${String(e)}]`).join(", ")}. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}.", e, n, r);
+function g(e, t, n, r) {
+	return m(`Read the latest reply below, split into numbered paragraphs. Illustrate exactly these paragraphs, one entry each: ${t.map((e) => `[${String(e)}]`).join(", ")}. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}.", e, n, r);
 }
-var h = t({
+var _ = t({
 	paragraph: i().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	tags: e([n(), r(n()).transform((e) => e.join(", "))]),
@@ -130,26 +147,26 @@ var h = t({
 		name: n().trim().min(1).max(120),
 		tags: n().trim()
 	})).max(16)
-}), g = t({ illustrations: r(h) }), _ = class extends Error {
+}), v = t({ illustrations: r(_) }), y = class extends Error {
 	excerpt;
 	constructor(e, t) {
 		super(e), this.name = "AnalysisParseError", this.excerpt = t.slice(0, 400);
 	}
 };
-function v(e, t, n) {
-	for (let r of a(e, "illustrations")) {
+function b(e, t, n) {
+	for (let r of o(e, "illustrations")) {
 		let e;
 		try {
 			e = JSON.parse(r);
 		} catch {
 			continue;
 		}
-		let i = g.safeParse(e);
+		let i = v.safeParse(e);
 		if (!i.success) continue;
 		let a = /* @__PURE__ */ new Set();
 		return i.data.illustrations.filter((e) => e.paragraph >= t || a.has(e.paragraph) ? !1 : (a.add(e.paragraph), !0)).slice(0, n);
 	}
-	throw new _("The analysis reply contains no illustrations JSON object", e);
+	throw new y("The analysis reply contains no illustrations JSON object", e);
 }
 //#endregion
-export { v as a, m as i, _ as n, l as o, p as r, c as s, u as t };
+export { b as a, l as c, g as i, y as n, d as o, h as r, u as s, f as t };

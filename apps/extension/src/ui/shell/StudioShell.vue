@@ -127,7 +127,10 @@ function select_route(route: StudioRoute): void {
       @resize="(width) => emit('resize-inspector', width)"
     />
 
-    <TaskStrip :tasks="props.state.tasks" />
+    <TaskStrip
+      :tasks="props.state.tasks"
+      @clear-failed="() => void props.controller.dismiss_failed_tasks()"
+    />
 
     <MobileBottomNav
       v-if="viewport === 'mobile'"

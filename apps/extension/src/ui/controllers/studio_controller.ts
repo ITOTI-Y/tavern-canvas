@@ -147,6 +147,8 @@ export interface StudioController {
   delete_gallery_record(record_id: Uuid): Promise<void>;
   reveal_gallery_source(record_id: Uuid): Promise<SourceRevealOutcome>;
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void>;
+  /** Removes every failed job from the task strip and the job store. */
+  dismiss_failed_tasks(): Promise<void>;
 }
 
 const DEFAULT_FAILURE_CODE = "capability_load_failed";
@@ -205,7 +207,11 @@ function job_to_task(job: GenerationJobSummary): TaskStripItemViewModel {
     id: job.job_id,
     label_code: job_to_task_label_code(job.state),
     status: job_to_task_status(job.state),
-    progress: job.image_count > 0 ? job.completed_image_ids.length / job.image_count : null,
+    progress:
+      job.state !== "failed" && job.image_count > 0
+        ? job.completed_image_ids.length / job.image_count
+        : null,
+    error: job.state === "failed" ? (job.error?.code ?? null) : null,
   };
 }
 
@@ -1070,6 +1076,11 @@ class StudioControllerImpl implements StudioController {
           ? null
           : this.#state.gallery.selected_record_id,
     });
+  }
+
+  async dismiss_failed_tasks(): Promise<void> {
+    const failed = this.#state.generation.jobs.filter((job) => job.state === "failed");
+    await this.#capabilities.generation.dismiss(failed.map((job) => job.job_id));
   }
 
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void> {

@@ -86,6 +86,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     submit: unavailable_command,
     cancel: unavailable_command,
     retry: unavailable_command,
+    dismiss: unavailable_command,
   };
 
   const profiles: ProfilesCapability = {

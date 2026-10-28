@@ -492,6 +492,16 @@ function create_generation_capability(initial_jobs: GenerationJobSummary[]): Gen
       }, 400);
       return Promise.resolve(next);
     },
+    dismiss: (job_ids) => {
+      for (const job_id of job_ids) {
+        const state = jobs.get(job_id)?.state;
+        if (state === "failed" || state === "cancelled") {
+          jobs.delete(job_id);
+          emit({ type: "job_removed", job_id });
+        }
+      }
+      return Promise.resolve();
+    },
   };
 }
 

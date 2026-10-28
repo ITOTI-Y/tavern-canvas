@@ -147,6 +147,7 @@ function build_mock_studio() {
     submit,
     cancel,
     retry,
+    dismiss: vi.fn(),
   };
 
   const profiles_harness = harness<readonly ProviderProfileSummary[], ProfilesDomainEvent>();
@@ -476,7 +477,7 @@ describe("create_studio_controller", () => {
     });
 
     expect(controller.state.tasks).toEqual([
-      { id: JOB_ID, label_code: "status.running", status: "pending", progress: 0.5 },
+      { id: JOB_ID, label_code: "status.running", status: "pending", progress: 0.5, error: null },
     ]);
     expect(controller.state.generation.jobs).toHaveLength(1);
   });
@@ -501,7 +502,7 @@ describe("create_studio_controller", () => {
     await start_promise;
 
     expect(controller.state.tasks).toEqual([
-      { id: JOB_ID, label_code: "status.pending", status: "pending", progress: 0 },
+      { id: JOB_ID, label_code: "status.pending", status: "pending", progress: 0, error: null },
     ]);
 
     mock.generation.sub.emit({
@@ -544,7 +545,13 @@ describe("create_studio_controller", () => {
     });
 
     expect(controller.state.tasks).toEqual([
-      { id: JOB_ID, label_code: "status.failed", status: "error", progress: 0 },
+      {
+        id: JOB_ID,
+        label_code: "status.failed",
+        status: "error",
+        progress: null,
+        error: "timed_out",
+      },
     ]);
   });
 });

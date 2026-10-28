@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp, GripVertical, Plus, Shuffle, Trash2 } from "lucide-vue-next";
-import { computed, ref } from "vue";
+import { computed, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { Uuid } from "@tavern-canvas/contracts";
@@ -40,7 +41,10 @@ const emit = defineEmits<{
   delete: [record_id: Uuid];
   reorder: [ordered_ids: readonly Uuid[]];
   "random-select": [record: AssetRecordSummary];
+  "delete-many": [record_ids: readonly Uuid[]];
 }>();
+
+const { t } = useI18n();
 
 const search_query = ref("");
 const pending_delete = ref<AssetRecordSummary | null>(null);
@@ -53,6 +57,44 @@ const filtered_records = computed(() => {
   }
   return props.records.filter((record) => record.display_name.toLowerCase().includes(query));
 });
+
+const selected = reactive(new Set<Uuid>());
+const bulk_delete_pending = ref(false);
+/** Selected entries that still exist, so a deletion elsewhere drops them from the count. */
+const selected_ids = computed(() =>
+  props.records.filter((record) => selected.has(record.id)).map((record) => record.id),
+);
+const all_shown_selected = computed(
+  () =>
+    filtered_records.value.length > 0 &&
+    filtered_records.value.every((record) => selected.has(record.id)),
+);
+
+function toggle_selected(record_id: Uuid): void {
+  if (selected.has(record_id)) {
+    selected.delete(record_id);
+  } else {
+    selected.add(record_id);
+  }
+}
+
+/** Selects every entry the search shows, or deselects them when all are already selected. */
+function toggle_select_all(): void {
+  const select = !all_shown_selected.value;
+  for (const record of filtered_records.value) {
+    if (select) {
+      selected.add(record.id);
+    } else {
+      selected.delete(record.id);
+    }
+  }
+}
+
+function confirm_bulk_delete(): void {
+  emit("delete-many", selected_ids.value);
+  selected.clear();
+  bulk_delete_pending.value = false;
+}
 
 const status = computed(() => {
   if (props.loading) {
@@ -158,7 +200,26 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
       <AppButton :label="addLabel" :icon="Plus" variant="primary" @click="emit('add')" />
     </div>
 
-    <p v-if="records.length > 1" :class="styles.reorderHint">{{ reorderHint }}</p>
+    <div v-if="records.length > 0" :class="styles.selectionBar">
+      <AppButton
+        :label="
+          all_shown_selected ? t('common.actions.deselect_all') : t('common.actions.select_all')
+        "
+        variant="secondary"
+        :disabled="filtered_records.length === 0"
+        data-testid="asset-select-all"
+        @click="toggle_select_all"
+      />
+      <AppButton
+        v-if="selected_ids.length > 0"
+        :label="t('assets.delete_selected_action', { n: selected_ids.length })"
+        :icon="Trash2"
+        variant="destructive"
+        data-testid="asset-delete-selected"
+        @click="bulk_delete_pending = true"
+      />
+      <span v-if="records.length > 1" :class="styles.reorderHint">{{ reorderHint }}</span>
+    </div>
 
     <StateSurface :status="status" :empty-title="emptyTitle" min-height="120px">
       <template #action>
@@ -179,6 +240,14 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
           <span :class="styles.dragHandle" :aria-label="dragHandleLabel" aria-hidden="true">
             <AppIcon :icon="GripVertical" :size="16" />
           </span>
+          <input
+            type="checkbox"
+            :class="styles.assetCardCheckbox"
+            :checked="selected.has(record.id)"
+            :aria-label="t('assets.select_entry_action', { name: record.display_name })"
+            data-testid="asset-select"
+            @change="toggle_selected(record.id)"
+          />
           <button
             type="button"
             :class="styles.assetCardMain"
@@ -233,6 +302,19 @@ function handle_drop(target_id: Uuid, event: DragEvent): void {
         }
       "
       @confirm="confirm_delete"
+    />
+    <ConfirmDialog
+      :open="bulk_delete_pending"
+      :title="t('assets.delete_selected_confirm_title', { n: selected_ids.length })"
+      :description="deleteConfirmDescription"
+      :confirm-label="confirmLabel"
+      :cancel-label="cancelLabel"
+      @update:open="
+        (open) => {
+          if (!open) bulk_delete_pending = false;
+        }
+      "
+      @confirm="confirm_bulk_delete"
     />
   </div>
 </template>

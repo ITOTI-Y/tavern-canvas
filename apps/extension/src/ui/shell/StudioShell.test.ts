@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
 import postcss, { type Rule } from "postcss";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { markRaw, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
@@ -413,8 +413,20 @@ describe("StudioShell task strip", () => {
     const { wrapper } = await mount_shell({
       state: {
         tasks: [
-          { id: "job-1", label_code: "status.running", status: "pending", progress: 0.5 },
-          { id: "job-2", label_code: "status.completed", status: "success", progress: null },
+          {
+            id: "job-1",
+            label_code: "status.running",
+            status: "pending",
+            progress: 0.5,
+            error: null,
+          },
+          {
+            id: "job-2",
+            label_code: "status.completed",
+            status: "success",
+            progress: null,
+            error: null,
+          },
         ],
       },
     });
@@ -434,17 +446,55 @@ describe("StudioShell task strip", () => {
     expect(wrapper.text()).toContain("2 tasks");
   });
 
+  it("names why a task failed and clears failed tasks through the controller", async () => {
+    const { wrapper, controller } = await mount_shell({
+      state: {
+        tasks: [
+          {
+            id: "job-1",
+            label_code: "status.failed",
+            status: "error",
+            progress: null,
+            error: "content_blocked",
+          },
+        ],
+      },
+    });
+    const dismiss = vi.spyOn(controller, "dismiss_failed_tasks").mockResolvedValue();
+
+    expect(wrapper.text()).toContain("Failed: blocked by the provider's content filter");
+    expect(wrapper.text()).not.toContain("0%");
+    await wrapper.get('[data-testid="task-strip-clear-failed"]').trigger("click");
+    expect(dismiss).toHaveBeenCalledOnce();
+  });
+
   it("changing a task's status text does not change the chip count or remove other chips", async () => {
     const { wrapper } = await mount_shell({
       state: {
-        tasks: [{ id: "job-1", label_code: "status.pending", status: "pending", progress: null }],
+        tasks: [
+          {
+            id: "job-1",
+            label_code: "status.pending",
+            status: "pending",
+            progress: null,
+            error: null,
+          },
+        ],
       },
     });
     expect(wrapper.findAll("[data-status]")).toHaveLength(1);
 
     await wrapper.setProps({
       state: build_state({
-        tasks: [{ id: "job-1", label_code: "status.completed", status: "success", progress: null }],
+        tasks: [
+          {
+            id: "job-1",
+            label_code: "status.completed",
+            status: "success",
+            progress: null,
+            error: null,
+          },
+        ],
       }),
     });
 

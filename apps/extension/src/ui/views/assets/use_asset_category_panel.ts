@@ -26,6 +26,7 @@ export interface AssetCategoryPanelController {
   close_dialog(): void;
   save(): Promise<void>;
   remove(asset_id: Uuid): void;
+  remove_many(asset_ids: readonly Uuid[]): Promise<void>;
   reorder(ordered_ids: readonly Uuid[]): void;
   random_select(record: AssetRecordSummary): void;
 }
@@ -107,6 +108,12 @@ export function use_asset_category_panel(
     void controller.remove_asset(category, asset_id);
   }
 
+  async function remove_many(asset_ids: readonly Uuid[]): Promise<void> {
+    for (const asset_id of asset_ids) {
+      await controller.remove_asset(category, asset_id);
+    }
+  }
+
   function reorder(ordered_ids: readonly Uuid[]): void {
     void controller.reorder_assets(category, ordered_ids);
   }
@@ -129,6 +136,7 @@ export function use_asset_category_panel(
     close_dialog,
     save,
     remove,
+    remove_many,
     reorder,
     random_select,
   };

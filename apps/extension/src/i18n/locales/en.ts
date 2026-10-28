@@ -31,6 +31,8 @@ const nav = {
   inspector_collapse: "Collapse inspector",
   task_strip_expand: "Show tasks",
   task_strip_collapse: "Hide tasks",
+  task_strip_clear_failed: "Clear failed tasks",
+  task_strip_error: ": {reason}",
   task_strip_count: "{n} task | {n} tasks",
 };
 
@@ -302,6 +304,9 @@ const assets = {
   chat_scope_label: "This chat only",
   other_chat_scope_label: "Other chat: {chat}",
   show_all_chats_label: "Show entries from all chats",
+  select_entry_action: "Select {name}",
+  delete_selected_action: "Delete selected ({n})",
+  delete_selected_confirm_title: "Delete the {n} selected entries?",
   chat_scope_note:
     "The wardrobe update created this entry from this chat; it appears in this chat only.",
   import_to_global_action: "Import to the global library",

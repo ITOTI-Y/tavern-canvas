@@ -86,6 +86,8 @@ export interface TaskStripItemViewModel {
   readonly label_code: string;
   readonly status: "pending" | "success" | "error";
   readonly progress: number | null;
+  /** The provider error code of a failed job. */
+  readonly error: string | null;
 }
 
 export type SettingsSection =

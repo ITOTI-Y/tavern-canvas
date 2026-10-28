@@ -123,6 +123,7 @@ const delete_confirm_title = (record_name: string): string =>
       @add="panel.open_create"
       @edit="panel.open_edit"
       @delete="panel.remove"
+      @delete-many="(ids) => void panel.remove_many(ids)"
       @reorder="panel.reorder"
       @random-select="panel.random_select"
     />

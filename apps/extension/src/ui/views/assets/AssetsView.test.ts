@@ -88,6 +88,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     detach_gallery_record: vi.fn(() => Promise.resolve()),
     delete_gallery_record: vi.fn(() => Promise.resolve()),
     bulk_delete_gallery_records: vi.fn(() => Promise.resolve()),
+    dismiss_failed_tasks: vi.fn(() => Promise.resolve()),
     update_prompt_draft: vi.fn(),
     select_prompt_preset: vi.fn(),
     start_new_prompt_preset: vi.fn(),
@@ -391,6 +392,45 @@ describe("Character panel CRUD and destructive confirmation", () => {
     await search_inputs[0]?.setValue("Alpha");
     expect(dom().text()).toContain("Alpha");
     expect(dom().text()).not.toContain("Beta");
+  });
+});
+
+describe("Library multi-select", () => {
+  it("deletes the selected entries after one confirmation", async () => {
+    const records = ["Alpha", "Beta", "Gamma"].map((name, index) =>
+      make_record("character", `5656565${String(index)}-5656-4565-8565-565656565656`, name),
+    );
+    const state = build_state({
+      records: { character: records, outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+    });
+    const { controller } = mount_assets_view({ state });
+    const boxes = dom().findAll('[data-testid="asset-select"]');
+    await boxes[0]?.setValue(true);
+    await boxes[2]?.setValue(true);
+    const delete_button = dom().find('[data-testid="asset-delete-selected"]');
+    expect(delete_button.text()).toContain("2");
+
+    await delete_button.trigger("click");
+    expect(controller.remove_asset).not.toHaveBeenCalled();
+    await dom().find('[role="alertdialog"] button[aria-label="Delete"]').trigger("click");
+    await flushPromises();
+    expect(vi.mocked(controller.remove_asset).mock.calls).toEqual([
+      ["character", records[0]?.id],
+      ["character", records[2]?.id],
+    ]);
+  });
+
+  it("select all picks every entry the search shows", async () => {
+    const records = ["Alpha", "Beta"].map((name, index) =>
+      make_record("character", `7878787${String(index)}-7878-4787-8787-787878787878`, name),
+    );
+    const state = build_state({
+      records: { character: records, outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+    });
+    mount_assets_view({ state });
+    await dom().find('input[aria-label="Search"]').setValue("Alpha");
+    await dom().find('[data-testid="asset-select-all"]').trigger("click");
+    expect(dom().find('[data-testid="asset-delete-selected"]').text()).toContain("1");
   });
 });
 

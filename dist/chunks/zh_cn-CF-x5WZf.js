@@ -27,6 +27,8 @@ var e = {
 		inspector_collapse: "收起检查器",
 		task_strip_expand: "展开任务栏",
 		task_strip_collapse: "收起任务栏",
+		task_strip_clear_failed: "清除失败任务",
+		task_strip_error: "：{reason}",
 		task_strip_count: "{n} 个任务 | {n} 个任务"
 	},
 	common: {
@@ -273,6 +275,9 @@ var e = {
 		chat_scope_label: "仅本聊天",
 		other_chat_scope_label: "其他聊天：{chat}",
 		show_all_chats_label: "显示所有聊天的条目",
+		select_entry_action: "选择 {name}",
+		delete_selected_action: "删除所选（{n}）",
+		delete_selected_confirm_title: "删除所选的 {n} 个条目？",
 		chat_scope_note: "该条目由服装判断从本聊天中建立，只在本聊天中出现。",
 		import_to_global_action: "导入全局素材库",
 		delete_confirm_title: "删除 {name}？",

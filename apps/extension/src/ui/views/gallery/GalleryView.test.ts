@@ -243,6 +243,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     detach_gallery_record: vi.fn(() => Promise.resolve()),
     delete_gallery_record: vi.fn(() => Promise.resolve()),
     bulk_delete_gallery_records: vi.fn(() => Promise.resolve()),
+    dismiss_failed_tasks: vi.fn(() => Promise.resolve()),
     update_prompt_draft: vi.fn(),
     select_prompt_preset: vi.fn(),
     start_new_prompt_preset: vi.fn(),

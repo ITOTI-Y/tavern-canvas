@@ -47,6 +47,8 @@ export interface GenerationCapability {
   submit(command: GenerationSubmitCommand): Promise<GenerationJobSummary>;
   cancel(job_id: Uuid): Promise<GenerationJobSummary>;
   retry(job_id: Uuid): Promise<GenerationJobSummary>;
+  /** Deletes jobs that failed or were cancelled; other jobs are left as they are. */
+  dismiss(job_ids: readonly Uuid[]): Promise<void>;
 }
 
 export interface ProviderProfileSummary {

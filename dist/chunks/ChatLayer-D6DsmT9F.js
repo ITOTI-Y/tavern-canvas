@@ -1,15 +1,14 @@
-import { i as e } from "./provider-Ctw4medr.js";
-import { a as t, n } from "./wardrobe_library-cpT1rkQA.js";
-import { A as r, B as i, C as a, F as o, G as s, N as c, O as l, T as u, V as d, W as f, _ as p, a as m, c as h, ct as g, d as _, dt as v, et as y, ft as b, g as x, h as S, k as C, m as w, n as T, nt as E, p as D, pt as O, u as k, ut as A, v as j, x as M, y as N } from "./vue-i18n-DUz2Gjn8.js";
-import { n as P } from "./portal_keys-B9C82xtk.js";
-import { n as F, t as I } from "./AppIcon-Cnhzrx9o.js";
-import { n as L, r as R, t as z } from "./StateSurface-BA0Ffiwe.js";
-import { t as B } from "./AppDialog-CzDoJQTe.js";
-import { t as V } from "./trash-2-B6ZXZcor.js";
-import { t as ee } from "./upload-CQtsg_mB.js";
-import { t as te } from "./x-CDKrptQJ.js";
-import { n as H, s as U } from "./analysis-7SNPkgCs.js";
-import { n as W } from "./deferred_stylesheets-BpS7LWkd.js";
+import { a as e, n as t } from "./wardrobe_library-cpT1rkQA.js";
+import { A as n, B as r, C as i, F as a, G as o, N as s, O as c, T as l, V as u, W as d, _ as f, a as p, c as m, ct as h, d as g, dt as _, et as v, ft as y, g as b, h as x, k as S, m as C, n as w, nt as T, p as E, pt as D, u as O, ut as k, v as A, x as j, y as M } from "./vue-i18n-DUz2Gjn8.js";
+import { n as N } from "./portal_keys-B9C82xtk.js";
+import { n as P, t as F } from "./AppIcon-Cnhzrx9o.js";
+import { n as I, r as L, t as R } from "./StateSurface-BA0Ffiwe.js";
+import { t as z } from "./AppDialog-CzDoJQTe.js";
+import { t as B } from "./trash-2-B6ZXZcor.js";
+import { t as V } from "./upload-CQtsg_mB.js";
+import { t as ee } from "./x-CDKrptQJ.js";
+import { c as H, n as U, s as W } from "./analysis-Cm9wJK0r.js";
+import { n as te } from "./deferred_stylesheets-BpS7LWkd.js";
 import { c as ne, n as re, o as ie, s as G } from "./library_match-er4-CW2n.js";
 import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
 import { r as se } from "./_prop_utils-CqbCYIc0.js";
@@ -19,7 +18,7 @@ import { a as ce, c as le, i as ue, n as de, r as fe, s as pe } from "./Collecti
 import { t as J } from "./IconButton-DPIesKAc.js";
 import { t as Y } from "./PromptTagChips-2I2ArwXq.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/book-open-text.js
-var me = F("book-open-text", [
+var me = P("book-open-text", [
 	["path", {
 		d: "M12 7v14",
 		key: "1akyts"
@@ -44,13 +43,13 @@ var me = F("book-open-text", [
 		d: "M6 8h2",
 		key: "30oboj"
 	}]
-]), he = F("eraser", [["path", {
+]), he = P("eraser", [["path", {
 	d: "M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21",
 	key: "g5wo59"
 }], ["path", {
 	d: "m5.082 11.09 8.828 8.828",
 	key: "1wx5vj"
-}]]), ge = F("languages", [
+}]]), ge = P("languages", [
 	["path", {
 		d: "m5 8 6 6",
 		key: "1wu5hv"
@@ -75,13 +74,13 @@ var me = F("book-open-text", [
 		d: "M14 18h6",
 		key: "1m8k6r"
 	}]
-]), _e = F("redo-2", [["path", {
+]), _e = P("redo-2", [["path", {
 	d: "m15 14 5-5-5-5",
 	key: "12vg1m"
 }], ["path", {
 	d: "M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13",
 	key: "6uklza"
-}]]), ve = F("sparkles", [
+}]]), ve = P("sparkles", [
 	["path", {
 		d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
 		key: "1s2grr"
@@ -100,13 +99,13 @@ var me = F("book-open-text", [
 		r: "2",
 		key: "6kqj1y"
 	}]
-]), ye = F("undo-2", [["path", {
+]), ye = P("undo-2", [["path", {
 	d: "M9 14 4 9l5-5",
 	key: "102s5s"
 }], ["path", {
 	d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11",
 	key: "f3b9sd"
-}]]), be = F("zoom-in", [
+}]]), be = P("zoom-in", [
 	["circle", {
 		cx: "11",
 		cy: "11",
@@ -134,7 +133,7 @@ var me = F("book-open-text", [
 		y2: "11",
 		key: "durymu"
 	}]
-]), xe = F("zoom-out", [
+]), xe = P("zoom-out", [
 	["circle", {
 		cx: "11",
 		cy: "11",
@@ -183,8 +182,8 @@ var me = F("book-open-text", [
 };
 //#endregion
 //#region src/ui/dialogs/dialogs_styles.ts
-W("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
-var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = ["aria-label"], De = 32, Oe = 1, ke = 3, Ae = /* @__PURE__ */ M({
+te("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
+var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = ["aria-label"], De = 32, Oe = 1, ke = 3, Ae = /* @__PURE__ */ j({
 	__name: "InpaintDialog",
 	props: {
 		open: { type: Boolean },
@@ -223,32 +222,32 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 		"upload-reference"
 	],
 	setup(e, { emit: t }) {
-		let n = e, i = t, o = [
+		let r = e, a = t, c = [
 			239,
 			68,
 			68,
 			140
-		], l = u(P, void 0), h = D(() => l ? { to: l } : {});
-		function _(e) {
-			i("update:open", e);
+		], m = l(N, void 0), g = E(() => m ? { to: m } : {});
+		function S(e) {
+			a("update:open", e);
 		}
-		let C = y(null), T = y(null), E = y(De), M = y(!1), F = y(Oe), z = y(n.initialPositivePrompt), B = y(n.initialNegativePrompt), H = y(.75), U = y(!1), W = y(!1), ne = D(() => {
-			let e = n.maskWidth ?? n.bitmap.width, t = n.maskHeight ?? n.bitmap.height;
+		let w = v(null), T = v(null), j = v(De), P = v(!1), R = v(Oe), z = v(r.initialPositivePrompt), H = v(r.initialNegativePrompt), U = v(.75), W = v(!1), te = v(!1), ne = E(() => {
+			let e = r.maskWidth ?? r.bitmap.width, t = r.maskHeight ?? r.bitmap.height;
 			try {
-				return ae(n.bitmap.width, n.bitmap.height, e, t), null;
+				return ae(r.bitmap.width, r.bitmap.height, e, t), null;
 			} catch {
-				return n.dimensionErrorLabel;
+				return r.dimensionErrorLabel;
 			}
-		}), re = D(() => n.bitmap.width / n.bitmap.height), ie = D(() => ({ "--tc-inpaint-aspect": String(re.value) })), G = null, K = null, q = [];
+		}), re = E(() => r.bitmap.width / r.bitmap.height), ie = E(() => ({ "--tc-inpaint-aspect": String(re.value) })), G = null, K = null, q = [];
 		function Y() {
-			U.value = G?.can_undo() ?? !1, W.value = G?.can_redo() ?? !1;
+			W.value = G?.can_undo() ?? !1, te.value = G?.can_redo() ?? !1;
 		}
 		function me() {
-			G = new oe(n.bitmap.width, n.bitmap.height), Y();
+			G = new oe(r.bitmap.width, r.bitmap.height), Y();
 		}
 		function ge() {
-			let e = C.value;
-			e !== null && (e.width = n.bitmap.width, e.height = n.bitmap.height, e.getContext("2d")?.drawImage(n.bitmap, 0, 0));
+			let e = w.value;
+			e !== null && (e.width = r.bitmap.width, e.height = r.bitmap.height, e.getContext("2d")?.drawImage(r.bitmap, 0, 0));
 		}
 		function X() {
 			let e = T.value;
@@ -256,16 +255,16 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			e.width = G.width, e.height = G.height;
 			let t = e.getContext("2d");
 			if (t === null) return;
-			let n = G.mask, r = t.createImageData(G.width, G.height), [i, a, s, c] = o;
+			let n = G.mask, r = t.createImageData(G.width, G.height), [i, a, o, s] = c;
 			for (let e = 0; e < n.length; e += 1) {
 				let t = e * 4;
-				n[e] === 255 && (r.data[t] = i, r.data[t + 1] = a, r.data[t + 2] = s, r.data[t + 3] = c);
+				n[e] === 255 && (r.data[t] = i, r.data[t + 1] = a, r.data[t + 2] = o, r.data[t + 3] = s);
 			}
 			t.putImageData(r, 0, 0);
 		}
-		r(() => {
+		n(() => {
 			me(), ge(), X();
-		}), d(() => n.bitmap, () => {
+		}), u(() => r.bitmap, () => {
 			me(), ge(), X();
 		});
 		function Se(e) {
@@ -300,7 +299,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 				q = [];
 				return;
 			}
-			G.stroke(q, E.value, M.value ? "erase" : "brush"), q = [], Y(), X();
+			G.stroke(q, j.value, P.value ? "erase" : "brush"), q = [], Y(), X();
 		}
 		function Ne() {
 			G?.undo(), Y(), X();
@@ -312,118 +311,118 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 			G?.clear(), Y(), X();
 		}
 		function $() {
-			F.value = Math.min(ke, F.value + .5);
+			R.value = Math.min(ke, R.value + .5);
 		}
 		function Ie() {
-			F.value = Math.max(Oe, F.value - .5);
+			R.value = Math.max(Oe, R.value - .5);
 		}
 		function Le() {
-			G !== null && ne.value === null && i("submit", {
+			G !== null && ne.value === null && a("submit", {
 				mask: G.export_binary_mask(),
-				brushSize: E.value,
+				brushSize: j.value,
 				positivePrompt: z.value,
-				negativePrompt: B.value,
-				denoiseStrength: H.value
+				negativePrompt: H.value,
+				denoiseStrength: U.value
 			});
 		}
-		return (t, n) => (c(), S(g(le), {
+		return (t, n) => (s(), x(h(le), {
 			open: e.open,
-			"onUpdate:open": _
+			"onUpdate:open": S
 		}, {
-			default: f(() => [N(g(se), v(a(h.value)), {
-				default: f(() => [N(g(fe), { class: A(g(R).dialogOverlay) }, null, 8, ["class"]), N(g(ce), { class: A([g(R).dialogContent, g(Z).inpaintDialogContent]) }, {
-					default: f(() => [
-						w("header", { class: A(g(R).dialogHeader) }, [N(g(de), { class: A(g(R).dialogTitle) }, {
-							default: f(() => [j(O(e.title), 1)]),
+			default: d(() => [M(h(se), _(i(g.value)), {
+				default: d(() => [M(h(fe), { class: k(h(L).dialogOverlay) }, null, 8, ["class"]), M(h(ce), { class: k([h(L).dialogContent, h(Z).inpaintDialogContent]) }, {
+					default: d(() => [
+						C("header", { class: k(h(L).dialogHeader) }, [M(h(de), { class: k(h(L).dialogTitle) }, {
+							default: d(() => [A(D(e.title), 1)]),
 							_: 1
-						}, 8, ["class"]), N(g(pe), {
-							class: A(["tc-interactive", g(R).dialogClose]),
+						}, 8, ["class"]), M(h(pe), {
+							class: k(["tc-interactive", h(L).dialogClose]),
 							"aria-label": e.closeLabel
 						}, {
-							default: f(() => [N(I, {
-								icon: g(te),
+							default: d(() => [M(F, {
+								icon: h(ee),
 								size: 18
 							}, null, 8, ["icon"])]),
 							_: 1
 						}, 8, ["class", "aria-label"])], 2),
-						N(g(ue), { class: "tc-visually-hidden" }, {
-							default: f(() => [j(O(e.title), 1)]),
+						M(h(ue), { class: "tc-visually-hidden" }, {
+							default: d(() => [A(D(e.title), 1)]),
 							_: 1
 						}),
-						w("div", { class: A(g(Z).inpaintBody) }, [
-							w("div", { class: A(g(Z).inpaintToolbar) }, [
-								N(J, {
-									icon: g(ye),
+						C("div", { class: k(h(Z).inpaintBody) }, [
+							C("div", { class: k(h(Z).inpaintToolbar) }, [
+								M(J, {
+									icon: h(ye),
 									label: e.undoLabel,
-									disabled: !U.value,
+									disabled: !W.value,
 									onClick: Ne
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								N(J, {
-									icon: g(_e),
+								M(J, {
+									icon: h(_e),
 									label: e.redoLabel,
-									disabled: !W.value,
+									disabled: !te.value,
 									onClick: Pe
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								N(J, {
-									icon: g(he),
+								M(J, {
+									icon: h(he),
 									label: e.eraseLabel,
-									pressed: M.value,
-									onClick: n[0] ||= (e) => M.value = !M.value
+									pressed: P.value,
+									onClick: n[0] ||= (e) => P.value = !P.value
 								}, null, 8, [
 									"icon",
 									"label",
 									"pressed"
 								]),
-								N(J, {
-									icon: g(V),
+								M(J, {
+									icon: h(B),
 									label: e.clearLabel,
 									destructive: "",
 									onClick: Fe
 								}, null, 8, ["icon", "label"]),
-								w("span", {
-									class: A(g(Z).inpaintToolbarDivider),
+								C("span", {
+									class: k(h(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
 								}, null, 2),
-								N(J, {
-									icon: g(xe),
+								M(J, {
+									icon: h(xe),
 									label: e.zoomOutLabel,
 									onClick: Ie
 								}, null, 8, ["icon", "label"]),
-								N(J, {
-									icon: g(be),
+								M(J, {
+									icon: h(be),
 									label: e.zoomInLabel,
 									onClick: $
 								}, null, 8, ["icon", "label"]),
-								e.showUpload ? (c(), p(k, { key: 0 }, [w("span", {
-									class: A(g(Z).inpaintToolbarDivider),
+								e.showUpload ? (s(), f(O, { key: 0 }, [C("span", {
+									class: k(h(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
-								}, null, 2), N(J, {
-									icon: g(ee),
+								}, null, 2), M(J, {
+									icon: h(V),
 									label: e.uploadLabel,
-									onClick: n[1] ||= (e) => i("upload-reference")
-								}, null, 8, ["icon", "label"])], 64)) : x("", !0)
+									onClick: n[1] ||= (e) => a("upload-reference")
+								}, null, 8, ["icon", "label"])], 64)) : b("", !0)
 							], 2),
-							w("div", {
-								class: A(g(Z).inpaintCanvasFrame),
-								style: b(ie.value)
-							}, [w("canvas", {
+							C("div", {
+								class: k(h(Z).inpaintCanvasFrame),
+								style: y(ie.value)
+							}, [C("canvas", {
 								ref_key: "bitmap_canvas",
-								ref: C,
-								style: b({ transform: `scale(${F.value})` }),
+								ref: w,
+								style: y({ transform: `scale(${R.value})` }),
 								"data-testid": "inpaint-bitmap-canvas"
-							}, null, 4), w("canvas", {
+							}, null, 4), C("canvas", {
 								ref_key: "mask_canvas",
 								ref: T,
-								style: b({
-									transform: `scale(${F.value})`,
+								style: y({
+									transform: `scale(${R.value})`,
 									touchAction: "none"
 								}),
 								"data-testid": "inpaint-mask-canvas",
@@ -432,49 +431,49 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								onPointerup: Q,
 								onPointercancel: Q
 							}, null, 36)], 6),
-							ne.value ? (c(), p("p", {
+							ne.value ? (s(), f("p", {
 								key: 0,
-								class: A(g(Z).inpaintDimensionError),
+								class: k(h(Z).inpaintDimensionError),
 								role: "alert"
-							}, O(ne.value), 3)) : x("", !0),
-							w("div", { class: A(g(Z).inpaintBrushRow) }, [w("label", null, [j(O(e.brushSizeLabel) + " ", 1), s(w("input", {
-								"onUpdate:modelValue": n[2] ||= (e) => E.value = e,
+							}, D(ne.value), 3)) : b("", !0),
+							C("div", { class: k(h(Z).inpaintBrushRow) }, [C("label", null, [A(D(e.brushSizeLabel) + " ", 1), o(C("input", {
+								"onUpdate:modelValue": n[2] ||= (e) => j.value = e,
 								type: "range",
 								min: "4",
 								max: "128",
 								step: "1",
 								"aria-label": e.brushSizeLabel
 							}, null, 8, Ce), [[
-								m,
-								E.value,
+								p,
+								j.value,
 								void 0,
 								{ number: !0 }
 							]])])], 2),
-							w("div", { class: A(g(Z).inpaintPromptGrid) }, [w("label", null, [j(O(e.positivePromptLabel) + " ", 1), s(w("textarea", {
+							C("div", { class: k(h(Z).inpaintPromptGrid) }, [C("label", null, [A(D(e.positivePromptLabel) + " ", 1), o(C("textarea", {
 								"onUpdate:modelValue": n[3] ||= (e) => z.value = e,
 								"aria-label": e.positivePromptLabel,
 								rows: "2"
-							}, null, 8, we), [[m, z.value]])]), w("label", null, [j(O(e.negativePromptLabel) + " ", 1), s(w("textarea", {
-								"onUpdate:modelValue": n[4] ||= (e) => B.value = e,
+							}, null, 8, we), [[p, z.value]])]), C("label", null, [A(D(e.negativePromptLabel) + " ", 1), o(C("textarea", {
+								"onUpdate:modelValue": n[4] ||= (e) => H.value = e,
 								"aria-label": e.negativePromptLabel,
 								rows: "2"
-							}, null, 8, Te), [[m, B.value]])])], 2),
-							w("label", null, [j(O(e.denoiseLabel) + " ", 1), s(w("input", {
-								"onUpdate:modelValue": n[5] ||= (e) => H.value = e,
+							}, null, 8, Te), [[p, H.value]])])], 2),
+							C("label", null, [A(D(e.denoiseLabel) + " ", 1), o(C("input", {
+								"onUpdate:modelValue": n[5] ||= (e) => U.value = e,
 								type: "range",
 								min: "0",
 								max: "1",
 								step: "0.01",
 								"aria-label": e.denoiseLabel
 							}, null, 8, Ee), [[
-								m,
-								H.value,
+								p,
+								U.value,
 								void 0,
 								{ number: !0 }
 							]])]),
-							w("div", { class: A(g(Z).inpaintFooter) }, [N(L, {
+							C("div", { class: k(h(Z).inpaintFooter) }, [M(I, {
 								label: e.generateLabel,
-								icon: g(ve),
+								icon: h(ve),
 								variant: "primary",
 								pending: e.pending,
 								disabled: ne.value !== null,
@@ -515,8 +514,8 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 };
 //#endregion
 //#region src/ui/chat/illustrate_dialog_styles.ts
-W("illustrate_dialog", "._body_1szjx_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1szjx_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_1szjx_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_1szjx_27{margin:0;font-size:14px}._label_1szjx_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_1szjx_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_1szjx_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_1szjx_61{color:var(--tc-error);margin:0}._excerpt_1szjx_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._picker_1szjx_78{flex-direction:column;align-items:flex-start;gap:8px;display:flex}._hint_1szjx_85{color:var(--tc-text-muted);margin:0;font-size:13px}._paragraphs_1szjx_91{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;align-self:stretch;gap:6px;max-height:240px;padding:8px;display:flex;overflow-y:auto}._footer_1szjx_103{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_1szjx_111{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_1szjx_117{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_1szjx_123{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_1szjx_130{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
-var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ */ M({
+te("illustrate_dialog", "._body_1szjx_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1szjx_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_1szjx_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_1szjx_27{margin:0;font-size:14px}._label_1szjx_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_1szjx_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_1szjx_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_1szjx_61{color:var(--tc-error);margin:0}._excerpt_1szjx_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._picker_1szjx_78{flex-direction:column;align-items:flex-start;gap:8px;display:flex}._hint_1szjx_85{color:var(--tc-text-muted);margin:0;font-size:13px}._paragraphs_1szjx_91{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;align-self:stretch;gap:6px;max-height:240px;padding:8px;display:flex;overflow-y:auto}._footer_1szjx_103{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_1szjx_111{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_1szjx_117{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_1szjx_123{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_1szjx_130{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
+var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ */ j({
 	__name: "OutfitPicker",
 	props: {
 		character: {},
@@ -524,18 +523,18 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 		outfits: {}
 	},
 	emits: ["change"],
-	setup(e, { emit: r }) {
-		let i = e, a = r, { t: o } = T(), l = D(() => [{
+	setup(n, { emit: r }) {
+		let i = n, a = r, { t: c } = w(), l = E(() => [{
 			value: Ne,
-			label: o("chat.dialog.outfit_none")
+			label: c("chat.dialog.outfit_none")
 		}, ...i.outfits.filter((e) => e.character_id === null || e.character_id === i.character.id).map((e) => ({
 			value: e.id,
 			label: e.name
-		}))]), u = y("");
-		d(() => i.wearing.conditions, (e) => {
-			u.value = n(e);
+		}))]), d = v("");
+		u(() => i.wearing.conditions, (e) => {
+			d.value = t(e);
 		}, { immediate: !0 });
-		function f(e) {
+		function m(e) {
 			a("change", {
 				character_id: i.character.id,
 				outfit_id: e === Ne ? null : e,
@@ -543,35 +542,35 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 				conditions: i.wearing.conditions
 			});
 		}
-		function h() {
-			let e = t(u.value);
-			n(e) !== n(i.wearing.conditions) && a("change", {
+		function g() {
+			let n = e(d.value);
+			t(n) !== t(i.wearing.conditions) && a("change", {
 				...i.wearing,
-				conditions: [...e]
+				conditions: [...n]
 			});
 		}
-		return (t, n) => (c(), p("div", {
-			class: A(g(Q).outfit),
+		return (e, t) => (s(), f("div", {
+			class: k(h(Q).outfit),
 			"data-testid": "outfit-picker"
-		}, [N(q, {
-			"model-value": e.wearing.outfit_id ?? Ne,
+		}, [M(q, {
+			"model-value": n.wearing.outfit_id ?? Ne,
 			options: l.value,
-			placeholder: g(o)("chat.dialog.outfit_label"),
-			"aria-label": g(o)("chat.dialog.outfit_label", { name: e.character.name }),
-			"onUpdate:modelValue": f
+			placeholder: h(c)("chat.dialog.outfit_label"),
+			"aria-label": h(c)("chat.dialog.outfit_label", { name: n.character.name }),
+			"onUpdate:modelValue": m
 		}, null, 8, [
 			"model-value",
 			"options",
 			"placeholder",
 			"aria-label"
-		]), s(w("input", {
-			"onUpdate:modelValue": n[0] ||= (e) => u.value = e,
+		]), o(C("input", {
+			"onUpdate:modelValue": t[0] ||= (e) => d.value = e,
 			type: "text",
-			class: A(g(Q).conditions),
-			placeholder: g(o)("chat.dialog.outfit_conditions"),
-			"aria-label": g(o)("chat.dialog.outfit_conditions"),
-			onBlur: h
-		}, null, 42, Me), [[m, u.value]])], 2));
+			class: k(h(Q).conditions),
+			placeholder: h(c)("chat.dialog.outfit_conditions"),
+			"aria-label": h(c)("chat.dialog.outfit_conditions"),
+			onBlur: g
+		}, null, 42, Me), [[p, d.value]])], 2));
 	}
 }), Fe = {
 	field: "_field_ad8ee_1",
@@ -591,7 +590,7 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 };
 //#endregion
 //#region src/ui/chat/prompt_field_styles.ts
-W("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
+te("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
 var $ = Fe, Ie = /[,，]/u, Le = /[぀-ヿ㐀-鿿豈-﫿]/u, Re = /^(?:-?[\d.]+::)?[{[(]*/u;
 function ze(e, t) {
 	let n = e.slice(0, t), r = 0;
@@ -627,7 +626,7 @@ var He = ["for"], Ue = [
 	"id",
 	"aria-selected",
 	"onMousedown"
-], Ke = 150, qe = 800, Je = /* @__PURE__ */ M({
+], Ke = 150, qe = 800, Je = /* @__PURE__ */ j({
 	__name: "PromptField",
 	props: {
 		modelValue: {},
@@ -636,34 +635,34 @@ var He = ["for"], Ue = [
 	},
 	emits: ["update:modelValue"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: a } = T(), s = i(), u = `${s}-suggestions`, f = y(null), m = y([]), _ = y(-1), v = y(!1), b = null, S = null, E = 0, D = y(!1), j = y(null), M = y(!1), P = y(null), F = null, I = 0;
+		let n = e, i = t, { t: o } = w(), l = r(), d = `${l}-suggestions`, p = v(null), g = v([]), _ = v(-1), y = v(!1), x = null, T = null, E = 0, A = v(!1), j = v(null), N = v(!1), P = v(null), F = null, I = 0;
 		function L(e) {
 			return e instanceof Error ? e.message : String(e);
 		}
 		function R() {
-			E += 1, m.value = [], _.value = -1;
+			E += 1, g.value = [], _.value = -1;
 		}
 		function z() {
-			let e = f.value, t = n.translator;
-			if (S !== null && clearTimeout(S), b = e === null ? null : ze(e.value, e.selectionStart), t === null || b === null) {
+			let e = p.value, t = n.translator;
+			if (T !== null && clearTimeout(T), x = e === null ? null : ze(e.value, e.selectionStart), t === null || x === null) {
 				R();
 				return;
 			}
-			let r = b.query, i = ++E;
-			S = setTimeout(() => {
+			let r = x.query, i = ++E;
+			T = setTimeout(() => {
 				t.suggest(r).then((e) => {
-					i === E && (v.value = e === null, m.value = e ?? [], _.value = -1);
+					i === E && (y.value = e === null, g.value = e ?? [], _.value = -1);
 				});
 			}, Ke);
 		}
 		async function B(e) {
-			let t = m.value[e];
-			if (t === void 0 || b === null) return;
-			let i = Be(n.modelValue, b, t.tag);
-			R(), r("update:modelValue", i.value), await l(), f.value?.focus(), f.value?.setSelectionRange(i.caret, i.caret);
+			let t = g.value[e];
+			if (t === void 0 || x === null) return;
+			let r = Be(n.modelValue, x, t.tag);
+			R(), i("update:modelValue", r.value), await c(), p.value?.focus(), p.value?.setSelectionRange(r.caret, r.caret);
 		}
 		function V(e) {
-			let t = m.value.length;
+			let t = g.value.length;
 			if (t !== 0) if (e.key === "ArrowDown" || e.key === "ArrowUp") {
 				e.preventDefault();
 				let n = e.key === "ArrowDown" ? 1 : -1;
@@ -671,9 +670,9 @@ var He = ["for"], Ue = [
 			} else e.key === "Tab" || e.key === "Enter" && _.value >= 0 ? (e.preventDefault(), B(Math.max(_.value, 0))) : e.key === "Escape" && (e.stopPropagation(), R());
 		}
 		function ee(e) {
-			r("update:modelValue", e.target.value), z();
+			i("update:modelValue", e.target.value), z();
 		}
-		async function te() {
+		async function H() {
 			let e = n.translator;
 			if (e === null) return;
 			let t = ++I;
@@ -685,110 +684,110 @@ var He = ["for"], Ue = [
 				t === I && (P.value = L(e));
 			}
 		}
-		function H() {
-			D.value = !D.value, j.value = null, D.value ? te() : I += 1;
+		function U() {
+			A.value = !A.value, j.value = null, A.value ? H() : I += 1;
 		}
-		async function U() {
+		async function W() {
 			let e = n.translator;
 			if (e !== null) {
-				M.value = !0, P.value = null;
+				N.value = !0, P.value = null;
 				try {
-					r("update:modelValue", await e.to_tags(n.modelValue));
+					i("update:modelValue", await e.to_tags(n.modelValue));
 				} catch (e) {
 					P.value = L(e);
 				} finally {
-					M.value = !1;
+					N.value = !1;
 				}
 			}
 		}
-		return d(() => n.modelValue, () => {
-			D.value && (F !== null && clearTimeout(F), F = setTimeout(() => void te(), qe));
-		}), C(() => {
-			for (let e of [S, F]) e !== null && clearTimeout(e);
-		}), (t, n) => (c(), p("div", { class: A(g($).field) }, [
-			w("div", { class: A(g($).header) }, [w("label", {
-				for: g(s),
-				class: A(g($).label)
-			}, O(e.label), 11, He), e.translator === null ? x("", !0) : (c(), p("span", {
+		return u(() => n.modelValue, () => {
+			A.value && (F !== null && clearTimeout(F), F = setTimeout(() => void H(), qe));
+		}), S(() => {
+			for (let e of [T, F]) e !== null && clearTimeout(e);
+		}), (t, n) => (s(), f("div", { class: k(h($).field) }, [
+			C("div", { class: k(h($).header) }, [C("label", {
+				for: h(l),
+				class: k(h($).label)
+			}, D(e.label), 11, He), e.translator === null ? b("", !0) : (s(), f("span", {
 				key: 0,
-				class: A(g($).tools)
-			}, [N(J, {
-				icon: g(ge),
+				class: k(h($).tools)
+			}, [M(J, {
+				icon: h(ge),
 				size: "sm",
-				label: g(a)("chat.dialog.translate_to_tags"),
-				disabled: M.value,
+				label: h(o)("chat.dialog.translate_to_tags"),
+				disabled: N.value,
 				"data-testid": "translate-to-tags",
-				onClick: U
+				onClick: W
 			}, null, 8, [
 				"icon",
 				"label",
 				"disabled"
-			]), N(J, {
-				icon: g(me),
+			]), M(J, {
+				icon: h(me),
 				size: "sm",
-				label: g(a)("chat.dialog.read_in_chinese"),
-				pressed: D.value,
+				label: h(o)("chat.dialog.read_in_chinese"),
+				pressed: A.value,
 				"data-testid": "read-in-chinese",
-				onClick: H
+				onClick: U
 			}, null, 8, [
 				"icon",
 				"label",
 				"pressed"
 			])], 2))], 2),
-			w("textarea", {
-				id: g(s),
+			C("textarea", {
+				id: h(l),
 				ref_key: "textarea",
-				ref: f,
+				ref: p,
 				value: e.modelValue,
-				class: A(g(Q).prompt),
+				class: k(h(Q).prompt),
 				role: "combobox",
 				"aria-autocomplete": "list",
-				"aria-expanded": m.value.length > 0,
-				"aria-controls": u,
-				"aria-activedescendant": _.value >= 0 ? `${u}-${_.value}` : void 0,
+				"aria-expanded": g.value.length > 0,
+				"aria-controls": d,
+				"aria-activedescendant": _.value >= 0 ? `${d}-${_.value}` : void 0,
 				onInput: ee,
 				onClick: z,
 				onKeydown: V,
 				onBlur: R
 			}, null, 42, Ue),
-			m.value.length > 0 ? (c(), p("ul", {
+			g.value.length > 0 ? (s(), f("ul", {
 				key: 0,
-				id: u,
+				id: d,
 				role: "listbox",
-				"aria-label": g(a)("chat.dialog.suggestions_label"),
-				class: A(g($).suggestions)
-			}, [(c(!0), p(k, null, o(m.value, (e, t) => (c(), p("li", {
-				id: `${u}-${t}`,
+				"aria-label": h(o)("chat.dialog.suggestions_label"),
+				class: k(h($).suggestions)
+			}, [(s(!0), f(O, null, a(g.value, (e, t) => (s(), f("li", {
+				id: `${d}-${t}`,
 				key: e.tag,
 				role: "option",
 				"aria-selected": t === _.value,
-				class: A([g($).suggestion, t === _.value && g($).highlighted]),
-				onMousedown: h((e) => B(t), ["prevent"])
+				class: k([h($).suggestion, t === _.value && h($).highlighted]),
+				onMousedown: m((e) => B(t), ["prevent"])
 			}, [
-				w("span", null, O(e.tag), 1),
-				e.translation === null ? x("", !0) : (c(), p("span", {
+				C("span", null, D(e.tag), 1),
+				e.translation === null ? b("", !0) : (s(), f("span", {
 					key: 0,
-					class: A(g($).translation)
-				}, O(e.translation), 3)),
-				w("span", {
-					class: A([g($).dot, g($)[`tier${g(Ve)(e.popularity)}`]]),
+					class: k(h($).translation)
+				}, D(e.translation), 3)),
+				C("span", {
+					class: k([h($).dot, h($)[`tier${h(Ve)(e.popularity)}`]]),
 					"aria-hidden": "true"
 				}, null, 2)
-			], 42, Ge))), 128))], 10, We)) : v.value ? (c(), p("p", {
+			], 42, Ge))), 128))], 10, We)) : y.value ? (s(), f("p", {
 				key: 1,
-				class: A(g($).hint)
-			}, O(g(a)("chat.dialog.vocabulary_preparing")), 3)) : x("", !0),
-			D.value ? (c(), p("p", {
+				class: k(h($).hint)
+			}, D(h(o)("chat.dialog.vocabulary_preparing")), 3)) : b("", !0),
+			A.value ? (s(), f("p", {
 				key: 2,
-				class: A(g($).reading)
-			}, O(j.value ?? g(a)("chat.dialog.reading_pending")), 3)) : x("", !0),
-			P.value === null ? x("", !0) : (c(), p("p", {
+				class: k(h($).reading)
+			}, D(j.value ?? h(o)("chat.dialog.reading_pending")), 3)) : b("", !0),
+			P.value === null ? b("", !0) : (s(), f("p", {
 				key: 3,
-				class: A(g(Q).error)
-			}, O(P.value), 3))
+				class: k(h(Q).error)
+			}, D(P.value), 3))
 		], 2));
 	}
-}), Ye = { key: 0 }, Xe = 120, Ze = /* @__PURE__ */ M({
+}), Ye = { key: 0 }, Xe = 120, Ze = /* @__PURE__ */ j({
 	__name: "IllustrateDialog",
 	props: {
 		request: {},
@@ -799,14 +798,14 @@ var He = ["for"], Ue = [
 	},
 	emits: ["close"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = T(), a = y({ status: "analyzing" }), s = y([]), l = y(!1), u = y(null), m = y(null), h = y([]), _ = y([]), v = y(!1), b = y(!1), C = y(null);
-		function E(e) {
+		let n = e, r = t, { t: i } = w(), o = v({ status: "analyzing" }), c = v([]), l = v(!1), p = v(null), m = v(null), g = v([]), _ = v([]), y = v(!1), S = v(!1), T = v(null);
+		function A(e) {
 			return e.text.length > Xe ? `${e.text.slice(0, Xe)}…` : e.text;
 		}
 		function j(e, t) {
 			_.value = t ? [..._.value, e] : _.value.filter((t) => t !== e);
 		}
-		function M(e, t) {
+		function N(e, t) {
 			return {
 				slot_id: e.slot_id,
 				anchor: e.anchor,
@@ -829,21 +828,21 @@ var He = ["for"], Ue = [
 				outfits: t.library.outfits
 			}];
 		}
-		function I(e) {
+		function L(e) {
 			let t = m.value, n = P(e);
 			return t === null || n === null ? null : G(n, t.snapshot, t.library.outfits);
 		}
-		async function R(e, t) {
-			let r = m.value, i = I(e);
-			if (r === null || i === null || a.value.status !== "ready") return;
-			let o = ne(i, r.library.outfits), c = ne(t, r.library.outfits);
-			for (let t of s.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ie(n.prompt, o, c));
+		async function B(e, t) {
+			let r = m.value, i = L(e);
+			if (r === null || i === null || o.value.status !== "ready") return;
+			let a = ne(i, r.library.outfits), s = ne(t, r.library.outfits);
+			for (let t of c.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ie(n.prompt, a, s));
 			m.value = {
 				...r,
 				snapshot: [...r.snapshot.filter((e) => e.character_id !== t.character_id), t]
-			}, await n.service.set_wearing(a.value.location, t);
+			}, await n.service.set_wearing(o.value.location, t);
 		}
-		let V = D(() => s.value.filter((e) => e.selected)), ee = D(() => {
+		let V = E(() => c.value.filter((e) => e.selected)), ee = E(() => {
 			let e = 0;
 			for (let t of V.value) {
 				if (t.estimate?.anlas === null || t.estimate === null) return null;
@@ -851,7 +850,7 @@ var He = ["for"], Ue = [
 			}
 			return e;
 		});
-		async function te(e, t) {
+		async function H(e, t) {
 			try {
 				let r = await n.service.preview_request(e, t.slot_id, t);
 				r.provider_id === "novelai" && (t.estimate = await n.novelai.estimate_cost(r));
@@ -859,45 +858,45 @@ var He = ["for"], Ue = [
 				t.estimate = null;
 			}
 		}
-		async function U(e) {
-			a.value = { status: "analyzing" }, s.value = [], m.value = null, u.value = null, h.value = [], _.value = [], v.value = !1, C.value = null;
+		async function W(e) {
+			o.value = { status: "analyzing" }, c.value = [], m.value = null, p.value = null, g.value = [], _.value = [], y.value = !1, T.value = null;
 			try {
 				let t = await n.service.analyze(e.message_id), r = await n.service.active_location(e.message_id);
-				s.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => M(t, e.slot_id !== null || t.image_ids.length === 0)), m.value = await n.service.wardrobe_view(r), e.slot_id === null && (h.value = await n.service.open_paragraphs(r)), a.value = {
+				c.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => N(t, e.slot_id !== null || t.image_ids.length === 0)), m.value = await n.service.wardrobe_view(r), e.slot_id === null && (g.value = await n.service.open_paragraphs(r)), o.value = {
 					status: "ready",
 					location: r
-				}, await Promise.all(s.value.map((e) => te(r, e)));
+				}, await Promise.all(c.value.map((e) => H(r, e)));
 			} catch (e) {
-				a.value = {
+				o.value = {
 					status: "failed",
 					message: e instanceof Error ? e.message : String(e),
-					excerpt: e instanceof H ? e.excerpt : null
+					excerpt: e instanceof U ? e.excerpt : null
 				};
 			}
 		}
-		d(() => n.request, (e) => {
-			e !== null && U(e);
+		u(() => n.request, (e) => {
+			e !== null && W(e);
 		}, { immediate: !0 });
-		async function W() {
-			let e = a.value;
+		async function te() {
+			let e = o.value;
 			if (e.status === "ready" && _.value.length !== 0) {
-				b.value = !0, C.value = null;
+				S.value = !0, T.value = null;
 				try {
-					let t = await n.service.add_paragraphs(e.location, _.value), r = t.map((e) => M(e, !0));
-					s.value = [...s.value, ...r];
+					let t = await n.service.add_paragraphs(e.location, _.value), r = t.map((e) => N(e, !0));
+					c.value = [...c.value, ...r];
 					let i = new Set(t.map((e) => e.paragraph));
-					h.value = h.value.filter((e) => !i.has(e.index)), _.value = [], v.value = !1, await Promise.all(s.value.slice(-r.length).map((t) => te(e.location, t)));
+					g.value = g.value.filter((e) => !i.has(e.index)), _.value = [], y.value = !1, await Promise.all(c.value.slice(-r.length).map((t) => H(e.location, t)));
 				} catch (e) {
-					C.value = e instanceof Error ? e.message : String(e);
+					T.value = e instanceof Error ? e.message : String(e);
 				} finally {
-					b.value = !1;
+					S.value = !1;
 				}
 			}
 		}
 		async function ae() {
-			let e = a.value;
+			let e = o.value;
 			if (e.status === "ready") {
-				l.value = !0, u.value = null;
+				l.value = !0, p.value = null;
 				try {
 					for (let t of V.value) await n.service.generate(e.location, t.slot_id, {
 						positive_prompt: t.positive_prompt,
@@ -906,7 +905,7 @@ var He = ["for"], Ue = [
 					});
 					r("close");
 				} catch (e) {
-					u.value = e instanceof Error ? e.message : String(e);
+					p.value = e instanceof Error ? e.message : String(e);
 				} finally {
 					l.value = !1;
 				}
@@ -918,31 +917,31 @@ var He = ["for"], Ue = [
 		function se(e) {
 			e || r("close");
 		}
-		return (t, n) => (c(), S(B, {
+		return (t, n) => (s(), x(z, {
 			open: e.request !== null,
-			title: g(i)("chat.dialog.title"),
-			"close-label": g(i)("chat.dialog.close"),
+			title: h(i)("chat.dialog.title"),
+			"close-label": h(i)("chat.dialog.close"),
 			"onUpdate:open": se
 		}, {
-			default: f(() => [w("div", { class: A(g(Q).body) }, [a.value.status === "analyzing" ? (c(), S(z, {
+			default: d(() => [C("div", { class: k(h(Q).body) }, [o.value.status === "analyzing" ? (s(), x(R, {
 				key: 0,
 				status: "loading",
 				"min-height": "160px"
-			})) : a.value.status === "failed" ? (c(), p(k, { key: 1 }, [
-				w("p", { class: A(g(Q).error) }, O(a.value.message), 3),
-				a.value.excerpt === null ? x("", !0) : (c(), p(k, { key: 0 }, [w("p", null, O(g(i)("chat.dialog.parse_failed_hint")), 1), w("pre", { class: A(g(Q).excerpt) }, O(a.value.excerpt), 3)], 64)),
-				w("div", { class: A(g(Q).footer) }, [N(L, {
-					label: g(i)("chat.dialog.retry"),
+			})) : o.value.status === "failed" ? (s(), f(O, { key: 1 }, [
+				C("p", { class: k(h(Q).error) }, D(o.value.message), 3),
+				o.value.excerpt === null ? b("", !0) : (s(), f(O, { key: 0 }, [C("p", null, D(h(i)("chat.dialog.parse_failed_hint")), 1), C("pre", { class: k(h(Q).excerpt) }, D(o.value.excerpt), 3)], 64)),
+				C("div", { class: k(h(Q).footer) }, [M(I, {
+					label: h(i)("chat.dialog.retry"),
 					variant: "primary",
-					onClick: n[0] ||= (t) => e.request !== null && U(e.request)
+					onClick: n[0] ||= (t) => e.request !== null && W(e.request)
 				}, null, 8, ["label"])], 2)
-			], 64)) : (c(), p(k, { key: 2 }, [
-				s.value.length === 0 ? (c(), p("p", Ye, O(g(i)("chat.dialog.no_slots")), 1)) : x("", !0),
-				(c(!0), p(k, null, o(s.value, (t) => (c(), p("section", {
+			], 64)) : (s(), f(O, { key: 2 }, [
+				c.value.length === 0 ? (s(), f("p", Ye, D(h(i)("chat.dialog.no_slots")), 1)) : b("", !0),
+				(s(!0), f(O, null, a(c.value, (t) => (s(), f("section", {
 					key: t.slot_id,
-					class: A(g(Q).slot)
+					class: k(h(Q).slot)
 				}, [
-					N(K, {
+					M(K, {
 						modelValue: t.selected,
 						"onUpdate:modelValue": (e) => t.selected = e,
 						label: t.scene
@@ -951,11 +950,11 @@ var He = ["for"], Ue = [
 						"onUpdate:modelValue",
 						"label"
 					]),
-					w("blockquote", { class: A(g(Q).anchor) }, O(t.anchor), 3),
-					N(Je, {
+					C("blockquote", { class: k(h(Q).anchor) }, D(t.anchor), 3),
+					M(Je, {
 						modelValue: t.positive_prompt,
 						"onUpdate:modelValue": (e) => t.positive_prompt = e,
-						label: t.character_prompts.length > 0 ? g(i)("chat.dialog.base_prompt") : g(i)("chat.dialog.positive_prompt"),
+						label: t.character_prompts.length > 0 ? h(i)("chat.dialog.base_prompt") : h(i)("chat.dialog.positive_prompt"),
 						translator: e.translator
 					}, null, 8, [
 						"modelValue",
@@ -963,14 +962,14 @@ var He = ["for"], Ue = [
 						"label",
 						"translator"
 					]),
-					w("div", { class: A(g(Q).chips) }, [N(Y, {
+					C("div", { class: k(h(Q).chips) }, [M(Y, {
 						port: e.promptTags,
 						kind: "quality"
 					}, null, 8, ["port"])], 2),
-					(c(!0), p(k, null, o(t.character_prompts, (t) => (c(), p(k, { key: t.name }, [N(Je, {
+					(s(!0), f(O, null, a(t.character_prompts, (t) => (s(), f(O, { key: t.name }, [M(Je, {
 						modelValue: t.prompt,
 						"onUpdate:modelValue": (e) => t.prompt = e,
-						label: g(i)("chat.dialog.character_prompt", { name: t.name }),
+						label: h(i)("chat.dialog.character_prompt", { name: t.name }),
 						translator: e.translator,
 						"data-testid": "character-prompt"
 					}, null, 8, [
@@ -978,22 +977,22 @@ var He = ["for"], Ue = [
 						"onUpdate:modelValue",
 						"label",
 						"translator"
-					]), (c(!0), p(k, null, o(F(t.name), (e) => (c(), S(Pe, {
+					]), (s(!0), f(O, null, a(F(t.name), (e) => (s(), x(Pe, {
 						key: e.character.id,
 						character: e.character,
 						wearing: e.wearing,
 						outfits: e.outfits,
-						onChange: (e) => void R(t.name, e)
+						onChange: (e) => void B(t.name, e)
 					}, null, 8, [
 						"character",
 						"wearing",
 						"outfits",
 						"onChange"
 					]))), 128))], 64))), 128)),
-					N(Je, {
+					M(Je, {
 						modelValue: t.negative_prompt,
 						"onUpdate:modelValue": (e) => t.negative_prompt = e,
-						label: g(i)("chat.dialog.negative_prompt"),
+						label: h(i)("chat.dialog.negative_prompt"),
 						translator: e.translator
 					}, null, 8, [
 						"modelValue",
@@ -1001,63 +1000,63 @@ var He = ["for"], Ue = [
 						"label",
 						"translator"
 					]),
-					w("div", { class: A(g(Q).chips) }, [N(Y, {
+					C("div", { class: k(h(Q).chips) }, [M(Y, {
 						port: e.promptTags,
 						kind: "undesired_content"
 					}, null, 8, ["port"])], 2),
-					w("div", { class: A(g(Q).meta) }, [w("span", null, O(oe(t)), 1)], 2)
+					C("div", { class: k(h(Q).meta) }, [C("span", null, D(oe(t)), 1)], 2)
 				], 2))), 128)),
-				h.value.length > 0 ? (c(), p("section", {
+				g.value.length > 0 ? (s(), f("section", {
 					key: 1,
-					class: A(g(Q).picker)
-				}, [N(L, {
-					label: g(i)("chat.dialog.pick_paragraphs", { count: h.value.length }),
-					"aria-expanded": v.value,
+					class: k(h(Q).picker)
+				}, [M(I, {
+					label: h(i)("chat.dialog.pick_paragraphs", { count: g.value.length }),
+					"aria-expanded": y.value,
 					"data-testid": "pick-paragraphs",
-					onClick: n[1] ||= (e) => v.value = !v.value
-				}, null, 8, ["label", "aria-expanded"]), v.value ? (c(), p(k, { key: 0 }, [
-					w("p", { class: A(g(Q).hint) }, O(g(i)("chat.dialog.pick_paragraphs_hint")), 3),
-					w("div", { class: A(g(Q).paragraphs) }, [(c(!0), p(k, null, o(h.value, (e) => (c(), S(K, {
+					onClick: n[1] ||= (e) => y.value = !y.value
+				}, null, 8, ["label", "aria-expanded"]), y.value ? (s(), f(O, { key: 0 }, [
+					C("p", { class: k(h(Q).hint) }, D(h(i)("chat.dialog.pick_paragraphs_hint")), 3),
+					C("div", { class: k(h(Q).paragraphs) }, [(s(!0), f(O, null, a(g.value, (e) => (s(), x(K, {
 						key: e.index,
 						"model-value": _.value.includes(e.index),
-						label: E(e),
+						label: A(e),
 						"onUpdate:modelValue": (t) => j(e.index, t === !0)
 					}, null, 8, [
 						"model-value",
 						"label",
 						"onUpdate:modelValue"
 					]))), 128))], 2),
-					C.value === null ? x("", !0) : (c(), p("p", {
+					T.value === null ? b("", !0) : (s(), f("p", {
 						key: 0,
-						class: A(g(Q).error)
-					}, O(C.value), 3)),
-					w("div", { class: A(g(Q).footer) }, [N(L, {
-						label: g(i)("chat.dialog.add_paragraphs", { count: _.value.length }),
-						pending: b.value,
+						class: k(h(Q).error)
+					}, D(T.value), 3)),
+					C("div", { class: k(h(Q).footer) }, [M(I, {
+						label: h(i)("chat.dialog.add_paragraphs", { count: _.value.length }),
+						pending: S.value,
 						disabled: _.value.length === 0,
 						"data-testid": "add-paragraphs",
-						onClick: W
+						onClick: te
 					}, null, 8, [
 						"label",
 						"pending",
 						"disabled"
 					])], 2)
-				], 64)) : x("", !0)], 2)) : x("", !0),
-				u.value === null ? x("", !0) : (c(), p("p", {
+				], 64)) : b("", !0)], 2)) : b("", !0),
+				p.value === null ? b("", !0) : (s(), f("p", {
 					key: 2,
-					class: A(g(Q).error)
-				}, O(u.value), 3)),
-				w("div", { class: A(g(Q).footer) }, [
-					ee.value !== null && V.value.length > 0 ? (c(), p("span", {
+					class: k(h(Q).error)
+				}, D(p.value), 3)),
+				C("div", { class: k(h(Q).footer) }, [
+					ee.value !== null && V.value.length > 0 ? (s(), f("span", {
 						key: 0,
-						class: A(g(Q).total)
-					}, O(g(i)("chat.dialog.total_anlas", { anlas: ee.value })), 3)) : x("", !0),
-					N(L, {
-						label: g(i)("chat.dialog.cancel"),
+						class: k(h(Q).total)
+					}, D(h(i)("chat.dialog.total_anlas", { anlas: ee.value })), 3)) : b("", !0),
+					M(I, {
+						label: h(i)("chat.dialog.cancel"),
 						onClick: n[2] ||= (e) => r("close")
 					}, null, 8, ["label"]),
-					N(L, {
-						label: g(i)("chat.dialog.confirm", { count: V.value.length }),
+					M(I, {
+						label: h(i)("chat.dialog.confirm", { count: V.value.length }),
 						variant: "primary",
 						pending: l.value,
 						disabled: V.value.length === 0,
@@ -1168,7 +1167,7 @@ function nt(e, t) {
 }
 //#endregion
 //#region src/ui/chat/QuickEditDialog.vue?vue&type=script&setup=true&lang.ts
-var rt = { key: 1 }, it = /* @__PURE__ */ M({
+var rt = { key: 1 }, it = /* @__PURE__ */ j({
 	__name: "QuickEditDialog",
 	props: {
 		request: {},
@@ -1178,29 +1177,29 @@ var rt = { key: 1 }, it = /* @__PURE__ */ M({
 	},
 	emits: ["close"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = T(), a = y(""), o = y(""), l = y(.6), u = y("lineart"), h = y("happy"), _ = y(""), v = y(0), b = y(null), C = y(null), E = y(!1), M = y(null), P = D(() => u.value === "colorize" || u.value === "emotion"), F = D(() => {
+		let n = e, r = t, { t: i } = w(), a = v(""), c = v(""), l = v(.6), m = v("lineart"), g = v("happy"), _ = v(""), y = v(0), S = v(null), T = v(null), j = v(!1), N = v(null), P = E(() => m.value === "colorize" || m.value === "emotion"), F = E(() => {
 			switch (n.request?.kind) {
 				case "img2img": return i("chat.quick_edit.img2img");
 				case "upscale": return i("chat.quick_edit.upscale");
 				default: return i("chat.quick_edit.director");
 			}
-		}), I = D(() => $e.map((e) => ({
+		}), L = E(() => $e.map((e) => ({
 			value: e,
 			label: tt(i, e)
-		}))), R = D(() => et.map((e) => ({
+		}))), R = E(() => et.map((e) => ({
 			value: e,
 			label: nt(i, e)
 		})));
-		function z() {
+		function B() {
 			let e = n.request;
 			if (e === null) return null;
 			switch (e.kind) {
-				case "img2img": return b.value === null ? null : {
+				case "img2img": return S.value === null ? null : {
 					kind: "img2img",
 					image_id: e.image_id,
-					source: b.value,
+					source: S.value,
 					positive_prompt: a.value,
-					negative_prompt: o.value,
+					negative_prompt: c.value,
 					strength: l.value
 				};
 				case "upscale": return {
@@ -1210,10 +1209,10 @@ var rt = { key: 1 }, it = /* @__PURE__ */ M({
 				case "augment": return {
 					kind: "augment",
 					image_id: e.image_id,
-					tool: u.value,
-					...u.value === "emotion" ? { emotion: h.value } : {},
+					tool: m.value,
+					...m.value === "emotion" ? { emotion: g.value } : {},
 					...P.value ? {
-						defry: v.value,
+						defry: y.value,
 						..._.value.trim() ? { tool_prompt: _.value.trim() } : {}
 					} : {}
 				};
@@ -1221,139 +1220,139 @@ var rt = { key: 1 }, it = /* @__PURE__ */ M({
 			}
 		}
 		async function V() {
-			let e = z();
-			if (C.value = null, e !== null) try {
+			let e = B();
+			if (T.value = null, e !== null) try {
 				let t = await n.service.preview_edit(e);
-				t.provider_id === "novelai" && (C.value = await n.novelai.estimate_cost(t));
+				t.provider_id === "novelai" && (T.value = await n.novelai.estimate_cost(t));
 			} catch {
-				C.value = null;
+				T.value = null;
 			}
 		}
-		d(() => n.request, async (e) => {
+		u(() => n.request, async (e) => {
 			if (e !== null) {
-				if (a.value = e.positive_prompt, o.value = e.negative_prompt, M.value = null, b.value = null, e.kind === "img2img") {
+				if (a.value = e.positive_prompt, c.value = e.negative_prompt, N.value = null, S.value = null, e.kind === "img2img") {
 					let t = await n.loadBitmap(e.image_id);
-					b.value = {
+					S.value = {
 						width: t.width,
 						height: t.height
 					}, t.close();
 				}
 				await V();
 			}
-		}, { immediate: !0 }), d([
+		}, { immediate: !0 }), u([
 			l,
-			u,
-			h,
-			v
+			m,
+			g,
+			y
 		], () => {
 			V();
 		});
-		let ee = D(() => C.value === null ? "" : C.value.opus_free ? i("chat.dialog.cost_free") : C.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: C.value.anlas }));
-		function te(e) {
-			u.value = $e.find((t) => t === e) ?? u.value;
-		}
+		let ee = E(() => T.value === null ? "" : T.value.opus_free ? i("chat.dialog.cost_free") : T.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: T.value.anlas }));
 		function H(e) {
-			h.value = et.find((t) => t === e) ?? h.value;
+			m.value = $e.find((t) => t === e) ?? m.value;
 		}
-		async function U() {
-			let e = n.request, t = z();
+		function U(e) {
+			g.value = et.find((t) => t === e) ?? g.value;
+		}
+		async function W() {
+			let e = n.request, t = B();
 			if (e !== null && t !== null) {
-				E.value = !0, M.value = null;
+				j.value = !0, N.value = null;
 				try {
 					await n.service.edit(e.location, e.slot_id, t), r("close");
 				} catch (e) {
-					M.value = e instanceof Error ? e.message : String(e);
+					N.value = e instanceof Error ? e.message : String(e);
 				} finally {
-					E.value = !1;
+					j.value = !1;
 				}
 			}
 		}
-		return (t, n) => (c(), S(B, {
+		return (t, n) => (s(), x(z, {
 			open: e.request !== null && e.request.kind !== "inpaint",
 			title: F.value,
-			"close-label": g(i)("chat.dialog.close"),
+			"close-label": h(i)("chat.dialog.close"),
 			"onUpdate:open": n[6] ||= (e) => !e && r("close")
 		}, {
-			default: f(() => [w("div", { class: A(g(Q).body) }, [
-				e.request?.kind === "img2img" ? (c(), p(k, { key: 0 }, [
-					w("label", { class: A(g(Q).label) }, [j(O(g(i)("chat.dialog.positive_prompt")) + " ", 1), s(w("textarea", {
+			default: d(() => [C("div", { class: k(h(Q).body) }, [
+				e.request?.kind === "img2img" ? (s(), f(O, { key: 0 }, [
+					C("label", { class: k(h(Q).label) }, [A(D(h(i)("chat.dialog.positive_prompt")) + " ", 1), o(C("textarea", {
 						"onUpdate:modelValue": n[0] ||= (e) => a.value = e,
-						class: A(g(Q).prompt)
-					}, null, 2), [[m, a.value]])], 2),
-					w("label", { class: A(g(Q).label) }, [j(O(g(i)("chat.dialog.negative_prompt")) + " ", 1), s(w("textarea", {
-						"onUpdate:modelValue": n[1] ||= (e) => o.value = e,
-						class: A(g(Q).prompt)
-					}, null, 2), [[m, o.value]])], 2),
-					w("label", { class: A(g(Q).label) }, [j(O(g(i)("chat.quick_edit.strength", { value: l.value.toFixed(2) })) + " ", 1), s(w("input", {
+						class: k(h(Q).prompt)
+					}, null, 2), [[p, a.value]])], 2),
+					C("label", { class: k(h(Q).label) }, [A(D(h(i)("chat.dialog.negative_prompt")) + " ", 1), o(C("textarea", {
+						"onUpdate:modelValue": n[1] ||= (e) => c.value = e,
+						class: k(h(Q).prompt)
+					}, null, 2), [[p, c.value]])], 2),
+					C("label", { class: k(h(Q).label) }, [A(D(h(i)("chat.quick_edit.strength", { value: l.value.toFixed(2) })) + " ", 1), o(C("input", {
 						"onUpdate:modelValue": n[2] ||= (e) => l.value = e,
 						type: "range",
 						min: "0.01",
 						max: "0.99",
 						step: "0.01"
 					}, null, 512), [[
-						m,
+						p,
 						l.value,
 						void 0,
 						{ number: !0 }
 					]])], 2)
-				], 64)) : e.request?.kind === "upscale" ? (c(), p("p", rt, O(g(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (c(), p(k, { key: 2 }, [
-					N(q, {
-						"model-value": u.value,
-						options: I.value,
-						placeholder: g(i)("chat.quick_edit.tool"),
-						"aria-label": g(i)("chat.quick_edit.tool"),
-						"onUpdate:modelValue": te
-					}, null, 8, [
-						"model-value",
-						"options",
-						"placeholder",
-						"aria-label"
-					]),
-					u.value === "emotion" ? (c(), S(q, {
-						key: 0,
-						"model-value": h.value,
-						options: R.value,
-						placeholder: g(i)("chat.quick_edit.emotion"),
-						"aria-label": g(i)("chat.quick_edit.emotion"),
+				], 64)) : e.request?.kind === "upscale" ? (s(), f("p", rt, D(h(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (s(), f(O, { key: 2 }, [
+					M(q, {
+						"model-value": m.value,
+						options: L.value,
+						placeholder: h(i)("chat.quick_edit.tool"),
+						"aria-label": h(i)("chat.quick_edit.tool"),
 						"onUpdate:modelValue": H
 					}, null, 8, [
 						"model-value",
 						"options",
 						"placeholder",
 						"aria-label"
-					])) : x("", !0),
-					P.value ? (c(), p(k, { key: 1 }, [w("label", { class: A(g(Q).label) }, [j(O(g(i)("chat.quick_edit.tool_prompt")) + " ", 1), s(w("textarea", {
+					]),
+					m.value === "emotion" ? (s(), x(q, {
+						key: 0,
+						"model-value": g.value,
+						options: R.value,
+						placeholder: h(i)("chat.quick_edit.emotion"),
+						"aria-label": h(i)("chat.quick_edit.emotion"),
+						"onUpdate:modelValue": U
+					}, null, 8, [
+						"model-value",
+						"options",
+						"placeholder",
+						"aria-label"
+					])) : b("", !0),
+					P.value ? (s(), f(O, { key: 1 }, [C("label", { class: k(h(Q).label) }, [A(D(h(i)("chat.quick_edit.tool_prompt")) + " ", 1), o(C("textarea", {
 						"onUpdate:modelValue": n[3] ||= (e) => _.value = e,
-						class: A(g(Q).prompt)
-					}, null, 2), [[m, _.value]])], 2), w("label", { class: A(g(Q).label) }, [j(O(g(i)("chat.quick_edit.defry", { value: v.value })) + " ", 1), s(w("input", {
-						"onUpdate:modelValue": n[4] ||= (e) => v.value = e,
+						class: k(h(Q).prompt)
+					}, null, 2), [[p, _.value]])], 2), C("label", { class: k(h(Q).label) }, [A(D(h(i)("chat.quick_edit.defry", { value: y.value })) + " ", 1), o(C("input", {
+						"onUpdate:modelValue": n[4] ||= (e) => y.value = e,
 						type: "range",
 						min: "0",
 						max: "5",
 						step: "1"
 					}, null, 512), [[
-						m,
-						v.value,
+						p,
+						y.value,
 						void 0,
 						{ number: !0 }
-					]])], 2)], 64)) : x("", !0)
-				], 64)) : x("", !0),
-				M.value === null ? x("", !0) : (c(), p("p", {
+					]])], 2)], 64)) : b("", !0)
+				], 64)) : b("", !0),
+				N.value === null ? b("", !0) : (s(), f("p", {
 					key: 3,
-					class: A(g(Q).error)
-				}, O(M.value), 3)),
-				w("div", { class: A(g(Q).footer) }, [
-					w("span", { class: A(g(Q).total) }, O(ee.value), 3),
-					N(L, {
-						label: g(i)("chat.dialog.cancel"),
+					class: k(h(Q).error)
+				}, D(N.value), 3)),
+				C("div", { class: k(h(Q).footer) }, [
+					C("span", { class: k(h(Q).total) }, D(ee.value), 3),
+					M(I, {
+						label: h(i)("chat.dialog.cancel"),
 						onClick: n[5] ||= (e) => r("close")
 					}, null, 8, ["label"]),
-					N(L, {
-						label: g(i)("chat.quick_edit.submit"),
+					M(I, {
+						label: h(i)("chat.quick_edit.submit"),
 						variant: "primary",
-						pending: E.value,
-						disabled: z() === null,
-						onClick: U
+						pending: j.value,
+						disabled: B() === null,
+						onClick: W
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1368,26 +1367,7 @@ var rt = { key: 1 }, it = /* @__PURE__ */ M({
 			"close-label"
 		]));
 	}
-});
-//#endregion
-//#region src/ui/chat/slot_error_label.ts
-function at(t, n) {
-	let r = e.safeParse(n);
-	if (!r.success) return n;
-	switch (r.data) {
-		case "auth_failed": return t("chat.errors.auth_failed");
-		case "rate_limited": return t("chat.errors.rate_limited");
-		case "content_blocked": return t("chat.errors.content_blocked");
-		case "invalid_request": return t("chat.errors.invalid_request");
-		case "provider_unavailable": return t("chat.errors.provider_unavailable");
-		case "timed_out": return t("chat.errors.timed_out");
-		case "cancelled": return t("chat.errors.cancelled");
-		case "malformed_response": return t("chat.errors.malformed_response");
-	}
-}
-//#endregion
-//#region src/ui/chat/SlotCard.vue?vue&type=script&setup=true&lang.ts
-var ot = ["src", "alt"], st = { key: 3 }, ct = { key: 4 }, lt = ["disabled", "aria-label"], ut = ["disabled", "aria-label"], dt = ["disabled"], ft = ["disabled", "onClick"], pt = /* @__PURE__ */ M({
+}), at = ["src", "alt"], ot = { key: 3 }, st = { key: 4 }, ct = ["disabled", "aria-label"], lt = ["disabled", "aria-label"], ut = ["disabled"], dt = ["disabled", "onClick"], ft = /* @__PURE__ */ j({
 	__name: "SlotCard",
 	props: {
 		entry: {},
@@ -1403,15 +1383,15 @@ var ot = ["src", "alt"], st = { key: 3 }, ct = { key: 4 }, lt = ["disabled", "ar
 		"quick-edit"
 	],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = T(), a = y(null), s = y(!1), l = D(() => n.entry.active_image_id === null ? -1 : n.entry.image_ids.indexOf(n.entry.active_image_id)), u = D(() => !n.pending && n.entry.pending_request_ids.length > 0);
-		d(() => n.entry.active_image_id, (e) => {
-			a.value = null, s.value = !1, e !== null && n.loadImage(e).then((t) => {
-				n.entry.active_image_id === e && (a.value = t);
+		let n = e, r = t, { t: i } = w(), o = v(null), c = v(!1), l = E(() => n.entry.active_image_id === null ? -1 : n.entry.image_ids.indexOf(n.entry.active_image_id)), d = E(() => !n.pending && n.entry.pending_request_ids.length > 0);
+		u(() => n.entry.active_image_id, (e) => {
+			o.value = null, c.value = !1, e !== null && n.loadImage(e).then((t) => {
+				n.entry.active_image_id === e && (o.value = t);
 			}, () => {
-				s.value = !0;
+				c.value = !0;
 			});
 		}, { immediate: !0 });
-		let f = [
+		let p = [
 			{
 				kind: "img2img",
 				label: () => i("chat.quick_edit.img2img")
@@ -1433,109 +1413,109 @@ var ot = ["src", "alt"], st = { key: 3 }, ct = { key: 4 }, lt = ["disabled", "ar
 			let t = n.entry.image_ids[l.value + e];
 			t !== void 0 && r("select", t);
 		}
-		return (t, n) => (c(), p("div", {
-			class: A(g(X).slot),
+		return (t, n) => (s(), f("div", {
+			class: k(h(X).slot),
 			"data-tc-slot-card": ""
 		}, [
-			w("div", { class: A(g(X).frame) }, [a.value !== null && e.entry.active_image_id !== null ? (c(), p("img", {
+			C("div", { class: k(h(X).frame) }, [o.value !== null && e.entry.active_image_id !== null ? (s(), f("img", {
 				key: 0,
-				class: A(g(X).image),
-				src: a.value,
+				class: k(h(X).image),
+				src: o.value,
 				alt: e.entry.scene,
 				onClick: n[0] ||= (t) => r("preview", e.entry.active_image_id)
-			}, null, 10, ot)) : (c(), p("div", {
+			}, null, 10, at)) : (s(), f("div", {
 				key: 1,
-				class: A(g(X).placeholder)
-			}, [e.pending ? (c(), p(k, { key: 0 }, [w("span", {
-				class: A(g(X).skeleton),
+				class: k(h(X).placeholder)
+			}, [e.pending ? (s(), f(O, { key: 0 }, [C("span", {
+				class: k(h(X).skeleton),
 				"aria-hidden": "true"
-			}, null, 2), w("span", null, O(g(i)("chat.slot.generating")), 1)], 64)) : s.value ? (c(), p("span", {
+			}, null, 2), C("span", null, D(h(i)("chat.slot.generating")), 1)], 64)) : c.value ? (s(), f("span", {
 				key: 1,
-				class: A(g(X).error)
-			}, O(g(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? u.value ? (c(), p("span", st, O(g(i)("chat.slot.interrupted")), 1)) : (c(), p("span", ct, O(e.entry.scene), 1)) : (c(), p("span", {
+				class: k(h(X).error)
+			}, D(h(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? d.value ? (s(), f("span", ot, D(h(i)("chat.slot.interrupted")), 1)) : (s(), f("span", st, D(e.entry.scene), 1)) : (s(), f("span", {
 				key: 2,
-				class: A(g(X).error)
-			}, O(g(i)("chat.slot.failed", { reason: g(at)(g(i), e.entry.last_error) })), 3))], 2))], 2),
-			w("div", { class: A(g(X).toolbar) }, [
-				e.entry.image_ids.length > 1 ? (c(), p("span", {
+				class: k(h(X).error)
+			}, D(h(i)("chat.slot.failed", { reason: h(W)(h(i), e.entry.last_error) })), 3))], 2))], 2),
+			C("div", { class: k(h(X).toolbar) }, [
+				e.entry.image_ids.length > 1 ? (s(), f("span", {
 					key: 0,
-					class: A(g(X).counter)
-				}, O(l.value + 1) + " / " + O(e.entry.image_ids.length), 3)) : (c(), p("span", {
+					class: k(h(X).counter)
+				}, D(l.value + 1) + " / " + D(e.entry.image_ids.length), 3)) : (s(), f("span", {
 					key: 1,
-					class: A(g(X).counter)
+					class: k(h(X).counter)
 				}, null, 2)),
-				e.entry.image_ids.length > 1 ? (c(), p("button", {
+				e.entry.image_ids.length > 1 ? (s(), f("button", {
 					key: 2,
 					type: "button",
-					class: A(g(X).button),
+					class: k(h(X).button),
 					disabled: l.value <= 0,
-					"aria-label": g(i)("chat.slot.previous"),
+					"aria-label": h(i)("chat.slot.previous"),
 					onClick: n[1] ||= (e) => m(-1)
-				}, " ‹ ", 10, lt)) : x("", !0),
-				e.entry.image_ids.length > 1 ? (c(), p("button", {
+				}, " ‹ ", 10, ct)) : b("", !0),
+				e.entry.image_ids.length > 1 ? (s(), f("button", {
 					key: 3,
 					type: "button",
-					class: A(g(X).button),
+					class: k(h(X).button),
 					disabled: l.value >= e.entry.image_ids.length - 1,
-					"aria-label": g(i)("chat.slot.next"),
+					"aria-label": h(i)("chat.slot.next"),
 					onClick: n[2] ||= (e) => m(1)
-				}, " › ", 10, ut)) : x("", !0),
-				w("button", {
+				}, " › ", 10, lt)) : b("", !0),
+				C("button", {
 					type: "button",
-					class: A(g(X).button),
+					class: k(h(X).button),
 					disabled: e.pending,
 					onClick: n[3] ||= (e) => r("generate")
-				}, O(e.entry.image_ids.length === 0 ? g(i)("chat.slot.generate") : g(i)("chat.slot.regenerate")), 11, dt),
-				w("button", {
+				}, D(e.entry.image_ids.length === 0 ? h(i)("chat.slot.generate") : h(i)("chat.slot.regenerate")), 11, ut),
+				C("button", {
 					type: "button",
-					class: A(g(X).button),
+					class: k(h(X).button),
 					onClick: n[4] ||= (e) => r("edit")
-				}, O(g(i)("chat.slot.edit")), 3)
+				}, D(h(i)("chat.slot.edit")), 3)
 			], 2),
-			e.canEdit && e.entry.active_image_id !== null ? (c(), p("div", {
+			e.canEdit && e.entry.active_image_id !== null ? (s(), f("div", {
 				key: 0,
-				class: A(g(X).toolbar)
-			}, [(c(), p(k, null, o(f, (t) => w("button", {
+				class: k(h(X).toolbar)
+			}, [(s(), f(O, null, a(p, (t) => C("button", {
 				key: t.kind,
 				type: "button",
-				class: A(g(X).button),
+				class: k(h(X).button),
 				disabled: e.pending,
 				onClick: (n) => e.entry.active_image_id !== null && r("quick-edit", t.kind, e.entry.active_image_id)
-			}, O(t.label()), 11, ft)), 64))], 2)) : x("", !0)
+			}, D(t.label()), 11, dt)), 64))], 2)) : b("", !0)
 		], 2));
 	}
-}), mt = "data-tc-illustrate", ht = "data-tc-notice", gt = 50;
-function _t(e) {
+}), pt = "data-tc-illustrate", mt = "data-tc-notice", ht = 50;
+function gt(e) {
 	return `${e.chat_id}:${String(e.message_id)}:${String(e.swipe_id)}`;
 }
-function vt(e) {
-	let { host: t, service: n } = e, i = E([]), a = E([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = /* @__PURE__ */ new Map(), l = [], u = null;
+function _t(e) {
+	let { host: t, service: r } = e, i = T([]), a = T([]), o = /* @__PURE__ */ new Map(), s = /* @__PURE__ */ new Map(), c = /* @__PURE__ */ new Map(), l = [], u = null;
 	function d(t, n) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
-		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${mt}]`) !== null) return;
+		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${pt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(U(t.ownerDocument)), a.setAttribute(mt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(H(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}
 	function f(e) {
-		let t = e.parentElement?.querySelector(`:scope > [${ht}]`);
+		let t = e.parentElement?.querySelector(`:scope > [${mt}]`);
 		if (t != null) return t;
 		let n = e.ownerDocument.createElement("div");
-		return n.setAttribute(ht, ""), e.after(n), n;
+		return n.setAttribute(mt, ""), e.after(n), n;
 	}
 	function p(e) {
-		let r = t.find_message_element(e.message_id);
-		if (r === null) {
+		let n = t.find_message_element(e.message_id);
+		if (n === null) {
 			o.delete(e.message_id);
 			return;
 		}
-		d(r, e.message_id);
-		let i = n.read(e)?.slots ?? [], a = [];
-		for (let t of r.querySelectorAll("[data-tc-slot]")) {
+		d(n, e.message_id);
+		let i = r.read(e)?.slots ?? [], a = [];
+		for (let t of n.querySelectorAll("[data-tc-slot]")) {
 			let n = i.find((e) => e.slot_id === t.dataset.tcSlot);
 			n !== void 0 && a.push({
-				key: `${_t(e)}:${n.slot_id}`,
+				key: `${gt(e)}:${n.slot_id}`,
 				element: t,
 				location: e,
 				slot: n
@@ -1566,7 +1546,7 @@ function vt(e) {
 	}
 	async function h(e) {
 		try {
-			p(await n.active_location(e));
+			p(await r.active_location(e));
 		} catch {
 			o.delete(e);
 		}
@@ -1587,17 +1567,17 @@ function vt(e) {
 	function _() {
 		u !== null && clearTimeout(u), u = setTimeout(() => {
 			u = null, g();
-		}, gt);
+		}, ht);
 	}
-	return r(() => {
+	return n(() => {
 		l.push(t.subscribe_message_rendered((e) => {
 			h(e);
 		}), t.subscribe_message_released((e) => {
 			o.delete(e), m();
 		}), t.subscribe_chat_rendered(() => {
 			s.clear(), c.clear(), _();
-		}), n.subscribe((e) => {
-			let t = _t(e.location);
+		}), r.subscribe((e) => {
+			let t = gt(e.location);
 			e.type === "wardrobe_failed" ? c.set(t, {
 				status: "wardrobe_failed",
 				message: e.message
@@ -1607,10 +1587,10 @@ function vt(e) {
 				excerpt: e.excerpt
 			}) : s.delete(t), h(e.location.message_id);
 		})), g();
-	}), C(() => {
+	}), S(() => {
 		for (let e of l.splice(0)) e();
 		u !== null && clearTimeout(u);
-		for (let e of document.querySelectorAll(`[${mt}], [${ht}]`)) e.remove();
+		for (let e of document.querySelectorAll(`[${pt}], [${mt}]`)) e.remove();
 	}), {
 		targets: i,
 		notices: a
@@ -1618,9 +1598,9 @@ function vt(e) {
 }
 //#endregion
 //#region src/ui/chat/use_image_urls.ts
-function yt(e) {
+function vt(e) {
 	let t = /* @__PURE__ */ new Map();
-	return C(() => {
+	return S(() => {
 		for (let e of t.values()) e.then((e) => {
 			URL.revokeObjectURL(e);
 		});
@@ -1632,7 +1612,7 @@ function yt(e) {
 }
 //#endregion
 //#region src/ui/chat/ChatLayer.vue?vue&type=script&setup=true&lang.ts
-var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
+var yt = { key: 1 }, bt = ["onClick"], xt = ["src"], St = /* @__PURE__ */ j({
 	__name: "ChatLayer",
 	props: {
 		host: {},
@@ -1643,8 +1623,8 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 		promptTags: {}
 	},
 	setup(e) {
-		let t = e, { t: n } = T(), i = y(null), a = y(null), s = yt(t.gallery), l = y(null), u = E(null), d = y(!1);
-		async function f(e) {
+		let t = e, { t: r } = w(), i = v(null), o = v(null), c = vt(t.gallery), l = v(null), u = T(null), d = v(!1);
+		async function p(e) {
 			let n = await t.gallery.read_bytes(e);
 			return createImageBitmap(new Blob([new Uint8Array(n)]));
 		}
@@ -1659,13 +1639,13 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 			};
 			n === "inpaint" ? u.value = {
 				request: i,
-				bitmap: await f(r)
+				bitmap: await p(r)
 			} : l.value = i;
 		}
-		function h() {
+		function _() {
 			u.value?.bitmap.close(), u.value = null;
 		}
-		async function v(e) {
+		async function y(e) {
 			let n = u.value;
 			if (n === null) return;
 			let r = {
@@ -1684,13 +1664,13 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 					strength: e.denoiseStrength
 				});
 			} catch {} finally {
-				d.value = !1, h();
+				d.value = !1, _();
 			}
 		}
-		let { targets: b, notices: D } = vt({
+		let { targets: E, notices: j } = _t({
 			host: t.host,
 			service: t.service,
-			button_label: () => n("chat.message_button"),
+			button_label: () => r("chat.message_button"),
 			on_illustrate: (e) => {
 				i.value = {
 					message_id: e,
@@ -1698,7 +1678,7 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 				};
 			}
 		});
-		function M(e) {
+		function N(e) {
 			return e.some((e) => t.service.is_pending(e));
 		}
 		function P(e, n) {
@@ -1714,23 +1694,23 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 			t.service.select_image(e, n, r);
 		}
 		async function L(e) {
-			a.value = await s(e);
+			o.value = await c(e);
 		}
 		function R(e) {
-			e.key === "Escape" && (a.value = null);
+			e.key === "Escape" && (o.value = null);
 		}
-		return r(() => {
+		return n(() => {
 			document.addEventListener("keydown", R), t.translator?.prepare().catch(() => void 0);
-		}), C(() => {
+		}), S(() => {
 			document.removeEventListener("keydown", R);
-		}), (t, r) => (c(), p(k, null, [
-			(c(!0), p(k, null, o(g(b), (t) => (c(), S(_, {
+		}), (t, n) => (s(), f(O, null, [
+			(s(!0), f(O, null, a(h(E), (t) => (s(), x(g, {
 				key: t.key,
 				to: t.element
-			}, [N(pt, {
+			}, [M(ft, {
 				entry: t.slot,
-				pending: M(t.slot.pending_request_ids),
-				"load-image": g(s),
+				pending: N(t.slot.pending_request_ids),
+				"load-image": h(c),
 				"can-edit": e.service.can_edit(),
 				onGenerate: (e) => P(t.location, t.slot.slot_id),
 				onEdit: (e) => i.value = {
@@ -1750,41 +1730,41 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 				"onSelect",
 				"onQuickEdit"
 			])], 8, ["to"]))), 128)),
-			(c(!0), p(k, null, o(g(D), (e) => (c(), S(_, {
+			(s(!0), f(O, null, a(h(j), (e) => (s(), x(g, {
 				key: e.key,
 				to: e.element
-			}, [w("div", { class: A(g(X).notice) }, [e.notice.status === "running" ? (c(), p(k, { key: 0 }, [j(O(g(n)("chat.analysis_running")), 1)], 64)) : e.notice.status === "wardrobe_failed" ? (c(), p(k, { key: 1 }, [j(O(g(n)("chat.wardrobe_failed", { reason: e.notice.message })), 1)], 64)) : (c(), p(k, { key: 2 }, [
-				w("div", null, O(g(n)("chat.analysis_failed", { reason: e.notice.message })), 1),
-				e.notice.excerpt === null ? x("", !0) : (c(), p("pre", {
+			}, [C("div", { class: k(h(X).notice) }, [e.notice.status === "running" ? (s(), f(O, { key: 0 }, [A(D(h(r)("chat.analysis_running")), 1)], 64)) : e.notice.status === "wardrobe_failed" ? (s(), f(O, { key: 1 }, [A(D(h(r)("chat.wardrobe_failed", { reason: e.notice.message })), 1)], 64)) : (s(), f(O, { key: 2 }, [
+				C("div", null, D(h(r)("chat.analysis_failed", { reason: e.notice.message })), 1),
+				e.notice.excerpt === null ? b("", !0) : (s(), f("pre", {
 					key: 0,
-					class: A(g(X).excerpt)
-				}, O(e.notice.excerpt), 3)),
-				e.notice.excerpt === null ? x("", !0) : (c(), p("div", bt, O(g(n)("chat.dialog.parse_failed_hint")), 1)),
-				w("div", { class: A(g(X).notice_actions) }, [w("button", {
+					class: k(h(X).excerpt)
+				}, D(e.notice.excerpt), 3)),
+				e.notice.excerpt === null ? b("", !0) : (s(), f("div", yt, D(h(r)("chat.dialog.parse_failed_hint")), 1)),
+				C("div", { class: k(h(X).notice_actions) }, [C("button", {
 					type: "button",
-					class: A(g(X).button),
+					class: k(h(X).button),
 					"data-testid": "analysis-retry",
 					onClick: (t) => F(e.message_id)
-				}, O(g(n)("chat.dialog.retry")), 11, xt)], 2)
+				}, D(h(r)("chat.dialog.retry")), 11, bt)], 2)
 			], 64))], 2)], 8, ["to"]))), 128)),
-			a.value === null ? x("", !0) : (c(), S(_, {
+			o.value === null ? b("", !0) : (s(), x(g, {
 				key: 0,
 				to: "body"
-			}, [w("div", {
-				class: A(g(X).lightbox),
+			}, [C("div", {
+				class: k(h(X).lightbox),
 				role: "dialog",
-				onClick: r[0] ||= (e) => a.value = null
-			}, [w("img", {
-				src: a.value,
+				onClick: n[0] ||= (e) => o.value = null
+			}, [C("img", {
+				src: o.value,
 				alt: ""
-			}, null, 8, St)], 2)])),
-			N(Ze, {
+			}, null, 8, xt)], 2)])),
+			M(Ze, {
 				request: i.value,
 				service: e.service,
 				novelai: e.novelai,
 				translator: e.translator,
 				"prompt-tags": e.promptTags,
-				onClose: r[1] ||= (e) => i.value = null
+				onClose: n[1] ||= (e) => i.value = null
 			}, null, 8, [
 				"request",
 				"service",
@@ -1792,42 +1772,42 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 				"translator",
 				"prompt-tags"
 			]),
-			N(it, {
+			M(it, {
 				request: l.value,
 				service: e.service,
 				novelai: e.novelai,
-				"load-bitmap": f,
-				onClose: r[2] ||= (e) => l.value = null
+				"load-bitmap": p,
+				onClose: n[2] ||= (e) => l.value = null
 			}, null, 8, [
 				"request",
 				"service",
 				"novelai"
 			]),
-			u.value === null ? x("", !0) : (c(), S(Ae, {
+			u.value === null ? b("", !0) : (s(), x(Ae, {
 				key: 1,
 				open: !0,
 				bitmap: u.value.bitmap,
-				title: g(n)("chat.quick_edit.inpaint"),
-				"close-label": g(n)("chat.dialog.close"),
-				"undo-label": g(n)("chat.inpaint.undo"),
-				"redo-label": g(n)("chat.inpaint.redo"),
-				"erase-label": g(n)("chat.inpaint.erase"),
-				"clear-label": g(n)("chat.inpaint.clear"),
-				"zoom-in-label": g(n)("chat.inpaint.zoom_in"),
-				"zoom-out-label": g(n)("chat.inpaint.zoom_out"),
+				title: h(r)("chat.quick_edit.inpaint"),
+				"close-label": h(r)("chat.dialog.close"),
+				"undo-label": h(r)("chat.inpaint.undo"),
+				"redo-label": h(r)("chat.inpaint.redo"),
+				"erase-label": h(r)("chat.inpaint.erase"),
+				"clear-label": h(r)("chat.inpaint.clear"),
+				"zoom-in-label": h(r)("chat.inpaint.zoom_in"),
+				"zoom-out-label": h(r)("chat.inpaint.zoom_out"),
 				"upload-label": "",
 				"show-upload": !1,
-				"generate-label": g(n)("chat.quick_edit.submit"),
-				"brush-size-label": g(n)("chat.inpaint.brush_size"),
-				"positive-prompt-label": g(n)("chat.dialog.positive_prompt"),
-				"negative-prompt-label": g(n)("chat.dialog.negative_prompt"),
-				"denoise-label": g(n)("chat.inpaint.strength"),
-				"dimension-error-label": g(n)("chat.inpaint.dimension_error"),
+				"generate-label": h(r)("chat.quick_edit.submit"),
+				"brush-size-label": h(r)("chat.inpaint.brush_size"),
+				"positive-prompt-label": h(r)("chat.dialog.positive_prompt"),
+				"negative-prompt-label": h(r)("chat.dialog.negative_prompt"),
+				"denoise-label": h(r)("chat.inpaint.strength"),
+				"dimension-error-label": h(r)("chat.inpaint.dimension_error"),
 				pending: d.value,
 				"initial-positive-prompt": u.value.request.positive_prompt,
 				"initial-negative-prompt": u.value.request.negative_prompt,
-				"onUpdate:open": r[3] ||= (e) => !e && h(),
-				onSubmit: v
+				"onUpdate:open": n[3] ||= (e) => !e && _(),
+				onSubmit: y
 			}, null, 8, [
 				"bitmap",
 				"title",
@@ -1852,4 +1832,4 @@ var bt = { key: 1 }, xt = ["onClick"], St = ["src"], Ct = /* @__PURE__ */ M({
 	}
 });
 //#endregion
-export { Ct as default };
+export { St as default };
