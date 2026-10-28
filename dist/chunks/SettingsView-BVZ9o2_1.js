@@ -4,20 +4,20 @@ import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
 import { d as a, n as o, r as s, t as c, u as l } from "./http_origin-Bd6yFS3-.js";
 import { G as u, H as d, I as f, K as p, P as m, _ as h, a as g, b as _, dt as v, g as y, h as b, j as x, lt as S, m as C, mt as w, n as T, p as E, s as D, tt as O, u as k, v as A, x as j, y as M } from "./vue-i18n-L-BrQRnK.js";
 import { n as N, t as P } from "./AppIcon-DkyxvN8k.js";
-import { i as F, n as I, r as L, t as ee } from "./PromptTagChips-CmNrMgMG.js";
-import { n as R, t as te } from "./StateSurface-CYPYd2Rl.js";
-import { t as z } from "./AppSelect-jUx_pTQw.js";
-import { t as ne } from "./AppCheckbox-Cgz54uQV.js";
-import { t as B } from "./FieldGroup-C0diPHlP.js";
-import { n as V, t as H } from "./AppSwitch-BeUU4ize.js";
+import { i as F, n as I, r as L, t as ee } from "./PromptTagChips-sCg414gJ.js";
+import { n as R, t as te } from "./StateSurface-GWjn3SBm.js";
+import { t as z } from "./AppSelect-CSUOja9D.js";
+import { t as ne } from "./AppCheckbox-DX2yIeKD.js";
+import { t as B } from "./FieldGroup-DaiyFp19.js";
+import { n as V, t as H } from "./AppSwitch-9p54gUrC.js";
 import { n as U } from "./deferred_stylesheets-BpS7LWkd.js";
 import "./browser_secret_vault-Cl9sZA7g.js";
 import { n as re, t as ie } from "./novelai_request_defaults-B0sJ9ANr.js";
-import { n as W, t as G } from "./NumberStepper-TrSn2gr9.js";
-import { t as K } from "./IconButton-Co--h1UV.js";
-import { t as q } from "./ToastViewport-VpPC5KkO.js";
-import { t as ae } from "./ConfirmDialog-DsgvxfoB.js";
-import { t as oe } from "./AppDialog-uh3_ghVm.js";
+import { n as W, t as G } from "./NumberStepper-3jccVt4E.js";
+import { t as K } from "./IconButton-D9vhcs7n.js";
+import { t as q } from "./ToastViewport-OPktSprv.js";
+import { t as ae } from "./ConfirmDialog-gHFXxrsh.js";
+import { t as oe } from "./AppDialog-BE7Xf98J.js";
 import { t as se } from "./use_toasts-taqPHY-l.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/cable.js
 var ce = N("cable", [
@@ -2248,7 +2248,7 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = _(() => import("./PromptView-Dx7e4q-0.js")), n = _(() => import("./PromptTagPresetPanel-d6DuTL-z.js")), r = _(() => import("./DiagnosticsView-DqS30vsd.js")), i = e, { t: a } = T(), o = [
+		let t = _(() => import("./PromptView-CZOgls2v.js")), n = _(() => import("./PromptTagPresetPanel-BfnwmQCg.js")), r = _(() => import("./DiagnosticsView-DKLOrQZB.js")), i = e, { t: a } = T(), o = [
 			"illustration",
 			"providers",
 			"translation",

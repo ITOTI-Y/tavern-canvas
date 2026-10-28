@@ -2,13 +2,13 @@ import { t as e } from "./shell.module-Bkh0ofYg.js";
 import { G as t, I as n, P as r, _ as i, b as a, dt as o, g as s, h as c, lt as l, m as u, mt as d, n as f, p, pt as m, tt as h, u as g, v as _, x as v, y } from "./vue-i18n-L-BrQRnK.js";
 import { n as b, t as x } from "./AppIcon-DkyxvN8k.js";
 import { n as S, t as C } from "./route_nav-CXLRDOo3.js";
-import { n as w } from "./components_styles-DfkKC2VR.js";
+import { n as w } from "./components_styles-cMkBAg-0.js";
 import { t as T } from "./trash-2-Dqlz-IWX.js";
 import { t as E } from "./x-D7Ry5i_D.js";
 import { t as D } from "./use_shell_viewport-Yd0oBRFR.js";
-import { t as O } from "./AppTooltip-Bay48E5d.js";
-import { n as k, r as A, t as j } from "./PopoverPortal-9Sdzb5-R.js";
-import { t as M } from "./PopoverTrigger-EsRtmuet.js";
+import { t as O } from "./AppTooltip-CrGQyPAP.js";
+import { n as k, r as A, t as j } from "./PopoverPortal-DuoJjBIU.js";
+import { t as M } from "./PopoverTrigger-AREeVgWK.js";
 import { t as N } from "./slot_error_label-BgREwP7d.js";
 import { t as P } from "./use_portal_target-RDZJMCu5.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/feather.js
@@ -66,7 +66,7 @@ var F = b("feather", [
 		controller: {}
 	},
 	setup(e) {
-		let t = a(() => import("./GalleryView-DJV2d5oC.js")), n = a(() => import("./SettingsView-DoZ4Bgx1.js")), i = a(() => import("./AssetsView-Dd4aXX7a.js"));
+		let t = a(() => import("./GalleryView-CBrf5uLY.js")), n = a(() => import("./SettingsView-BVZ9o2_1.js")), i = a(() => import("./AssetsView-DMOvydBx.js"));
 		return (a, o) => e.state.route === "gallery" ? (r(), c(l(t), {
 			key: 0,
 			state: e.state,

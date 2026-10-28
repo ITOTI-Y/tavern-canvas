@@ -2372,7 +2372,7 @@ var Kr = /* @__PURE__ */ ke({
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ye(() => import("./chunks/ChatLayer-CT6lKwz3.js")), i = ye(() => import("./chunks/StudioShell-B6S9e4MU.js")), { t: a } = Te();
+		let n = t, r = ye(() => import("./chunks/ChatLayer-DRlqnSa_.js")), i = ye(() => import("./chunks/StudioShell-BSRZs4O8.js")), { t: a } = Te();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}

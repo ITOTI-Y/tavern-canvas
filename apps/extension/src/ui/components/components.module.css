@@ -508,7 +508,9 @@
   box-shadow:
     0 8px 24px var(--tc-shadow),
     0 1px 3px var(--tc-shadow);
-  width: var(--reka-select-trigger-width);
+  /* As wide as the longest option, never narrower than the trigger, so options are not cut off. */
+  width: max-content;
+  min-width: var(--reka-select-trigger-width);
   max-width: var(--reka-select-content-available-width);
 }
 
