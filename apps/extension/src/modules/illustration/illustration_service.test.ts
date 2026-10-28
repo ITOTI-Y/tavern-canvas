@@ -6,6 +6,7 @@ import {
 } from "@tavern-canvas/contracts";
 import { describe, expect, it, vi } from "vitest";
 import { reactive } from "vue";
+import { create_wardrobe_runner } from "./analysis_requests.js";
 
 import type {
   HostAdapter,
@@ -15,11 +16,7 @@ import type {
   PresetGenerationRequest,
 } from "../../host/index.js";
 import { WardrobeService } from "../wardrobe/wardrobe_service.js";
-import {
-  IllustrationService,
-  MessageChangedError,
-  create_wardrobe_runner,
-} from "./illustration_service.js";
+import { IllustrationService, MessageChangedError } from "./illustration_service.js";
 
 const REPLY = "She opened the door.\n\nRain fell outside.";
 const IMAGE_ID = "01906f4e-5f1c-7a2a-8d73-cc3a51abf1ed";

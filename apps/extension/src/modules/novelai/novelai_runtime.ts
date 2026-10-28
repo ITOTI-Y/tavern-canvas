@@ -8,15 +8,12 @@ import type {
   NovelAiVibeEncodingRepository,
   ProviderInputAssetRepository,
 } from "@tavern-canvas/storage";
+import { create_sillytavern_proxy_fetcher } from "../../host/sillytavern_proxy_fetch.js";
 
 import { create_browser_image_operations } from "./novelai_image_operations.js";
 import { composite_novelai_infill } from "./novelai_infill_output.js";
 import { prepare_novelai_request } from "./novelai_request_preparation.js";
-import {
-  create_novelai_service,
-  create_sillytavern_proxy_fetcher,
-  type NovelAiService,
-} from "./novelai_service.js";
+import { create_novelai_service, type NovelAiService } from "./novelai_service.js";
 import {
   create_provider_input_store,
   create_vibe_encoding_cache,

@@ -1,7 +1,5 @@
 import {
   SwipeIllustrationsSchema,
-  type AnalysisConnection,
-  type AnalysisWorldInfo,
   type IllustrationSettings,
   type IllustrationSlot,
   type ImageGenerationRequest,
@@ -12,31 +10,22 @@ import {
 } from "@tavern-canvas/contracts";
 import type { GenerationJobSnapshot } from "@tavern-canvas/core";
 
-import type {
-  HostAdapter,
-  HostGenerationConnection,
-  HostGenerationEvent,
-  HostJsonSchema,
-  HostSwipeLocation,
-  HostWorldInfo,
-} from "../../host/index.js";
+import type { HostAdapter, HostGenerationEvent, HostSwipeLocation } from "../../host/index.js";
 import {
-  ANALYSIS_JSON_SCHEMA,
   AnalysisParseError,
   build_analysis_input,
   build_chosen_paragraphs_input,
   parse_analysis_output,
-  type IllustrationProposal,
 } from "./analysis.js";
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs, type Paragraph } from "./slot_markers.js";
-import { assemble_slot_prompt, type SlotPromptPreset } from "./slot_prompt.js";
+import { type SlotPromptPreset } from "./slot_prompt.js";
 import type { CharacterTags } from "../wardrobe/character_from_image.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
-import { match_library, type SlotLibrary } from "./library_match.js";
-import { guidance_lines } from "./user_guidance.js";
-import { activate_worldbook } from "./worldbook.js";
+import { type SlotLibrary } from "./library_match.js";
+import { request_analysis, run_wardrobe_request } from "./analysis_requests.js";
+import { proposal_slots } from "./proposal_slots.js";
 
 export interface SlotPromptContext {
   readonly preset: SlotPromptPreset | null;
@@ -77,9 +66,6 @@ export interface IllustrationServiceDeps {
   readonly wait: (milliseconds: number) => Promise<void>;
 }
 
-const ANALYSIS_ATTEMPTS = 3;
-const ANALYSIS_RETRY_DELAY_MS = 2_000;
-
 export type IllustrationEvent =
   | { readonly type: "slots_changed"; readonly location: HostSwipeLocation }
   | { readonly type: "analysis_started"; readonly location: HostSwipeLocation }
@@ -115,98 +101,6 @@ const ILLUSTRATED_GENERATION_TYPES: ReadonlySet<string> = new Set([
   "regenerate",
   "continue",
 ]);
-
-async function to_host_connection(
-  connection: AnalysisConnection,
-  resolve_key: () => Promise<string>,
-): Promise<HostGenerationConnection> {
-  switch (connection.kind) {
-    case "current":
-      return { kind: "current" };
-    case "proxy_preset":
-      return {
-        kind: "proxy_preset",
-        proxy_preset: connection.proxy_preset,
-        model: connection.model,
-      };
-    case "custom":
-      // With `apiurl` set, JS-Slash-Runner sends the request as an OpenAI reverse proxy call.
-      return {
-        kind: "custom",
-        api_url: connection.api_url,
-        api_key: await resolve_key(),
-        model: connection.model,
-        source: "openai",
-      };
-  }
-}
-
-async function to_host_world_info(
-  world_info: AnalysisWorldInfo,
-  text: string,
-  host: HostAdapter,
-): Promise<HostWorldInfo> {
-  switch (world_info.mode) {
-    case "chat":
-      return { kind: "chat" };
-    case "off":
-      return { kind: "replace", text: "" };
-    case "worldbook":
-      return {
-        kind: "replace",
-        text: activate_worldbook(await host.read_worldbook(world_info.worldbook), text),
-      };
-  }
-}
-
-export interface WardrobeRunnerDeps {
-  readonly host: HostAdapter;
-  readonly settings: () => IllustrationSettings;
-  readonly resolve_analysis_key: () => Promise<string>;
-  readonly new_generation_id: () => string;
-}
-
-/**
- * Runs a wardrobe request through the analysis preset and connection, with the chosen wardrobe
- * model where the connection names one. It sends no chat history and no world info: the request
- * carries everything it needs.
- */
-async function run_wardrobe_request(
-  deps: WardrobeRunnerDeps,
-  input: string,
-  json_schema: HostJsonSchema,
-  image: string | null,
-): Promise<string> {
-  const settings = deps.settings();
-  const model = settings.wardrobe_model;
-  const connection =
-    model === null || settings.connection.kind === "current"
-      ? settings.connection
-      : { ...settings.connection, model };
-  const result = await deps.host.generate_with_preset({
-    generation_id: deps.new_generation_id(),
-    preset_name: settings.preset_name,
-    user_input: input,
-    max_chat_history: 0,
-    connection: await to_host_connection(connection, deps.resolve_analysis_key),
-    json_schema,
-    world_info: { kind: "replace", text: "" },
-    image,
-  });
-  return result.content;
-}
-
-export function create_wardrobe_runner(
-  deps: WardrobeRunnerDeps,
-): (input: string, json_schema: HostJsonSchema) => Promise<string> {
-  return (input, json_schema) =>
-    run_wardrobe_request(
-      deps,
-      [input, ...guidance_lines(deps.settings().wardrobe_guidance)].join("\n"),
-      json_schema,
-      null,
-    );
-}
 
 /** Loaded on demand: it needs the NovelAI model table, which stays out of the initial bundle. */
 async function with_character_prompts(
@@ -341,7 +235,8 @@ export class IllustrationService {
     if (paragraphs.length > 0) {
       const snapshot = await this.#wardrobe_snapshot(location);
       const context = await this.#deps.prompt_context(location.chat_id);
-      const proposals = await this.#propose(
+      const proposals = await request_analysis(
+        this.#deps,
         text,
         build_analysis_input(
           paragraphs,
@@ -351,7 +246,9 @@ export class IllustrationService {
         ),
         (raw) => parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message),
       );
-      record.slots.push(...this.#slots_for(paragraphs, proposals, context, snapshot));
+      record.slots.push(
+        ...proposal_slots(paragraphs, proposals, context, snapshot, this.#deps.new_slot_id),
+      );
     }
     // The record lands first so the re-render triggered by the text change already finds it.
     await this.#deps.host.write_swipe_record(location, record);
@@ -366,84 +263,6 @@ export class IllustrationService {
       }
     }
     return record;
-  }
-
-  /**
-   * Sends one analysis request and parses its reply, retrying both together: a failed request and a
-   * reply cut off mid-JSON usually succeed on another try.
-   */
-  async #propose(
-    text: string,
-    user_input: string,
-    parse: (raw: string) => readonly IllustrationProposal[],
-  ): Promise<readonly IllustrationProposal[]> {
-    const settings = this.#deps.settings();
-    const connection = await to_host_connection(
-      settings.connection,
-      this.#deps.resolve_analysis_key,
-    );
-    const world_info = await to_host_world_info(settings.world_info, text, this.#deps.host);
-    for (let attempt = 1; ; attempt += 1) {
-      try {
-        const result = await this.#deps.host.generate_with_preset({
-          generation_id: this.#deps.new_generation_id(),
-          preset_name: settings.preset_name,
-          user_input,
-          max_chat_history: settings.max_chat_history,
-          connection,
-          json_schema: ANALYSIS_JSON_SCHEMA,
-          world_info,
-          image: null,
-        });
-        return parse(result.content);
-      } catch (error) {
-        if (attempt >= ANALYSIS_ATTEMPTS) {
-          throw error;
-        }
-        await this.#deps.wait(ANALYSIS_RETRY_DELAY_MS * attempt);
-      }
-    }
-  }
-
-  #slots_for(
-    paragraphs: readonly Paragraph[],
-    proposals: readonly IllustrationProposal[],
-    context: SlotPromptContext,
-    snapshot: readonly Wearing[],
-  ): IllustrationSlot[] {
-    return proposals.map((proposal): IllustrationSlot => {
-      const library = match_library(
-        `${paragraphs[proposal.paragraph]?.text ?? ""}\n${proposal.scene}`,
-        proposal.characters.map((character) => character.name),
-        context.library,
-        snapshot,
-      );
-      const prompt = assemble_slot_prompt({
-        preset: context.preset,
-        library,
-        characters: proposal.characters,
-        scene_tags: proposal.tags,
-      });
-      return {
-        slot_id: this.#deps.new_slot_id(),
-        paragraph: proposal.paragraph,
-        anchor: (paragraphs[proposal.paragraph]?.text ?? "").slice(0, 400),
-        scene: proposal.scene,
-        characters: [
-          ...new Set([
-            ...proposal.characters.map((character) => character.name),
-            ...library.characters.map((entry) => entry.character.name),
-          ]),
-        ],
-        positive_prompt: prompt.positive_prompt,
-        negative_prompt: prompt.negative_prompt,
-        character_prompts: [...prompt.character_prompts],
-        image_ids: [],
-        active_image_id: null,
-        pending_request_ids: [],
-        last_error: null,
-      };
-    });
   }
 
   async #swipe_text(location: HostSwipeLocation): Promise<string> {
@@ -484,7 +303,8 @@ export class IllustrationService {
     const settings = this.#deps.settings();
     const snapshot = await this.#wardrobe_snapshot(location);
     const context = await this.#deps.prompt_context(location.chat_id);
-    const proposals = await this.#propose(
+    const proposals = await request_analysis(
+      this.#deps,
       text,
       build_chosen_paragraphs_input(
         paragraphs,
@@ -495,7 +315,7 @@ export class IllustrationService {
       (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
     );
     const by_paragraph = new Map(proposals.map((proposal) => [proposal.paragraph, proposal]));
-    const slots = this.#slots_for(
+    const slots = proposal_slots(
       paragraphs,
       wanted.map(
         (index) =>
@@ -508,6 +328,7 @@ export class IllustrationService {
       ),
       context,
       snapshot,
+      this.#deps.new_slot_id,
     );
     await this.#deps.host.write_swipe_record(location, {
       schema_version: 2,

@@ -3,49 +3,49 @@ import { a as t, c as n, s as r } from "./novelai-Dh4UVw5r.js";
 import { a as i, i as a, n as o, r as s } from "./novelai_models-CXz0Nwhv.js";
 import { t as c } from "./novelai_errors-Bve94MgO.js";
 //#region ../../packages/contracts/src/providers/novelai_pricing.ts
-var l = 65536, u = 1048576, d = 28, f = 140, p = 2, ee = 4, te = 5, m = [
+var l = 65536, u = 1048576, d = 28, f = 140, p = 2, m = 4, h = 5, g = [
 	[1048576, 1],
 	[1747627, 2],
 	[2446678, 3],
 	[3145728, 4]
 ];
-function h(e) {
+function _(e) {
 	let t = Math.max(e.pixels, l), n = Math.ceil(2951823174884865e-21 * t + 5.753298233447344e-7 * t * e.steps * e.step_price_factor) * e.smea_factor * e.price_multiplier, r = Math.max(Math.ceil(n * e.strength), 2);
 	return r > f ? null : r;
 }
-function g(e, t) {
+function v(e, t) {
 	return e === null || e.tier_level < 3 || !e.active ? !1 : !(t && e.usage?.is_negative === !0);
 }
-function _(e, t, r) {
-	let i = a(e.model_id)?.profile, o = i?.smea === !0 && e.smea ? e.dyn ? 1.4 : 1.2 : 1, s = e.action === "infill" ? e.inpaint_strength : e.action === "img2img" ? e.strength : 1, c = h({
+function y(e, t, r) {
+	let i = a(e.model_id)?.profile, o = i?.smea === !0 && e.smea ? e.dyn ? 1.4 : 1.2 : 1, s = e.action === "infill" ? e.inpaint_strength : e.action === "img2img" ? e.strength : 1, c = _({
 		pixels: e.width * e.height,
 		steps: e.steps,
 		smea_factor: o,
 		strength: s,
 		price_multiplier: i?.price_multiplier ?? 1,
 		step_price_factor: i?.step_price_factor ?? 1
-	}), l = e.character_references?.length ?? 0, f = n(e) ? e.vibe_references?.length ?? 0 : 0, m = e.width * e.height <= u && e.steps <= d && g(t, i?.opus_usage_limit ?? !1), _ = f === 0 ? 0 : r * p;
+	}), l = e.character_references?.length ?? 0, f = n(e) ? e.vibe_references?.length ?? 0 : 0, g = e.width * e.height <= u && e.steps <= d && v(t, i?.opus_usage_limit ?? !1), y = f === 0 ? 0 : r * p;
 	return c === null ? {
 		anlas: null,
-		opus_free: m,
+		opus_free: g,
 		per_image: null,
-		vibe_encoding: _
+		vibe_encoding: y
 	} : {
-		anlas: c * (e.output_count - +!!m) + te * l * e.output_count + p * Math.max(0, f - ee) + _,
-		opus_free: m,
+		anlas: c * (e.output_count - +!!g) + h * l * e.output_count + p * Math.max(0, f - m) + y,
+		opus_free: g,
 		per_image: c,
-		vibe_encoding: _
+		vibe_encoding: y
 	};
 }
-function v(e, t, n) {
+function b(e, t, n) {
 	let r = e * t;
 	if (r <= n) return r;
 	let i = Math.sqrt(n / r);
 	return Math.floor(e * i) * Math.floor(t * i);
 }
-function y(e, t, n, r) {
-	let i = h({
-		pixels: v(t, n, u),
+function ee(e, t, n, r) {
+	let i = _({
+		pixels: b(t, n, u),
 		steps: d,
 		smea_factor: 1,
 		strength: 1,
@@ -64,7 +64,7 @@ function y(e, t, n, r) {
 		per_image: i,
 		vibe_encoding: 0
 	};
-	let a = g(r, !1);
+	let a = v(r, !1);
 	return {
 		anlas: a ? 0 : i,
 		opus_free: a,
@@ -72,14 +72,14 @@ function y(e, t, n, r) {
 		vibe_encoding: 0
 	};
 }
-function b(e) {
+function te(e) {
 	if (e > 1048576) return {
 		anlas: null,
 		opus_free: !1,
 		per_image: null,
 		vibe_encoding: 0
 	};
-	let t = m.find(([t]) => e <= t)?.[1] ?? null;
+	let t = g.find(([t]) => e <= t)?.[1] ?? null;
 	return {
 		anlas: t,
 		opus_free: !1,
@@ -87,13 +87,23 @@ function b(e) {
 		vibe_encoding: 0
 	};
 }
-function x(e, t) {
-	return r(e) ? _(e, t.account, t.unencoded_vibes) : e.action === "augment" ? y(e.tool, e.width, e.height, t.account) : b(t.source_pixels ?? Infinity);
+function ne(e, t) {
+	return r(e) ? y(e, t.account, t.unencoded_vibes) : e.action === "augment" ? ee(e.tool, e.width, e.height, t.account) : te(t.source_pixels ?? Infinity);
+}
+//#endregion
+//#region src/host/sillytavern_proxy_fetch.ts
+function x(e = globalThis.fetch.bind(globalThis)) {
+	return async (t, n) => {
+		let r = await e(`/proxy/${t}`, { signal: n });
+		if (r.status === 404) throw Error("SillyTavern's CORS proxy is disabled (set enableCorsProxy: true)");
+		if (!r.ok) throw Error(`the SillyTavern CORS proxy answered ${String(r.status)}`);
+		return r.text();
+	};
 }
 //#endregion
 //#region src/modules/novelai/novelai_infill_compositing.ts
-var S = 4, C = 10, w = 2;
-function T(e, t) {
+var S = 4, C = 10, re = 2;
+function w(e, t) {
 	let { width: n, height: r, values: i } = e, a = new Uint8Array(i.length);
 	for (let e = 0; e < r; e += 1) for (let r = 0; r < n; r += 1) {
 		let o = 0;
@@ -118,7 +128,7 @@ function T(e, t) {
 		values: o
 	};
 }
-function E(e, t, n) {
+function T(e, t, n) {
 	let r = new Float32Array(t * n), i = e.width / t, a = e.height / n, o = (t, n) => (e.values[Math.min(e.height - 1, Math.max(0, n)) * e.width + Math.min(e.width - 1, Math.max(0, t))] ?? 0) / 255;
 	for (let e = 0; e < n; e += 1) {
 		let n = (e + .5) * a - .5, s = Math.floor(n), c = n - s;
@@ -129,7 +139,7 @@ function E(e, t, n) {
 	}
 	return r;
 }
-function D(e, t, n, r, i) {
+function E(e, t, n, r, i) {
 	let a = new Float32Array(e.length), o = i ? t : n, s = i ? n : t, c = r * 2 + 1;
 	for (let n = 0; n < s; n += 1) {
 		let s = (e) => {
@@ -141,15 +151,15 @@ function D(e, t, n, r, i) {
 	}
 	return a;
 }
-function ne(e, t, n, r, i) {
+function D(e, t, n, r, i) {
 	let a = e;
-	for (let e = 0; e < i; e += 1) a = D(a, t, n, r, !0), a = D(a, t, n, r, !1);
+	for (let e = 0; e < i; e += 1) a = E(a, t, n, r, !0), a = E(a, t, n, r, !1);
 	return a;
 }
-function re(e, t, n) {
-	return ne(E(T(e, S), t, n), t, n, C, w);
+function O(e, t, n) {
+	return D(T(w(e, S), t, n), t, n, C, re);
 }
-function ie(e, t, n) {
+function k(e, t, n) {
 	let r = new Uint8ClampedArray(e.length);
 	for (let i = 0; i < n.length; i += 1) {
 		let a = Math.min(1, Math.max(0, n[i] ?? 0)), o = i * 4;
@@ -163,10 +173,10 @@ function ie(e, t, n) {
 }
 //#endregion
 //#region src/modules/novelai/novelai_image_operations.ts
-var ae = {
+var ie = {
 	width: 448,
 	height: 448
-}, oe = [
+}, ae = [
 	{
 		width: 1024,
 		height: 1536
@@ -179,26 +189,26 @@ var ae = {
 		width: 1472,
 		height: 1472
 	}
-], O = 3143728, se = 1011712, k = 1048576, A = 155, j = 8;
-function M(e) {
+], A = 3143728, oe = 1011712, j = 1048576, M = 155, N = 8;
+function P(e) {
 	let t = e.width / e.height;
-	return oe.reduce((e, n) => Math.abs(Math.log(n.width / n.height / t)) < Math.abs(Math.log(e.width / e.height / t)) ? n : e);
+	return ae.reduce((e, n) => Math.abs(Math.log(n.width / n.height / t)) < Math.abs(Math.log(e.width / e.height / t)) ? n : e);
 }
-function N(e, t) {
+function F(e, t) {
 	let n = Math.sqrt(t / (e.width * e.height));
 	return {
-		width: Math.max(j, Math.floor(e.width * n / j) * j),
-		height: Math.max(j, Math.floor(e.height * n / j) * j)
+		width: Math.max(N, Math.floor(e.width * n / N) * N),
+		height: Math.max(N, Math.floor(e.height * n / N) * N)
 	};
 }
-function P(e) {
+function I(e) {
 	let t = e.width * e.height;
-	return t > O ? N(e, O) : t < se ? N(e, k) : e;
+	return t > A ? F(e, A) : t < oe ? F(e, j) : e;
 }
-async function F(e) {
+async function L(e) {
 	return createImageBitmap(new Blob([new Uint8Array(e)]));
 }
-function I(e) {
+function R(e) {
 	let t = new OffscreenCanvas(e.width, e.height), n = t.getContext("2d");
 	if (n === null) throw Error("A 2D canvas context is unavailable in this browser");
 	return {
@@ -206,42 +216,42 @@ function I(e) {
 		context: n
 	};
 }
-async function L(e) {
+async function z(e) {
 	let t = await e.convertToBlob({ type: "image/png" });
 	return new Uint8Array(await t.arrayBuffer());
 }
-function R(e, t) {
-	let { context: n } = I(t);
+function B(e, t) {
+	let { context: n } = R(t);
 	return n.drawImage(e, 0, 0, t.width, t.height), n.getImageData(0, 0, t.width, t.height);
 }
-function z() {
+function V() {
 	return {
 		async composite_infill(e, t, n) {
 			let [r, i, a] = await Promise.all([
-				F(e),
-				F(t),
-				F(n)
+				L(e),
+				L(t),
+				L(n)
 			]);
 			try {
 				let e = {
 					width: i.width,
 					height: i.height
 				}, t = {
-					width: Math.max(1, Math.floor(e.width / j)),
-					height: Math.max(1, Math.floor(e.height / j))
-				}, n = R(a, t).data, o = new Uint8Array(t.width * t.height);
+					width: Math.max(1, Math.floor(e.width / N)),
+					height: Math.max(1, Math.floor(e.height / N))
+				}, n = B(a, t).data, o = new Uint8Array(t.width * t.height);
 				for (let e = 0; e < o.length; e += 1) o[e] = (n[e * 4] ?? 0) >= 128 ? 255 : 0;
-				let s = re({
+				let s = O({
 					values: o,
 					...t
-				}, e.width, e.height), c = ie(R(r, e).data, R(i, e).data, s), { canvas: l, context: u } = I(e);
-				return u.putImageData(new ImageData(c, e.width, e.height), 0, 0), await L(l);
+				}, e.width, e.height), c = k(B(r, e).data, B(i, e).data, s), { canvas: l, context: u } = R(e);
+				return u.putImageData(new ImageData(c, e.width, e.height), 0, 0), await z(l);
 			} finally {
 				r.close(), i.close(), a.close();
 			}
 		},
 		async size(e) {
-			let t = await F(e);
+			let t = await L(e);
 			try {
 				return {
 					width: t.width,
@@ -252,41 +262,41 @@ function z() {
 			}
 		},
 		async resize(e, t) {
-			let n = await F(e);
+			let n = await L(e);
 			try {
-				let { canvas: e, context: r } = I(t);
-				return r.imageSmoothingQuality = "high", r.drawImage(n, 0, 0, t.width, t.height), await L(e);
+				let { canvas: e, context: r } = R(t);
+				return r.imageSmoothingQuality = "high", r.drawImage(n, 0, 0, t.width, t.height), await z(e);
 			} finally {
 				n.close();
 			}
 		},
 		async pad(e, t) {
-			let n = await F(e);
+			let n = await L(e);
 			try {
-				let { canvas: e, context: r } = I(t);
+				let { canvas: e, context: r } = R(t);
 				r.fillStyle = "#000000", r.fillRect(0, 0, t.width, t.height);
 				let i = Math.min(t.width / n.width, t.height / n.height), a = Math.round(n.width * i), o = Math.round(n.height * i);
-				return r.imageSmoothingQuality = "high", r.drawImage(n, Math.floor((t.width - a) / 2), Math.floor((t.height - o) / 2), a, o), await L(e);
+				return r.imageSmoothingQuality = "high", r.drawImage(n, Math.floor((t.width - a) / 2), Math.floor((t.height - o) / 2), a, o), await z(e);
 			} finally {
 				n.close();
 			}
 		},
 		async binarize_mask(e, t) {
-			let n = await F(e);
+			let n = await L(e);
 			try {
 				let e = {
-					width: Math.max(1, Math.floor(t.width / j)),
-					height: Math.max(1, Math.floor(t.height / j))
-				}, { canvas: r, context: i } = I(e);
+					width: Math.max(1, Math.floor(t.width / N)),
+					height: Math.max(1, Math.floor(t.height / N))
+				}, { canvas: r, context: i } = R(e);
 				i.drawImage(n, 0, 0, e.width, e.height);
 				let a = i.getImageData(0, 0, e.width, e.height), o = a.data;
 				for (let e = 0; e < o.length; e += 4) {
-					let t = ((o[e] ?? 0) + (o[e + 1] ?? 0) + (o[e + 2] ?? 0)) / 3 * (o[e + 3] ?? 0) / 255 >= A ? 255 : 0;
+					let t = ((o[e] ?? 0) + (o[e + 1] ?? 0) + (o[e + 2] ?? 0)) / 3 * (o[e + 3] ?? 0) / 255 >= M ? 255 : 0;
 					o[e] = t, o[e + 1] = t, o[e + 2] = t, o[e + 3] = 255;
 				}
 				i.putImageData(a, 0, 0);
-				let s = I(t);
-				return s.context.imageSmoothingEnabled = !1, s.context.drawImage(r, 0, 0, t.width, t.height), await L(s.canvas);
+				let s = R(t);
+				return s.context.imageSmoothingEnabled = !1, s.context.drawImage(r, 0, 0, t.width, t.height), await z(s.canvas);
 			} finally {
 				n.close();
 			}
@@ -295,25 +305,25 @@ function z() {
 }
 //#endregion
 //#region src/modules/novelai/novelai_storage.ts
-var B = 6048e5;
-async function V(e) {
+var H = 6048e5;
+async function U(e) {
 	let t = new Uint8Array(await crypto.subtle.digest("SHA-256", new Uint8Array(e)));
 	return Array.from(t, (e) => e.toString(16).padStart(2, "0")).join("");
 }
-async function H(e) {
-	let t = await V(new TextEncoder().encode(e)), n = (Number.parseInt(t.slice(16, 17), 16) & 3 | 8).toString(16);
+async function W(e) {
+	let t = await U(new TextEncoder().encode(e)), n = (Number.parseInt(t.slice(16, 17), 16) & 3 | 8).toString(16);
 	return `${t.slice(0, 8)}-${t.slice(8, 12)}-8${t.slice(13, 16)}-${n}${t.slice(17, 20)}-${t.slice(20, 32)}`;
 }
-function U(e) {
+function G(e) {
 	return `${e.image_sha256}:${e.model_id}:${String(e.information_extracted)}`;
 }
-function W(e, t, n) {
+function se(e, t, n) {
 	return {
 		async get(n) {
-			return (await e.get(t(), await H(U(n))))?.encoding ?? null;
+			return (await e.get(t(), await W(G(n))))?.encoding ?? null;
 		},
 		async put(r, i) {
-			let a = n(), o = await H(U(r));
+			let a = n(), o = await W(G(r));
 			await e.put(t(), {
 				schema_version: 1,
 				id: o,
@@ -329,12 +339,12 @@ function W(e, t, n) {
 		}
 	};
 }
-function ce(e) {
+function K(e) {
 	return e[0] === 255 && e[1] === 216 ? "image/jpeg" : e[0] === 82 && e[1] === 73 && e[2] === 70 && e[3] === 70 ? "image/webp" : "image/png";
 }
-function G(t, n, r) {
+function ce(t, n, r) {
 	async function i() {
-		let e = r() - B;
+		let e = r() - H;
 		for (let r of await t.list(n())) Date.parse(r.created_at) < e && await t.delete(n(), r.id);
 	}
 	return {
@@ -348,7 +358,7 @@ function G(t, n, r) {
 				record_key: `${n()}:${o}`,
 				created_at: s,
 				updated_at: s,
-				media_type: ce(a),
+				media_type: K(a),
 				byte_length: a.byteLength,
 				blob: new Uint8Array(a).buffer
 			}), o;
@@ -381,7 +391,7 @@ async function ue(e, t, n, r) {
 				...t.asset,
 				media_type: "image/png",
 				byte_length: n.byteLength,
-				sha256: await V(n)
+				sha256: await U(n)
 			},
 			bytes: n
 		};
@@ -389,31 +399,31 @@ async function ue(e, t, n, r) {
 }
 //#endregion
 //#region src/modules/novelai/novelai_request_preparation.ts
-var K = class extends Error {
+var q = class extends Error {
 	constructor(e) {
 		super(e), this.name = "NovelAiPreparationError";
 	}
 };
 function de(e) {
 	let t = a(e);
-	if (t === null) throw new K(`"${e}" is not a NovelAI image model`);
+	if (t === null) throw new q(`"${e}" is not a NovelAI image model`);
 	return t.profile;
 }
-function q(e, t) {
+function J(e, t) {
 	return e.width === t.width && e.height === t.height;
 }
-async function J(e, t, n) {
+async function Y(e, t, n) {
 	return (await e.assets.read(t, n)).bytes;
 }
-async function Y(e, t, n, r) {
-	let i = await J(e, t, r);
-	return q(await e.image_operations.size(i), n) ? t : e.store_input(await e.image_operations.resize(i, n));
-}
 async function X(e, t, n, r) {
-	let i = await J(e, t, r), a = await e.image_operations.size(i), o = typeof n == "function" ? n(a) : n;
-	return q(a, o) ? t : e.store_input(await e.image_operations.pad(i, o));
+	let i = await Y(e, t, r);
+	return J(await e.image_operations.size(i), n) ? t : e.store_input(await e.image_operations.resize(i, n));
 }
-function Z(e, t, n) {
+async function Z(e, t, n, r) {
+	let i = await Y(e, t, r), a = await e.image_operations.size(i), o = typeof n == "function" ? n(a) : n;
+	return J(a, o) ? t : e.store_input(await e.image_operations.pad(i, o));
+}
+function Q(e, t, n) {
 	return {
 		image_sha256: e,
 		model_id: t,
@@ -427,7 +437,7 @@ async function fe(e, t, n) {
 			i.push(a);
 			continue;
 		}
-		let r = await J(e, a.asset_id, n), o = Z(await e.sha256(r), t.model_id, a), s = await e.vibe_cache.get(o);
+		let r = await Y(e, a.asset_id, n), o = Q(await e.sha256(r), t.model_id, a), s = await e.vibe_cache.get(o);
 		s === null && (s = await e.encode_vibe(r, t.model_id, a.information_extracted, n), await e.vibe_cache.put(o, s)), i.push({
 			...a,
 			encoding: s
@@ -438,13 +448,13 @@ async function fe(e, t, n) {
 async function pe(e, t, r, i) {
 	if (r.vibe_references === void 0 || !n(r)) return r.vibe_references;
 	switch (t.vibe_transfer) {
-		case "unsupported": throw new K(`${t.display_name} does not support vibe transfer`);
+		case "unsupported": throw new q(`${t.display_name} does not support vibe transfer`);
 		case "encoded": return fe(e, r, i);
 		case "raw_image": {
 			let t = [];
 			for (let n of r.vibe_references) t.push({
 				...n,
-				asset_id: await X(e, n.asset_id, ae, i)
+				asset_id: await Z(e, n.asset_id, ie, i)
 			});
 			return t;
 		}
@@ -456,7 +466,7 @@ async function me(e, t, n) {
 		height: t.height
 	}, a = await pe(e, r, t, n), o = t.character_references === void 0 ? void 0 : await Promise.all(t.character_references.map(async (t) => ({
 		...t,
-		asset_id: await X(e, t.asset_id, M, n)
+		asset_id: await Z(e, t.asset_id, P, n)
 	}))), s = {
 		...a === void 0 ? {} : { vibe_references: [...a] },
 		...o === void 0 ? {} : { character_references: o }
@@ -469,14 +479,14 @@ async function me(e, t, n) {
 		case "img2img": return {
 			...t,
 			...s,
-			image_asset_id: await Y(e, t.image_asset_id, i, n)
+			image_asset_id: await X(e, t.image_asset_id, i, n)
 		};
 		case "infill": {
-			let r = await J(e, t.mask_asset_id, n);
+			let r = await Y(e, t.mask_asset_id, n);
 			return {
 				...t,
 				...s,
-				image_asset_id: await Y(e, t.image_asset_id, i, n),
+				image_asset_id: await X(e, t.image_asset_id, i, n),
 				mask_asset_id: await e.store_input(await e.image_operations.binarize_mask(r, i))
 			};
 		}
@@ -491,11 +501,11 @@ async function he(e, n, r) {
 			i = await me(e, n, r);
 			break;
 		case "augment": {
-			let t = await J(e, n.image_asset_id, r), a = P(await e.image_operations.size(t));
+			let t = await Y(e, n.image_asset_id, r), a = I(await e.image_operations.size(t));
 			i = {
 				...n,
 				...a,
-				image_asset_id: await Y(e, n.image_asset_id, a, r)
+				image_asset_id: await X(e, n.image_asset_id, a, r)
 			};
 			break;
 		}
@@ -508,20 +518,20 @@ async function ge(e, t, r) {
 	let i = 0;
 	for (let n of t.vibe_references) {
 		if (n.encoding !== void 0) continue;
-		let a = (await e.assets.read(n.asset_id, r)).bytes, o = Z(await e.sha256(a), t.model_id, n);
+		let a = (await e.assets.read(n.asset_id, r)).bytes, o = Q(await e.sha256(a), t.model_id, n);
 		await e.vibe_cache.get(o) === null && (i += 1);
 	}
 	return i;
 }
 //#endregion
 //#region src/modules/novelai/novelai_service.ts
-var Q = "https://novelai.net/image", $ = /\/_next\/static\/chunks\/[A-Za-z0-9._-]+\.js/gu, _e = 3e7;
-async function ve(e, t) {
-	let n = await e(Q, t), r = [...new Set(n.match($) ?? [])].map((e) => new URL(e, Q).href), i = [n];
+var $ = "https://novelai.net/image", _e = /\/_next\/static\/chunks\/[A-Za-z0-9._-]+\.js/gu, ve = 3e7;
+async function ye(e, t) {
+	let n = await e($, t), r = [...new Set(n.match(_e) ?? [])].map((e) => new URL(e, $).href), i = [n];
 	for (let n of r) i.push(await e(n, t));
 	return o(i);
 }
-function ye(e) {
+function be(e) {
 	let t = i, n = null, r = !1;
 	async function a(t) {
 		r = !0;
@@ -534,7 +544,7 @@ function ye(e) {
 		async refresh_models(n) {
 			let r = [];
 			for (let i of e.page_fetchers) try {
-				let e = await ve(i, n);
+				let e = await ye(i, n);
 				if (e.length > 0) return t = e, s(t);
 				r.push("the page named no NovelAI models");
 			} catch (e) {
@@ -549,7 +559,7 @@ function ye(e) {
 				let n = (await e.preparation.assets.read(t.image_asset_id, i)).bytes, r = await e.image_operations.size(n);
 				s = r.width * r.height;
 			}
-			return x(t, {
+			return ne(t, {
 				account: n,
 				unencoded_vibes: o,
 				...s === void 0 ? {} : { source_pixels: s }
@@ -561,32 +571,24 @@ function ye(e) {
 				image: t,
 				model_id: n,
 				information_extracted: r,
-				max_request_bytes: _e,
+				max_request_bytes: ve,
 				signal: i
 			});
 		}
 	};
 }
-function be(e = globalThis.fetch.bind(globalThis)) {
-	return async (t, n) => {
-		let r = await e(`/proxy/${t}`, { signal: n });
-		if (r.status === 404) throw Error("SillyTavern's CORS proxy is disabled (set enableCorsProxy: true)");
-		if (!r.ok) throw Error(`the SillyTavern CORS proxy answered ${String(r.status)}`);
-		return r.text();
-	};
-}
 //#endregion
 //#region src/modules/novelai/novelai_runtime.ts
 function xe(e) {
-	let t = z(), n = G(e.provider_inputs, e.namespace, () => Date.now()), r = W(e.vibe_encodings, e.namespace, () => (/* @__PURE__ */ new Date()).toISOString()), i = le(e.gallery_assets, n), a = ye({
+	let t = V(), n = ce(e.provider_inputs, e.namespace, () => Date.now()), r = se(e.vibe_encodings, e.namespace, () => (/* @__PURE__ */ new Date()).toISOString()), i = le(e.gallery_assets, n), a = be({
 		transport: e.transport,
 		preparation: {
 			assets: i,
 			vibe_cache: r,
-			sha256: V
+			sha256: U
 		},
 		image_operations: t,
-		page_fetchers: [be(e.fetch)]
+		page_fetchers: [x(e.fetch)]
 	});
 	return {
 		service: a,
@@ -602,7 +604,7 @@ function xe(e) {
 			store_input: (e) => n.put(e),
 			vibe_cache: r,
 			encode_vibe: (e, t, n, r) => a.encode_vibe(e, t, n, r),
-			sha256: V
+			sha256: U
 		}, e, o) : Promise.resolve(e)
 	};
 }

@@ -1,11 +1,11 @@
 import { NovelAiRequestSchema } from "@tavern-canvas/contracts";
 import type { ProviderTransport, ProviderTransportOperation } from "@tavern-canvas/providers";
 import { describe, expect, it, vi } from "vitest";
+import { create_sillytavern_proxy_fetcher } from "../../host/sillytavern_proxy_fetch.js";
 
 import { NovelAiServiceUnavailableError } from "./novelai_errors.js";
 import {
   create_novelai_service,
-  create_sillytavern_proxy_fetcher,
   type NovelAiServiceDeps,
   type PageTextFetcher,
 } from "./novelai_service.js";

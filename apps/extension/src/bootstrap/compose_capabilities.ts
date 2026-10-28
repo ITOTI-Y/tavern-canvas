@@ -17,6 +17,7 @@ import {
   open_database,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
+import { create_wardrobe_runner } from "../modules/illustration/analysis_requests.js";
 
 import type { BootstrapProbeResult } from "../host/index.js";
 import type { CompositeHostAdapter } from "../host/composite_host.js";
@@ -26,10 +27,7 @@ import {
   MediaJobExecutor,
   type GeneratedImageStoreDeps,
 } from "../modules/media/media_command_service.js";
-import {
-  IllustrationService,
-  create_wardrobe_runner,
-} from "../modules/illustration/illustration_service.js";
+import { IllustrationService } from "../modules/illustration/illustration_service.js";
 import { create_wardrobe_library_port } from "../modules/wardrobe/wardrobe_library_port.js";
 import { WardrobeService } from "../modules/wardrobe/wardrobe_service.js";
 import {
