@@ -1,7 +1,7 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--tc-space-4);
   max-height: min(70vh, 720px);
   overflow-y: auto;
 }
@@ -9,53 +9,47 @@
 .slot {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-panel);
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-4);
+  border-radius: var(--tc-radius-card);
   background: var(--tc-surface-raised);
 }
 
 .anchor {
   margin: 0;
-  padding-inline-start: 10px;
+  padding-inline-start: var(--tc-space-2);
   border-inline-start: 2px solid var(--tc-divider);
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .scene {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--tc-font-size-md);
 }
 
 .label {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--tc-text-muted);
+  gap: var(--tc-field-gap);
+  font-size: var(--tc-label-font-size);
+  font-weight: var(--tc-font-weight-medium);
+  line-height: var(--tc-line-height-sm);
+  color: var(--tc-text);
 }
 
 .prompt {
-  min-height: 72px;
-  padding: 8px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background: var(--tc-surface);
-  color: var(--tc-text);
-  font: inherit;
-  font-size: 13px;
-  resize: vertical;
+  composes: tc-field tc-field-multiline from global;
+  font-size: var(--tc-font-size-sm);
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--tc-space-2);
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .error {
@@ -67,37 +61,37 @@
   margin: 0;
   max-height: 160px;
   overflow: auto;
-  padding: 8px;
-  border-radius: var(--tc-radius-field);
+  padding: var(--tc-space-3) var(--tc-space-4);
+  border-radius: var(--tc-radius-card);
   background: var(--tc-surface-raised);
   white-space: pre-wrap;
-  font-family: monospace;
-  font-size: 12px;
+  font-family: var(--tc-font-mono);
+  font-size: var(--tc-font-size-xs);
 }
 
 .picker {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .hint {
   margin: 0;
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .paragraphs {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--tc-space-1-5);
   align-self: stretch;
   max-height: 240px;
   overflow-y: auto;
-  padding: 8px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
+  padding: var(--tc-space-3);
+  border-radius: var(--tc-radius-card);
+  background: var(--tc-surface-raised);
 }
 
 .footer {
@@ -105,34 +99,30 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .total {
   margin-inline-end: auto;
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .chips {
   display: flex;
   justify-content: flex-end;
-  margin-top: -4px;
+  margin-top: calc(-1 * var(--tc-space-1));
 }
 
 .outfit {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .conditions {
+  composes: tc-field from global;
   flex: 1 1 160px;
-  min-width: 0;
-  padding: 6px 8px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background-color: var(--tc-surface);
-  color: var(--tc-text);
+  width: auto;
 }

@@ -1,55 +1,64 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--tc-field-gap);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  min-height: 28px;
+  gap: var(--tc-space-2);
+  min-height: var(--tc-control-height-sm);
 }
 
 .label {
-  font-size: 13px;
-  color: var(--tc-text-muted);
+  font-size: var(--tc-label-font-size);
+  font-weight: var(--tc-font-weight-medium);
+  line-height: var(--tc-line-height-sm);
+  color: var(--tc-text);
 }
 
 .tools {
   display: inline-flex;
-  gap: 2px;
+  gap: var(--tc-space-0-5);
 }
 
 .suggestions {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--tc-space-1-5);
   margin: 0;
-  padding: 8px;
+  padding: var(--tc-space-2);
   list-style: none;
   border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-popover);
   background: var(--tc-surface);
+  box-shadow: 0 8px 24px var(--tc-shadow);
 }
 
 .suggestion {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-status);
-  background: var(--tc-surface-raised);
+  gap: var(--tc-space-1-5);
+  height: var(--tc-chip-height);
+  padding: 0 var(--tc-chip-padding-x);
+  border: 1px solid transparent;
+  border-radius: var(--tc-radius-chip);
+  background: var(--tc-chip-bg);
   color: var(--tc-text);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
   cursor: pointer;
 }
 
-.suggestion:hover,
-.highlighted {
-  border-color: var(--tc-accent);
+.suggestion:hover {
+  border-color: var(--tc-border-field);
+}
+
+.highlighted,
+.highlighted:hover {
+  border-color: var(--tc-accent-border);
+  background: var(--tc-accent-soft);
 }
 
 .translation {
@@ -79,11 +88,11 @@
 .hint,
 .reading {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
   color: var(--tc-text-muted);
 }
 
 .reading {
-  padding-inline-start: 10px;
+  padding-inline-start: var(--tc-space-2);
   border-inline-start: 2px solid var(--tc-divider);
 }

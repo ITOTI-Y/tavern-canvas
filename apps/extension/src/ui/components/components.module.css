@@ -1,15 +1,15 @@
 /*
- * Scoped styles for the 15 shared controls in this directory. Tokens only (apps/extension/src/ui/styles/tokens.css)
- * -- no component invents a color, radius, or duration; radius follows the shape-consistency lock
- * exactly: panel = --tc-radius-panel (dialogs), field = --tc-radius-field (inputs/buttons/switch),
- * image = --tc-radius-image (unused here -- no image tiles in this file), status = --tc-radius-status
- * (small chips: tooltip, toast, select item, skeleton block, checkbox).
+ * Scoped styles for the shared controls in this directory. Every color, size, spacing step, radius
+ * and duration comes from apps/extension/src/ui/styles/tokens.css.
  *
  * Every interactive element also carries the global `.tc-interactive` utility class
  * (apps/extension/src/ui/styles/utilities.css), which reserves `border: 1px solid transparent` and
  * owns the `:active` transform + `:focus-visible` outline. Rules here only ever set `border-color`
  * (never the `border` shorthand) on those elements, so the reserved width/style survive regardless
  * of stylesheet load order.
+ *
+ * Ink (--tc-accent) fills the primary action, checked toggles and the selected segment; the marker
+ * yellow (--tc-marker) marks the current navigation item and selected records.
  */
 
 /* ---------------------------------------------------------------------- */
@@ -34,32 +34,33 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-control);
   background-color: transparent;
-  color: var(--tc-text);
+  color: var(--tc-text-muted);
 }
 
 .iconButtonSm {
-  width: 28px;
-  height: 28px;
+  width: var(--tc-control-height-sm);
+  height: var(--tc-control-height-sm);
 }
 
 .iconButtonMd {
-  width: 32px;
-  height: 32px;
+  width: var(--tc-control-height-md);
+  height: var(--tc-control-height-md);
 }
 
 .iconButtonLg {
-  width: 40px;
-  height: 40px;
+  width: var(--tc-control-height-lg);
+  height: var(--tc-control-height-lg);
 }
 
 .iconButton:hover:not(:disabled) {
   background-color: var(--tc-surface-raised);
+  color: var(--tc-text);
 }
 
 .iconButton:disabled {
-  color: var(--tc-text-muted);
+  opacity: 0.5;
 }
 
 .iconButtonDestructive {
@@ -67,14 +68,14 @@
 }
 
 .iconButtonDestructive:hover:not(:disabled) {
-  background-color: var(--tc-surface-raised);
-  border-color: var(--tc-error);
+  background-color: var(--tc-error-soft);
+  color: var(--tc-error);
 }
 
-.iconButtonPressed {
-  background-color: var(--tc-surface-raised);
-  border-color: var(--tc-accent);
-  color: var(--tc-accent);
+.iconButtonPressed,
+.iconButtonPressed:hover:not(:disabled) {
+  background-color: var(--tc-marker);
+  color: var(--tc-on-marker);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -84,13 +85,18 @@
 .appButton {
   position: relative;
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: var(--tc-radius-field);
-  background-color: var(--tc-surface);
-  font-weight: 500;
+  height: var(--tc-control-height-md);
+  padding: 0 var(--tc-control-padding-x-md);
+  border-radius: var(--tc-radius-control);
+  background-color: transparent;
+  color: var(--tc-text);
+  font-size: var(--tc-control-font-size);
+  font-weight: var(--tc-font-weight-medium);
+  line-height: var(--tc-line-height-sm);
+  white-space: nowrap;
 }
 
 .appButton:disabled {
@@ -100,7 +106,7 @@
 .appButtonContent {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-control-gap);
   min-width: 0;
 }
 
@@ -127,12 +133,8 @@
   animation: tc-icon-rotate var(--tc-motion-normal) linear infinite;
 }
 
-/* The one solid fill in the button set. Primary, secondary and destructive were all white-on-white
-   with only a border color between them, which left a five-button settings row with no read on
-   which control was the main action -- and made the red destructive outline the loudest thing on
-   the page. Filling only primary restores that hierarchy without touching the other two variants.
-   Foreground is --tc-on-accent, never a literal white: in dark mode the accent is light enough
-   that white ink drops to 2.93:1. */
+/* The one solid fill in the button set, so a row of actions always shows which one is the main
+   action. Foreground is --tc-on-accent: the ink accent flips to near-white in dark mode. */
 .appButtonPrimary {
   border-color: var(--tc-accent);
   background-color: var(--tc-accent);
@@ -145,7 +147,8 @@
 }
 
 .appButtonSecondary {
-  border-color: var(--tc-divider);
+  border-color: var(--tc-border-field);
+  background-color: var(--tc-surface);
   color: var(--tc-text);
 }
 
@@ -154,53 +157,89 @@
 }
 
 .appButtonDestructive {
-  border-color: var(--tc-error);
   color: var(--tc-error);
 }
 
 .appButtonDestructive:hover:not(:disabled) {
-  background-color: var(--tc-surface-raised);
+  background-color: var(--tc-error-soft);
 }
 
 /* ---------------------------------------------------------------------- */
 /* SegmentedControl                                                       */
 /* ---------------------------------------------------------------------- */
 
+/* `fill` (short labels): every option takes an equal share of the row. `hug` (long labels): each
+   option sizes to its label, and the options stack in one column once the workspace is narrow. */
 .segmentedControl {
   display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background-color: var(--tc-surface);
+  flex-wrap: wrap;
+  align-self: start;
+  max-width: 100%;
+  gap: var(--tc-space-0-5);
+  padding: 3px;
+  border-radius: var(--tc-radius-control);
+  background-color: var(--tc-surface-raised);
+}
+
+.segmentedControl[data-layout="fill"] {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  align-self: stretch;
+  width: 100%;
 }
 
 .segmentedControlItem {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
-  padding: 0 12px;
-  border-radius: var(--tc-radius-status);
+  min-width: 0;
+  height: calc(var(--tc-control-height-md) - 6px);
+  padding: 0 var(--tc-control-padding-x-md);
+  border-radius: var(--tc-radius-control);
   background-color: transparent;
   color: var(--tc-text-muted);
+  font-size: var(--tc-control-font-size);
+  white-space: nowrap;
+}
+
+.segmentedControl[data-layout="fill"] .segmentedControlItem {
+  padding: 0 var(--tc-space-2);
 }
 
 .segmentedControlItem:hover:not([data-disabled]) {
-  background-color: var(--tc-surface-raised);
+  color: var(--tc-text);
 }
 
-.segmentedControlItem[data-state="checked"] {
-  background-color: var(--tc-surface-raised);
-  border-color: var(--tc-accent);
-  color: var(--tc-accent);
+.segmentedControlItem[data-state="checked"],
+.segmentedControlItem[data-state="checked"]:hover:not([data-disabled]) {
+  background-color: var(--tc-accent);
+  color: var(--tc-on-accent);
+  font-weight: var(--tc-font-weight-medium);
+}
+
+.segmentedControlItem[data-disabled] {
+  opacity: 0.5;
 }
 
 .segmentedControlItemLabel {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 160px;
+}
+
+@container studio-workspace (max-width: 600px) {
+  .segmentedControl[data-layout="hug"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-self: stretch;
+    width: 100%;
+    border-radius: calc(var(--tc-control-height-md) / 2 + 3px);
+  }
+
+  .segmentedControl[data-layout="hug"] .segmentedControlItem {
+    justify-content: flex-start;
+  }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -211,8 +250,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--tc-space-4);
   cursor: pointer;
+}
+
+.switchRow:has(.switchDescription) {
+  align-items: flex-start;
 }
 
 .switchRow[data-disabled] {
@@ -222,68 +265,62 @@
 .switchLabelGroup {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--tc-space-1);
   min-width: 0;
 }
 
 .switchLabel {
   color: var(--tc-text);
+  font-size: var(--tc-label-font-size);
+  font-weight: 600;
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
 .switchDescription {
+  max-width: 60ch;
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
-/* Pill track + circular thumb, deliberately outside the field radius scale, for the same reason
-   gallery.module.css's `.tileSelectDot` is a true circle: at 40x24 a 6px-rounded rectangle holding
-   another 6px-rounded rectangle reads as an empty input, not as a switch. The shape is what tells
-   a user this control toggles; it is carrying meaning, not decoration.
-   The border also steps up from --tc-divider to --tc-text-muted: the unchecked track
-   (--tc-surface-raised) sits at 1.03:1 against the --tc-surface panels these rows live on, so the
-   border is the only thing separating the whole control from its background. */
+/* Pill track and round thumb: the shape alone tells a user this control toggles. */
 .switchRoot {
   position: relative;
   flex: none;
-  width: 40px;
-  height: 24px;
-  border-radius: 999px;
-  background-color: var(--tc-surface-raised);
-  border-color: var(--tc-text-muted);
+  width: var(--tc-switch-width);
+  height: var(--tc-switch-height);
+  border-radius: var(--tc-radius-control);
+  border-color: transparent;
+  background-color: var(--tc-switch-off);
 }
 
 .switchRoot[data-state="checked"] {
   background-color: var(--tc-accent);
-  border-color: var(--tc-accent);
 }
 
 .switchRoot:disabled {
   opacity: 0.5;
 }
 
+/* The track keeps the 1px transparent border `.tc-interactive` reserves, so the thumb's box is the
+   track height minus that border and the 2px inset on each side. */
 .switchThumb {
+  position: absolute;
+  top: var(--tc-space-0-5);
+  left: var(--tc-space-0-5);
   display: block;
-  width: 18px;
-  height: 18px;
-  /* --tc-divider against --tc-surface-raised (the unchecked track) is only ~1.3:1 -- too close to
-     read as a boundary. --tc-text-muted clears WCAG 1.4.11's 3:1 non-text minimum by a wide margin
-     against every surface token (verified: light 5.4-5.7:1, dark 7.5-8.3:1), so the thumb stays
-     visibly distinct from its track in the unchecked state. */
-  border: 1px solid var(--tc-text-muted);
-  border-radius: 50%;
-  background-color: var(--tc-surface);
-  transform: translateX(2px);
-  transition: transform var(--tc-motion-fast) ease-out;
+  width: calc(var(--tc-switch-height) - 2 * var(--tc-space-0-5) - 2px);
+  height: calc(var(--tc-switch-height) - 2 * var(--tc-space-0-5) - 2px);
+  border-radius: var(--tc-radius-control);
+  background-color: var(--tc-switch-thumb);
+  box-shadow: 0 1px 2px var(--tc-shadow);
+  transition: transform var(--tc-motion-normal) ease;
 }
 
-/* Checked, the thumb no longer needs a contrasting outline -- --tc-surface against a filled
-   --tc-accent track is 6.16:1 in light mode and 5.89:1 in dark. Matching the border to the track
-   keeps the moving part reading as one clean disc instead of a ringed one. */
 .switchThumb[data-state="checked"] {
-  transform: translateX(18px);
-  border-color: var(--tc-accent);
+  transform: translateX(calc(var(--tc-switch-width) - var(--tc-switch-height)));
 }
 
 /* ---------------------------------------------------------------------- */
@@ -293,7 +330,9 @@
 .checkboxRow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-2);
+  min-height: var(--tc-control-height-sm);
+  font-size: var(--tc-font-size-sm);
   cursor: pointer;
 }
 
@@ -301,25 +340,19 @@
   cursor: not-allowed;
 }
 
-/* A square box against the switch's pill, for the same reason the switch is a pill in the first
-   place: in a list row that carries both controls, the shape is the only thing telling a user which
-   one selects the row and which one turns the row's setting on. --tc-radius-status is the right
-   step of the scale at this size -- the field radius on an 18px box rounds it most of the way to a
-   circle, which is the radio button's shape and the wrong promise entirely.
-   The border steps up from --tc-divider to --tc-text-muted exactly as the switch track does: an
-   unchecked box is --tc-surface on --tc-surface, so the border is the whole control. */
+/* A rounded square, never a circle: a circle is the radio button's shape. */
 .checkboxBox {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 18px;
-  height: 18px;
-  border-radius: var(--tc-radius-status);
-  border-color: var(--tc-text-muted);
-  background-color: var(--tc-surface);
+  width: var(--tc-check-size);
+  height: var(--tc-check-size);
+  border-radius: var(--tc-radius-check);
+  border-color: var(--tc-border-field);
+  background-color: var(--tc-field-bg);
   color: var(--tc-on-accent);
-  transition: background-color var(--tc-motion-fast) ease-out;
+  transition: background-color var(--tc-motion-fast) ease;
 }
 
 .checkboxBox[data-state="checked"],
@@ -347,52 +380,59 @@
 /* NumberStepper                                                          */
 /* ---------------------------------------------------------------------- */
 
-/* `align-self: start` is load-bearing, not decoration. Every caller wraps this in FieldGroup, whose
-   column flex container stretches its items across the row; that stretch also blockifies the
-   `inline-flex` here into `flex`, so the stepper's 1px border ended up drawn around ~550px of dead
-   space with the three controls huddled at the left edge. The stepper's meaningful width is its
-   own content (28 + 56 + 28), and a numeric field has nothing to gain from a wider box. */
+/* `align-self: start` keeps the stepper at its content width inside FieldGroup's stretching
+   column; a numeric field gains nothing from a wider box. */
 .numberStepper {
   display: inline-flex;
   align-self: start;
-  align-items: stretch;
-  height: 32px;
-  border: 1px solid var(--tc-divider);
+  align-items: center;
+  height: var(--tc-control-height-md);
+  padding: 1px;
+  border: 1px solid var(--tc-border-field);
   border-radius: var(--tc-radius-field);
-  overflow: hidden;
+  background-color: var(--tc-field-bg);
+}
+
+.numberStepper:has(.numberStepperInput:focus-visible) {
+  border-color: transparent;
+  outline: 2px solid var(--tc-focus);
+  outline-offset: -1px;
 }
 
 .numberStepperButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  background-color: var(--tc-surface);
-  color: var(--tc-text);
-  border-radius: 0;
+  flex: none;
+  width: calc(var(--tc-control-height-md) - 4px);
+  height: calc(var(--tc-control-height-md) - 4px);
+  border-radius: var(--tc-radius-control);
+  background-color: transparent;
+  color: var(--tc-text-muted);
 }
 
 .numberStepperButton:hover:not(:disabled) {
   background-color: var(--tc-surface-raised);
+  color: var(--tc-text);
 }
 
 .numberStepperButton:disabled {
-  color: var(--tc-text-muted);
+  opacity: 0.5;
 }
 
 .numberStepperInput {
-  width: 56px;
+  width: 7ch;
+  min-width: 0;
+  height: 100%;
   border: none;
-  border-left: 1px solid var(--tc-divider);
-  border-right: 1px solid var(--tc-divider);
-  background-color: var(--tc-surface);
+  background-color: transparent;
   color: var(--tc-text);
+  font-size: var(--tc-control-font-size);
   text-align: center;
 }
 
 .numberStepperInput:focus-visible {
-  outline: 2px solid var(--tc-accent);
-  outline-offset: -2px;
+  outline: none;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -403,21 +443,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  height: 32px;
+  gap: var(--tc-space-2);
+  height: var(--tc-control-height-md);
   min-width: 160px;
-  padding: 0 10px;
+  padding: 0 var(--tc-field-padding-x);
   border-radius: var(--tc-radius-field);
-  border-color: var(--tc-divider);
-  background-color: var(--tc-surface);
+  border-color: var(--tc-border-field);
+  background-color: var(--tc-field-bg);
   color: var(--tc-text);
+  font-size: var(--tc-control-font-size);
 }
 
 .selectTrigger:hover:not(:disabled) {
   background-color: var(--tc-surface-raised);
 }
 
+.selectTrigger:disabled {
+  opacity: 0.5;
+}
+
 .selectTrigger[data-placeholder] {
+  color: var(--tc-text-placeholder);
+}
+
+.selectTrigger > svg {
+  flex: none;
   color: var(--tc-text-muted);
 }
 
@@ -435,27 +485,33 @@
   max-height: 320px;
   overflow: hidden;
   border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-popover);
   background-color: var(--tc-surface);
+  box-shadow:
+    0 8px 24px var(--tc-shadow),
+    0 1px 3px var(--tc-shadow);
   width: var(--reka-select-trigger-width);
   max-width: var(--reka-select-content-available-width);
 }
 
 .selectViewport {
-  padding: 4px;
+  padding: var(--tc-space-1);
 }
 
 .selectItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: var(--tc-radius-status);
+  gap: var(--tc-space-2);
+  min-height: var(--tc-control-height-md);
+  padding: 0 var(--tc-space-3);
+  border-radius: var(--tc-radius-option);
   color: var(--tc-text);
+  font-size: var(--tc-control-font-size);
   outline: 2px solid transparent;
   outline-offset: -2px;
   min-width: 0;
+  cursor: pointer;
 }
 
 .selectItemText {
@@ -471,9 +527,14 @@
   background-color: var(--tc-surface-raised);
 }
 
+.selectItem[data-state="checked"] {
+  background-color: var(--tc-accent-soft);
+  color: var(--tc-accent-text);
+}
+
 .selectItem:focus-visible,
 .selectItem:focus {
-  outline-color: var(--tc-accent);
+  outline-color: var(--tc-focus);
 }
 
 .selectItem[data-disabled] {
@@ -482,7 +543,7 @@
 
 .selectItemIndicator {
   display: inline-flex;
-  color: var(--tc-accent);
+  color: var(--tc-accent-text);
   flex-shrink: 0;
 }
 
@@ -493,13 +554,15 @@
 .fieldGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--tc-field-gap);
+  min-width: 0;
 }
 
 .fieldGroupLabel {
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--tc-label-font-size);
+  font-weight: 600;
+  line-height: var(--tc-line-height-sm);
 }
 
 .fieldGroupRequired {
@@ -507,16 +570,19 @@
 }
 
 .fieldGroupHint {
+  max-width: 60ch;
   margin: 0;
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
 .fieldGroupError {
   margin: 0;
   color: var(--tc-error);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
@@ -528,7 +594,7 @@
   position: fixed;
   inset: 0;
   z-index: var(--tc-z-overlay);
-  background-color: rgb(17 19 24 / 48%);
+  background-color: var(--tc-media-scrim);
 }
 
 .dialogContent {
@@ -539,39 +605,44 @@
   z-index: var(--tc-z-overlay);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: min(480px, calc(100vw - 32px));
-  max-height: calc(100vh - 64px);
+  gap: var(--tc-space-4);
+  width: min(480px, calc(100vw - 2 * var(--tc-space-4)));
+  max-height: calc(100vh - 2 * var(--tc-space-8));
   overflow-y: auto;
   border: 1px solid var(--tc-divider);
   border-radius: var(--tc-radius-panel);
   background-color: var(--tc-surface);
-  padding: 20px;
+  box-shadow: 0 18px 50px var(--tc-shadow);
+  padding: var(--tc-space-6);
 }
 
 .confirmDialogContent {
-  gap: 16px;
+  gap: var(--tc-space-4);
 }
 
 .dialogHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--tc-space-3);
 }
 
 .dialogTitle {
   color: var(--tc-text);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
   overflow-wrap: anywhere;
 }
 
 .dialogClose {
+  display: inline-flex;
   flex: none;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--tc-radius-field);
+  align-items: center;
+  justify-content: center;
+  width: var(--tc-control-height-sm);
+  height: var(--tc-control-height-sm);
+  border-radius: var(--tc-radius-control);
   color: var(--tc-text-muted);
 }
 
@@ -582,20 +653,22 @@
 
 .dialogDescription {
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
 .dialogBody {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--tc-form-row-gap);
 }
 
 .confirmDialogActions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -605,11 +678,12 @@
 .tooltipContent {
   z-index: var(--tc-z-overlay);
   max-width: 240px;
-  padding: 6px 10px;
-  border-radius: var(--tc-radius-status);
+  padding: var(--tc-space-1) var(--tc-space-3);
+  border-radius: var(--tc-radius-popover);
   background-color: var(--tc-text);
   color: var(--tc-canvas);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
   overflow-wrap: anywhere;
 }
 
@@ -624,18 +698,18 @@
 .stateSurface {
   display: flex;
   flex-direction: column;
-  padding: 4px 0px;
+  padding: var(--tc-space-1) 0;
 }
 
 .stateSurfaceSkeleton {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 4px 0;
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-1) 0;
 }
 
 .skeletonBlock {
-  height: 12px;
+  height: var(--tc-space-3);
   border-radius: var(--tc-radius-status);
   background-color: var(--tc-surface-raised);
 }
@@ -646,31 +720,32 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 12px;
-  padding: 16px;
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-4);
 }
 
-/* Title and description are one block with a tight 4px gap; the parent's 12px gap then separates
-   that whole block from the action slot, so the two text lines never read as far apart as the
-   text is from the button. */
+/* Title and description form one tight block; the parent's larger gap then separates that block
+   from the action slot. */
 .stateSurfaceMessageGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--tc-space-1);
 }
 
 .stateSurfaceMessageTitle {
   margin: 0;
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--tc-font-size-md);
+  font-weight: var(--tc-font-weight-medium);
   overflow-wrap: anywhere;
 }
 
 .stateSurfaceMessageText {
+  max-width: 60ch;
   margin: 0;
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
@@ -688,67 +763,85 @@
 
 .toastViewport {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: var(--tc-space-4);
+  bottom: var(--tc-space-4);
   z-index: var(--tc-z-toast);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: flex-end;
+  gap: var(--tc-space-2);
   width: 320px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - 2 * var(--tc-space-4));
   margin: 0;
   padding: 0;
 }
 
+/* Info and success toasts are the inverse ink surface; an error toast stays on the regular surface
+   so its error-colored title keeps full contrast. */
 .toastRoot {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px 36px 12px 12px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-status);
-  background-color: var(--tc-surface);
+  gap: var(--tc-space-0-5);
+  min-height: var(--tc-control-height-md);
+  max-width: 100%;
+  padding: var(--tc-space-2) calc(var(--tc-control-height-sm) + var(--tc-space-2)) var(--tc-space-2)
+    var(--tc-space-4);
+  border: 1px solid transparent;
+  border-radius: var(--tc-radius-popover);
+  background-color: var(--tc-text);
+  color: var(--tc-canvas);
+  box-shadow: 0 8px 24px var(--tc-shadow);
+}
+
+/* A title-only toast is one line, so it takes the full pill like every other control. */
+.toastRoot:not(:has(.toastDescription)) {
+  justify-content: center;
+  border-radius: var(--tc-radius-control);
 }
 
 .toastTitle {
-  color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 600;
+  color: inherit;
+  font-size: var(--tc-font-size-sm);
+  font-weight: var(--tc-font-weight-medium);
+  line-height: var(--tc-line-height-sm);
   overflow-wrap: anywhere;
 }
 
 .toastDescription {
-  color: var(--tc-text-muted);
-  font-size: 12px;
+  color: inherit;
+  opacity: 0.8;
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
   overflow-wrap: anywhere;
 }
 
 .toastClose {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--tc-radius-status);
-  color: var(--tc-text-muted);
+  top: calc((var(--tc-control-height-md) - var(--tc-control-height-sm)) / 2 - 1px);
+  right: var(--tc-space-1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tc-control-height-sm);
+  height: var(--tc-control-height-sm);
+  border-radius: var(--tc-radius-control);
+  color: inherit;
+  opacity: 0.8;
 }
 
 .toastClose:hover {
-  background-color: var(--tc-surface-raised);
-  color: var(--tc-text);
-}
-
-.toastSuccess {
-  border-color: var(--tc-success);
+  opacity: 1;
 }
 
 .toastSuccess .toastTitle {
-  color: var(--tc-success);
+  color: var(--tc-success-on-inverse);
 }
 
 .toastError {
   border-color: var(--tc-error);
+  background-color: var(--tc-surface);
+  color: var(--tc-text);
 }
 
 .toastError .toastTitle {
@@ -784,11 +877,12 @@
   display: inline-flex;
   align-items: stretch;
   max-width: 100%;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-status);
-  background-color: var(--tc-surface);
+  height: var(--tc-chip-height);
+  border-radius: var(--tc-radius-chip);
+  background-color: var(--tc-chip-bg);
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
+  line-height: 1;
 }
 
 .promptTagChip[data-enabled] {
@@ -797,9 +891,9 @@
 
 .promptTagTrigger {
   min-width: 0;
-  padding: 4px 8px;
+  padding: 0 var(--tc-space-1) 0 var(--tc-chip-padding-x);
   overflow: hidden;
-  border: 0;
+  border-radius: var(--tc-radius-chip) 0 0 var(--tc-radius-chip);
   background: none;
   color: inherit;
   white-space: nowrap;
@@ -809,15 +903,14 @@
 .promptTagToggle {
   display: inline-flex;
   align-items: center;
-  padding: 0 6px;
-  border: 0;
-  border-left: 1px solid var(--tc-divider);
+  padding: 0 var(--tc-space-2) 0 var(--tc-space-1);
+  border-radius: 0 var(--tc-radius-chip) var(--tc-radius-chip) 0;
   background: none;
   color: var(--tc-text-muted);
 }
 
 .promptTagToggle[aria-pressed="true"] {
-  color: var(--tc-accent);
+  color: var(--tc-text);
 }
 
 .promptTagContent {
@@ -825,53 +918,59 @@
   width: min(420px, 90vw);
   max-height: 360px;
   overflow-y: auto;
-  padding: 4px;
+  padding: var(--tc-space-1);
   border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-popover);
   background-color: var(--tc-surface);
+  box-shadow:
+    0 8px 24px var(--tc-shadow),
+    0 1px 3px var(--tc-shadow);
 }
 
 .promptTagGroup + .promptTagGroup {
-  margin-top: 4px;
+  margin-top: var(--tc-space-1);
   border-top: 1px solid var(--tc-divider);
 }
 
 .promptTagGroupTitle {
   margin: 0;
-  padding: 6px 8px 2px;
+  padding: var(--tc-space-2) var(--tc-space-3) var(--tc-space-0-5);
   color: var(--tc-text-muted);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-xs);
+  font-weight: var(--tc-font-weight-semibold);
 }
 
 .promptTagOption {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--tc-space-0-5);
   width: 100%;
-  padding: 6px 8px;
-  border: 0;
-  border-radius: var(--tc-radius-status);
+  padding: var(--tc-space-1-5) var(--tc-space-3);
+  border-radius: calc(var(--tc-radius-popover) - var(--tc-space-1));
   background: none;
   color: var(--tc-text);
   text-align: left;
 }
 
-.promptTagOption:hover,
-.promptTagOption[aria-pressed="true"] {
+.promptTagOption:hover {
   background-color: var(--tc-surface-raised);
+}
+
+.promptTagOption[aria-pressed="true"] {
+  background-color: var(--tc-accent-soft);
 }
 
 .promptTagOptionLabel {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 13px;
+  gap: var(--tc-space-1);
+  font-size: var(--tc-font-size-sm);
 }
 
 .promptTagOptionText {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
   overflow-wrap: anywhere;
 }
 

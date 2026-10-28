@@ -8,11 +8,10 @@
   overflow: hidden;
   color: var(--tc-text);
   background-color: var(--tc-canvas);
-  border: 1px solid color-mix(in srgb, var(--tc-divider) 78%, var(--tc-text) 22%);
-  border-radius: 12px;
+  border-radius: var(--tc-radius-window);
   box-shadow:
-    0 32px 96px rgb(8 11 16 / 30%),
-    0 8px 28px rgb(8 11 16 / 18%);
+    0 0 0 1px var(--tc-divider),
+    0 18px 50px var(--tc-shadow);
   transform: translate3d(var(--tc-floating-window-x, 20px), var(--tc-floating-window-y, 64px), 0);
   pointer-events: auto;
   isolation: isolate;
@@ -25,8 +24,8 @@
 
 .window[data-dragging="true"] {
   box-shadow:
-    0 40px 112px rgb(8 11 16 / 36%),
-    0 12px 36px rgb(8 11 16 / 22%);
+    0 0 0 1px var(--tc-divider),
+    0 24px 64px var(--tc-shadow);
   user-select: none;
 }
 
@@ -50,11 +49,11 @@
 
 @media (max-width: 959px) {
   .window {
-    inset: 8px;
+    inset: 0;
     width: auto;
     height: auto;
     min-height: 0;
-    border-radius: 10px;
+    border-radius: var(--tc-radius-window-narrow);
     transform: none;
   }
 

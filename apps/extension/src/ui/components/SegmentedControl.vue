@@ -32,6 +32,7 @@ function handle_update(value: unknown): void {
 <template>
   <RadioGroupRoot
     :class="styles.segmentedControl"
+    :data-layout="options.some((option) => option.label.length > 6) ? 'hug' : 'fill'"
     :model-value="modelValue"
     :disabled="disabled"
     orientation="horizontal"

@@ -111,10 +111,15 @@ function find_forbidden_pattern_violations(decls: readonly DeclarationRef[]) {
 }
 
 const EXPECTED_RADIUS_TOKENS: Readonly<Record<string, string>> = {
-  "--tc-radius-panel": "0",
-  "--tc-radius-field": "6px",
-  "--tc-radius-image": "8px",
-  "--tc-radius-status": "4px",
+  "--tc-radius-window": "20px",
+  "--tc-radius-panel": "16px",
+  "--tc-radius-card": "16px",
+  "--tc-radius-control": "999px",
+  "--tc-radius-field": "999px",
+  "--tc-radius-textarea": "16px",
+  "--tc-radius-image": "6px",
+  "--tc-radius-status": "999px",
+  "--tc-radius-popover": "16px",
 };
 
 const ALLOWED_MOTION_PROPERTIES = new Set(["transform", "opacity", "color", "background-color"]);
@@ -358,7 +363,7 @@ describe("style contract", () => {
     expect(format(find_forbidden_pattern_violations(decls))).toEqual([]);
   });
 
-  it("defines the exact panel/field/image/status radius tokens", () => {
+  it("defines the exact window/panel/control/field/image/status radius tokens", () => {
     const light_tokens = collect_tokens_for_selector(decls, LIGHT_SELECTOR);
     for (const [token, expected] of Object.entries(EXPECTED_RADIUS_TOKENS)) {
       expect(light_tokens.get(token)).toBe(expected);
@@ -384,22 +389,36 @@ describe("style contract", () => {
     }
   });
 
-  it("defines separate, non-overlapping neutral/accent/success/warning/error token families", () => {
+  // The accent is ink, the same color as body text, so only the status family must stay apart.
+  it("defines status colors distinct from each other, the accent, and every neutral token", () => {
     for (const selector of [LIGHT_SELECTOR, DARK_SELECTOR]) {
       const tokens = collect_tokens_for_selector(decls, selector);
       for (const token of [...NEUTRAL_TOKENS, ...ACCENT_TOKENS, ...STATUS_TOKENS]) {
         expect(tokens.get(token), `${selector} is missing ${token}`).toBeDefined();
       }
 
-      const accent_and_status = [...ACCENT_TOKENS, ...STATUS_TOKENS].map((token) =>
-        tokens.get(token),
-      );
-      expect(new Set(accent_and_status).size).toBe(accent_and_status.length);
+      const status = STATUS_TOKENS.map((token) => tokens.get(token));
+      expect(new Set(status).size).toBe(status.length);
 
-      const neutral_values = new Set(NEUTRAL_TOKENS.map((token) => tokens.get(token)));
-      for (const value of accent_and_status) {
-        expect(neutral_values.has(value)).toBe(false);
+      const taken = new Set(
+        [...NEUTRAL_TOKENS, ...ACCENT_TOKENS].map((token) => tokens.get(token)),
+      );
+      for (const value of status) {
+        expect(taken.has(value)).toBe(false);
       }
+    }
+  });
+
+  it("meets WCAG AA contrast for text on the marker highlight, both themes", () => {
+    for (const selector of [LIGHT_SELECTOR, DARK_SELECTOR]) {
+      const tokens = collect_tokens_for_selector(decls, selector);
+      const ratio = contrast_ratio(
+        tokens.get("--tc-on-marker") ?? "",
+        tokens.get("--tc-marker") ?? "",
+      );
+      expect(ratio, `${selector} --tc-on-marker on --tc-marker`).toBeGreaterThanOrEqual(
+        AA_BODY_TEXT_RATIO,
+      );
     }
   });
 

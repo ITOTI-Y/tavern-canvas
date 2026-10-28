@@ -145,7 +145,7 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     return undefined;
   }
 
-  it("desktop: 56px top bar, 64px rail, fluid workspace, inspector clamped 320-400px, auto task strip", () => {
+  it("desktop: token-height top bar, 64px rail, fluid workspace, inspector clamped 320-400px, auto task strip", () => {
     const columns = declaration('.shell[data-viewport="desktop"]', "grid-template-columns");
     const rows = declaration('.shell[data-viewport="desktop"]', "grid-template-rows");
     expect(columns).toBeDefined();
@@ -153,15 +153,15 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     expect(columns).toMatch(/(?:^|\s)64px(?:\s|$)/u);
     expect(columns).toMatch(/minmax\(0,\s*1fr\)/u);
     expect(columns).toMatch(/clamp\(320px,\s*var\(--tc-inspector-width[^)]*\),\s*400px\)/u);
-    expect(rows?.split(/\s+/u)[0]).toBe("56px");
+    expect(rows?.split(/\s+/u)[0]).toBe("var(--tc-topbar-height)");
     expect(rows?.trim().endsWith("auto")).toBe(true);
   });
 
-  it("mobile: 100dvh, one content layer, 56px top bar row, safe-area padding on the bottom nav", () => {
+  it("mobile: 100dvh, one content layer, token-height top bar row, safe-area padding on the bottom nav", () => {
     const height = declaration('.shell[data-viewport="mobile"]', "height");
     const rows = declaration('.shell[data-viewport="mobile"]', "grid-template-rows");
     expect(height).toBe("100dvh");
-    expect(rows?.split(/\s+/u)[0]).toBe("56px");
+    expect(rows?.split(/\s+/u)[0]).toBe("var(--tc-topbar-height)");
 
     const safe_area = declaration(".bottom_nav", "padding-bottom");
     expect(safe_area).toMatch(/env\(safe-area-inset-bottom/u);
@@ -171,12 +171,14 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     const areas = declaration('.shell[data-viewport="mobile"]', "grid-template-areas");
     expect(areas).toMatch(/taskstrip/u);
     const rows = declaration('.shell[data-viewport="mobile"]', "grid-template-rows");
-    expect(rows).toMatch(/^56px\s+minmax\(0,\s*1fr\)\s+auto\s+64px$/u);
+    expect(rows).toMatch(
+      /^var\(--tc-topbar-height\)\s+minmax\(0,\s*1fr\)\s+auto\s+var\(--tc-bottomnav-height\)$/u,
+    );
   });
 
   it("desktop rail and mobile bottom-nav items declare fixed dimensions with no per-state override", () => {
-    expect(declaration(".rail_button", "width")).toBe("48px");
-    expect(declaration(".rail_button", "height")).toBe("48px");
+    expect(declaration(".rail_button", "width")).toBe("var(--tc-control-height-lg)");
+    expect(declaration(".rail_button", "height")).toBe("var(--tc-control-height-lg)");
     expect(declaration('.rail_button[data-selected="true"]', "width")).toBeUndefined();
     expect(declaration('.rail_button[data-selected="true"]', "height")).toBeUndefined();
   });
@@ -190,13 +192,14 @@ describe("StudioShell layout contract (shell.module.css)", () => {
     expect(declaration(".task_chip", "max-width")).toBeDefined();
   });
 
-  it("shell sections are unframed bands separated by 1px dividers, never wrapped in a card", () => {
-    expect(declaration(".top_bar", "border-bottom")).toMatch(/^1px solid var\(--tc-divider\)$/u);
-    expect(declaration(".rail", "border-right")).toMatch(/^1px solid var\(--tc-divider\)$/u);
-    expect(declaration(".inspector", "border-left")).toMatch(/^1px solid var\(--tc-divider\)$/u);
+  it("top bar, rail and workspace share one unframed canvas; only the inspector floats as a panel", () => {
+    for (const selector of [".top_bar", ".rail", ".workspace"]) {
+      expect(declaration(selector, "background-color"), selector).toBe("var(--tc-canvas)");
+      expect(declaration(selector, "border-radius"), selector).toBeUndefined();
+    }
+    expect(declaration(".inspector", "background-color")).toBe("var(--tc-surface)");
+    expect(declaration(".inspector", "border-radius")).toBe("var(--tc-radius-panel)");
     expect(declaration(".task_strip", "border-top")).toMatch(/^1px solid var\(--tc-divider\)$/u);
-    expect(declaration(".workspace", "border-radius")).toBeUndefined();
-    expect(declaration(".inspector", "border-radius")).toBeUndefined();
   });
 });
 

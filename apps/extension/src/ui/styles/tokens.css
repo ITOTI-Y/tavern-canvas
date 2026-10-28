@@ -1,87 +1,173 @@
 /*
- * Design tokens for the TavernCanvas Studio. This is the whole token surface: no component adds
- * a color, radius, or duration outside these custom properties (style_contract.test.ts enforces
- * the radius/motion/color-family rules mechanically).
+ * Design tokens for the Inkwell Studio. Components reference only these custom properties;
+ * style_contract.test.ts enforces the radius, motion and color rules. Dark mode is the single
+ * :host([data-color-mode="dark"]) override block below.
  *
- * Dark mode is a single override block, never a per-section inversion: the shell (Stage 06 Task 2)
- * reflects StudioState.color_mode onto the Shadow Root host as data-color-mode="dark" | "light",
- * and :host([data-color-mode="dark"]) below overrides the same custom properties in one place.
+ * Ink is the primary action color and the marker yellow only marks what is selected or current.
  */
 
 :host {
-  --tc-canvas: #edf0f5;
+  --tc-space-0-5: 2px;
+  --tc-space-1: 4px;
+  --tc-space-1-5: 6px;
+  --tc-space-2: 8px;
+  --tc-space-3: 12px;
+  --tc-space-4: 16px;
+  --tc-space-5: 20px;
+  --tc-space-6: 24px;
+  --tc-space-8: 32px;
+  --tc-space-10: 40px;
+  --tc-font-family: "Geist", system-ui, "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --tc-font-mono: "Geist Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --tc-font-size-xs: 12px;
+  --tc-font-size-sm: 13px;
+  --tc-font-size-md: 14px;
+  --tc-font-size-lg: 17px;
+  --tc-font-size-xl: 26px;
+  --tc-line-height-xs: 16px;
+  --tc-line-height-sm: 20px;
+  --tc-line-height-md: 22px;
+  --tc-line-height-lg: 24px;
+  --tc-line-height-xl: 32px;
+  --tc-font-weight-regular: 400;
+  --tc-font-weight-medium: 500;
+  --tc-font-weight-semibold: 650;
+  --tc-label-font-size: 13px;
+  --tc-control-height-sm: 28px;
+  --tc-control-height-md: 36px;
+  --tc-control-height-lg: 44px;
+  --tc-control-padding-x-sm: 12px;
+  --tc-control-padding-x-md: 16px;
+  --tc-control-padding-x-lg: 20px;
+  --tc-control-gap: 6px;
+  --tc-control-font-size: 14px;
+  --tc-field-padding-x: 16px;
+  --tc-icon-size: 16px;
+  --tc-icon-size-sm: 15px;
+  --tc-chip-height: 26px;
+  --tc-chip-height-sm: 22px;
+  --tc-chip-padding-x: 10px;
+  --tc-check-size: 18px;
+  --tc-switch-width: 44px;
+  --tc-switch-height: 26px;
+  --tc-radius-window: 20px;
+  --tc-radius-window-narrow: 0;
+  --tc-radius-panel: 16px;
+  --tc-radius-card: 16px;
+  --tc-radius-control: 999px;
+  --tc-radius-field: 999px;
+  --tc-radius-textarea: 16px;
+  --tc-radius-taginput: 18px;
+  --tc-radius-chip: 999px;
+  --tc-radius-check: 6px;
+  --tc-radius-image: 6px;
+  --tc-radius-status: 999px;
+  --tc-radius-popover: 16px;
+  --tc-radius-option: 999px;
+  --tc-radius-bar: 999px;
+  --tc-field-gap: 8px;
+  --tc-form-row-gap: 24px;
+  --tc-group-gap: 40px;
+  --tc-panel-padding: 28px;
+  --tc-nav-width: 200px;
+  --tc-form-max-width: 600px;
+  --tc-inspector-width: 360px;
+  --tc-card-min: 250px;
+  --tc-tile-min: 168px;
+  --tc-tile-gap: 10px;
+  --tc-topbar-height: 60px;
+  --tc-bottomnav-height: 60px;
+  --tc-canvas: #f4f4f2;
   --tc-surface: #ffffff;
-  --tc-surface-raised: #f3f6fa;
-  --tc-text: #141923;
-  --tc-text-muted: #596578;
-  --tc-divider: #ccd4df;
-  --tc-accent: #2f5af5;
-  --tc-accent-hover: #244bd6;
-  /* Foreground for text/icons sitting on a solid accent fill. The value changes with the theme
-     because the dark theme uses a lighter accent for visibility against the near-black canvas.
-     style_contract.test.ts checks both foreground pairings against accent and accent-hover. */
-  --tc-on-accent: #ffffff;
-  --tc-success: #157b59;
-  --tc-warning: #946100;
-  --tc-error: #c23838;
-  /* --tc-success/--tc-warning/--tc-error are calibrated as foreground (text/icon/border) colors
-     against --tc-surface and --tc-surface-raised (WCAG AA, see style_contract.test.ts). On bare
-     --tc-canvas they clear large-text AA but fall just under body-text AA; prefer surface for
-     small status text. In dark mode (below) they do not clear AA as a solid fill with white text
-     -- badges/buttons must use an outline or tinted-background treatment, never a solid status
-     fill with light text, in dark mode. */
-
-  /* Overlay pair for controls that sit ON TOP of user image content (gallery tile select toggle,
-     pinned badge). Deliberately absent from the dark-mode block below, and deliberately not built
-     from the surface/text tokens: what these controls must stay legible against is the bitmap
-     underneath them, which does not change when the color mode does. Reading them from
-     --tc-surface is what made the gallery tile badges disappear against dark artwork in dark mode
-     -- the border turned near-black and the tile behind it was already near-black. The scrim is
-     opaque enough (62%) to carry white ink at AA over any underlying pixel value. */
+  --tc-surface-raised: #ededea;
+  --tc-surface-sunken: #e6e6e2;
+  --tc-field-bg: #ffffff;
+  --tc-text: #17171a;
+  --tc-text-muted: #5a5a61;
+  --tc-text-placeholder: #7a7a81;
+  --tc-divider: #e0e0db;
+  --tc-border-field: #8d8d94;
+  --tc-accent: #17171a;
+  --tc-accent-hover: #35353b;
+  --tc-on-accent: #fafaf7;
+  --tc-accent-soft: #fbefb4;
+  --tc-accent-text: #17171a;
+  --tc-accent-border: #e2c53a;
+  --tc-focus: #17171a;
+  --tc-marker: #f6d743;
+  --tc-on-marker: #17171a;
+  --tc-success: #1d7a4a;
+  --tc-warning: #8a5a00;
+  --tc-error: #c0362c;
+  --tc-success-on-inverse: #6fe0a6;
+  --tc-error-soft: #fbe9e6;
+  --tc-switch-off: #a5a5ab;
+  --tc-switch-thumb: #ffffff;
+  --tc-chip-bg: #ededea;
+  --tc-selection: #fae58a;
+  --tc-para-hover: #f7f3dc;
+  --tc-shadow: rgb(23 23 26 / 12%);
+  /* For controls drawn over user images: the image beneath does not change with the color mode,
+     so this pair stays out of the dark block. */
   --tc-media-scrim: rgb(17 19 24 / 62%);
   --tc-media-ink: #ffffff;
-
-  --tc-radius-panel: 0;
-  --tc-radius-field: 6px;
-  --tc-radius-image: 8px;
-  --tc-radius-status: 4px;
-
   --tc-motion-fast: 140ms;
   --tc-motion-normal: 180ms;
   --tc-motion-slow: 220ms;
-
-  /* Stacking scale: every first-party z-index references one of these, never an ad-hoc number.
-     Shell chrome (top bar, rails, bottom nav) sits just above document flow; the mobile inspector
-     sheet sits above shell chrome; Reka dialog/menu/tooltip portals sit above the sheet; toasts
-     always paint on top of everything else. */
   --tc-z-shell-sticky: 10;
   --tc-z-inspector-sheet: 20;
   --tc-z-overlay: 30;
   --tc-z-toast: 40;
-  /* Above the shell's own internal scale on purpose: this one positions the Shadow Root's host
-     element itself against the SillyTavern page behind it (base.css's `:host { position: fixed }`
-     rule), not anything inside the shell. Matches the value the pre-Stage-06 bootstrap placeholder
-     already used, safely below the 32-bit signed integer max some browsers start misbehaving at. */
+  /* Positions the Shadow Root host against the SillyTavern page, above the shell's own scale. */
   --tc-z-host: 2147483000;
 
   color: var(--tc-text);
   background: var(--tc-canvas);
-  font-family: "Geist", system-ui, "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
-  font-size: 14px;
-  letter-spacing: 0;
+  font-family: var(--tc-font-family);
+  font-size: var(--tc-font-size-md);
+  line-height: var(--tc-line-height-md);
 }
 
 :host([data-color-mode="dark"]) {
-  --tc-canvas: #080b10;
-  --tc-surface: #10151c;
-  --tc-surface-raised: #181f29;
-  --tc-text: #f5f7fa;
-  --tc-text-muted: #9ca8b8;
-  --tc-divider: #2b3441;
-  --tc-accent: #7898ff;
-  --tc-accent-hover: #8aa6ff;
-  --tc-on-accent: #080b10;
-  --tc-success: #45c995;
-  --tc-warning: #e8b44e;
-  --tc-error: #ff7b7b;
+  --tc-canvas: #131315;
+  --tc-surface: #1b1b1e;
+  --tc-surface-raised: #252528;
+  --tc-surface-sunken: #0d0d0f;
+  --tc-field-bg: #161618;
+  --tc-text: #f1f1ed;
+  --tc-text-muted: #a4a4ab;
+  --tc-text-placeholder: #85858c;
+  --tc-divider: #2e2e33;
+  --tc-border-field: #66666e;
+  --tc-accent: #f1f1ed;
+  --tc-accent-hover: #fafaf7;
+  --tc-on-accent: #131315;
+  --tc-accent-soft: #3a3214;
+  --tc-accent-text: #f6e08a;
+  --tc-accent-border: #8a7424;
+  --tc-focus: #f1f1ed;
+  --tc-marker: #e8c93f;
+  --tc-on-marker: #131315;
+  --tc-success: #5fd39a;
+  --tc-warning: #ecbd55;
+  --tc-error: #ff8a7f;
+  --tc-success-on-inverse: #1d7a4a;
+  --tc-error-soft: #3b1b19;
+  --tc-switch-off: #55555c;
+  --tc-switch-thumb: #131315;
+  --tc-chip-bg: #29292d;
+  --tc-selection: #5a4b16;
+  --tc-para-hover: #23211a;
+  --tc-shadow: rgb(0 0 0 / 50%);
+}
+
+@media (pointer: coarse) {
+  :host {
+    --tc-control-height-sm: 36px;
+    --tc-control-height-md: 44px;
+    --tc-control-height-lg: 48px;
+    --tc-control-font-size: 15px;
+    --tc-chip-height: 30px;
+    --tc-check-size: 20px;
+  }
 }

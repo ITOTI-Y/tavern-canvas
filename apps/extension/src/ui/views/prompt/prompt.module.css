@@ -1,7 +1,7 @@
 /*
  * Prompt workspace: preset browser column plus a stacked editor column (fixed prompts, context
  * preview, quality controls, replacement/regex rules, private test panel). Unframed sections
- * separated by 1px dividers, no card wrapping a whole section (taste directive: cockpit density).
+ * separated by 1px dividers; the selected preset in the browser carries the marker highlight.
  */
 
 .prompt_view {
@@ -19,7 +19,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding-bottom: 24px;
+  padding-bottom: var(--tc-space-6);
 }
 
 /* Below use_shell_viewport.ts's DESKTOP_BREAKPOINT_PX (960px, the same constant the shell itself
@@ -39,71 +39,48 @@
 
 .section_header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 12px 16px 4px;
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-5) var(--tc-space-5) var(--tc-space-2);
 }
 
 .section_title {
-  font-weight: 600;
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
 }
 
-/* This is the one control whose box came from the UA button padding base.css now resets, so the
-   value moves here rather than disappearing -- an inline accent action needs the horizontal
-   breathing room around its label either way. */
 .icon_text_button {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 1px 6px;
-  color: var(--tc-accent);
+  gap: var(--tc-space-1);
+  height: var(--tc-control-height-sm);
+  padding: 0 var(--tc-space-2);
+  border-radius: var(--tc-radius-control);
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-sm);
+  font-weight: var(--tc-font-weight-medium);
 }
 
 .text_input {
-  width: 100%;
-  padding: 6px 8px;
-  color: var(--tc-text);
-  background-color: var(--tc-surface);
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  font-family: inherit;
-  font-size: 13px;
+  composes: tc-field from global;
 }
 
 .text_input_narrow {
-  width: 64px;
-  padding: 6px 8px;
-  color: var(--tc-text);
-  background-color: var(--tc-surface);
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  font-family: inherit;
-  font-size: 13px;
+  composes: tc-field from global;
+  width: 9ch;
+  padding: 0 var(--tc-space-3);
 }
 
-.text_input:focus-visible,
-.text_input_narrow:focus-visible {
-  outline: 2px solid var(--tc-accent);
-  outline-offset: 1px;
+.icon_text_button:hover {
+  background-color: var(--tc-surface-raised);
 }
 
 .textarea {
-  width: 100%;
-  min-height: 56px;
-  padding: 8px 10px;
-  color: var(--tc-text);
-  background-color: var(--tc-surface);
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  font-family: inherit;
-  font-size: 14px;
-  resize: vertical;
-}
-
-.textarea:focus-visible {
-  outline: 2px solid var(--tc-accent);
-  outline-offset: 1px;
+  composes: tc-field tc-field-multiline from global;
 }
 
 /* --------------------------------------------------------------------- Preset browser */
@@ -114,31 +91,33 @@
 }
 
 .search_input {
-  margin: 0 16px 8px;
-  padding: 6px 8px;
-  color: var(--tc-text);
-  background-color: var(--tc-surface);
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  font-size: 13px;
+  composes: tc-field from global;
+  width: auto;
+  margin: 0 var(--tc-space-5) var(--tc-space-2);
+}
+
+.bulk_delete_button:hover {
+  background-color: var(--tc-error-soft);
 }
 
 .bulk_delete_button {
-  margin: 0 16px 8px;
-  padding: 6px 10px;
+  align-self: flex-start;
+  height: var(--tc-control-height-sm);
+  margin: 0 var(--tc-space-5) var(--tc-space-2);
+  padding: 0 var(--tc-control-padding-x-sm);
+  border-radius: var(--tc-radius-control);
   color: var(--tc-error);
-  background-color: var(--tc-surface-raised);
-  border-radius: var(--tc-radius-field);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
+  font-weight: var(--tc-font-weight-medium);
 }
 
 .group_header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 16px;
+  padding: var(--tc-space-3) var(--tc-space-5) var(--tc-space-1);
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
   border-top: 1px solid var(--tc-divider);
 }
 
@@ -150,18 +129,22 @@
 .preset_row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 16px;
+  gap: var(--tc-space-2);
+  margin: 0 var(--tc-space-2);
+  padding: 0 var(--tc-space-3);
+  border-radius: var(--tc-radius-control);
 }
 
 .preset_row_selected {
-  background-color: var(--tc-surface-raised);
+  background-color: var(--tc-marker);
+  color: var(--tc-on-marker);
+  font-weight: var(--tc-font-weight-medium);
 }
 
 .preset_name_button {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 4px 0;
+  padding: var(--tc-space-1) 0;
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
@@ -173,8 +156,8 @@
 .name_row {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-3) var(--tc-space-5) var(--tc-space-4);
   border-bottom: 1px solid var(--tc-divider);
 }
 
@@ -187,16 +170,21 @@
 .prompt_builder {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-bottom: 8px;
+  gap: var(--tc-form-row-gap);
+  padding: 0 var(--tc-space-5) var(--tc-space-6);
   border-bottom: 1px solid var(--tc-divider);
+}
+
+.prompt_builder > .section_header {
+  margin-bottom: calc(var(--tc-space-2) - var(--tc-form-row-gap));
+  padding-inline: 0;
 }
 
 /* --------------------------------------------------------------------- Rules (replacement/regex) */
 
 .replacement_rules,
 .regex_rules {
-  padding-bottom: 8px;
+  padding-bottom: var(--tc-space-2);
   border-bottom: 1px solid var(--tc-divider);
 }
 
@@ -204,8 +192,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-3) var(--tc-space-5);
   border-top: 1px solid var(--tc-divider);
 }
 
@@ -219,33 +207,33 @@
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .test_result {
   flex-basis: 100%;
   margin: 0;
   color: var(--tc-success);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .test_result_error {
   flex-basis: 100%;
   margin: 0;
   color: var(--tc-error);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 /* --------------------------------------------------------------------- Prompt tag presets */
 
 .prompt_tag_panel {
-  padding-bottom: 16px;
+  padding-bottom: var(--tc-space-4);
   border-top: 1px solid var(--tc-divider);
 }
 
 .prompt_tag_description {
   margin: 0;
-  padding: 0 16px 8px;
+  padding: 0 var(--tc-space-5) var(--tc-space-2);
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
 }

@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import { Cable } from "lucide-vue-next";
-import { computed, defineAsyncComponent } from "vue";
+import {
+  BookOpenText,
+  Cable,
+  Image,
+  Languages,
+  Layers,
+  ScanSearch,
+  SlidersHorizontal,
+  Sparkles,
+} from "lucide-vue-next";
+import { type Component, computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppIcon from "../../components/AppIcon.vue";
@@ -60,6 +69,16 @@ function section_label(section: SettingsSection): string {
   }
 }
 
+const SECTION_ICONS: Readonly<Record<SettingsSection, Component>> = {
+  illustration: Sparkles,
+  providers: Image,
+  translation: Languages,
+  prompts: BookOpenText,
+  library: Layers,
+  general: SlidersHorizontal,
+  diagnostics: ScanSearch,
+};
+
 const section = computed(() => props.state.settings_section);
 
 /** NovelAI parameters belong to the profile generation uses, which is the active one. */
@@ -90,7 +109,8 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
         :aria-current="item === section ? 'page' : undefined"
         @click="controller.set_settings_section(item)"
       >
-        {{ section_label(item) }}
+        <AppIcon :icon="SECTION_ICONS[item]" :size="15" />
+        <span>{{ section_label(item) }}</span>
       </button>
     </nav>
 

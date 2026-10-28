@@ -1,19 +1,17 @@
 /*
- * Scoped styles for the Assets view (Stage 06 Task 6). Tokens only (apps/extension/src/ui/styles/
- * tokens.css) -- panel = --tc-radius-panel (the unframed page + dialogs, via AppDialog), field =
- * --tc-radius-field (inputs, buttons, and the draggable asset cards below -- they behave like
- * interactive controls, not images or status chips), status = --tc-radius-status (badges). Cards
- * here are the plan's one sanctioned card use (repeated/draggable asset records) and never nest a
- * card inside another card -- each card is a single flat row.
+ * Scoped styles for the Assets view. Tokens only (apps/extension/src/ui/styles/tokens.css). Asset
+ * records are the one sanctioned card use (repeated/draggable records), each a single flat card
+ * with --tc-radius-card; a selected card takes the soft marker. The current tab is underlined with
+ * the marker stroke.
  */
 
 .assetsView {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--tc-space-4);
   height: 100%;
   min-height: 0;
-  padding: 16px;
+  padding: var(--tc-space-2) var(--tc-panel-padding) var(--tc-panel-padding);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -22,44 +20,73 @@
 
 .tabsList {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  border-bottom: 1px solid var(--tc-divider);
-  padding-bottom: 0;
+  gap: var(--tc-space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .tabsTrigger {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: var(--tc-control-height-lg);
+  padding: 0 var(--tc-space-2);
   border: 1px solid transparent;
-  border-bottom: 2px solid transparent;
-  border-radius: var(--tc-radius-field) var(--tc-radius-field) 0 0;
-  padding: 8px 14px;
-  color: var(--tc-text-muted);
+  border-radius: var(--tc-radius-control);
   background-color: transparent;
-  font-size: 13px;
-  font-weight: 500;
-  transition:
-    color var(--tc-motion-fast) ease-out,
-    background-color var(--tc-motion-fast) ease-out;
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-md);
+  font-weight: var(--tc-font-weight-medium);
+  white-space: nowrap;
+  isolation: isolate;
+  transition: color var(--tc-motion-fast) ease-out;
 }
 
 .tabsTrigger:hover {
   color: var(--tc-text);
-  background-color: var(--tc-surface-raised);
 }
 
 .tabsTrigger[data-state="active"] {
-  color: var(--tc-accent);
-  border-bottom-color: var(--tc-accent);
+  color: var(--tc-text);
+  font-weight: var(--tc-font-weight-semibold);
+}
+
+/* The marker stroke sits behind the label's lower half, slightly tilted like a hand-drawn line. */
+.tabsTrigger[data-state="active"]::after {
+  content: "";
+  position: absolute;
+  right: var(--tc-space-1);
+  bottom: calc(50% - 10px);
+  left: var(--tc-space-1);
+  z-index: -1;
+  height: 9px;
+  border-radius: 2px;
+  background-color: var(--tc-marker);
+  transform: rotate(-1deg);
+}
+
+.tabsTrigger:focus-visible {
+  outline: 2px solid var(--tc-focus);
+  outline-offset: -2px;
 }
 
 .tabsContent {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: var(--tc-space-3);
   min-height: 0;
+  padding-top: var(--tc-space-3);
   overflow-y: auto;
 }
 
+.tabsContent[hidden] {
+  display: none;
+}
+
 .tabsContent:focus-visible {
-  outline: 2px solid var(--tc-accent);
+  outline: 2px solid var(--tc-focus);
   outline-offset: 2px;
 }
 
@@ -70,90 +97,80 @@
 .categoryList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px 0;
+  gap: var(--tc-space-3);
 }
 
 .categoryToolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: var(--tc-space-2);
 }
 
 .searchInput {
-  flex: 1;
-  min-width: 160px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background-color: var(--tc-surface);
-  color: var(--tc-text);
-  padding: 8px 12px;
-  font-size: 13px;
-}
-
-.searchInput:focus-visible {
-  outline: 2px solid var(--tc-accent);
-  outline-offset: 1px;
+  composes: tc-field from global;
+  flex: 1 1 200px;
+  width: auto;
 }
 
 .reorderHint {
+  margin-left: auto;
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .emptyDescription {
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .cardGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--tc-card-min), 1fr));
+  gap: var(--tc-space-3);
 }
 
-/* Wraps rather than overflows. In the 400px docked panel the row's controls can outgrow their
-   track no matter how tight the copy is, and the alternative to wrapping was what shipped: a
-   horizontal scrollbar under the list plus labels broken one character per line. Wrapping puts the
-   action group on its own line instead, still right-aligned under the entry it belongs to. */
+/* The card is draggable as a whole, so the grip icon stays hidden; the selection checkbox sits in
+   the top-right corner and the reorder/delete actions wrap under the name. */
 .assetCard {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
+  gap: var(--tc-space-1);
+  min-width: 0;
+  padding: var(--tc-space-3);
+  border-radius: var(--tc-radius-card);
   background-color: var(--tc-surface);
-  padding: 6px 8px;
+  box-shadow: 0 0 0 1px var(--tc-divider);
+  transition: background-color var(--tc-motion-fast) ease;
+}
+
+.assetCard:has(.assetCardCheckbox:checked) {
+  background-color: var(--tc-accent-soft);
+  box-shadow: 0 0 0 1px var(--tc-accent-border);
 }
 
 .assetCard[data-dragging] {
-  border-color: var(--tc-accent);
+  box-shadow: 0 0 0 2px var(--tc-accent);
 }
 
 .dragHandle {
-  display: inline-flex;
-  flex: none;
-  color: var(--tc-text-muted);
-  cursor: grab;
-  padding: 4px;
+  display: none;
 }
 
-/* `min-width: 0` is what lets the name actually ellipsize: a flex item's automatic minimum size is
-   its content, so without this the nowrap title sets the column's floor and pushes the actions out
-   of the card. The 160px flex-basis is the width below which the title has no room left to say
-   anything, and the point at which the actions should wrap to their own line instead. */
+/* `min-width: 0` lets the name ellipsize: a flex item's automatic minimum size is its content, so
+   without it the nowrap title sets the column's floor and pushes the actions out of the card. */
 .assetCardMain {
   display: flex;
-  flex: 1 1 160px;
+  flex: 1 1 100%;
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  border-radius: var(--tc-radius-field);
+  gap: var(--tc-space-1);
+  padding: var(--tc-space-1) var(--tc-space-8) var(--tc-space-1) var(--tc-space-1);
+  border-radius: calc(var(--tc-radius-card) - var(--tc-space-2));
   background-color: transparent;
-  padding: 2px 4px;
   text-align: left;
   transition: background-color var(--tc-motion-fast) ease-out;
 }
@@ -163,21 +180,23 @@
 }
 
 .assetCardName {
-  color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   max-width: 100%;
+  overflow: hidden;
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .assetCardSummary {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--tc-space-0-5) var(--tc-space-2);
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
 }
 
 .assetCardSummaryPart {
@@ -188,8 +207,34 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-0-5);
   margin-left: auto;
+}
+
+.assetCardCheckbox {
+  position: absolute;
+  top: var(--tc-space-3);
+  right: var(--tc-space-3);
+  flex: none;
+  width: var(--tc-check-size);
+  height: var(--tc-check-size);
+  margin: 0;
+  accent-color: var(--tc-accent);
+  cursor: pointer;
+}
+
+.selectionBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--tc-space-1) var(--tc-space-3);
+  min-height: var(--tc-control-height-sm);
+}
+
+.selectionBar > button {
+  height: var(--tc-control-height-sm);
+  padding: 0 var(--tc-control-padding-x-sm);
+  font-size: var(--tc-font-size-sm);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -199,42 +244,46 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--tc-form-row-gap);
 }
 
-.textInput,
-.textArea {
-  width: 100%;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background-color: var(--tc-surface);
-  color: var(--tc-text);
-  padding: 8px 10px;
-  font-size: 13px;
-  font-family: inherit;
+.textInput {
+  composes: tc-field from global;
 }
 
 .textArea {
-  min-height: 72px;
-  resize: vertical;
+  composes: tc-field tc-field-multiline from global;
 }
 
-.textInput:focus-visible,
-.textArea:focus-visible {
-  outline: 2px solid var(--tc-accent);
-  outline-offset: 1px;
+.codeTextArea {
+  min-height: 160px;
+  font-family: var(--tc-font-mono);
+  font-size: var(--tc-font-size-sm);
 }
 
 .formError {
   margin: 0;
   color: var(--tc-error);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .formActions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--tc-space-2);
+}
+
+/* Every action before the final (primary) one reads as a ghost button, as in the editor footer. */
+.formActions > button:not(:last-child) {
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--tc-text-muted);
+}
+
+.formActions > button:not(:last-child):hover:not(:disabled) {
+  background-color: var(--tc-surface-raised);
+  color: var(--tc-text);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -244,119 +293,122 @@
 .vocabularyPanel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--tc-group-gap);
 }
 
 .vocabularySearchRow {
   display: flex;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .searchResultsList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .searchResultRow {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-2) var(--tc-space-1);
   border-bottom: 1px solid var(--tc-divider);
-  padding: 8px 4px;
 }
 
 .searchResultTag {
   color: var(--tc-text);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 .searchResultTranslation {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .loadMoreRow {
   display: flex;
   justify-content: center;
-  padding-top: 4px;
+  padding-top: var(--tc-space-1);
 }
 
 .sectionTitle {
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
 }
 
 .catalogList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .catalogEntry {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-3) var(--tc-space-1);
   border-bottom: 1px solid var(--tc-divider);
-  padding: 10px 4px;
 }
 
 .catalogEntryInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--tc-space-0-5);
   min-width: 0;
 }
 
 .catalogEntryName {
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--tc-font-size-sm);
+  font-weight: var(--tc-font-weight-medium);
 }
 
 .catalogEntryMeta {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
 }
 
 .bundledBadge {
   display: inline-flex;
   align-items: center;
-  border-radius: var(--tc-radius-status);
-  background-color: var(--tc-surface-raised);
+  height: var(--tc-chip-height-sm);
+  padding: 0 var(--tc-space-2);
+  border-radius: var(--tc-radius-chip);
+  background-color: var(--tc-chip-bg);
   color: var(--tc-text-muted);
-  padding: 2px 6px;
-  font-size: 11px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .nsfwSection {
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  padding: 8px 12px;
+  padding: var(--tc-space-2) var(--tc-space-4);
+  border-radius: var(--tc-radius-card);
+  background-color: var(--tc-surface);
+  box-shadow: 0 0 0 1px var(--tc-divider);
 }
 
 .nsfwToggle {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--tc-space-1-5);
+  min-height: var(--tc-control-height-sm);
   color: var(--tc-text-muted);
   background: none;
-  font-size: 12px;
-  padding: 4px 0;
+  font-size: var(--tc-font-size-sm);
 }
 
 .nsfwNotice {
+  padding: var(--tc-space-2) 0 0;
   color: var(--tc-text-muted);
-  font-size: 12px;
-  padding: 8px 0 0;
+  font-size: var(--tc-font-size-sm);
 }
 
 .installProgress {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -366,30 +418,30 @@
 .workflowToolbarRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .placeholderList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .placeholderRow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .placeholderKey {
   flex: none;
   width: 40%;
-  color: var(--tc-text);
-  font-size: 12px;
-  font-family: ui-monospace, "SFMono-Regular", monospace;
   overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--tc-text);
+  font-family: var(--tc-font-mono);
+  font-size: var(--tc-font-size-xs);
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .hiddenFileInput {
@@ -408,7 +460,7 @@
   display: block;
   max-width: 160px;
   max-height: 160px;
-  margin-bottom: 8px;
+  margin-bottom: var(--tc-space-2);
   border-radius: var(--tc-radius-image);
   object-fit: contain;
 }
@@ -417,17 +469,18 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-2);
   margin: 0;
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
 }
 
 .reference {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 12px;
+  gap: var(--tc-space-3);
 }
 
 .reference .reference_thumbnail {
@@ -437,29 +490,24 @@
 .reference_actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .reference_composer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-4);
+  border-radius: var(--tc-radius-card);
+  background-color: var(--tc-surface-raised);
 }
 
-.selectionBar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
+@container studio-workspace (max-width: 640px) {
+  .assetsView {
+    padding: var(--tc-space-2) var(--tc-space-4) var(--tc-space-4);
+  }
 
-.assetCardCheckbox {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--tc-accent);
+  .reorderHint {
+    display: none;
+  }
 }

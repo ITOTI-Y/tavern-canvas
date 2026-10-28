@@ -51,6 +51,56 @@
   outline-offset: 2px;
 }
 
+/*
+ * The one look for raw <input>, <select> and <textarea> elements. View CSS Modules pull these in
+ * with `composes: tc-field from global` and add only layout (width, min-height) on top.
+ * Single-line fields take the pill radius; multi-line fields take --tc-radius-textarea, because a
+ * pill radius on a box taller than one line clips the first and last lines' corners.
+ */
+.tc-field {
+  width: 100%;
+  min-width: 0;
+  height: var(--tc-control-height-md);
+  padding: 0 var(--tc-field-padding-x);
+  border: 1px solid var(--tc-border-field);
+  border-radius: var(--tc-radius-field);
+  background-color: var(--tc-field-bg);
+  color: var(--tc-text);
+  font-family: inherit;
+  font-size: var(--tc-control-font-size);
+  line-height: var(--tc-line-height-md);
+  transition: background-color var(--tc-motion-fast) ease;
+}
+
+.tc-field-multiline {
+  display: block;
+  height: auto;
+  min-height: calc(var(--tc-line-height-md) * 2 + var(--tc-control-height-md));
+  padding-block: calc((var(--tc-control-height-md) - var(--tc-line-height-md)) / 2 - 1px);
+  border-radius: var(--tc-radius-textarea);
+  resize: vertical;
+}
+
+.tc-field::placeholder {
+  color: var(--tc-text-placeholder);
+}
+
+.tc-field:focus,
+.tc-field:focus-visible {
+  outline: 2px solid var(--tc-focus);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.tc-field[aria-invalid="true"] {
+  border-color: var(--tc-error);
+}
+
+.tc-field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .tc-z-shell-sticky {
   z-index: var(--tc-z-shell-sticky);
 }

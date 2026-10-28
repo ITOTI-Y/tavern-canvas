@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PanelRightClose, PanelRightOpen, X } from "lucide-vue-next";
+import { Feather, PanelRightClose, PanelRightOpen, X } from "lucide-vue-next";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -35,7 +35,12 @@ function toggle_inspector(): void {
 <template>
   <header :class="styles.top_bar" data-window-drag-handle>
     <div :class="styles.top_bar_start">
-      <span :class="styles.top_bar_brand">{{ t("app.name") }}</span>
+      <span :class="styles.top_bar_brand">
+        <span :class="styles.top_bar_brand_mark" aria-hidden="true">
+          <AppIcon :icon="Feather" :size="15" />
+        </span>
+        {{ t("app.name") }}
+      </span>
       <span :class="styles.top_bar_divider" aria-hidden="true">/</span>
       <span :class="styles.top_bar_title">{{ title }}</span>
     </div>

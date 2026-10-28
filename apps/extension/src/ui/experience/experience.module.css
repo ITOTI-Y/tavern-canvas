@@ -18,6 +18,9 @@
   padding: 0;
   border-radius: 50%;
   background-color: var(--tc-surface);
+  box-shadow:
+    0 0 0 1px var(--tc-divider),
+    0 8px 24px var(--tc-shadow);
   color: var(--tc-text);
   cursor: grab;
   touch-action: none;

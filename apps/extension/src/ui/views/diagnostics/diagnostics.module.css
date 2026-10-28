@@ -7,8 +7,14 @@
 .view {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 16px;
+  gap: var(--tc-group-gap);
+  padding: var(--tc-space-4) var(--tc-panel-padding) var(--tc-panel-padding);
+}
+
+@container studio-workspace (max-width: 640px) {
+  .view {
+    padding: var(--tc-space-4);
+  }
 }
 
 .section {
@@ -21,23 +27,26 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 8px;
+  gap: var(--tc-space-3);
+  padding-bottom: var(--tc-space-3);
 }
 
 .section_title {
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
 }
 
 .row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
+  gap: var(--tc-space-3);
+  min-height: var(--tc-control-height-lg);
+  padding: var(--tc-space-1) 0;
   border-top: 1px solid var(--tc-divider);
+  font-size: var(--tc-font-size-sm);
 }
 
 .row_label {
@@ -56,7 +65,7 @@
 .status_text {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--tc-space-1-5);
   color: var(--tc-text-muted);
 }
 
@@ -80,11 +89,11 @@
   display: grid;
   grid-template-columns: 92px 1fr 1fr minmax(0, 1.4fr);
   align-items: center;
-  gap: 12px;
+  gap: var(--tc-space-3);
   height: 100%;
-  padding: 0 4px;
+  padding: 0 var(--tc-space-1);
   border-bottom: 1px solid var(--tc-divider);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .timeline_cell {
@@ -96,8 +105,8 @@
 
 .timeline_header {
   color: var(--tc-text-muted);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-xs);
+  font-weight: var(--tc-font-weight-semibold);
   text-transform: uppercase;
 }
 
@@ -107,7 +116,7 @@
 
 .timeline_code {
   color: var(--tc-text);
-  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-family: var(--tc-font-mono);
 }
 
 .timeline_error {
@@ -117,26 +126,26 @@
 .warning_list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px 0 0;
+  gap: var(--tc-space-1);
+  padding: var(--tc-space-2) 0 0;
 }
 
 .warning_item {
   color: var(--tc-warning);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
   overflow-wrap: anywhere;
 }
 
 .actions_row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-top: 8px;
+  gap: var(--tc-space-3);
+  padding-top: var(--tc-space-2);
 }
 
 .description {
   margin: 0;
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
   overflow-wrap: anywhere;
 }

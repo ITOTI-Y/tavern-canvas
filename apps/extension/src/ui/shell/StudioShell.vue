@@ -111,9 +111,9 @@ function select_route(route: StudioRoute): void {
         role="status"
         :aria-label="t('status.loading')"
       >
-        <div :class="styles.skeleton_block" style="width: 40%; height: 20px" />
-        <div :class="styles.skeleton_block" style="width: 90%; height: 14px; margin-top: 12px" />
-        <div :class="styles.skeleton_block" style="width: 75%; height: 14px; margin-top: 8px" />
+        <div :class="[styles.skeleton_block, styles.skeleton_title]" />
+        <div :class="[styles.skeleton_block, styles.skeleton_line]" />
+        <div :class="[styles.skeleton_block, styles.skeleton_line_short]" />
       </div>
       <StudioWorkspace v-else :state="props.state" :controller="props.controller" />
     </main>

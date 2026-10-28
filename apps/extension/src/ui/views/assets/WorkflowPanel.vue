@@ -232,8 +232,7 @@ const delete_confirm_title = (record_name: string): string =>
           <template #default="{ fieldId }">
             <textarea
               :id="fieldId"
-              :class="styles.textArea"
-              style="min-height: 160px; font-family: ui-monospace, monospace"
+              :class="[styles.textArea, styles.codeTextArea]"
               :value="workflow_json()"
               @input="panel.values.workflow_json = ($event.target as HTMLTextAreaElement).value"
             />

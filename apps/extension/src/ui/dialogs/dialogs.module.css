@@ -17,7 +17,7 @@
 .inpaintBody {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--tc-space-3);
   /* Never resizes on status change: fixed at construction from the loaded bitmap's own aspect
      ratio (set inline via `--tc-inpaint-aspect`), not recalculated when submit/pending/error
      state changes. */
@@ -45,7 +45,7 @@
 .inpaintToolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--tc-space-1-5);
   flex-wrap: wrap;
 }
 
@@ -53,13 +53,13 @@
   width: 1px;
   align-self: stretch;
   background-color: var(--tc-divider);
-  margin: 0 4px;
+  margin: 0 var(--tc-space-1);
 }
 
 .inpaintBrushRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--tc-space-3);
 }
 
 .inpaintBrushRow > * {
@@ -69,17 +69,17 @@
 .inpaintPromptGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--tc-space-3);
 }
 
 .inpaintFooter {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .inpaintDimensionError {
   margin: 0;
   color: var(--tc-error);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }

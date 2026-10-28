@@ -1,19 +1,17 @@
 /*
- * Scoped styles for the Gallery view (Stage 06 Task 6). Tokens only. Radius: image =
- * --tc-radius-image for every tile/preview surface, field = --tc-radius-field for inputs/selects,
- * panel = --tc-radius-panel for the preview dialog surface, status = --tc-radius-status for the
- * pinned badge and select dot. No card wraps the toolbar or the grid itself (cockpit density
- * discipline) -- only the tiles (repeated/draggable-equivalent image records) are the plan's
- * sanctioned card use, and even those are plain fixed boxes here, not nested cards.
+ * Scoped styles for the Gallery view. Tokens only. Radius: image = --tc-radius-image for every
+ * tile/preview surface, field = --tc-radius-field for inputs, panel = --tc-radius-panel for the
+ * preview dialog surface, status = --tc-radius-status for the pinned badge and select dot, bar =
+ * --tc-radius-bar for the bulk action bar. A selected tile is ringed with the marker yellow.
  */
 
 .galleryView {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--tc-space-3);
   height: 100%;
   min-height: 0;
-  padding: 16px;
+  padding: var(--tc-space-2) var(--tc-panel-padding) var(--tc-panel-padding);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -24,40 +22,80 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-  border-bottom: 1px solid var(--tc-divider);
-  padding-bottom: 12px;
+  gap: var(--tc-space-2) var(--tc-space-5);
+}
+
+/* The filter switches render as chip toggles: the switch stays in the accessibility tree and keeps
+   focus and keyboard handling, and the whole label is the visible control. */
+.filterBar > label:has(> button[role="switch"]) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--tc-control-height-md);
+  padding: 0 var(--tc-control-padding-x-md);
+  border: 1px solid var(--tc-border-field);
+  border-radius: var(--tc-radius-control);
+  background-color: var(--tc-surface);
+  color: var(--tc-text-muted);
+  font-size: var(--tc-control-font-size);
+  white-space: nowrap;
+  transition: background-color var(--tc-motion-fast) ease;
+}
+
+.filterBar > label:has(> button[role="switch"]):hover {
+  background-color: var(--tc-surface-raised);
+}
+
+.filterBar > label:has(> button[role="switch"][data-state="checked"]) {
+  border-color: var(--tc-marker);
+  background-color: var(--tc-marker);
+  color: var(--tc-on-marker);
+}
+
+.filterBar > label:has(> button[role="switch"]:focus-visible) {
+  outline: 2px solid var(--tc-focus);
+  outline-offset: 2px;
+}
+
+.filterBar > label > span,
+.filterBar > label > span span {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.filterBar > label > button[role="switch"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
 }
 
 .dateFilterLabel {
   display: flex;
   align-items: center;
-  gap: 6px;
+  white-space: nowrap;
+  gap: var(--tc-space-1-5);
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-sm);
 }
 
-/* Matches the select trigger sharing this filter bar (components.module.css `.selectTrigger`,
-   6px 8px). At 4px 6px the date text and the native calendar picker button both crowded the
-   border hard enough to read as a different, tighter control class than its own neighbours. */
 .dateInput {
-  border: 1px solid var(--tc-divider);
-  border-radius: var(--tc-radius-field);
-  background-color: var(--tc-surface);
-  color: var(--tc-text);
-  padding: 6px 8px;
-  font-size: 12px;
+  composes: tc-field from global;
+  width: auto;
+  padding: 0 var(--tc-space-3);
 }
 
 .cacheOccupancy {
   margin-left: auto;
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .emptyDescription {
   color: var(--tc-text-muted);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -67,7 +105,7 @@
 .skeletonGrid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .skeletonTile {
@@ -98,9 +136,15 @@
   background-color: var(--tc-surface-raised);
 }
 
-.tile[data-selected] {
-  outline: 2px solid var(--tc-accent);
-  outline-offset: -2px;
+/* Drawn as an overlay on top of the image: the tile clips its content, and the row gap is too
+   tight for an outline outside the tile. */
+.tile[data-selected]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--tc-marker);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .tileButton {
@@ -130,11 +174,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--tc-space-1);
   color: var(--tc-text-muted);
-  font-size: 11px;
+  font-size: var(--tc-font-size-xs);
   text-align: center;
-  padding: 8px;
+  padding: var(--tc-space-2);
+  border: 1px dashed var(--tc-border-field);
+  border-radius: var(--tc-radius-image);
 }
 
 /* Both tile overlays read from the --tc-media-* pair (tokens.css), never the surface/text/accent
@@ -143,38 +189,39 @@
    left both controls invisible against dark artwork in dark mode. */
 .tilePinnedBadge {
   position: absolute;
-  top: 6px;
-  left: 6px;
+  top: var(--tc-space-1-5);
+  right: var(--tc-space-1-5);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--tc-radius-status);
   background-color: var(--tc-media-scrim);
   color: var(--tc-media-ink);
-  padding: 3px;
+  padding: var(--tc-space-1);
 }
 
 .tileSelectToggle {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: var(--tc-space-1-5);
+  left: var(--tc-space-1-5);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: var(--tc-check-size);
+  height: var(--tc-check-size);
+  box-sizing: content-box;
   border-radius: var(--tc-radius-status);
-  border: 1px solid var(--tc-media-ink);
+  border: 1.5px solid var(--tc-media-ink);
   background-color: var(--tc-media-scrim);
   color: var(--tc-media-ink);
   transition: background-color var(--tc-motion-fast) ease-out;
 }
 
-/* Checked takes the accent fill every other selected control uses, keeping the --tc-media-ink
-   outline so the box still separates from artwork whose colors sit near the accent. */
+/* Checked takes the marker fill of every other selected item. */
 .tileSelectToggle[data-checked] {
-  background-color: var(--tc-accent);
-  color: var(--tc-on-accent);
+  border-color: var(--tc-marker);
+  background-color: var(--tc-marker);
+  color: var(--tc-on-marker);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -183,22 +230,42 @@
 
 .bulkActionBar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid var(--tc-divider);
-  padding-top: 12px;
+  justify-content: flex-start;
+  gap: var(--tc-space-2) var(--tc-space-3);
+  min-height: var(--tc-control-height-lg);
+  padding: var(--tc-space-1) var(--tc-space-1) var(--tc-space-1) var(--tc-space-4);
+  border-radius: var(--tc-radius-bar);
+  background-color: var(--tc-accent-soft);
+  box-shadow: 0 0 0 1px var(--tc-accent-border);
 }
 
 .bulkActionCount {
-  color: var(--tc-text);
-  font-size: 13px;
+  color: var(--tc-accent-text);
+  font-size: var(--tc-font-size-sm);
+  font-weight: var(--tc-font-weight-medium);
 }
 
 .bulkActionButtons {
   display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-1);
+}
+
+/* Small buttons, as in the mockup's bulk bar; the trailing clear button sits at the far end. */
+.bulkActionButtons > button {
+  height: var(--tc-control-height-sm);
+  padding: 0 var(--tc-control-padding-x-sm);
+  font-size: var(--tc-font-size-sm);
+}
+
+.bulkActionButtons > button:last-child {
+  width: var(--tc-control-height-sm);
+  margin-left: auto;
+  padding: 0;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -209,16 +276,17 @@
   position: fixed;
   inset: 0;
   z-index: var(--tc-z-overlay);
-  background-color: rgb(17 19 24 / 72%);
+  background-color: var(--tc-media-scrim);
 }
 
 .previewContent {
   position: fixed;
-  inset: 16px;
+  inset: var(--tc-space-4);
   z-index: var(--tc-z-overlay);
   display: flex;
   border-radius: var(--tc-radius-panel);
   background-color: var(--tc-surface);
+  box-shadow: 0 18px 50px var(--tc-shadow);
   overflow: hidden;
 }
 
@@ -238,23 +306,23 @@
 .previewToolbar {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px;
-  border-bottom: 1px solid var(--tc-divider);
+  gap: var(--tc-space-1);
+  padding: var(--tc-space-2);
 }
 
 .previewToolbarButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--tc-radius-field);
-  color: var(--tc-text);
+  width: var(--tc-control-height-md);
+  height: var(--tc-control-height-md);
+  border-radius: var(--tc-radius-control);
+  color: var(--tc-text-muted);
 }
 
 .previewToolbarButton:hover {
   background-color: var(--tc-surface-raised);
+  color: var(--tc-text);
 }
 
 .previewToolbarSpacer {
@@ -267,8 +335,8 @@
   min-height: 0;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px;
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-3);
   overflow: auto;
 }
 
@@ -295,8 +363,8 @@
   align-items: center;
   justify-content: center;
   color: var(--tc-text-muted);
-  font-size: 13px;
-  padding: 24px;
+  font-size: var(--tc-font-size-sm);
+  padding: var(--tc-space-6);
 }
 
 .previewNavButton {
@@ -309,7 +377,7 @@
   max-width: 40vw;
   overflow-y: auto;
   border-left: 1px solid var(--tc-divider);
-  padding: 16px;
+  padding: var(--tc-space-5);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -319,33 +387,34 @@
 .metadataInspector {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--tc-space-3);
 }
 
 .metadataTitle {
   color: var(--tc-text);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-lg);
+  line-height: var(--tc-line-height-lg);
+  font-weight: var(--tc-font-weight-semibold);
 }
 
 .metadataOrphanNotice {
   color: var(--tc-warning);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .metadataList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .metadataRow {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--tc-space-0-5);
   border-bottom: 1px solid var(--tc-divider);
-  padding-bottom: 6px;
-  font-size: 12px;
+  padding-bottom: var(--tc-space-1-5);
+  font-size: var(--tc-font-size-xs);
 }
 
 .metadataRow dt {
@@ -364,23 +433,42 @@
 
 .metadataEmpty {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .metadataActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--tc-space-2);
 }
 
 .metadataActionsHint {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 /* ---------------------------------------------------------------------- */
 /* Mobile: full screen preview, controls stay reachable above scroll area  */
 /* ---------------------------------------------------------------------- */
+
+@container studio-workspace (max-width: 640px) {
+  .galleryView {
+    padding: var(--tc-space-2) var(--tc-space-4) var(--tc-space-4);
+  }
+
+  .cacheOccupancy {
+    margin-left: 0;
+  }
+
+  .dateFilterLabel {
+    width: 100%;
+  }
+
+  .dateInput {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
 
 @media (max-width: 959px) {
   .previewContent {

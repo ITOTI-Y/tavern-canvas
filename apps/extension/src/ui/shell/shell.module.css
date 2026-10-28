@@ -1,8 +1,9 @@
 /*
- * The Studio application shell: CSS grid for desktop, fixed tracks for mobile. Every band is an
- * unframed region separated by 1px dividers -- no card wraps the workspace or inspector (plan
- * rule, taste directive 10). Buttons/nav items reuse utilities.css's `.tc-interactive` for hover
- * and press feedback so their transition rules stay centrally compliant with the motion contract.
+ * The Studio application shell: CSS grid for desktop, fixed tracks for mobile. Top bar, rail and
+ * workspace share the one canvas; the inspector floats in it as a panel. Buttons/nav items reuse
+ * utilities.css's `.tc-interactive` for hover and press feedback so their transition rules stay
+ * centrally compliant with the motion contract. The current rail and bottom-nav item carries the
+ * marker highlight.
  */
 
 .shell {
@@ -17,13 +18,13 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Desktop: fixed 56px top bar, fixed 64px icon rail, fluid workspace, an inspector column clamped
+ * Desktop: fixed top bar, fixed 64px icon rail, fluid workspace, an inspector column clamped
  * between 320px and 400px around its persisted width, and a content-sized (auto) task strip row.
  * --------------------------------------------------------------------------- */
 
 .shell[data-viewport="desktop"] {
   grid-template-columns: 64px minmax(0, 1fr) clamp(320px, var(--tc-inspector-width, 320px), 400px);
-  grid-template-rows: 56px minmax(0, 1fr) auto;
+  grid-template-rows: var(--tc-topbar-height) minmax(0, 1fr) auto;
   grid-template-areas:
     "topbar topbar topbar"
     "rail workspace inspector"
@@ -37,15 +38,13 @@
 /* ---------------------------------------------------------------------------
  * Mobile: one content layer (top bar, workspace, content-sized task strip, bottom nav) at 100dvh;
  * the inspector becomes a full-width sheet layered on top instead of a persistent column.
- * `taskstrip` mirrors desktop's own `auto` row (fix-wave addition) -- omitting it here left
- * `.task_strip`'s `grid-area: taskstrip` matching no named area on this viewport, so it fell back
- * to grid auto-placement and landed in an unplanned implicit row that broke the fixed 100dvh
- * layout; unreachable before this fix wave because `state.tasks` was never non-empty.
+ * `taskstrip` mirrors desktop's own `auto` row, so `.task_strip`'s `grid-area` always matches a
+ * named area and never falls into an implicit row that would break the fixed 100dvh layout.
  * --------------------------------------------------------------------------- */
 
 .shell[data-viewport="mobile"] {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 56px minmax(0, 1fr) auto 64px;
+  grid-template-rows: var(--tc-topbar-height) minmax(0, 1fr) auto var(--tc-bottomnav-height);
   grid-template-areas:
     "topbar"
     "workspace"
@@ -59,11 +58,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--tc-space-2);
   min-width: 0;
-  padding-inline: 16px;
-  background-color: var(--tc-surface);
-  border-bottom: 1px solid var(--tc-divider);
+  padding-inline: var(--tc-space-5) var(--tc-space-3);
+  background-color: var(--tc-canvas);
   cursor: move;
   touch-action: none;
 }
@@ -72,27 +70,44 @@
 .top_bar_end {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--tc-space-2);
   min-width: 0;
 }
 
+.top_bar_end {
+  gap: var(--tc-space-1);
+}
+
 .top_bar_brand {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  gap: var(--tc-space-2);
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 650;
+  font-size: var(--tc-font-size-md);
+  font-weight: var(--tc-font-weight-semibold);
+}
+
+.top_bar_brand_mark {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tc-control-height-sm);
+  height: var(--tc-control-height-sm);
+  border-radius: var(--tc-radius-control);
+  background-color: var(--tc-marker);
+  color: var(--tc-on-marker);
 }
 
 .top_bar_divider {
   flex: none;
-  color: var(--tc-divider);
+  color: var(--tc-text-placeholder);
 }
 
 .top_bar_title {
   min-width: 0;
   overflow: hidden;
   color: var(--tc-text-muted);
-  font-weight: 500;
+  font-weight: var(--tc-font-weight-medium);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -102,15 +117,21 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--tc-control-height-md);
+  height: var(--tc-control-height-md);
   color: var(--tc-text-muted);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-control);
+}
+
+.icon_button:hover {
+  color: var(--tc-text);
+  background-color: var(--tc-surface-raised);
 }
 
 .shell[data-viewport="mobile"] .top_bar {
   cursor: default;
   touch-action: auto;
+  padding-inline: var(--tc-space-4) var(--tc-space-2);
 }
 
 .icon_button.close_button:hover {
@@ -120,7 +141,7 @@
 
 .icon_button[data-selected="true"],
 .icon_button[aria-pressed="true"] {
-  color: var(--tc-accent);
+  color: var(--tc-text);
 }
 
 .rail {
@@ -128,10 +149,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 12px 8px;
-  background-color: var(--tc-surface);
-  border-right: 1px solid var(--tc-divider);
+  gap: var(--tc-space-1);
+  padding: var(--tc-space-2);
+  background-color: var(--tc-canvas);
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -139,28 +159,33 @@
 .rail_button {
   position: relative;
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  padding: 4px;
+  width: var(--tc-control-height-lg);
+  height: var(--tc-control-height-lg);
   color: var(--tc-text-muted);
-  border-left: 2px solid transparent;
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-control);
 }
 
-.rail_button[data-selected="true"] {
-  color: var(--tc-accent);
+.rail_button:hover {
+  color: var(--tc-text);
   background-color: var(--tc-surface-raised);
-  border-left-color: var(--tc-accent);
+}
+
+.rail_button[data-selected="true"],
+.rail_button[data-selected="true"]:hover {
+  color: var(--tc-on-marker);
+  background-color: var(--tc-marker);
 }
 
 .tooltip_content {
-  padding: 4px 8px;
-  font-size: 12px;
-  color: var(--tc-surface);
+  padding: var(--tc-space-1) var(--tc-space-3);
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
+  color: var(--tc-canvas);
   background-color: var(--tc-text);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-popover);
 }
 
 .workspace {
@@ -179,21 +204,24 @@
   align-items: flex-start;
   justify-content: center;
   min-height: 240px;
-  padding: 24px;
+  padding: var(--tc-panel-padding);
 }
 
+/* The inspector floats as a panel inside the canvas instead of a column ruled off by a divider. */
 .inspector {
   grid-area: inspector;
   display: flex;
   min-width: 0;
+  margin: 0 var(--tc-space-4) var(--tc-space-4) 0;
   overflow: hidden;
   background-color: var(--tc-surface);
-  border-left: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-panel);
+  box-shadow: 0 0 0 1px var(--tc-divider);
 }
 
 .inspector_resizer {
   flex: none;
-  width: 4px;
+  width: var(--tc-space-1);
   cursor: col-resize;
   background-color: transparent;
   touch-action: none;
@@ -217,41 +245,48 @@
   flex: none;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid var(--tc-divider);
+  gap: var(--tc-space-2);
+  min-height: var(--tc-topbar-height);
+  padding: var(--tc-space-2) var(--tc-space-2) var(--tc-space-2) var(--tc-space-4);
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
 }
 
 .inspector_body {
   flex: 1 1 auto;
   min-height: 0;
-  padding: 12px;
+  padding: 0 var(--tc-space-4) var(--tc-space-4);
   overflow: auto;
   color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
 }
 
 .inspector_selection_kind {
-  margin: 0 0 8px;
+  margin: 0 0 var(--tc-space-2);
   color: var(--tc-text);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--tc-font-size-md);
+  font-weight: var(--tc-font-weight-semibold);
 }
 
 .inspector_selection {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--tc-space-2);
   margin: 0;
 }
 
 .inspector_selection dt {
   color: var(--tc-text-muted);
-  font-size: 12px;
+  font-size: var(--tc-font-size-xs);
 }
 
 .inspector_selection dd {
   margin: 0;
   color: var(--tc-text);
-  font-size: 13px;
+  font-size: var(--tc-font-size-sm);
   overflow-wrap: anywhere;
 }
 
@@ -270,20 +305,33 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: var(--tc-space-0-5);
   min-width: 0;
-  padding-block: 6px;
+  padding-block: var(--tc-space-1);
   color: var(--tc-text-muted);
 }
 
+.bottom_nav_item > svg {
+  box-sizing: content-box;
+  padding: var(--tc-space-0-5) var(--tc-space-3);
+  border-radius: var(--tc-radius-control);
+}
+
 .bottom_nav_item[data-selected="true"] {
-  color: var(--tc-accent);
+  color: var(--tc-text);
+  font-weight: var(--tc-font-weight-medium);
+}
+
+.bottom_nav_item[data-selected="true"] > svg {
+  color: var(--tc-on-marker);
+  background-color: var(--tc-marker);
 }
 
 .bottom_nav_item_label {
   max-width: 100%;
   overflow: hidden;
-  font-size: 10px;
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -291,8 +339,7 @@
 .sheet_overlay {
   position: fixed;
   inset: 0;
-  background-color: var(--tc-text);
-  opacity: 0.32;
+  background-color: var(--tc-media-scrim);
 }
 
 .sheet_content {
@@ -306,17 +353,17 @@
   max-height: 80dvh;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background-color: var(--tc-surface);
-  border-top: 1px solid var(--tc-divider);
+  border-radius: var(--tc-radius-panel) var(--tc-radius-panel) 0 0;
+  box-shadow: 0 -8px 24px var(--tc-shadow);
 }
 
 .sheet_handle {
   flex: none;
-  width: 32px;
-  height: 4px;
-  margin: 8px auto;
-  /* Not --tc-divider: this bar is a drag affordance, not a structural separator, so it needs
-     more than a hairline's contrast to read as interactive (T1's WCAG audit flagged dividers
-     doubling as interactive boundaries as needing a separate, higher-contrast treatment). */
+  width: var(--tc-space-8);
+  height: var(--tc-space-1);
+  margin: var(--tc-space-2) auto;
+  /* Not --tc-divider: this bar is a drag affordance, not a structural separator, so it needs more
+     than a hairline's contrast to read as interactive. */
   background-color: var(--tc-text-muted);
   border-radius: var(--tc-radius-status);
 }
@@ -326,16 +373,20 @@
   flex: none;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 16px 12px;
-  border-bottom: 1px solid var(--tc-divider);
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-1) var(--tc-space-2) var(--tc-space-2) var(--tc-space-4);
+  color: var(--tc-text);
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
 }
 
 .sheet_body {
   flex: 1 1 auto;
   min-height: 0;
-  padding: 16px;
+  padding: 0 var(--tc-space-4) var(--tc-space-4);
   overflow: auto;
   color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
 }
 
 .task_strip {
@@ -343,7 +394,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background-color: var(--tc-surface);
+  background-color: var(--tc-canvas);
   border-top: 1px solid var(--tc-divider);
 }
 
@@ -351,23 +402,25 @@
   display: flex;
   flex: none;
   align-items: center;
-  justify-content: space-between;
-  padding: 6px 12px;
+  gap: var(--tc-space-1);
+  padding: var(--tc-space-1) var(--tc-space-3) var(--tc-space-1) var(--tc-space-5);
 }
 
 .task_strip_summary {
   min-width: 0;
+  margin-right: auto;
   overflow: hidden;
   font-variant-numeric: tabular-nums;
   color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .task_strip_list {
   display: flex;
-  gap: 8px;
-  padding: 0 12px 8px;
+  gap: var(--tc-space-2);
+  padding: 0 var(--tc-space-5) var(--tc-space-3);
   overflow-x: auto;
 }
 
@@ -375,12 +428,14 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 6px;
-  height: 28px;
+  gap: var(--tc-space-1-5);
+  height: var(--tc-control-height-sm);
   max-width: 220px;
-  padding-inline: 8px;
+  padding-inline: var(--tc-space-2);
+  color: var(--tc-text-muted);
   background-color: var(--tc-surface-raised);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-control);
+  font-size: var(--tc-font-size-sm);
 }
 
 .task_chip_dot {
@@ -405,75 +460,108 @@
 
 .task_chip_label {
   overflow: hidden;
-  font-size: 12px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .skeleton_block {
   background-color: var(--tc-surface-raised);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-status);
+}
+
+.skeleton_title {
+  width: 40%;
+  height: var(--tc-space-5);
+}
+
+.skeleton_line {
+  width: 90%;
+  height: var(--tc-space-3);
+  margin-top: var(--tc-space-3);
+}
+
+.skeleton_line_short {
+  width: 75%;
+  height: var(--tc-space-3);
+  margin-top: var(--tc-space-2);
 }
 
 .partial_banner {
   display: flex;
   flex: none;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: var(--tc-space-2) var(--tc-space-3);
+  margin: 0 var(--tc-space-4) var(--tc-space-2);
+  padding: var(--tc-space-1) var(--tc-space-1) var(--tc-space-1) var(--tc-space-4);
   color: var(--tc-warning);
-  background-color: var(--tc-surface-raised);
-  border-bottom: 1px solid var(--tc-divider);
+  background-color: var(--tc-surface);
+  border-radius: var(--tc-radius-bar);
+  box-shadow: 0 0 0 1px var(--tc-divider);
+  font-size: var(--tc-font-size-sm);
 }
 
 .state_screen {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: var(--tc-space-5);
+  right: var(--tc-space-5);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  width: min(560px, calc(100vw - 40px));
-  max-height: calc(100dvh - 40px);
-  padding: 32px;
+  gap: var(--tc-space-2);
+  width: min(560px, calc(100vw - 2 * var(--tc-space-5)));
+  max-height: calc(100dvh - 2 * var(--tc-space-5));
+  padding: var(--tc-space-8);
   overflow: auto;
   color: var(--tc-text);
   background-color: var(--tc-canvas);
-  border: 1px solid var(--tc-divider);
-  border-radius: 12px;
-  box-shadow: 0 20px 56px rgb(17 19 24 / 22%);
+  border-radius: var(--tc-radius-window);
+  box-shadow:
+    0 0 0 1px var(--tc-divider),
+    0 18px 50px var(--tc-shadow);
 }
 
 .state_screen_eyebrow {
   color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
 }
 
 .state_screen_title {
   max-width: 56ch;
+  font-size: var(--tc-font-size-lg);
+  font-weight: var(--tc-font-weight-semibold);
+  line-height: var(--tc-line-height-lg);
 }
 
 .state_screen_action {
   display: inline-flex;
   align-items: center;
-  margin-top: 20px;
-  padding: 8px 16px;
-  color: var(--tc-surface);
+  height: var(--tc-control-height-md);
+  margin-top: var(--tc-space-3);
+  padding: 0 var(--tc-control-padding-x-md);
+  color: var(--tc-on-accent);
   background-color: var(--tc-accent);
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-control);
+  font-size: var(--tc-control-font-size);
+  font-weight: var(--tc-font-weight-medium);
+}
+
+.state_screen_action:hover {
+  background-color: var(--tc-accent-hover);
 }
 
 .state_screen_detail {
   max-width: 100%;
   margin: 0;
-  padding: 8px 12px;
+  padding: var(--tc-space-3) var(--tc-space-4);
   overflow-x: auto;
-  border-radius: var(--tc-radius-field);
+  border-radius: var(--tc-radius-card);
   background: var(--tc-surface-raised);
   color: var(--tc-text-muted);
-  font-family: ui-monospace, monospace;
-  font-size: 12px;
+  font-family: var(--tc-font-mono);
+  font-size: var(--tc-font-size-xs);
   white-space: pre-wrap;
   user-select: text;
 }
@@ -481,4 +569,6 @@
 .state_screen_description {
   max-width: 56ch;
   color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
+  line-height: var(--tc-line-height-sm);
 }
