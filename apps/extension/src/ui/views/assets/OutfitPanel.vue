@@ -14,6 +14,7 @@ import type { AssetFieldSpec, AssetSummaryFieldSpec } from "./asset_field_schema
 import AssetCategoryList, { type AssetCardView } from "./AssetCategoryList.vue";
 import AssetEditorPanel from "./AssetEditorPanel.vue";
 import AssetRecordForm from "./AssetRecordForm.vue";
+import OutfitPreview from "./OutfitPreview.vue";
 import styles from "./assets_styles.js";
 import { use_chat_scope } from "./chat_scope.js";
 import { replace_values, use_asset_category_panel } from "./use_asset_category_panel.js";
@@ -63,7 +64,9 @@ function payload_text(record: AssetRecordSummary, key: string): string {
 }
 
 function describe_outfit(record: AssetRecordSummary): AssetCardView {
+  const preview = payload_text(record, "preview_image");
   return {
+    thumbnail: preview === "" ? null : preview,
     subtitle: payload_text(record, "owner_label"),
     detail: payload_text(record, "scope_label"),
     tags: OUTFIT_SLOTS.flatMap((slot) => split_tags(payload_text(record, slot))),
@@ -83,8 +86,44 @@ const panel = use_asset_category_panel(
   props.controller,
   () => FIELDS.value,
   () => t("errors.validation_required"),
-  ["character_id", "origin", "chat_id"],
+  ["character_id", "origin", "chat_id", "preview_image"],
 );
+
+const preview_image = computed(() =>
+  typeof panel.values.preview_image === "string" && panel.values.preview_image !== ""
+    ? panel.values.preview_image
+    : null,
+);
+
+function set_preview_image(image: string | null): void {
+  if (image === null) {
+    Reflect.deleteProperty(panel.values, "preview_image");
+  } else {
+    panel.values.preview_image = image;
+  }
+}
+
+const SUBJECT_TAGS: Readonly<Record<string, string>> = { girl: "1girl", boy: "1boy" };
+/** A plain full-figure view, so the outfit is what the preview shows. */
+const PREVIEW_COMPOSITION = "solo, full body, standing, simple background, white background";
+
+/** The outfit's own tags on the owner's subject; read when the button is pressed. */
+function preview_prompt(): { positive_prompt: string; negative_prompt: string } {
+  const owner = props.characterRecords.find(
+    (character) => character.id === panel.values.character_id,
+  );
+  const subject = owner === undefined ? "" : (SUBJECT_TAGS[String(owner.payload.subject)] ?? "");
+  return {
+    positive_prompt: [
+      subject,
+      PREVIEW_COMPOSITION,
+      ...OUTFIT_SLOTS.flatMap((slot) => split_tags(panel.values[slot])),
+    ]
+      .filter((tag) => tag !== "")
+      .join(", "),
+    negative_prompt: "",
+  };
+}
 
 const bound_to_chat = computed(
   () => typeof panel.values.chat_id === "string" && panel.values.chat_id !== "",
@@ -145,6 +184,7 @@ function set_character_id(character_id: string): void {
           : t('assets.outfits.add_action')
       "
       :description="t('assets.form_dialog_description')"
+      :thumbnail="preview_image"
       :close-label="t('common.actions.close')"
       @update:open="
         (open) => {
@@ -174,6 +214,13 @@ function set_character_id(character_id: string): void {
         @save="panel.save"
         @cancel="panel.close_dialog"
       >
+        <template #leading-fields>
+          <OutfitPreview
+            :image="preview_image"
+            :prompt="preview_prompt"
+            @update:image="set_preview_image"
+          />
+        </template>
         <template #extra-fields>
           <p v-if="bound_to_chat" :class="styles.chat_scope_note">
             {{ t("assets.chat_scope_note") }}

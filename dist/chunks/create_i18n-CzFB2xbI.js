@@ -256,6 +256,12 @@ var o = {
 			reference_mode_precise: "Precise reference"
 		},
 		outfits: {
+			preview_label: "Preview",
+			preview_hint: "A full-figure picture generated from the outfit's tags, shown on its library card.",
+			preview_generate: "Generate a preview",
+			preview_regenerate: "Regenerate",
+			preview_remove: "Remove the preview",
+			preview_failed: "The preview could not be generated: {reason}",
 			empty_title: "No outfits saved yet",
 			empty_description: "Save outfit tags per slot and link them to a character; when the story changes clothes, the wardrobe update switches or creates outfits.",
 			add_action: "Add outfit",
@@ -806,7 +812,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-B7fhdzI7.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DDN12Wx3.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

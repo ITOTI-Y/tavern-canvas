@@ -252,6 +252,13 @@ const assets = {
     reference_mode_precise: "Precise reference",
   },
   outfits: {
+    preview_label: "Preview",
+    preview_hint:
+      "A full-figure picture generated from the outfit's tags, shown on its library card.",
+    preview_generate: "Generate a preview",
+    preview_regenerate: "Regenerate",
+    preview_remove: "Remove the preview",
+    preview_failed: "The preview could not be generated: {reason}",
     empty_title: "No outfits saved yet",
     empty_description:
       "Save outfit tags per slot and link them to a character; when the story changes clothes, the wardrobe update switches or creates outfits.",

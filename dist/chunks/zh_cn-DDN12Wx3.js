@@ -225,6 +225,12 @@ var e = {
 			reference_mode_precise: "人物参考"
 		},
 		outfits: {
+			preview_label: "预览图",
+			preview_hint: "按服装标签生成一张全身图，作为素材库卡片的缩略图。",
+			preview_generate: "一键生成预览图",
+			preview_regenerate: "重新生成",
+			preview_remove: "移除预览图",
+			preview_failed: "预览图生成失败：{reason}",
 			empty_title: "还没有保存服装",
 			empty_description: "按部位保存服装标签并关联到角色；角色在剧情中更衣时，服装判断会自动切换或新建服装。",
 			add_action: "添加服装",

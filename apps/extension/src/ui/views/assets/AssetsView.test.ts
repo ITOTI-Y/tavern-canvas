@@ -556,6 +556,35 @@ describe("Outfit panel character link", () => {
   });
 });
 
+describe("Outfit preview", () => {
+  it("generates a preview from the outfit's tags and saves it with the outfit", async () => {
+    const generate = vi.fn<ReferenceImagePort["generate"]>(() => Promise.resolve(new Blob()));
+    const { controller } = mount_assets_view({
+      reference: { generate, read_outfit: vi.fn(), read_character: vi.fn() },
+    });
+    await click_tab("Outfits");
+    await dom().find('button[aria-label="Add outfit"]').trigger("click");
+    await dom().find('input[placeholder="Name"]').setValue("Sailor uniform");
+    const tops = dom().find<HTMLInputElement>(
+      '[data-testid="asset-editor"] input[role="combobox"]',
+    );
+    await tops.setValue("sailor collar, ");
+
+    await dom().find('[data-testid="outfit-preview-generate"]').trigger("click");
+    await flushPromises();
+    await dom().find('button[type="submit"]').trigger("click");
+    await flushPromises();
+
+    expect(generate.mock.calls[0]?.[0].positive_prompt).toContain("sailor collar");
+    expect(controller.save_asset).toHaveBeenCalledWith(
+      "outfit",
+      expect.objectContaining({
+        payload: expect.objectContaining({ preview_image: "data:image/png;base64,AAAA" }),
+      }),
+    );
+  });
+});
+
 describe("LoRA metadata panel", () => {
   it("saves the file name and trigger words with a default weight of 1", async () => {
     const { controller } = mount_assets_view();

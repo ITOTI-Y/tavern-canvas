@@ -7,7 +7,7 @@ import { l as _, n as v, o as y, r as b, s as x } from "./chunks/wardrobe_librar
 import { a as S, i as C, r as te } from "./chunks/provider-B-m_0o6I.js";
 import { a as ne, c as re, i as ie, l as ae, n as w, o as T, r as oe, s as E, t as se, u as ce } from "./chunks/http_origin-XzGYW1kD.js";
 import { $ as le, A as D, F as ue, G as de, H as fe, L as pe, O as me, P as O, Q as he, U as ge, _ as _e, b as ve, dt as k, g as ye, h as be, i as xe, it as Se, j as Ce, lt as A, m as j, mt as M, n as we, p as N, pt as Te, rt as Ee, tt as P, u as De, x as Oe, y as ke } from "./chunks/vue-i18n-L-BrQRnK.js";
-import { t as Ae } from "./chunks/create_i18n-C2x-EsSI.js";
+import { t as Ae } from "./chunks/create_i18n-CzFB2xbI.js";
 import { i as je, n as Me, r as Ne, t as Pe } from "./chunks/portal_keys-DthxrmWp.js";
 import { t as Fe } from "./chunks/AppIcon-DkyxvN8k.js";
 import { t as Ie } from "./chunks/use_shell_viewport-Yd0oBRFR.js";
@@ -2350,7 +2350,7 @@ var zr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-DdIxtQs8.js")), i = ve(() => import("./chunks/StudioShell-BQ3TdxUR.js")), { t: a } = we();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-DdIxtQs8.js")), i = ve(() => import("./chunks/StudioShell-CRGWt8YP.js")), { t: a } = we();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
