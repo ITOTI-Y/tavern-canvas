@@ -2353,7 +2353,7 @@ var zr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-CdoD2DGS.js")), i = ve(() => import("./chunks/StudioShell-BNmjJRBB.js")), { t: a } = we();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-CdoD2DGS.js")), i = ve(() => import("./chunks/StudioShell-Bh7Y6UlE.js")), { t: a } = we();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -5092,7 +5092,7 @@ function Qo(e) {
 			if (d.provider_id !== "novelai" || d.action !== "generate" || p === null) return c(d);
 			let [{ apply_novelai_defaults: m }, { reference_image_bytes: h }, g] = await Promise.all([
 				import("./chunks/novelai_profile_defaults-CKb8rSMX.js"),
-				import("./chunks/reference_image-DYyYuujP.js").then((e) => e.n),
+				import("./chunks/reference_image-B8V-aXPW.js").then((e) => e.r),
 				p.load_runtime()
 			]), ee = jo(i.record), _ = ee === null ? d : await m(d, ee, {
 				store_input: (e) => g.store_input(e),

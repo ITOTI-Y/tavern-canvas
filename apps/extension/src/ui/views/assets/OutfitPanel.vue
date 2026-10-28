@@ -64,7 +64,8 @@ function payload_text(record: AssetRecordSummary, key: string): string {
 }
 
 function describe_outfit(record: AssetRecordSummary): AssetCardView {
-  const preview = payload_text(record, "preview_image");
+  const preview =
+    payload_text(record, "preview_thumbnail") || payload_text(record, "preview_image");
   return {
     thumbnail: preview === "" ? null : preview,
     subtitle: payload_text(record, "owner_label"),
@@ -87,6 +88,7 @@ const panel = use_asset_category_panel(
   () => FIELDS.value,
   () => t("errors.validation_required"),
   ["character_id", "origin", "chat_id", "preview_image"],
+  { preview_image: "preview_thumbnail" },
 );
 
 const preview_image = computed(() =>
@@ -184,7 +186,7 @@ function set_character_id(character_id: string): void {
           : t('assets.outfits.add_action')
       "
       :description="t('assets.form_dialog_description')"
-      :thumbnail="preview_image"
+      :thumbnail="panel.thumbnail('preview_image')"
       :close-label="t('common.actions.close')"
       @update:open="
         (open) => {

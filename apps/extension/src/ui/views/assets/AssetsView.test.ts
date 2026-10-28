@@ -13,6 +13,7 @@ import AssetsView from "./AssetsView.vue";
 
 vi.mock("./reference_image.js", () => ({
   read_reference_image: () => Promise.resolve("data:image/png;base64,AAAA"),
+  card_thumbnail: () => Promise.resolve("data:image/webp;base64,THUMB"),
 }));
 
 function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioState {
@@ -557,6 +558,59 @@ describe("Outfit panel character link", () => {
   });
 });
 
+describe("Card thumbnails", () => {
+  it("saves a small thumbnail beside the reference image and shows it on the card", async () => {
+    const record = make_record("character", "13131313-1313-4131-8131-131313131313", "Lin", {
+      reference_image: "data:image/png;base64,FULL",
+    });
+    const state = build_state({
+      records: {
+        character: [record],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+      },
+    });
+    const { controller } = mount_assets_view({ state });
+    await dom().find('button[aria-label="Edit: Lin"]').trigger("click");
+    await dom().find('button[type="submit"]').trigger("click");
+    await flushPromises();
+
+    expect(controller.save_asset).toHaveBeenCalledWith(
+      "character",
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          reference_image: "data:image/png;base64,FULL",
+          reference_thumbnail: "data:image/webp;base64,THUMB",
+        }),
+      }),
+    );
+  });
+
+  it("reads the thumbnail rather than the full image for the card", () => {
+    const record = make_record("character", "14141414-1414-4141-8141-141414141414", "Lin", {
+      reference_image: "data:image/png;base64,FULL",
+      reference_thumbnail: "data:image/webp;base64,THUMB",
+    });
+    const state = build_state({
+      records: {
+        character: [record],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+      },
+    });
+    mount_assets_view({ state });
+    expect(dom().find('[data-testid="asset-card"] img').attributes("src")).toBe(
+      "data:image/webp;base64,THUMB",
+    );
+  });
+});
+
 describe("Outfit preview", () => {
   it("generates a preview from the outfit's tags and saves it with the outfit", async () => {
     const generate = vi.fn<ReferenceImagePort["generate"]>(() => Promise.resolve(new Blob()));
@@ -580,7 +634,10 @@ describe("Outfit preview", () => {
     expect(controller.save_asset).toHaveBeenCalledWith(
       "outfit",
       expect.objectContaining({
-        payload: expect.objectContaining({ preview_image: "data:image/png;base64,AAAA" }),
+        payload: expect.objectContaining({
+          preview_image: "data:image/png;base64,AAAA",
+          preview_thumbnail: "data:image/webp;base64,THUMB",
+        }),
       }),
     );
   });

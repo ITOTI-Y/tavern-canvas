@@ -64,7 +64,7 @@ const SUMMARY_FIELDS: readonly AssetSummaryFieldSpec[] = [
 ];
 
 function describe_vibe(record: AssetRecordSummary): AssetCardView {
-  const image = record.payload.image;
+  const image = record.payload.image_thumbnail ?? record.payload.image;
   const strength = record.payload.strength;
   return {
     thumbnail: typeof image === "string" && image !== "" ? image : null,
@@ -79,6 +79,7 @@ const panel = use_asset_category_panel(
   () => FIELDS.value,
   () => t("errors.validation_required"),
   ["provider", "image"],
+  { image: "image_thumbnail" },
 );
 
 const image_error = ref<string | null>(null);

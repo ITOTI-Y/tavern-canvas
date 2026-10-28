@@ -3,6 +3,7 @@ import { reactive, ref, type Ref } from "vue";
 import type { Uuid } from "@tavern-canvas/contracts";
 import type { AssetCategory, AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
+import { card_thumbnail } from "./reference_image.js";
 import {
   empty_form_values,
   form_values_from_record,
@@ -21,6 +22,8 @@ export interface AssetCategoryPanelController {
   readonly save_error: Ref<string | null>;
   readonly values: AssetFormValues;
   readonly saving: Ref<boolean>;
+  /** The small picture for an image field, or the full image while a new one is unsaved. */
+  thumbnail(source_key: string): string | null;
   open_create(): void;
   open_edit(record: AssetRecordSummary): void;
   close_dialog(): void;
@@ -38,6 +41,8 @@ export function use_asset_category_panel(
   validation_message: () => string,
   /** Payload keys edited outside the field form, such as an attached image, kept when a record is edited. */
   preserved_keys: readonly string[] = [],
+  /** Image payload keys and the keys their card thumbnails are saved under. */
+  thumbnail_keys: Readonly<Record<string, string>> = {},
 ): AssetCategoryPanelController {
   const dialog_open = ref(false);
   const editing_record = ref<AssetRecordSummary | null>(null);
@@ -65,7 +70,7 @@ export function use_asset_category_panel(
     name_error.value = null;
     save_error.value = null;
     const preserved: AssetFormValues = {};
-    for (const key of preserved_keys) {
+    for (const key of [...preserved_keys, ...Object.values(thumbnail_keys)]) {
       const value = record.payload[key];
       if (typeof value === "string" || typeof value === "number") {
         preserved[key] = value;
@@ -73,6 +78,34 @@ export function use_asset_category_panel(
     }
     replace_values(values, { ...form_values_from_record(fields(), record), ...preserved });
     dialog_open.value = true;
+  }
+
+  function image_changed(source_key: string): boolean {
+    return values[source_key] !== editing_record.value?.payload[source_key];
+  }
+
+  function thumbnail(source_key: string): string | null {
+    const image = values[source_key];
+    if (typeof image !== "string" || image === "") {
+      return null;
+    }
+    const thumbnail_key = thumbnail_keys[source_key];
+    const saved = thumbnail_key === undefined ? undefined : values[thumbnail_key];
+    return typeof saved === "string" && !image_changed(source_key) ? saved : image;
+  }
+
+  /** A new image gets a fresh thumbnail; a record saved before thumbnails existed gets its first. */
+  async function with_thumbnails(): Promise<AssetFormValues> {
+    const payload: AssetFormValues = { ...values };
+    for (const [source_key, thumbnail_key] of Object.entries(thumbnail_keys)) {
+      const image = payload[source_key];
+      if (typeof image !== "string" || image === "") {
+        Reflect.deleteProperty(payload, thumbnail_key);
+      } else if (typeof payload[thumbnail_key] !== "string" || image_changed(source_key)) {
+        payload[thumbnail_key] = await card_thumbnail(image);
+      }
+    }
+    return payload;
   }
 
   function close_dialog(): void {
@@ -94,7 +127,7 @@ export function use_asset_category_panel(
         category,
         record_key: id,
         display_name: trimmed_name,
-        payload: { ...values },
+        payload: await with_thumbnails(),
       });
       dialog_open.value = false;
     } catch (error) {
@@ -131,6 +164,7 @@ export function use_asset_category_panel(
     save_error,
     values,
     saving,
+    thumbnail,
     open_create,
     open_edit,
     close_dialog,

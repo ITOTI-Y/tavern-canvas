@@ -93,6 +93,7 @@ const panel = use_asset_category_panel(
   () => FIELDS.value,
   () => t("errors.validation_required"),
   PRESERVED_KEYS,
+  { reference_image: "reference_thumbnail" },
 );
 
 const subject_options = computed<readonly SegmentedControlOption[]>(() => [
@@ -266,7 +267,8 @@ function subject_label(value: string): string {
 }
 
 function describe_character(record: AssetRecordSummary): AssetCardView {
-  const image = payload_text(record, "reference_image");
+  const image =
+    payload_text(record, "reference_thumbnail") || payload_text(record, "reference_image");
   return {
     thumbnail: image === "" ? null : image,
     subtitle: subject_label(payload_text(record, "subject")),
@@ -367,7 +369,7 @@ async function import_to_global(): Promise<void> {
             })
           : t('assets.form_dialog_description')
       "
-      :thumbnail="reference_image"
+      :thumbnail="panel.thumbnail('reference_image')"
       :close-label="t('common.actions.close')"
       @update:open="
         (open) => {

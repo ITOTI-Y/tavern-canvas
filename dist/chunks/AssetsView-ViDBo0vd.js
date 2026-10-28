@@ -9,7 +9,7 @@ import { t as U } from "./image-plus-D7OOsWBN.js";
 import { n as W, r as G, t as K } from "./AppCheckbox-qcV3D_N_.js";
 import { t as q } from "./FieldGroup-CViCiHLn.js";
 import { n as J, t as re } from "./AppSwitch-DeEYCZzD.js";
-import { a as Y, i as X, n as Z, r as Q, t as ie } from "./use_asset_category_panel-DGY2Dr1j.js";
+import { a as Y, i as X, n as Z, r as Q, t as ie } from "./use_asset_category_panel-CawmA-00.js";
 import { t as ae } from "./upload-BjktsLMj.js";
 import { t as oe } from "./x-D7Ry5i_D.js";
 import { t as se } from "./_prop_utils-O1SzpV_h.js";
@@ -18,7 +18,7 @@ import { n as me } from "./NumberStepper-CeqkgodA.js";
 import { c as he } from "./PopperContent-BPSDCuaj.js";
 import { t as ge } from "./ConfirmDialog-DASvEQUq.js";
 import { t as _e } from "./IconButton-4U1H-LPK.js";
-import { t as ve } from "./reference_image-DYyYuujP.js";
+import { n as ve } from "./reference_image-B8V-aXPW.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/chevron-up.js
 var ye = R("chevron-up", [["path", {
 	d: "m18 15-6-6-6 6",
@@ -590,7 +590,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			"locked_fields",
 			"chat_id",
 			"created_from_message_id"
-		]), _ = D(() => [
+		], { reference_image: "reference_thumbnail" }), _ = D(() => [
 			{
 				value: "girl",
 				label: l("assets.characters.subject_girl")
@@ -694,7 +694,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			return l(e === "boy" ? "assets.characters.subject_boy" : e === "other" ? "assets.characters.subject_other" : "assets.characters.subject_girl");
 		}
 		function ae(t) {
-			let n = J(t, "reference_image");
+			let n = J(t, "reference_thumbnail") || J(t, "reference_image");
 			return {
 				thumbnail: n === "" ? null : n,
 				subtitle: re(J(t, "subject")),
@@ -772,7 +772,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 				open: S(g).dialog_open.value,
 				title: S(g).editing_record.value ? S(g).editing_record.value.display_name : S(l)("assets.characters.add_action"),
 				description: S(g).editing_record.value ? S(l)("assets.characters.editor_description", { name: S(g).editing_record.value.display_name }) : S(l)("assets.form_dialog_description"),
-				thumbnail: k.value,
+				thumbnail: S(g).thumbnail("reference_image"),
 				"close-label": S(l)("common.actions.close"),
 				"onUpdate:open": t[7] ||= (e) => {
 					e || S(g).close_dialog();
@@ -1183,7 +1183,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			return typeof n == "string" ? n : "";
 		}
 		function f(t) {
-			let n = d(t, "preview_image");
+			let n = d(t, "preview_thumbnail") || d(t, "preview_image");
 			return {
 				thumbnail: n === "" ? null : n,
 				subtitle: d(t, "owner_label"),
@@ -1199,7 +1199,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			"origin",
 			"chat_id",
 			"preview_image"
-		]), _ = D(() => typeof g.values.preview_image == "string" && g.values.preview_image !== "" ? g.values.preview_image : null);
+		], { preview_image: "preview_thumbnail" }), _ = D(() => typeof g.values.preview_image == "string" && g.values.preview_image !== "" ? g.values.preview_image : null);
 		function b(e) {
 			e === null ? Reflect.deleteProperty(g.values, "preview_image") : g.values.preview_image = e;
 		}
@@ -1281,7 +1281,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			open: S(g).dialog_open.value,
 			title: S(g).editing_record.value ? S(g).editing_record.value.display_name : S(r)("assets.outfits.add_action"),
 			description: S(r)("assets.form_dialog_description"),
-			thumbnail: _.value,
+			thumbnail: S(g).thumbnail("preview_image"),
 			"close-label": S(r)("common.actions.close"),
 			"onUpdate:open": n[3] ||= (e) => {
 				e || S(g).close_dialog();
@@ -1399,13 +1399,13 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			numeric: !0
 		}];
 		function o(e) {
-			let t = e.payload.image, r = e.payload.strength;
+			let t = e.payload.image_thumbnail ?? e.payload.image, r = e.payload.strength;
 			return {
 				thumbnail: typeof t == "string" && t !== "" ? t : null,
 				detail: typeof r == "number" ? `${n("assets.vibe.strength_label")} ${String(r)}` : ""
 			};
 		}
-		let c = Z("vibe", t.controller, () => i.value, () => n("errors.validation_required"), ["provider", "image"]), l = j(null), u = D(() => typeof c.values.image == "string" && c.values.image !== "" ? c.values.image : null);
+		let c = Z("vibe", t.controller, () => i.value, () => n("errors.validation_required"), ["provider", "image"], { image: "image_thumbnail" }), l = j(null), u = D(() => typeof c.values.image == "string" && c.values.image !== "" ? c.values.image : null);
 		async function d(e) {
 			let t = e.target.files?.[0];
 			if (t !== void 0) {
