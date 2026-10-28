@@ -1,22 +1,26 @@
 import { a as e, i as t, n, o as r, s as i } from "./wardrobe_library-cpT1rkQA.js";
 import { A as a, D as o, F as s, G as c, I as l, N as u, T as d, V as f, W as p, _ as m, a as h, at as g, c as _, ct as v, et as y, ft as b, g as x, h as S, k as C, m as w, n as T, nt as E, p as D, pt as O, s as k, u as A, ut as j, v as M, x as N, y as P } from "./vue-i18n-DUz2Gjn8.js";
-import { r as F, t as I } from "./portal_keys-B9C82xtk.js";
-import { n as L, t as R } from "./AppIcon-Cnhzrx9o.js";
-import { i as z, n as B, r as ee, t as V } from "./AppSelect-CRHyq1ex.js";
+import { r as ee, t as F } from "./portal_keys-B9C82xtk.js";
+import { n as I, t as L } from "./AppIcon-Cnhzrx9o.js";
 import { t as te } from "./chevron-down-Tu_8qTxg.js";
 import { t as ne } from "./chevron-up-D4TetO-M.js";
-import { n as H, t as U } from "./download-DHgWv1wH.js";
-import { a as W, i as G, n as K, r as q, t as J } from "./use_asset_category_panel-ra3ACBcY.js";
-import { a as re, i as ie, n as Y, r as ae } from "./PromptTagChips-DuVZRo9M.js";
-import { t as X } from "./FieldGroup-5lMIUNw6.js";
-import { t as oe } from "./upload-CQtsg_mB.js";
-import { M as se, _ as ce, c as Z, i as le, o as ue, s as de } from "./Teleport-CZ6NJvBB.js";
+import { n as re, t as R } from "./download-DHgWv1wH.js";
+import { a as z, i as B, n as V, r as H, t as U } from "./use_asset_category_panel-BqBdmyjM.js";
+import { n as W, t as G } from "./StateSurface-BA0Ffiwe.js";
+import { n as K, r as q, t as J } from "./AppDialog-CzDoJQTe.js";
+import { t as Y } from "./FieldGroup-BYtqLDde.js";
+import { t as ie } from "./upload-CQtsg_mB.js";
+import { t as ae } from "./_prop_utils-CqbCYIc0.js";
+import { M as oe, _ as se, c as X, i as Z, o as ce, s as le } from "./Teleport-CZ6NJvBB.js";
+import { t as ue } from "./AppCheckbox-CTxQ1oVE.js";
+import { n as de } from "./NumberStepper-BaD6Y0DB.js";
 import { c as fe } from "./PopperContent-8IQaFABb.js";
-import { n as pe, t as me } from "./ConfirmDialog-CcAJItG1.js";
-import { t as he } from "./reference_image-DYyYuujP.js";
-import { r as ge } from "./SettingsView-BvGeDxju.js";
+import { t as pe } from "./AppSelect-BdnjEPS_.js";
+import { t as me } from "./ConfirmDialog-3SJceF8v.js";
+import { t as he } from "./AppSwitch-DGomz9dg.js";
+import { t as ge } from "./reference_image-DYyYuujP.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/scan-search.js
-var _e = L("scan-search", [
+var _e = I("scan-search", [
 	["path", {
 		d: "M3 7V5a2 2 0 0 1 2-2h2",
 		key: "aa7l1z"
@@ -43,7 +47,7 @@ var _e = L("scan-search", [
 		d: "m16 16-1.9-1.9",
 		key: "1dq9hf"
 	}]
-]), [ve, ye] = /*#__PURE__*/ se("TabsRoot"), be = /* @__PURE__ */ N({
+]), [ve, ye] = /*#__PURE__*/ oe("TabsRoot"), be = /* @__PURE__ */ N({
 	__name: "TabsRoot",
 	props: {
 		defaultValue: {
@@ -85,8 +89,8 @@ var _e = L("scan-search", [
 	emits: ["update:modelValue"],
 	setup(e, { emit: t }) {
 		let n = e, r = t, { orientation: i, unmountOnHide: a, dir: o } = g(n), s = fe(o);
-		Z();
-		let c = ce(n, "modelValue", r, {
+		X();
+		let c = se(n, "modelValue", r, {
 			defaultValue: n.defaultValue,
 			passive: n.modelValue === void 0
 		}), d = y(), f = E(/* @__PURE__ */ new Set());
@@ -99,7 +103,7 @@ var _e = L("scan-search", [
 			dir: s,
 			unmountOnHide: a,
 			activationMode: n.activationMode,
-			baseId: de(void 0, "reka-tabs"),
+			baseId: le(void 0, "reka-tabs"),
 			tabsList: d,
 			contentIds: f,
 			registerContent: (e) => {
@@ -109,7 +113,7 @@ var _e = L("scan-search", [
 				let t = new Set(f.value);
 				t.delete(e), f.value = t;
 			}
-		}), (e, t) => (u(), S(v(le), {
+		}), (e, t) => (u(), S(v(Z), {
 			dir: v(s),
 			"data-orientation": v(i),
 			"as-child": e.asChild,
@@ -156,18 +160,18 @@ var Q = /* @__PURE__ */ N({
 		}
 	},
 	setup(e) {
-		let t = e, { forwardRef: n } = Z(), r = ve(), i = D(() => xe(r.baseId, t.value)), o = D(() => Se(r.baseId, t.value)), s = D(() => t.value === r.modelValue.value), c = y(s.value);
+		let t = e, { forwardRef: n } = X(), r = ve(), i = D(() => xe(r.baseId, t.value)), o = D(() => Se(r.baseId, t.value)), s = D(() => t.value === r.modelValue.value), c = y(s.value);
 		return a(() => {
 			r.registerContent(t.value), requestAnimationFrame(() => {
 				c.value = !1;
 			});
 		}), C(() => {
 			r.unregisterContent(t.value);
-		}), (e, t) => (u(), S(v(ue), {
+		}), (e, t) => (u(), S(v(ce), {
 			present: e.forceMount || s.value,
 			"force-mount": ""
 		}, {
-			default: p(({ present: t }) => [P(v(le), {
+			default: p(({ present: t }) => [P(v(Z), {
 				id: o.value,
 				ref: v(n),
 				"as-child": e.asChild,
@@ -213,14 +217,14 @@ var Q = /* @__PURE__ */ N({
 		}
 	},
 	setup(e) {
-		let { loop: t } = g(e), { forwardRef: n, currentElement: r } = Z(), i = ve();
-		return i.tabsList = r, (e, r) => (u(), S(v(re), {
+		let { loop: t } = g(e), { forwardRef: n, currentElement: r } = X(), i = ve();
+		return i.tabsList = r, (e, r) => (u(), S(v(q), {
 			"as-child": "",
 			orientation: v(i).orientation.value,
 			dir: v(i).dir.value,
 			loop: v(t)
 		}, {
-			default: p(() => [P(v(le), {
+			default: p(() => [P(v(Z), {
 				ref: v(n),
 				role: "tablist",
 				"as-child": e.asChild,
@@ -264,13 +268,13 @@ var Q = /* @__PURE__ */ N({
 		}
 	},
 	setup(e) {
-		let t = e, { forwardRef: n } = Z(), r = ve(), i = D(() => xe(r.baseId, t.value)), a = D(() => r.contentIds.value.has(t.value) ? Se(r.baseId, t.value) : void 0), o = D(() => t.value === r.modelValue.value);
-		return (e, t) => (u(), S(v(ie), {
+		let t = e, { forwardRef: n } = X(), r = ve(), i = D(() => xe(r.baseId, t.value)), a = D(() => r.contentIds.value.has(t.value) ? Se(r.baseId, t.value) : void 0), o = D(() => t.value === r.modelValue.value);
+		return (e, t) => (u(), S(v(K), {
 			"as-child": "",
 			focusable: !e.disabled,
 			active: o.value
 		}, {
-			default: p(() => [P(v(le), {
+			default: p(() => [P(v(Z), {
 				id: i.value,
 				ref: v(n),
 				role: "tab",
@@ -313,7 +317,7 @@ var Q = /* @__PURE__ */ N({
 //#endregion
 //#region src/ui/views/assets/chat_scope.ts
 function we(e, t, n = () => !1) {
-	let r = d(I, y(null));
+	let r = d(F, y(null));
 	return {
 		active_chat_id: r,
 		visible: D(() => e().flatMap((e) => {
@@ -352,7 +356,7 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 		"uploaded"
 	],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = T(), a = d(F, null), o = y(null), s = y(null), l = y(!1), f = y(!1), g = y(""), _ = y(""), b = D(() => [
+		let n = e, r = t, { t: i } = T(), a = d(ee, null), o = y(null), s = y(null), l = y(!1), f = y(!1), g = y(""), _ = y(""), b = D(() => [
 			{
 				value: "vibe",
 				label: i("assets.characters.reference_mode_vibe")
@@ -372,7 +376,7 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 			s.value = null;
 			let a;
 			try {
-				a = await he(n);
+				a = await ge(n);
 			} catch {
 				s.value = i("assets.characters.reference_image_unreadable");
 				return;
@@ -389,7 +393,7 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 					let e = await a.generate({
 						positive_prompt: g.value,
 						negative_prompt: _.value
-					}), t = await he(e);
+					}), t = await ge(e);
 					r("update:image", t), r("generated", t), l.value = !1;
 				} catch (e) {
 					s.value = i("assets.characters.reference_generate_failed", { reason: e instanceof Error ? e.message : String(e) });
@@ -399,17 +403,17 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 			}
 		}
 		return (t, n) => (u(), m(A, null, [
-			P(X, {
+			P(Y, {
 				label: v(i)("assets.characters.reference_image_label"),
 				hint: v(i)("assets.characters.reference_image_hint"),
 				error: s.value
 			}, {
-				default: p(() => [w("div", { class: j(v(W).reference) }, [e.image === null ? x("", !0) : (u(), m("img", {
+				default: p(() => [w("div", { class: j(v(z).reference) }, [e.image === null ? x("", !0) : (u(), m("img", {
 					key: 0,
 					src: e.image,
 					alt: v(i)("assets.characters.reference_image_label"),
-					class: j(v(W).reference_thumbnail)
-				}, null, 10, Te)), w("div", { class: j(v(W).reference_actions) }, [
+					class: j(v(z).reference_thumbnail)
+				}, null, 10, Te)), w("div", { class: j(v(z).reference_actions) }, [
 					w("input", {
 						ref_key: "file_input",
 						ref: o,
@@ -419,18 +423,18 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 						"data-testid": "character-reference-input",
 						onChange: C
 					}, null, 544),
-					P(z, {
+					P(W, {
 						label: v(i)("assets.characters.reference_upload"),
 						onClick: n[0] ||= (e) => o.value?.click()
 					}, null, 8, ["label"]),
-					v(a) === null ? x("", !0) : (u(), S(z, {
+					v(a) === null ? x("", !0) : (u(), S(W, {
 						key: 0,
 						label: v(i)("assets.characters.reference_generate"),
 						disabled: l.value,
 						"data-testid": "character-reference-generate",
 						onClick: E
 					}, null, 8, ["label", "disabled"])),
-					e.image === null ? x("", !0) : (u(), S(z, {
+					e.image === null ? x("", !0) : (u(), S(W, {
 						key: 1,
 						label: v(i)("assets.characters.reference_image_remove"),
 						onClick: n[1] ||= (e) => r("update:image", null)
@@ -444,29 +448,29 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 			]),
 			l.value ? (u(), m("div", {
 				key: 0,
-				class: j(v(W).reference_composer)
+				class: j(v(z).reference_composer)
 			}, [
-				w("p", { class: j(v(W).chat_scope_note) }, O(v(i)("assets.characters.reference_generate_hint")), 3),
-				P(X, { label: v(i)("assets.characters.reference_prompt_label") }, {
+				w("p", { class: j(v(z).chat_scope_note) }, O(v(i)("assets.characters.reference_generate_hint")), 3),
+				P(Y, { label: v(i)("assets.characters.reference_prompt_label") }, {
 					default: p(({ fieldId: e }) => [c(w("textarea", {
 						id: e,
 						"onUpdate:modelValue": n[2] ||= (e) => g.value = e,
-						class: j(v(W).textArea)
+						class: j(v(z).textArea)
 					}, null, 10, Ee), [[h, g.value]])]),
 					_: 1
 				}, 8, ["label"]),
-				P(X, { label: v(i)("assets.characters.reference_negative_label") }, {
+				P(Y, { label: v(i)("assets.characters.reference_negative_label") }, {
 					default: p(({ fieldId: e }) => [c(w("textarea", {
 						id: e,
 						"onUpdate:modelValue": n[3] ||= (e) => _.value = e,
-						class: j(v(W).textArea)
+						class: j(v(z).textArea)
 					}, null, 10, De), [[h, _.value]])]),
 					_: 1
 				}, 8, ["label"]),
-				w("div", { class: j(v(W).reference_actions) }, [P(z, {
+				w("div", { class: j(v(z).reference_actions) }, [P(W, {
 					label: v(i)("common.actions.cancel"),
 					onClick: n[4] ||= (e) => l.value = !1
-				}, null, 8, ["label"]), P(z, {
+				}, null, 8, ["label"]), P(W, {
 					label: e.image === null ? v(i)("assets.characters.reference_generate_submit") : v(i)("assets.characters.reference_regenerate_submit"),
 					variant: "primary",
 					pending: f.value,
@@ -474,15 +478,15 @@ var Te = ["src", "alt"], Ee = ["id"], De = ["id"], Oe = /* @__PURE__ */ N({
 					onClick: k
 				}, null, 8, ["label", "pending"])], 2)
 			], 2)) : x("", !0),
-			e.image === null ? x("", !0) : (u(), m(A, { key: 1 }, [P(ae, {
+			e.image === null ? x("", !0) : (u(), m(A, { key: 1 }, [P(ue, {
 				"model-value": e.send,
 				label: v(i)("assets.characters.reference_send_label"),
 				"onUpdate:modelValue": n[5] ||= (e) => r("update:send", e)
-			}, null, 8, ["model-value", "label"]), P(X, {
+			}, null, 8, ["model-value", "label"]), P(Y, {
 				label: v(i)("assets.characters.reference_mode_label"),
 				hint: v(i)("assets.characters.reference_mode_hint")
 			}, {
-				default: p(() => [P(ge, {
+				default: p(() => [P(de, {
 					"model-value": e.mode,
 					options: b.value,
 					label: v(i)("assets.characters.reference_mode_label"),
@@ -559,7 +563,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 		]), h = D(() => [{
 			key: "scope_label",
 			label: c("assets.scope_label")
-		}]), g = K("character", s.controller, () => f.value, () => c("errors.validation_required"), [
+		}]), g = V("character", s.controller, () => f.value, () => c("errors.validation_required"), [
 			"subject",
 			"default_outfit_id",
 			"reference_image",
@@ -606,11 +610,11 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			}
 			g.values.reference_image = e, g.values.reference_mode = k.value;
 		}
-		let N = d(F, null), I = y(null), L = y(!1), R = y(null);
-		function ee(e) {
-			s.outfitRecords.some((e) => e.payload.character_id === g.record_id.value) || (I.value = e);
+		let N = d(ee, null), F = y(null), I = y(!1), L = y(null);
+		function te(e) {
+			s.outfitRecords.some((e) => e.payload.character_id === g.record_id.value) || (F.value = e);
 		}
-		async function te(e) {
+		async function ne(e) {
 			let t = crypto.randomUUID();
 			await s.controller.save_asset("outfit", {
 				id: t,
@@ -625,42 +629,42 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				}
 			}), g.values.default_outfit_id = t;
 		}
-		async function ne() {
-			let e = I.value;
+		async function re() {
+			let e = F.value;
 			if (e !== null && N !== null) {
-				L.value = !0, R.value = null;
+				I.value = !0, L.value = null;
 				try {
-					await te(await N.read_outfit(e));
+					await ne(await N.read_outfit(e));
 				} catch (e) {
-					R.value = c("assets.characters.outfit_from_reference_failed", { reason: e instanceof Error ? e.message : String(e) });
+					L.value = c("assets.characters.outfit_from_reference_failed", { reason: e instanceof Error ? e.message : String(e) });
 				} finally {
-					L.value = !1, I.value = null;
+					I.value = !1, F.value = null;
 				}
 			}
 		}
-		let H = y(null), U = y(!1);
-		function re(e) {
-			N !== null && (H.value = e);
+		let R = y(null), G = y(!1);
+		function K(e) {
+			N !== null && (R.value = e);
 		}
-		async function ie() {
-			let t = H.value;
+		async function q() {
+			let t = R.value;
 			if (t !== null && N !== null) {
-				U.value = !0, R.value = null;
+				G.value = !0, L.value = null;
 				try {
 					let i = await N.read_character(t);
 					for (let t of r) {
 						let r = i.appearance[t];
 						r !== void 0 && e(g.values[t]).length === 0 && (g.values[t] = n(r));
 					}
-					g.values.subject !== "girl" && g.values.subject !== "boy" && (g.values.subject = i.subject), i.outfit !== null && await te(i.outfit);
+					g.values.subject !== "girl" && g.values.subject !== "boy" && (g.values.subject = i.subject), i.outfit !== null && await ne(i.outfit);
 				} catch (e) {
-					R.value = c("assets.characters.character_from_reference_failed", { reason: e instanceof Error ? e.message : String(e) });
+					L.value = c("assets.characters.character_from_reference_failed", { reason: e instanceof Error ? e.message : String(e) });
 				} finally {
-					U.value = !1, H.value = null;
+					G.value = !1, R.value = null;
 				}
 			}
 		}
-		let ae = {
+		let ie = {
 			girl: "1girl",
 			boy: "1boy",
 			other: ""
@@ -669,23 +673,23 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			return r === void 0 ? [] : i.flatMap((e) => r.slots[e]);
 		}), se = D(() => ({
 			positive_prompt: n([
-				ae[b.value],
+				ie[b.value],
 				Me,
 				...r.flatMap((t) => e(g.values[t])),
 				...oe.value
 			].filter((e) => e !== "")),
 			negative_prompt: n(e(g.values.excluded_traits))
 		}));
-		async function ce() {
+		async function X() {
 			let t = g.editing_record.value?.payload ?? {}, n = r.filter((n) => e(g.values[n]).join(",") !== e(typeof t[n] == "string" ? t[n] : "").join(",")), i = /* @__PURE__ */ new Set([...e(g.values.locked_fields), ...n]);
 			g.values.locked_fields = [...i].join(", "), g.values.origin = typeof g.values.origin == "string" ? g.values.origin : "user", await g.save();
 		}
 		async function Z() {
-			g.values.chat_id = "", await ce();
+			g.values.chat_id = "", await X();
 		}
-		let le = (e) => c("assets.delete_confirm_title", { name: e });
+		let ce = (e) => c("assets.delete_confirm_title", { name: e });
 		return (e, t) => (u(), m("div", null, [
-			P(G, {
+			P(B, {
 				records: v(l),
 				"summary-fields": h.value,
 				loading: a.loading,
@@ -698,7 +702,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"reorder-hint": v(c)("assets.reorder_hint"),
 				"edit-label": v(c)("common.actions.edit"),
 				"delete-label": v(c)("common.actions.delete"),
-				"delete-confirm-title": le,
+				"delete-confirm-title": ce,
 				"delete-confirm-description": v(c)("assets.delete_confirm_description"),
 				"confirm-label": v(c)("confirmations.destructive.default_confirm_action"),
 				"cancel-label": v(c)("confirmations.destructive.default_cancel_action"),
@@ -736,7 +740,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"onReorder",
 				"onRandomSelect"
 			]),
-			P(Y, {
+			P(J, {
 				open: v(g).dialog_open.value,
 				title: v(g).editing_record.value ? v(c)("common.actions.edit") : v(c)("assets.characters.add_action"),
 				description: v(c)("assets.form_dialog_description"),
@@ -745,7 +749,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 					e || v(g).close_dialog();
 				}
 			}, {
-				default: p(() => [P(q, {
+				default: p(() => [P(H, {
 					"name-label": v(c)("common.labels.name"),
 					"name-placeholder": v(c)("common.labels.name"),
 					name: v(g).name.value,
@@ -761,8 +765,8 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 					"onUpdate:name": t[5] ||= (e) => {
 						v(g).name.value = e;
 					},
-					"onUpdate:values": t[6] ||= (e) => v(J)(v(g).values, e),
-					onSave: ce,
+					"onUpdate:values": t[6] ||= (e) => v(U)(v(g).values, e),
+					onSave: X,
 					onCancel: v(g).close_dialog
 				}, {
 					"leading-fields": p(() => [P(Oe, {
@@ -773,29 +777,29 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 						"onUpdate:image": A,
 						"onUpdate:send": t[1] ||= (e) => v(g).values.reference_send = +!!e,
 						"onUpdate:mode": t[2] ||= (e) => v(g).values.reference_mode = e,
-						onGenerated: ee,
-						onUploaded: re
+						onGenerated: te,
+						onUploaded: K
 					}, null, 8, [
 						"image",
 						"send",
 						"mode",
 						"default-prompt"
-					]), R.value === null ? x("", !0) : (u(), m("p", {
+					]), L.value === null ? x("", !0) : (u(), m("p", {
 						key: 0,
-						class: j(v(W).formError),
+						class: j(v(z).formError),
 						role: "alert"
-					}, O(R.value), 3))]),
+					}, O(L.value), 3))]),
 					"extra-fields": p(() => [
 						w.value ? (u(), m("p", {
 							key: 0,
-							class: j(v(W).chat_scope_note)
-						}, [M(O(v(c)("assets.chat_scope_note")) + " ", 1), P(z, {
+							class: j(v(z).chat_scope_note)
+						}, [M(O(v(c)("assets.chat_scope_note")) + " ", 1), P(W, {
 							label: v(c)("assets.import_to_global_action"),
 							"data-testid": "import-to-global",
 							onClick: Z
 						}, null, 8, ["label"])], 2)) : x("", !0),
-						P(X, { label: v(c)("assets.characters.subject_label") }, {
-							default: p(() => [P(ge, {
+						P(Y, { label: v(c)("assets.characters.subject_label") }, {
+							default: p(() => [P(de, {
 								"model-value": b.value,
 								options: _.value,
 								label: v(c)("assets.characters.subject_label"),
@@ -807,13 +811,13 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 							])]),
 							_: 1
 						}, 8, ["label"]),
-						P(X, { label: v(c)("assets.characters.default_outfit_label") }, {
-							default: p(({ fieldId: e, describedBy: n }) => [P(V, o({
+						P(Y, { label: v(c)("assets.characters.default_outfit_label") }, {
+							default: p(({ fieldId: e, describedBy: n }) => [P(pe, o({
 								id: e,
 								"model-value": C.value,
 								options: S.value,
 								placeholder: v(c)("assets.characters.default_outfit_label")
-							}, v(B)({ describedBy: n }), { "onUpdate:modelValue": t[4] ||= (e) => v(g).values.default_outfit_id = e === je ? "" : e }), null, 16, [
+							}, v(ae)({ describedBy: n }), { "onUpdate:modelValue": t[4] ||= (e) => v(g).values.default_outfit_id = e === je ? "" : e }), null, 16, [
 								"id",
 								"model-value",
 								"options",
@@ -846,17 +850,17 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"close-label"
 			]),
 			P(me, {
-				open: I.value !== null,
+				open: F.value !== null,
 				title: v(c)("assets.characters.outfit_from_reference_title"),
 				description: v(c)("assets.characters.outfit_from_reference_description"),
 				"confirm-label": v(c)("assets.characters.outfit_from_reference_confirm"),
 				"cancel-label": v(c)("assets.characters.outfit_from_reference_cancel"),
-				pending: L.value,
+				pending: I.value,
 				destructive: !1,
 				"onUpdate:open": t[8] ||= (e) => {
-					!e && !L.value && (I.value = null);
+					!e && !I.value && (F.value = null);
 				},
-				onConfirm: ne
+				onConfirm: re
 			}, null, 8, [
 				"open",
 				"title",
@@ -866,17 +870,17 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"pending"
 			]),
 			P(me, {
-				open: H.value !== null,
+				open: R.value !== null,
 				title: v(c)("assets.characters.character_from_reference_title"),
 				description: v(c)("assets.characters.character_from_reference_description"),
 				"confirm-label": v(c)("assets.characters.character_from_reference_confirm"),
 				"cancel-label": v(c)("assets.characters.character_from_reference_cancel"),
-				pending: U.value,
+				pending: G.value,
 				destructive: !1,
 				"onUpdate:open": t[9] ||= (e) => {
-					!e && !U.value && (H.value = null);
+					!e && !G.value && (R.value = null);
 				},
-				onConfirm: ie
+				onConfirm: q
 			}, null, 8, [
 				"open",
 				"title",
@@ -931,7 +935,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				key: "trigger_words",
 				label: n("assets.lora.trigger_words_label")
 			}
-		], a = K("lora", t.controller, () => r.value, () => n("errors.validation_required"), ["character_id"]);
+		], a = V("lora", t.controller, () => r.value, () => n("errors.validation_required"), ["character_id"]);
 		function s() {
 			a.open_create(), a.values.weight = 1;
 		}
@@ -942,7 +946,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			let e = a.values.character_id;
 			return typeof e == "string" && e !== "" ? e : void 0;
 		}), d = (e) => n("assets.delete_confirm_title", { name: e });
-		return (t, f) => (u(), m("div", null, [P(G, {
+		return (t, f) => (u(), m("div", null, [P(B, {
 			records: e.records,
 			"summary-fields": i,
 			loading: e.loading,
@@ -990,7 +994,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			"onDelete",
 			"onReorder",
 			"onRandomSelect"
-		]), P(Y, {
+		]), P(J, {
 			open: v(a).dialog_open.value,
 			title: v(a).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.lora.add_action"),
 			description: v(n)("assets.form_dialog_description"),
@@ -999,7 +1003,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				e || v(a).close_dialog();
 			}
 		}, {
-			default: p(() => [P(q, {
+			default: p(() => [P(H, {
 				"name-label": v(n)("common.labels.name"),
 				"name-placeholder": v(n)("common.labels.name"),
 				name: v(a).name.value,
@@ -1015,20 +1019,20 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"onUpdate:name": f[2] ||= (e) => {
 					v(a).name.value = e;
 				},
-				"onUpdate:values": f[3] ||= (e) => v(J)(v(a).values, e),
+				"onUpdate:values": f[3] ||= (e) => v(U)(v(a).values, e),
 				onSave: v(a).save,
 				onCancel: v(a).close_dialog
 			}, {
-				"extra-fields": p(() => [P(X, {
+				"extra-fields": p(() => [P(Y, {
 					label: v(n)("assets.lora.character_label"),
 					hint: v(n)("assets.lora.character_hint")
 				}, {
-					default: p(({ fieldId: e, describedBy: t }) => [P(V, o({
+					default: p(({ fieldId: e, describedBy: t }) => [P(pe, o({
 						id: e,
 						"model-value": l.value,
 						options: c.value,
 						placeholder: v(n)("assets.lora.character_placeholder")
-					}, v(B)({ describedBy: t }), { "onUpdate:modelValue": f[1] ||= (e) => v(a).values.character_id = e }), null, 16, [
+					}, v(ae)({ describedBy: t }), { "onUpdate:modelValue": f[1] ||= (e) => v(a).values.character_id = e }), null, 16, [
 						"id",
 						"model-value",
 						"options",
@@ -1096,7 +1100,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 		})), { visible: l } = we(() => t.characterRecords, () => ({
 			this_chat: n("assets.chat_scope_label"),
 			other_chat: (e) => n("assets.other_chat_scope_label", { chat: e })
-		})), d = K("outfit", t.controller, () => r.value, () => n("errors.validation_required"), [
+		})), d = V("outfit", t.controller, () => r.value, () => n("errors.validation_required"), [
 			"character_id",
 			"origin",
 			"chat_id"
@@ -1115,7 +1119,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			d.values.character_id = e;
 		}
 		let b = (e) => n("assets.delete_confirm_title", { name: e });
-		return (t, i) => (u(), m("div", null, [P(G, {
+		return (t, i) => (u(), m("div", null, [P(B, {
 			records: c.value,
 			"summary-fields": a.value,
 			loading: e.loading,
@@ -1165,7 +1169,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			"onDelete",
 			"onReorder",
 			"onRandomSelect"
-		]), P(Y, {
+		]), P(J, {
 			open: v(d).dialog_open.value,
 			title: v(d).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.outfits.add_action"),
 			description: v(n)("assets.form_dialog_description"),
@@ -1174,7 +1178,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				e || v(d).close_dialog();
 			}
 		}, {
-			default: p(() => [P(q, {
+			default: p(() => [P(H, {
 				"name-label": v(n)("common.labels.name"),
 				"name-placeholder": v(n)("common.labels.name"),
 				name: v(d).name.value,
@@ -1190,23 +1194,23 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"onUpdate:name": i[1] ||= (e) => {
 					v(d).name.value = e;
 				},
-				"onUpdate:values": i[2] ||= (e) => v(J)(v(d).values, e),
+				"onUpdate:values": i[2] ||= (e) => v(U)(v(d).values, e),
 				onSave: v(d).save,
 				onCancel: v(d).close_dialog
 			}, {
 				"extra-fields": p(() => [f.value ? (u(), m("p", {
 					key: 0,
-					class: j(v(W).chat_scope_note)
-				}, [M(O(v(n)("assets.chat_scope_note")) + " ", 1), P(z, {
+					class: j(v(z).chat_scope_note)
+				}, [M(O(v(n)("assets.chat_scope_note")) + " ", 1), P(W, {
 					label: v(n)("assets.import_to_global_action"),
 					onClick: h
-				}, null, 8, ["label"])], 2)) : x("", !0), P(X, { label: v(n)("assets.outfits.character_label") }, {
-					default: p(({ fieldId: e, describedBy: t }) => [P(V, o({
+				}, null, 8, ["label"])], 2)) : x("", !0), P(Y, { label: v(n)("assets.outfits.character_label") }, {
+					default: p(({ fieldId: e, describedBy: t }) => [P(pe, o({
 						id: e,
 						"model-value": _.value,
 						options: g.value,
 						placeholder: v(n)("assets.outfits.character_placeholder")
-					}, v(B)({ describedBy: t }), { "onUpdate:modelValue": y }), null, 16, [
+					}, v(ae)({ describedBy: t }), { "onUpdate:modelValue": y }), null, 16, [
 						"id",
 						"model-value",
 						"options",
@@ -1278,13 +1282,13 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			key: "strength",
 			label: n("assets.vibe.strength_label"),
 			numeric: !0
-		}], o = K("vibe", t.controller, () => i.value, () => n("errors.validation_required"), ["provider", "image"]), s = y(null), c = D(() => typeof o.values.image == "string" && o.values.image !== "" ? o.values.image : null);
+		}], o = V("vibe", t.controller, () => i.value, () => n("errors.validation_required"), ["provider", "image"]), s = y(null), c = D(() => typeof o.values.image == "string" && o.values.image !== "" ? o.values.image : null);
 		async function l(e) {
 			let t = e.target.files?.[0];
 			if (t !== void 0) {
 				s.value = null;
 				try {
-					o.values.image = await he(t);
+					o.values.image = await ge(t);
 				} catch {
 					s.value = n("assets.vibe.image_unreadable");
 				}
@@ -1295,7 +1299,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			o.values.provider = e;
 		}
 		let h = (e) => n("assets.delete_confirm_title", { name: e });
-		return (t, g) => (u(), m("div", null, [P(G, {
+		return (t, g) => (u(), m("div", null, [P(B, {
 			records: e.records,
 			"summary-fields": a,
 			loading: e.loading,
@@ -1344,7 +1348,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			"onDelete",
 			"onReorder",
 			"onRandomSelect"
-		]), P(Y, {
+		]), P(J, {
 			open: v(o).dialog_open.value,
 			title: v(o).editing_record.value ? v(n)("common.actions.edit") : v(n)("assets.vibe.add_action"),
 			description: v(n)("assets.form_dialog_description"),
@@ -1353,7 +1357,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				e || v(o).close_dialog();
 			}
 		}, {
-			default: p(() => [P(q, {
+			default: p(() => [P(H, {
 				"name-label": v(n)("common.labels.name"),
 				"name-placeholder": v(n)("common.labels.name"),
 				name: v(o).name.value,
@@ -1369,11 +1373,11 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"onUpdate:name": g[1] ||= (e) => {
 					v(o).name.value = e;
 				},
-				"onUpdate:values": g[2] ||= (e) => v(J)(v(o).values, e),
+				"onUpdate:values": g[2] ||= (e) => v(U)(v(o).values, e),
 				onSave: v(o).save,
 				onCancel: v(o).close_dialog
 			}, {
-				"extra-fields": p(() => [P(X, {
+				"extra-fields": p(() => [P(Y, {
 					label: v(n)("assets.vibe.image_label"),
 					hint: v(n)("assets.vibe.image_hint"),
 					error: s.value
@@ -1382,7 +1386,7 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 						key: 0,
 						src: c.value,
 						alt: v(n)("assets.vibe.image_label"),
-						class: j(v(W).reference_thumbnail)
+						class: j(v(z).reference_thumbnail)
 					}, null, 10, Ie)), w("input", {
 						id: e,
 						type: "file",
@@ -1396,8 +1400,8 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 					"label",
 					"hint",
 					"error"
-				]), P(X, { label: v(n)("assets.vibe.provider_label") }, {
-					default: p(() => [P(ge, {
+				]), P(Y, { label: v(n)("assets.vibe.provider_label") }, {
+					default: p(() => [P(de, {
 						"model-value": d.value,
 						options: r.value,
 						label: v(n)("assets.vibe.provider_label"),
@@ -1434,33 +1438,49 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 			"close-label"
 		])]));
 	}
-}), Ve = {
+}), Ve = { "data-testid": "vocabulary-installed" }, He = {
 	class: "tc-visually-hidden",
 	for: "vocabulary-search-input"
-}, He = ["placeholder"], Ue = ["aria-expanded"], We = /* @__PURE__ */ N({
+}, Ue = ["placeholder"], We = ["aria-expanded"], Ge = /* @__PURE__ */ N({
 	__name: "VocabularyPanel",
 	props: {
 		catalog: {},
 		installCommand: {},
 		loading: { type: Boolean },
+		catalogFailure: {},
 		controller: {},
 		locale: {}
 	},
 	setup(e) {
-		let t = e, { t: n } = T();
-		a(() => {
-			t.controller.load_vocabulary_catalog();
-		});
-		let r = /nsfw|adult|explicit/iu;
-		function i(e) {
-			return r.test(e.package_id) || r.test(e.display_name.en) || r.test(e.display_name["zh-CN"]);
+		let t = e, { t: n } = T(), r = y({ status: "loading" });
+		async function i() {
+			r.value = { status: "loading" };
+			try {
+				r.value = {
+					status: "ready",
+					package: await t.controller.load_installed_vocabulary()
+				};
+			} catch {
+				r.value = { status: "failed" };
+			}
 		}
-		let o = D(() => t.catalog.filter((e) => !i(e))), l = D(() => t.catalog.filter((e) => i(e))), d = y(!1);
+		a(() => {
+			i();
+		});
+		let o = y(!1);
+		function l() {
+			o.value = !0, t.controller.load_vocabulary_catalog();
+		}
+		let d = /nsfw|adult|explicit/iu;
 		function g(e) {
+			return d.test(e.package_id) || d.test(e.display_name.en) || d.test(e.display_name["zh-CN"]);
+		}
+		let _ = D(() => t.catalog.filter((e) => !g(e))), b = D(() => t.catalog.filter((e) => g(e))), C = y(!1);
+		function E(e) {
 			return t.locale === "zh-CN" ? e.display_name["zh-CN"] : e.display_name.en;
 		}
-		let _ = y(null), b = y(null);
-		function C(e) {
+		let k = y(null), N = y(null);
+		function ee(e) {
 			switch (e.phase) {
 				case "verifying_catalog_manifest": return n("assets.vocabulary.progress_verifying_catalog_manifest");
 				case "downloading": return n("assets.vocabulary.progress_downloading");
@@ -1469,81 +1489,97 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				default: return "";
 			}
 		}
-		async function E(e) {
-			_.value === null && (_.value = e.package_id, b.value = null, await t.controller.install_vocabulary_package(e, (e) => {
-				b.value = C(e);
-			}), _.value = null, b.value = null, t.controller.state.assets.vocabulary_install_command.status === "success" && (N.value = [], F.value = null, k.value.trim() !== "" && await G()));
+		async function F(e) {
+			k.value === null && (k.value = e.package_id, N.value = null, await t.controller.install_vocabulary_package(e, (e) => {
+				N.value = ee(e);
+			}), k.value = null, N.value = null, t.controller.state.assets.vocabulary_install_command.status === "success" && (B.value = [], V.value = null, i(), I.value.trim() !== "" && await Y()));
 		}
-		let k = y(""), N = y([]), F = y(null), I = y(!1), L = y(!1), B = y(null), V = null;
-		async function G() {
-			let e = k.value.trim();
+		let I = y(""), B = y([]), V = y(null), H = y(!1), U = y(!1), K = y(!1), q = y(null), J = null;
+		async function Y() {
+			let e = I.value.trim();
 			if (e === "") {
-				N.value = [], F.value = null;
+				B.value = [], V.value = null;
 				return;
 			}
-			I.value = !0;
+			H.value = !0, U.value = !1;
 			try {
 				let n = await t.controller.search_vocabulary(e);
-				N.value = n.results, F.value = n.next_cursor;
+				B.value = n.results, V.value = n.next_cursor;
+			} catch {
+				B.value = [], V.value = null, U.value = !0;
 			} finally {
-				I.value = !1;
+				H.value = !1;
 			}
 		}
-		async function K() {
-			if (F.value !== null) {
-				L.value = !0;
+		async function ie() {
+			if (V.value !== null) {
+				K.value = !0;
 				try {
-					let e = await t.controller.load_more_vocabulary(F.value);
-					N.value = [...N.value, ...e.results], F.value = e.next_cursor;
+					let e = await t.controller.load_more_vocabulary(V.value);
+					B.value = [...B.value, ...e.results], V.value = e.next_cursor;
 				} finally {
-					L.value = !1;
+					K.value = !1;
 				}
 			}
 		}
-		f(k, () => {
-			V !== null && clearTimeout(V), V = setTimeout(() => {
-				G();
+		f(I, () => {
+			J !== null && clearTimeout(J), J = setTimeout(() => {
+				Y();
 			}, 250);
 		});
-		async function q(e) {
-			await navigator.clipboard.writeText(e.display_text), B.value = e.record_id, setTimeout(() => {
-				B.value === e.record_id && (B.value = null);
+		async function ae(e) {
+			await navigator.clipboard.writeText(e.display_text), q.value = e.record_id, setTimeout(() => {
+				q.value === e.record_id && (q.value = null);
 			}, 2e3);
 		}
-		let J = D(() => t.loading ? "loading" : t.catalog.length === 0 ? "empty" : "ready"), re = D(() => I.value && N.value.length === 0 ? "loading" : k.value.trim() === "" || N.value.length > 0 ? "ready" : "empty");
-		return (e, t) => (u(), m("div", { class: j(v(W).vocabularyPanel) }, [
+		let oe = D(() => t.loading ? "loading" : t.catalogFailure === null ? t.catalog.length === 0 ? "empty" : "ready" : "error"), se = D(() => H.value && B.value.length === 0 ? "loading" : U.value ? "error" : I.value.trim() === "" || B.value.length > 0 ? "ready" : "empty");
+		return (t, i) => (u(), m("div", { class: j(v(z).vocabularyPanel) }, [
+			w("section", Ve, [w("p", { class: j(v(z).sectionTitle) }, O(v(n)("assets.vocabulary.installed_title")), 3), r.value.status === "loading" ? (u(), m("p", {
+				key: 0,
+				class: j(v(z).catalogEntryMeta)
+			}, O(v(n)("assets.vocabulary.installed_preparing")), 3)) : r.value.status === "failed" ? (u(), m("p", {
+				key: 1,
+				class: j(v(z).catalogEntryMeta)
+			}, O(v(n)("assets.vocabulary.installed_failed")), 3)) : r.value.package === null ? (u(), m("p", {
+				key: 2,
+				class: j(v(z).catalogEntryMeta)
+			}, O(v(n)("assets.vocabulary.installed_none")), 3)) : (u(), m("div", {
+				key: 3,
+				class: j(v(z).catalogEntry)
+			}, [w("div", { class: j(v(z).catalogEntryInfo) }, [w("span", { class: j(v(z).catalogEntryName) }, O(r.value.package.package_id), 3), w("span", { class: j(["tc-tabular-nums", v(z).catalogEntryMeta]) }, O(r.value.package.data_version) + " · " + O(v(n)("assets.vocabulary.tag_count", r.value.package.record_count)), 3)], 2)], 2))]),
 			w("section", null, [
-				w("p", { class: j(v(W).sectionTitle) }, O(v(n)("assets.vocabulary.search_placeholder")), 3),
-				w("div", { class: j(v(W).vocabularySearchRow) }, [w("label", Ve, O(v(n)("assets.vocabulary.search_placeholder")), 1), c(w("input", {
+				w("p", { class: j(v(z).sectionTitle) }, O(v(n)("assets.vocabulary.search_placeholder")), 3),
+				w("div", { class: j(v(z).vocabularySearchRow) }, [w("label", He, O(v(n)("assets.vocabulary.search_placeholder")), 1), c(w("input", {
 					id: "vocabulary-search-input",
-					"onUpdate:modelValue": t[0] ||= (e) => k.value = e,
+					"onUpdate:modelValue": i[0] ||= (e) => I.value = e,
 					type: "text",
-					class: j(v(W).searchInput),
+					class: j(v(z).searchInput),
 					placeholder: v(n)("assets.vocabulary.search_placeholder")
-				}, null, 10, He), [[h, k.value]])], 2),
-				P(ee, {
-					status: re.value,
-					"empty-title": v(n)("assets.vocabulary.empty_title"),
-					"empty-message": v(n)("assets.vocabulary.empty_description"),
+				}, null, 10, Ue), [[h, I.value]])], 2),
+				P(G, {
+					status: se.value,
+					"empty-title": v(n)("assets.vocabulary.no_results_title"),
+					"empty-message": v(n)("assets.vocabulary.no_results_description"),
+					"error-message": v(n)("assets.vocabulary.search_failed"),
 					"min-height": "60px"
 				}, {
-					default: p(() => [N.value.length > 0 ? (u(), m("ul", {
+					default: p(() => [B.value.length > 0 ? (u(), m("ul", {
 						key: 0,
-						class: j(v(W).searchResultsList)
-					}, [(u(!0), m(A, null, s(N.value, (e) => (u(), m("li", {
+						class: j(v(z).searchResultsList)
+					}, [(u(!0), m(A, null, s(B.value, (e) => (u(), m("li", {
 						key: e.record_id,
-						class: j(v(W).searchResultRow)
+						class: j(v(z).searchResultRow)
 					}, [
-						w("span", { class: j(v(W).searchResultTag) }, O(e.display_text), 3),
+						w("span", { class: j(v(z).searchResultTag) }, O(e.display_text), 3),
 						e.category ? (u(), m("span", {
 							key: 0,
-							class: j(v(W).searchResultTranslation)
+							class: j(v(z).searchResultTranslation)
 						}, O(e.category), 3)) : x("", !0),
-						P(z, {
-							label: B.value === e.record_id ? v(n)("common.actions.copied") : v(n)("common.actions.copy"),
-							icon: v(H),
+						P(W, {
+							label: q.value === e.record_id ? v(n)("common.actions.copied") : v(n)("common.actions.copy"),
+							icon: v(re),
 							variant: "secondary",
-							onClick: () => void q(e)
+							onClick: () => void ae(e)
 						}, null, 8, [
 							"label",
 							"icon",
@@ -1554,39 +1590,42 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				}, 8, [
 					"status",
 					"empty-title",
-					"empty-message"
+					"empty-message",
+					"error-message"
 				]),
-				F.value === null ? x("", !0) : (u(), m("div", {
+				V.value === null ? x("", !0) : (u(), m("div", {
 					key: 0,
-					class: j(v(W).loadMoreRow)
-				}, [P(z, {
+					class: j(v(z).loadMoreRow)
+				}, [P(W, {
 					label: v(n)("common.actions.next"),
 					variant: "secondary",
-					pending: L.value,
-					onClick: t[1] ||= () => void K()
+					pending: K.value,
+					onClick: i[1] ||= () => void ie()
 				}, null, 8, ["label", "pending"])], 2))
 			]),
 			w("section", null, [
-				w("p", { class: j(v(W).sectionTitle) }, O(v(n)("assets.vocabulary.update_action")), 3),
-				P(ee, {
-					status: J.value,
-					"empty-title": v(n)("assets.vocabulary.empty_title"),
-					"empty-message": v(n)("assets.vocabulary.empty_description"),
+				w("p", { class: j(v(z).sectionTitle) }, O(v(n)("assets.vocabulary.updates_title")), 3),
+				o.value ? (u(), S(G, {
+					key: 1,
+					status: oe.value,
+					"empty-title": v(n)("assets.vocabulary.no_updates_title"),
+					"empty-message": v(n)("assets.vocabulary.no_updates_description"),
+					"error-message": e.catalogFailure === null ? "" : v(n)("assets.vocabulary.catalog_failed_code", { code: e.catalogFailure.code }),
 					"min-height": "80px"
 				}, {
-					default: p(() => [w("div", { class: j(v(W).catalogList) }, [(u(!0), m(A, null, s(o.value, (e) => (u(), m("div", {
+					default: p(() => [w("div", { class: j(v(z).catalogList) }, [(u(!0), m(A, null, s(_.value, (e) => (u(), m("div", {
 						key: e.package_id,
-						class: j(v(W).catalogEntry)
-					}, [w("div", { class: j(v(W).catalogEntryInfo) }, [w("span", { class: j(v(W).catalogEntryName) }, O(g(e)), 3), w("span", { class: j(["tc-tabular-nums", v(W).catalogEntryMeta]) }, O(v(n)("assets.vocabulary.tag_count", e.record_count)), 3)], 2), e.bundled ? (u(), m("span", {
+						class: j(v(z).catalogEntry)
+					}, [w("div", { class: j(v(z).catalogEntryInfo) }, [w("span", { class: j(v(z).catalogEntryName) }, O(E(e)), 3), w("span", { class: j(["tc-tabular-nums", v(z).catalogEntryMeta]) }, O(v(n)("assets.vocabulary.tag_count", e.record_count)), 3)], 2), e.bundled ? (u(), m("span", {
 						key: 0,
-						class: j(v(W).bundledBadge)
-					}, O(v(n)("assets.vocabulary.bundled_label")), 3)) : (u(), S(z, {
+						class: j(v(z).bundledBadge)
+					}, O(v(n)("assets.vocabulary.bundled_label")), 3)) : (u(), S(W, {
 						key: 1,
 						label: v(n)("assets.vocabulary.import_action"),
-						icon: v(U),
+						icon: v(R),
 						variant: "primary",
-						pending: _.value === e.package_id,
-						onClick: () => void E(e)
+						pending: k.value === e.package_id,
+						onClick: () => void F(e)
 					}, null, 8, [
 						"label",
 						"icon",
@@ -1597,36 +1636,43 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				}, 8, [
 					"status",
 					"empty-title",
-					"empty-message"
-				]),
-				_.value !== null && b.value !== null ? (u(), m("p", {
+					"empty-message",
+					"error-message"
+				])) : (u(), S(W, {
 					key: 0,
-					class: j(v(W).installProgress)
-				}, O(b.value), 3)) : x("", !0)
+					label: v(n)("assets.vocabulary.update_action"),
+					variant: "secondary",
+					"data-testid": "vocabulary-check-updates",
+					onClick: l
+				}, null, 8, ["label"])),
+				k.value !== null && N.value !== null ? (u(), m("p", {
+					key: 2,
+					class: j(v(z).installProgress)
+				}, O(N.value), 3)) : x("", !0)
 			]),
-			l.value.length > 0 ? (u(), m("section", {
+			b.value.length > 0 ? (u(), m("section", {
 				key: 0,
-				class: j(v(W).nsfwSection)
+				class: j(v(z).nsfwSection)
 			}, [w("button", {
 				type: "button",
-				class: j(["tc-interactive", v(W).nsfwToggle]),
-				"aria-expanded": d.value,
-				onClick: t[2] ||= (e) => d.value = !d.value
-			}, [P(R, {
-				icon: d.value ? v(ne) : v(te),
+				class: j(["tc-interactive", v(z).nsfwToggle]),
+				"aria-expanded": C.value,
+				onClick: i[2] ||= (e) => C.value = !C.value
+			}, [P(L, {
+				icon: C.value ? v(ne) : v(te),
 				size: 14
-			}, null, 8, ["icon"]), M(" " + O(v(n)("assets.vocabulary.nsfw_disclosure_label")), 1)], 10, Ue), d.value ? (u(), m("div", {
+			}, null, 8, ["icon"]), M(" " + O(v(n)("assets.vocabulary.nsfw_disclosure_label")), 1)], 10, We), C.value ? (u(), m("div", {
 				key: 1,
-				class: j(v(W).catalogList)
-			}, [w("p", { class: j(v(W).nsfwNotice) }, O(v(n)("assets.vocabulary.nsfw_disclosure_hint")), 3), (u(!0), m(A, null, s(l.value, (e) => (u(), m("div", {
+				class: j(v(z).catalogList)
+			}, [w("p", { class: j(v(z).nsfwNotice) }, O(v(n)("assets.vocabulary.nsfw_disclosure_hint")), 3), (u(!0), m(A, null, s(b.value, (e) => (u(), m("div", {
 				key: e.package_id,
-				class: j(v(W).catalogEntry)
-			}, [w("div", { class: j(v(W).catalogEntryInfo) }, [w("span", { class: j(v(W).catalogEntryName) }, O(g(e)), 3), w("span", { class: j(["tc-tabular-nums", v(W).catalogEntryMeta]) }, O(v(n)("assets.vocabulary.tag_count", e.record_count)), 3)], 2), P(z, {
+				class: j(v(z).catalogEntry)
+			}, [w("div", { class: j(v(z).catalogEntryInfo) }, [w("span", { class: j(v(z).catalogEntryName) }, O(E(e)), 3), w("span", { class: j(["tc-tabular-nums", v(z).catalogEntryMeta]) }, O(v(n)("assets.vocabulary.tag_count", e.record_count)), 3)], 2), P(W, {
 				label: v(n)("assets.vocabulary.import_action"),
-				icon: v(U),
+				icon: v(R),
 				variant: "destructive",
-				pending: _.value === e.package_id,
-				onClick: () => void E(e)
+				pending: k.value === e.package_id,
+				onClick: () => void F(e)
 			}, null, 8, [
 				"label",
 				"icon",
@@ -1634,11 +1680,11 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 				"onClick"
 			])], 2))), 128))], 2)) : (u(), m("p", {
 				key: 0,
-				class: j(v(W).nsfwNotice)
+				class: j(v(z).nsfwNotice)
 			}, O(v(n)("assets.vocabulary.nsfw_disclosure_hint")), 3))], 2)) : x("", !0)
 		], 2));
 	}
-}), Ge = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/gu, Ke = [
+}), Ke = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/gu, qe = [
 	"positive_prompt",
 	"negative_prompt",
 	"seed",
@@ -1646,9 +1692,9 @@ var je = "none", Me = "solo, full body, standing, looking at viewer, simple back
 	"height",
 	"steps"
 ];
-function qe(e) {
+function Je(e) {
 	let t = /* @__PURE__ */ new Set();
-	for (let n of e.matchAll(Ge)) {
+	for (let n of e.matchAll(Ke)) {
 		let e = n[1];
 		e !== void 0 && t.add(e);
 	}
@@ -1656,13 +1702,13 @@ function qe(e) {
 }
 //#endregion
 //#region src/ui/views/assets/WorkflowPanel.vue?vue&type=script&setup=true&lang.ts
-var Je = ["aria-label"], Ye = [
+var Ye = ["aria-label"], Xe = [
 	"id",
 	"placeholder",
 	"value",
 	"aria-describedby",
 	"aria-invalid"
-], Xe = ["id", "value"], Ze = "unmapped", Qe = "{{", $e = "}}", et = /* @__PURE__ */ N({
+], Ze = ["id", "value"], Qe = "unmapped", $e = "{{", et = "}}", tt = /* @__PURE__ */ N({
 	__name: "WorkflowPanel",
 	props: {
 		records: {},
@@ -1674,7 +1720,7 @@ var Je = ["aria-label"], Ye = [
 			key: "workflow_json",
 			label: "",
 			kind: "textarea"
-		}], a = K("workflow", t.controller, () => i, () => n("errors.validation_required")), o = y(null), c = y([]);
+		}], a = V("workflow", t.controller, () => i, () => n("errors.validation_required")), o = y(null), c = y([]);
 		function l(e) {
 			switch (e) {
 				case "positive_prompt": return n("assets.workflow.target_positive_prompt");
@@ -1686,9 +1732,9 @@ var Je = ["aria-label"], Ye = [
 			}
 		}
 		let d = D(() => [{
-			value: Ze,
+			value: Qe,
 			label: n("assets.workflow.placeholder_unmapped")
-		}, ...Ke.map((e) => ({
+		}, ...qe.map((e) => ({
 			value: e,
 			label: l(e)
 		}))]);
@@ -1713,7 +1759,7 @@ var Je = ["aria-label"], Ye = [
 			e ? g(e.payload) : c.value = [];
 		}, { immediate: !0 });
 		function b() {
-			let e = qe(h()), t = new Map(c.value.map((e) => [e.name, e.target]));
+			let e = Je(h()), t = new Map(c.value.map((e) => [e.name, e.target]));
 			c.value = e.map((e) => ({
 				name: e,
 				target: t.get(e) ?? ""
@@ -1721,19 +1767,19 @@ var Je = ["aria-label"], Ye = [
 		}
 		function C(e, t) {
 			let n = c.value.find((t) => t.name === e);
-			n && (n.target = t === Ze ? "" : t);
+			n && (n.target = t === Qe ? "" : t);
 		}
 		function E() {
 			o.value?.click();
 		}
 		function k(e) {
-			return `${Qe}${e}${$e}`;
+			return `${$e}${e}${et}`;
 		}
 		async function M(e) {
 			let t = e.target, n = t.files?.[0];
 			if (t.value = "", !n) return;
 			let r = await n.text();
-			a.open_create(), a.name.value = n.name.replace(/\.json$/iu, ""), a.values.workflow_json = r, c.value = qe(r).map((e) => ({
+			a.open_create(), a.name.value = n.name.replace(/\.json$/iu, ""), a.values.workflow_json = r, c.value = Je(r).map((e) => ({
 				name: e,
 				target: ""
 			}));
@@ -1743,23 +1789,23 @@ var Je = ["aria-label"], Ye = [
 			for (let t of c.value) e[t.name] = t.target;
 			a.values.placeholder_map = JSON.stringify(e), await a.save();
 		}
-		let F = (e) => n("assets.delete_confirm_title", { name: e });
+		let ee = (e) => n("assets.delete_confirm_title", { name: e });
 		return (t, i) => (u(), m("div", null, [
-			w("div", { class: j(v(W).workflowToolbarRow) }, [P(z, {
+			w("div", { class: j(v(z).workflowToolbarRow) }, [P(W, {
 				label: v(n)("assets.workflow.import_action"),
-				icon: v(oe),
+				icon: v(ie),
 				variant: "primary",
 				onClick: E
 			}, null, 8, ["label", "icon"]), w("input", {
 				ref_key: "file_input",
 				ref: o,
-				class: j(v(W).hiddenFileInput),
+				class: j(v(z).hiddenFileInput),
 				type: "file",
 				accept: "application/json,.json",
 				"aria-label": v(n)("assets.workflow.import_action"),
 				onChange: i[0] ||= (e) => void M(e)
-			}, null, 42, Je)], 2),
-			P(G, {
+			}, null, 42, Ye)], 2),
+			P(B, {
 				records: e.records,
 				"summary-fields": [],
 				loading: e.loading,
@@ -1772,7 +1818,7 @@ var Je = ["aria-label"], Ye = [
 				"reorder-hint": v(n)("assets.reorder_hint"),
 				"edit-label": v(n)("assets.workflow.edit_action"),
 				"delete-label": v(n)("common.actions.delete"),
-				"delete-confirm-title": F,
+				"delete-confirm-title": ee,
 				"delete-confirm-description": v(n)("assets.delete_confirm_description"),
 				"confirm-label": v(n)("confirmations.destructive.default_confirm_action"),
 				"cancel-label": v(n)("confirmations.destructive.default_cancel_action"),
@@ -1808,7 +1854,7 @@ var Je = ["aria-label"], Ye = [
 				"onReorder",
 				"onRandomSelect"
 			]),
-			P(Y, {
+			P(J, {
 				open: v(a).dialog_open.value,
 				title: v(n)("assets.workflow.edit_action"),
 				description: v(n)("assets.form_dialog_description"),
@@ -1818,40 +1864,40 @@ var Je = ["aria-label"], Ye = [
 				}
 			}, {
 				default: p(() => [w("form", {
-					class: j(v(W).form),
+					class: j(v(z).form),
 					onSubmit: i[4] ||= _(() => void N(), ["prevent"])
 				}, [
-					P(X, {
+					P(Y, {
 						label: v(n)("common.labels.name"),
 						error: v(a).name_error.value,
 						required: ""
 					}, {
 						default: p(({ fieldId: e, describedBy: t, invalid: r }) => [w("input", {
 							id: e,
-							class: j(v(W).textInput),
+							class: j(v(z).textInput),
 							type: "text",
 							placeholder: v(n)("common.labels.name"),
 							value: v(a).name.value,
 							"aria-describedby": t,
 							"aria-invalid": r,
 							onInput: i[2] ||= (e) => v(a).name.value = e.target.value
-						}, null, 42, Ye)]),
+						}, null, 42, Xe)]),
 						_: 1
 					}, 8, ["label", "error"]),
-					P(X, { label: v(n)("assets.workflow.json_label") }, {
+					P(Y, { label: v(n)("assets.workflow.json_label") }, {
 						default: p(({ fieldId: e }) => [w("textarea", {
 							id: e,
-							class: j(v(W).textArea),
+							class: j(v(z).textArea),
 							style: {
 								"min-height": "160px",
 								"font-family": "ui-monospace, monospace"
 							},
 							value: h(),
 							onInput: i[3] ||= (e) => v(a).values.workflow_json = e.target.value
-						}, null, 42, Xe)]),
+						}, null, 42, Ze)]),
 						_: 1
 					}, 8, ["label"]),
-					P(z, {
+					P(W, {
 						label: v(n)("assets.workflow.placeholder_scan_action"),
 						icon: v(_e),
 						variant: "secondary",
@@ -1860,13 +1906,13 @@ var Je = ["aria-label"], Ye = [
 					}, null, 8, ["label", "icon"]),
 					c.value.length > 0 ? (u(), m("div", {
 						key: 0,
-						class: j(v(W).placeholderList)
+						class: j(v(z).placeholderList)
 					}, [(u(!0), m(A, null, s(c.value, (e) => (u(), m("div", {
 						key: e.name,
-						class: j(v(W).placeholderRow)
-					}, [w("span", { class: j(v(W).placeholderKey) }, O(k(e.name)), 3), (u(), S(V, {
+						class: j(v(z).placeholderRow)
+					}, [w("span", { class: j(v(z).placeholderKey) }, O(k(e.name)), 3), (u(), S(pe, {
 						key: v(r),
-						"model-value": e.target === "" ? Ze : e.target,
+						"model-value": e.target === "" ? Qe : e.target,
 						options: d.value,
 						placeholder: v(n)("assets.workflow.placeholder_unmapped"),
 						ariaLabel: e.name,
@@ -1878,12 +1924,12 @@ var Je = ["aria-label"], Ye = [
 						"ariaLabel",
 						"onUpdate:modelValue"
 					]))], 2))), 128))], 2)) : x("", !0),
-					w("div", { class: j(v(W).formActions) }, [P(z, {
+					w("div", { class: j(v(z).formActions) }, [P(W, {
 						label: v(n)("common.actions.cancel"),
 						variant: "secondary",
 						type: "button",
 						onClick: v(a).close_dialog
-					}, null, 8, ["label", "onClick"]), P(z, {
+					}, null, 8, ["label", "onClick"]), P(W, {
 						label: v(n)("common.actions.save"),
 						variant: "primary",
 						type: "submit",
@@ -1899,7 +1945,7 @@ var Je = ["aria-label"], Ye = [
 			])
 		]));
 	}
-}), tt = /* @__PURE__ */ N({
+}), nt = /* @__PURE__ */ N({
 	__name: "AssetsView",
 	props: {
 		state: {},
@@ -1917,54 +1963,54 @@ var Je = ["aria-label"], Ye = [
 			a.value = e, i.has(e) && t.controller.set_active_asset_category(e);
 		}
 		let c = D(() => t.state.loading.has("assets")), l = D(() => t.state.loading.has("vocabulary")), d = D(() => r.value === "zh-CN" ? "zh-CN" : "en");
-		return (t, r) => (u(), m("div", { class: j(v(W).assetsView) }, [P(v(be), {
+		return (t, r) => (u(), m("div", { class: j(v(z).assetsView) }, [P(v(be), {
 			"model-value": a.value,
 			"onUpdate:modelValue": s
 		}, {
 			default: p(() => [
 				P(v(Ce), {
-					class: j(v(W).tabsList),
+					class: j(v(z).tabsList),
 					"aria-label": v(n)("nav.assets")
 				}, {
 					default: p(() => [
 						P(v($), {
 							value: "vocabulary",
-							class: j(v(W).tabsTrigger)
+							class: j(v(z).tabsTrigger)
 						}, {
 							default: p(() => [M(O(v(n)("assets.tabs.vocabulary")), 1)]),
 							_: 1
 						}, 8, ["class"]),
 						P(v($), {
 							value: "character",
-							class: j(v(W).tabsTrigger)
+							class: j(v(z).tabsTrigger)
 						}, {
 							default: p(() => [M(O(v(n)("assets.tabs.characters")), 1)]),
 							_: 1
 						}, 8, ["class"]),
 						P(v($), {
 							value: "outfit",
-							class: j(v(W).tabsTrigger)
+							class: j(v(z).tabsTrigger)
 						}, {
 							default: p(() => [M(O(v(n)("assets.tabs.outfits")), 1)]),
 							_: 1
 						}, 8, ["class"]),
 						P(v($), {
 							value: "lora",
-							class: j(v(W).tabsTrigger)
+							class: j(v(z).tabsTrigger)
 						}, {
 							default: p(() => [M(O(v(n)("assets.tabs.lora")), 1)]),
 							_: 1
 						}, 8, ["class"]),
 						P(v($), {
 							value: "vibe",
-							class: j(v(W).tabsTrigger)
+							class: j(v(z).tabsTrigger)
 						}, {
 							default: p(() => [M(O(v(n)("assets.tabs.vibe")), 1)]),
 							_: 1
 						}, 8, ["class"]),
 						P(v($), {
 							value: "workflow",
-							class: j(v(W).tabsTrigger)
+							class: j(v(z).tabsTrigger)
 						}, {
 							default: p(() => [M(O(v(n)("assets.tabs.workflow")), 1)]),
 							_: 1
@@ -1974,17 +2020,19 @@ var Je = ["aria-label"], Ye = [
 				}, 8, ["class", "aria-label"]),
 				P(v(Q), {
 					value: "vocabulary",
-					class: j(v(W).tabsContent)
+					class: j(v(z).tabsContent)
 				}, {
-					default: p(() => [P(We, {
+					default: p(() => [P(Ge, {
 						catalog: e.state.assets.vocabulary_catalog,
 						"install-command": e.state.assets.vocabulary_install_command,
+						"catalog-failure": e.state.failures.get("vocabulary") ?? null,
 						loading: l.value,
 						controller: e.controller,
 						locale: d.value
 					}, null, 8, [
 						"catalog",
 						"install-command",
+						"catalog-failure",
 						"loading",
 						"controller",
 						"locale"
@@ -1993,9 +2041,9 @@ var Je = ["aria-label"], Ye = [
 				}, 8, ["class"]),
 				P(v(Q), {
 					value: "character",
-					class: j(v(W).tabsContent)
+					class: j(v(z).tabsContent)
 				}, {
-					default: p(() => [P(pe, {
+					default: p(() => [P(he, {
 						modelValue: o.value,
 						"onUpdate:modelValue": r[0] ||= (e) => o.value = e,
 						label: v(n)("assets.show_all_chats_label")
@@ -2016,9 +2064,9 @@ var Je = ["aria-label"], Ye = [
 				}, 8, ["class"]),
 				P(v(Q), {
 					value: "outfit",
-					class: j(v(W).tabsContent)
+					class: j(v(z).tabsContent)
 				}, {
-					default: p(() => [P(pe, {
+					default: p(() => [P(he, {
 						modelValue: o.value,
 						"onUpdate:modelValue": r[1] ||= (e) => o.value = e,
 						label: v(n)("assets.show_all_chats_label")
@@ -2039,7 +2087,7 @@ var Je = ["aria-label"], Ye = [
 				}, 8, ["class"]),
 				P(v(Q), {
 					value: "lora",
-					class: j(v(W).tabsContent)
+					class: j(v(z).tabsContent)
 				}, {
 					default: p(() => [P(Pe, {
 						records: e.state.assets.records.lora,
@@ -2056,7 +2104,7 @@ var Je = ["aria-label"], Ye = [
 				}, 8, ["class"]),
 				P(v(Q), {
 					value: "vibe",
-					class: j(v(W).tabsContent)
+					class: j(v(z).tabsContent)
 				}, {
 					default: p(() => [P(Be, {
 						records: e.state.assets.records.vibe,
@@ -2071,9 +2119,9 @@ var Je = ["aria-label"], Ye = [
 				}, 8, ["class"]),
 				P(v(Q), {
 					value: "workflow",
-					class: j(v(W).tabsContent)
+					class: j(v(z).tabsContent)
 				}, {
-					default: p(() => [P(et, {
+					default: p(() => [P(tt, {
 						records: e.state.assets.records.workflow,
 						loading: c.value,
 						controller: e.controller
@@ -2090,4 +2138,4 @@ var Je = ["aria-label"], Ye = [
 	}
 });
 //#endregion
-export { tt as default };
+export { nt as default };

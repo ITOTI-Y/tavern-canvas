@@ -1,9 +1,9 @@
 import { N as e, W as t, _ as n, ct as r, m as i, n as a, p as o, pt as s, ut as c, x as l, y as u } from "./vue-i18n-DUz2Gjn8.js";
-import { i as d, n as f, r as p, t as m } from "./use_asset_category_panel-ra3ACBcY.js";
-import { n as h } from "./PromptTagChips-DuVZRo9M.js";
-import { t as g } from "./FieldGroup-5lMIUNw6.js";
-import { t as _ } from "./prompt_styles-C9N1Zkvr.js";
-import { r as v } from "./SettingsView-BvGeDxju.js";
+import { i as d, n as f, r as p, t as m } from "./use_asset_category_panel-BqBdmyjM.js";
+import { t as h } from "./AppDialog-CzDoJQTe.js";
+import { t as g } from "./FieldGroup-BYtqLDde.js";
+import { n as _ } from "./NumberStepper-BaD6Y0DB.js";
+import { t as v } from "./prompt_styles-C9N1Zkvr.js";
 //#endregion
 //#region src/ui/views/prompt/PromptTagPresetPanel.vue
 var y = /* @__PURE__ */ l({
@@ -41,11 +41,11 @@ var y = /* @__PURE__ */ l({
 		}
 		let D = (e) => b("assets.delete_confirm_title", { name: e });
 		return (a, o) => (e(), n("section", {
-			class: c(r(_).prompt_tag_panel),
+			class: c(r(v).prompt_tag_panel),
 			"data-testid": "prompt-tag-presets"
 		}, [
-			i("div", { class: c(r(_).section_header) }, [i("span", { class: c(r(_).section_title) }, s(r(b)("prompt_tags.panel_title")), 3)], 2),
-			i("p", { class: c(r(_).prompt_tag_description) }, s(r(b)("prompt_tags.panel_description")), 3),
+			i("div", { class: c(r(v).section_header) }, [i("span", { class: c(r(v).section_title) }, s(r(b)("prompt_tags.panel_title")), 3)], 2),
+			i("p", { class: c(r(v).prompt_tag_description) }, s(r(b)("prompt_tags.panel_description")), 3),
 			u(d, {
 				records: w.value,
 				"summary-fields": S.value,
@@ -125,7 +125,7 @@ var y = /* @__PURE__ */ l({
 					onCancel: r(T).close_dialog
 				}, {
 					"extra-fields": t(() => [u(g, { label: r(b)("prompt_tags.kind_label") }, {
-						default: t(() => [u(v, {
+						default: t(() => [u(_, {
 							"model-value": r(T).values.kind === "undesired_content" ? "undesired_content" : "quality",
 							options: C.value,
 							label: r(b)("prompt_tags.kind_label"),

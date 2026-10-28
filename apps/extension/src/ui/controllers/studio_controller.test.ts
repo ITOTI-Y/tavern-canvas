@@ -202,6 +202,7 @@ function build_mock_studio() {
   const vocabulary_load = vi.fn(() => Promise.resolve([]));
   const vocabulary: VocabularyCapability = {
     load: vocabulary_load,
+    installed: vi.fn(),
     search: vi.fn(),
     lookup: vi.fn(),
     prepare: vi.fn(),

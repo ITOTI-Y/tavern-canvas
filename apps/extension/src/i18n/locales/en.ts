@@ -157,9 +157,19 @@ const assets = {
   },
   vocabulary: {
     search_placeholder: "Search tags",
-    empty_title: "No vocabulary loaded yet",
-    empty_description:
-      "Install a vocabulary package from the update channel to search and insert tags.",
+    installed_title: "Current vocabulary",
+    installed_preparing: "Preparing the bundled vocabulary; the first time takes about a minute…",
+    installed_failed:
+      "The vocabulary could not be opened, so search and completion are unavailable. Reload the page and try again.",
+    installed_none: "No vocabulary is available yet.",
+    no_results_title: "No matching tags",
+    no_results_description: "Try another keyword; Chinese and English both work.",
+    search_failed: "Search failed; the vocabulary may still be preparing",
+    updates_title: "Vocabulary updates",
+    no_updates_title: "The update channel offers no other packages",
+    no_updates_description: "The current vocabulary already powers search and completion.",
+    catalog_failed_code:
+      "The update catalog could not be fetched (error code {code}). The bundled vocabulary is unaffected.",
     tag_count: "{n} tag | {n} tags",
     update_action: "Check for updates",
     import_action: "Import package",

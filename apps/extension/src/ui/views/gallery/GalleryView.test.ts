@@ -235,6 +235,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     reorder_assets: vi.fn(() => Promise.resolve()),
     search_vocabulary: vi.fn(() => Promise.resolve({ results: [], next_cursor: null })),
     load_more_vocabulary: vi.fn(() => Promise.resolve({ results: [], next_cursor: null })),
+    load_installed_vocabulary: vi.fn(() => Promise.resolve(null)),
     select_gallery_record: vi.fn(),
     read_gallery_bytes: vi.fn(() => Promise.resolve(DETAILED_PNG)),
     pin_gallery_record: vi.fn(() => Promise.resolve()),

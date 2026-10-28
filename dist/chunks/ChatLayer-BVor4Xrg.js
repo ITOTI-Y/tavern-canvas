@@ -2,16 +2,21 @@ import { a as e, n as t } from "./wardrobe_library-cpT1rkQA.js";
 import { A as n, B as r, C as i, F as a, G as o, N as s, O as c, T as l, V as u, W as d, _ as f, a as p, c as m, ct as h, d as g, dt as _, et as v, ft as y, g as b, h as x, k as S, m as C, n as w, nt as T, p as E, pt as D, u as O, ut as k, v as A, x as j, y as M } from "./vue-i18n-DUz2Gjn8.js";
 import { n as N } from "./portal_keys-B9C82xtk.js";
 import { n as P, t as F } from "./AppIcon-Cnhzrx9o.js";
-import { a as I, c as L, d as R, f as z, i as B, l as V, m as H, p as ee, r as U, t as W, u as te } from "./AppSelect-CRHyq1ex.js";
-import { n as ne, r as re, t as ie } from "./PromptTagChips-DuVZRo9M.js";
-import { t as ae } from "./trash-2-B6ZXZcor.js";
-import { t as oe } from "./upload-CQtsg_mB.js";
-import { t as se } from "./x-CDKrptQJ.js";
-import { c as ce, n as le, s as ue } from "./analysis-BZjOoC79.js";
-import { n as de } from "./deferred_stylesheets-BpS7LWkd.js";
-import { c as G, n as K, o as q, s as J } from "./library_match-er4-CW2n.js";
-import { r as fe, t as pe } from "./inpaint_session-wWdlKjTY.js";
-import { t as Y } from "./IconButton-Cyu85S4F.js";
+import { n as I, r as L, t as R } from "./StateSurface-BA0Ffiwe.js";
+import { t as z } from "./AppDialog-CzDoJQTe.js";
+import { t as B } from "./trash-2-B6ZXZcor.js";
+import { t as V } from "./upload-CQtsg_mB.js";
+import { t as ee } from "./x-CDKrptQJ.js";
+import { c as H, n as U, s as W } from "./analysis-BZjOoC79.js";
+import { n as te } from "./deferred_stylesheets-BpS7LWkd.js";
+import { c as ne, n as re, o as ie, s as G } from "./library_match-er4-CW2n.js";
+import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
+import { r as se } from "./_prop_utils-CqbCYIc0.js";
+import { t as K } from "./AppCheckbox-CTxQ1oVE.js";
+import { t as q } from "./AppSelect-BdnjEPS_.js";
+import { a as ce, c as le, i as ue, n as de, r as fe, s as pe } from "./Collection-DWsxNExQ.js";
+import { t as J } from "./IconButton-DPIesKAc.js";
+import { t as Y } from "./PromptTagChips-2I2ArwXq.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/book-open-text.js
 var me = P("book-open-text", [
 	["path", {
@@ -177,7 +182,7 @@ var me = P("book-open-text", [
 };
 //#endregion
 //#region src/ui/dialogs/dialogs_styles.ts
-de("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
+te("dialogs", "._inpaintDialogContent_677ep_13{width:min(90vw,720px)}._inpaintBody_677ep_17{flex-direction:column;gap:12px;width:100%;display:flex}._inpaintCanvasFrame_677ep_27{width:100%;aspect-ratio:var(--tc-inpaint-aspect,1);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-image);background-color:var(--tc-surface-raised);touch-action:none;position:relative;overflow:hidden}._inpaintCanvasFrame_677ep_27 canvas{width:100%;height:100%;position:absolute;inset:0}._inpaintToolbar_677ep_45{flex-wrap:wrap;align-items:center;gap:6px;display:flex}._inpaintToolbarDivider_677ep_52{background-color:var(--tc-divider);align-self:stretch;width:1px;margin:0 4px}._inpaintBrushRow_677ep_59{align-items:center;gap:12px;display:flex}._inpaintBrushRow_677ep_59>*{flex:1}._inpaintPromptGrid_677ep_69{grid-template-columns:1fr 1fr;gap:12px;display:grid}._inpaintFooter_677ep_75{justify-content:flex-end;gap:8px;display:flex}._inpaintDimensionError_677ep_81{color:var(--tc-error);margin:0;font-size:12px}");
 var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = ["aria-label"], De = 32, Oe = 1, ke = 3, Ae = /* @__PURE__ */ j({
 	__name: "InpaintDialog",
 	props: {
@@ -226,19 +231,19 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 		function S(e) {
 			a("update:open", e);
 		}
-		let w = v(null), T = v(null), j = v(De), P = v(!1), U = v(Oe), W = v(r.initialPositivePrompt), ne = v(r.initialNegativePrompt), re = v(.75), ie = v(!1), ce = v(!1), le = E(() => {
+		let w = v(null), T = v(null), j = v(De), P = v(!1), R = v(Oe), z = v(r.initialPositivePrompt), H = v(r.initialNegativePrompt), U = v(.75), W = v(!1), te = v(!1), ne = E(() => {
 			let e = r.maskWidth ?? r.bitmap.width, t = r.maskHeight ?? r.bitmap.height;
 			try {
-				return fe(r.bitmap.width, r.bitmap.height, e, t), null;
+				return ae(r.bitmap.width, r.bitmap.height, e, t), null;
 			} catch {
 				return r.dimensionErrorLabel;
 			}
-		}), ue = E(() => r.bitmap.width / r.bitmap.height), de = E(() => ({ "--tc-inpaint-aspect": String(ue.value) })), G = null, K = null, q = [];
-		function J() {
-			ie.value = G?.can_undo() ?? !1, ce.value = G?.can_redo() ?? !1;
+		}), re = E(() => r.bitmap.width / r.bitmap.height), ie = E(() => ({ "--tc-inpaint-aspect": String(re.value) })), G = null, K = null, q = [];
+		function Y() {
+			W.value = G?.can_undo() ?? !1, te.value = G?.can_redo() ?? !1;
 		}
 		function me() {
-			G = new pe(r.bitmap.width, r.bitmap.height), J();
+			G = new oe(r.bitmap.width, r.bitmap.height), Y();
 		}
 		function ge() {
 			let e = w.value;
@@ -294,79 +299,79 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 				q = [];
 				return;
 			}
-			G.stroke(q, j.value, P.value ? "erase" : "brush"), q = [], J(), X();
+			G.stroke(q, j.value, P.value ? "erase" : "brush"), q = [], Y(), X();
 		}
 		function Ne() {
-			G?.undo(), J(), X();
+			G?.undo(), Y(), X();
 		}
 		function Pe() {
-			G?.redo(), J(), X();
+			G?.redo(), Y(), X();
 		}
 		function Fe() {
-			G?.clear(), J(), X();
+			G?.clear(), Y(), X();
 		}
 		function $() {
-			U.value = Math.min(ke, U.value + .5);
+			R.value = Math.min(ke, R.value + .5);
 		}
 		function Ie() {
-			U.value = Math.max(Oe, U.value - .5);
+			R.value = Math.max(Oe, R.value - .5);
 		}
 		function Le() {
-			G !== null && le.value === null && a("submit", {
+			G !== null && ne.value === null && a("submit", {
 				mask: G.export_binary_mask(),
 				brushSize: j.value,
-				positivePrompt: W.value,
-				negativePrompt: ne.value,
-				denoiseStrength: re.value
+				positivePrompt: z.value,
+				negativePrompt: H.value,
+				denoiseStrength: U.value
 			});
 		}
-		return (t, n) => (s(), x(h(H), {
+		return (t, n) => (s(), x(h(le), {
 			open: e.open,
 			"onUpdate:open": S
 		}, {
-			default: d(() => [M(h(V), _(i(g.value)), {
-				default: d(() => [M(h(te), { class: k(h(I).dialogOverlay) }, null, 8, ["class"]), M(h(z), { class: k([h(I).dialogContent, h(Z).inpaintDialogContent]) }, {
+			default: d(() => [M(h(se), _(i(g.value)), {
+				default: d(() => [M(h(fe), { class: k(h(L).dialogOverlay) }, null, 8, ["class"]), M(h(ce), { class: k([h(L).dialogContent, h(Z).inpaintDialogContent]) }, {
 					default: d(() => [
-						C("header", { class: k(h(I).dialogHeader) }, [M(h(L), { class: k(h(I).dialogTitle) }, {
+						C("header", { class: k(h(L).dialogHeader) }, [M(h(de), { class: k(h(L).dialogTitle) }, {
 							default: d(() => [A(D(e.title), 1)]),
 							_: 1
-						}, 8, ["class"]), M(h(ee), {
-							class: k(["tc-interactive", h(I).dialogClose]),
+						}, 8, ["class"]), M(h(pe), {
+							class: k(["tc-interactive", h(L).dialogClose]),
 							"aria-label": e.closeLabel
 						}, {
 							default: d(() => [M(F, {
-								icon: h(se),
+								icon: h(ee),
 								size: 18
 							}, null, 8, ["icon"])]),
 							_: 1
 						}, 8, ["class", "aria-label"])], 2),
-						M(h(R), { class: "tc-visually-hidden" }, {
+						M(h(ue), { class: "tc-visually-hidden" }, {
 							default: d(() => [A(D(e.title), 1)]),
 							_: 1
 						}),
 						C("div", { class: k(h(Z).inpaintBody) }, [
 							C("div", { class: k(h(Z).inpaintToolbar) }, [
-								M(Y, {
+								M(J, {
 									icon: h(ye),
 									label: e.undoLabel,
-									disabled: !ie.value,
+									disabled: !W.value,
 									onClick: Ne
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								M(Y, {
+								M(J, {
 									icon: h(_e),
 									label: e.redoLabel,
-									disabled: !ce.value,
+									disabled: !te.value,
 									onClick: Pe
 								}, null, 8, [
 									"icon",
 									"label",
 									"disabled"
 								]),
-								M(Y, {
+								M(J, {
 									icon: h(he),
 									label: e.eraseLabel,
 									pressed: P.value,
@@ -376,8 +381,8 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 									"label",
 									"pressed"
 								]),
-								M(Y, {
-									icon: h(ae),
+								M(J, {
+									icon: h(B),
 									label: e.clearLabel,
 									destructive: "",
 									onClick: Fe
@@ -386,12 +391,12 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 									class: k(h(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
 								}, null, 2),
-								M(Y, {
+								M(J, {
 									icon: h(xe),
 									label: e.zoomOutLabel,
 									onClick: Ie
 								}, null, 8, ["icon", "label"]),
-								M(Y, {
+								M(J, {
 									icon: h(be),
 									label: e.zoomInLabel,
 									onClick: $
@@ -399,25 +404,25 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								e.showUpload ? (s(), f(O, { key: 0 }, [C("span", {
 									class: k(h(Z).inpaintToolbarDivider),
 									"aria-hidden": "true"
-								}, null, 2), M(Y, {
-									icon: h(oe),
+								}, null, 2), M(J, {
+									icon: h(V),
 									label: e.uploadLabel,
 									onClick: n[1] ||= (e) => a("upload-reference")
 								}, null, 8, ["icon", "label"])], 64)) : b("", !0)
 							], 2),
 							C("div", {
 								class: k(h(Z).inpaintCanvasFrame),
-								style: y(de.value)
+								style: y(ie.value)
 							}, [C("canvas", {
 								ref_key: "bitmap_canvas",
 								ref: w,
-								style: y({ transform: `scale(${U.value})` }),
+								style: y({ transform: `scale(${R.value})` }),
 								"data-testid": "inpaint-bitmap-canvas"
 							}, null, 4), C("canvas", {
 								ref_key: "mask_canvas",
 								ref: T,
 								style: y({
-									transform: `scale(${U.value})`,
+									transform: `scale(${R.value})`,
 									touchAction: "none"
 								}),
 								"data-testid": "inpaint-mask-canvas",
@@ -426,11 +431,11 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								onPointerup: Q,
 								onPointercancel: Q
 							}, null, 36)], 6),
-							le.value ? (s(), f("p", {
+							ne.value ? (s(), f("p", {
 								key: 0,
 								class: k(h(Z).inpaintDimensionError),
 								role: "alert"
-							}, D(le.value), 3)) : b("", !0),
+							}, D(ne.value), 3)) : b("", !0),
 							C("div", { class: k(h(Z).inpaintBrushRow) }, [C("label", null, [A(D(e.brushSizeLabel) + " ", 1), o(C("input", {
 								"onUpdate:modelValue": n[2] ||= (e) => j.value = e,
 								type: "range",
@@ -445,16 +450,16 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								{ number: !0 }
 							]])])], 2),
 							C("div", { class: k(h(Z).inpaintPromptGrid) }, [C("label", null, [A(D(e.positivePromptLabel) + " ", 1), o(C("textarea", {
-								"onUpdate:modelValue": n[3] ||= (e) => W.value = e,
+								"onUpdate:modelValue": n[3] ||= (e) => z.value = e,
 								"aria-label": e.positivePromptLabel,
 								rows: "2"
-							}, null, 8, we), [[p, W.value]])]), C("label", null, [A(D(e.negativePromptLabel) + " ", 1), o(C("textarea", {
-								"onUpdate:modelValue": n[4] ||= (e) => ne.value = e,
+							}, null, 8, we), [[p, z.value]])]), C("label", null, [A(D(e.negativePromptLabel) + " ", 1), o(C("textarea", {
+								"onUpdate:modelValue": n[4] ||= (e) => H.value = e,
 								"aria-label": e.negativePromptLabel,
 								rows: "2"
-							}, null, 8, Te), [[p, ne.value]])])], 2),
+							}, null, 8, Te), [[p, H.value]])])], 2),
 							C("label", null, [A(D(e.denoiseLabel) + " ", 1), o(C("input", {
-								"onUpdate:modelValue": n[5] ||= (e) => re.value = e,
+								"onUpdate:modelValue": n[5] ||= (e) => U.value = e,
 								type: "range",
 								min: "0",
 								max: "1",
@@ -462,16 +467,16 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 								"aria-label": e.denoiseLabel
 							}, null, 8, Ee), [[
 								p,
-								re.value,
+								U.value,
 								void 0,
 								{ number: !0 }
 							]])]),
-							C("div", { class: k(h(Z).inpaintFooter) }, [M(B, {
+							C("div", { class: k(h(Z).inpaintFooter) }, [M(I, {
 								label: e.generateLabel,
 								icon: h(ve),
 								variant: "primary",
 								pending: e.pending,
-								disabled: le.value !== null,
+								disabled: ne.value !== null,
 								onClick: Le
 							}, null, 8, [
 								"label",
@@ -509,7 +514,7 @@ var Z = Se, Ce = ["aria-label"], we = ["aria-label"], Te = ["aria-label"], Ee = 
 };
 //#endregion
 //#region src/ui/chat/illustrate_dialog_styles.ts
-de("illustrate_dialog", "._body_1szjx_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1szjx_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_1szjx_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_1szjx_27{margin:0;font-size:14px}._label_1szjx_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_1szjx_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_1szjx_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_1szjx_61{color:var(--tc-error);margin:0}._excerpt_1szjx_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._picker_1szjx_78{flex-direction:column;align-items:flex-start;gap:8px;display:flex}._hint_1szjx_85{color:var(--tc-text-muted);margin:0;font-size:13px}._paragraphs_1szjx_91{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;align-self:stretch;gap:6px;max-height:240px;padding:8px;display:flex;overflow-y:auto}._footer_1szjx_103{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_1szjx_111{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_1szjx_117{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_1szjx_123{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_1szjx_130{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
+te("illustrate_dialog", "._body_1szjx_1{flex-direction:column;gap:16px;max-height:min(70vh,720px);display:flex;overflow-y:auto}._slot_1szjx_9{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-panel);background:var(--tc-surface-raised);flex-direction:column;gap:8px;padding:12px;display:flex}._anchor_1szjx_19{border-inline-start:2px solid var(--tc-divider);color:var(--tc-text-muted);margin:0;padding-inline-start:10px;font-size:13px}._scene_1szjx_27{margin:0;font-size:14px}._label_1szjx_32{color:var(--tc-text-muted);flex-direction:column;gap:4px;font-size:13px;display:flex}._prompt_1szjx_40{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);min-height:72px;color:var(--tc-text);font:inherit;resize:vertical;padding:8px;font-size:13px}._meta_1szjx_52{color:var(--tc-text-muted);flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:13px;display:flex}._error_1szjx_61{color:var(--tc-error);margin:0}._excerpt_1szjx_66{border-radius:var(--tc-radius-field);background:var(--tc-surface-raised);white-space:pre-wrap;max-height:160px;margin:0;padding:8px;font-family:monospace;font-size:12px;overflow:auto}._picker_1szjx_78{flex-direction:column;align-items:flex-start;gap:8px;display:flex}._hint_1szjx_85{color:var(--tc-text-muted);margin:0;font-size:13px}._paragraphs_1szjx_91{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;align-self:stretch;gap:6px;max-height:240px;padding:8px;display:flex;overflow-y:auto}._footer_1szjx_103{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;display:flex}._total_1szjx_111{color:var(--tc-text-muted);margin-inline-end:auto;font-size:13px}._chips_1szjx_117{justify-content:flex-end;margin-top:-4px;display:flex}._outfit_1szjx_123{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._conditions_1szjx_130{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:0;color:var(--tc-text);flex:160px;padding:6px 8px}");
 var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ */ j({
 	__name: "OutfitPicker",
 	props: {
@@ -547,7 +552,7 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 		return (e, t) => (s(), f("div", {
 			class: k(h(Q).outfit),
 			"data-testid": "outfit-picker"
-		}, [M(W, {
+		}, [M(q, {
 			"model-value": n.wearing.outfit_id ?? Ne,
 			options: l.value,
 			placeholder: h(c)("chat.dialog.outfit_label"),
@@ -585,7 +590,7 @@ var Q = je, Me = ["placeholder", "aria-label"], Ne = "none", Pe = /* @__PURE__ *
 };
 //#endregion
 //#region src/ui/chat/prompt_field_styles.ts
-de("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
+te("prompt_field", "._field_ad8ee_1{flex-direction:column;gap:4px;display:flex}._header_ad8ee_7{justify-content:space-between;align-items:center;gap:8px;min-height:28px;display:flex}._label_ad8ee_15{color:var(--tc-text-muted);font-size:13px}._tools_ad8ee_20{gap:2px;display:inline-flex}._suggestions_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background:var(--tc-surface);flex-wrap:wrap;gap:6px;margin:0;padding:8px;list-style:none;display:flex}._suggestion_ad8ee_25{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-status);background:var(--tc-surface-raised);color:var(--tc-text);cursor:pointer;align-items:center;gap:6px;padding:4px 8px;font-size:13px;display:inline-flex}._suggestion_ad8ee_25:hover,._highlighted_ad8ee_51{border-color:var(--tc-accent)}._translation_ad8ee_55{color:var(--tc-text-muted)}._dot_ad8ee_59{border:1px solid var(--tc-text-muted);border-radius:50%;width:8px;height:8px}._tier1_ad8ee_66{background:color-mix(in srgb, var(--tc-text) 35%, transparent)}._tier2_ad8ee_70{background:color-mix(in srgb, var(--tc-text) 65%, transparent)}._tier3_ad8ee_74{border-color:var(--tc-text);background:var(--tc-text)}._hint_ad8ee_79,._reading_ad8ee_80{color:var(--tc-text-muted);margin:0;font-size:13px}._reading_ad8ee_80{border-inline-start:2px solid var(--tc-divider);padding-inline-start:10px}");
 var $ = Fe, Ie = /[,，]/u, Le = /[぀-ヿ㐀-鿿豈-﫿]/u, Re = /^(?:-?[\d.]+::)?[{[(]*/u;
 function ze(e, t) {
 	let n = e.slice(0, t), r = 0;
@@ -664,10 +669,10 @@ var He = ["for"], Ue = [
 				_.value = (_.value + n + t) % t;
 			} else e.key === "Tab" || e.key === "Enter" && _.value >= 0 ? (e.preventDefault(), B(Math.max(_.value, 0))) : e.key === "Escape" && (e.stopPropagation(), R());
 		}
-		function H(e) {
+		function ee(e) {
 			i("update:modelValue", e.target.value), z();
 		}
-		async function ee() {
+		async function H() {
 			let e = n.translator;
 			if (e === null) return;
 			let t = ++I;
@@ -680,7 +685,7 @@ var He = ["for"], Ue = [
 			}
 		}
 		function U() {
-			A.value = !A.value, j.value = null, A.value ? ee() : I += 1;
+			A.value = !A.value, j.value = null, A.value ? H() : I += 1;
 		}
 		async function W() {
 			let e = n.translator;
@@ -696,7 +701,7 @@ var He = ["for"], Ue = [
 			}
 		}
 		return u(() => n.modelValue, () => {
-			A.value && (F !== null && clearTimeout(F), F = setTimeout(() => void ee(), qe));
+			A.value && (F !== null && clearTimeout(F), F = setTimeout(() => void H(), qe));
 		}), S(() => {
 			for (let e of [T, F]) e !== null && clearTimeout(e);
 		}), (t, n) => (s(), f("div", { class: k(h($).field) }, [
@@ -706,7 +711,7 @@ var He = ["for"], Ue = [
 			}, D(e.label), 11, He), e.translator === null ? b("", !0) : (s(), f("span", {
 				key: 0,
 				class: k(h($).tools)
-			}, [M(Y, {
+			}, [M(J, {
 				icon: h(ge),
 				size: "sm",
 				label: h(o)("chat.dialog.translate_to_tags"),
@@ -717,7 +722,7 @@ var He = ["for"], Ue = [
 				"icon",
 				"label",
 				"disabled"
-			]), M(Y, {
+			]), M(J, {
 				icon: h(me),
 				size: "sm",
 				label: h(o)("chat.dialog.read_in_chinese"),
@@ -740,7 +745,7 @@ var He = ["for"], Ue = [
 				"aria-expanded": g.value.length > 0,
 				"aria-controls": d,
 				"aria-activedescendant": _.value >= 0 ? `${d}-${_.value}` : void 0,
-				onInput: H,
+				onInput: ee,
 				onClick: z,
 				onKeydown: V,
 				onBlur: R
@@ -813,39 +818,39 @@ var He = ["for"], Ue = [
 			};
 		}
 		function P(e) {
-			return m.value?.library.characters.find((t) => K(t, e)) ?? null;
+			return m.value?.library.characters.find((t) => re(t, e)) ?? null;
 		}
 		function F(e) {
 			let t = m.value, n = P(e);
 			return t === null || n === null ? [] : [{
 				character: n,
-				wearing: J(n, t.snapshot, t.library.outfits),
+				wearing: G(n, t.snapshot, t.library.outfits),
 				outfits: t.library.outfits
 			}];
 		}
-		function I(e) {
+		function L(e) {
 			let t = m.value, n = P(e);
-			return t === null || n === null ? null : J(n, t.snapshot, t.library.outfits);
+			return t === null || n === null ? null : G(n, t.snapshot, t.library.outfits);
 		}
-		async function L(e, t) {
-			let r = m.value, i = I(e);
+		async function B(e, t) {
+			let r = m.value, i = L(e);
 			if (r === null || i === null || o.value.status !== "ready") return;
-			let a = G(i, r.library.outfits), s = G(t, r.library.outfits);
-			for (let t of c.value) for (let n of t.character_prompts) n.name === e && (n.prompt = q(n.prompt, a, s));
+			let a = ne(i, r.library.outfits), s = ne(t, r.library.outfits);
+			for (let t of c.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ie(n.prompt, a, s));
 			m.value = {
 				...r,
 				snapshot: [...r.snapshot.filter((e) => e.character_id !== t.character_id), t]
 			}, await n.service.set_wearing(o.value.location, t);
 		}
-		let R = E(() => c.value.filter((e) => e.selected)), z = E(() => {
+		let V = E(() => c.value.filter((e) => e.selected)), ee = E(() => {
 			let e = 0;
-			for (let t of R.value) {
+			for (let t of V.value) {
 				if (t.estimate?.anlas === null || t.estimate === null) return null;
 				e += t.estimate.anlas;
 			}
 			return e;
 		});
-		async function V(e, t) {
+		async function H(e, t) {
 			try {
 				let r = await n.service.preview_request(e, t.slot_id, t);
 				r.provider_id === "novelai" && (t.estimate = await n.novelai.estimate_cost(r));
@@ -853,26 +858,26 @@ var He = ["for"], Ue = [
 				t.estimate = null;
 			}
 		}
-		async function H(e) {
+		async function W(e) {
 			o.value = { status: "analyzing" }, c.value = [], m.value = null, p.value = null, g.value = [], _.value = [], y.value = !1, T.value = null;
 			try {
 				let t = await n.service.analyze(e.message_id), r = await n.service.active_location(e.message_id);
 				c.value = t.slots.filter((t) => e.slot_id === null || t.slot_id === e.slot_id).map((t) => N(t, e.slot_id !== null || t.image_ids.length === 0)), m.value = await n.service.wardrobe_view(r), e.slot_id === null && (g.value = await n.service.open_paragraphs(r)), o.value = {
 					status: "ready",
 					location: r
-				}, await Promise.all(c.value.map((e) => V(r, e)));
+				}, await Promise.all(c.value.map((e) => H(r, e)));
 			} catch (e) {
 				o.value = {
 					status: "failed",
 					message: e instanceof Error ? e.message : String(e),
-					excerpt: e instanceof le ? e.excerpt : null
+					excerpt: e instanceof U ? e.excerpt : null
 				};
 			}
 		}
 		u(() => n.request, (e) => {
-			e !== null && H(e);
+			e !== null && W(e);
 		}, { immediate: !0 });
-		async function ee() {
+		async function te() {
 			let e = o.value;
 			if (e.status === "ready" && _.value.length !== 0) {
 				S.value = !0, T.value = null;
@@ -880,7 +885,7 @@ var He = ["for"], Ue = [
 					let t = await n.service.add_paragraphs(e.location, _.value), r = t.map((e) => N(e, !0));
 					c.value = [...c.value, ...r];
 					let i = new Set(t.map((e) => e.paragraph));
-					g.value = g.value.filter((e) => !i.has(e.index)), _.value = [], y.value = !1, await Promise.all(c.value.slice(-r.length).map((t) => V(e.location, t)));
+					g.value = g.value.filter((e) => !i.has(e.index)), _.value = [], y.value = !1, await Promise.all(c.value.slice(-r.length).map((t) => H(e.location, t)));
 				} catch (e) {
 					T.value = e instanceof Error ? e.message : String(e);
 				} finally {
@@ -888,13 +893,13 @@ var He = ["for"], Ue = [
 				}
 			}
 		}
-		async function W() {
+		async function ae() {
 			let e = o.value;
 			if (e.status !== "ready") return;
 			l.value = !0, p.value = null;
-			let t = R.value.length, a = 0;
+			let t = V.value.length, a = 0;
 			try {
-				for (let t of R.value) await n.service.generate(e.location, t.slot_id, {
+				for (let t of V.value) await n.service.generate(e.location, t.slot_id, {
 					positive_prompt: t.positive_prompt,
 					negative_prompt: t.negative_prompt,
 					character_prompts: t.character_prompts.filter((e) => e.prompt.trim() !== "")
@@ -910,29 +915,29 @@ var He = ["for"], Ue = [
 				l.value = !1;
 			}
 		}
-		function te(e) {
+		function oe(e) {
 			return e.estimate === null ? "" : e.estimate.opus_free ? i("chat.dialog.cost_free") : e.estimate.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: e.estimate.anlas });
 		}
-		function ae(e) {
+		function se(e) {
 			e || (o.value.status === "analyzing" && n.request !== null && n.service.cancel_analysis(n.request.message_id), r("close"));
 		}
-		return (t, n) => (s(), x(ne, {
+		return (t, n) => (s(), x(z, {
 			open: e.request !== null,
 			title: h(i)("chat.dialog.title"),
 			"close-label": h(i)("chat.dialog.close"),
-			"onUpdate:open": ae
+			"onUpdate:open": se
 		}, {
-			default: d(() => [C("div", { class: k(h(Q).body) }, [o.value.status === "analyzing" ? (s(), x(U, {
+			default: d(() => [C("div", { class: k(h(Q).body) }, [o.value.status === "analyzing" ? (s(), x(R, {
 				key: 0,
 				status: "loading",
 				"min-height": "160px"
 			})) : o.value.status === "failed" ? (s(), f(O, { key: 1 }, [
 				C("p", { class: k(h(Q).error) }, D(o.value.message), 3),
 				o.value.excerpt === null ? b("", !0) : (s(), f(O, { key: 0 }, [C("p", null, D(h(i)("chat.dialog.parse_failed_hint")), 1), C("pre", { class: k(h(Q).excerpt) }, D(o.value.excerpt), 3)], 64)),
-				C("div", { class: k(h(Q).footer) }, [M(B, {
+				C("div", { class: k(h(Q).footer) }, [M(I, {
 					label: h(i)("chat.dialog.retry"),
 					variant: "primary",
-					onClick: n[0] ||= (t) => e.request !== null && H(e.request)
+					onClick: n[0] ||= (t) => e.request !== null && W(e.request)
 				}, null, 8, ["label"])], 2)
 			], 64)) : (s(), f(O, { key: 2 }, [
 				c.value.length === 0 ? (s(), f("p", Ye, D(h(i)("chat.dialog.no_slots")), 1)) : b("", !0),
@@ -940,7 +945,7 @@ var He = ["for"], Ue = [
 					key: t.slot_id,
 					class: k(h(Q).slot)
 				}, [
-					M(re, {
+					M(K, {
 						modelValue: t.selected,
 						"onUpdate:modelValue": (e) => t.selected = e,
 						label: t.scene
@@ -961,7 +966,7 @@ var He = ["for"], Ue = [
 						"label",
 						"translator"
 					]),
-					C("div", { class: k(h(Q).chips) }, [M(ie, {
+					C("div", { class: k(h(Q).chips) }, [M(Y, {
 						port: e.promptTags,
 						kind: "quality"
 					}, null, 8, ["port"])], 2),
@@ -981,7 +986,7 @@ var He = ["for"], Ue = [
 						character: e.character,
 						wearing: e.wearing,
 						outfits: e.outfits,
-						onChange: (e) => void L(t.name, e)
+						onChange: (e) => void B(t.name, e)
 					}, null, 8, [
 						"character",
 						"wearing",
@@ -999,23 +1004,23 @@ var He = ["for"], Ue = [
 						"label",
 						"translator"
 					]),
-					C("div", { class: k(h(Q).chips) }, [M(ie, {
+					C("div", { class: k(h(Q).chips) }, [M(Y, {
 						port: e.promptTags,
 						kind: "undesired_content"
 					}, null, 8, ["port"])], 2),
-					C("div", { class: k(h(Q).meta) }, [C("span", null, D(te(t)), 1)], 2)
+					C("div", { class: k(h(Q).meta) }, [C("span", null, D(oe(t)), 1)], 2)
 				], 2))), 128)),
 				g.value.length > 0 ? (s(), f("section", {
 					key: 1,
 					class: k(h(Q).picker)
-				}, [M(B, {
+				}, [M(I, {
 					label: h(i)("chat.dialog.pick_paragraphs", { count: g.value.length }),
 					"aria-expanded": y.value,
 					"data-testid": "pick-paragraphs",
 					onClick: n[1] ||= (e) => y.value = !y.value
 				}, null, 8, ["label", "aria-expanded"]), y.value ? (s(), f(O, { key: 0 }, [
 					C("p", { class: k(h(Q).hint) }, D(h(i)("chat.dialog.pick_paragraphs_hint")), 3),
-					C("div", { class: k(h(Q).paragraphs) }, [(s(!0), f(O, null, a(g.value, (e) => (s(), x(re, {
+					C("div", { class: k(h(Q).paragraphs) }, [(s(!0), f(O, null, a(g.value, (e) => (s(), x(K, {
 						key: e.index,
 						"model-value": _.value.includes(e.index),
 						label: A(e),
@@ -1029,12 +1034,12 @@ var He = ["for"], Ue = [
 						key: 0,
 						class: k(h(Q).error)
 					}, D(T.value), 3)),
-					C("div", { class: k(h(Q).footer) }, [M(B, {
+					C("div", { class: k(h(Q).footer) }, [M(I, {
 						label: h(i)("chat.dialog.add_paragraphs", { count: _.value.length }),
 						pending: S.value,
 						disabled: _.value.length === 0,
 						"data-testid": "add-paragraphs",
-						onClick: ee
+						onClick: te
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1046,20 +1051,20 @@ var He = ["for"], Ue = [
 					class: k(h(Q).error)
 				}, D(p.value), 3)),
 				C("div", { class: k(h(Q).footer) }, [
-					z.value !== null && R.value.length > 0 ? (s(), f("span", {
+					ee.value !== null && V.value.length > 0 ? (s(), f("span", {
 						key: 0,
 						class: k(h(Q).total)
-					}, D(h(i)("chat.dialog.total_anlas", { anlas: z.value })), 3)) : b("", !0),
-					M(B, {
+					}, D(h(i)("chat.dialog.total_anlas", { anlas: ee.value })), 3)) : b("", !0),
+					M(I, {
 						label: h(i)("chat.dialog.cancel"),
 						onClick: n[2] ||= (e) => r("close")
 					}, null, 8, ["label"]),
-					M(B, {
-						label: h(i)("chat.dialog.confirm", { count: R.value.length }),
+					M(I, {
+						label: h(i)("chat.dialog.confirm", { count: V.value.length }),
 						variant: "primary",
 						pending: l.value,
-						disabled: R.value.length === 0,
-						onClick: W
+						disabled: V.value.length === 0,
+						onClick: ae
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1182,14 +1187,14 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 				case "upscale": return i("chat.quick_edit.upscale");
 				default: return i("chat.quick_edit.director");
 			}
-		}), I = E(() => $e.map((e) => ({
+		}), L = E(() => $e.map((e) => ({
 			value: e,
 			label: tt(i, e)
-		}))), L = E(() => et.map((e) => ({
+		}))), R = E(() => et.map((e) => ({
 			value: e,
 			label: nt(i, e)
 		})));
-		function R() {
+		function B() {
 			let e = n.request;
 			if (e === null) return null;
 			switch (e.kind) {
@@ -1218,8 +1223,8 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 				case "inpaint": return null;
 			}
 		}
-		async function z() {
-			let e = R();
+		async function V() {
+			let e = B();
 			if (T.value = null, e !== null) try {
 				let t = await n.service.preview_edit(e);
 				t.provider_id === "novelai" && (T.value = await n.novelai.estimate_cost(t));
@@ -1236,7 +1241,7 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 						height: t.height
 					}, t.close();
 				}
-				await z();
+				await V();
 			}
 		}, { immediate: !0 }), u([
 			l,
@@ -1244,17 +1249,17 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 			g,
 			y
 		], () => {
-			z();
+			V();
 		});
-		let V = E(() => T.value === null ? "" : T.value.opus_free ? i("chat.dialog.cost_free") : T.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: T.value.anlas }));
+		let ee = E(() => T.value === null ? "" : T.value.opus_free ? i("chat.dialog.cost_free") : T.value.anlas === null ? i("chat.dialog.cost_rejected") : i("chat.dialog.cost_anlas", { anlas: T.value.anlas }));
 		function H(e) {
 			m.value = $e.find((t) => t === e) ?? m.value;
 		}
-		function ee(e) {
+		function U(e) {
 			g.value = et.find((t) => t === e) ?? g.value;
 		}
-		async function U() {
-			let e = n.request, t = R();
+		async function W() {
+			let e = n.request, t = B();
 			if (e !== null && t !== null) {
 				j.value = !0, N.value = null;
 				try {
@@ -1266,7 +1271,7 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 				}
 			}
 		}
-		return (t, n) => (s(), x(ne, {
+		return (t, n) => (s(), x(z, {
 			open: e.request !== null && e.request.kind !== "inpaint",
 			title: F.value,
 			"close-label": h(i)("chat.dialog.close"),
@@ -1295,9 +1300,9 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 						{ number: !0 }
 					]])], 2)
 				], 64)) : e.request?.kind === "upscale" ? (s(), f("p", rt, D(h(i)("chat.quick_edit.upscale_description")), 1)) : e.request?.kind === "augment" ? (s(), f(O, { key: 2 }, [
-					M(W, {
+					M(q, {
 						"model-value": m.value,
-						options: I.value,
+						options: L.value,
 						placeholder: h(i)("chat.quick_edit.tool"),
 						"aria-label": h(i)("chat.quick_edit.tool"),
 						"onUpdate:modelValue": H
@@ -1307,13 +1312,13 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 						"placeholder",
 						"aria-label"
 					]),
-					m.value === "emotion" ? (s(), x(W, {
+					m.value === "emotion" ? (s(), x(q, {
 						key: 0,
 						"model-value": g.value,
-						options: L.value,
+						options: R.value,
 						placeholder: h(i)("chat.quick_edit.emotion"),
 						"aria-label": h(i)("chat.quick_edit.emotion"),
-						"onUpdate:modelValue": ee
+						"onUpdate:modelValue": U
 					}, null, 8, [
 						"model-value",
 						"options",
@@ -1341,17 +1346,17 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 					class: k(h(Q).error)
 				}, D(N.value), 3)),
 				C("div", { class: k(h(Q).footer) }, [
-					C("span", { class: k(h(Q).total) }, D(V.value), 3),
-					M(B, {
+					C("span", { class: k(h(Q).total) }, D(ee.value), 3),
+					M(I, {
 						label: h(i)("chat.dialog.cancel"),
 						onClick: n[5] ||= (e) => r("close")
 					}, null, 8, ["label"]),
-					M(B, {
+					M(I, {
 						label: h(i)("chat.quick_edit.submit"),
 						variant: "primary",
 						pending: j.value,
-						disabled: R() === null,
-						onClick: U
+						disabled: B() === null,
+						onClick: W
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1434,7 +1439,7 @@ var rt = { key: 1 }, it = /* @__PURE__ */ j({
 			}, D(h(i)("chat.slot.image_missing")), 3)) : e.entry.last_error === null ? d.value ? (s(), f("span", ot, D(h(i)("chat.slot.interrupted")), 1)) : (s(), f("span", st, D(e.entry.scene), 1)) : (s(), f("span", {
 				key: 2,
 				class: k(h(X).error)
-			}, D(h(i)("chat.slot.failed", { reason: h(ue)(h(i), e.entry.last_error) })), 3))], 2))], 2),
+			}, D(h(i)("chat.slot.failed", { reason: h(W)(h(i), e.entry.last_error) })), 3))], 2))], 2),
 			C("div", { class: k(h(X).toolbar) }, [
 				e.entry.image_ids.length > 1 ? (s(), f("span", {
 					key: 0,
@@ -1493,7 +1498,7 @@ function _t(e) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
 		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${pt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(ce(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(H(t.ownerDocument)), a.setAttribute(pt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}

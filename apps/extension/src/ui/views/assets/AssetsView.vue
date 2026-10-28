@@ -75,6 +75,7 @@ const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN"
         <VocabularyPanel
           :catalog="state.assets.vocabulary_catalog"
           :install-command="state.assets.vocabulary_install_command"
+          :catalog-failure="state.failures.get('vocabulary') ?? null"
           :loading="vocabulary_loading"
           :controller="controller"
           :locale="resolved_locale"

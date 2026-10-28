@@ -3,7 +3,8 @@ import { n as t, t as n } from "./sha2-BGNex9vj.js";
 import { c as r, d as i, g as a, h as o, m as s, o as c, p as l, r as u, u as d } from "./schemas-DMBLWk59.js";
 import { a as ee, d as f, o as p, r as te, s as m, t as ne } from "./vocabulary-BfEyI-lw.js";
 import { t as h } from "./_vocabulary_import_error-BOxujgW3.js";
-import { c as g, n as _, p as v, r as y, s as re, t as ie, u as ae } from "./package_store-CSEuMtjv.js";
+import { f as g, l as _, n as v, o as y, s as re, t as ie } from "./typedArrays-CZjeeKxv.js";
+import { n as ae } from "./src-BzSC_ziC.js";
 //#region ../../packages/contracts/src/vocabulary_shards.ts
 var b = 4096, x = 1e3, oe = 2166136261, se = 16777619;
 function ce(e) {
@@ -77,7 +78,7 @@ var E = class e {
 	bytes;
 	entered = !1;
 	constructor(e) {
-		this.extensionCodec = e?.extensionCodec ?? y.defaultCodec, this.context = e?.context, this.useBigInt64 = e?.useBigInt64 ?? !1, this.maxDepth = e?.maxDepth ?? 100, this.initialBufferSize = e?.initialBufferSize ?? 2048, this.sortKeys = e?.sortKeys ?? !1, this.forceFloat32 = e?.forceFloat32 ?? !1, this.ignoreUndefined = e?.ignoreUndefined ?? !1, this.forceIntegerToFloat = e?.forceIntegerToFloat ?? !1, this.pos = 0, this.view = new DataView(new ArrayBuffer(this.initialBufferSize)), this.bytes = new Uint8Array(this.view.buffer);
+		this.extensionCodec = e?.extensionCodec ?? v.defaultCodec, this.context = e?.context, this.useBigInt64 = e?.useBigInt64 ?? !1, this.maxDepth = e?.maxDepth ?? 100, this.initialBufferSize = e?.initialBufferSize ?? 2048, this.sortKeys = e?.sortKeys ?? !1, this.forceFloat32 = e?.forceFloat32 ?? !1, this.ignoreUndefined = e?.ignoreUndefined ?? !1, this.forceIntegerToFloat = e?.forceIntegerToFloat ?? !1, this.pos = 0, this.view = new DataView(new ArrayBuffer(this.initialBufferSize)), this.bytes = new Uint8Array(this.view.buffer);
 	}
 	clone() {
 		return new e({
@@ -146,8 +147,8 @@ var E = class e {
 		else throw Error(`Too long string: ${e} bytes in UTF-8`);
 	}
 	encodeString(e) {
-		let t = ae(e);
-		this.ensureBufferSizeToWrite(5 + t), this.writeStringHeader(t), v(e, this.bytes, this.pos), this.pos += t;
+		let t = _(e);
+		this.ensureBufferSizeToWrite(5 + t), this.writeStringHeader(t), g(e, this.bytes, this.pos), this.pos += t;
 	}
 	encodeObject(e, t) {
 		let n = this.extensionCodec.tryToEncode(e, this.context);
@@ -163,7 +164,7 @@ var E = class e {
 		else if (t < 65536) this.writeU8(197), this.writeU16(t);
 		else if (t < 4294967296) this.writeU8(198), this.writeU32(t);
 		else throw Error(`Too large binary: ${t}`);
-		let n = _(e);
+		let n = ie(e);
 		this.writeU8a(n);
 	}
 	encodeArray(e, t) {
@@ -240,10 +241,10 @@ var E = class e {
 		this.ensureBufferSizeToWrite(8), this.view.setFloat64(this.pos, e), this.pos += 8;
 	}
 	writeU64(e) {
-		this.ensureBufferSizeToWrite(8), g(this.view, this.pos, e), this.pos += 8;
+		this.ensureBufferSizeToWrite(8), re(this.view, this.pos, e), this.pos += 8;
 	}
 	writeI64(e) {
-		this.ensureBufferSizeToWrite(8), re(this.view, this.pos, e), this.pos += 8;
+		this.ensureBufferSizeToWrite(8), y(this.view, this.pos, e), this.pos += 8;
 	}
 	writeBigUint64(e) {
 		this.ensureBufferSizeToWrite(8), this.view.setBigUint64(this.pos, e), this.pos += 8;
@@ -794,7 +795,7 @@ function Ue(e, t, n) {
 		}), a.trim().length === 0) throw new h("vocabulary_import_invalid_file", "The vocabulary file is empty");
 		let s = ze(t, a), c = s === "legacy_v2" ? [a] : Be(a);
 		i = new Ne({
-			store: new ie(e, Pe),
+			store: new ae(e, Pe),
 			package_id: Fe,
 			data_version: Z,
 			minimum_extension_version: Q,

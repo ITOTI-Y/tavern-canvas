@@ -80,6 +80,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     reorder_assets: vi.fn(() => Promise.resolve()),
     search_vocabulary: vi.fn(() => Promise.resolve({ results: [], next_cursor: null })),
     load_more_vocabulary: vi.fn(() => Promise.resolve({ results: [], next_cursor: null })),
+    load_installed_vocabulary: vi.fn(() => Promise.resolve(null)),
     select_gallery_record: vi.fn(),
     read_gallery_bytes: vi.fn(() => Promise.resolve(new Uint8Array())),
     pin_gallery_record: vi.fn(() => Promise.resolve()),
@@ -713,11 +714,34 @@ describe("Vocabulary panel: search, pagination, install, NSFW opt-in", () => {
     expect(controller.install_vocabulary_package).not.toHaveBeenCalled();
   });
 
+  it("shows the installed package and requests the update catalog only on demand", async () => {
+    const state = build_state({ vocabulary_catalog: [] });
+    const { controller } = mount_assets_view({ state });
+    controller.load_installed_vocabulary = vi.fn(() =>
+      Promise.resolve({
+        package_id: "tavern-canvas-baseline",
+        data_version: "1.1.0",
+        record_count: 50_000,
+      }),
+    );
+    await click_tab("Vocabulary");
+    await flushPromises();
+
+    expect(dom().find('[data-testid="vocabulary-installed"]').text()).toContain(
+      "tavern-canvas-baseline",
+    );
+    expect(controller.load_vocabulary_catalog).not.toHaveBeenCalled();
+    await dom().find('[data-testid="vocabulary-check-updates"]').trigger("click");
+    expect(controller.load_vocabulary_catalog).toHaveBeenCalledOnce();
+    expect(dom().text()).toContain("The update channel offers no other packages");
+  });
+
   it("clicking install calls install_vocabulary_package for that entry", async () => {
     const entry = make_catalog_entry();
     const state = build_state({ vocabulary_catalog: [entry] });
     const { controller } = mount_assets_view({ state });
     await click_tab("Vocabulary");
+    await dom().find('[data-testid="vocabulary-check-updates"]').trigger("click");
     await dom().find('button[aria-label="Import package"]').trigger("click");
     await flushPromises();
     expect(controller.install_vocabulary_package).toHaveBeenCalledWith(entry, expect.any(Function));
@@ -754,6 +778,7 @@ describe("Vocabulary panel: search, pagination, install, NSFW opt-in", () => {
     await flushPromises();
     (controller.search_vocabulary as ReturnType<typeof vi.fn>).mockClear();
 
+    await dom().find('[data-testid="vocabulary-check-updates"]').trigger("click");
     await dom().find('button[aria-label="Import package"]').trigger("click");
     await flushPromises();
 

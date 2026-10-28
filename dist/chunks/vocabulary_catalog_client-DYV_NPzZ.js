@@ -3,7 +3,8 @@ import { h as n, i as r, l as i, m as a, r as o, u as s, x as c, y as l } from "
 import { n as u } from "./generation-C8k9E8Cm.js";
 import { c as d, i as ee, n as f, r as p } from "./vocabulary-BfEyI-lw.js";
 import { h as m } from "./business_repositories-Tf6NN3HM.js";
-import { a as h, d as g, f as _, l as v, n as y, o as te, r as ne, t as re } from "./package_store-CSEuMtjv.js";
+import { a as h, c as g, d as _, i as v, n as te, t as y, u as ne } from "./typedArrays-CZjeeKxv.js";
+import { n as re } from "./src-BzSC_ziC.js";
 //#region ../../packages/contracts/src/vocabulary_catalog.ts
 var ie = n().trim().min(2).max(16).regex(/^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$/u), ae = a({
 	en: n().trim().min(1).max(128),
@@ -150,7 +151,7 @@ var O = 16, k = 16, A = class {
 	}
 }, j = "array", M = "map_key", N = "map_value", P = (e) => {
 	if (typeof e == "string" || typeof e == "number") return e;
-	throw new v("The type of key must be string or number but " + typeof e);
+	throw new g("The type of key must be string or number but " + typeof e);
 }, F = class {
 	stack = [];
 	stackHeadPosition = -1;
@@ -220,7 +221,7 @@ var z = /* @__PURE__ */ RangeError("Insufficient data"), B = new A(), V = class 
 	stack = new F();
 	entered = !1;
 	constructor(e) {
-		this.extensionCodec = e?.extensionCodec ?? ne.defaultCodec, this.context = e?.context, this.useBigInt64 = e?.useBigInt64 ?? !1, this.rawStrings = e?.rawStrings ?? !1, this.maxStrLength = e?.maxStrLength ?? 4294967295, this.maxBinLength = e?.maxBinLength ?? 4294967295, this.maxArrayLength = e?.maxArrayLength ?? 4294967295, this.maxMapLength = e?.maxMapLength ?? 4294967295, this.maxExtLength = e?.maxExtLength ?? 4294967295, this.keyDecoder = e?.keyDecoder === void 0 ? B : e.keyDecoder, this.mapKeyConverter = e?.mapKeyConverter ?? P;
+		this.extensionCodec = e?.extensionCodec ?? te.defaultCodec, this.context = e?.context, this.useBigInt64 = e?.useBigInt64 ?? !1, this.rawStrings = e?.rawStrings ?? !1, this.maxStrLength = e?.maxStrLength ?? 4294967295, this.maxBinLength = e?.maxBinLength ?? 4294967295, this.maxArrayLength = e?.maxArrayLength ?? 4294967295, this.maxMapLength = e?.maxMapLength ?? 4294967295, this.maxExtLength = e?.maxExtLength ?? 4294967295, this.keyDecoder = e?.keyDecoder === void 0 ? B : e.keyDecoder, this.mapKeyConverter = e?.mapKeyConverter ?? P;
 	}
 	clone() {
 		return new e({
@@ -428,7 +429,7 @@ var z = /* @__PURE__ */ RangeError("Insufficient data"), B = new A(), V = class 
 			} else if (e === 201) {
 				let e = this.lookU32();
 				t = this.decodeExtension(e, 4);
-			} else throw new v(`Unrecognized type byte: ${D(e)}`);
+			} else throw new g(`Unrecognized type byte: ${D(e)}`);
 			this.complete();
 			let n = this.stack;
 			for (; n.length > 0;) {
@@ -436,7 +437,7 @@ var z = /* @__PURE__ */ RangeError("Insufficient data"), B = new A(), V = class 
 				if (e.type === j) if (e.array[e.position] = t, e.position++, e.position === e.size) t = e.array, n.release(e);
 				else continue DECODE;
 				else if (e.type === M) {
-					if (t === "__proto__") throw new v("The key __proto__ is not allowed");
+					if (t === "__proto__") throw new g("The key __proto__ is not allowed");
 					e.key = this.mapKeyConverter(t), e.type = N;
 					continue DECODE;
 				} else if (e.map[e.key] = t, e.readCount++, e.readCount === e.size) t = e.map, n.release(e);
@@ -461,37 +462,37 @@ var z = /* @__PURE__ */ RangeError("Insufficient data"), B = new A(), V = class 
 			case 221: return this.readU32();
 			default:
 				if (e < 160) return e - 144;
-				throw new v(`Unrecognized array type byte: ${D(e)}`);
+				throw new g(`Unrecognized array type byte: ${D(e)}`);
 		}
 	}
 	pushMapState(e) {
-		if (e > this.maxMapLength) throw new v(`Max length exceeded: map length (${e}) > maxMapLengthLength (${this.maxMapLength})`);
+		if (e > this.maxMapLength) throw new g(`Max length exceeded: map length (${e}) > maxMapLengthLength (${this.maxMapLength})`);
 		this.stack.pushMapState(e);
 	}
 	pushArrayState(e) {
-		if (e > this.maxArrayLength) throw new v(`Max length exceeded: array length (${e}) > maxArrayLength (${this.maxArrayLength})`);
+		if (e > this.maxArrayLength) throw new g(`Max length exceeded: array length (${e}) > maxArrayLength (${this.maxArrayLength})`);
 		this.stack.pushArrayState(e);
 	}
 	decodeString(e, t) {
 		return !this.rawStrings || this.stateIsMapKey() ? this.decodeUtf8String(e, t) : this.decodeBinary(e, t);
 	}
 	decodeUtf8String(e, t) {
-		if (e > this.maxStrLength) throw new v(`Max length exceeded: UTF-8 byte length (${e}) > maxStrLength (${this.maxStrLength})`);
+		if (e > this.maxStrLength) throw new g(`Max length exceeded: UTF-8 byte length (${e}) > maxStrLength (${this.maxStrLength})`);
 		if (this.bytes.byteLength < this.pos + t + e) throw z;
 		let n = this.pos + t, r;
-		return r = this.stateIsMapKey() && this.keyDecoder?.canBeCached(e) ? this.keyDecoder.decode(this.bytes, n, e) : g(this.bytes, n, e), this.pos += t + e, r;
+		return r = this.stateIsMapKey() && this.keyDecoder?.canBeCached(e) ? this.keyDecoder.decode(this.bytes, n, e) : ne(this.bytes, n, e), this.pos += t + e, r;
 	}
 	stateIsMapKey() {
 		return this.stack.length > 0 && this.stack.top().type === M;
 	}
 	decodeBinary(e, t) {
-		if (e > this.maxBinLength) throw new v(`Max length exceeded: bin length (${e}) > maxBinLength (${this.maxBinLength})`);
+		if (e > this.maxBinLength) throw new g(`Max length exceeded: bin length (${e}) > maxBinLength (${this.maxBinLength})`);
 		if (!this.hasRemaining(e + t)) throw z;
 		let n = this.pos + t, r = this.bytes.subarray(n, n + e);
 		return this.pos += t + e, r;
 	}
 	decodeExtension(e, t) {
-		if (e > this.maxExtLength) throw new v(`Max length exceeded: ext length (${e}) > maxExtLength (${this.maxExtLength})`);
+		if (e > this.maxExtLength) throw new g(`Max length exceeded: ext length (${e}) > maxExtLength (${this.maxExtLength})`);
 		let n = this.view.getInt8(this.pos + t), r = this.decodeBinary(e, t + 1);
 		return this.extensionCodec.decode(r, n, this.context);
 	}
@@ -529,11 +530,11 @@ var z = /* @__PURE__ */ RangeError("Insufficient data"), B = new A(), V = class 
 		return this.pos += 4, e;
 	}
 	readU64() {
-		let e = te(this.view, this.pos);
+		let e = h(this.view, this.pos);
 		return this.pos += 8, e;
 	}
 	readI64() {
-		let e = h(this.view, this.pos);
+		let e = v(this.view, this.pos);
 		return this.pos += 8, e;
 	}
 	readU64AsBigInt() {

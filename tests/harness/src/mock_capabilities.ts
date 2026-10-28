@@ -777,6 +777,12 @@ function create_vocabulary_capability(): VocabularyCapability {
     });
   return {
     load: () => Promise.resolve(VOCABULARY_CATALOG),
+    installed: () =>
+      Promise.resolve({
+        package_id: "tavern-canvas-baseline",
+        data_version: "1.1.0",
+        record_count: 50_000,
+      }),
     search,
     lookup: search,
     prepare: () => Promise.resolve(),

@@ -1,17 +1,18 @@
 import { $ as e, D as t, F as n, G as r, I as i, N as a, W as o, _ as s, a as c, ct as l, et as u, g as d, h as f, m as p, n as m, p as h, pt as g, u as _, ut as v, x as y, y as b } from "./vue-i18n-DUz2Gjn8.js";
 import { n as x, t as S } from "./AppIcon-Cnhzrx9o.js";
-import { i as C, n as w, r as T } from "./AppSelect-CRHyq1ex.js";
-import { t as E } from "./chevron-down-Tu_8qTxg.js";
-import { t as D } from "./chevron-up-D4TetO-M.js";
-import { n as O, t as k } from "./FieldGroup-5lMIUNw6.js";
-import { t as ee } from "./shuffle-BAB9O4dE.js";
-import { t as A } from "./trash-2-B6ZXZcor.js";
-import { n as j } from "./deferred_stylesheets-BpS7LWkd.js";
-import { t as M } from "./ConfirmDialog-CcAJItG1.js";
-import { t as N } from "./IconButton-Cyu85S4F.js";
-import { n as P } from "./SettingsView-BvGeDxju.js";
+import { t as ee } from "./chevron-down-Tu_8qTxg.js";
+import { t as C } from "./chevron-up-D4TetO-M.js";
+import { n as w, t as te } from "./StateSurface-BA0Ffiwe.js";
+import { n as T, t as E } from "./FieldGroup-BYtqLDde.js";
+import { t as D } from "./shuffle-BAB9O4dE.js";
+import { t as O } from "./trash-2-B6ZXZcor.js";
+import { n as k } from "./deferred_stylesheets-BpS7LWkd.js";
+import { t as A } from "./_prop_utils-CqbCYIc0.js";
+import { t as j } from "./NumberStepper-BaD6Y0DB.js";
+import { t as M } from "./ConfirmDialog-3SJceF8v.js";
+import { t as N } from "./IconButton-DPIesKAc.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/grip-vertical.js
-var te = x("grip-vertical", [
+var P = x("grip-vertical", [
 	["circle", {
 		cx: "9",
 		cy: "12",
@@ -104,7 +105,7 @@ var te = x("grip-vertical", [
 };
 //#endregion
 //#region src/ui/views/assets/assets_styles.ts
-j("assets", "._assetsView_1d2lf_10{flex-direction:column;gap:16px;height:100%;min-height:0;padding:16px;display:flex}._tabsList_1d2lf_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;gap:4px;padding-bottom:0;display:flex}._tabsTrigger_1d2lf_31{border-radius:var(--tc-radius-field) var(--tc-radius-field) 0 0;color:var(--tc-text-muted);transition:color var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out;background-color:#0000;border:1px solid #0000;border-bottom-width:2px;padding:8px 14px;font-size:13px;font-weight:500}._tabsTrigger_1d2lf_31:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._tabsTrigger_1d2lf_31[data-state=active]{color:var(--tc-accent);border-bottom-color:var(--tc-accent)}._tabsContent_1d2lf_55{flex:1;min-height:0;overflow-y:auto}._tabsContent_1d2lf_55:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._categoryList_1d2lf_70{flex-direction:column;gap:12px;padding:12px 0;display:flex}._categoryToolbar_1d2lf_77{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._searchInput_1d2lf_84{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:160px;color:var(--tc-text);flex:1;padding:8px 12px;font-size:13px}._searchInput_1d2lf_84:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reorderHint_1d2lf_100{color:var(--tc-text-muted);font-size:12px}._emptyDescription_1d2lf_105{color:var(--tc-text-muted);font-size:13px}._cardGrid_1d2lf_110{flex-direction:column;gap:8px;display:flex}._assetCard_1d2lf_120{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);flex-wrap:wrap;align-items:center;gap:8px;padding:6px 8px;display:flex}._assetCard_1d2lf_120[data-dragging]{border-color:var(--tc-accent)}._dragHandle_1d2lf_135{color:var(--tc-text-muted);cursor:grab;flex:none;padding:4px;display:inline-flex}._assetCardMain_1d2lf_147{border-radius:var(--tc-radius-field);text-align:left;min-width:0;transition:background-color var(--tc-motion-fast) ease-out;background-color:#0000;flex-direction:column;flex:160px;align-items:flex-start;gap:2px;padding:2px 4px;display:flex}._assetCardMain_1d2lf_147:hover{background-color:var(--tc-surface-raised)}._assetCardName_1d2lf_165{color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;max-width:100%;font-size:13px;font-weight:500;overflow:hidden}._assetCardSummary_1d2lf_175{color:var(--tc-text-muted);flex-wrap:wrap;gap:8px;font-size:12px;display:flex}._assetCardSummaryPart_1d2lf_183{white-space:nowrap}._assetCardActions_1d2lf_187{flex:none;align-items:center;gap:8px;margin-left:auto;display:flex}._form_1d2lf_199{flex-direction:column;gap:14px;display:flex}._textInput_1d2lf_205,._textArea_1d2lf_206{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;color:var(--tc-text);padding:8px 10px;font-family:inherit;font-size:13px}._textArea_1d2lf_206{resize:vertical;min-height:72px}._textInput_1d2lf_205:focus-visible,._textArea_1d2lf_206:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._formError_1d2lf_228{color:var(--tc-error);margin:0;font-size:12px}._formActions_1d2lf_234{justify-content:flex-end;gap:8px;display:flex}._vocabularyPanel_1d2lf_244{flex-direction:column;gap:20px;display:flex}._vocabularySearchRow_1d2lf_250{gap:8px;display:flex}._searchResultsList_1d2lf_255{flex-direction:column;gap:4px;display:flex}._searchResultRow_1d2lf_261{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:baseline;gap:12px;padding:8px 4px;display:flex}._searchResultTag_1d2lf_270{color:var(--tc-text);font-size:13px}._searchResultTranslation_1d2lf_275{color:var(--tc-text-muted);font-size:12px}._loadMoreRow_1d2lf_280{justify-content:center;padding-top:4px;display:flex}._sectionTitle_1d2lf_286{color:var(--tc-text);font-size:13px;font-weight:600}._catalogList_1d2lf_292{flex-direction:column;gap:8px;display:flex}._catalogEntry_1d2lf_298{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;display:flex}._catalogEntryInfo_1d2lf_307{flex-direction:column;gap:2px;min-width:0;display:flex}._catalogEntryName_1d2lf_314{color:var(--tc-text);font-size:13px;font-weight:500}._catalogEntryMeta_1d2lf_320{color:var(--tc-text-muted);font-size:12px}._bundledBadge_1d2lf_325{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);color:var(--tc-text-muted);align-items:center;padding:2px 6px;font-size:11px;display:inline-flex}._nsfwSection_1d2lf_335{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:8px 12px}._nsfwToggle_1d2lf_341{color:var(--tc-text-muted);background:0 0;align-items:center;gap:6px;padding:4px 0;font-size:12px;display:flex}._nsfwNotice_1d2lf_351{color:var(--tc-text-muted);padding:8px 0 0;font-size:12px}._installProgress_1d2lf_357{color:var(--tc-text-muted);font-size:12px}._workflowToolbarRow_1d2lf_366{flex-wrap:wrap;gap:8px;display:flex}._placeholderList_1d2lf_372{flex-direction:column;gap:8px;display:flex}._placeholderRow_1d2lf_378{align-items:center;gap:8px;display:flex}._placeholderKey_1d2lf_384{width:40%;color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;flex:none;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;overflow:hidden}._hiddenFileInput_1d2lf_395{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}._reference_thumbnail_1d2lf_407{border-radius:var(--tc-radius-image);object-fit:contain;max-width:160px;max-height:160px;margin-bottom:8px;display:block}._chat_scope_note_1d2lf_416{color:var(--tc-text-muted);flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:12px;display:flex}._reference_1d2lf_407{flex-wrap:wrap;align-items:flex-end;gap:12px;display:flex}._reference_1d2lf_407 ._reference_thumbnail_1d2lf_407{margin-bottom:0}._reference_actions_1d2lf_437{flex-wrap:wrap;gap:8px;display:flex}._reference_composer_1d2lf_443{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;gap:8px;padding:12px;display:flex}._selectionBar_1d2lf_452{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._assetCardCheckbox_1d2lf_459{width:16px;height:16px;accent-color:var(--tc-accent);flex:none;margin:0}");
+k("assets", "._assetsView_1d2lf_10{flex-direction:column;gap:16px;height:100%;min-height:0;padding:16px;display:flex}._tabsList_1d2lf_23{border-bottom:1px solid var(--tc-divider);flex-wrap:wrap;gap:4px;padding-bottom:0;display:flex}._tabsTrigger_1d2lf_31{border-radius:var(--tc-radius-field) var(--tc-radius-field) 0 0;color:var(--tc-text-muted);transition:color var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out;background-color:#0000;border:1px solid #0000;border-bottom-width:2px;padding:8px 14px;font-size:13px;font-weight:500}._tabsTrigger_1d2lf_31:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._tabsTrigger_1d2lf_31[data-state=active]{color:var(--tc-accent);border-bottom-color:var(--tc-accent)}._tabsContent_1d2lf_55{flex:1;min-height:0;overflow-y:auto}._tabsContent_1d2lf_55:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}._categoryList_1d2lf_70{flex-direction:column;gap:12px;padding:12px 0;display:flex}._categoryToolbar_1d2lf_77{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._searchInput_1d2lf_84{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);min-width:160px;color:var(--tc-text);flex:1;padding:8px 12px;font-size:13px}._searchInput_1d2lf_84:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._reorderHint_1d2lf_100{color:var(--tc-text-muted);font-size:12px}._emptyDescription_1d2lf_105{color:var(--tc-text-muted);font-size:13px}._cardGrid_1d2lf_110{flex-direction:column;gap:8px;display:flex}._assetCard_1d2lf_120{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);flex-wrap:wrap;align-items:center;gap:8px;padding:6px 8px;display:flex}._assetCard_1d2lf_120[data-dragging]{border-color:var(--tc-accent)}._dragHandle_1d2lf_135{color:var(--tc-text-muted);cursor:grab;flex:none;padding:4px;display:inline-flex}._assetCardMain_1d2lf_147{border-radius:var(--tc-radius-field);text-align:left;min-width:0;transition:background-color var(--tc-motion-fast) ease-out;background-color:#0000;flex-direction:column;flex:160px;align-items:flex-start;gap:2px;padding:2px 4px;display:flex}._assetCardMain_1d2lf_147:hover{background-color:var(--tc-surface-raised)}._assetCardName_1d2lf_165{color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;max-width:100%;font-size:13px;font-weight:500;overflow:hidden}._assetCardSummary_1d2lf_175{color:var(--tc-text-muted);flex-wrap:wrap;gap:8px;font-size:12px;display:flex}._assetCardSummaryPart_1d2lf_183{white-space:nowrap}._assetCardActions_1d2lf_187{flex:none;align-items:center;gap:8px;margin-left:auto;display:flex}._form_1d2lf_199{flex-direction:column;gap:14px;display:flex}._textInput_1d2lf_205,._textArea_1d2lf_206{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);background-color:var(--tc-surface);width:100%;color:var(--tc-text);padding:8px 10px;font-family:inherit;font-size:13px}._textArea_1d2lf_206{resize:vertical;min-height:72px}._textInput_1d2lf_205:focus-visible,._textArea_1d2lf_206:focus-visible{outline:2px solid var(--tc-accent);outline-offset:1px}._formError_1d2lf_228{color:var(--tc-error);margin:0;font-size:12px}._formActions_1d2lf_234{justify-content:flex-end;gap:8px;display:flex}._vocabularyPanel_1d2lf_244{flex-direction:column;gap:20px;display:flex}._vocabularySearchRow_1d2lf_250{gap:8px;display:flex}._searchResultsList_1d2lf_255{flex-direction:column;gap:4px;display:flex}._searchResultRow_1d2lf_261{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:baseline;gap:12px;padding:8px 4px;display:flex}._searchResultTag_1d2lf_270{color:var(--tc-text);font-size:13px}._searchResultTranslation_1d2lf_275{color:var(--tc-text-muted);font-size:12px}._loadMoreRow_1d2lf_280{justify-content:center;padding-top:4px;display:flex}._sectionTitle_1d2lf_286{color:var(--tc-text);font-size:13px;font-weight:600}._catalogList_1d2lf_292{flex-direction:column;gap:8px;display:flex}._catalogEntry_1d2lf_298{border-bottom:1px solid var(--tc-divider);justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;display:flex}._catalogEntryInfo_1d2lf_307{flex-direction:column;gap:2px;min-width:0;display:flex}._catalogEntryName_1d2lf_314{color:var(--tc-text);font-size:13px;font-weight:500}._catalogEntryMeta_1d2lf_320{color:var(--tc-text-muted);font-size:12px}._bundledBadge_1d2lf_325{border-radius:var(--tc-radius-status);background-color:var(--tc-surface-raised);color:var(--tc-text-muted);align-items:center;padding:2px 6px;font-size:11px;display:inline-flex}._nsfwSection_1d2lf_335{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);padding:8px 12px}._nsfwToggle_1d2lf_341{color:var(--tc-text-muted);background:0 0;align-items:center;gap:6px;padding:4px 0;font-size:12px;display:flex}._nsfwNotice_1d2lf_351{color:var(--tc-text-muted);padding:8px 0 0;font-size:12px}._installProgress_1d2lf_357{color:var(--tc-text-muted);font-size:12px}._workflowToolbarRow_1d2lf_366{flex-wrap:wrap;gap:8px;display:flex}._placeholderList_1d2lf_372{flex-direction:column;gap:8px;display:flex}._placeholderRow_1d2lf_378{align-items:center;gap:8px;display:flex}._placeholderKey_1d2lf_384{width:40%;color:var(--tc-text);text-overflow:ellipsis;white-space:nowrap;flex:none;font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;overflow:hidden}._hiddenFileInput_1d2lf_395{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}._reference_thumbnail_1d2lf_407{border-radius:var(--tc-radius-image);object-fit:contain;max-width:160px;max-height:160px;margin-bottom:8px;display:block}._chat_scope_note_1d2lf_416{color:var(--tc-text-muted);flex-wrap:wrap;align-items:center;gap:8px;margin:0;font-size:12px;display:flex}._reference_1d2lf_407{flex-wrap:wrap;align-items:flex-end;gap:12px;display:flex}._reference_1d2lf_407 ._reference_thumbnail_1d2lf_407{margin-bottom:0}._reference_actions_1d2lf_437{flex-wrap:wrap;gap:8px;display:flex}._reference_composer_1d2lf_443{border:1px solid var(--tc-divider);border-radius:var(--tc-radius-field);flex-direction:column;gap:8px;padding:12px;display:flex}._selectionBar_1d2lf_452{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._assetCardCheckbox_1d2lf_459{width:16px;height:16px;accent-color:var(--tc-accent);flex:none;margin:0}");
 var I = F;
 //#endregion
 //#region src/ui/views/assets/asset_field_schema.ts
@@ -183,7 +184,7 @@ var H = ["for"], U = [
 		"delete-many"
 	],
 	setup(t, { emit: i }) {
-		let y = t, x = i, { t: w } = m(), k = u(""), j = u(null), P = u(null), F = h(() => {
+		let y = t, x = i, { t: E } = m(), k = u(""), A = u(null), j = u(null), F = h(() => {
 			let e = k.value.trim().toLowerCase();
 			return e === "" ? y.records : y.records.filter((t) => t.display_name.toLowerCase().includes(e));
 		}), L = e(/* @__PURE__ */ new Set()), R = u(!1), z = h(() => y.records.filter((e) => L.has(e.id)).map((e) => e.id)), B = h(() => F.value.length > 0 && F.value.every((e) => L.has(e.id)));
@@ -202,10 +203,10 @@ var H = ["for"], U = [
 			return V(e.payload, y.summaryFields);
 		}
 		function Z(e) {
-			j.value = e;
+			A.value = e;
 		}
 		function Q() {
-			j.value && x("delete", j.value.id), j.value = null;
+			A.value && x("delete", A.value.id), A.value = null;
 		}
 		function $(e, t) {
 			let n = y.records.findIndex((t) => t.id === e), r = n + t;
@@ -219,15 +220,15 @@ var H = ["for"], U = [
 			t && x("random-select", t);
 		}
 		function ae(e, t) {
-			P.value = e, t.dataTransfer?.setData("text/plain", e), t.dataTransfer && (t.dataTransfer.effectAllowed = "move");
+			j.value = e, t.dataTransfer?.setData("text/plain", e), t.dataTransfer && (t.dataTransfer.effectAllowed = "move");
 		}
 		function oe(e) {
 			e.preventDefault();
 		}
 		function se(e, t) {
 			t.preventDefault();
-			let n = P.value;
-			if (P.value = null, !n || n === e) return;
+			let n = j.value;
+			if (j.value = null, !n || n === e) return;
 			let r = y.records.findIndex((e) => e.id === n), i = y.records.findIndex((t) => t.id === e);
 			if (r === -1 || i === -1) return;
 			let a = [...y.records], [o] = a.splice(r, 1);
@@ -247,15 +248,15 @@ var H = ["for"], U = [
 					placeholder: t.searchPlaceholder,
 					"aria-label": t.searchLabel
 				}, null, 10, U), [[c, k.value]]),
-				b(C, {
+				b(w, {
 					label: t.randomLabel,
-					icon: l(ee),
+					icon: l(D),
 					variant: "secondary",
 					onClick: ie
 				}, null, 8, ["label", "icon"]),
-				b(C, {
+				b(w, {
 					label: t.addLabel,
-					icon: l(O),
+					icon: l(T),
 					variant: "primary",
 					onClick: i[1] ||= (e) => x("add")
 				}, null, 8, ["label", "icon"])
@@ -264,17 +265,17 @@ var H = ["for"], U = [
 				key: 0,
 				class: v(l(I).selectionBar)
 			}, [
-				b(C, {
-					label: B.value ? l(w)("common.actions.deselect_all") : l(w)("common.actions.select_all"),
+				b(w, {
+					label: B.value ? l(E)("common.actions.deselect_all") : l(E)("common.actions.select_all"),
 					variant: "secondary",
 					disabled: F.value.length === 0,
 					"data-testid": "asset-select-all",
 					onClick: q
 				}, null, 8, ["label", "disabled"]),
-				z.value.length > 0 ? (a(), f(C, {
+				z.value.length > 0 ? (a(), f(w, {
 					key: 0,
-					label: l(w)("assets.delete_selected_action", { n: z.value.length }),
-					icon: l(A),
+					label: l(E)("assets.delete_selected_action", { n: z.value.length }),
+					icon: l(O),
 					variant: "destructive",
 					"data-testid": "asset-delete-selected",
 					onClick: i[2] ||= (e) => R.value = !0
@@ -284,14 +285,14 @@ var H = ["for"], U = [
 					class: v(l(I).reorderHint)
 				}, g(t.reorderHint), 3)) : d("", !0)
 			], 2)) : d("", !0),
-			b(T, {
+			b(te, {
 				status: Y.value,
 				"empty-title": t.emptyTitle,
 				"min-height": "120px"
 			}, {
-				action: o(() => [p("p", { class: v(l(I).emptyDescription) }, g(t.emptyDescription), 3), b(C, {
+				action: o(() => [p("p", { class: v(l(I).emptyDescription) }, g(t.emptyDescription), 3), b(w, {
 					label: t.addLabel,
-					icon: l(O),
+					icon: l(T),
 					variant: "primary",
 					onClick: i[3] ||= (e) => x("add")
 				}, null, 8, ["label", "icon"])]),
@@ -299,7 +300,7 @@ var H = ["for"], U = [
 					key: e.id,
 					class: v(l(I).assetCard),
 					draggable: "true",
-					"data-dragging": P.value === e.id ? "" : null,
+					"data-dragging": j.value === e.id ? "" : null,
 					onDragstart: (t) => ae(e.id, t),
 					onDragover: oe,
 					onDrop: (t) => se(e.id, t)
@@ -309,14 +310,14 @@ var H = ["for"], U = [
 						"aria-label": t.dragHandleLabel,
 						"aria-hidden": "true"
 					}, [b(S, {
-						icon: l(te),
+						icon: l(P),
 						size: 16
 					}, null, 8, ["icon"])], 10, G),
 					p("input", {
 						type: "checkbox",
 						class: v(l(I).assetCardCheckbox),
 						checked: L.has(e.id),
-						"aria-label": l(w)("assets.select_entry_action", { name: e.display_name }),
+						"aria-label": l(E)("assets.select_entry_action", { name: e.display_name }),
 						"data-testid": "asset-select",
 						onChange: (t) => K(e.id)
 					}, null, 42, ne),
@@ -334,7 +335,7 @@ var H = ["for"], U = [
 					}, g(e.label) + ": " + g(e.value), 3))), 128))], 2)) : d("", !0)], 10, re),
 					p("div", { class: v(l(I).assetCardActions) }, [
 						b(N, {
-							icon: l(D),
+							icon: l(C),
 							size: "sm",
 							label: t.moveUpLabel,
 							onClick: (t) => $(e.id, -1)
@@ -344,7 +345,7 @@ var H = ["for"], U = [
 							"onClick"
 						]),
 						b(N, {
-							icon: l(E),
+							icon: l(ee),
 							size: "sm",
 							label: t.moveDownLabel,
 							onClick: (t) => $(e.id, 1)
@@ -354,7 +355,7 @@ var H = ["for"], U = [
 							"onClick"
 						]),
 						b(N, {
-							icon: l(A),
+							icon: l(O),
 							size: "sm",
 							destructive: "",
 							label: t.deleteLabel,
@@ -369,13 +370,13 @@ var H = ["for"], U = [
 				_: 1
 			}, 8, ["status", "empty-title"]),
 			b(M, {
-				open: j.value !== null,
-				title: j.value ? t.deleteConfirmTitle(j.value.display_name) : "",
+				open: A.value !== null,
+				title: A.value ? t.deleteConfirmTitle(A.value.display_name) : "",
 				description: t.deleteConfirmDescription,
 				"confirm-label": t.confirmLabel,
 				"cancel-label": t.cancelLabel,
 				"onUpdate:open": i[4] ||= (e) => {
-					e || (j.value = null);
+					e || (A.value = null);
 				},
 				onConfirm: Q
 			}, null, 8, [
@@ -387,7 +388,7 @@ var H = ["for"], U = [
 			]),
 			b(M, {
 				open: R.value,
-				title: l(w)("assets.delete_selected_confirm_title", { n: z.value.length }),
+				title: l(E)("assets.delete_selected_confirm_title", { n: z.value.length }),
 				description: t.deleteConfirmDescription,
 				"confirm-label": t.confirmLabel,
 				"cancel-label": t.cancelLabel,
@@ -465,7 +466,7 @@ var H = ["for"], U = [
 			onSubmit: x
 		}, [
 			i(r.$slots, "leading-fields"),
-			b(k, {
+			b(E, {
 				label: e.nameLabel,
 				error: e.nameError,
 				required: ""
@@ -482,10 +483,10 @@ var H = ["for"], U = [
 				}, null, 42, q)]),
 				_: 1
 			}, 8, ["label", "error"]),
-			(a(!0), s(_, null, n(e.fields, (n) => (a(), f(k, t({
+			(a(!0), s(_, null, n(e.fields, (n) => (a(), f(E, t({
 				key: n.key,
 				label: n.label
-			}, { ref_for: !0 }, l(w)({ hint: n.hint })), {
+			}, { ref_for: !0 }, l(A)({ hint: n.hint })), {
 				default: o(({ fieldId: r, describedBy: i }) => [n.kind === "text" ? (a(), s("input", {
 					key: 0,
 					id: r,
@@ -501,7 +502,7 @@ var H = ["for"], U = [
 					value: e.values[n.key],
 					"aria-describedby": i,
 					onInput: (e) => m(n.key, e.target.value)
-				}, null, 42, Y)) : (a(), f(P, t({
+				}, null, 42, Y)) : (a(), f(j, t({
 					key: 2,
 					id: r,
 					"model-value": typeof e.values[n.key] == "number" ? e.values[n.key] : 0,
@@ -509,7 +510,7 @@ var H = ["for"], U = [
 					step: n.step ?? 1,
 					"decrement-label": e.decrementLabel,
 					"increment-label": e.incrementLabel
-				}, { ref_for: !0 }, l(w)({
+				}, { ref_for: !0 }, l(A)({
 					min: n.min,
 					max: n.max,
 					describedBy: i
@@ -530,12 +531,12 @@ var H = ["for"], U = [
 				class: v(l(I).formError),
 				role: "alert"
 			}, g(e.saveError), 3)) : d("", !0),
-			p("div", { class: v(l(I).formActions) }, [b(C, {
+			p("div", { class: v(l(I).formActions) }, [b(w, {
 				label: e.cancelLabel,
 				variant: "secondary",
 				type: "button",
 				onClick: c[1] ||= (e) => u("cancel")
-			}, null, 8, ["label"]), b(C, {
+			}, null, 8, ["label"]), b(w, {
 				label: e.saveLabel,
 				variant: "primary",
 				type: "submit",

@@ -7,7 +7,7 @@ import { l as _, n as v, o as y, r as b, s as x } from "./chunks/wardrobe_librar
 import { a as S, i as C, r as te } from "./chunks/provider-B-m_0o6I.js";
 import { a as ne, i as w, n as re, o as ie, r as ae, s as oe, t as se } from "./chunks/http_origin-NLkLJD5s.js";
 import { A as T, F as ce, H as le, I as ue, N as E, O as de, P as fe, Q as pe, V as me, W as he, Z as ge, _ as D, b as O, ct as k, et as A, ft as _e, g as j, h as M, i as ve, k as ye, m as N, n as be, nt as xe, p as P, pt as F, rt as Se, u as Ce, ut as I, x as L, y as R } from "./chunks/vue-i18n-DUz2Gjn8.js";
-import { t as we } from "./chunks/create_i18n-B_ybKpTP.js";
+import { t as we } from "./chunks/create_i18n-C47Npz8u.js";
 import { n as Te, r as Ee, t as De } from "./chunks/portal_keys-B9C82xtk.js";
 import { n as Oe, t as ke } from "./chunks/AppIcon-Cnhzrx9o.js";
 import { t as Ae } from "./chunks/chevron-down-Tu_8qTxg.js";
@@ -1286,6 +1286,7 @@ function Hn() {
 		},
 		vocabulary: {
 			load: () => Promise.resolve([]),
+			installed: W,
 			search: W,
 			lookup: () => Promise.resolve(null),
 			prepare: W,
@@ -1888,6 +1889,9 @@ var cr = class {
 	search_vocabulary(e, t) {
 		return this.#e.vocabulary.search(e, t);
 	}
+	load_installed_vocabulary() {
+		return this.#e.vocabulary.installed();
+	}
 	load_more_vocabulary(e) {
 		return this.#e.vocabulary.next_page(e);
 	}
@@ -2394,7 +2398,7 @@ var Hr = {
 		controller: {}
 	},
 	setup(e) {
-		let t = O(() => import("./chunks/GalleryView-qdQT-h1r.js")), n = O(() => import("./chunks/SettingsView-BvGeDxju.js").then((e) => e.t));
+		let t = O(() => import("./chunks/GalleryView-CpWrmN90.js")), n = O(() => import("./chunks/SettingsView-7M3F_kYe.js"));
 		return (r, i) => e.state.route === "gallery" ? (E(), M(k(t), {
 			key: 0,
 			state: e.state,
@@ -2658,7 +2662,7 @@ var Hr = {
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = O(() => import("./chunks/ChatLayer--EbYXyKG.js")), { t: i } = be();
+		let n = t, r = O(() => import("./chunks/ChatLayer-BVor4Xrg.js")), { t: i } = be();
 		function a() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -5106,7 +5110,7 @@ function es(e) {
 			}, a = null;
 			n = i;
 			try {
-				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-CA4Ogu6d.js");
+				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-6picZUMm.js");
 				a = o(e.database, t, r), n = a, i.cancelled && a.cancel(), await a.completed;
 			} finally {
 				(n === i || n === a) && (n = null);
@@ -5165,6 +5169,9 @@ function ns(e) {
 	return {
 		async load() {
 			return (await r()).list();
+		},
+		async installed() {
+			return await (await i()).ready(), e.read_active_package();
 		},
 		async search(e, t) {
 			return (await i()).search(e, t === void 0 ? {} : { category: t });
@@ -6060,7 +6067,7 @@ async function $s(e) {
 		return i;
 	}), r.generation), D = e.create_vocabulary_worker === void 0 ? Qs() : e.create_vocabulary_worker, O = o("vocabulary", u === null ? Z(Gs) : D === null ? Z("This host has no Worker constructor, so vocabulary search cannot run") : Q(() => ns({
 		async load_catalog() {
-			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-CV-I07iw.js");
+			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-DYV_NPzZ.js");
 			return new e({
 				current_extension_version: n,
 				open_database_impl: () => Promise.resolve(u)
@@ -6069,6 +6076,14 @@ async function $s(e) {
 		async create_client() {
 			let { VocabularyClient: e } = await import("./chunks/vocabulary_client-CCQkWkkk.js");
 			return new e({ create_worker: D });
+		},
+		async read_active_package() {
+			let { VocabularyPackageStore: e } = await import("./chunks/src-BzSC_ziC.js").then((e) => e.t), t = await new e(u, "vocabulary").find_active_or_confirmed();
+			return t === null ? null : {
+				package_id: t.manifest.package_id,
+				data_version: t.manifest.data_version,
+				record_count: t.manifest.record_count
+			};
 		}
 	})), r.vocabulary);
 	return {

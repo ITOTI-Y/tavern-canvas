@@ -7,7 +7,8 @@ import type { VocabularyCatalogEntry, VocabularySearchResult } from "@tavern-can
 import AppButton from "../../components/AppButton.vue";
 import AppIcon from "../../components/AppIcon.vue";
 import StateSurface from "../../components/StateSurface.vue";
-import type { CommandState } from "../../contracts/view_models.js";
+import type { InstalledVocabularyView } from "../../contracts/ui_capabilities.js";
+import type { CommandState, UiFailure } from "../../contracts/view_models.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./assets_styles.js";
 
@@ -16,16 +17,43 @@ const props = defineProps<{
   readonly catalog: readonly VocabularyCatalogEntry[];
   readonly installCommand: CommandState<void>;
   readonly loading: boolean;
+  readonly catalogFailure: UiFailure | null;
   readonly controller: StudioController;
   readonly locale: "en" | "zh-CN";
 }>();
 
 const { t } = useI18n();
 
-// The catalog is remote, so it loads when this panel opens, not at bootstrap.
+type InstalledState =
+  | { readonly status: "loading" }
+  | { readonly status: "ready"; readonly package: InstalledVocabularyView | null }
+  | { readonly status: "failed" };
+
+const installed = ref<InstalledState>({ status: "loading" });
+
+async function load_installed(): Promise<void> {
+  installed.value = { status: "loading" };
+  try {
+    installed.value = {
+      status: "ready",
+      package: await props.controller.load_installed_vocabulary(),
+    };
+  } catch {
+    installed.value = { status: "failed" };
+  }
+}
+
 onMounted(() => {
-  void props.controller.load_vocabulary_catalog();
+  void load_installed();
 });
+
+// The catalog is remote, so it is requested only when the user checks for updates.
+const catalog_checked = ref(false);
+
+function check_updates(): void {
+  catalog_checked.value = true;
+  void props.controller.load_vocabulary_catalog();
+}
 
 const NSFW_PATTERN = /nsfw|adult|explicit/iu;
 
@@ -77,6 +105,7 @@ async function install(entry: VocabularyCatalogEntry): Promise<void> {
   if (props.controller.state.assets.vocabulary_install_command.status === "success") {
     search_results.value = [];
     next_cursor.value = null;
+    void load_installed();
     if (search_query.value.trim() !== "") {
       await run_search();
     }
@@ -87,6 +116,7 @@ const search_query = ref("");
 const search_results = ref<readonly VocabularySearchResult[]>([]);
 const next_cursor = ref<string | null>(null);
 const searching = ref(false);
+const search_failed = ref(false);
 const loading_more = ref(false);
 const copied_record_id = ref<number | null>(null);
 let debounce_handle: ReturnType<typeof setTimeout> | null = null;
@@ -99,10 +129,15 @@ async function run_search(): Promise<void> {
     return;
   }
   searching.value = true;
+  search_failed.value = false;
   try {
     const page = await props.controller.search_vocabulary(query);
     search_results.value = page.results;
     next_cursor.value = page.next_cursor;
+  } catch {
+    search_results.value = [];
+    next_cursor.value = null;
+    search_failed.value = true;
   } finally {
     searching.value = false;
   }
@@ -145,12 +180,18 @@ const catalog_status = computed(() => {
   if (props.loading) {
     return "loading" as const;
   }
+  if (props.catalogFailure !== null) {
+    return "error" as const;
+  }
   return props.catalog.length === 0 ? ("empty" as const) : ("ready" as const);
 });
 
 const search_status = computed(() => {
   if (searching.value && search_results.value.length === 0) {
     return "loading" as const;
+  }
+  if (search_failed.value) {
+    return "error" as const;
   }
   if (search_query.value.trim() === "" || search_results.value.length > 0) {
     return "ready" as const;
@@ -161,6 +202,28 @@ const search_status = computed(() => {
 
 <template>
   <div :class="styles.vocabularyPanel">
+    <section data-testid="vocabulary-installed">
+      <p :class="styles.sectionTitle">{{ t("assets.vocabulary.installed_title") }}</p>
+      <p v-if="installed.status === 'loading'" :class="styles.catalogEntryMeta">
+        {{ t("assets.vocabulary.installed_preparing") }}
+      </p>
+      <p v-else-if="installed.status === 'failed'" :class="styles.catalogEntryMeta">
+        {{ t("assets.vocabulary.installed_failed") }}
+      </p>
+      <p v-else-if="installed.package === null" :class="styles.catalogEntryMeta">
+        {{ t("assets.vocabulary.installed_none") }}
+      </p>
+      <div v-else :class="styles.catalogEntry">
+        <div :class="styles.catalogEntryInfo">
+          <span :class="styles.catalogEntryName">{{ installed.package.package_id }}</span>
+          <span class="tc-tabular-nums" :class="styles.catalogEntryMeta">
+            {{ installed.package.data_version }} ·
+            {{ t("assets.vocabulary.tag_count", installed.package.record_count) }}
+          </span>
+        </div>
+      </div>
+    </section>
+
     <section>
       <p :class="styles.sectionTitle">{{ t("assets.vocabulary.search_placeholder") }}</p>
       <div :class="styles.vocabularySearchRow">
@@ -178,8 +241,9 @@ const search_status = computed(() => {
 
       <StateSurface
         :status="search_status"
-        :empty-title="t('assets.vocabulary.empty_title')"
-        :empty-message="t('assets.vocabulary.empty_description')"
+        :empty-title="t('assets.vocabulary.no_results_title')"
+        :empty-message="t('assets.vocabulary.no_results_description')"
+        :error-message="t('assets.vocabulary.search_failed')"
         min-height="60px"
       >
         <ul v-if="search_results.length > 0" :class="styles.searchResultsList">
@@ -217,11 +281,24 @@ const search_status = computed(() => {
     </section>
 
     <section>
-      <p :class="styles.sectionTitle">{{ t("assets.vocabulary.update_action") }}</p>
+      <p :class="styles.sectionTitle">{{ t("assets.vocabulary.updates_title") }}</p>
+      <AppButton
+        v-if="!catalog_checked"
+        :label="t('assets.vocabulary.update_action')"
+        variant="secondary"
+        data-testid="vocabulary-check-updates"
+        @click="check_updates"
+      />
       <StateSurface
+        v-else
         :status="catalog_status"
-        :empty-title="t('assets.vocabulary.empty_title')"
-        :empty-message="t('assets.vocabulary.empty_description')"
+        :empty-title="t('assets.vocabulary.no_updates_title')"
+        :empty-message="t('assets.vocabulary.no_updates_description')"
+        :error-message="
+          catalogFailure === null
+            ? ''
+            : t('assets.vocabulary.catalog_failed_code', { code: catalogFailure.code })
+        "
         min-height="80px"
       >
         <div :class="styles.catalogList">

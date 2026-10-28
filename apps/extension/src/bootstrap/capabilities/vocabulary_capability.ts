@@ -3,6 +3,7 @@ import type { VocabularyCatalogEntry } from "@tavern-canvas/contracts";
 import type { VocabularyCatalogClient } from "../../modules/vocabulary/vocabulary_catalog_client.js";
 import type { VocabularyClient } from "../../modules/vocabulary/vocabulary_client.js";
 import type {
+  InstalledVocabularyView,
   VocabularyCapability,
   VocabularyInstallProgressView,
 } from "../../ui/contracts/ui_capabilities.js";
@@ -12,6 +13,7 @@ export interface VocabularyCapabilityDeps {
   readonly load_catalog: () => Promise<VocabularyCatalogClient>;
   /** A fresh client is needed after an install: the search Worker holds a snapshot of the installed packages. */
   readonly create_client: () => Promise<VocabularyClient>;
+  readonly read_active_package: () => Promise<InstalledVocabularyView | null>;
 }
 
 function to_progress_view(progress: {
@@ -60,6 +62,10 @@ export function create_vocabulary_capability(deps: VocabularyCapabilityDeps): Vo
   return {
     async load() {
       return (await active_catalog()).list();
+    },
+    async installed() {
+      await (await active_client()).ready();
+      return deps.read_active_package();
     },
     async search(query, category) {
       return (await active_client()).search(query, category === undefined ? {} : { category });

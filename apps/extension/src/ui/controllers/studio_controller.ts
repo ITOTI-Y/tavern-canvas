@@ -18,6 +18,7 @@ import type {
   GalleryDomainEvent,
   GenerationDomainEvent,
   GenerationJobSummary,
+  InstalledVocabularyView,
   ProfileConnectionTestResult,
   ProfilesDomainEvent,
   ProviderProfileDraft,
@@ -146,6 +147,7 @@ export interface StudioController {
     category?: VocabularyCategory,
   ): Promise<VocabularySearchPageView>;
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView>;
+  load_installed_vocabulary(): Promise<InstalledVocabularyView | null>;
 
   select_gallery_record(record_id: Uuid | null): void;
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array>;
@@ -804,6 +806,10 @@ class StudioControllerImpl implements StudioController {
     category?: VocabularyCategory,
   ): Promise<VocabularySearchPageView> {
     return this.#capabilities.vocabulary.search(query, category);
+  }
+
+  load_installed_vocabulary(): Promise<InstalledVocabularyView | null> {
+    return this.#capabilities.vocabulary.installed();
   }
 
   load_more_vocabulary(cursor: string): Promise<VocabularySearchPageView> {

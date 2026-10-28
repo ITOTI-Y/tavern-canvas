@@ -591,6 +591,20 @@ export async function compose_studio_capabilities(
                   await import("../modules/vocabulary/vocabulary_client.js");
                 return new VocabularyClient({ create_worker });
               },
+              async read_active_package() {
+                const { VocabularyPackageStore } = await import("@tavern-canvas/vocabulary");
+                const active = await new VocabularyPackageStore(
+                  database,
+                  "vocabulary",
+                ).find_active_or_confirmed();
+                return active === null
+                  ? null
+                  : {
+                      package_id: active.manifest.package_id,
+                      data_version: active.manifest.data_version,
+                      record_count: active.manifest.record_count,
+                    };
+              },
             }),
           ),
     fallback.vocabulary,

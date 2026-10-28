@@ -263,8 +263,17 @@ export type VocabularyImportProgressView =
     }
   | { readonly phase: "cancelled" };
 
+export interface InstalledVocabularyView {
+  readonly package_id: string;
+  readonly data_version: string;
+  readonly record_count: number;
+}
+
 export interface VocabularyCapability {
+  /** The remote update catalog; requested only when the user asks for updates. */
   load(): Promise<readonly VocabularyCatalogEntry[]>;
+  /** Prepares the search Worker, installing the bundled package on first use, then names the active package. */
+  installed(): Promise<InstalledVocabularyView | null>;
   search(query: string, category?: VocabularyCategory): Promise<VocabularySearchPageView>;
   /**
    * One query that runs alongside others; `null` while the search Worker is still opening its
