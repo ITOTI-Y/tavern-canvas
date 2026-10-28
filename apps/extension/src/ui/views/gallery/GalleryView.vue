@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Pin, Unlink } from "lucide-vue-next";
 import { computed, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import AppButton from "../../components/AppButton.vue";
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
-import AppSwitch from "../../components/AppSwitch.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import AppIcon from "../../components/AppIcon.vue";
 import { drop_undefined } from "../../components/_prop_utils.js";
 import StateSurface from "../../components/StateSurface.vue";
 import ToastViewport from "../../components/ToastViewport.vue";
@@ -23,7 +23,6 @@ const props = defineProps<{
   readonly state: StudioState;
   readonly controller: StudioController;
   readonly gridWidthOverride?: number;
-  readonly gridHeightOverride?: number;
 }>();
 
 const { t, locale } = useI18n();
@@ -34,8 +33,22 @@ const ALL_PROVIDERS = "all";
 const filter_provider = ref(ALL_PROVIDERS);
 const filter_pinned_only = ref(false);
 const filter_orphaned_only = ref(false);
-const filter_date_from = ref("");
-const filter_date_to = ref("");
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DATE_RANGES = { all: null, week: 7, month: 30 } as const;
+type DateRange = keyof typeof DATE_RANGES;
+const filter_range = ref<DateRange>("all");
+
+const range_options = computed<readonly AppSelectOption[]>(() => [
+  { value: "all", label: t("gallery.filters.range_all") },
+  { value: "week", label: t("gallery.filters.range_week") },
+  { value: "month", label: t("gallery.filters.range_month") },
+]);
+
+/** The earliest `created_at` the time filter keeps, or `null` for all time. */
+const range_start = computed(() => {
+  const days = DATE_RANGES[filter_range.value];
+  return days === null ? null : new Date(Date.now() - days * DAY_MS).toISOString();
+});
 
 const provider_options = computed<readonly AppSelectOption[]>(() => {
   const providers = new Set(props.state.gallery.records.map((record) => record.provider_id));
@@ -56,27 +69,25 @@ function matches_filters(record: GalleryRecordSummary): boolean {
   if (filter_orphaned_only.value && !record.quarantined) {
     return false;
   }
-  if (filter_date_from.value !== "" && record.created_at < filter_date_from.value) {
-    return false;
-  }
-  if (filter_date_to.value !== "" && record.created_at > `${filter_date_to.value}T23:59:59.999Z`) {
-    return false;
-  }
-  return true;
+  return range_start.value === null || record.created_at >= range_start.value;
 }
 
 const filtered_records = computed(() => props.state.gallery.records.filter(matches_filters));
 
 const resolved_locale = computed<"en" | "zh-CN">(() => (locale.value === "zh-CN" ? "zh-CN" : "en"));
-const cache_occupancy_label = computed<string | null>(() => {
+const cache_occupancy = computed<{ label: string; fraction: number } | null>(() => {
   const snapshot = props.state.diagnostics.snapshot;
   if (!snapshot || snapshot.storage_usage_bytes === null || snapshot.storage_quota_bytes === null) {
     return null;
   }
-  return t("gallery.cache_occupancy.description", {
-    used: format_byte_size(snapshot.storage_usage_bytes, resolved_locale.value),
-    limit: format_byte_size(snapshot.storage_quota_bytes, resolved_locale.value),
-  });
+  const quota = snapshot.storage_quota_bytes;
+  return {
+    label: t("gallery.cache_occupancy.description", {
+      used: format_byte_size(snapshot.storage_usage_bytes, resolved_locale.value),
+      limit: format_byte_size(quota, resolved_locale.value),
+    }),
+    fraction: quota > 0 ? Math.min(1, snapshot.storage_usage_bytes / quota) : 0,
+  };
 });
 
 const selected_ids = reactive(new Set<string>());
@@ -251,6 +262,17 @@ async function confirm_bulk_detach(): Promise<void> {
 
 const read_bytes = (id: string): Promise<Uint8Array> => props.controller.read_gallery_bytes(id);
 
+/** The cached thumbnail, or the full image when no thumbnail can be made for it. */
+async function read_tile_image(record: GalleryRecordSummary): Promise<Blob> {
+  try {
+    const thumbnail = await props.controller.read_gallery_thumbnail(record.id);
+    return new Blob([new Uint8Array(thumbnail)], { type: "image/webp" });
+  } catch {
+    const bytes = await props.controller.read_gallery_bytes(record.id);
+    return new Blob([new Uint8Array(bytes)], { type: record.media_type });
+  }
+}
+
 const grid_status = computed(() => {
   if (props.state.loading.has("gallery")) {
     return "loading" as const;
@@ -265,40 +287,82 @@ const grid_status = computed(() => {
       <span class="tc-visually-hidden">{{ t("gallery.filters.title") }}</span>
       <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind AppSelect's prop -->
       <!-- :key="locale" remounts the select: Reka's SelectValue keeps the old-locale label when option labels change. -->
-
-      <AppSelect
-        :key="locale"
-        :model-value="filter_provider"
-        :options="provider_options"
-        :placeholder="t('gallery.filters.provider_label')"
-        :ariaLabel="t('gallery.filters.provider_label')"
-        @update:model-value="
-          (value) => {
-            filter_provider = value;
-          }
-        "
-      />
+      <div :class="styles.filterSelect">
+        <AppSelect
+          :key="locale"
+          :model-value="filter_provider"
+          :options="provider_options"
+          :placeholder="t('gallery.filters.provider_label')"
+          :ariaLabel="t('gallery.filters.provider_label')"
+          @update:model-value="
+            (value) => {
+              filter_provider = value;
+            }
+          "
+        />
+      </div>
+      <div :class="styles.filterSelect">
+        <AppSelect
+          :key="locale"
+          :model-value="filter_range"
+          :options="range_options"
+          :placeholder="t('gallery.filters.date_range_label')"
+          :ariaLabel="t('gallery.filters.date_range_label')"
+          data-testid="gallery-range"
+          @update:model-value="
+            (value) => {
+              filter_range = value as DateRange;
+            }
+          "
+        />
+      </div>
       <!-- eslint-enable vue/attribute-hyphenation -->
-      <AppSwitch v-model="filter_pinned_only" :label="t('gallery.filters.pinned_only_label')" />
-      <AppSwitch v-model="filter_orphaned_only" :label="t('gallery.filters.orphaned_only_label')" />
-      <AppButton
-        :label="
-          all_visible_selected ? t('common.actions.deselect_all') : t('common.actions.select_all')
-        "
-        :disabled="filtered_records.length === 0"
-        variant="secondary"
-        data-testid="gallery-select-all"
-        @click="toggle_select_all"
-      />
-      <label :class="styles.dateFilterLabel">
-        {{ t("gallery.filters.date_range_label") }}
-        <input v-model="filter_date_from" type="date" :class="styles.dateInput" />
-        <input v-model="filter_date_to" type="date" :class="styles.dateInput" />
-      </label>
-      <span v-if="cache_occupancy_label" class="tc-tabular-nums" :class="styles.cacheOccupancy">
-        {{ t("gallery.cache_occupancy.label") }}: {{ cache_occupancy_label }}
-      </span>
+      <button
+        type="button"
+        class="tc-interactive"
+        :class="styles.chipToggle"
+        :aria-pressed="filter_pinned_only"
+        data-testid="gallery-pinned-only"
+        @click="filter_pinned_only = !filter_pinned_only"
+      >
+        <AppIcon :icon="Pin" :size="16" />
+        {{ t("gallery.filters.pinned_only_label") }}
+      </button>
+      <button
+        type="button"
+        class="tc-interactive"
+        :class="styles.chipToggle"
+        :aria-pressed="filter_orphaned_only"
+        data-testid="gallery-orphaned-only"
+        @click="filter_orphaned_only = !filter_orphaned_only"
+      >
+        <AppIcon :icon="Unlink" :size="16" />
+        {{ t("gallery.filters.orphaned_only_label") }}
+      </button>
+      <div v-if="cache_occupancy" :class="styles.meter" data-testid="gallery-cache-meter">
+        <span>{{ t("gallery.cache_occupancy.label") }}</span>
+        <span :class="styles.meterBar" aria-hidden="true">
+          <span :style="{ width: `${String(Math.round(cache_occupancy.fraction * 100))}%` }" />
+        </span>
+        <span :class="styles.meterValue" class="tc-tabular-nums">{{ cache_occupancy.label }}</span>
+      </div>
     </div>
+
+    <BulkActionBar
+      v-if="selected_ids.size > 0"
+      :selected-count-label="selected_count_label"
+      :select-all-label="t('common.actions.select_all')"
+      :all-selected="all_visible_selected"
+      :download-label="t('gallery.selection.download_action')"
+      :delete-label="t('gallery.selection.delete_action')"
+      :detach-label="t('gallery.selection.detach_action')"
+      :clear-label="t('common.actions.deselect_all')"
+      @select-all="toggle_select_all"
+      @download="() => void download_selected()"
+      @delete="bulk_delete_pending = true"
+      @detach="bulk_detach_pending = true"
+      @clear="clear_selection"
+    />
 
     <StateSurface
       :status="grid_status"
@@ -318,33 +382,18 @@ const grid_status = computed(() => {
       <ImageGrid
         :records="filtered_records"
         :selected-ids="selected_ids"
-        :read-bytes="read_bytes"
+        :read-image="read_tile_image"
         :thumbnail-failed-label="t('gallery.thumbnail_failed')"
         :pinned-label="t('gallery.pin_action')"
         :select-label="t('gallery.select_image_action')"
         :open-label="t('gallery.open_preview_action')"
         :ariaLabel="t('nav.gallery')"
-        v-bind="
-          drop_undefined({ widthOverride: gridWidthOverride, heightOverride: gridHeightOverride })
-        "
+        v-bind="drop_undefined({ widthOverride: gridWidthOverride })"
         @open="open_preview"
         @toggle-select="toggle_select"
       />
       <!-- eslint-enable vue/attribute-hyphenation -->
     </StateSurface>
-
-    <BulkActionBar
-      v-if="selected_ids.size > 0"
-      :selected-count-label="selected_count_label"
-      :download-label="t('gallery.selection.download_action')"
-      :delete-label="t('gallery.selection.delete_action')"
-      :detach-label="t('gallery.selection.detach_action')"
-      :clear-label="t('common.actions.deselect_all')"
-      @download="() => void download_selected()"
-      @delete="bulk_delete_pending = true"
-      @detach="bulk_detach_pending = true"
-      @clear="clear_selection"
-    />
 
     <ImagePreviewDialog
       :open="preview_record !== null"

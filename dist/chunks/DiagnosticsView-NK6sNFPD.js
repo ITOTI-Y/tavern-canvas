@@ -1,7 +1,21 @@
-import { $ as e, H as t, I as n, L as r, P as i, _ as a, ct as o, dt as s, lt as c, m as l, p as u, pt as d, rt as f, tt as p, u as m, x as h } from "./vue-i18n-L-BrQRnK.js";
-import { t as g } from "./components_styles-DHX8irr3.js";
+import { $ as e, G as t, H as n, I as r, L as i, P as a, _ as o, ct as s, dt as c, g as l, h as u, j as d, lt as f, m as p, mt as m, n as h, p as g, pt as _, rt as v, tt as y, u as b, v as x, x as S, y as C } from "./vue-i18n-L-BrQRnK.js";
+import { n as w } from "./create_i18n-Bb05jdRy.js";
+import { t as T } from "./AppIcon-DkyxvN8k.js";
+import { n as E, r as D, t as O } from "./StateSurface-X9aRtXAT.js";
+import { t as k } from "./components_styles-DHX8irr3.js";
+import { t as A } from "./x-D7Ry5i_D.js";
+import { n as j } from "./deferred_stylesheets-BpS7LWkd.js";
+//#region src/host/host_adapter.ts
+var ee = [
+	"main_generation_events",
+	"preset_generation",
+	"message_swipe_metadata",
+	"tavern_regex",
+	"tavern_helper"
+];
+//#endregion
 //#region ../../node_modules/.pnpm/@tanstack+virtual-core@3.17.7/node_modules/@tanstack/virtual-core/dist/esm/lazy-measurements.js
-function _(e, t, n) {
+function te(e, t, n) {
 	let r = Array(e);
 	return new Proxy(r, { get(r, i, a) {
 		if (typeof i == "string") {
@@ -31,7 +45,7 @@ function _(e, t, n) {
 }
 //#endregion
 //#region ../../node_modules/.pnpm/@tanstack+virtual-core@3.17.7/node_modules/@tanstack/virtual-core/dist/esm/utils.js
-function v(e, t, n) {
+function M(e, t, n) {
 	let r = n.initialDeps ?? [], i, a = !0;
 	function o() {
 		let o = e();
@@ -41,32 +55,32 @@ function v(e, t, n) {
 		r = e;
 	}, o;
 }
-function y(e, t) {
+function N(e, t) {
 	if (e === void 0) throw Error(`Unexpected undefined${t ? `: ${t}` : ""}`);
 	return e;
 }
-var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
+var P = (e, t) => Math.abs(e - t) < 1.01, F = (e, t, n) => {
 	let r;
 	return function(...i) {
 		e.clearTimeout(r), r = e.setTimeout(() => t.apply(this, i), n);
 	};
-}, S, C = () => {
-	if (S !== void 0) return S;
-	if (typeof navigator > "u") return S = !1;
-	if (/iP(hone|od|ad)/.test(navigator.userAgent)) return S = !0;
+}, I, L = () => {
+	if (I !== void 0) return I;
+	if (typeof navigator > "u") return I = !1;
+	if (/iP(hone|od|ad)/.test(navigator.userAgent)) return I = !0;
 	let e = navigator.maxTouchPoints;
-	return S = navigator.platform === "MacIntel" && e !== void 0 && e > 0;
-}, w = (e) => {
+	return I = navigator.platform === "MacIntel" && e !== void 0 && e > 0;
+}, R = (e) => {
 	let { offsetWidth: t, offsetHeight: n } = e;
 	return {
 		width: t,
 		height: n
 	};
-}, T = (e) => e, E = (e) => {
+}, z = (e) => e, B = (e) => {
 	let t = Math.max(e.startIndex - e.overscan, 0), n = Math.min(e.endIndex + e.overscan, e.count - 1) - t + 1, r = Array(n);
 	for (let e = 0; e < n; e++) r[e] = t + e;
 	return r;
-}, D = (e, t) => {
+}, V = (e, t) => {
 	let n = e.scrollElement;
 	if (!n) return;
 	let r = e.targetWindow;
@@ -78,7 +92,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 			height: Math.round(r)
 		});
 	};
-	if (i(w(n)), !r.ResizeObserver) return () => {};
+	if (i(R(n)), !r.ResizeObserver) return () => {};
 	let a = new r.ResizeObserver((t) => {
 		let r = () => {
 			let e = t[0];
@@ -92,28 +106,28 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 					return;
 				}
 			}
-			i(w(n));
+			i(R(n));
 		};
 		e.options.useAnimationFrameWithResizeObserver ? requestAnimationFrame(r) : r();
 	});
 	return a.observe(n, { box: "border-box" }), () => {
 		a.unobserve(n);
 	};
-}, O = { passive: !0 }, k = typeof window > "u" || "onscrollend" in window, A = (e, t, n) => {
+}, H = { passive: !0 }, U = typeof window > "u" || "onscrollend" in window, W = (e, t, n) => {
 	let r = e.scrollElement;
 	if (!r) return;
 	let i = e.targetWindow;
 	if (!i) return;
-	let a = e.options.useScrollendEvent && k, o = 0, s = a ? null : x(i, () => t(o, !1), e.options.isScrollingResetDelay), c = (e) => () => {
+	let a = e.options.useScrollendEvent && U, o = 0, s = a ? null : F(i, () => t(o, !1), e.options.isScrollingResetDelay), c = (e) => () => {
 		o = n(r), s?.(), t(o, e);
 	}, l = c(!0), u = c(!1);
-	return r.addEventListener("scroll", l, O), a && r.addEventListener("scrollend", u, O), () => {
+	return r.addEventListener("scroll", l, H), a && r.addEventListener("scrollend", u, H), () => {
 		r.removeEventListener("scroll", l), a && r.removeEventListener("scrollend", u);
 	};
-}, j = (e, t) => A(e, t, (t) => {
+}, G = (e, t) => W(e, t, (t) => {
 	let { horizontal: n, isRtl: r } = e.options;
 	return n ? t.scrollLeft * (r && -1 || 1) : t.scrollTop;
-}), M = (e, t, n) => {
+}), K = (e, t, n) => {
 	if (n.options.useCachedMeasurements) {
 		let t = n.indexFromElement(e), r = n.options.getItemKey(t);
 		return n.itemSizeCache.get(r) ?? n.options.estimateSize(t);
@@ -127,13 +141,13 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 		if (i !== void 0) return i;
 	}
 	return e[n.options.horizontal ? "offsetWidth" : "offsetHeight"];
-}, N = (e, { adjustments: t = 0, behavior: n }, r) => {
+}, q = (e, { adjustments: t = 0, behavior: n }, r) => {
 	var i, a;
 	(a = (i = r.scrollElement)?.scrollTo) == null || a.call(i, {
 		[r.options.horizontal ? "left" : "top"]: e + t,
 		behavior: n
 	});
-}, P = class {
+}, ne = class {
 	constructor(e) {
 		this.unsubs = [], this.scrollElement = null, this.targetWindow = null, this.isScrolling = !1, this.scrollState = null, this.measurementsCache = [], this._flatMeasurements = null, this.itemSizeCache = /* @__PURE__ */ new Map(), this.itemSizeCacheVersion = 0, this.laneAssignments = /* @__PURE__ */ new Map(), this.pendingMin = null, this.prevLanes = void 0, this.lanesChangedFlag = !1, this.lanesSettling = !1, this.pendingScrollAnchor = null, this.scrollRect = null, this.scrollOffset = null, this.scrollDirection = null, this.scrollAdjustments = 0, this._iosDeferredAdjustment = 0, this._iosTouching = !1, this._iosJustTouchEnded = !1, this._iosTouchEndTimerId = null, this._intendedScrollOffset = null, this.elementsCache = /* @__PURE__ */ new Map(), this.now = () => {
 			var e;
@@ -174,10 +188,10 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 				scrollPaddingStart: 0,
 				scrollPaddingEnd: 0,
 				horizontal: !1,
-				getItemKey: T,
-				rangeExtractor: E,
+				getItemKey: z,
+				rangeExtractor: B,
 				onChange: () => {},
-				measureElement: M,
+				measureElement: K,
 				initialRect: {
 					width: 0,
 					height: 0
@@ -235,7 +249,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 		}, this.notify = (e) => {
 			var t, n;
 			(n = (t = this.options).onChange) == null || n.call(t, this, e);
-		}, this.maybeNotify = v(() => (this.calculateRange(), [
+		}, this.maybeNotify = M(() => (this.calculateRange(), [
 			this.isScrolling,
 			this.range ? this.range.startIndex : null,
 			this.range ? this.range.endIndex : null
@@ -273,11 +287,11 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 					let e = this.scrollElement, t = () => {
 						this._iosTouching = !0, this._iosJustTouchEnded = !1, this._iosTouchEndTimerId !== null && this.targetWindow != null && (this.targetWindow.clearTimeout(this._iosTouchEndTimerId), this._iosTouchEndTimerId = null);
 					}, n = () => {
-						this._iosTouching = !1, !(!C() || this.targetWindow == null) && (this._iosJustTouchEnded = !0, this._iosTouchEndTimerId = this.targetWindow.setTimeout(() => {
+						this._iosTouching = !1, !(!L() || this.targetWindow == null) && (this._iosJustTouchEnded = !0, this._iosTouchEndTimerId = this.targetWindow.setTimeout(() => {
 							this._iosJustTouchEnded = !1, this._iosTouchEndTimerId = null, this._flushIosDeferredIfReady();
 						}, 150));
 					};
-					e.addEventListener("touchstart", t, O), e.addEventListener("touchend", n, O), this.unsubs.push(() => {
+					e.addEventListener("touchstart", t, H), e.addEventListener("touchend", n, H), this.unsubs.push(() => {
 						e.removeEventListener("touchstart", t), e.removeEventListener("touchend", n), this._iosTouchEndTimerId !== null && this.targetWindow != null && (this.targetWindow.clearTimeout(this._iosTouchEndTimerId), this._iosTouchEndTimerId = null);
 					});
 				}
@@ -289,7 +303,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 			let t = this.pendingScrollAnchor;
 			if (this.pendingScrollAnchor = null, t && this.scrollElement && this.options.enabled) {
 				let [e, n, r, i] = t;
-				e !== null && !r && (C() && (this.isScrolling || this._iosTouching || this._iosJustTouchEnded) ? i !== 0 && (this._iosDeferredAdjustment += i) : this._scrollToOffset(this.getScrollOffset(), {
+				e !== null && !r && (L() && (this.isScrolling || this._iosTouching || this._iosJustTouchEnded) ? i !== 0 && (this._iosDeferredAdjustment += i) : this._scrollToOffset(this.getScrollOffset(), {
 					adjustments: void 0,
 					behavior: void 0
 				})), r && this.scrollToEnd({ behavior: r });
@@ -307,7 +321,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 				adjustments: this.scrollAdjustments += n,
 				behavior: void 0
 			});
-		}, this.rafId = null, this.getSize = () => this.options.enabled ? (this.scrollRect = this.scrollRect ?? this.options.initialRect, this.scrollRect[this.options.horizontal ? "width" : "height"]) : (this.scrollRect = null, 0), this.getScrollOffset = () => this.options.enabled ? (this.scrollOffset = this.scrollOffset ?? (typeof this.options.initialOffset == "function" ? this.options.initialOffset() : this.options.initialOffset), this.scrollOffset) : (this.scrollOffset = null, 0), this.getMeasurementOptions = v(() => [
+		}, this.rafId = null, this.getSize = () => this.options.enabled ? (this.scrollRect = this.scrollRect ?? this.options.initialRect, this.scrollRect[this.options.horizontal ? "width" : "height"]) : (this.scrollRect = null, 0), this.getScrollOffset = () => this.options.enabled ? (this.scrollOffset = this.scrollOffset ?? (typeof this.options.initialOffset == "function" ? this.options.initialOffset() : this.options.initialOffset), this.scrollOffset) : (this.scrollOffset = null, 0), this.getMeasurementOptions = M(() => [
 			this.options.count,
 			this.options.paddingStart,
 			this.options.scrollMargin,
@@ -325,7 +339,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 			lanes: a,
 			laneAssignmentMode: o,
 			gap: s
-		}), { key: !1 }), this.getMeasurements = v(() => [this.getMeasurementOptions(), this.itemSizeCacheVersion], ({ count: e, paddingStart: t, scrollMargin: n, getItemKey: r, enabled: i, lanes: a, laneAssignmentMode: o, gap: s }, c) => {
+		}), { key: !1 }), this.getMeasurements = M(() => [this.getMeasurementOptions(), this.itemSizeCacheVersion], ({ count: e, paddingStart: t, scrollMargin: n, getItemKey: r, enabled: i, lanes: a, laneAssignmentMode: o, gap: s }, c) => {
 			let l = this.itemSizeCache;
 			if (!i) return this.measurementsCache = [], this.itemSizeCache.clear(), this.laneAssignments.clear(), [];
 			if (this.laneAssignments.size > e) for (let t of this.laneAssignments.keys()) t >= e && this.laneAssignments.delete(t);
@@ -349,7 +363,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 					let e = r(t), n = l.get(e), i = typeof n == "number" ? n : this.options.estimateSize(t);
 					a[t * 2] = o, a[t * 2 + 1] = i, o += i + s;
 				}
-				let c = _(e, a, r);
+				let c = te(e, a, r);
 				return this.measurementsCache = c, c;
 			}
 			let d = this.measurementsCache.slice(0, u), f = Array(a).fill(void 0), p = new Float64Array(a), m = 0;
@@ -385,15 +399,15 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 		}, {
 			key: !1,
 			debug: () => this.options.debug
-		}), this.calculateRange = v(() => [
+		}), this.calculateRange = M(() => [
 			this.getMeasurements(),
 			this.getSize(),
 			this.getScrollOffset(),
 			this.options.lanes
-		], (e, t, n, r) => e.length === 0 || t === 0 ? (this.range = null, null) : (this.range = L(e, t, n, r, r === 1 && this._flatMeasurements != null ? this._flatMeasurements : null), this.range), {
+		], (e, t, n, r) => e.length === 0 || t === 0 ? (this.range = null, null) : (this.range = X(e, t, n, r, r === 1 && this._flatMeasurements != null ? this._flatMeasurements : null), this.range), {
 			key: !1,
 			debug: () => this.options.debug
-		}), this.getVirtualIndexes = v(() => {
+		}), this.getVirtualIndexes = M(() => {
 			let e = null, t = null, n = this.calculateRange();
 			return n && (e = n.startIndex, t = n.endIndex), this.maybeNotify.updateDeps([
 				this.isScrolling,
@@ -457,7 +471,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 				let f = !1;
 				a ? f = this.applyScrollAdjustment(this.getTotalSize() - c) : d && (f = this.applyScrollAdjustment(s)), this.notify(f);
 			}
-		}, this.getVirtualItems = v(() => [this.getVirtualIndexes(), this.getMeasurements()], (e, t) => {
+		}, this.getVirtualItems = M(() => [this.getVirtualIndexes(), this.getMeasurements()], (e, t) => {
 			let n = [];
 			for (let r = 0, i = e.length; r < i; r++) {
 				let i = t[e[r]];
@@ -471,7 +485,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 			let t = this.getMeasurements();
 			if (t.length === 0) return;
 			let n = this._flatMeasurements, r = this.options.lanes === 1 && n != null;
-			return y(t[F(0, t.length - 1, r ? (e) => n[e * 2] : (e) => y(t[e]).start, e)]);
+			return N(t[J(0, t.length - 1, r ? (e) => n[e * 2] : (e) => N(t[e]).start, e)]);
 		}, this.getMaxScrollOffset = () => {
 			if (!this.scrollElement) return 0;
 			if ("scrollHeight" in this.scrollElement) return this.options.horizontal ? this.scrollElement.scrollWidth - this.scrollElement.clientWidth : this.scrollElement.scrollHeight - this.scrollElement.clientHeight;
@@ -585,7 +599,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 		}, this.setOptions(e);
 	}
 	applyScrollAdjustment(e, t) {
-		return e === 0 ? !1 : C() && (this.isScrolling || this._iosTouching || this._iosJustTouchEnded) ? (this._iosDeferredAdjustment += e, !1) : (this._scrollToOffset(this.getScrollOffset(), {
+		return e === 0 ? !1 : L() && (this.isScrolling || this._iosTouching || this._iosJustTouchEnded) ? (this._iosDeferredAdjustment += e, !1) : (this._scrollToOffset(this.getScrollOffset(), {
 			adjustments: this.scrollAdjustments += e,
 			behavior: t
 		}), this.scrollOffset !== null && (this.scrollOffset += this.scrollAdjustments, this.scrollOffset < 0 && (this.scrollOffset = 0), this.scrollAdjustments = 0), !0);
@@ -606,7 +620,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 			return;
 		}
 		let e = this.scrollState.index == null ? void 0 : this.getOffsetForIndex(this.scrollState.index, this.scrollState.align), t = e ? e[0] : this.scrollState.lastTargetOffset, n = t !== this.scrollState.lastTargetOffset;
-		if (!n && b(t, this.getScrollOffset())) {
+		if (!n && P(t, this.getScrollOffset())) {
 			if (this.scrollState.stableFrames++, this.scrollState.stableFrames >= 1) {
 				this.getScrollOffset() !== t && this._scrollToOffset(t, {
 					adjustments: void 0,
@@ -623,7 +637,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 		}
 		this.scheduleScrollReconcile();
 	}
-}, F = (e, t, n, r) => {
+}, J = (e, t, n, r) => {
 	for (; e <= t;) {
 		let i = (e + t) / 2 | 0, a = n(i);
 		if (a < r) e = i + 1;
@@ -632,7 +646,7 @@ var b = (e, t) => Math.abs(e - t) < 1.01, x = (e, t, n) => {
 	}
 	return e > 0 ? e - 1 : 0;
 };
-function I(e, t, n) {
+function Y(e, t, n) {
 	let r = 0;
 	for (; r <= t;) {
 		let i = (r + t) / 2 | 0, a = e[i * 2];
@@ -642,21 +656,21 @@ function I(e, t, n) {
 	}
 	return r > 0 ? r - 1 : 0;
 }
-function L(e, t, n, r, i) {
+function X(e, t, n, r, i) {
 	let a = e.length - 1;
 	if (e.length <= r) return {
 		startIndex: 0,
 		endIndex: a
 	};
 	if (r === 1 && i !== null) {
-		let e = I(i, a, n), r = e, o = n + t;
+		let e = Y(i, a, n), r = e, o = n + t;
 		for (; r < a && i[r * 2] + i[r * 2 + 1] < o;) r++;
 		return {
 			startIndex: e,
 			endIndex: r
 		};
 	}
-	let o = F(0, a, (t) => e[t].start, n), s = o;
+	let o = J(0, a, (t) => e[t].start, n), s = o;
 	if (r === 1) for (; s < a && e[s].end < n + t;) s++;
 	else if (r > 1) {
 		let i = Array(r).fill(0);
@@ -678,31 +692,125 @@ function L(e, t, n, r, i) {
 }
 //#endregion
 //#region ../../node_modules/.pnpm/@tanstack+vue-virtual@3.13.35_vue@3.5.40_typescript@6.0.3_/node_modules/@tanstack/vue-virtual/dist/esm/index.js
-function R(n) {
-	let r = new P(c(n)), i = f(r), a = r._didMount();
-	return t(() => c(n).getScrollElement(), (e) => {
+function Z(t) {
+	let r = new ne(f(t)), i = v(r), a = r._didMount();
+	return n(() => f(t).getScrollElement(), (e) => {
 		e && r._willUpdate();
-	}, { immediate: !0 }), t(() => c(n), (e) => {
+	}, { immediate: !0 }), n(() => f(t), (e) => {
 		r.setOptions({
 			...e,
 			onChange: (t, n) => {
 				var r;
-				o(i), (r = e.onChange) == null || r.call(e, t, n);
+				s(i), (r = e.onChange) == null || r.call(e, t, n);
 			}
-		}), r._willUpdate(), o(i);
+		}), r._willUpdate(), s(i);
 	}, { immediate: !0 }), e(a), i;
 }
-function z(e) {
-	return R(u(() => ({
-		observeElementRect: D,
-		observeElementOffset: j,
-		scrollToFn: N,
-		...c(e)
+function re(e) {
+	return Z(g(() => ({
+		observeElementRect: V,
+		observeElementOffset: G,
+		scrollToFn: q,
+		...f(e)
 	})));
 }
 //#endregion
-//#region src/ui/components/VirtualList.vue?vue&type=script&setup=true&lang.ts
-var B = ["aria-label"], V = /* @__PURE__ */ h({
+//#region src/ui/views/diagnostics/capability_labels.ts
+var ie = ee;
+function ae(e, t) {
+	switch (t) {
+		case "main_generation_events": return e("diagnostics.capability_matrix.capabilities.main_generation_events");
+		case "preset_generation": return e("diagnostics.capability_matrix.capabilities.preset_generation");
+		case "message_swipe_metadata": return e("diagnostics.capability_matrix.capabilities.message_swipe_metadata");
+		case "tavern_regex": return e("diagnostics.capability_matrix.capabilities.tavern_regex");
+		case "tavern_helper": return e("diagnostics.capability_matrix.capabilities.tavern_helper");
+	}
+}
+var oe = {
+	view: "_view_t3z03_7",
+	section: "_section_t3z03_20",
+	section_header: "_section_header_t3z03_26",
+	section_title: "_section_title_t3z03_34",
+	row: "_row_t3z03_41",
+	row_label: "_row_label_t3z03_52",
+	row_value: "_row_value_t3z03_60",
+	status_text: "_status_text_t3z03_65",
+	timeline_list: "_timeline_list_t3z03_84",
+	timeline_row: "_timeline_row_t3z03_88",
+	timeline_cell: "_timeline_cell_t3z03_99",
+	timeline_header: "_timeline_header_t3z03_106",
+	timeline_code: "_timeline_code_t3z03_117",
+	timeline_error: "_timeline_error_t3z03_122",
+	warning_list: "_warning_list_t3z03_126",
+	warning_item: "_warning_item_t3z03_133",
+	actions_row: "_actions_row_t3z03_139",
+	description: "_description_t3z03_146"
+};
+//#endregion
+//#region src/ui/views/diagnostics/diagnostics_styles.ts
+j("diagnostics", "._view_t3z03_7{gap:var(--tc-group-gap);padding:var(--tc-space-4) var(--tc-panel-padding) var(--tc-panel-padding);flex-direction:column;display:flex}@container studio-workspace (width<=640px){._view_t3z03_7{padding:var(--tc-space-4)}}._section_t3z03_20{flex-direction:column;min-width:0;display:flex}._section_header_t3z03_26{justify-content:space-between;align-items:center;gap:var(--tc-space-3);padding-bottom:var(--tc-space-3);display:flex}._section_title_t3z03_34{color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg)}._row_t3z03_41{justify-content:space-between;align-items:center;gap:var(--tc-space-3);min-height:var(--tc-control-height-lg);padding:var(--tc-space-1) 0;border-top:1px solid var(--tc-divider);font-size:var(--tc-font-size-sm);display:flex}._row_label_t3z03_52{min-width:0;color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._row_value_t3z03_60{color:var(--tc-text);flex:none}._status_text_t3z03_65{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-text-muted);display:inline-flex}._status_text_t3z03_65[data-tone=success]{color:var(--tc-success)}._status_text_t3z03_65[data-tone=warning]{color:var(--tc-warning)}._status_text_t3z03_65[data-tone=error]{color:var(--tc-error)}._timeline_list_t3z03_84{border-top:1px solid var(--tc-divider)}._timeline_row_t3z03_88{align-items:center;gap:var(--tc-space-3);height:100%;padding:0 var(--tc-space-1);border-bottom:1px solid var(--tc-divider);font-size:var(--tc-font-size-xs);grid-template-columns:92px 1fr 1fr minmax(0,1.4fr);display:grid}._timeline_cell_t3z03_99{color:var(--tc-text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._timeline_header_t3z03_106{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);font-weight:var(--tc-font-weight-semibold);text-transform:uppercase}._timeline_header_t3z03_106 ._timeline_cell_t3z03_99{color:inherit}._timeline_code_t3z03_117{color:var(--tc-text);font-family:var(--tc-font-mono)}._timeline_error_t3z03_122{color:var(--tc-error)}._warning_list_t3z03_126{gap:var(--tc-space-1);padding:var(--tc-space-2) 0 0;flex-direction:column;display:flex}._warning_item_t3z03_133{color:var(--tc-warning);font-size:var(--tc-font-size-xs);overflow-wrap:anywhere}._actions_row_t3z03_139{align-items:center;gap:var(--tc-space-3);padding-top:var(--tc-space-2);display:flex}._description_t3z03_146{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);overflow-wrap:anywhere;margin:0}");
+var Q = oe, $ = ["data-capability-id"], se = ["data-tone", "data-available"], ce = /* @__PURE__ */ S({
+	__name: "CapabilityMatrix",
+	props: { matrix: {} },
+	setup(e) {
+		let { t } = h();
+		return (n, i) => (a(), o("div", {
+			class: c(f(Q).section),
+			"data-testid": "capability-matrix"
+		}, [p("div", { class: c(f(Q).section_header) }, [p("h2", { class: c(f(Q).section_title) }, m(f(t)("diagnostics.capability_matrix.title")), 3)], 2), p("div", null, [(a(!0), o(b, null, r(f(ie), (n) => (a(), o("div", {
+			key: n,
+			class: c(f(Q).row),
+			"data-capability-id": n
+		}, [p("span", { class: c(f(Q).row_label) }, m(f(ae)(f(t), n)), 3), p("span", {
+			class: c(f(Q).status_text),
+			"data-tone": e.matrix[n]?.available ? "success" : "error",
+			"data-available": e.matrix[n]?.available === !0
+		}, [C(T, {
+			icon: e.matrix[n]?.available ? f(D) : f(A),
+			size: 14
+		}, null, 8, ["icon"]), x(" " + m(e.matrix[n]?.available ? f(t)("diagnostics.capability_matrix.available") : f(t)("diagnostics.capability_matrix.unavailable")), 1)], 10, se)], 10, $))), 128))])], 2));
+	}
+}), le = .9, ue = /* @__PURE__ */ S({
+	__name: "StorageUsage",
+	props: {
+		usageBytes: {},
+		quotaBytes: {}
+	},
+	setup(e) {
+		let t = e, { t: n, locale: r } = h(), i = g(() => t.usageBytes !== null && t.quotaBytes !== null && t.quotaBytes > 0 && t.usageBytes / t.quotaBytes >= le);
+		function s(e) {
+			return w(e, r.value);
+		}
+		return (t, r) => (a(), o("div", {
+			class: c(f(Q).section),
+			"data-testid": "storage-usage"
+		}, [
+			p("div", { class: c(f(Q).section_header) }, [p("h2", { class: c(f(Q).section_title) }, m(f(n)("diagnostics.storage_usage.title")), 3)], 2),
+			p("div", { class: c(f(Q).row) }, [p("span", { class: c(f(Q).row_label) }, m(f(n)("diagnostics.storage_usage.estimate_label")), 3), p("span", { class: c(["tc-tabular-nums", f(Q).row_value]) }, m(e.usageBytes === null ? f(n)("status.unknown") : s(e.usageBytes)), 3)], 2),
+			p("div", { class: c(f(Q).row) }, [p("span", { class: c(f(Q).row_label) }, m(f(n)("diagnostics.storage_usage.quota_label")), 3), e.quotaBytes === null ? (a(), o("span", {
+				key: 1,
+				class: c(f(Q).status_text),
+				"data-tone": "warning",
+				"data-testid": "storage-quota-unavailable"
+			}, m(f(n)("diagnostics.storage_usage.quota_unavailable")), 3)) : (a(), o("span", {
+				key: 0,
+				class: c(["tc-tabular-nums", f(Q).row_value]),
+				"data-testid": "storage-quota-value"
+			}, m(s(e.quotaBytes)), 3))], 2),
+			i.value ? (a(), o("p", {
+				key: 0,
+				class: c([f(Q).status_text, f(Q).description]),
+				"data-tone": "warning",
+				"data-testid": "storage-quota-high-pressure"
+			}, m(f(n)("diagnostics.storage_usage.quota_high_pressure")), 3)) : l("", !0),
+			p("div", { class: c(f(Q).row) }, [p("span", { class: c(f(Q).row_label) }, m(f(n)("diagnostics.storage_usage.cache_references_label")), 3), p("span", {
+				class: c(f(Q).status_text),
+				"data-tone": "warning",
+				"data-testid": "cache-references-value"
+			}, m(f(n)("diagnostics.storage_usage.cache_references_unavailable")), 3)], 2)
+		], 2));
+	}
+}), de = ["aria-label"], fe = /* @__PURE__ */ S({
 	__name: "VirtualList",
 	props: {
 		items: {},
@@ -716,39 +824,171 @@ var B = ["aria-label"], V = /* @__PURE__ */ h({
 		ariaLabel: { default: void 0 }
 	},
 	setup(e) {
-		let t = e, o = p(null), f = z(u(() => ({
+		let t = e, n = y(null), s = re(g(() => ({
 			count: t.items.length,
-			getScrollElement: () => o.value,
+			getScrollElement: () => n.value,
 			estimateSize: () => t.itemSize,
 			overscan: t.overscan,
 			getItemKey: (e) => {
 				let n = t.items[e];
 				return t.getKey && n !== void 0 ? t.getKey(n, e) : e;
 			}
-		}))), h = u(() => f.value.getVirtualItems()), _ = u(() => f.value.getTotalSize());
-		return (t, u) => (i(), a("div", {
+		}))), l = g(() => s.value.getVirtualItems()), u = g(() => s.value.getTotalSize());
+		return (t, s) => (a(), o("div", {
 			ref_key: "scroll_parent",
-			ref: o,
-			class: s(c(g).virtualList),
-			style: d({ height: e.height }),
+			ref: n,
+			class: c(f(k).virtualList),
+			style: _({ height: e.height }),
 			role: "list",
 			"aria-label": e.ariaLabel
-		}, [l("div", {
-			class: s(c(g).virtualListSizer),
-			style: d({ height: `${_.value}px` })
-		}, [(i(!0), a(m, null, n(h.value, (n) => (i(), a("div", {
+		}, [p("div", {
+			class: c(f(k).virtualListSizer),
+			style: _({ height: `${u.value}px` })
+		}, [(a(!0), o(b, null, r(l.value, (n) => (a(), o("div", {
 			key: String(n.key),
 			role: "listitem",
-			class: s(c(g).virtualListItem),
-			style: d({
+			class: c(f(k).virtualListItem),
+			style: _({
 				height: `${n.size}px`,
 				transform: `translateY(${n.start}px)`
 			})
-		}, [r(t.$slots, "default", {
+		}, [i(t.$slots, "default", {
 			item: e.items[n.index],
 			index: n.index
-		})], 6))), 128))], 6)], 14, B));
+		})], 6))), 128))], 6)], 14, de));
+	}
+}), pe = 32, me = "320px", he = /* @__PURE__ */ S({
+	__name: "TaskTimeline",
+	props: { entries: {} },
+	setup(e) {
+		let n = e, { t: r, d: i } = h(), s = g(() => n.entries.length === 0 ? "empty" : "ready");
+		function u(e) {
+			let t = new Date(e);
+			return Number.isNaN(t.getTime()) ? e : i(t, "short_time");
+		}
+		return (n, i) => (a(), o("div", {
+			class: c(f(Q).section),
+			"data-testid": "task-timeline"
+		}, [p("div", { class: c(f(Q).section_header) }, [p("h2", { class: c(f(Q).section_title) }, m(f(r)("diagnostics.task_timeline.title")), 3), e.entries.length > 0 ? (a(), o("span", {
+			key: 0,
+			class: c(["tc-tabular-nums", f(Q).row_label])
+		}, m(f(r)("diagnostics.task_timeline.count_label", e.entries.length)), 3)) : l("", !0)], 2), C(O, {
+			status: s.value,
+			"empty-message": f(r)("diagnostics.task_timeline.empty_description"),
+			"min-height": "80px"
+		}, {
+			default: t(() => [p("div", { class: c(f(Q).timeline_list) }, [e.entries.length > 0 ? (a(), o("div", {
+				key: 0,
+				class: c([f(Q).timeline_row, f(Q).timeline_header]),
+				"data-testid": "timeline-header"
+			}, [
+				p("span", { class: c(f(Q).timeline_cell) }, m(f(r)("diagnostics.task_timeline.time_label")), 3),
+				p("span", { class: c(f(Q).timeline_cell) }, m(f(r)("diagnostics.task_timeline.event_label")), 3),
+				p("span", { class: c(f(Q).timeline_cell) }, m(f(r)("diagnostics.task_timeline.module_label")), 3),
+				p("span", { class: c(f(Q).timeline_cell) }, m(f(r)("diagnostics.task_timeline.provider_label")), 3)
+			], 2)) : l("", !0), C(fe, {
+				items: e.entries,
+				"item-size": pe,
+				height: me,
+				"aria-label": f(r)("diagnostics.task_timeline.title"),
+				"get-key": (e) => e.event_id
+			}, {
+				default: t(({ item: e }) => [e ? (a(), o("div", {
+					key: 0,
+					class: c(f(Q).timeline_row),
+					"data-testid": "timeline-row"
+				}, [
+					p("span", { class: c(f(Q).timeline_cell) }, m(u(e.occurred_at)), 3),
+					p("span", { class: c([f(Q).timeline_cell, f(Q).timeline_code]) }, m(e.event_code), 3),
+					p("span", { class: c([f(Q).timeline_cell, f(Q).timeline_code]) }, m(e.module_id), 3),
+					e.error_code ? (a(), o("span", {
+						key: 0,
+						class: c([
+							f(Q).timeline_cell,
+							f(Q).timeline_code,
+							f(Q).timeline_error
+						])
+					}, m(f(r)("diagnostics.task_timeline.error_code_label")) + ": " + m(e.error_code), 3)) : e.provider_id ? (a(), o("span", {
+						key: 1,
+						class: c(f(Q).timeline_cell)
+					}, m(e.provider_id), 3)) : (a(), o("span", {
+						key: 2,
+						class: c(f(Q).timeline_cell)
+					}, null, 2))
+				], 2)) : l("", !0)]),
+				_: 1
+			}, 8, [
+				"items",
+				"aria-label",
+				"get-key"
+			])], 2)]),
+			_: 1
+		}, 8, ["status", "empty-message"])], 2));
+	}
+}), ge = /* @__PURE__ */ S({
+	__name: "DiagnosticsView",
+	props: {
+		state: {},
+		controller: {}
+	},
+	setup(e) {
+		let t = e, { t: n } = h(), r = g(() => t.state.diagnostics.snapshot), i = g(() => t.state.diagnostics.support_bundle_command), s = g(() => i.value.status === "pending");
+		d(() => {
+			t.controller.load_diagnostics_timeline();
+		});
+		function _() {
+			t.controller.export_support_bundle();
+		}
+		function v() {
+			if (i.value.status !== "success") return;
+			let e = JSON.stringify(i.value.result, null, 2), t = new Blob([e], { type: "application/json" }), n = URL.createObjectURL(t), r = document.createElement("a");
+			r.href = n, r.download = "tavern-canvas-support-bundle.json", r.click(), URL.revokeObjectURL(n);
+		}
+		return (t, d) => (a(), o("div", {
+			class: c(f(Q).view),
+			"data-testid": "diagnostics-view"
+		}, [
+			p("div", { class: c(f(Q).section) }, [p("div", { class: c(f(Q).section_header) }, [p("h2", { class: c(f(Q).section_title) }, m(f(n)("diagnostics.versions.title")), 3)], 2), p("div", { class: c(f(Q).row) }, [p("span", { class: c(f(Q).row_label) }, m(f(n)("diagnostics.versions.helper_label")), 3), p("span", { class: c(["tc-tabular-nums", f(Q).row_value]) }, m(r.value?.helper_version ?? f(n)("status.unknown")), 3)], 2)], 2),
+			C(ce, { matrix: r.value?.capability_matrix ?? {} }, null, 8, ["matrix"]),
+			C(he, { entries: e.state.diagnostics.timeline }, null, 8, ["entries"]),
+			C(ue, {
+				"usage-bytes": r.value?.storage_usage_bytes ?? null,
+				"quota-bytes": r.value?.storage_quota_bytes ?? null
+			}, null, 8, ["usage-bytes", "quota-bytes"]),
+			p("div", {
+				class: c(f(Q).section),
+				"data-testid": "support-bundle"
+			}, [
+				p("div", { class: c(f(Q).section_header) }, [p("h2", { class: c(f(Q).section_title) }, m(f(n)("diagnostics.support_bundle.title")), 3)], 2),
+				p("p", { class: c(f(Q).description) }, m(f(n)("diagnostics.support_bundle.description")), 3),
+				p("div", { class: c(f(Q).actions_row) }, [C(E, {
+					label: f(n)("diagnostics.support_bundle.export_action"),
+					pending: s.value,
+					onClick: _
+				}, null, 8, ["label", "pending"]), i.value.status === "success" ? (a(), u(E, {
+					key: 0,
+					label: f(n)("common.actions.download"),
+					variant: "secondary",
+					onClick: v
+				}, null, 8, ["label"])) : l("", !0)], 2),
+				i.value.status === "success" ? (a(), o("p", {
+					key: 0,
+					class: c([f(Q).status_text, f(Q).description]),
+					"data-tone": "success",
+					"data-testid": "support-bundle-summary"
+				}, m(f(n)("diagnostics.support_bundle.exported_toast")) + " · " + m(i.value.result.error_codes.length) + " · " + m(i.value.result.timeline.length), 3)) : i.value.status === "error" ? (a(), o("p", {
+					key: 1,
+					class: c([f(Q).status_text, f(Q).description]),
+					"data-tone": "error"
+				}, m(f(n)("errors.unexpected")), 3)) : l("", !0),
+				i.value.status === "success" ? (a(), o("pre", {
+					key: 2,
+					class: c(f(Q).description),
+					"data-testid": "support-bundle-preview"
+				}, m(JSON.stringify(i.value.result, null, 2)), 3)) : l("", !0)
+			], 2)
+		], 2));
 	}
 });
 //#endregion
-export { V as t };
+export { ge as default };

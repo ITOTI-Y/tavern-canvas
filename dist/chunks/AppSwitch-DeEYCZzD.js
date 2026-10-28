@@ -1,9 +1,38 @@
 import { D as e, G as t, L as n, P as r, _ as i, c as a, dt as o, g as s, h as c, lt as l, m as u, mt as d, ot as f, p, s as m, u as h, x as g, y as _ } from "./vue-i18n-L-BrQRnK.js";
-import { t as v } from "./components_styles-DHX8irr3.js";
-import { i as y, n as b, r as x, t as S } from "./_prop_utils-vFiFbBPl.js";
-import { P as C, S as w, f as T, s as E } from "./Teleport-CquQcgiX.js";
-//#region ../../node_modules/.pnpm/reka-ui@2.10.1_vue@3.5.40_typescript@6.0.3_/node_modules/reka-ui/dist/Switch/SwitchRoot.js
-var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
+import { n as v } from "./AppIcon-DkyxvN8k.js";
+import { t as y } from "./components_styles-DHX8irr3.js";
+import { a as b, i as x } from "./AppCheckbox-qcV3D_N_.js";
+import { n as S, t as C } from "./_prop_utils-O1SzpV_h.js";
+import { P as w, S as T, f as E, s as D } from "./Teleport-CquQcgiX.js";
+//#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/scan-search.js
+var O = v("scan-search", [
+	["path", {
+		d: "M3 7V5a2 2 0 0 1 2-2h2",
+		key: "aa7l1z"
+	}],
+	["path", {
+		d: "M17 3h2a2 2 0 0 1 2 2v2",
+		key: "4qcy5o"
+	}],
+	["path", {
+		d: "M21 17v2a2 2 0 0 1-2 2h-2",
+		key: "6vwrx8"
+	}],
+	["path", {
+		d: "M7 21H5a2 2 0 0 1-2-2v-2",
+		key: "ioqczr"
+	}],
+	["circle", {
+		cx: "12",
+		cy: "12",
+		r: "3",
+		key: "1v7zrd"
+	}],
+	["path", {
+		d: "m16 16-1.9-1.9",
+		key: "1dq9hf"
+	}]
+]), [k, A] = /*#__PURE__*/ w("SwitchRoot"), j = /* @__PURE__ */ g({
 	inheritAttrs: !1,
 	__name: "SwitchRoot",
 	props: {
@@ -59,21 +88,21 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 	},
 	emits: ["update:modelValue"],
 	setup(o, { emit: u }) {
-		let d = o, g = u, { disabled: v } = f(d), S = w(d, "modelValue", g, {
+		let d = o, g = u, { disabled: v } = f(d), y = T(d, "modelValue", g, {
 			defaultValue: d.defaultValue ?? d.falseValue,
 			passive: d.modelValue === void 0
-		}), C = p(() => S.value === d.trueValue);
-		function D() {
-			v.value || (S.value = C.value ? d.falseValue : d.trueValue);
+		}), C = p(() => y.value === d.trueValue);
+		function w() {
+			v.value || (y.value = C.value ? d.falseValue : d.trueValue);
 		}
-		let { forwardRef: k, currentElement: A } = T(), j = y(A), M = x(), N = p(() => d.id && A.value ? document.querySelector(`[for="${d.id}"]`)?.innerText : void 0);
-		return O({
+		let { forwardRef: O, currentElement: k } = E(), j = S(k), M = b(), N = p(() => d.id && k.value ? document.querySelector(`[for="${d.id}"]`)?.innerText : void 0);
+		return A({
 			checked: C,
-			toggleCheck: D,
+			toggleCheck: w,
 			disabled: v
-		}), (o, u) => (r(), i(h, null, [_(l(E), e({
+		}), (o, u) => (r(), i(h, null, [_(l(D), e({
 			id: o.id,
-			ref: l(k),
+			ref: l(O),
 			role: "switch",
 			type: o.as === "button" ? "button" : void 0,
 			value: o.value,
@@ -89,11 +118,11 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 			...l(M),
 			...o.$attrs
 		}, {
-			onClick: D,
-			onKeydown: m(a(D, ["prevent"]), ["enter"])
+			onClick: w,
+			onKeydown: m(a(w, ["prevent"]), ["enter"])
 		}), {
 			default: t(() => [n(o.$slots, "default", {
-				modelValue: l(S),
+				modelValue: l(y),
 				checked: C.value
 			})]),
 			_: 3
@@ -110,7 +139,7 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 			"as",
 			"disabled",
 			"onKeydown"
-		]), l(j) && o.name ? (r(), c(l(b), e({
+		]), l(j) && o.name ? (r(), c(l(x), e({
 			key: 0,
 			type: "checkbox",
 			name: o.name,
@@ -126,7 +155,7 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 			"checked"
 		])) : s("v-if", !0)], 64));
 	}
-}), A = /* @__PURE__ */ g({
+}), M = /* @__PURE__ */ g({
 	__name: "SwitchThumb",
 	props: {
 		asChild: {
@@ -140,8 +169,8 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 		}
 	},
 	setup(e) {
-		let i = D();
-		return T(), (e, a) => (r(), c(l(E), {
+		let i = k();
+		return E(), (e, a) => (r(), c(l(D), {
 			"data-state": l(i).checked.value ? "checked" : "unchecked",
 			"data-disabled": l(i).disabled.value ? "" : void 0,
 			"as-child": e.asChild,
@@ -156,7 +185,7 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 			"as"
 		]));
 	}
-}), j = ["data-disabled"], M = /* @__PURE__ */ g({
+}), N = ["data-disabled"], P = /* @__PURE__ */ g({
 	__name: "AppSwitch",
 	props: {
 		modelValue: { type: Boolean },
@@ -179,34 +208,34 @@ var [D, O] = /*#__PURE__*/ C("SwitchRoot"), k = /* @__PURE__ */ g({
 		function m(e) {
 			f("update:modelValue", e);
 		}
-		let h = p(() => S({
+		let h = p(() => C({
 			id: c.id,
 			"aria-describedby": c.describedBy,
 			"aria-label": c.labelHidden ? c.label : void 0
 		}));
 		return (a, c) => (r(), i("label", {
-			class: o(l(v).switchRow),
+			class: o(l(y).switchRow),
 			"data-disabled": n.disabled ? "" : void 0
 		}, [n.labelHidden ? s("", !0) : (r(), i("span", {
 			key: 0,
-			class: o(l(v).switchLabelGroup)
-		}, [u("span", { class: o(l(v).switchLabel) }, d(n.label), 3), n.description ? (r(), i("span", {
+			class: o(l(y).switchLabelGroup)
+		}, [u("span", { class: o(l(y).switchLabel) }, d(n.label), 3), n.description ? (r(), i("span", {
 			key: 0,
-			class: o(l(v).switchDescription)
-		}, d(n.description), 3)) : s("", !0)], 2)), _(l(k), e(h.value, {
-			class: ["tc-interactive", l(v).switchRoot],
+			class: o(l(y).switchDescription)
+		}, d(n.description), 3)) : s("", !0)], 2)), _(l(j), e(h.value, {
+			class: ["tc-interactive", l(y).switchRoot],
 			"model-value": n.modelValue,
 			disabled: n.disabled,
 			"onUpdate:modelValue": m
 		}), {
-			default: t(() => [_(l(A), { class: o(l(v).switchThumb) }, null, 8, ["class"])]),
+			default: t(() => [_(l(M), { class: o(l(y).switchThumb) }, null, 8, ["class"])]),
 			_: 1
 		}, 16, [
 			"class",
 			"model-value",
 			"disabled"
-		])], 10, j));
+		])], 10, N));
 	}
 });
 //#endregion
-export { M as t };
+export { O as n, P as t };

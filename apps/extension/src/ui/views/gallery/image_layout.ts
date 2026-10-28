@@ -4,16 +4,6 @@ export interface LayoutSourceItem {
   readonly height: number | null;
 }
 
-export interface LayoutTile<TItem> {
-  readonly item: TItem;
-  readonly pixel_width: number;
-}
-
-export interface LayoutRow<TItem> {
-  readonly key: string;
-  readonly tiles: readonly LayoutTile<TItem>[];
-}
-
 const DEFAULT_ASPECT_RATIO = 1;
 const MIN_ASPECT_RATIO = 0.35;
 const MAX_ASPECT_RATIO = 3.5;
@@ -26,42 +16,26 @@ function aspect_ratio(item: LayoutSourceItem): number {
   return Math.min(MAX_ASPECT_RATIO, Math.max(MIN_ASPECT_RATIO, ratio));
 }
 
-export function layout_justified_rows<TItem extends LayoutSourceItem>(
+/**
+ * Deals the items into `column_count` columns, each to the currently shortest one (heights in
+ * column widths), so the newest images stay along the top and the columns end near each other.
+ */
+export function layout_masonry_columns<TItem extends LayoutSourceItem>(
   items: readonly TItem[],
-  container_width: number,
-  row_height: number,
-  gap: number,
-): readonly LayoutRow<TItem>[] {
-  if (items.length === 0) {
-    return [];
-  }
-  const safe_width = container_width > 0 ? container_width : row_height;
-
-  const rows: LayoutRow<TItem>[] = [];
-  let current: LayoutTile<TItem>[] = [];
-  let current_width = 0;
-
-  function flush(): void {
-    if (current.length > 0) {
-      rows.push({ key: current[0]?.item.id ?? String(rows.length), tiles: current });
-      current = [];
-      current_width = 0;
-    }
-  }
-
+  column_count: number,
+): readonly (readonly TItem[])[] {
+  const count = Math.max(1, Math.floor(column_count));
+  const columns: TItem[][] = Array.from({ length: count }, () => []);
+  const heights = Array.from({ length: count }, () => 0);
   for (const item of items) {
-    const pixel_width = Math.round(row_height * aspect_ratio(item));
-    const next_width = current_width + (current.length > 0 ? gap : 0) + pixel_width;
-    if (current.length > 0 && next_width > safe_width) {
-      flush();
-      current.push({ item, pixel_width });
-      current_width = pixel_width;
-    } else {
-      current.push({ item, pixel_width });
-      current_width = next_width;
+    let shortest = 0;
+    for (let index = 1; index < count; index += 1) {
+      if ((heights[index] ?? 0) < (heights[shortest] ?? 0)) {
+        shortest = index;
+      }
     }
+    columns[shortest]?.push(item);
+    heights[shortest] = (heights[shortest] ?? 0) + 1 / aspect_ratio(item);
   }
-  flush();
-
-  return rows;
+  return columns;
 }

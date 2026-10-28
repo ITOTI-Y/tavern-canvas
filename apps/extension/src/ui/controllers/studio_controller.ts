@@ -152,6 +152,8 @@ export interface StudioController {
 
   select_gallery_record(record_id: Uuid | null): void;
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array>;
+  /** A WebP picture at most 384 px on its long edge, made and cached on first read. */
+  read_gallery_thumbnail(record_id: Uuid): Promise<Uint8Array>;
   pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void>;
   /** Clears only the message attachment; `delete_gallery_record` is the separate permanent action. */
   detach_gallery_record(record_id: Uuid): Promise<void>;
@@ -842,6 +844,10 @@ class StudioControllerImpl implements StudioController {
 
   read_gallery_bytes(record_id: Uuid): Promise<Uint8Array> {
     return this.#capabilities.gallery.read_bytes(record_id);
+  }
+
+  read_gallery_thumbnail(record_id: Uuid): Promise<Uint8Array> {
+    return this.#capabilities.gallery.read_thumbnail(record_id);
   }
 
   async pin_gallery_record(record_id: Uuid, pinned: boolean): Promise<void> {

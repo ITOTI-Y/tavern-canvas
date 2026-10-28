@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { DOMWrapper, flushPromises, mount } from "@vue/test-utils";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 
@@ -40,21 +40,36 @@ function make_record(overrides: Partial<GalleryRecordSummary> = {}): GalleryReco
 afterEach(() => {
   document.body.innerHTML = "";
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
+
+/** Every tile counts as on screen, so it reads its image straight away. */
+class VisibleIntersectionObserver {
+  readonly #callback: (entries: { isIntersecting: boolean }[]) => void;
+  constructor(callback: (entries: { isIntersecting: boolean }[]) => void) {
+    this.#callback = callback;
+  }
+  observe(): void {
+    this.#callback([{ isIntersecting: true }]);
+  }
+  disconnect(): void {}
+}
+
+beforeEach(() => {
+  vi.stubGlobal("IntersectionObserver", VisibleIntersectionObserver);
 });
 
 describe("GalleryTile: stable dimensions before load, object URL lifecycle, failed fallback", () => {
-  it("reserves its pixel box immediately, before the image byte fetch resolves", () => {
-    let resolve_bytes!: (bytes: Uint8Array) => void;
-    const pending = new Promise<Uint8Array>((res) => {
-      resolve_bytes = res;
+  it("reserves the image's aspect ratio immediately, before the image resolves", () => {
+    let resolve_image!: (image: Blob) => void;
+    const pending = new Promise<Blob>((res) => {
+      resolve_image = res;
     });
     const wrapper = mount(GalleryTile, {
       props: {
         record: make_record(),
-        pixelWidth: 234,
-        rowHeight: 176,
         selected: false,
-        readBytes: () => pending,
+        readImage: () => pending,
         thumbnailFailedLabel: "Thumbnail unavailable",
         pinnedLabel: "Pin",
         selectLabel: "Select",
@@ -62,9 +77,8 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
       },
     });
     const style = wrapper.attributes("style") ?? "";
-    expect(style).toContain("width: 234px");
-    expect(style).toContain("height: 176px");
-    resolve_bytes(DETAILED_PNG);
+    expect(style).toContain("aspect-ratio: 640 / 480");
+    resolve_image(new Blob([DETAILED_PNG]));
   });
 
   it("creates an object URL once bytes resolve and revokes it on unmount", async () => {
@@ -73,10 +87,8 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
     const wrapper = mount(GalleryTile, {
       props: {
         record: make_record(),
-        pixelWidth: 176,
-        rowHeight: 176,
         selected: false,
-        readBytes: () => Promise.resolve(DETAILED_PNG),
+        readImage: () => Promise.resolve(new Blob([DETAILED_PNG])),
         thumbnailFailedLabel: "Thumbnail unavailable",
         pinnedLabel: "Pin",
         selectLabel: "Select",
@@ -95,10 +107,8 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
     const wrapper = mount(GalleryTile, {
       props: {
         record: make_record(),
-        pixelWidth: 176,
-        rowHeight: 176,
         selected: false,
-        readBytes: () => Promise.reject(new Error("missing blob")),
+        readImage: () => Promise.reject(new Error("missing blob")),
         thumbnailFailedLabel: "Thumbnail unavailable",
         pinnedLabel: "Pin",
         selectLabel: "Select",
@@ -114,10 +124,8 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
     const wrapper = mount(GalleryTile, {
       props: {
         record: make_record(),
-        pixelWidth: 176,
-        rowHeight: 176,
         selected: false,
-        readBytes: () => Promise.resolve(DETAILED_PNG),
+        readImage: () => Promise.resolve(new Blob([DETAILED_PNG])),
         thumbnailFailedLabel: "Thumbnail unavailable",
         pinnedLabel: "Pin",
         selectLabel: "Select",
@@ -136,10 +144,8 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
     const pinned = mount(GalleryTile, {
       props: {
         record: make_record({ pinned: true }),
-        pixelWidth: 176,
-        rowHeight: 176,
         selected: false,
-        readBytes: () => new Promise<Uint8Array>(() => {}),
+        readImage: () => new Promise<Blob>(() => {}),
         thumbnailFailedLabel: "Thumbnail unavailable",
         pinnedLabel: "Pin",
         selectLabel: "Select",
@@ -152,10 +158,8 @@ describe("GalleryTile: stable dimensions before load, object URL lifecycle, fail
     const unpinned = mount(GalleryTile, {
       props: {
         record: make_record({ pinned: false }),
-        pixelWidth: 176,
-        rowHeight: 176,
         selected: false,
-        readBytes: () => new Promise<Uint8Array>(() => {}),
+        readImage: () => new Promise<Blob>(() => {}),
         thumbnailFailedLabel: "Thumbnail unavailable",
         pinnedLabel: "Pin",
         selectLabel: "Select",
@@ -238,6 +242,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     load_installed_vocabulary: vi.fn(() => Promise.resolve(null)),
     select_gallery_record: vi.fn(),
     read_gallery_bytes: vi.fn(() => Promise.resolve(DETAILED_PNG)),
+    read_gallery_thumbnail: vi.fn(() => Promise.resolve(DETAILED_PNG)),
     pin_gallery_record: vi.fn(() => Promise.resolve()),
     detach_gallery_record: vi.fn(() => Promise.resolve()),
     delete_gallery_record: vi.fn(() => Promise.resolve()),
@@ -357,6 +362,21 @@ describe("GalleryView: state surface and data flow into ImageGrid", () => {
   });
 });
 
+describe("tile images", () => {
+  it("shows the cached thumbnail and falls back to the full image when none can be made", async () => {
+    const record = make_record();
+    const state = build_state({ records: [record] });
+    const controller = build_controller(state);
+    controller.read_gallery_thumbnail = vi.fn(() => Promise.reject(new Error("no canvas")));
+    mount_gallery_view({ state, controller });
+    await flushPromises();
+
+    expect(controller.read_gallery_thumbnail).toHaveBeenCalledWith(record.id);
+    expect(controller.read_gallery_bytes).toHaveBeenCalledWith(record.id);
+    expect(dom().find("img").exists()).toBe(true);
+  });
+});
+
 describe("filters", () => {
   it("pinned-only filter reduces the records handed to ImageGrid", async () => {
     const pinned = make_record({
@@ -371,8 +391,7 @@ describe("filters", () => {
     const { wrapper } = mount_gallery_view({ state });
     expect(wrapper.findComponent(ImageGrid).props("records")).toHaveLength(2);
 
-    const pinned_switch = dom().findAll('button[role="switch"]')[0];
-    await pinned_switch?.trigger("click");
+    await dom().find('[data-testid="gallery-pinned-only"]').trigger("click");
     await flushPromises();
     expect(wrapper.findComponent(ImageGrid).props("records")).toHaveLength(1);
   });
@@ -389,8 +408,7 @@ describe("filters", () => {
     const state = build_state({ records: [attached, orphaned] });
     const { wrapper } = mount_gallery_view({ state });
 
-    const orphaned_switch = dom().findAll('button[role="switch"]')[1];
-    await orphaned_switch?.trigger("click");
+    await dom().find('[data-testid="gallery-orphaned-only"]').trigger("click");
     await flushPromises();
     const remaining = wrapper
       .findComponent(ImageGrid)
@@ -582,7 +600,7 @@ describe("preview dialog: parameter inspector, copy, source message, pin, detach
 });
 
 describe("multi-select and batch actions", () => {
-  it("select all picks only the filtered images and toggles back to deselect all", async () => {
+  it("select all in the bulk bar picks only the filtered images; clearing deselects them", async () => {
     const sd = make_record({
       id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd" as Uuid,
       provider_id: "sd_webui",
@@ -596,17 +614,17 @@ describe("multi-select and batch actions", () => {
     wrapper.findComponent(AppSelect).vm.$emit("update:modelValue", "novelai");
     await flushPromises();
 
-    const button = dom().find('[data-testid="gallery-select-all"]');
-    expect(button.text()).toBe("Select all");
-    await button.trigger("click");
+    toggle_tile_select(wrapper, nai[0]?.id ?? "");
+    await flushPromises();
+    await dom().find('[data-testid="gallery-select-all"]').trigger("click");
     await flushPromises();
     expect(dom().text()).toContain("2 images selected");
     expect(wrapper.findComponent(ImageGrid).props("selectedIds")).toEqual(
       new Set(nai.map((record) => record.id)),
     );
-    expect(button.text()).toBe("Deselect all");
+    expect(dom().find('[data-testid="gallery-select-all"]').exists()).toBe(false);
 
-    await button.trigger("click");
+    await dom().find('button[aria-label="Deselect all"]').trigger("click");
     await flushPromises();
     expect(dom().text()).not.toContain("images selected");
   });

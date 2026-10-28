@@ -342,6 +342,9 @@ var o = {
 			provider_label: "Provider",
 			all_providers: "All providers",
 			date_range_label: "Date range",
+			range_all: "All time",
+			range_week: "Last 7 days",
+			range_month: "Last 30 days",
 			pinned_only_label: "Pinned only",
 			orphaned_only_label: "Orphaned only"
 		},
@@ -812,7 +815,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DDN12Wx3.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-ByJihbaT.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

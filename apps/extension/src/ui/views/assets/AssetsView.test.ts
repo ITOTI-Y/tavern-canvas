@@ -83,6 +83,7 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     load_installed_vocabulary: vi.fn(() => Promise.resolve(null)),
     select_gallery_record: vi.fn(),
     read_gallery_bytes: vi.fn(() => Promise.resolve(new Uint8Array())),
+    read_gallery_thumbnail: vi.fn(() => Promise.resolve(new Uint8Array())),
     pin_gallery_record: vi.fn(() => Promise.resolve()),
     detach_gallery_record: vi.fn(() => Promise.resolve()),
     delete_gallery_record: vi.fn(() => Promise.resolve()),

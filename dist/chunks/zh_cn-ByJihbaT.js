@@ -311,6 +311,9 @@ var e = {
 			provider_label: "图像服务",
 			all_providers: "全部图像服务",
 			date_range_label: "时间范围",
+			range_all: "全部时间",
+			range_week: "最近 7 天",
+			range_month: "最近 30 天",
 			pinned_only_label: "仅显示置顶",
 			orphaned_only_label: "仅显示孤立图片"
 		},

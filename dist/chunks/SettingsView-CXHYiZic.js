@@ -6,17 +6,16 @@ import { G as u, H as d, I as f, K as p, P as m, _ as h, a as g, b as _, dt as v
 import { n as N, t as P } from "./AppIcon-DkyxvN8k.js";
 import { i as F, n as I, r as L, t as R } from "./PromptTagChips-BSiYc5Q5.js";
 import { n as z, t as B } from "./StateSurface-X9aRtXAT.js";
-import { t as V } from "./AppSelect-gXfI5z0N.js";
-import { t as ee } from "./AppCheckbox-BsNETLqc.js";
+import { t as V } from "./AppSelect-D-2VXU1J.js";
+import { t as ee } from "./AppCheckbox-qcV3D_N_.js";
 import { t as H } from "./FieldGroup-CViCiHLn.js";
-import { t as te } from "./scan-search-C_tMvEZl.js";
-import { n as U } from "./deferred_stylesheets-BpS7LWkd.js";
+import { n as te, t as U } from "./AppSwitch-DeEYCZzD.js";
+import { n as W } from "./deferred_stylesheets-BpS7LWkd.js";
 import "./browser_secret_vault-CnTo7PwU.js";
-import { n as W, t as ne } from "./novelai_request_defaults-B0sJ9ANr.js";
-import { n as G, t as K } from "./NumberStepper-juOMl-Ck.js";
-import { t as q } from "./ToastViewport-BajWipCQ.js";
-import { t as J } from "./ConfirmDialog-DASvEQUq.js";
-import { t as Y } from "./AppSwitch-DrgoDfj2.js";
+import { n as G, t as ne } from "./novelai_request_defaults-B0sJ9ANr.js";
+import { n as K, t as q } from "./NumberStepper-CeqkgodA.js";
+import { t as J } from "./ToastViewport-BajWipCQ.js";
+import { t as Y } from "./ConfirmDialog-DASvEQUq.js";
 import { t as re } from "./AppDialog-CwkMmVVL.js";
 import { t as ie } from "./use_toasts-taqPHY-l.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/cable.js
@@ -132,7 +131,7 @@ var X = N("cable", [
 };
 //#endregion
 //#region src/ui/views/settings/settings_styles.ts
-U("settings", "._layout_1kdil_9{grid-template-columns:var(--tc-nav-width) minmax(0, 1fr);min-height:100%;display:grid}._section_nav_1kdil_15{gap:var(--tc-space-0-5);padding:var(--tc-space-2) var(--tc-space-3);background-color:var(--tc-canvas);flex-direction:column;display:flex}._section_nav_item_1kdil_23{align-items:center;gap:var(--tc-space-2);height:var(--tc-control-height-md);padding:0 var(--tc-control-padding-x-md);border-radius:var(--tc-radius-control);color:var(--tc-text-muted);font-size:var(--tc-control-font-size);text-align:start;white-space:nowrap;flex:none;display:flex}._section_nav_item_1kdil_23:hover{background-color:var(--tc-surface-raised);color:var(--tc-text)}._section_nav_item_1kdil_23[data-selected=true],._section_nav_item_1kdil_23[data-selected=true]:hover{background-color:var(--tc-marker);color:var(--tc-on-marker);font-weight:var(--tc-font-weight-medium)}._section_content_1kdil_49{min-width:0}._pane_head_1kdil_53{gap:var(--tc-space-1);max-width:var(--tc-form-max-width);padding:var(--tc-space-2) var(--tc-panel-padding) var(--tc-group-gap);display:grid}._pane_title_1kdil_60{color:var(--tc-text);font-size:var(--tc-font-size-xl);font-weight:700;line-height:var(--tc-line-height-xl);margin:0}._pane_description_1kdil_68{color:var(--tc-text-muted);font-size:var(--tc-font-size-md);line-height:var(--tc-line-height-md);margin:0}._groups_1kdil_75{gap:var(--tc-group-gap);flex-direction:column;display:flex}._input_row_1kdil_81{align-items:center;gap:var(--tc-space-2);display:flex}._input_row_1kdil_81>input{flex:auto;min-width:0}._view_1kdil_92{gap:var(--tc-group-gap);max-width:var(--tc-form-max-width);padding:0 var(--tc-panel-padding) var(--tc-panel-padding);flex-direction:column;display:flex}._onboarding_1kdil_100{grid-template-columns:var(--tc-control-height-lg) minmax(0, 1fr);gap:var(--tc-space-4);padding:var(--tc-space-6);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);display:grid}._onboarding_icon_1kdil_110{width:var(--tc-control-height-lg);height:var(--tc-control-height-lg);border-radius:var(--tc-radius-control);background-color:var(--tc-marker);color:var(--tc-on-marker);justify-content:center;align-items:center;display:flex}._onboarding_label_1kdil_121{margin-bottom:var(--tc-space-1);color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);font-weight:var(--tc-font-weight-semibold)}._onboarding_title_1kdil_128{color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg)}._onboarding_description_1kdil_135{max-width:62ch;margin-top:var(--tc-space-2);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm)}._section_1kdil_15{gap:var(--tc-form-row-gap);flex-direction:column;min-width:0;display:flex}._section_1kdil_15+._section_1kdil_15{margin-top:calc(-1 * var(--tc-group-gap) / 2);padding-top:var(--tc-group-gap);border-top:1px solid var(--tc-divider)}._section_header_1kdil_158{justify-content:space-between;align-items:center;gap:var(--tc-space-3);flex-wrap:wrap;display:flex}._section_title_1kdil_166{color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:700;line-height:var(--tc-line-height-lg)}._form_grid_1kdil_173>._section_title_1kdil_166{margin-top:var(--tc-space-2)}._row_1kdil_178{justify-items:start;gap:var(--tc-field-gap);grid-template-columns:minmax(0,1fr);min-width:0;display:grid}._row_label_1kdil_186{min-width:0;color:var(--tc-text);font-size:var(--tc-label-font-size);font-weight:600;line-height:var(--tc-line-height-sm);overflow-wrap:anywhere}._row_value_1kdil_195{color:var(--tc-text);flex:none}._profile_row_1kdil_202{justify-content:space-between;align-items:center;gap:var(--tc-space-3);padding:var(--tc-space-3) 0;border-top:1px solid var(--tc-divider);flex-wrap:wrap;display:flex}._profile_identity_1kdil_214{gap:var(--tc-space-0-5);flex-direction:column;flex:12rem;min-width:0;display:flex}._profile_name_1kdil_222{color:var(--tc-text);font-weight:var(--tc-font-weight-medium);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_1kdil_230{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_actions_1kdil_239{justify-content:flex-end;align-items:center;gap:var(--tc-space-1);flex-wrap:wrap;display:flex}._badge_1kdil_247{height:var(--tc-chip-height-sm);padding:0 var(--tc-space-2);border:1px solid var(--tc-accent-border);border-radius:var(--tc-radius-chip);background-color:var(--tc-accent-soft);color:var(--tc-accent-text);font-size:var(--tc-font-size-xs);flex:none;align-items:center;display:inline-flex}._form_grid_1kdil_173{gap:var(--tc-form-row-gap);flex-direction:column;display:flex}._form_grid_1kdil_173>._description_1kdil_268{margin-top:calc(var(--tc-field-gap) - var(--tc-form-row-gap))}._status_text_1kdil_272{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);display:inline-flex}._status_text_1kdil_272[data-tone=success]{color:var(--tc-success)}._status_text_1kdil_272[data-tone=warning]{color:var(--tc-warning)}._status_text_1kdil_272[data-tone=error]{color:var(--tc-error)}._risk_banner_1kdil_293{gap:var(--tc-space-2);padding:var(--tc-space-4);border:1px solid var(--tc-warning);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);flex-direction:column;display:flex}._risk_banner_1kdil_293[data-severity=error]{border-color:var(--tc-error);background-color:var(--tc-error-soft)}._risk_banner_title_1kdil_308{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-warning);font-weight:var(--tc-font-weight-semibold);display:flex}._risk_banner_1kdil_293[data-severity=error] ._risk_banner_title_1kdil_308{color:var(--tc-error)}._risk_banner_description_1kdil_320{color:var(--tc-text);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere;margin:0}._risk_banner_actions_1kdil_328{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._acknowledged_note_1kdil_335{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-success);font-size:var(--tc-font-size-sm);display:flex}._description_1kdil_268{max-width:60ch;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere;margin:0}._actions_row_1kdil_352{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._vault_mode_row_1kdil_359{justify-content:space-between;align-items:center;gap:var(--tc-space-3);flex-wrap:wrap;display:flex}._vault_mode_row_1kdil_359 ._profile_meta_1kdil_230{white-space:normal;text-overflow:clip;overflow:visible}._vault_controls_1kdil_373{gap:var(--tc-space-3);width:min(100%,520px);display:grid}._vault_controls_1kdil_373>button{width:fit-content}._vault_unlocked_actions_1kdil_383{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._prompt_tag_row_1kdil_398{gap:var(--tc-space-1-5);flex-wrap:wrap;display:flex}@container studio-workspace (width<=640px){._layout_1kdil_9{grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr)}._section_nav_1kdil_15{padding:var(--tc-space-2) var(--tc-space-4);border-bottom:1px solid var(--tc-divider);scrollbar-width:none;flex-direction:row;overflow-x:auto}._pane_head_1kdil_53{padding:var(--tc-space-3) var(--tc-space-4) var(--tc-group-gap)}._view_1kdil_92{padding:0 var(--tc-space-4) var(--tc-space-4)}._onboarding_1kdil_100{padding:var(--tc-space-5);grid-template-columns:minmax(0,1fr)}}");
+W("settings", "._layout_1kdil_9{grid-template-columns:var(--tc-nav-width) minmax(0, 1fr);min-height:100%;display:grid}._section_nav_1kdil_15{gap:var(--tc-space-0-5);padding:var(--tc-space-2) var(--tc-space-3);background-color:var(--tc-canvas);flex-direction:column;display:flex}._section_nav_item_1kdil_23{align-items:center;gap:var(--tc-space-2);height:var(--tc-control-height-md);padding:0 var(--tc-control-padding-x-md);border-radius:var(--tc-radius-control);color:var(--tc-text-muted);font-size:var(--tc-control-font-size);text-align:start;white-space:nowrap;flex:none;display:flex}._section_nav_item_1kdil_23:hover{background-color:var(--tc-surface-raised);color:var(--tc-text)}._section_nav_item_1kdil_23[data-selected=true],._section_nav_item_1kdil_23[data-selected=true]:hover{background-color:var(--tc-marker);color:var(--tc-on-marker);font-weight:var(--tc-font-weight-medium)}._section_content_1kdil_49{min-width:0}._pane_head_1kdil_53{gap:var(--tc-space-1);max-width:var(--tc-form-max-width);padding:var(--tc-space-2) var(--tc-panel-padding) var(--tc-group-gap);display:grid}._pane_title_1kdil_60{color:var(--tc-text);font-size:var(--tc-font-size-xl);font-weight:700;line-height:var(--tc-line-height-xl);margin:0}._pane_description_1kdil_68{color:var(--tc-text-muted);font-size:var(--tc-font-size-md);line-height:var(--tc-line-height-md);margin:0}._groups_1kdil_75{gap:var(--tc-group-gap);flex-direction:column;display:flex}._input_row_1kdil_81{align-items:center;gap:var(--tc-space-2);display:flex}._input_row_1kdil_81>input{flex:auto;min-width:0}._view_1kdil_92{gap:var(--tc-group-gap);max-width:var(--tc-form-max-width);padding:0 var(--tc-panel-padding) var(--tc-panel-padding);flex-direction:column;display:flex}._onboarding_1kdil_100{grid-template-columns:var(--tc-control-height-lg) minmax(0, 1fr);gap:var(--tc-space-4);padding:var(--tc-space-6);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);display:grid}._onboarding_icon_1kdil_110{width:var(--tc-control-height-lg);height:var(--tc-control-height-lg);border-radius:var(--tc-radius-control);background-color:var(--tc-marker);color:var(--tc-on-marker);justify-content:center;align-items:center;display:flex}._onboarding_label_1kdil_121{margin-bottom:var(--tc-space-1);color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);font-weight:var(--tc-font-weight-semibold)}._onboarding_title_1kdil_128{color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg)}._onboarding_description_1kdil_135{max-width:62ch;margin-top:var(--tc-space-2);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm)}._section_1kdil_15{gap:var(--tc-form-row-gap);flex-direction:column;min-width:0;display:flex}._section_1kdil_15+._section_1kdil_15{margin-top:calc(-1 * var(--tc-group-gap) / 2);padding-top:var(--tc-group-gap);border-top:1px solid var(--tc-divider)}._section_header_1kdil_158{justify-content:space-between;align-items:center;gap:var(--tc-space-3);flex-wrap:wrap;display:flex}._section_title_1kdil_166{color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:700;line-height:var(--tc-line-height-lg)}._form_grid_1kdil_173>._section_title_1kdil_166{margin-top:var(--tc-space-2)}._row_1kdil_178{justify-items:start;gap:var(--tc-field-gap);grid-template-columns:minmax(0,1fr);min-width:0;display:grid}._row_label_1kdil_186{min-width:0;color:var(--tc-text);font-size:var(--tc-label-font-size);font-weight:600;line-height:var(--tc-line-height-sm);overflow-wrap:anywhere}._row_value_1kdil_195{color:var(--tc-text);flex:none}._profile_row_1kdil_202{justify-content:space-between;align-items:center;gap:var(--tc-space-3);padding:var(--tc-space-3) 0;border-top:1px solid var(--tc-divider);flex-wrap:wrap;display:flex}._profile_identity_1kdil_214{gap:var(--tc-space-0-5);flex-direction:column;flex:12rem;min-width:0;display:flex}._profile_name_1kdil_222{color:var(--tc-text);font-weight:var(--tc-font-weight-medium);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_meta_1kdil_230{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._profile_actions_1kdil_239{justify-content:flex-end;align-items:center;gap:var(--tc-space-1);flex-wrap:wrap;display:flex}._badge_1kdil_247{height:var(--tc-chip-height-sm);padding:0 var(--tc-space-2);border:1px solid var(--tc-accent-border);border-radius:var(--tc-radius-chip);background-color:var(--tc-accent-soft);color:var(--tc-accent-text);font-size:var(--tc-font-size-xs);flex:none;align-items:center;display:inline-flex}._form_grid_1kdil_173{gap:var(--tc-form-row-gap);flex-direction:column;display:flex}._form_grid_1kdil_173>._description_1kdil_268{margin-top:calc(var(--tc-field-gap) - var(--tc-form-row-gap))}._status_text_1kdil_272{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);display:inline-flex}._status_text_1kdil_272[data-tone=success]{color:var(--tc-success)}._status_text_1kdil_272[data-tone=warning]{color:var(--tc-warning)}._status_text_1kdil_272[data-tone=error]{color:var(--tc-error)}._risk_banner_1kdil_293{gap:var(--tc-space-2);padding:var(--tc-space-4);border:1px solid var(--tc-warning);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);flex-direction:column;display:flex}._risk_banner_1kdil_293[data-severity=error]{border-color:var(--tc-error);background-color:var(--tc-error-soft)}._risk_banner_title_1kdil_308{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-warning);font-weight:var(--tc-font-weight-semibold);display:flex}._risk_banner_1kdil_293[data-severity=error] ._risk_banner_title_1kdil_308{color:var(--tc-error)}._risk_banner_description_1kdil_320{color:var(--tc-text);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere;margin:0}._risk_banner_actions_1kdil_328{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._acknowledged_note_1kdil_335{align-items:center;gap:var(--tc-space-1-5);color:var(--tc-success);font-size:var(--tc-font-size-sm);display:flex}._description_1kdil_268{max-width:60ch;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere;margin:0}._actions_row_1kdil_352{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._vault_mode_row_1kdil_359{justify-content:space-between;align-items:center;gap:var(--tc-space-3);flex-wrap:wrap;display:flex}._vault_mode_row_1kdil_359 ._profile_meta_1kdil_230{white-space:normal;text-overflow:clip;overflow:visible}._vault_controls_1kdil_373{gap:var(--tc-space-3);width:min(100%,520px);display:grid}._vault_controls_1kdil_373>button{width:fit-content}._vault_unlocked_actions_1kdil_383{align-items:center;gap:var(--tc-space-2);flex-wrap:wrap;display:flex}._prompt_tag_row_1kdil_398{gap:var(--tc-space-1-5);flex-wrap:wrap;display:flex}@container studio-workspace (width<=640px){._layout_1kdil_9{grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr)}._section_nav_1kdil_15{padding:var(--tc-space-2) var(--tc-space-4);border-bottom:1px solid var(--tc-divider);scrollbar-width:none;flex-direction:row;overflow-x:auto}._pane_head_1kdil_53{padding:var(--tc-space-3) var(--tc-space-4) var(--tc-group-gap)}._view_1kdil_92{padding:0 var(--tc-space-4) var(--tc-space-4)}._onboarding_1kdil_100{padding:var(--tc-space-5);grid-template-columns:minmax(0,1fr)}}");
 var Q = Z, oe = /* @__PURE__ */ j({
 	__name: "AppearanceSettings",
 	props: {
@@ -192,7 +191,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 			class: v(S(Q).section),
 			"data-testid": "appearance-settings"
 		}, [C("div", { class: v(S(Q).section_header) }, [C("h2", { class: v(S(Q).section_title) }, w(S(n)("settings.sections.appearance")), 3)], 2), C("div", { class: v(S(Q).form_grid) }, [
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.appearance.theme_label")), 3), M(G, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.appearance.theme_label")), 3), M(K, {
 				"model-value": e.settings?.ui.color_mode ?? "system",
 				options: a.value,
 				label: S(n)("settings.appearance.theme_label"),
@@ -202,7 +201,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				"options",
 				"label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.appearance.language_label")), 3), M(G, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.appearance.language_label")), 3), M(K, {
 				"model-value": e.settings?.locale ?? "auto",
 				options: o.value,
 				label: S(n)("settings.appearance.language_label"),
@@ -212,7 +211,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				"options",
 				"label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.appearance.inspector_width_label")), 3), M(K, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.appearance.inspector_width_label")), 3), M(q, {
 				"model-value": e.settings?.ui.inspector_width ?? 320,
 				label: S(n)("settings.appearance.inspector_width_label"),
 				min: 240,
@@ -227,7 +226,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			M(Y, {
+			M(U, {
 				"model-value": e.settings?.ui.optional_entry_enabled ?? !1,
 				label: S(n)("settings.appearance.optional_entry_label"),
 				disabled: !e.settings,
@@ -343,7 +342,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				class: v(S(Q).status_text),
 				"data-tone": e.vaultStatus.state === "unlocked" ? "success" : void 0
 			}, w(d.value), 11, $)) : y("", !0)], 2),
-			C("div", { class: v(S(Q).vault_mode_row) }, [C("div", { class: v(S(Q).profile_identity) }, [C("span", { class: v(S(Q).profile_name) }, w(S(n)("settings.credential_storage.mode_label")), 3), C("span", { class: v(S(Q).profile_meta) }, w(S(n)("settings.credential_storage.mode_hint")), 3)], 2), M(G, {
+			C("div", { class: v(S(Q).vault_mode_row) }, [C("div", { class: v(S(Q).profile_identity) }, [C("span", { class: v(S(Q).profile_name) }, w(S(n)("settings.credential_storage.mode_label")), 3), C("span", { class: v(S(Q).profile_meta) }, w(S(n)("settings.credential_storage.mode_hint")), 3)], 2), M(K, {
 				modelValue: l.value,
 				"onUpdate:modelValue": _[0] ||= (e) => l.value = e,
 				options: c.value,
@@ -438,7 +437,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				"data-tone": "error",
 				role: "alert"
 			}, w(o.value), 3)) : y("", !0)], 2)) : y("", !0),
-			M(J, {
+			M(Y, {
 				open: s.value,
 				title: S(n)("settings.credential_storage.reset_confirm_title"),
 				description: S(n)("settings.credential_storage.reset_confirm_description"),
@@ -560,7 +559,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 			class: v(S(Q).section),
 			"data-testid": "data-settings"
 		}, [C("div", { class: v(S(Q).section_header) }, [C("h2", { class: v(S(Q).section_title) }, w(S(n)("settings.sections.data")), 3)], 2), C("div", { class: v(S(Q).form_grid) }, [
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.data.vocabulary_channel_label")), 3), M(G, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.data.vocabulary_channel_label")), 3), M(K, {
 				"model-value": e.vocabularyUpdateChannel ?? "bundled",
 				options: i,
 				label: S(n)("settings.data.vocabulary_channel_label"),
@@ -729,7 +728,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				model: t
 			};
 		}
-		let I = E(() => W.value === "custom" && l.value.trim() !== "" && F() === null);
+		let I = E(() => G.value === "custom" && l.value.trim() !== "" && F() === null);
 		function L() {
 			let e = F();
 			e !== null && a({ connection: e });
@@ -754,7 +753,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				B.value = "failed";
 			}
 		}
-		let U = E(() => {
+		let W = E(() => {
 			switch (B.value) {
 				case "saved": return n("settings.illustration.custom_key_saved");
 				case "cleared": return n("settings.illustration.custom_key_cleared");
@@ -762,23 +761,23 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				case "idle":
 				case "saving": return "";
 			}
-		}), W = O(r.value?.connection.kind ?? "current");
+		}), G = O(r.value?.connection.kind ?? "current");
 		d(() => r.value?.connection.kind, (e) => {
-			e !== void 0 && (W.value = e);
+			e !== void 0 && (G.value = e);
 		});
 		function ne(e) {
-			if (e === "current") W.value = "current", a({ connection: { kind: "current" } });
+			if (e === "current") G.value = "current", a({ connection: { kind: "current" } });
 			else if (e === "proxy_preset") {
-				W.value = "proxy_preset";
+				G.value = "proxy_preset";
 				let e = P();
 				e !== null && a({ connection: e });
-			} else e === "custom" && (W.value = "custom", L());
+			} else e === "custom" && (G.value = "custom", L());
 		}
-		function q() {
+		function J() {
 			let e = P();
 			e !== null && a({ connection: e });
 		}
-		let J = E(() => [{
+		let Y = E(() => [{
 			value: we,
 			label: n("settings.illustration.prompt_preset_none")
 		}, ...t.promptPresets.map((e) => ({
@@ -835,7 +834,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 		}, [
 			C("section", { class: v(S(Q).section) }, [
 				C("h2", { class: v(S(Q).section_title) }, w(S(n)("settings.groups.generation")), 3),
-				M(Y, {
+				M(U, {
 					"model-value": e.settings?.auto_generation_enabled ?? !1,
 					label: S(n)("settings.illustration.auto_generation_label"),
 					description: S(n)("settings.illustration.auto_generation_hint"),
@@ -847,7 +846,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 					"description",
 					"disabled"
 				]),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.max_images_label")), 3), M(K, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.max_images_label")), 3), M(q, {
 					"model-value": r.value?.max_images_per_message,
 					label: S(n)("settings.illustration.max_images_label"),
 					min: 1,
@@ -865,7 +864,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				])], 2),
 				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.prompt_preset_label")), 3), M(V, {
 					"model-value": r.value?.prompt_preset_id ?? we,
-					options: J.value,
+					options: Y.value,
 					placeholder: S(n)("settings.illustration.prompt_preset_label"),
 					"aria-label": S(n)("settings.illustration.prompt_preset_label"),
 					disabled: !e.settings,
@@ -877,7 +876,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 					"aria-label",
 					"disabled"
 				])], 2),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.concurrency_label")), 3), M(K, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.concurrency_label")), 3), M(q, {
 					"model-value": e.settings?.global_concurrency,
 					label: S(n)("settings.illustration.concurrency_label"),
 					min: 1,
@@ -896,8 +895,8 @@ var Q = Z, oe = /* @__PURE__ */ j({
 			], 2),
 			C("section", { class: v(S(Q).section) }, [
 				C("h2", { class: v(S(Q).section_title) }, w(S(n)("settings.groups.analysis")), 3),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.connection_label")), 3), M(G, {
-					"model-value": W.value,
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.connection_label")), 3), M(K, {
+					"model-value": G.value,
 					options: N.value,
 					label: S(n)("settings.illustration.connection_label"),
 					disabled: !e.settings,
@@ -908,7 +907,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 					"label",
 					"disabled"
 				])], 2),
-				W.value === "proxy_preset" ? (m(), h(k, { key: 0 }, [M(H, {
+				G.value === "proxy_preset" ? (m(), h(k, { key: 0 }, [M(H, {
 					label: S(n)("settings.illustration.proxy_preset_label"),
 					hint: S(n)("settings.illustration.proxy_preset_hint")
 				}, {
@@ -919,7 +918,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 						"aria-describedby": t,
 						class: v(S(Q).text_input),
 						"data-testid": "analysis-proxy-preset-input",
-						onBlur: q
+						onBlur: J
 					}, null, 42, me), [[g, s.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]), M(H, {
@@ -932,11 +931,11 @@ var Q = Z, oe = /* @__PURE__ */ j({
 						type: "text",
 						"aria-describedby": t,
 						class: v(S(Q).text_input),
-						onBlur: q
+						onBlur: J
 					}, null, 42, he), [[g, c.value]])]),
 					_: 1
 				}, 8, ["label", "hint"])], 64)) : y("", !0),
-				W.value === "custom" ? (m(), h(k, { key: 1 }, [
+				G.value === "custom" ? (m(), h(k, { key: 1 }, [
 					M(H, {
 						label: S(n)("settings.illustration.custom_url_label"),
 						hint: S(n)("settings.illustration.custom_url_hint"),
@@ -1001,7 +1000,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 					}, null, 8, ["label"]), C("span", {
 						class: v(S(Q).status_text),
 						role: "status"
-					}, w(U.value), 3)], 2)
+					}, w(W.value), 3)], 2)
 				], 64)) : y("", !0),
 				M(H, {
 					label: S(n)("settings.illustration.preset_label"),
@@ -1020,7 +1019,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 					}, null, 42, ye), [[g, o.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.chat_history_label")), 3), M(K, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.chat_history_label")), 3), M(q, {
 					"model-value": r.value?.max_chat_history,
 					label: S(n)("settings.illustration.chat_history_label"),
 					min: 0,
@@ -1036,7 +1035,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 					"decrement-label",
 					"disabled"
 				])], 2),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.world_info_label")), 3), M(G, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.illustration.world_info_label")), 3), M(K, {
 					"model-value": X.value,
 					options: ie.value,
 					label: S(n)("settings.illustration.world_info_label"),
@@ -1067,7 +1066,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 				}, w(S(n)("settings.illustration.worldbook_unavailable")), 3)) : y("", !0)], 64)) : y("", !0),
 				M(H, {
 					label: S(n)("settings.illustration.wardrobe_model_label"),
-					hint: W.value === "current" ? S(n)("settings.illustration.wardrobe_model_current_hint") : S(n)("settings.illustration.wardrobe_model_hint")
+					hint: G.value === "current" ? S(n)("settings.illustration.wardrobe_model_current_hint") : S(n)("settings.illustration.wardrobe_model_hint")
 				}, {
 					default: u(({ fieldId: t, describedBy: n }) => [p(C("input", {
 						id: t,
@@ -1075,7 +1074,7 @@ var Q = Z, oe = /* @__PURE__ */ j({
 						type: "text",
 						"aria-describedby": n,
 						class: v(S(Q).text_input),
-						disabled: !e.settings || W.value === "current",
+						disabled: !e.settings || G.value === "current",
 						"data-testid": "wardrobe-model-input",
 						onBlur: A
 					}, null, 42, be), [[g, _.value]])]),
@@ -1163,7 +1162,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 		});
 		function u() {
 			if (i.profile.novelai_defaults !== null) return i.profile.novelai_defaults;
-			let e = W(c.value);
+			let e = G(c.value);
 			return {
 				width: e.width,
 				height: e.height,
@@ -1233,21 +1232,21 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 			value: e,
 			label: De[e]
 		}));
-		function U(e, t, n) {
+		function W(e, t, n) {
 			t.includes(n) && g({ [e]: n });
 		}
-		let G = E(() => i.vibes.filter((e) => typeof e.payload.image == "string" && (e.payload.provider === void 0 || e.payload.provider === "novelai")));
-		function q(e, t) {
+		let K = E(() => i.vibes.filter((e) => typeof e.payload.image == "string" && (e.payload.provider === void 0 || e.payload.provider === "novelai")));
+		function J(e, t) {
 			let n = p.value.vibe_asset_ids.filter((t) => t !== e);
 			g({ vibe_asset_ids: t ? [...n, e].slice(0, 16) : n });
 		}
-		let J = O("idle");
+		let Y = O("idle");
 		async function re() {
-			J.value = "saving";
+			Y.value = "saving";
 			try {
-				await i.controller.save_novelai_defaults(i.profile.id, p.value), J.value = "saved";
+				await i.controller.save_novelai_defaults(i.profile.id, p.value), Y.value = "saved";
 			} catch {
-				J.value = "failed";
+				Y.value = "failed";
 			}
 		}
 		return (r, i) => (m(), h("div", {
@@ -1290,7 +1289,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				"placeholder",
 				"aria-label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.width_label")), 3), M(K, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.width_label")), 3), M(q, {
 				"model-value": p.value.width,
 				label: S(o)("settings.novelai.width_label"),
 				min: 64,
@@ -1305,7 +1304,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.height_label")), 3), M(K, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.height_label")), 3), M(q, {
 				"model-value": p.value.height,
 				label: S(o)("settings.novelai.height_label"),
 				min: 64,
@@ -1320,7 +1319,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.steps_label")), 3), M(K, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.steps_label")), 3), M(q, {
 				"model-value": p.value.steps,
 				label: S(o)("settings.novelai.steps_label"),
 				min: 1,
@@ -1334,7 +1333,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.scale_label")), 3), M(K, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.scale_label")), 3), M(q, {
 				"model-value": p.value.scale,
 				label: S(o)("settings.novelai.scale_label"),
 				min: 0,
@@ -1349,7 +1348,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				"increment-label",
 				"decrement-label"
 			])], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.cfg_rescale_label")), 3), M(K, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.cfg_rescale_label")), 3), M(q, {
 				"model-value": p.value.cfg_rescale,
 				label: S(o)("settings.novelai.cfg_rescale_label"),
 				min: 0,
@@ -1369,7 +1368,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				options: S(H),
 				placeholder: S(o)("settings.novelai.sampler_label"),
 				"aria-label": S(o)("settings.novelai.sampler_label"),
-				"onUpdate:modelValue": i[6] ||= (e) => U("sampler", S(n).options, e)
+				"onUpdate:modelValue": i[6] ||= (e) => W("sampler", S(n).options, e)
 			}, null, 8, [
 				"model-value",
 				"options",
@@ -1381,38 +1380,38 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 				options: S(te),
 				placeholder: S(o)("settings.novelai.noise_schedule_label"),
 				"aria-label": S(o)("settings.novelai.noise_schedule_label"),
-				"onUpdate:modelValue": i[7] ||= (e) => U("noise_schedule", S(t).options, e)
+				"onUpdate:modelValue": i[7] ||= (e) => W("noise_schedule", S(t).options, e)
 			}, null, 8, [
 				"model-value",
 				"options",
 				"placeholder",
 				"aria-label"
 			])], 2),
-			M(Y, {
+			M(U, {
 				"model-value": p.value.smea,
 				label: S(o)("settings.novelai.smea_label"),
 				"onUpdate:modelValue": i[8] ||= (e) => g({ smea: e })
 			}, null, 8, ["model-value", "label"]),
-			M(Y, {
+			M(U, {
 				"model-value": p.value.dyn,
 				label: S(o)("settings.novelai.dyn_label"),
 				"onUpdate:modelValue": i[9] ||= (e) => g({ dyn: e })
 			}, null, 8, ["model-value", "label"]),
-			M(Y, {
+			M(U, {
 				"model-value": p.value.variety_plus,
 				label: S(o)("settings.novelai.variety_label"),
 				"onUpdate:modelValue": i[10] ||= (e) => g({ variety_plus: e })
 			}, null, 8, ["model-value", "label"]),
 			C("h3", { class: v(S(Q).section_title) }, w(S(o)("settings.novelai.vibes_title")), 3),
-			G.value.length === 0 ? (m(), h("p", {
+			K.value.length === 0 ? (m(), h("p", {
 				key: 0,
 				class: v(S(Q).description)
 			}, w(S(o)("settings.novelai.vibes_empty")), 3)) : y("", !0),
-			(m(!0), h(k, null, f(G.value, (e) => (m(), b(ee, {
+			(m(!0), h(k, null, f(K.value, (e) => (m(), b(ee, {
 				key: e.id,
 				"model-value": p.value.vibe_asset_ids.includes(e.id),
 				label: e.display_name,
-				"onUpdate:modelValue": (t) => q(e.id, t)
+				"onUpdate:modelValue": (t) => J(e.id, t)
 			}, null, 8, [
 				"model-value",
 				"label",
@@ -1434,7 +1433,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 			C("div", { class: v(S(Q).actions_row) }, [M(z, {
 				label: S(o)("settings.novelai.save"),
 				variant: "primary",
-				pending: J.value === "saving",
+				pending: Y.value === "saving",
 				disabled: _.value !== null,
 				onClick: re
 			}, null, 8, [
@@ -1444,7 +1443,7 @@ var ke = "https://novelai.net/image", Ae = /* @__PURE__ */ j({
 			]), C("span", {
 				class: v(S(Q).status_text),
 				role: "status"
-			}, w(J.value === "saved" ? S(o)("settings.novelai.saved") : J.value === "failed" ? S(o)("settings.novelai.save_failed") : ""), 3)], 2)
+			}, w(Y.value === "saved" ? S(o)("settings.novelai.saved") : Y.value === "failed" ? S(o)("settings.novelai.save_failed") : ""), 3)], 2)
 		], 2)], 2));
 	}
 }), je = [
@@ -1492,8 +1491,8 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 		}), ee = new Set(i.map((e) => e.model_id)), te = i.filter((e) => e.selectable).map((e) => ({
 			value: e.model_id,
 			label: e.display_name
-		})), U = E(() => l.value?.provider_id === "sd_webui" || l.value?.provider_id === "comfyui");
-		function W(e) {
+		})), W = E(() => l.value?.provider_id === "sd_webui" || l.value?.provider_id === "comfyui");
+		function G(e) {
 			try {
 				let t = o(e.trim());
 				return c(t) ? t : null;
@@ -1501,7 +1500,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 				return null;
 			}
 		}
-		function G() {
+		function K() {
 			l.value = {
 				id: crypto.randomUUID(),
 				is_new: !0,
@@ -1513,7 +1512,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 				is_default: n.profiles.length === 0
 			}, _.value = null, s.value = !0;
 		}
-		function K(e) {
+		function q(e) {
 			l.value = {
 				id: e.id,
 				is_new: !1,
@@ -1525,7 +1524,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 				is_default: e.is_default
 			}, _.value = null, s.value = !0;
 		}
-		function q() {
+		function J() {
 			s.value = !1, l.value = null, _.value = null;
 		}
 		async function ie() {
@@ -1536,8 +1535,8 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 				_.value = a("errors.validation_required");
 				return;
 			}
-			let s = U.value ? W(t.base_url) : null;
-			if (U.value && s === null) {
+			let s = W.value ? G(t.base_url) : null;
+			if (W.value && s === null) {
 				_.value = a("settings.provider_profiles.base_url_invalid");
 				return;
 			}
@@ -1552,7 +1551,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 					base_url: s,
 					is_default: t.is_default,
 					updated_at: (/* @__PURE__ */ new Date()).toISOString()
-				}), q();
+				}), J();
 			} catch {
 				_.value = a("errors.unexpected");
 			} finally {
@@ -1632,7 +1631,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 			C("div", { class: v(S(Q).section_header) }, [C("h2", { class: v(S(Q).section_title) }, w(S(a)("settings.sections.provider_profiles")), 3), M(z, {
 				label: S(a)("settings.provider_profiles.add_action"),
 				variant: t.profiles.length === 0 ? "primary" : "secondary",
-				onClick: G
+				onClick: K
 			}, null, 8, ["label", "variant"])], 2),
 			M(B, {
 				status: t.profiles.length === 0 ? "empty" : "ready",
@@ -1691,7 +1690,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 					M(z, {
 						label: S(a)("common.actions.edit"),
 						variant: "secondary",
-						onClick: (t) => K(e)
+						onClick: (t) => q(e)
 					}, null, 8, ["label", "onClick"]),
 					M(z, {
 						label: S(a)("common.actions.delete"),
@@ -1705,7 +1704,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 				open: s.value,
 				title: l.value?.is_new ? S(a)("settings.provider_profiles.dialog_add_title") : S(a)("settings.provider_profiles.dialog_edit_title"),
 				"close-label": S(a)("common.actions.close"),
-				"onUpdate:open": n[7] ||= (e) => !e && q()
+				"onUpdate:open": n[7] ||= (e) => !e && J()
 			}, {
 				default: u(() => [l.value ? (m(), h("div", {
 					key: 0,
@@ -1775,7 +1774,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 						}, null, 10, Pe), [[g, l.value.model_id]])]),
 						_: 1
 					}, 8, ["label"])),
-					U.value ? (m(), b(H, {
+					W.value ? (m(), b(H, {
 						key: 2,
 						label: S(a)("settings.provider_profiles.base_url_label"),
 						hint: l.value.provider_id === "comfyui" ? S(a)("settings.provider_profiles.base_url_hint_comfyui") : S(a)("settings.provider_profiles.base_url_hint_sd_webui"),
@@ -1806,7 +1805,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 						}, null, 10, Ie), [[g, l.value.workflow_id]])]),
 						_: 1
 					}, 8, ["label"])) : y("", !0),
-					M(Y, {
+					M(U, {
 						modelValue: l.value.is_default,
 						"onUpdate:modelValue": n[6] ||= (e) => l.value.is_default = e,
 						label: S(a)("settings.provider_profiles.set_default_action")
@@ -1823,7 +1822,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 					}, null, 8, ["label", "pending"]), M(z, {
 						label: S(a)("common.actions.cancel"),
 						variant: "secondary",
-						onClick: q
+						onClick: J
 					}, null, 8, ["label"])], 2)
 				], 2)) : y("", !0)]),
 				_: 1
@@ -1870,7 +1869,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 				"description",
 				"close-label"
 			]),
-			M(J, {
+			M(Y, {
 				open: x.value !== null,
 				title: S(a)("settings.provider_profiles.remove_confirm_title", { name: x.value?.display_name ?? "" }),
 				description: S(a)("settings.provider_profiles.remove_confirm_description"),
@@ -2009,7 +2008,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 					role: "status"
 				}, w(y.value), 3)
 			], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.translation.endpoint_label")), 3), M(G, {
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(n)("settings.translation.endpoint_label")), 3), M(K, {
 				"model-value": r.value?.deepl_endpoint ?? "free",
 				options: a.value,
 				label: S(n)("settings.translation.endpoint_label"),
@@ -2072,7 +2071,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = _(() => import("./PromptView-8KTol-rr.js")), n = _(() => import("./PromptTagPresetPanel-4vvg48JS.js")), r = _(() => import("./DiagnosticsView-Dv0ttM2c.js")), i = e, { t: a } = T(), o = [
+		let t = _(() => import("./PromptView-8KTol-rr.js")), n = _(() => import("./PromptTagPresetPanel-BfEWYsDz.js")), r = _(() => import("./DiagnosticsView-NK6sNFPD.js")), i = e, { t: a } = T(), o = [
 			"illustration",
 			"providers",
 			"translation",
@@ -2242,7 +2241,7 @@ var Ne = ["id", "aria-describedby"], Pe = ["id", "aria-describedby"], Fe = ["id"
 					}, null, 8, ["vocabulary-update-channel", "controller"])
 				], 64)) : y("", !0)], 2))
 			], 2),
-			M(q, {
+			M(J, {
 				toasts: S(g),
 				"viewport-label": S(a)("common.notifications.viewport_label"),
 				"announce-label": S(a)("common.notifications.announce_label"),

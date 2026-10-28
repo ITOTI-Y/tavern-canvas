@@ -9,9 +9,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--tc-space-3);
-  height: 100%;
-  min-height: 0;
-  padding: var(--tc-space-2) var(--tc-panel-padding) var(--tc-panel-padding);
+  padding: var(--tc-space-3) var(--tc-panel-padding) var(--tc-panel-padding);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -22,15 +20,18 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--tc-space-2) var(--tc-space-5);
+  gap: var(--tc-space-2);
 }
 
-/* The filter switches render as chip toggles: the switch stays in the accessibility tree and keeps
-   focus and keyboard handling, and the whole label is the visible control. */
-.filterBar > label:has(> button[role="switch"]) {
-  position: relative;
+.filterSelect {
+  flex: 0 1 170px;
+  min-width: 0;
+}
+
+.chipToggle {
   display: inline-flex;
   align-items: center;
+  gap: var(--tc-control-gap);
   height: var(--tc-control-height-md);
   padding: 0 var(--tc-control-padding-x-md);
   border: 1px solid var(--tc-border-field);
@@ -39,58 +40,44 @@
   color: var(--tc-text-muted);
   font-size: var(--tc-control-font-size);
   white-space: nowrap;
-  transition: background-color var(--tc-motion-fast) ease;
 }
 
-.filterBar > label:has(> button[role="switch"]):hover {
-  background-color: var(--tc-surface-raised);
+.chipToggle:hover {
+  color: var(--tc-text);
 }
 
-.filterBar > label:has(> button[role="switch"][data-state="checked"]) {
+.chipToggle[aria-pressed="true"],
+.chipToggle[aria-pressed="true"]:hover {
   border-color: var(--tc-marker);
   background-color: var(--tc-marker);
   color: var(--tc-on-marker);
 }
 
-.filterBar > label:has(> button[role="switch"]:focus-visible) {
-  outline: 2px solid var(--tc-focus);
-  outline-offset: 2px;
-}
-
-.filterBar > label > span,
-.filterBar > label > span span {
-  color: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-}
-
-.filterBar > label > button[role="switch"] {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  opacity: 0;
-}
-
-.dateFilterLabel {
-  display: flex;
+.meter {
+  display: grid;
+  grid-template-columns: auto 96px;
   align-items: center;
-  white-space: nowrap;
-  gap: var(--tc-space-1-5);
-  color: var(--tc-text-muted);
-  font-size: var(--tc-font-size-sm);
-}
-
-.dateInput {
-  composes: tc-field from global;
-  width: auto;
-  padding: 0 var(--tc-space-3);
-}
-
-.cacheOccupancy {
+  gap: var(--tc-space-0-5) var(--tc-space-2);
   margin-left: auto;
   color: var(--tc-text-muted);
   font-size: var(--tc-font-size-xs);
+}
+
+.meterBar {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background-color: var(--tc-surface-sunken);
+}
+
+.meterBar > span {
+  display: block;
+  height: 100%;
+  background-color: var(--tc-text-muted);
+}
+
+.meterValue {
+  grid-column: 1 / -1;
 }
 
 .emptyDescription {
@@ -103,48 +90,48 @@
 /* ---------------------------------------------------------------------- */
 
 .skeletonGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--tc-space-2);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--tc-tile-min), 1fr));
+  gap: var(--tc-tile-gap);
 }
 
 .skeletonTile {
-  width: 176px;
-  height: 176px;
+  aspect-ratio: 3 / 4;
   border-radius: var(--tc-radius-image);
   background-color: var(--tc-surface-raised);
 }
 
 /* ---------------------------------------------------------------------- */
-/* Grid / rows / tiles                                                    */
+/* Masonry columns and tiles                                              */
 /* ---------------------------------------------------------------------- */
 
-.gridContainer {
-  flex: 1;
-  min-height: 0;
+.masonry {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--tc-tile-gap);
 }
 
-.gridRow {
+.masonryColumn {
   display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--tc-tile-gap);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .tile {
   position: relative;
-  flex: none;
+  width: 100%;
   border-radius: var(--tc-radius-image);
-  overflow: hidden;
-  background-color: var(--tc-surface-raised);
+  background-color: var(--tc-surface-sunken);
 }
 
-/* Drawn as an overlay on top of the image: the tile clips its content, and the row gap is too
-   tight for an outline outside the tile. */
-.tile[data-selected]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 3px solid var(--tc-marker);
-  border-radius: inherit;
-  pointer-events: none;
+.tile[data-selected] {
+  outline: 3px solid var(--tc-marker);
+  outline-offset: 2px;
 }
 
 .tileButton {
@@ -152,73 +139,85 @@
   width: 100%;
   height: 100%;
   padding: 0;
-}
-
-.tileSkeleton {
-  position: absolute;
-  inset: 0;
-  background-color: var(--tc-surface-raised);
+  overflow: hidden;
+  border-radius: inherit;
 }
 
 .tileImage {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
   transition: opacity var(--tc-motion-normal) ease-out;
 }
 
+.tileImage[data-decoded] {
+  opacity: 1;
+}
+
 .tileFallback {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--tc-space-1);
-  color: var(--tc-text-muted);
-  font-size: var(--tc-font-size-xs);
-  text-align: center;
+  height: 100%;
   padding: var(--tc-space-2);
   border: 1px dashed var(--tc-border-field);
   border-radius: var(--tc-radius-image);
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+  text-align: center;
 }
 
-/* Both tile overlays read from the --tc-media-* pair (tokens.css), never the surface/text/accent
-   families: they float over user artwork, so their contrast partner is the bitmap below them, not
-   the current color mode. The previous --tc-surface border and fill inverted with the theme and
-   left both controls invisible against dark artwork in dark mode. */
+/* Both tile overlays read from the --tc-media-* pair (tokens.css): they float over user artwork,
+   so their contrast partner is the bitmap below them, not the current color mode. */
 .tilePinnedBadge {
   position: absolute;
   top: var(--tc-space-1-5);
   right: var(--tc-space-1-5);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
   border-radius: var(--tc-radius-status);
   background-color: var(--tc-media-scrim);
   color: var(--tc-media-ink);
-  padding: var(--tc-space-1);
 }
 
+/* Shown on hover, keyboard focus and touch, and always once the tile is selected. */
 .tileSelectToggle {
   position: absolute;
   top: var(--tc-space-1-5);
   left: var(--tc-space-1-5);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   width: var(--tc-check-size);
   height: var(--tc-check-size);
   box-sizing: content-box;
-  border-radius: var(--tc-radius-status);
   border: 1.5px solid var(--tc-media-ink);
+  border-radius: var(--tc-radius-status);
   background-color: var(--tc-media-scrim);
-  color: var(--tc-media-ink);
-  transition: background-color var(--tc-motion-fast) ease-out;
+  color: transparent;
+  opacity: 0;
+  transition: opacity var(--tc-motion-fast) ease-out;
+}
+
+.tile:hover .tileSelectToggle,
+.tileSelectToggle:focus-visible,
+.tileSelectToggle[aria-pressed="true"] {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .tileSelectToggle {
+    opacity: 1;
+  }
 }
 
 /* Checked takes the marker fill of every other selected item. */
-.tileSelectToggle[data-checked] {
+.tileSelectToggle[aria-pressed="true"] {
   border-color: var(--tc-marker);
   background-color: var(--tc-marker);
   color: var(--tc-on-marker);
@@ -232,10 +231,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
   gap: var(--tc-space-2) var(--tc-space-3);
   min-height: var(--tc-control-height-lg);
-  padding: var(--tc-space-1) var(--tc-space-1) var(--tc-space-1) var(--tc-space-4);
+  padding: var(--tc-space-1) var(--tc-space-1) var(--tc-space-1) var(--tc-space-3);
   border-radius: var(--tc-radius-bar);
   background-color: var(--tc-accent-soft);
   box-shadow: 0 0 0 1px var(--tc-accent-border);
@@ -247,25 +245,26 @@
   font-weight: var(--tc-font-weight-medium);
 }
 
-.bulkActionButtons {
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--tc-space-1);
-}
-
-/* Small buttons, as in the mockup's bulk bar; the trailing clear button sits at the far end. */
+.bulkActionBar > button,
 .bulkActionButtons > button {
   height: var(--tc-control-height-sm);
   padding: 0 var(--tc-control-padding-x-sm);
   font-size: var(--tc-font-size-sm);
 }
 
-.bulkActionButtons > button:last-child {
-  width: var(--tc-control-height-sm);
+.bulkActionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--tc-space-1);
+}
+
+.bulkNarrow {
+  display: none;
+}
+
+.bulkClear {
   margin-left: auto;
-  padding: 0;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -453,20 +452,30 @@
 
 @container studio-workspace (max-width: 640px) {
   .galleryView {
-    padding: var(--tc-space-2) var(--tc-space-4) var(--tc-space-4);
+    padding: var(--tc-space-3) var(--tc-space-4) var(--tc-space-4);
   }
 
-  .cacheOccupancy {
+  .filterSelect {
+    flex: 1 1 140px;
+  }
+
+  .meter {
+    grid-template-columns: auto minmax(0, 1fr);
+    width: 100%;
     margin-left: 0;
   }
 
-  .dateFilterLabel {
-    width: 100%;
+  .bulkActionBar {
+    flex-wrap: nowrap;
+    gap: var(--tc-space-2);
   }
 
-  .dateInput {
-    flex: 1 1 0;
-    min-width: 0;
+  .bulkWide {
+    display: none;
+  }
+
+  .bulkNarrow {
+    display: flex;
   }
 }
 

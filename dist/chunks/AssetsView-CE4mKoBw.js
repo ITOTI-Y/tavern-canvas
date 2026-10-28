@@ -3,27 +3,26 @@ import { A as a, D as o, G as s, H as c, I as l, K as u, L as d, O as f, P as p,
 import { r as I, t as L } from "./portal_keys-DthxrmWp.js";
 import { n as R, t as z } from "./AppIcon-DkyxvN8k.js";
 import { n as B, t as ee } from "./StateSurface-X9aRtXAT.js";
-import { n as te, t as V } from "./AppSelect-gXfI5z0N.js";
+import { n as te, t as V } from "./AppSelect-D-2VXU1J.js";
 import { n as ne, t as H } from "./download-B0Y9EiOz.js";
-import { a as U, i as W, n as G, o as K, r as q, t as J } from "./use_asset_category_panel-0tKQbD62.js";
-import { n as re, r as ie, t as ae } from "./AppCheckbox-BsNETLqc.js";
+import { a as U, i as W, n as G, o as K, r as q, t as J } from "./use_asset_category_panel-C-u8Uyqp.js";
+import { n as re, r as ie, t as ae } from "./AppCheckbox-qcV3D_N_.js";
 import { t as Y } from "./FieldGroup-CViCiHLn.js";
-import { t as X } from "./scan-search-C_tMvEZl.js";
-import { t as oe } from "./upload-BjktsLMj.js";
-import { t as se } from "./x-D7Ry5i_D.js";
-import { t as ce } from "./_prop_utils-vFiFbBPl.js";
-import { P as le, S as ue, f as Z, l as de, s as fe, u as pe } from "./Teleport-CquQcgiX.js";
-import { n as me } from "./NumberStepper-juOMl-Ck.js";
-import { c as he } from "./PopperContent-BPSDCuaj.js";
-import { t as ge } from "./ConfirmDialog-DASvEQUq.js";
-import { t as _e } from "./AppSwitch-DrgoDfj2.js";
+import { n as X, t as oe } from "./AppSwitch-DeEYCZzD.js";
+import { t as se } from "./upload-BjktsLMj.js";
+import { t as ce } from "./x-D7Ry5i_D.js";
+import { t as le } from "./_prop_utils-O1SzpV_h.js";
+import { P as ue, S as de, f as Z, l as fe, s as pe, u as me } from "./Teleport-CquQcgiX.js";
+import { n as he } from "./NumberStepper-CeqkgodA.js";
+import { c as ge } from "./PopperContent-BPSDCuaj.js";
+import { t as _e } from "./ConfirmDialog-DASvEQUq.js";
 import { t as ve } from "./IconButton-4U1H-LPK.js";
 import { t as ye } from "./reference_image-DYyYuujP.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/chevron-up.js
 var be = R("chevron-up", [["path", {
 	d: "m18 15-6-6-6 6",
 	key: "153udz"
-}]]), [xe, Se] = /*#__PURE__*/ le("TabsRoot"), Ce = /* @__PURE__ */ P({
+}]]), [xe, Se] = /*#__PURE__*/ ue("TabsRoot"), Ce = /* @__PURE__ */ P({
 	__name: "TabsRoot",
 	props: {
 		defaultValue: {
@@ -64,9 +63,9 @@ var be = R("chevron-up", [["path", {
 	},
 	emits: ["update:modelValue"],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { orientation: i, unmountOnHide: a, dir: o } = E(n), c = he(o);
+		let n = e, r = t, { orientation: i, unmountOnHide: a, dir: o } = E(n), c = ge(o);
 		Z();
-		let l = ue(n, "modelValue", r, {
+		let l = de(n, "modelValue", r, {
 			defaultValue: n.defaultValue,
 			passive: n.modelValue === void 0
 		}), u = j(), f = k(/* @__PURE__ */ new Set());
@@ -79,7 +78,7 @@ var be = R("chevron-up", [["path", {
 			dir: c,
 			unmountOnHide: a,
 			activationMode: n.activationMode,
-			baseId: pe(void 0, "reka-tabs"),
+			baseId: me(void 0, "reka-tabs"),
 			tabsList: u,
 			contentIds: f,
 			registerContent: (e) => {
@@ -89,7 +88,7 @@ var be = R("chevron-up", [["path", {
 				let t = new Set(f.value);
 				t.delete(e), f.value = t;
 			}
-		}), (e, t) => (p(), b(S(fe), {
+		}), (e, t) => (p(), b(S(pe), {
 			dir: S(c),
 			"data-orientation": S(i),
 			"as-child": e.asChild,
@@ -143,11 +142,11 @@ var Q = /* @__PURE__ */ P({
 			});
 		}), a(() => {
 			r.unregisterContent(t.value);
-		}), (e, t) => (p(), b(S(de), {
+		}), (e, t) => (p(), b(S(fe), {
 			present: e.forceMount || c.value,
 			"force-mount": ""
 		}, {
-			default: s(({ present: t }) => [F(S(fe), {
+			default: s(({ present: t }) => [F(S(pe), {
 				id: o.value,
 				ref: S(n),
 				"as-child": e.asChild,
@@ -200,7 +199,7 @@ var Q = /* @__PURE__ */ P({
 			dir: S(i).dir.value,
 			loop: S(t)
 		}, {
-			default: s(() => [F(S(fe), {
+			default: s(() => [F(S(pe), {
 				ref: S(n),
 				role: "tablist",
 				"as-child": e.asChild,
@@ -250,7 +249,7 @@ var Q = /* @__PURE__ */ P({
 			focusable: !e.disabled,
 			active: o.value
 		}, {
-			default: s(() => [F(S(fe), {
+			default: s(() => [F(S(pe), {
 				id: i.value,
 				ref: S(n),
 				role: "tab",
@@ -324,7 +323,7 @@ var Q = /* @__PURE__ */ P({
 			}, null, 8, Ae))], 10, ke)),
 			C("div", { class: v(S(U).editorHeading) }, [C("h3", { class: v(S(U).editorTitle) }, w(e.title), 3), C("p", { class: v(S(U).editorDescription) }, w(e.description), 3)], 2),
 			F(ve, {
-				icon: S(se),
+				icon: S(ce),
 				label: e.closeLabel,
 				onClick: n[0] ||= (e) => r("update:open", !1)
 			}, null, 8, ["icon", "label"])
@@ -503,7 +502,7 @@ var Me = ["src", "alt"], Ne = ["id"], Pe = ["id"], Fe = /* @__PURE__ */ P({
 				label: S(i)("assets.characters.reference_mode_label"),
 				hint: S(i)("assets.characters.reference_mode_hint")
 			}, {
-				default: s(() => [F(me, {
+				default: s(() => [F(he, {
 					"model-value": e.mode,
 					options: x.value,
 					label: S(i)("assets.characters.reference_mode_label"),
@@ -702,7 +701,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 				tags: r.flatMap((n) => e(X(t, n)))
 			};
 		}
-		let le = D(() => {
+		let ce = D(() => {
 			let e = g.record_id.value, n = c.outfitRecords.map(t), r = n.find((e) => e.id === g.values.default_outfit_id) ?? n.find((t) => t.character_id === e);
 			return r === void 0 ? [] : i.flatMap((e) => r.slots[e]);
 		}), ue = D(() => ({
@@ -710,16 +709,16 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 				ae[b.value],
 				Be,
 				...r.flatMap((t) => e(g.values[t])),
-				...le.value
+				...ce.value
 			].filter((e) => e !== "")),
 			negative_prompt: n(e(g.values.excluded_traits))
 		}));
-		async function Z() {
+		async function de() {
 			let t = g.editing_record.value?.payload ?? {}, n = r.filter((n) => e(g.values[n]).join(",") !== e(typeof t[n] == "string" ? t[n] : "").join(",")), i = /* @__PURE__ */ new Set([...e(g.values.locked_fields), ...n]);
 			g.values.locked_fields = [...i].join(", "), g.values.origin = typeof g.values.origin == "string" ? g.values.origin : "user", await g.save();
 		}
-		async function de() {
-			g.values.chat_id = "", await Z();
+		async function Z() {
+			g.values.chat_id = "", await de();
 		}
 		return (e, t) => (p(), h("div", {
 			class: v(S(U).assetsBody),
@@ -795,7 +794,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 						S(g).name.value = e;
 					},
 					"onUpdate:values": t[6] ||= (e) => S(J)(S(g).values, e),
-					onSave: Z,
+					onSave: de,
 					onCancel: S(g).close_dialog
 				}, {
 					"leading-fields": s(() => [
@@ -821,7 +820,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 							role: "alert"
 						}, w(z.value), 3)),
 						F(Y, { label: S(l)("assets.characters.subject_label") }, {
-							default: s(() => [F(me, {
+							default: s(() => [F(he, {
 								"model-value": b.value,
 								options: _.value,
 								label: S(l)("assets.characters.subject_label"),
@@ -840,14 +839,14 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 					}, [N(w(S(l)("assets.chat_scope_note")) + " ", 1), F(B, {
 						label: S(l)("assets.import_to_global_action"),
 						"data-testid": "import-to-global",
-						onClick: de
+						onClick: Z
 					}, null, 8, ["label"])], 2)) : y("", !0), F(Y, { label: S(l)("assets.characters.default_outfit_label") }, {
 						default: s(({ fieldId: e, describedBy: n }) => [F(V, o({
 							id: e,
 							"model-value": E.value,
 							options: x.value,
 							placeholder: S(l)("assets.characters.default_outfit_label")
-						}, S(ce)({ describedBy: n }), { "onUpdate:modelValue": t[4] ||= (e) => S(g).values.default_outfit_id = e === ze ? "" : e }), null, 16, [
+						}, S(le)({ describedBy: n }), { "onUpdate:modelValue": t[4] ||= (e) => S(g).values.default_outfit_id = e === ze ? "" : e }), null, 16, [
 							"id",
 							"model-value",
 							"options",
@@ -879,7 +878,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 				"thumbnail",
 				"close-label"
 			]),
-			F(ge, {
+			F(_e, {
 				open: L.value !== null,
 				title: S(l)("assets.characters.outfit_from_reference_title"),
 				description: S(l)("assets.characters.outfit_from_reference_description"),
@@ -899,7 +898,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 				"cancel-label",
 				"pending"
 			]),
-			F(ge, {
+			F(_e, {
 				open: H.value !== null,
 				title: S(l)("assets.characters.character_from_reference_title"),
 				description: S(l)("assets.characters.character_from_reference_description"),
@@ -1056,7 +1055,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 						"model-value": u.value,
 						options: l.value,
 						placeholder: S(n)("assets.lora.character_placeholder")
-					}, S(ce)({ describedBy: t }), { "onUpdate:modelValue": d[1] ||= (e) => S(a).values.character_id = e }), null, 16, [
+					}, S(le)({ describedBy: t }), { "onUpdate:modelValue": d[1] ||= (e) => S(a).values.character_id = e }), null, 16, [
 						"id",
 						"model-value",
 						"options",
@@ -1324,7 +1323,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 						"model-value": j.value,
 						options: A.value,
 						placeholder: S(r)("assets.outfits.character_placeholder")
-					}, S(ce)({ describedBy: t }), { "onUpdate:modelValue": M }), null, 16, [
+					}, S(le)({ describedBy: t }), { "onUpdate:modelValue": M }), null, 16, [
 						"id",
 						"model-value",
 						"options",
@@ -1518,7 +1517,7 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 					"hint",
 					"error"
 				]), F(Y, { label: S(n)("assets.vibe.provider_label") }, {
-					default: s(() => [F(me, {
+					default: s(() => [F(he, {
 						"model-value": f.value,
 						options: r.value,
 						label: S(n)("assets.vibe.provider_label"),
@@ -1911,7 +1910,7 @@ var lt = ["data-editing"], ut = ["aria-label"], dt = [
 			"data-editing": S(a).dialog_open.value ? "" : void 0
 		}, [C("div", { class: v(S(U).assetsMain) }, [C("div", { class: v(S(U).workflowToolbarRow) }, [F(B, {
 			label: S(n)("assets.workflow.import_action"),
-			icon: S(oe),
+			icon: S(se),
 			variant: "primary",
 			onClick: O
 		}, null, 8, ["label", "icon"]), C("input", {
@@ -2111,7 +2110,7 @@ var lt = ["data-editing"], ut = ["aria-label"], dt = [
 				g.value && (a.value === "character" || a.value === "outfit") ? (p(), h("div", {
 					key: 0,
 					class: v(S(U).scopeSwitch)
-				}, [F(_e, {
+				}, [F(oe, {
 					modelValue: o.value,
 					"onUpdate:modelValue": r[0] ||= (e) => o.value = e,
 					label: S(n)("assets.show_all_chats_label")
