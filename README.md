@@ -66,6 +66,10 @@ the analyzed reply, or none. Two separate text boxes, Illustration guidance and 
 carry standing direction such as art style, season, era, or place: the first is appended to every
 paragraph analysis, the second to every wardrobe update, and what the reply states takes precedence.
 
+With automatic illustration on, the wardrobe update for a new reply travels in the same request as
+its paragraph analysis, so each reply costs one analysis call; with it off, the wardrobe update is
+sent on its own through the wardrobe model.
+
 NovelAI answers 429 to image requests that reach one account together, so Inkwell starts NovelAI
 requests at least 1.5 seconds apart and lets them run in parallel where the account allows it. A
 subscription account rejects new requests while an image is generating; a rejected request is sent

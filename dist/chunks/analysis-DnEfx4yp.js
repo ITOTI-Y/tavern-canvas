@@ -1,6 +1,6 @@
 import { _ as e, d as t, h as n, r, u as i } from "./schemas-DMBLWk59.js";
 import { n as a } from "./provider-B-m_0o6I.js";
-import { l as o } from "./library_match-er4-CW2n.js";
+import { t as o } from "./model_json-DNK3Va6h.js";
 //#region src/ui/experience/host_image_icon.ts
 var s = "http://www.w3.org/2000/svg", c = [
 	["rect", {
@@ -108,6 +108,31 @@ var f = {
 	}
 };
 function p(e) {
+	let t = f.value;
+	return {
+		name: f.name,
+		value: {
+			type: "object",
+			properties: {
+				...t.properties,
+				wardrobe: e.value
+			},
+			required: ["illustrations", "wardrobe"],
+			additionalProperties: !1
+		}
+	};
+}
+var m = "Answer both requests above in one JSON object of the form {\"illustrations\":[...],\"wardrobe\":{\"characters\":[...],\"initial_outfits\":{...}}}. This replaces the reply format each request states.";
+function h(e) {
+	for (let t of o(e, "illustrations")) try {
+		let e = JSON.parse(t);
+		if (typeof e.wardrobe == "object" && e.wardrobe !== null) return JSON.stringify(e.wardrobe);
+	} catch {
+		continue;
+	}
+	return null;
+}
+function g(e) {
 	if (e.characters.length === 0 && e.outfits.length === 0) return [];
 	let t = new Map(e.characters.map((e) => [e.id, e.name]));
 	return [
@@ -120,7 +145,7 @@ function p(e) {
 		})
 	];
 }
-function m(e, t, n, r, i) {
+function _(e, t, n, r, i) {
 	return [
 		"[Inkwell illustration request]",
 		e,
@@ -129,20 +154,20 @@ function m(e, t, n, r, i) {
 		"- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
 		"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
 		t,
-		...p(r),
+		...g(r),
 		...d(i),
 		"",
 		"Paragraphs:",
 		...n.map((e) => `[${String(e.index)}] ${e.text}`)
 	].join("\n");
 }
-function h(e, t, n, r) {
-	return m(`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.", e, n, r);
+function v(e, t, n, r) {
+	return _(`Read the latest reply below, split into numbered paragraphs. Choose at most ${String(t)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}. Use an empty array when nothing should be illustrated.", e, n, r);
 }
-function g(e, t, n, r) {
-	return m(`Read the latest reply below, split into numbered paragraphs. Illustrate exactly these paragraphs, one entry each: ${t.map((e) => `[${String(e)}]`).join(", ")}. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}.", e, n, r);
+function y(e, t, n, r) {
+	return _(`Read the latest reply below, split into numbered paragraphs. Illustrate exactly these paragraphs, one entry each: ${t.map((e) => `[${String(e)}]`).join(", ")}. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}.", e, n, r);
 }
-var _ = t({
+var b = t({
 	paragraph: i().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	tags: e([n(), r(n()).transform((e) => e.join(", "))]),
@@ -150,13 +175,13 @@ var _ = t({
 		name: n().trim().min(1).max(120),
 		tags: n().trim()
 	})).max(16)
-}), v = t({ illustrations: r(_) }), y = class extends Error {
+}), x = t({ illustrations: r(b) }), S = class extends Error {
 	excerpt;
 	constructor(e, t) {
 		super(e), this.name = "AnalysisParseError", this.excerpt = t.slice(0, 400);
 	}
 };
-function b(e, t, n) {
+function C(e, t, n) {
 	for (let r of o(e, "illustrations")) {
 		let e;
 		try {
@@ -164,12 +189,12 @@ function b(e, t, n) {
 		} catch {
 			continue;
 		}
-		let i = v.safeParse(e);
+		let i = x.safeParse(e);
 		if (!i.success) continue;
 		let a = /* @__PURE__ */ new Set();
 		return i.data.illustrations.filter((e) => e.paragraph >= t || a.has(e.paragraph) ? !1 : (a.add(e.paragraph), !0)).slice(0, n);
 	}
-	throw new y("The analysis reply contains no illustrations JSON object", e);
+	throw new S("The analysis reply contains no illustrations JSON object", e);
 }
 //#endregion
-export { b as a, l as c, g as i, y as n, d as o, h as r, u as s, f as t };
+export { y as a, h as c, l as d, v as i, d as l, S as n, p as o, m as r, C as s, f as t, u };

@@ -7,9 +7,9 @@ import { t as z } from "./AppDialog-CzDoJQTe.js";
 import { t as B } from "./trash-2-B6ZXZcor.js";
 import { t as V } from "./upload-CQtsg_mB.js";
 import { t as ee } from "./x-CDKrptQJ.js";
-import { c as H, n as U, s as W } from "./analysis-BZjOoC79.js";
+import { d as H, n as U, u as W } from "./analysis-DnEfx4yp.js";
 import { n as te } from "./deferred_stylesheets-BpS7LWkd.js";
-import { c as ne, n as re, o as ie, s as G } from "./library_match-er4-CW2n.js";
+import { c as ne, l as re, r as ie, s as G } from "./model_json-DNK3Va6h.js";
 import { r as ae, t as oe } from "./inpaint_session-wWdlKjTY.js";
 import { r as se } from "./_prop_utils-CqbCYIc0.js";
 import { t as K } from "./AppCheckbox-CTxQ1oVE.js";
@@ -818,25 +818,25 @@ var He = ["for"], Ue = [
 			};
 		}
 		function P(e) {
-			return m.value?.library.characters.find((t) => re(t, e)) ?? null;
+			return m.value?.library.characters.find((t) => ie(t, e)) ?? null;
 		}
 		function F(e) {
 			let t = m.value, n = P(e);
 			return t === null || n === null ? [] : [{
 				character: n,
-				wearing: G(n, t.snapshot, t.library.outfits),
+				wearing: ne(n, t.snapshot, t.library.outfits),
 				outfits: t.library.outfits
 			}];
 		}
 		function L(e) {
 			let t = m.value, n = P(e);
-			return t === null || n === null ? null : G(n, t.snapshot, t.library.outfits);
+			return t === null || n === null ? null : ne(n, t.snapshot, t.library.outfits);
 		}
 		async function B(e, t) {
 			let r = m.value, i = L(e);
 			if (r === null || i === null || o.value.status !== "ready") return;
-			let a = ne(i, r.library.outfits), s = ne(t, r.library.outfits);
-			for (let t of c.value) for (let n of t.character_prompts) n.name === e && (n.prompt = ie(n.prompt, a, s));
+			let a = re(i, r.library.outfits), s = re(t, r.library.outfits);
+			for (let t of c.value) for (let n of t.character_prompts) n.name === e && (n.prompt = G(n.prompt, a, s));
 			m.value = {
 				...r,
 				snapshot: [...r.snapshot.filter((e) => e.character_id !== t.character_id), t]

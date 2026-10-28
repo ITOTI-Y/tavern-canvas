@@ -36,6 +36,14 @@ function location_of(chat: HostChatSnapshot, message_id: number): HostSwipeLocat
     : { chat_id: chat.chat_id, message_id, swipe_id: message.active_swipe_id };
 }
 
+/** A wardrobe update whose request the caller sends, possibly inside another request. */
+export interface PendingWardrobeUpdate {
+  readonly input: string;
+  readonly json_schema: HostJsonSchema;
+  /** Parses the reply, creates the entries it introduces and records the swipe's snapshot. */
+  apply(raw: string): Promise<readonly Wearing[]>;
+}
+
 export class WardrobeService {
   readonly #deps: WardrobeServiceDeps;
   readonly #running = new Map<string, Promise<readonly Wearing[]>>();
@@ -97,7 +105,19 @@ export class WardrobeService {
     return pending;
   }
 
+  async prepare_update(location: HostSwipeLocation): Promise<PendingWardrobeUpdate> {
+    return this.#prepare(await this.#deps.host.get_active_chat(), location);
+  }
+
   async #update(chat: HostChatSnapshot, location: HostSwipeLocation): Promise<readonly Wearing[]> {
+    const pending = await this.#prepare(chat, location);
+    return pending.apply(await this.#deps.run(pending.input, pending.json_schema));
+  }
+
+  async #prepare(
+    chat: HostChatSnapshot,
+    location: HostSwipeLocation,
+  ): Promise<PendingWardrobeUpdate> {
     const message = chat.messages.find((candidate) => candidate.message_id === location.message_id);
     const reply = message?.swipes[location.swipe_id]?.content ?? "";
     const user_message =
@@ -118,27 +138,29 @@ export class WardrobeService {
       },
     ] = await Promise.all([this.#deps.library.load(location.chat_id), import("./scene_update.js")]);
     const needs_outfit = characters_needing_outfit(reply, previous, library);
-    const raw = await this.#deps.run(
-      build_scene_update_input(user_message, reply, previous, library),
-      scene_update_json_schema(needs_outfit.map((character) => character.id)),
-    );
-    const applied = apply_scene_update(
-      parse_scene_update(raw),
-      previous,
-      library,
-      this.#deps.new_id,
-    );
-    for (const outfit of applied.new_outfits) {
-      await this.#deps.library.create_outfit(outfit, location.chat_id);
-    }
-    for (const character of applied.new_characters) {
-      await this.#deps.library.create_character(character, location);
-    }
-    for (const addition of applied.appearance_additions) {
-      await this.#deps.library.add_appearance(addition);
-    }
-    await this.#write(location, applied.wearing);
-    return applied.wearing;
+    return {
+      input: build_scene_update_input(user_message, reply, previous, library),
+      json_schema: scene_update_json_schema(needs_outfit.map((character) => character.id)),
+      apply: async (raw) => {
+        const applied = apply_scene_update(
+          parse_scene_update(raw),
+          previous,
+          library,
+          this.#deps.new_id,
+        );
+        for (const outfit of applied.new_outfits) {
+          await this.#deps.library.create_outfit(outfit, location.chat_id);
+        }
+        for (const character of applied.new_characters) {
+          await this.#deps.library.create_character(character, location);
+        }
+        for (const addition of applied.appearance_additions) {
+          await this.#deps.library.add_appearance(addition);
+        }
+        await this.#write(location, applied.wearing);
+        return applied.wearing;
+      },
+    };
   }
 
   /** Replaces one character's wearing on this reply; later replies inherit the correction. */

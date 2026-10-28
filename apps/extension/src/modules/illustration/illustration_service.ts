@@ -12,17 +12,22 @@ import type { GenerationJobSnapshot } from "@tavern-canvas/core";
 
 import type { HostAdapter, HostGenerationEvent, HostSwipeLocation } from "../../host/index.js";
 import {
+  ANALYSIS_JSON_SCHEMA,
   AnalysisParseError,
   build_analysis_input,
   build_chosen_paragraphs_input,
+  combined_analysis_json_schema,
+  COMBINED_REPLY_FORMAT,
   parse_analysis_output,
+  wardrobe_reply_of,
 } from "./analysis.js";
 import type { SlotEdit } from "./slot_edits.js";
 import { insert_markers, split_paragraphs, type Paragraph } from "./slot_markers.js";
 import { type SlotPromptPreset } from "./slot_prompt.js";
 import type { CharacterTags } from "../wardrobe/character_from_image.js";
 import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
-import type { WardrobeService } from "../wardrobe/wardrobe_service.js";
+import type { PendingWardrobeUpdate, WardrobeService } from "../wardrobe/wardrobe_service.js";
+import { guidance_lines } from "./user_guidance.js";
 import { type SlotLibrary } from "./library_match.js";
 import {
   AnalysisStoppedError,
@@ -257,20 +262,49 @@ export class IllustrationService {
     const settings = this.#deps.settings();
     const record: SwipeIllustrations = { schema_version: 2, slots: [] };
     if (paragraphs.length > 0) {
-      const snapshot = await this.#wardrobe_snapshot(location);
+      const pending =
+        this.#deps.wardrobe.read(location) === null
+          ? await this.#deps.wardrobe.prepare_update(location)
+          : null;
       const context = await this.#deps.prompt_context(location.chat_id);
-      const proposals = await request_analysis(
+      const analysis_input = build_analysis_input(
+        paragraphs,
+        settings.max_images_per_message,
+        context.library,
+        settings.analysis_guidance,
+      );
+      const parse_proposals = (raw: string) =>
+        parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message);
+      const { proposals, wardrobe_reply } = await request_analysis(
         this.#deps,
         text,
-        build_analysis_input(
-          paragraphs,
-          settings.max_images_per_message,
-          context.library,
-          settings.analysis_guidance,
-        ),
-        (raw) => parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message),
+        pending === null
+          ? {
+              user_input: analysis_input,
+              json_schema: ANALYSIS_JSON_SCHEMA,
+              parse: (raw) => ({ proposals: parse_proposals(raw), wardrobe_reply: null }),
+            }
+          : {
+              user_input: [
+                analysis_input,
+                "",
+                pending.input,
+                ...guidance_lines(settings.wardrobe_guidance),
+                "",
+                COMBINED_REPLY_FORMAT,
+              ].join("\n"),
+              json_schema: combined_analysis_json_schema(pending.json_schema),
+              parse: (raw) => ({
+                proposals: parse_proposals(raw),
+                wardrobe_reply: wardrobe_reply_of(raw),
+              }),
+            },
         signal,
       );
+      const snapshot =
+        pending === null
+          ? await this.#wardrobe_snapshot(location)
+          : await this.#apply_wardrobe(location, pending, wardrobe_reply);
       record.slots.push(
         ...proposal_slots(paragraphs, proposals, context, snapshot, this.#deps.new_slot_id),
       );
@@ -331,13 +365,16 @@ export class IllustrationService {
     const proposals = await request_analysis(
       this.#deps,
       text,
-      build_chosen_paragraphs_input(
-        paragraphs,
-        wanted,
-        context.library,
-        settings.analysis_guidance,
-      ),
-      (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
+      {
+        user_input: build_chosen_paragraphs_input(
+          paragraphs,
+          wanted,
+          context.library,
+          settings.analysis_guidance,
+        ),
+        json_schema: ANALYSIS_JSON_SCHEMA,
+        parse: (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
+      },
       new AbortController().signal,
     );
     const by_paragraph = new Map(proposals.map((proposal) => [proposal.paragraph, proposal]));
@@ -637,9 +674,11 @@ export class IllustrationService {
           await this.#deps.host.write_swipe_record(location, null);
           await this.#deps.host.write_swipe_wardrobe(location, null);
         }
-        await this.#wardrobe_snapshot(location);
+        // With automatic illustration on, the analysis request carries the wardrobe update.
         if (this.#deps.auto_generation_enabled()) {
           await this.illustrate(event.message_id);
+        } else {
+          await this.#wardrobe_snapshot(location);
         }
       })
       .catch(() => {
@@ -651,6 +690,23 @@ export class IllustrationService {
    * The reply's wardrobe snapshot, running the wardrobe update when the reply has none. A failed
    * update is reported and the reply falls back to what it inherits.
    */
+  /** Applies the wardrobe half of a combined reply; a missing or unreadable half is reported. */
+  async #apply_wardrobe(
+    location: HostSwipeLocation,
+    pending: PendingWardrobeUpdate,
+    wardrobe_reply: string | null,
+  ): Promise<readonly Wearing[]> {
+    try {
+      if (wardrobe_reply === null) {
+        throw new Error("The analysis reply contains no wardrobe object");
+      }
+      return await pending.apply(wardrobe_reply);
+    } catch (error) {
+      this.#emit({ type: "wardrobe_failed", location, message: error_message(error) });
+      return this.#deps.wardrobe.current(location.message_id);
+    }
+  }
+
   async #wardrobe_snapshot(location: HostSwipeLocation): Promise<readonly Wearing[]> {
     const own = this.#deps.wardrobe.read(location);
     if (own !== null) {

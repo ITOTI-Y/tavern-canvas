@@ -10,7 +10,6 @@ import type {
   HostJsonSchema,
   HostWorldInfo,
 } from "../../host/index.js";
-import { ANALYSIS_JSON_SCHEMA, type IllustrationProposal } from "./analysis.js";
 import { guidance_lines } from "./user_guidance.js";
 import { activate_worldbook } from "./worldbook.js";
 
@@ -163,13 +162,18 @@ export interface AnalysisRequestDeps {
  * Sends one analysis request and parses its reply, retrying both together: a failed request and a
  * reply cut off mid-JSON usually succeed on another try.
  */
-export async function request_analysis(
+export interface AnalysisRequest<T> {
+  readonly user_input: string;
+  readonly json_schema: HostJsonSchema;
+  readonly parse: (raw: string) => T;
+}
+
+export async function request_analysis<T>(
   deps: AnalysisRequestDeps,
   text: string,
-  user_input: string,
-  parse: (raw: string) => readonly IllustrationProposal[],
+  request: AnalysisRequest<T>,
   signal: AbortSignal,
-): Promise<readonly IllustrationProposal[]> {
+): Promise<T> {
   const settings = deps.settings();
   const connection = await to_host_connection(settings.connection, deps.resolve_analysis_key);
   const world_info = await to_host_world_info(settings.world_info, text, deps.host);
@@ -185,16 +189,16 @@ export async function request_analysis(
         deps.host.generate_with_preset({
           generation_id,
           preset_name: settings.preset_name,
-          user_input,
+          user_input: request.user_input,
           max_chat_history: settings.max_chat_history,
           connection,
-          json_schema: ANALYSIS_JSON_SCHEMA,
+          json_schema: request.json_schema,
           world_info,
           image: null,
         }),
         signal,
       );
-      return parse(result.content);
+      return request.parse(result.content);
     } catch (error) {
       if (attempt >= ANALYSIS_ATTEMPTS || error instanceof AnalysisStoppedError) {
         throw error;

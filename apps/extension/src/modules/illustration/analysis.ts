@@ -51,6 +51,38 @@ export const ANALYSIS_JSON_SCHEMA: HostJsonSchema = {
   },
 };
 
+/** One request that also carries a wardrobe update, answered as `{illustrations, wardrobe}`. */
+export function combined_analysis_json_schema(wardrobe: HostJsonSchema): HostJsonSchema {
+  const analysis = ANALYSIS_JSON_SCHEMA.value as { readonly properties: Record<string, unknown> };
+  return {
+    name: ANALYSIS_JSON_SCHEMA.name,
+    value: {
+      type: "object",
+      properties: { ...analysis.properties, wardrobe: wardrobe.value },
+      required: ["illustrations", "wardrobe"],
+      additionalProperties: false,
+    },
+  };
+}
+
+export const COMBINED_REPLY_FORMAT =
+  'Answer both requests above in one JSON object of the form {"illustrations":[...],"wardrobe":{"characters":[...],"initial_outfits":{...}}}. This replaces the reply format each request states.';
+
+/** The `wardrobe` member of a combined reply as JSON text, or `null` when the reply has none. */
+export function wardrobe_reply_of(raw: string): string | null {
+  for (const candidate of json_candidates(raw, "illustrations")) {
+    try {
+      const value = JSON.parse(candidate) as { readonly wardrobe?: unknown };
+      if (typeof value.wardrobe === "object" && value.wardrobe !== null) {
+        return JSON.stringify(value.wardrobe);
+      }
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 function library_lines(library: SlotLibrary): readonly string[] {
   if (library.characters.length === 0 && library.outfits.length === 0) {
     return [];

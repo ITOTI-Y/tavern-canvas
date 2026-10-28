@@ -259,6 +259,53 @@ describe("IllustrationService.analyze", () => {
     }
   });
 
+  it("asks for the illustrations and the wardrobe update in one request when the reply has no wardrobe", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({
+      illustrations: [{ paragraph: 1, scene: "rain", tags: "rain, window", characters: [] }],
+      wardrobe: { characters: [], initial_outfits: {} },
+    });
+    const { service } = create_service(host);
+    const events: string[] = [];
+    service.subscribe((event) => events.push(event.type));
+
+    const record = await service.analyze(3);
+
+    expect(host.generate_calls).toHaveLength(1);
+    expect(host.generate_calls[0]?.json_schema?.value).toMatchObject({
+      required: ["illustrations", "wardrobe"],
+    });
+    expect(host.generate_calls[0]?.user_input).toContain("[Inkwell wardrobe update]");
+    expect(host.wardrobes.get("3:0")).toEqual({ schema_version: 1, wearing: [] });
+    expect(events).not.toContain("wardrobe_failed");
+    expect(record.slots).toHaveLength(1);
+  });
+
+  it("sends only the analysis when the reply already has a wardrobe snapshot", async () => {
+    const host = new MemoryHost();
+    host.wardrobes.set("3:0", { schema_version: 1, wearing: [] });
+    const { service } = create_service(host);
+
+    await service.analyze(3);
+
+    expect(host.generate_calls[0]?.json_schema?.value).toMatchObject({
+      required: ["illustrations"],
+    });
+    expect(host.generate_calls[0]?.user_input).not.toContain("[Inkwell wardrobe update]");
+  });
+
+  it("still illustrates when the combined reply has no wardrobe, reporting the wardrobe failure", async () => {
+    const host = new MemoryHost();
+    const { service } = create_service(host);
+    const events: string[] = [];
+    service.subscribe((event) => events.push(event.type));
+
+    const record = await service.analyze(3);
+
+    expect(events).toContain("wardrobe_failed");
+    expect(record.slots).toHaveLength(1);
+  });
+
   it("records the chosen slots and writes a marker after the paragraph", async () => {
     const host = new MemoryHost();
     const { service } = create_service(host);
