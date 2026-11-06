@@ -1,3 +1,4 @@
+import { DEFAULT_STRIP_SETTINGS } from "@tavern-canvas/contracts";
 import type { TavernCanvasSettings } from "@tavern-canvas/contracts";
 
 import type {
@@ -39,6 +40,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   vibe: [],
   workflow: [],
   prompt_tag: [],
+  creation: [],
 };
 
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
@@ -67,6 +69,7 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
     wardrobe_model: null,
     analysis_guidance: "",
     wardrobe_guidance: "",
+    strip: DEFAULT_STRIP_SETTINGS,
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {

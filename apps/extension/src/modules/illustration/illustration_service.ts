@@ -41,6 +41,7 @@ import {
   run_wardrobe_request,
 } from "./analysis_requests.js";
 import { proposal_slots } from "./proposal_slots.js";
+import type { CreationScene } from "../creation/creation_record.js";
 
 export interface SlotPromptContext {
   readonly preset: SlotPromptPreset | null;
@@ -51,6 +52,8 @@ export interface SlotGenerationInput {
   readonly positive_prompt: string;
   readonly negative_prompt: string;
   readonly character_prompts: readonly SlotCharacterPrompt[];
+  /** Replaces the profile's default canvas, for providers whose requests carry a width and height. */
+  readonly size?: { readonly width: number; readonly height: number };
 }
 
 export interface IllustrationJobPort {
@@ -63,7 +66,7 @@ export interface IllustrationServiceDeps {
   readonly host: HostAdapter;
   readonly settings: () => IllustrationSettings;
   readonly auto_generation_enabled: () => boolean;
-  readonly prompt_context: (chat_id: string) => Promise<SlotPromptContext>;
+  readonly prompt_context: (chat_id: string | null) => Promise<SlotPromptContext>;
   readonly wardrobe: WardrobeService;
   /** Builds the request the active provider profile would receive for these prompts. */
   readonly build_request: (input: SlotGenerationInput) => Promise<ImageGenerationRequest>;
@@ -109,6 +112,9 @@ interface PendingSlotJob {
   readonly location: HostSwipeLocation;
   readonly slot_id: string;
 }
+
+/** Scenes the create page plans from one story at most. */
+const STORY_MAX_SCENES = 6;
 
 /** Generation types that produce a fresh assistant reply worth illustrating. */
 const ILLUSTRATED_GENERATION_TYPES: ReadonlySet<string> = new Set([
@@ -503,6 +509,107 @@ export class IllustrationService {
     } finally {
       stop();
     }
+  }
+
+  /**
+   * Plans the pictures for a story typed on the create page. It sends no chat history and, of world
+   * info, only the chosen books.
+   */
+  async plan_story(story: string, worldbooks: readonly string[]): Promise<CreationScene[]> {
+    const planning = await import("../creation/creation_planning.js");
+    const paragraphs = split_paragraphs(story);
+    const context = await this.#deps.prompt_context(null);
+    const settings = this.#deps.settings();
+    const plans = await request_analysis(
+      this.#deps,
+      story,
+      {
+        user_input: planning.build_scene_input(
+          "story",
+          paragraphs,
+          STORY_MAX_SCENES,
+          context,
+          settings.analysis_guidance,
+        ),
+        json_schema: planning.SCENE_JSON_SCHEMA,
+        parse: (raw) => planning.parse_scene_output(raw, paragraphs.length, STORY_MAX_SCENES),
+      },
+      new AbortController().signal,
+      {
+        max_chat_history: 0,
+        world_info:
+          worldbooks.length === 0
+            ? { mode: "off" }
+            : { mode: "worldbook", worldbooks: [...worldbooks] },
+      },
+    );
+    return planning.scenes_from_plans(paragraphs, plans, context, [], this.#deps.new_slot_id);
+  }
+
+  /** The open chat's messages as the strip range picker lists them, each with its active swipe. */
+  async strip_messages(): Promise<{
+    readonly chat_id: string;
+    readonly messages: readonly {
+      readonly message_id: number;
+      readonly name: string;
+      readonly is_user: boolean;
+      readonly text: string;
+    }[];
+  }> {
+    const chat = await this.#deps.host.get_active_chat();
+    return {
+      chat_id: chat.chat_id,
+      messages: chat.messages
+        .filter((message) => !message.is_hidden && message.role !== "system")
+        .map((message) => ({
+          message_id: message.message_id,
+          name: message.name,
+          is_user: message.role === "user",
+          text:
+            message.swipes.find((swipe) => swipe.swipe_id === message.active_swipe_id)?.content ??
+            "",
+        })),
+    };
+  }
+
+  /**
+   * Plans comic-strip panels for the messages `from` through `to` of the open chat. The messages are
+   * the whole story, so no further chat history is sent; world info follows the analysis settings.
+   */
+  async plan_strip(from: number, to: number): Promise<CreationScene[]> {
+    const planning = await import("../creation/creation_planning.js");
+    const { chat_id, messages } = await this.strip_messages();
+    const chosen = messages.filter(
+      (message) => message.message_id >= from && message.message_id <= to,
+    );
+    const paragraphs = planning.strip_paragraphs(chosen);
+    const text = paragraphs.map((paragraph) => paragraph.text).join("\n");
+    const settings = this.#deps.settings();
+    const max_panels = settings.strip.max_panels;
+    const context = await this.#deps.prompt_context(chat_id);
+    const last = chosen.at(-1);
+    const snapshot =
+      last === undefined
+        ? []
+        : await this.#wardrobe_snapshot(await this.active_location(last.message_id));
+    const plans = await request_analysis(
+      this.#deps,
+      text,
+      {
+        user_input: planning.build_scene_input(
+          "strip",
+          paragraphs,
+          max_panels,
+          context,
+          settings.analysis_guidance,
+        ),
+        json_schema: planning.SCENE_JSON_SCHEMA,
+        parse: (raw) => planning.parse_scene_output(raw, paragraphs.length, max_panels),
+      },
+      new AbortController().signal,
+      { max_chat_history: 0 },
+    );
+    return planning.scenes_from_plans(paragraphs, plans, context, snapshot, this.#deps.new_slot_id);
   }
 
   /**

@@ -24,7 +24,7 @@ const props = defineProps<{
 const { t, locale } = useI18n();
 
 type AssetsTab = "vocabulary" | AssetCategory;
-type ListedCategory = Exclude<AssetCategory, "prompt_tag">;
+type ListedCategory = Exclude<AssetCategory, "prompt_tag" | "creation">;
 
 const CATEGORY_TABS = ["character", "outfit", "lora", "vibe", "workflow"] as const;
 

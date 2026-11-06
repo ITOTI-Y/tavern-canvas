@@ -79,6 +79,16 @@ var S = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 		worldbooks: s(n().trim().min(1).max(200)).min(1).max(20)
 	})
 ])), D = r({
+	style: c(["strip", "default"]),
+	max_panels: l().int().min(1).max(12),
+	style_tags: n().max(2e3),
+	no_text_tags: n().max(2e3)
+}), O = {
+	style: "strip",
+	max_panels: 6,
+	style_tags: "comic panel, cinematic composition, clean lineart, dynamic angle",
+	no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature"
+}, k = r({
 	preset_name: n().trim().min(1).max(200),
 	connection: T,
 	max_chat_history: l().int().min(0).max(20),
@@ -87,14 +97,15 @@ var S = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	world_info: E.default({ mode: "chat" }),
 	wardrobe_model: n().trim().min(1).max(200).nullable().default(null),
 	analysis_guidance: n().max(2e3).default(""),
-	wardrobe_guidance: n().max(2e3).default("")
-}), O = r({
+	wardrobe_guidance: n().max(2e3).default(""),
+	strip: D.default(O)
+}), A = r({
 	source: n().trim().min(1).max(32),
 	target: n().trim().min(1).max(128)
-}), k = r({
+}), j = r({
 	deepl_endpoint: c(["free", "pro"]),
-	glossary: s(O).max(200)
-}), A = r({
+	glossary: s(A).max(200)
+}), M = r({
 	schema_version: t(1),
 	active_namespace: S,
 	locale: c([
@@ -107,10 +118,10 @@ var S = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	global_concurrency: l().int().min(1).max(4),
 	auto_generation_enabled: i(),
 	vocabulary_update_channel: c(["bundled", "remote"]),
-	illustration: D,
-	translation: k,
+	illustration: k,
+	translation: j,
 	ui: w
-}), j = g("image", [
+}), N = g("image", [
 	["rect", {
 		width: "18",
 		height: "18",
@@ -133,7 +144,7 @@ var S = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 ]);
 //#endregion
 //#region src/transport/http_origin.ts
-function M(e) {
+function P(e) {
 	let t;
 	try {
 		t = new URL(e);
@@ -143,16 +154,16 @@ function M(e) {
 	if (t.protocol !== "http:" && t.protocol !== "https:" || t.username.length > 0 || t.password.length > 0 || t.pathname !== "/" || t.search.length > 0 || t.hash.length > 0) throw TypeError("Endpoint must be an HTTP or HTTPS origin");
 	return y.parse(t.origin);
 }
-function N(e) {
-	let t = new URL(M(e)).hostname.toLowerCase();
+function F(e) {
+	let t = new URL(P(e)).hostname.toLowerCase();
 	if (t === "localhost" || t === "[::1]") return "loopback";
-	let n = F(t);
+	let n = L(t);
 	return n === void 0 ? t.startsWith("[fc") || t.startsWith("[fd") || /^\[fe[89ab]/u.test(t) ? "private" : "public_or_unknown" : n[0] === 127 ? "loopback" : n[0] === 10 || n[0] === 172 && n[1] >= 16 && n[1] <= 31 || n[0] === 192 && n[1] === 168 || n[0] === 169 && n[1] === 254 ? "private" : "public_or_unknown";
 }
-function P(e) {
-	return N(e) === "loopback";
+function I(e) {
+	return F(e) === "loopback";
 }
-function F(e) {
+function L(e) {
 	let t = e.split(".");
 	if (t.length !== 4) return;
 	let n = t.map(Number);
@@ -166,4 +177,4 @@ function F(e) {
 	];
 }
 //#endregion
-export { D as a, k as c, v as d, C as i, x as l, M as n, A as o, j as r, w as s, P as t, _ as u };
+export { O as a, w as c, _ as d, v as f, C as i, j as l, P as n, k as o, N as r, M as s, I as t, x as u };

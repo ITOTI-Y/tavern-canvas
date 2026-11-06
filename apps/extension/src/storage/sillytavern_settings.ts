@@ -5,6 +5,7 @@ import {
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   type TavernCanvasSettings,
+  DEFAULT_STRIP_SETTINGS,
 } from "@tavern-canvas/contracts";
 import type { z } from "zod";
 
@@ -51,6 +52,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
     wardrobe_model: null,
     analysis_guidance: "",
     wardrobe_guidance: "",
+    strip: DEFAULT_STRIP_SETTINGS,
   },
   translation: {
     deepl_endpoint: "free",

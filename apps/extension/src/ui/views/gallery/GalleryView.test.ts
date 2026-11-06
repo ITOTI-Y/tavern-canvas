@@ -173,7 +173,15 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+      records: {
+        character: [],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+        creation: [],
+      },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },

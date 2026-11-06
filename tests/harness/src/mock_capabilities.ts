@@ -161,6 +161,7 @@ const ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSummary[
   vibe: [VIBE_ASSET],
   workflow: [WORKFLOW_ASSET],
   prompt_tag: [],
+  creation: [],
 };
 
 const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSummary[]>> = {
@@ -170,6 +171,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   vibe: [],
   workflow: [],
   prompt_tag: [],
+  creation: [],
 };
 
 const PRESET_SHORT: PromptPresetSummary = {
@@ -300,6 +302,7 @@ function build_settings(): TavernCanvasSettings {
       wardrobe_model: null,
       analysis_guidance: "",
       wardrobe_guidance: "",
+      strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
@@ -734,6 +737,7 @@ function create_assets_capability(
     vibe: [...initial.vibe],
     workflow: [...initial.workflow],
     prompt_tag: [],
+    creation: [],
   };
   return {
     load: () => Promise.resolve(records),

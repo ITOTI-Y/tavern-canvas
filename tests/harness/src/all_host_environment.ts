@@ -170,6 +170,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         wardrobe_model: null,
         analysis_guidance: "",
         wardrobe_guidance: "",
+        strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
       },
       translation: { deepl_endpoint: "free", glossary: [] },
       ui: {

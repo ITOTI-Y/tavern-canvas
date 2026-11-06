@@ -1,7 +1,7 @@
 import { n as e, t } from "./sha2-BGNex9vj.js";
 import { S as n, c as r, g as i, h as a, m as o, r as s, t as c, u as l } from "./schemas-BjkyCQYG.js";
-import { _ as u, i as d, l as f, m as p, u as m } from "./business_repositories-CShe0wJc.js";
-import { s as h } from "./image_store-CIom2v36.js";
+import { _ as u, i as d, l as f, m as p, u as m } from "./business_repositories-4nVP7Td6.js";
+import { s as h } from "./image_store-BP8GIHiw.js";
 //#region ../../packages/contracts/src/archive.ts
 var g = "tavern-canvas-archive", _ = [
 	"provider_profiles",
@@ -13,6 +13,7 @@ var g = "tavern-canvas-archive", _ = [
 	"outfit_profiles",
 	"lora_profiles",
 	"prompt_tag_presets",
+	"creation_records",
 	"image_records",
 	"generation_jobs"
 ], v = c(_), y = [

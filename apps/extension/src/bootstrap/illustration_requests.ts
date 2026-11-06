@@ -46,11 +46,22 @@ async function prompt_tag_injector(
   return (request) => tags.inject_prompt_tags(request, selection, presets);
 }
 
+/** A requested canvas, applied after the profile's defaults; providers sized by name keep theirs. */
+function with_size(
+  request: ImageGenerationRequest,
+  size: { readonly width: number; readonly height: number } | undefined,
+): ImageGenerationRequest {
+  if (size === undefined || !("width" in request)) {
+    return request;
+  }
+  return { ...request, width: size.width, height: size.height };
+}
+
 export function create_illustration_request_builders(
   deps: IllustrationRequestDeps,
 ): IllustrationRequestBuilders {
   return {
-    async build_request({ positive_prompt, negative_prompt, character_prompts }) {
+    async build_request({ positive_prompt, negative_prompt, character_prompts, size }) {
       const profile = await deps.require_active_profile();
       const [{ build_generation_request }, assets_module, catalog] = await Promise.all([
         import("../modules/generation/build_generation_request.js"),
@@ -80,7 +91,7 @@ export function create_illustration_request_builders(
       );
       const novelai = deps.novelai;
       if (request.provider_id !== "novelai" || request.action !== "generate" || novelai === null) {
-        return with_prompt_tags(request);
+        return with_prompt_tags(with_size(request, size));
       }
       const [{ apply_novelai_defaults }, { reference_image_bytes }, runtime] = await Promise.all([
         import("../modules/novelai/novelai_profile_defaults.js"),
@@ -109,9 +120,12 @@ export function create_illustration_request_builders(
               },
             });
       return with_prompt_tags(
-        await assets_module.attach_character_references(configured, characters, {
-          store_reference: (data_url) => runtime.store_input(reference_image_bytes(data_url)),
-        }),
+        with_size(
+          await assets_module.attach_character_references(configured, characters, {
+            store_reference: (data_url) => runtime.store_input(reference_image_bytes(data_url)),
+          }),
+          size,
+        ),
       );
     },
 

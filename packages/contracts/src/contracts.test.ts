@@ -406,6 +406,7 @@ describe("initial settings and capability contracts", () => {
       wardrobe_model: null,
       analysis_guidance: "",
       wardrobe_guidance: "",
+      strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
@@ -503,6 +504,7 @@ describe("strict public object boundaries", () => {
       wardrobe_model: null,
       analysis_guidance: "",
       wardrobe_guidance: "",
+      strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {

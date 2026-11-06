@@ -19,6 +19,7 @@ describe("create_unavailable_capabilities", () => {
       vibe: [],
       workflow: [],
       prompt_tag: [],
+      creation: [],
     });
     await expect(capabilities.gallery.load()).resolves.toEqual([]);
     await expect(capabilities.vocabulary.load()).resolves.toEqual([]);

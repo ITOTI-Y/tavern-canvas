@@ -1,7 +1,7 @@
 import { a as e } from "./ids-pPJWL4BL.js";
 import { i as t, o as n } from "./novelai-B6V3MfU9.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { d as a, n as o, r as s, t as c, u as l } from "./http_origin-Bd6yFS3-.js";
+import { d as a, f as o, n as s, r as c, t as l } from "./http_origin-DKkU4C7m.js";
 import { G as u, H as d, I as f, K as p, P as m, _ as h, a as g, b as _, dt as v, g as y, h as b, j as x, lt as S, m as C, mt as w, n as T, p as E, s as D, tt as O, u as k, v as A, x as j, y as M } from "./vue-i18n-L-BrQRnK.js";
 import { n as N, t as P } from "./AppIcon-DkyxvN8k.js";
 import { i as F, n as I, r as L, t as ee } from "./PromptTagChips-sCg414gJ.js";
@@ -1354,13 +1354,13 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 		controller: {}
 	},
 	setup(e) {
-		let i = e, { t: o, d: s } = T(), c = E(() => {
+		let i = e, { t: s, d: c } = T(), l = E(() => {
 			let e = i.profile.model_id;
 			return e != null && r(e) !== null ? e : ie;
 		});
 		function u() {
 			if (i.profile.novelai_defaults !== null) return i.profile.novelai_defaults;
-			let e = re(c.value);
+			let e = re(l.value);
 			return {
 				width: e.width,
 				height: e.height,
@@ -1385,9 +1385,9 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 				...e
 			};
 		}
-		let _ = E(() => l.safeParse(p.value).success ? null : o("settings.novelai.invalid_size")), D = E(() => {
-			let e = r(c.value);
-			return e === null ? [] : a(e.profile, p.value);
+		let _ = E(() => a.safeParse(p.value).success ? null : s("settings.novelai.invalid_size")), D = E(() => {
+			let e = r(l.value);
+			return e === null ? [] : o(e.profile, p.value);
 		}), j = O(null), N = O(null), P = O(!1), F = O(!1);
 		async function I() {
 			F.value = !0, N.value = null, P.value = !1;
@@ -1450,36 +1450,36 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 		return (r, i) => (m(), h("div", {
 			class: v(S(Q).section),
 			"data-testid": "novelai-settings"
-		}, [C("div", { class: v(S(Q).section_header) }, [C("h2", { class: v(S(Q).section_title) }, w(S(o)("settings.novelai.title", { name: e.profile.display_name })), 3)], 2), C("div", { class: v(S(Q).form_grid) }, [
+		}, [C("div", { class: v(S(Q).section_header) }, [C("h2", { class: v(S(Q).section_title) }, w(S(s)("settings.novelai.title", { name: e.profile.display_name })), 3)], 2), C("div", { class: v(S(Q).form_grid) }, [
 			C("div", { class: v(S(Q).actions_row) }, [M(R, {
-				label: S(o)("settings.novelai.refresh_account"),
+				label: S(s)("settings.novelai.refresh_account"),
 				pending: F.value,
 				onClick: I
 			}, null, 8, ["label", "pending"]), j.value === null ? P.value ? (m(), h("span", {
 				key: 1,
 				class: v(S(Q).status_text),
 				"data-testid": "novelai-account-unreachable"
-			}, [A(w(S(o)("settings.novelai.account_unreachable")) + " ", 1), C("a", {
+			}, [A(w(S(s)("settings.novelai.account_unreachable")) + " ", 1), C("a", {
 				href: ze,
 				target: "_blank",
 				rel: "noopener noreferrer"
-			}, w(S(o)("settings.novelai.account_open_site")), 1)], 2)) : N.value === null ? y("", !0) : (m(), h("span", {
+			}, w(S(s)("settings.novelai.account_open_site")), 1)], 2)) : N.value === null ? y("", !0) : (m(), h("span", {
 				key: 2,
 				class: v(S(Q).status_text)
 			}, w(N.value), 3)) : (m(), h("span", {
 				key: 0,
 				class: v(S(Q).status_text),
 				"data-testid": "novelai-account"
-			}, w(S(o)("settings.novelai.account_summary", {
+			}, w(S(s)("settings.novelai.account_summary", {
 				tier: j.value.tier,
 				anlas: j.value.anlas,
-				expires: S(s)(new Date(j.value.expires_at), "short_date")
+				expires: S(c)(new Date(j.value.expires_at), "short_date")
 			})), 3))], 2),
-			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.model_label")), 3), M(z, {
-				"model-value": c.value,
+			C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(s)("settings.novelai.model_label")), 3), M(z, {
+				"model-value": l.value,
 				options: ee.value,
-				placeholder: c.value,
-				"aria-label": S(o)("settings.novelai.model_label"),
+				placeholder: l.value,
+				"aria-label": S(s)("settings.novelai.model_label"),
 				"onUpdate:modelValue": i[0] ||= (e) => void te(e)
 			}, null, 8, [
 				"model-value",
@@ -1495,13 +1495,13 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 				"onUpdate:modelValue": i[1] ||= (e) => g(e)
 			}, null, 8, ["model-value"]),
 			C("div", { class: v(S(Q).field_grid) }, [
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.steps_label")), 3), M(G, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(s)("settings.novelai.steps_label")), 3), M(G, {
 					"model-value": p.value.steps,
-					label: S(o)("settings.novelai.steps_label"),
+					label: S(s)("settings.novelai.steps_label"),
 					min: 1,
 					max: 50,
-					"increment-label": S(o)("common.actions.increase"),
-					"decrement-label": S(o)("common.actions.decrease"),
+					"increment-label": S(s)("common.actions.increase"),
+					"decrement-label": S(s)("common.actions.decrease"),
 					"onUpdate:modelValue": i[2] ||= (e) => g({ steps: e })
 				}, null, 8, [
 					"model-value",
@@ -1509,14 +1509,14 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 					"increment-label",
 					"decrement-label"
 				])], 2),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.scale_label")), 3), M(G, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(s)("settings.novelai.scale_label")), 3), M(G, {
 					"model-value": p.value.scale,
-					label: S(o)("settings.novelai.scale_label"),
+					label: S(s)("settings.novelai.scale_label"),
 					min: 0,
 					max: 10,
 					step: .1,
-					"increment-label": S(o)("common.actions.increase"),
-					"decrement-label": S(o)("common.actions.decrease"),
+					"increment-label": S(s)("common.actions.increase"),
+					"decrement-label": S(s)("common.actions.decrease"),
 					"onUpdate:modelValue": i[3] ||= (e) => g({ scale: e })
 				}, null, 8, [
 					"model-value",
@@ -1524,14 +1524,14 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 					"increment-label",
 					"decrement-label"
 				])], 2),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.cfg_rescale_label")), 3), M(G, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(s)("settings.novelai.cfg_rescale_label")), 3), M(G, {
 					"model-value": p.value.cfg_rescale,
-					label: S(o)("settings.novelai.cfg_rescale_label"),
+					label: S(s)("settings.novelai.cfg_rescale_label"),
 					min: 0,
 					max: 1,
 					step: .02,
-					"increment-label": S(o)("common.actions.increase"),
-					"decrement-label": S(o)("common.actions.decrease"),
+					"increment-label": S(s)("common.actions.increase"),
+					"decrement-label": S(s)("common.actions.decrease"),
 					"onUpdate:modelValue": i[4] ||= (e) => g({ cfg_rescale: e })
 				}, null, 8, [
 					"model-value",
@@ -1539,11 +1539,11 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 					"increment-label",
 					"decrement-label"
 				])], 2),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.sampler_label")), 3), M(z, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(s)("settings.novelai.sampler_label")), 3), M(z, {
 					"model-value": p.value.sampler,
 					options: S(B),
-					placeholder: S(o)("settings.novelai.sampler_label"),
-					"aria-label": S(o)("settings.novelai.sampler_label"),
+					placeholder: S(s)("settings.novelai.sampler_label"),
+					"aria-label": S(s)("settings.novelai.sampler_label"),
 					"onUpdate:modelValue": i[5] ||= (e) => U("sampler", S(n).options, e)
 				}, null, 8, [
 					"model-value",
@@ -1551,11 +1551,11 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 					"placeholder",
 					"aria-label"
 				])], 2),
-				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(o)("settings.novelai.noise_schedule_label")), 3), M(z, {
+				C("div", { class: v(S(Q).row) }, [C("span", { class: v(S(Q).row_label) }, w(S(s)("settings.novelai.noise_schedule_label")), 3), M(z, {
 					"model-value": p.value.noise_schedule,
 					options: S(V),
-					placeholder: S(o)("settings.novelai.noise_schedule_label"),
-					"aria-label": S(o)("settings.novelai.noise_schedule_label"),
+					placeholder: S(s)("settings.novelai.noise_schedule_label"),
+					"aria-label": S(s)("settings.novelai.noise_schedule_label"),
 					"onUpdate:modelValue": i[6] ||= (e) => U("noise_schedule", S(t).options, e)
 				}, null, 8, [
 					"model-value",
@@ -1566,24 +1566,24 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 			], 2),
 			M(H, {
 				"model-value": p.value.smea,
-				label: S(o)("settings.novelai.smea_label"),
+				label: S(s)("settings.novelai.smea_label"),
 				"onUpdate:modelValue": i[7] ||= (e) => g({ smea: e })
 			}, null, 8, ["model-value", "label"]),
 			M(H, {
 				"model-value": p.value.dyn,
-				label: S(o)("settings.novelai.dyn_label"),
+				label: S(s)("settings.novelai.dyn_label"),
 				"onUpdate:modelValue": i[8] ||= (e) => g({ dyn: e })
 			}, null, 8, ["model-value", "label"]),
 			M(H, {
 				"model-value": p.value.variety_plus,
-				label: S(o)("settings.novelai.variety_label"),
+				label: S(s)("settings.novelai.variety_label"),
 				"onUpdate:modelValue": i[9] ||= (e) => g({ variety_plus: e })
 			}, null, 8, ["model-value", "label"]),
-			C("h3", { class: v(S(Q).section_title) }, w(S(o)("settings.novelai.vibes_title")), 3),
+			C("h3", { class: v(S(Q).section_title) }, w(S(s)("settings.novelai.vibes_title")), 3),
 			W.value.length === 0 ? (m(), h("p", {
 				key: 0,
 				class: v(S(Q).description)
-			}, w(S(o)("settings.novelai.vibes_empty")), 3)) : y("", !0),
+			}, w(S(s)("settings.novelai.vibes_empty")), 3)) : y("", !0),
 			(m(!0), h(k, null, f(W.value, (e) => (m(), b(ne, {
 				key: e.id,
 				"model-value": p.value.vibe_asset_ids.includes(e.id),
@@ -1598,17 +1598,17 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 				key: 1,
 				class: v(S(Q).risk_banner),
 				"data-testid": "novelai-ignored"
-			}, [C("p", { class: v(S(Q).risk_banner_title) }, w(S(o)("settings.novelai.ignored_title")), 3), (m(!0), h(k, null, f(D.value, (e) => (m(), h("p", {
+			}, [C("p", { class: v(S(Q).risk_banner_title) }, w(S(s)("settings.novelai.ignored_title")), 3), (m(!0), h(k, null, f(D.value, (e) => (m(), h("p", {
 				key: e,
 				class: v(S(Q).risk_banner_description)
-			}, w(S(Re)(S(o), e)), 3))), 128))], 2)) : y("", !0),
+			}, w(S(Re)(S(s), e)), 3))), 128))], 2)) : y("", !0),
 			_.value === null ? y("", !0) : (m(), h("p", {
 				key: 2,
 				class: v(S(Q).status_text),
 				role: "alert"
 			}, w(_.value), 3)),
 			C("div", { class: v(S(Q).actions_row) }, [M(R, {
-				label: S(o)("settings.novelai.save"),
+				label: S(s)("settings.novelai.save"),
 				variant: "primary",
 				pending: q.value === "saving",
 				disabled: _.value !== null,
@@ -1620,7 +1620,7 @@ var ze = "https://novelai.net/image", Be = /* @__PURE__ */ j({
 			]), C("span", {
 				class: v(S(Q).status_text),
 				role: "status"
-			}, w(q.value === "saved" ? S(o)("settings.novelai.saved") : q.value === "failed" ? S(o)("settings.novelai.save_failed") : ""), 3)], 2)
+			}, w(q.value === "saved" ? S(s)("settings.novelai.saved") : q.value === "failed" ? S(s)("settings.novelai.save_failed") : ""), 3)], 2)
 		], 2)], 2));
 	}
 }), Ve = [
@@ -1657,28 +1657,28 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 				save: (e, t) => n.controller.save_prompt_tags(e, t)
 			};
 		}
-		let { t: a } = T(), s = O(!1), l = O(null), d = O(!1), _ = O(null), x = O(null), D = O(!1), A = O(null), j = O(""), N = O(!1), P = O(null), F = O(/* @__PURE__ */ new Map()), I = Ve.map((e) => ({
+		let { t: a } = T(), o = O(!1), c = O(null), d = O(!1), _ = O(null), x = O(null), D = O(!1), A = O(null), j = O(""), N = O(!1), P = O(null), F = O(/* @__PURE__ */ new Map()), I = Ve.map((e) => ({
 			value: e,
 			label: He(a, e)
 		})), L = E({
-			get: () => l.value?.provider_id ?? "sd_webui",
+			get: () => c.value?.provider_id ?? "sd_webui",
 			set: (e) => {
-				l.value && (l.value.provider_id = e, l.value.workflow_id = "", l.value.base_url = e === "comfyui" ? Ye : Je, e === "novelai" && !ne.has(l.value.model_id) && (l.value.model_id = ie));
+				c.value && (c.value.provider_id = e, c.value.workflow_id = "", c.value.base_url = e === "comfyui" ? Ye : Je, e === "novelai" && !ne.has(c.value.model_id) && (c.value.model_id = ie));
 			}
 		}), ne = new Set(i.map((e) => e.model_id)), V = i.filter((e) => e.selectable).map((e) => ({
 			value: e.model_id,
 			label: e.display_name
-		})), U = E(() => l.value?.provider_id === "sd_webui" || l.value?.provider_id === "comfyui");
+		})), U = E(() => c.value?.provider_id === "sd_webui" || c.value?.provider_id === "comfyui");
 		function re(e) {
 			try {
-				let t = o(e.trim());
-				return c(t) ? t : null;
+				let t = s(e.trim());
+				return l(t) ? t : null;
 			} catch {
 				return null;
 			}
 		}
 		function W() {
-			l.value = {
+			c.value = {
 				id: crypto.randomUUID(),
 				is_new: !0,
 				provider_id: "sd_webui",
@@ -1687,10 +1687,10 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 				workflow_id: "",
 				base_url: Je,
 				is_default: n.profiles.length === 0
-			}, _.value = null, s.value = !0;
+			}, _.value = null, o.value = !0;
 		}
 		function G(e) {
-			l.value = {
+			c.value = {
 				id: e.id,
 				is_new: !1,
 				provider_id: e.provider_id,
@@ -1699,13 +1699,13 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 				workflow_id: e.workflow_id ?? "",
 				base_url: e.base_url ?? "",
 				is_default: e.is_default
-			}, _.value = null, s.value = !0;
+			}, _.value = null, o.value = !0;
 		}
 		function K() {
-			s.value = !1, l.value = null, _.value = null;
+			o.value = !1, c.value = null, _.value = null;
 		}
 		async function q() {
-			let t = l.value;
+			let t = c.value;
 			if (!t || d.value) return;
 			let r = t.display_name.trim(), i = t.model_id.trim(), o = t.provider_id === "comfyui" ? e.safeParse(t.workflow_id.trim()) : null;
 			if (r.length === 0 || i.length === 0 || t.provider_id === "comfyui" && o?.success !== !0) {
@@ -1878,12 +1878,12 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 				_: 1
 			}, 8, ["status", "empty-message"]),
 			M(oe, {
-				open: s.value,
-				title: l.value?.is_new ? S(a)("settings.provider_profiles.dialog_add_title") : S(a)("settings.provider_profiles.dialog_edit_title"),
+				open: o.value,
+				title: c.value?.is_new ? S(a)("settings.provider_profiles.dialog_add_title") : S(a)("settings.provider_profiles.dialog_edit_title"),
 				"close-label": S(a)("common.actions.close"),
 				"onUpdate:open": n[7] ||= (e) => !e && K()
 			}, {
-				default: u(() => [l.value ? (m(), h("div", {
+				default: u(() => [c.value ? (m(), h("div", {
 					key: 0,
 					class: v(S(Q).form_grid)
 				}, [
@@ -1893,11 +1893,11 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 					}, {
 						default: u(({ fieldId: e, describedBy: t }) => [p(C("input", {
 							id: e,
-							"onUpdate:modelValue": n[0] ||= (e) => l.value.display_name = e,
+							"onUpdate:modelValue": n[0] ||= (e) => c.value.display_name = e,
 							type: "text",
 							"aria-describedby": t,
 							class: v(S(Q).text_input)
-						}, null, 10, Ue), [[g, l.value.display_name]])]),
+						}, null, 10, Ue), [[g, c.value.display_name]])]),
 						_: 1
 					}, 8, ["label"]),
 					M(B, {
@@ -1918,15 +1918,15 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 						])]),
 						_: 1
 					}, 8, ["label"]),
-					l.value.provider_id === "novelai" ? (m(), b(B, {
+					c.value.provider_id === "novelai" ? (m(), b(B, {
 						key: 0,
 						label: S(a)("settings.provider_profiles.model_label"),
 						required: ""
 					}, {
 						default: u(({ fieldId: e }) => [M(z, {
 							id: e,
-							modelValue: l.value.model_id,
-							"onUpdate:modelValue": n[2] ||= (e) => l.value.model_id = e,
+							modelValue: c.value.model_id,
+							"onUpdate:modelValue": n[2] ||= (e) => c.value.model_id = e,
 							options: S(V),
 							placeholder: S(a)("settings.provider_profiles.model_label")
 						}, null, 8, [
@@ -1943,48 +1943,48 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 					}, {
 						default: u(({ fieldId: e, describedBy: t }) => [p(C("input", {
 							id: e,
-							"onUpdate:modelValue": n[3] ||= (e) => l.value.model_id = e,
+							"onUpdate:modelValue": n[3] ||= (e) => c.value.model_id = e,
 							type: "text",
 							"aria-describedby": t,
 							class: v(S(Q).text_input),
 							"data-testid": "provider-model-input"
-						}, null, 10, We), [[g, l.value.model_id]])]),
+						}, null, 10, We), [[g, c.value.model_id]])]),
 						_: 1
 					}, 8, ["label"])),
 					U.value ? (m(), b(B, {
 						key: 2,
 						label: S(a)("settings.provider_profiles.base_url_label"),
-						hint: l.value.provider_id === "comfyui" ? S(a)("settings.provider_profiles.base_url_hint_comfyui") : S(a)("settings.provider_profiles.base_url_hint_sd_webui"),
+						hint: c.value.provider_id === "comfyui" ? S(a)("settings.provider_profiles.base_url_hint_comfyui") : S(a)("settings.provider_profiles.base_url_hint_sd_webui"),
 						required: ""
 					}, {
 						default: u(({ fieldId: e, describedBy: t }) => [p(C("input", {
 							id: e,
-							"onUpdate:modelValue": n[4] ||= (e) => l.value.base_url = e,
+							"onUpdate:modelValue": n[4] ||= (e) => c.value.base_url = e,
 							type: "url",
 							"aria-describedby": t,
 							class: v(S(Q).text_input),
 							"data-testid": "provider-base-url-input"
-						}, null, 10, Ge), [[g, l.value.base_url]])]),
+						}, null, 10, Ge), [[g, c.value.base_url]])]),
 						_: 1
 					}, 8, ["label", "hint"])) : y("", !0),
-					l.value.provider_id === "comfyui" ? (m(), b(B, {
+					c.value.provider_id === "comfyui" ? (m(), b(B, {
 						key: 3,
 						label: S(a)("settings.provider_profiles.workflow_label"),
 						required: ""
 					}, {
 						default: u(({ fieldId: e, describedBy: t }) => [p(C("input", {
 							id: e,
-							"onUpdate:modelValue": n[5] ||= (e) => l.value.workflow_id = e,
+							"onUpdate:modelValue": n[5] ||= (e) => c.value.workflow_id = e,
 							type: "text",
 							"aria-describedby": t,
 							class: v(S(Q).text_input),
 							"data-testid": "provider-workflow-input"
-						}, null, 10, Ke), [[g, l.value.workflow_id]])]),
+						}, null, 10, Ke), [[g, c.value.workflow_id]])]),
 						_: 1
 					}, 8, ["label"])) : y("", !0),
 					M(H, {
-						modelValue: l.value.is_default,
-						"onUpdate:modelValue": n[6] ||= (e) => l.value.is_default = e,
+						modelValue: c.value.is_default,
+						"onUpdate:modelValue": n[6] ||= (e) => c.value.is_default = e,
 						label: S(a)("settings.provider_profiles.set_default_action")
 					}, null, 8, ["modelValue", "label"]),
 					_.value ? (m(), h("p", {
@@ -2256,7 +2256,7 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 			"general",
 			"diagnostics"
 		];
-		function c(e) {
+		function s(e) {
 			switch (e) {
 				case "illustration": return a("settings.nav.illustration");
 				case "providers": return a("settings.nav.providers");
@@ -2268,7 +2268,7 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 		}
 		let l = {
 			illustration: I,
-			providers: s,
+			providers: c,
 			translation: L,
 			prompts: F,
 			general: Y,
@@ -2296,7 +2296,7 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 		function A(e, t) {
 			return i.controller.test_prompt_regex(e, t);
 		}
-		return (i, s) => (m(), h("div", {
+		return (i, c) => (m(), h("div", {
 			class: v(S(Q).layout),
 			"data-testid": "settings-view"
 		}, [
@@ -2313,9 +2313,9 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 			}, [M(P, {
 				icon: l[t],
 				size: 15
-			}, null, 8, ["icon"]), C("span", null, w(c(t)), 1)], 10, rt)), 64))], 10, nt),
+			}, null, 8, ["icon"]), C("span", null, w(s(t)), 1)], 10, rt)), 64))], 10, nt),
 			C("div", { class: v(S(Q).section_content) }, [
-				C("header", { class: v(S(Q).pane_head) }, [C("h1", { class: v(S(Q).pane_title) }, w(c(p.value)), 3), C("p", { class: v(S(Q).pane_description) }, w(u(p.value)), 3)], 2),
+				C("header", { class: v(S(Q).pane_head) }, [C("h1", { class: v(S(Q).pane_title) }, w(s(p.value)), 3), C("p", { class: v(S(Q).pane_description) }, w(u(p.value)), 3)], 2),
 				e.state.settings.update_command.status === "error" ? (m(), h("p", {
 					key: 0,
 					class: v([S(Q).status_text, S(Q).description]),
@@ -2326,11 +2326,11 @@ var Ue = ["id", "aria-describedby"], We = ["id", "aria-describedby"], Ge = ["id"
 				p.value === "prompts" ? (m(), h(k, { key: 1 }, [M(S(t), {
 					state: e.state,
 					"test-regex": A,
-					onSelectPreset: s[0] ||= (t) => void e.controller.select_prompt_preset(t),
-					onNewPreset: s[1] ||= (t) => e.controller.start_new_prompt_preset(),
-					onBulkDeletePresets: s[2] ||= (t) => void e.controller.bulk_remove_prompt_presets(t),
-					onUpdateDraft: s[3] ||= (t) => e.controller.update_prompt_draft(t),
-					onSave: s[4] ||= (t) => void e.controller.save_prompt_preset(t)
+					onSelectPreset: c[0] ||= (t) => void e.controller.select_prompt_preset(t),
+					onNewPreset: c[1] ||= (t) => e.controller.start_new_prompt_preset(),
+					onBulkDeletePresets: c[2] ||= (t) => void e.controller.bulk_remove_prompt_presets(t),
+					onUpdateDraft: c[3] ||= (t) => e.controller.update_prompt_draft(t),
+					onSave: c[4] ||= (t) => void e.controller.save_prompt_preset(t)
 				}, null, 8, ["state"]), M(S(n), {
 					records: e.state.assets.records.prompt_tag,
 					loading: e.state.loading.has("assets"),

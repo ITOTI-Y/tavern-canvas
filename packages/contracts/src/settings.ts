@@ -86,6 +86,24 @@ export const AnalysisWorldInfoSchema = z.preprocess(
 );
 export type AnalysisWorldInfo = z.infer<typeof AnalysisWorldInfoSchema>;
 
+/** How comic strips are drawn: their own style tags, or the style ordinary illustrations use. */
+export const StripSettingsSchema = z.strictObject({
+  style: z.enum(["strip", "default"]),
+  max_panels: z.number().int().min(1).max(12),
+  /** Added to every panel's positive prompt when `style` is `strip`. */
+  style_tags: z.string().max(2000),
+  /** Added to every panel's negative prompt whatever the style, so panels carry no lettering. */
+  no_text_tags: z.string().max(2000),
+});
+export type StripSettings = z.infer<typeof StripSettingsSchema>;
+
+export const DEFAULT_STRIP_SETTINGS: StripSettings = {
+  style: "strip",
+  max_panels: 6,
+  style_tags: "comic panel, cinematic composition, clean lineart, dynamic angle",
+  no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature",
+};
+
 export const IllustrationSettingsSchema = z.strictObject({
   /** A SillyTavern chat completion preset name; `in_use` is the preset currently loaded. */
   preset_name: z.string().trim().min(1).max(200),
@@ -100,6 +118,7 @@ export const IllustrationSettingsSchema = z.strictObject({
   analysis_guidance: z.string().max(2000).default(""),
   /** The user's direction on clothing, sent with every wardrobe update. */
   wardrobe_guidance: z.string().max(2000).default(""),
+  strip: StripSettingsSchema.default(DEFAULT_STRIP_SETTINGS),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

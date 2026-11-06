@@ -12,8 +12,9 @@ import { t as q } from "./AppCheckbox-DX2yIeKD.js";
 import { t as te } from "./trash-2-Dqlz-IWX.js";
 import { t as ne } from "./upload-BjktsLMj.js";
 import { t as re } from "./x-D7Ry5i_D.js";
-import { n as ie, u as ae } from "./analysis-BmwOpwK4.js";
+import { t as ie } from "./host_image_icon-CySMeJr8.js";
 import { n as J } from "./deferred_stylesheets-BpS7LWkd.js";
+import { n as ae } from "./analysis-CvO6PasH.js";
 import { c as oe, l as se, r as ce, s as le } from "./model_json-DnhzkPSG.js";
 import { r as ue, t as de } from "./inpaint_session-wWdlKjTY.js";
 import { n as fe } from "./_prop_utils-DgoYzKlR.js";
@@ -225,12 +226,12 @@ var Z = ke, Ae = ["aria-label"], je = ["aria-label"], Me = ["aria-label"], Ne = 
 			} catch {
 				return n.dimensionErrorLabel;
 			}
-		}), G = T(() => n.bitmap.width / n.bitmap.height), ee = T(() => ({ "--tc-inpaint-aspect": String(G.value) })), q = null, ie = null, ae = [];
-		function J() {
+		}), G = T(() => n.bitmap.width / n.bitmap.height), ee = T(() => ({ "--tc-inpaint-aspect": String(G.value) })), q = null, ie = null, J = [];
+		function ae() {
 			H.value = q?.can_undo() ?? !1, U.value = q?.can_redo() ?? !1;
 		}
 		function oe() {
-			q = new de(n.bitmap.width, n.bitmap.height), J();
+			q = new de(n.bitmap.width, n.bitmap.height), ae();
 		}
 		function se() {
 			let e = w.value;
@@ -271,31 +272,31 @@ var Z = ke, Ae = ["aria-label"], je = ["aria-label"], Me = ["aria-label"], Ne = 
 		function ye(e) {
 			if (ie !== null) return;
 			let t = le(e);
-			t !== null && (ie = e.pointerId, e.currentTarget.setPointerCapture(e.pointerId), ae = [t]);
+			t !== null && (ie = e.pointerId, e.currentTarget.setPointerCapture(e.pointerId), J = [t]);
 		}
 		function be(e) {
 			if (ie !== e.pointerId) return;
 			let t = le(e);
-			t !== null && ae.push(t);
+			t !== null && J.push(t);
 		}
 		function xe(e) {
 			ie === e.pointerId && (ie = null, Ce());
 		}
 		function Ce() {
-			if (q === null || ae.length === 0) {
-				ae = [];
+			if (q === null || J.length === 0) {
+				J = [];
 				return;
 			}
-			q.stroke(ae, O.value, M.value ? "erase" : "brush"), ae = [], J(), ce();
+			q.stroke(J, O.value, M.value ? "erase" : "brush"), J = [], ae(), ce();
 		}
 		function Te() {
-			q?.undo(), J(), ce();
+			q?.undo(), ae(), ce();
 		}
 		function X() {
-			q?.redo(), J(), ce();
+			q?.redo(), ae(), ce();
 		}
 		function ke() {
-			q?.clear(), J(), ce();
+			q?.clear(), ae(), ce();
 		}
 		function Le() {
 			F.value = Math.min(Ie, F.value + .5);
@@ -857,7 +858,7 @@ var Ye = ["for"], Xe = [
 				c.value = {
 					status: "failed",
 					message: be(s, e instanceof Error ? e.message : String(e)),
-					excerpt: e instanceof ie ? e.excerpt : null
+					excerpt: e instanceof ae ? e.excerpt : null
 				};
 			}
 		}
@@ -1689,7 +1690,7 @@ function kt(e) {
 		let r = t.closest(".mes"), i = r?.querySelector(".extraMesButtons") ?? r?.querySelector(".mes_buttons");
 		if (i == null || r?.getAttribute("is_user") === "true" || i.querySelector(`[${Tt}]`) !== null) return;
 		let a = t.ownerDocument.createElement("div");
-		a.className = "mes_button interactable", a.append(ae(t.ownerDocument)), a.setAttribute(Tt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
+		a.className = "mes_button interactable", a.append(ie(t.ownerDocument)), a.setAttribute(Tt, ""), a.setAttribute("role", "button"), a.tabIndex = 0, a.title = e.button_label(), a.addEventListener("click", () => {
 			e.on_illustrate(n);
 		}), i.prepend(a);
 	}

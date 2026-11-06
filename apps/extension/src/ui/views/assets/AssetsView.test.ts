@@ -36,7 +36,15 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+      records: {
+        character: [],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+        creation: [],
+      },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
       ...overrides,
@@ -293,6 +301,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     mount_assets_view({ state });
@@ -311,6 +320,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -334,6 +344,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -358,6 +369,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -379,6 +391,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     mount_assets_view({ state });
@@ -391,7 +404,15 @@ describe("Character panel CRUD and destructive confirmation", () => {
     const a = make_record("character", "77777777-7777-4777-8777-777777777777", "Alpha");
     const b = make_record("character", "88888888-8888-4888-8888-888888888888", "Beta");
     const state = build_state({
-      records: { character: [a, b], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+      records: {
+        character: [a, b],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+        creation: [],
+      },
     });
     mount_assets_view({ state });
     const search_inputs = dom().findAll('input[aria-label="Search"]');
@@ -407,7 +428,15 @@ describe("Library multi-select", () => {
       make_record("character", `5656565${String(index)}-5656-4565-8565-565656565656`, name),
     );
     const state = build_state({
-      records: { character: records, outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+      records: {
+        character: records,
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+        creation: [],
+      },
     });
     const { controller } = mount_assets_view({ state });
     await check_card(0);
@@ -430,7 +459,15 @@ describe("Library multi-select", () => {
       make_record("character", `7878787${String(index)}-7878-4787-8787-787878787878`, name),
     );
     const state = build_state({
-      records: { character: records, outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+      records: {
+        character: records,
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+        creation: [],
+      },
     });
     mount_assets_view({ state });
     await dom().find('input[aria-label="Search"]').setValue("Alpha");
@@ -456,6 +493,7 @@ describe("Library entries of other chats", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     mount_assets_view({ state });
@@ -547,6 +585,7 @@ describe("Outfit panel character link", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     mount_assets_view({ state });
@@ -571,6 +610,7 @@ describe("Card thumbnails", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -602,6 +642,7 @@ describe("Card thumbnails", () => {
         vibe: [],
         workflow: [],
         prompt_tag: [],
+        creation: [],
       },
     });
     mount_assets_view({ state });

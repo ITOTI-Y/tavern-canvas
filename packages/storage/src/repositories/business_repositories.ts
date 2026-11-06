@@ -13,6 +13,8 @@ import {
   type LoraProfile,
   LoraProfileSchema,
   type PromptTagPreset,
+  type CreationRecord,
+  CreationRecordSchema,
   PromptTagPresetSchema,
   type NovelAiVibeEncoding,
   NovelAiVibeEncodingSchema,
@@ -98,6 +100,15 @@ export class PromptTagPresetRepository extends IndexedDbRepository<
 > {
   constructor(database: IDBPDatabase<DBSchema>) {
     super(database, "prompt_tag_presets", PromptTagPresetSchema);
+  }
+}
+
+export class CreationRecordRepository extends IndexedDbRepository<
+  "creation_records",
+  CreationRecord
+> {
+  constructor(database: IDBPDatabase<DBSchema>) {
+    super(database, "creation_records", CreationRecordSchema);
   }
 }
 
@@ -332,6 +343,7 @@ export interface BusinessRepositories {
   regex_rules: RegexRuleRepository;
   lora_profiles: LoraProfileRepository;
   prompt_tag_presets: PromptTagPresetRepository;
+  creation_records: CreationRecordRepository;
   vocabulary_packages: VocabularyPackageRepository;
   vocabulary_shards: VocabularyShardRepository;
   image_records: ImageRecordRepository;
@@ -354,6 +366,7 @@ export function create_business_repositories(
     regex_rules: new RegexRuleRepository(database),
     lora_profiles: new LoraProfileRepository(database),
     prompt_tag_presets: new PromptTagPresetRepository(database),
+    creation_records: new CreationRecordRepository(database),
     vocabulary_packages: new VocabularyPackageRepository(database),
     vocabulary_shards: new VocabularyShardRepository(database),
     image_records: new ImageRecordRepository(database),

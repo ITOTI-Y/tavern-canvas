@@ -169,15 +169,26 @@ export interface AnalysisRequest<T> {
   readonly parse: (raw: string) => T;
 }
 
+/** Replaces the analysis settings' chat history and world info for one request. */
+export interface AnalysisOverrides {
+  readonly max_chat_history?: number;
+  readonly world_info?: AnalysisWorldInfo;
+}
+
 export async function request_analysis<T>(
   deps: AnalysisRequestDeps,
   text: string,
   request: AnalysisRequest<T>,
   signal: AbortSignal,
+  overrides: AnalysisOverrides = {},
 ): Promise<T> {
   const settings = deps.settings();
   const connection = await to_host_connection(settings.connection, deps.resolve_analysis_key);
-  const world_info = await to_host_world_info(settings.world_info, text, deps.host);
+  const world_info = await to_host_world_info(
+    overrides.world_info ?? settings.world_info,
+    text,
+    deps.host,
+  );
   for (let attempt = 1; ; attempt += 1) {
     if (signal.aborted) {
       throw new AnalysisStoppedError("cancelled");
@@ -191,7 +202,7 @@ export async function request_analysis<T>(
           generation_id,
           preset_name: settings.preset_name,
           user_input: request.user_input,
-          max_chat_history: settings.max_chat_history,
+          max_chat_history: overrides.max_chat_history ?? settings.max_chat_history,
           connection,
           json_schema: request.json_schema,
           world_info,

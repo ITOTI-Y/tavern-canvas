@@ -162,7 +162,8 @@ export interface PromptPresetsCapability {
   test_regex(rule: PromptRegexRule, sample_text: string): Promise<string>;
 }
 
-export type AssetCategory = "character" | "outfit" | "lora" | "vibe" | "workflow" | "prompt_tag";
+export type AssetCategory =
+  "character" | "outfit" | "lora" | "vibe" | "workflow" | "prompt_tag" | "creation";
 
 export interface AssetRecordSummary {
   readonly id: Uuid;

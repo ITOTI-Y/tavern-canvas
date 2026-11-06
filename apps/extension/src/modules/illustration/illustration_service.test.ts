@@ -33,6 +33,7 @@ const SETTINGS: IllustrationSettings = {
   wardrobe_model: null,
   analysis_guidance: "",
   wardrobe_guidance: "",
+  strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
 };
 
 class MemoryHost {
@@ -704,6 +705,7 @@ describe("create_wardrobe_runner", () => {
         ...SETTINGS,
         analysis_guidance: "watercolor",
         wardrobe_guidance: "summer clothing",
+        strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",
@@ -743,5 +745,47 @@ describe("IllustrationService.add_paragraphs", () => {
     );
     expect(service.read(LOCATION)?.slots).toHaveLength(2);
     expect(await service.open_paragraphs(LOCATION)).toEqual([]);
+  });
+});
+
+describe("IllustrationService create page planning", () => {
+  it("plans a typed story with no chat history and only the chosen worldbooks", async () => {
+    const host = new MemoryHost();
+    host.worldbooks.set("Town", [
+      {
+        enabled: true,
+        strategy: "constant" as const,
+        keys: [],
+        secondary_logic: "and_any" as const,
+        secondary_keys: [],
+        order: 0,
+        content: "The old town has blue doors.",
+      },
+    ]);
+    host.analysis_reply = JSON.stringify({
+      scenes: [
+        {
+          paragraph: 0,
+          scene: "A girl at a door",
+          frame: "portrait",
+          tags: "door",
+          characters: [],
+        },
+        { paragraph: 1, scene: "The street", frame: "landscape", tags: "street", characters: [] },
+      ],
+    });
+    const { service } = create_service(host);
+
+    const scenes = await service.plan_story("She knocked.\n\nThe street was empty.", ["Town"]);
+
+    expect(host.generate_calls[0]).toMatchObject({
+      max_chat_history: 0,
+      world_info: { kind: "replace", text: "The old town has blue doors." },
+    });
+    expect(scenes.map((scene) => [scene.scene, scene.size])).toEqual([
+      ["A girl at a door", { width: 832, height: 1216 }],
+      ["The street", { width: 1216, height: 832 }],
+    ]);
+    expect(scenes[0]?.positive_prompt).toContain("door");
   });
 });

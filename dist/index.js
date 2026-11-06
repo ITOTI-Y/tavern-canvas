@@ -3,26 +3,27 @@ import { n as t, r as n, t as r } from "./chunks/sha2-BGNex9vj.js";
 import { c as i, d as a, g as o, h as s, i as c, r as l, t as u, u as d } from "./chunks/schemas-BjkyCQYG.js";
 import { i as f, n as p, o as m, r as h } from "./chunks/ids-pPJWL4BL.js";
 import { n as g, t as ee } from "./chunks/generation-CxBPzqgd.js";
-import { l as _, n as v, o as y, r as b, s as te } from "./chunks/wardrobe_library-BkM-wKPK.js";
-import { a as x, i as S, r as ne } from "./chunks/provider-9M1GIrZ6.js";
-import { a as re, c as ie, i as ae, l as oe, n as C, o as w, r as se, s as T, t as ce, u as le } from "./chunks/http_origin-Bd6yFS3-.js";
-import { $ as ue, A as E, F as de, G as fe, H as pe, L as me, O as he, P as D, Q as ge, U as _e, _ as ve, b as ye, dt as O, g as be, h as xe, i as Se, it as Ce, j as we, lt as k, m as A, mt as j, n as Te, p as M, pt as Ee, rt as De, tt as N, u as Oe, x as ke, y as Ae } from "./chunks/vue-i18n-L-BrQRnK.js";
+import { l as _, n as v, o as te, r as y, s as ne } from "./chunks/wardrobe_library-BkM-wKPK.js";
+import { a as b, i as x, r as re } from "./chunks/provider-9M1GIrZ6.js";
+import { a as ie, c as S, d as ae, i as C, l as oe, n as se, o as w, r as ce, s as T, t as le, u as ue } from "./chunks/http_origin-DKkU4C7m.js";
+import { $ as de, A as E, F as fe, G as pe, H as me, L as he, O as ge, P as D, Q as _e, U as ve, _ as O, b as ye, dt as k, g as be, h as xe, i as Se, it as Ce, j as we, lt as A, m as j, mt as M, n as Te, p as N, pt as Ee, rt as De, tt as P, u as Oe, x as ke, y as Ae } from "./chunks/vue-i18n-L-BrQRnK.js";
 import { t as je } from "./chunks/create_i18n-R1W64PR-.js";
 import { i as Me, n as Ne, r as Pe, t as Fe } from "./chunks/portal_keys-DthxrmWp.js";
 import { t as Ie } from "./chunks/AppIcon-DkyxvN8k.js";
 import { t as Le } from "./chunks/use_shell_viewport-Yd0oBRFR.js";
-import { a as Re, c as ze, i as Be, l as Ve, n as He, o as Ue, r as We, s as Ge, t as Ke, u as qe } from "./chunks/analysis-BmwOpwK4.js";
-import { t as Je } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
-import { c as Ye, h as Xe, i as Ze, o as Qe } from "./chunks/business_repositories-CShe0wJc.js";
-import { a as $e, c as et, i as tt, n as nt, o as rt, r as it, t as at } from "./chunks/image_store-CIom2v36.js";
-import { a as ot, i as st, n as ct, r as lt } from "./chunks/model_json-DnhzkPSG.js";
-import { a as ut, i as dt, n as ft, o as pt, s as P } from "./chunks/provider_transport-CdL7IECS.js";
-import { n as mt, r as F, t as ht } from "./chunks/tag_normalizer-CEAU4497.js";
-import { i as gt, r as _t } from "./chunks/browser_secret_vault-Cl9sZA7g.js";
-import { t as vt } from "./chunks/_vocabulary_import_error-BOxujgW3.js";
-import { t as yt } from "./chunks/novelai_errors-Bve94MgO.js";
+import { t as Re } from "./chunks/host_image_icon-CySMeJr8.js";
+import { t as ze } from "./chunks/deferred_stylesheets-BpS7LWkd.js";
+import { c as Be, h as Ve, i as He, o as Ue } from "./chunks/business_repositories-4nVP7Td6.js";
+import { a as We, c as Ge, i as Ke, n as qe, o as Je, r as Ye, t as Xe } from "./chunks/image_store-BP8GIHiw.js";
+import { a as Ze, d as Qe, l as $e, n as et, o as tt, r as nt, s as rt, t as it, u as at } from "./chunks/analysis-CvO6PasH.js";
+import { a as ot, n as st } from "./chunks/model_json-DnhzkPSG.js";
+import { a as ct, i as lt, n as ut, o as dt, s as F } from "./chunks/provider_transport-CdL7IECS.js";
+import { a as ft, i as pt, n as mt, o as ht, r as gt, t as _t } from "./chunks/proposal_slots-ufEAgMTk.js";
+import { i as vt, r as yt } from "./chunks/browser_secret_vault-Cl9sZA7g.js";
+import { t as bt } from "./chunks/_vocabulary_import_error-BOxujgW3.js";
+import { t as xt } from "./chunks/novelai_errors-Bve94MgO.js";
 //#region ../../packages/core/src/capability_registry.ts
-var bt = class {
+var St = class {
 	#e = /* @__PURE__ */ new Map();
 	register(e, t, n) {
 		let r = this.#e.get(e);
@@ -46,7 +47,7 @@ var bt = class {
 	remove_by_owner(e) {
 		for (let [t, n] of this.#e) n.owner_module_id === e && this.#e.delete(t);
 	}
-}, xt = class {
+}, Ct = class {
 	#e = /* @__PURE__ */ new Map();
 	subscribe(e, t) {
 		let n = this.#e.get(e);
@@ -72,12 +73,12 @@ var bt = class {
 		}
 		return r;
 	}
-}, St = class {
+}, wt = class {
 	#e = /* @__PURE__ */ new Map();
 	#t;
 	#n = [];
 	#r = "idle";
-	constructor(e, t = new bt(), n = new xt()) {
+	constructor(e, t = new St(), n = new Ct()) {
 		for (let t of e) {
 			if (this.#e.has(t.module_id)) throw Error(`Module "${t.module_id}" is registered more than once`);
 			this.#e.set(t.module_id, t);
@@ -158,49 +159,49 @@ var bt = class {
 		}
 		return this.#n.length = 0, e;
 	}
-}, Ct = "Canonical JSON accepts only JSON data";
-function I() {
-	throw TypeError(Ct);
+}, Tt = "Canonical JSON accepts only JSON data";
+function Et() {
+	throw TypeError(Tt);
 }
-function wt(e) {
-	return typeof e == "number" && !Number.isFinite(e) ? I() : JSON.stringify(e);
+function Dt(e) {
+	return typeof e == "number" && !Number.isFinite(e) ? Et() : JSON.stringify(e);
 }
-function Tt(e, t) {
-	if (e === null || typeof e == "boolean" || typeof e == "number" || typeof e == "string") return wt(e);
-	if (typeof e != "object") return I();
+function Ot(e, t) {
+	if (e === null || typeof e == "boolean" || typeof e == "number" || typeof e == "string") return Dt(e);
+	if (typeof e != "object") return Et();
 	if (t.has(e)) throw TypeError("Canonical JSON cannot encode cyclic data");
 	t.add(e);
 	try {
 		if (Array.isArray(e)) {
-			if (Reflect.ownKeys(e).some((t) => typeof t != "string" || t !== "length" && (!/^\d+$/u.test(t) || Number(t) >= e.length || String(Number(t)) !== t))) return I();
+			if (Reflect.ownKeys(e).some((t) => typeof t != "string" || t !== "length" && (!/^\d+$/u.test(t) || Number(t) >= e.length || String(Number(t)) !== t))) return Et();
 			let n = [];
 			for (let r = 0; r < e.length; r += 1) {
-				if (!Object.prototype.hasOwnProperty.call(e, r)) return I();
-				n.push(Tt(e[r], t));
+				if (!Object.prototype.hasOwnProperty.call(e, r)) return Et();
+				n.push(Ot(e[r], t));
 			}
 			return `[${n.join(",")}]`;
 		}
 		let n = Object.getPrototypeOf(e);
-		if (n !== Object.prototype && n !== null) return I();
+		if (n !== Object.prototype && n !== null) return Et();
 		let r = Reflect.ownKeys(e);
-		if (r.some((e) => typeof e != "string")) return I();
+		if (r.some((e) => typeof e != "string")) return Et();
 		let i = r.toSorted(), a = [];
 		for (let n of i) {
 			let r = Object.getOwnPropertyDescriptor(e, n);
-			if (r === void 0 || !r.enumerable || !("value" in r)) return I();
-			a.push(`${wt(n)}:${Tt(r.value, t)}`);
+			if (r === void 0 || !r.enumerable || !("value" in r)) return Et();
+			a.push(`${Dt(n)}:${Ot(r.value, t)}`);
 		}
 		return `{${a.join(",")}}`;
 	} finally {
 		t.delete(e);
 	}
 }
-function Et(e) {
-	return Tt(e, /* @__PURE__ */ new WeakSet());
+function kt(e) {
+	return Ot(e, /* @__PURE__ */ new WeakSet());
 }
 //#endregion
 //#region ../../packages/core/src/generation/anchors.ts
-var Dt = class {
+var At = class {
 	#e;
 	constructor(e) {
 		if (e === void 0 || typeof e.getRandomValues != "function") throw Error("Secure random generation is unavailable");
@@ -212,23 +213,23 @@ var Dt = class {
 		return this.#e.getRandomValues(t), t;
 	}
 };
-function Ot(e) {
+function jt(e) {
 	return t(r(n(e)));
 }
-function kt(e, n) {
-	let r = Ot(Et(e)), i = n.bytes(32);
+function Mt(e, n) {
+	let r = jt(kt(e)), i = n.bytes(32);
 	if (i.length !== 32) throw Error("Random source must return exactly 32 bytes");
 	return {
 		source_anchor: r,
-		generation_anchor: Ot(`${r}${t(i)}`)
+		generation_anchor: jt(`${r}${t(i)}`)
 	};
 }
 //#endregion
 //#region ../../packages/contracts/src/direct_catalog.ts
-var At = Object.freeze({}), jt = {
+var Nt = Object.freeze({}), Pt = {
 	kind: "bearer",
 	header: "authorization"
-}, Mt = Object.freeze({
+}, Ft = Object.freeze({
 	sd_webui: null,
 	comfyui: null,
 	novelai: {
@@ -240,14 +241,14 @@ var At = Object.freeze({}), jt = {
 			"/ai/augment-image",
 			"/user/subscription"
 		],
-		auth: jt,
-		required_headers: At
+		auth: Pt,
+		required_headers: Nt
 	},
 	openai_image: {
 		origin: "https://api.openai.com",
 		routes: ["/v1/images/generations", "/v1/images/edits"],
-		auth: jt,
-		required_headers: At
+		auth: Pt,
+		required_headers: Nt
 	},
 	google_image: {
 		origin: "https://generativelanguage.googleapis.com",
@@ -256,52 +257,52 @@ var At = Object.freeze({}), jt = {
 			kind: "api_key",
 			header: "x-goog-api-key"
 		},
-		required_headers: At
+		required_headers: Nt
 	}
-}), Nt = class extends Error {
+}), It = class extends Error {
 	code = "direct_route_rejected";
 	constructor() {
 		super("The requested destination is not in the provider route catalog"), this.name = "DirectRouteRejectedError";
 	}
 };
-function Pt(e) {
-	return Mt[e];
+function Lt(e) {
+	return Ft[e];
 }
-function Ft(e, t) {
-	if (!e.routes.includes(t)) throw new Nt();
+function Rt(e, t) {
+	if (!e.routes.includes(t)) throw new It();
 	return `${e.origin}${t}`;
 }
 //#endregion
 //#region ../../packages/contracts/src/message.ts
-var It = o().regex(/^[A-Za-z0-9_-]{8,32}$/u), Lt = s({
+var zt = o().regex(/^[A-Za-z0-9_-]{8,32}$/u), Bt = s({
 	name: o().trim().min(1).max(120),
 	prompt: o().trim().min(1).max(4e3),
 	negative_prompt: o().max(4e3)
-}), Rt = s({
-	slot_id: It,
+}), Vt = s({
+	slot_id: zt,
 	paragraph: d().int().min(0),
 	anchor: o().max(400),
 	scene: o().max(2e3),
 	characters: l(o().trim().min(1).max(120)).max(16),
 	positive_prompt: o().max(8e3),
 	negative_prompt: o().max(8e3),
-	character_prompts: l(Lt).max(16),
+	character_prompts: l(Bt).max(16),
 	image_ids: l(p),
 	active_image_id: p.nullable(),
 	pending_request_ids: l(f),
 	last_error: o().max(500).nullable()
-}), zt = s({
+}), Ht = s({
 	schema_version: i(2),
-	slots: l(Rt).max(16)
+	slots: l(Vt).max(16)
 });
 u(["quality", "undesired_content"]);
-var Bt = s({
+var Ut = s({
 	enabled: c(),
 	preset_id: o().trim().min(1).max(200)
-}), Vt = s({
-	quality: Bt,
-	undesired_content: Bt
-}), Ht = s({
+}), Wt = s({
+	quality: Ut,
+	undesired_content: Ut
+}), Gt = s({
 	schema_version: i(1),
 	chat_id: o().min(1).max(512),
 	active_swipes: l(a({
@@ -318,12 +319,12 @@ var Bt = s({
 		content_sha256: g,
 		swipe_id: d().int().nonnegative().nullable()
 	}))
-}), Ut = class {
+}), Kt = class {
 	now() {
 		return /* @__PURE__ */ new Date();
 	}
 };
-function L(e) {
+function I(e) {
 	let t = e.error === null ? null : Object.freeze({ ...e.error });
 	return Object.freeze({
 		job_id: e.job_id,
@@ -344,12 +345,12 @@ function L(e) {
 }
 //#endregion
 //#region ../../packages/core/src/jobs/job_executor.ts
-var R = class extends Error {
+var L = class extends Error {
 	provider_error;
 	constructor(e) {
-		super(`Job executor failed: ${e.code}`), this.name = "JobExecutorFailure", this.provider_error = Object.freeze(ne.parse(e));
+		super(`Job executor failed: ${e.code}`), this.name = "JobExecutorFailure", this.provider_error = Object.freeze(re.parse(e));
 	}
-}, Wt = {
+}, qt = {
 	queued: ["preparing", "cancelled"],
 	preparing: [
 		"submitting",
@@ -372,7 +373,7 @@ var R = class extends Error {
 	cancelled: [],
 	attached: [],
 	orphaned: []
-}, Gt = class extends Error {
+}, Jt = class extends Error {
 	code = "invalid_generation_job_transition";
 	job_id;
 	prior_state;
@@ -381,18 +382,18 @@ var R = class extends Error {
 		super(`Job ${e} cannot transition from ${t} to ${n}`), this.name = "GenerationJobTransitionError", this.job_id = e, this.prior_state = t, this.attempted_state = n;
 	}
 };
-function Kt(e, t, n) {
+function Yt(e, t, n) {
 	let r = e.state;
 	if (r !== "cancelled" || t !== "cancelled") {
-		if (!Wt[r].includes(t)) throw new Gt(e.job_id, r, t);
+		if (!qt[r].includes(t)) throw new Jt(e.job_id, r, t);
 		e.state = t, e.updated_at = n;
 	}
 }
-function qt(e, t) {
+function Xt(e, t) {
 	if (!Number.isInteger(e) || e < 1) throw RangeError(`${t} must be a positive integer`);
 	return e;
 }
-function Jt(e) {
+function Zt(e) {
 	let t = g.parse(e.generation_anchor), n = Object.freeze(ee.parse(e.arguments));
 	if (n.generation_anchor !== t) throw TypeError("Image job arguments must use the job generation anchor");
 	if (e.chat_id.trim().length === 0) throw TypeError("Image job chat ID must not be empty");
@@ -403,16 +404,16 @@ function Jt(e) {
 		source_anchor: g.parse(e.source_anchor),
 		chat_id: e.chat_id,
 		requested_swipe_id: e.requested_swipe_id,
-		provider_id: S.parse(e.provider_id),
+		provider_id: x.parse(e.provider_id),
 		arguments: n,
 		automatic: e.automatic
 	};
 }
-function Yt(e) {
-	let i = `${e.generation_anchor}${Et(e.arguments)}`;
+function Qt(e) {
+	let i = `${e.generation_anchor}${kt(e.arguments)}`;
 	return t(r(n(i)));
 }
-function Xt(e) {
+function $t(e) {
 	return {
 		...e,
 		arguments: { ...e.arguments },
@@ -420,18 +421,18 @@ function Xt(e) {
 		image_ids: [...e.image_ids]
 	};
 }
-var Zt = /* @__PURE__ */ new Set([
+var en = /* @__PURE__ */ new Set([
 	"completed",
 	"failed",
 	"cancelled"
 ]);
-function Qt(e) {
-	return e instanceof R ? { ...e.provider_error } : {
+function tn(e) {
+	return e instanceof L ? { ...e.provider_error } : {
 		code: "provider_unavailable",
 		retryable: !1
 	};
 }
-var $t = class {
+var nn = class {
 	#e;
 	#t;
 	#n;
@@ -446,21 +447,21 @@ var $t = class {
 	#d = /* @__PURE__ */ new Map();
 	#f = /* @__PURE__ */ new Map();
 	#p = /* @__PURE__ */ new Set();
-	#m = S.options;
+	#m = x.options;
 	#h = 0;
 	#g = 0;
 	#_ = !1;
 	#v = null;
 	#y = 0;
 	constructor(e) {
-		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Ut(), this.#i = qt(e.global_concurrency ?? 4, "Global job concurrency");
+		this.#e = e.executor, this.#t = e.persistence, this.#n = e.job_id_source, this.#r = e.time_source ?? new Kt(), this.#i = Xt(e.global_concurrency ?? 4, "Global job concurrency");
 		for (let t of this.#m) {
-			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : qt(n, `Concurrency for ${t}`);
+			let n = e.provider_concurrency?.[t], r = n === void 0 ? this.#i : Xt(n, `Concurrency for ${t}`);
 			this.#a.set(t, r), this.#o.set(t, e.provider_start_interval_ms?.[t] ?? 0), this.#c.set(t, []), this.#l.set(t, 0);
 		}
 	}
 	enqueue(e) {
-		let t = Jt(e), n = Yt(t);
+		let t = Zt(e), n = Qt(t);
 		if (t.automatic) {
 			let e = this.#d.get(n);
 			if (e !== void 0) {
@@ -480,7 +481,7 @@ var $t = class {
 	}
 	get(e) {
 		let t = this.#u.get(e);
-		return t === void 0 ? null : L(t.job);
+		return t === void 0 ? null : I(t.job);
 	}
 	subscribe(e) {
 		this.#p.add(e);
@@ -492,9 +493,9 @@ var $t = class {
 	async cancel(e) {
 		let t = this.#u.get(e);
 		if (t === void 0) throw Error(`Generation job ${e} does not exist`);
-		if (t.job.state === "cancelled") return L(t.job);
+		if (t.job.state === "cancelled") return I(t.job);
 		t.cancel_requested = !0, t.controller.abort(), t.queued && this.#A(t);
-		let n = await this.#k(t, async () => (t.job.state !== "cancelled" && await this.#D(t, "cancelled"), L(t.job)));
+		let n = await this.#k(t, async () => (t.job.state !== "cancelled" && await this.#D(t, "cancelled"), I(t.job)));
 		return this.#S(), n;
 	}
 	mark_attached(e) {
@@ -505,7 +506,7 @@ var $t = class {
 	}
 	#b(e, t) {
 		let n = this.#u.get(e);
-		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#k(n, async () => (n.job.state !== t && await this.#D(n, t), L(n.job)));
+		return n === void 0 ? Promise.reject(/* @__PURE__ */ Error(`Generation job ${e} does not exist`)) : this.#k(n, async () => (n.job.state !== t && await this.#D(n, t), I(n.job)));
 	}
 	async #x(e, t) {
 		let n = this.#r.now().toISOString(), r = {
@@ -523,7 +524,7 @@ var $t = class {
 			updated_at: n,
 			error: null,
 			image_ids: []
-		}, i = L(r);
+		}, i = I(r);
 		await this.#t.save(i);
 		let a = {
 			job: r,
@@ -591,42 +592,42 @@ var $t = class {
 			}
 		};
 		try {
-			let n = (await this.#e.execute(L(e.job), t)).image_ids.map((e) => p.parse(e));
-			if (n.length === 0) throw new R({
+			let n = (await this.#e.execute(I(e.job), t)).image_ids.map((e) => p.parse(e));
+			if (n.length === 0) throw new L({
 				code: "malformed_response",
 				retryable: !1
 			});
 			await this.#k(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
-				let t = Xt(e.job);
+				let t = $t(e.job);
 				t.image_ids = n, await this.#D(e, "completed", t);
 			});
 		} catch (t) {
 			await this.#k(e, async () => {
 				if (e.cancel_requested || e.job.state === "cancelled") return;
-				let n = Xt(e.job);
-				n.error = Qt(t), await this.#D(e, "failed", n);
+				let n = $t(e.job);
+				n.error = tn(t), await this.#D(e, "failed", n);
 			});
 		}
 	}
-	async #D(e, t, n = Xt(e.job)) {
-		Kt(n, t, this.#r.now().toISOString());
-		let r = L(n);
+	async #D(e, t, n = $t(e.job)) {
+		Yt(n, t, this.#r.now().toISOString());
+		let r = I(n);
 		try {
 			await this.#t.save(r);
 		} catch (e) {
-			if (!Zt.has(t)) throw e;
+			if (!en.has(t)) throw e;
 		}
 		return e.job = n, this.#j(r), r;
 	}
 	#O(e) {
-		if (Zt.has(e.job.state)) return;
-		let t = Xt(e.job);
+		if (en.has(e.job.state)) return;
+		let t = $t(e.job);
 		t.state = "failed", t.updated_at = this.#r.now().toISOString(), t.error = {
 			code: "storage_failed",
 			retryable: !1
 		}, e.job = t;
-		let n = L(t);
+		let n = I(t);
 		this.#j(n), this.#t.save(n).catch(() => void 0);
 	}
 	#k(e, t) {
@@ -642,54 +643,54 @@ var $t = class {
 	#j(e) {
 		for (let t of this.#p) t(e);
 	}
-}, en = "tavern_canvas", tn = "tavern_canvas_wardrobe";
-function nn(e) {
+}, rn = "tavern_canvas", an = "tavern_canvas_wardrobe";
+function on(e) {
 	return e.bind(globalThis);
 }
-function rn(e) {
+function sn(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function an(e) {
+function cn(e) {
 	if (typeof e != "object" || !e) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function z(e, t) {
+function R(e, t) {
 	try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function on(e, t) {
-	let n = z(e, t);
+function ln(e, t) {
+	let n = R(e, t);
 	if (typeof n == "function") try {
 		return Reflect.apply(n, e, []);
 	} catch {
 		return;
 	}
 }
-function sn(e, t) {
-	let n = z(e, "eventSource"), r = z(e, "eventTypes");
-	return !rn(n) || !rn(r) ? !1 : typeof z(n, "on") == "function" && typeof z(n, "removeListener") == "function" && t.every((e) => {
-		let t = z(r, e);
+function un(e, t) {
+	let n = R(e, "eventSource"), r = R(e, "eventTypes");
+	return !sn(n) || !sn(r) ? !1 : typeof R(n, "on") == "function" && typeof R(n, "removeListener") == "function" && t.every((e) => {
+		let t = R(r, e);
 		return typeof t == "string" && t.length > 0;
 	});
 }
-function cn(e) {
-	let t = rn(e) ? on(e, "getContext") : void 0;
-	if (!rn(t)) return {
+function dn(e) {
+	let t = sn(e) ? ln(e, "getContext") : void 0;
+	if (!sn(t)) return {
 		main_generation_events: !1,
 		message_swipe_metadata: !1
 	};
-	let n = on(t, "getCurrentLocale");
+	let n = ln(t, "getCurrentLocale");
 	return {
-		main_generation_events: typeof n == "string" && n.trim().length > 0 && sn(t, [
+		main_generation_events: typeof n == "string" && n.trim().length > 0 && un(t, [
 			"GENERATION_STARTED",
 			"GENERATION_STOPPED",
 			"GENERATION_ENDED"
 		]),
-		message_swipe_metadata: typeof z(t, "getCurrentChatId") == "function" && Array.isArray(z(t, "chat")) && typeof z(t, "saveChat") == "function" && sn(t, [
+		message_swipe_metadata: typeof R(t, "getCurrentChatId") == "function" && Array.isArray(R(t, "chat")) && typeof R(t, "saveChat") == "function" && un(t, [
 			"CHAT_CHANGED",
 			"MESSAGE_SWIPED",
 			"MESSAGE_UPDATED",
@@ -699,25 +700,25 @@ function cn(e) {
 		])
 	};
 }
-function ln(e, t) {
+function fn(e, t) {
 	if (typeof e != "string" || e.trim().length === 0) throw Error(t);
 	return e;
 }
-function un(e) {
-	if (!an(e) || !Object.values(e).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
+function pn(e) {
+	if (!cn(e) || !Object.values(e).every((e) => typeof e == "string")) throw Error("SillyTavern returned invalid request headers");
 	return { ...e };
 }
-function dn(e) {
+function mn(e) {
 	return typeof e == "number" && Number.isInteger(e) && e >= 0 ? e : null;
 }
-var fn = class {
+var hn = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t.bind(globalThis);
 	}
 	get_locale() {
-		return ln(this.#e().getCurrentLocale(), "SillyTavern returned an invalid locale");
+		return fn(this.#e().getCurrentLocale(), "SillyTavern returned an invalid locale");
 	}
 	get_active_chat_id() {
 		let e = this.#e().getCurrentChatId();
@@ -747,7 +748,7 @@ var fn = class {
 				e({ phase: "stopped" });
 			}],
 			["GENERATION_ENDED", (t) => {
-				let n = dn(t);
+				let n = mn(t);
 				n !== null && n > 0 && e({
 					phase: "ended",
 					message_id: n - 1
@@ -762,7 +763,7 @@ var fn = class {
 	}
 	subscribe_message_rendered(e) {
 		let t = (t) => {
-			let n = dn(t);
+			let n = mn(t);
 			n !== null && e(n);
 		};
 		return this.#n([
@@ -788,10 +789,10 @@ var fn = class {
 		return i == null ? null : (i.extra === void 0 && t && (i.extra = {}), i.extra ?? null);
 	}
 	read_swipe_record(e) {
-		return this.#i(e, en);
+		return this.#i(e, rn);
 	}
 	read_swipe_wardrobe(e) {
-		return this.#i(e, tn);
+		return this.#i(e, an);
 	}
 	#i(e, t) {
 		let n = this.#r(e, !1)?.[t];
@@ -800,7 +801,7 @@ var fn = class {
 	async translate_deepl(e, t, n) {
 		let r = await this.#t("/api/translate/deepl", {
 			method: "POST",
-			headers: un(this.#e().getRequestHeaders()),
+			headers: pn(this.#e().getRequestHeaders()),
 			body: JSON.stringify({
 				text: e,
 				lang: t,
@@ -812,17 +813,17 @@ var fn = class {
 		return r.text();
 	}
 	write_swipe_record(e, t) {
-		return this.#a(e, en, t);
+		return this.#a(e, rn, t);
 	}
 	write_swipe_wardrobe(e, t) {
-		return this.#a(e, tn, t);
+		return this.#a(e, an, t);
 	}
 	async #a(e, t, n) {
 		let r = this.#r(e, !0);
 		if (r === null) throw Error(`Chat ${e.chat_id} message ${String(e.message_id)} swipe ${String(e.swipe_id)} is not available`);
 		r[t] = structuredClone(n), await this.#e().saveChat();
 	}
-}, pn = {
+}, gn = {
 	message_swipe_metadata: ["getChatMessages", "setChatMessages"],
 	preset_generation: [
 		"generate",
@@ -836,25 +837,25 @@ var fn = class {
 		"retrieveDisplayedMessage"
 	]
 };
-function mn(e) {
+function _n(e) {
 	return typeof e == "object" && !!e || typeof e == "function";
 }
-function B(e) {
+function z(e) {
 	if (typeof e != "object" || !e) return !1;
 	let t = Object.getPrototypeOf(e);
 	return t === Object.prototype || t === null;
 }
-function hn(e, t) {
+function vn(e, t) {
 	try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function gn(e, t) {
-	return t.every((t) => typeof hn(e, t) == "function");
+function yn(e, t) {
+	return t.every((t) => typeof vn(e, t) == "function");
 }
-function _n(e) {
+function bn(e) {
 	let t;
 	try {
 		t = Reflect.get(e, "getTavernHelperVersion");
@@ -873,13 +874,13 @@ function _n(e) {
 		value: n
 	} : { state: "invalid" };
 }
-function vn(e) {
-	return mn(e) ? {
+function xn(e) {
+	return _n(e) ? {
 		detected: !0,
-		version: _n(e),
-		message_swipe_metadata: gn(e, pn.message_swipe_metadata),
-		preset_generation: gn(e, pn.preset_generation),
-		tavern_regex: gn(e, pn.tavern_regex)
+		version: bn(e),
+		message_swipe_metadata: yn(e, gn.message_swipe_metadata),
+		preset_generation: yn(e, gn.preset_generation),
+		tavern_regex: yn(e, gn.tavern_regex)
 	} : {
 		detected: e !== void 0,
 		version: e === void 0 ? { state: "missing" } : { state: "invalid" },
@@ -888,13 +889,13 @@ function vn(e) {
 		tavern_regex: !1
 	};
 }
-function yn(e) {
+function Sn(e) {
 	return e === "system" || e === "assistant" || e === "user";
 }
-function bn(e) {
-	if (!B(e)) throw Error("TavernHelper returned an invalid chat message");
+function Cn(e) {
+	if (!z(e)) throw Error("TavernHelper returned an invalid chat message");
 	let { message_id: t, name: n, role: r, is_hidden: i, swipe_id: a, swipes: o } = e;
-	if (typeof t != "number" || !Number.isInteger(t) || t < 0 || typeof n != "string" || !yn(r) || i !== void 0 && typeof i != "boolean" || typeof a != "number" || !Number.isInteger(a) || !Array.isArray(o) || !o.every((e) => typeof e == "string") || a < 0 || a >= o.length) throw Error(`TavernHelper returned an invalid chat message ${String(t)}`);
+	if (typeof t != "number" || !Number.isInteger(t) || t < 0 || typeof n != "string" || !Sn(r) || i !== void 0 && typeof i != "boolean" || typeof a != "number" || !Number.isInteger(a) || !Array.isArray(o) || !o.every((e) => typeof e == "string") || a < 0 || a >= o.length) throw Error(`TavernHelper returned an invalid chat message ${String(t)}`);
 	return {
 		message_id: t,
 		name: n,
@@ -904,7 +905,7 @@ function bn(e) {
 		swipes: o
 	};
 }
-function xn(e) {
+function wn(e) {
 	return {
 		message_id: e.message_id,
 		name: e.name,
@@ -917,28 +918,28 @@ function xn(e) {
 		}))
 	};
 }
-function Sn(e) {
+function Tn(e) {
 	if (typeof e == "string") return {
 		content: e,
 		reasoning: null
 	};
-	if (B(e) && typeof e.content == "string") return {
+	if (z(e) && typeof e.content == "string") return {
 		content: e.content,
 		reasoning: typeof e.reasoning == "string" && e.reasoning.length > 0 ? e.reasoning : null
 	};
 	throw Error("TavernHelper.generate returned neither text nor a detailed result");
 }
-var Cn = /* @__PURE__ */ new Set([
+var En = /* @__PURE__ */ new Set([
 	"and_any",
 	"and_all",
 	"not_all",
 	"not_any"
-]), wn = /* @__PURE__ */ new Set([
+]), Dn = /* @__PURE__ */ new Set([
 	"constant",
 	"selective",
 	"vectorized"
 ]);
-function Tn(e) {
+function On(e) {
 	if (!Array.isArray(e)) throw Error("TavernHelper returned invalid world info keys");
 	return e.map((e) => {
 		if (typeof e == "string") return e;
@@ -949,21 +950,21 @@ function Tn(e) {
 		throw Error("TavernHelper returned an invalid world info key");
 	});
 }
-function En(e) {
-	if (!B(e) || !B(e.strategy) || !B(e.position)) throw Error("TavernHelper returned an invalid world info entry");
-	let { enabled: t, content: n, strategy: r, position: i } = e, a = r.keys_secondary, o = B(a) ? a.logic ?? "and_any" : void 0;
-	if (typeof t != "boolean" || typeof n != "string" || typeof r.type != "string" || !wn.has(r.type) || !B(a) || typeof o != "string" || !Cn.has(o) || typeof i.order != "number") throw Error("TavernHelper returned an invalid world info entry");
+function kn(e) {
+	if (!z(e) || !z(e.strategy) || !z(e.position)) throw Error("TavernHelper returned an invalid world info entry");
+	let { enabled: t, content: n, strategy: r, position: i } = e, a = r.keys_secondary, o = z(a) ? a.logic ?? "and_any" : void 0;
+	if (typeof t != "boolean" || typeof n != "string" || typeof r.type != "string" || !Dn.has(r.type) || !z(a) || typeof o != "string" || !En.has(o) || typeof i.order != "number") throw Error("TavernHelper returned an invalid world info entry");
 	return {
 		enabled: t,
 		strategy: r.type,
-		keys: Tn(r.keys),
+		keys: On(r.keys),
 		secondary_logic: o,
-		secondary_keys: Tn(a.keys),
+		secondary_keys: On(a.keys),
 		order: i.order,
 		content: n
 	};
 }
-function Dn(e) {
+function An(e) {
 	switch (e.kind) {
 		case "current": return;
 		case "proxy_preset": return e.model === null ? { proxy_preset: e.proxy_preset } : {
@@ -978,7 +979,7 @@ function Dn(e) {
 		};
 	}
 }
-function On(e) {
+function jn(e) {
 	return {
 		id: e.id,
 		script_name: e.script_name,
@@ -1002,10 +1003,10 @@ function On(e) {
 		max_depth: null
 	};
 }
-function kn(e, t) {
+function Mn(e, t) {
 	return e.script_name === t.script_name && e.find_regex === t.find_regex && e.replace_string === t.replace_string && e.source.ai_output === t.source.ai_output && e.source.user_input === t.source.user_input && e.destination.display === t.destination.display && e.destination.prompt === t.destination.prompt && e.run_on_edit === t.run_on_edit;
 }
-var An = class {
+var Nn = class {
 	#e;
 	#t;
 	constructor(e, t) {
@@ -1014,7 +1015,7 @@ var An = class {
 	#n(e) {
 		let t = this.#e.getChatMessages(e, { include_swipes: !0 });
 		if (!Array.isArray(t)) throw Error("TavernHelper returned invalid chat messages");
-		return t.map(bn);
+		return t.map(Cn);
 	}
 	get_active_swipe_id(e) {
 		return this.#n(e)[0]?.swipe_id ?? null;
@@ -1023,7 +1024,7 @@ var An = class {
 		let e = this.#n("0-{{lastMessageId}}");
 		return Promise.resolve({
 			chat_id: this.#t(),
-			messages: e.map(xn)
+			messages: e.map(wn)
 		});
 	}
 	async replace_message_text(e, t, n) {
@@ -1034,8 +1035,8 @@ var An = class {
 		}], { refresh: "affected" }), !0);
 	}
 	async generate_with_preset(e) {
-		let t = Dn(e.connection);
-		return Sn(await this.#e.generate({
+		let t = An(e.connection);
+		return Tn(await this.#e.generate({
 			generation_id: e.generation_id,
 			preset_name: e.preset_name,
 			user_input: e.user_input,
@@ -1064,15 +1065,15 @@ var An = class {
 	async read_worldbook(e) {
 		let t = await this.#e.getWorldbook(e);
 		if (!Array.isArray(t)) throw Error(`TavernHelper returned invalid entries for world info book ${e}`);
-		return t.map(En);
+		return t.map(kn);
 	}
 	stop_generation(e) {
 		this.#e.stopGenerationById(e);
 	}
 	async sync_regex_scripts(e) {
-		let t = { type: "global" }, n = this.#e.getTavernRegexes(t), r = e.map(On).filter((e) => {
+		let t = { type: "global" }, n = this.#e.getTavernRegexes(t), r = e.map(jn).filter((e) => {
 			let t = n.find((t) => t.id === e.id);
-			return t === void 0 || !kn(t, e);
+			return t === void 0 || !Mn(t, e);
 		});
 		if (r.length === 0) return !1;
 		let i = n.filter((e) => !r.some((t) => t.id === e.id));
@@ -1081,9 +1082,9 @@ var An = class {
 	find_message_element(e) {
 		return this.#e.retrieveDisplayedMessage(e).get(0) ?? null;
 	}
-}, jn = "4.11.1", Mn = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
-function Nn(e) {
-	let t = Mn.exec(e.trim());
+}, Pn = "4.11.1", Fn = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$/u;
+function In(e) {
+	let t = Fn.exec(e.trim());
 	if (t === null) return null;
 	let [, n, r, i, a] = t;
 	return {
@@ -1093,68 +1094,68 @@ function Nn(e) {
 		prerelease: a ?? null
 	};
 }
-function Pn(e, t) {
+function Ln(e, t) {
 	let n = e.major - t.major || e.minor - t.minor || e.patch - t.patch;
 	return n === 0 ? e.prerelease === null : n > 0;
 }
-function Fn(e) {
-	let t = Nn(e), n = Nn(jn);
-	return t === null || n === null ? "invalid" : Pn(t, n) ? "supported" : "unsupported";
+function Rn(e) {
+	let t = In(e), n = In(Pn);
+	return t === null || n === null ? "invalid" : Ln(t, n) ? "supported" : "unsupported";
 }
-var In = [
+var zn = [
 	"main_generation_events",
 	"preset_generation",
 	"message_swipe_metadata",
 	"tavern_regex",
 	"tavern_helper"
 ];
-function Ln(e) {
+function Bn(e) {
 	return {
 		available: !1,
 		reason: e
 	};
 }
-function Rn(e, t) {
-	return e ? { available: !0 } : Ln(t);
+function Vn(e, t) {
+	return e ? { available: !0 } : Bn(t);
 }
-function zn(e, t) {
+function Hn(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Bn(e, t) {
+function Un(e, t) {
 	return {
-		main_generation_events: Rn(t.main_generation_events, "SillyTavern generation event API is unavailable"),
-		preset_generation: Rn(e.preset_generation, "TavernHelper.generate, stopGenerationById or the world info functions are unavailable"),
-		message_swipe_metadata: Rn(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper or SillyTavern chat message API is unavailable"),
-		tavern_regex: Rn(e.tavern_regex, "TavernHelper regex or displayed message API is unavailable"),
-		tavern_helper: Rn(e.version.state === "available", "TavernHelper version API is unavailable")
+		main_generation_events: Vn(t.main_generation_events, "SillyTavern generation event API is unavailable"),
+		preset_generation: Vn(e.preset_generation, "TavernHelper.generate, stopGenerationById or the world info functions are unavailable"),
+		message_swipe_metadata: Vn(e.message_swipe_metadata && t.message_swipe_metadata, "TavernHelper or SillyTavern chat message API is unavailable"),
+		tavern_regex: Vn(e.tavern_regex, "TavernHelper regex or displayed message API is unavailable"),
+		tavern_helper: Vn(e.version.state === "available", "TavernHelper version API is unavailable")
 	};
 }
-function Vn(e) {
-	return In.filter((t) => e[t]?.available !== !0);
+function Wn(e) {
+	return zn.filter((t) => e[t]?.available !== !0);
 }
-function Hn(e) {
-	let t = vn(zn(e, "TavernHelper")), n = Bn(t, cn(zn(e, "SillyTavern")));
+function Gn(e) {
+	let t = xn(Hn(e, "TavernHelper")), n = Un(t, dn(Hn(e, "SillyTavern")));
 	if (!t.detected) return {
 		ready: !1,
 		error_code: "tavern_helper_missing",
-		missing_capabilities: Vn(n)
+		missing_capabilities: Wn(n)
 	};
 	let r = t.version;
 	if (r.state === "missing" || r.state === "threw") return {
 		ready: !1,
 		error_code: "helper_api_incomplete",
-		missing_capabilities: Vn(n)
+		missing_capabilities: Wn(n)
 	};
 	if (r.state === "invalid") return {
 		ready: !1,
 		error_code: "helper_version_invalid",
 		missing_capabilities: ["tavern_helper"]
 	};
-	let i = r.value, a = Fn(i);
+	let i = r.value, a = Rn(i);
 	if (a === "invalid") return {
 		ready: !1,
 		error_code: "helper_version_invalid",
@@ -1166,7 +1167,7 @@ function Hn(e) {
 		missing_capabilities: ["tavern_helper"],
 		current_version: i
 	};
-	let o = Vn(n);
+	let o = Wn(n);
 	return o.length > 0 ? {
 		ready: !1,
 		error_code: "helper_api_incomplete",
@@ -1179,27 +1180,28 @@ function Hn(e) {
 }
 //#endregion
 //#region src/ui/controllers/unavailable_capabilities.ts
-var Un = "capability_not_implemented";
-function V() {
+var Kn = "capability_not_implemented";
+function B() {
 	let e = /* @__PURE__ */ Error("This capability is not available in the current host");
-	return Object.defineProperty(e, "code", { value: Un }), Promise.reject(e);
+	return Object.defineProperty(e, "code", { value: Kn }), Promise.reject(e);
 }
-function H() {
+function V() {
 	return () => {};
 }
-var Wn = {
+var qn = {
 	character: [],
 	outfit: [],
 	lora: [],
 	vibe: [],
 	workflow: [],
-	prompt_tag: []
-}, Gn = {
+	prompt_tag: [],
+	creation: []
+}, Jn = {
 	capability_matrix: {},
 	helper_version: null,
 	storage_usage_bytes: null,
 	storage_quota_bytes: null
-}, Kn = {
+}, Yn = {
 	schema_version: 1,
 	active_namespace: "default",
 	locale: "auto",
@@ -1217,7 +1219,8 @@ var Wn = {
 		world_info: { mode: "chat" },
 		wardrobe_model: null,
 		analysis_guidance: "",
-		wardrobe_guidance: ""
+		wardrobe_guidance: "",
+		strip: ie
 	},
 	translation: {
 		deepl_endpoint: "free",
@@ -1230,146 +1233,146 @@ var Wn = {
 		optional_entry_enabled: !1
 	}
 };
-function qn() {
+function Xn() {
 	return {
 		generation: {
 			load: () => Promise.resolve([]),
-			subscribe: H,
-			submit: V,
-			cancel: V,
-			retry: V,
-			dismiss: V
+			subscribe: V,
+			submit: B,
+			cancel: B,
+			retry: B,
+			dismiss: B
 		},
 		profiles: {
 			load: () => Promise.resolve([]),
-			subscribe: H,
-			save: V,
-			remove: V,
-			test_connection: V,
-			set_credential: V,
-			clear_credential: V,
-			save_novelai_defaults: V,
-			save_prompt_tags: V
+			subscribe: V,
+			save: B,
+			remove: B,
+			test_connection: B,
+			set_credential: B,
+			clear_credential: B,
+			save_novelai_defaults: B,
+			save_prompt_tags: B
 		},
 		novelai: {
-			get_account: V,
+			get_account: B,
 			load: () => Promise.resolve([]),
-			refresh_models: V,
-			estimate_cost: V
+			refresh_models: B,
+			estimate_cost: B
 		},
 		prompt_presets: {
 			load: () => Promise.resolve([]),
-			subscribe: H,
-			load_draft: V,
-			save_draft: V,
-			remove: V,
-			bulk_remove: V,
-			test_regex: V
+			subscribe: V,
+			load_draft: B,
+			save_draft: B,
+			remove: B,
+			bulk_remove: B,
+			test_regex: B
 		},
 		assets: {
-			load: () => Promise.resolve(Wn),
-			subscribe: H,
-			save: V,
-			remove: V,
-			reorder: V
+			load: () => Promise.resolve(qn),
+			subscribe: V,
+			save: B,
+			remove: B,
+			reorder: B
 		},
 		gallery: {
 			load: () => Promise.resolve([]),
-			subscribe: H,
-			read_bytes: V,
-			read_thumbnail: V,
-			pin: V,
-			detach_from_message: V,
-			delete_record: V,
-			reveal_source: V,
-			bulk_delete: V
+			subscribe: V,
+			read_bytes: B,
+			read_thumbnail: B,
+			pin: B,
+			detach_from_message: B,
+			delete_record: B,
+			reveal_source: B,
+			bulk_delete: B
 		},
 		vocabulary: {
 			load: () => Promise.resolve([]),
-			installed: V,
-			search: V,
+			installed: B,
+			search: B,
 			lookup: () => Promise.resolve(null),
-			prepare: V,
-			next_page: V,
-			install: V,
+			prepare: B,
+			next_page: B,
+			install: B,
 			cancel_install: () => {}
 		},
 		diagnostics: {
-			load: () => Promise.resolve(Gn),
-			subscribe: H,
+			load: () => Promise.resolve(Jn),
+			subscribe: V,
 			load_timeline: () => Promise.resolve([]),
-			export_support_bundle: V
+			export_support_bundle: B
 		},
 		settings: {
 			load: () => Promise.resolve({
-				settings: Kn,
+				settings: Yn,
 				vocabulary_update_channel: "bundled",
 				browser_secret_vault: {
 					state: "unavailable",
 					secret_count: 0
 				}
 			}),
-			subscribe: H,
-			update: V,
-			set_analysis_key: V,
-			list_worldbooks: V,
-			clear_analysis_key: V,
-			set_deepl_key: V,
-			clear_deepl_key: V,
-			initialize_browser_secret_vault: V,
-			unlock_browser_secret_vault: V,
-			lock_browser_secret_vault: V,
-			reset_browser_secret_vault: V,
-			set_vocabulary_update_channel: V,
-			import_vocabulary_package: V,
+			subscribe: V,
+			update: B,
+			set_analysis_key: B,
+			list_worldbooks: B,
+			clear_analysis_key: B,
+			set_deepl_key: B,
+			clear_deepl_key: B,
+			initialize_browser_secret_vault: B,
+			unlock_browser_secret_vault: B,
+			lock_browser_secret_vault: B,
+			reset_browser_secret_vault: B,
+			set_vocabulary_update_channel: B,
+			import_vocabulary_package: B,
 			cancel_vocabulary_import: () => {},
-			export_archive: V,
-			import_archive: V
+			export_archive: B,
+			import_archive: B
 		}
 	};
 }
 //#endregion
 //#region src/ui/contracts/view_models.ts
-var Jn = { status: "idle" }, Yn = "capability_load_failed", Xn = "command_failed", Zn = /^[a-z][a-z0-9_]*$/u;
-function Qn(e, t) {
+var Zn = { status: "idle" }, Qn = "capability_load_failed", $n = "command_failed", er = /^[a-z][a-z0-9_]*$/u;
+function tr(e, t) {
 	if (e instanceof Error) {
 		let t = e.code;
-		if (typeof t == "string" && Zn.test(t)) return { code: t };
+		if (typeof t == "string" && er.test(t)) return { code: t };
 	}
 	return { code: t };
 }
-function U(e, t, n) {
+function H(e, t, n) {
 	let r = n(t), i = e.findIndex((e) => n(e) === r);
 	if (i === -1) return [...e, t];
 	let a = [...e];
 	return a[i] = t, a;
 }
-var $n = /* @__PURE__ */ new Set([
+var nr = /* @__PURE__ */ new Set([
 	"queued",
 	"preparing",
 	"submitting",
 	"running",
 	"failed"
 ]);
-function er(e) {
+function rr(e) {
 	return e === "failed" ? "error" : "pending";
 }
-function tr(e) {
+function ir(e) {
 	return e === "running" ? "status.running" : e === "failed" ? "status.failed" : "status.pending";
 }
-function nr(e) {
+function ar(e) {
 	return {
 		id: e.job_id,
-		label_code: tr(e.state),
-		status: er(e.state),
+		label_code: ir(e.state),
+		status: rr(e.state),
 		progress: e.state !== "failed" && e.image_count > 0 ? e.completed_image_ids.length / e.image_count : null,
 		error: e.state === "failed" ? e.error?.code ?? null : null
 	};
 }
-function rr(e) {
-	return e.filter((e) => $n.has(e.state)).map(nr);
+function or(e) {
+	return e.filter((e) => nr.has(e.state)).map(ar);
 }
-function ir(e, t, n) {
+function sr(e, t, n) {
 	return e().status === "pending" ? Promise.resolve() : (t({ status: "pending" }), n().then((e) => {
 		t({
 			status: "success",
@@ -1378,11 +1381,11 @@ function ir(e, t, n) {
 	}, (e) => {
 		t({
 			status: "error",
-			failure: Qn(e, Xn)
+			failure: tr(e, $n)
 		});
 	}));
 }
-function ar(e, t, n) {
+function cr(e, t, n) {
 	return {
 		route: e,
 		settings_section: "illustration",
@@ -1398,7 +1401,7 @@ function ar(e, t, n) {
 			presets: [],
 			selected_preset_id: null,
 			draft: null,
-			save_command: Jn
+			save_command: Zn
 		},
 		assets: {
 			active_category: "character",
@@ -1408,20 +1411,21 @@ function ar(e, t, n) {
 				lora: [],
 				vibe: [],
 				workflow: [],
-				prompt_tag: []
+				prompt_tag: [],
+				creation: []
 			},
 			vocabulary_catalog: [],
-			vocabulary_install_command: Jn
+			vocabulary_install_command: Zn
 		},
 		gallery: {
 			records: [],
 			selected_record_id: null,
-			bulk_delete_command: Jn
+			bulk_delete_command: Zn
 		},
 		diagnostics: {
 			snapshot: null,
 			timeline: [],
-			support_bundle_command: Jn
+			support_bundle_command: Zn
 		},
 		settings: {
 			settings: null,
@@ -1430,7 +1434,7 @@ function ar(e, t, n) {
 				state: "unavailable",
 				secret_count: 0
 			},
-			update_command: Jn
+			update_command: Zn
 		},
 		inspector: {
 			collapsed: !1,
@@ -1440,34 +1444,34 @@ function ar(e, t, n) {
 		tasks: []
 	};
 }
-function or(e, t) {
-	let n = t.type === "job_updated" ? U(e.generation.jobs, t.job, (e) => e.job_id) : e.generation.jobs.filter((e) => e.job_id !== t.job_id);
+function lr(e, t) {
+	let n = t.type === "job_updated" ? H(e.generation.jobs, t.job, (e) => e.job_id) : e.generation.jobs.filter((e) => e.job_id !== t.job_id);
 	return {
 		generation: {
 			...e.generation,
 			jobs: n
 		},
-		tasks: rr(n)
+		tasks: or(n)
 	};
 }
-function sr(e, t) {
-	let n = t.type === "profile_upserted" ? U(e.generation.profiles, t.profile, (e) => e.id) : e.generation.profiles.filter((e) => e.id !== t.profile_id);
+function ur(e, t) {
+	let n = t.type === "profile_upserted" ? H(e.generation.profiles, t.profile, (e) => e.id) : e.generation.profiles.filter((e) => e.id !== t.profile_id);
 	return { generation: {
 		...e.generation,
 		profiles: n
 	} };
 }
-function cr(e, t) {
-	let n = t.type === "preset_upserted" ? U(e.prompt.presets, t.preset, (e) => e.id) : e.prompt.presets.filter((e) => e.id !== t.preset_id);
+function dr(e, t) {
+	let n = t.type === "preset_upserted" ? H(e.prompt.presets, t.preset, (e) => e.id) : e.prompt.presets.filter((e) => e.id !== t.preset_id);
 	return { prompt: {
 		...e.prompt,
 		presets: n
 	} };
 }
-function lr(e, t) {
+function fr(e, t) {
 	let n = t.type === "asset_upserted" ? {
 		...e.assets.records,
-		[t.asset.category]: U(e.assets.records[t.asset.category], t.asset, (e) => e.id)
+		[t.asset.category]: H(e.assets.records[t.asset.category], t.asset, (e) => e.id)
 	} : {
 		...e.assets.records,
 		[t.category]: e.assets.records[t.category].filter((e) => e.id !== t.asset_id)
@@ -1477,20 +1481,20 @@ function lr(e, t) {
 		records: n
 	} };
 }
-function ur(e, t) {
-	let n = t.type === "record_upserted" ? U(e.gallery.records, t.record, (e) => e.id) : e.gallery.records.filter((e) => e.id !== t.record_id);
+function pr(e, t) {
+	let n = t.type === "record_upserted" ? H(e.gallery.records, t.record, (e) => e.id) : e.gallery.records.filter((e) => e.id !== t.record_id);
 	return { gallery: {
 		...e.gallery,
 		records: n
 	} };
 }
-function dr(e, t) {
+function mr(e, t) {
 	return { diagnostics: {
 		...e.diagnostics,
 		timeline: [...e.diagnostics.timeline, t.entry]
 	} };
 }
-function fr(e, t) {
+function hr(e, t) {
 	return { settings: {
 		...e.settings,
 		settings: t.settings
@@ -1498,7 +1502,7 @@ function fr(e, t) {
 }
 //#endregion
 //#region src/ui/controllers/studio_controller.ts
-var pr = class {
+var gr = class {
 	#e;
 	#t;
 	#n = /* @__PURE__ */ new Set();
@@ -1506,7 +1510,7 @@ var pr = class {
 	#i = !1;
 	#a = Promise.resolve();
 	constructor(e) {
-		this.#e = e.capabilities, this.#t = ar(e.initial_route ?? "settings", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
+		this.#e = e.capabilities, this.#t = cr(e.initial_route ?? "settings", e.initial_color_mode ?? "light", e.initial_inspector_width ?? 320);
 	}
 	get state() {
 		return this.#t;
@@ -1537,7 +1541,7 @@ var pr = class {
 				...this.#t.generation,
 				jobs: e
 			},
-			tasks: rr(e)
+			tasks: or(e)
 		});
 	}
 	#u(e) {
@@ -1588,31 +1592,31 @@ var pr = class {
 		return this.#g(e, !0), t().then((t) => {
 			this.#i || (n(t), this.#_(e, null));
 		}).catch((t) => {
-			this.#i || this.#_(e, Qn(t, Yn));
+			this.#i || this.#_(e, tr(t, Qn));
 		}).finally(() => {
 			this.#g(e, !1);
 		});
 	}
 	#y(e) {
-		this.#i || this.#s(or(this.#t, e));
-	}
-	#b(e) {
-		this.#i || this.#s(sr(this.#t, e));
-	}
-	#x(e) {
-		this.#i || this.#s(cr(this.#t, e));
-	}
-	#S(e) {
 		this.#i || this.#s(lr(this.#t, e));
 	}
-	#C(e) {
+	#b(e) {
 		this.#i || this.#s(ur(this.#t, e));
 	}
-	#w(e) {
+	#x(e) {
 		this.#i || this.#s(dr(this.#t, e));
 	}
-	#T(e) {
+	#S(e) {
 		this.#i || this.#s(fr(this.#t, e));
+	}
+	#C(e) {
+		this.#i || this.#s(pr(this.#t, e));
+	}
+	#w(e) {
+		this.#i || this.#s(mr(this.#t, e));
+	}
+	#T(e) {
+		this.#i || this.#s(hr(this.#t, e));
 	}
 	load_vocabulary_catalog() {
 		return this.#v("vocabulary", () => this.#e.vocabulary.load(), (e) => {
@@ -1744,18 +1748,18 @@ var pr = class {
 		return this.#e.prompt_presets.test_regex(e, t);
 	}
 	save_prompt_preset(e) {
-		return ir(() => this.#t.prompt.save_command, (e) => {
+		return sr(() => this.#t.prompt.save_command, (e) => {
 			this.#u({ save_command: e });
 		}, async () => {
 			let t = await this.#e.prompt_presets.save_draft(e);
 			return this.#u({
-				presets: U(this.#t.prompt.presets, t, (e) => e.id),
+				presets: H(this.#t.prompt.presets, t, (e) => e.id),
 				draft: null
 			}), t;
 		});
 	}
 	install_vocabulary_package(e, t) {
-		return ir(() => this.#t.assets.vocabulary_install_command, (e) => {
+		return sr(() => this.#t.assets.vocabulary_install_command, (e) => {
 			this.#d({ vocabulary_install_command: e });
 		}, () => this.#e.vocabulary.install(e, t));
 	}
@@ -1774,7 +1778,7 @@ var pr = class {
 		} catch (e) {
 			this.#m({ update_command: {
 				status: "error",
-				failure: Qn(e, Xn)
+				failure: tr(e, $n)
 			} });
 		}
 	}
@@ -1789,7 +1793,7 @@ var pr = class {
 		}), this.#c({ profiles: r }), n.settings;
 	}
 	export_support_bundle() {
-		return ir(() => this.#t.diagnostics.support_bundle_command, (e) => {
+		return sr(() => this.#t.diagnostics.support_bundle_command, (e) => {
 			this.#p({ support_bundle_command: e });
 		}, () => this.#e.diagnostics.export_support_bundle());
 	}
@@ -1800,7 +1804,7 @@ var pr = class {
 	async save_provider_profile(e) {
 		let t = await this.#e.profiles.save(e), n = t.is_default || this.#t.generation.active_profile_id === null;
 		return n && await this.#e.settings.update({ active_provider_profile_id: t.id }), this.#i || this.#c({
-			profiles: U(this.#t.generation.profiles, t, (e) => e.id),
+			profiles: H(this.#t.generation.profiles, t, (e) => e.id),
 			...n ? { active_profile_id: t.id } : {}
 		}), t;
 	}
@@ -1812,19 +1816,19 @@ var pr = class {
 	}
 	async set_provider_profile_credential(e, t) {
 		let n = await this.#e.profiles.set_credential(e, t);
-		return this.#i || this.#c({ profiles: U(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#c({ profiles: H(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	async clear_provider_profile_credential(e) {
 		let t = await this.#e.profiles.clear_credential(e);
-		return this.#i || this.#c({ profiles: U(this.#t.generation.profiles, t, (e) => e.id) }), t;
+		return this.#i || this.#c({ profiles: H(this.#t.generation.profiles, t, (e) => e.id) }), t;
 	}
 	async save_novelai_defaults(e, t) {
 		let n = await this.#e.profiles.save_novelai_defaults(e, t);
-		return this.#i || this.#c({ profiles: U(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#c({ profiles: H(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	async save_prompt_tags(e, t) {
 		let n = await this.#e.profiles.save_prompt_tags(e, t);
-		return this.#i || this.#c({ profiles: U(this.#t.generation.profiles, n, (e) => e.id) }), n;
+		return this.#i || this.#c({ profiles: H(this.#t.generation.profiles, n, (e) => e.id) }), n;
 	}
 	load_novelai_account() {
 		return this.#e.novelai.get_account();
@@ -1885,7 +1889,7 @@ var pr = class {
 		let n = await this.#e.assets.save(e, t);
 		this.#i || this.#d({ records: {
 			...this.#t.assets.records,
-			[e]: U(this.#t.assets.records[e], n, (e) => e.id)
+			[e]: H(this.#t.assets.records[e], n, (e) => e.id)
 		} });
 	}
 	async remove_asset(e, t) {
@@ -1946,7 +1950,7 @@ var pr = class {
 		await this.#e.generation.dismiss(e.map((e) => e.job_id));
 	}
 	bulk_delete_gallery_records(e) {
-		return ir(() => this.#t.gallery.bulk_delete_command, (e) => {
+		return sr(() => this.#t.gallery.bulk_delete_command, (e) => {
 			this.#f({ bulk_delete_command: e });
 		}, async () => {
 			await this.#e.gallery.bulk_delete(e);
@@ -1958,16 +1962,16 @@ var pr = class {
 		});
 	}
 };
-function mr(e) {
-	return new pr(e);
+function _r(e) {
+	return new gr(e);
 }
 //#endregion
 //#region src/ui/controllers/use_studio_controller.ts
-function hr(e) {
-	let t = ge(mr(e)), n = De(t.state), r = t.on_change(() => {
+function vr(e) {
+	let t = _e(_r(e)), n = De(t.state), r = t.on_change(() => {
 		n.value = t.state;
 	});
-	return t.start(), ue(() => {
+	return t.start(), de(() => {
 		r(), t.stop();
 	}), {
 		controller: t,
@@ -1976,39 +1980,39 @@ function hr(e) {
 }
 //#endregion
 //#region src/modules/experience/media_state_player.ts
-var gr = ["image", "video"], _r = /^(?:blob:|data:image\/|data:video\/)/u, vr = s({
-	kind: u(gr),
-	url: o().min(1).refine((e) => _r.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
+var yr = ["image", "video"], br = /^(?:blob:|data:image\/|data:video\/)/u, xr = s({
+	kind: u(yr),
+	url: o().min(1).refine((e) => br.test(e), { message: "Media asset URL must be a local blob: or data: URI, not a remote address" })
 });
-function yr(e) {
-	let t = vr.safeParse(e);
+function Sr(e) {
+	let t = xr.safeParse(e);
 	return t.success ? t.data : null;
 }
-function br(e, t) {
+function Cr(e, t) {
 	let n = e[t];
 	return n === void 0 ? {
 		state: t,
 		asset: null
 	} : {
 		state: t,
-		asset: yr(n)
+		asset: Sr(n)
 	};
 }
-var xr = 8;
-function Sr(e, t) {
-	let n = Math.max(xr, t.width - 56 - xr), r = Math.max(xr, t.height - 56 - xr);
+var wr = 8;
+function Tr(e, t) {
+	let n = Math.max(wr, t.width - 56 - wr), r = Math.max(wr, t.height - 56 - wr);
 	return {
-		x: Math.min(Math.max(e.x, xr), n),
-		y: Math.min(Math.max(e.y, xr), r)
+		x: Math.min(Math.max(e.x, wr), n),
+		y: Math.min(Math.max(e.y, wr), r)
 	};
 }
-function Cr(e) {
-	return Sr({
+function Er(e) {
+	return Tr({
 		x: (e.width - 56) / 2,
 		y: (e.height - 56) / 2
 	}, e);
 }
-var wr = class {
+var Dr = class {
 	#e = /* @__PURE__ */ new Map();
 	get(e) {
 		return this.#e.get(e) ?? null;
@@ -2017,11 +2021,11 @@ var wr = class {
 		this.#e.set(e, t);
 	}
 };
-function Tr(e) {
-	let t = yr(e);
+function Or(e) {
+	let t = Sr(e);
 	return t !== null && t.kind === "image" ? t : null;
 }
-var Er = class {
+var kr = class {
 	#e;
 	#t;
 	#n = !1;
@@ -2039,7 +2043,7 @@ var Er = class {
 		this.#n = !0, this.#r = this.#t;
 	}
 	drag_to(e) {
-		this.#n && (this.#t = Sr(e, this.#e.get_viewport()));
+		this.#n && (this.#t = Tr(e, this.#e.get_viewport()));
 	}
 	end_drag() {
 		let e = this.#n, t = this.#r;
@@ -2048,24 +2052,24 @@ var Er = class {
 		return { moved: n > 4 || r > 4 };
 	}
 	reset_position() {
-		this.#t = Cr(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
+		this.#t = Er(this.#e.get_viewport()), this.#e.position_store.set(this.#e.get_viewport_bucket(), this.#t);
 	}
 	reflow() {
 		this.#t = this.#i();
 	}
 	#i() {
 		let e = this.#e.position_store.get(this.#e.get_viewport_bucket()), t = this.#e.get_viewport();
-		return e === null ? Cr(t) : Sr(e, t);
+		return e === null ? Er(t) : Tr(e, t);
 	}
-}, Dr = {
+}, Ar = {
 	floatingEntry: "_floatingEntry_1bpar_9",
 	floatingEntryDragging: "_floatingEntryDragging_1bpar_34",
 	floatingEntryMedia: "_floatingEntryMedia_1bpar_38"
-}, Or = [
+}, jr = [
 	"aria-label",
 	"data-dragging",
 	"data-media-state"
-], kr = ["src"], Ar = ["src"], jr = /* @__PURE__ */ ke({
+], Mr = ["src"], Nr = ["src"], Pr = /* @__PURE__ */ ke({
 	__name: "FloatingEntry",
 	props: {
 		enabled: { type: Boolean },
@@ -2087,15 +2091,15 @@ var Er = class {
 				height: window.innerHeight
 			};
 		}
-		let o = new Er({
-			position_store: Ce(n.positionStore) ?? ge(new wr()),
+		let o = new kr({
+			position_store: Ce(n.positionStore) ?? _e(new Dr()),
 			get_viewport: a,
 			get_viewport_bucket: () => i.value
-		}), s = N(o.position), c = N(o.dragging);
+		}), s = P(o.position), c = P(o.dragging);
 		function l() {
 			s.value = o.position, c.value = o.dragging;
 		}
-		pe(i, () => {
+		me(i, () => {
 			o.reflow(), l();
 		});
 		function u() {
@@ -2106,12 +2110,12 @@ var Er = class {
 		}), E(() => {
 			window.removeEventListener("resize", u);
 		});
-		let d = M(() => {
+		let d = N(() => {
 			let e = c.value ? "dragging" : n.mediaState;
 			return e === "idle" ? {
 				state: e,
-				asset: Tr(n.mediaAssets.idle)
-			} : br(n.mediaAssets, e);
+				asset: Or(n.mediaAssets.idle)
+			} : Cr(n.mediaAssets, e);
 		}), f = !1;
 		function p(e) {
 			let t = e.currentTarget;
@@ -2151,10 +2155,10 @@ var Er = class {
 		function h(e) {
 			(e.key === "Enter" || e.key === " ") && (e.preventDefault(), r("open"));
 		}
-		return (t, n) => e.enabled ? (D(), ve("button", {
+		return (t, n) => e.enabled ? (D(), O("button", {
 			key: 0,
 			type: "button",
-			class: O(["tc-interactive", [k(Dr).floatingEntry, c.value && k(Dr).floatingEntryDragging]]),
+			class: k(["tc-interactive", [A(Ar).floatingEntry, c.value && A(Ar).floatingEntryDragging]]),
 			style: Ee({
 				left: `${s.value.x}px`,
 				top: `${s.value.y}px`
@@ -2167,35 +2171,35 @@ var Er = class {
 			onPointerdown: p,
 			onClick: m,
 			onKeydown: h
-		}, [d.value.asset?.kind === "video" ? (D(), ve("video", {
+		}, [d.value.asset?.kind === "video" ? (D(), O("video", {
 			key: 0,
-			class: O(k(Dr).floatingEntryMedia),
+			class: k(A(Ar).floatingEntryMedia),
 			src: d.value.asset.url,
 			autoplay: "",
 			muted: "",
 			loop: "",
 			playsinline: ""
-		}, null, 10, kr)) : d.value.asset?.kind === "image" ? (D(), ve("img", {
+		}, null, 10, Mr)) : d.value.asset?.kind === "image" ? (D(), O("img", {
 			key: 1,
-			class: O(k(Dr).floatingEntryMedia),
+			class: k(A(Ar).floatingEntryMedia),
 			src: d.value.asset.url,
 			alt: ""
-		}, null, 10, Ar)) : (D(), xe(Ie, {
+		}, null, 10, Nr)) : (D(), xe(Ie, {
 			key: 2,
-			icon: k(se)
-		}, null, 8, ["icon"]))], 46, Or)) : be("", !0);
+			icon: A(ce)
+		}, null, 8, ["icon"]))], 46, jr)) : be("", !0);
 	}
-}), Mr = "data-tavern-canvas-menu-entry";
-function Nr(e, t) {
-	let n = N(!1), r = null;
+}), Fr = "data-tavern-canvas-menu-entry";
+function Ir(e, t) {
+	let n = P(!1), r = null;
 	return we(() => {
 		let i = document.getElementById("extensionsMenu");
 		if (i === null) return;
-		i.querySelector(`[${Mr}]`)?.remove(), r = document.createElement("div"), r.className = "list-group-item flex-container flexGap5 interactable", r.setAttribute(Mr, ""), r.setAttribute("role", "button"), r.tabIndex = 0;
+		i.querySelector(`[${Fr}]`)?.remove(), r = document.createElement("div"), r.className = "list-group-item flex-container flexGap5 interactable", r.setAttribute(Fr, ""), r.setAttribute("role", "button"), r.tabIndex = 0;
 		let a = document.createElement("div");
-		a.className = "extensionsMenuExtensionButton", a.append(qe(document));
+		a.className = "extensionsMenuExtensionButton", a.append(Re(document));
 		let o = document.createElement("span");
-		_e(() => {
+		ve(() => {
 			o.textContent = e();
 		}), r.append(a, o), r.addEventListener("click", t), i.append(r), n.value = !0;
 	}), E(() => {
@@ -2204,29 +2208,29 @@ function Nr(e, t) {
 }
 //#endregion
 //#region src/host/slash_command.ts
-var Pr = "inkwell", Fr = !1;
-function Ir(e, t) {
-	if (Fr) return;
+var Lr = "inkwell", Rr = !1;
+function zr(e, t) {
+	if (Rr) return;
 	let n = globalThis.SillyTavern?.getContext?.(), r = n?.SlashCommand?.fromProps?.({
-		name: Pr,
+		name: Lr,
 		helpString: e,
 		returns: "nothing",
 		callback: () => (t(), "")
 	});
-	r !== void 0 && n?.SlashCommandParser?.addCommandObject !== void 0 && (n.SlashCommandParser.addCommandObject(r), Fr = !0);
+	r !== void 0 && n?.SlashCommandParser?.addCommandObject !== void 0 && (n.SlashCommandParser.addCommandObject(r), Rr = !0);
 }
 //#endregion
 //#region src/ui/experience/use_host_entry_points.ts
-var Lr = "data-tavern-canvas-settings";
-function Rr(e, t) {
+var Br = "data-tavern-canvas-settings";
+function Vr(e, t) {
 	let n = null;
 	we(() => {
-		Ir(e.description(), t);
+		zr(e.description(), t);
 		let r = document.getElementById("extensions_settings2") ?? document.getElementById("extensions_settings");
 		if (r === null) return;
-		r.querySelector(`[${Lr}]`)?.remove(), n = document.createElement("div"), n.setAttribute(Lr, ""), n.className = "flex-container flexFlowColumn flexGap5";
+		r.querySelector(`[${Br}]`)?.remove(), n = document.createElement("div"), n.setAttribute(Br, ""), n.className = "flex-container flexFlowColumn flexGap5";
 		let i = document.createElement("b"), a = document.createElement("small"), o = document.createElement("div");
-		_e(() => {
+		ve(() => {
 			i.textContent = e.name(), a.textContent = e.description(), o.textContent = e.open();
 		}), o.className = "menu_button interactable", o.setAttribute("role", "button"), o.tabIndex = 0, o.addEventListener("click", t), o.addEventListener("keydown", (e) => {
 			(e.key === "Enter" || e.key === " ") && (e.preventDefault(), t());
@@ -2235,34 +2239,34 @@ function Rr(e, t) {
 		n?.remove();
 	});
 }
-function zr(e, t, n) {
+function Hr(e, t, n) {
 	let r = Math.max(20, t.width - n.width - 20), i = Math.max(20, t.height - n.height - 20);
 	return {
 		x: Math.min(Math.max(e.x, 20), r),
 		y: Math.min(Math.max(e.y, 20), i)
 	};
 }
-function Br(e, t) {
-	return zr({
+function Ur(e, t) {
+	return Hr({
 		x: e.width - t.width - 20,
 		y: 64
 	}, e, t);
 }
-var Vr = {
+var Wr = {
 	window: "_window_1jfap_1",
 	"floating-window-enter": "_floating-window-enter_1jfap_1"
-}, Hr = [
+}, Gr = [
 	"aria-label",
 	"data-positioned",
 	"data-dragging"
-], Ur = /* @__PURE__ */ ke({
+], Kr = /* @__PURE__ */ ke({
 	__name: "FloatingStudioWindow",
 	props: { label: {} },
 	setup(e) {
-		let t = e, n = N(null), r = N({
+		let t = e, n = P(null), r = P({
 			x: 0,
 			y: 0
-		}), i = N(!1), a = N(!1);
+		}), i = P(!1), a = P(!1);
 		function o() {
 			return {
 				width: window.innerWidth,
@@ -2280,7 +2284,7 @@ var Vr = {
 			let e = n.value;
 			if (e === null || window.innerWidth < 960) return;
 			let t = o(), a = s(e);
-			r.value = i.value ? zr(r.value, t, a) : Br(t, a), i.value = !0;
+			r.value = i.value ? Hr(r.value, t, a) : Ur(t, a), i.value = !0;
 		}
 		function l(e) {
 			let t = n.value, i = e.target;
@@ -2292,7 +2296,7 @@ var Vr = {
 				y: e.clientY
 			}, u = r.value;
 			function d(e) {
-				r.value = zr({
+				r.value = Hr({
 					x: u.x + e.clientX - l.x,
 					y: u.y + e.clientY - l.y
 				}, o(), s(c));
@@ -2312,13 +2316,13 @@ var Vr = {
 			c();
 		}
 		return we(() => {
-			window.addEventListener("resize", u), he(c);
+			window.addEventListener("resize", u), ge(c);
 		}), E(() => {
 			window.removeEventListener("resize", u);
-		}), (e, o) => (D(), ve("section", {
+		}), (e, o) => (D(), O("section", {
 			ref_key: "window_element",
 			ref: n,
-			class: O(k(Vr).window),
+			class: k(A(Wr).window),
 			style: Ee({
 				"--tc-floating-window-x": `${r.value.x}px`,
 				"--tc-floating-window-y": `${r.value.y}px`
@@ -2329,13 +2333,13 @@ var Vr = {
 			"data-window-role": "studio",
 			role: "dialog",
 			onPointerdown: l
-		}, [me(e.$slots, "default")], 46, Hr));
+		}, [he(e.$slots, "default")], 46, Gr));
 	}
-}), Wr = "[role=\"listbox\"], [role=\"dialog\"], [role=\"alertdialog\"], [role=\"menu\"]";
-function Gr(e) {
+}), qr = "[role=\"listbox\"], [role=\"dialog\"], [role=\"alertdialog\"], [role=\"menu\"]";
+function Jr(e) {
 	let t = e.ownerDocument;
 	function n(t) {
-		let n = [...e.querySelectorAll(Wr)];
+		let n = [...e.querySelectorAll(qr)];
 		if (n.length === 0) return;
 		let r = t.composedPath();
 		n.some((e) => r.includes(e)) || t.preventDefault();
@@ -2350,15 +2354,15 @@ function Gr(e) {
 }
 //#endregion
 //#region src/ui/shell/PortalProvider.vue
-var Kr = /* @__PURE__ */ ke({
+var Yr = /* @__PURE__ */ ke({
 	__name: "PortalProvider",
 	props: { portalTarget: {} },
 	setup(e) {
 		let t = e;
 		if (t.portalTarget === document.body) throw Error("PortalProvider must never receive document.body as the portal target -- pass the Shadow Root's dedicated [data-shadow-role=\"portal\"] element instead.");
-		return de(Ne, t.portalTarget), E(Gr(t.portalTarget)), (e, t) => me(e.$slots, "default");
+		return fe(Ne, t.portalTarget), E(Jr(t.portalTarget)), (e, t) => he(e.$slots, "default");
 	}
-}), qr = ["href"], Jr = /* @__PURE__ */ ke({
+}), Xr = ["href"], Zr = /* @__PURE__ */ ke({
 	__name: "AppRoot",
 	props: {
 		status: {},
@@ -2372,21 +2376,21 @@ var Kr = /* @__PURE__ */ ke({
 		translator: {}
 	},
 	setup(t) {
-		let n = t, r = ye(() => import("./chunks/ChatLayer-DRlqnSa_.js")), i = ye(() => import("./chunks/StudioShell-BSRZs4O8.js")), { t: a } = Te();
+		let n = t, r = ye(() => import("./chunks/ChatLayer-ClhRsG18.js")), i = ye(() => import("./chunks/StudioShell-ZXl39IVa.js")), { t: a } = Te();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
 		let s = n.hostElement, c = o();
 		s.dataset.colorMode = c;
-		let l = M(() => n.probe.ready ? void 0 : n.probe.current_version), u = M(() => `${a("app.name")} ${a("app.version_label", { version: n.version })}`), d = n.status.state === "ready" ? hr({
-			capabilities: n.capabilities ?? qn(),
+		let l = N(() => n.probe.ready ? void 0 : n.probe.current_version), u = N(() => `${a("app.name")} ${a("app.version_label", { version: n.version })}`), d = n.status.state === "ready" ? vr({
+			capabilities: n.capabilities ?? Xn(),
 			initial_color_mode: c
-		}) : null, f = d === null ? null : n.host ?? null, p = N(f?.get_active_chat_id() ?? null), m = f?.subscribe_chat_change((e) => {
+		}) : null, f = d === null ? null : n.host ?? null, p = P(f?.get_active_chat_id() ?? null), m = f?.subscribe_chat_change((e) => {
 			p.value = e.chat_id;
 		});
-		E(() => m?.()), de(Fe, p), de(Me, n.translator ?? null);
+		E(() => m?.()), fe(Fe, p), fe(Me, n.translator ?? null);
 		let h = d === null ? null : n.illustrations ?? null, g = n.capabilities?.gallery;
-		de(Pe, h === null || g === void 0 ? null : {
+		fe(Pe, h === null || g === void 0 ? null : {
 			async generate(e) {
 				let t = await h.generate_image({
 					...e,
@@ -2397,112 +2401,112 @@ var Kr = /* @__PURE__ */ ke({
 			read_outfit: (e) => h.read_outfit(e),
 			read_character: (e) => h.read_character(e)
 		});
-		let ee = M(() => {
+		let ee = N(() => {
 			let e = d?.state.value, t = e?.settings.settings?.active_provider_profile_id ?? null;
 			return {
 				profile: e?.generation.profiles.find((e) => e.id === t) ?? null,
 				custom_presets: e?.assets.records.prompt_tag ?? [],
 				save: (e, t) => d === null ? Promise.resolve() : d.controller.save_prompt_tags(e, t)
 			};
-		}), _ = N(c), v = typeof window > "u" || typeof window.matchMedia != "function" ? null : window.matchMedia("(prefers-color-scheme: dark)");
-		function y(e) {
+		}), _ = P(c), v = typeof window > "u" || typeof window.matchMedia != "function" ? null : window.matchMedia("(prefers-color-scheme: dark)");
+		function te(e) {
 			_.value = e.matches ? "dark" : "light";
 		}
-		v?.addEventListener("change", y), E(() => v?.removeEventListener("change", y));
-		let b = M(() => {
+		v?.addEventListener("change", te), E(() => v?.removeEventListener("change", te));
+		let y = N(() => {
 			let e = d?.state.value.settings.settings?.ui.color_mode ?? "system";
 			return e === "system" ? _.value : e;
 		});
-		pe(b, (e) => {
+		me(y, (e) => {
 			s.dataset.colorMode = e;
 		});
-		function te(e) {
+		function ne(e) {
 			d?.controller.set_route(e);
 		}
-		function x(e) {
+		function b(e) {
 			d?.controller.set_inspector_collapsed(e);
 		}
-		function S(e) {
+		function x(e) {
 			d?.controller.set_inspector_width(e);
 		}
-		function ne() {
+		function re() {
 			window.location.reload();
 		}
-		let re = N(!1), ie = M(() => re.value), ae = Nr(() => a("app.name"), C);
-		Rr({
+		let ie = P(!1), S = N(() => ie.value), ae = Ir(() => a("app.name"), oe);
+		Vr({
 			name: () => a("app.name"),
 			description: () => a("app.entry_description"),
 			open: () => a("app.open_action")
-		}, C);
-		let oe = M(() => !ae.value || d?.state.value.settings.settings?.ui.optional_entry_enabled === !0);
-		pe(ie, (e) => {
+		}, oe);
+		let C = N(() => !ae.value || d?.state.value.settings.settings?.ui.optional_entry_enabled === !0);
+		me(S, (e) => {
 			s.dataset.surfaceMode = e ? "studio" : "entry";
 		}, { immediate: !0 });
-		function C() {
-			re.value = !0;
+		function oe() {
+			ie.value = !0;
 		}
-		function w() {
-			re.value = !1;
+		function se() {
+			ie.value = !1;
 		}
-		return (n, o) => (D(), xe(Kr, { "portal-target": t.portalTarget }, {
-			default: fe(() => [t.status.state === "blocked" ? (D(), ve("div", {
+		return (n, o) => (D(), xe(Yr, { "portal-target": t.portalTarget }, {
+			default: pe(() => [t.status.state === "blocked" ? (D(), O("div", {
 				key: 0,
-				class: O(k(e).state_screen),
+				class: k(A(e).state_screen),
 				"data-startup-state": "blocked"
 			}, [
-				A("p", { class: O(k(e).state_screen_eyebrow) }, j(u.value), 3),
-				A("h1", { class: O(k(e).state_screen_title) }, j(k(a)("app.unsupported_host.title")), 3),
-				A("p", { class: O(k(e).state_screen_description) }, j(k(a)("app.unsupported_host.description", {
-					required_version: k(jn),
-					current_version: l.value ?? k(a)("status.unknown")
+				j("p", { class: k(A(e).state_screen_eyebrow) }, M(u.value), 3),
+				j("h1", { class: k(A(e).state_screen_title) }, M(A(a)("app.unsupported_host.title")), 3),
+				j("p", { class: k(A(e).state_screen_description) }, M(A(a)("app.unsupported_host.description", {
+					required_version: A(Pn),
+					current_version: l.value ?? A(a)("status.unknown")
 				})), 3),
-				A("a", {
-					class: O(["tc-interactive", k(e).state_screen_action]),
+				j("a", {
+					class: k(["tc-interactive", A(e).state_screen_action]),
 					href: t.status.update_url,
 					target: "_blank",
 					rel: "noreferrer"
-				}, j(k(a)("app.unsupported_host.update_action")), 11, qr)
-			], 2)) : t.status.state === "failed" ? (D(), ve("div", {
+				}, M(A(a)("app.unsupported_host.update_action")), 11, Xr)
+			], 2)) : t.status.state === "failed" ? (D(), O("div", {
 				key: 1,
-				class: O(k(e).state_screen),
+				class: k(A(e).state_screen),
 				"data-startup-state": "failed"
 			}, [
-				A("p", { class: O(k(e).state_screen_eyebrow) }, j(u.value), 3),
-				A("h1", { class: O(k(e).state_screen_title) }, j(k(a)("app.fatal_error.title")), 3),
-				A("p", { class: O(k(e).state_screen_description) }, j(k(a)("app.fatal_error.description")), 3),
-				A("pre", {
-					class: O(k(e).state_screen_detail),
+				j("p", { class: k(A(e).state_screen_eyebrow) }, M(u.value), 3),
+				j("h1", { class: k(A(e).state_screen_title) }, M(A(a)("app.fatal_error.title")), 3),
+				j("p", { class: k(A(e).state_screen_description) }, M(A(a)("app.fatal_error.description")), 3),
+				j("pre", {
+					class: k(A(e).state_screen_detail),
 					"data-testid": "startup-error-detail"
-				}, j(t.status.detail), 3),
-				A("button", {
+				}, M(t.status.detail), 3),
+				j("button", {
 					type: "button",
-					class: O(["tc-interactive", k(e).state_screen_action]),
-					onClick: ne
-				}, j(k(a)("app.fatal_error.reload_action")), 3)
-			], 2)) : k(d) ? (D(), ve(Oe, { key: 2 }, [
-				ie.value ? (D(), xe(Ur, {
+					class: k(["tc-interactive", A(e).state_screen_action]),
+					onClick: re
+				}, M(A(a)("app.fatal_error.reload_action")), 3)
+			], 2)) : A(d) ? (D(), O(Oe, { key: 2 }, [
+				S.value ? (D(), xe(Kr, {
 					key: 0,
-					label: k(a)("app.name")
+					label: A(a)("app.name")
 				}, {
-					default: fe(() => [Ae(k(i), {
-						state: k(d).state.value,
-						controller: k(d).controller,
-						onSelectRoute: te,
-						onSetInspectorCollapsed: x,
-						onResizeInspector: S,
-						onClose: w
+					default: pe(() => [Ae(A(i), {
+						state: A(d).state.value,
+						controller: A(d).controller,
+						onSelectRoute: ne,
+						onSetInspectorCollapsed: b,
+						onResizeInspector: x,
+						onClose: se
 					}, null, 8, ["state", "controller"])]),
 					_: 1
 				}, 8, ["label"])) : be("", !0),
-				Ae(jr, {
-					enabled: oe.value && !ie.value,
-					"open-label": k(a)("app.name"),
-					onOpen: C
+				Ae(Pr, {
+					enabled: C.value && !S.value,
+					"open-label": A(a)("app.name"),
+					onOpen: oe
 				}, null, 8, ["enabled", "open-label"]),
-				t.host && k(h) && t.capabilities ? (D(), xe(k(r), {
+				t.host && A(h) && t.capabilities ? (D(), xe(A(r), {
 					key: 1,
 					host: t.host,
-					service: k(h),
+					service: A(h),
 					gallery: t.capabilities.gallery,
 					novelai: t.capabilities.novelai,
 					translator: t.translator ?? null,
@@ -2519,17 +2523,17 @@ var Kr = /* @__PURE__ */ ke({
 			_: 1
 		}, 8, ["portal-target"]));
 	}
-}), Yr = "._slot_lzfdp_7,._notice_lzfdp_8,._lightbox_lzfdp_9,._paragraph_action_lzfdp_10{--tc-space-0-5:2px;--tc-space-1:4px;--tc-space-1-5:6px;--tc-space-2:8px;--tc-space-3:12px;--tc-control-height-sm:28px;--tc-control-padding-x-sm:12px;--tc-control-gap:6px;--tc-radius-control:999px;--tc-radius-image:6px;--tc-radius-popover:16px;--tc-motion-fast:.14s;--tc-marker:#f6d743;--tc-on-marker:#17171a}._slot_lzfdp_7{gap:var(--tc-space-1);margin:var(--tc-space-2) 0;max-width:min(100%,560px);color:var(--SmartThemeBodyColor,inherit);font-size:calc(var(--mainFontSize,1rem) * .9);grid-template-columns:minmax(0,1fr);display:grid}._frame_lzfdp_39{border-radius:var(--tc-radius-image);background:var(--SmartThemeBlurTintColor,#00000026);position:relative;overflow:hidden}._image_lzfdp_46{cursor:zoom-in;width:100%;height:auto;display:block}._placeholder_lzfdp_53{aspect-ratio:3/2;justify-content:center;align-items:center;gap:var(--tc-space-2);padding:var(--tc-space-3);text-align:center;opacity:.85;flex-direction:column;display:flex}._error_lzfdp_65{color:var(--SmartThemeQuoteColor,#e06c75)}._toolbar_lzfdp_69{align-items:center;gap:var(--tc-space-0-5);flex-wrap:wrap;display:flex}._status_lzfdp_76{font-size:.95em}._pager_lzfdp_80{align-items:center;gap:var(--tc-space-0-5);display:inline-flex}._counter_lzfdp_86{font-variant-numeric:tabular-nums;text-align:center;opacity:.75;min-width:3.2em;font-size:.85em}._scene_lzfdp_94{white-space:nowrap;text-overflow:ellipsis;opacity:.75;flex:8em;min-width:0;font-size:.85em;overflow:hidden}._actions_lzfdp_104{align-items:center;gap:var(--tc-space-0-5);margin-left:auto;display:inline-flex}._more_lzfdp_111{position:relative}._menu_lzfdp_115{right:0;bottom:calc(100% + var(--tc-space-1));z-index:3;min-width:10em;padding:var(--tc-space-1);border-radius:var(--tc-radius-popover);background:var(--SmartThemeChatTintColor,Canvas);display:grid;position:absolute;box-shadow:0 8px 24px #00000040}._menu_item_lzfdp_128{height:var(--tc-control-height-sm);padding:0 var(--tc-space-3);border-radius:var(--tc-radius-control);color:inherit;font:inherit;text-align:start;white-space:nowrap;cursor:pointer;background:0 0;border:0}._menu_item_lzfdp_128:hover:not(:disabled),._menu_item_lzfdp_128:focus-visible{background:#8080802e;outline:none}._menu_item_lzfdp_128:disabled{cursor:default;opacity:.5}._button_lzfdp_153{justify-content:center;align-items:center;gap:var(--tc-control-gap);min-width:var(--tc-control-height-sm);height:var(--tc-control-height-sm);padding:0 var(--tc-control-padding-x-sm);border-radius:var(--tc-radius-control);color:inherit;font:inherit;white-space:nowrap;cursor:pointer;transition:background-color var(--tc-motion-fast) ease;background:0 0;border:0;display:inline-flex}._button_lzfdp_153:hover:not(:disabled){background:var(--SmartThemeBlurTintColor,#80808026)}._icon_button_lzfdp_176{width:var(--tc-control-height-sm);padding:0}._button_lzfdp_153:focus-visible{outline-offset:1px;outline:2px solid}._button_lzfdp_153:disabled{cursor:default;opacity:.5}._skeleton_lzfdp_191{border-radius:var(--tc-radius-control);opacity:.2;background:currentColor;width:60%;height:.8em;animation:1.4s ease-in-out infinite _pulse_lzfdp_1}._notice_lzfdp_8{margin:var(--tc-space-2) 0;padding:var(--tc-space-2) var(--tc-space-3);border-inline-start:3px solid var(--SmartThemeQuoteColor,#e06c75);border-radius:0 var(--tc-radius-image) var(--tc-radius-image) 0;background:var(--SmartThemeBlurTintColor,#0000001a);font-size:calc(var(--mainFontSize,1rem) * .85)}._excerpt_lzfdp_209{margin:var(--tc-space-1-5) 0 0;white-space:pre-wrap;opacity:.8;max-height:8em;font-family:monospace;overflow:auto}@keyframes _pulse_lzfdp_1{50%{opacity:.45}}@media (prefers-reduced-motion:reduce){._skeleton_lzfdp_191{animation:none}}._lightbox_lzfdp_9{z-index:9999;cursor:zoom-out;background:#000c;justify-content:center;align-items:center;padding:2vmin;display:flex;position:fixed;inset:0}._lightbox_lzfdp_9 img{object-fit:contain;max-width:100%;max-height:100%}._notice_actions_lzfdp_248{gap:var(--tc-space-0-5);margin-top:var(--tc-space-1-5);flex-wrap:wrap;display:flex}@media (width<=600px){._scene_lzfdp_94{flex-basis:100%;order:-1}._button_label_lzfdp_262{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}._actions_lzfdp_104 ._button_lzfdp_153{width:var(--tc-control-height-sm);padding:0}}._paragraph_action_lzfdp_10{z-index:50;justify-content:center;align-items:center;gap:var(--tc-control-gap);height:var(--tc-control-height-sm);min-width:var(--tc-control-height-sm);border-radius:var(--tc-radius-control);background:var(--tc-marker);color:var(--tc-on-marker);font:inherit;font-size:calc(var(--mainFontSize,1rem) * .85);cursor:pointer;border:0;padding:0;display:inline-flex;position:fixed;box-shadow:0 2px 6px #0003}._paragraph_action_lzfdp_10[data-kind=selection],._paragraph_action_lzfdp_10[data-kind=status]{padding:0 var(--tc-control-padding-x-sm);color:#fafaf7;background:#17171a;box-shadow:0 6px 18px #00000040}._paragraph_action_lzfdp_10[data-kind=selection]{transform:translate(-50%, calc(-100% - var(--tc-space-2)))}._paragraph_action_lzfdp_10[data-kind=status]{cursor:default;transform:translate(-100%)}._paragraph_action_lzfdp_10:focus-visible{outline-offset:2px;outline:2px solid}._paragraph_highlight_lzfdp_326{background:#f6d7432e;border-radius:4px;box-shadow:0 0 0 4px #f6d7432e}", Xr = "tavern-canvas-chat-style";
-function Zr(e) {
-	e.getElementById(Xr)?.remove();
+}), Qr = "._slot_lzfdp_7,._notice_lzfdp_8,._lightbox_lzfdp_9,._paragraph_action_lzfdp_10{--tc-space-0-5:2px;--tc-space-1:4px;--tc-space-1-5:6px;--tc-space-2:8px;--tc-space-3:12px;--tc-control-height-sm:28px;--tc-control-padding-x-sm:12px;--tc-control-gap:6px;--tc-radius-control:999px;--tc-radius-image:6px;--tc-radius-popover:16px;--tc-motion-fast:.14s;--tc-marker:#f6d743;--tc-on-marker:#17171a}._slot_lzfdp_7{gap:var(--tc-space-1);margin:var(--tc-space-2) 0;max-width:min(100%,560px);color:var(--SmartThemeBodyColor,inherit);font-size:calc(var(--mainFontSize,1rem) * .9);grid-template-columns:minmax(0,1fr);display:grid}._frame_lzfdp_39{border-radius:var(--tc-radius-image);background:var(--SmartThemeBlurTintColor,#00000026);position:relative;overflow:hidden}._image_lzfdp_46{cursor:zoom-in;width:100%;height:auto;display:block}._placeholder_lzfdp_53{aspect-ratio:3/2;justify-content:center;align-items:center;gap:var(--tc-space-2);padding:var(--tc-space-3);text-align:center;opacity:.85;flex-direction:column;display:flex}._error_lzfdp_65{color:var(--SmartThemeQuoteColor,#e06c75)}._toolbar_lzfdp_69{align-items:center;gap:var(--tc-space-0-5);flex-wrap:wrap;display:flex}._status_lzfdp_76{font-size:.95em}._pager_lzfdp_80{align-items:center;gap:var(--tc-space-0-5);display:inline-flex}._counter_lzfdp_86{font-variant-numeric:tabular-nums;text-align:center;opacity:.75;min-width:3.2em;font-size:.85em}._scene_lzfdp_94{white-space:nowrap;text-overflow:ellipsis;opacity:.75;flex:8em;min-width:0;font-size:.85em;overflow:hidden}._actions_lzfdp_104{align-items:center;gap:var(--tc-space-0-5);margin-left:auto;display:inline-flex}._more_lzfdp_111{position:relative}._menu_lzfdp_115{right:0;bottom:calc(100% + var(--tc-space-1));z-index:3;min-width:10em;padding:var(--tc-space-1);border-radius:var(--tc-radius-popover);background:var(--SmartThemeChatTintColor,Canvas);display:grid;position:absolute;box-shadow:0 8px 24px #00000040}._menu_item_lzfdp_128{height:var(--tc-control-height-sm);padding:0 var(--tc-space-3);border-radius:var(--tc-radius-control);color:inherit;font:inherit;text-align:start;white-space:nowrap;cursor:pointer;background:0 0;border:0}._menu_item_lzfdp_128:hover:not(:disabled),._menu_item_lzfdp_128:focus-visible{background:#8080802e;outline:none}._menu_item_lzfdp_128:disabled{cursor:default;opacity:.5}._button_lzfdp_153{justify-content:center;align-items:center;gap:var(--tc-control-gap);min-width:var(--tc-control-height-sm);height:var(--tc-control-height-sm);padding:0 var(--tc-control-padding-x-sm);border-radius:var(--tc-radius-control);color:inherit;font:inherit;white-space:nowrap;cursor:pointer;transition:background-color var(--tc-motion-fast) ease;background:0 0;border:0;display:inline-flex}._button_lzfdp_153:hover:not(:disabled){background:var(--SmartThemeBlurTintColor,#80808026)}._icon_button_lzfdp_176{width:var(--tc-control-height-sm);padding:0}._button_lzfdp_153:focus-visible{outline-offset:1px;outline:2px solid}._button_lzfdp_153:disabled{cursor:default;opacity:.5}._skeleton_lzfdp_191{border-radius:var(--tc-radius-control);opacity:.2;background:currentColor;width:60%;height:.8em;animation:1.4s ease-in-out infinite _pulse_lzfdp_1}._notice_lzfdp_8{margin:var(--tc-space-2) 0;padding:var(--tc-space-2) var(--tc-space-3);border-inline-start:3px solid var(--SmartThemeQuoteColor,#e06c75);border-radius:0 var(--tc-radius-image) var(--tc-radius-image) 0;background:var(--SmartThemeBlurTintColor,#0000001a);font-size:calc(var(--mainFontSize,1rem) * .85)}._excerpt_lzfdp_209{margin:var(--tc-space-1-5) 0 0;white-space:pre-wrap;opacity:.8;max-height:8em;font-family:monospace;overflow:auto}@keyframes _pulse_lzfdp_1{50%{opacity:.45}}@media (prefers-reduced-motion:reduce){._skeleton_lzfdp_191{animation:none}}._lightbox_lzfdp_9{z-index:9999;cursor:zoom-out;background:#000c;justify-content:center;align-items:center;padding:2vmin;display:flex;position:fixed;inset:0}._lightbox_lzfdp_9 img{object-fit:contain;max-width:100%;max-height:100%}._notice_actions_lzfdp_248{gap:var(--tc-space-0-5);margin-top:var(--tc-space-1-5);flex-wrap:wrap;display:flex}@media (width<=600px){._scene_lzfdp_94{flex-basis:100%;order:-1}._button_label_lzfdp_262{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}._actions_lzfdp_104 ._button_lzfdp_153{width:var(--tc-control-height-sm);padding:0}}._paragraph_action_lzfdp_10{z-index:50;justify-content:center;align-items:center;gap:var(--tc-control-gap);height:var(--tc-control-height-sm);min-width:var(--tc-control-height-sm);border-radius:var(--tc-radius-control);background:var(--tc-marker);color:var(--tc-on-marker);font:inherit;font-size:calc(var(--mainFontSize,1rem) * .85);cursor:pointer;border:0;padding:0;display:inline-flex;position:fixed;box-shadow:0 2px 6px #0003}._paragraph_action_lzfdp_10[data-kind=selection],._paragraph_action_lzfdp_10[data-kind=status]{padding:0 var(--tc-control-padding-x-sm);color:#fafaf7;background:#17171a;box-shadow:0 6px 18px #00000040}._paragraph_action_lzfdp_10[data-kind=selection]{transform:translate(-50%, calc(-100% - var(--tc-space-2)))}._paragraph_action_lzfdp_10[data-kind=status]{cursor:default;transform:translate(-100%)}._paragraph_action_lzfdp_10:focus-visible{outline-offset:2px;outline:2px solid}._paragraph_highlight_lzfdp_326{background:#f6d7432e;border-radius:4px;box-shadow:0 0 0 4px #f6d7432e}", $r = "tavern-canvas-chat-style";
+function ei(e) {
+	e.getElementById($r)?.remove();
 	let t = e.createElement("style");
-	return t.id = Xr, t.textContent = Yr, e.head.append(t), () => {
+	return t.id = $r, t.textContent = Qr, e.head.append(t), () => {
 		t.remove();
 	};
 }
 //#endregion
 //#region src/ui/create_shadow_root.ts
-function Qr(e, t) {
+function ti(e, t) {
 	e.getElementById("tavern-canvas-root")?.remove();
 	let n = e.createElement("div");
 	n.id = "tavern-canvas-root";
@@ -2539,7 +2543,7 @@ function Qr(e, t) {
 	a.dataset.shadowRole = "app", r.append(a);
 	let o = e.createElement("div");
 	o.dataset.shadowRole = "portal", r.append(o), e.body.append(n);
-	let s = Je(r);
+	let s = ze(r);
 	return {
 		host_element: n,
 		shadow_root: r,
@@ -2552,12 +2556,12 @@ function Qr(e, t) {
 }
 //#endregion
 //#region src/modules/illustration/worldbook.ts
-function $r(e, t) {
+function ni(e, t) {
 	return typeof e == "string" ? ot(t, e) : new RegExp(e.source, e.flags.replace("g", "")).test(t);
 }
-function ei(e, t) {
+function ri(e, t) {
 	if (e.secondary_keys.length === 0) return !0;
-	let n = e.secondary_keys.map((e) => $r(e, t));
+	let n = e.secondary_keys.map((e) => ni(e, t));
 	switch (e.secondary_logic) {
 		case "and_any": return n.some(Boolean);
 		case "and_all": return n.every(Boolean);
@@ -2565,27 +2569,27 @@ function ei(e, t) {
 		case "not_any": return !n.some(Boolean);
 	}
 }
-function ti(e, t) {
-	return e.filter((e) => e.enabled && e.content.trim() !== "" && (e.strategy === "constant" || e.strategy === "selective" && e.keys.some((e) => $r(e, t)) && ei(e, t))).sort((e, t) => e.order - t.order).map((e) => e.content.trim()).join("\n\n");
+function ii(e, t) {
+	return e.filter((e) => e.enabled && e.content.trim() !== "" && (e.strategy === "constant" || e.strategy === "selective" && e.keys.some((e) => ni(e, t)) && ri(e, t))).sort((e, t) => e.order - t.order).map((e) => e.content.trim()).join("\n\n");
 }
 //#endregion
 //#region src/modules/illustration/analysis_requests.ts
-var ni = 3, ri = 2e3, ii = 18e4, ai = class extends Error {
+var ai = 3, oi = 2e3, si = 18e4, ci = class extends Error {
 	reason;
 	constructor(e) {
 		super(e === "cancelled" ? "Analysis was cancelled" : "Analysis timed out"), this.name = "AnalysisStoppedError", this.reason = e;
 	}
 };
-async function oi(e, t, n, r) {
+async function li(e, t, n, r) {
 	let i, a = () => {}, o = new Promise((n, o) => {
 		let s = (n) => {
-			e.stop_generation(t), o(new ai(n));
+			e.stop_generation(t), o(new ci(n));
 		};
 		a = () => {
 			s("cancelled");
 		}, i = setTimeout(() => {
 			s("timed_out");
-		}, ii), r.addEventListener("abort", a, { once: !0 });
+		}, si), r.addEventListener("abort", a, { once: !0 });
 	});
 	try {
 		return await Promise.race([n, o]);
@@ -2593,7 +2597,7 @@ async function oi(e, t, n, r) {
 		clearTimeout(i), r.removeEventListener("abort", a);
 	}
 }
-async function si(e, t) {
+async function ui(e, t) {
 	switch (e.kind) {
 		case "current": return { kind: "current" };
 		case "proxy_preset": return {
@@ -2610,7 +2614,7 @@ async function si(e, t) {
 		};
 	}
 }
-async function ci(e, t, n) {
+async function di(e, t, n) {
 	switch (e.mode) {
 		case "chat": return { kind: "chat" };
 		case "off": return {
@@ -2619,11 +2623,11 @@ async function ci(e, t, n) {
 		};
 		case "worldbook": return {
 			kind: "replace",
-			text: ti((await Promise.all(e.worldbooks.map((e) => n.read_worldbook(e)))).flat(), t)
+			text: ii((await Promise.all(e.worldbooks.map((e) => n.read_worldbook(e)))).flat(), t)
 		};
 	}
 }
-async function li(e, t, n, r) {
+async function fi(e, t, n, r) {
 	let i = e.settings(), a = i.wardrobe_model, o = a === null || i.connection.kind === "current" ? i.connection : {
 		...i.connection,
 		model: a
@@ -2633,7 +2637,7 @@ async function li(e, t, n, r) {
 		preset_name: i.preset_name,
 		user_input: t,
 		max_chat_history: 0,
-		connection: await si(o, e.resolve_analysis_key),
+		connection: await ui(o, e.resolve_analysis_key),
 		json_schema: n,
 		world_info: {
 			kind: "replace",
@@ -2642,42 +2646,42 @@ async function li(e, t, n, r) {
 		image: r
 	})).content;
 }
-function ui(e) {
-	return (t, n) => li(e, [t, ...Ve(e.settings().wardrobe_guidance)].join("\n"), n, null);
+function pi(e) {
+	return (t, n) => fi(e, [t, ...Qe(e.settings().wardrobe_guidance)].join("\n"), n, null);
 }
-async function di(e, t, n, r) {
-	let i = e.settings(), a = await si(i.connection, e.resolve_analysis_key), o = await ci(i.world_info, t, e.host);
+async function mi(e, t, n, r, i = {}) {
+	let a = e.settings(), o = await ui(a.connection, e.resolve_analysis_key), s = await di(i.world_info ?? a.world_info, t, e.host);
 	for (let t = 1;; t += 1) {
-		if (r.aborted) throw new ai("cancelled");
-		let s = e.new_generation_id();
+		if (r.aborted) throw new ci("cancelled");
+		let c = e.new_generation_id();
 		try {
-			let t = await oi(e.host, s, e.host.generate_with_preset({
-				generation_id: s,
-				preset_name: i.preset_name,
+			let t = await li(e.host, c, e.host.generate_with_preset({
+				generation_id: c,
+				preset_name: a.preset_name,
 				user_input: n.user_input,
-				max_chat_history: i.max_chat_history,
-				connection: a,
+				max_chat_history: i.max_chat_history ?? a.max_chat_history,
+				connection: o,
 				json_schema: n.json_schema,
-				world_info: o,
+				world_info: s,
 				image: null
 			}), r);
 			return n.parse(t.content);
 		} catch (n) {
-			if (t >= ni || n instanceof ai) throw n;
-			await e.wait(ri * t);
+			if (t >= ai || n instanceof ci) throw n;
+			await e.wait(oi * t);
 		}
 	}
 }
 //#endregion
 //#region src/modules/media/media_command_service.ts
-var fi = class {
+var hi = class {
 	#e;
 	#t;
 	constructor(e, t) {
 		this.#e = e, this.#t = t;
 	}
 	async save(e) {
-		let t = Qe(this.#e), n = {
+		let t = Ue(this.#e), n = {
 			schema_version: 1,
 			id: e.job_id,
 			namespace: this.#t,
@@ -2698,7 +2702,7 @@ var fi = class {
 		};
 		await t.put(this.#t, n);
 	}
-}, pi = class {
+}, gi = class {
 	#e = /* @__PURE__ */ new Map();
 	register(e) {
 		this.#e.set(e.request_id, e);
@@ -2708,7 +2712,7 @@ var fi = class {
 		return this.#e.delete(e), t;
 	}
 };
-async function mi(e, t, n) {
+async function _i(e, t, n) {
 	let r = e.resolve_source_message(t), i = [];
 	for (let a of n) {
 		let n = e.ids.next();
@@ -2726,19 +2730,19 @@ async function mi(e, t, n) {
 	}
 	return i.map((e) => p.parse(e));
 }
-var hi = 1e3;
-function gi(e) {
-	if (e instanceof P) return new R({
+var vi = 1e3;
+function yi(e) {
+	if (e instanceof F) return new L({
 		code: e.code === "configuration" ? "not_configured" : "malformed_response",
 		retryable: !1
 	});
 	if (e instanceof Error && "provider_error" in e) {
-		let t = ne.safeParse(e.provider_error);
-		if (t.success) return new R(t.data);
+		let t = re.safeParse(e.provider_error);
+		if (t.success) return new L(t.data);
 	}
 	return e;
 }
-var _i = class {
+var bi = class {
 	#e;
 	#t;
 	constructor(e) {
@@ -2746,7 +2750,7 @@ var _i = class {
 	}
 	async execute(e, t) {
 		let n = this.#e.plans.take(e.request_id);
-		if (n === void 0) throw new R({
+		if (n === void 0) throw new L({
 			code: "invalid_request",
 			retryable: !1
 		});
@@ -2754,13 +2758,13 @@ var _i = class {
 		try {
 			r = await this.#n(n, t);
 		} catch (e) {
-			throw gi(e);
+			throw yi(e);
 		}
 		let i = await this.#r(n, r), a;
 		try {
 			a = await this.#i(e, i);
 		} catch {
-			throw new R({
+			throw new L({
 				code: "storage_failed",
 				retryable: !1
 			});
@@ -2769,7 +2773,7 @@ var _i = class {
 	}
 	async #n(e, t) {
 		let n = (await this.#e.load_adapters())[e.provider_id];
-		if (n === void 0) throw new R({
+		if (n === void 0) throw new L({
 			code: "provider_unavailable",
 			retryable: !1
 		});
@@ -2783,12 +2787,12 @@ var _i = class {
 		await t.mark_running();
 		let i = await n.submit(r, e);
 		if (i.state === "completed") return i.output_assets;
-		let a = i.poll_after_ms ?? hi;
+		let a = i.poll_after_ms ?? vi;
 		for (;;) {
 			await this.#t(a);
 			let e = await n.poll(r, i);
 			if (e.state === "completed") return e.output_assets;
-			if (e.state === "failed") throw new R(e.error);
+			if (e.state === "failed") throw new L(e.error);
 			a = e.poll_after_ms ?? a;
 		}
 	}
@@ -2796,16 +2800,16 @@ var _i = class {
 		return this.#e.postprocess === void 0 ? Promise.resolve(t) : this.#e.postprocess(e, t);
 	}
 	#i(e, t) {
-		return mi(this.#e, e, t.map((e) => ({
+		return _i(this.#e, e, t.map((e) => ({
 			bytes: e.bytes,
 			media_type: e.asset.media_type
 		})));
 	}
 };
-async function vi(e, t, n) {
-	return e.plans.register(n), yi(e.queue, t, n.request_id, n.provider_id);
+async function xi(e, t, n) {
+	return e.plans.register(n), Si(e.queue, t, n.request_id, n.provider_id);
 }
-async function yi(e, t, n, r) {
+async function Si(e, t, n, r) {
 	let i = {
 		request_id: n,
 		generation_anchor: t.generation_anchor,
@@ -2821,256 +2825,29 @@ async function yi(e, t, n, r) {
 	};
 	return e.enqueue(i);
 }
-function bi(e, t) {
+function Ci(e, t) {
 	return e.queue.cancel(t);
 }
 //#endregion
-//#region src/modules/illustration/slot_markers.ts
-var xi = "[A-Za-z0-9_-]{8,32}", Si = RegExp(`<!--tc-image:(${xi})-->`, "gu");
-function Ci(e) {
-	return `<!--tc-image:${e}-->`;
-}
-var wi = [{
-	id: "tavern-canvas-image-slot-display",
-	script_name: "Inkwell image slot (display)",
-	find_regex: `/<!--tc-image:(${xi})-->/g`,
-	replace_string: "<div class=\"tavern-canvas-slot\" data-tc-slot=\"$1\"></div>",
-	destination: "display"
-}, {
-	id: "tavern-canvas-image-slot-prompt",
-	script_name: "Inkwell image slot (prompt)",
-	find_regex: `/\\n?<!--tc-image:${xi}-->/g`,
-	replace_string: "",
-	destination: "prompt"
-}];
-function Ti(e) {
-	return [...e.matchAll(Si)].map((e) => e[1] ?? "");
-}
-function Ei(e) {
-	return e.toLowerCase().replace(/[\p{P}\p{S}\s]/gu, "");
-}
-function Di(e, t) {
-	let n = Ei(t);
-	if (n.length === 0) return null;
-	let r = e.map((e) => Ei(e.text));
-	for (let t of [
-		24,
-		12,
-		6
-	]) {
-		let i = n.slice(0, t), a = r.findIndex((e) => e.includes(i));
-		if (a !== -1) return e[a]?.index ?? null;
-	}
-	return null;
-}
-function Oi(e) {
-	let t = [], n = !1;
-	return e.split("\n").forEach((e, r) => {
-		let i = e.trim();
-		if (i.startsWith("```")) {
-			n = !n;
-			return;
-		}
-		n || i.length === 0 || Ti(i).length > 0 || t.push({
-			index: t.length,
-			text: i,
-			line: r
-		});
-	}), t;
-}
-function ki(e, t) {
-	let n = Oi(e), r = /* @__PURE__ */ new Map();
-	for (let e of t) {
-		let t = n[e.paragraph];
-		if (t === void 0) throw RangeError(`Paragraph ${String(e.paragraph)} does not exist`);
-		let i = r.get(t.line) ?? [];
-		i.push(Ci(e.slot_id)), r.set(t.line, i);
-	}
-	return e.split("\n").flatMap((e, t) => [e, ...r.get(t) ?? []]).join("\n");
-}
-//#endregion
-//#region src/modules/prompt/regex_transform.ts
-function Ai(e, t) {
-	try {
-		let n = new RegExp(t.pattern, t.flags);
-		return {
-			text: e.replace(n, t.replacement),
-			error: null
-		};
-	} catch (t) {
-		return {
-			text: e,
-			error: t instanceof Error ? t.message : String(t)
-		};
-	}
-}
-function ji(e, t) {
-	let n = e, r = [];
-	for (let e of t) {
-		let t = Ai(n, e);
-		n = t.text, t.error !== null && r.push({
-			rule_id: e.id,
-			error: t.error
-		});
-	}
-	return {
-		text: n,
-		failures: r
-	};
-}
-function Mi(e, t) {
-	return Ai(t, e).text;
-}
-//#endregion
-//#region src/modules/illustration/slot_prompt.ts
-var Ni = /^(?:\d+)?(girl|boy|other)s?$/u;
-function Pi(e) {
-	let t = null, n = [];
-	for (let r of e.split(",")) {
-		let e = Ni.exec(mt(r).toLowerCase());
-		e === null ? n.push(r) : t ??= e[1];
-	}
-	return {
-		subject: t,
-		rest: F(n)
-	};
-}
-function Fi(e) {
-	return [
-		"girl",
-		"boy",
-		"other"
-	].map((t) => {
-		let n = e.filter((e) => e === t).length;
-		return n === 0 ? "" : n === 1 ? `1${t}` : `${String(n)}${t}s`;
-	}).filter((e) => e !== "").join(", ");
-}
-function Ii(e, t) {
-	let n = /* @__PURE__ */ new Map();
-	for (let e of t) for (let t of e.triggers) n.set(mt(t), e.replacement);
-	return F(e.split(",").map((e) => n.get(mt(e)) ?? e));
-}
-function Li(e, t) {
-	if (t === null) return ht(e);
-	let n = Ii(e, t.replacement_rules);
-	return ht(ji(n, t.regex_rules).text);
-}
-function Ri(e, t) {
-	return F(y.filter((e) => e !== "expression" || !t).flatMap((t) => e.appearance[t]));
-}
-function zi(e, t) {
-	let n = new Set(t.map((e) => e.trim().toLowerCase()));
-	return F(e.split(",").filter((e) => {
-		let t = mt(e).toLowerCase().replace(/^wearing\s+/u, "");
-		return !n.has(t);
-	}));
-}
-function Bi(e) {
-	let t = e.library.characters, n = [], r = /* @__PURE__ */ new Set(), i = (i, a) => {
-		let o = t[i];
-		if (o === void 0 || r.has(o.character.id)) return;
-		r.add(o.character.id);
-		let s = Pi(zi(a, e.library.outfit_names));
-		n.push({
-			name: o.character.name,
-			subject: o.character.subject === "other" ? s.subject ?? "other" : o.character.subject,
-			prompt: F([
-				Ri(o.character, s.rest !== ""),
-				F(o.outfit_tags),
-				s.rest
-			]),
-			negative_prompt: F(o.character.excluded_traits)
-		});
-	};
-	for (let r of e.characters) {
-		let e = t.findIndex((e) => lt(e.character, r.name));
-		if (e !== -1) {
-			i(e, r.tags);
-			continue;
-		}
-		let a = Pi(r.tags);
-		(a.subject !== null || a.rest !== "") && n.push({
-			name: r.name,
-			subject: a.subject,
-			prompt: a.rest,
-			negative_prompt: ""
-		});
-	}
-	return t.forEach((e, t) => {
-		i(t, "");
-	}), n;
-}
-function Vi(e) {
-	let t = e.preset, n = Bi(e), r = ht(t?.fixed_negative_prompt ?? "");
-	if (n.length === 0) return {
-		positive_prompt: Li(F([t?.fixed_positive_prompt, e.scene_tags]), t),
-		negative_prompt: r,
-		character_prompts: []
-	};
-	let i = n.flatMap((e) => e.subject === null ? [] : [e.subject]);
-	return {
-		positive_prompt: Li(F([
-			t?.fixed_positive_prompt,
-			Fi(i),
-			Pi(e.scene_tags).rest
-		]), t),
-		negative_prompt: r,
-		character_prompts: n.flatMap((e) => {
-			let n = Li(F([e.subject, e.prompt]), t);
-			return n === "" ? [] : [{
-				name: e.name,
-				prompt: n,
-				negative_prompt: ht(e.negative_prompt)
-			}];
-		})
-	};
-}
-//#endregion
-//#region src/modules/illustration/proposal_slots.ts
-function Hi(e, t, n, r, i) {
-	return t.map((t) => {
-		let a = st(`${e[t.paragraph]?.text ?? ""}\n${t.scene}`, t.characters.map((e) => e.name), n.library, r), o = Vi({
-			preset: n.preset,
-			library: a,
-			characters: t.characters,
-			scene_tags: t.tags
-		});
-		return {
-			slot_id: i(),
-			paragraph: t.paragraph,
-			anchor: (e[t.paragraph]?.text ?? "").slice(0, 400),
-			scene: t.scene,
-			characters: [.../* @__PURE__ */ new Set([...t.characters.map((e) => e.name), ...a.characters.map((e) => e.character.name)])],
-			positive_prompt: o.positive_prompt,
-			negative_prompt: o.negative_prompt,
-			character_prompts: [...o.character_prompts],
-			image_ids: [],
-			active_image_id: null,
-			pending_request_ids: [],
-			last_error: null
-		};
-	});
-}
-//#endregion
 //#region src/modules/illustration/illustration_service.ts
-var Ui = class extends Error {
+var wi = class extends Error {
 	constructor(e) {
 		super(`Message ${String(e)} changed while it was being analyzed`), this.name = "MessageChangedError";
 	}
-}, Wi = /* @__PURE__ */ new Set([
+}, Ti = 6, Ei = /* @__PURE__ */ new Set([
 	"normal",
 	"swipe",
 	"regenerate",
 	"continue"
 ]);
-async function Gi(e, t) {
+async function Di(e, t) {
 	let { attach_character_prompts: n } = await import("./chunks/character_prompts-BRu7L7wm.js");
 	return n(e, t);
 }
-function Ki(e) {
-	return e instanceof P && e.code === "configuration" ? "not_configured" : e instanceof He ? "analysis_unparsable" : e instanceof ai ? e.reason : e instanceof Ui ? "message_changed" : (e instanceof Error ? e.message : String(e)).slice(0, 500);
+function Oi(e) {
+	return e instanceof F && e.code === "configuration" ? "not_configured" : e instanceof et ? "analysis_unparsable" : e instanceof ci ? e.reason : e instanceof wi ? "message_changed" : (e instanceof Error ? e.message : String(e)).slice(0, 500);
 }
-var qi = class {
+var ki = class {
 	#e;
 	#t = /* @__PURE__ */ new Map();
 	#n = /* @__PURE__ */ new Set();
@@ -3096,7 +2873,7 @@ var qi = class {
 		};
 	}
 	read(e) {
-		let t = zt.safeParse(this.#e.host.read_swipe_record(e));
+		let t = Ht.safeParse(this.#e.host.read_swipe_record(e));
 		return t.success ? t.data : null;
 	}
 	is_pending(e) {
@@ -3136,14 +2913,14 @@ var qi = class {
 				location: r
 			}), e;
 		} catch (e) {
-			throw e instanceof ai && e.reason === "cancelled" ? (this.#g({
+			throw e instanceof ci && e.reason === "cancelled" ? (this.#g({
 				type: "analysis_cancelled",
 				location: r
 			}), e) : (this.#g({
 				type: "analysis_failed",
 				location: r,
-				message: Ki(e),
-				excerpt: e instanceof He ? e.excerpt : null
+				message: Oi(e),
+				excerpt: e instanceof et ? e.excerpt : null
 			}), e);
 		} finally {
 			this.#r.delete(a);
@@ -3159,14 +2936,14 @@ var qi = class {
 		return this.#e.auto_generation_enabled();
 	}
 	async #o(e, t, n) {
-		let r = Oi(t), i = this.#e.settings(), a = {
+		let r = ht(t), i = this.#e.settings(), a = {
 			schema_version: 2,
 			slots: []
 		};
 		if (r.length > 0) {
-			let o = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e) : null, s = await this.#e.prompt_context(e.chat_id), c = Be(r, i.max_images_per_message, s.library, i.analysis_guidance), l = (e) => Ge(e, r.length, i.max_images_per_message), { proposals: u, wardrobe_reply: d } = await di(this.#e, t, o === null ? {
+			let o = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e) : null, s = await this.#e.prompt_context(e.chat_id), c = Ze(r, i.max_images_per_message, s.library, i.analysis_guidance), l = (e) => $e(e, r.length, i.max_images_per_message), { proposals: u, wardrobe_reply: d } = await mi(this.#e, t, o === null ? {
 				user_input: c,
-				json_schema: Ke,
+				json_schema: it,
 				parse: (e) => ({
 					proposals: l(e),
 					wardrobe_reply: null
@@ -3176,35 +2953,35 @@ var qi = class {
 					c,
 					"",
 					o.input,
-					...Ve(i.wardrobe_guidance),
+					...Qe(i.wardrobe_guidance),
 					"",
-					We
+					nt
 				].join("\n"),
-				json_schema: Ue(o.json_schema),
+				json_schema: rt(o.json_schema),
 				parse: (e) => ({
 					proposals: l(e),
-					wardrobe_reply: ze(e)
+					wardrobe_reply: at(e)
 				})
 			}, n), f = o === null ? await this.#h(e) : await this.#m(e, o, d);
-			a.slots.push(...Hi(r, u, s, f, this.#e.new_slot_id));
+			a.slots.push(..._t(r, u, s, f, this.#e.new_slot_id));
 		}
 		if (await this.#e.host.write_swipe_record(e, a), a.slots.length > 0) {
-			let n = ki(t, a.slots.map((e) => ({
+			let n = pt(t, a.slots.map((e) => ({
 				paragraph: e.paragraph,
 				slot_id: e.slot_id
 			})));
-			if (!await this.#e.host.replace_message_text(e.message_id, t, n)) throw await this.#e.host.write_swipe_record(e, null), new Ui(e.message_id);
+			if (!await this.#e.host.replace_message_text(e.message_id, t, n)) throw await this.#e.host.write_swipe_record(e, null), new wi(e.message_id);
 		}
 		return a;
 	}
 	async #s(e) {
 		let t = await this.#e.host.get_active_chat(), n = t.messages.find((t) => t.message_id === e.message_id);
-		if (t.chat_id !== e.chat_id || n?.active_swipe_id !== e.swipe_id) throw new Ui(e.message_id);
+		if (t.chat_id !== e.chat_id || n?.active_swipe_id !== e.swipe_id) throw new wi(e.message_id);
 		return n.swipes[e.swipe_id]?.content ?? "";
 	}
 	async paragraph_index_of(e, t) {
 		let n = await this.active_location(e);
-		return Di(Oi(await this.#s(n)), t);
+		return ft(ht(await this.#s(n)), t);
 	}
 	async illustrate_paragraph(e, t) {
 		let n = await this.active_location(e), r = this.read(n)?.slots.find((e) => e.paragraph === t) ?? (await this.add_paragraphs(n, [t]))[0];
@@ -3213,16 +2990,16 @@ var qi = class {
 	}
 	async open_paragraphs(e) {
 		let t = new Set(this.read(e)?.slots.map((e) => e.paragraph) ?? []);
-		return Oi(await this.#s(e)).filter((e) => !t.has(e.index));
+		return ht(await this.#s(e)).filter((e) => !t.has(e.index));
 	}
 	async add_paragraphs(e, t) {
-		let n = await this.#s(e), r = Oi(n), i = this.read(e), a = new Set(i?.slots.map((e) => e.paragraph) ?? []), o = [...new Set(t)].filter((e) => e < r.length && !a.has(e)).sort((e, t) => e - t);
+		let n = await this.#s(e), r = ht(n), i = this.read(e), a = new Set(i?.slots.map((e) => e.paragraph) ?? []), o = [...new Set(t)].filter((e) => e < r.length && !a.has(e)).sort((e, t) => e - t);
 		if (o.length === 0) return [];
-		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await di(this.#e, n, {
-			user_input: Re(r, o, l.library, s.analysis_guidance),
-			json_schema: Ke,
-			parse: (e) => Ge(e, r.length, r.length)
-		}, new AbortController().signal), d = new Map(u.map((e) => [e.paragraph, e])), f = Hi(r, o.map((e) => d.get(e) ?? {
+		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await mi(this.#e, n, {
+			user_input: tt(r, o, l.library, s.analysis_guidance),
+			json_schema: it,
+			parse: (e) => $e(e, r.length, r.length)
+		}, new AbortController().signal), d = new Map(u.map((e) => [e.paragraph, e])), f = _t(r, o.map((e) => d.get(e) ?? {
 			paragraph: e,
 			scene: (r[e]?.text ?? "").slice(0, 120),
 			tags: "",
@@ -3232,11 +3009,11 @@ var qi = class {
 			schema_version: 2,
 			slots: [...i?.slots ?? [], ...f]
 		});
-		let p = ki(n, f.map((e) => ({
+		let p = pt(n, f.map((e) => ({
 			paragraph: e.paragraph,
 			slot_id: e.slot_id
 		})));
-		if (!await this.#e.host.replace_message_text(e.message_id, n, p)) throw await this.#e.host.write_swipe_record(e, i), new Ui(e.message_id);
+		if (!await this.#e.host.replace_message_text(e.message_id, n, p)) throw await this.#e.host.write_swipe_record(e, i), new wi(e.message_id);
 		return this.#g({
 			type: "slots_changed",
 			location: e
@@ -3247,7 +3024,7 @@ var qi = class {
 		return this.#c(n ?? r);
 	}
 	async #c(e) {
-		return Gi(await this.#e.build_request(e), e.character_prompts);
+		return Di(await this.#e.build_request(e), e.character_prompts);
 	}
 	async generate_image(e) {
 		let t = await this.#c(e), n = /* @__PURE__ */ new Map(), r = null, i = null, a = this.#e.jobs.subscribe((e) => {
@@ -3265,13 +3042,47 @@ var qi = class {
 			a();
 		}
 	}
+	async plan_story(e, t) {
+		let n = await import("./chunks/creation_planning-CMKRXjca.js"), r = ht(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), o = await mi(this.#e, e, {
+			user_input: n.build_scene_input("story", r, Ti, i, a.analysis_guidance),
+			json_schema: n.SCENE_JSON_SCHEMA,
+			parse: (e) => n.parse_scene_output(e, r.length, Ti)
+		}, new AbortController().signal, {
+			max_chat_history: 0,
+			world_info: t.length === 0 ? { mode: "off" } : {
+				mode: "worldbook",
+				worldbooks: [...t]
+			}
+		});
+		return n.scenes_from_plans(r, o, i, [], this.#e.new_slot_id);
+	}
+	async strip_messages() {
+		let e = await this.#e.host.get_active_chat();
+		return {
+			chat_id: e.chat_id,
+			messages: e.messages.filter((e) => !e.is_hidden && e.role !== "system").map((e) => ({
+				message_id: e.message_id,
+				name: e.name,
+				is_user: e.role === "user",
+				text: e.swipes.find((t) => t.swipe_id === e.active_swipe_id)?.content ?? ""
+			}))
+		};
+	}
+	async plan_strip(e, t) {
+		let n = await import("./chunks/creation_planning-CMKRXjca.js"), { chat_id: r, messages: i } = await this.strip_messages(), a = i.filter((n) => n.message_id >= e && n.message_id <= t), o = n.strip_paragraphs(a), s = o.map((e) => e.text).join("\n"), c = this.#e.settings(), l = c.strip.max_panels, u = await this.#e.prompt_context(r), d = a.at(-1), f = d === void 0 ? [] : await this.#h(await this.active_location(d.message_id)), p = await mi(this.#e, s, {
+			user_input: n.build_scene_input("strip", o, l, u, c.analysis_guidance),
+			json_schema: n.SCENE_JSON_SCHEMA,
+			parse: (e) => n.parse_scene_output(e, o.length, l)
+		}, new AbortController().signal, { max_chat_history: 0 });
+		return n.scenes_from_plans(o, p, u, f, this.#e.new_slot_id);
+	}
 	async read_outfit(e) {
 		let { OUTFIT_FROM_IMAGE_INPUT: t, OUTFIT_FROM_IMAGE_JSON_SCHEMA: n, parse_outfit_from_image: r } = await import("./chunks/outfit_from_image-CN81wUQf.js");
-		return r(await li(this.#e, t, n, e));
+		return r(await fi(this.#e, t, n, e));
 	}
 	async read_character(e) {
 		let { CHARACTER_FROM_IMAGE_INPUT: t, CHARACTER_FROM_IMAGE_JSON_SCHEMA: n, parse_character_from_image: r } = await import("./chunks/character_from_image-kYkOdVqW.js");
-		return r(await li(this.#e, t, n, e));
+		return r(await fi(this.#e, t, n, e));
 	}
 	async generate(e, t, n) {
 		let r = this.#u(e, t), i = {
@@ -3298,7 +3109,7 @@ var qi = class {
 	}
 	async edit(e, t, n) {
 		let r = this.#u(e, t), i = n.kind === "img2img" || n.kind === "inpaint" ? r.character_prompts : [];
-		await this.#l(e, t, async () => Gi(await this.#e.build_edit_request(n), i));
+		await this.#l(e, t, async () => Di(await this.#e.build_edit_request(n), i));
 	}
 	async #l(e, t, n, r = (e) => e) {
 		let i;
@@ -3307,7 +3118,7 @@ var qi = class {
 		} catch (n) {
 			throw await this.#d(e, t, (e) => ({
 				...e,
-				last_error: Ki(n)
+				last_error: Oi(n)
 			})), n;
 		}
 		this.#t.set(i, {
@@ -3385,7 +3196,7 @@ var qi = class {
 			return;
 		}
 		let t = this.#i;
-		this.#i = null, !(t === null || !Wi.has(t)) && this.active_location(e.message_id).then(async (n) => {
+		this.#i = null, !(t === null || !Ei.has(t)) && this.active_location(e.message_id).then(async (n) => {
 			t === "swipe" && (await this.#e.host.write_swipe_record(n, null), await this.#e.host.write_swipe_wardrobe(n, null)), this.#e.auto_generation_enabled() ? await this.illustrate(e.message_id) : await this.#h(n);
 		}).catch(() => {});
 	}
@@ -3397,7 +3208,7 @@ var qi = class {
 			return this.#g({
 				type: "wardrobe_failed",
 				location: e,
-				message: Ki(t)
+				message: Oi(t)
 			}), this.#e.wardrobe.current(e.message_id);
 		}
 	}
@@ -3410,7 +3221,7 @@ var qi = class {
 			return this.#g({
 				type: "wardrobe_failed",
 				location: e,
-				message: Ki(t)
+				message: Oi(t)
 			}), this.#e.wardrobe.current(e.message_id);
 		}
 	}
@@ -3430,10 +3241,10 @@ var qi = class {
 };
 //#endregion
 //#region src/modules/wardrobe/wardrobe_library_port.ts
-function Ji(e) {
+function Ai(e) {
 	return {
 		async load(t) {
-			return b(await e.load(), t);
+			return y(await e.load(), t);
 		},
 		async create_character(t, n) {
 			await e.save("character", {
@@ -3444,7 +3255,7 @@ function Ji(e) {
 				payload: {
 					aliases: v(t.aliases),
 					subject: t.subject,
-					...Object.fromEntries(y.map((e) => [e, v(t.appearance[e] ?? [])])),
+					...Object.fromEntries(te.map((e) => [e, v(t.appearance[e] ?? [])])),
 					excluded_traits: "",
 					default_outfit_id: t.default_outfit_id ?? "",
 					origin: "analysis",
@@ -3462,7 +3273,7 @@ function Ji(e) {
 				display_name: t.name,
 				payload: {
 					character_id: t.character_id,
-					...Object.fromEntries(te.map((e) => [e, v(t.slots[e] ?? [])])),
+					...Object.fromEntries(ne.map((e) => [e, v(t.slots[e] ?? [])])),
 					origin: "analysis",
 					chat_id: n
 				}
@@ -3485,7 +3296,7 @@ function Ji(e) {
 }
 //#endregion
 //#region src/modules/wardrobe/wardrobe_service.ts
-function Yi(e, t) {
+function ji(e, t) {
 	let n = e.messages.find((e) => e.message_id === t);
 	return n === void 0 ? null : {
 		chat_id: e.chat_id,
@@ -3493,7 +3304,7 @@ function Yi(e, t) {
 		swipe_id: n.active_swipe_id
 	};
 }
-var Xi = class {
+var Mi = class {
 	#e;
 	#t = /* @__PURE__ */ new Map();
 	constructor(e) {
@@ -3516,12 +3327,12 @@ var Xi = class {
 		return [];
 	}
 	async current(e) {
-		let t = await this.#e.host.get_active_chat(), n = Yi(t, e);
+		let t = await this.#e.host.get_active_chat(), n = ji(t, e);
 		return (n === null ? null : this.read(n)) ?? this.inherited(t, e);
 	}
 	update(e) {
 		return this.#e.host.get_active_chat().then(async (t) => {
-			let n = Yi(t, e);
+			let n = ji(t, e);
 			if (n === null) throw Error(`Message ${String(e)} is not in the active chat`);
 			let r = `${n.chat_id}:${String(e)}:${String(n.swipe_id)}`, i = this.#t.get(r);
 			if (i !== void 0) return i;
@@ -3560,17 +3371,17 @@ var Xi = class {
 			wearing: t
 		}));
 	}
-}, Zi = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
-function Qi() {
-	return [...crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(12))].map((e) => Zi[e % 64] ?? "_").join("");
+}, Ni = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
+function Pi() {
+	return [...crypto.getRandomValues(/* @__PURE__ */ new Uint8Array(12))].map((e) => Ni[e % 64] ?? "_").join("");
 }
-async function $i(e, t) {
-	return ea(await e.load(), t);
+async function Fi(e, t) {
+	return Ii(await e.load(), t);
 }
-function ea(e, t) {
+function Ii(e, t) {
 	let n = (e) => typeof e == "string" ? e.trim() : "";
 	return {
-		...b(e, t),
+		...y(e, t),
 		loras: e.lora.flatMap((e) => {
 			let t = n(e.payload.character_id);
 			return t === "" ? [] : [{
@@ -3582,14 +3393,14 @@ function ea(e, t) {
 		})
 	};
 }
-async function ta(e, t, n, r) {
-	let [i, a] = await Promise.all([n === null ? null : e.load_draft(n), $i(t, r)]);
+async function Li(e, t, n, r) {
+	let [i, a] = await Promise.all([n === null ? null : e.load_draft(n), Fi(t, r)]);
 	return {
 		preset: i,
 		library: a
 	};
 }
-var na = class {
+var Ri = class {
 	module_id = "illustrations";
 	requires = [];
 	#e;
@@ -3603,7 +3414,7 @@ var na = class {
 	}
 	async start() {
 		try {
-			await this.#t.sync_regex_scripts(wi), this.#n = null;
+			await this.#t.sync_regex_scripts(gt), this.#n = null;
 		} catch (e) {
 			this.#n = e instanceof Error ? e.message : String(e);
 		}
@@ -3612,45 +3423,45 @@ var na = class {
 	stop() {
 		return this.#e.stop(), Promise.resolve();
 	}
-}, ra = /[぀-ヿ㐀-鿿豈-﫿]/u, ia = /[,，、]/u;
-function aa(e) {
-	return e.split(ia).map((e) => e.trim()).filter((e) => e.length > 0);
+}, zi = /[぀-ヿ㐀-鿿豈-﫿]/u, Bi = /[,，、]/u;
+function Vi(e) {
+	return e.split(Bi).map((e) => e.trim()).filter((e) => e.length > 0);
 }
-function oa(e, t) {
+function Hi(e, t) {
 	return e.trim().toLowerCase() === t.trim().toLowerCase();
 }
-function sa(e) {
+function Ui(e) {
 	let t = e.trim().replace(/^-?[\d.]+::/u, "").replace(/::$/u, ""), n = /^\((.+):[\d.]+\)$/u.exec(t);
 	for (n?.[1] !== void 0 && (t = n[1]); /^[{[].*[}\]]$/u.test(t);) t = t.slice(1, -1);
 	return t.trim().toLowerCase();
 }
-function ca(e) {
+function Wi(e) {
 	return e.trim().replace(/[.。]+$/u, "").toLowerCase();
 }
-async function la(e, t) {
-	let n = aa(e);
+async function Gi(e, t) {
+	let n = Vi(e);
 	return (await Promise.all(n.map(async (e) => {
-		if (!ra.test(e)) return e;
-		let n = t.glossary.find((t) => oa(t.source, e));
-		return n === void 0 ? await t.find_tag(e) ?? ca(await t.deepl(e, "EN-US")) : n.target;
+		if (!zi.test(e)) return e;
+		let n = t.glossary.find((t) => Hi(t.source, e));
+		return n === void 0 ? await t.find_tag(e) ?? Wi(await t.deepl(e, "EN-US")) : n.target;
 	}))).join(", ");
 }
-async function ua(e, t) {
-	let n = aa(e);
+async function Ki(e, t) {
+	let n = Vi(e);
 	return (await Promise.all(n.map(async (e) => {
-		if (ra.test(e)) return e;
-		let n = sa(e), r = t.glossary.find((e) => oa(e.target, n));
+		if (zi.test(e)) return e;
+		let n = Ui(e), r = t.glossary.find((e) => Hi(e.target, n));
 		return r === void 0 ? await t.find_translation(n) ?? (await t.deepl(n, "ZH")).trim() : r.source;
 	}))).join("，");
 }
 //#endregion
 //#region src/modules/translation/prompt_translator.ts
-var da = 10;
-function fa(e) {
+var qi = 10;
+function Ji(e) {
 	let t = e.translation?.split("-")[0]?.trim() ?? "";
 	return t === "" ? null : t;
 }
-function pa(e) {
+function Yi(e) {
 	let t = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
 	async function r(n) {
 		let r = t.get(n);
@@ -3675,14 +3486,14 @@ function pa(e) {
 			},
 			async find_translation(e) {
 				let t = (await r(e))?.find((e) => e.match_kind === "exact");
-				return t === void 0 ? null : fa(t);
+				return t === void 0 ? null : Ji(t);
 			},
 			deepl: i
 		};
 	}
 	return {
-		to_tags: (e) => la(e, a()),
-		read_in_chinese: (e) => ua(e, a()),
+		to_tags: (e) => Gi(e, a()),
+		read_in_chinese: (e) => Ki(e, a()),
 		async suggest(t) {
 			let n;
 			try {
@@ -3690,9 +3501,9 @@ function pa(e) {
 			} catch {
 				return [];
 			}
-			return n === null ? null : n.results.slice(0, da).map((e) => ({
+			return n === null ? null : n.results.slice(0, qi).map((e) => ({
 				tag: e.display_text.replaceAll("_", " "),
-				translation: fa(e),
+				translation: Ji(e),
 				popularity: e.popularity
 			}));
 		},
@@ -3701,13 +3512,13 @@ function pa(e) {
 }
 //#endregion
 //#region src/storage/sillytavern_settings.ts
-var ma = "tavern_canvas", ha = /* @__PURE__ */ new Set([
+var Xi = "tavern_canvas", Zi = /* @__PURE__ */ new Set([
 	"profiles",
 	"workflows",
 	"image_data",
 	"vocabulary_data",
 	"logs"
-]), ga = /* @__PURE__ */ new Set(["gateway"]), _a = /* @__PURE__ */ new Set([...Object.keys(w.shape), ...ga]), va = new Set(Object.keys(T.shape)), ya = {
+]), Qi = /* @__PURE__ */ new Set(["gateway"]), $i = /* @__PURE__ */ new Set([...Object.keys(T.shape), ...Qi]), ea = new Set(Object.keys(S.shape)), ta = {
 	schema_version: 1,
 	active_namespace: "primary",
 	locale: "auto",
@@ -3725,7 +3536,8 @@ var ma = "tavern_canvas", ha = /* @__PURE__ */ new Set([
 		world_info: { mode: "chat" },
 		wardrobe_model: null,
 		analysis_guidance: "",
-		wardrobe_guidance: ""
+		wardrobe_guidance: "",
+		strip: ie
 	},
 	translation: {
 		deepl_endpoint: "free",
@@ -3738,92 +3550,92 @@ var ma = "tavern_canvas", ha = /* @__PURE__ */ new Set([
 		optional_entry_enabled: !1
 	}
 };
-function ba(e) {
+function na(e) {
 	return typeof e == "object" && !!e && !Array.isArray(e);
 }
-function xa() {
-	return structuredClone(ya);
+function ra() {
+	return structuredClone(ta);
 }
-function Sa(e) {
+function ia(e) {
 	return JSON.stringify(e);
 }
-function Ca(e) {
+function aa(e) {
 	try {
-		let t = Sa(e);
+		let t = ia(e);
 		return t === void 0 ? 0 : new TextEncoder().encode(t).length;
 	} catch {
 		return null;
 	}
 }
-function wa(e, t, n, r) {
+function oa(e, t, n, r) {
 	for (let i of Object.keys(e)) {
 		if (t.has(i)) continue;
-		let e = n === "" ? i : `${n}.${i}`, a = ha.has(i) ? "disallowed_category" : "unknown_field";
+		let e = n === "" ? i : `${n}.${i}`, a = Zi.has(i) ? "disallowed_category" : "unknown_field";
 		r.push({
 			path: e,
 			code: a
 		});
 	}
 }
-function W(e, t, n, r, i) {
+function U(e, t, n, r, i) {
 	let a = e.safeParse(t);
 	return a.success ? a.data : (i.push({
 		path: r,
 		code: "invalid_value"
 	}), n);
 }
-function Ta(e, t, n, r, i) {
-	if (!ba(t)) return t !== void 0 && i.push({
+function sa(e, t, n, r, i) {
+	if (!na(t)) return t !== void 0 && i.push({
 		path: r,
 		code: "invalid_value"
 	}), structuredClone(n);
-	wa(t, new Set(Object.keys(e)), r, i);
+	oa(t, new Set(Object.keys(e)), r, i);
 	let a = {};
-	for (let o of Object.keys(e)) a[o] = W(e[o], t[o], structuredClone(n[o]), `${r}.${o}`, i);
+	for (let o of Object.keys(e)) a[o] = U(e[o], t[o], structuredClone(n[o]), `${r}.${o}`, i);
 	return a;
 }
-function Ea(e, t) {
-	let n = ya.ui;
-	return ba(e) ? (wa(e, va, "ui", t), {
-		color_mode: W(T.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
-		inspector_width: W(T.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
-		inspector_collapsed: W(T.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
-		optional_entry_enabled: W(T.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
+function ca(e, t) {
+	let n = ta.ui;
+	return na(e) ? (oa(e, ea, "ui", t), {
+		color_mode: U(S.shape.color_mode, e.color_mode, n.color_mode, "ui.color_mode", t),
+		inspector_width: U(S.shape.inspector_width, e.inspector_width, n.inspector_width, "ui.inspector_width", t),
+		inspector_collapsed: U(S.shape.inspector_collapsed, e.inspector_collapsed, n.inspector_collapsed, "ui.inspector_collapsed", t),
+		optional_entry_enabled: U(S.shape.optional_entry_enabled, e.optional_entry_enabled, n.optional_entry_enabled, "ui.optional_entry_enabled", t)
 	}) : (e !== void 0 && t.push({
 		path: "ui",
 		code: "invalid_value"
 	}), { ...n });
 }
-function Da(e, t) {
-	if (e === void 0) return xa();
-	let n = Ca(e);
+function la(e, t) {
+	if (e === void 0) return ra();
+	let n = aa(e);
 	if (n === null || n > 65536) return t.push({
-		path: ma,
+		path: Xi,
 		code: n === null ? "invalid_value" : "serialized_size_exceeded"
-	}), xa();
-	if (!ba(e)) return t.push({
-		path: ma,
+	}), ra();
+	if (!na(e)) return t.push({
+		path: Xi,
 		code: "invalid_value"
-	}), xa();
-	wa(e, _a, "", t);
-	let r = ya;
+	}), ra();
+	oa(e, $i, "", t);
+	let r = ta;
 	return {
-		schema_version: W(w.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
-		active_namespace: W(w.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
-		locale: W(w.shape.locale, e.locale, r.locale, "locale", t),
-		credential_storage_mode: W(ae, e.credential_storage_mode, r.credential_storage_mode, "credential_storage_mode", t),
-		active_provider_profile_id: W(w.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
-		global_concurrency: W(w.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
-		auto_generation_enabled: W(w.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
-		vocabulary_update_channel: W(w.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
-		illustration: Ta(re.shape, e.illustration, r.illustration, "illustration", t),
-		translation: Ta(ie.shape, e.translation, r.translation, "translation", t),
-		ui: Ea(e.ui, t)
+		schema_version: U(T.shape.schema_version, e.schema_version, r.schema_version, "schema_version", t),
+		active_namespace: U(T.shape.active_namespace, e.active_namespace, r.active_namespace, "active_namespace", t),
+		locale: U(T.shape.locale, e.locale, r.locale, "locale", t),
+		credential_storage_mode: U(C, e.credential_storage_mode, r.credential_storage_mode, "credential_storage_mode", t),
+		active_provider_profile_id: U(T.shape.active_provider_profile_id, e.active_provider_profile_id, r.active_provider_profile_id, "active_provider_profile_id", t),
+		global_concurrency: U(T.shape.global_concurrency, e.global_concurrency, r.global_concurrency, "global_concurrency", t),
+		auto_generation_enabled: U(T.shape.auto_generation_enabled, e.auto_generation_enabled, r.auto_generation_enabled, "auto_generation_enabled", t),
+		vocabulary_update_channel: U(T.shape.vocabulary_update_channel, e.vocabulary_update_channel, r.vocabulary_update_channel, "vocabulary_update_channel", t),
+		illustration: sa(w.shape, e.illustration, r.illustration, "illustration", t),
+		translation: sa(oe.shape, e.translation, r.translation, "translation", t),
+		ui: ca(e.ui, t)
 	};
 }
-function Oa(e) {
-	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = Da(t[ma], i);
-	t[ma] = a;
+function ua(e) {
+	let { extension_settings: t, save_settings: n, scheduler: r } = e, i = [], a = la(t[Xi], i);
+	t[Xi] = a;
 	let o = !1, s = !1;
 	async function c() {
 		o && (o = !1, await n());
@@ -3834,7 +3646,7 @@ function Oa(e) {
 		}));
 	}
 	function u(e) {
-		return a = e, t[ma] = a, o = !0, l(), a;
+		return a = e, t[Xi] = a, o = !0, l(), a;
 	}
 	return {
 		diagnostics: i,
@@ -3846,10 +3658,10 @@ function Oa(e) {
 				...a,
 				...e
 			};
-			return u(w.parse(t));
+			return u(T.parse(t));
 		},
 		replace_settings(e) {
-			return u(w.parse(e));
+			return u(T.parse(e));
 		},
 		flush: c,
 		async stop() {
@@ -3859,50 +3671,50 @@ function Oa(e) {
 }
 //#endregion
 //#region src/host/sillytavern_secret_resolver.ts
-var G = class extends Error {
+var W = class extends Error {
 	code;
 	constructor(e, t) {
 		super(t), this.name = "SecretResolutionError", this.code = e;
 	}
-}, ka = "The host refused to reveal the stored credential. Switch credential storage to This device in Settings > General and enter the key again, or allow key exposure in the host (allowKeysExposure in SillyTavern's config.yaml).", Aa = class {
+}, da = "The host refused to reveal the stored credential. Switch credential storage to This device in Settings > General and enter the key again, or allow key exposure in the host (allowKeysExposure in SillyTavern's config.yaml).", fa = class {
 	#e;
 	#t;
 	constructor(e, t) {
-		this.#e = e, this.#t = nn(t);
+		this.#e = e, this.#t = on(t);
 	}
 	async resolve_secret(e) {
-		if (!m.safeParse(e).success) throw new G("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
+		if (!m.safeParse(e).success) throw new W("invalid_reference", "A provider credential must be named by a tavern_canvas: vault reference");
 		let t;
 		try {
 			t = await this.#t("/api/secrets/view", {
 				method: "POST",
-				headers: un(this.#e.getRequestHeaders()),
+				headers: pn(this.#e.getRequestHeaders()),
 				body: JSON.stringify({})
 			});
 		} catch {
-			throw new G("unavailable", "The host secret vault could not be reached");
+			throw new W("unavailable", "The host secret vault could not be reached");
 		}
-		if (!t.ok) throw t.status === 403 ? new G("not_exposed", ka) : t.status === 404 ? new G("not_found", "The host vault holds no such credential") : new G("unavailable", `The host secret vault answered with status ${String(t.status)}`);
+		if (!t.ok) throw t.status === 403 ? new W("not_exposed", da) : t.status === 404 ? new W("not_found", "The host vault holds no such credential") : new W("unavailable", `The host secret vault answered with status ${String(t.status)}`);
 		let n;
 		try {
 			n = await t.json();
 		} catch {
-			throw new G("unavailable", "The host secret vault returned an unreadable response");
+			throw new W("unavailable", "The host secret vault returned an unreadable response");
 		}
 		let r;
-		if (typeof n == "object" && n && !Array.isArray(n) && e in n && (r = Reflect.get(n, e)), typeof r != "string" || r.trim().length === 0) throw new G("not_found", "The host vault holds no such credential");
+		if (typeof n == "object" && n && !Array.isArray(n) && e in n && (r = Reflect.get(n, e)), typeof r != "string" || r.trim().length === 0) throw new W("not_found", "The host vault holds no such credential");
 		return r;
 	}
 };
-function ja(e) {
+function pa(e) {
 	return (typeof e == "object" && !!e || typeof e == "function") && typeof e.getRequestHeaders == "function";
 }
-function Ma(e, t) {
-	return !ja(e) || typeof t != "function" ? null : new Aa(e, t);
+function ma(e, t) {
+	return !pa(e) || typeof t != "function" ? null : new fa(e, t);
 }
 //#endregion
 //#region src/host/secret_backend_router.ts
-var Na = class {
+var ha = class {
 	#e;
 	#t;
 	#n;
@@ -3937,7 +3749,7 @@ var Na = class {
 	}
 	async resolve_secret(e) {
 		let t = this.#o();
-		if (t === null) throw new G("unsupported_host", `${this.#s()} credential storage cannot reveal credentials`);
+		if (t === null) throw new W("unsupported_host", `${this.#s()} credential storage cannot reveal credentials`);
 		return t.resolve_secret(e);
 	}
 	#a() {
@@ -3961,66 +3773,66 @@ var Na = class {
 			case "host": return "Host";
 		}
 	}
-}, Pa = class extends P {
+}, ga = class extends F {
 	constructor(e, t) {
 		super("configuration", e, t), this.name = "TransportConfigurationError";
 	}
 };
-function Fa(e) {
-	let t = Ia(e.direct_cloud);
+function _a(e) {
+	let t = va(e.direct_cloud);
 	if (t !== null) return t;
 	if (e.direct_provider_base_url !== null) {
-		let t = La(e.direct_provider_base_url);
-		if (!ce(t)) throw new Pa("Direct provider endpoint must use a loopback address");
+		let t = ya(e.direct_provider_base_url);
+		if (!le(t)) throw new ga("Direct provider endpoint must use a loopback address");
 		return {
 			kind: "local_direct",
 			endpoint: t
 		};
 	}
-	throw new Pa("No provider transport is available");
+	throw new ga("No provider transport is available");
 }
-function Ia(e) {
-	if (e === null || Pt(e.provider_id) === null) return null;
-	if (e.credential_reference === null) throw new Pa("This provider needs a stored credential before it can be called directly; set one on the active profile");
-	if (!e.secrets_readable) throw new Pa("This host cannot reveal stored credentials, so a direct provider call is impossible; switch the credential storage to this device");
+function va(e) {
+	if (e === null || Lt(e.provider_id) === null) return null;
+	if (e.credential_reference === null) throw new ga("This provider needs a stored credential before it can be called directly; set one on the active profile");
+	if (!e.secrets_readable) throw new ga("This host cannot reveal stored credentials, so a direct provider call is impossible; switch the credential storage to this device");
 	return {
 		kind: "direct_cloud",
 		provider_id: e.provider_id,
 		credential_reference: e.credential_reference
 	};
 }
-function La(e) {
+function ya(e) {
 	try {
-		return C(e);
+		return se(e);
 	} catch (e) {
-		throw new Pa("Transport endpoint is invalid", { cause: e });
+		throw new ga("Transport endpoint is invalid", { cause: e });
 	}
 }
 //#endregion
 //#region src/bootstrap/capabilities/_records.ts
-function Ra(e) {
+function G(e) {
 	return typeof e != "object" || !e || Array.isArray(e) ? {} : e;
 }
 function K(e) {
-	return Ra(e.payload);
+	return G(e.payload);
 }
 function q(e, t, n) {
 	let r = e[t];
 	return typeof r == "string" ? r : n;
 }
-function za(e, t) {
+function ba(e, t) {
 	let n = e[t];
 	return typeof n == "string" ? n : null;
 }
-function Ba(e, t, n) {
+function xa(e, t, n) {
 	let r = e[t];
 	return typeof r == "boolean" ? r : n;
 }
-function Va(e, t, n) {
+function Sa(e, t, n) {
 	let r = e[t];
 	return typeof r == "number" && Number.isFinite(r) ? r : n;
 }
-function Ha(e, t) {
+function Ca(e, t) {
 	let n = e[t];
 	return Array.isArray(n) ? n : [];
 }
@@ -4035,7 +3847,7 @@ function J(e, t = /* @__PURE__ */ new Set()) {
 	for (let [t, i] of Object.entries(e)) i !== void 0 && (r[t] = J(i, n));
 	return r;
 }
-var Y = class {
+var wa = class {
 	#e = /* @__PURE__ */ new Set();
 	subscribe(e) {
 		return this.#e.add(e), () => {
@@ -4045,15 +3857,16 @@ var Y = class {
 	emit(e) {
 		for (let t of [...this.#e]) t(e);
 	}
-}, Ua = [
+}, Ta = [
 	"character",
 	"outfit",
 	"lora",
 	"vibe",
 	"workflow",
-	"prompt_tag"
+	"prompt_tag",
+	"creation"
 ];
-function Wa(e, t) {
+function Ea(e, t) {
 	switch (t) {
 		case "character": return e.character_profiles;
 		case "vibe": return e.novelai_vibes;
@@ -4061,9 +3874,10 @@ function Wa(e, t) {
 		case "outfit": return e.outfit_profiles;
 		case "lora": return e.lora_profiles;
 		case "prompt_tag": return e.prompt_tag_presets;
+		case "creation": return e.creation_records;
 	}
 }
-function Ga(e, t) {
+function Da(e, t) {
 	let n = K(e);
 	return {
 		id: e.id,
@@ -4074,23 +3888,23 @@ function Ga(e, t) {
 		payload: n
 	};
 }
-function Ka(e, t) {
-	let n = Va(K(e), "order", 2 ** 53 - 1), r = Va(K(t), "order", 2 ** 53 - 1);
+function Oa(e, t) {
+	let n = Sa(K(e), "order", 2 ** 53 - 1), r = Sa(K(t), "order", 2 ** 53 - 1);
 	return n === r ? e.id < t.id ? -1 : +(e.id > t.id) : n - r;
 }
-function qa(e) {
-	let t = new Y();
+function ka(e) {
+	let t = new wa();
 	async function n(t) {
-		return [...await Wa(e.repositories, t).list(e.namespace())].sort(Ka).map((e) => Ga(e, t));
+		return [...await Ea(e.repositories, t).list(e.namespace())].sort(Oa).map((e) => Da(e, t));
 	}
 	return {
 		async load() {
-			let e = await Promise.all(Ua.map(async (e) => [e, await n(e)]));
+			let e = await Promise.all(Ta.map(async (e) => [e, await n(e)]));
 			return Object.fromEntries(e);
 		},
 		subscribe: (e) => t.subscribe(e),
 		async save(n, r) {
-			let i = Wa(e.repositories, n), a = e.namespace(), o = await i.get(a, r.id), s = e.now(), c = o === null ? Math.max(-1, ...(await i.list(a)).map((e) => Va(K(e), "order", -1))) + 1 : Va(K(o), "order", 2 ** 53 - 1), l = {
+			let i = Ea(e.repositories, n), a = e.namespace(), o = await i.get(a, r.id), s = e.now(), c = o === null ? Math.max(-1, ...(await i.list(a)).map((e) => Sa(K(e), "order", -1))) + 1 : Sa(K(o), "order", 2 ** 53 - 1), l = {
 				schema_version: 1,
 				id: r.id,
 				namespace: a,
@@ -4104,21 +3918,21 @@ function qa(e) {
 				})
 			};
 			await i.put(a, l);
-			let u = Ga(l, n);
+			let u = Da(l, n);
 			return t.emit({
 				type: "asset_upserted",
 				asset: u
 			}), u;
 		},
 		async remove(n, r) {
-			await Wa(e.repositories, n).delete(e.namespace(), r), t.emit({
+			await Ea(e.repositories, n).delete(e.namespace(), r), t.emit({
 				type: "asset_removed",
 				category: n,
 				asset_id: r
 			});
 		},
 		async reorder(t, n) {
-			let r = Wa(e.repositories, t), i = e.namespace(), a = e.now();
+			let r = Ea(e.repositories, t), i = e.namespace(), a = e.now();
 			for (let [e, t] of n.entries()) {
 				let n = await r.get(i, t);
 				n !== null && await r.put(i, {
@@ -4135,9 +3949,9 @@ function qa(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/diagnostics_capability.ts
-var Ja = 500, Ya = class {
+var Aa = 500, ja = class {
 	#e = [];
-	#t = new Y();
+	#t = new wa();
 	#n = 0;
 	get entries() {
 		return this.#e;
@@ -4152,7 +3966,7 @@ var Ja = 500, Ya = class {
 			event_id: `timeline-${String(this.#n)}`,
 			occurred_at: (/* @__PURE__ */ new Date()).toISOString()
 		};
-		this.#e.push(t), this.#e.length > Ja && this.#e.shift(), this.#t.emit({
+		this.#e.push(t), this.#e.length > Aa && this.#e.shift(), this.#t.emit({
 			type: "timeline_entry_appended",
 			entry: t
 		});
@@ -4171,7 +3985,7 @@ var Ja = 500, Ya = class {
 		});
 	}
 };
-function Xa(e) {
+function Ma(e) {
 	return e === null ? {} : {
 		schema_version: e.schema_version,
 		locale: e.locale,
@@ -4180,7 +3994,7 @@ function Xa(e) {
 		ui: e.ui
 	};
 }
-function Za(e) {
+function Na(e) {
 	async function t() {
 		try {
 			return await e.estimate_storage();
@@ -4206,7 +4020,7 @@ function Za(e) {
 				version: e.extension_version,
 				capability_matrix: e.capability_matrix,
 				redacted_settings: {
-					...Xa(e.settings()),
+					...Ma(e.settings()),
 					capability_resolutions: e.resolutions()
 				},
 				error_codes: n,
@@ -4217,43 +4031,43 @@ function Za(e) {
 }
 //#endregion
 //#region src/bootstrap/capability_resolution.ts
-function Qa(e) {
+function Pa(e) {
 	return {
 		status: "available",
 		value: e
 	};
 }
-function X(e) {
+function Y(e) {
 	return {
 		status: "unavailable",
 		reason: e
 	};
 }
-function Z(e) {
+function X(e) {
 	try {
-		return Qa(e());
+		return Pa(e());
 	} catch (e) {
-		return X($a(e));
+		return Y(Fa(e));
 	}
 }
-function $a(e) {
+function Fa(e) {
 	return e instanceof Error && e.message.trim() !== "" ? e.message : "Capability construction failed";
 }
-function eo(e, t) {
+function Ia(e, t) {
 	return {
 		capability_id: e,
 		status: t.status,
 		reason: t.status === "unavailable" ? t.reason : null
 	};
 }
-var to = "capability_unavailable";
-function Q(e) {
+var La = "capability_unavailable";
+function Z(e) {
 	let t = Error(e);
-	return Object.defineProperty(t, "code", { value: to }), t;
+	return Object.defineProperty(t, "code", { value: La }), t;
 }
 //#endregion
 //#region src/bootstrap/capabilities/gallery_capability.ts
-function no(e) {
+function Ra(e) {
 	switch (e.media_type) {
 		case "image/png":
 		case "image/jpeg":
@@ -4261,10 +4075,10 @@ function no(e) {
 		case "video/mp4": return null;
 	}
 }
-function ro(e) {
-	let t = no(e);
+function za(e) {
+	let t = Ra(e);
 	if (t === null) return null;
-	let n = S.parse(e.provider_id);
+	let n = x.parse(e.provider_id);
 	return {
 		id: e.id,
 		provider_id: n,
@@ -4278,23 +4092,23 @@ function ro(e) {
 		created_at: e.created_at
 	};
 }
-function io(e) {
-	let t = new Y();
+function Ba(e) {
+	let t = new wa();
 	async function n(t) {
 		let n = await e.repository.get(e.namespace(), t);
-		if (n === null) throw Q(`Gallery record ${t} no longer exists`);
+		if (n === null) throw Z(`Gallery record ${t} no longer exists`);
 		return n;
 	}
 	async function r(n) {
 		await e.repository.put(e.namespace(), n);
-		let r = ro(n);
+		let r = za(n);
 		r !== null && t.emit({
 			type: "record_upserted",
 			record: r
 		});
 	}
 	async function i(n) {
-		await nt(e.database, e.namespace(), n), t.emit({
+		await qe(e.database, e.namespace(), n), t.emit({
 			type: "record_removed",
 			record_id: n
 		});
@@ -4302,28 +4116,28 @@ function io(e) {
 	return {
 		async load() {
 			return (await e.repository.list(e.namespace())).flatMap((e) => {
-				let t = ro(e);
+				let t = za(e);
 				return t === null ? [] : [t];
 			});
 		},
 		subscribe: (e) => t.subscribe(e),
 		async read_bytes(t) {
-			let r = await n(t), i = await $e(e.database, r.sha256);
-			if (i === null) throw Q(`Gallery record ${t} has no stored bytes; the blob was evicted`);
+			let r = await n(t), i = await We(e.database, r.sha256);
+			if (i === null) throw Z(`Gallery record ${t} has no stored bytes; the blob was evicted`);
 			return i;
 		},
 		async read_thumbnail(t) {
-			let i = await n(t), a = await rt(e.database, i.sha256);
+			let i = await n(t), a = await Je(e.database, i.sha256);
 			if (a !== null && i.width !== void 0) return a.bytes;
-			let o = await $e(e.database, i.sha256);
-			if (o === null) throw Q(`Gallery record ${t} has no stored bytes; the blob was evicted`);
-			let s = i.width === void 0 ? et(o) : null;
+			let o = await We(e.database, i.sha256);
+			if (o === null) throw Z(`Gallery record ${t} has no stored bytes; the blob was evicted`);
+			let s = i.width === void 0 ? Ge(o) : null;
 			if (s !== null && await r({
 				...i,
 				...s
 			}), a !== null) return a.bytes;
 			let c = await e.make_thumbnail(o, i.media_type);
-			return await tt(e.database, i.sha256, c, "image/webp"), c;
+			return await Ke(e.database, i.sha256, c, "image/webp"), c;
 		},
 		async pin(t, i) {
 			await r({
@@ -4351,26 +4165,26 @@ function io(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/generation_capability.ts
-function ao(e) {
+function Va(e) {
 	return e.image_count ?? 1;
 }
-function oo(e) {
+function Ha(e) {
 	return {
 		job_id: e.job_id,
 		request_id: e.request_id,
-		provider_id: S.parse(e.provider_id),
+		provider_id: x.parse(e.provider_id),
 		state: e.state,
-		image_count: ao(e.arguments),
+		image_count: Va(e.arguments),
 		completed_image_ids: e.image_ids,
 		error: e.error,
 		submitted_at: e.created_at
 	};
 }
-function so(e) {
+function Ua(e) {
 	return {
 		job_id: e.id,
 		request_id: e.request_id,
-		provider_id: S.parse(e.provider_id),
+		provider_id: x.parse(e.provider_id),
 		state: e.state,
 		image_count: e.arguments.image_count ?? 1,
 		completed_image_ids: e.image_ids,
@@ -4378,14 +4192,14 @@ function so(e) {
 		submitted_at: e.created_at
 	};
 }
-var co = /* @__PURE__ */ new Set([
+var Wa = /* @__PURE__ */ new Set([
 	"queued",
 	"preparing",
 	"submitting",
 	"running"
 ]);
-async function lo(e, t, n) {
-	for (let r of await e.list(t)) co.has(r.state) && await e.put(t, {
+async function Ga(e, t, n) {
+	for (let r of await e.list(t)) Wa.has(r.state) && await e.put(t, {
 		...r,
 		state: "failed",
 		error: {
@@ -4395,39 +4209,39 @@ async function lo(e, t, n) {
 		updated_at: n
 	});
 }
-function uo(e) {
-	let t = new Y(), n = /* @__PURE__ */ new Map();
+function Ka(e) {
+	let t = new wa(), n = /* @__PURE__ */ new Map();
 	e.queue.subscribe((e) => {
 		t.emit({
 			type: "job_updated",
-			job: oo(e)
+			job: Ha(e)
 		});
 	});
 	async function r(t) {
-		let r = e.prepare_request === void 0 ? t : await e.prepare_request(t), i = await e.origin.resolve(), a = await vi({
+		let r = e.prepare_request === void 0 ? t : await e.prepare_request(t), i = await e.origin.resolve(), a = await xi({
 			queue: e.queue,
 			plans: e.plans
 		}, {
 			...i,
 			scene_description: r.prompt
 		}, r);
-		return n.set(a.job_id, r), oo(a);
+		return n.set(a.job_id, r), Ha(a);
 	}
 	return {
 		async load() {
-			return (await e.jobs.list(e.namespace())).map(so);
+			return (await e.jobs.list(e.namespace())).map(Ua);
 		},
 		subscribe: (e) => t.subscribe(e),
 		submit: (e) => r(e.request),
 		async cancel(t) {
-			return oo(await bi({
+			return Ha(await Ci({
 				queue: e.queue,
 				plans: e.plans
 			}, t));
 		},
 		retry(t) {
 			let i = n.get(t);
-			if (i === void 0) throw Q(`Generation job ${t} was not submitted in this session, so its request cannot be replayed`);
+			if (i === void 0) throw Z(`Generation job ${t} was not submitted in this session, so its request cannot be replayed`);
 			return r({
 				...i,
 				request_id: e.new_request_id()
@@ -4446,13 +4260,13 @@ function uo(e) {
 }
 //#endregion
 //#region src/bootstrap/page_lock.ts
-var fo = "inkwell:page:";
-async function po(e, t) {
+var qa = "inkwell:page:";
+async function Ja(e, t) {
 	if (e === void 0) return {
 		sole_page: !0,
 		release: () => {}
 	};
-	let n = `${fo}${t}`, r = () => {};
+	let n = `${qa}${t}`, r = () => {};
 	await new Promise((t) => {
 		e.request(n, () => new Promise((e) => {
 			r = e, t();
@@ -4460,26 +4274,26 @@ async function po(e, t) {
 	});
 	let { held: i = [] } = await e.query();
 	return {
-		sole_page: !i.some((e) => e.name !== n && e.name?.startsWith(fo) === !0),
+		sole_page: !i.some((e) => e.name !== n && e.name?.startsWith(qa) === !0),
 		release: r
 	};
 }
 //#endregion
 //#region src/bootstrap/capabilities/novelai_capability.ts
-var mo = 3e4, ho = 12e4, go = 3e4;
-function _o(e) {
+var Ya = 3e4, Xa = 12e4, Za = 3e4;
+function Qa(e) {
 	return {
 		load: async () => (await e()).list_models(),
-		get_account: async () => (await e()).get_account(AbortSignal.timeout(mo)),
-		refresh_models: async () => (await e()).refresh_models(AbortSignal.timeout(ho)),
-		estimate_cost: async (t) => (await e()).estimate_cost(t, AbortSignal.timeout(go))
+		get_account: async () => (await e()).get_account(AbortSignal.timeout(Ya)),
+		refresh_models: async () => (await e()).refresh_models(AbortSignal.timeout(Xa)),
+		estimate_cost: async (t) => (await e()).estimate_cost(t, AbortSignal.timeout(Za))
 	};
 }
 //#endregion
 //#region src/bootstrap/capabilities/generation_context.ts
-var vo = "inkwell:library";
-function yo(e) {
-	return Ht.parse({
+var $a = "inkwell:library";
+function eo(e) {
+	return Gt.parse({
 		schema_version: 1,
 		chat_id: e.chat_id,
 		active_swipes: e.messages.map((e) => ({
@@ -4494,7 +4308,7 @@ function yo(e) {
 		}))
 	});
 }
-var bo = class {
+var to = class {
 	#e;
 	#t;
 	constructor(e, t) {
@@ -4502,7 +4316,7 @@ var bo = class {
 	}
 	async resolve() {
 		if (this.#e.get_active_chat_id() === null) return this.#n();
-		let e = await this.#e.get_active_chat(), t = kt(yo(e), this.#t), n = e.messages.at(-1);
+		let e = await this.#e.get_active_chat(), t = Mt(eo(e), this.#t), n = e.messages.at(-1);
 		return {
 			chat_id: e.chat_id,
 			requested_swipe_id: n?.active_swipe_id ?? 0,
@@ -4511,38 +4325,38 @@ var bo = class {
 		};
 	}
 	#n() {
-		let e = kt(Ht.parse({
+		let e = Mt(Gt.parse({
 			schema_version: 1,
-			chat_id: vo,
+			chat_id: $a,
 			active_swipes: [],
 			messages: []
 		}), this.#t);
 		return {
-			chat_id: vo,
+			chat_id: $a,
 			requested_swipe_id: 0,
 			generation_anchor: e.generation_anchor,
 			source_anchor: e.source_anchor
 		};
 	}
-}, xo = "vault_key", So = "novelai_defaults", Co = "prompt_tags", wo = "provider_profile", To = 2e7, Eo = "base_url";
-function Do(e) {
+}, no = "vault_key", ro = "novelai_defaults", io = "prompt_tags", ao = "provider_profile", oo = 2e7, so = "base_url";
+function co(e) {
 	return e === "sd_webui" || e === "comfyui";
 }
-function Oo(e) {
-	let t = C(e);
-	if (!ce(t)) throw TypeError("A local provider address must be a loopback address");
+function lo(e) {
+	let t = se(e);
+	if (!le(t)) throw TypeError("A local provider address must be a loopback address");
 	return t;
 }
-function ko(e) {
+function uo(e) {
 	let t = e[0];
 	return typeof t == "string" && t.trim().length > 0 ? t : null;
 }
-function Ao(e, t) {
+function fo(e, t) {
 	let n = {
 		output_mime_type_allowlist: ["image/png"],
-		max_response_bytes: To,
-		max_input_asset_bytes: To,
-		...t?.provider_id === e.provider_id ? Ra(K(t)[wo]) : {},
+		max_response_bytes: oo,
+		max_input_asset_bytes: oo,
+		...t?.provider_id === e.provider_id ? G(K(t)[ao]) : {},
 		model_allowlist: [e.model_id.trim()]
 	};
 	switch (e.provider_id) {
@@ -4567,49 +4381,49 @@ function Ao(e, t) {
 		case "google_image": return n;
 	}
 }
-function jo(e) {
+function po(e) {
 	return {
-		...Ra(K(e)[wo]),
+		...G(K(e)[ao]),
 		profile_id: e.id,
 		provider_id: e.provider_id
 	};
 }
-function Mo(e) {
-	let t = K(e), n = Ra(t[wo]);
+function mo(e) {
+	let t = K(e), n = G(t[ao]);
 	return {
 		id: e.id,
-		provider_id: S.parse(e.provider_id),
+		provider_id: x.parse(e.provider_id),
 		display_name: q(t, "display_name", e.id),
-		model_id: ko(Ha(n, "model_allowlist")),
-		workflow_id: ko(Ha(n, "workflow_allowlist")),
-		base_url: typeof t[Eo] == "string" ? t[Eo] : null,
-		is_default: Ba(t, "is_default", !1),
-		credential_reference: typeof t.vault_key == "string" ? t[xo] : null,
+		model_id: uo(Ca(n, "model_allowlist")),
+		workflow_id: uo(Ca(n, "workflow_allowlist")),
+		base_url: typeof t[so] == "string" ? t[so] : null,
+		is_default: xa(t, "is_default", !1),
+		credential_reference: typeof t.vault_key == "string" ? t[no] : null,
 		updated_at: e.updated_at,
-		novelai_defaults: Po(e),
-		prompt_tags: No(e)
+		novelai_defaults: go(e),
+		prompt_tags: ho(e)
 	};
 }
-function No(e) {
-	let t = Vt.safeParse(K(e)[Co]);
+function ho(e) {
+	let t = Wt.safeParse(K(e)[io]);
 	return t.success ? t.data : null;
 }
-function Po(e) {
-	let t = le.safeParse(K(e)[So]);
+function go(e) {
+	let t = ae.safeParse(K(e)[ro]);
 	return t.success ? t.data : null;
 }
-function Fo(e) {
-	let t = new Y();
+function _o(e) {
+	let t = new wa();
 	async function n(t) {
 		let n = await e.repository.get(e.namespace(), t);
-		if (n === null) throw Q(`Provider profile ${t} no longer exists`);
+		if (n === null) throw Z(`Provider profile ${t} no longer exists`);
 		return n;
 	}
 	return {
 		async load() {
 			let t = await e.repository.list(e.namespace());
 			return Promise.all(t.map(async (t) => {
-				let n = Mo(t);
+				let n = mo(t);
 				return n.credential_reference === null ? n : await e.credential_present(n.credential_reference).catch(() => !1) === !1 ? {
 					...n,
 					credential_reference: null
@@ -4622,9 +4436,9 @@ function Fo(e) {
 				...K(i ?? { payload: {} }),
 				display_name: n.display_name,
 				is_default: n.is_default,
-				[wo]: J(Ao(n, i))
+				[ao]: J(fo(n, i))
 			};
-			i !== null && i.provider_id !== n.provider_id && Reflect.deleteProperty(o, xo), Do(n.provider_id) && n.base_url !== null ? o[Eo] = Oo(n.base_url) : Reflect.deleteProperty(o, Eo);
+			i !== null && i.provider_id !== n.provider_id && Reflect.deleteProperty(o, no), co(n.provider_id) && n.base_url !== null ? o[so] = lo(n.base_url) : Reflect.deleteProperty(o, so);
 			let s = {
 				schema_version: 1,
 				id: n.id,
@@ -4635,9 +4449,9 @@ function Fo(e) {
 				provider_id: n.provider_id,
 				payload: J(o)
 			}, c = (await e.load_adapters())[n.provider_id];
-			if (c === void 0) throw Q(`Provider ${n.provider_id} is unavailable`);
-			c.validate_profile(jo(s)), await e.repository.put(r, s);
-			let l = Mo(s);
+			if (c === void 0) throw Z(`Provider ${n.provider_id} is unavailable`);
+			c.validate_profile(po(s)), await e.repository.put(r, s);
+			let l = mo(s);
 			return t.emit({
 				type: "profile_upserted",
 				profile: l
@@ -4651,19 +4465,19 @@ function Fo(e) {
 		},
 		async set_credential(r, i) {
 			if (i.trim().length === 0) throw TypeError("A provider credential must not be blank");
-			if (e.secrets === null) throw Q("The selected credential storage backend is unavailable");
-			let a = await n(r), o = x(a.namespace, r);
+			if (e.secrets === null) throw Z("The selected credential storage backend is unavailable");
+			let a = await n(r), o = b(a.namespace, r);
 			await e.secrets.write_secret(o, i);
 			let s = {
 				...a,
 				updated_at: e.now(),
 				payload: J({
 					...K(a),
-					[xo]: o
+					[no]: o
 				})
 			};
 			await e.repository.put(a.namespace, s);
-			let c = Mo(s);
+			let c = mo(s);
 			return t.emit({
 				type: "profile_upserted",
 				profile: c
@@ -4677,11 +4491,11 @@ function Fo(e) {
 				updated_at: e.now(),
 				payload: J({
 					...K(a),
-					[So]: le.parse(i)
+					[ro]: ae.parse(i)
 				})
 			};
 			await e.repository.put(a.namespace, o);
-			let s = Mo(o);
+			let s = mo(o);
 			return t.emit({
 				type: "profile_upserted",
 				profile: s
@@ -4693,33 +4507,33 @@ function Fo(e) {
 				updated_at: e.now(),
 				payload: J({
 					...K(a),
-					[Co]: Vt.parse(i)
+					[io]: Wt.parse(i)
 				})
 			};
 			await e.repository.put(a.namespace, o);
-			let s = Mo(o);
+			let s = mo(o);
 			return t.emit({
 				type: "profile_upserted",
 				profile: s
 			}), s;
 		},
 		async clear_credential(r) {
-			let i = await n(r), a = { ...K(i) }, o = a[xo];
-			Reflect.deleteProperty(a, xo), typeof o == "string" && await e.secrets?.delete_secret?.(o);
+			let i = await n(r), a = { ...K(i) }, o = a[no];
+			Reflect.deleteProperty(a, no), typeof o == "string" && await e.secrets?.delete_secret?.(o);
 			let s = {
 				...i,
 				updated_at: e.now(),
 				payload: J(a)
 			};
 			await e.repository.put(i.namespace, s);
-			let c = Mo(s);
+			let c = mo(s);
 			return t.emit({
 				type: "profile_upserted",
 				profile: c
 			}), c;
 		},
 		async test_connection(t) {
-			let r = Date.now(), i = await n(t), a = S.parse(i.provider_id), o = (await e.load_adapters())[a];
+			let r = Date.now(), i = await n(t), a = x.parse(i.provider_id), o = (await e.load_adapters())[a];
 			if (o === void 0) return {
 				status: "failed",
 				error: {
@@ -4728,17 +4542,17 @@ function Fo(e) {
 				}
 			};
 			try {
-				o.validate_profile(jo(i));
+				o.validate_profile(po(i));
 			} catch (e) {
 				return {
 					status: "failed",
-					error: e instanceof ut ? e.provider_error : {
+					error: e instanceof ct ? e.provider_error : {
 						code: "invalid_request",
 						retryable: !1
 					}
 				};
 			}
-			let s = K(i)[xo];
+			let s = K(i)[no];
 			return typeof s == "string" && e.secrets !== null && !await e.secrets.probe_secret(s) ? {
 				status: "failed",
 				error: {
@@ -4754,28 +4568,28 @@ function Fo(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/prompt_presets_capability.ts
-function Io(e) {
+function vo(e) {
 	let t = K(e);
 	return {
 		id: e.id,
 		display_name: q(t, "display_name", e.id),
-		group: za(t, "group"),
+		group: ba(t, "group"),
 		updated_at: e.updated_at
 	};
 }
-function Lo(e) {
+function yo(e) {
 	return e.flatMap((e) => {
-		let t = Ra(e), n = za(t, "id");
+		let t = G(e), n = ba(t, "id");
 		return n === null ? [] : [{
 			id: n,
-			triggers: Ha(t, "triggers").filter((e) => typeof e == "string"),
+			triggers: Ca(t, "triggers").filter((e) => typeof e == "string"),
 			replacement: q(t, "replacement", "")
 		}];
 	});
 }
-function Ro(e) {
+function bo(e) {
 	return e.flatMap((e) => {
-		let t = Ra(e), n = za(t, "id");
+		let t = G(e), n = ba(t, "id");
 		return n === null ? [] : [{
 			id: n,
 			pattern: q(t, "pattern", ""),
@@ -4784,8 +4598,8 @@ function Ro(e) {
 		}];
 	});
 }
-function zo(e) {
-	let t = new Y();
+function xo(e) {
+	let t = new wa();
 	async function n(n) {
 		await e.repository.delete(e.namespace(), n), t.emit({
 			type: "preset_removed",
@@ -4794,21 +4608,21 @@ function zo(e) {
 	}
 	return {
 		async load() {
-			return (await e.repository.list(e.namespace())).map(Io);
+			return (await e.repository.list(e.namespace())).map(vo);
 		},
 		subscribe: (e) => t.subscribe(e),
 		async load_draft(t) {
 			let n = await e.repository.get(e.namespace(), t);
-			if (n === null) throw Q(`Prompt preset ${t} no longer exists`);
+			if (n === null) throw Z(`Prompt preset ${t} no longer exists`);
 			let r = K(n);
 			return {
 				id: n.id,
 				display_name: q(r, "display_name", n.id),
-				group: za(r, "group"),
+				group: ba(r, "group"),
 				fixed_positive_prompt: q(r, "fixed_positive_prompt", ""),
 				fixed_negative_prompt: q(r, "fixed_negative_prompt", ""),
-				replacement_rules: Lo(Ha(r, "replacement_rules")),
-				regex_rules: Ro(Ha(r, "regex_rules"))
+				replacement_rules: yo(Ca(r, "replacement_rules")),
+				regex_rules: bo(Ca(r, "regex_rules"))
 			};
 		},
 		async save_draft(n) {
@@ -4829,7 +4643,7 @@ function zo(e) {
 				})
 			};
 			await e.repository.put(r, s);
-			let c = Io(s);
+			let c = vo(s);
 			return t.emit({
 				type: "preset_upserted",
 				preset: c
@@ -4839,18 +4653,18 @@ function zo(e) {
 		async bulk_remove(e) {
 			for (let t of e) await n(t);
 		},
-		test_regex: (e, t) => Promise.resolve(Mi(e, t))
+		test_regex: (e, t) => Promise.resolve(mt(e, t))
 	};
 }
 //#endregion
 //#region src/bootstrap/capabilities/settings_capability.ts
-var Bo = "The selected credential storage backend is unavailable", Vo = "SillyTavern's secret store is unreachable from this page", Ho = "deepl", Uo = "Listing world info books needs JS-Slash-Runner";
-function Wo(e) {
-	if (e === null) throw Q("Archive import and export need IndexedDB, which is unavailable on this host");
+var So = "The selected credential storage backend is unavailable", Co = "SillyTavern's secret store is unreachable from this page", wo = "deepl", To = "Listing world info books needs JS-Slash-Runner";
+function Eo(e) {
+	if (e === null) throw Z("Archive import and export need IndexedDB, which is unavailable on this host");
 	return e;
 }
-function Go(e) {
-	let t = new Y(), n = null;
+function Do(e) {
+	let t = new wa(), n = null;
 	async function r() {
 		let t = e.settings.get_settings(), n;
 		return n = e.browser_secret_vault === null ? {
@@ -4881,45 +4695,45 @@ function Go(e) {
 		update: (e) => Promise.resolve(i(e)),
 		async set_analysis_key(t) {
 			if (t.trim().length === 0) throw TypeError("An API key must not be blank");
-			if (e.secrets === null) throw Q(Bo);
-			await e.secrets.write_secret(oe(e.settings.get_settings().active_namespace), t.trim());
+			if (e.secrets === null) throw Z(So);
+			await e.secrets.write_secret(ue(e.settings.get_settings().active_namespace), t.trim());
 		},
 		list_worldbooks() {
-			return e.list_worldbooks === null ? Promise.reject(Q(Uo)) : Promise.resolve(e.list_worldbooks());
+			return e.list_worldbooks === null ? Promise.reject(Z(To)) : Promise.resolve(e.list_worldbooks());
 		},
 		async clear_analysis_key() {
-			if (e.secrets?.delete_secret === void 0) throw Q(Bo);
-			await e.secrets.delete_secret(oe(e.settings.get_settings().active_namespace));
+			if (e.secrets?.delete_secret === void 0) throw Z(So);
+			await e.secrets.delete_secret(ue(e.settings.get_settings().active_namespace));
 		},
 		async set_deepl_key(t) {
-			if (e.host_secrets === null) throw Q(Vo);
-			await e.host_secrets.write_secret(Ho, t.trim());
+			if (e.host_secrets === null) throw Z(Co);
+			await e.host_secrets.write_secret(wo, t.trim());
 		},
 		async clear_deepl_key() {
-			if (e.host_secrets?.delete_secret === void 0) throw Q(Vo);
-			await e.host_secrets.delete_secret(Ho);
+			if (e.host_secrets?.delete_secret === void 0) throw Z(Co);
+			await e.host_secrets.delete_secret(wo);
 		},
 		async initialize_browser_secret_vault(t) {
-			if (e.browser_secret_vault === null) throw Q(Bo);
+			if (e.browser_secret_vault === null) throw Z(So);
 			return e.browser_secret_vault.initialize(t);
 		},
 		async unlock_browser_secret_vault(t) {
-			if (e.browser_secret_vault === null) throw Q(Bo);
+			if (e.browser_secret_vault === null) throw Z(So);
 			return e.browser_secret_vault.unlock(t);
 		},
 		async lock_browser_secret_vault() {
-			if (e.browser_secret_vault === null) throw Q(Bo);
+			if (e.browser_secret_vault === null) throw Z(So);
 			return e.browser_secret_vault.lock();
 		},
 		async reset_browser_secret_vault() {
-			if (e.browser_secret_vault === null) throw Q(Bo);
+			if (e.browser_secret_vault === null) throw Z(So);
 			return e.browser_secret_vault.reset();
 		},
 		set_vocabulary_update_channel(t) {
 			return i({ vocabulary_update_channel: t }), e.settings.flush();
 		},
 		async import_vocabulary_package(t, r) {
-			if (n !== null) throw new vt("vocabulary_import_busy", "A vocabulary import is already in progress");
+			if (n !== null) throw new bt("vocabulary_import_busy", "A vocabulary import is already in progress");
 			let i = {
 				cancelled: !1,
 				cancel() {
@@ -4928,7 +4742,7 @@ function Go(e) {
 			}, a = null;
 			n = i;
 			try {
-				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-X9fNUliM.js");
+				let { start_vocabulary_import: o } = await import("./chunks/vocabulary_import-CFRYRNGN.js");
 				a = o(e.database, t, r), n = a, i.cancelled && a.cancel(), await a.completed;
 			} finally {
 				(n === i || n === a) && (n = null);
@@ -4938,17 +4752,17 @@ function Go(e) {
 			n?.cancel();
 		},
 		async export_archive() {
-			let { export_archive: t } = await import("./chunks/archive-CRvsEi-3.js");
+			let { export_archive: t } = await import("./chunks/archive-D3rPGHcN.js");
 			return t({
-				database: Wo(e.database),
+				database: Eo(e.database),
 				namespace: e.settings.get_settings().active_namespace,
 				extension_version: e.extension_version
 			});
 		},
 		async import_archive(t) {
-			let { import_archive: n } = await import("./chunks/archive-CRvsEi-3.js");
+			let { import_archive: n } = await import("./chunks/archive-D3rPGHcN.js");
 			await n({
-				database: Wo(e.database),
+				database: Eo(e.database),
 				archive: t,
 				namespace: e.settings.get_settings().active_namespace
 			});
@@ -4957,7 +4771,7 @@ function Go(e) {
 }
 //#endregion
 //#region src/bootstrap/capabilities/vocabulary_capability.ts
-function Ko(e) {
+function Oo(e) {
 	switch (e.phase) {
 		case "verifying_catalog_manifest": return { phase: "verifying_catalog_manifest" };
 		case "downloading": return {
@@ -4970,7 +4784,7 @@ function Ko(e) {
 		default: return null;
 	}
 }
-function qo(e) {
+function ko(e) {
 	let t = null, n = null;
 	function r() {
 		return t ??= e.load_catalog();
@@ -5006,7 +4820,7 @@ function qo(e) {
 		},
 		async install(e, t) {
 			await (await r()).install(e, (e) => {
-				let n = Ko(e);
+				let n = Oo(e);
 				n !== null && t?.(n);
 			}), a();
 		},
@@ -5019,9 +4833,9 @@ function qo(e) {
 }
 //#endregion
 //#region src/bootstrap/image_store_ports.ts
-var Jo = 384;
-async function Yo(e, t) {
-	let n = await createImageBitmap(new Blob([new Uint8Array(e)], { type: t })), r = Math.min(1, Jo / Math.max(n.width, n.height)), i = new OffscreenCanvas(Math.max(1, Math.round(n.width * r)), Math.max(1, Math.round(n.height * r))), a = i.getContext("2d");
+var Ao = 384;
+async function jo(e, t) {
+	let n = await createImageBitmap(new Blob([new Uint8Array(e)], { type: t })), r = Math.min(1, Ao / Math.max(n.width, n.height)), i = new OffscreenCanvas(Math.max(1, Math.round(n.width * r)), Math.max(1, Math.round(n.height * r))), a = i.getContext("2d");
 	if (a === null) throw n.close(), Error("This browser cannot draw thumbnails");
 	a.drawImage(n, 0, 0, i.width, i.height), n.close();
 	let o = await i.convertToBlob({
@@ -5030,7 +4844,7 @@ async function Yo(e, t) {
 	});
 	return new Uint8Array(await o.arrayBuffer());
 }
-async function Xo(e) {
+async function Mo(e) {
 	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-CYOmmJi2.js"), o = {
 		novelai: new r(),
 		sd_webui: new a(),
@@ -5038,19 +4852,19 @@ async function Xo(e) {
 		google_image: new n()
 	};
 	if (e !== null) {
-		let n = Ze(e);
+		let n = He(e);
 		o.comfyui = new t({ workflow_store: { async load(e) {
 			return (await n.comfy_workflows.get("primary", e))?.payload;
 		} } });
 	}
 	return o;
 }
-function Zo(e, t) {
-	let n = new at(e);
+function No(e, t) {
+	let n = new Xe(e);
 	return { async read(r) {
 		let i = await n.get(t(), r);
 		if (i === null) throw Error(`Source asset ${r} is not in the image store`);
-		let a = await $e(e, i.sha256);
+		let a = await We(e, i.sha256);
 		if (a === null) throw Error(`Source asset ${r} has no stored bytes`);
 		if (i.media_type === "video/mp4") throw Error(`Source asset ${r} is a video and cannot be a provider input`);
 		return {
@@ -5060,27 +4874,27 @@ function Zo(e, t) {
 		};
 	} };
 }
-function Qo(e) {
-	return Ye.omit({
+function Po(e) {
+	return Be.omit({
 		media_type: !0,
 		quarantined: !0
 	}).parse(e);
 }
-function $o(e, t) {
+function Fo(e, t) {
 	return {
 		async put_image(n) {
-			return { id: (await it(e, t(), {
+			return { id: (await Ye(e, t(), {
 				id: n.id,
 				bytes: n.bytes,
 				claimed_media_type: n.claimed_media_type,
 				created_at: n.created_at,
-				metadata: Qo(n.metadata)
+				metadata: Po(n.metadata)
 			})).id };
 		},
 		async read_image(n) {
-			let r = await new at(e).get(t(), n);
+			let r = await new Xe(e).get(t(), n);
 			if (r === null) return null;
-			let i = await $e(e, r.sha256);
+			let i = await We(e, r.sha256);
 			return i === null ? null : {
 				bytes: i,
 				media_type: r.media_type
@@ -5090,46 +4904,53 @@ function $o(e, t) {
 }
 //#endregion
 //#region src/bootstrap/illustration_requests.ts
-async function es(e, t) {
+async function Io(e, t) {
 	let n = await import("./chunks/prompt_tags-CAoIz8Hm.js").then((e) => e.r), r = n.effective_prompt_tags({
 		provider_id: e.provider_id,
 		model_id: e.model_id,
-		prompt_tags: No(e.record)
+		prompt_tags: ho(e.record)
 	}), i = n.prompt_tag_presets(t);
 	return (e) => n.inject_prompt_tags(e, r, i);
 }
-function ts(e) {
+function Lo(e, t) {
+	return t === void 0 || !("width" in e) ? e : {
+		...e,
+		width: t.width,
+		height: t.height
+	};
+}
+function Ro(e) {
 	return {
-		async build_request({ positive_prompt: t, negative_prompt: n, character_prompts: r }) {
-			let i = await e.require_active_profile(), [{ build_generation_request: a }, o, s] = await Promise.all([
+		async build_request({ positive_prompt: t, negative_prompt: n, character_prompts: r, size: i }) {
+			let a = await e.require_active_profile(), [{ build_generation_request: o }, s, c] = await Promise.all([
 				import("./chunks/build_generation_request-BbaXLzyG.js"),
 				import("./chunks/character_assets-C_vsqVcv.js"),
 				e.assets.load()
-			]), c = await es(i, s.prompt_tag), l = ea(s, e.active_chat_id()), u = ct(r.map((e) => e.name), l), d = o.attach_character_loras(await a({
-				provider_id: i.provider_id,
+			]), l = await Io(a, c.prompt_tag), u = Ii(c, e.active_chat_id()), d = st(r.map((e) => e.name), u), p = s.attach_character_loras(await o({
+				provider_id: a.provider_id,
 				positive_prompt: t,
 				negative_prompt: n,
 				image_count: 1,
 				references: [],
-				...i.model_id === null ? {} : { model_id: i.model_id }
-			}, f.parse(crypto.randomUUID())), u, l.loras), p = e.novelai;
-			if (d.provider_id !== "novelai" || d.action !== "generate" || p === null) return c(d);
-			let [{ apply_novelai_defaults: m }, { reference_image_bytes: h }, g] = await Promise.all([
+				...a.model_id === null ? {} : { model_id: a.model_id }
+			}, f.parse(crypto.randomUUID())), d, u.loras), m = e.novelai;
+			if (p.provider_id !== "novelai" || p.action !== "generate" || m === null) return l(Lo(p, i));
+			let [{ apply_novelai_defaults: h }, { reference_image_bytes: g }, ee] = await Promise.all([
 				import("./chunks/novelai_profile_defaults-CKb8rSMX.js"),
 				import("./chunks/reference_image-B8V-aXPW.js").then((e) => e.r),
-				p.load_runtime()
-			]), ee = Po(i.record), _ = ee === null ? d : await m(d, ee, {
-				store_input: (e) => g.store_input(e),
+				m.load_runtime()
+			]), _ = go(a.record), v = _ === null ? p : await h(p, _, {
+				store_input: (e) => ee.store_input(e),
 				async load_vibe(t) {
-					let n = await p.repositories.novelai_vibes.get(e.namespace(), t), r = n === null ? {} : K(n);
+					let n = await m.repositories.novelai_vibes.get(e.namespace(), t), r = n === null ? {} : K(n);
 					return typeof r.image == "string" ? {
-						image_bytes: h(r.image),
-						strength: Va(r, "strength", .6),
-						information_extracted: Va(r, "information_extracted", 1)
+						image_bytes: g(r.image),
+						strength: Sa(r, "strength", .6),
+						information_extracted: Sa(r, "information_extracted", 1)
 					} : null;
 				}
 			});
-			return c(await o.attach_character_references(_, u, { store_reference: (e) => g.store_input(h(e)) }));
+			return l(Lo(await s.attach_character_references(v, d, { store_reference: (e) => ee.store_input(g(e)) }), i));
 		},
 		async build_edit_request(t) {
 			let n = await e.read_active_profile();
@@ -5139,7 +4960,7 @@ function ts(e) {
 				import("./chunks/build_generation_request-BbaXLzyG.js"),
 				import("./chunks/novelai_request_defaults-B0sJ9ANr.js").then((e) => e.r),
 				e.assets.load()
-			]), s = await es(n, o.prompt_tag), c = f.parse(crypto.randomUUID()), l = {
+			]), s = await Io(n, o.prompt_tag), c = f.parse(crypto.randomUUID()), l = {
 				request_id: c,
 				generation_anchor: g.parse(await i(c)),
 				model_id: n.model_id ?? a
@@ -5155,7 +4976,7 @@ function ts(e) {
 }
 //#endregion
 //#region src/transport/browser_fetch.ts
-async function ns(e, t, n, r) {
+async function zo(e, t, n, r) {
 	let i;
 	try {
 		i = await e(t, {
@@ -5165,23 +4986,23 @@ async function ns(e, t, n, r) {
 			redirect: "error"
 		});
 	} catch (e) {
-		throw n.signal?.aborted ? new DOMException("Provider request was aborted", "AbortError") : new pt({ cause: e });
+		throw n.signal?.aborted ? new DOMException("Provider request was aborted", "AbortError") : new dt({ cause: e });
 	}
 	let a = Number(i.headers.get("content-length"));
 	if (Number.isFinite(a) && a > r) {
 		if (i.body !== null) try {
 			await i.body.cancel();
 		} catch {}
-		throw new P("malformed_response", "Provider response exceeds the byte limit");
+		throw new F("malformed_response", "Provider response exceeds the byte limit");
 	}
-	let o = await rs(i.body, r, n.signal);
+	let o = await Bo(i.body, r, n.signal);
 	return {
 		status: i.status,
 		headers: Object.fromEntries(i.headers.entries()),
 		body: o
 	};
 }
-async function rs(e, t, n) {
+async function Bo(e, t, n) {
 	if (e === null) return /* @__PURE__ */ new Uint8Array();
 	let r = e.getReader(), i = [], a = 0, o = !1;
 	try {
@@ -5192,11 +5013,11 @@ async function rs(e, t, n) {
 				o = !0;
 				break;
 			}
-			if (a += s.byteLength, a > t) throw new P("malformed_response", "Provider response exceeds the byte limit");
+			if (a += s.byteLength, a > t) throw new F("malformed_response", "Provider response exceeds the byte limit");
 			i.push(s);
 		}
 	} catch (e) {
-		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof P ? e : new pt({ cause: e });
+		throw n?.aborted === !0 ? new DOMException("Provider request was aborted", "AbortError") : e instanceof F ? e : new dt({ cause: e });
 	} finally {
 		if (!o) try {
 			await r.cancel();
@@ -5209,12 +5030,12 @@ async function rs(e, t, n) {
 }
 //#endregion
 //#region src/transport/provider_operations.ts
-function is(e) {
+function Vo(e) {
 	try {
-		if (!os(e)) throw $("Provider operation is invalid");
+		if (!Uo(e)) throw Q("Provider operation is invalid");
 		let { route: t, method: n, body: r, max_request_bytes: i, content_type: a, accept: o, max_response_bytes: s, signal: c } = e, l = r === void 0 ? i === void 0 : typeof i == "number" && Number.isSafeInteger(i) && i > 0 && i <= 2e8;
-		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !ss(a) || !ss(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw $("Provider operation is invalid");
-		if (ft(t), r === void 0) return {
+		if (typeof t != "string" || n !== "GET" && n !== "POST" && n !== "DELETE" || r !== void 0 && !(r instanceof Uint8Array) || r !== void 0 && r instanceof Uint8Array && typeof i == "number" && r.byteLength > i || !l || !Wo(a) || !Wo(o) || typeof s != "number" || !Number.isSafeInteger(s) || s <= 0 || !(c instanceof AbortSignal) || c.aborted) throw Q("Provider operation is invalid");
+		if (ut(t), r === void 0) return {
 			route: t,
 			method: n,
 			...a === void 0 ? {} : { content_type: a },
@@ -5222,7 +5043,7 @@ function is(e) {
 			max_response_bytes: s,
 			signal: c
 		};
-		if (!(r instanceof Uint8Array) || typeof i != "number") throw $("Provider operation is invalid");
+		if (!(r instanceof Uint8Array) || typeof i != "number") throw Q("Provider operation is invalid");
 		return {
 			route: t,
 			method: n,
@@ -5234,16 +5055,16 @@ function is(e) {
 			signal: c
 		};
 	} catch (e) {
-		throw e instanceof P ? e : $("Provider operation is invalid", e);
+		throw e instanceof F ? e : Q("Provider operation is invalid", e);
 	}
 }
-function as(e) {
+function Ho(e) {
 	try {
-		if (!os(e)) throw $("Remote provider asset operation is invalid");
+		if (!Uo(e)) throw Q("Remote provider asset operation is invalid");
 		let { url: t, allowed_origins: n, max_bytes: r, signal: i } = e;
-		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw $("Remote provider asset operation is invalid");
-		let a = new URL(t), o = n.map(C);
-		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw $("Remote provider asset URL is not allowlisted");
+		if (typeof t != "string" || !Array.isArray(n) || n.length === 0 || !n.every((e) => typeof e == "string") || typeof r != "number" || !Number.isSafeInteger(r) || r <= 0 || !(i instanceof AbortSignal) || i.aborted) throw Q("Remote provider asset operation is invalid");
+		let a = new URL(t), o = n.map(se);
+		if (a.protocol !== "https:" || a.username.length > 0 || a.password.length > 0 || a.hash.length > 0 || !o.includes(a.origin)) throw Q("Remote provider asset URL is not allowlisted");
 		return {
 			url: a.href,
 			allowed_origins: Object.freeze(o),
@@ -5251,10 +5072,10 @@ function as(e) {
 			signal: i
 		};
 	} catch (e) {
-		throw e instanceof P ? e : $("Remote provider asset operation is invalid", e);
+		throw e instanceof F ? e : Q("Remote provider asset operation is invalid", e);
 	}
 }
-function os(e) {
+function Uo(e) {
 	if (typeof e != "object" || !e) return !1;
 	try {
 		let t = Object.getPrototypeOf(e);
@@ -5263,7 +5084,7 @@ function os(e) {
 		return !1;
 	}
 }
-function ss(e) {
+function Wo(e) {
 	if (e === void 0) return !0;
 	if (typeof e != "string" || e.length === 0 || e.length > 1024) return !1;
 	for (let t of e) {
@@ -5272,12 +5093,12 @@ function ss(e) {
 	}
 	return !0;
 }
-function $(e, t) {
-	return new P("configuration", e, t === void 0 ? void 0 : { cause: t });
+function Q(e, t) {
+	return new F("configuration", e, t === void 0 ? void 0 : { cause: t });
 }
 //#endregion
 //#region src/transport/direct_cloud_transport.ts
-var cs = class {
+var Go = class {
 	#e;
 	#t;
 	#n;
@@ -5287,16 +5108,16 @@ var cs = class {
 		this.#e = e.catalog_entry, this.#t = e.credential_reference, this.#n = e.secrets, this.#r = e.fetch ?? globalThis.fetch.bind(globalThis), this.#i = e.log ?? null;
 	}
 	async execute(e) {
-		let t = is(e), n = us(this.#e, t.route), r = await ds(this.#e, this.#t, this.#n, {
+		let t = Vo(e), n = qo(this.#e, t.route), r = await Jo(this.#e, this.#t, this.#n, {
 			...t.content_type === void 0 ? {} : { "content-type": t.content_type },
 			...t.accept === void 0 ? {} : { accept: t.accept }
-		}), i = Date.now(), a = await ls(ns(this.#r, n, {
+		}), i = Date.now(), a = await Ko(zo(this.#r, n, {
 			method: t.method,
 			...t.body === void 0 ? {} : { body: new Uint8Array(t.body).buffer },
 			headers: r,
 			signal: t.signal
 		}, t.max_response_bytes));
-		return this.#i?.write(dt({
+		return this.#i?.write(lt({
 			route: t.route,
 			method: t.method,
 			status_code: a.status,
@@ -5306,63 +5127,63 @@ var cs = class {
 		})), a;
 	}
 	async fetch_remote_asset(e) {
-		let t = as(e);
-		return ns(this.#r, t.url, {
+		let t = Ho(e);
+		return zo(this.#r, t.url, {
 			method: "GET",
 			signal: t.signal
 		}, t.max_bytes);
 	}
 };
-async function ls(e) {
+async function Ko(e) {
 	try {
 		return await e;
 	} catch (e) {
-		throw e instanceof pt ? new pt() : e;
+		throw e instanceof dt ? new dt() : e;
 	}
 }
-function us(e, t) {
+function qo(e, t) {
 	try {
-		return Ft(e, t);
+		return Rt(e, t);
 	} catch (e) {
-		throw e instanceof Nt ? new P("configuration", e.message) : e;
+		throw e instanceof It ? new F("configuration", e.message) : e;
 	}
 }
-async function ds(e, t, n, r) {
+async function Jo(e, t, n, r) {
 	let i = {
 		...r,
 		...e.required_headers
 	};
 	if (e.auth.kind === "none") return i;
-	if (t === null) throw new P("configuration", "This provider requires a stored credential; the active profile names no vault reference");
+	if (t === null) throw new F("configuration", "This provider requires a stored credential; the active profile names no vault reference");
 	let a;
 	try {
 		a = await n.resolve_secret(t);
 	} catch (e) {
-		throw new P("configuration", fs(e));
+		throw new F("configuration", Yo(e));
 	}
 	return i[e.auth.header] = e.auth.kind === "bearer" ? `Bearer ${a}` : a, i;
 }
-function fs(e) {
+function Yo(e) {
 	return e instanceof Error && e.name === "SecretResolutionError" && e.message.trim() !== "" ? e.message : "The stored provider credential could not be resolved from the selected credential storage";
 }
 //#endregion
 //#region src/transport/local_direct_transport.ts
-var ps = class {
+var Xo = class {
 	#e;
 	#t;
 	constructor(e) {
 		let t;
 		try {
-			t = C(e.base_url);
+			t = se(e.base_url);
 		} catch (e) {
-			throw new P("configuration", "Direct provider base URL is invalid", { cause: e });
+			throw new F("configuration", "Direct provider base URL is invalid", { cause: e });
 		}
-		if (!ce(t)) throw new P("configuration", "Direct provider base URL must use a loopback address");
+		if (!le(t)) throw new F("configuration", "Direct provider base URL must use a loopback address");
 		this.#e = t, this.#t = e.fetch ?? globalThis.fetch.bind(globalThis);
 	}
 	execute(e) {
-		let t = is(e);
-		return ns(this.#t, `${this.#e}${t.route}`, {
+		let t = Vo(e);
+		return zo(this.#t, `${this.#e}${t.route}`, {
 			method: t.method,
 			...t.body === void 0 ? {} : { body: new Uint8Array(t.body).buffer },
 			headers: {
@@ -5373,8 +5194,8 @@ var ps = class {
 		}, t.max_response_bytes);
 	}
 	fetch_remote_asset(e) {
-		let t = as(e);
-		return ns(this.#t, t.url, {
+		let t = Ho(e);
+		return zo(this.#t, t.url, {
 			method: "GET",
 			signal: t.signal
 		}, t.max_bytes);
@@ -5382,42 +5203,42 @@ var ps = class {
 };
 //#endregion
 //#region src/bootstrap/provider_transports.ts
-function ms(e, t = { secrets: null }) {
+function Zo(e, t = { secrets: null }) {
 	let n = t.fetch;
 	switch (e.kind) {
 		case "direct_cloud": {
-			let r = Pt(e.provider_id);
+			let r = Lt(e.provider_id);
 			if (r === null || t.secrets === null) throw Error(`No direct route catalog entry and host credential resolver pair exists for ${e.provider_id}`);
-			return new cs({
+			return new Go({
 				catalog_entry: r,
 				credential_reference: e.credential_reference,
 				secrets: t.secrets,
 				...n === void 0 ? {} : { fetch: n }
 			});
 		}
-		case "local_direct": return new ps({
+		case "local_direct": return new Xo({
 			base_url: e.endpoint,
 			...n === void 0 ? {} : { fetch: n }
 		});
 	}
 }
-function hs(e, t) {
-	let n = S.safeParse(e.provider_id).data;
+function Qo(e, t) {
+	let n = x.safeParse(e.provider_id).data;
 	if (n === void 0) return null;
 	let r = K(e);
 	return {
 		record: e,
 		provider_id: n,
-		model_id: Ha(Ra(r.provider_profile), "model_allowlist").find((e) => typeof e == "string") ?? null,
-		base_url: za(r, "base_url"),
+		model_id: Ca(G(r.provider_profile), "model_allowlist").find((e) => typeof e == "string") ?? null,
+		base_url: ba(r, "base_url"),
 		direct_cloud: {
 			provider_id: n,
-			credential_reference: za(r, xo),
+			credential_reference: ba(r, no),
 			secrets_readable: t
 		}
 	};
 }
-function gs(e) {
+function $o(e) {
 	return {
 		async execute(t) {
 			return (await e()).execute(t);
@@ -5429,11 +5250,11 @@ function gs(e) {
 		}
 	};
 }
-function _s(e, t, n) {
-	if (e === null || e.provider_id !== "novelai") throw new yt("The active provider profile is not a NovelAI profile");
-	if (e.credential_reference === null) throw new yt("The active NovelAI profile has no stored token; set one in Settings > Providers");
-	if (!e.secrets_readable || t === null) throw new yt("This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml");
-	return ms({
+function es(e, t, n) {
+	if (e === null || e.provider_id !== "novelai") throw new xt("The active provider profile is not a NovelAI profile");
+	if (e.credential_reference === null) throw new xt("The active NovelAI profile has no stored token; set one in Settings > Providers");
+	if (!e.secrets_readable || t === null) throw new xt("This host cannot reveal stored credentials; enable allowKeysExposure in SillyTavern's config.yaml");
+	return Zo({
 		kind: "direct_cloud",
 		provider_id: "novelai",
 		credential_reference: e.credential_reference
@@ -5444,7 +5265,7 @@ function _s(e, t, n) {
 }
 //#endregion
 //#region src/host/chat_surface.ts
-var vs = "tavern-canvas/illustration-slots", ys = class {
+var ts = "tavern-canvas/illustration-slots", ns = class {
 	#e = /* @__PURE__ */ new Map();
 	#t = /* @__PURE__ */ new Set();
 	#n = !1;
@@ -5481,16 +5302,16 @@ var vs = "tavern-canvas/illustration-slots", ys = class {
 		}
 	}
 };
-function bs(e) {
+function rs(e) {
 	let t = e?.__TAURITAVERN__?.api?.chatSurface;
 	if (typeof t != "object" || !t) return null;
 	let n = t;
 	return typeof n.isManagedOwnershipRequired == "function" && typeof n.registerParticipant == "function" ? n : null;
 }
-function xs(e, t) {
-	let n = bs(e);
+function is(e, t) {
+	let n = rs(e);
 	return n === null || !n.isManagedOwnershipRequired() ? !1 : (n.registerParticipant({
-		id: vs,
+		id: ts,
 		protocolVersion: 1,
 		didCommitContent: ({ mesid: e, element: n, content: r }) => t.commit({
 			mesid: e,
@@ -5499,7 +5320,7 @@ function xs(e, t) {
 		})
 	}), t.activate(), !0);
 }
-var Ss = new ys(), Cs = class {
+var as = new ns(), os = class {
 	capabilities;
 	#e;
 	#t;
@@ -5578,18 +5399,18 @@ var Ss = new ys(), Cs = class {
 		return this.#t.translate_deepl(e, t, n);
 	}
 };
-function ws(e, t) {
+function ss(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Ts(e, t, n) {
-	let r = ws(e, "TavernHelper"), i = ws(e, "SillyTavern"), a = ws(e, "fetch"), o = vn(r), s = cn(i);
+function cs(e, t, n) {
+	let r = ss(e, "TavernHelper"), i = ss(e, "SillyTavern"), a = ss(e, "fetch"), o = xn(r), s = dn(i);
 	if (!o.message_swipe_metadata || !o.preset_generation || !o.tavern_regex || !s.main_generation_events || !s.message_swipe_metadata || typeof a != "function") return null;
-	let c = new fn(() => i.getContext(), a);
-	return new Cs(t, new An(r, () => {
+	let c = new hn(() => i.getContext(), a);
+	return new os(t, new Nn(r, () => {
 		let e = c.get_active_chat_id();
 		if (e === null) throw Error("no_chat_open");
 		return e;
@@ -5597,19 +5418,19 @@ function Ts(e, t, n) {
 }
 //#endregion
 //#region src/host/sillytavern_secret_destination.ts
-function Es(e) {
+function ls(e) {
 	return typeof e == "object" && !!e;
 }
-function Ds(e, t) {
-	if (!Es(e)) return !1;
+function us(e, t) {
+	if (!ls(e)) return !1;
 	let n = e[t];
 	return typeof n == "string" && n.length > 0;
 }
-var Os = class {
+var ds = class {
 	#e;
 	#t;
 	constructor(e, t) {
-		this.#e = e, this.#t = nn(t);
+		this.#e = e, this.#t = on(t);
 	}
 	supports(e) {
 		return !0;
@@ -5617,7 +5438,7 @@ var Os = class {
 	async write_secret(e, t) {
 		let n = await this.#t("/api/secrets/write", {
 			method: "POST",
-			headers: un(this.#e.getRequestHeaders()),
+			headers: pn(this.#e.getRequestHeaders()),
 			body: JSON.stringify({
 				key: e,
 				value: t,
@@ -5629,7 +5450,7 @@ var Os = class {
 	async delete_secret(e) {
 		let t = await this.#t("/api/secrets/delete", {
 			method: "POST",
-			headers: un(this.#e.getRequestHeaders()),
+			headers: pn(this.#e.getRequestHeaders()),
 			body: JSON.stringify({ key: e })
 		});
 		if (!t.ok) throw Error(`SillyTavern secret deletion failed with status ${String(t.status)}`);
@@ -5637,7 +5458,7 @@ var Os = class {
 	async probe_secret(e) {
 		let t = await this.#t("/api/secrets/view", {
 			method: "POST",
-			headers: un(this.#e.getRequestHeaders()),
+			headers: pn(this.#e.getRequestHeaders()),
 			body: JSON.stringify({})
 		});
 		if (!t.ok) return !1;
@@ -5647,34 +5468,34 @@ var Os = class {
 		} catch {
 			return !1;
 		}
-		return Ds(n, e);
+		return us(n, e);
 	}
 };
-function ks(e) {
+function fs(e) {
 	return (typeof e == "object" && !!e || typeof e == "function") && typeof e.getRequestHeaders == "function";
 }
-function As(e, t) {
-	return !ks(e) || typeof t != "function" ? null : new Os(e, t);
+function ps(e, t) {
+	return !fs(e) || typeof t != "function" ? null : new ds(e, t);
 }
 //#endregion
 //#region src/bootstrap/host_environment.ts
-function js(e, t) {
+function ms(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Ms(e) {
-	let t = js(e, "SillyTavern"), n = js(t, "getContext");
+function hs(e) {
+	let t = ms(e, "SillyTavern"), n = ms(t, "getContext");
 	if (typeof n == "function") try {
 		return Reflect.apply(n, t, []);
 	} catch {
 		return;
 	}
 }
-function Ns(e) {
-	let t = Ms(e), n = js(t, "extensionSettings"), r = js(t, "saveSettingsDebounced");
+function gs(e) {
+	let t = hs(e), n = ms(t, "extensionSettings"), r = ms(t, "saveSettingsDebounced");
 	return typeof n != "object" || !n || typeof r != "function" ? null : {
 		extension_settings: n,
 		save_settings: () => {
@@ -5687,116 +5508,116 @@ function Ns(e) {
 		} }
 	};
 }
-function Ps(e) {
-	return As(Ms(e), js(e, "fetch"));
+function _s(e) {
+	return ps(hs(e), ms(e, "fetch"));
 }
-function Fs(e) {
-	return Ma(Ms(e), js(e, "fetch"));
+function vs(e) {
+	return ma(hs(e), ms(e, "fetch"));
 }
-function Is(e, t) {
-	return Ts(e, t, Ss.active ? Ss : null);
+function ys(e, t) {
+	return cs(e, t, as.active ? as : null);
 }
 //#endregion
 //#region src/bootstrap/compose_capabilities.ts
-var Ls = "IndexedDB could not be opened, so nothing that persists records can be composed", Rs = "No usable SillyTavern + TavernHelper host pair was detected", zs = "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair", Bs = 12e4, Vs = { novelai: 1500 }, Hs = "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
-function Us() {
+var bs = "IndexedDB could not be opened, so nothing that persists records can be composed", xs = "No usable SillyTavern + TavernHelper host pair was detected", Ss = "SillyTavern's context exposes no extensionSettings/saveSettingsDebounced pair", Cs = 12e4, ws = { novelai: 1500 }, Ts = "This host cannot reveal stored credentials, so the analysis API key cannot be read back; enable allowKeysExposure in SillyTavern's config.yaml or switch credential storage to the encrypted browser vault";
+function Es() {
 	return navigator.storage.estimate();
 }
-function Ws() {
+function Ds() {
 	return typeof Worker > "u" ? null : () => new Worker(new URL(
 		/* @vite-ignore */
 		"" + new URL("workers/vocabulary_worker.js", import.meta.url).href,
 		"" + import.meta.url
 	), { type: "module" });
 }
-async function Gs(e) {
-	let t = e.globals ?? globalThis, n = e.extension_version ?? "development", r = qn(), i = [], a = [];
+async function Os(e) {
+	let t = e.globals ?? globalThis, n = e.extension_version ?? "development", r = Xn(), i = [], a = [];
 	function o(e, t, n) {
-		if (i.push(eo(e, t)), t.status === "available") return t.value;
+		if (i.push(Ia(e, t)), t.status === "available") return t.value;
 		let r = t.reason;
 		return {
 			...n,
-			load: () => Promise.reject(Q(r))
+			load: () => Promise.reject(Z(r))
 		};
 	}
-	let s = e.probe.ready ? e.probe.matrix : {}, c = Is(t, s), l = [], u = null;
+	let s = e.probe.ready ? e.probe.matrix : {}, c = ys(t, s), l = [], u = null;
 	try {
-		u = await (e.open_storage ?? Xe)();
+		u = await (e.open_storage ?? Ve)();
 	} catch {
 		u = null;
 	}
-	let d = Ns(t), p = d === null ? null : Oa(d), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = Ps(t), ee = Fs(t), _;
+	let d = gs(t), p = d === null ? null : ua(d), m = () => p?.get_settings().active_namespace ?? "primary", h = () => (/* @__PURE__ */ new Date()).toISOString(), g = _s(t), ee = vs(t), _;
 	try {
-		_ = (e.create_browser_secret_vault ?? _t)(t);
+		_ = (e.create_browser_secret_vault ?? yt)(t);
 	} catch {
 		_ = null;
 	}
 	_ !== null && a.push(() => _.close());
-	let v = gt(t);
+	let v = vt(t);
 	v !== null && a.push(() => v.close());
-	let y = new Na({
+	let te = new ha({
 		mode: () => p?.get_settings().credential_storage_mode ?? "host",
 		host_destination: g,
 		host_resolver: ee,
 		browser_vault: _,
 		device_vault: v
-	}), b = y.has_destination ? y : null, te = y.has_resolver ? y : null, x = u === null ? null : Ze(u), S = await po(t.navigator?.locks, crypto.randomUUID());
+	}), y = te.has_destination ? te : null, ne = te.has_resolver ? te : null, b = u === null ? null : He(u), x = await Ja(t.navigator?.locks, crypto.randomUUID());
 	a.push(() => {
-		S.release();
-	}), x !== null && S.sole_page && await lo(x.generation_jobs, m(), h());
-	let ne = new Ya(), re = null, ie = () => re ??= Xo(u), ae = null, C = async () => {
-		if (x === null || p === null) return null;
-		let e = p.get_settings().active_provider_profile_id, t = e === null ? null : await x.provider_profiles.get(m(), e).catch(() => null), n = t === null ? null : hs(t, te !== null);
+		x.release();
+	}), b !== null && x.sole_page && await Ga(b.generation_jobs, m(), h());
+	let re = new ja(), ie = null, S = () => ie ??= Mo(u), ae = null, C = async () => {
+		if (b === null || p === null) return null;
+		let e = p.get_settings().active_provider_profile_id, t = e === null ? null : await b.provider_profiles.get(m(), e).catch(() => null), n = t === null ? null : Qo(t, ne !== null);
 		return ae = n?.provider_id ?? null, n;
 	};
 	await C();
-	let w = async () => {
+	let oe = async () => {
 		let e = await C();
 		if (e === null) throw Error("No provider profile is active; choose one in Settings");
 		return e;
-	}, se = null, T = x === null || u === null ? null : () => se ??= import("./chunks/novelai_runtime-BRf8buU7.js").then((t) => t.create_novelai_runtime({
-		vibe_encodings: x.novelai_vibe_encodings,
-		provider_inputs: x.provider_input_assets,
+	}, se = null, w = b === null || u === null ? null : () => se ??= import("./chunks/novelai_runtime-BRf8buU7.js").then((t) => t.create_novelai_runtime({
+		vibe_encodings: b.novelai_vibe_encodings,
+		provider_inputs: b.provider_input_assets,
 		namespace: m,
-		gallery_assets: Zo(u, m),
-		transport: () => gs(async () => _s((await C())?.direct_cloud ?? null, te, e.provider_fetch)),
+		gallery_assets: No(u, m),
+		transport: () => $o(async () => es((await C())?.direct_cloud ?? null, ne, e.provider_fetch)),
 		fetch: e.provider_fetch ?? globalThis.fetch.bind(globalThis)
-	})), ce = T === null || u === null ? null : { async read(e, t) {
+	})), ce = w === null || u === null ? null : { async read(e, t) {
 		try {
-			return await Zo(u, m).read(e, t);
+			return await No(u, m).read(e, t);
 		} catch {
-			return (await T()).assets.read(e, t);
+			return (await w()).assets.read(e, t);
 		}
-	} }, le = T === null ? null : async (e) => e.provider_id === "novelai" ? (await T()).prepare(e, AbortSignal.timeout(Bs)) : e, ue = o("novelai", T === null ? X(Ls) : Z(() => _o(async () => (await T()).service)), r.novelai), E = o("settings", p === null ? X(zs) : Z(() => Go({
+	} }, T = w === null ? null : async (e) => e.provider_id === "novelai" ? (await w()).prepare(e, AbortSignal.timeout(Cs)) : e, le = o("novelai", w === null ? Y(bs) : X(() => Qa(async () => (await w()).service)), r.novelai), de = o("settings", p === null ? Y(Ss) : X(() => Do({
 		settings: p,
 		database: u,
 		extension_version: n,
-		secrets: b,
+		secrets: y,
 		browser_secret_vault: _,
 		host_secrets: g,
 		list_worldbooks: c === null ? null : () => c.list_worldbooks()
-	})), r.settings), de = o("profiles", x === null ? X(Ls) : Z(() => Fo({
-		repository: x.provider_profiles,
+	})), r.settings), E = o("profiles", b === null ? Y(bs) : X(() => _o({
+		repository: b.provider_profiles,
 		namespace: m,
-		load_adapters: ie,
-		secrets: b,
-		credential_present: async (e) => b === null || (p?.get_settings().credential_storage_mode ?? "host") === "host" ? null : b.probe_secret(e),
+		load_adapters: S,
+		secrets: y,
+		credential_present: async (e) => y === null || (p?.get_settings().credential_storage_mode ?? "host") === "host" ? null : y.probe_secret(e),
 		now: h
-	})), r.profiles), fe = o("prompt_presets", x === null ? X(Ls) : Z(() => zo({
-		repository: x.prompt_presets,
+	})), r.profiles), fe = o("prompt_presets", b === null ? Y(bs) : X(() => xo({
+		repository: b.prompt_presets,
 		namespace: m,
 		now: h,
 		new_id: () => crypto.randomUUID()
-	})), r.prompt_presets), pe = o("assets", x === null ? X(Ls) : Z(() => qa({
-		repositories: x,
+	})), r.prompt_presets), pe = o("assets", b === null ? Y(bs) : X(() => ka({
+		repositories: b,
 		namespace: m,
 		now: h
-	})), r.assets), me = o("gallery", u === null ? X(Ls) : Z(() => io({
+	})), r.assets), me = o("gallery", u === null ? Y(bs) : X(() => Ba({
 		database: u,
-		repository: new at(u),
+		repository: new Xe(u),
 		namespace: m,
 		now: h,
-		make_thumbnail: Yo,
+		make_thumbnail: jo,
 		reveal_message: c === null ? null : (e, t) => {
 			if (c.get_active_chat_id() !== e) return "other_chat";
 			let n = c.find_message_element(t)?.closest(".mes");
@@ -5805,13 +5626,13 @@ async function Gs(e) {
 				block: "center"
 			}), "revealed");
 		}
-	})), r.gallery), he = null, D = o("generation", u === null ? X(Ls) : c === null ? X(Rs) : Z(() => {
-		let t = (e) => Fa({
+	})), r.gallery), he = null, ge = o("generation", u === null ? Y(bs) : c === null ? Y(xs) : X(() => {
+		let t = (e) => _a({
 			direct_provider_base_url: e?.base_url ?? null,
 			direct_cloud: e?.direct_cloud ?? null
-		}), n = new pi(), r = new $t({
-			executor: new _i({
-				store: $o(u, m),
+		}), n = new gi(), r = new nn({
+			executor: new bi({
+				store: Fo(u, m),
 				ids: { next: () => crypto.randomUUID() },
 				clock: { now: h },
 				resolve_source_message: (e) => {
@@ -5822,48 +5643,48 @@ async function Gs(e) {
 						swipe_id: t.swipe_id
 					};
 				},
-				load_adapters: ie,
+				load_adapters: S,
 				profiles: { resolve: async (e) => {
-					let t = (await ie())[e], n = await C();
+					let t = (await S())[e], n = await C();
 					if (t === void 0 || n?.provider_id !== e) throw Error(`No stored provider profile is active for ${e}`);
-					return t.validate_profile(jo(n.record));
+					return t.validate_profile(po(n.record));
 				} },
-				transport: gs(async () => ms(t(await C()), {
-					secrets: te,
+				transport: $o(async () => Zo(t(await C()), {
+					secrets: ne,
 					...e.provider_fetch === void 0 ? {} : { fetch: e.provider_fetch }
 				})),
-				assets: ce ?? Zo(u, m),
-				...T === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await T()).finish(e, t, AbortSignal.timeout(Bs)) : t },
+				assets: ce ?? No(u, m),
+				...w === null ? {} : { postprocess: async (e, t) => e.provider_id === "novelai" && e.action === "infill" ? (await w()).finish(e, t, AbortSignal.timeout(Cs)) : t },
 				log: { write: () => {} },
 				plans: n
 			}),
-			persistence: new fi(u, m()),
+			persistence: new hi(u, m()),
 			job_id_source: { next: () => crypto.randomUUID() },
-			time_source: new Ut(),
+			time_source: new Kt(),
 			global_concurrency: p?.get_settings().global_concurrency ?? 1,
-			provider_start_interval_ms: Vs
+			provider_start_interval_ms: ws
 		});
-		a.push(ne.observe_jobs(r));
-		let i = uo({
+		a.push(re.observe_jobs(r));
+		let i = Ka({
 			queue: r,
 			plans: n,
-			jobs: Ze(u).generation_jobs,
+			jobs: He(u).generation_jobs,
 			namespace: m,
-			origin: new bo(c, new Dt(globalThis.crypto)),
+			origin: new to(c, new At(globalThis.crypto)),
 			new_request_id: () => f.parse(crypto.randomUUID()),
-			...le === null ? {} : { prepare_request: le }
+			...T === null ? {} : { prepare_request: T }
 		});
 		if (p !== null) {
-			let e = () => te === null ? Promise.reject(/* @__PURE__ */ Error(Hs)) : te.resolve_secret(oe(p.get_settings().active_namespace));
-			he = new qi({
+			let e = () => ne === null ? Promise.reject(/* @__PURE__ */ Error(Ts)) : ne.resolve_secret(ue(p.get_settings().active_namespace));
+			he = new ki({
 				host: c,
 				settings: () => p.get_settings().illustration,
 				auto_generation_enabled: () => p.get_settings().auto_generation_enabled,
-				prompt_context: (e) => ta(fe, pe, p.get_settings().illustration.prompt_preset_id, e),
-				wardrobe: new Xi({
+				prompt_context: (e) => Li(fe, pe, p.get_settings().illustration.prompt_preset_id, e),
+				wardrobe: new Mi({
 					host: c,
-					library: Ji(pe),
-					run: ui({
+					library: Ai(pe),
+					run: pi({
 						host: c,
 						settings: () => p.get_settings().illustration,
 						resolve_analysis_key: e,
@@ -5871,36 +5692,36 @@ async function Gs(e) {
 					}),
 					new_id: () => crypto.randomUUID()
 				}),
-				...ts({
+				...Ro({
 					assets: pe,
 					active_chat_id: () => c.get_active_chat_id(),
 					read_active_profile: C,
-					require_active_profile: w,
-					novelai: T === null || x === null ? null : {
-						load_runtime: T,
-						repositories: x
+					require_active_profile: oe,
+					novelai: w === null || b === null ? null : {
+						load_runtime: w,
+						repositories: b
 					},
 					namespace: m
 				}),
 				edits_available: () => ae === "novelai",
 				resolve_analysis_key: e,
 				async submit(e) {
-					let n = await w();
+					let n = await oe();
 					return t(n), (await i.submit({
 						profile_id: n.record.id,
 						request: e
 					})).request_id;
 				},
 				jobs: r,
-				new_slot_id: Qi,
+				new_slot_id: Pi,
 				new_generation_id: () => crypto.randomUUID(),
 				wait: (e) => new Promise((t) => setTimeout(t, e))
-			}), l.push(new na(he, c));
+			}), l.push(new Ri(he, c));
 		}
 		return i;
-	}), r.generation), ge = e.create_vocabulary_worker === void 0 ? Ws() : e.create_vocabulary_worker, _e = o("vocabulary", u === null ? X(Ls) : ge === null ? X("This host has no Worker constructor, so vocabulary search cannot run") : Z(() => qo({
+	}), r.generation), D = e.create_vocabulary_worker === void 0 ? Ds() : e.create_vocabulary_worker, _e = o("vocabulary", u === null ? Y(bs) : D === null ? Y("This host has no Worker constructor, so vocabulary search cannot run") : X(() => ko({
 		async load_catalog() {
-			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-DZYuYD1v.js");
+			let { VocabularyCatalogClient: e } = await import("./chunks/vocabulary_catalog_client-DJG4Cw83.js");
 			return new e({
 				current_extension_version: n,
 				open_database_impl: () => Promise.resolve(u)
@@ -5908,10 +5729,10 @@ async function Gs(e) {
 		},
 		async create_client() {
 			let { VocabularyClient: e } = await import("./chunks/vocabulary_client-ULLQWxF9.js");
-			return new e({ create_worker: ge });
+			return new e({ create_worker: D });
 		},
 		async read_active_package() {
-			let { VocabularyPackageStore: e } = await import("./chunks/src-CTdU5o0x.js").then((e) => e.t), t = await new e(u, "vocabulary").find_active_or_confirmed();
+			let { VocabularyPackageStore: e } = await import("./chunks/src-CyD1Rtcq.js").then((e) => e.t), t = await new e(u, "vocabulary").find_active_or_confirmed();
 			return t === null ? null : {
 				package_id: t.manifest.package_id,
 				data_version: t.manifest.data_version,
@@ -5921,28 +5742,28 @@ async function Gs(e) {
 	})), r.vocabulary);
 	return {
 		capabilities: {
-			generation: D,
-			profiles: de,
+			generation: ge,
+			profiles: E,
 			prompt_presets: fe,
 			assets: pe,
 			gallery: me,
 			vocabulary: _e,
-			diagnostics: o("diagnostics", Z(() => Za({
+			diagnostics: o("diagnostics", X(() => Na({
 				capability_matrix: s,
 				helper_version: e.probe.ready ? e.probe.helper_version : null,
-				timeline: ne,
+				timeline: re,
 				resolutions: () => i,
 				settings: () => p?.get_settings() ?? null,
-				estimate_storage: e.estimate_storage ?? Us,
+				estimate_storage: e.estimate_storage ?? Es,
 				extension_version: n
 			})), r.diagnostics),
-			settings: E,
-			novelai: ue
+			settings: de,
+			novelai: le
 		},
 		resolutions: i,
 		host: c,
 		illustrations: he,
-		translator: c === null || p === null ? null : pa({
+		translator: c === null || p === null ? null : Yi({
 			host: c,
 			settings: () => p.get_settings().translation,
 			vocabulary: _e
@@ -5958,42 +5779,42 @@ async function Gs(e) {
 }
 //#endregion
 //#region src/bootstrap/startup_error.ts
-var Ks = "https://github.com/N0VI028/JS-Slash-Runner";
-function qs(e) {
+var ks = "https://github.com/N0VI028/JS-Slash-Runner";
+function As(e) {
 	if (e.ready) return {
 		state: "ready",
 		title: "Inkwell ready",
 		message: `Connected through JS Slash Runner ${e.helper_version}.`
 	};
-	let t = `JS Slash Runner ${jn} or newer is required.`;
+	let t = `JS Slash Runner ${Pn} or newer is required.`;
 	switch (e.error_code) {
 		case "tavern_helper_missing": return {
 			state: "blocked",
 			title: "JS Slash Runner is required",
 			message: t,
-			update_url: Ks
+			update_url: ks
 		};
 		case "helper_version_invalid": return {
 			state: "blocked",
 			title: "JS Slash Runner version is invalid",
 			message: `Inkwell could not verify the installed version. ${t}`,
-			update_url: Ks
+			update_url: ks
 		};
 		case "helper_version_unsupported": return {
 			state: "blocked",
 			title: "Update JS Slash Runner",
 			message: t,
-			update_url: Ks
+			update_url: ks
 		};
 		case "helper_api_incomplete": return {
 			state: "blocked",
 			title: "JS Slash Runner API is incomplete",
 			message: `Required public capabilities are unavailable. ${t}`,
-			update_url: Ks
+			update_url: ks
 		};
 	}
 }
-function Js(e) {
+function js(e) {
 	return {
 		state: "failed",
 		title: "Inkwell could not start",
@@ -6003,10 +5824,10 @@ function Js(e) {
 }
 //#endregion
 //#region src/bootstrap/bootstrap.ts
-async function Ys(e = {}) {
-	let t = e.document ?? document, n = e.globals ?? globalThis, r = Hn(n), i, a, o = null, s = null;
+async function Ms(e = {}) {
+	let t = e.document ?? document, n = e.globals ?? globalThis, r = Gn(n), i, a, o = null, s = null;
 	try {
-		o = await Gs({
+		o = await Os({
 			...e.composition,
 			probe: r,
 			globals: n,
@@ -6015,15 +5836,15 @@ async function Ys(e = {}) {
 	} catch (e) {
 		console.error("[Inkwell] Startup failed while composing capabilities", e), s = e ?? /* @__PURE__ */ Error("Composition failed");
 	}
-	let c = r.ready ? new St([...e.modules ?? [], ...o?.modules ?? []]) : void 0;
-	if (!r.ready) i = "blocked", a = qs(r);
-	else if (s !== null) i = "failed", a = Js(s);
+	let c = r.ready ? new wt([...e.modules ?? [], ...o?.modules ?? []]) : void 0;
+	if (!r.ready) i = "blocked", a = As(r);
+	else if (s !== null) i = "failed", a = js(s);
 	else try {
-		await c?.start_all(), i = "ready", a = qs(r);
+		await c?.start_all(), i = "ready", a = As(r);
 	} catch (e) {
-		console.error("[Inkwell] Startup failed while starting runtime modules", e), i = "failed", a = Js(e);
+		console.error("[Inkwell] Startup failed while starting runtime modules", e), i = "failed", a = js(e);
 	}
-	let l = Qr(t, e.stylesheet ?? ""), u = je(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null), f = () => {
+	let l = ti(t, e.stylesheet ?? ""), u = je(), d = await o?.capabilities.settings.load().then((e) => e.settings.locale).catch(() => null), f = () => {
 		try {
 			return o?.host?.get_locale() ?? navigator.language;
 		} catch {
@@ -6033,21 +5854,21 @@ async function Ys(e = {}) {
 	u.apply_locale(d ?? "auto", f());
 	let p = o?.capabilities.settings.subscribe((e) => {
 		u.apply_locale(e.settings.locale, f());
-	}), m = Se(Jr, {
+	}), m = Se(Zr, {
 		status: a,
 		probe: r,
 		version: e.version ?? "development",
 		portalTarget: l.portal_element,
 		hostElement: l.host_element,
 		capabilities: o?.capabilities,
-		host: o?.host ? ge(o.host) : null,
-		illustrations: o?.illustrations ? ge(o.illustrations) : null,
+		host: o?.host ? _e(o.host) : null,
+		illustrations: o?.illustrations ? _e(o.illustrations) : null,
 		translator: o?.translator ?? null
 	});
 	m.config.errorHandler = (e, t, n) => {
 		console.error(`[Inkwell] Unhandled error in ${n}`, e);
 	};
-	let h = Zr(t);
+	let h = ei(t);
 	m.use(u.i18n), m.onUnmount(() => {
 		p?.(), l.remove(), h();
 	});
@@ -6097,15 +5918,15 @@ async function Ys(e = {}) {
 }
 //#endregion
 //#region src/bootstrap/host_readiness.ts
-function Xs(e, t) {
+function $(e, t) {
 	if (!((typeof e != "object" || !e) && typeof e != "function")) try {
 		return Reflect.get(e, t);
 	} catch {
 		return;
 	}
 }
-function Zs(e) {
-	let t = Xs(e, "SillyTavern"), n = Xs(t, "getContext");
+function Ns(e) {
+	let t = $(e, "SillyTavern"), n = $(t, "getContext");
 	if (typeof n != "function") return Promise.resolve();
 	let r;
 	try {
@@ -6113,7 +5934,7 @@ function Zs(e) {
 	} catch {
 		return Promise.resolve();
 	}
-	let i = Xs(r, "eventSource"), a = Xs(Xs(r, "eventTypes"), "APP_READY"), o = Xs(i, "on"), s = Xs(i, "removeListener");
+	let i = $(r, "eventSource"), a = $($(r, "eventTypes"), "APP_READY"), o = $(i, "on"), s = $(i, "removeListener");
 	if (typeof a != "string" || typeof o != "function") return Promise.resolve();
 	let { promise: c, resolve: l } = Promise.withResolvers(), u = !1, d = () => {
 		if (!u) {
@@ -6132,26 +5953,26 @@ function Zs(e) {
 }
 //#endregion
 //#region src/ui/styles/tokens.css?inline
-var Qs = ":host{--tc-space-0-5:2px;--tc-space-1:4px;--tc-space-1-5:6px;--tc-space-2:8px;--tc-space-3:12px;--tc-space-4:16px;--tc-space-5:20px;--tc-space-6:24px;--tc-space-8:32px;--tc-space-10:40px;--tc-font-family:\"Geist\", system-ui, \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif;--tc-font-mono:\"Geist Mono\", ui-monospace, \"Cascadia Mono\", Consolas, monospace;--tc-font-size-xs:12px;--tc-font-size-sm:13px;--tc-font-size-md:14px;--tc-font-size-lg:17px;--tc-font-size-xl:26px;--tc-line-height-xs:16px;--tc-line-height-sm:20px;--tc-line-height-md:22px;--tc-line-height-lg:24px;--tc-line-height-xl:32px;--tc-font-weight-regular:400;--tc-font-weight-medium:500;--tc-font-weight-semibold:650;--tc-label-font-size:13px;--tc-control-height-sm:28px;--tc-control-height-md:36px;--tc-control-height-lg:44px;--tc-control-padding-x-sm:12px;--tc-control-padding-x-md:16px;--tc-control-padding-x-lg:20px;--tc-control-gap:6px;--tc-control-font-size:14px;--tc-field-padding-x:16px;--tc-icon-size:16px;--tc-icon-size-sm:15px;--tc-chip-height:26px;--tc-chip-height-sm:22px;--tc-chip-padding-x:10px;--tc-check-size:18px;--tc-switch-width:44px;--tc-switch-height:26px;--tc-radius-window:20px;--tc-radius-window-narrow:0;--tc-radius-panel:16px;--tc-radius-card:16px;--tc-radius-control:999px;--tc-radius-field:999px;--tc-radius-textarea:16px;--tc-radius-taginput:18px;--tc-radius-chip:999px;--tc-radius-check:6px;--tc-radius-image:6px;--tc-radius-status:999px;--tc-radius-popover:16px;--tc-radius-option:999px;--tc-radius-bar:999px;--tc-field-gap:8px;--tc-form-row-gap:24px;--tc-group-gap:40px;--tc-panel-padding:28px;--tc-nav-width:200px;--tc-form-max-width:600px;--tc-inspector-width:360px;--tc-card-min:250px;--tc-tile-min:168px;--tc-tile-gap:10px;--tc-topbar-height:60px;--tc-bottomnav-height:60px;--tc-canvas:#f4f4f2;--tc-surface:#fff;--tc-surface-raised:#ededea;--tc-surface-sunken:#e6e6e2;--tc-field-bg:#fff;--tc-text:#17171a;--tc-text-muted:#5a5a61;--tc-text-placeholder:#7a7a81;--tc-divider:#e0e0db;--tc-border-field:#8d8d94;--tc-accent:#17171a;--tc-accent-hover:#35353b;--tc-on-accent:#fafaf7;--tc-accent-soft:#fbefb4;--tc-accent-text:#17171a;--tc-accent-border:#e2c53a;--tc-focus:#17171a;--tc-marker:#f6d743;--tc-on-marker:#17171a;--tc-success:#1d7a4a;--tc-warning:#8a5a00;--tc-error:#c0362c;--tc-success-on-inverse:#6fe0a6;--tc-error-soft:#fbe9e6;--tc-switch-off:#a5a5ab;--tc-switch-thumb:#fff;--tc-chip-bg:#ededea;--tc-selection:#fae58a;--tc-para-hover:#f7f3dc;--tc-shadow:#17171a1f;--tc-media-scrim:#1113189e;--tc-media-ink:#fff;--tc-motion-fast:.14s;--tc-motion-normal:.18s;--tc-motion-slow:.22s;--tc-z-shell-sticky:10;--tc-z-inspector-sheet:20;--tc-z-overlay:30;--tc-z-toast:40;--tc-z-host:2147480000;color:var(--tc-text);background:var(--tc-canvas);font-family:var(--tc-font-family);font-size:var(--tc-font-size-md);line-height:var(--tc-line-height-md)}:host([data-color-mode=dark]){--tc-canvas:#131315;--tc-surface:#1b1b1e;--tc-surface-raised:#252528;--tc-surface-sunken:#0d0d0f;--tc-field-bg:#161618;--tc-text:#f1f1ed;--tc-text-muted:#a4a4ab;--tc-text-placeholder:#85858c;--tc-divider:#2e2e33;--tc-border-field:#66666e;--tc-accent:#f1f1ed;--tc-accent-hover:#fafaf7;--tc-on-accent:#131315;--tc-accent-soft:#3a3214;--tc-accent-text:#f6e08a;--tc-accent-border:#8a7424;--tc-focus:#f1f1ed;--tc-marker:#e8c93f;--tc-on-marker:#131315;--tc-success:#5fd39a;--tc-warning:#ecbd55;--tc-error:#ff8a7f;--tc-success-on-inverse:#1d7a4a;--tc-error-soft:#3b1b19;--tc-switch-off:#55555c;--tc-switch-thumb:#131315;--tc-chip-bg:#29292d;--tc-selection:#5a4b16;--tc-para-hover:#23211a;--tc-shadow:#00000080}@media (pointer:coarse){:host{--tc-control-height-sm:36px;--tc-control-height-md:44px;--tc-control-height-lg:48px;--tc-control-font-size:15px;--tc-chip-height:30px;--tc-check-size:20px}}", $s = "@font-face{font-family:Geist;src:url(__TAVERN_CANVAS_ASSET_URL__geist_variable.woff2__)format(\"woff2\");font-weight:100 900;font-style:normal;font-display:swap}:host{z-index:var(--tc-z-host);pointer-events:none;background:0 0;position:fixed;inset:0}:host [data-window-role=studio],:host [data-startup-state],:host [data-shadow-role=entry],:host [data-shadow-role=portal]>*{pointer-events:auto}*,:before,:after{box-sizing:border-box}*{margin:0}[data-shadow-role=app],[data-shadow-role=portal]{font-family:inherit;font-size:inherit;color:inherit;line-height:1.5}[data-shadow-role=app]{width:100%;height:100%}img,svg{max-width:100%;display:block}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;background:0 0;border:none;padding:0}button:disabled{cursor:not-allowed}ul,ol{padding:0;list-style:none}a{color:inherit}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}", ec = ".tc-tabular-nums{font-variant-numeric:tabular-nums}.tc-visually-hidden{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.tc-interactive{transition:transform var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out, color var(--tc-motion-fast) ease-out;border:1px solid #0000}.tc-interactive:active{transform:scale(.97)}.tc-interactive:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}.tc-field{width:100%;min-width:0;height:var(--tc-control-height-md);padding:0 var(--tc-field-padding-x);border:1px solid var(--tc-border-field);border-radius:var(--tc-radius-field);background-color:var(--tc-field-bg);color:var(--tc-text);font-family:inherit;font-size:var(--tc-control-font-size);line-height:var(--tc-line-height-md);transition:background-color var(--tc-motion-fast) ease}.tc-field-multiline{height:auto;min-height:calc(var(--tc-line-height-md) * 2 + var(--tc-control-height-md));padding-block:calc((var(--tc-control-height-md) - var(--tc-line-height-md)) / 2 - 1px);border-radius:var(--tc-radius-textarea);resize:vertical;display:block}.tc-field::placeholder{color:var(--tc-text-placeholder)}.tc-field:focus,.tc-field:focus-visible{outline:2px solid var(--tc-focus);outline-offset:-1px;border-color:#0000}.tc-field[aria-invalid=true]{border-color:var(--tc-error)}.tc-field:disabled{opacity:.5;cursor:not-allowed}.tc-z-shell-sticky{z-index:var(--tc-z-shell-sticky)}.tc-z-inspector-sheet{z-index:var(--tc-z-inspector-sheet)}.tc-z-overlay{z-index:var(--tc-z-overlay)}.tc-z-toast{z-index:var(--tc-z-toast)}", tc = "._floatingEntry_1bpar_9{background-color:var(--tc-surface);width:56px;height:56px;box-shadow:0 0 0 1px var(--tc-divider), 0 8px 24px var(--tc-shadow);color:var(--tc-text);cursor:grab;touch-action:none;z-index:var(--tc-z-shell-sticky);border-radius:50%;justify-content:center;align-items:center;padding:0;display:inline-flex;position:fixed;top:0;left:0}._floatingEntry_1bpar_9:hover:not(:disabled){background-color:var(--tc-surface-raised)}._floatingEntryDragging_1bpar_34{cursor:grabbing}._floatingEntryMedia_1bpar_38{object-fit:cover;pointer-events:none;border-radius:50%;width:100%;height:100%}", nc = "._window_1jfap_1{width:min(1180px,100vw - 40px);height:min(780px,100dvh - 80px);min-height:560px;color:var(--tc-text);background-color:var(--tc-canvas);border-radius:var(--tc-radius-window);box-shadow:0 0 0 1px var(--tc-divider), 0 18px 50px var(--tc-shadow);transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0);pointer-events:auto;isolation:isolate;animation:.18s cubic-bezier(.2,.8,.2,1) _floating-window-enter_1jfap_1;position:fixed;top:0;left:0;overflow:hidden}._window_1jfap_1[data-positioned=false]{visibility:hidden}._window_1jfap_1[data-dragging=true]{box-shadow:0 0 0 1px var(--tc-divider), 0 24px 64px var(--tc-shadow);-webkit-user-select:none;user-select:none}@keyframes _floating-window-enter_1jfap_1{0%{opacity:0;transform:translate3d(var(--tc-floating-window-x,20px), calc(var(--tc-floating-window-y,64px) + 8px), 0) scale(.985)}to{opacity:1;transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0) scale(1)}}@media (width<=959px){._window_1jfap_1{border-radius:var(--tc-radius-window-narrow);width:auto;height:auto;min-height:0;inset:0;transform:none}._window_1jfap_1[data-positioned=false]{visibility:visible}}@media (prefers-reduced-motion:reduce){._window_1jfap_1{animation:none}}", rc = "._shell_spgmj_8{background-color:var(--tc-canvas);width:100%;height:100%;min-height:0;color:var(--tc-text);display:grid;position:relative;overflow:hidden}._shell_spgmj_8[data-viewport=desktop]{grid-template-columns:minmax(0, 1fr) clamp(320px, var(--tc-inspector-width,320px), 400px);grid-template-rows:var(--tc-topbar-height) minmax(0, 1fr);grid-template-areas:\"topbar topbar\"\"workspace inspector\"}._shell_spgmj_8[data-viewport=desktop][data-inspector-collapsed=true]{grid-template-columns:minmax(0,1fr) 0}._shell_spgmj_8[data-viewport=mobile]{grid-template-columns:minmax(0,1fr);grid-template-rows:var(--tc-topbar-height) minmax(0, 1fr) var(--tc-bottomnav-height);grid-template-areas:\"topbar\"\"workspace\"\"bottomnav\";height:100dvh}._top_bar_spgmj_51{align-items:center;gap:var(--tc-space-3);min-width:0;padding-inline:var(--tc-space-5) var(--tc-space-3);background-color:var(--tc-canvas);cursor:move;touch-action:none;grid-area:topbar;display:flex}._top_bar_end_spgmj_63{align-items:center;gap:var(--tc-space-1);min-width:0;margin-left:auto;display:flex}._top_tabs_spgmj_71{gap:var(--tc-space-1);margin-left:var(--tc-space-3);display:flex}._top_tab_spgmj_71{align-items:center;gap:var(--tc-control-gap);height:var(--tc-control-height-md);padding-inline:var(--tc-control-padding-x-md);border-radius:var(--tc-radius-control);color:var(--tc-text-muted);font-size:var(--tc-control-font-size);font-weight:var(--tc-font-weight-medium);display:inline-flex}._top_tab_spgmj_71:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._top_tab_spgmj_71[aria-current=page],._top_tab_spgmj_71[aria-current=page]:hover{color:var(--tc-on-marker);background-color:var(--tc-marker)}._task_pill_spgmj_100{align-items:center;gap:var(--tc-space-1);height:var(--tc-control-height-sm);padding-inline:var(--tc-space-2);border-radius:var(--tc-radius-control);color:var(--tc-text-muted);background-color:var(--tc-surface-raised);font-size:var(--tc-font-size-sm);display:inline-flex}._task_pill_spgmj_100:hover{color:var(--tc-text)}._task_pill_spin_spgmj_116{animation:_tc-icon-rotate_spgmj_1 var(--tc-motion-normal) linear infinite}._shell_spgmj_8[data-viewport=mobile] ._task_pill_label_spgmj_120{display:none}._task_popover_spgmj_124{z-index:var(--tc-z-overlay);width:min(360px, calc(100vw - var(--tc-space-8)));overscroll-behavior:contain;background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-popover);max-height:60dvh;box-shadow:0 12px 32px var(--tc-shadow);overflow:auto}._top_bar_brand_spgmj_136{align-items:center;gap:var(--tc-space-2);color:var(--tc-text);font-size:var(--tc-font-size-md);font-weight:var(--tc-font-weight-semibold);flex:none;display:inline-flex}._top_bar_brand_mark_spgmj_146{width:var(--tc-control-height-sm);height:var(--tc-control-height-sm);border-radius:var(--tc-radius-control);background-color:var(--tc-marker);color:var(--tc-on-marker);place-items:center;display:inline-grid}._icon_button_spgmj_156{width:var(--tc-control-height-md);height:var(--tc-control-height-md);color:var(--tc-text-muted);border-radius:var(--tc-radius-control);flex:none;justify-content:center;align-items:center;display:flex}._icon_button_spgmj_156:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._shell_spgmj_8[data-viewport=mobile] ._top_bar_spgmj_51{cursor:default;touch-action:auto;padding-inline:var(--tc-space-4) var(--tc-space-2)}._icon_button_spgmj_156._close_button_spgmj_178:hover{color:var(--tc-on-accent);background-color:var(--tc-error)}._icon_button_spgmj_156[data-selected=true],._icon_button_spgmj_156[aria-pressed=true]{color:var(--tc-text)}._tooltip_content_spgmj_188{padding:var(--tc-space-1) var(--tc-space-3);font-size:var(--tc-font-size-xs);line-height:var(--tc-line-height-xs);color:var(--tc-canvas);background-color:var(--tc-text);border-radius:var(--tc-radius-popover)}._workspace_spgmj_197{background-color:var(--tc-canvas);grid-area:workspace;min-width:0;min-height:0;overflow:auto;container:studio-workspace/inline-size}._workspace_placeholder_spgmj_207{min-height:240px;padding:var(--tc-panel-padding);flex-direction:column;justify-content:center;align-items:flex-start;display:flex}._inspector_spgmj_217{min-width:0;margin:0 var(--tc-space-4) var(--tc-space-4) 0;background-color:var(--tc-surface);border-radius:var(--tc-radius-panel);box-shadow:0 0 0 1px var(--tc-divider);grid-area:inspector;display:flex;overflow:hidden}._inspector_resizer_spgmj_228{width:var(--tc-space-1);cursor:col-resize;touch-action:none;background-color:#0000;flex:none}._inspector_resizer_spgmj_228:hover,._inspector_resizer_spgmj_228[data-dragging=true]{background-color:var(--tc-divider)}._inspector_panel_spgmj_241{flex-direction:column;flex:auto;min-width:0;display:flex;overflow:hidden}._inspector_header_spgmj_249{justify-content:space-between;align-items:center;gap:var(--tc-space-2);min-height:var(--tc-topbar-height);padding:var(--tc-space-2) var(--tc-space-2) var(--tc-space-2) var(--tc-space-4);color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg);flex:none;display:flex}._inspector_body_spgmj_263{min-height:0;padding:0 var(--tc-space-4) var(--tc-space-4);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);flex:auto;overflow:auto}._inspector_selection_kind_spgmj_273{margin:0 0 var(--tc-space-2);color:var(--tc-text);font-size:var(--tc-font-size-md);font-weight:var(--tc-font-weight-semibold)}._inspector_selection_spgmj_273{gap:var(--tc-space-2);flex-direction:column;margin:0;display:flex}._inspector_selection_spgmj_273 dt{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs)}._inspector_selection_spgmj_273 dd{color:var(--tc-text);font-size:var(--tc-font-size-sm);overflow-wrap:anywhere;margin:0}._bottom_nav_spgmj_299{min-height:0;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-top:1px solid var(--tc-divider);grid-area:bottomnav;display:flex}._bottom_nav_item_spgmj_308{justify-content:center;align-items:center;gap:var(--tc-space-0-5);min-width:0;padding-block:var(--tc-space-1);color:var(--tc-text-muted);flex-direction:column;flex:1 1 0;display:flex}._bottom_nav_item_spgmj_308>svg{box-sizing:content-box;padding:var(--tc-space-0-5) var(--tc-space-3);border-radius:var(--tc-radius-control)}._bottom_nav_item_spgmj_308[data-selected=true]{color:var(--tc-text);font-weight:var(--tc-font-weight-medium)}._bottom_nav_item_spgmj_308[data-selected=true]>svg{color:var(--tc-on-marker);background-color:var(--tc-marker)}._bottom_nav_item_label_spgmj_336{max-width:100%;font-size:var(--tc-font-size-xs);line-height:var(--tc-line-height-xs);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._sheet_overlay_spgmj_345{background-color:var(--tc-media-scrim);position:fixed;inset:0}._sheet_content_spgmj_351{width:100%;max-height:80dvh;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-radius:var(--tc-radius-panel) var(--tc-radius-panel) 0 0;box-shadow:0 -8px 24px var(--tc-shadow);flex-direction:column;display:flex;position:fixed;bottom:0;left:0;right:0}._sheet_handle_spgmj_366{width:var(--tc-space-8);height:var(--tc-space-1);margin:var(--tc-space-2) auto;background-color:var(--tc-text-muted);border-radius:var(--tc-radius-status);flex:none}._sheet_header_spgmj_377{justify-content:space-between;align-items:center;gap:var(--tc-space-2);padding:var(--tc-space-1) var(--tc-space-2) var(--tc-space-2) var(--tc-space-4);color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);flex:none;display:flex}._sheet_body_spgmj_389{min-height:0;padding:0 var(--tc-space-4) var(--tc-space-4);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);flex:auto;overflow:auto}._task_strip_spgmj_398{flex-direction:column;min-width:0;display:flex}._task_strip_header_spgmj_404{align-items:center;gap:var(--tc-space-1);padding:var(--tc-space-2) var(--tc-space-2) var(--tc-space-1) var(--tc-space-4);flex:none;display:flex}._task_strip_summary_spgmj_412{font-variant-numeric:tabular-nums;min-width:0;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);white-space:nowrap;text-overflow:ellipsis;margin-right:auto;overflow:hidden}._task_strip_list_spgmj_423{gap:var(--tc-space-1);padding:0 var(--tc-space-3) var(--tc-space-3);flex-direction:column;display:flex}._task_chip_spgmj_430{align-items:center;gap:var(--tc-space-1-5);height:var(--tc-control-height-sm);padding-inline:var(--tc-space-2);color:var(--tc-text-muted);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-control);font-size:var(--tc-font-size-sm);flex:none;display:flex}._task_chip_dot_spgmj_443{background-color:var(--tc-text-muted);border-radius:50%;flex:none;width:6px;height:6px}._task_chip_dot_spgmj_443[data-status=pending]{background-color:var(--tc-text-muted)}._task_chip_dot_spgmj_443[data-status=success]{background-color:var(--tc-success)}._task_chip_dot_spgmj_443[data-status=error]{background-color:var(--tc-error)}._task_chip_label_spgmj_463{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._skeleton_block_spgmj_469{background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-status)}._skeleton_title_spgmj_474{width:40%;height:var(--tc-space-5)}._skeleton_line_spgmj_479{width:90%;height:var(--tc-space-3);margin-top:var(--tc-space-3)}._skeleton_line_short_spgmj_485{width:75%;height:var(--tc-space-3);margin-top:var(--tc-space-2)}._partial_banner_spgmj_491{justify-content:space-between;align-items:center;gap:var(--tc-space-2) var(--tc-space-3);margin:0 var(--tc-space-4) var(--tc-space-2);padding:var(--tc-space-1) var(--tc-space-1) var(--tc-space-1) var(--tc-space-4);color:var(--tc-warning);background-color:var(--tc-surface);border-radius:var(--tc-radius-bar);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);flex-wrap:wrap;flex:none;display:flex}._state_screen_spgmj_507{top:var(--tc-space-5);right:var(--tc-space-5);justify-content:center;align-items:flex-start;gap:var(--tc-space-2);width:min(560px, calc(100vw - 2 * var(--tc-space-5)));max-height:calc(100dvh - 2 * var(--tc-space-5));padding:var(--tc-space-8);color:var(--tc-text);background-color:var(--tc-canvas);border-radius:var(--tc-radius-window);box-shadow:0 0 0 1px var(--tc-divider), 0 18px 50px var(--tc-shadow);flex-direction:column;display:flex;position:fixed;overflow:auto}._state_screen_eyebrow_spgmj_528{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm)}._state_screen_title_spgmj_533{max-width:56ch;font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg)}._state_screen_action_spgmj_540{height:var(--tc-control-height-md);margin-top:var(--tc-space-3);padding:0 var(--tc-control-padding-x-md);color:var(--tc-on-accent);background-color:var(--tc-accent);border-radius:var(--tc-radius-control);font-size:var(--tc-control-font-size);font-weight:var(--tc-font-weight-medium);align-items:center;display:inline-flex}._state_screen_action_spgmj_540:hover{background-color:var(--tc-accent-hover)}._state_screen_detail_spgmj_557{max-width:100%;padding:var(--tc-space-3) var(--tc-space-4);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);color:var(--tc-text-muted);font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);white-space:pre-wrap;-webkit-user-select:text;user-select:text;margin:0;overflow-x:auto}._state_screen_description_spgmj_571{max-width:56ch;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm)}", ic = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
-function ac(e) {
-	return e.replaceAll(ic, (e, t) => new URL(t, import.meta.url).href);
+var Ps = ":host{--tc-space-0-5:2px;--tc-space-1:4px;--tc-space-1-5:6px;--tc-space-2:8px;--tc-space-3:12px;--tc-space-4:16px;--tc-space-5:20px;--tc-space-6:24px;--tc-space-8:32px;--tc-space-10:40px;--tc-font-family:\"Geist\", system-ui, \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif;--tc-font-mono:\"Geist Mono\", ui-monospace, \"Cascadia Mono\", Consolas, monospace;--tc-font-size-xs:12px;--tc-font-size-sm:13px;--tc-font-size-md:14px;--tc-font-size-lg:17px;--tc-font-size-xl:26px;--tc-line-height-xs:16px;--tc-line-height-sm:20px;--tc-line-height-md:22px;--tc-line-height-lg:24px;--tc-line-height-xl:32px;--tc-font-weight-regular:400;--tc-font-weight-medium:500;--tc-font-weight-semibold:650;--tc-label-font-size:13px;--tc-control-height-sm:28px;--tc-control-height-md:36px;--tc-control-height-lg:44px;--tc-control-padding-x-sm:12px;--tc-control-padding-x-md:16px;--tc-control-padding-x-lg:20px;--tc-control-gap:6px;--tc-control-font-size:14px;--tc-field-padding-x:16px;--tc-icon-size:16px;--tc-icon-size-sm:15px;--tc-chip-height:26px;--tc-chip-height-sm:22px;--tc-chip-padding-x:10px;--tc-check-size:18px;--tc-switch-width:44px;--tc-switch-height:26px;--tc-radius-window:20px;--tc-radius-window-narrow:0;--tc-radius-panel:16px;--tc-radius-card:16px;--tc-radius-control:999px;--tc-radius-field:999px;--tc-radius-textarea:16px;--tc-radius-taginput:18px;--tc-radius-chip:999px;--tc-radius-check:6px;--tc-radius-image:6px;--tc-radius-status:999px;--tc-radius-popover:16px;--tc-radius-option:999px;--tc-radius-bar:999px;--tc-field-gap:8px;--tc-form-row-gap:24px;--tc-group-gap:40px;--tc-panel-padding:28px;--tc-nav-width:200px;--tc-form-max-width:600px;--tc-inspector-width:360px;--tc-card-min:250px;--tc-tile-min:168px;--tc-tile-gap:10px;--tc-topbar-height:60px;--tc-bottomnav-height:60px;--tc-canvas:#f4f4f2;--tc-surface:#fff;--tc-surface-raised:#ededea;--tc-surface-sunken:#e6e6e2;--tc-field-bg:#fff;--tc-text:#17171a;--tc-text-muted:#5a5a61;--tc-text-placeholder:#7a7a81;--tc-divider:#e0e0db;--tc-border-field:#8d8d94;--tc-accent:#17171a;--tc-accent-hover:#35353b;--tc-on-accent:#fafaf7;--tc-accent-soft:#fbefb4;--tc-accent-text:#17171a;--tc-accent-border:#e2c53a;--tc-focus:#17171a;--tc-marker:#f6d743;--tc-on-marker:#17171a;--tc-success:#1d7a4a;--tc-warning:#8a5a00;--tc-error:#c0362c;--tc-success-on-inverse:#6fe0a6;--tc-error-soft:#fbe9e6;--tc-switch-off:#a5a5ab;--tc-switch-thumb:#fff;--tc-chip-bg:#ededea;--tc-selection:#fae58a;--tc-para-hover:#f7f3dc;--tc-shadow:#17171a1f;--tc-media-scrim:#1113189e;--tc-media-ink:#fff;--tc-motion-fast:.14s;--tc-motion-normal:.18s;--tc-motion-slow:.22s;--tc-z-shell-sticky:10;--tc-z-inspector-sheet:20;--tc-z-overlay:30;--tc-z-toast:40;--tc-z-host:2147480000;color:var(--tc-text);background:var(--tc-canvas);font-family:var(--tc-font-family);font-size:var(--tc-font-size-md);line-height:var(--tc-line-height-md)}:host([data-color-mode=dark]){--tc-canvas:#131315;--tc-surface:#1b1b1e;--tc-surface-raised:#252528;--tc-surface-sunken:#0d0d0f;--tc-field-bg:#161618;--tc-text:#f1f1ed;--tc-text-muted:#a4a4ab;--tc-text-placeholder:#85858c;--tc-divider:#2e2e33;--tc-border-field:#66666e;--tc-accent:#f1f1ed;--tc-accent-hover:#fafaf7;--tc-on-accent:#131315;--tc-accent-soft:#3a3214;--tc-accent-text:#f6e08a;--tc-accent-border:#8a7424;--tc-focus:#f1f1ed;--tc-marker:#e8c93f;--tc-on-marker:#131315;--tc-success:#5fd39a;--tc-warning:#ecbd55;--tc-error:#ff8a7f;--tc-success-on-inverse:#1d7a4a;--tc-error-soft:#3b1b19;--tc-switch-off:#55555c;--tc-switch-thumb:#131315;--tc-chip-bg:#29292d;--tc-selection:#5a4b16;--tc-para-hover:#23211a;--tc-shadow:#00000080}@media (pointer:coarse){:host{--tc-control-height-sm:36px;--tc-control-height-md:44px;--tc-control-height-lg:48px;--tc-control-font-size:15px;--tc-chip-height:30px;--tc-check-size:20px}}", Fs = "@font-face{font-family:Geist;src:url(__TAVERN_CANVAS_ASSET_URL__geist_variable.woff2__)format(\"woff2\");font-weight:100 900;font-style:normal;font-display:swap}:host{z-index:var(--tc-z-host);pointer-events:none;background:0 0;position:fixed;inset:0}:host [data-window-role=studio],:host [data-startup-state],:host [data-shadow-role=entry],:host [data-shadow-role=portal]>*{pointer-events:auto}*,:before,:after{box-sizing:border-box}*{margin:0}[data-shadow-role=app],[data-shadow-role=portal]{font-family:inherit;font-size:inherit;color:inherit;line-height:1.5}[data-shadow-role=app]{width:100%;height:100%}img,svg{max-width:100%;display:block}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;background:0 0;border:none;padding:0}button:disabled{cursor:not-allowed}ul,ol{padding:0;list-style:none}a{color:inherit}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}", Is = ".tc-tabular-nums{font-variant-numeric:tabular-nums}.tc-visually-hidden{clip-path:inset(50%);white-space:nowrap;border:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.tc-interactive{transition:transform var(--tc-motion-fast) ease-out, background-color var(--tc-motion-fast) ease-out, color var(--tc-motion-fast) ease-out;border:1px solid #0000}.tc-interactive:active{transform:scale(.97)}.tc-interactive:focus-visible{outline:2px solid var(--tc-accent);outline-offset:2px}.tc-field{width:100%;min-width:0;height:var(--tc-control-height-md);padding:0 var(--tc-field-padding-x);border:1px solid var(--tc-border-field);border-radius:var(--tc-radius-field);background-color:var(--tc-field-bg);color:var(--tc-text);font-family:inherit;font-size:var(--tc-control-font-size);line-height:var(--tc-line-height-md);transition:background-color var(--tc-motion-fast) ease}.tc-field-multiline{height:auto;min-height:calc(var(--tc-line-height-md) * 2 + var(--tc-control-height-md));padding-block:calc((var(--tc-control-height-md) - var(--tc-line-height-md)) / 2 - 1px);border-radius:var(--tc-radius-textarea);resize:vertical;display:block}.tc-field::placeholder{color:var(--tc-text-placeholder)}.tc-field:focus,.tc-field:focus-visible{outline:2px solid var(--tc-focus);outline-offset:-1px;border-color:#0000}.tc-field[aria-invalid=true]{border-color:var(--tc-error)}.tc-field:disabled{opacity:.5;cursor:not-allowed}.tc-z-shell-sticky{z-index:var(--tc-z-shell-sticky)}.tc-z-inspector-sheet{z-index:var(--tc-z-inspector-sheet)}.tc-z-overlay{z-index:var(--tc-z-overlay)}.tc-z-toast{z-index:var(--tc-z-toast)}", Ls = "._floatingEntry_1bpar_9{background-color:var(--tc-surface);width:56px;height:56px;box-shadow:0 0 0 1px var(--tc-divider), 0 8px 24px var(--tc-shadow);color:var(--tc-text);cursor:grab;touch-action:none;z-index:var(--tc-z-shell-sticky);border-radius:50%;justify-content:center;align-items:center;padding:0;display:inline-flex;position:fixed;top:0;left:0}._floatingEntry_1bpar_9:hover:not(:disabled){background-color:var(--tc-surface-raised)}._floatingEntryDragging_1bpar_34{cursor:grabbing}._floatingEntryMedia_1bpar_38{object-fit:cover;pointer-events:none;border-radius:50%;width:100%;height:100%}", Rs = "._window_1jfap_1{width:min(1180px,100vw - 40px);height:min(780px,100dvh - 80px);min-height:560px;color:var(--tc-text);background-color:var(--tc-canvas);border-radius:var(--tc-radius-window);box-shadow:0 0 0 1px var(--tc-divider), 0 18px 50px var(--tc-shadow);transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0);pointer-events:auto;isolation:isolate;animation:.18s cubic-bezier(.2,.8,.2,1) _floating-window-enter_1jfap_1;position:fixed;top:0;left:0;overflow:hidden}._window_1jfap_1[data-positioned=false]{visibility:hidden}._window_1jfap_1[data-dragging=true]{box-shadow:0 0 0 1px var(--tc-divider), 0 24px 64px var(--tc-shadow);-webkit-user-select:none;user-select:none}@keyframes _floating-window-enter_1jfap_1{0%{opacity:0;transform:translate3d(var(--tc-floating-window-x,20px), calc(var(--tc-floating-window-y,64px) + 8px), 0) scale(.985)}to{opacity:1;transform:translate3d(var(--tc-floating-window-x,20px), var(--tc-floating-window-y,64px), 0) scale(1)}}@media (width<=959px){._window_1jfap_1{border-radius:var(--tc-radius-window-narrow);width:auto;height:auto;min-height:0;inset:0;transform:none}._window_1jfap_1[data-positioned=false]{visibility:visible}}@media (prefers-reduced-motion:reduce){._window_1jfap_1{animation:none}}", zs = "._shell_spgmj_8{background-color:var(--tc-canvas);width:100%;height:100%;min-height:0;color:var(--tc-text);display:grid;position:relative;overflow:hidden}._shell_spgmj_8[data-viewport=desktop]{grid-template-columns:minmax(0, 1fr) clamp(320px, var(--tc-inspector-width,320px), 400px);grid-template-rows:var(--tc-topbar-height) minmax(0, 1fr);grid-template-areas:\"topbar topbar\"\"workspace inspector\"}._shell_spgmj_8[data-viewport=desktop][data-inspector-collapsed=true]{grid-template-columns:minmax(0,1fr) 0}._shell_spgmj_8[data-viewport=mobile]{grid-template-columns:minmax(0,1fr);grid-template-rows:var(--tc-topbar-height) minmax(0, 1fr) var(--tc-bottomnav-height);grid-template-areas:\"topbar\"\"workspace\"\"bottomnav\";height:100dvh}._top_bar_spgmj_51{align-items:center;gap:var(--tc-space-3);min-width:0;padding-inline:var(--tc-space-5) var(--tc-space-3);background-color:var(--tc-canvas);cursor:move;touch-action:none;grid-area:topbar;display:flex}._top_bar_end_spgmj_63{align-items:center;gap:var(--tc-space-1);min-width:0;margin-left:auto;display:flex}._top_tabs_spgmj_71{gap:var(--tc-space-1);margin-left:var(--tc-space-3);display:flex}._top_tab_spgmj_71{align-items:center;gap:var(--tc-control-gap);height:var(--tc-control-height-md);padding-inline:var(--tc-control-padding-x-md);border-radius:var(--tc-radius-control);color:var(--tc-text-muted);font-size:var(--tc-control-font-size);font-weight:var(--tc-font-weight-medium);display:inline-flex}._top_tab_spgmj_71:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._top_tab_spgmj_71[aria-current=page],._top_tab_spgmj_71[aria-current=page]:hover{color:var(--tc-on-marker);background-color:var(--tc-marker)}._task_pill_spgmj_100{align-items:center;gap:var(--tc-space-1);height:var(--tc-control-height-sm);padding-inline:var(--tc-space-2);border-radius:var(--tc-radius-control);color:var(--tc-text-muted);background-color:var(--tc-surface-raised);font-size:var(--tc-font-size-sm);display:inline-flex}._task_pill_spgmj_100:hover{color:var(--tc-text)}._task_pill_spin_spgmj_116{animation:_tc-icon-rotate_spgmj_1 var(--tc-motion-normal) linear infinite}._shell_spgmj_8[data-viewport=mobile] ._task_pill_label_spgmj_120{display:none}._task_popover_spgmj_124{z-index:var(--tc-z-overlay);width:min(360px, calc(100vw - var(--tc-space-8)));overscroll-behavior:contain;background-color:var(--tc-surface);border:1px solid var(--tc-divider);border-radius:var(--tc-radius-popover);max-height:60dvh;box-shadow:0 12px 32px var(--tc-shadow);overflow:auto}._top_bar_brand_spgmj_136{align-items:center;gap:var(--tc-space-2);color:var(--tc-text);font-size:var(--tc-font-size-md);font-weight:var(--tc-font-weight-semibold);flex:none;display:inline-flex}._top_bar_brand_mark_spgmj_146{width:var(--tc-control-height-sm);height:var(--tc-control-height-sm);border-radius:var(--tc-radius-control);background-color:var(--tc-marker);color:var(--tc-on-marker);place-items:center;display:inline-grid}._icon_button_spgmj_156{width:var(--tc-control-height-md);height:var(--tc-control-height-md);color:var(--tc-text-muted);border-radius:var(--tc-radius-control);flex:none;justify-content:center;align-items:center;display:flex}._icon_button_spgmj_156:hover{color:var(--tc-text);background-color:var(--tc-surface-raised)}._shell_spgmj_8[data-viewport=mobile] ._top_bar_spgmj_51{cursor:default;touch-action:auto;padding-inline:var(--tc-space-4) var(--tc-space-2)}._icon_button_spgmj_156._close_button_spgmj_178:hover{color:var(--tc-on-accent);background-color:var(--tc-error)}._icon_button_spgmj_156[data-selected=true],._icon_button_spgmj_156[aria-pressed=true]{color:var(--tc-text)}._tooltip_content_spgmj_188{padding:var(--tc-space-1) var(--tc-space-3);font-size:var(--tc-font-size-xs);line-height:var(--tc-line-height-xs);color:var(--tc-canvas);background-color:var(--tc-text);border-radius:var(--tc-radius-popover)}._workspace_spgmj_197{background-color:var(--tc-canvas);grid-area:workspace;min-width:0;min-height:0;overflow:auto;container:studio-workspace/inline-size}._workspace_placeholder_spgmj_207{min-height:240px;padding:var(--tc-panel-padding);flex-direction:column;justify-content:center;align-items:flex-start;display:flex}._inspector_spgmj_217{min-width:0;margin:0 var(--tc-space-4) var(--tc-space-4) 0;background-color:var(--tc-surface);border-radius:var(--tc-radius-panel);box-shadow:0 0 0 1px var(--tc-divider);grid-area:inspector;display:flex;overflow:hidden}._inspector_resizer_spgmj_228{width:var(--tc-space-1);cursor:col-resize;touch-action:none;background-color:#0000;flex:none}._inspector_resizer_spgmj_228:hover,._inspector_resizer_spgmj_228[data-dragging=true]{background-color:var(--tc-divider)}._inspector_panel_spgmj_241{flex-direction:column;flex:auto;min-width:0;display:flex;overflow:hidden}._inspector_header_spgmj_249{justify-content:space-between;align-items:center;gap:var(--tc-space-2);min-height:var(--tc-topbar-height);padding:var(--tc-space-2) var(--tc-space-2) var(--tc-space-2) var(--tc-space-4);color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg);flex:none;display:flex}._inspector_body_spgmj_263{min-height:0;padding:0 var(--tc-space-4) var(--tc-space-4);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);flex:auto;overflow:auto}._inspector_selection_kind_spgmj_273{margin:0 0 var(--tc-space-2);color:var(--tc-text);font-size:var(--tc-font-size-md);font-weight:var(--tc-font-weight-semibold)}._inspector_selection_spgmj_273{gap:var(--tc-space-2);flex-direction:column;margin:0;display:flex}._inspector_selection_spgmj_273 dt{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs)}._inspector_selection_spgmj_273 dd{color:var(--tc-text);font-size:var(--tc-font-size-sm);overflow-wrap:anywhere;margin:0}._bottom_nav_spgmj_299{min-height:0;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-top:1px solid var(--tc-divider);grid-area:bottomnav;display:flex}._bottom_nav_item_spgmj_308{justify-content:center;align-items:center;gap:var(--tc-space-0-5);min-width:0;padding-block:var(--tc-space-1);color:var(--tc-text-muted);flex-direction:column;flex:1 1 0;display:flex}._bottom_nav_item_spgmj_308>svg{box-sizing:content-box;padding:var(--tc-space-0-5) var(--tc-space-3);border-radius:var(--tc-radius-control)}._bottom_nav_item_spgmj_308[data-selected=true]{color:var(--tc-text);font-weight:var(--tc-font-weight-medium)}._bottom_nav_item_spgmj_308[data-selected=true]>svg{color:var(--tc-on-marker);background-color:var(--tc-marker)}._bottom_nav_item_label_spgmj_336{max-width:100%;font-size:var(--tc-font-size-xs);line-height:var(--tc-line-height-xs);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._sheet_overlay_spgmj_345{background-color:var(--tc-media-scrim);position:fixed;inset:0}._sheet_content_spgmj_351{width:100%;max-height:80dvh;padding-bottom:env(safe-area-inset-bottom,0px);background-color:var(--tc-surface);border-radius:var(--tc-radius-panel) var(--tc-radius-panel) 0 0;box-shadow:0 -8px 24px var(--tc-shadow);flex-direction:column;display:flex;position:fixed;bottom:0;left:0;right:0}._sheet_handle_spgmj_366{width:var(--tc-space-8);height:var(--tc-space-1);margin:var(--tc-space-2) auto;background-color:var(--tc-text-muted);border-radius:var(--tc-radius-status);flex:none}._sheet_header_spgmj_377{justify-content:space-between;align-items:center;gap:var(--tc-space-2);padding:var(--tc-space-1) var(--tc-space-2) var(--tc-space-2) var(--tc-space-4);color:var(--tc-text);font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);flex:none;display:flex}._sheet_body_spgmj_389{min-height:0;padding:0 var(--tc-space-4) var(--tc-space-4);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);flex:auto;overflow:auto}._task_strip_spgmj_398{flex-direction:column;min-width:0;display:flex}._task_strip_header_spgmj_404{align-items:center;gap:var(--tc-space-1);padding:var(--tc-space-2) var(--tc-space-2) var(--tc-space-1) var(--tc-space-4);flex:none;display:flex}._task_strip_summary_spgmj_412{font-variant-numeric:tabular-nums;min-width:0;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);white-space:nowrap;text-overflow:ellipsis;margin-right:auto;overflow:hidden}._task_strip_list_spgmj_423{gap:var(--tc-space-1);padding:0 var(--tc-space-3) var(--tc-space-3);flex-direction:column;display:flex}._task_chip_spgmj_430{align-items:center;gap:var(--tc-space-1-5);height:var(--tc-control-height-sm);padding-inline:var(--tc-space-2);color:var(--tc-text-muted);background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-control);font-size:var(--tc-font-size-sm);flex:none;display:flex}._task_chip_dot_spgmj_443{background-color:var(--tc-text-muted);border-radius:50%;flex:none;width:6px;height:6px}._task_chip_dot_spgmj_443[data-status=pending]{background-color:var(--tc-text-muted)}._task_chip_dot_spgmj_443[data-status=success]{background-color:var(--tc-success)}._task_chip_dot_spgmj_443[data-status=error]{background-color:var(--tc-error)}._task_chip_label_spgmj_463{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}._skeleton_block_spgmj_469{background-color:var(--tc-surface-raised);border-radius:var(--tc-radius-status)}._skeleton_title_spgmj_474{width:40%;height:var(--tc-space-5)}._skeleton_line_spgmj_479{width:90%;height:var(--tc-space-3);margin-top:var(--tc-space-3)}._skeleton_line_short_spgmj_485{width:75%;height:var(--tc-space-3);margin-top:var(--tc-space-2)}._partial_banner_spgmj_491{justify-content:space-between;align-items:center;gap:var(--tc-space-2) var(--tc-space-3);margin:0 var(--tc-space-4) var(--tc-space-2);padding:var(--tc-space-1) var(--tc-space-1) var(--tc-space-1) var(--tc-space-4);color:var(--tc-warning);background-color:var(--tc-surface);border-radius:var(--tc-radius-bar);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);flex-wrap:wrap;flex:none;display:flex}._state_screen_spgmj_507{top:var(--tc-space-5);right:var(--tc-space-5);justify-content:center;align-items:flex-start;gap:var(--tc-space-2);width:min(560px, calc(100vw - 2 * var(--tc-space-5)));max-height:calc(100dvh - 2 * var(--tc-space-5));padding:var(--tc-space-8);color:var(--tc-text);background-color:var(--tc-canvas);border-radius:var(--tc-radius-window);box-shadow:0 0 0 1px var(--tc-divider), 0 18px 50px var(--tc-shadow);flex-direction:column;display:flex;position:fixed;overflow:auto}._state_screen_eyebrow_spgmj_528{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm)}._state_screen_title_spgmj_533{max-width:56ch;font-size:var(--tc-font-size-lg);font-weight:var(--tc-font-weight-semibold);line-height:var(--tc-line-height-lg)}._state_screen_action_spgmj_540{height:var(--tc-control-height-md);margin-top:var(--tc-space-3);padding:0 var(--tc-control-padding-x-md);color:var(--tc-on-accent);background-color:var(--tc-accent);border-radius:var(--tc-radius-control);font-size:var(--tc-control-font-size);font-weight:var(--tc-font-weight-medium);align-items:center;display:inline-flex}._state_screen_action_spgmj_540:hover{background-color:var(--tc-accent-hover)}._state_screen_detail_spgmj_557{max-width:100%;padding:var(--tc-space-3) var(--tc-space-4);border-radius:var(--tc-radius-card);background:var(--tc-surface-raised);color:var(--tc-text-muted);font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);white-space:pre-wrap;-webkit-user-select:text;user-select:text;margin:0;overflow-x:auto}._state_screen_description_spgmj_571{max-width:56ch;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm)}", Bs = /__TAVERN_CANVAS_ASSET_URL__(.*?)__/gu;
+function Vs(e) {
+	return e.replaceAll(Bs, (e, t) => new URL(t, import.meta.url).href);
 }
-var oc = ac([
-	Qs,
-	$s,
-	ec,
-	tc,
-	nc,
-	rc
+var Hs = Vs([
+	Ps,
+	Fs,
+	Is,
+	Ls,
+	Rs,
+	zs
 ].join("\n"));
 //#endregion
 //#region src/index.ts
-function sc() {
-	xs(globalThis, Ss);
+function Us() {
+	is(globalThis, as);
 }
-var cc = Zs(globalThis).then(() => Ys({
-	stylesheet: oc,
+var Ws = Ns(globalThis).then(() => Ms({
+	stylesheet: Hs,
 	version: "3.0.0"
 }));
 //#endregion
-export { cc as bootstrap_handle, sc as register_chat_surface };
+export { Ws as bootstrap_handle, Us as register_chat_surface };

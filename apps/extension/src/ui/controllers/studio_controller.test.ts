@@ -91,6 +91,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     wardrobe_model: null,
     analysis_guidance: "",
     wardrobe_guidance: "",
+    strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {
@@ -108,6 +109,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   vibe: [],
   workflow: [],
   prompt_tag: [],
+  creation: [],
 };
 
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {

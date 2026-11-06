@@ -83,7 +83,7 @@ export function wardrobe_reply_of(raw: string): string | null {
   return null;
 }
 
-function library_lines(library: SlotLibrary): readonly string[] {
+export function library_lines(library: SlotLibrary): readonly string[] {
   if (library.characters.length === 0 && library.outfits.length === 0) {
     return [];
   }
@@ -102,6 +102,14 @@ function library_lines(library: SlotLibrary): readonly string[] {
   ];
 }
 
+/** The fields every proposed picture carries, shared by reply illustrations and created scenes. */
+export const PROPOSAL_FIELD_LINES: readonly string[] = [
+  "- paragraph: the paragraph number",
+  "- scene: one sentence describing what the picture shows",
+  "- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
+  "- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
+];
+
 function request_input(
   selection: string,
   reply_format: string,
@@ -112,10 +120,7 @@ function request_input(
   return [
     "[Inkwell illustration request]",
     selection,
-    "- paragraph: the paragraph number",
-    "- scene: one sentence describing what the picture shows",
-    "- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
-    "- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character",
+    ...PROPOSAL_FIELD_LINES,
     reply_format,
     ...library_lines(library),
     ...guidance_lines(guidance),

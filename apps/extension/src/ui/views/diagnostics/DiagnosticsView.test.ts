@@ -89,7 +89,15 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     assets: {
       active_category: "character",
-      records: { character: [], outfit: [], lora: [], vibe: [], workflow: [], prompt_tag: [] },
+      records: {
+        character: [],
+        outfit: [],
+        lora: [],
+        vibe: [],
+        workflow: [],
+        prompt_tag: [],
+        creation: [],
+      },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
@@ -119,6 +127,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           wardrobe_model: null,
           analysis_guidance: "",
           wardrobe_guidance: "",
+          strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
         },
         translation: { deepl_endpoint: "free", glossary: [] },
         ui: {
@@ -257,6 +266,7 @@ const SETTINGS: TavernCanvasSettings = {
     wardrobe_model: null,
     analysis_guidance: "",
     wardrobe_guidance: "",
+    strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {

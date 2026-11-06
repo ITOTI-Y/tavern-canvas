@@ -23,7 +23,7 @@ export function new_slot_id(): string {
 /** The global library and the entries bound to this chat, in library order. */
 export async function load_slot_library(
   assets: AssetsCapability,
-  chat_id: string,
+  chat_id: string | null,
 ): Promise<SlotLibrary> {
   return slot_library_of(await assets.load(), chat_id);
 }
@@ -56,7 +56,8 @@ export async function load_slot_prompt_context(
   prompt_presets: PromptPresetsCapability,
   assets: AssetsCapability,
   prompt_preset_id: Uuid | null,
-  chat_id: string,
+  /** `null` for a story with no chat: only the global library entries apply. */
+  chat_id: string | null,
 ): Promise<SlotPromptContext> {
   const [preset, library] = await Promise.all([
     prompt_preset_id === null ? null : prompt_presets.load_draft(prompt_preset_id),

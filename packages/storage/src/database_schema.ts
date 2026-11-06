@@ -3,7 +3,7 @@ import { ProviderErrorSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 10 as const;
+export const DATABASE_VERSION = 11 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 interface StoreDefinition {
@@ -103,6 +103,11 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 7,
   },
+  creation_records: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 11,
+  },
 } as const satisfies Record<string, StoreDefinition>;
 
 /** Stores dropped from the schema; upgrades delete them from databases created before. */
@@ -194,6 +199,10 @@ export type LoraProfile = z.infer<typeof LoraProfileSchema>;
 
 export const PromptTagPresetSchema = namespaced_schema({});
 export type PromptTagPreset = z.infer<typeof PromptTagPresetSchema>;
+
+/** A story, prompt or comic-strip creation from the Studio's create page, with its scenes. */
+export const CreationRecordSchema = namespaced_schema({});
+export type CreationRecord = z.infer<typeof CreationRecordSchema>;
 
 export const RegexRuleSchema = namespaced_schema({});
 export type RegexRule = z.infer<typeof RegexRuleSchema>;
@@ -315,7 +324,8 @@ export type BusinessRecord =
   | ProviderInputAsset
   | OutfitProfile
   | LoraProfile
-  | PromptTagPreset;
+  | PromptTagPreset
+  | CreationRecord;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -338,6 +348,7 @@ export type RecordByStore = {
   outfit_profiles: OutfitProfile;
   lora_profiles: LoraProfile;
   prompt_tag_presets: PromptTagPreset;
+  creation_records: CreationRecord;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -482,6 +493,14 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  creation_records: {
+    key: string;
+    value: CreationRecord;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -502,6 +521,7 @@ export const RECORD_SCHEMAS: {
   outfit_profiles: OutfitProfileSchema,
   lora_profiles: LoraProfileSchema,
   prompt_tag_presets: PromptTagPresetSchema,
+  creation_records: CreationRecordSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;
