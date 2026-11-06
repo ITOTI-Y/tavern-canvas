@@ -455,8 +455,10 @@
 
 .panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--tc-space-1-5);
   width: 100%;
+  min-width: 0;
   max-width: 520px;
   margin: 0;
 }
@@ -474,6 +476,7 @@
 
 .panel_frame {
   position: relative;
+  min-width: 0;
   overflow: hidden;
   border-radius: var(--tc-radius-image);
   background-color: var(--tc-surface-sunken);

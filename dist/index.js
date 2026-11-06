@@ -2379,7 +2379,7 @@ var Yr = /* @__PURE__ */ Oe({
 		creation: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-9-gLh1Pj.js")), i = ve(() => import("./chunks/StudioShell-C1RuNV0V.js")), { t: a } = we();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-9-gLh1Pj.js")), i = ve(() => import("./chunks/StudioShell-vez9ToCj.js")), { t: a } = we();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
