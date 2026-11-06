@@ -15,6 +15,7 @@ import {
   REFERENCE_IMAGE_KEY,
   TAG_SUGGESTIONS_KEY,
 } from "./contracts/portal_keys.js";
+import { CREATION_KEY, type CreationPort } from "./contracts/creation_port.js";
 import type { PromptTagsPort } from "./contracts/prompt_tags_port.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
@@ -37,6 +38,8 @@ const props = defineProps<{
   host?: HostAdapter | null;
   illustrations?: IllustrationService | null;
   translator?: PromptTranslator | null;
+  /** Replaces the port built from `illustrations`, for the Studio harness. */
+  creation?: CreationPort | null;
 }>();
 
 const ChatLayer = defineAsyncComponent(() => import("./chat/ChatLayer.vue"));
@@ -94,6 +97,19 @@ provide(
         read_outfit: (image) => illustrations.read_outfit(image),
         read_character: (image) => illustrations.read_character(image),
       },
+);
+
+provide(
+  CREATION_KEY,
+  props.creation ??
+    (illustrations === null
+      ? null
+      : {
+          plan_story: (story, worldbooks) => illustrations.plan_story(story, worldbooks),
+          strip_messages: () => illustrations.strip_messages(),
+          plan_strip: (from, to, max_panels) => illustrations.plan_strip(from, to, max_panels),
+          generate: (input) => illustrations.generate_image(input),
+        }),
 );
 
 const prompt_tags = computed<PromptTagsPort>(() => {

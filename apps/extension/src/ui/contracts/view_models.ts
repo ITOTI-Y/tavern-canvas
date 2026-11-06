@@ -92,7 +92,7 @@ export type SettingsSection =
   "illustration" | "providers" | "translation" | "prompts" | "general" | "diagnostics";
 
 export interface StudioState {
-  route: "library" | "gallery" | "settings";
+  route: "create" | "library" | "gallery" | "settings";
   settings_section: SettingsSection;
   color_mode: "light" | "dark";
   loading: ReadonlySet<string>;

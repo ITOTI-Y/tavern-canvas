@@ -7,6 +7,7 @@ import type { StudioController } from "../controllers/studio_controller.js";
 const GalleryView = defineAsyncComponent(() => import("../views/gallery/GalleryView.vue"));
 const SettingsView = defineAsyncComponent(() => import("../views/settings/SettingsView.vue"));
 const AssetsView = defineAsyncComponent(() => import("../views/assets/AssetsView.vue"));
+const CreateView = defineAsyncComponent(() => import("../views/create/CreateView.vue"));
 
 defineProps<{
   readonly state: StudioState;
@@ -17,5 +18,6 @@ defineProps<{
 <template>
   <GalleryView v-if="state.route === 'gallery'" :state="state" :controller="controller" />
   <AssetsView v-else-if="state.route === 'library'" :state="state" :controller="controller" />
+  <CreateView v-else-if="state.route === 'create'" :state="state" :controller="controller" />
   <SettingsView v-else :state="state" :controller="controller" />
 </template>

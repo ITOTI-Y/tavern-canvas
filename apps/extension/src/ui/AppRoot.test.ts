@@ -159,7 +159,7 @@ describe("AppRoot normal studio state", () => {
 
     expect(wrapper.find('[data-startup-state="blocked"]').exists()).toBe(false);
     expect(wrapper.find('[data-startup-state="failed"]').exists()).toBe(false);
-    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(3);
+    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(4);
   });
 
   it("starts closed, opens from the entry and closes back to it", async () => {

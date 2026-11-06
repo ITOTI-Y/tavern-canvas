@@ -13,6 +13,7 @@ const DEFERRED_STYLESHEET_ORDER = [
   "prompt",
   "diagnostics",
   "settings",
+  "create",
 ] as const;
 
 export type DeferredStylesheetKey = (typeof DEFERRED_STYLESHEET_ORDER)[number];

@@ -10,6 +10,7 @@ import {
   INITIAL_STYLESHEET,
 } from "../../../apps/extension/src/dev/stylesheet_hmr.js";
 import { create_mock_capabilities, type ScenarioName } from "./mock_capabilities.js";
+import { create_mock_creation_port } from "./mock_creation.js";
 
 const params = new URLSearchParams(window.location.search);
 const scenario = (params.get("scenario") ?? "full") as ScenarioName;
@@ -39,6 +40,7 @@ const app = createApp(AppRoot, {
   portalTarget: surface.portal_element,
   hostElement: surface.host_element,
   capabilities: create_mock_capabilities(scenario),
+  creation: create_mock_creation_port(),
 });
 app.use(locale_runtime.i18n);
 app.mount(surface.app_element);

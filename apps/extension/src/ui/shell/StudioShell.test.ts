@@ -216,9 +216,10 @@ describe("StudioShell desktop navigation", () => {
     return wrapper.findAll('[data-testid="studio-tabs"] > button');
   }
 
-  it("shows library, gallery and settings as top-bar tabs with the current one marked", async () => {
+  it("shows create, library, gallery and settings as top-bar tabs with the current one marked", async () => {
     const { wrapper } = await mount_shell({ state: { route: "gallery" } });
     expect(tabs(wrapper).map((button) => button.text())).toEqual([
+      "Create",
       "Library",
       "Gallery",
       "Settings",
@@ -245,10 +246,10 @@ describe("StudioShell desktop navigation", () => {
 });
 
 describe("StudioShell mobile navigation", () => {
-  it("shows the three routes in the bottom nav", async () => {
+  it("shows the four routes in the bottom nav", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile" });
     const items = wrapper.find('[data-testid="studio-bottom-nav"]').findAll("button");
-    expect(items.map((item) => item.text())).toEqual(["Library", "Gallery", "Settings"]);
+    expect(items.map((item) => item.text())).toEqual(["Create", "Library", "Gallery", "Settings"]);
   });
 
   it("moves the routes out of the top bar and keeps the inspector toggle", async () => {
@@ -480,7 +481,7 @@ describe("StudioShell shell-level states", () => {
     const banner = wrapper.find('[data-testid="partial-banner"]');
     expect(banner.exists()).toBe(true);
     expect(banner.text()).toContain("Running with limited functionality");
-    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(3);
+    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(4);
   });
 
   it("navigates to Diagnostics from the partial-initialization banner", async () => {
@@ -500,7 +501,7 @@ describe("StudioShell shell-level states", () => {
 });
 
 describe("StudioShell narrow and long locale labels", () => {
-  it("keeps both desktop routes and their accessible names when a label is unusually long", async () => {
+  it("keeps every desktop route and their accessible names when a label is unusually long", async () => {
     const long_label = "Gallery of every image generated for this chat and earlier chats";
     const messages = {
       en: { ...en_messages, nav: { ...en_messages.nav, gallery: long_label } },
@@ -508,7 +509,7 @@ describe("StudioShell narrow and long locale labels", () => {
     const { wrapper } = await mount_shell({ messages });
 
     const buttons = wrapper.findAll('[data-testid="studio-tabs"] > button');
-    expect(buttons).toHaveLength(3);
+    expect(buttons).toHaveLength(4);
     expect(buttons.some((button) => button.text() === long_label)).toBe(true);
   });
 
@@ -516,6 +517,6 @@ describe("StudioShell narrow and long locale labels", () => {
     const { wrapper } = await mount_shell({ viewport: "mobile", locale: "zh-CN" });
     const nav = wrapper.find('[data-testid="studio-bottom-nav"]');
     const items = nav.findAll("button");
-    expect(items.map((item) => item.text())).toEqual(["素材库", "图库", "设置"]);
+    expect(items.map((item) => item.text())).toEqual(["创作", "素材库", "图库", "设置"]);
   });
 });

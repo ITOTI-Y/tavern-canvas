@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type {
-  AnalysisConnection,
-  IllustrationSettings,
-  TavernCanvasSettings,
+import {
+  DEFAULT_STRIP_SETTINGS,
+  type AnalysisConnection,
+  type IllustrationSettings,
+  type StripSettings,
+  type TavernCanvasSettings,
 } from "@tavern-canvas/contracts";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -14,6 +16,7 @@ import AppSwitch from "../../components/AppSwitch.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
 import SegmentedControl from "../../components/SegmentedControl.vue";
+import TagInput from "../../components/TagInput.vue";
 import type { PromptPresetSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./settings_styles.js";
@@ -41,6 +44,17 @@ function update_illustration(partial: Partial<IllustrationSettings>): void {
     update({ illustration: { ...current, ...partial } });
   }
 }
+
+const strip = computed(() => illustration.value?.strip ?? DEFAULT_STRIP_SETTINGS);
+
+function update_strip(partial: Partial<StripSettings>): void {
+  update_illustration({ strip: { ...strip.value, ...partial } });
+}
+
+const strip_style_options = computed(() => [
+  { value: "strip", label: t("create.style.strip") },
+  { value: "default", label: t("create.style.default") },
+]);
 
 const preset_name_draft = ref("");
 const proxy_preset_draft = ref("");
@@ -554,6 +568,59 @@ function set_worldbook(name: string, chosen: boolean): void {
             :disabled="!settings"
             data-testid="wardrobe-guidance-input"
             @blur="update_illustration({ wardrobe_guidance: wardrobe_guidance_draft.trim() })"
+          />
+        </template>
+      </FieldGroup>
+    </section>
+
+    <section :class="styles.section">
+      <h2 :class="styles.section_title">{{ t("settings.groups.strip") }}</h2>
+      <FieldGroup
+        :label="t('settings.illustration.strip_style_label')"
+        :hint="t('settings.illustration.strip_style_hint')"
+      >
+        <SegmentedControl
+          :model-value="strip.style"
+          :options="strip_style_options"
+          :label="t('settings.illustration.strip_style_label')"
+          :disabled="!settings"
+          @update:model-value="update_strip({ style: $event === 'default' ? 'default' : 'strip' })"
+        />
+      </FieldGroup>
+      <FieldGroup :label="t('settings.illustration.strip_max_label')">
+        <template #default="{ fieldId }">
+          <NumberStepper
+            :id="fieldId"
+            :model-value="strip.max_panels"
+            :label="t('settings.illustration.strip_max_label')"
+            :min="1"
+            :max="12"
+            :increment-label="t('common.actions.increase')"
+            :decrement-label="t('common.actions.decrease')"
+            :disabled="!settings"
+            @update:model-value="update_strip({ max_panels: $event ?? strip.max_panels })"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup :label="t('settings.illustration.strip_style_tags_label')">
+        <template #default="{ fieldId }">
+          <TagInput
+            :id="fieldId"
+            :model-value="strip.style_tags"
+            @update:model-value="update_strip({ style_tags: $event })"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup
+        :label="t('settings.illustration.strip_no_text_label')"
+        :hint="t('settings.illustration.strip_no_text_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <TagInput
+            :id="fieldId"
+            :model-value="strip.no_text_tags"
+            :described-by="describedBy"
+            @update:model-value="update_strip({ no_text_tags: $event })"
           />
         </template>
       </FieldGroup>

@@ -1,4 +1,4 @@
-import { Images, Layers, Settings } from "lucide-vue-next";
+import { Images, Layers, Settings, Sparkles } from "lucide-vue-next";
 import type { Component } from "vue";
 
 import type { StudioRoute } from "../contracts/view_models.js";
@@ -9,6 +9,7 @@ export interface RouteNavItem {
 }
 
 export const STUDIO_ROUTES: readonly RouteNavItem[] = [
+  { route: "create", icon: Sparkles },
   { route: "library", icon: Layers },
   { route: "gallery", icon: Images },
   { route: "settings", icon: Settings },
@@ -19,6 +20,8 @@ export type Translate = (key: string) => string;
 /** One literal translate call per route; tools/locale_check forbids dynamic keys. */
 export function route_label(t: Translate, route: StudioRoute): string {
   switch (route) {
+    case "create":
+      return t("nav.create");
     case "library":
       return t("nav.library");
     case "settings":

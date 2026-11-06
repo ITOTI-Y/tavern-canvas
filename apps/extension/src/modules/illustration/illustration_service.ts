@@ -573,10 +573,11 @@ export class IllustrationService {
   }
 
   /**
-   * Plans comic-strip panels for the messages `from` through `to` of the open chat. The messages are
-   * the whole story, so no further chat history is sent; world info follows the analysis settings.
+   * Plans at most `max_panels` comic-strip panels for the messages `from` through `to` of the open
+   * chat. The messages are the whole story, so no further chat history is sent; world info follows
+   * the analysis settings.
    */
-  async plan_strip(from: number, to: number): Promise<CreationScene[]> {
+  async plan_strip(from: number, to: number, max_panels: number): Promise<CreationScene[]> {
     const planning = await import("../creation/creation_planning.js");
     const { chat_id, messages } = await this.strip_messages();
     const chosen = messages.filter(
@@ -585,7 +586,6 @@ export class IllustrationService {
     const paragraphs = planning.strip_paragraphs(chosen);
     const text = paragraphs.map((paragraph) => paragraph.text).join("\n");
     const settings = this.#deps.settings();
-    const max_panels = settings.strip.max_panels;
     const context = await this.#deps.prompt_context(chat_id);
     const last = chosen.at(-1);
     const snapshot =
