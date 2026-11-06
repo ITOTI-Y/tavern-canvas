@@ -92,7 +92,9 @@ describe("creation store", () => {
       "rooftop, comic",
       "rooftop, comic",
     ]);
-    expect(generate.mock.calls[0]?.[0].negative_prompt).toBe("lowres, text");
+    expect(generate.mock.calls[0]?.[0].negative_prompt).toBe(
+      "lowres, text, comic, multiple views, 4koma, split screen",
+    );
     expect(saved.length).toBeGreaterThanOrEqual(3);
     expect(store.pending.size).toBe(0);
   });

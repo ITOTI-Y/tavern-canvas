@@ -450,7 +450,7 @@
   gap: var(--tc-space-2);
   align-items: center;
   width: 100%;
-  max-width: 520px;
+  max-width: 600px;
 }
 
 .panel {
@@ -551,6 +551,76 @@
 .compact[data-layout] {
   justify-self: start;
   width: auto;
+}
+
+/* A comic page: panels in rows with ink borders and narrow gutters, actions inside each frame. */
+.page {
+  display: grid;
+  gap: var(--tc-space-2);
+  width: 100%;
+  max-width: 600px;
+  padding: var(--tc-space-3);
+  border-radius: var(--tc-radius-card);
+  background-color: var(--tc-surface);
+  box-shadow: 0 0 0 1px var(--tc-divider);
+}
+
+.page_row {
+  display: flex;
+  gap: var(--tc-space-2);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.page_row[data-narrow="true"] {
+  justify-content: center;
+}
+
+.page_row[data-narrow="true"] > .panel {
+  max-width: calc(50% - var(--tc-space-1));
+}
+
+.panel[data-layout="page"] {
+  max-width: none;
+}
+
+.panel[data-layout="page"] .panel_frame {
+  border: 2px solid var(--tc-text);
+  border-radius: 2px;
+}
+
+.panel_source {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-xs);
+  line-height: var(--tc-line-height-xs);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.panel_tools {
+  position: absolute;
+  top: var(--tc-space-1-5);
+  right: var(--tc-space-1-5);
+  display: flex;
+  gap: var(--tc-space-1);
+  padding: var(--tc-space-0-5);
+  border-radius: 999px;
+  background-color: var(--tc-surface);
+  opacity: 0;
+  transition: opacity var(--tc-motion-fast) ease;
+}
+
+.panel_frame:hover .panel_tools,
+.panel_frame:focus-within .panel_tools {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .panel_tools {
+    opacity: 1;
+  }
 }
 
 .narrow_only {

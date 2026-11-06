@@ -87,6 +87,7 @@ var e = {
 		scenes_selected: "已选 {n} / {total}",
 		scenes_empty: "分析模型没有返回场景，可以重新拆分。",
 		replan: "重新拆分",
+		show_source: "显示原文",
 		show_panels: "查看图片",
 		panels_saved: "图片同时保存在图库中",
 		edit_scenes: "修改分镜",

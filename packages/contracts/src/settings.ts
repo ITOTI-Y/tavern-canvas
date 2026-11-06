@@ -100,7 +100,7 @@ export type StripSettings = z.infer<typeof StripSettingsSchema>;
 export const DEFAULT_STRIP_SETTINGS: StripSettings = {
   style: "strip",
   max_panels: 6,
-  style_tags: "comic panel, cinematic composition, clean lineart, dynamic angle",
+  style_tags: "dynamic angle, cinematic lighting, depth of field, clean lineart",
   no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature",
 };
 

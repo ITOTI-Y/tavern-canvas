@@ -118,6 +118,7 @@ var o = {
 		scenes_selected: "{n} of {total} selected",
 		scenes_empty: "The analysis model returned no scenes; try splitting again.",
 		replan: "Split again",
+		show_source: "Show source text",
 		show_panels: "View pictures",
 		panels_saved: "The pictures are also saved in the gallery",
 		edit_scenes: "Edit scenes",
@@ -931,7 +932,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-CDSMBAss.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DvXpp_dn.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

@@ -56,7 +56,7 @@ var h = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 }), x = {
 	style: "strip",
 	max_panels: 6,
-	style_tags: "comic panel, cinematic composition, clean lineart, dynamic angle",
+	style_tags: "dynamic angle, cinematic lighting, depth of field, clean lineart",
 	no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature"
 }, S = r({
 	preset_name: n().trim().min(1).max(200),

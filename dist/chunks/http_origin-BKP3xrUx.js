@@ -1,7 +1,7 @@
 import { h as e, i as t, r as n, u as r } from "./schemas-BjkyCQYG.js";
 import { a as i } from "./ids-pPJWL4BL.js";
 import { i as a, o, r as s, t as c } from "./novelai-B6V3MfU9.js";
-import { i as l } from "./settings-AUN8XBLO.js";
+import { i as l } from "./settings-BPfL5ty6.js";
 import { n as u } from "./AppIcon-DkyxvN8k.js";
 //#region ../../packages/contracts/src/providers/novelai_defaults.ts
 var d = e({

@@ -93,6 +93,7 @@ const create = {
   scenes_selected: "{n} of {total} selected",
   scenes_empty: "The analysis model returned no scenes; try splitting again.",
   replan: "Split again",
+  show_source: "Show source text",
   show_panels: "View pictures",
   panels_saved: "The pictures are also saved in the gallery",
   edit_scenes: "Edit scenes",

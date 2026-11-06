@@ -1,8 +1,8 @@
 import { a as e } from "./ids-pPJWL4BL.js";
 import { i as t, o as n } from "./novelai-B6V3MfU9.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { a, i as o, n as s, r as c, t as l } from "./http_origin-gVxrRWXz.js";
-import { n as u } from "./settings-AUN8XBLO.js";
+import { a, i as o, n as s, r as c, t as l } from "./http_origin-BKP3xrUx.js";
+import { n as u } from "./settings-BPfL5ty6.js";
 import { G as d, H as f, I as p, K as m, P as h, _ as g, a as _, b as v, dt as y, g as b, h as x, j as S, lt as C, m as w, mt as T, n as E, p as D, s as O, tt as k, u as A, v as j, x as M, y as N } from "./vue-i18n-L-BrQRnK.js";
 import { n as P, t as F } from "./AppIcon-DkyxvN8k.js";
 import { n as I, r as L, t as ee } from "./PromptTagChips-CCFe1e5c.js";
@@ -2094,7 +2094,7 @@ var Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = v(() => import("./PromptView-BVeZuNP5.js")), n = v(() => import("./PromptTagPresetPanel-By5jcE0Z.js")), r = v(() => import("./DiagnosticsView-Ce-pF2oP.js")), i = e, { t: a } = E(), o = [
+		let t = v(() => import("./PromptView-BVeZuNP5.js")), n = v(() => import("./PromptTagPresetPanel-By5jcE0Z.js")), r = v(() => import("./DiagnosticsView-2nb1-1X1.js")), i = e, { t: a } = E(), o = [
 			"illustration",
 			"providers",
 			"translation",

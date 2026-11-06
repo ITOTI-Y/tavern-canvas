@@ -33,6 +33,7 @@ import type {
   ImageSize,
 } from "../../../modules/creation/creation_record.js";
 import ImageSizeField from "../settings/ImageSizeField.vue";
+import { page_rows } from "./comic_page.js";
 import CreationImage from "./CreationImage.vue";
 import PanelFigure from "./PanelFigure.vue";
 import SceneCard, { type ScenePatch } from "./SceneCard.vue";
@@ -439,6 +440,9 @@ const shown_panels = computed(
     ) ?? [],
 );
 
+const show_source = ref(false);
+const panel_rows = computed(() => page_rows(shown_panels.value));
+
 function change_scene(scene_id: string, patch: ScenePatch, debounce: boolean): void {
   const current = selected.value;
   if (current === null) {
@@ -728,6 +732,8 @@ async function delete_selected(): Promise<void> {
               :index="index"
               :pending="store.pending.has(scene.id)"
               :numbered="false"
+              layout="list"
+              :source="null"
               :read-image="read_image"
               @regenerate="regenerate(scene.id)"
               @update:prompt="change_scene(scene.id, { positive_prompt: $event }, true)"
@@ -850,6 +856,15 @@ async function delete_selected(): Promise<void> {
             <span :class="styles.kind">{{ kind_label(selected.kind) }}</span>
             <span :class="styles.hint">{{ t("create.panels_saved") }}</span>
             <span :class="styles.spacer" />
+            <button
+              type="button"
+              class="tc-interactive"
+              :class="styles.chip_toggle"
+              :aria-pressed="show_source"
+              @click="show_source = !show_source"
+            >
+              {{ t("create.show_source") }}
+            </button>
             <AppButton
               :icon="Pencil"
               :label="t('create.edit_scenes')"
@@ -857,17 +872,29 @@ async function delete_selected(): Promise<void> {
               @click="view_mode = 'plan'"
             />
           </div>
-          <PanelFigure
-            v-for="(scene, index) in shown_panels"
-            :key="scene.id"
-            :scene="scene"
-            :index="index"
-            :pending="store.pending.has(scene.id)"
-            :numbered="true"
-            :read-image="read_image"
-            @regenerate="regenerate(scene.id)"
-            @update:prompt="change_scene(scene.id, { positive_prompt: $event }, true)"
-          />
+          <div :class="styles.page">
+            <div
+              v-for="row in panel_rows"
+              :key="row.cells[0]?.item.id"
+              :class="styles.page_row"
+              :data-narrow="String(row.narrow)"
+            >
+              <PanelFigure
+                v-for="cell in row.cells"
+                :key="cell.item.id"
+                :style="{ flex: `${String(cell.ratio)} 1 0` }"
+                :scene="cell.item"
+                :index="cell.index"
+                :pending="store.pending.has(cell.item.id)"
+                :numbered="true"
+                layout="page"
+                :source="show_source && cell.item.excerpt !== '' ? cell.item.excerpt : null"
+                :read-image="read_image"
+                @regenerate="regenerate(cell.item.id)"
+                @update:prompt="change_scene(cell.item.id, { positive_prompt: $event }, true)"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

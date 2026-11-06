@@ -5,10 +5,10 @@ import { i as f, n as p, o as m, r as h } from "./chunks/ids-pPJWL4BL.js";
 import { n as g, t as ee } from "./chunks/generation-CxBPzqgd.js";
 import { l as _, n as v, o as y, r as b, s as x } from "./chunks/wardrobe_library-BkM-wKPK.js";
 import { a as S, i as C, r as te } from "./chunks/provider-9M1GIrZ6.js";
-import { i as ne, n as w, r as re, t as T } from "./chunks/http_origin-gVxrRWXz.js";
-import { a as E, c as ie, n as ae, o as D, r as oe, s as se, t as ce } from "./chunks/settings-AUN8XBLO.js";
+import { i as ne, n as w, r as re, t as T } from "./chunks/http_origin-BKP3xrUx.js";
+import { a as E, c as ie, n as ae, o as D, r as oe, s as se, t as ce } from "./chunks/settings-BPfL5ty6.js";
 import { $ as le, A as O, F as ue, G as de, H as fe, L as pe, O as me, P as k, Q as he, U as ge, _ as _e, b as ve, dt as A, g as ye, h as be, i as xe, it as Se, j as Ce, lt as j, m as M, mt as N, n as we, p as P, pt as Te, rt as Ee, tt as F, u as De, x as Oe, y as ke } from "./chunks/vue-i18n-L-BrQRnK.js";
-import { t as Ae } from "./chunks/create_i18n-fBqxji54.js";
+import { t as Ae } from "./chunks/create_i18n-BuPoRUdT.js";
 import { i as je, n as Me, r as Ne, t as Pe } from "./chunks/portal_keys-DthxrmWp.js";
 import { t as Fe } from "./chunks/creation_port-CiZWBydV.js";
 import { t as Ie } from "./chunks/AppIcon-DkyxvN8k.js";
@@ -17,7 +17,7 @@ import { t as Re } from "./chunks/host_image_icon-CySMeJr8.js";
 import { t as ze } from "./chunks/deferred_stylesheets-C5SZyo6f.js";
 import { c as Be, h as Ve, i as He, o as Ue } from "./chunks/business_repositories-4nVP7Td6.js";
 import { a as We, c as Ge, i as Ke, n as qe, o as Je, r as Ye, t as Xe } from "./chunks/image_store-BP8GIHiw.js";
-import { a as Ze, d as Qe, l as $e, n as et, o as tt, r as nt, s as rt, t as it, u as at } from "./chunks/analysis-CvO6PasH.js";
+import { a as Ze, c as Qe, i as $e, l as et, n as tt, o as nt, r as rt, t as it, u as at } from "./chunks/analysis-5v7pfQ9S.js";
 import { a as ot, n as st } from "./chunks/model_json-DnhzkPSG.js";
 import { a as ct, i as lt, n as ut, o as dt, s as I } from "./chunks/provider_transport-CdL7IECS.js";
 import { a as ft, i as pt, n as mt, o as ht, r as gt, t as _t } from "./chunks/proposal_slots-ufEAgMTk.js";
@@ -2379,7 +2379,7 @@ var Yr = /* @__PURE__ */ Oe({
 		creation: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-9-gLh1Pj.js")), i = ve(() => import("./chunks/StudioShell-vez9ToCj.js")), { t: a } = we();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-CkQrLSa_.js")), i = ve(() => import("./chunks/StudioShell-DZiu49pV.js")), { t: a } = we();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -2655,7 +2655,7 @@ async function fi(e, t, n, r) {
 	})).content;
 }
 function pi(e) {
-	return (t, n) => fi(e, [t, ...Qe(e.settings().wardrobe_guidance)].join("\n"), n, null);
+	return (t, n) => fi(e, [t, ...at(e.settings().wardrobe_guidance)].join("\n"), n, null);
 }
 async function mi(e, t, n, r, i = {}) {
 	let a = e.settings(), o = await ui(a.connection, e.resolve_analysis_key), s = await di(i.world_info ?? a.world_info, t, e.host);
@@ -2853,7 +2853,7 @@ async function Di(e, t) {
 	return n(e, t);
 }
 function Oi(e) {
-	return e instanceof I && e.code === "configuration" ? "not_configured" : e instanceof et ? "analysis_unparsable" : e instanceof ci ? e.reason : e instanceof wi ? "message_changed" : (e instanceof Error ? e.message : String(e)).slice(0, 500);
+	return e instanceof I && e.code === "configuration" ? "not_configured" : e instanceof tt ? "analysis_unparsable" : e instanceof ci ? e.reason : e instanceof wi ? "message_changed" : (e instanceof Error ? e.message : String(e)).slice(0, 500);
 }
 var ki = class {
 	#e;
@@ -2928,7 +2928,7 @@ var ki = class {
 				type: "analysis_failed",
 				location: r,
 				message: Oi(e),
-				excerpt: e instanceof et ? e.excerpt : null
+				excerpt: e instanceof tt ? e.excerpt : null
 			}), e);
 		} finally {
 			this.#r.delete(a);
@@ -2949,7 +2949,7 @@ var ki = class {
 			slots: []
 		};
 		if (r.length > 0) {
-			let o = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e) : null, s = await this.#e.prompt_context(e.chat_id), c = Ze(r, i.max_images_per_message, s.library, i.analysis_guidance), l = (e) => $e(e, r.length, i.max_images_per_message), { proposals: u, wardrobe_reply: d } = await mi(this.#e, t, o === null ? {
+			let o = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e) : null, s = await this.#e.prompt_context(e.chat_id), c = $e(r, i.max_images_per_message, s.library, i.analysis_guidance), l = (e) => Qe(e, r.length, i.max_images_per_message), { proposals: u, wardrobe_reply: d } = await mi(this.#e, t, o === null ? {
 				user_input: c,
 				json_schema: it,
 				parse: (e) => ({
@@ -2961,14 +2961,14 @@ var ki = class {
 					c,
 					"",
 					o.input,
-					...Qe(i.wardrobe_guidance),
+					...at(i.wardrobe_guidance),
 					"",
-					nt
+					rt
 				].join("\n"),
-				json_schema: rt(o.json_schema),
+				json_schema: nt(o.json_schema),
 				parse: (e) => ({
 					proposals: l(e),
-					wardrobe_reply: at(e)
+					wardrobe_reply: et(e)
 				})
 			}, n), f = o === null ? await this.#h(e) : await this.#m(e, o, d);
 			a.slots.push(..._t(r, u, s, f, this.#e.new_slot_id));
@@ -3004,9 +3004,9 @@ var ki = class {
 		let n = await this.#s(e), r = ht(n), i = this.read(e), a = new Set(i?.slots.map((e) => e.paragraph) ?? []), o = [...new Set(t)].filter((e) => e < r.length && !a.has(e)).sort((e, t) => e - t);
 		if (o.length === 0) return [];
 		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await mi(this.#e, n, {
-			user_input: tt(r, o, l.library, s.analysis_guidance),
+			user_input: Ze(r, o, l.library, s.analysis_guidance),
 			json_schema: it,
-			parse: (e) => $e(e, r.length, r.length)
+			parse: (e) => Qe(e, r.length, r.length)
 		}, new AbortController().signal), d = new Map(u.map((e) => [e.paragraph, e])), f = _t(r, o.map((e) => d.get(e) ?? {
 			paragraph: e,
 			scene: (r[e]?.text ?? "").slice(0, 120),
@@ -3051,8 +3051,8 @@ var ki = class {
 		}
 	}
 	async plan_story(e, t) {
-		let n = await import("./chunks/creation_planning-DMFz8H3q.js").then((e) => e.n), r = ht(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), o = await mi(this.#e, e, {
-			user_input: n.build_scene_input("story", r, Ti, i, a.analysis_guidance),
+		let n = await import("./chunks/creation_planning-D9KBWp2D.js").then((e) => e.n), r = ht(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), o = await mi(this.#e, e, {
+			user_input: n.build_scene_input("story", r, Ti, i, a.analysis_guidance, null),
 			json_schema: n.SCENE_JSON_SCHEMA,
 			parse: (e) => n.parse_scene_output(e, r.length, Ti)
 		}, new AbortController().signal, {
@@ -3077,8 +3077,8 @@ var ki = class {
 		};
 	}
 	async plan_strip(e, t, n) {
-		let r = await import("./chunks/creation_planning-DMFz8H3q.js").then((e) => e.n), { chat_id: i, messages: a } = await this.strip_messages(), o = a.filter((n) => n.message_id >= e && n.message_id <= t), s = r.strip_paragraphs(o), c = s.map((e) => e.text).join("\n"), l = this.#e.settings(), u = await this.#e.prompt_context(i), d = o.at(-1), f = d === void 0 ? [] : await this.#h(await this.active_location(d.message_id)), p = await mi(this.#e, c, {
-			user_input: r.build_scene_input("strip", s, n, u, l.analysis_guidance),
+		let r = await import("./chunks/creation_planning-D9KBWp2D.js").then((e) => e.n), { chat_id: i, messages: a } = await this.strip_messages(), o = a.filter((n) => n.message_id >= e && n.message_id <= t), s = r.strip_paragraphs(o), c = s.map((e) => e.text).join("\n"), l = this.#e.settings(), u = await this.#e.prompt_context(i), d = o.at(-1), f = d === void 0 ? [] : await this.#h(await this.active_location(d.message_id)), p = await mi(this.#e, c, {
+			user_input: r.build_scene_input("strip", s, n, u, l.analysis_guidance, a.find((e) => e.is_user)?.name ?? null),
 			json_schema: r.SCENE_JSON_SCHEMA,
 			parse: (e) => r.parse_scene_output(e, s.length, n)
 		}, new AbortController().signal, { max_chat_history: 0 });

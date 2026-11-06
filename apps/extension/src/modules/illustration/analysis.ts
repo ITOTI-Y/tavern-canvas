@@ -102,8 +102,8 @@ export function library_lines(library: SlotLibrary): readonly string[] {
   ];
 }
 
-/** The fields every proposed picture carries, shared by reply illustrations and created scenes. */
-export const PROPOSAL_FIELD_LINES: readonly string[] = [
+/** The fields every proposed reply illustration carries. */
+const PROPOSAL_FIELD_LINES: readonly string[] = [
   "- paragraph: the paragraph number",
   "- scene: one sentence describing what the picture shows",
   "- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",

@@ -17,6 +17,10 @@ const props = defineProps<{
   readonly index: number;
   readonly pending: boolean;
   readonly numbered: boolean;
+  /** `page` lays the panel out as part of a comic page, with its actions inside the frame. */
+  readonly layout: "page" | "list";
+  /** The chat text the panel retells, shown under it; `null` hides it. */
+  readonly source: string | null;
   readonly readImage: (image_id: string) => Promise<Blob>;
 }>();
 
@@ -45,7 +49,7 @@ const caption = computed(() => props.scene.scene || props.scene.positive_prompt)
 </script>
 
 <template>
-  <figure :class="styles.panel">
+  <figure :class="styles.panel" :data-layout="layout">
     <div :class="styles.panel_frame" :style="{ aspectRatio: aspect_ratio }">
       <div v-if="pending" :class="styles.panel_state">
         <span :class="component_styles.appButtonSpinner" aria-hidden="true">
@@ -77,8 +81,27 @@ const caption = computed(() => props.scene.scene || props.scene.positive_prompt)
         }}
       </div>
       <span v-if="numbered" :class="styles.panel_number">{{ index + 1 }}</span>
+      <span v-if="layout === 'page'" :class="styles.panel_tools">
+        <IconButton
+          :icon="RefreshCw"
+          size="sm"
+          :label="t('create.panel_regenerate')"
+          :disabled="pending"
+          @click="emit('regenerate')"
+        />
+        <IconButton
+          :icon="Pencil"
+          size="sm"
+          :label="t('create.panel_edit_prompt')"
+          :pressed="editing"
+          @click="editing = !editing"
+        />
+      </span>
     </div>
-    <figcaption :class="styles.panel_bar">
+    <figcaption v-if="source !== null" :class="styles.panel_source" :title="source">
+      {{ source }}
+    </figcaption>
+    <figcaption v-if="layout === 'list'" :class="styles.panel_bar">
       <span :class="styles.panel_caption">{{ caption }}</span>
       <AppButton
         :class="styles.wide_only"
