@@ -127,7 +127,13 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           wardrobe_model: null,
           analysis_guidance: "",
           wardrobe_guidance: "",
-          strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
+          strip: {
+            style: "strip",
+            max_panels: 6,
+            style_tags: "",
+            no_text_tags: "",
+            symbol_bubbles: true,
+          },
         },
         translation: { deepl_endpoint: "free", glossary: [] },
         ui: {
@@ -266,7 +272,13 @@ const SETTINGS: TavernCanvasSettings = {
     wardrobe_model: null,
     analysis_guidance: "",
     wardrobe_guidance: "",
-    strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
+    strip: {
+      style: "strip",
+      max_panels: 6,
+      style_tags: "",
+      no_text_tags: "",
+      symbol_bubbles: true,
+    },
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {

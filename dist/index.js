@@ -5,10 +5,10 @@ import { i as f, n as p, o as m, r as h } from "./chunks/ids-pPJWL4BL.js";
 import { n as g, t as ee } from "./chunks/generation-CxBPzqgd.js";
 import { l as _, n as v, o as y, r as b, s as x } from "./chunks/wardrobe_library-BkM-wKPK.js";
 import { a as S, i as C, r as te } from "./chunks/provider-9M1GIrZ6.js";
-import { i as ne, n as w, r as re, t as T } from "./chunks/http_origin-BKP3xrUx.js";
-import { a as E, c as ie, n as ae, o as D, r as oe, s as se, t as ce } from "./chunks/settings-BPfL5ty6.js";
+import { i as ne, n as w, r as re, t as T } from "./chunks/http_origin-B84z4wOm.js";
+import { a as E, c as ie, n as ae, o as D, r as oe, s as se, t as ce } from "./chunks/settings-BZvhtHsY.js";
 import { $ as le, A as O, F as ue, G as de, H as fe, L as pe, O as me, P as k, Q as he, U as ge, _ as _e, b as ve, dt as A, g as ye, h as be, i as xe, it as Se, j as Ce, lt as j, m as M, mt as N, n as we, p as P, pt as Te, rt as Ee, tt as F, u as De, x as Oe, y as ke } from "./chunks/vue-i18n-L-BrQRnK.js";
-import { t as Ae } from "./chunks/create_i18n-BuPoRUdT.js";
+import { t as Ae } from "./chunks/create_i18n-C1UF1JsO.js";
 import { i as je, n as Me, r as Ne, t as Pe } from "./chunks/portal_keys-DthxrmWp.js";
 import { t as Fe } from "./chunks/creation_port-CiZWBydV.js";
 import { t as Ie } from "./chunks/AppIcon-DkyxvN8k.js";
@@ -2379,7 +2379,7 @@ var Yr = /* @__PURE__ */ Oe({
 		creation: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-CkQrLSa_.js")), i = ve(() => import("./chunks/StudioShell-DZiu49pV.js")), { t: a } = we();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-CkQrLSa_.js")), i = ve(() => import("./chunks/StudioShell-9CKwNFvq.js")), { t: a } = we();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -3051,10 +3051,10 @@ var ki = class {
 		}
 	}
 	async plan_story(e, t) {
-		let n = await import("./chunks/creation_planning-D9KBWp2D.js").then((e) => e.n), r = ht(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), o = await mi(this.#e, e, {
-			user_input: n.build_scene_input("story", r, Ti, i, a.analysis_guidance, null),
+		let n = await import("./chunks/creation_planning-Cr6DYCAJ.js").then((e) => e.n), r = ht(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), o = await mi(this.#e, e, {
+			user_input: n.build_scene_input("story", r, Ti, i, a.analysis_guidance, null, !1),
 			json_schema: n.SCENE_JSON_SCHEMA,
-			parse: (e) => n.parse_scene_output(e, r.length, Ti)
+			parse: (e) => n.parse_scene_output(e, r.length, Ti, !1)
 		}, new AbortController().signal, {
 			max_chat_history: 0,
 			world_info: t.length === 0 ? { mode: "off" } : {
@@ -3077,10 +3077,10 @@ var ki = class {
 		};
 	}
 	async plan_strip(e, t, n) {
-		let r = await import("./chunks/creation_planning-D9KBWp2D.js").then((e) => e.n), { chat_id: i, messages: a } = await this.strip_messages(), o = a.filter((n) => n.message_id >= e && n.message_id <= t), s = r.strip_paragraphs(o), c = s.map((e) => e.text).join("\n"), l = this.#e.settings(), u = await this.#e.prompt_context(i), d = o.at(-1), f = d === void 0 ? [] : await this.#h(await this.active_location(d.message_id)), p = await mi(this.#e, c, {
-			user_input: r.build_scene_input("strip", s, n, u, l.analysis_guidance, a.find((e) => e.is_user)?.name ?? null),
+		let r = await import("./chunks/creation_planning-Cr6DYCAJ.js").then((e) => e.n), { chat_id: i, messages: a } = await this.strip_messages(), o = a.filter((n) => n.message_id >= e && n.message_id <= t), s = r.strip_paragraphs(o), c = s.map((e) => e.text).join("\n"), l = this.#e.settings(), u = await this.#e.prompt_context(i), d = o.at(-1), f = d === void 0 ? [] : await this.#h(await this.active_location(d.message_id)), p = await mi(this.#e, c, {
+			user_input: r.build_scene_input("strip", s, n, u, l.analysis_guidance, a.find((e) => e.is_user)?.name ?? null, l.strip.symbol_bubbles),
 			json_schema: r.SCENE_JSON_SCHEMA,
-			parse: (e) => r.parse_scene_output(e, s.length, n)
+			parse: (e) => r.parse_scene_output(e, s.length, n, l.strip.symbol_bubbles)
 		}, new AbortController().signal, { max_chat_history: 0 });
 		return r.scenes_from_plans(s, p, u, f, this.#e.new_slot_id);
 	}

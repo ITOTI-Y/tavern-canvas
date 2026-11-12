@@ -42,10 +42,14 @@ describe("creation planning", () => {
 
   it("asks for a strip without lettering, tells who 'you' is, and asks a story in story order", () => {
     const paragraphs = strip_paragraphs([{ name: "Lin", text: "She ran." }]);
-    const strip = build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu");
+    const strip = build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu", true);
     expect(strip).toContain("no lettering");
     expect(strip).toContain('"You" in the text is Yu.');
-    const story = build_scene_input("story", paragraphs, 6, CONTEXT, "", null);
+    expect(strip).toContain("bubble: speech or thought");
+    expect(build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu", false)).toContain(
+      "no speech bubbles",
+    );
+    const story = build_scene_input("story", paragraphs, 6, CONTEXT, "", null, false);
     expect(story).toContain("in story order");
     expect(story).not.toContain('"You"');
   });
@@ -59,7 +63,9 @@ describe("creation planning", () => {
         { paragraph: 0, scene: "d", frame: "portrait", tags: "", characters: [] },
       ],
     });
-    expect(parse_scene_output(raw, 1, 2).plans.map((plan) => [plan.scene, plan.frame])).toEqual([
+    expect(
+      parse_scene_output(raw, 1, 2, true).plans.map((plan) => [plan.scene, plan.frame]),
+    ).toEqual([
       ["a", "square"],
       ["c", "portrait"],
     ]);
@@ -72,6 +78,7 @@ describe("creation planning", () => {
       scenes: [0, 0].map((paragraph, index) => ({
         paragraph,
         scene: `beat ${String(index)}`,
+        caption: index === 0 ? "the girl in the red coat runs, down a wet alley" : "",
         shot: index === 0 ? "establishing" : "close-up",
         place: "alley",
         frame: "landscape",
@@ -82,19 +89,79 @@ describe("creation planning", () => {
     const paragraphs = strip_paragraphs([{ name: "Lin", text: "She ran." }]);
     const scenes = scenes_from_plans(
       paragraphs,
-      parse_scene_output(raw, 1, 6),
+      parse_scene_output(raw, 1, 6, true),
       CONTEXT,
       [],
       () => "id",
     );
     expect(scenes.map((scene) => scene.positive_prompt)).toEqual([
-      expect.stringContaining("wide shot, scenery, alley, brick wall, night"),
+      expect.stringContaining(
+        "wide shot, scenery, alley, brick wall, night, the girl in the red coat runs down a wet alley",
+      ),
       expect.stringContaining("close-up, portrait, alley, brick wall, night"),
     ]);
     expect(scenes.map((scene) => scene.character_prompts[0]?.prompt)).toEqual([
       expect.stringMatching(/black hair, red coat, running/u),
       expect.stringMatching(/black hair, red coat, crying/u),
     ]);
+  });
+
+  it("draws a character's bubble as a small picture or one symbol, and lifts the bubble ban for that panel", () => {
+    const raw = JSON.stringify({
+      cast: [],
+      places: [],
+      scenes: [
+        {
+          paragraph: 0,
+          scene: "she warns him",
+          shot: "medium",
+          place: "",
+          frame: "square",
+          tags: "",
+          characters: [
+            {
+              name: "Lin",
+              tags: "girl, pointing",
+              bubble: "speech",
+              symbol: "none",
+              picture: "black wolf, red eyes",
+            },
+            {
+              name: "Yu",
+              tags: "boy, startled",
+              bubble: "thought",
+              symbol: "question",
+              picture: "",
+            },
+            { name: "Ann", tags: "girl, asleep", bubble: "none", symbol: "zzz", picture: "" },
+          ],
+        },
+      ],
+    });
+    const tags = (bubbles: boolean) =>
+      parse_scene_output(raw, 1, 6, bubbles).plans[0]?.characters.map(
+        (character) => character.tags,
+      );
+    expect(tags(true)).toEqual([
+      "girl, pointing, speech bubble, spoken object, black wolf red eyes in speech bubble",
+      "boy, startled, thought bubble, spoken question mark",
+      "girl, asleep",
+    ]);
+    expect(tags(false)).toEqual(["girl, pointing", "boy, startled", "girl, asleep"]);
+
+    const settings = { ...DEFAULT_STRIP_SETTINGS, no_text_tags: "text, speech bubble, signature" };
+    const with_bubble = {
+      ...SCENE,
+      character_prompts: [
+        { name: "Lin", prompt: "girl, speech bubble, spoken heart", negative_prompt: "" },
+      ],
+    };
+    expect(
+      scene_generation_input(with_bubble, { settings, style: "default" }).negative_prompt,
+    ).toBe("lowres, text, signature, comic, multiple views, 4koma, split screen");
+    expect(scene_generation_input(SCENE, { settings, style: "default" }).negative_prompt).toContain(
+      "speech bubble",
+    );
   });
 
   it("adds the strip style and the no-lettering tags to a panel, and only the latter by default", () => {

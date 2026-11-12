@@ -576,6 +576,9 @@ const settings = {
     strip_style_hint:
       "With the default image style, strips are drawn like any other illustration, adding only the no-lettering tags below.",
     strip_max_label: "Panel limit",
+    strip_bubbles_label: "Show dialogue as symbol bubbles",
+    strip_bubbles_hint:
+      "Lets a panel carry a speech or thought bubble holding one symbol or a small picture, never words. When off, panels have no bubbles at all.",
     strip_style_tags_label: "Comic strip style tags",
     strip_no_text_label: "No-lettering negative tags",
     strip_no_text_hint: "Added in either style, so no text appears in the pictures.",

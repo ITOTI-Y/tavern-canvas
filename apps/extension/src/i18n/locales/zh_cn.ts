@@ -555,6 +555,9 @@ const settings = {
     strip_style_hint:
       "选“默认生图风格”时，条漫和普通配图用同样的风格，只附加下方去除文字的负向标签。",
     strip_max_label: "格数上限",
+    strip_bubbles_label: "用符号气泡表达对话",
+    strip_bubbles_hint:
+      "允许分格里出现说话或想法气泡，气泡内只有一个符号或一幅小图，不含文字。关闭后画面中没有任何气泡。",
     strip_style_tags_label: "条漫风格标签",
     strip_no_text_label: "去除文字的负向标签",
     strip_no_text_hint: "无论哪种风格都会附加，保证画面不出现文字。",

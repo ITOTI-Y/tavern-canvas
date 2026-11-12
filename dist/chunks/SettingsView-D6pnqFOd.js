@@ -1,8 +1,8 @@
 import { a as e } from "./ids-pPJWL4BL.js";
 import { i as t, o as n } from "./novelai-B6V3MfU9.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { a, i as o, n as s, r as c, t as l } from "./http_origin-BKP3xrUx.js";
-import { n as u } from "./settings-BPfL5ty6.js";
+import { a, i as o, n as s, r as c, t as l } from "./http_origin-B84z4wOm.js";
+import { n as u } from "./settings-BZvhtHsY.js";
 import { G as d, H as f, I as p, K as m, P as h, _ as g, a as _, b as v, dt as y, g as b, h as x, j as S, lt as C, m as w, mt as T, n as E, p as D, s as O, tt as k, u as A, v as j, x as M, y as N } from "./vue-i18n-L-BrQRnK.js";
 import { n as P, t as F } from "./AppIcon-DkyxvN8k.js";
 import { n as I, r as L, t as ee } from "./PromptTagChips-CCFe1e5c.js";
@@ -1139,11 +1139,23 @@ var X = P("cable", [
 					])]),
 					_: 1
 				}, 8, ["label"]),
+				N(U, {
+					"model-value": o.value.symbol_bubbles,
+					label: C(n)("settings.illustration.strip_bubbles_label"),
+					description: C(n)("settings.illustration.strip_bubbles_hint"),
+					disabled: !e.settings,
+					"onUpdate:modelValue": u[17] ||= (e) => s({ symbol_bubbles: e })
+				}, null, 8, [
+					"model-value",
+					"label",
+					"description",
+					"disabled"
+				]),
 				N(V, { label: C(n)("settings.illustration.strip_style_tags_label") }, {
 					default: d(({ fieldId: e }) => [N(ie, {
 						id: e,
 						"model-value": o.value.style_tags,
-						"onUpdate:modelValue": u[17] ||= (e) => s({ style_tags: e })
+						"onUpdate:modelValue": u[18] ||= (e) => s({ style_tags: e })
 					}, null, 8, ["id", "model-value"])]),
 					_: 1
 				}, 8, ["label"]),
@@ -1155,7 +1167,7 @@ var X = P("cable", [
 						id: e,
 						"model-value": o.value.no_text_tags,
 						"described-by": t,
-						"onUpdate:modelValue": u[18] ||= (e) => s({ no_text_tags: e })
+						"onUpdate:modelValue": u[19] ||= (e) => s({ no_text_tags: e })
 					}, null, 8, [
 						"id",
 						"model-value",
@@ -2094,7 +2106,7 @@ var Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = v(() => import("./PromptView-BVeZuNP5.js")), n = v(() => import("./PromptTagPresetPanel-By5jcE0Z.js")), r = v(() => import("./DiagnosticsView-2nb1-1X1.js")), i = e, { t: a } = E(), o = [
+		let t = v(() => import("./PromptView-BVeZuNP5.js")), n = v(() => import("./PromptTagPresetPanel-By5jcE0Z.js")), r = v(() => import("./DiagnosticsView-BuzfUONM.js")), i = e, { t: a } = E(), o = [
 			"illustration",
 			"providers",
 			"translation",

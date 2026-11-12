@@ -559,6 +559,8 @@ var o = {
 			strip_style_label: "Default style",
 			strip_style_hint: "With the default image style, strips are drawn like any other illustration, adding only the no-lettering tags below.",
 			strip_max_label: "Panel limit",
+			strip_bubbles_label: "Show dialogue as symbol bubbles",
+			strip_bubbles_hint: "Lets a panel carry a speech or thought bubble holding one symbol or a small picture, never words. When off, panels have no bubbles at all.",
 			strip_style_tags_label: "Comic strip style tags",
 			strip_no_text_label: "No-lettering negative tags",
 			strip_no_text_hint: "Added in either style, so no text appears in the pictures.",
@@ -932,7 +934,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-DvXpp_dn.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-BbdjBMUF.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

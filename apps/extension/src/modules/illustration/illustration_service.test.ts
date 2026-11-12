@@ -33,7 +33,13 @@ const SETTINGS: IllustrationSettings = {
   wardrobe_model: null,
   analysis_guidance: "",
   wardrobe_guidance: "",
-  strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
+  strip: {
+    style: "strip",
+    max_panels: 6,
+    style_tags: "",
+    no_text_tags: "",
+    symbol_bubbles: true,
+  },
 };
 
 class MemoryHost {
@@ -705,7 +711,13 @@ describe("create_wardrobe_runner", () => {
         ...SETTINGS,
         analysis_guidance: "watercolor",
         wardrobe_guidance: "summer clothing",
-        strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
+        strip: {
+          style: "strip",
+          max_panels: 6,
+          style_tags: "",
+          no_text_tags: "",
+          symbol_bubbles: true,
+        },
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",

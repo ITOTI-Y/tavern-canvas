@@ -602,6 +602,13 @@ function set_worldbook(name: string, chosen: boolean): void {
           />
         </template>
       </FieldGroup>
+      <AppSwitch
+        :model-value="strip.symbol_bubbles"
+        :label="t('settings.illustration.strip_bubbles_label')"
+        :description="t('settings.illustration.strip_bubbles_hint')"
+        :disabled="!settings"
+        @update:model-value="update_strip({ symbol_bubbles: $event })"
+      />
       <FieldGroup :label="t('settings.illustration.strip_style_tags_label')">
         <template #default="{ fieldId }">
           <TagInput

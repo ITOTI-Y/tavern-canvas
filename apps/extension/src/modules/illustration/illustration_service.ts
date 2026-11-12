@@ -531,9 +531,11 @@ export class IllustrationService {
           context,
           settings.analysis_guidance,
           null,
+          false,
         ),
         json_schema: planning.SCENE_JSON_SCHEMA,
-        parse: (raw) => planning.parse_scene_output(raw, paragraphs.length, STORY_MAX_SCENES),
+        parse: (raw) =>
+          planning.parse_scene_output(raw, paragraphs.length, STORY_MAX_SCENES, false),
       },
       new AbortController().signal,
       {
@@ -604,9 +606,16 @@ export class IllustrationService {
           context,
           settings.analysis_guidance,
           messages.find((message) => message.is_user)?.name ?? null,
+          settings.strip.symbol_bubbles,
         ),
         json_schema: planning.SCENE_JSON_SCHEMA,
-        parse: (raw) => planning.parse_scene_output(raw, paragraphs.length, max_panels),
+        parse: (raw) =>
+          planning.parse_scene_output(
+            raw,
+            paragraphs.length,
+            max_panels,
+            settings.strip.symbol_bubbles,
+          ),
       },
       new AbortController().signal,
       { max_chat_history: 0 },

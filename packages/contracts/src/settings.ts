@@ -94,6 +94,11 @@ export const StripSettingsSchema = z.strictObject({
   style_tags: z.string().max(2000),
   /** Added to every panel's negative prompt whatever the style, so panels carry no lettering. */
   no_text_tags: z.string().max(2000),
+  /**
+   * Lets a panel carry a speech or thought bubble holding one symbol or a small picture of what is
+   * said, never words.
+   */
+  symbol_bubbles: z.boolean().default(true),
 });
 export type StripSettings = z.infer<typeof StripSettingsSchema>;
 
@@ -102,6 +107,7 @@ export const DEFAULT_STRIP_SETTINGS: StripSettings = {
   max_panels: 6,
   style_tags: "dynamic angle, cinematic lighting, depth of field, clean lineart",
   no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature",
+  symbol_bubbles: true,
 };
 
 export const IllustrationSettingsSchema = z.strictObject({

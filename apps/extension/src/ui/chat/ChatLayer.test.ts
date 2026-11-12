@@ -106,7 +106,13 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       wardrobe_model: null,
       analysis_guidance: "",
       wardrobe_guidance: "",
-      strip: { style: "strip", max_panels: 6, style_tags: "", no_text_tags: "" },
+      strip: {
+        style: "strip",
+        max_panels: 6,
+        style_tags: "",
+        no_text_tags: "",
+        symbol_bubbles: true,
+      },
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>

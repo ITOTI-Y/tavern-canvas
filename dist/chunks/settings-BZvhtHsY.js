@@ -52,12 +52,14 @@ var h = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	style: c(["strip", "default"]),
 	max_panels: l().int().min(1).max(12),
 	style_tags: n().max(2e3),
-	no_text_tags: n().max(2e3)
+	no_text_tags: n().max(2e3),
+	symbol_bubbles: i().default(!0)
 }), x = {
 	style: "strip",
 	max_panels: 6,
 	style_tags: "dynamic angle, cinematic lighting, depth of field, clean lineart",
-	no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature"
+	no_text_tags: "text, speech bubble, onomatopoeia, english text, watermark, signature",
+	symbol_bubbles: !0
 }, S = r({
 	preset_name: n().trim().min(1).max(200),
 	connection: v,
