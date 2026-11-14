@@ -42,7 +42,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   active_provider_profile_id: null,
   global_concurrency: 2,
   auto_generation_enabled: false,
-  vocabulary_update_channel: "bundled",
+  vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
     preset_name: "in_use",
     connection: { kind: "current" },
@@ -129,7 +129,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     settings: {
       settings: DEFAULT_SETTINGS,
-      vocabulary_update_channel: "bundled",
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
     },
@@ -432,7 +431,6 @@ describe("SettingsView credential storage", () => {
       load: () =>
         Promise.resolve({
           settings: current_settings,
-          vocabulary_update_channel: current_settings.vocabulary_update_channel,
           browser_secret_vault: vault_status,
         }),
       update: (partial) => {
@@ -491,7 +489,6 @@ function recording_settings_capability(
     load: () =>
       Promise.resolve({
         settings: current,
-        vocabulary_update_channel: "bundled",
         browser_secret_vault: { state: "unavailable", secret_count: 0 },
       }),
     subscribe: () => () => {},
@@ -669,7 +666,6 @@ describe("SettingsView appearance settings", () => {
       load: () =>
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       subscribe: () => () => {},
@@ -677,7 +673,6 @@ describe("SettingsView appearance settings", () => {
         updates.push(partial);
         return Promise.resolve({ ...DEFAULT_SETTINGS, ...partial });
       },
-      set_vocabulary_update_channel: capabilities.settings.set_vocabulary_update_channel,
       import_vocabulary_package: capabilities.settings.import_vocabulary_package,
       cancel_vocabulary_import: capabilities.settings.cancel_vocabulary_import,
       export_archive: capabilities.settings.export_archive,
@@ -700,19 +695,23 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     current_section = "general";
   });
 
-  it("switches the vocabulary update channel through the controller", async () => {
-    const channels: string[] = [];
+  it("saves a dataset id as its catalog URL and hands the token to the credential store", async () => {
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const tokens: string[] = [];
     const capabilities = create_unavailable_capabilities();
     const settings: SettingsCapability = {
       ...capabilities.settings,
       load: () =>
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
-      set_vocabulary_update_channel: (channel) => {
-        channels.push(channel);
+      update: (partial) => {
+        updates.push(partial);
+        return Promise.resolve({ ...DEFAULT_SETTINGS, ...partial });
+      },
+      set_vocabulary_token: (value) => {
+        tokens.push(value);
         return Promise.resolve();
       },
     };
@@ -720,13 +719,22 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
     const { wrapper } = await mount_view_with_live_controller(controller);
 
     const section = wrapper.get('[data-testid="data-settings"]');
-    const remote_option = section
-      .findAll('[role="radio"]')
-      .find((r) => r.text().includes("Remote"));
-    await remote_option?.trigger("click");
-    await nextTick();
+    const catalog = section.get('[data-testid="vocabulary-catalog-input"]');
+    await catalog.setValue("owner/name");
+    await catalog.trigger("change");
+    await flushPromises();
+    expect(updates).toContainEqual({
+      vocabulary_remote: {
+        catalog_url: "https://huggingface.co/datasets/owner/name/resolve/main/catalog.json",
+        token_saved: false,
+      },
+    });
 
-    expect(channels).toEqual(["remote"]);
+    await section.get('[data-testid="vocabulary-token-input"]').setValue("hf_abc");
+    const save = section.findAll("button").find((b) => b.text() === "Save token");
+    await save?.trigger("click");
+    await flushPromises();
+    expect(tokens).toEqual(["hf_abc"]);
   });
 
   it("imports a local vocabulary file with progress and a success status", async () => {
@@ -737,7 +745,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
       load: () =>
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: (file, on_progress) => {
@@ -782,7 +789,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
       load: () =>
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_vocabulary_package: () => import_promise,
@@ -813,7 +819,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
       load: () =>
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       export_archive: () => Promise.resolve(archive_blob),
@@ -844,7 +849,6 @@ describe("SettingsView data settings: vocabulary channel and archive", () => {
       load: () =>
         Promise.resolve({
           settings: DEFAULT_SETTINGS,
-          vocabulary_update_channel: "bundled",
           browser_secret_vault: { state: "unavailable", secret_count: 0 },
         }),
       import_archive: (archive) => {

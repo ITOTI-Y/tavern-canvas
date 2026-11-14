@@ -58,7 +58,7 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
-  vocabulary_update_channel: "bundled",
+  vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
     preset_name: "in_use",
     connection: { kind: "current" },
@@ -164,7 +164,6 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     load: () =>
       Promise.resolve({
         settings: EMPTY_SETTINGS,
-        vocabulary_update_channel: "bundled",
         browser_secret_vault: { state: "unavailable", secret_count: 0 },
       } satisfies SettingsSnapshot),
     subscribe: no_subscription,
@@ -178,7 +177,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     unlock_browser_secret_vault: unavailable_command,
     lock_browser_secret_vault: unavailable_command,
     reset_browser_secret_vault: unavailable_command,
-    set_vocabulary_update_channel: unavailable_command,
+    set_vocabulary_token: unavailable_command,
+    clear_vocabulary_token: unavailable_command,
     import_vocabulary_package: unavailable_command,
     cancel_vocabulary_import: () => {},
     export_archive: unavailable_command,

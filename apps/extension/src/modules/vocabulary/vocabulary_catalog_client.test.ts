@@ -19,10 +19,16 @@ import {
 } from "@tavern-canvas/storage";
 import { VocabularyPackageStore } from "@tavern-canvas/vocabulary";
 
-import { CatalogInstallBusyError, VocabularyCatalogClient } from "./vocabulary_catalog_client.js";
+import {
+  CatalogInstallBusyError,
+  open_vocabulary_catalog,
+  VocabularyCatalogClient,
+  with_hub_token,
+} from "./vocabulary_catalog_client.js";
 
 const CURRENT_EXTENSION_VERSION = "3.5.0";
 const BASE_URL = "https://updates.example.com/packages/tavern-canvas-full-zh/";
+const CATALOG_URL = "https://updates.example.com/catalog.json";
 const BUNDLED_BASE_URL = "https://extension.local/vocabulary/baseline/";
 
 async function gzip(bytes: Uint8Array): Promise<Uint8Array> {
@@ -159,6 +165,45 @@ describe("VocabularyCatalogClient.list", () => {
   });
 });
 
+describe("remote catalog access", () => {
+  it("sends the token to Hugging Face hosts and to no other host", async () => {
+    const seen: [string, string | null][] = [];
+    const recorder = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      seen.push([request_url(input), new Headers(init?.headers).get("Authorization")]);
+      return new Response(null, { status: 204 });
+    }) as unknown as typeof fetch;
+    const fetch_impl = with_hub_token(recorder, "hf_abc");
+
+    await fetch_impl("https://huggingface.co/datasets/owner/name/resolve/main/catalog.json");
+    const cdn_file = "https://cdn.hf.co/x";
+    await fetch_impl(new URL(cdn_file));
+    await fetch_impl("https://updates.example.com/catalog.json");
+
+    expect(seen.map(([, header]) => header)).toEqual(["Bearer hf_abc", "Bearer hf_abc", null]);
+  });
+
+  it("reports a refused catalog request as catalog_unauthorized", async () => {
+    const client = new VocabularyCatalogClient({
+      current_extension_version: CURRENT_EXTENSION_VERSION,
+      catalog_url: CATALOG_URL,
+      fetch_impl: (async () => new Response(null, { status: 401 })) as unknown as typeof fetch,
+    });
+
+    await expect(client.list()).rejects.toMatchObject({ code: "catalog_unauthorized" });
+  });
+
+  it("asks for a catalog address before any request is made", async () => {
+    await expect(
+      open_vocabulary_catalog({
+        current_extension_version: CURRENT_EXTENSION_VERSION,
+        remote: { catalog_url: "", token_saved: false },
+        secrets: null,
+        open_database_impl: open_database,
+      }),
+    ).rejects.toMatchObject({ code: "catalog_url_missing" });
+  });
+});
+
 describe("VocabularyCatalogClient.install", () => {
   it("installs a non-bundled entry into the vocabulary namespace via the injected database factory", async () => {
     const { entry, files } = await build_installable("tavern-canvas-full-zh", BASE_URL);
@@ -167,6 +212,7 @@ describe("VocabularyCatalogClient.install", () => {
     let opened: StorageDatabase | undefined;
     const client = new VocabularyCatalogClient({
       current_extension_version: CURRENT_EXTENSION_VERSION,
+      catalog_url: CATALOG_URL,
       fetch_impl,
       open_database_impl: async () => {
         opened = await open_database();
@@ -199,6 +245,7 @@ describe("VocabularyCatalogClient.install", () => {
 
     const client = new VocabularyCatalogClient({
       current_extension_version: CURRENT_EXTENSION_VERSION,
+      catalog_url: CATALOG_URL,
       fetch_impl,
       bundled_base_url: BUNDLED_BASE_URL,
     });
@@ -217,6 +264,7 @@ describe("VocabularyCatalogClient.install", () => {
 
     const client = new VocabularyCatalogClient({
       current_extension_version: CURRENT_EXTENSION_VERSION,
+      catalog_url: CATALOG_URL,
       fetch_impl,
     });
 
@@ -239,6 +287,7 @@ describe("VocabularyCatalogClient.install", () => {
 
     const client = new VocabularyCatalogClient({
       current_extension_version: CURRENT_EXTENSION_VERSION,
+      catalog_url: CATALOG_URL,
       fetch_impl,
     });
 
@@ -253,6 +302,7 @@ describe("VocabularyCatalogClient.install", () => {
   it("cancel() is a no-op when no install is in progress", () => {
     const client = new VocabularyCatalogClient({
       current_extension_version: CURRENT_EXTENSION_VERSION,
+      catalog_url: CATALOG_URL,
     });
     expect(() => client.cancel()).not.toThrow();
   });

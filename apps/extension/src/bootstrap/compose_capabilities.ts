@@ -581,10 +581,15 @@ export async function compose_studio_capabilities(
         : resolve_capability(() =>
             create_vocabulary_capability({
               async load_catalog() {
-                const { VocabularyCatalogClient } =
+                const { open_vocabulary_catalog } =
                   await import("../modules/vocabulary/vocabulary_catalog_client.js");
-                return new VocabularyCatalogClient({
+                return open_vocabulary_catalog({
                   current_extension_version: extension_version,
+                  remote: settings_adapter?.get_settings().vocabulary_remote ?? {
+                    catalog_url: "",
+                    token_saved: false,
+                  },
+                  secrets: secret_resolver,
                   open_database_impl: () => Promise.resolve(database),
                 });
               },

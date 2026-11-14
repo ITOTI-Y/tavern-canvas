@@ -27,7 +27,9 @@ imported into IndexedDB only when no active or confirmed package already exists.
 
 ## Package format
 
-A package is a directory containing `manifest.json` and one file per shard.
+A package is a directory containing `manifest.json` and one file per shard. A package built for
+remote installs also holds `pack.bin`, every shard's bytes back to back in manifest order, and
+only `manifest.json` and `pack.bin` are uploaded.
 
 ### Manifest
 
@@ -43,6 +45,7 @@ A package is a directory containing `manifest.json` and one file per shard.
 | `compressed_size`           | Non negative integer, equal to the sum of every shard `byte_length`              |
 | `minimum_extension_version` | SemVer; a package declaring a version above the running extension is not offered |
 | `shards`                    | Array of 1–50,000 shard entries                                                  |
+| `pack`                      | Optional `{ path, byte_length }`; `byte_length` must equal `compressed_size`     |
 
 Duplicate `shard_id` values are rejected, and every shard's `package_id` must equal the manifest's.
 
@@ -170,19 +173,26 @@ The translation strings have no traceable upstream author or license and are red
 explicit decision by the repository owner, which is an acceptance of risk rather than a license
 clearance.
 
-## The update channel
+## The remote catalog
 
-Settings has a vocabulary channel with two values. `bundled`, the default, uses only the package that
-ships with the extension and makes no network request. `https` allows installing packages from the
-remote catalog.
-
-The catalog is a single JSON document:
+Settings > General has a Remote vocabulary catalog field. It is empty by default, and while it is
+empty the extension uses only the package that ships with it and makes no network request. The
+field accepts the address of a `catalog.json`, a Hugging Face dataset page, or an `owner/name`
+dataset id; a dataset page or id is saved as that dataset's catalog address:
 
 ```text
-https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json
+https://huggingface.co/datasets/<owner>/<name>/resolve/main/catalog.json
 ```
 
-`huggingface.co` is the only host contacted. HTTPS is enforced twice, at the client and in the
+A private dataset needs a Hugging Face read token, entered in the Hugging Face token field below
+the catalog field. The token is stored in the selected credential backend, and settings record only
+whether one is saved. It is sent as an `Authorization: Bearer` header with requests to
+`huggingface.co`, `hf.co` and their subdomains, and with no other host, so a catalog entry whose
+`base_url` points elsewhere never receives it. The browser drops the header when Hugging Face
+redirects a file to its storage CDN. With the SillyTavern secret store as the backend, reading the
+token back requires `allowKeysExposure` in SillyTavern's `config.yaml`.
+
+HTTPS is enforced twice, at the client and in the
 schema. The catalog document is a JSON array of at most 500 entries, each declaring `package_id`,
 bilingual display name and description, `data_version`, `record_count`, `compressed_bytes`,
 `manifest_sha256`, `languages`, `min_extension_version`, `base_url`, an optional `bundled` flag, and
@@ -199,11 +209,43 @@ An update proceeds as staging, ready, active, confirmed. The updater compares th
 against the installed one and short circuits when `data_version`, shard count, and every per path
 hash already match. Shards whose hash is unchanged are copied from the existing package instead of
 downloaded; only changed shards cross the network, each bounded to its declared `byte_length` plus a
-64 KB margin. Activation happens in a single IndexedDB transaction.
+64 KB margin. When the manifest names a `pack` and any shard has changed, the updater downloads
+`pack.bin` in one request bounded to its `byte_length`, cuts each shard at its offset in manifest
+order, and verifies every slice against its own hash as above. Activation happens in a single
+IndexedDB transaction.
 
-Two known gaps: the channel setting is held in memory and does not survive a reload, and the catalog
-client is constructed without a bundled base URL, so installing the bundled catalog entry through the
-UI fails.
+The catalog client is constructed without a bundled base URL, so installing the bundled catalog
+entry through the UI fails.
+
+## Monthly refresh
+
+`.github/workflows/vocabulary.yml` refreshes the full package on the first of every month and on
+manual dispatch. The Hugging Face dataset holds the living data: `data/tags.jsonl` (the published
+records), `data/translations.jsonl` (every translation ever published, keyed by tag) and
+`data/report.json` (the last refresh report). A run:
+
+1. Downloads those files; before the first publish it starts from
+   `data/vocabulary/raw_vocabulary_tags_public.jsonl`.
+2. Fetches every Danbooru tag with at least 10 posts and every active alias.
+3. Runs `refresh`, which merges the fetch with the previous records and resolves duplicates in five
+   layers: a tag id fetched twice keeps its last copy; tags whose normalized keys match fold into
+   the most popular one, the others becoming its aliases; an alias equal to another tag's key is
+   dropped; an alias claimed by several tags stays on the most popular; a tag with no translation
+   inherits one an alias had, which carries translations across Danbooru renames. Translations come
+   from the translation memory, so a tag that drops below the threshold gets its translation back
+   when it returns. A previous tag that met the threshold but Danbooru no longer lists, and
+   that is not an alias of a fetched tag, is kept with its last popularity, because image models
+   trained on older posts still recognise deprecated tags.
+4. Stops if the result holds fewer than 95% of the previous records that meet the threshold, and
+   skips publishing when the records' SHA-256 equals the last report's.
+5. Builds the package with `pack.bin`, versioned by date (`2026.11.14`), and uploads
+   `packages/tavern-canvas-full-zh/<version>/`, the catalog and the data files in one commit. The
+   previous version's directory is kept until the next release so an install that read the old
+   catalog can finish.
+
+The workflow reads and writes the dataset with the `HF_TOKEN` repository secret, which needs write
+access. Without the secret a run starts from the committed source, builds the package and keeps the
+report and records as a workflow artifact, and leaves the dataset untouched.
 
 ## Importing your own package
 

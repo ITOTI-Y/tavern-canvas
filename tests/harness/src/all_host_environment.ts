@@ -159,7 +159,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       active_provider_profile_id: options.active_provider_profile_id,
       global_concurrency: 2,
       auto_generation_enabled: false,
-      vocabulary_update_channel: "bundled",
+      vocabulary_remote: { catalog_url: "", token_saved: false },
       illustration: {
         preset_name: "in_use",
         connection: { kind: "current" },

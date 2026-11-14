@@ -173,6 +173,8 @@ export {
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   TranslationSettingsSchema,
+  VOCABULARY_TOKEN_REFERENCE,
+  VocabularyRemoteSettingsSchema,
   derive_analysis_credential_reference,
 } from "./settings.js";
 export type {
@@ -185,6 +187,7 @@ export type {
   TavernCanvasSettings,
   TavernCanvasUiSettings,
   TranslationSettings,
+  VocabularyRemoteSettings,
 } from "./settings.js";
 export {
   PromptTagChoiceSchema,
@@ -223,6 +226,7 @@ export {
   VocabularyCategorySchema,
   VocabularyIndexKindSchema,
   VocabularyManifestSchema,
+  VocabularyPackFileSchema,
   VocabularyPackageIdSchema,
   VocabularyPopularitySchema,
   VocabularyRecordCollectionSchema,
@@ -236,6 +240,7 @@ export type {
   VocabularyCategory,
   VocabularyIndexKind,
   VocabularyManifest,
+  VocabularyPackFile,
   VocabularyPackageId,
   VocabularyPopularity,
   VocabularyRecord,

@@ -110,7 +110,6 @@ export {
   CatalogSourceConfigError,
   CatalogValidationError,
   create_catalog_client,
-  DEFAULT_CATALOG_URL,
   plan_catalog_install,
 } from "./catalog/catalog_client.js";
 export type {

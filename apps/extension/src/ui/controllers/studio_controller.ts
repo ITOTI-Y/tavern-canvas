@@ -33,7 +33,6 @@ import type {
   VocabularyImportProgressView,
   VocabularyInstallProgressView,
   VocabularySearchPageView,
-  VocabularyUpdateChannel,
 } from "../contracts/ui_capabilities.js";
 import {
   type AssetsViewModel,
@@ -129,7 +128,8 @@ export interface StudioController {
   unlock_browser_secret_vault(passphrase: string): Promise<void>;
   lock_browser_secret_vault(): Promise<void>;
   reset_browser_secret_vault(): Promise<void>;
-  set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
+  set_vocabulary_token(plaintext_value: string): Promise<void>;
+  clear_vocabulary_token(): Promise<void>;
   import_vocabulary_package(
     file: Blob,
     on_progress?: (progress: VocabularyImportProgressView) => void,
@@ -376,7 +376,6 @@ class StudioControllerImpl implements StudioController {
         (snapshot) => {
           this.#patch_settings({
             settings: snapshot.settings,
-            vocabulary_update_channel: snapshot.vocabulary_update_channel,
             browser_secret_vault: snapshot.browser_secret_vault,
           });
         },
@@ -588,7 +587,6 @@ class StudioControllerImpl implements StudioController {
     ]);
     this.#patch_settings({
       settings: snapshot.settings,
-      vocabulary_update_channel: snapshot.vocabulary_update_channel,
       browser_secret_vault: snapshot.browser_secret_vault,
     });
     this.#patch_generation({ profiles });
@@ -745,11 +743,12 @@ class StudioControllerImpl implements StudioController {
     }
   }
 
-  async set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void> {
-    await this.#capabilities.settings.set_vocabulary_update_channel(channel);
-    if (!this.#stopped) {
-      this.#patch_settings({ vocabulary_update_channel: channel });
-    }
+  set_vocabulary_token(plaintext_value: string): Promise<void> {
+    return this.#capabilities.settings.set_vocabulary_token(plaintext_value);
+  }
+
+  clear_vocabulary_token(): Promise<void> {
+    return this.#capabilities.settings.clear_vocabulary_token();
   }
 
   import_vocabulary_package(

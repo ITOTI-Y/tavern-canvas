@@ -226,7 +226,7 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
             :controller="controller"
           />
           <DataSettings
-            :vocabulary-update-channel="state.settings.vocabulary_update_channel"
+            :remote="state.settings.settings?.vocabulary_remote ?? null"
             :controller="controller"
           />
         </template>

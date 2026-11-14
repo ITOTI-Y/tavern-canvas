@@ -1,40 +1,82 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import type { VocabularyRemoteSettings } from "@tavern-canvas/contracts";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { StudioController } from "../../controllers/studio_controller.js";
-import type {
-  VocabularyImportProgressView,
-  VocabularyUpdateChannel,
-} from "../../contracts/ui_capabilities.js";
+import type { VocabularyImportProgressView } from "../../contracts/ui_capabilities.js";
 import AppButton from "../../components/AppButton.vue";
-import SegmentedControl from "../../components/SegmentedControl.vue";
+import FieldGroup from "../../components/FieldGroup.vue";
+import { catalog_url_from_input } from "../../../modules/vocabulary/catalog_url.js";
 import styles from "./settings_styles.js";
 
 const props = defineProps<{
-  readonly vocabularyUpdateChannel: VocabularyUpdateChannel | null;
+  readonly remote: VocabularyRemoteSettings | null;
   readonly controller: StudioController;
 }>();
 
 const { t } = useI18n();
 
-const channel_pending = ref(false);
-const channel_options = [
-  { value: "bundled", label: t("settings.data.vocabulary_channel_bundled") },
-  { value: "remote", label: t("settings.data.vocabulary_channel_https") },
-];
+const catalog_draft = ref("");
+const catalog_invalid = ref(false);
+watch(
+  () => props.remote?.catalog_url,
+  (url) => {
+    catalog_draft.value = url ?? "";
+  },
+  { immediate: true },
+);
 
-async function set_channel(value: string): Promise<void> {
-  if ((value !== "bundled" && value !== "remote") || channel_pending.value) {
+/** A dataset id or page is saved as the catalog.json URL it names, so the field shows what is requested. */
+async function save_catalog(): Promise<void> {
+  const remote = props.remote;
+  const catalog_url = catalog_url_from_input(catalog_draft.value);
+  catalog_invalid.value = catalog_url === null;
+  if (remote === null || catalog_url === null) {
     return;
   }
-  channel_pending.value = true;
-  try {
-    await props.controller.set_vocabulary_update_channel(value);
-  } finally {
-    channel_pending.value = false;
+  catalog_draft.value = catalog_url;
+  if (catalog_url !== remote.catalog_url) {
+    await props.controller.update_settings({ vocabulary_remote: { ...remote, catalog_url } });
   }
 }
+
+const token_draft = ref("");
+const token_status = ref<"idle" | "saving" | "failed">("idle");
+
+async function save_token(): Promise<void> {
+  const value = token_draft.value.trim();
+  if (value === "") {
+    return;
+  }
+  token_status.value = "saving";
+  try {
+    await props.controller.set_vocabulary_token(value);
+    token_draft.value = "";
+    token_status.value = "idle";
+  } catch {
+    token_status.value = "failed";
+  }
+}
+
+async function clear_token(): Promise<void> {
+  token_status.value = "saving";
+  try {
+    await props.controller.clear_vocabulary_token();
+    token_status.value = "idle";
+  } catch {
+    token_status.value = "failed";
+  }
+}
+
+const token_status_text = computed(() => {
+  if (token_status.value === "failed") {
+    return t("settings.data.vocabulary_token_failed");
+  }
+  return props.remote?.token_saved === true
+    ? t("settings.data.vocabulary_token_present")
+    : t("settings.data.vocabulary_token_absent");
+});
 
 const vocabulary_import_pending = ref(false);
 const vocabulary_import_success = ref(false);
@@ -172,15 +214,65 @@ async function handle_import_file(event: Event): Promise<void> {
     </div>
 
     <div :class="styles.form_grid">
-      <div :class="styles.row">
-        <span :class="styles.row_label">{{ t("settings.data.vocabulary_channel_label") }}</span>
-        <SegmentedControl
-          :model-value="vocabularyUpdateChannel ?? 'bundled'"
-          :options="channel_options"
-          :label="t('settings.data.vocabulary_channel_label')"
-          :disabled="channel_pending"
-          @update:model-value="set_channel"
+      <FieldGroup
+        :label="t('settings.data.vocabulary_catalog_label')"
+        :hint="t('settings.data.vocabulary_catalog_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <input
+            :id="fieldId"
+            v-model="catalog_draft"
+            type="url"
+            autocomplete="off"
+            spellcheck="false"
+            :placeholder="t('settings.data.vocabulary_catalog_placeholder')"
+            :aria-describedby="describedBy"
+            :class="styles.text_input"
+            :disabled="remote === null"
+            data-testid="vocabulary-catalog-input"
+            @change="save_catalog"
+          />
+        </template>
+      </FieldGroup>
+      <p
+        v-if="catalog_invalid"
+        :class="[styles.status_text, styles.description]"
+        data-tone="error"
+        data-testid="vocabulary-catalog-invalid"
+      >
+        {{ t("settings.data.vocabulary_catalog_invalid") }}
+      </p>
+
+      <FieldGroup
+        :label="t('settings.data.vocabulary_token_label')"
+        :hint="t('settings.data.vocabulary_token_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <input
+            :id="fieldId"
+            v-model="token_draft"
+            type="password"
+            autocomplete="off"
+            :aria-describedby="describedBy"
+            :class="styles.text_input"
+            data-testid="vocabulary-token-input"
+          />
+        </template>
+      </FieldGroup>
+      <div :class="styles.actions_row">
+        <AppButton
+          :label="t('settings.data.vocabulary_token_save')"
+          variant="primary"
+          :pending="token_status === 'saving'"
+          :disabled="token_draft.trim() === ''"
+          @click="save_token"
         />
+        <AppButton
+          v-if="remote?.token_saved === true"
+          :label="t('settings.data.vocabulary_token_clear')"
+          @click="clear_token"
+        />
+        <span :class="styles.status_text" role="status">{{ token_status_text }}</span>
       </div>
 
       <div :class="styles.actions_row">

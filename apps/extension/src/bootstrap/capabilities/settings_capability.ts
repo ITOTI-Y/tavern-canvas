@@ -1,5 +1,6 @@
 import {
   derive_analysis_credential_reference,
+  VOCABULARY_TOKEN_REFERENCE,
   type TavernCanvasSettings,
 } from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
@@ -72,7 +73,6 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
     }
     return {
       settings,
-      vocabulary_update_channel: settings.vocabulary_update_channel,
       browser_secret_vault,
     };
   }
@@ -81,6 +81,12 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
     const settings = deps.settings.update_settings(partial);
     events.emit({ type: "settings_changed", settings });
     return settings;
+  }
+
+  function set_token_saved(token_saved: boolean): void {
+    apply({
+      vocabulary_remote: { ...deps.settings.get_settings().vocabulary_remote, token_saved },
+    });
   }
 
   return {
@@ -150,9 +156,24 @@ export function create_settings_capability(deps: SettingsCapabilityDeps): Settin
       }
       return deps.browser_secret_vault.reset();
     },
-    set_vocabulary_update_channel(channel) {
-      apply({ vocabulary_update_channel: channel });
-      return deps.settings.flush();
+    async set_vocabulary_token(plaintext_value) {
+      if (plaintext_value.trim().length === 0) {
+        throw new TypeError("A Hugging Face token must not be blank");
+      }
+      if (deps.secrets === null) {
+        throw capability_unavailable_error(SECRET_DESTINATION_UNAVAILABLE);
+      }
+      await deps.secrets.write_secret(VOCABULARY_TOKEN_REFERENCE, plaintext_value.trim());
+      set_token_saved(true);
+      await deps.settings.flush();
+    },
+    async clear_vocabulary_token() {
+      if (deps.secrets?.delete_secret === undefined) {
+        throw capability_unavailable_error(SECRET_DESTINATION_UNAVAILABLE);
+      }
+      await deps.secrets.delete_secret(VOCABULARY_TOKEN_REFERENCE);
+      set_token_saved(false);
+      await deps.settings.flush();
     },
     async import_vocabulary_package(file, on_progress) {
       if (active_import !== null) {

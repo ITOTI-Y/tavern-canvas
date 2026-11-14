@@ -46,7 +46,7 @@ const HOST_SETTINGS = {
   active_provider_profile_id: PROFILE_ID,
   global_concurrency: 2,
   auto_generation_enabled: false,
-  vocabulary_update_channel: "bundled",
+  vocabulary_remote: { catalog_url: "", token_saved: false },
   ui: {
     color_mode: "system",
     inspector_width: 320,

@@ -257,6 +257,49 @@ describe("PackageUpdater.update", () => {
     );
   });
 
+  it("installs every shard from one pack request when the manifest names a pack", async () => {
+    const database = await open_database();
+    const specs: ShardSpec[] = ["aa", "ab", "ac"].map((key, index) => ({
+      shard_id: `prefix-${key}`,
+      path: `shards/prefix-${key}.msgpack.gz`,
+      kind: "prefix",
+      value: { kind: "prefix", entries: [[key, index, 1]] },
+    }));
+    const built = await build_package("full", "1.0.0", specs);
+    const pack_parts = built.manifest.shards.map((shard) =>
+      require_bytes(built.shard_bytes, shard.path),
+    );
+    const pack_bytes = new Uint8Array(pack_parts.reduce((total, part) => total + part.length, 0));
+    let offset = 0;
+    for (const part of pack_parts) {
+      pack_bytes.set(part, offset);
+      offset += part.length;
+    }
+    const packed: BuiltPackage = {
+      manifest: { ...built.manifest, pack: { path: "pack.bin", byte_length: pack_bytes.length } },
+      shard_bytes: new Map([...built.shard_bytes, ["pack.bin", pack_bytes]]),
+    };
+    const { client, fetched_paths } = create_fake_client(packed);
+
+    const result = await new PackageUpdater({
+      database,
+      namespace: NAMESPACE,
+      client,
+      current_extension_version: CURRENT_EXTENSION_VERSION,
+    }).update();
+
+    expect(result).toMatchObject({ outcome: "updated", data_version: "1.0.0" });
+    expect(fetched_paths).toEqual(["pack.bin"]);
+    const store = new VocabularyPackageStore(database, NAMESPACE);
+    for (const spec of specs) {
+      const stored = await store.shard_bytes(spec.path);
+      expect(stored.byteLength).toBe(require_bytes(built.shard_bytes, spec.path).byteLength);
+      expect(bytesToHex(sha256(stored))).toBe(
+        sha256_hex(require_bytes(built.shard_bytes, spec.path)),
+      );
+    }
+  });
+
   it("stages every download under a fresh staging package record before it becomes active", async () => {
     const database = await open_database();
     const spec: ShardSpec = {

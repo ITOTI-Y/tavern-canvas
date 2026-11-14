@@ -271,6 +271,15 @@ const assets = {
     no_updates_description: "The current vocabulary already powers search and completion.",
     catalog_failed_code:
       "The update catalog could not be fetched (error code {code}). The bundled vocabulary is unaffected.",
+    install_failed_code: "Install failed (error code {code}).",
+    failures: {
+      catalog_url_missing: "Set a remote catalog in Settings > General first.",
+      catalog_unauthorized:
+        "Access refused (401/403). A private dataset needs a Hugging Face token.",
+      catalog_not_found: "No catalog at this address (404).",
+      not_exposed: "SillyTavern will not reveal the token; use This device storage instead.",
+      manifest_fetch_failed: "The package manifest could not be downloaded; check its base_url.",
+    },
     tag_count: "{n} tag | {n} tags",
     update_action: "Check for updates",
     import_action: "Import package",
@@ -809,9 +818,17 @@ const settings = {
     optional_entry_label: "Show the floating entry button",
   },
   data: {
-    vocabulary_channel_label: "Vocabulary update channel",
-    vocabulary_channel_bundled: "Bundled baseline",
-    vocabulary_channel_https: "Remote update channel",
+    vocabulary_catalog_label: "Remote vocabulary catalog",
+    vocabulary_catalog_hint: "A catalog.json address or a Hugging Face dataset id (owner/name).",
+    vocabulary_catalog_placeholder: "owner/name",
+    vocabulary_catalog_invalid: "Enter an https:// address or owner/name.",
+    vocabulary_token_label: "Hugging Face token",
+    vocabulary_token_hint: "For private datasets; sent only to huggingface.co and hf.co.",
+    vocabulary_token_save: "Save token",
+    vocabulary_token_clear: "Delete token",
+    vocabulary_token_present: "A token is saved.",
+    vocabulary_token_absent: "No token saved.",
+    vocabulary_token_failed: "The token could not be changed.",
     vocabulary_import: {
       action: "Import local package",
       cancel_action: "Cancel import",

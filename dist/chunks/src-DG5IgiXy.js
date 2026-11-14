@@ -1,7 +1,7 @@
 import { n as e } from "./rolldown-runtime-B0aSnxlc.js";
 import { n as t, t as n } from "./sha2-BGNex9vj.js";
 import { g as r, h as i, i as a, r as o, u as s } from "./schemas-BjkyCQYG.js";
-import { c, i as l, l as u, n as d, u as f } from "./vocabulary-BVB062U1.js";
+import { c, i as l, l as u, n as d, u as f } from "./vocabulary-RqWrFCFR.js";
 import { b as p, m, n as h, r as g, y as _ } from "./business_repositories-4nVP7Td6.js";
 var v = /* @__PURE__ */ new Set([
 	"staging",
@@ -306,7 +306,6 @@ var N = class {
 		}), this.invalidate_active_package_cache();
 	}
 }, P = /* @__PURE__ */ e({
-	DEFAULT_CATALOG_URL: () => DEFAULT_CATALOG_URL,
 	DEFAULT_MAX_BATCH_PAYLOAD_LENGTH: () => DEFAULT_MAX_BATCH_PAYLOAD_LENGTH,
 	DEFAULT_MAX_TOTAL_RECORDS: () => DEFAULT_MAX_TOTAL_RECORDS,
 	DESKTOP_LRU_BUDGET_BYTES: () => DESKTOP_LRU_BUDGET_BYTES,

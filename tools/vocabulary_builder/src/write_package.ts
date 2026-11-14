@@ -12,6 +12,7 @@ import {
   VocabularyShardPayloadSchema,
   type VocabularyIndexKind,
   type VocabularyManifest,
+  type VocabularyPackFile,
   type VocabularyRecord,
   type VocabularyShardEntry,
   type VocabularyShardPayload,
@@ -45,6 +46,8 @@ export interface WritePackageInput {
   readonly changelog: string;
   readonly records: readonly VocabularyRecord[];
   readonly shards: readonly VocabularyShardFile[];
+  /** Also writes every shard back to back into this file and names it in the manifest. */
+  readonly pack_file?: string;
 }
 
 interface EncodedShard {
@@ -97,12 +100,23 @@ function serialize_manifest(manifest: VocabularyManifest): string {
   return `${JSON.stringify(manifest, null, 2)}\n`;
 }
 
+function concatenate(chunks: readonly Uint8Array[]): Uint8Array {
+  const joined = new Uint8Array(chunks.reduce((total, chunk) => total + chunk.length, 0));
+  let offset = 0;
+  for (const chunk of chunks) {
+    joined.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return joined;
+}
+
 function build_manifest(
   input: Pick<
     WritePackageInput,
     "package_id" | "data_version" | "minimum_extension_version" | "changelog" | "records"
   >,
   shard_entries: VocabularyShardEntry[],
+  pack: VocabularyPackFile | undefined,
 ): VocabularyManifest {
   return {
     package_id: input.package_id,
@@ -113,6 +127,7 @@ function build_manifest(
     compressed_size: shard_entries.reduce((total, entry) => total + entry.byte_length, 0),
     minimum_extension_version: input.minimum_extension_version,
     shards: shard_entries,
+    ...(pack === undefined ? {} : { pack }),
   };
 }
 
@@ -126,6 +141,9 @@ async function verify_directory_against_manifest(
   directory: string,
   manifest: VocabularyManifest,
 ): Promise<void> {
+  if (manifest.pack !== undefined) {
+    await verify_pack_against_manifest(directory, manifest, manifest.pack);
+  }
   for (const shard of manifest.shards) {
     const shard_path = join(directory, shard.path);
     let compressed_bytes: Buffer;
@@ -227,6 +245,40 @@ async function replace_directory_atomically(
   }
 }
 
+/** The pack must hold each shard's exact bytes at its offset in manifest order. */
+async function verify_pack_against_manifest(
+  directory: string,
+  manifest: VocabularyManifest,
+  pack: VocabularyPackFile,
+): Promise<void> {
+  let pack_bytes: Buffer;
+  try {
+    pack_bytes = await readFile(join(directory, pack.path));
+  } catch (error) {
+    throw new VocabularyPackageError(
+      `pack file is missing at "${pack.path}": ${String(error)}`,
+      "verification",
+    );
+  }
+  if (pack_bytes.length !== pack.byte_length) {
+    throw new VocabularyPackageError(
+      `pack byte length mismatch: manifest says ${String(pack.byte_length)}, disk has ${String(pack_bytes.length)}`,
+      "verification",
+    );
+  }
+  let offset = 0;
+  for (const shard of manifest.shards) {
+    const digest = compute_sha256_hex(pack_bytes.subarray(offset, offset + shard.byte_length));
+    if (digest !== shard.sha256) {
+      throw new VocabularyPackageError(
+        `pack bytes for shard "${shard.shard_id}" do not match its hash`,
+        "verification",
+      );
+    }
+    offset += shard.byte_length;
+  }
+}
+
 /**
  * Encodes every shard, writes them plus `manifest.json` into a staging
  * directory beside `output_directory`, self-verifies the staged bytes
@@ -239,10 +291,17 @@ export async function write_vocabulary_package(
   input: WritePackageInput,
 ): Promise<VocabularyManifest> {
   const encoded_shards = encode_shards(input.package_id, input.shards);
+  const pack_bytes =
+    input.pack_file === undefined
+      ? undefined
+      : concatenate(encoded_shards.map((shard) => shard.bytes));
   const manifest_result = VocabularyManifestSchema.safeParse(
     build_manifest(
       input,
       encoded_shards.map((shard) => shard.entry),
+      input.pack_file === undefined || pack_bytes === undefined
+        ? undefined
+        : { path: input.pack_file, byte_length: pack_bytes.length },
     ),
   );
   if (!manifest_result.success) {
@@ -263,6 +322,9 @@ export async function write_vocabulary_package(
       const shard_path = join(staging_directory, shard.path);
       await mkdir(dirname(shard_path), { recursive: true });
       await writeFile(shard_path, shard.bytes);
+    }
+    if (manifest.pack !== undefined && pack_bytes !== undefined) {
+      await writeFile(join(staging_directory, manifest.pack.path), pack_bytes);
     }
     await writeFile(join(staging_directory, MANIFEST_FILE_NAME), serialize_manifest(manifest));
     await verify_directory_against_manifest(staging_directory, manifest);

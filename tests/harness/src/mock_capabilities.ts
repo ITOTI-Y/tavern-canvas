@@ -291,7 +291,7 @@ function build_settings(): TavernCanvasSettings {
     active_provider_profile_id: PROFILE_SD.id,
     global_concurrency: 2,
     auto_generation_enabled: false,
-    vocabulary_update_channel: "bundled",
+    vocabulary_remote: { catalog_url: "", token_saved: false },
     illustration: {
       preset_name: "in_use",
       connection: { kind: "current" },
@@ -837,7 +837,6 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
     load: () =>
       Promise.resolve({
         settings: current,
-        vocabulary_update_channel: current.vocabulary_update_channel,
         browser_secret_vault,
       }),
     subscribe: () => () => {},
@@ -866,8 +865,18 @@ function create_settings_capability(initial: TavernCanvasSettings): SettingsCapa
       browser_secret_vault = { state: "uninitialized", secret_count: 0 };
       return Promise.resolve(browser_secret_vault);
     },
-    set_vocabulary_update_channel: (channel) => {
-      current = { ...current, vocabulary_update_channel: channel };
+    set_vocabulary_token: () => {
+      current = {
+        ...current,
+        vocabulary_remote: { ...current.vocabulary_remote, token_saved: true },
+      };
+      return Promise.resolve();
+    },
+    clear_vocabulary_token: () => {
+      current = {
+        ...current,
+        vocabulary_remote: { ...current.vocabulary_remote, token_saved: false },
+      };
       return Promise.resolve();
     },
     import_vocabulary_package: () => Promise.resolve(),

@@ -45,6 +45,9 @@ var p = t().regex(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\
 	sha256: o,
 	byte_length: a().int().nonnegative()
 }), y = n({
+	path: _,
+	byte_length: a().int().positive()
+}), b = n({
 	package_id: m,
 	schema_version: e(1),
 	data_version: p,
@@ -52,30 +55,38 @@ var p = t().regex(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\
 	record_count: a().int().nonnegative(),
 	compressed_size: a().int().nonnegative(),
 	minimum_extension_version: p,
-	shards: r(v).min(1).max(5e4)
+	shards: r(v).min(1).max(5e4),
+	pack: y.optional()
 }).check((e) => {
-	let t = /* @__PURE__ */ new Set();
-	e.value.shards.forEach((n, r) => {
-		t.has(n.shard_id) && e.issues.push({
+	let { pack: t } = e.value, n = e.value.shards.reduce((e, t) => e + t.byte_length, 0);
+	t !== void 0 && t.byte_length !== n && e.issues.push({
+		code: "custom",
+		input: t.byte_length,
+		message: `pack byte_length must equal the shards' total ${String(n)}`,
+		path: ["pack", "byte_length"]
+	});
+	let r = /* @__PURE__ */ new Set();
+	e.value.shards.forEach((t, n) => {
+		r.has(t.shard_id) && e.issues.push({
 			code: "custom",
-			input: n.shard_id,
-			message: `duplicate shard_id: ${n.shard_id}`,
+			input: t.shard_id,
+			message: `duplicate shard_id: ${t.shard_id}`,
 			path: [
 				"shards",
-				r,
+				n,
 				"shard_id"
 			]
-		}), t.add(n.shard_id), n.package_id !== e.value.package_id && e.issues.push({
+		}), r.add(t.shard_id), t.package_id !== e.value.package_id && e.issues.push({
 			code: "custom",
-			input: n.package_id,
+			input: t.package_id,
 			message: "shard package_id must match manifest package_id",
 			path: [
 				"shards",
-				r,
+				n,
 				"package_id"
 			]
 		});
 	});
 });
 //#endregion
-export { l as a, p as c, d, m as i, v as l, u as n, s as o, y as r, f as s, c as t, _ as u };
+export { l as a, p as c, d, m as i, v as l, u as n, s as o, b as r, f as s, c as t, _ as u };

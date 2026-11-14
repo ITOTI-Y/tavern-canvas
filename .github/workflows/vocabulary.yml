@@ -1,0 +1,137 @@
+name: Vocabulary refresh
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vocabulary-refresh
+  cancel-in-progress: false
+
+env:
+  HF_DATASET: ITOTIY/tavern-canvas-vocabulary
+  PACKAGE_ID: tavern-canvas-full-zh
+  MIN_POST_COUNT: "10"
+  # Without the secret the run only reports; nothing is read from or written to the dataset.
+  HAS_HF_TOKEN: ${{ secrets.HF_TOKEN != '' }}
+  DANBOORU_USER_AGENT: tavern-canvas-vocabulary-refresh/1.0 (+https://github.com/ITOTI-Y/tavern-canvas)
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
+
+      - name: Download the published data
+        if: env.HAS_HF_TOKEN == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: uv run tools/vocabulary_source/scripts/hf_dataset.py download --repo "$HF_DATASET" --out-dir work/published
+
+      # The first refresh has no published records yet and starts from the committed source.
+      - name: Choose the previous records
+        run: |
+          mkdir -p work
+          if [ -f work/published/data/tags.jsonl ]; then
+            cp work/published/data/tags.jsonl work/previous.jsonl
+          else
+            cp data/vocabulary/raw_vocabulary_tags_public.jsonl work/previous.jsonl
+          fi
+          if [ -f work/published/data/translations.jsonl ]; then
+            cp work/published/data/translations.jsonl work/memory.jsonl
+          else
+            : > work/memory.jsonl
+          fi
+
+      - name: Fetch Danbooru tags and aliases
+        run: >-
+          pnpm exec tsx tools/vocabulary_source/src/index.ts fetch-danbooru
+          --user-agent "$DANBOORU_USER_AGENT"
+          --min-post-count "$MIN_POST_COUNT"
+          --out work/facts.jsonl
+
+      - name: Merge, deduplicate and report
+        run: >-
+          pnpm exec tsx tools/vocabulary_source/src/index.ts refresh
+          --previous work/previous.jsonl
+          --memory work/memory.jsonl
+          --facts work/facts.jsonl
+          --min-post-count "$MIN_POST_COUNT"
+          --out work/tags.jsonl
+          --memory-out work/translations.jsonl
+          --report work/report.json
+
+      - name: Check the refresh
+        id: check
+        run: >-
+          uv run tools/vocabulary_source/scripts/hf_dataset.py check
+          --report work/report.json
+          --previous-report work/published/data/report.json
+          --summary "$GITHUB_STEP_SUMMARY"
+
+      - name: Build the package
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          version="$(date -u +%Y.%-m.%-d)"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          record_count="$(wc -l < work/tags.jsonl)"
+          pnpm exec tsx tools/vocabulary_builder/scripts/generate_full_pack.ts \
+            --source work/tags.jsonl \
+            --output work/package \
+            --data-version "$version" \
+            --changelog "Danbooru tags with at least $MIN_POST_COUNT posts, refreshed on $(date -u +%F): $record_count records with zh translations kept from earlier releases."
+          if [ -f work/published/catalog.json ]; then
+            pnpm exec tsx tools/vocabulary_builder/scripts/update_catalog.ts \
+              --catalog work/published/catalog.json \
+              --package work/package \
+              --base-url "https://huggingface.co/datasets/$HF_DATASET/resolve/main/packages/$PACKAGE_ID/$version/" \
+              --out work/catalog.json
+          fi
+
+      - name: Keep the refresh results
+        uses: actions/upload-artifact@v5
+        with:
+          name: vocabulary-refresh
+          path: |
+            work/report.json
+            work/tags.jsonl
+          if-no-files-found: error
+
+      - name: Publish to the Hugging Face dataset
+        if: steps.check.outputs.changed == 'true' && env.HAS_HF_TOKEN == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: >-
+          uv run tools/vocabulary_source/scripts/hf_dataset.py publish
+          --repo "$HF_DATASET"
+          --package-id "$PACKAGE_ID"
+          --version "$VERSION"
+          --package-dir work/package
+          --catalog work/catalog.json
+          --tags work/tags.jsonl
+          --translations work/translations.jsonl
+          --report work/report.json

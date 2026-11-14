@@ -334,11 +334,8 @@ export interface DiagnosticsCapability {
   export_support_bundle(): Promise<SupportBundle>;
 }
 
-export type VocabularyUpdateChannel = "bundled" | "remote";
-
 export interface SettingsSnapshot {
   readonly settings: TavernCanvasSettings;
-  readonly vocabulary_update_channel: VocabularyUpdateChannel;
   readonly browser_secret_vault: BrowserSecretVaultStatus;
 }
 
@@ -363,7 +360,9 @@ export interface SettingsCapability {
   unlock_browser_secret_vault(passphrase: string): Promise<BrowserSecretVaultStatus>;
   lock_browser_secret_vault(): Promise<BrowserSecretVaultStatus>;
   reset_browser_secret_vault(): Promise<BrowserSecretVaultStatus>;
-  set_vocabulary_update_channel(channel: VocabularyUpdateChannel): Promise<void>;
+  /** Stores the Hugging Face token sent with requests for the remote vocabulary catalog. */
+  set_vocabulary_token(plaintext_value: string): Promise<void>;
+  clear_vocabulary_token(): Promise<void>;
   import_vocabulary_package(
     file: Blob,
     on_progress?: (progress: VocabularyImportProgressView) => void,

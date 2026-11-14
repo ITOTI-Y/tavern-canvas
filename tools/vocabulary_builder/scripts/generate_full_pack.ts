@@ -12,9 +12,9 @@ import {
   stage_pack_source,
 } from "./pack_common.js";
 
-// Generates the full bilingual pack (~153k records, zh included). Not committed: written under
-// gitignored output/ for upload to the HF dataset repo as a catalog package. No --check mode, since
-// no committed copy exists.
+// Generates the full bilingual pack with a pack.bin holding every shard. Not committed: written
+// under gitignored output/ for upload to the HF dataset repo as a catalog package. No --check mode,
+// since no committed copy exists.
 
 class GenerateFullPackError extends Error {}
 
@@ -31,15 +31,34 @@ const CHANGELOG =
 const POPULARITY_FLOOR_PROBE_TAG = "1girl";
 const POPULARITY_FLOOR = 8_000_000;
 
+export const PACK_FILE = "pack.bin";
+
 function parse_args(argv: readonly string[]): {
   readonly source_path: string;
   readonly output_directory: string;
+  readonly data_version: string;
+  readonly changelog: string;
 } {
   let source_path = DEFAULT_SOURCE_PATH;
   let output_directory = DEFAULT_OUTPUT_DIRECTORY;
+  let data_version = DATA_VERSION;
+  let changelog = CHANGELOG;
 
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
+    if (flag === "--data-version" || flag === "--changelog") {
+      const value = argv[index + 1];
+      if (value === undefined) {
+        throw new GenerateFullPackError(`${flag} requires a value`);
+      }
+      if (flag === "--data-version") {
+        data_version = value;
+      } else {
+        changelog = value;
+      }
+      index += 1;
+      continue;
+    }
     if (flag === "--source") {
       const value = argv[index + 1];
       if (value === undefined) {
@@ -61,11 +80,11 @@ function parse_args(argv: readonly string[]): {
     throw new GenerateFullPackError(`unrecognized argument: ${flag ?? "<none>"}`);
   }
 
-  return { source_path, output_directory };
+  return { source_path, output_directory, data_version, changelog };
 }
 
 export async function run_generate_full_pack(argv: readonly string[]): Promise<void> {
-  const { source_path, output_directory } = parse_args(argv);
+  const { source_path, output_directory, data_version, changelog } = parse_args(argv);
   const scratch_directory = await mkdtemp(join(tmpdir(), "vocabulary-full-pack-"));
   const staged_source_path = join(scratch_directory, "source.jsonl");
 
@@ -74,9 +93,10 @@ export async function run_generate_full_pack(argv: readonly string[]): Promise<v
     const minimum_extension_version = await read_current_extension_version();
     await build_pack_into(output_directory, staged_source_path, {
       package_id: PACKAGE_ID,
-      data_version: DATA_VERSION,
+      data_version,
       minimum_extension_version,
-      changelog: CHANGELOG,
+      changelog,
+      pack_file: PACK_FILE,
     });
     await assert_tag_popularity_at_least(
       output_directory,

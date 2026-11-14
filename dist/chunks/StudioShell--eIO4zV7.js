@@ -66,7 +66,7 @@ var F = b("feather", [
 		controller: {}
 	},
 	setup(e) {
-		let t = a(() => import("./GalleryView-BCm0ya3R.js")), n = a(() => import("./SettingsView-isZ0Lzh2.js")), i = a(() => import("./AssetsView-B13oKShd.js")), o = a(() => import("./CreateView-4Um2mZIK.js"));
+		let t = a(() => import("./GalleryView-DTYzDxc2.js")), n = a(() => import("./SettingsView-DwcD7t8p.js")), i = a(() => import("./AssetsView-LWQNoBb4.js")), o = a(() => import("./CreateView-B1Tuil4Z.js"));
 		return (a, s) => e.state.route === "gallery" ? (r(), c(l(t), {
 			key: 0,
 			state: e.state,

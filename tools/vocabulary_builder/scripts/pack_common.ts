@@ -44,6 +44,8 @@ export interface PackIdentity {
   readonly data_version: string;
   readonly minimum_extension_version: string;
   readonly changelog: string;
+  /** Also writes every shard into this one file, so a remote install is a single request. */
+  readonly pack_file?: string;
 }
 
 export async function build_pack_into(
@@ -64,6 +66,7 @@ export async function build_pack_into(
     identity.minimum_extension_version,
     "--changelog",
     identity.changelog,
+    ...(identity.pack_file === undefined ? [] : ["--pack-file", identity.pack_file]),
   ]);
   if (build_exit_code !== EXIT_SUCCESS) {
     throw new PackBuildError(

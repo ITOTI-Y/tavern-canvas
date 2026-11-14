@@ -34,6 +34,7 @@ interface BuildOptions {
   readonly data_version: string;
   readonly minimum_extension_version: string;
   readonly changelog: string;
+  readonly pack_file: string | undefined;
 }
 
 function parse_flags(argv: readonly string[]): Map<string, string> {
@@ -87,6 +88,7 @@ function parse_build_options(argv: readonly string[]): BuildOptions {
     data_version: data_version_result.data,
     minimum_extension_version: minimum_extension_version_result.data,
     changelog: require_flag(flags, "changelog"),
+    pack_file: flags.get("pack-file"),
   };
 }
 
@@ -134,6 +136,7 @@ export async function run_build(argv: readonly string[]): Promise<number> {
       changelog: options.changelog,
       records,
       shards,
+      ...(options.pack_file === undefined ? {} : { pack_file: options.pack_file }),
     });
     return EXIT_SUCCESS;
   } catch (error) {

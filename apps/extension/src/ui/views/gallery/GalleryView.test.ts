@@ -198,7 +198,6 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
     },
     settings: {
       settings: null,
-      vocabulary_update_channel: null,
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
     },
@@ -256,7 +255,8 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     clear_analysis_key: vi.fn(() => Promise.resolve()),
     set_deepl_key: vi.fn(() => Promise.resolve()),
     clear_deepl_key: vi.fn(() => Promise.resolve()),
-    set_vocabulary_update_channel: vi.fn(() => Promise.resolve()),
+    set_vocabulary_token: vi.fn(() => Promise.resolve()),
+    clear_vocabulary_token: vi.fn(() => Promise.resolve()),
     import_vocabulary_package: vi.fn(() => Promise.resolve()),
     cancel_vocabulary_import: vi.fn(),
     export_settings_archive: vi.fn(() => Promise.resolve(new Blob())),

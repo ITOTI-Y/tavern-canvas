@@ -80,7 +80,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
-  vocabulary_update_channel: "bundled",
+  vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
     preset_name: "in_use",
     connection: { kind: "current" },
@@ -130,7 +130,6 @@ const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {
 
 const DEFAULT_SETTINGS_SNAPSHOT: SettingsSnapshot = {
   settings: DEFAULT_SETTINGS,
-  vocabulary_update_channel: "bundled",
   browser_secret_vault: { state: "unavailable", secret_count: 0 },
 };
 
@@ -245,7 +244,8 @@ function build_mock_studio() {
     unlock_browser_secret_vault: vi.fn(),
     lock_browser_secret_vault: vi.fn(),
     reset_browser_secret_vault: vi.fn(),
-    set_vocabulary_update_channel: vi.fn(),
+    set_vocabulary_token: vi.fn(),
+    clear_vocabulary_token: vi.fn(),
     import_vocabulary_package: vi.fn(),
     cancel_vocabulary_import: vi.fn(),
     export_archive: vi.fn(),
@@ -675,7 +675,6 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
     vi.mocked(mock.capabilities.settings.update).mockResolvedValue(settings);
     vi.mocked(mock.capabilities.settings.load).mockResolvedValue({
       settings,
-      vocabulary_update_channel: settings.vocabulary_update_channel,
       browser_secret_vault: { state: "locked", secret_count: 2 },
     });
 

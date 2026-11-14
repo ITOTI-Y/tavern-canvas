@@ -167,6 +167,16 @@ export const TranslationSettingsSchema = z.strictObject({
 });
 export type TranslationSettings = z.infer<typeof TranslationSettingsSchema>;
 
+/** The Hugging Face token for a private vocabulary catalog, stored with the other credentials. */
+export const VOCABULARY_TOKEN_REFERENCE = "tavern_canvas:vocabulary:hf_token";
+
+export const VocabularyRemoteSettingsSchema = z.strictObject({
+  /** Empty when no remote catalog is configured. */
+  catalog_url: z.union([z.literal(""), z.url({ protocol: /^https$/u }).max(2048)]),
+  token_saved: z.boolean(),
+});
+export type VocabularyRemoteSettings = z.infer<typeof VocabularyRemoteSettingsSchema>;
+
 export const TavernCanvasSettingsSchema = z.strictObject({
   schema_version: z.literal(1),
   active_namespace: NamespaceIdentifierSchema,
@@ -175,7 +185,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   active_provider_profile_id: UuidSchema.nullable(),
   global_concurrency: z.number().int().min(1).max(4),
   auto_generation_enabled: z.boolean(),
-  vocabulary_update_channel: z.enum(["bundled", "remote"]),
+  vocabulary_remote: VocabularyRemoteSettingsSchema,
   illustration: IllustrationSettingsSchema,
   translation: TranslationSettingsSchema,
   ui: TavernCanvasUiSettingsSchema,

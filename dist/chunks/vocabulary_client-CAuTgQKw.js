@@ -1,6 +1,6 @@
 import { c as e, g as t, h as n, o as r, r as i, t as a, u as o } from "./schemas-BjkyCQYG.js";
 import { i as s } from "./ids-pPJWL4BL.js";
-import { a as c, c as l, i as u, o as d, t as f } from "./vocabulary-BVB062U1.js";
+import { a as c, c as l, i as u, o as d, t as f } from "./vocabulary-RqWrFCFR.js";
 //#region ../../packages/contracts/src/vocabulary_worker.ts
 var p = 50, m = a([
 	"exact",

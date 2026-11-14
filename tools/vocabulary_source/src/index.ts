@@ -15,6 +15,7 @@ import { run_fetch_danbooru_cli } from "./fetch_danbooru.js";
 import { run_import_hf_tags_cli } from "./import_hf_tags.js";
 import { write_jsonl } from "./jsonl_io.js";
 import { run_merge_cli } from "./merge_sources.js";
+import { run_refresh_cli } from "./refresh_vocabulary.js";
 
 export * from "./danbooru_client.js";
 export * from "./extract_legacy_seed.js";
@@ -22,6 +23,7 @@ export * from "./fetch_danbooru.js";
 export * from "./import_hf_tags.js";
 export * from "./jsonl_io.js";
 export * from "./merge_sources.js";
+export * from "./refresh_vocabulary.js";
 export * from "./select_baseline_subset.js";
 export * from "./vocabulary_record_schema.js";
 export { decrypt_legacy_openssl_payload, LegacyDecryptionError } from "./decrypt_legacy_tagdata.js";
@@ -161,6 +163,47 @@ async function run_merge(args: readonly string[]): Promise<void> {
   );
 }
 
+async function run_refresh(args: readonly string[]): Promise<void> {
+  const { values } = parseArgs({
+    args,
+    options: {
+      previous: { type: "string" },
+      memory: { type: "string" },
+      facts: { type: "string" },
+      "min-post-count": { type: "string" },
+      out: { type: "string" },
+      "memory-out": { type: "string" },
+      report: { type: "string" },
+    },
+  });
+  const { previous, facts, out, report } = values;
+  const memory_out = values["memory-out"];
+  if (
+    previous === undefined ||
+    facts === undefined ||
+    out === undefined ||
+    memory_out === undefined ||
+    report === undefined
+  ) {
+    throw new Error(
+      "refresh requires --previous, --facts, --out, --memory-out and --report <path>.",
+    );
+  }
+  const result = await run_refresh_cli({
+    previous_path: previous,
+    memory_path: values.memory,
+    facts_path: facts,
+    min_post_count: values["min-post-count"] ? Number(values["min-post-count"]) : 10,
+    out_path: out,
+    memory_out_path: memory_out,
+    report_path: report,
+  });
+  console.error(
+    `refresh: wrote ${String(result.record_count)} records (added=${String(result.added_count)}, ` +
+      `removed=${String(result.removed_count)}, untranslated_added=${String(result.untranslated_added_count)})`,
+  );
+}
+
 export async function run_cli(argv: readonly string[]): Promise<void> {
   const [command, ...rest] = argv;
   switch (command) {
@@ -176,10 +219,13 @@ export async function run_cli(argv: readonly string[]): Promise<void> {
     case "merge":
       await run_merge(rest);
       return;
+    case "refresh":
+      await run_refresh(rest);
+      return;
     default:
       throw new Error(
         `Unknown command ${JSON.stringify(command)}. Expected one of: extract-seed, ` +
-          "fetch-danbooru, import-hf-tags, merge.",
+          "fetch-danbooru, import-hf-tags, merge, refresh.",
       );
   }
 }

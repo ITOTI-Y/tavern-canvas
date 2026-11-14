@@ -1,4 +1,7 @@
-import { derive_analysis_credential_reference } from "@tavern-canvas/contracts";
+import {
+  derive_analysis_credential_reference,
+  VOCABULARY_TOKEN_REFERENCE,
+} from "@tavern-canvas/contracts";
 import type { StorageDatabase } from "@tavern-canvas/storage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -249,14 +252,34 @@ describe("browser secret vault status", () => {
   });
 });
 
-describe("vocabulary update channel", () => {
-  it("persists the selected channel in the formal settings object", async () => {
-    const { extension_settings, capability } = create_capability(null);
+describe("vocabulary token", () => {
+  it("stores the token as a credential and records only that one is saved", async () => {
+    const writes: [string, string][] = [];
+    const deleted: string[] = [];
+    const { extension_settings, capability } = create_capability({
+      supports: () => true,
+      write_secret: (reference, value) => {
+        writes.push([reference, value]);
+        return Promise.resolve();
+      },
+      delete_secret: (reference) => {
+        deleted.push(reference);
+        return Promise.resolve();
+      },
+      probe_secret: () => Promise.resolve(true),
+    });
 
-    await capability.set_vocabulary_update_channel("remote");
-    expect((await capability.load()).vocabulary_update_channel).toBe("remote");
+    await capability.set_vocabulary_token("  hf_abc  ");
+    expect(writes).toEqual([[VOCABULARY_TOKEN_REFERENCE, "hf_abc"]]);
     expect(extension_settings.tavern_canvas).toMatchObject({
-      vocabulary_update_channel: "remote",
+      vocabulary_remote: { catalog_url: "", token_saved: true },
+    });
+    expect(JSON.stringify(extension_settings.tavern_canvas)).not.toContain("hf_abc");
+
+    await capability.clear_vocabulary_token();
+    expect(deleted).toEqual([VOCABULARY_TOKEN_REFERENCE]);
+    expect(extension_settings.tavern_canvas).toMatchObject({
+      vocabulary_remote: { token_saved: false },
     });
   });
 });

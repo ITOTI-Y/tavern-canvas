@@ -250,6 +250,14 @@ var e = {
 			no_updates_title: "更新渠道没有提供其他词库包",
 			no_updates_description: "当前使用的词库已可用于搜索与补全。",
 			catalog_failed_code: "无法获取更新目录，错误代码：{code}。内置词库不受影响。",
+			install_failed_code: "词库包安装失败，错误代码：{code}。",
+			failures: {
+				catalog_url_missing: "还没有设置远程词库目录。请在 设置 > 通用 的“远程词库目录”中填写地址或数据集名称。",
+				catalog_unauthorized: "目录服务器拒绝访问（401 或 403）。私有数据集需要在 设置 > 通用 中保存有读取权限的 Hugging Face 令牌。",
+				catalog_not_found: "目录地址不存在（404），请检查 设置 > 通用 中的远程词库目录。",
+				not_exposed: "SillyTavern 不允许读回已保存的令牌。请把存储后端改为“本机加密存储”后重新保存令牌，或在 SillyTavern 的 config.yaml 中开启 allowKeysExposure。",
+				manifest_fetch_failed: "无法下载词库包的清单。请检查目录中该词库包的 base_url；私有数据集还需要保存 Hugging Face 令牌。"
+			},
 			tag_count: "{n} 个标签 | {n} 个标签",
 			update_action: "检查更新",
 			import_action: "导入词库包",
@@ -739,9 +747,17 @@ var e = {
 			optional_entry_label: "显示悬浮入口按钮"
 		},
 		data: {
-			vocabulary_channel_label: "词库更新渠道",
-			vocabulary_channel_bundled: "内置基线包",
-			vocabulary_channel_https: "远程更新渠道",
+			vocabulary_catalog_label: "远程词库目录",
+			vocabulary_catalog_hint: "填写 catalog.json 的地址，也可以填写 Hugging Face 数据集的页面地址或 owner/name 形式的数据集名称，保存时会换算成 catalog.json 的地址。留空时只使用内置词库。",
+			vocabulary_catalog_placeholder: "owner/name 或 https://…/catalog.json",
+			vocabulary_catalog_invalid: "无法识别这个地址。请填写以 https:// 开头的地址，或 owner/name 形式的数据集名称。",
+			vocabulary_token_label: "Hugging Face 令牌",
+			vocabulary_token_hint: "读取私有数据集时需要，在 huggingface.co 的 Settings > Access Tokens 中创建只读令牌。令牌只随发往 huggingface.co 和 hf.co 的请求发送，与其他 API 密钥保存在同一个存储后端。",
+			vocabulary_token_save: "保存令牌",
+			vocabulary_token_clear: "删除令牌",
+			vocabulary_token_present: "已保存令牌。",
+			vocabulary_token_absent: "未保存令牌。",
+			vocabulary_token_failed: "令牌修改失败，请检查 设置 > 通用 中的存储后端。",
 			vocabulary_import: {
 				action: "导入本地词库包",
 				cancel_action: "取消导入",

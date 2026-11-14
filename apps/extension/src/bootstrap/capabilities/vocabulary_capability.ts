@@ -9,7 +9,7 @@ import type {
 } from "../../ui/contracts/ui_capabilities.js";
 
 export interface VocabularyCapabilityDeps {
-  /** Resolved on first use: constructing the catalog client eagerly would issue an unsolicited third-party request when the Studio opens. */
+  /** Called on each use, so a changed catalog URL or token applies to the next check or install. */
   readonly load_catalog: () => Promise<VocabularyCatalogClient>;
   /** A fresh client is needed after an install: the search Worker holds a snapshot of the installed packages. */
   readonly create_client: () => Promise<VocabularyClient>;
@@ -40,12 +40,8 @@ function to_progress_view(progress: {
 }
 
 export function create_vocabulary_capability(deps: VocabularyCapabilityDeps): VocabularyCapability {
-  let catalog: Promise<VocabularyCatalogClient> | null = null;
+  let installing: VocabularyCatalogClient | null = null;
   let client: Promise<VocabularyClient> | null = null;
-
-  function active_catalog(): Promise<VocabularyCatalogClient> {
-    return (catalog ??= deps.load_catalog());
-  }
 
   function active_client(): Promise<VocabularyClient> {
     return (client ??= deps.create_client());
@@ -61,7 +57,7 @@ export function create_vocabulary_capability(deps: VocabularyCapabilityDeps): Vo
 
   return {
     async load() {
-      return (await active_catalog()).list();
+      return (await deps.load_catalog()).list();
     },
     async installed() {
       await (await active_client()).ready();
@@ -81,20 +77,22 @@ export function create_vocabulary_capability(deps: VocabularyCapabilityDeps): Vo
       return (await active_client()).next_page(cursor);
     },
     async install(entry: VocabularyCatalogEntry, on_progress) {
-      await (
-        await active_catalog()
-      ).install(entry, (progress) => {
-        const view = to_progress_view(progress);
-        if (view !== null) {
-          on_progress?.(view);
-        }
-      });
+      const catalog = await deps.load_catalog();
+      installing = catalog;
+      try {
+        await catalog.install(entry, (progress) => {
+          const view = to_progress_view(progress);
+          if (view !== null) {
+            on_progress?.(view);
+          }
+        });
+      } finally {
+        installing = null;
+      }
       recreate_client();
     },
     cancel_install: () => {
-      void catalog?.then((instance) => {
-        instance.cancel();
-      });
+      installing?.cancel();
     },
   };
 }

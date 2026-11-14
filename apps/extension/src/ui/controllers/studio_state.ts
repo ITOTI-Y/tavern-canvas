@@ -157,7 +157,6 @@ export function create_initial_state(
     },
     settings: {
       settings: null,
-      vocabulary_update_channel: null,
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
     },

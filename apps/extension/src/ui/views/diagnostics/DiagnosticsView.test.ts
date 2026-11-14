@@ -116,7 +116,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         active_provider_profile_id: null,
         global_concurrency: 1,
         auto_generation_enabled: false,
-        vocabulary_update_channel: "bundled" as const,
+        vocabulary_remote: { catalog_url: "", token_saved: false },
         illustration: {
           preset_name: "in_use",
           connection: { kind: "current" },
@@ -146,7 +146,6 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
           optional_entry_enabled: false,
         },
       },
-      vocabulary_update_channel: "bundled",
       browser_secret_vault: { state: "unavailable", secret_count: 0 },
       update_command: IDLE_COMMAND_STATE,
     },
@@ -264,7 +263,7 @@ const SETTINGS: TavernCanvasSettings = {
   active_provider_profile_id: null,
   global_concurrency: 1,
   auto_generation_enabled: false,
-  vocabulary_update_channel: "bundled",
+  vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
     preset_name: "in_use",
     connection: { kind: "current" },
@@ -441,7 +440,6 @@ describe("DiagnosticsView support bundle export", () => {
         load: () =>
           Promise.resolve({
             settings: SETTINGS,
-            vocabulary_update_channel: "bundled" as const,
             browser_secret_vault: { state: "unavailable" as const, secret_count: 0 },
           }),
       },

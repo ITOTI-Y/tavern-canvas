@@ -581,6 +581,27 @@ describe("vocabulary_builder verify", () => {
     expect(await run_verify(["--package", output])).toBe(EXIT_VERIFICATION_FAILURE);
   });
 
+  it("writes a pack holding every shard back to back and rejects a pack that drifts", async () => {
+    const root = await make_temp_root();
+    const output = join(root, "package");
+    expect(await run_build([...build_args(FIXTURE_PATH, output), "--pack-file", "pack.bin"])).toBe(
+      EXIT_SUCCESS,
+    );
+
+    const manifest = await read_manifest(output);
+    const pack = await readFile(join(output, "pack.bin"));
+    expect(manifest.pack).toEqual({ path: "pack.bin", byte_length: manifest.compressed_size });
+    const first_shard = require_defined(manifest.shards[0], "expected at least one shard");
+    expect(pack.subarray(0, first_shard.byte_length)).toEqual(
+      await readFile(join(output, first_shard.path)),
+    );
+    expect(await run_verify(["--package", output])).toBe(EXIT_SUCCESS);
+
+    pack[0] = (pack[0] ?? 0) ^ 0xff;
+    await writeFile(join(output, "pack.bin"), pack);
+    expect(await run_verify(["--package", output])).toBe(EXIT_VERIFICATION_FAILURE);
+  });
+
   it("fails verification when the manifest is missing", async () => {
     const root = await make_temp_root();
     const output = join(root, "empty_package");

@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from "idb";
 
-import type { VocabularyManifest } from "@tavern-canvas/contracts";
+import type { VocabularyManifest, VocabularyPackFile } from "@tavern-canvas/contracts";
 import type { DBSchema } from "@tavern-canvas/storage";
 
 import type { PackageClient } from "./package_client.js";
@@ -137,6 +137,33 @@ export class PackageUpdater {
     this.on_progress?.(progress);
   }
 
+  /** One request for every shard; each slice is still verified against its own hash below. */
+  private async fetch_pack(
+    pack: VocabularyPackFile,
+    signal: AbortSignal | undefined,
+  ): Promise<Uint8Array> {
+    const bytes = await this.client.fetch_shard_bytes(pack.path, {
+      max_bytes: pack.byte_length,
+      ...(signal === undefined ? {} : { signal }),
+      on_progress: (progress) => {
+        this.emit({
+          phase: "downloading",
+          shard_path: pack.path,
+          downloaded_bytes: progress.downloaded_bytes,
+          total_bytes: pack.byte_length,
+        });
+      },
+    });
+    if (bytes.byteLength !== pack.byte_length) {
+      throw new PackageVerificationError(
+        "byte_length_mismatch",
+        `Declared pack byte_length ${String(pack.byte_length)} does not match downloaded size ${String(bytes.byteLength)}`,
+        pack.path,
+      );
+    }
+    return bytes;
+  }
+
   private async run_update(signal: AbortSignal | undefined): Promise<PackageUpdateResult> {
     this.emit({ phase: "checking_manifest" });
     assert_not_aborted(signal);
@@ -156,7 +183,14 @@ export class PackageUpdater {
     let downloaded_bytes = 0;
 
     try {
+      const pack =
+        manifest.pack !== undefined && total_bytes > 0
+          ? await this.fetch_pack(manifest.pack, signal)
+          : null;
+      let pack_offset = 0;
       for (const entry of manifest.shards) {
+        const offset = pack_offset;
+        pack_offset += entry.byte_length;
         assert_not_aborted(signal);
         const prior_hash = current?.manifest.shards.find(
           (shard) => shard.path === entry.path,
@@ -168,18 +202,21 @@ export class PackageUpdater {
           continue;
         }
 
-        const compressed_bytes = await this.client.fetch_shard_bytes(entry.path, {
-          max_bytes: shard_download_bound(entry.byte_length),
-          ...(signal === undefined ? {} : { signal }),
-          on_progress: (progress) => {
-            this.emit({
-              phase: "downloading",
-              shard_path: entry.path,
-              downloaded_bytes: downloaded_bytes + progress.downloaded_bytes,
-              total_bytes,
-            });
-          },
-        });
+        const compressed_bytes =
+          pack !== null
+            ? pack.slice(offset, offset + entry.byte_length)
+            : await this.client.fetch_shard_bytes(entry.path, {
+                max_bytes: shard_download_bound(entry.byte_length),
+                ...(signal === undefined ? {} : { signal }),
+                on_progress: (progress) => {
+                  this.emit({
+                    phase: "downloading",
+                    shard_path: entry.path,
+                    downloaded_bytes: downloaded_bytes + progress.downloaded_bytes,
+                    total_bytes,
+                  });
+                },
+              });
         downloaded_bytes += compressed_bytes.byteLength;
 
         this.emit({ phase: "verifying", shard_path: entry.path });

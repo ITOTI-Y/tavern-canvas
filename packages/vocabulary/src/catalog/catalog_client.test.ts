@@ -8,7 +8,6 @@ import {
   CatalogSourceConfigError,
   CatalogValidationError,
   create_catalog_client,
-  DEFAULT_CATALOG_URL,
   plan_catalog_install,
 } from "./catalog_client.js";
 
@@ -54,15 +53,18 @@ describe("create_catalog_client configuration", () => {
     );
   });
 
-  it("defaults to the published catalog URL", async () => {
+  it("requests the configured catalog URL", async () => {
     const requested_urls: string[] = [];
     const fetch_impl = vi.fn(async (input: RequestInfo | URL) => {
       requested_urls.push(request_url(input));
       return json_response([entry()]);
     }) as unknown as typeof fetch;
 
-    await create_catalog_client({ fetch_impl }).fetch_catalog();
-    expect(requested_urls).toEqual([DEFAULT_CATALOG_URL]);
+    await create_catalog_client({
+      catalog_url: "https://updates.example.com/catalog.json",
+      fetch_impl,
+    }).fetch_catalog();
+    expect(requested_urls).toEqual(["https://updates.example.com/catalog.json"]);
   });
 });
 
@@ -218,11 +220,12 @@ describe("plan_catalog_install", () => {
   });
 });
 
-// Opt-in: exercises the real published catalog over the network. Skipped by default so the
-// ordinary test suite never depends on network access; run explicitly with CATALOG_LIVE=1.
-describe.skipIf(process.env.CATALOG_LIVE !== "1")("live catalog smoke test", () => {
-  it("fetches and validates the real published catalog", async () => {
-    const client = create_catalog_client();
+// Opt-in: exercises a real public catalog over the network. Skipped by default so the ordinary
+// test suite never depends on network access; run with CATALOG_URL set to the catalog address.
+const LIVE_CATALOG_URL = process.env.CATALOG_URL;
+describe.skipIf(LIVE_CATALOG_URL === undefined)("live catalog smoke test", () => {
+  it("fetches and validates a real published catalog", async () => {
+    const client = create_catalog_client({ catalog_url: LIVE_CATALOG_URL ?? "" });
     const entries = await client.fetch_catalog();
     expect(entries.length).toBeGreaterThanOrEqual(1);
     expect(entries.some((candidate) => candidate.bundled === true)).toBe(true);

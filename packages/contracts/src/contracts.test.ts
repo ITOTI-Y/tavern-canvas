@@ -395,7 +395,7 @@ describe("initial settings and capability contracts", () => {
     active_provider_profile_id: null,
     global_concurrency: 4,
     auto_generation_enabled: true,
-    vocabulary_update_channel: "bundled",
+    vocabulary_remote: { catalog_url: "", token_saved: false },
     illustration: {
       preset_name: "in_use",
       connection: { kind: "current" },
@@ -502,7 +502,7 @@ describe("strict public object boundaries", () => {
     active_provider_profile_id: null,
     global_concurrency: 4,
     auto_generation_enabled: true,
-    vocabulary_update_channel: "bundled",
+    vocabulary_remote: { catalog_url: "", token_saved: false },
     illustration: {
       preset_name: "in_use",
       connection: { kind: "current" },

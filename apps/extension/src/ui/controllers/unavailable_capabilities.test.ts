@@ -31,7 +31,7 @@ describe("create_unavailable_capabilities", () => {
     });
     const settings_snapshot = await capabilities.settings.load();
     expect(settings_snapshot.settings.schema_version).toBe(1);
-    expect(settings_snapshot.vocabulary_update_channel).toBe("bundled");
+    expect(settings_snapshot.settings.vocabulary_remote.catalog_url).toBe("");
   });
 
   it("every subscribe() returns a callable no-op unsubscribe", () => {

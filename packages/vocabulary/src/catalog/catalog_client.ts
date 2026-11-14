@@ -6,17 +6,18 @@ import {
 import type { PackageSourceConfig } from "../package_client.js";
 import { compare_semver } from "../package_verifier.js";
 
-export const DEFAULT_CATALOG_URL =
-  "https://huggingface.co/datasets/ITOTIY/tavern-canvas-vocabulary/resolve/main/catalog.json";
-
 const DEFAULT_MAX_CATALOG_BYTES = 1 * 1024 * 1024;
 
 export class CatalogSourceConfigError extends TypeError {}
 
 export class CatalogFetchError extends Error {
-  constructor(message: string) {
+  /** The HTTP status of a rejected request, `null` when the body was the problem. */
+  readonly status: number | null;
+
+  constructor(message: string, status: number | null = null) {
     super(message);
     this.name = "CatalogFetchError";
+    this.status = status;
   }
 }
 
@@ -35,7 +36,7 @@ export class CatalogPlanError extends Error {
 }
 
 export interface CatalogClientOptions {
-  readonly catalog_url?: string;
+  readonly catalog_url: string;
   readonly fetch_impl?: typeof fetch;
   readonly max_bytes?: number;
   /** Milliseconds a fetched document may be reused for; 0 never caches. Per instance only. */
@@ -109,8 +110,8 @@ interface CachedCatalog {
   readonly fetched_at_ms: number;
 }
 
-export function create_catalog_client(options: CatalogClientOptions = {}): CatalogClient {
-  const catalog_url = options.catalog_url ?? DEFAULT_CATALOG_URL;
+export function create_catalog_client(options: CatalogClientOptions): CatalogClient {
+  const catalog_url = options.catalog_url;
   validated_https_url(catalog_url);
   const fetch_impl = options.fetch_impl ?? fetch;
   const max_bytes = options.max_bytes ?? DEFAULT_MAX_CATALOG_BYTES;
@@ -129,7 +130,10 @@ export function create_catalog_client(options: CatalogClientOptions = {}): Catal
       fetch_options.signal === undefined ? {} : { signal: fetch_options.signal },
     );
     if (!response.ok) {
-      throw new CatalogFetchError(`Catalog request failed with status ${String(response.status)}`);
+      throw new CatalogFetchError(
+        `Catalog request failed with status ${String(response.status)}`,
+        response.status,
+      );
     }
     const parsed = await read_bounded_json(response.body, max_bytes);
     const result = VocabularyCatalogDocumentSchema.safeParse(parsed);

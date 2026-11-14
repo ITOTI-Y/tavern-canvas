@@ -103,6 +103,13 @@ export const VocabularyShardEntrySchema = z.strictObject({
 });
 export type VocabularyShardEntry = z.infer<typeof VocabularyShardEntrySchema>;
 
+/** Every shard's bytes back to back in manifest order, so a remote install is one request. */
+export const VocabularyPackFileSchema = z.strictObject({
+  path: VocabularyShardPathSchema,
+  byte_length: z.number().int().positive(),
+});
+export type VocabularyPackFile = z.infer<typeof VocabularyPackFileSchema>;
+
 export const VocabularyManifestSchema = z
   .strictObject({
     package_id: VocabularyPackageIdSchema,
@@ -113,8 +120,19 @@ export const VocabularyManifestSchema = z
     compressed_size: z.number().int().nonnegative(),
     minimum_extension_version: VocabularySemverSchema,
     shards: z.array(VocabularyShardEntrySchema).min(1).max(50_000),
+    pack: VocabularyPackFileSchema.optional(),
   })
   .check((context) => {
+    const { pack } = context.value;
+    const shard_bytes = context.value.shards.reduce((total, shard) => total + shard.byte_length, 0);
+    if (pack !== undefined && pack.byte_length !== shard_bytes) {
+      context.issues.push({
+        code: "custom",
+        input: pack.byte_length,
+        message: `pack byte_length must equal the shards' total ${String(shard_bytes)}`,
+        path: ["pack", "byte_length"],
+      });
+    }
     const seen_shard_ids = new Set<string>();
 
     context.value.shards.forEach((shard, index) => {

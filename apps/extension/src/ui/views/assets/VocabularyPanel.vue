@@ -24,6 +24,25 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+function failure_message(code: string, install: boolean): string {
+  switch (code) {
+    case "catalog_url_missing":
+      return t("assets.vocabulary.failures.catalog_url_missing");
+    case "catalog_unauthorized":
+      return t("assets.vocabulary.failures.catalog_unauthorized");
+    case "catalog_not_found":
+      return t("assets.vocabulary.failures.catalog_not_found");
+    case "not_exposed":
+      return t("assets.vocabulary.failures.not_exposed");
+    case "manifest_fetch_failed":
+      return t("assets.vocabulary.failures.manifest_fetch_failed");
+    default:
+      return install
+        ? t("assets.vocabulary.install_failed_code", { code })
+        : t("assets.vocabulary.catalog_failed_code", { code });
+  }
+}
+
 type InstalledState =
   | { readonly status: "loading" }
   | { readonly status: "ready"; readonly package: InstalledVocabularyView | null }
@@ -294,11 +313,7 @@ const search_status = computed(() => {
         :status="catalog_status"
         :empty-title="t('assets.vocabulary.no_updates_title')"
         :empty-message="t('assets.vocabulary.no_updates_description')"
-        :error-message="
-          catalogFailure === null
-            ? ''
-            : t('assets.vocabulary.catalog_failed_code', { code: catalogFailure.code })
-        "
+        :error-message="catalogFailure === null ? '' : failure_message(catalogFailure.code, false)"
         min-height="80px"
       >
         <div :class="styles.catalogList">
@@ -332,6 +347,14 @@ const search_status = computed(() => {
         :class="styles.installProgress"
       >
         {{ install_progress_label }}
+      </p>
+      <p
+        v-if="installCommand.status === 'error'"
+        :class="styles.installProgress"
+        role="alert"
+        data-testid="vocabulary-install-error"
+      >
+        {{ failure_message(installCommand.failure.code, true) }}
       </p>
     </section>
 

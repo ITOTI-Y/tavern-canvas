@@ -2,6 +2,7 @@ import {
   CredentialStorageModeSchema,
   IllustrationSettingsSchema,
   TranslationSettingsSchema,
+  VocabularyRemoteSettingsSchema,
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   type TavernCanvasSettings,
@@ -25,7 +26,7 @@ const DISALLOWED_SMALL_SETTINGS_CATEGORIES: ReadonlySet<string> = new Set([
 ]);
 
 // Fields earlier versions wrote; recovery drops them without a diagnostic.
-const RETIRED_KEYS: ReadonlySet<string> = new Set(["gateway"]);
+const RETIRED_KEYS: ReadonlySet<string> = new Set(["gateway", "vocabulary_update_channel"]);
 
 const TOP_LEVEL_KEYS: ReadonlySet<string> = new Set([
   ...Object.keys(TavernCanvasSettingsSchema.shape),
@@ -41,7 +42,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
   active_provider_profile_id: null,
   global_concurrency: 4,
   auto_generation_enabled: true,
-  vocabulary_update_channel: "bundled",
+  vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
     preset_name: "in_use",
     connection: { kind: "current" },
@@ -284,11 +285,11 @@ function recover_settings(raw: unknown, diagnostics: SettingsDiagnostic[]): Tave
       "auto_generation_enabled",
       diagnostics,
     ),
-    vocabulary_update_channel: recover_field(
-      TavernCanvasSettingsSchema.shape.vocabulary_update_channel,
-      raw.vocabulary_update_channel,
-      defaults.vocabulary_update_channel,
-      "vocabulary_update_channel",
+    vocabulary_remote: recover_fields<TavernCanvasSettings["vocabulary_remote"]>(
+      VocabularyRemoteSettingsSchema.shape,
+      raw.vocabulary_remote,
+      defaults.vocabulary_remote,
+      "vocabulary_remote",
       diagnostics,
     ),
     illustration: recover_fields<TavernCanvasSettings["illustration"]>(

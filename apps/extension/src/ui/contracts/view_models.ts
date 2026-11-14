@@ -12,7 +12,6 @@ import type {
   PromptPresetSummary,
   SupportBundle,
   TaskTimelineEntry,
-  VocabularyUpdateChannel,
 } from "./ui_capabilities.js";
 
 /** `code` is a locale lookup key, never a rendered sentence; `params` holds only stable data. */
@@ -63,7 +62,6 @@ export interface DiagnosticsViewModel {
 
 export interface SettingsViewModel {
   readonly settings: TavernCanvasSettings | null;
-  readonly vocabulary_update_channel: VocabularyUpdateChannel | null;
   readonly browser_secret_vault: BrowserSecretVaultStatus;
   readonly update_command: CommandState<TavernCanvasSettings>;
 }
