@@ -299,6 +299,8 @@ export function format_finding(finding: LocaleFinding): string {
 const DEFAULT_EN_LOCALE_PATH = "apps/extension/src/i18n/locales/en.ts";
 const DEFAULT_ZH_LOCALE_PATH = "apps/extension/src/i18n/locales/zh_cn.ts";
 const DEFAULT_SOURCE_ROOT = "apps/extension/src";
+/** Pages load their own messages from `<name>_en.ts` and `<name>_zh_cn.ts` pairs in this folder. */
+const DEFERRED_LOCALE_DIRECTORY = "apps/extension/src/i18n/locales/deferred";
 const EXCLUDED_SOURCE_PREFIXES = ["apps/extension/src/i18n/"];
 const SCANNED_SOURCE_EXTENSIONS = new Set([".ts", ".vue"]);
 const SKIPPED_DIRECTORY_NAMES = new Set(["node_modules", "dist", ".git"]);
@@ -380,6 +382,25 @@ async function import_locale_module(absolute_path: string, export_name: string):
   return messages;
 }
 
+async function deferred_locale_pairs(
+  repository_root: string,
+): Promise<{ readonly en: string; readonly zh: string }[]> {
+  const directory = resolve(repository_root, DEFERRED_LOCALE_DIRECTORY);
+  let names: string[];
+  try {
+    names = await readdir(directory);
+  } catch {
+    return [];
+  }
+  return names
+    .filter((name) => name.endsWith("_en.ts"))
+    .sort()
+    .map((name) => ({
+      en: resolve(directory, name),
+      zh: resolve(directory, name.replace(/_en\.ts$/u, "_zh_cn.ts")),
+    }));
+}
+
 export interface CheckLocalesOptions {
   readonly repository_root?: string;
   readonly en_locale_path?: string;
@@ -397,8 +418,17 @@ export async function check_locales(options: CheckLocalesOptions = {}): Promise<
   const zh_cn_messages = await import_locale_module(zh_path, "zh_cn_messages");
 
   const findings = compare_locales(en_messages, zh_cn_messages);
+  const keys = flatten_string_keys(en_messages);
+  for (const pair of await deferred_locale_pairs(repository_root)) {
+    const deferred_en = await import_locale_module(pair.en, "en_messages");
+    const deferred_zh = await import_locale_module(pair.zh, "zh_cn_messages");
+    findings.push(...compare_locales(deferred_en, deferred_zh));
+    for (const key of flatten_string_keys(deferred_en)) {
+      keys.add(key);
+    }
+  }
   const files = await collect_source_files(source_root, repository_root);
-  findings.push(...check_usage(files, flatten_string_keys(en_messages)));
+  findings.push(...check_usage(files, keys));
 
   return findings;
 }

@@ -162,6 +162,7 @@ const ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSummary[
   workflow: [WORKFLOW_ASSET],
   prompt_tag: [],
   creation: [],
+  opening: [],
 };
 
 const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSummary[]>> = {
@@ -172,6 +173,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   workflow: [],
   prompt_tag: [],
   creation: [],
+  opening: [],
 };
 
 const PRESET_SHORT: PromptPresetSummary = {
@@ -747,6 +749,7 @@ function create_assets_capability(
     workflow: [...initial.workflow],
     prompt_tag: [],
     creation: [],
+    opening: [],
   };
   return {
     load: () => Promise.resolve(records),

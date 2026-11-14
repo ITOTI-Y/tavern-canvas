@@ -33,6 +33,7 @@ const ALL_CATEGORIES: readonly AssetCategory[] = [
   "workflow",
   "prompt_tag",
   "creation",
+  "opening",
 ];
 
 function repository_for(
@@ -54,6 +55,8 @@ function repository_for(
       return repositories.prompt_tag_presets;
     case "creation":
       return repositories.creation_records;
+    case "opening":
+      return repositories.opening_records;
   }
 }
 

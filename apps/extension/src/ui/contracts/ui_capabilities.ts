@@ -163,7 +163,7 @@ export interface PromptPresetsCapability {
 }
 
 export type AssetCategory =
-  "character" | "outfit" | "lora" | "vibe" | "workflow" | "prompt_tag" | "creation";
+  "character" | "outfit" | "lora" | "vibe" | "workflow" | "prompt_tag" | "creation" | "opening";
 
 export interface AssetRecordSummary {
   readonly id: Uuid;

@@ -24,6 +24,7 @@ const app = {
 };
 
 const nav = {
+  opening: "Opening",
   create: "Create",
   library: "Library",
   assets: "Library",

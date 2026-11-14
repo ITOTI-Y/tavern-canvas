@@ -119,6 +119,7 @@ const EMPTY_ASSET_RECORDS: Readonly<Record<AssetCategory, readonly AssetRecordSu
   workflow: [],
   prompt_tag: [],
   creation: [],
+  opening: [],
 };
 
 const EMPTY_DIAGNOSTICS_SNAPSHOT: DiagnosticsSnapshot = {

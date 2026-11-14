@@ -14,6 +14,7 @@ export const ARCHIVE_RECORD_STORES = [
   "lora_profiles",
   "prompt_tag_presets",
   "creation_records",
+  "opening_records",
   "image_records",
   "generation_jobs",
 ] as const;

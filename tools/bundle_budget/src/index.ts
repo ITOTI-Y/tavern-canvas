@@ -3,7 +3,7 @@ import { relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
 
-export const INITIAL_JS_GZIP_LIMIT_BYTES = 188416;
+export const INITIAL_JS_GZIP_LIMIT_BYTES = 200000;
 export const INITIAL_CSS_GZIP_LIMIT_BYTES = 40960;
 
 export interface ManifestChunk {

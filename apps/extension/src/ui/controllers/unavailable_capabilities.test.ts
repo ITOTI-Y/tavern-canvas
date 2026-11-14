@@ -20,6 +20,7 @@ describe("create_unavailable_capabilities", () => {
       workflow: [],
       prompt_tag: [],
       creation: [],
+      opening: [],
     });
     await expect(capabilities.gallery.load()).resolves.toEqual([]);
     await expect(capabilities.vocabulary.load()).resolves.toEqual([]);

@@ -43,6 +43,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
@@ -215,9 +216,10 @@ describe("StudioShell desktop navigation", () => {
     return wrapper.findAll('[data-testid="studio-tabs"] > button');
   }
 
-  it("shows create, library, gallery and settings as top-bar tabs with the current one marked", async () => {
+  it("shows opening, create, library, gallery and settings as top-bar tabs with the current one marked", async () => {
     const { wrapper } = await mount_shell({ state: { route: "gallery" } });
     expect(tabs(wrapper).map((button) => button.text())).toEqual([
+      "Opening",
       "Create",
       "Library",
       "Gallery",
@@ -245,10 +247,16 @@ describe("StudioShell desktop navigation", () => {
 });
 
 describe("StudioShell mobile navigation", () => {
-  it("shows the four routes in the bottom nav", async () => {
+  it("shows the five routes in the bottom nav", async () => {
     const { wrapper } = await mount_shell({ viewport: "mobile" });
     const items = wrapper.find('[data-testid="studio-bottom-nav"]').findAll("button");
-    expect(items.map((item) => item.text())).toEqual(["Create", "Library", "Gallery", "Settings"]);
+    expect(items.map((item) => item.text())).toEqual([
+      "Opening",
+      "Create",
+      "Library",
+      "Gallery",
+      "Settings",
+    ]);
   });
 
   it("moves the routes out of the top bar and keeps the inspector toggle", async () => {
@@ -480,7 +488,7 @@ describe("StudioShell shell-level states", () => {
     const banner = wrapper.find('[data-testid="partial-banner"]');
     expect(banner.exists()).toBe(true);
     expect(banner.text()).toContain("Running with limited functionality");
-    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(4);
+    expect(wrapper.findAll('[data-testid="studio-tabs"] > button')).toHaveLength(5);
   });
 
   it("navigates to Diagnostics from the partial-initialization banner", async () => {
@@ -508,7 +516,7 @@ describe("StudioShell narrow and long locale labels", () => {
     const { wrapper } = await mount_shell({ messages });
 
     const buttons = wrapper.findAll('[data-testid="studio-tabs"] > button');
-    expect(buttons).toHaveLength(4);
+    expect(buttons).toHaveLength(5);
     expect(buttons.some((button) => button.text() === long_label)).toBe(true);
   });
 
@@ -516,6 +524,6 @@ describe("StudioShell narrow and long locale labels", () => {
     const { wrapper } = await mount_shell({ viewport: "mobile", locale: "zh-CN" });
     const nav = wrapper.find('[data-testid="studio-bottom-nav"]');
     const items = nav.findAll("button");
-    expect(items.map((item) => item.text())).toEqual(["创作", "素材库", "图库", "设置"]);
+    expect(items.map((item) => item.text())).toEqual(["开篇", "创作", "素材库", "图库", "设置"]);
   });
 });

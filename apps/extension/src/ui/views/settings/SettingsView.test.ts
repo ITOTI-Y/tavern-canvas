@@ -117,6 +117,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,

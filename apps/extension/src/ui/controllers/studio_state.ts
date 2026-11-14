@@ -141,6 +141,7 @@ export function create_initial_state(
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,

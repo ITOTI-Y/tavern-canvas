@@ -3,7 +3,7 @@ import { ProviderErrorSchema } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 export const DATABASE_NAME = "tavern_canvas_v3" as const;
-export const DATABASE_VERSION = 11 as const;
+export const DATABASE_VERSION = 12 as const;
 export const MAX_NAMESPACE_LENGTH = 128 as const;
 
 interface StoreDefinition {
@@ -108,6 +108,11 @@ export const STORE_DEFINITIONS = {
     indexes: ["namespace", "updated_at"],
     since_version: 11,
   },
+  opening_records: {
+    key_path: "record_key",
+    indexes: ["namespace", "updated_at"],
+    since_version: 12,
+  },
 } as const satisfies Record<string, StoreDefinition>;
 
 /** Stores dropped from the schema; upgrades delete them from databases created before. */
@@ -203,6 +208,10 @@ export type PromptTagPreset = z.infer<typeof PromptTagPresetSchema>;
 /** A story, prompt or comic-strip creation from the Studio's create page, with its scenes. */
 export const CreationRecordSchema = namespaced_schema({});
 export type CreationRecord = z.infer<typeof CreationRecordSchema>;
+
+/** An opening draft or an opening template from the Studio's opening page. */
+export const OpeningRecordSchema = namespaced_schema({});
+export type OpeningRecord = z.infer<typeof OpeningRecordSchema>;
 
 export const RegexRuleSchema = namespaced_schema({});
 export type RegexRule = z.infer<typeof RegexRuleSchema>;
@@ -325,7 +334,8 @@ export type BusinessRecord =
   | OutfitProfile
   | LoraProfile
   | PromptTagPreset
-  | CreationRecord;
+  | CreationRecord
+  | OpeningRecord;
 export type ImageBlobRecord = ImageBlob;
 export type ImageRecordRecord = ImageRecord;
 export type GenerationJobRecord = GenerationJob;
@@ -349,6 +359,7 @@ export type RecordByStore = {
   lora_profiles: LoraProfile;
   prompt_tag_presets: PromptTagPreset;
   creation_records: CreationRecord;
+  opening_records: OpeningRecord;
 };
 
 export interface DBSchema extends IdbDBSchema {
@@ -501,6 +512,14 @@ export interface DBSchema extends IdbDBSchema {
       updated_at: IDBValidKey;
     };
   };
+  opening_records: {
+    key: string;
+    value: OpeningRecord;
+    indexes: {
+      namespace: IDBValidKey;
+      updated_at: IDBValidKey;
+    };
+  };
 }
 
 export const RECORD_SCHEMAS: {
@@ -522,6 +541,7 @@ export const RECORD_SCHEMAS: {
   lora_profiles: LoraProfileSchema,
   prompt_tag_presets: PromptTagPresetSchema,
   creation_records: CreationRecordSchema,
+  opening_records: OpeningRecordSchema,
 };
 
 export const IMAGE_BLOB_SCHEMA: z.ZodType<ImageBlob> = ImageBlobSchema;

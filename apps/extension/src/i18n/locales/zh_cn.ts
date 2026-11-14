@@ -24,6 +24,7 @@ const app = {
 };
 
 const nav = {
+  opening: "开篇",
   create: "创作",
   library: "素材库",
   assets: "素材库",

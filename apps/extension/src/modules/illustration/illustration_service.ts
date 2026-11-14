@@ -36,6 +36,10 @@ import {
 } from "./analysis_requests.js";
 import { proposal_slots } from "./proposal_slots.js";
 import type { CreationScene } from "../creation/creation_record.js";
+import type {
+  OpeningRequestOptions,
+  OpeningStructuredRequest,
+} from "../../ui/contracts/opening_port.js";
 
 export interface SlotPromptContext {
   readonly preset: SlotPromptPreset | null;
@@ -582,6 +586,41 @@ export class IllustrationService {
       },
     );
     return planning.scenes_from_plans(paragraphs, plans, context, [], this.#deps.new_slot_id);
+  }
+
+  /**
+   * One structured request for the opening page, with that draft's connection, preset and world
+   * books in place of the analysis settings'.
+   */
+  request_opening<T>(
+    request: OpeningStructuredRequest<T>,
+    options: OpeningRequestOptions,
+  ): Promise<T> {
+    const base = this.#deps.settings();
+    const { connection } = options;
+    const settings: IllustrationSettings = {
+      ...base,
+      preset_name: options.preset_name,
+      connection:
+        connection.kind === "analysis"
+          ? base.connection
+          : connection.kind === "current"
+            ? { kind: "current" }
+            : { kind: "proxy_preset", proxy_preset: connection.proxy_preset, model: null },
+    };
+    const { worldbooks } = options;
+    return request_analysis(
+      { ...this.#deps, settings: () => settings },
+      options.text,
+      { ...request, history: [] },
+      new AbortController().signal,
+      {
+        world_info:
+          worldbooks.length === 0
+            ? { mode: "off" }
+            : { mode: "worldbook", worldbooks: [...worldbooks] },
+      },
+    );
   }
 
   /** The open chat's messages as the strip range picker lists them, each with its active swipe. */

@@ -14,6 +14,7 @@ const DEFERRED_STYLESHEET_ORDER = [
   "diagnostics",
   "settings",
   "create",
+  "opening",
 ] as const;
 
 export type DeferredStylesheetKey = (typeof DEFERRED_STYLESHEET_ORDER)[number];

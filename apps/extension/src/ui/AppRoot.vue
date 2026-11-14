@@ -16,6 +16,7 @@ import {
   TAG_SUGGESTIONS_KEY,
 } from "./contracts/portal_keys.js";
 import { CREATION_KEY, type CreationPort } from "./contracts/creation_port.js";
+import { OPENING_KEY, type OpeningPort } from "./contracts/opening_port.js";
 import type { PromptTagsPort } from "./contracts/prompt_tags_port.js";
 import type { StudioCapabilities } from "./contracts/ui_capabilities.js";
 import type { StudioRoute } from "./contracts/view_models.js";
@@ -40,6 +41,8 @@ const props = defineProps<{
   translator?: PromptTranslator | null;
   /** Replaces the port built from `illustrations`, for the Studio harness. */
   creation?: CreationPort | null;
+  /** Replaces the port built from `illustrations`, for the Studio harness. */
+  opening?: OpeningPort | null;
 }>();
 
 const ChatLayer = defineAsyncComponent(() => import("./chat/ChatLayer.vue"));
@@ -109,6 +112,18 @@ provide(
           strip_messages: () => illustrations.strip_messages(),
           plan_strip: (from, to, max_panels) => illustrations.plan_strip(from, to, max_panels),
           generate: (input) => illustrations.generate_image(input),
+        }),
+);
+
+provide(
+  OPENING_KEY,
+  props.opening ??
+    (illustrations === null
+      ? null
+      : {
+          request: (request, options) => illustrations.request_opening(request, options),
+          host: async () =>
+            (await import("../host/tavern_helper_opening.js")).create_opening_host(globalThis),
         }),
 );
 

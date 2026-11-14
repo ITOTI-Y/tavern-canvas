@@ -308,6 +308,36 @@ describe("check_locales", () => {
     expect(findings).toEqual([]);
   });
 
+  it("checks a page's deferred locale pair and counts its keys as defined", async () => {
+    await write_file(
+      "apps/extension/src/i18n/locales/en.ts",
+      'export const en_messages = { app: { name: "TavernCanvas" } };',
+    );
+    await write_file(
+      "apps/extension/src/i18n/locales/zh_cn.ts",
+      'export const zh_cn_messages = { app: { name: "智绘姬" } };',
+    );
+    await write_file(
+      "apps/extension/src/i18n/locales/deferred/page_en.ts",
+      'export const en_messages = { page: { title: "Page", hint: "Hint" } };',
+    );
+    await write_file(
+      "apps/extension/src/i18n/locales/deferred/page_zh_cn.ts",
+      'export const zh_cn_messages = { page: { title: "页面" } };',
+    );
+    await write_file(
+      "apps/extension/src/ui/AppRoot.vue",
+      '<script setup lang="ts">\nconst a = t("app.name");\nconst b = t("page.title");\n</script>',
+    );
+
+    const findings = await check_locales({ repository_root: temporary_root });
+
+    expect(findings.map((finding) => [finding.rule_id, finding.path])).toEqual([
+      ["key-set-mismatch", "page.hint"],
+      ["unused-key", "page.hint"],
+    ]);
+  });
+
   it("reports a key-set-mismatch discovered from real files on disk", async () => {
     await write_file(
       "apps/extension/src/i18n/locales/en.ts",

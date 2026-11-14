@@ -44,6 +44,7 @@ function build_state(overrides: Partial<StudioState["assets"]> = {}): StudioStat
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
@@ -302,6 +303,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
@@ -321,6 +323,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -345,6 +348,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -370,6 +374,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -392,6 +397,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
@@ -412,6 +418,7 @@ describe("Character panel CRUD and destructive confirmation", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
@@ -436,6 +443,7 @@ describe("Library multi-select", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -467,6 +475,7 @@ describe("Library multi-select", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
@@ -494,6 +503,7 @@ describe("Library entries of other chats", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
@@ -586,6 +596,7 @@ describe("Outfit panel character link", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
@@ -611,6 +622,7 @@ describe("Card thumbnails", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     const { controller } = mount_assets_view({ state });
@@ -643,6 +655,7 @@ describe("Card thumbnails", () => {
         workflow: [],
         prompt_tag: [],
         creation: [],
+        opening: [],
       },
     });
     mount_assets_view({ state });
