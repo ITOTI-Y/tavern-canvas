@@ -80,7 +80,12 @@ var _ = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	strip: S.default(C),
 	size_sets: c(T).max(20).default([]),
 	size_set_id: n().trim().min(1).max(64).nullable().default(null),
-	size_set_by_chat: a(n().min(1).max(300), n().trim().min(1).max(64).nullable()).default({})
+	size_set_by_chat: a(n().min(1).max(300), n().trim().min(1).max(64).nullable()).default({}),
+	structured_output: l([
+		"auto",
+		"tools",
+		"json_schema"
+	]).default("auto")
 }), D = r({
 	source: n().trim().min(1).max(32),
 	target: n().trim().min(1).max(128)

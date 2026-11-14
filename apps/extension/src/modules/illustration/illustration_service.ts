@@ -35,6 +35,7 @@ import {
   viewer_name,
 } from "./analysis_requests.js";
 import { proposal_slots } from "./proposal_slots.js";
+import type { StructuredAttemptLog } from "./structured_output.js";
 import type { CreationScene } from "../creation/creation_record.js";
 import type {
   OpeningRequestOptions,
@@ -66,6 +67,8 @@ export interface IllustrationJobPort {
 
 export interface IllustrationServiceDeps {
   readonly host: HostAdapter;
+  /** Records which mode each structured request used, for the diagnostics timeline. */
+  readonly on_attempt?: StructuredAttemptLog;
   readonly settings: () => IllustrationSettings;
   readonly auto_generation_enabled: () => boolean;
   readonly prompt_context: (chat_id: string | null) => Promise<SlotPromptContext>;
@@ -305,7 +308,10 @@ export class IllustrationService {
         analysis_json_schema,
         combined_analysis_json_schema,
         COMBINED_REPLY_FORMAT,
+        COMBINED_TOOLS_FORMAT,
+        ILLUSTRATIONS_TOOL,
         parse_analysis_output,
+        WARDROBE_TOOL,
         wardrobe_reply_of,
       } = await import("./analysis.js");
       const { active_sizes } = await import("./size_choice.js");
@@ -348,6 +354,40 @@ export class IllustrationService {
                 proposals: parse_proposals(raw),
                 wardrobe_reply: wardrobe_reply_of(raw),
               }),
+              // Two calls in one reply: a malformed wardrobe call leaves the pictures usable.
+              tools: {
+                tools: [
+                  {
+                    name: ILLUSTRATIONS_TOOL,
+                    description: "Submit the pictures chosen for this reply.",
+                    parameters: analysis_json_schema(sizes).value,
+                  },
+                  {
+                    name: WARDROBE_TOOL,
+                    description: "Submit the wardrobe update.",
+                    parameters: pending.json_schema.value,
+                  },
+                ],
+                choice: "required",
+                user_input: [
+                  analysis_input,
+                  "",
+                  pending.input,
+                  ...guidance_lines(settings.wardrobe_guidance),
+                  "",
+                  COMBINED_TOOLS_FORMAT,
+                ].join("\n"),
+                parse: (calls, content) => {
+                  const pictures = calls.find((call) => call.name === ILLUSTRATIONS_TOOL);
+                  const wardrobe = calls.find((call) => call.name === WARDROBE_TOOL);
+                  return {
+                    proposals: parse_proposals(pictures?.arguments ?? content),
+                    wardrobe_reply:
+                      wardrobe?.arguments ??
+                      (pictures === undefined ? wardrobe_reply_of(content) : null),
+                  };
+                },
+              },
             },
         signal,
       );

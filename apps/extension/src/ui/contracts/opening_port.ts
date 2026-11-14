@@ -1,5 +1,6 @@
 import type { InjectionKey } from "vue";
 
+import type { ToolPlan } from "../../modules/illustration/structured_output.js";
 import type { OpeningHost } from "../../modules/opening/opening_host.js";
 
 /** Which backend writes the opening: the analysis settings' connection, the chat's, or a proxy preset. */
@@ -25,6 +26,8 @@ export interface OpeningStructuredRequest<T> {
     readonly value: Readonly<Record<string, unknown>>;
   };
   readonly parse: (raw: string) => T;
+  /** Defaults to one submit tool taking `json_schema`. */
+  readonly tools?: ToolPlan<T>;
 }
 
 /** What the opening page needs from the host and the analysis model. */

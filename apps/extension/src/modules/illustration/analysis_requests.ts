@@ -13,6 +13,15 @@ import type {
   HostWorldInfo,
 } from "../../host/index.js";
 import { strip_slot_markers } from "./slot_markers.js";
+import {
+  forget_tools,
+  submit_tool,
+  tool_key,
+  tool_request,
+  uses_tools,
+  type StructuredAttemptLog,
+  type ToolPlan,
+} from "./structured_output.js";
 import { guidance_lines } from "./user_guidance.js";
 import { activate_worldbook } from "./worldbook.js";
 
@@ -142,6 +151,7 @@ export interface WardrobeRunnerDeps {
   readonly settings: () => IllustrationSettings;
   readonly resolve_analysis_key: () => Promise<string>;
   readonly new_generation_id: () => string;
+  readonly on_attempt?: StructuredAttemptLog;
 }
 
 /**
@@ -161,17 +171,41 @@ export async function run_wardrobe_request(
     model === null || settings.connection.kind === "current"
       ? settings.connection
       : { ...settings.connection, model };
-  const result = await deps.host.generate_with_preset({
-    generation_id: deps.new_generation_id(),
-    preset_name: settings.preset_name,
-    user_input: input,
-    chat_history: [],
-    connection: await to_host_connection(connection, deps.resolve_analysis_key),
-    json_schema,
-    world_info: { kind: "replace", text: "" },
-    image,
-  });
-  return result.content;
+  const host_connection = await to_host_connection(connection, deps.resolve_analysis_key);
+  const key = tool_key(deps.host, host_connection);
+  const plan = submit_tool(json_schema, (raw) => raw);
+  const send = async (tools: boolean): Promise<string> => {
+    const result = await deps.host.generate_with_preset({
+      generation_id: deps.new_generation_id(),
+      preset_name: settings.preset_name,
+      user_input: input,
+      chat_history: [],
+      connection: host_connection,
+      json_schema: tools ? null : json_schema,
+      ...(tools ? { tools: tool_request(plan) } : {}),
+      world_info: { kind: "replace", text: "" },
+      image,
+    });
+    return tools ? plan.parse(result.tool_calls ?? [], result.content) : result.content;
+  };
+  if (!uses_tools(settings.structured_output, key)) {
+    return send(false);
+  }
+  try {
+    const raw = await send(true);
+    deps.on_attempt?.("tools", "ok");
+    return raw;
+  } catch (error) {
+    if (settings.structured_output !== "auto") {
+      deps.on_attempt?.("tools", "failed");
+      throw error;
+    }
+    deps.on_attempt?.("tools", "fallback");
+    const raw = await send(false);
+    // The schema answered where tools failed, so tools are the problem on this connection.
+    forget_tools(key);
+    return raw;
+  }
 }
 
 export function create_wardrobe_runner(
@@ -192,6 +226,7 @@ export interface AnalysisRequestDeps {
   readonly resolve_analysis_key: () => Promise<string>;
   readonly new_generation_id: () => string;
   readonly wait: (milliseconds: number) => Promise<void>;
+  readonly on_attempt?: StructuredAttemptLog;
 }
 
 /**
@@ -204,6 +239,8 @@ export interface AnalysisRequest<T> {
   readonly history: readonly HostHistoryMessage[];
   readonly json_schema: HostJsonSchema;
   readonly parse: (raw: string) => T;
+  /** Defaults to one submit tool taking `json_schema`, parsed with `parse`. */
+  readonly tools?: ToolPlan<T>;
 }
 
 /** Replaces the analysis settings' world info for one request. */
@@ -225,10 +262,18 @@ export async function request_analysis<T>(
     text,
     deps.host,
   );
-  for (let attempt = 1; ; attempt += 1) {
+  const key = tool_key(deps.host, connection);
+  const plan = request.tools ?? submit_tool(request.json_schema, request.parse);
+  // After a failed tool attempt the request continues with the JSON schema; the switch is not
+  // counted as an attempt, and tools are forgotten for the session only if the schema then works,
+  // since a failure in both modes points to the backend rather than to tool calling.
+  let switched = false;
+  for (let attempt = 1; ;) {
     if (signal.aborted) {
       throw new AnalysisStoppedError("cancelled");
     }
+    const tools = !switched && uses_tools(settings.structured_output, key);
+    const mode = tools ? "tools" : "json_schema";
     const generation_id = deps.new_generation_id();
     try {
       const result = await generate_until_stopped(
@@ -237,21 +282,39 @@ export async function request_analysis<T>(
         deps.host.generate_with_preset({
           generation_id,
           preset_name: settings.preset_name,
-          user_input: request.user_input,
+          user_input: tools ? (plan.user_input ?? request.user_input) : request.user_input,
           chat_history: request.history,
           connection,
-          json_schema: request.json_schema,
+          json_schema: tools ? null : request.json_schema,
+          ...(tools ? { tools: tool_request(plan) } : {}),
           world_info,
           image: null,
         }),
         signal,
       );
-      return request.parse(result.content);
+      const value = tools
+        ? plan.parse(result.tool_calls ?? [], result.content)
+        : request.parse(result.content);
+      if (switched) {
+        forget_tools(key);
+      }
+      deps.on_attempt?.(mode, "ok");
+      return value;
     } catch (error) {
-      if (attempt >= ANALYSIS_ATTEMPTS || error instanceof AnalysisStoppedError) {
+      if (error instanceof AnalysisStoppedError) {
+        throw error;
+      }
+      if (tools && settings.structured_output === "auto") {
+        switched = true;
+        deps.on_attempt?.(mode, "fallback");
+        continue;
+      }
+      deps.on_attempt?.(mode, "failed");
+      if (attempt >= ANALYSIS_ATTEMPTS) {
         throw error;
       }
       await deps.wait(ANALYSIS_RETRY_DELAY_MS * attempt);
+      attempt += 1;
     }
   }
 }

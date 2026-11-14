@@ -72,6 +72,7 @@ var e = { opening: {
 		asking: "Thinking of the next question...",
 		generating: "Writing {step}...",
 		rewriting: "Rewriting this entry...",
+		dropped: "{n} entries were left out because they did not match the entry format; regenerate the step or add them by hand.",
 		retry: "Try again"
 	},
 	errors: {

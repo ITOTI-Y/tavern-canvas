@@ -216,6 +216,18 @@ function set_prompt_preset(value: string): void {
   update_illustration({ prompt_preset_id: preset?.id ?? null });
 }
 
+const structured_output_options = computed(() => [
+  { value: "auto", label: t("settings.illustration.structured_output_auto") },
+  { value: "json_schema", label: t("settings.illustration.structured_output_json") },
+  { value: "tools", label: t("settings.illustration.structured_output_tools") },
+]);
+
+function set_structured_output(value: string | undefined): void {
+  if (value === "auto" || value === "json_schema" || value === "tools") {
+    update_illustration({ structured_output: value });
+  }
+}
+
 const world_info_options = computed(() => [
   { value: "chat", label: t("settings.illustration.world_info_chat") },
   { value: "worldbook", label: t("settings.illustration.world_info_worldbook") },
@@ -467,6 +479,22 @@ function set_worldbook(name: string, chosen: boolean): void {
             :disabled="!settings"
             data-testid="analysis-preset-input"
             @blur="save_preset_name"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup
+        :label="t('settings.illustration.structured_output_label')"
+        :hint="t('settings.illustration.structured_output_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <AppSelect
+            :id="fieldId"
+            :described-by="describedBy"
+            :model-value="illustration?.structured_output ?? 'auto'"
+            :options="structured_output_options"
+            :placeholder="t('settings.illustration.structured_output_label')"
+            :disabled="!settings"
+            @update:model-value="set_structured_output"
           />
         </template>
       </FieldGroup>

@@ -17,6 +17,7 @@ const EVENT_TYPES = {
   MESSAGE_EDITED: "message_edited",
   CHARACTER_MESSAGE_RENDERED: "character_message_rendered",
   MORE_MESSAGES_LOADED: "more_messages_loaded",
+  CHAT_COMPLETION_SETTINGS_READY: "chat_completion_settings_ready",
 };
 
 function create_host(
@@ -84,6 +85,29 @@ describe("SillyTavernHost events", () => {
     emit(EVENT_TYPES.MESSAGE_EDITED, "not an id");
 
     expect(handler.mock.calls).toEqual([[3], [4]]);
+  });
+});
+
+describe("SillyTavernHost Advanced Preset marker", () => {
+  it("removes the marker only from the request sent right after the given generation started", () => {
+    const { host, emit } = create_host();
+    const restore = host.send_natively("inkwell-1");
+    const ready = (data: object) => {
+      emit(EVENT_TYPES.CHAT_COMPLETION_SETTINGS_READY, data);
+      return "__ap_gen_id" in data;
+    };
+
+    const before = ready({ __ap_gen_id: "a" });
+    emit("js_generation_started", "inkwell-1");
+    const own = ready({ __ap_gen_id: "b" });
+    const next = ready({ __ap_gen_id: "c" });
+    emit("js_generation_started", "other");
+    const other = ready({ __ap_gen_id: "d" });
+    restore();
+    emit("js_generation_started", "inkwell-1");
+    const after = ready({ __ap_gen_id: "e" });
+
+    expect([before, own, next, other, after]).toEqual([true, false, true, true, true]);
   });
 });
 

@@ -1,4 +1,5 @@
 import type {
+  HostChatCompletionTarget,
   DeepLEndpoint,
   DeepLTarget,
   HostChatChangeHandler,
@@ -57,7 +58,11 @@ type EventTypeName =
   | "MESSAGE_UPDATED"
   | "MESSAGE_EDITED"
   | "CHARACTER_MESSAGE_RENDERED"
-  | "MORE_MESSAGES_LOADED";
+  | "MORE_MESSAGES_LOADED"
+  | "CHAT_COMPLETION_SETTINGS_READY";
+
+/** JS-Slash-Runner's `iframe_events.GENERATION_STARTED`, emitted with the `generate` call's generation id. */
+const JS_GENERATION_STARTED = "js_generation_started";
 
 /** A SillyTavern chat message as stored in `context.chat`; only the fields TavernCanvas touches. */
 export interface SillyTavernChatMessage {
@@ -75,7 +80,12 @@ export interface SillyTavernContextSurface {
   saveChat(): Promise<void>;
   readonly eventSource: SillyTavernEventSource;
   readonly eventTypes: Readonly<Record<EventTypeName, string>>;
+  readonly mainApi?: unknown;
+  readonly chatCompletionSettings?: unknown;
 }
+
+/** Most sources keep their model under `<source>_model`; Google AI Studio is the exception. */
+const MODEL_SETTING: Readonly<Record<string, string>> = { makersuite: "google_model" };
 
 export interface SillyTavernUploadResponse {
   readonly ok: boolean;
@@ -219,6 +229,21 @@ export class SillyTavernHost {
     return typeof chat_id === "string" && chat_id.trim().length > 0 ? chat_id : null;
   }
 
+  chat_completion_target(): HostChatCompletionTarget | null {
+    const context = this.#get_context();
+    const settings = context.chatCompletionSettings;
+    if (context.mainApi !== "openai" || typeof settings !== "object" || settings === null) {
+      return null;
+    }
+    const values = settings as Readonly<Record<string, unknown>>;
+    const source = values.chat_completion_source;
+    if (typeof source !== "string") {
+      return null;
+    }
+    const model = values[MODEL_SETTING[source] ?? `${source}_model`];
+    return { source, model: typeof model === "string" ? model : "" };
+  }
+
   #listen(listeners: readonly (readonly [EventTypeName, SillyTavernEventListener])[]): () => void {
     const context = this.#get_context();
     const registered = listeners.map(
@@ -236,6 +261,36 @@ export class SillyTavernHost {
       for (const [event_name, listener] of registered) {
         context.eventSource.removeListener(event_name, listener);
       }
+    };
+  }
+
+  /**
+   * Until the returned function is called, the chat completion request that JS-Slash-Runner sends
+   * for `generation_id` loses the Advanced Preset marker, so SillyTavern sends it as built. Advanced
+   * Preset's own sending replaces `tool_choice` with `auto`, adds its workflow tools and rejects a
+   * reply that holds only tool calls; the preset's prompt is assembled before the marker is set.
+   * The request is told apart by JS-Slash-Runner's `js_generation_started` event, emitted with the
+   * generation id right before its request; the tools themselves are added to the request by a
+   * listener that runs after this one.
+   */
+  send_natively(generation_id: string): () => void {
+    const context = this.#get_context();
+    const settings_ready = context.eventTypes.CHAT_COMPLETION_SETTINGS_READY;
+    let ours = false;
+    const on_started: SillyTavernEventListener = (id) => {
+      ours = id === generation_id;
+    };
+    const on_settings: SillyTavernEventListener = (data) => {
+      if (ours && is_plain_record(data)) {
+        ours = false;
+        delete data.__ap_gen_id;
+      }
+    };
+    context.eventSource.on(JS_GENERATION_STARTED, on_started);
+    context.eventSource.on(settings_ready, on_settings);
+    return () => {
+      context.eventSource.removeListener(JS_GENERATION_STARTED, on_started);
+      context.eventSource.removeListener(settings_ready, on_settings);
     };
   }
 

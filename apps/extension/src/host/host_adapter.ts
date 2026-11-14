@@ -69,6 +69,31 @@ export interface HostJsonSchema {
   readonly value: Readonly<Record<string, unknown>>;
 }
 
+/** A function the model may call; `parameters` is the JSON schema of its arguments. */
+export interface HostTool {
+  readonly name: string;
+  readonly description: string;
+  readonly parameters: Readonly<Record<string, unknown>>;
+}
+
+/** `required` lets the model call several tools in one reply; a name forces that one call. */
+export interface HostToolRequest {
+  readonly tools: readonly HostTool[];
+  readonly choice: "required" | { readonly name: string };
+}
+
+export interface HostToolCall {
+  readonly name: string;
+  /** JSON text, as the model wrote it. */
+  readonly arguments: string;
+}
+
+/** The chat completion backend SillyTavern sends to, and its model. */
+export interface HostChatCompletionTarget {
+  readonly source: string;
+  readonly model: string;
+}
+
 /** `chat` lets SillyTavern insert the world info it activates for the current chat. */
 export type HostWorldInfo =
   { readonly kind: "chat" } | { readonly kind: "replace"; readonly text: string };
@@ -95,6 +120,8 @@ export interface PresetGenerationRequest {
   readonly chat_history: readonly HostHistoryMessage[];
   readonly connection: HostGenerationConnection;
   readonly json_schema: HostJsonSchema | null;
+  /** Sent in place of `json_schema`; the two cannot go together. */
+  readonly tools?: HostToolRequest;
   readonly world_info: HostWorldInfo;
   /** A data URL sent with the user input; the connection's model must accept images. */
   readonly image: string | null;
@@ -115,6 +142,7 @@ export interface HostWorldbookEntry {
 export interface PresetGenerationResult {
   readonly content: string;
   readonly reasoning: string | null;
+  readonly tool_calls?: readonly HostToolCall[];
 }
 
 /** A SillyTavern global regex script owned by the extension, keyed by a stable id. */
@@ -160,6 +188,8 @@ export interface HostAdapter {
   /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;
+  /** `null` when SillyTavern is set to a text completion API, which cannot call tools. */
+  chat_completion_target?(): HostChatCompletionTarget | null;
   list_worldbooks(): readonly string[];
   read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]>;
   stop_generation(generation_id: string): void;

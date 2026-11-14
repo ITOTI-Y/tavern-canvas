@@ -1,5 +1,5 @@
 import { F as e, L as t, M as n, R as r, W as i, _ as a, at as o, dt as s, g as c, gt as l, h as u, ht as d, m as f, n as p, p as m, pt as h, q as g, rt as _, tt as v, u as y, ut as b, v as x, x as S, y as C } from "./vue-i18n-XoxYzLIP.js";
-import { n as w } from "./create_i18n-DJU3jo1w.js";
+import { n as w } from "./create_i18n-H4kmaJLA.js";
 import { t as T } from "./AppIcon-DD754F_c.js";
 import { n as E, r as D, t as O } from "./StateSurface-C9eJEtTP.js";
 import { t as k } from "./components_styles-BXC5Dc_L.js";

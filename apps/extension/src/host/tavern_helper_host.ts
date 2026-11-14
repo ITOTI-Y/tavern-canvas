@@ -1,4 +1,5 @@
 import type {
+  HostToolCall,
   HostChatMessageSnapshot,
   HostChatSnapshot,
   HostHistoryMessage,
@@ -63,6 +64,17 @@ export interface TavernHelperGenerateConfig {
     readonly value: Readonly<Record<string, unknown>>;
     readonly strict: true;
   };
+  /** OpenAI format; JS-Slash-Runner converts `tool_choice` for Claude and Gemini. */
+  readonly tools?: readonly {
+    readonly type: "function";
+    readonly function: {
+      readonly name: string;
+      readonly description: string;
+      readonly parameters: Readonly<Record<string, unknown>>;
+    };
+  }[];
+  readonly tool_choice?:
+    "required" | { readonly type: "function"; readonly function: { readonly name: string } };
   /**
    * Data URLs. A single image goes onto the chat message, where SillyTavern drops it unless it
    * recognizes the model as accepting images; an array is written into the final request as is.
@@ -212,15 +224,28 @@ function normalize_chat_message(message: TavernHelperChatMessage): HostChatMessa
   };
 }
 
+function read_tool_calls(value: unknown): HostToolCall[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.flatMap((call: unknown) => {
+    const fn = is_plain_record(call) && is_plain_record(call.function) ? call.function : null;
+    return fn !== null && typeof fn.name === "string" && typeof fn.arguments === "string"
+      ? [{ name: fn.name, arguments: fn.arguments }]
+      : [];
+  });
+}
+
 function read_generation_result(value: unknown): PresetGenerationResult {
   if (typeof value === "string") {
-    return { content: value, reasoning: null };
+    return { content: value, reasoning: null, tool_calls: [] };
   }
   if (is_plain_record(value) && typeof value.content === "string") {
     return {
       content: value.content,
       reasoning:
         typeof value.reasoning === "string" && value.reasoning.length > 0 ? value.reasoning : null,
+      tool_calls: read_tool_calls(value.tool_calls),
     };
   }
   throw new Error("TavernHelper.generate returned neither text nor a detailed result");
@@ -402,9 +427,20 @@ export class TavernHelperHost {
               },
             },
           }),
-      ...(request.json_schema === null
-        ? {}
-        : { json_schema: { ...request.json_schema, strict: true } }),
+      ...(request.tools !== undefined
+        ? {
+            tools: request.tools.tools.map((tool) => ({
+              type: "function" as const,
+              function: tool,
+            })),
+            tool_choice:
+              request.tools.choice === "required"
+                ? "required"
+                : { type: "function" as const, function: { name: request.tools.choice.name } },
+          }
+        : request.json_schema === null
+          ? {}
+          : { json_schema: { ...request.json_schema, strict: true } }),
       ...(request.image === null ? {} : { image: [request.image] }),
     });
     return read_generation_result(result);

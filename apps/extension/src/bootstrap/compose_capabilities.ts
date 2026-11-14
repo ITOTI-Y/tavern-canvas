@@ -18,6 +18,7 @@ import {
   type StorageDatabase,
 } from "@tavern-canvas/storage";
 import { create_wardrobe_runner } from "../modules/illustration/analysis_requests.js";
+import type { StructuredAttemptLog } from "../modules/illustration/structured_output.js";
 
 import type { BootstrapProbeResult } from "../host/index.js";
 import type { CompositeHostAdapter } from "../host/composite_host.js";
@@ -510,8 +511,20 @@ export async function compose_studio_capabilities(
                   ),
                 );
               };
+              const on_attempt: StructuredAttemptLog = (mode, outcome) => {
+                timeline.append({
+                  event_code: `analysis.${mode}.${outcome}`,
+                  module_id: "analysis",
+                  generation_anchor: null,
+                  request_id: null,
+                  job_id: null,
+                  provider_id: null,
+                  error_code: null,
+                });
+              };
               illustrations = new IllustrationService({
                 host,
+                on_attempt,
                 settings: () => settings_adapter.get_settings().illustration,
                 auto_generation_enabled: () =>
                   settings_adapter.get_settings().auto_generation_enabled,
@@ -530,6 +543,7 @@ export async function compose_studio_capabilities(
                     settings: () => settings_adapter.get_settings().illustration,
                     resolve_analysis_key,
                     new_generation_id: () => crypto.randomUUID(),
+                    on_attempt,
                   }),
                   new_id: () => crypto.randomUUID(),
                 }),

@@ -76,6 +76,7 @@ export const zh_cn_messages = {
       asking: "正在想下一个问题……",
       generating: "正在生成“{step}”……",
       rewriting: "正在重写这一条……",
+      dropped: "有 {n} 条条目格式不符，已经略去；可以重新生成本步，或手动补上。",
       retry: "重试",
     },
     errors: {

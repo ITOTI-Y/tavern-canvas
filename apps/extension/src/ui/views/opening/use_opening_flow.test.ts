@@ -67,7 +67,7 @@ describe("use_opening_flow", () => {
       },
     });
     const { port, asked } = fake_port({
-      tavern_canvas_opening_question: [JSON.stringify({ question: QUESTION })],
+      tavern_canvas_opening_turn: [JSON.stringify({ question: QUESTION, entries: [] })],
       tavern_canvas_opening_entries: [
         JSON.stringify({
           entries: [{ title: "势力｜公会", constant: false, keys: ["公会"], content: "垄断晶核" }],
@@ -89,7 +89,7 @@ describe("use_opening_flow", () => {
     await flow.next(draft());
     expect(draft().states[1]).toMatchObject({ status: "done", message: { speaker: "伊芙琳" } });
     expect(asked).toEqual([
-      "tavern_canvas_opening_question",
+      "tavern_canvas_opening_turn",
       "tavern_canvas_opening_entries",
       "tavern_canvas_opening_message",
     ]);

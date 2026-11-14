@@ -57,6 +57,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
     size_sets: [],
     size_set_id: null,
     size_set_by_chat: {},
+    structured_output: "auto",
   },
   translation: {
     deepl_endpoint: "free",

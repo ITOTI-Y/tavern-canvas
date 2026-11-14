@@ -782,6 +782,13 @@ watch(selected_id, () => {
                     : t("opening.status.rewriting")
               }}
             </p>
+            <p
+              v-if="busy === null && flow.dropped(draft.id) > 0 && has_result"
+              :class="styles.hint"
+              role="status"
+            >
+              {{ t("opening.status.dropped", { n: flow.dropped(draft.id) }) }}
+            </p>
             <div v-if="flow_error !== null" :class="styles.banner" role="alert">
               <span>{{ error_text(flow_error) }}</span>
               <AppButton

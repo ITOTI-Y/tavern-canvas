@@ -150,6 +150,11 @@ export const IllustrationSettingsSchema = z.strictObject({
   size_set_by_chat: z
     .record(z.string().min(1).max(300), z.string().trim().min(1).max(64).nullable())
     .default({}),
+  /**
+   * How analysis replies are kept structured: `auto` calls a submit tool and falls back to a JSON
+   * schema when the connection cannot call tools; the other two use only that mode.
+   */
+  structured_output: z.enum(["auto", "tools", "json_schema"]).default("auto"),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

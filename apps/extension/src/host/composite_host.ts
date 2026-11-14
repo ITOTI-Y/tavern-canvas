@@ -1,6 +1,7 @@
 import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
 import type {
+  HostChatCompletionTarget,
   DeepLEndpoint,
   DeepLTarget,
   HostAdapter,
@@ -53,6 +54,10 @@ export class CompositeHostAdapter implements HostAdapter {
 
   get_active_chat_id(): string | null {
     return this.#sillytavern.get_active_chat_id();
+  }
+
+  chat_completion_target(): HostChatCompletionTarget | null {
+    return this.#sillytavern.chat_completion_target();
   }
 
   get_active_chat(): Promise<HostChatSnapshot> {
@@ -129,8 +134,16 @@ export class CompositeHostAdapter implements HostAdapter {
     return this.#helper.replace_message_text(message_id, expected, next);
   }
 
-  generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
-    return this.#helper.generate_with_preset(request);
+  async generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
+    if (request.tools === undefined) {
+      return this.#helper.generate_with_preset(request);
+    }
+    const restore = this.#sillytavern.send_natively(request.generation_id);
+    try {
+      return await this.#helper.generate_with_preset(request);
+    } finally {
+      restore();
+    }
   }
 
   list_worldbooks(): readonly string[] {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import type { HostToolCall } from "../../host/index.js";
 import type { OpeningStructuredRequest } from "../../ui/contracts/opening_port.js";
 import { AnalysisParseError } from "../illustration/analysis_error.js";
 import { json_candidates } from "../illustration/model_json.js";
@@ -46,16 +47,6 @@ const ENTRY_VALUE = {
   },
   required: ["title", "constant", "keys", "content"],
   additionalProperties: false,
-} as const;
-
-export const QUESTION_JSON_SCHEMA = {
-  name: "tavern_canvas_opening_question",
-  value: {
-    type: "object",
-    properties: { question: { anyOf: [QUESTION_VALUE, { type: "null" }] } },
-    required: ["question"],
-    additionalProperties: false,
-  },
 } as const;
 
 export const ENTRIES_JSON_SCHEMA = {
@@ -199,41 +190,16 @@ function first_match<T>(raw: string, key: string, schema: z.ZodType<T>, what: st
   throw new AnalysisParseError(`The reply contains no ${what} JSON object`, raw);
 }
 
-const QuestionReplySchema = z.object({
-  question: z
-    .preprocess(
-      (value) =>
-        typeof value === "object" &&
-        value !== null &&
-        "options" in value &&
-        Array.isArray(value.options)
-          ? { ...value, options: value.options.slice(0, MAX_OPTIONS) }
-          : value,
-      OpeningQuestionSchema,
-    )
-    .nullable(),
-});
-
-/** Asks the model for the next question of the step, or `null` when it can write the step. */
-export function question_request(
-  draft: OpeningDraftPayload,
-  index: number,
-  rounds_left: number,
-): OpeningStructuredRequest<OpeningQuestion | null> {
-  return {
-    user_input: [
-      ...context_lines(draft, index),
-      "",
-      `Decide whether one more question is needed before writing this step. At most ${String(rounds_left)} more may be asked in this step.`,
-      "Ask only about a choice that changes what this step writes and that the description and the answers leave open. Never ask about anything already settled.",
-      "If you ask: write the question, a one-sentence reason it matters (why), and 3 or 4 options, each a short label with a one-sentence detail. Set multiple to true only when several options can hold at once. Do not add an 'other' option; the user can always type their own.",
-      "If nothing important is open, set question to null.",
-      'Reply with only a JSON object of the form {"question": {...} or null}.',
-    ].join("\n"),
-    json_schema: QUESTION_JSON_SCHEMA,
-    parse: (raw) => first_match(raw, "question", QuestionReplySchema, "question").question,
-  };
-}
+const QuestionSchema = z.preprocess(
+  (value) =>
+    typeof value === "object" &&
+    value !== null &&
+    "options" in value &&
+    Array.isArray(value.options)
+      ? { ...value, options: value.options.slice(0, MAX_OPTIONS) }
+      : value,
+  OpeningQuestionSchema,
+);
 
 const ReplyEntrySchema = z.object({
   title: z.string().trim().min(1).max(120),
@@ -246,8 +212,40 @@ const ReplyEntrySchema = z.object({
   content: z.string().trim().min(1).max(8_000),
 });
 
+const MAX_ENTRIES = 30;
+
 function with_id(entry: z.infer<typeof ReplyEntrySchema>): OpeningEntry {
   return { id: crypto.randomUUID(), ...entry, keys: entry.constant ? [] : entry.keys };
+}
+
+/** Entries written by a step; `dropped` counts the ones that failed validation and were left out. */
+export interface WrittenEntries {
+  readonly entries: OpeningEntry[];
+  readonly dropped: number;
+}
+
+/** Each entry is checked on its own, so one malformed entry no longer costs the whole step. */
+function written_entries(items: readonly unknown[], raw: string): WrittenEntries {
+  const entries = items.slice(0, MAX_ENTRIES).flatMap((item) => {
+    const parsed = ReplyEntrySchema.safeParse(item);
+    return parsed.success ? [with_id(parsed.data)] : [];
+  });
+  if (entries.length === 0) {
+    throw new AnalysisParseError("The reply contains no valid entry", raw);
+  }
+  return { entries, dropped: items.length - entries.length };
+}
+
+function call_arguments(calls: readonly HostToolCall[], name: string): unknown[] {
+  return calls
+    .filter((call) => call.name === name)
+    .flatMap((call) => {
+      try {
+        return [JSON.parse(call.arguments) as unknown];
+      } catch {
+        return [null];
+      }
+    });
 }
 
 const ENTRY_RULES = [
@@ -258,26 +256,202 @@ const ENTRY_RULES = [
   "- content: self-contained prose a storyteller can rely on, without referring to other entries by number.",
 ];
 
+const MESSAGE_RULES = [
+  "The opening message is the first message of the roleplay, sent by the character who meets {{user}} first.",
+  "- speaker: that character's name.",
+  "- text: the whole message, following the narration person, style and length settled above, ending at a moment {{user}} can answer. Do not speak or act for {{user}}.",
+];
+
+const QUESTION_RULES = [
+  "Ask only about a choice that changes what this step writes and that the description and the answers leave open. Never ask about anything already settled.",
+  "A question has the question text, a one-sentence reason it matters (why), and 3 or 4 options, each a short label with a one-sentence detail. Set multiple to true only when several options can hold at once. Do not add an 'other' option; the user can always type their own.",
+];
+
+const ASK_TOOL = "ask_question";
+const ENTRY_TOOL = "add_entry";
+const MESSAGE_TOOL = "write_message";
+
+const EntriesReplySchema = z.object({ entries: z.array(z.unknown()).min(1) });
+
+/** Writes the step's entries: one `add_entry` call per entry, or one JSON array. */
 export function entries_request(
   draft: OpeningDraftPayload,
   index: number,
-): OpeningStructuredRequest<OpeningEntry[]> {
+): OpeningStructuredRequest<WrittenEntries> {
+  const context = [
+    ...context_lines(draft, index),
+    "",
+    "Now write this step's result as world book entries.",
+    ...ENTRY_RULES,
+  ];
+  const parse = (raw: string): WrittenEntries =>
+    written_entries(first_match(raw, "entries", EntriesReplySchema, "entries").entries, raw);
+  return {
+    user_input: [...context, 'Reply with only a JSON object of the form {"entries": [...]}.'].join(
+      "\n",
+    ),
+    json_schema: ENTRIES_JSON_SCHEMA,
+    parse,
+    tools: {
+      tools: [
+        { name: ENTRY_TOOL, description: "Add one world book entry.", parameters: ENTRY_VALUE },
+      ],
+      choice: "required",
+      user_input: [...context, `Call ${ENTRY_TOOL} once for each entry, all in this reply.`].join(
+        "\n",
+      ),
+      parse: (calls, content) => {
+        const items = call_arguments(calls, ENTRY_TOOL);
+        return items.length === 0 ? parse(content) : written_entries(items, content);
+      },
+    },
+  };
+}
+
+export type OpeningTurn =
+  | { readonly kind: "question"; readonly question: OpeningQuestion }
+  | ({ readonly kind: "entries" } & WrittenEntries)
+  | { readonly kind: "message"; readonly message: OpeningMessage };
+
+const TURN_ENTRIES_SCHEMA = {
+  name: "tavern_canvas_opening_turn",
+  value: {
+    type: "object",
+    properties: {
+      question: { anyOf: [QUESTION_VALUE, { type: "null" }] },
+      entries: { type: "array", items: ENTRY_VALUE },
+    },
+    required: ["question", "entries"],
+    additionalProperties: false,
+  },
+} as const;
+
+const TURN_MESSAGE_SCHEMA = {
+  name: "tavern_canvas_opening_turn",
+  value: {
+    type: "object",
+    properties: {
+      question: { anyOf: [QUESTION_VALUE, { type: "null" }] },
+      message: { anyOf: [MESSAGE_JSON_SCHEMA.value, { type: "null" }] },
+    },
+    required: ["question", "message"],
+    additionalProperties: false,
+  },
+} as const;
+
+const TurnReplySchema = z.object({
+  question: z.unknown().optional(),
+  entries: z.array(z.unknown()).optional(),
+  message: z.unknown().optional(),
+});
+
+/**
+ * One request that either asks the step's next question or, when nothing important is open,
+ * writes the step at once; with tools the model picks by which tool it calls.
+ */
+export function turn_request(
+  draft: OpeningDraftPayload,
+  index: number,
+  rounds_left: number,
+): OpeningStructuredRequest<OpeningTurn> {
+  const message_step = draft.steps[index]?.output === "message";
+  const write_rules = message_step
+    ? MESSAGE_RULES
+    : ["The step's result is world book entries.", ...ENTRY_RULES];
+  const context = [
+    ...context_lines(draft, index),
+    "",
+    `Either ask one more question before writing this step (at most ${String(rounds_left)} more may be asked in this step), or write the step now if nothing important is open.`,
+    ...QUESTION_RULES,
+    ...write_rules,
+  ];
+
+  function turn_of(question: unknown, written: () => OpeningTurn, raw: string): OpeningTurn {
+    const asked = QuestionSchema.safeParse(question);
+    if (asked.success) {
+      return { kind: "question", question: asked.data };
+    }
+    if (question !== null && question !== undefined) {
+      throw new AnalysisParseError("The reply asks a malformed question", raw);
+    }
+    return written();
+  }
+
+  const parse = (raw: string): OpeningTurn => {
+    const reply = first_match(raw, "question", TurnReplySchema, "opening turn");
+    return turn_of(
+      reply.question,
+      () => {
+        if (message_step) {
+          const message = OpeningMessageSchema.safeParse(reply.message);
+          if (!message.success) {
+            throw new AnalysisParseError("The reply contains no opening message", raw);
+          }
+          return { kind: "message", message: message.data };
+        }
+        return { kind: "entries", ...written_entries(reply.entries ?? [], raw) };
+      },
+      raw,
+    );
+  };
+
   return {
     user_input: [
-      ...context_lines(draft, index),
-      "",
-      "Now write this step's result as world book entries.",
-      ...ENTRY_RULES,
-      'Reply with only a JSON object of the form {"entries": [...]}.',
+      ...context,
+      message_step
+        ? 'Reply with only a JSON object of the form {"question": {...} or null, "message": {"speaker": "...", "text": "..."} or null}: a question and a null message, or a null question and the message.'
+        : 'Reply with only a JSON object of the form {"question": {...} or null, "entries": [...]}: a question and no entries, or a null question and the entries.',
     ].join("\n"),
-    json_schema: ENTRIES_JSON_SCHEMA,
-    parse: (raw) =>
-      first_match(
-        raw,
-        "entries",
-        z.object({ entries: z.array(ReplyEntrySchema).min(1).max(30) }),
-        "entries",
-      ).entries.map(with_id),
+    json_schema: message_step ? TURN_MESSAGE_SCHEMA : TURN_ENTRIES_SCHEMA,
+    parse,
+    tools: {
+      tools: [
+        {
+          name: ASK_TOOL,
+          description: "Ask the user one question with options.",
+          parameters: QUESTION_VALUE,
+        },
+        message_step
+          ? {
+              name: MESSAGE_TOOL,
+              description: "Write the opening message.",
+              parameters: MESSAGE_JSON_SCHEMA.value,
+            }
+          : { name: ENTRY_TOOL, description: "Add one world book entry.", parameters: ENTRY_VALUE },
+      ],
+      choice: "required",
+      user_input: [
+        ...context,
+        message_step
+          ? `Call ${ASK_TOOL} once to ask, or ${MESSAGE_TOOL} once to write the message.`
+          : `Call ${ASK_TOOL} once to ask, or ${ENTRY_TOOL} once for each entry, all in this reply, to write the step.`,
+      ].join("\n"),
+      parse: (calls, content) => {
+        const [question] = call_arguments(calls, ASK_TOOL);
+        if (calls.length === 0) {
+          return parse(content);
+        }
+        return turn_of(
+          question ?? null,
+          () => {
+            if (message_step) {
+              const message = OpeningMessageSchema.safeParse(
+                call_arguments(calls, MESSAGE_TOOL)[0],
+              );
+              if (!message.success) {
+                throw new AnalysisParseError("The reply contains no opening message", content);
+              }
+              return { kind: "message", message: message.data };
+            }
+            return {
+              kind: "entries",
+              ...written_entries(call_arguments(calls, ENTRY_TOOL), content),
+            };
+          },
+          content,
+        );
+      },
+    },
   };
 }
 
@@ -314,9 +488,8 @@ export function message_request(
     user_input: [
       ...context_lines(draft, index),
       "",
-      "Now write the opening message: the first message of the roleplay, sent by the character who meets {{user}} first.",
-      "- speaker: that character's name.",
-      "- text: the whole message, following the narration person, style and length settled above, ending at a moment {{user}} can answer. Do not speak or act for {{user}}.",
+      "Now write the opening message.",
+      ...MESSAGE_RULES,
       'Reply with only a JSON object of the form {"speaker": "...", "text": "..."}.',
     ].join("\n"),
     json_schema: MESSAGE_JSON_SCHEMA,

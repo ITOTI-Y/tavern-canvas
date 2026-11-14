@@ -7,13 +7,16 @@ import { a as u, n as d } from "./size_choice-BAuN1-V0.js";
 var f = /* @__PURE__ */ e({
 	ANALYSIS_JSON_SCHEMA: () => v,
 	COMBINED_REPLY_FORMAT: () => x,
+	COMBINED_TOOLS_FORMAT: () => w,
+	ILLUSTRATIONS_TOOL: () => S,
 	POSITION_JSON_SCHEMA: () => h,
 	PositionSchema: () => g,
+	WARDROBE_TOOL: () => C,
 	analysis_json_schema: () => y,
 	center_of: () => _,
 	combined_analysis_json_schema: () => b,
-	parse_analysis_output: () => T,
-	wardrobe_reply_of: () => S
+	parse_analysis_output: () => O,
+	wardrobe_reply_of: () => T
 }), p = {
 	left: .1,
 	"center-left": .3,
@@ -139,8 +142,8 @@ function b(e, t = v) {
 		}
 	};
 }
-var x = "Answer both requests above in one JSON object of the form {\"illustrations\":[...],\"wardrobe\":{\"characters\":[...],\"initial_outfits\":{...}}}. This replaces the reply format each request states.";
-function S(e) {
+var x = "Answer both requests above in one JSON object of the form {\"illustrations\":[...],\"wardrobe\":{\"characters\":[...],\"initial_outfits\":{...}}}. This replaces the reply format each request states.", S = "submit_illustrations", C = "submit_wardrobe", w = `Answer both requests above in this one reply by calling two tools: ${S} with {"illustrations":[...]} and ${C} with {"characters":[...],"initial_outfits":{...}}. This replaces the reply format each request states.`;
+function T(e) {
 	for (let t of l(e, "illustrations")) try {
 		let e = JSON.parse(t);
 		if (typeof e.wardrobe == "object" && e.wardrobe !== null) return JSON.stringify(e.wardrobe);
@@ -149,7 +152,7 @@ function S(e) {
 	}
 	return null;
 }
-var C = t({
+var E = t({
 	paragraph: a().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	caption: n().trim().max(600).catch(""),
@@ -166,8 +169,8 @@ var C = t({
 		...t,
 		..._(e)
 	}))
-})), w = t({ illustrations: r(C) });
-function T(e, t, n, r = []) {
+})), D = t({ illustrations: r(E) });
+function O(e, t, n, r = []) {
 	for (let i of l(e, "illustrations")) {
 		let e;
 		try {
@@ -175,7 +178,7 @@ function T(e, t, n, r = []) {
 		} catch {
 			continue;
 		}
-		let a = w.safeParse(e);
+		let a = D.safeParse(e);
 		if (!a.success) continue;
 		let o = /* @__PURE__ */ new Set();
 		return a.data.illustrations.filter((e) => e.paragraph >= t || o.has(e.paragraph) ? !1 : (o.add(e.paragraph), !0)).slice(0, n).map(({ size: e, ...t }) => {

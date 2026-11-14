@@ -180,6 +180,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         size_sets: [],
         size_set_id: null,
         size_set_by_chat: {},
+        structured_output: "auto",
       },
       translation: { deepl_endpoint: "free", glossary: [] },
       ui: {
@@ -230,6 +231,7 @@ export function create_host_environment(options: HostEnvironmentOptions): {
       MESSAGE_EDITED: "MESSAGE_EDITED",
       CHARACTER_MESSAGE_RENDERED: "CHARACTER_MESSAGE_RENDERED",
       MORE_MESSAGES_LOADED: "MORE_MESSAGES_LOADED",
+      CHAT_COMPLETION_SETTINGS_READY: "CHAT_COMPLETION_SETTINGS_READY",
     },
     extensionSettings: extension_settings,
     saveSettingsDebounced() {

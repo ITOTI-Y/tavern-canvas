@@ -144,6 +144,11 @@ export function combined_analysis_json_schema(
 export const COMBINED_REPLY_FORMAT =
   'Answer both requests above in one JSON object of the form {"illustrations":[...],"wardrobe":{"characters":[...],"initial_outfits":{...}}}. This replaces the reply format each request states.';
 
+export const ILLUSTRATIONS_TOOL = "submit_illustrations";
+export const WARDROBE_TOOL = "submit_wardrobe";
+
+export const COMBINED_TOOLS_FORMAT = `Answer both requests above in this one reply by calling two tools: ${ILLUSTRATIONS_TOOL} with {"illustrations":[...]} and ${WARDROBE_TOOL} with {"characters":[...],"initial_outfits":{...}}. This replaces the reply format each request states.`;
+
 /** The `wardrobe` member of a combined reply as JSON text, or `null` when the reply has none. */
 export function wardrobe_reply_of(raw: string): string | null {
   for (const candidate of json_candidates(raw, "illustrations")) {

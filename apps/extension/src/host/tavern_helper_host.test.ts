@@ -133,7 +133,7 @@ describe("TavernHelperHost", () => {
       image: "data:image/jpeg;base64,AAAA",
     });
 
-    expect(result).toEqual({ content: '{"a":1}', reasoning: "thinking" });
+    expect(result).toEqual({ content: '{"a":1}', reasoning: "thinking", tool_calls: [] });
     expect(generate).toHaveBeenCalledWith({
       generation_id: "g1",
       preset_name: "in_use",
@@ -146,6 +146,54 @@ describe("TavernHelperHost", () => {
       json_schema: { name: "illustrations", value: { type: "object" }, strict: true },
       image: ["data:image/jpeg;base64,AAAA"],
     });
+  });
+
+  it("sends tools in place of the schema and reads the tool calls back", async () => {
+    const generate = vi.fn(() =>
+      Promise.resolve({
+        content: "",
+        tool_calls: [
+          { id: "1", type: "function", function: { name: "add_entry", arguments: '{"a":1}' } },
+          { id: "2", type: "function", function: { name: "add_entry", arguments: '{"a":2}' } },
+        ],
+      }),
+    );
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+
+    const result = await host.generate_with_preset({
+      generation_id: "g1",
+      preset_name: "in_use",
+      user_input: "write",
+      chat_history: [],
+      connection: { kind: "current" },
+      json_schema: null,
+      tools: {
+        tools: [{ name: "add_entry", description: "Add one.", parameters: { type: "object" } }],
+        choice: "required",
+      },
+      world_info: { kind: "chat" },
+      image: null,
+    });
+
+    expect(generate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "add_entry",
+              description: "Add one.",
+              parameters: { type: "object" },
+            },
+          },
+        ],
+        tool_choice: "required",
+      }),
+    );
+    expect(result.tool_calls).toEqual([
+      { name: "add_entry", arguments: '{"a":1}' },
+      { name: "add_entry", arguments: '{"a":2}' },
+    ]);
   });
 
   it("sends the given messages as the chat history, oldest first", async () => {

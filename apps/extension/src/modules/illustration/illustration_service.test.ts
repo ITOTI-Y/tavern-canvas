@@ -11,6 +11,8 @@ import { AnalysisStoppedError, create_wardrobe_runner } from "./analysis_request
 
 import type {
   HostAdapter,
+  HostChatCompletionTarget,
+  HostToolCall,
   HostGenerationHandler,
   HostSwipeLocation,
   HostWorldbookEntry,
@@ -43,6 +45,7 @@ const SETTINGS: IllustrationSettings = {
   size_sets: [],
   size_set_id: null,
   size_set_by_chat: {},
+  structured_output: "auto",
 };
 
 class MemoryHost {
@@ -59,6 +62,8 @@ class MemoryHost {
   edit_before_replace = false;
   failures_before_reply = 0;
   hang_replies = false;
+  tool_target: HostChatCompletionTarget | null = null;
+  tool_calls: HostToolCall[] = [];
   readonly stopped: string[] = [];
 
   readonly adapter = {
@@ -140,8 +145,13 @@ class MemoryHost {
         this.failures_before_reply -= 1;
         return Promise.reject(new Error("upstream 502"));
       }
-      return Promise.resolve({ content: this.analysis_reply, reasoning: null });
+      return Promise.resolve({
+        content: this.tool_calls.length > 0 ? "" : this.analysis_reply,
+        reasoning: null,
+        tool_calls: this.tool_calls,
+      });
     },
+    chat_completion_target: () => this.tool_target,
     list_worldbooks: () => [...this.worldbooks.keys()],
     read_worldbook: (name: string) => Promise.resolve(this.worldbooks.get(name) ?? []),
     stop_generation: (generation_id: string) => {
@@ -311,6 +321,36 @@ describe("IllustrationService.analyze", () => {
     expect(host.wardrobes.get("3:0")).toEqual({ schema_version: 1, wearing: [] });
     expect(events).not.toContain("wardrobe_failed");
     expect(record.slots).toHaveLength(1);
+  });
+
+  it("asks for both through two tools in one reply, keeping the pictures when the wardrobe call is malformed", async () => {
+    const host = new MemoryHost();
+    host.tool_target = { source: "openrouter", model: "m" };
+    host.tool_calls = [
+      {
+        name: "submit_illustrations",
+        arguments: JSON.stringify({
+          illustrations: [{ paragraph: 1, scene: "rain", tags: "rain, window", characters: [] }],
+        }),
+      },
+      { name: "submit_wardrobe", arguments: "{" },
+    ];
+    const { service } = create_service(host);
+    const events: string[] = [];
+    service.subscribe((event) => events.push(event.type));
+
+    const record = await service.analyze(3);
+
+    expect(host.generate_calls).toHaveLength(1);
+    expect(host.generate_calls[0]?.json_schema).toBeNull();
+    expect(host.generate_calls[0]?.tools?.choice).toBe("required");
+    expect(host.generate_calls[0]?.tools?.tools.map((tool) => tool.name)).toEqual([
+      "submit_illustrations",
+      "submit_wardrobe",
+    ]);
+    expect(host.generate_calls[0]?.user_input).toContain("calling two tools");
+    expect(record.slots).toHaveLength(1);
+    expect(events).toContain("wardrobe_failed");
   });
 
   it("sends only the analysis when the reply already has a wardrobe snapshot", async () => {
@@ -750,6 +790,7 @@ describe("create_wardrobe_runner", () => {
         size_sets: [],
         size_set_id: null,
         size_set_by_chat: {},
+        structured_output: "auto",
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",

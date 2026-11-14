@@ -416,6 +416,7 @@ describe("initial settings and capability contracts", () => {
       size_sets: [],
       size_set_id: null,
       size_set_by_chat: {},
+      structured_output: "auto",
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
@@ -523,6 +524,7 @@ describe("strict public object boundaries", () => {
       size_sets: [],
       size_set_id: null,
       size_set_by_chat: {},
+      structured_output: "auto",
     },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {

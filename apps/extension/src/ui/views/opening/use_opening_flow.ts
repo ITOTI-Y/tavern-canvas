@@ -9,8 +9,9 @@ import {
   activation_text,
   entries_request,
   message_request,
-  question_request,
   rewrite_request,
+  turn_request,
+  type OpeningTurn,
 } from "../../../modules/opening/opening_requests.js";
 import type { OpeningPort, OpeningRequestOptions } from "../../contracts/opening_port.js";
 import type { OpeningStore } from "./use_opening_store.js";
@@ -22,6 +23,8 @@ export type OpeningBusy =
 export interface OpeningFlow {
   busy(draft_id: string): OpeningBusy | null;
   error(draft_id: string): unknown;
+  /** Entries the last write left out because they failed validation. */
+  dropped(draft_id: string): number;
   /** Asks the model about the step, or writes it once no question is left. */
   run_step(draft: OpeningDraft, index: number): Promise<void>;
   answer(draft: OpeningDraft, selected: readonly string[], other: string): Promise<void>;
@@ -39,6 +42,29 @@ export interface OpeningFlow {
 export function use_opening_flow(port: OpeningPort, store: OpeningStore): OpeningFlow {
   const busy = reactive(new Map<string, OpeningBusy>());
   const errors = reactive(new Map<string, unknown>());
+  const dropped = reactive(new Map<string, number>());
+
+  /** Stores a written result; later steps that already had one are now stale. */
+  function store_result(
+    draft: OpeningDraft,
+    index: number,
+    turn: Exclude<OpeningTurn, { kind: "question" }>,
+  ) {
+    dropped.set(draft.id, turn.kind === "entries" ? turn.dropped : 0);
+    store.edit(draft, (current) => {
+      const state = current.states[index];
+      if (state !== undefined) {
+        state.question = null;
+        state.status = "done";
+        if (turn.kind === "entries") {
+          state.entries = turn.entries;
+        } else {
+          state.message = turn.message;
+        }
+      }
+      mark_later_stale(current, index);
+    });
+  }
 
   function options(draft: OpeningDraft): OpeningRequestOptions {
     return {
@@ -75,24 +101,11 @@ export function use_opening_flow(port: OpeningPort, store: OpeningStore): Openin
     await guarded(draft, { kind: "generate", step: index }, async () => {
       if (step.output === "message") {
         const message = await port.request(message_request(draft, index), options(draft));
-        store.edit(draft, (current) => {
-          const state = current.states[index];
-          if (state !== undefined) {
-            Object.assign(state, { message, question: null, status: "done" });
-          }
-        });
+        store_result(draft, index, { kind: "message", message });
       } else {
-        const entries = await port.request(entries_request(draft, index), options(draft));
-        store.edit(draft, (current) => {
-          const state = current.states[index];
-          if (state !== undefined) {
-            Object.assign(state, { entries, question: null, status: "done" });
-          }
-        });
+        const written = await port.request(entries_request(draft, index), options(draft));
+        store_result(draft, index, { kind: "entries", ...written });
       }
-      store.edit(draft, (current) => {
-        mark_later_stale(current, index);
-      });
     });
   }
 
@@ -110,33 +123,30 @@ export function use_opening_flow(port: OpeningPort, store: OpeningStore): Openin
       }
     });
     const rounds_left = step.max_rounds - state.answers.length;
-    if (rounds_left > 0) {
-      const outcome = { asked: false };
-      const ok = await guarded(draft, { kind: "question", step: index }, async () => {
-        const question = await port.request(
-          question_request(draft, index, rounds_left),
-          options(draft),
-        );
-        if (question !== null) {
-          outcome.asked = true;
-          store.edit(draft, (current) => {
-            const target = current.states[index];
-            if (target !== undefined) {
-              target.question = question;
-            }
-          });
-        }
-      });
-      if (!ok || outcome.asked) {
+    if (rounds_left <= 0) {
+      await generate(draft, index);
+      return;
+    }
+    // One request either asks the next question or writes the step.
+    await guarded(draft, { kind: "question", step: index }, async () => {
+      const turn = await port.request(turn_request(draft, index, rounds_left), options(draft));
+      if (turn.kind !== "question") {
+        store_result(draft, index, turn);
         return;
       }
-    }
-    await generate(draft, index);
+      store.edit(draft, (current) => {
+        const target = current.states[index];
+        if (target !== undefined) {
+          target.question = turn.question;
+        }
+      });
+    });
   }
 
   return {
     busy: (id) => busy.get(id) ?? null,
     error: (id) => errors.get(id) ?? null,
+    dropped: (id) => dropped.get(id) ?? 0,
     run_step,
     generate,
     async answer(draft, selected, other) {

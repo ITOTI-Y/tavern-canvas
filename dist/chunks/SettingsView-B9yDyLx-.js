@@ -1,8 +1,8 @@
 import { a as e } from "./ids-pPJWL4BL.js";
 import { i as t, o as n } from "./novelai-B6V3MfU9.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { a, i as o, n as s, r as c, t as l } from "./http_origin-B-Rw6Ppb.js";
-import { n as u } from "./settings-DJXtl7jq.js";
+import { a, i as o, n as s, r as c, t as l } from "./http_origin-BFlylMPJ.js";
+import { n as u } from "./settings-DW51ow35.js";
 import { F as d, J as f, L as p, M as m, T as h, W as g, _, a as v, b as y, dt as b, g as x, gt as S, h as C, m as w, n as T, p as E, pt as D, q as O, rt as k, s as A, u as j, v as M, x as N, y as P } from "./vue-i18n-XoxYzLIP.js";
 import { t as F } from "./portal_keys-DthxrmWp.js";
 import { n as I, t as L } from "./AppIcon-DD754F_c.js";
@@ -197,7 +197,7 @@ var ue = I("cable", [
 			])
 		], 2)], 2));
 	}
-}), pe = ["data-tone"], me = ["id", "aria-describedby"], $ = ["id", "aria-describedby"], he = ["id", "aria-describedby"], ge = /* @__PURE__ */ N({
+}), pe = ["data-tone"], me = ["id", "aria-describedby"], he = ["id", "aria-describedby"], ge = ["id", "aria-describedby"], $ = /* @__PURE__ */ N({
 	__name: "CredentialStorageSettings",
 	props: {
 		settings: {},
@@ -350,7 +350,7 @@ var ue = I("cable", [
 						"aria-describedby": t,
 						class: D(b(W).text_input),
 						"data-testid": "browser-vault-passphrase-confirmation"
-					}, null, 10, $), [[v, i.value]])]),
+					}, null, 10, he), [[v, i.value]])]),
 					_: 1
 				}, 8, ["label"]),
 				P(B, {
@@ -372,7 +372,7 @@ var ue = I("cable", [
 					class: D(b(W).text_input),
 					"data-testid": "browser-vault-passphrase",
 					onKeydown: A(C, ["enter"])
-				}, null, 42, he), [[v, r.value]])]),
+				}, null, 42, ge), [[v, r.value]])]),
 				_: 1
 			}, 8, ["label", "hint"]), P(B, {
 				label: b(n)("settings.credential_storage.unlock_action"),
@@ -1044,6 +1044,23 @@ var ue = I("cable", [
 		}
 		let ue = E(() => [
 			{
+				value: "auto",
+				label: n("settings.illustration.structured_output_auto")
+			},
+			{
+				value: "json_schema",
+				label: n("settings.illustration.structured_output_json")
+			},
+			{
+				value: "tools",
+				label: n("settings.illustration.structured_output_tools")
+			}
+		]);
+		function de(e) {
+			(e === "auto" || e === "json_schema" || e === "tools") && a({ structured_output: e });
+		}
+		let fe = E(() => [
+			{
 				value: "chat",
 				label: n("settings.illustration.world_info_chat")
 			},
@@ -1055,26 +1072,26 @@ var ue = I("cable", [
 				value: "off",
 				label: n("settings.illustration.world_info_off")
 			}
-		]), de = k(r.value?.world_info.mode ?? "chat");
+		]), pe = k(r.value?.world_info.mode ?? "chat");
 		g(() => r.value?.world_info.mode, (e) => {
-			e !== void 0 && (de.value = e);
+			e !== void 0 && (pe.value = e);
 		});
-		let fe = k([]), pe = k(!1);
-		async function me() {
+		let me = k([]), he = k(!1);
+		async function ge() {
 			try {
-				fe.value = await t.controller.list_worldbooks(), pe.value = !1;
+				me.value = await t.controller.list_worldbooks(), he.value = !1;
 			} catch {
-				pe.value = !0;
+				he.value = !0;
 			}
 		}
 		m(() => {
-			de.value === "worldbook" && me();
+			pe.value === "worldbook" && ge();
 		});
-		let $ = E(() => r.value?.world_info.mode === "worldbook" ? r.value.world_info.worldbooks : []), he = E(() => [.../* @__PURE__ */ new Set([...fe.value, ...$.value])]);
-		function ge(e) {
-			e === "chat" || e === "off" ? (de.value = e, a({ world_info: { mode: e } })) : e === "worldbook" && (de.value = e, me());
+		let $ = E(() => r.value?.world_info.mode === "worldbook" ? r.value.world_info.worldbooks : []), _e = E(() => [.../* @__PURE__ */ new Set([...me.value, ...$.value])]);
+		function ve(e) {
+			e === "chat" || e === "off" ? (pe.value = e, a({ world_info: { mode: e } })) : e === "worldbook" && (pe.value = e, ge());
 		}
-		function _e(e, t) {
+		function ye(e, t) {
 			let n = t ? [...$.value, e] : $.value.filter((t) => t !== e);
 			n.length > 0 && a({ world_info: {
 				mode: "worldbook",
@@ -1279,6 +1296,28 @@ var ue = I("cable", [
 					}, null, 42, je), [[v, l.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
+				P(K, {
+					label: b(n)("settings.illustration.structured_output_label"),
+					hint: b(n)("settings.illustration.structured_output_hint")
+				}, {
+					default: O(({ fieldId: t, describedBy: i }) => [P(V, {
+						id: t,
+						"described-by": i,
+						"model-value": r.value?.structured_output ?? "auto",
+						options: ue.value,
+						placeholder: b(n)("settings.illustration.structured_output_label"),
+						disabled: !e.settings,
+						"onUpdate:modelValue": de
+					}, null, 8, [
+						"id",
+						"described-by",
+						"model-value",
+						"options",
+						"placeholder",
+						"disabled"
+					])]),
+					_: 1
+				}, 8, ["label", "hint"]),
 				w("div", { class: D(b(W).row) }, [w("span", { class: D(b(W).row_label) }, S(b(n)("settings.illustration.chat_history_label")), 3), P(Z, {
 					"model-value": r.value?.max_chat_history,
 					label: b(n)("settings.illustration.chat_history_label"),
@@ -1296,11 +1335,11 @@ var ue = I("cable", [
 					"disabled"
 				])], 2),
 				w("div", { class: D(b(W).row) }, [w("span", { class: D(b(W).row_label) }, S(b(n)("settings.illustration.world_info_label")), 3), P(X, {
-					"model-value": de.value,
-					options: ue.value,
+					"model-value": pe.value,
+					options: fe.value,
 					label: b(n)("settings.illustration.world_info_label"),
 					disabled: !e.settings,
-					"onUpdate:modelValue": ge
+					"onUpdate:modelValue": ve
 				}, null, 8, [
 					"model-value",
 					"options",
@@ -1308,17 +1347,17 @@ var ue = I("cable", [
 					"disabled"
 				])], 2),
 				w("p", { class: D(b(W).description) }, S(b(n)("settings.illustration.world_info_hint")), 3),
-				de.value === "worldbook" ? (d(), _(j, { key: 2 }, [w("fieldset", {
+				pe.value === "worldbook" ? (d(), _(j, { key: 2 }, [w("fieldset", {
 					class: D(b(W).check_list),
 					"data-testid": "worldbook-list"
 				}, [
 					w("legend", { class: D(b(W).row_label) }, S(b(n)("settings.illustration.worldbook_label")), 3),
-					(d(!0), _(j, null, p(he.value, (e) => (d(), C(ne, {
+					(d(!0), _(j, null, p(_e.value, (e) => (d(), C(ne, {
 						key: e,
 						"model-value": $.value.includes(e),
 						label: e,
 						disabled: $.value.length === 1 && $.value.includes(e),
-						"onUpdate:modelValue": (t) => _e(e, t)
+						"onUpdate:modelValue": (t) => ye(e, t)
 					}, null, 8, [
 						"model-value",
 						"label",
@@ -1329,7 +1368,7 @@ var ue = I("cable", [
 						key: 0,
 						class: D(b(W).description)
 					}, S(b(n)("settings.illustration.worldbook_placeholder")), 3)) : x("", !0)
-				], 2), pe.value ? (d(), _("p", {
+				], 2), he.value ? (d(), _("p", {
 					key: 0,
 					class: D(b(W).description),
 					role: "alert"
@@ -2398,7 +2437,7 @@ var Ge = ["id", "aria-describedby"], Ke = ["id", "aria-describedby"], qe = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-DubARoCH.js")), n = y(() => import("./PromptTagPresetPanel-BlynfcrQ.js")), r = y(() => import("./DiagnosticsView-EmIy5wMV.js")), i = e, { t: a } = T(), o = [
+		let t = y(() => import("./PromptView-DubARoCH.js")), n = y(() => import("./PromptTagPresetPanel-BlynfcrQ.js")), r = y(() => import("./DiagnosticsView-Dkr5iEGY.js")), i = e, { t: a } = T(), o = [
 			"illustration",
 			"providers",
 			"translation",
@@ -2553,7 +2592,7 @@ var Ge = ["id", "aria-describedby"], Ke = ["id", "aria-describedby"], qe = ["id"
 						settings: e.state.settings.settings,
 						controller: e.controller
 					}, null, 8, ["settings", "controller"]),
-					P(ge, {
+					P($, {
 						settings: e.state.settings.settings,
 						"vault-status": e.state.settings.browser_secret_vault,
 						controller: e.controller

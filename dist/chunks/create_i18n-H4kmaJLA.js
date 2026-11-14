@@ -621,6 +621,11 @@ var o = {
 			custom_key_saved: "Key saved.",
 			custom_key_cleared: "Key removed.",
 			custom_key_failed: "The key could not be changed.",
+			structured_output_label: "Structured replies",
+			structured_output_hint: "Tool calling sends each reply through submit tools; when the connection cannot call tools, auto mode switches to a JSON schema for this session. With the Advanced Preset extension enabled, tool calling requests are sent by SillyTavern instead of Advanced Preset: the preset's prompt is kept, its workflow stages are skipped. JSON schema requests are still sent by Advanced Preset.",
+			structured_output_auto: "Tool calling, JSON schema as fallback",
+			structured_output_json: "JSON schema only",
+			structured_output_tools: "Tool calling only",
 			chat_history_label: "Chat messages sent with the analysis",
 			wardrobe_model_label: "Wardrobe update model",
 			wardrobe_model_hint: "The wardrobe update runs once per reply. Leave empty to use the analysis connection's model, or name a cheaper one.",
@@ -969,7 +974,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-CtzWj2mV.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-ALJnUSbd.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2
