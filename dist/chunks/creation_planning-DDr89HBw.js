@@ -1,22 +1,24 @@
 import { n as e } from "./rolldown-runtime-B0aSnxlc.js";
 import { d as t, g as n, r, t as i, u as a, v as o } from "./schemas-BjkyCQYG.js";
-import { o as s, t as c } from "./proposal_slots-BQfaZJTP.js";
+import { o as s, t as c } from "./proposal_slots-CnQ1_yme.js";
 import { t as l } from "./user_guidance-Bx38WM6V.js";
-import { r as u, t as d } from "./model_json-BmZ6iNw3.js";
-import { n as f } from "./analysis-Bc8d_b65.js";
-import { n as p } from "./analysis_prompts-DZSUaREq.js";
+import { n as u } from "./library_match-CF9rnk-0.js";
+import { t as d } from "./analysis_error-a25bWfWj.js";
+import { t as f } from "./model_json-B2EVqBvs.js";
+import { i as p, n as m, t as h } from "./analysis-CzzvHd5s.js";
+import { n as g } from "./analysis_prompts-BKnhUqil.js";
 //#region src/modules/creation/creation_planning.ts
-var m = /* @__PURE__ */ e({
-	BUBBLE_SYMBOLS: () => v,
-	FRAME_SIZES: () => h,
-	SCENE_JSON_SCHEMA: () => S,
-	SHOTS: () => g,
-	build_scene_input: () => k,
-	parse_scene_output: () => I,
-	scene_generation_input: () => U,
-	scenes_from_plans: () => R,
-	strip_paragraphs: () => L
-}), h = {
+var _ = /* @__PURE__ */ e({
+	BUBBLE_SYMBOLS: () => x,
+	FRAME_SIZES: () => v,
+	SCENE_JSON_SCHEMA: () => T,
+	SHOTS: () => y,
+	build_scene_input: () => M,
+	parse_scene_output: () => z,
+	scene_generation_input: () => K,
+	scenes_from_plans: () => V,
+	strip_paragraphs: () => B
+}), v = {
 	portrait: {
 		width: 832,
 		height: 1216
@@ -29,7 +31,7 @@ var m = /* @__PURE__ */ e({
 		width: 1024,
 		height: 1024
 	}
-}, g = [
+}, y = [
 	"establishing",
 	"wide",
 	"medium",
@@ -38,7 +40,7 @@ var m = /* @__PURE__ */ e({
 	"over the shoulder",
 	"pov",
 	"insert"
-], _ = {
+], b = {
 	establishing: "wide shot, scenery",
 	wide: "wide shot, full body",
 	medium: "cowboy shot",
@@ -47,7 +49,7 @@ var m = /* @__PURE__ */ e({
 	"over the shoulder": "from behind, depth of field",
 	pov: "pov",
 	insert: "close-up, still life, object focus"
-}, v = [
+}, x = [
 	"question",
 	"exclamation",
 	"interrobang",
@@ -57,7 +59,7 @@ var m = /* @__PURE__ */ e({
 	"sweat",
 	"music",
 	"zzz"
-], y = {
+], S = {
 	question: "spoken question mark",
 	exclamation: "spoken exclamation mark",
 	interrobang: "spoken interrobang",
@@ -67,7 +69,7 @@ var m = /* @__PURE__ */ e({
 	sweat: "spoken sweatdrop",
 	music: "spoken musical note",
 	zzz: "spoken zzz"
-}, b = {
+}, C = {
 	type: "object",
 	properties: {
 		name: { type: "string" },
@@ -75,7 +77,7 @@ var m = /* @__PURE__ */ e({
 	},
 	required: ["name", "tags"],
 	additionalProperties: !1
-}, x = {
+}, w = {
 	type: "object",
 	properties: {
 		name: { type: "string" },
@@ -90,30 +92,32 @@ var m = /* @__PURE__ */ e({
 		},
 		symbol: {
 			type: "string",
-			enum: ["none", ...v]
+			enum: ["none", ...x]
 		},
-		picture: { type: "string" }
+		picture: { type: "string" },
+		position: h
 	},
 	required: [
 		"name",
 		"tags",
 		"bubble",
 		"symbol",
-		"picture"
+		"picture",
+		"position"
 	],
 	additionalProperties: !1
-}, S = {
+}, T = {
 	name: "tavern_canvas_scenes",
 	value: {
 		type: "object",
 		properties: {
 			cast: {
 				type: "array",
-				items: b
+				items: C
 			},
 			places: {
 				type: "array",
-				items: b
+				items: C
 			},
 			scenes: {
 				type: "array",
@@ -125,7 +129,7 @@ var m = /* @__PURE__ */ e({
 						caption: { type: "string" },
 						shot: {
 							type: "string",
-							enum: [...g]
+							enum: [...y]
 						},
 						place: { type: "string" },
 						frame: {
@@ -139,7 +143,7 @@ var m = /* @__PURE__ */ e({
 						tags: { type: "string" },
 						characters: {
 							type: "array",
-							items: x
+							items: w
 						}
 					},
 					required: [
@@ -163,7 +167,7 @@ var m = /* @__PURE__ */ e({
 		],
 		additionalProperties: !1
 	}
-}, C = [
+}, E = [
 	"Plan the pictures like a storyboard:",
 	"- The first picture establishes the place, who is there and the time of day.",
 	"- Each later picture shows the next story beat: an action, its result or a reaction. Something visible changes from the previous picture: a pose, a gesture, an object changing hands, an expression, the light.",
@@ -176,80 +180,82 @@ var m = /* @__PURE__ */ e({
 	"- Break an important action into setup, action and reaction over consecutive pictures. Between two consecutive pictures change one thing only, so the reader can tell what happened.",
 	"- Act it out like a silent film: poses, gestures and expressions strong enough to read without words, with manga marks as tags where they help (sweatdrop, anger vein, blush, tears, trembling, motion lines, emphasis lines).",
 	"- Keep each character on the same side of the picture from one picture to the next."
-], w = `  and, only where what the character says or thinks carries the story, bubble: speech or thought (none otherwise) holding either symbol: one of ${v.join(", ")} (none otherwise), or picture: two to five English words naming the one thing spoken or thought about, drawn small inside the bubble, such as black wolf with red eyes (empty otherwise). One bubble per character at most; a bubble never holds words.`, T = "  and bubble: none, symbol: none, picture: empty", E = "Give cast: one entry per character who appears in any picture, with name exactly as written in the text and tags: that character's fixed look as Danbooru-style English tags for an anime image model, starting with girl or boy by the character's gender as the text shows it (other only for a creature or machine without one; no numbers), then hair, eyes, build and clothing. These tags are repeated on every picture, so leave out pose and expression; use a character name tag only when it is a well-known Danbooru character.", D = "Give places: one entry per distinct place a picture is set in, with a short name and tags: Danbooru-style English tags for that place's look (indoor or outdoor, building, materials, furniture, landscape). These tags are added to every picture set there, so leave out lighting that changes and the props of a single moment.", O = [
+], D = `  and, only where what the character says or thinks carries the story, bubble: speech or thought (none otherwise) holding either symbol: one of ${x.join(", ")} (none otherwise), or picture: two to five English words naming the one thing spoken or thought about, drawn small inside the bubble, such as black wolf with red eyes (empty otherwise). One bubble per character at most; a bubble never holds words.`, O = "  and bubble: none, symbol: none, picture: empty", k = "Give cast: one entry per character who appears in any picture, with name exactly as written in the text and tags: that character's fixed look as Danbooru-style English tags for an anime image model, starting with girl or boy by the character's gender as the text shows it (other only for a creature or machine without one; no numbers), then hair, eyes, build and clothing. These tags are repeated on every picture, so leave out pose and expression; use a character name tag only when it is a well-known Danbooru character.", A = "Give places: one entry per distinct place a picture is set in, with a short name and tags: Danbooru-style English tags for that place's look (indoor or outdoor, building, materials, furniture, landscape). These tags are added to every picture set there, so leave out lighting that changes and the props of a single moment.", j = [
 	"Give scenes, in reading order, one entry per picture:",
 	"- paragraph: the number of the paragraph the picture retells",
 	"- scene: one sentence saying what happens in this picture",
 	"- caption: one plain English sentence without commas that tells an image model exactly what this picture shows: who does what to whom and where each stands in the frame. Call every character by a look, such as the pink-haired girl, never by name",
-	`- shot: one of ${g.join(", ")}`,
+	`- shot: one of ${y.join(", ")}`,
 	"- place: the name of its place in places",
 	"- frame: portrait for one figure or a close-up, landscape for an establishing or wide shot or several figures side by side, square otherwise",
 	"- tags: Danbooru-style English tags for this picture's lighting, time of day and the props that matter in it, plus any style or artist tags the guidance below asks for",
-	"- characters: one entry per character visible in this picture, with name as in cast and tags: only this picture's pose, action, gaze and expression"
+	"- characters: one entry per character visible in this picture, with name as in cast, tags: only this picture's pose, action, gaze and expression, and position: where the character is in the picture, x one of left, center-left, center, center-right, right and y one of top, middle, bottom, where bottom is nearer the viewer",
+	"Animals and creatures that take part in a moment are characters too: list them in cast and give each its own entry, named by kind such as wolf 1, with tags starting with other. For an action between two characters, put it in both entries with a prefix: source# for the one who acts and target# for the one acted on, or mutual# on both, such as source#hug and target#hug."
 ];
-function k(e, t, n, r, i, a, o) {
+function M(e, t, n, r, i, a, o) {
 	let s = String(n), c = e === "story" ? [`Read the story below, split into numbered paragraphs. Choose at most ${s} moments that together tell the story, in story order, so that someone who has not read it can follow it from the pictures.`] : [`Read the chat messages below, split into numbered paragraphs, and retell them as a wordless comic strip of at most ${s} panels in the order the events happen; several panels may come from one paragraph. A reader who has not seen the text must be able to follow the story from the panels alone.`, o ? "Each panel is one single picture with no lettering: no written words, captions, sound effects or signs. Turn dialogue into expressions, gestures and bubbles that hold a symbol or a small picture." : "Each panel is one single picture with no lettering: no speech bubbles, captions, sound effects or written signs. Turn dialogue into expressions and gestures."], u = a === null ? [] : [`"You" in the text is ${a}. Draw ${a} like any other character in cast, or use the pov shot when a moment is seen through ${a}'s eyes.`];
 	return [
 		e === "story" ? "[Inkwell scene request]" : "[Inkwell comic strip request]",
 		...c,
-		...C,
+		...E,
 		...u,
-		E,
-		D,
-		...O,
-		o ? w : T,
+		k,
+		A,
+		...j,
+		o ? D : O,
 		"Reply with only a JSON object of the form {\"cast\":[...],\"places\":[...],\"scenes\":[...]}.",
-		...p(r.library),
+		...g(r.library),
 		...l(i),
 		"",
 		"Paragraphs:",
 		...t.map((e) => `[${String(e.index)}] ${e.text}`)
 	].join("\n");
 }
-var A = o([n(), r(n()).transform((e) => e.join(", "))]), j = t({
+var N = o([n(), r(n()).transform((e) => e.join(", "))]), P = t({
 	name: n().trim().min(1).max(120),
-	tags: A
-}), M = j.extend({
+	tags: N
+}), F = P.extend({
 	bubble: i([
 		"none",
 		"speech",
 		"thought"
 	]).catch("none"),
-	symbol: i(["none", ...v]).catch("none"),
-	picture: n().trim().max(120).catch("")
+	symbol: i(["none", ...x]).catch("none"),
+	picture: n().trim().max(120).catch(""),
+	position: m
 });
-function N(e) {
+function I(e) {
 	if (e.bubble === "none") return "";
 	let t = e.picture.replace(/[,，\s]+/gu, " ").trim();
-	return t === "" ? e.symbol === "none" ? "" : `${e.bubble === "thought" ? "thought bubble" : "speech bubble"}, ${y[e.symbol]}` : e.bubble === "thought" ? `thought bubble, imagining, ${t} in thought bubble` : `speech bubble, spoken object, ${t} in speech bubble`;
+	return t === "" ? e.symbol === "none" ? "" : `${e.bubble === "thought" ? "thought bubble" : "speech bubble"}, ${S[e.symbol]}` : e.bubble === "thought" ? `thought bubble, imagining, ${t} in thought bubble` : `speech bubble, spoken object, ${t} in speech bubble`;
 }
-var P = t({
+var L = t({
 	paragraph: a().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	caption: n().trim().max(600).catch(""),
-	shot: i(g).nullable().catch(null),
+	shot: i(y).nullable().catch(null),
 	place: n().trim().nullable().catch(null),
 	frame: i([
 		"portrait",
 		"landscape",
 		"square"
 	]).catch("square"),
-	tags: A,
-	characters: r(M).max(16)
-}), F = t({
-	cast: r(j).max(32).catch([]),
-	places: r(j).max(32).catch([]),
-	scenes: r(P)
+	tags: N,
+	characters: r(F).max(16)
+}), R = t({
+	cast: r(P).max(32).catch([]),
+	places: r(P).max(32).catch([]),
+	scenes: r(L)
 });
-function I(e, t, n, r) {
-	for (let i of d(e, "scenes")) {
+function z(e, t, n, r) {
+	for (let i of f(e, "scenes")) {
 		let e;
 		try {
 			e = JSON.parse(i);
 		} catch {
 			continue;
 		}
-		let a = F.safeParse(e);
+		let a = R.safeParse(e);
 		if (a.success) return {
 			cast: a.data.cast,
 			places: a.data.places,
@@ -257,14 +263,15 @@ function I(e, t, n, r) {
 				...e,
 				characters: e.characters.map((e) => ({
 					name: e.name,
-					tags: z(e.tags, r ? N(e) : "")
+					tags: H(e.tags, r ? I(e) : ""),
+					...p(e.position)
 				}))
 			}))
 		};
 	}
-	throw new f("The reply contains no scenes JSON object", e);
+	throw new d("The reply contains no scenes JSON object", e);
 }
-function L(e) {
+function B(e) {
 	let t = [];
 	for (let n of e) for (let e of s(n.text)) t.push({
 		index: t.length,
@@ -273,16 +280,16 @@ function L(e) {
 	});
 	return t;
 }
-function R(e, t, n, r, i) {
+function V(e, t, n, r, i) {
 	let a = (e, t) => {
 		let n = t.trim().toLowerCase();
 		return e.find((e) => e.name.trim().toLowerCase() === n)?.tags ?? "";
 	}, o = (e) => n.library.characters.some((t) => u(t, e)) ? "" : a(t.cast, e), s = t.plans.map((e) => ({
 		...e,
-		tags: z(e.shot === null ? "" : _[e.shot], e.place === null ? "" : a(t.places, e.place), e.tags),
+		tags: H(e.shot === null ? "" : b[e.shot], e.place === null ? "" : a(t.places, e.place), e.tags),
 		characters: e.characters.map((e) => ({
-			name: e.name,
-			tags: z(o(e.name), e.tags)
+			...e,
+			tags: H(o(e.name), e.tags)
 		}))
 	})), l = e.map((e) => ({
 		...e,
@@ -297,8 +304,8 @@ function R(e, t, n, r, i) {
 		scene: s[n]?.scene ?? "",
 		excerpt: (e[s[n]?.paragraph ?? -1]?.text ?? "").slice(0, 200),
 		characters: t.characters,
-		size: h[s[n]?.frame ?? "square"],
-		positive_prompt: z(t.positive_prompt, (s[n]?.caption ?? "").replace(/[,，\s]+/gu, " ")),
+		size: v[s[n]?.frame ?? "square"],
+		positive_prompt: t.positive_prompt,
 		negative_prompt: t.negative_prompt,
 		character_prompts: t.character_prompts,
 		image_ids: [],
@@ -306,21 +313,21 @@ function R(e, t, n, r, i) {
 		last_error: null
 	}));
 }
-function z(...e) {
+function H(...e) {
 	return e.map((e) => e.trim().replace(/^,+|,+$/gu, "").trim()).filter((e) => e !== "").join(", ");
 }
-var B = /^(?:speech|thought) bubble$/u;
-function V(e) {
-	return e.split(",").filter((e) => !B.test(e.trim().toLowerCase())).join(",");
+var U = /^(?:speech|thought) bubble$/u;
+function W(e) {
+	return e.split(",").filter((e) => !U.test(e.trim().toLowerCase())).join(",");
 }
-var H = "comic, multiple views, 4koma, split screen";
-function U(e, t) {
+var G = "comic, multiple views, 4koma, split screen";
+function K(e, t) {
 	return {
-		positive_prompt: t?.style === "strip" ? z(e.positive_prompt, t.settings.style_tags) : e.positive_prompt,
-		negative_prompt: t === null ? e.negative_prompt : z(e.negative_prompt, e.character_prompts.some((e) => /\b(?:speech|thought) bubble\b/u.test(e.prompt)) ? V(t.settings.no_text_tags) : t.settings.no_text_tags, H),
+		positive_prompt: t?.style === "strip" ? H(e.positive_prompt, t.settings.style_tags) : e.positive_prompt,
+		negative_prompt: t === null ? e.negative_prompt : H(e.negative_prompt, e.character_prompts.some((e) => /\b(?:speech|thought) bubble\b/u.test(e.prompt)) ? W(t.settings.no_text_tags) : t.settings.no_text_tags, G),
 		character_prompts: e.character_prompts,
 		size: e.size
 	};
 }
 //#endregion
-export { m as n, U as r, h as t };
+export { _ as n, K as r, v as t };

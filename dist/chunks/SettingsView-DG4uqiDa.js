@@ -14,7 +14,7 @@ import { t as V } from "./FieldGroup-DUIzuG3F.js";
 import { n as H, t as U } from "./AppSwitch-DBPX1VeE.js";
 import { t as W } from "./sparkles-DHUWhG-4.js";
 import "./browser_secret_vault-Cl9sZA7g.js";
-import { n as G, t as K } from "./novelai_request_defaults-B0sJ9ANr.js";
+import { n as G, t as K } from "./novelai_request_defaults-DmJSc0ed.js";
 import { n as q, r as J, t as ie } from "./TagInput-DaW9nw0K.js";
 import { t as Y } from "./ToastViewport-D9UeF33M.js";
 import { t as ae } from "./ConfirmDialog-B5HDtQez.js";
@@ -1539,9 +1539,9 @@ var Pe = ["id", "aria-describedby"], Fe = ["id", "aria-describedby"], Ie = ["id"
 			c.value = {
 				id: crypto.randomUUID(),
 				is_new: !0,
-				provider_id: "sd_webui",
+				provider_id: "novelai",
 				display_name: "",
-				model_id: "",
+				model_id: K,
 				workflow_id: "",
 				base_url: ze,
 				is_default: n.profiles.length === 0

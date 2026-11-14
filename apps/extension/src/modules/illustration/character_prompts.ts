@@ -42,10 +42,12 @@ export function attach_character_prompts(
   return {
     ...request,
     prompt,
-    characters: sent.map((character) =>
-      character.negative_prompt.trim() === ""
-        ? { prompt: character.prompt }
-        : { prompt: character.prompt, negative_prompt: character.negative_prompt },
-    ),
+    characters: sent.map((character) => ({
+      prompt: character.prompt,
+      ...(character.negative_prompt.trim() === ""
+        ? {}
+        : { negative_prompt: character.negative_prompt }),
+      ...(character.center === undefined ? {} : { center: character.center }),
+    })),
   } as ImageGenerationRequest;
 }

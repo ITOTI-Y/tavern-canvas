@@ -4,7 +4,13 @@ import type { IllustrationProposal } from "./analysis.js";
 import type { SlotPromptContext } from "./illustration_service.js";
 import { match_library } from "./library_match.js";
 import type { Paragraph } from "./slot_markers.js";
+import { join_prompt_parts } from "../prompt/tag_normalizer.js";
 import { assemble_slot_prompt } from "./slot_prompt.js";
+
+/** The caption sentence as one prompt part: commas would split it into separate tags. */
+export function caption_tag(caption: string): string {
+  return caption.replace(/[,，\s]+/gu, " ").trim();
+}
 
 export function proposal_slots(
   paragraphs: readonly Paragraph[],
@@ -37,7 +43,7 @@ export function proposal_slots(
           ...library.characters.map((entry) => entry.character.name),
         ]),
       ],
-      positive_prompt: prompt.positive_prompt,
+      positive_prompt: join_prompt_parts([prompt.positive_prompt, caption_tag(proposal.caption)]),
       negative_prompt: prompt.negative_prompt,
       character_prompts: [...prompt.character_prompts],
       image_ids: [],

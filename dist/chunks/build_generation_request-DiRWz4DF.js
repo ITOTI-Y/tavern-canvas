@@ -1,4 +1,4 @@
-import { n as e } from "./novelai_request_defaults-B0sJ9ANr.js";
+import { n as e } from "./novelai_request_defaults-DmJSc0ed.js";
 //#region src/modules/generation/build_generation_request.ts
 var t = class extends Error {
 	code = "workbench_provider_unsupported";
@@ -59,7 +59,7 @@ function l(a, o, s) {
 			provider_id: "novelai",
 			action: "generate",
 			...c,
-			...e(a.model_id ?? "nai-diffusion-5-curated"),
+			...e(a.model_id ?? "nai-diffusion-5-full"),
 			...a.references.length > 0 ? { vibe_references: a.references.slice(0, 16).map((e) => ({
 				asset_id: e.asset_id,
 				strength: .6,

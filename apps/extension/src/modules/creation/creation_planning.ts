@@ -2,7 +2,13 @@ import type { StripSettings, Wearing } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 import type { HostJsonSchema } from "../../host/index.js";
-import { AnalysisParseError, type IllustrationProposal } from "../illustration/analysis.js";
+import { AnalysisParseError } from "../illustration/analysis_error.js";
+import {
+  center_of,
+  POSITION_JSON_SCHEMA,
+  PositionSchema,
+  type IllustrationProposal,
+} from "../illustration/analysis.js";
 import { library_lines } from "../illustration/analysis_prompts.js";
 import { is_named } from "../illustration/library_match.js";
 import type {
@@ -109,8 +115,9 @@ const SCENE_CHARACTER = {
     bubble: { type: "string", enum: ["none", "speech", "thought"] },
     symbol: { type: "string", enum: ["none", ...BUBBLE_SYMBOLS] },
     picture: { type: "string" },
+    position: POSITION_JSON_SCHEMA,
   },
-  required: ["name", "tags", "bubble", "symbol", "picture"],
+  required: ["name", "tags", "bubble", "symbol", "picture", "position"],
   additionalProperties: false,
 } as const;
 
@@ -190,7 +197,8 @@ const SCENE_FIELD_LINES: readonly string[] = [
   "- place: the name of its place in places",
   "- frame: portrait for one figure or a close-up, landscape for an establishing or wide shot or several figures side by side, square otherwise",
   "- tags: Danbooru-style English tags for this picture's lighting, time of day and the props that matter in it, plus any style or artist tags the guidance below asks for",
-  "- characters: one entry per character visible in this picture, with name as in cast and tags: only this picture's pose, action, gaze and expression",
+  "- characters: one entry per character visible in this picture, with name as in cast, tags: only this picture's pose, action, gaze and expression, and position: where the character is in the picture, x one of left, center-left, center, center-right, right and y one of top, middle, bottom, where bottom is nearer the viewer",
+  "Animals and creatures that take part in a moment are characters too: list them in cast and give each its own entry, named by kind such as wolf 1, with tags starting with other. For an action between two characters, put it in both entries with a prefix: source# for the one who acts and target# for the one acted on, or mutual# on both, such as source#hug and target#hug.",
 ];
 
 /** The request that turns a story, or a stretch of chat, into pictures to confirm before drawing. */
@@ -246,6 +254,7 @@ const SceneCharacterSchema = NamedTagsSchema.extend({
   bubble: z.enum(["none", "speech", "thought"]).catch("none"),
   symbol: z.enum(["none", ...BUBBLE_SYMBOLS]).catch("none"),
   picture: z.string().trim().max(120).catch(""),
+  position: PositionSchema,
 });
 
 /** The tags that draw a character's bubble: a small picture of the thing, or else one symbol. */
@@ -309,6 +318,7 @@ export function parse_scene_output(
             characters: plan.characters.map((character) => ({
               name: character.name,
               tags: join_tags(character.tags, bubbles ? bubble_tags(character) : ""),
+              ...center_of(character.position),
             })),
           })),
       };
@@ -367,7 +377,7 @@ export function scenes_from_plans(
       plan.tags,
     ),
     characters: plan.characters.map((character) => ({
-      name: character.name,
+      ...character,
       tags: join_tags(look(character.name), character.tags),
     })),
   }));
@@ -388,10 +398,7 @@ export function scenes_from_plans(
     excerpt: (paragraphs[plans[index]?.paragraph ?? -1]?.text ?? "").slice(0, 200),
     characters: slot.characters,
     size: FRAME_SIZES[plans[index]?.frame ?? "square"],
-    positive_prompt: join_tags(
-      slot.positive_prompt,
-      (plans[index]?.caption ?? "").replace(/[,，\s]+/gu, " "),
-    ),
+    positive_prompt: slot.positive_prompt,
     negative_prompt: slot.negative_prompt,
     character_prompts: slot.character_prompts,
     image_ids: [],

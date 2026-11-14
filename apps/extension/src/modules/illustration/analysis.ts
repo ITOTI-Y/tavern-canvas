@@ -1,18 +1,56 @@
 import { z } from "zod";
 
+import type { CharacterCenter } from "@tavern-canvas/contracts";
+
 import type { HostJsonSchema } from "../../host/index.js";
+import { AnalysisParseError } from "./analysis_error.js";
 import { json_candidates } from "./model_json.js";
 
 export interface ProposedCharacter {
   readonly name: string;
   readonly tags: string;
+  /** `undefined` lets the image model place the character. */
+  readonly center?: CharacterCenter;
 }
 
 export interface IllustrationProposal {
   readonly paragraph: number;
   readonly scene: string;
+  /** One plain sentence for the image model on who is where doing what; may be empty. */
+  readonly caption: string;
   readonly tags: string;
   readonly characters: readonly ProposedCharacter[];
+}
+
+const POSITION_X = { left: 0.1, "center-left": 0.3, center: 0.5, "center-right": 0.7, right: 0.9 };
+const POSITION_Y = { top: 0.3, middle: 0.5, bottom: 0.7 };
+
+/** The JSON Schema of a character's place in the picture, shared with created scenes. */
+export const POSITION_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    x: { type: "string", enum: Object.keys(POSITION_X) },
+    y: { type: "string", enum: Object.keys(POSITION_Y) },
+  },
+  required: ["x", "y"],
+  additionalProperties: false,
+} as const;
+
+export const PositionSchema = z
+  .object({
+    x: z.enum(["left", "center-left", "center", "center-right", "right"]),
+    y: z.enum(["top", "middle", "bottom"]),
+  })
+  .nullable()
+  .catch(null);
+
+/** The image coordinates of a named position, or nothing when the model gave none. */
+export function center_of(position: z.infer<typeof PositionSchema>): {
+  readonly center?: CharacterCenter;
+} {
+  return position === null
+    ? {}
+    : { center: { x: POSITION_X[position.x], y: POSITION_Y[position.y] } };
 }
 
 export const ANALYSIS_JSON_SCHEMA: HostJsonSchema = {
@@ -27,18 +65,23 @@ export const ANALYSIS_JSON_SCHEMA: HostJsonSchema = {
           properties: {
             paragraph: { type: "integer" },
             scene: { type: "string" },
+            caption: { type: "string" },
             tags: { type: "string" },
             characters: {
               type: "array",
               items: {
                 type: "object",
-                properties: { name: { type: "string" }, tags: { type: "string" } },
-                required: ["name", "tags"],
+                properties: {
+                  name: { type: "string" },
+                  tags: { type: "string" },
+                  position: POSITION_JSON_SCHEMA,
+                },
+                required: ["name", "tags", "position"],
                 additionalProperties: false,
               },
             },
           },
-          required: ["paragraph", "scene", "tags", "characters"],
+          required: ["paragraph", "scene", "caption", "tags", "characters"],
           additionalProperties: false,
         },
       },
@@ -80,27 +123,31 @@ export function wardrobe_reply_of(raw: string): string | null {
   return null;
 }
 
-const ProposalSchema = z.object({
-  paragraph: z.number().int().min(0),
-  scene: z.string().trim().min(1).max(2000),
-  tags: z.union([z.string(), z.array(z.string()).transform((tags) => tags.join(", "))]),
-  characters: z
-    .array(z.object({ name: z.string().trim().min(1).max(120), tags: z.string().trim() }))
-    .max(16),
-});
+const ProposalSchema = z
+  .object({
+    paragraph: z.number().int().min(0),
+    scene: z.string().trim().min(1).max(2000),
+    caption: z.string().trim().max(600).catch(""),
+    tags: z.union([z.string(), z.array(z.string()).transform((tags) => tags.join(", "))]),
+    characters: z
+      .array(
+        z.object({
+          name: z.string().trim().min(1).max(120),
+          tags: z.string().trim(),
+          position: PositionSchema,
+        }),
+      )
+      .max(16),
+  })
+  .transform(({ characters, ...proposal }) => ({
+    ...proposal,
+    characters: characters.map(({ position, ...character }) => ({
+      ...character,
+      ...center_of(position),
+    })),
+  }));
 
 const AnalysisOutputSchema = z.object({ illustrations: z.array(ProposalSchema) });
-
-/** Carries the start of the raw output so the user can see what their preset made the model write. */
-export class AnalysisParseError extends Error {
-  readonly excerpt: string;
-
-  constructor(message: string, raw: string) {
-    super(message);
-    this.name = "AnalysisParseError";
-    this.excerpt = raw.slice(0, 400);
-  }
-}
 
 /** Structured output when the backend honored the schema; otherwise the JSON is dug out of the text. */
 export function parse_analysis_output(

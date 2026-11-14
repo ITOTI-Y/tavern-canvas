@@ -12,14 +12,7 @@ import type { GenerationJobSnapshot } from "@tavern-canvas/core";
 import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
 import type { HostAdapter, HostGenerationEvent, HostSwipeLocation } from "../../host/index.js";
-import {
-  ANALYSIS_JSON_SCHEMA,
-  AnalysisParseError,
-  combined_analysis_json_schema,
-  COMBINED_REPLY_FORMAT,
-  parse_analysis_output,
-  wardrobe_reply_of,
-} from "./analysis.js";
+import { AnalysisParseError } from "./analysis_error.js";
 import type { SlotEdit } from "./slot_edits.js";
 import {
   insert_markers,
@@ -299,6 +292,13 @@ export class IllustrationService {
           : null;
       const context = await this.#deps.prompt_context(location.chat_id);
       const { build_analysis_input } = await import("./analysis_prompts.js");
+      const {
+        ANALYSIS_JSON_SCHEMA,
+        combined_analysis_json_schema,
+        COMBINED_REPLY_FORMAT,
+        parse_analysis_output,
+        wardrobe_reply_of,
+      } = await import("./analysis.js");
       const analysis_input = build_analysis_input(
         paragraphs,
         settings.max_images_per_message,
@@ -420,6 +420,7 @@ export class IllustrationService {
     const context = await this.#deps.prompt_context(location.chat_id);
     const chat = await this.#deps.host.get_active_chat();
     const { build_chosen_paragraphs_input } = await import("./analysis_prompts.js");
+    const { ANALYSIS_JSON_SCHEMA, parse_analysis_output } = await import("./analysis.js");
     const proposals = await request_analysis(
       this.#deps,
       text,
@@ -445,6 +446,7 @@ export class IllustrationService {
           by_paragraph.get(index) ?? {
             paragraph: index,
             scene: (paragraphs[index]?.text ?? "").slice(0, 120),
+            caption: "",
             tags: "",
             characters: [],
           },
@@ -689,6 +691,9 @@ export class IllustrationService {
           name: character.name,
           prompt: character.prompt,
           negative_prompt: character.negative_prompt,
+          ...(character.center === undefined
+            ? {}
+            : { center: { x: character.center.x, y: character.center.y } }),
         })),
       }),
     );

@@ -40,6 +40,7 @@ export {
   IllustrationSlotIdSchema,
   IllustrationSlotSchema,
   SlotCharacterPromptSchema,
+  CharacterCenterSchema,
   MAX_SLOTS_PER_SWIPE,
   SwipeIllustrationsSchema,
 } from "./message.js";
@@ -47,6 +48,7 @@ export type {
   IllustrationSlot,
   IllustrationSlotId,
   SlotCharacterPrompt,
+  CharacterCenter,
   SwipeIllustrations,
 } from "./message.js";
 export {

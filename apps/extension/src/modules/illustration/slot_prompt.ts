@@ -1,4 +1,8 @@
-import { APPEARANCE_SLOTS, type SlotCharacterPrompt } from "@tavern-canvas/contracts";
+import {
+  APPEARANCE_SLOTS,
+  type CharacterCenter,
+  type SlotCharacterPrompt,
+} from "@tavern-canvas/contracts";
 
 import { apply_regex_rules, type RegexRule } from "../prompt/regex_transform.js";
 import { deduplicate_tags, get_base_tag, join_prompt_parts } from "../prompt/tag_normalizer.js";
@@ -109,13 +113,14 @@ interface CharacterDraft {
   readonly subject: Subject | null;
   readonly prompt: string;
   readonly negative_prompt: string;
+  readonly center?: CharacterCenter;
 }
 
 function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
   const library = input.library.characters;
   const drafts: CharacterDraft[] = [];
   const used = new Set<string>();
-  const add_library = (index: number, own_tags: string): void => {
+  const add_library = (index: number, own_tags: string, center?: CharacterCenter): void => {
     const entry = library[index];
     if (entry === undefined || used.has(entry.character.id)) {
       return;
@@ -132,12 +137,13 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
         own.rest,
       ]),
       negative_prompt: join_prompt_parts(entry.character.excluded_traits),
+      ...(center === undefined ? {} : { center }),
     });
   };
   for (const proposed of input.characters) {
     const index = library.findIndex((entry) => is_named(entry.character, proposed.name));
     if (index !== -1) {
-      add_library(index, proposed.tags);
+      add_library(index, proposed.tags, proposed.center);
       continue;
     }
     const own = split_subject(proposed.tags);
@@ -147,6 +153,7 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
         subject: own.subject,
         prompt: own.rest,
         negative_prompt: "",
+        ...(proposed.center === undefined ? {} : { center: proposed.center }),
       });
     }
   }
@@ -192,7 +199,14 @@ export function assemble_slot_prompt(input: SlotPromptInput): SlotPrompt {
       const prompt = apply_preset(join_prompt_parts([draft.subject, draft.prompt]), preset);
       return prompt === ""
         ? []
-        : [{ name: draft.name, prompt, negative_prompt: deduplicate_tags(draft.negative_prompt) }];
+        : [
+            {
+              name: draft.name,
+              prompt,
+              negative_prompt: deduplicate_tags(draft.negative_prompt),
+              ...(draft.center === undefined ? {} : { center: draft.center }),
+            },
+          ];
     }),
   };
 }

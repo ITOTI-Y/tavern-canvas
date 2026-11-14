@@ -9,7 +9,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { HostSwipeLocation } from "../../host/index.js";
-import { AnalysisParseError } from "../../modules/illustration/analysis.js";
+import { AnalysisParseError } from "../../modules/illustration/analysis_error.js";
 import { is_named, type SlotLibrary } from "../../modules/illustration/library_match.js";
 import type { Paragraph } from "../../modules/illustration/slot_markers.js";
 import { replace_outfit_tags, wearing_of, wearing_tags } from "../../modules/wardrobe/wearing.js";

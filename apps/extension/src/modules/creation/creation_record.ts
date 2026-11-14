@@ -11,6 +11,7 @@ const CharacterPromptSchema = z.object({
   name: z.string(),
   prompt: z.string(),
   negative_prompt: z.string(),
+  center: z.object({ x: z.number().min(0).max(1), y: z.number().min(0).max(1) }).optional(),
 });
 
 export const CreationSceneSchema = z.object({

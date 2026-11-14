@@ -1,6 +1,7 @@
 import { d as e, g as t, i as n, m as r, r as i, t as a } from "./schemas-BjkyCQYG.js";
 import { c as o, n as s, o as c, s as l } from "./wardrobe_library-BkM-wKPK.js";
-import { a as u, l as d, o as f, s as p, t as m } from "./model_json-BmZ6iNw3.js";
+import { a as u, c as d, i as f, o as p } from "./library_match-CF9rnk-0.js";
+import { t as m } from "./model_json-B2EVqBvs.js";
 //#region src/modules/wardrobe/scene_update.ts
 var h = {
 	type: "array",
@@ -187,7 +188,7 @@ function O(e, t, n) {
 	].join("");
 }
 function k(e, t, n) {
-	return n.characters.filter((r) => d(r, t, n.outfits).outfit_id === null && [r.name, ...r.aliases].some((t) => u(e, t)));
+	return n.characters.filter((r) => d(r, t, n.outfits).outfit_id === null && [r.name, ...r.aliases].some((t) => f(e, t)));
 }
 function A(e, t, n) {
 	let r = new Map(n.characters.map((e) => [e.id, e.name])), i = k(e.reply, t, n);
@@ -259,10 +260,10 @@ function N(e, t) {
 	return n;
 }
 function P(e, t) {
-	return [e.name, ...e.aliases].some((e) => u(t, e) && u(e, t));
+	return [e.name, ...e.aliases].some((e) => f(t, e) && f(e, t));
 }
 function F(e, t) {
-	return [e.name, ...e.aliases].some((e) => u(t, e) || u(e, t));
+	return [e.name, ...e.aliases].some((e) => f(t, e) || f(e, t));
 }
 function I(e, t) {
 	let n = t.find((t) => t.id === e.ref);
@@ -272,7 +273,7 @@ function L(e) {
 	return l.map((t) => [...new Set((e[t] ?? []).map((e) => e.toLowerCase()))].sort().join(",")).join("|");
 }
 function R(e, t, n, r) {
-	let i = new Map(t.map((e) => [e.character_id, e])), a = [], o = [], s = [], u = (e) => n.outfits.some((t) => t.id === e) || o.some((t) => t.id === e), d = (e, t) => {
+	let i = new Map(t.map((e) => [e.character_id, e])), a = [], o = [], s = [], d = (e) => n.outfits.some((t) => t.id === e) || o.some((t) => t.id === e), f = (e, t) => {
 		let i = N(e.slots, l);
 		if (Object.keys(i).length === 0) return null;
 		let a = L(i), s = [...n.outfits, ...o].find((e) => e.character_id === t && L(e.slots) === a);
@@ -315,9 +316,9 @@ function R(e, t, n, r) {
 			outfit_id: null,
 			overrides: {},
 			conditions: []
-		} : f(e, n.outfits)), m = p.outfit_id === null ? t.new_outfit ?? t.new_character?.outfit ?? null : null, h = M(t.conditions);
+		} : u(e, n.outfits)), m = p.outfit_id === null ? t.new_outfit ?? t.new_character?.outfit ?? null : null, h = M(t.conditions);
 		if (!t.wearing_changed) {
-			let e = m === null ? null : d(m, o);
+			let e = m === null ? null : f(m, o);
 			i.set(o, {
 				...p,
 				...e === null ? {} : { outfit_id: e },
@@ -325,8 +326,8 @@ function R(e, t, n, r) {
 			});
 			continue;
 		}
-		let g = u(t.outfit_id) ? t.outfit_id : p.outfit_id, _ = e !== void 0 && !i.has(o) && p.outfit_id !== null ? null : t.new_outfit ?? m;
-		_ !== null && (g = d(_, o) ?? g);
+		let g = d(t.outfit_id) ? t.outfit_id : p.outfit_id, _ = e !== void 0 && !i.has(o) && p.outfit_id !== null ? null : t.new_outfit ?? m;
+		_ !== null && (g = f(_, o) ?? g);
 		let v = new Map(g === p.outfit_id ? l.flatMap((e) => {
 			let t = p.overrides[e];
 			return t === void 0 ? [] : [[e, t === "removed" ? t : [...t]]];
@@ -345,7 +346,7 @@ function R(e, t, n, r) {
 	for (let [t, r] of Object.entries(e.initial_outfits)) {
 		let e = n.characters.find((e) => e.id === t);
 		if (e === void 0 || r === null) continue;
-		let a = i.get(t) ?? f(e, n.outfits), o = a.outfit_id === null ? d(r, t) : null;
+		let a = i.get(t) ?? u(e, n.outfits), o = a.outfit_id === null ? f(r, t) : null;
 		o !== null && i.set(t, {
 			...a,
 			outfit_id: o

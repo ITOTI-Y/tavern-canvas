@@ -1,14 +1,23 @@
 import { describe, expect, it } from "vitest";
 
 import { test_character, test_outfit } from "../wardrobe/wardrobe_test_fixtures.js";
-import { AnalysisParseError, parse_analysis_output } from "./analysis.js";
+import { parse_analysis_output } from "./analysis.js";
+import { AnalysisParseError } from "./analysis_error.js";
 import { build_analysis_input } from "./analysis_prompts.js";
 
+/** As the model writes it. */
 const PROPOSAL = {
   paragraph: 1,
   scene: "a girl at a door",
+  caption: "a girl with silver hair opens the door on the left",
   tags: "1girl, door",
-  characters: [{ name: "Alice", tags: "girl, smile" }],
+  characters: [{ name: "Alice", tags: "girl, smile", position: { x: "left", y: "middle" } }],
+};
+
+/** As parsed: the named position becomes image coordinates. */
+const PARSED = {
+  ...PROPOSAL,
+  characters: [{ name: "Alice", tags: "girl, smile", center: { x: 0.1, y: 0.5 } }],
 };
 
 describe("build_analysis_input", () => {
@@ -80,7 +89,7 @@ describe("build_analysis_input", () => {
 describe("parse_analysis_output", () => {
   it("reads a structured reply directly", () => {
     expect(parse_analysis_output(JSON.stringify({ illustrations: [PROPOSAL] }), 3, 2)).toEqual([
-      PROPOSAL,
+      PARSED,
     ]);
   });
 
@@ -93,7 +102,7 @@ describe("parse_analysis_output", () => {
       "```",
     ].join("\n");
 
-    expect(parse_analysis_output(raw, 3, 2)).toEqual([PROPOSAL]);
+    expect(parse_analysis_output(raw, 3, 2)).toEqual([PARSED]);
   });
 
   it("drops out-of-range and duplicate paragraphs and keeps the image limit", () => {

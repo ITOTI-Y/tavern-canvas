@@ -5,7 +5,7 @@ import { attach_character_prompts } from "./character_prompts.js";
 
 const PROMPTS = [
   { name: "Alice", prompt: "girl, silver hair", negative_prompt: "" },
-  { name: "Bob", prompt: "boy, armor", negative_prompt: "hat" },
+  { name: "Bob", prompt: "boy, armor", negative_prompt: "hat", center: { x: 0.9, y: 0.5 } },
 ];
 
 function novelai(model_id: string): ImageGenerationRequest {
@@ -25,7 +25,7 @@ describe("attach_character_prompts", () => {
       prompt: "1girl, 1boy, tavern",
       characters: [
         { prompt: "girl, silver hair" },
-        { prompt: "boy, armor", negative_prompt: "hat" },
+        { prompt: "boy, armor", negative_prompt: "hat", center: { x: 0.9, y: 0.5 } },
       ],
     });
   });

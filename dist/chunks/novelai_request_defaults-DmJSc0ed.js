@@ -4,7 +4,7 @@ import { i as t } from "./novelai_models-CXz0Nwhv.js";
 var n = /* @__PURE__ */ e({
 	DEFAULT_NOVELAI_MODEL_ID: () => r,
 	novelai_default_parameters: () => a
-}), r = "nai-diffusion-5-curated";
+}), r = "nai-diffusion-5-full";
 function i(e) {
 	let n = t(e);
 	if (n === null) throw Error(`"${e}" is not a NovelAI image model this extension can drive`);

@@ -13,7 +13,7 @@ import { n as le, t as I } from "./FieldGroup-DUIzuG3F.js";
 import { t as ue } from "./sparkles-DHUWhG-4.js";
 import { t as de } from "./trash-2-Dqlz-IWX.js";
 import { n as L } from "./deferred_stylesheets-C5SZyo6f.js";
-import { r as R, t as fe } from "./creation_planning-Pazxl0nR.js";
+import { r as R, t as fe } from "./creation_planning-DDr89HBw.js";
 import { n as pe, r as me, t as z } from "./TagInput-DaW9nw0K.js";
 import { t as B } from "./IconButton-DsFRFlSI.js";
 import { t as he } from "./ConfirmDialog-B5HDtQez.js";
@@ -506,7 +506,11 @@ var U = Ce, we = ["data-layout"], Te = ["data-error"], Ee = ["title"], De = ["fo
 }), J = e({
 	name: t(),
 	prompt: t(),
-	negative_prompt: t()
+	negative_prompt: t(),
+	center: e({
+		x: a().min(0).max(1),
+		y: a().min(0).max(1)
+	}).optional()
 }), Y = e({
 	id: t().min(1),
 	enabled: n(),

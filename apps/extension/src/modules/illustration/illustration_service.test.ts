@@ -461,7 +461,7 @@ describe("IllustrationService.active_location", () => {
 });
 
 describe("IllustrationService image jobs", () => {
-  it("stores edited character prompts even when the caller passes reactive objects", async () => {
+  it("stores edited character prompts with their places even when the caller passes reactive objects", async () => {
     const host = new MemoryHost();
     const { service } = create_service(host);
     await service.analyze(3);
@@ -469,11 +469,13 @@ describe("IllustrationService image jobs", () => {
     await service.generate(LOCATION, "slot_0001", {
       positive_prompt: "1girl, rain",
       negative_prompt: "",
-      character_prompts: reactive([{ name: "Alice", prompt: "girl, smile", negative_prompt: "" }]),
+      character_prompts: reactive([
+        { name: "Alice", prompt: "girl, smile", negative_prompt: "", center: { x: 0.1, y: 0.5 } },
+      ]),
     });
 
     expect(service.read(LOCATION)?.slots[0]?.character_prompts).toEqual([
-      { name: "Alice", prompt: "girl, smile", negative_prompt: "" },
+      { name: "Alice", prompt: "girl, smile", negative_prompt: "", center: { x: 0.1, y: 0.5 } },
     ]);
   });
 

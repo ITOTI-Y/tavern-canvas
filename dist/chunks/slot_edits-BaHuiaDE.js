@@ -1,7 +1,7 @@
 import { t as e } from "./ids-pPJWL4BL.js";
 import { t } from "./novelai-B6V3MfU9.js";
-import { n } from "./novelai_request_defaults-B0sJ9ANr.js";
-import { n as r } from "./inpaint_session-wWdlKjTY.js";
+import { n } from "./novelai_request_defaults-DmJSc0ed.js";
+import { n as r } from "./inpaint_session-KbTYn9Od.js";
 //#region src/modules/illustration/slot_edits.ts
 var i = 64;
 function a(e) {

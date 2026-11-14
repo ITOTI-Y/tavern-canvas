@@ -15,10 +15,11 @@ function r(e, r) {
 	} : {
 		...e,
 		prompt: s,
-		characters: a.map((e) => e.negative_prompt.trim() === "" ? { prompt: e.prompt } : {
+		characters: a.map((e) => ({
 			prompt: e.prompt,
-			negative_prompt: e.negative_prompt
-		})
+			...e.negative_prompt.trim() === "" ? {} : { negative_prompt: e.negative_prompt },
+			...e.center === void 0 ? {} : { center: e.center }
+		}))
 	};
 }
 //#endregion

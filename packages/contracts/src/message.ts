@@ -8,11 +8,20 @@ export type IllustrationSlotId = z.infer<typeof IllustrationSlotIdSchema>;
 
 export const MAX_SLOTS_PER_SWIPE = 16;
 
+/** Where a character stands, as fractions of the image width and height from the top left. */
+export const CharacterCenterSchema = z.strictObject({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+});
+export type CharacterCenter = z.infer<typeof CharacterCenterSchema>;
+
 /** One NovelAI character prompt; the slot's positive prompt then holds only shared tags. */
 export const SlotCharacterPromptSchema = z.strictObject({
   name: z.string().trim().min(1).max(120),
   prompt: z.string().trim().min(1).max(4000),
   negative_prompt: z.string().max(4000),
+  /** Omitted lets the image model place the character. */
+  center: CharacterCenterSchema.optional(),
 });
 export type SlotCharacterPrompt = z.infer<typeof SlotCharacterPromptSchema>;
 

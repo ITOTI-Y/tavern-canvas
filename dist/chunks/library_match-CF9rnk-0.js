@@ -66,30 +66,4 @@ function p(e, t, n, r) {
 	};
 }
 //#endregion
-//#region src/modules/illustration/model_json.ts
-var m = /<(think|thinking|reasoning)>[\s\S]*?<\/\1>/giu, h = /```(?:json)?\s*([\s\S]*?)```/giu;
-function g(e, t) {
-	for (let n = e.lastIndexOf("}"); n >= 0; n = e.lastIndexOf("}", n - 1)) {
-		let r = 0;
-		for (let i = n; i >= 0; --i) {
-			let a = e[i];
-			if (a === "}") r += 1;
-			else if (a === "{" && (--r, r === 0)) {
-				let r = e.slice(i, n + 1);
-				if (r.includes(`"${t}"`)) return r;
-				break;
-			}
-		}
-	}
-	return null;
-}
-function _(e, t) {
-	let n = e.replace(m, "").trim(), r = [...n.matchAll(h)].map((e) => (e[1] ?? "").trim()).reverse(), i = g(n, t);
-	return [
-		n,
-		...r,
-		...i === null ? [] : [i]
-	];
-}
-//#endregion
-export { l as a, o as c, p as i, a as l, f as n, n as o, d as r, r as s, _ as t, i as u };
+export { n as a, a as c, l as i, i as l, d as n, r as o, p as r, o as s, f as t };

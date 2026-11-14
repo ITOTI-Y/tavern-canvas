@@ -1,4 +1,4 @@
-import { n as e } from "./novelai_request_defaults-B0sJ9ANr.js";
+import { n as e } from "./novelai_request_defaults-DmJSc0ed.js";
 var t = class extends TypeError {
 	constructor(e) {
 		super(e), this.name = "InpaintDimensionError";
@@ -119,7 +119,7 @@ function o(t) {
 		prompt: t.positive_prompt,
 		...t.negative_prompt === void 0 ? {} : { negative_prompt: t.negative_prompt },
 		output_count: 1,
-		...e(t.model_id ?? "nai-diffusion-5-curated"),
+		...e(t.model_id ?? "nai-diffusion-5-full"),
 		width: t.width,
 		height: t.height,
 		...t.seed === void 0 ? {} : { seed: t.seed },
