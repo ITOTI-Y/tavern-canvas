@@ -249,7 +249,32 @@ describe("fetch_danbooru_tags", () => {
     await expect(generator.next()).rejects.toThrow(RangeError);
   });
 
-  it("throws DanbooruApiError on a non-ok response instead of yielding it as data", async () => {
+  it("waits out a rate limit and continues with the same page", async () => {
+    const waits: number[] = [];
+    let calls = 0;
+    const fetch_impl: FetchLike = () => {
+      calls += 1;
+      return Promise.resolve(
+        calls === 1
+          ? json_response({ error: "rate limited" }, false, 429)
+          : json_response([{ id: 1, name: "cat", post_count: 20, category: 0 }]),
+      );
+    };
+    const generator = fetch_danbooru_tags({
+      user_agent: "test-bot/1.0",
+      fetch_impl,
+      delay_fn: (ms) => {
+        waits.push(ms);
+        return Promise.resolve();
+      },
+    });
+
+    const page = await generator.next();
+    expect(page.value).toEqual([expect.objectContaining({ name: "cat" })]);
+    expect(waits).toEqual([5_000]);
+  });
+
+  it("throws DanbooruApiError once a rate limit outlasts every retry", async () => {
     const fetch_impl: FetchLike = () =>
       Promise.resolve(json_response({ error: "rate limited" }, false, 429));
     const generator = fetch_danbooru_tags({

@@ -87,6 +87,10 @@ function resolve_options(options: DanbooruClientOptions): ResolvedClientOptions 
   };
 }
 
+/** Rate limiting and transient server errors are waited out; other failures stop the crawl. */
+const RETRYABLE_STATUSES: ReadonlySet<number> = new Set([429, 500, 502, 503, 504]);
+const RETRY_BACKOFF_MS: readonly number[] = [5_000, 15_000, 30_000, 60_000, 120_000];
+
 async function fetch_json(
   resolved: ResolvedClientOptions,
   path: string,
@@ -97,9 +101,18 @@ async function fetch_json(
     url.searchParams.set(key, value);
   }
 
-  const response = await resolved.fetch_impl(url.toString(), {
+  let response = await resolved.fetch_impl(url.toString(), {
     headers: { "User-Agent": resolved.user_agent, Accept: "application/json" },
   });
+  for (const backoff_ms of RETRY_BACKOFF_MS) {
+    if (response.ok || !RETRYABLE_STATUSES.has(response.status)) {
+      break;
+    }
+    await resolved.delay_fn(backoff_ms);
+    response = await resolved.fetch_impl(url.toString(), {
+      headers: { "User-Agent": resolved.user_agent, Accept: "application/json" },
+    });
+  }
   if (!response.ok) {
     throw new DanbooruApiError(
       `Danbooru API request to ${url.toString()} failed: ${String(response.status)} ${response.statusText}`,
