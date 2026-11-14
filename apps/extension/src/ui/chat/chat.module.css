@@ -30,7 +30,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--tc-space-1);
-  margin: var(--tc-space-2) 0;
+  margin: var(--tc-space-2) auto;
   max-width: min(100%, 560px);
   color: var(--SmartThemeBodyColor, inherit);
   font-size: calc(var(--mainFontSize, 1rem) * 0.9);

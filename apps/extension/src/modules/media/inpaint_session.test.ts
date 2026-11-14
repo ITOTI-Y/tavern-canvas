@@ -202,7 +202,7 @@ describe("build_novelai_inpaint_request", () => {
     expect(request.image_asset_id).toBe(ASSET_A);
     expect(request.mask_asset_id).toBe(ASSET_B);
     expect(request.inpaint_strength).toBe(0.54);
-    expect(request.model_id).toBe("nai-diffusion-5-curated");
+    expect(request.model_id).toBe("nai-diffusion-5-full");
   });
 
   it("uses the requested base model, which the adapter maps to its inpainting variant", () => {
@@ -228,7 +228,7 @@ describe("build_novelai_inpaint_request", () => {
       model_id: "nai-diffusion-4-5-full",
     });
 
-    expect(default_request.model_id).toBe("nai-diffusion-5-curated");
+    expect(default_request.model_id).toBe("nai-diffusion-5-full");
     expect(overridden_request.model_id).toBe("nai-diffusion-4-5-full");
   });
 });

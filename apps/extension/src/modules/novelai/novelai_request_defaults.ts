@@ -4,7 +4,7 @@ import {
   type NovelAiModelProfile,
 } from "@tavern-canvas/contracts";
 
-export const DEFAULT_NOVELAI_MODEL_ID = "nai-diffusion-5-curated";
+export const DEFAULT_NOVELAI_MODEL_ID = "nai-diffusion-5-full";
 
 export type NovelAiDiffusionParameters = Pick<
   NovelAiDiffusionRequest,

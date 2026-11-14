@@ -116,9 +116,9 @@ function open_add_dialog(): void {
   draft.value = {
     id: crypto.randomUUID(),
     is_new: true,
-    provider_id: "sd_webui",
+    provider_id: "novelai",
     display_name: "",
-    model_id: "",
+    model_id: DEFAULT_NOVELAI_MODEL_ID,
     workflow_id: "",
     base_url: DEFAULT_SD_WEBUI_URL,
     is_default: props.profiles.length === 0,

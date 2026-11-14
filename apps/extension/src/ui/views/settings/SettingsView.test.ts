@@ -273,12 +273,6 @@ describe("SettingsView provider profiles", () => {
     name_input.value = "New NovelAI profile";
     name_input.dispatchEvent(new Event("input"));
     await nextTick();
-    const model_input = document.querySelector(
-      '[role="dialog"] [data-testid="provider-model-input"]',
-    ) as HTMLInputElement;
-    model_input.value = "sdxl-base";
-    model_input.dispatchEvent(new Event("input"));
-    await nextTick();
 
     const dialog_buttons = document.querySelectorAll('[role="dialog"] button');
     const save_button = Array.from(dialog_buttons).find((b) => b.textContent === "Save");
@@ -290,7 +284,8 @@ describe("SettingsView provider profiles", () => {
 
     expect(saved).toHaveLength(1);
     expect(saved[0]?.display_name).toBe("New NovelAI profile");
-    expect(saved[0]?.model_id).toBe("sdxl-base");
+    expect(saved[0]?.provider_id).toBe("novelai");
+    expect(saved[0]?.model_id).toBe("nai-diffusion-5-full");
     expect(wrapper.findAll('[data-testid="provider-profile-row"]').length).toBe(2);
   });
   it("stores a provider API key through the credential command without adding it to the profile draft", async () => {
