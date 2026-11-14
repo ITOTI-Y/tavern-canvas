@@ -1,5 +1,8 @@
+import type { ImageSize } from "@tavern-canvas/contracts";
+
 import type { SlotLibrary } from "./library_match.js";
 import type { Paragraph } from "./slot_markers.js";
+import { size_field_lines } from "./size_choice.js";
 import { guidance_lines } from "./user_guidance.js";
 
 export function library_lines(library: SlotLibrary): readonly string[] {
@@ -50,11 +53,13 @@ function request_input(
   library: SlotLibrary,
   guidance: string,
   viewer: string | null,
+  sizes: readonly ImageSize[],
 ): string {
   return [
     "[Inkwell illustration request]",
     selection,
     ...PROPOSAL_FIELD_LINES,
+    ...size_field_lines(sizes),
     ...continuity_lines(viewer),
     reply_format,
     ...library_lines(library),
@@ -71,6 +76,7 @@ export function build_analysis_input(
   library: SlotLibrary,
   guidance: string,
   viewer: string | null,
+  sizes: readonly ImageSize[],
 ): string {
   return request_input(
     `Read the latest reply below, split into numbered paragraphs. Choose at most ${String(max_images)} paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
@@ -79,6 +85,7 @@ export function build_analysis_input(
     library,
     guidance,
     viewer,
+    sizes,
   );
 }
 
@@ -89,6 +96,7 @@ export function build_chosen_paragraphs_input(
   library: SlotLibrary,
   guidance: string,
   viewer: string | null,
+  sizes: readonly ImageSize[],
 ): string {
   return request_input(
     `Read the latest reply below, split into numbered paragraphs. Illustrate exactly these paragraphs, one entry each: ${chosen.map((index) => `[${String(index)}]`).join(", ")}. For each one give:`,
@@ -97,5 +105,6 @@ export function build_chosen_paragraphs_input(
     library,
     guidance,
     viewer,
+    sizes,
   );
 }

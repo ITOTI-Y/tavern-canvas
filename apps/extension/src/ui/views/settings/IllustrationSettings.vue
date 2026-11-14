@@ -20,6 +20,7 @@ import TagInput from "../../components/TagInput.vue";
 import type { PromptPresetSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
 import styles from "./settings_styles.js";
+import SizeSetSettings from "./SizeSetSettings.vue";
 
 const props = defineProps<{
   readonly settings: TavernCanvasSettings | null;
@@ -334,6 +335,12 @@ function set_worldbook(name: string, chosen: boolean): void {
         </div>
       </div>
     </section>
+
+    <SizeSetSettings
+      v-if="illustration !== null"
+      :illustration="illustration"
+      @update="update_illustration"
+    />
 
     <section :class="styles.section">
       <h2 :class="styles.section_title">{{ t("settings.groups.analysis") }}</h2>

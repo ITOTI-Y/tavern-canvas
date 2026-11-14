@@ -35,6 +35,13 @@ export const IllustrationSlotSchema = z.strictObject({
   positive_prompt: z.string().max(8000),
   negative_prompt: z.string().max(8000),
   character_prompts: z.array(SlotCharacterPromptSchema).max(16),
+  /** The canvas chosen for this picture; omitted keeps the image profile's. */
+  size: z
+    .strictObject({
+      width: z.number().int().min(64).max(2048),
+      height: z.number().int().min(64).max(2048),
+    })
+    .optional(),
   image_ids: z.array(ImageIdSchema),
   active_image_id: ImageIdSchema.nullable(),
   pending_request_ids: z.array(RequestIdSchema),

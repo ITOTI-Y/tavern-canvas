@@ -1,4 +1,4 @@
-import type { StripSettings, Wearing } from "@tavern-canvas/contracts";
+import type { ImageSize as CanvasSize, StripSettings, Wearing } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 import type { HostJsonSchema } from "../../host/index.js";
@@ -17,6 +17,7 @@ import type {
 } from "../illustration/illustration_service.js";
 import { json_candidates } from "../illustration/model_json.js";
 import { proposal_slots } from "../illustration/proposal_slots.js";
+import { chosen_size, size_field_lines, size_json_schema } from "../illustration/size_choice.js";
 import { split_paragraphs, type Paragraph } from "../illustration/slot_markers.js";
 import { guidance_lines } from "../illustration/user_guidance.js";
 import type { CreationScene, ImageSize, SceneFrame } from "./creation_record.js";
@@ -161,6 +162,38 @@ export const SCENE_JSON_SCHEMA: HostJsonSchema = {
   },
 };
 
+interface ObjectSchema {
+  readonly properties: Record<string, unknown>;
+  readonly required: readonly string[];
+}
+
+/** The scene schema, asking for one of the set's canvases instead of a frame when there is a choice. */
+export function scene_json_schema(sizes: readonly CanvasSize[]): HostJsonSchema {
+  if (sizes.length < 2) {
+    return SCENE_JSON_SCHEMA;
+  }
+  const root = SCENE_JSON_SCHEMA.value as unknown as ObjectSchema;
+  const list = root.properties.scenes as { readonly items: ObjectSchema };
+  const { frame: _frame, ...properties } = list.items.properties;
+  return {
+    name: SCENE_JSON_SCHEMA.name,
+    value: {
+      ...root,
+      properties: {
+        ...root.properties,
+        scenes: {
+          ...list,
+          items: {
+            ...list.items,
+            properties: { ...properties, size: size_json_schema(sizes) },
+            required: list.items.required.map((field) => (field === "frame" ? "size" : field)),
+          },
+        },
+      },
+    },
+  };
+}
+
 export type ScenePlanKind = "story" | "strip";
 
 /** Storyboard rules shared by stories and strips: each picture must carry its own beat. */
@@ -195,11 +228,13 @@ const SCENE_FIELD_LINES: readonly string[] = [
   "- caption: one plain English sentence without commas that tells an image model exactly what this picture shows: who does what to whom and where each stands in the frame. Call every character by a look, such as the pink-haired girl, never by name",
   `- shot: one of ${SHOTS.join(", ")}`,
   "- place: the name of its place in places",
-  "- frame: portrait for one figure or a close-up, landscape for an establishing or wide shot or several figures side by side, square otherwise",
   "- tags: Danbooru-style English tags for this picture's lighting, time of day and the props that matter in it, plus any style or artist tags the guidance below asks for",
   "- characters: one entry per character visible in this picture, with name as in cast, tags: only this picture's pose, action, gaze and expression, and position: where the character is in the picture, x one of left, center-left, center, center-right, right and y one of top, middle, bottom, where bottom is nearer the viewer",
   "Animals and creatures that take part in a moment are characters too: list them in cast and give each its own entry, named by kind such as wolf 1, with tags starting with other. For an action between two characters, put it in both entries with a prefix: source# for the one who acts and target# for the one acted on, or mutual# on both, such as source#hug and target#hug.",
 ];
+
+const FRAME_FIELD_LINE =
+  "- frame: portrait for one figure or a close-up, landscape for an establishing or wide shot or several figures side by side, square otherwise";
 
 /** The request that turns a story, or a stretch of chat, into pictures to confirm before drawing. */
 export function build_scene_input(
@@ -210,6 +245,7 @@ export function build_scene_input(
   guidance: string,
   viewer: string | null,
   bubbles: boolean,
+  sizes: readonly CanvasSize[],
 ): string {
   const count = String(max_scenes);
   const selection =
@@ -237,6 +273,7 @@ export function build_scene_input(
     CAST_LINE,
     PLACES_LINE,
     ...SCENE_FIELD_LINES,
+    ...(sizes.length < 2 ? [FRAME_FIELD_LINE] : size_field_lines(sizes)),
     bubbles ? BUBBLE_FIELD_LINE : NO_BUBBLE_FIELD_LINE,
     'Reply with only a JSON object of the form {"cast":[...],"places":[...],"scenes":[...]}.',
     ...library_lines(context.library),
@@ -284,6 +321,7 @@ const PlanSchema = z.object({
   frame: z.enum(["portrait", "landscape", "square"]).catch("square"),
   tags: TagsSchema,
   characters: z.array(SceneCharacterSchema).max(16),
+  size: z.unknown().optional(),
 });
 const PlanOutputSchema = z.object({
   cast: z.array(NamedTagsSchema).max(32).catch([]),
@@ -297,6 +335,7 @@ export function parse_scene_output(
   paragraph_count: number,
   max_scenes: number,
   bubbles: boolean,
+  sizes: readonly CanvasSize[] = [],
 ): PlannedScenes {
   for (const candidate of json_candidates(raw, "scenes")) {
     let value: unknown;
@@ -313,8 +352,9 @@ export function parse_scene_output(
         plans: parsed.data.scenes
           .filter((plan) => plan.paragraph < paragraph_count)
           .slice(0, max_scenes)
-          .map((plan) => ({
+          .map(({ size, ...plan }) => ({
             ...plan,
+            ...size_of(chosen_size(size, sizes)),
             characters: plan.characters.map((character) => ({
               name: character.name,
               tags: join_tags(character.tags, bubbles ? bubble_tags(character) : ""),
@@ -325,6 +365,10 @@ export function parse_scene_output(
     }
   }
   throw new AnalysisParseError("The reply contains no scenes JSON object", raw);
+}
+
+function size_of(size: CanvasSize | undefined): { readonly size?: CanvasSize } {
+  return size === undefined ? {} : { size };
 }
 
 export interface StripMessage {
@@ -397,7 +441,7 @@ export function scenes_from_plans(
     scene: plans[index]?.scene ?? "",
     excerpt: (paragraphs[plans[index]?.paragraph ?? -1]?.text ?? "").slice(0, 200),
     characters: slot.characters,
-    size: FRAME_SIZES[plans[index]?.frame ?? "square"],
+    size: plans[index]?.size ?? FRAME_SIZES[plans[index]?.frame ?? "square"],
     positive_prompt: slot.positive_prompt,
     negative_prompt: slot.negative_prompt,
     character_prompts: slot.character_prompts,

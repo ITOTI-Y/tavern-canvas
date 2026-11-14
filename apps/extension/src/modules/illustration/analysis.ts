@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-import type { CharacterCenter } from "@tavern-canvas/contracts";
+import type { CharacterCenter, ImageSize } from "@tavern-canvas/contracts";
 
 import type { HostJsonSchema } from "../../host/index.js";
 import { AnalysisParseError } from "./analysis_error.js";
 import { json_candidates } from "./model_json.js";
+import { chosen_size, size_json_schema } from "./size_choice.js";
 
 export interface ProposedCharacter {
   readonly name: string;
@@ -20,6 +21,8 @@ export interface IllustrationProposal {
   readonly caption: string;
   readonly tags: string;
   readonly characters: readonly ProposedCharacter[];
+  /** `undefined` keeps the image profile's canvas. */
+  readonly size?: ImageSize;
 }
 
 const POSITION_X = { left: 0.1, "center-left": 0.3, center: 0.5, "center-right": 0.7, right: 0.9 };
@@ -91,11 +94,44 @@ export const ANALYSIS_JSON_SCHEMA: HostJsonSchema = {
   },
 };
 
-/** One request that also carries a wardrobe update, answered as `{illustrations, wardrobe}`. */
-export function combined_analysis_json_schema(wardrobe: HostJsonSchema): HostJsonSchema {
-  const analysis = ANALYSIS_JSON_SCHEMA.value as { readonly properties: Record<string, unknown> };
+interface ObjectSchema {
+  readonly properties: Record<string, unknown>;
+  readonly required: readonly string[];
+}
+
+/** The analysis schema with each picture's canvas to choose when the size set offers a choice. */
+export function analysis_json_schema(sizes: readonly ImageSize[]): HostJsonSchema {
+  if (sizes.length < 2) {
+    return ANALYSIS_JSON_SCHEMA;
+  }
+  const root = ANALYSIS_JSON_SCHEMA.value as unknown as ObjectSchema;
+  const list = root.properties.illustrations as { readonly items: ObjectSchema };
   return {
     name: ANALYSIS_JSON_SCHEMA.name,
+    value: {
+      ...root,
+      properties: {
+        illustrations: {
+          ...list,
+          items: {
+            ...list.items,
+            properties: { ...list.items.properties, size: size_json_schema(sizes) },
+            required: [...list.items.required, "size"],
+          },
+        },
+      },
+    },
+  };
+}
+
+/** One request that also carries a wardrobe update, answered as `{illustrations, wardrobe}`. */
+export function combined_analysis_json_schema(
+  wardrobe: HostJsonSchema,
+  schema: HostJsonSchema = ANALYSIS_JSON_SCHEMA,
+): HostJsonSchema {
+  const analysis = schema.value as unknown as ObjectSchema;
+  return {
+    name: schema.name,
     value: {
       type: "object",
       properties: { ...analysis.properties, wardrobe: wardrobe.value },
@@ -138,6 +174,7 @@ const ProposalSchema = z
         }),
       )
       .max(16),
+    size: z.unknown().optional(),
   })
   .transform(({ characters, ...proposal }) => ({
     ...proposal,
@@ -154,6 +191,7 @@ export function parse_analysis_output(
   raw: string,
   paragraph_count: number,
   max_images: number,
+  sizes: readonly ImageSize[] = [],
 ): readonly IllustrationProposal[] {
   for (const candidate of json_candidates(raw, "illustrations")) {
     let value: unknown;
@@ -175,7 +213,11 @@ export function parse_analysis_output(
         seen.add(proposal.paragraph);
         return true;
       })
-      .slice(0, max_images);
+      .slice(0, max_images)
+      .map(({ size, ...proposal }) => {
+        const chosen = chosen_size(size, sizes);
+        return chosen === undefined ? proposal : { ...proposal, size: chosen };
+      });
   }
   throw new AnalysisParseError("The analysis reply contains no illustrations JSON object", raw);
 }

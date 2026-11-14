@@ -229,6 +229,7 @@ function k(e, t, r, a, o) {
 			positive_prompt: i([c.positive_prompt, O(t.caption)]),
 			negative_prompt: c.negative_prompt,
 			character_prompts: [...c.character_prompts],
+			...t.size === void 0 ? {} : { size: { ...t.size } },
 			image_ids: [],
 			active_image_id: null,
 			pending_request_ids: [],

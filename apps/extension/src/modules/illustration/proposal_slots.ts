@@ -46,6 +46,7 @@ export function proposal_slots(
       positive_prompt: join_prompt_parts([prompt.positive_prompt, caption_tag(proposal.caption)]),
       negative_prompt: prompt.negative_prompt,
       character_prompts: [...prompt.character_prompts],
+      ...(proposal.size === undefined ? {} : { size: { ...proposal.size } }),
       image_ids: [],
       active_image_id: null,
       pending_request_ids: [],

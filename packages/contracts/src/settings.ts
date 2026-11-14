@@ -110,6 +110,24 @@ export const DEFAULT_STRIP_SETTINGS: StripSettings = {
   symbol_bubbles: true,
 };
 
+/** A canvas on NovelAI's 64 px grid. */
+export const ImageSizeSchema = z.strictObject({
+  width: z.number().int().min(64).max(2048).multipleOf(64),
+  height: z.number().int().min(64).max(2048).multipleOf(64),
+});
+export type ImageSize = z.infer<typeof ImageSizeSchema>;
+
+/** A named group of canvases the analysis model picks from, one per picture. */
+export const SizeSetSchema = z.strictObject({
+  id: z.string().trim().min(1).max(64),
+  name: z.string().trim().min(1).max(60),
+  sizes: z.array(ImageSizeSchema).min(1).max(16),
+});
+export type SizeSet = z.infer<typeof SizeSetSchema>;
+
+/** Chats that keep their own size set; older entries are dropped past this many. */
+export const MAX_CHAT_SIZE_SETS = 100;
+
 export const IllustrationSettingsSchema = z.strictObject({
   /** A SillyTavern chat completion preset name; `in_use` is the preset currently loaded. */
   preset_name: z.string().trim().min(1).max(200),
@@ -125,6 +143,13 @@ export const IllustrationSettingsSchema = z.strictObject({
   /** The user's direction on clothing, sent with every wardrobe update. */
   wardrobe_guidance: z.string().max(2000).default(""),
   strip: StripSettingsSchema.default(DEFAULT_STRIP_SETTINGS),
+  size_sets: z.array(SizeSetSchema).max(20).default([]),
+  /** The set every chat uses unless it has its own; `null` keeps the image profile's canvas. */
+  size_set_id: z.string().trim().min(1).max(64).nullable().default(null),
+  /** A chat's own set by chat id, `null` keeping the profile's canvas in that chat. */
+  size_set_by_chat: z
+    .record(z.string().min(1).max(300), z.string().trim().min(1).max(64).nullable())
+    .default({}),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

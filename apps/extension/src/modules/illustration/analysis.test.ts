@@ -31,6 +31,7 @@ describe("build_analysis_input", () => {
       { characters: [], outfits: [], loras: [] },
       "  ",
       null,
+      [],
     );
 
     expect(input).toContain("Choose at most 2 paragraphs");
@@ -46,6 +47,7 @@ describe("build_analysis_input", () => {
       { characters: [], outfits: [], loras: [] },
       "",
       "Yu",
+      [],
     );
 
     expect(input).toContain("both sides of an exchange are visible");
@@ -59,6 +61,7 @@ describe("build_analysis_input", () => {
       { characters: [], outfits: [], loras: [] },
       " watercolor, summer evening ",
       null,
+      [],
     );
 
     expect(input).toMatch(/User guidance[^\n]*\nwatercolor, summer evening\n\nParagraphs:/u);
@@ -77,6 +80,7 @@ describe("build_analysis_input", () => {
       },
       "",
       null,
+      [],
     );
 
     expect(input).toContain("never hair, eyes, face, body or clothing");

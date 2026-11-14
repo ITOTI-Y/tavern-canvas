@@ -32,6 +32,7 @@ import type {
   CreationScene,
   ImageSize,
 } from "../../../modules/creation/creation_record.js";
+import { active_sizes } from "../../../modules/illustration/size_choice.js";
 import ImageSizeField from "../settings/ImageSizeField.vue";
 import { page_rows } from "./comic_page.js";
 import CreationImage from "./CreationImage.vue";
@@ -319,6 +320,15 @@ async function load_strip_messages(): Promise<void> {
 }
 
 const active_chat_id = inject(ACTIVE_CHAT_ID_KEY, ref(null));
+
+/** The canvases a scene may switch to: the story uses the default set, a strip its chat's. */
+const scene_sizes = computed(() => {
+  const illustration = props.state.settings.settings?.illustration;
+  if (illustration === undefined) {
+    return [];
+  }
+  return active_sizes(illustration, selected.value?.kind === "strip" ? active_chat_id.value : null);
+});
 
 /** Reloaded whenever the range picker opens or the open chat changes under it. */
 watch(
@@ -820,6 +830,7 @@ async function delete_selected(): Promise<void> {
             :key="scene.id"
             :scene="scene"
             :index="index"
+            :sizes="scene_sizes"
             @change="(patch, debounce) => change_scene(scene.id, patch, debounce)"
             @remove="remove_scene(scene.id)"
           />

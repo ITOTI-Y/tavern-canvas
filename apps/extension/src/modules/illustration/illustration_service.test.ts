@@ -40,6 +40,9 @@ const SETTINGS: IllustrationSettings = {
     no_text_tags: "",
     symbol_bubbles: true,
   },
+  size_sets: [],
+  size_set_id: null,
+  size_set_by_chat: {},
 };
 
 class MemoryHost {
@@ -194,7 +197,10 @@ function create_service(
       new_id: () => "id-1",
     }),
     build_request: (input) =>
-      Promise.resolve({ prompt: input.positive_prompt } as unknown as ImageGenerationRequest),
+      Promise.resolve({
+        prompt: input.positive_prompt,
+        size: input.size,
+      } as unknown as ImageGenerationRequest),
     build_edit_request: (edit) =>
       Promise.resolve({ prompt: edit.kind } as unknown as ImageGenerationRequest),
     edits_available: () => true,
@@ -741,6 +747,9 @@ describe("create_wardrobe_runner", () => {
           no_text_tags: "",
           symbol_bubbles: true,
         },
+        size_sets: [],
+        size_set_id: null,
+        size_set_by_chat: {},
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",
@@ -822,5 +831,47 @@ describe("IllustrationService create page planning", () => {
       ["The street", { width: 1216, height: 832 }],
     ]);
     expect(scenes[0]?.positive_prompt).toContain("door");
+  });
+});
+
+describe("IllustrationService size sets", () => {
+  it("lets the analysis pick a canvas from this chat's set and draws the slot at it", async () => {
+    const host = new MemoryHost();
+    host.analysis_reply = JSON.stringify({
+      illustrations: [
+        {
+          paragraph: 1,
+          scene: "rain",
+          caption: "",
+          tags: "rain",
+          characters: [],
+          size: "1344x768",
+        },
+      ],
+    });
+    const settings: IllustrationSettings = {
+      ...SETTINGS,
+      size_sets: [
+        {
+          id: "wide",
+          name: "Wide",
+          sizes: [
+            { width: 832, height: 1216 },
+            { width: 1344, height: 768 },
+          ],
+        },
+      ],
+      size_set_by_chat: { "chat-1": "wide" },
+    };
+    const { service, submit } = create_service(host, { settings });
+
+    await service.analyze(3);
+    await service.generate(LOCATION, "slot_0001");
+
+    expect(host.generate_calls[0]?.user_input).toContain("1344x768 (wide 1.75:1)");
+    expect(service.read(LOCATION)?.slots[0]?.size).toEqual({ width: 1344, height: 768 });
+    expect(submit).toHaveBeenCalledWith(
+      expect.objectContaining({ size: { width: 1344, height: 768 } }),
+    );
   });
 });

@@ -134,6 +134,9 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
             no_text_tags: "",
             symbol_bubbles: true,
           },
+          size_sets: [],
+          size_set_id: null,
+          size_set_by_chat: {},
         },
         translation: { deepl_endpoint: "free", glossary: [] },
         ui: {
@@ -279,6 +282,9 @@ const SETTINGS: TavernCanvasSettings = {
       no_text_tags: "",
       symbol_bubbles: true,
     },
+    size_sets: [],
+    size_set_id: null,
+    size_set_by_chat: {},
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {

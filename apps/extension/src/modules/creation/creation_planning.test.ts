@@ -5,6 +5,7 @@ import {
   build_scene_input,
   parse_scene_output,
   scene_generation_input,
+  scene_json_schema,
   scenes_from_plans,
   strip_paragraphs,
 } from "./creation_planning.js";
@@ -42,14 +43,14 @@ describe("creation planning", () => {
 
   it("asks for a strip without lettering, tells who 'you' is, and asks a story in story order", () => {
     const paragraphs = strip_paragraphs([{ name: "Lin", text: "She ran." }]);
-    const strip = build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu", true);
+    const strip = build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu", true, []);
     expect(strip).toContain("no lettering");
     expect(strip).toContain('"You" in the text is Yu.');
     expect(strip).toContain("bubble: speech or thought");
-    expect(build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu", false)).toContain(
+    expect(build_scene_input("strip", paragraphs, 6, CONTEXT, "", "Yu", false, [])).toContain(
       "no speech bubbles",
     );
-    const story = build_scene_input("story", paragraphs, 6, CONTEXT, "", null, false);
+    const story = build_scene_input("story", paragraphs, 6, CONTEXT, "", null, false, []);
     expect(story).toContain("in story order");
     expect(story).not.toContain('"You"');
   });
@@ -68,6 +69,42 @@ describe("creation planning", () => {
     ).toEqual([
       ["a", "square"],
       ["c", "portrait"],
+    ]);
+  });
+
+  it("asks for one of the set's canvases instead of a frame and sizes each scene by it", () => {
+    const sizes = [
+      { width: 1344, height: 768 },
+      { width: 832, height: 1216 },
+    ];
+    const items = (
+      scene_json_schema(sizes).value as {
+        properties: { scenes: { items: { required: string[] } } };
+      }
+    ).properties.scenes.items;
+    expect(items.required).toContain("size");
+    expect(items.required).not.toContain("frame");
+    const paragraphs = strip_paragraphs([{ name: "Lin", text: "She ran." }]);
+    expect(build_scene_input("story", paragraphs, 6, CONTEXT, "", null, false, sizes)).toContain(
+      "- size: the canvas for this picture, one of 1344x768 (wide 1.75:1), 832x1216 (tall 1:1.46)",
+    );
+
+    const raw = JSON.stringify({
+      scenes: [
+        { paragraph: 0, scene: "a", size: "1344x768", tags: "", characters: [] },
+        { paragraph: 0, scene: "b", size: "640x640", tags: "", characters: [] },
+      ],
+    });
+    const scenes = scenes_from_plans(
+      paragraphs,
+      parse_scene_output(raw, 1, 6, false, sizes),
+      CONTEXT,
+      [],
+      () => "id",
+    );
+    expect(scenes.map((scene) => scene.size)).toEqual([
+      { width: 1344, height: 768 },
+      { width: 1024, height: 1024 },
     ]);
   });
 

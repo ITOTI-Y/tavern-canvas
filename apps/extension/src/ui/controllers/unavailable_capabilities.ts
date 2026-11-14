@@ -70,6 +70,9 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
     analysis_guidance: "",
     wardrobe_guidance: "",
     strip: DEFAULT_STRIP_SETTINGS,
+    size_sets: [],
+    size_set_id: null,
+    size_set_by_chat: {},
   },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {

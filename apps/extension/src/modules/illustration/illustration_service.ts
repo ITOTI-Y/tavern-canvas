@@ -3,6 +3,7 @@ import {
   type IllustrationSettings,
   type IllustrationSlot,
   type ImageGenerationRequest,
+  type ImageSize,
   type RequestId,
   type SwipeIllustrations,
   type SlotCharacterPrompt,
@@ -46,7 +47,11 @@ export interface SlotGenerationInput {
   readonly negative_prompt: string;
   readonly character_prompts: readonly SlotCharacterPrompt[];
   /** Replaces the profile's default canvas, for providers whose requests carry a width and height. */
-  readonly size?: { readonly width: number; readonly height: number };
+  readonly size?: ImageSize;
+}
+
+function with_size(size: ImageSize | undefined): { readonly size?: ImageSize } {
+  return size === undefined ? {} : { size: { width: size.width, height: size.height } };
 }
 
 export interface IllustrationJobPort {
@@ -293,21 +298,24 @@ export class IllustrationService {
       const context = await this.#deps.prompt_context(location.chat_id);
       const { build_analysis_input } = await import("./analysis_prompts.js");
       const {
-        ANALYSIS_JSON_SCHEMA,
+        analysis_json_schema,
         combined_analysis_json_schema,
         COMBINED_REPLY_FORMAT,
         parse_analysis_output,
         wardrobe_reply_of,
       } = await import("./analysis.js");
+      const { active_sizes } = await import("./size_choice.js");
+      const sizes = active_sizes(settings, location.chat_id);
       const analysis_input = build_analysis_input(
         paragraphs,
         settings.max_images_per_message,
         context.library,
         settings.analysis_guidance,
         viewer_name(chat),
+        sizes,
       );
       const parse_proposals = (raw: string) =>
-        parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message);
+        parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message, sizes);
       const { proposals, wardrobe_reply } = await request_analysis(
         this.#deps,
         text,
@@ -315,7 +323,7 @@ export class IllustrationService {
           ? {
               user_input: analysis_input,
               history,
-              json_schema: ANALYSIS_JSON_SCHEMA,
+              json_schema: analysis_json_schema(sizes),
               parse: (raw) => ({ proposals: parse_proposals(raw), wardrobe_reply: null }),
             }
           : {
@@ -328,7 +336,10 @@ export class IllustrationService {
                 COMBINED_REPLY_FORMAT,
               ].join("\n"),
               history,
-              json_schema: combined_analysis_json_schema(pending.json_schema),
+              json_schema: combined_analysis_json_schema(
+                pending.json_schema,
+                analysis_json_schema(sizes),
+              ),
               parse: (raw) => ({
                 proposals: parse_proposals(raw),
                 wardrobe_reply: wardrobe_reply_of(raw),
@@ -420,7 +431,9 @@ export class IllustrationService {
     const context = await this.#deps.prompt_context(location.chat_id);
     const chat = await this.#deps.host.get_active_chat();
     const { build_chosen_paragraphs_input } = await import("./analysis_prompts.js");
-    const { ANALYSIS_JSON_SCHEMA, parse_analysis_output } = await import("./analysis.js");
+    const { analysis_json_schema, parse_analysis_output } = await import("./analysis.js");
+    const { active_sizes } = await import("./size_choice.js");
+    const sizes = active_sizes(settings, location.chat_id);
     const proposals = await request_analysis(
       this.#deps,
       text,
@@ -431,10 +444,11 @@ export class IllustrationService {
           context.library,
           settings.analysis_guidance,
           viewer_name(chat),
+          sizes,
         ),
         history: history_before(chat, location.message_id, settings.max_chat_history),
-        json_schema: ANALYSIS_JSON_SCHEMA,
-        parse: (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
+        json_schema: analysis_json_schema(sizes),
+        parse: (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length, sizes),
       },
       new AbortController().signal,
     );
@@ -478,7 +492,13 @@ export class IllustrationService {
     prompt?: SlotGenerationInput,
   ): Promise<ImageGenerationRequest> {
     const slot = this.#require_slot(location, slot_id);
-    return this.#build_slot_request(prompt ?? slot);
+    const source = prompt ?? slot;
+    return this.#build_slot_request({
+      positive_prompt: source.positive_prompt,
+      negative_prompt: source.negative_prompt,
+      character_prompts: source.character_prompts,
+      ...with_size(prompt?.size ?? slot.size),
+    });
   }
 
   async #build_slot_request(input: SlotGenerationInput): Promise<ImageGenerationRequest> {
@@ -532,6 +552,8 @@ export class IllustrationService {
     const paragraphs = split_paragraphs(story);
     const context = await this.#deps.prompt_context(null);
     const settings = this.#deps.settings();
+    const { active_sizes } = await import("./size_choice.js");
+    const sizes = active_sizes(settings, null);
     const plans = await request_analysis(
       this.#deps,
       story,
@@ -544,11 +566,12 @@ export class IllustrationService {
           settings.analysis_guidance,
           null,
           false,
+          sizes,
         ),
         history: [],
-        json_schema: planning.SCENE_JSON_SCHEMA,
+        json_schema: planning.scene_json_schema(sizes),
         parse: (raw) =>
-          planning.parse_scene_output(raw, paragraphs.length, STORY_MAX_SCENES, false),
+          planning.parse_scene_output(raw, paragraphs.length, STORY_MAX_SCENES, false, sizes),
       },
       new AbortController().signal,
       {
@@ -602,6 +625,8 @@ export class IllustrationService {
     const text = paragraphs.map((paragraph) => paragraph.text).join("\n");
     const settings = this.#deps.settings();
     const context = await this.#deps.prompt_context(chat_id);
+    const { active_sizes } = await import("./size_choice.js");
+    const sizes = active_sizes(settings, chat_id);
     const last = chosen.at(-1);
     const snapshot =
       last === undefined
@@ -619,15 +644,17 @@ export class IllustrationService {
           settings.analysis_guidance,
           messages.find((message) => message.is_user)?.name ?? null,
           settings.strip.symbol_bubbles,
+          sizes,
         ),
         history: [],
-        json_schema: planning.SCENE_JSON_SCHEMA,
+        json_schema: planning.scene_json_schema(sizes),
         parse: (raw) =>
           planning.parse_scene_output(
             raw,
             paragraphs.length,
             max_panels,
             settings.strip.symbol_bubbles,
+            sizes,
           ),
       },
       new AbortController().signal,
@@ -677,6 +704,7 @@ export class IllustrationService {
       positive_prompt: prompt?.positive_prompt ?? slot.positive_prompt,
       negative_prompt: prompt?.negative_prompt ?? slot.negative_prompt,
       character_prompts: prompt?.character_prompts ?? slot.character_prompts,
+      ...with_size(prompt?.size ?? slot.size),
     };
     await this.#submit_for_slot(
       location,

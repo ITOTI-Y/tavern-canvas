@@ -114,6 +114,9 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
         no_text_tags: "",
         symbol_bubbles: true,
       },
+      size_sets: [],
+      size_set_id: null,
+      size_set_by_chat: {},
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>

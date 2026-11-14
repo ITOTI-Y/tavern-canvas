@@ -543,7 +543,25 @@ var o = {
 			strip: "Comic strip",
 			generation: "Generation",
 			analysis: "Analysis",
-			guidance: "Guidance"
+			guidance: "Guidance",
+			sizes: "Image sizes"
+		},
+		size_sets: {
+			hint: "Tick the canvases a set offers; the analysis model picks one per picture by its composition, such as a wide canvas for characters side by side. Chat illustrations and the create page both use the set.",
+			default_label: "Default set",
+			chat_label: "Set for this chat",
+			none: "None: use the image service's size",
+			follow_default: "Follow the default set",
+			edit_label: "Set to edit",
+			add: "New set",
+			duplicate: "Duplicate",
+			remove: "Delete set",
+			new_name: "Size set {n}",
+			copy_name: "{name} copy",
+			name_label: "Set name",
+			sizes_label: "Sizes in this set",
+			costs_anlas: "costs Anlas",
+			add_custom: "Add this size"
 		},
 		saved: "Saved",
 		save_failed: "The settings could not be saved (error code {code}); the last change did not take effect. Try again.",
@@ -934,7 +952,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-BbdjBMUF.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-BoZCGRLh.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2
