@@ -1,0 +1,43 @@
+name: Visual snapshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium and system dependencies
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Render the Studio snapshots
+        run: pnpm exec playwright test --project=studio tests/e2e/studio_visual.spec.ts --update-snapshots=all
+
+      - name: Upload the snapshots
+        uses: actions/upload-artifact@v5
+        with:
+          name: studio-visual-snapshots
+          path: tests/e2e/studio_visual.spec.ts-snapshots/*-linux.png
+          if-no-files-found: error

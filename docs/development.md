@@ -135,3 +135,10 @@ pnpm test:e2e         # Playwright end to end tests
 ```
 
 `pnpm check` runs `pnpm build`, which rewrites `dist/`. Commit that change with the rest.
+
+The Studio visual tests compare against the `*-linux.png` baselines in
+`tests/e2e/studio_visual.spec.ts-snapshots/`, rendered on the GitHub Ubuntu runner that CI uses.
+After a change to the Studio's look, run the **Visual snapshots** workflow from the Actions tab,
+download its `studio-visual-snapshots` artifact into that directory, and commit the images.
+Snapshots rendered on Windows or under WSL differ from the runner's in font rendering and are not
+committed.
