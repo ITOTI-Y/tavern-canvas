@@ -4,6 +4,7 @@ import type {
   HostChatChangeHandler,
   HostGenerationHandler,
   HostMessageRenderedHandler,
+  HostStoryStatus,
   HostSwipeLocation,
 } from "./host_adapter.js";
 
@@ -12,6 +13,35 @@ export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => vo
 /** The key under a message's `extra` (and each `swipe_info[i].extra`) that holds TavernCanvas data. */
 export const TAVERN_CANVAS_EXTRA_KEY = "tavern_canvas";
 const WARDROBE_EXTRA_KEY = "tavern_canvas_wardrobe";
+const ADVANCED_PRESET_EXTRA_KEY = "advanced_preset";
+
+function text_field(record: unknown, key: string): string | null {
+  if (typeof record !== "object" || record === null) {
+    return null;
+  }
+  const value = (record as Record<string, unknown>)[key];
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
+/** Reads Advanced Preset's sidecar (`v` 1): the status bar first, else the event synopsis. */
+function story_status_of(sidecar: unknown): HostStoryStatus | null {
+  if (typeof sidecar !== "object" || sidecar === null) {
+    return null;
+  }
+  const record = sidecar as Record<string, unknown>;
+  const structures = record["structures"];
+  if (record["v"] !== 1 || typeof structures !== "object" || structures === null) {
+    return null;
+  }
+  const status = (structures as Record<string, unknown>)["status"];
+  const synopsis = (structures as Record<string, unknown>)["synopsis"];
+  const result = {
+    date: text_field(status, "date"),
+    time: text_field(status, "time") ?? text_field(synopsis, "time"),
+    location: text_field(status, "location") ?? text_field(synopsis, "location"),
+  };
+  return result.date === null && result.time === null && result.location === null ? null : result;
+}
 
 export interface SillyTavernEventSource {
   on(event_name: string, listener: SillyTavernEventListener): void;
@@ -308,6 +338,10 @@ export class SillyTavernHost {
 
   read_swipe_wardrobe(location: HostSwipeLocation): unknown {
     return this.#read_extra(location, WARDROBE_EXTRA_KEY);
+  }
+
+  read_story_status(location: HostSwipeLocation): HostStoryStatus | null {
+    return story_status_of(this.#find_extra(location, false)?.[ADVANCED_PRESET_EXTRA_KEY]);
   }
 
   #read_extra(location: HostSwipeLocation, key: string): unknown {

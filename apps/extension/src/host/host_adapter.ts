@@ -73,6 +73,13 @@ export interface HostJsonSchema {
 export type HostWorldInfo =
   { readonly kind: "chat" } | { readonly kind: "replace"; readonly text: string };
 
+/** Where and when a reply happens in the story, as the chat preset recorded it. */
+export interface HostStoryStatus {
+  readonly date: string | null;
+  readonly time: string | null;
+  readonly location: string | null;
+}
+
 /** A chat message sent as history, in place of the chat's own latest messages. */
 export interface HostHistoryMessage {
   readonly role: "user" | "assistant";
@@ -145,6 +152,11 @@ export interface HostAdapter {
   /** The wardrobe snapshot kept beside the illustration record, under its own key. */
   read_swipe_wardrobe(location: HostSwipeLocation): unknown;
   write_swipe_wardrobe(location: HostSwipeLocation, record: unknown): Promise<void>;
+  /**
+   * The story date, time and place the Advanced Preset status bar or event synopsis recorded on
+   * this swipe; `null` when the preset recorded neither.
+   */
+  read_story_status(location: HostSwipeLocation): HostStoryStatus | null;
   /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;

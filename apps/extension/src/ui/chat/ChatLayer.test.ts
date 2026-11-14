@@ -86,6 +86,7 @@ function create_host(text_element: HTMLElement): HostAdapter {
     read_worldbook: () => Promise.resolve([]),
     translate_deepl: () => Promise.reject(new Error("not used")),
     read_swipe_wardrobe: () => null,
+    read_story_status: () => null,
     write_swipe_wardrobe: () => Promise.resolve(),
   };
 }

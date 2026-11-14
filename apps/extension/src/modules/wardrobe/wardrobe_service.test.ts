@@ -64,6 +64,12 @@ function create(reply: unknown) {
       stored.set(key(location), structuredClone(record));
       return Promise.resolve();
     },
+    read_story_status: (location: HostSwipeLocation) =>
+      location.message_id === 0
+        ? { date: "Day1", time: "20:10", location: "the cottage" }
+        : location.message_id === 4
+          ? { date: "Day2", time: "07:15", location: "the river" }
+          : null,
   } as unknown as HostAdapter;
   const library: WardrobeLibraryPort = {
     load: () =>
@@ -127,6 +133,9 @@ describe("WardrobeService", () => {
     expect(input).toContain("Latest user message:\nGo on.");
     expect(input).toContain('"You" in the story is U');
     expect(input).not.toContain("Hello.");
+    expect(input).toContain(
+      "Since the last update the story moved from Day1 20:10 at the cottage to Day2 07:15 at the river.",
+    );
   });
 
   it("lets a later reply inherit the latest earlier snapshot until it gets its own", async () => {

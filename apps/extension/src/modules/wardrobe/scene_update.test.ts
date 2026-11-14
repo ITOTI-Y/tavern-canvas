@@ -368,6 +368,7 @@ const STORY = {
   reply: "Seraphina slips into her nightgown.",
   reply_shown_above: false,
   viewer: null,
+  since: null,
 };
 
 describe("build_scene_update_input", () => {
@@ -406,6 +407,18 @@ describe("build_scene_update_input", () => {
     expect(input).toContain('"You" in the story is Yu');
     expect(input).toContain("Latest reply: the numbered paragraphs above.");
     expect(input).not.toContain("slips into her nightgown");
+  });
+
+  it("asks to recheck short-lived conditions and says how far the story moved", () => {
+    const input = build_scene_update_input(
+      { ...STORY, since: { from: "Day1 20:10 at the cottage", to: "Day2 07:15 at the river" } },
+      [],
+      LIBRARY,
+    );
+    expect(input).toContain("Short-lived ones such as wet clothes");
+    expect(input).toContain(
+      "Since the last update the story moved from Day1 20:10 at the cottage to Day2 07:15 at the river.",
+    );
   });
 });
 

@@ -241,6 +241,8 @@ export interface SceneUpdateStory {
   readonly reply_shown_above: boolean;
   /** The user's character, whom the story calls "you". */
   readonly viewer: string | null;
+  /** Story time and place at the last update and at the latest reply, when the chat records them. */
+  readonly since: { readonly from: string; readonly to: string } | null;
 }
 
 export function build_scene_update_input(
@@ -269,6 +271,10 @@ export function build_scene_update_input(
     "- outfit_id: the known outfit now worn, chosen whenever the clothing broadly matches one of this character's outfits, with overrides for the parts that differ; null with new_outfit filled only for clothing unlike every known outfit",
     "- overrides: only the slots of that outfit the story now changes, with the new tags, or removed true when taken off; changes listed for the character under Known characters are kept unless you change that slot again; an empty tag list with removed false puts the outfit's own tags back",
     "- conditions: always the complete list of visible passing states of this character's clothing or body at the end of the latest reply, such as wet clothes, torn sleeve, bandaged arm or messy hair: keep the ones listed under Known characters that still hold, add new ones and leave out those that have ended; moods, actions and illness are not conditions",
+    "Recheck every listed condition against the story. Short-lived ones such as wet clothes, wet hair, sweat, dirt or messy hair end once the characters move to another place or time passes, unless the story says they last; wounds, bandages and damaged clothing stay until the story changes them.",
+    ...(story.since === null
+      ? []
+      : [`Since the last update the story moved from ${story.since.from} to ${story.since.to}.`]),
     "All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
     "initial_outfits: one entry per id listed under Outfits needed, giving what that character wears now (see Outfit choice); an empty object when none are listed.",
     "Outfit choice: take the clothing from the story, else from the character description; when neither states it, choose plausible clothing for the character's role, the setting and the era. Fill at least the top and bottom, or full_body, and give the outfit a short descriptive name.",

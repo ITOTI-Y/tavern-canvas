@@ -4,6 +4,7 @@ import type {
   HostAdapter,
   HostChatSnapshot,
   HostJsonSchema,
+  HostStoryStatus,
   HostSwipeLocation,
 } from "../../host/index.js";
 import { viewer_name } from "../illustration/analysis_requests.js";
@@ -39,6 +40,13 @@ function active_text(message: HostChatSnapshot["messages"][number]): string {
   return strip_slot_markers(
     message.swipes.find((swipe) => swipe.swipe_id === message.active_swipe_id)?.content ?? "",
   );
+}
+
+function describe_status(status: HostStoryStatus): string {
+  const when = [status.date, status.time].filter((part) => part !== null).join(" ");
+  return [when, status.location === null ? "" : `at ${status.location}`]
+    .filter((part) => part !== "")
+    .join(" ");
 }
 
 function location_of(chat: HostChatSnapshot, message_id: number): HostSwipeLocation | null {
@@ -169,6 +177,15 @@ export class WardrobeService {
     while (gap.reduce((sum, item) => sum + item.text.length, 0) > GAP_MAX_CHARACTERS) {
       gap.shift();
     }
+    const anchor_location =
+      anchor.message_id === null ? null : location_of(chat, anchor.message_id);
+    const from =
+      anchor_location === null ? null : this.#deps.host.read_story_status(anchor_location);
+    const to = this.#deps.host.read_story_status(location);
+    const since =
+      from === null || to === null || describe_status(from) === describe_status(to)
+        ? null
+        : { from: describe_status(from), to: describe_status(to) };
     const [
       library,
       {
@@ -188,6 +205,7 @@ export class WardrobeService {
           reply,
           reply_shown_above,
           viewer: viewer_name(chat),
+          since,
         },
         previous,
         library,

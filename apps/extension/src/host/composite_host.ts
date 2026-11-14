@@ -9,6 +9,7 @@ import type {
   HostGenerationHandler,
   HostMessageRenderedHandler,
   HostRegexScript,
+  HostStoryStatus,
   HostSwipeLocation,
   HostWorldbookEntry,
   PresetGenerationRequest,
@@ -114,6 +115,10 @@ export class CompositeHostAdapter implements HostAdapter {
 
   read_swipe_wardrobe(location: HostSwipeLocation): unknown {
     return this.#sillytavern.read_swipe_wardrobe(location);
+  }
+
+  read_story_status(location: HostSwipeLocation): HostStoryStatus | null {
+    return this.#sillytavern.read_story_status(location);
   }
 
   write_swipe_wardrobe(location: HostSwipeLocation, record: unknown): Promise<void> {

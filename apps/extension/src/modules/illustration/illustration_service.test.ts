@@ -111,6 +111,7 @@ class MemoryHost {
       this.records.set(this.#key(location), structuredClone(record));
       return Promise.resolve();
     },
+    read_story_status: () => null,
     read_swipe_wardrobe: (location: HostSwipeLocation) =>
       this.wardrobes.get(this.#key(location)) ?? null,
     write_swipe_wardrobe: (location: HostSwipeLocation, record: unknown) => {

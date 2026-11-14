@@ -20,6 +20,7 @@ export type {
   HostMessageRole,
   HostMessageSwipeSnapshot,
   HostRegexScript,
+  HostStoryStatus,
   HostSwipeLocation,
   HostWorldInfo,
   HostWorldbookEntry,
