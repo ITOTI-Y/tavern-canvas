@@ -11,10 +11,10 @@ Gallery.
 
 ## Requirements
 
-| Requirement     | Version                                                               |
-| --------------- | --------------------------------------------------------------------- |
-| SillyTavern     | 1.18.0 or newer (`minimum_client_version`), or TauriTavern            |
-| JS Slash Runner | 4.9.1 or newer (`minimum_tavern_helper_version`, enforced at startup) |
+| Requirement     | Version                                                                |
+| --------------- | ---------------------------------------------------------------------- |
+| SillyTavern     | 1.18.0 or newer (`minimum_client_version`), or TauriTavern             |
+| JS Slash Runner | 4.11.1 or newer (`minimum_tavern_helper_version`, enforced at startup) |
 
 JS Slash Runner is a hard dependency, declared in `manifest.json` as
 `dependencies: ["third-party/JS-Slash-Runner"]`. Paragraph analysis, message editing and world info

@@ -23,7 +23,7 @@ const expected_manifest = {
   homePage: "https://github.com/ITOTI-Y/tavern-canvas",
   auto_update: true,
   minimum_client_version: "1.18.0",
-  minimum_tavern_helper_version: "4.9.1",
+  minimum_tavern_helper_version: "4.11.1",
   hooks: {
     chatSurface: "register_chat_surface",
   },
