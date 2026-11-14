@@ -1,5 +1,5 @@
 import { o as e } from "./wardrobe_library-BkM-wKPK.js";
-import { i as t, r as n } from "./model_json-DnhzkPSG.js";
+import { i as t, r as n } from "./model_json-BmZ6iNw3.js";
 import { n as r, r as i, t as a } from "./tag_normalizer-CEAU4497.js";
 //#region src/modules/illustration/slot_markers.ts
 var o = "[A-Za-z0-9_-]{8,32}", s = RegExp(`<!--tc-image:(${o})-->`, "gu");
@@ -20,15 +20,18 @@ var l = [{
 	destination: "prompt"
 }];
 function u(e) {
-	return [...e.matchAll(s)].map((e) => e[1] ?? "");
+	return e.replace(RegExp(`\n?<!--tc-image:${o}-->`, "gu"), "");
 }
 function d(e) {
+	return [...e.matchAll(s)].map((e) => e[1] ?? "");
+}
+function f(e) {
 	return e.toLowerCase().replace(/[\p{P}\p{S}\s]/gu, "");
 }
-function f(e, t) {
-	let n = d(t);
+function p(e, t) {
+	let n = f(t);
 	if (n.length === 0) return null;
-	let r = e.map((e) => d(e.text));
+	let r = e.map((e) => f(e.text));
 	for (let t of [
 		24,
 		12,
@@ -39,7 +42,7 @@ function f(e, t) {
 	}
 	return null;
 }
-function p(e) {
+function m(e) {
 	let t = [], n = !1;
 	return e.split("\n").forEach((e, r) => {
 		let i = e.trim();
@@ -47,15 +50,15 @@ function p(e) {
 			n = !n;
 			return;
 		}
-		n || i.length === 0 || u(i).length > 0 || t.push({
+		n || i.length === 0 || d(i).length > 0 || t.push({
 			index: t.length,
 			text: i,
 			line: r
 		});
 	}), t;
 }
-function m(e, t) {
-	let n = p(e), r = /* @__PURE__ */ new Map();
+function h(e, t) {
+	let n = m(e), r = /* @__PURE__ */ new Map();
 	for (let e of t) {
 		let t = n[e.paragraph];
 		if (t === void 0) throw RangeError(`Paragraph ${String(e.paragraph)} does not exist`);
@@ -66,7 +69,7 @@ function m(e, t) {
 }
 //#endregion
 //#region src/modules/prompt/regex_transform.ts
-function h(e, t) {
+function g(e, t) {
 	try {
 		let n = new RegExp(t.pattern, t.flags);
 		return {
@@ -80,10 +83,10 @@ function h(e, t) {
 		};
 	}
 }
-function g(e, t) {
+function _(e, t) {
 	let n = e, r = [];
 	for (let e of t) {
-		let t = h(n, e);
+		let t = g(n, e);
 		n = t.text, t.error !== null && r.push({
 			rule_id: e.id,
 			error: t.error
@@ -94,16 +97,16 @@ function g(e, t) {
 		failures: r
 	};
 }
-function _(e, t) {
-	return h(t, e).text;
+function v(e, t) {
+	return g(t, e).text;
 }
 //#endregion
 //#region src/modules/illustration/slot_prompt.ts
-var v = /^(?:\d+)?(girl|boy|other)s?$/u;
-function y(e) {
+var y = /^(?:\d+)?(girl|boy|other)s?$/u;
+function b(e) {
 	let t = null, n = [];
 	for (let i of e.split(",")) {
-		let e = v.exec(r(i).toLowerCase());
+		let e = y.exec(r(i).toLowerCase());
 		e === null ? n.push(i) : t ??= e[1];
 	}
 	return {
@@ -111,7 +114,7 @@ function y(e) {
 		rest: i(n)
 	};
 }
-function b(e) {
+function x(e) {
 	return [
 		"girl",
 		"boy",
@@ -121,37 +124,37 @@ function b(e) {
 		return n === 0 ? "" : n === 1 ? `1${t}` : `${String(n)}${t}s`;
 	}).filter((e) => e !== "").join(", ");
 }
-function x(e, t) {
+function S(e, t) {
 	let n = /* @__PURE__ */ new Map();
 	for (let e of t) for (let t of e.triggers) n.set(r(t), e.replacement);
 	return i(e.split(",").map((e) => n.get(r(e)) ?? e));
 }
-function S(e, t) {
+function C(e, t) {
 	if (t === null) return a(e);
-	let n = x(e, t.replacement_rules);
-	return a(g(n, t.regex_rules).text);
+	let n = S(e, t.replacement_rules);
+	return a(_(n, t.regex_rules).text);
 }
-function C(t, n) {
+function w(t, n) {
 	return i(e.filter((e) => e !== "expression" || !n).flatMap((e) => t.appearance[e]));
 }
-function w(e, t) {
+function T(e, t) {
 	let n = new Set(t.map((e) => e.trim().toLowerCase()));
 	return i(e.split(",").filter((e) => {
 		let t = r(e).toLowerCase().replace(/^wearing\s+/u, "");
 		return !n.has(t);
 	}));
 }
-function T(e) {
+function E(e) {
 	let t = e.library.characters, r = [], a = /* @__PURE__ */ new Set(), o = (n, o) => {
 		let s = t[n];
 		if (s === void 0 || a.has(s.character.id)) return;
 		a.add(s.character.id);
-		let c = y(w(o, e.library.outfit_names));
+		let c = b(T(o, e.library.outfit_names));
 		r.push({
 			name: s.character.name,
 			subject: s.character.subject === "other" ? c.subject ?? "other" : s.character.subject,
 			prompt: i([
-				C(s.character, c.rest !== ""),
+				w(s.character, c.rest !== ""),
 				i(s.outfit_tags),
 				c.rest
 			]),
@@ -164,7 +167,7 @@ function T(e) {
 			o(e, i.tags);
 			continue;
 		}
-		let a = y(i.tags);
+		let a = b(i.tags);
 		(a.subject !== null || a.rest !== "") && r.push({
 			name: i.name,
 			subject: a.subject,
@@ -176,23 +179,23 @@ function T(e) {
 		o(t, "");
 	}), r;
 }
-function E(e) {
-	let t = e.preset, n = T(e), r = a(t?.fixed_negative_prompt ?? "");
+function D(e) {
+	let t = e.preset, n = E(e), r = a(t?.fixed_negative_prompt ?? "");
 	if (n.length === 0) return {
-		positive_prompt: S(i([t?.fixed_positive_prompt, e.scene_tags]), t),
+		positive_prompt: C(i([t?.fixed_positive_prompt, e.scene_tags]), t),
 		negative_prompt: r,
 		character_prompts: []
 	};
 	let o = n.flatMap((e) => e.subject === null ? [] : [e.subject]);
 	return {
-		positive_prompt: S(i([
+		positive_prompt: C(i([
 			t?.fixed_positive_prompt,
-			b(o),
-			y(e.scene_tags).rest
+			x(o),
+			b(e.scene_tags).rest
 		]), t),
 		negative_prompt: r,
 		character_prompts: n.flatMap((e) => {
-			let n = S(i([e.subject, e.prompt]), t);
+			let n = C(i([e.subject, e.prompt]), t);
 			return n === "" ? [] : [{
 				name: e.name,
 				prompt: n,
@@ -203,9 +206,9 @@ function E(e) {
 }
 //#endregion
 //#region src/modules/illustration/proposal_slots.ts
-function D(e, n, r, i, a) {
+function O(e, n, r, i, a) {
 	return n.map((n) => {
-		let o = t(`${e[n.paragraph]?.text ?? ""}\n${n.scene}`, n.characters.map((e) => e.name), r.library, i), s = E({
+		let o = t(`${e[n.paragraph]?.text ?? ""}\n${n.scene}`, n.characters.map((e) => e.name), r.library, i), s = D({
 			preset: r.preset,
 			library: o,
 			characters: n.characters,
@@ -228,4 +231,4 @@ function D(e, n, r, i, a) {
 	});
 }
 //#endregion
-export { f as a, m as i, _ as n, p as o, l as r, D as t };
+export { p as a, h as i, v as n, m as o, l as r, u as s, O as t };

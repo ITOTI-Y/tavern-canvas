@@ -2,11 +2,8 @@ import type { StripSettings, Wearing } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 import type { HostJsonSchema } from "../../host/index.js";
-import {
-  AnalysisParseError,
-  library_lines,
-  type IllustrationProposal,
-} from "../illustration/analysis.js";
+import { AnalysisParseError, type IllustrationProposal } from "../illustration/analysis.js";
+import { library_lines } from "../illustration/analysis_prompts.js";
 import { is_named } from "../illustration/library_match.js";
 import type {
   SlotGenerationInput,

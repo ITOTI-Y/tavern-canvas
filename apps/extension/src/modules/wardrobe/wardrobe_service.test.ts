@@ -114,6 +114,21 @@ describe("WardrobeService", () => {
     });
   });
 
+  it("reads the replies no update has seen since the last snapshot before the latest reply", async () => {
+    const { service, stored, run } = create({ characters: [] });
+    stored.set("0:0", { schema_version: 1, wearing: [] });
+
+    await service.update(4);
+
+    const input = run.mock.calls[0]?.[0] ?? "";
+    expect(input).toContain(
+      "Earlier messages since the last update, oldest first (apply their changes too):\nU: Get changed.\nA: Ann puts on a raincoat.",
+    );
+    expect(input).toContain("Latest user message:\nGo on.");
+    expect(input).toContain('"You" in the story is U');
+    expect(input).not.toContain("Hello.");
+  });
+
   it("lets a later reply inherit the latest earlier snapshot until it gets its own", async () => {
     const { service } = create({ characters: [] });
     const wearing = {

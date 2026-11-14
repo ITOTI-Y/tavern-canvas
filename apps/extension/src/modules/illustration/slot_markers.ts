@@ -25,6 +25,11 @@ export const SLOT_REGEX_SCRIPTS: readonly HostRegexScript[] = [
   },
 ];
 
+/** The message text as written, without the markers Inkwell placed in it. */
+export function strip_slot_markers(text: string): string {
+  return text.replace(new RegExp(`\n?<!--tc-image:${SLOT_ID_CHARACTERS}-->`, "gu"), "");
+}
+
 export function find_slot_ids(text: string): readonly string[] {
   return [...text.matchAll(MARKER_PATTERN)].map((match) => match[1] ?? "");
 }

@@ -68,6 +68,22 @@ class MemoryHost {
         chat_id: this.chat_id,
         messages: [
           {
+            message_id: 1,
+            name: "Alice",
+            role: "assistant" as const,
+            is_hidden: false,
+            active_swipe_id: 0,
+            swipes: [{ swipe_id: 0, content: "The clouds gathered.\n<!--tc-image:slot_0000-->" }],
+          },
+          {
+            message_id: 2,
+            name: "Yu",
+            role: "user" as const,
+            is_hidden: false,
+            active_swipe_id: 0,
+            swipes: [{ swipe_id: 0, content: "Look outside." }],
+          },
+          {
             message_id: 3,
             name: "Alice",
             role: "assistant" as const,
@@ -328,9 +344,13 @@ describe("IllustrationService.analyze", () => {
     expect(service.read(LOCATION)).toEqual(record);
     expect(host.generate_calls[0]).toMatchObject({
       preset_name: "in_use",
-      max_chat_history: 4,
+      chat_history: [
+        { role: "assistant", content: "The clouds gathered." },
+        { role: "user", content: "Look outside." },
+      ],
       world_info: { kind: "chat" },
     });
+    expect(host.generate_calls[0]?.user_input).toContain('"You" in the story is Yu');
   });
 
   it("replaces the chat's world info with the entries one book activates for this reply", async () => {
@@ -578,7 +598,7 @@ describe("IllustrationService.read_outfit", () => {
 
     expect(host.generate_calls[0]).toMatchObject({
       image: "data:image/jpeg;base64,AAAA",
-      max_chat_history: 0,
+      chat_history: [],
       json_schema: { name: "tavern_canvas_outfit" },
     });
     expect(outfit).toEqual({
@@ -791,7 +811,7 @@ describe("IllustrationService create page planning", () => {
     const scenes = await service.plan_story("She knocked.\n\nThe street was empty.", ["Town"]);
 
     expect(host.generate_calls[0]).toMatchObject({
-      max_chat_history: 0,
+      chat_history: [],
       world_info: { kind: "replace", text: "The old town has blue doors." },
     });
     expect(scenes.map((scene) => [scene.scene, scene.size])).toEqual([

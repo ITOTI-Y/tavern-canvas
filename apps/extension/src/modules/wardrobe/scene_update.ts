@@ -17,7 +17,7 @@ import {
   type WardrobeCharacter,
   type WardrobeOutfit,
 } from "./wardrobe_library.js";
-import { initial_wearing, wearing_of, wearing_tags } from "./wearing.js";
+import { initial_wearing, outfit_tags, wearing_of } from "./wearing.js";
 
 const TAG_ARRAY = { type: "array", items: { type: "string" } } as const;
 
@@ -211,7 +211,8 @@ function describe_character(
     character.aliases.length > 0 ? `, also called ${character.aliases.join(" / ")}` : "",
     outfit === undefined
       ? "; outfit not yet known"
-      : `; wears outfit ${outfit.id} (${outfit.name}): ${join_tags(wearing_tags(wearing, library.outfits))}`,
+      : `; wears outfit ${outfit.id} (${outfit.name}): ${join_tags(outfit_tags(wearing, library.outfits))}`,
+    wearing.conditions.length > 0 ? `; conditions now: ${join_tags(wearing.conditions)}` : "",
     empty.length > 0 ? `; appearance slots still empty: ${empty.join(", ")}` : "",
     character.subject === "other" ? "; subject not yet known" : "",
   ].join("");
@@ -230,27 +231,44 @@ export function characters_needing_outfit(
   );
 }
 
+/** The story a wardrobe update reads. */
+export interface SceneUpdateStory {
+  /** Messages since the last reply with a snapshot, before the latest user message; oldest first. */
+  readonly earlier: readonly { readonly name: string; readonly text: string }[];
+  readonly user_message: string | null;
+  readonly reply: string;
+  /** The request already shows the reply as numbered paragraphs, so it is not repeated. */
+  readonly reply_shown_above: boolean;
+  /** The user's character, whom the story calls "you". */
+  readonly viewer: string | null;
+}
+
 export function build_scene_update_input(
-  user_message: string | null,
-  reply: string,
+  story: SceneUpdateStory,
   snapshot: readonly Wearing[],
   library: WardrobeLibrary,
 ): string {
   const owner = new Map(library.characters.map((character) => [character.id, character.name]));
-  const needs_outfit = characters_needing_outfit(reply, snapshot, library);
+  const needs_outfit = characters_needing_outfit(story.reply, snapshot, library);
   return [
     "[Inkwell wardrobe update]",
-    "Track what each named character wears across the story. Read the latest reply and return one entry for every named character who appears in it or is clearly present. Skip unnamed people.",
+    "Track what each named character wears across the story. Read the story since the last update and return one entry for every named character who appears in it or is clearly present, with their state at the end of the latest reply. Skip unnamed people.",
+    ...(story.viewer === null
+      ? []
+      : [
+          `"You" in the story is ${story.viewer}, the user's character: give ${story.viewer} an entry like any other named character. What "you" wear, take off or suffer belongs to ${story.viewer}.`,
+        ]),
+    "A clothing change or condition belongs only to the character it physically happens to; never move one character's change onto another.",
     "- ref: the id listed for this exact character below, also when the story uses a shorter or fuller form of the listed name, or null for a named character not listed; never another character's id",
     "- name: the name as written in the story",
     "- new_character: only when ref is null: subject (see Subject), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
     "- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
     "- subject: for a known character whose subject is not yet known, girl or boy when the story shows it; otherwise null",
     "Subject: girl for a woman or girl, boy for a man or boy, judged from pronouns such as 他 / 她 or he / she, how others address them, the name and the description. other only for a character without a gender, such as a creature or a machine.",
-    "- wearing_changed: true only when the reply changes what the character wears or their passing state; describing clothing they already wear is no change; when false the other wearing fields are ignored",
+    "- wearing_changed: true only when the story changes what the character wears; describing clothing they already wear is no change; when false outfit_id, new_outfit and overrides are ignored",
     "- outfit_id: the known outfit now worn, chosen whenever the clothing broadly matches one of this character's outfits, with overrides for the parts that differ; null with new_outfit filled only for clothing unlike every known outfit",
-    "- overrides: slots of that outfit the reply changes, with the new tags, or removed true when taken off",
-    "- conditions: the complete list of visible passing states of clothing or body now in effect, such as wet clothes, torn sleeve or messy hair; moods, actions and illness are not conditions; an empty list clears them",
+    "- overrides: only the slots of that outfit the story now changes, with the new tags, or removed true when taken off; changes listed for the character under Known characters are kept unless you change that slot again; an empty tag list with removed false puts the outfit's own tags back",
+    "- conditions: always the complete list of visible passing states of this character's clothing or body at the end of the latest reply, such as wet clothes, torn sleeve, bandaged arm or messy hair: keep the ones listed under Known characters that still hold, add new ones and leave out those that have ended; moods, actions and illness are not conditions",
     "All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
     "initial_outfits: one entry per id listed under Outfits needed, giving what that character wears now (see Outfit choice); an empty object when none are listed.",
     "Outfit choice: take the clothing from the story, else from the character description; when neither states it, choose plausible clothing for the character's role, the setting and the era. Fill at least the top and bottom, or full_body, and give the outfit a short descriptive name.",
@@ -276,9 +294,17 @@ export function build_scene_update_input(
           return `- id ${outfit.id}: ${outfit.name}${worn_by === null || worn_by === undefined ? "" : ` (${worn_by})`}: ${join_tags(OUTFIT_SLOTS.flatMap((slot) => outfit.slots[slot]))}`;
         })),
     "",
-    ...(user_message === null ? [] : ["Latest user message:", user_message, ""]),
-    "Latest reply:",
-    reply,
+    ...(story.earlier.length === 0
+      ? []
+      : [
+          "Earlier messages since the last update, oldest first (apply their changes too):",
+          ...story.earlier.map((message) => `${message.name}: ${message.text}`),
+          "",
+        ]),
+    ...(story.user_message === null ? [] : ["Latest user message:", story.user_message, ""]),
+    ...(story.reply_shown_above
+      ? ["Latest reply: the numbered paragraphs above."]
+      : ["Latest reply:", story.reply]),
   ].join("\n");
 }
 
@@ -448,9 +474,14 @@ export function apply_scene_update(
         : initial_wearing(known, library.outfits));
     const first =
       prior.outfit_id === null ? (entry.new_outfit ?? entry.new_character?.outfit ?? null) : null;
+    const conditions = clean_tags(entry.conditions);
     if (!entry.wearing_changed) {
       const outfit_id = first === null ? null : add_outfit(first, character_id);
-      wearing.set(character_id, outfit_id === null ? prior : { ...prior, outfit_id });
+      wearing.set(character_id, {
+        ...prior,
+        ...(outfit_id === null ? {} : { outfit_id }),
+        conditions,
+      });
       continue;
     }
     let outfit_id = known_outfit(entry.outfit_id) ? entry.outfit_id : prior.outfit_id;
@@ -462,15 +493,32 @@ export function apply_scene_update(
     if (introduced !== null) {
       outfit_id = add_outfit(introduced, character_id) ?? outfit_id;
     }
-    const overrides: Wearing["overrides"] = {};
+    // Changes to the same outfit build on the earlier ones; a different outfit starts clean.
+    const overrides = new Map<OutfitSlot, string[] | "removed">(
+      outfit_id === prior.outfit_id
+        ? OUTFIT_SLOTS.flatMap((slot) => {
+            const tags = prior.overrides[slot];
+            return tags === undefined
+              ? []
+              : [[slot, tags === "removed" ? tags : [...tags]] as const];
+          })
+        : [],
+    );
     for (const override of entry.overrides) {
-      overrides[override.slot] = override.removed ? "removed" : clean_tags(override.tags);
+      const tags = clean_tags(override.tags);
+      if (override.removed) {
+        overrides.set(override.slot, "removed");
+      } else if (tags.length > 0) {
+        overrides.set(override.slot, tags);
+      } else {
+        overrides.delete(override.slot);
+      }
     }
     wearing.set(character_id, {
       character_id,
       outfit_id,
-      overrides,
-      conditions: clean_tags(entry.conditions),
+      overrides: Object.fromEntries(overrides),
+      conditions,
     });
   }
 

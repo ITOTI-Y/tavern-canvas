@@ -1,6 +1,7 @@
 import type {
   HostChatMessageSnapshot,
   HostChatSnapshot,
+  HostHistoryMessage,
   HostMessageRole,
   HostRegexScript,
   HostWorldbookEntry,
@@ -43,15 +44,19 @@ export interface TavernHelperGenerateConfig {
   readonly generation_id: string;
   readonly preset_name: string;
   readonly user_input: string;
-  readonly max_chat_history: number;
+  readonly max_chat_history?: 0;
   readonly should_silence: true;
   readonly should_stream: false;
   readonly should_return_reasoning: true;
   readonly custom_api?: Readonly<Record<string, string>>;
   readonly overrides?: {
-    readonly world_info_before: string;
-    readonly world_info_after: string;
-    readonly chat_history: { readonly with_depth_entries: false };
+    readonly world_info_before?: string;
+    readonly world_info_after?: string;
+    readonly chat_history?: {
+      readonly with_depth_entries?: false;
+      /** Replaces the chat's messages; oldest first. */
+      readonly prompts?: readonly HostHistoryMessage[];
+    };
   };
   readonly json_schema?: {
     readonly name: string;
@@ -371,22 +376,30 @@ export class TavernHelperHost {
 
   async generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
     const custom_api = to_custom_api(request.connection);
+    const replace_world_info = request.world_info.kind === "replace";
+    const history = request.chat_history.length > 0;
     const result = await this.#helper.generate({
       generation_id: request.generation_id,
       preset_name: request.preset_name,
       user_input: request.user_input,
-      max_chat_history: request.max_chat_history,
+      // An empty prompts list would also drop the persona and author's note, so no history is
+      // asked for by count instead.
+      ...(history ? {} : { max_chat_history: 0 as const }),
       should_silence: true,
       should_stream: false,
       should_return_reasoning: true,
       ...(custom_api === undefined ? {} : { custom_api }),
-      ...(request.world_info.kind === "chat"
+      ...(!replace_world_info && !history
         ? {}
         : {
             overrides: {
-              world_info_before: request.world_info.text,
-              world_info_after: "",
-              chat_history: { with_depth_entries: false },
+              ...(request.world_info.kind === "replace"
+                ? { world_info_before: request.world_info.text, world_info_after: "" }
+                : {}),
+              chat_history: {
+                ...(replace_world_info ? { with_depth_entries: false as const } : {}),
+                ...(history ? { prompts: request.chat_history } : {}),
+              },
             },
           }),
       ...(request.json_schema === null

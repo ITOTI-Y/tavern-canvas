@@ -1,8 +1,10 @@
 import { n as e } from "./rolldown-runtime-B0aSnxlc.js";
 import { d as t, g as n, r, t as i, u as a, v as o } from "./schemas-BjkyCQYG.js";
-import { n as s, s as c, u as l } from "./analysis-5v7pfQ9S.js";
-import { r as u, t as d } from "./model_json-DnhzkPSG.js";
-import { o as f, t as p } from "./proposal_slots-ufEAgMTk.js";
+import { o as s, t as c } from "./proposal_slots-BQfaZJTP.js";
+import { t as l } from "./user_guidance-Bx38WM6V.js";
+import { r as u, t as d } from "./model_json-BmZ6iNw3.js";
+import { n as f } from "./analysis-Bc8d_b65.js";
+import { n as p } from "./analysis_prompts-DZSUaREq.js";
 //#region src/modules/creation/creation_planning.ts
 var m = /* @__PURE__ */ e({
 	BUBBLE_SYMBOLS: () => v,
@@ -186,18 +188,18 @@ var m = /* @__PURE__ */ e({
 	"- characters: one entry per character visible in this picture, with name as in cast and tags: only this picture's pose, action, gaze and expression"
 ];
 function k(e, t, n, r, i, a, o) {
-	let s = String(n), u = e === "story" ? [`Read the story below, split into numbered paragraphs. Choose at most ${s} moments that together tell the story, in story order, so that someone who has not read it can follow it from the pictures.`] : [`Read the chat messages below, split into numbered paragraphs, and retell them as a wordless comic strip of at most ${s} panels in the order the events happen; several panels may come from one paragraph. A reader who has not seen the text must be able to follow the story from the panels alone.`, o ? "Each panel is one single picture with no lettering: no written words, captions, sound effects or signs. Turn dialogue into expressions, gestures and bubbles that hold a symbol or a small picture." : "Each panel is one single picture with no lettering: no speech bubbles, captions, sound effects or written signs. Turn dialogue into expressions and gestures."], d = a === null ? [] : [`"You" in the text is ${a}. Draw ${a} like any other character in cast, or use the pov shot when a moment is seen through ${a}'s eyes.`];
+	let s = String(n), c = e === "story" ? [`Read the story below, split into numbered paragraphs. Choose at most ${s} moments that together tell the story, in story order, so that someone who has not read it can follow it from the pictures.`] : [`Read the chat messages below, split into numbered paragraphs, and retell them as a wordless comic strip of at most ${s} panels in the order the events happen; several panels may come from one paragraph. A reader who has not seen the text must be able to follow the story from the panels alone.`, o ? "Each panel is one single picture with no lettering: no written words, captions, sound effects or signs. Turn dialogue into expressions, gestures and bubbles that hold a symbol or a small picture." : "Each panel is one single picture with no lettering: no speech bubbles, captions, sound effects or written signs. Turn dialogue into expressions and gestures."], u = a === null ? [] : [`"You" in the text is ${a}. Draw ${a} like any other character in cast, or use the pov shot when a moment is seen through ${a}'s eyes.`];
 	return [
 		e === "story" ? "[Inkwell scene request]" : "[Inkwell comic strip request]",
-		...u,
+		...c,
 		...C,
-		...d,
+		...u,
 		E,
 		D,
 		...O,
 		o ? w : T,
 		"Reply with only a JSON object of the form {\"cast\":[...],\"places\":[...],\"scenes\":[...]}.",
-		...c(r.library),
+		...p(r.library),
 		...l(i),
 		"",
 		"Paragraphs:",
@@ -260,11 +262,11 @@ function I(e, t, n, r) {
 			}))
 		};
 	}
-	throw new s("The reply contains no scenes JSON object", e);
+	throw new f("The reply contains no scenes JSON object", e);
 }
 function L(e) {
 	let t = [];
-	for (let n of e) for (let e of f(n.text)) t.push({
+	for (let n of e) for (let e of s(n.text)) t.push({
 		index: t.length,
 		text: `${n.name}: ${e.text}`,
 		line: e.line
@@ -282,11 +284,11 @@ function R(e, t, n, r, i) {
 			name: e.name,
 			tags: z(o(e.name), e.tags)
 		}))
-	})), c = e.map((e) => ({
+	})), l = e.map((e) => ({
 		...e,
 		text: ""
 	}));
-	return p(c, s.map((e) => ({
+	return c(l, s.map((e) => ({
 		...e,
 		scene: ""
 	})), n, r, i).map((t, n) => ({

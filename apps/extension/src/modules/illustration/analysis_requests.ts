@@ -6,14 +6,49 @@ import type {
 
 import type {
   HostAdapter,
+  HostChatSnapshot,
   HostGenerationConnection,
+  HostHistoryMessage,
   HostJsonSchema,
   HostWorldInfo,
 } from "../../host/index.js";
+import { strip_slot_markers } from "./slot_markers.js";
 import { guidance_lines } from "./user_guidance.js";
 import { activate_worldbook } from "./worldbook.js";
 
 const ANALYSIS_ATTEMPTS = 3;
+
+/**
+ * The chat as it stood when this message was written: the `count` latest messages up to and
+ * including it, without the message itself, which the request carries in its own input.
+ */
+export function history_before(
+  chat: HostChatSnapshot,
+  message_id: number,
+  count: number,
+): readonly HostHistoryMessage[] {
+  if (count <= 1) {
+    return [];
+  }
+  return chat.messages
+    .filter(
+      (message) =>
+        message.message_id < message_id && !message.is_hidden && message.role !== "system",
+    )
+    .slice(-(count - 1))
+    .map((message) => ({
+      role: message.role === "user" ? ("user" as const) : ("assistant" as const),
+      content: strip_slot_markers(
+        message.swipes.find((swipe) => swipe.swipe_id === message.active_swipe_id)?.content ?? "",
+      ),
+    }));
+}
+
+/** The name of the user's character, whom the story calls "you"; `null` before the user has spoken. */
+export function viewer_name(chat: HostChatSnapshot): string | null {
+  const name = chat.messages.findLast((message) => message.role === "user")?.name.trim() ?? "";
+  return name === "" ? null : name;
+}
 const ANALYSIS_RETRY_DELAY_MS = 2_000;
 const ANALYSIS_TIMEOUT_MS = 180_000;
 
@@ -130,7 +165,7 @@ export async function run_wardrobe_request(
     generation_id: deps.new_generation_id(),
     preset_name: settings.preset_name,
     user_input: input,
-    max_chat_history: 0,
+    chat_history: [],
     connection: await to_host_connection(connection, deps.resolve_analysis_key),
     json_schema,
     world_info: { kind: "replace", text: "" },
@@ -165,13 +200,14 @@ export interface AnalysisRequestDeps {
  */
 export interface AnalysisRequest<T> {
   readonly user_input: string;
+  /** Oldest first; build it with `history_before` so the analysed message is not sent twice. */
+  readonly history: readonly HostHistoryMessage[];
   readonly json_schema: HostJsonSchema;
   readonly parse: (raw: string) => T;
 }
 
-/** Replaces the analysis settings' chat history and world info for one request. */
+/** Replaces the analysis settings' world info for one request. */
 export interface AnalysisOverrides {
-  readonly max_chat_history?: number;
   readonly world_info?: AnalysisWorldInfo;
 }
 
@@ -202,7 +238,7 @@ export async function request_analysis<T>(
           generation_id,
           preset_name: settings.preset_name,
           user_input: request.user_input,
-          max_chat_history: overrides.max_chat_history ?? settings.max_chat_history,
+          chat_history: request.history,
           connection,
           json_schema: request.json_schema,
           world_info,

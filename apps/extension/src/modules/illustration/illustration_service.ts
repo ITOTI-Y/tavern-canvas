@@ -15,8 +15,6 @@ import type { HostAdapter, HostGenerationEvent, HostSwipeLocation } from "../../
 import {
   ANALYSIS_JSON_SCHEMA,
   AnalysisParseError,
-  build_analysis_input,
-  build_chosen_paragraphs_input,
   combined_analysis_json_schema,
   COMBINED_REPLY_FORMAT,
   parse_analysis_output,
@@ -37,8 +35,10 @@ import { guidance_lines } from "./user_guidance.js";
 import { type SlotLibrary } from "./library_match.js";
 import {
   AnalysisStoppedError,
+  history_before,
   request_analysis,
   run_wardrobe_request,
+  viewer_name,
 } from "./analysis_requests.js";
 import { proposal_slots } from "./proposal_slots.js";
 import type { CreationScene } from "../creation/creation_record.js";
@@ -291,16 +291,20 @@ export class IllustrationService {
     const settings = this.#deps.settings();
     const record: SwipeIllustrations = { schema_version: 2, slots: [] };
     if (paragraphs.length > 0) {
+      const chat = await this.#deps.host.get_active_chat();
+      const history = history_before(chat, location.message_id, settings.max_chat_history);
       const pending =
         this.#deps.wardrobe.read(location) === null
-          ? await this.#deps.wardrobe.prepare_update(location)
+          ? await this.#deps.wardrobe.prepare_update(location, true)
           : null;
       const context = await this.#deps.prompt_context(location.chat_id);
+      const { build_analysis_input } = await import("./analysis_prompts.js");
       const analysis_input = build_analysis_input(
         paragraphs,
         settings.max_images_per_message,
         context.library,
         settings.analysis_guidance,
+        viewer_name(chat),
       );
       const parse_proposals = (raw: string) =>
         parse_analysis_output(raw, paragraphs.length, settings.max_images_per_message);
@@ -310,6 +314,7 @@ export class IllustrationService {
         pending === null
           ? {
               user_input: analysis_input,
+              history,
               json_schema: ANALYSIS_JSON_SCHEMA,
               parse: (raw) => ({ proposals: parse_proposals(raw), wardrobe_reply: null }),
             }
@@ -322,6 +327,7 @@ export class IllustrationService {
                 "",
                 COMBINED_REPLY_FORMAT,
               ].join("\n"),
+              history,
               json_schema: combined_analysis_json_schema(pending.json_schema),
               parse: (raw) => ({
                 proposals: parse_proposals(raw),
@@ -412,6 +418,8 @@ export class IllustrationService {
     const settings = this.#deps.settings();
     const snapshot = await this.#wardrobe_snapshot(location);
     const context = await this.#deps.prompt_context(location.chat_id);
+    const chat = await this.#deps.host.get_active_chat();
+    const { build_chosen_paragraphs_input } = await import("./analysis_prompts.js");
     const proposals = await request_analysis(
       this.#deps,
       text,
@@ -421,7 +429,9 @@ export class IllustrationService {
           wanted,
           context.library,
           settings.analysis_guidance,
+          viewer_name(chat),
         ),
+        history: history_before(chat, location.message_id, settings.max_chat_history),
         json_schema: ANALYSIS_JSON_SCHEMA,
         parse: (raw) => parse_analysis_output(raw, paragraphs.length, paragraphs.length),
       },
@@ -533,13 +543,13 @@ export class IllustrationService {
           null,
           false,
         ),
+        history: [],
         json_schema: planning.SCENE_JSON_SCHEMA,
         parse: (raw) =>
           planning.parse_scene_output(raw, paragraphs.length, STORY_MAX_SCENES, false),
       },
       new AbortController().signal,
       {
-        max_chat_history: 0,
         world_info:
           worldbooks.length === 0
             ? { mode: "off" }
@@ -608,6 +618,7 @@ export class IllustrationService {
           messages.find((message) => message.is_user)?.name ?? null,
           settings.strip.symbol_bubbles,
         ),
+        history: [],
         json_schema: planning.SCENE_JSON_SCHEMA,
         parse: (raw) =>
           planning.parse_scene_output(
@@ -618,7 +629,6 @@ export class IllustrationService {
           ),
       },
       new AbortController().signal,
-      { max_chat_history: 0 },
     );
     return planning.scenes_from_plans(paragraphs, plans, context, snapshot, this.#deps.new_slot_id);
   }

@@ -73,12 +73,19 @@ export interface HostJsonSchema {
 export type HostWorldInfo =
   { readonly kind: "chat" } | { readonly kind: "replace"; readonly text: string };
 
+/** A chat message sent as history, in place of the chat's own latest messages. */
+export interface HostHistoryMessage {
+  readonly role: "user" | "assistant";
+  readonly content: string;
+}
+
 /** Always runs through a SillyTavern preset: the extension never sends a request the user's preset has not shaped. */
 export interface PresetGenerationRequest {
   readonly generation_id: string;
   readonly preset_name: string;
   readonly user_input: string;
-  readonly max_chat_history: number;
+  /** Oldest first; empty sends no chat history. */
+  readonly chat_history: readonly HostHistoryMessage[];
   readonly connection: HostGenerationConnection;
   readonly json_schema: HostJsonSchema | null;
   readonly world_info: HostWorldInfo;

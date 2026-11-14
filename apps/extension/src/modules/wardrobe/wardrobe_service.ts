@@ -6,6 +6,8 @@ import type {
   HostJsonSchema,
   HostSwipeLocation,
 } from "../../host/index.js";
+import { viewer_name } from "../illustration/analysis_requests.js";
+import { strip_slot_markers } from "../illustration/slot_markers.js";
 import type {
   AppearanceAddition,
   CharacterDraft,
@@ -27,6 +29,16 @@ export interface WardrobeServiceDeps {
   /** Sends the wardrobe request through the analysis preset and connection; resolves with the reply. */
   readonly run: (input: string, json_schema: HostJsonSchema) => Promise<string>;
   readonly new_id: () => string;
+}
+
+/** How much of the untracked story one update reads: the latest messages, within both limits. */
+const GAP_MAX_MESSAGES = 8;
+const GAP_MAX_CHARACTERS = 6_000;
+
+function active_text(message: HostChatSnapshot["messages"][number]): string {
+  return strip_slot_markers(
+    message.swipes.find((swipe) => swipe.swipe_id === message.active_swipe_id)?.content ?? "",
+  );
 }
 
 function location_of(chat: HostChatSnapshot, message_id: number): HostSwipeLocation | null {
@@ -60,6 +72,14 @@ export class WardrobeService {
 
   /** The snapshot of the latest earlier assistant reply that has one; empty at the start. */
   inherited(chat: HostChatSnapshot, message_id: number): readonly Wearing[] {
+    return this.#anchor(chat, message_id).snapshot;
+  }
+
+  /** The latest earlier reply with a snapshot; `message_id` is `null` when none has one. */
+  #anchor(
+    chat: HostChatSnapshot,
+    message_id: number,
+  ): { readonly snapshot: readonly Wearing[]; readonly message_id: number | null } {
     const earlier = chat.messages
       .filter((message) => message.message_id < message_id && message.role === "assistant")
       .sort((left, right) => right.message_id - left.message_id);
@@ -70,10 +90,10 @@ export class WardrobeService {
         swipe_id: message.active_swipe_id,
       });
       if (snapshot !== null) {
-        return snapshot;
+        return { snapshot, message_id: message.message_id };
       }
     }
-    return [];
+    return { snapshot: [], message_id: null };
   }
 
   /** The reply's own snapshot, or what it inherits when no update has run for it yet. */
@@ -105,28 +125,50 @@ export class WardrobeService {
     return pending;
   }
 
-  async prepare_update(location: HostSwipeLocation): Promise<PendingWardrobeUpdate> {
-    return this.#prepare(await this.#deps.host.get_active_chat(), location);
+  /**
+   * `reply_shown_above` is set when the caller sends the update inside a request that already
+   * shows the reply as numbered paragraphs, so the reply is not repeated.
+   */
+  async prepare_update(
+    location: HostSwipeLocation,
+    reply_shown_above: boolean,
+  ): Promise<PendingWardrobeUpdate> {
+    return this.#prepare(await this.#deps.host.get_active_chat(), location, reply_shown_above);
   }
 
   async #update(chat: HostChatSnapshot, location: HostSwipeLocation): Promise<readonly Wearing[]> {
-    const pending = await this.#prepare(chat, location);
+    const pending = await this.#prepare(chat, location, false);
     return pending.apply(await this.#deps.run(pending.input, pending.json_schema));
   }
 
   async #prepare(
     chat: HostChatSnapshot,
     location: HostSwipeLocation,
+    reply_shown_above: boolean,
   ): Promise<PendingWardrobeUpdate> {
     const message = chat.messages.find((candidate) => candidate.message_id === location.message_id);
-    const reply = message?.swipes[location.swipe_id]?.content ?? "";
-    const user_message =
-      [...chat.messages]
-        .filter((candidate) => candidate.message_id < location.message_id)
-        .reverse()
-        .find((candidate) => candidate.role === "user")
-        ?.swipes.at(0)?.content ?? null;
-    const previous = this.inherited(chat, location.message_id);
+    const reply = strip_slot_markers(message?.swipes[location.swipe_id]?.content ?? "");
+    const before = chat.messages.filter(
+      (candidate) =>
+        candidate.message_id < location.message_id &&
+        !candidate.is_hidden &&
+        candidate.role !== "system",
+    );
+    const user = before.findLast((candidate) => candidate.role === "user");
+    const anchor = this.#anchor(chat, location.message_id);
+    const previous = anchor.snapshot;
+    // Replies no update has read: their clothing changes are read now, before the latest reply.
+    const gap = before
+      .filter(
+        (candidate) =>
+          (anchor.message_id === null || candidate.message_id > anchor.message_id) &&
+          candidate !== user,
+      )
+      .slice(-GAP_MAX_MESSAGES)
+      .map((candidate) => ({ name: candidate.name, text: active_text(candidate) }));
+    while (gap.reduce((sum, item) => sum + item.text.length, 0) > GAP_MAX_CHARACTERS) {
+      gap.shift();
+    }
     const [
       library,
       {
@@ -139,7 +181,17 @@ export class WardrobeService {
     ] = await Promise.all([this.#deps.library.load(location.chat_id), import("./scene_update.js")]);
     const needs_outfit = characters_needing_outfit(reply, previous, library);
     return {
-      input: build_scene_update_input(user_message, reply, previous, library),
+      input: build_scene_update_input(
+        {
+          earlier: gap,
+          user_message: user === undefined ? null : active_text(user),
+          reply,
+          reply_shown_above,
+          viewer: viewer_name(chat),
+        },
+        previous,
+        library,
+      ),
       json_schema: scene_update_json_schema(needs_outfit.map((character) => character.id)),
       apply: async (raw) => {
         const applied = apply_scene_update(

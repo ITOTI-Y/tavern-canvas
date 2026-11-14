@@ -120,7 +120,7 @@ describe("TavernHelperHost", () => {
       generation_id: "g1",
       preset_name: "in_use",
       user_input: "analyze",
-      max_chat_history: 4,
+      chat_history: [],
       connection: {
         kind: "custom",
         api_url: "https://llm.example",
@@ -138,7 +138,7 @@ describe("TavernHelperHost", () => {
       generation_id: "g1",
       preset_name: "in_use",
       user_input: "analyze",
-      max_chat_history: 4,
+      max_chat_history: 0,
       should_silence: true,
       should_stream: false,
       should_return_reasoning: true,
@@ -146,6 +146,30 @@ describe("TavernHelperHost", () => {
       json_schema: { name: "illustrations", value: { type: "object" }, strict: true },
       image: ["data:image/jpeg;base64,AAAA"],
     });
+  });
+
+  it("sends the given messages as the chat history, oldest first", async () => {
+    const generate = vi.fn(() => Promise.resolve("{}"));
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+    const chat_history = [
+      { role: "user" as const, content: "Hi" },
+      { role: "assistant" as const, content: "Hello" },
+    ];
+
+    await host.generate_with_preset({
+      generation_id: "g1",
+      preset_name: "in_use",
+      user_input: "analyze",
+      chat_history,
+      connection: { kind: "current" },
+      json_schema: null,
+      world_info: { kind: "chat" },
+      image: null,
+    });
+
+    const config = (generate.mock.calls[0] as unknown[])[0] as Record<string, unknown>;
+    expect(config["overrides"]).toEqual({ chat_history: { prompts: chat_history } });
+    expect(config).not.toHaveProperty("max_chat_history");
   });
 
   it("replaces world info and depth entries when the analysis brings its own", async () => {
@@ -156,7 +180,7 @@ describe("TavernHelperHost", () => {
       generation_id: "g1",
       preset_name: "in_use",
       user_input: "analyze",
-      max_chat_history: 4,
+      chat_history: [],
       connection: { kind: "current" },
       json_schema: null,
       world_info: { kind: "replace", text: "Doors are blue." },

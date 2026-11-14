@@ -12,7 +12,7 @@ import {
   type WardrobeLibrary,
 } from "./scene_update.js";
 import { test_character, test_outfit } from "./wardrobe_test_fixtures.js";
-import { replace_outfit_tags } from "./wearing.js";
+import { replace_outfit_tags, wearing_tags } from "./wearing.js";
 
 const LIBRARY: WardrobeLibrary = {
   characters: [
@@ -67,12 +67,62 @@ describe("apply_scene_update", () => {
       { character_id: "c1", outfit_id: "o1", overrides: {}, conditions: ["wet clothes"] },
     ];
     const applied = apply_scene_update(
-      update(entry({ ref: "c1", name: "Seraphina" })),
+      update(entry({ ref: "c1", name: "Seraphina", conditions: ["wet clothes"] })),
       previous,
       LIBRARY,
       new_id,
     );
     expect(applied.wearing).toEqual(previous);
+  });
+
+  it("takes a present character's conditions as given even when the clothes stay the same", () => {
+    const previous: Wearing[] = [
+      { character_id: "c1", outfit_id: "o1", overrides: {}, conditions: ["wet clothes"] },
+    ];
+    const applied = apply_scene_update(
+      update(entry({ ref: "c1", name: "Seraphina", conditions: ["messy hair"] })),
+      previous,
+      LIBRARY,
+      new_id,
+    );
+    expect(applied.wearing[0]?.conditions).toEqual(["messy hair"]);
+  });
+
+  it("builds slot changes on earlier ones within an outfit and clears them with the outfit", () => {
+    const previous: Wearing[] = [
+      {
+        character_id: "c1",
+        outfit_id: "o1",
+        overrides: { outerwear: ["red cloak"], accessories: ["knife"] },
+        conditions: [],
+      },
+    ];
+    const same = apply_scene_update(
+      update(
+        entry({
+          ref: "c1",
+          name: "Seraphina",
+          wearing_changed: true,
+          outfit_id: "o1",
+          overrides: [
+            { slot: "accessories", tags: [], removed: true },
+            { slot: "outerwear", tags: [], removed: false },
+          ],
+        }),
+      ),
+      previous,
+      LIBRARY,
+      new_id,
+    );
+    expect(same.wearing[0]?.overrides).toEqual({ accessories: "removed" });
+
+    const changed = apply_scene_update(
+      update(entry({ ref: "c1", name: "Seraphina", wearing_changed: true, outfit_id: "o2" })),
+      previous,
+      LIBRARY,
+      new_id,
+    );
+    expect(changed.wearing[0]?.overrides).toEqual({});
   });
 
   it("switches outfits, takes a slot off and replaces the passing states", () => {
@@ -312,12 +362,19 @@ describe("parse_scene_update", () => {
   });
 });
 
+const STORY = {
+  earlier: [],
+  user_message: "Change for bed.",
+  reply: "Seraphina slips into her nightgown.",
+  reply_shown_above: false,
+  viewer: null,
+};
+
 describe("build_scene_update_input", () => {
   it("lists what each character wears and which appearance slots are still open", () => {
     const input = build_scene_update_input(
-      "Change for bed.",
-      "Seraphina slips into her nightgown.",
-      [{ character_id: "c1", outfit_id: "o1", overrides: {}, conditions: [] }],
+      STORY,
+      [{ character_id: "c1", outfit_id: "o1", overrides: {}, conditions: ["wet hair"] }],
       LIBRARY,
     );
     expect(input).toContain(
@@ -328,6 +385,65 @@ describe("build_scene_update_input", () => {
     );
     expect(input).toContain("- id o2: Nightgown (Seraphina): nightgown");
     expect(input).toContain("Latest user message:\nChange for bed.");
+    expect(input).toContain("; conditions now: wet hair");
+    expect(input).toContain("Latest reply:\nSeraphina slips into her nightgown.");
+  });
+
+  it("reads untracked earlier messages, names the user's character and skips a reply shown above", () => {
+    const input = build_scene_update_input(
+      {
+        ...STORY,
+        earlier: [{ name: "Seraphina", text: "She took off her boots." }],
+        reply_shown_above: true,
+        viewer: "Yu",
+      },
+      [],
+      LIBRARY,
+    );
+    expect(input).toContain(
+      "Earlier messages since the last update, oldest first (apply their changes too):\nSeraphina: She took off her boots.",
+    );
+    expect(input).toContain('"You" in the story is Yu');
+    expect(input).toContain("Latest reply: the numbered paragraphs above.");
+    expect(input).not.toContain("slips into her nightgown");
+  });
+});
+
+describe("wearing_tags", () => {
+  it("drops the outfit's own dress under changed separates and its separates under a changed dress", () => {
+    const dress = {
+      ...LIBRARY,
+      outfits: [
+        test_outfit({
+          id: "d",
+          name: "Dress",
+          character_id: "c1",
+          slots: { full_body: ["sundress"], footwear: ["sandals"] },
+        }),
+      ],
+    };
+    expect(
+      wearing_tags(
+        {
+          character_id: "c1",
+          outfit_id: "d",
+          overrides: { top: ["white shirt"] },
+          conditions: ["wet"],
+        },
+        dress.outfits,
+      ),
+    ).toEqual(["white shirt", "sandals", "wet"]);
+    expect(
+      wearing_tags(
+        {
+          character_id: "c1",
+          outfit_id: "o1",
+          overrides: { full_body: ["nightgown"] },
+          conditions: [],
+        },
+        LIBRARY.outfits,
+      ),
+    ).toEqual(["nightgown", "green cloak"]);
   });
 });
 
@@ -345,9 +461,9 @@ describe("initial outfits", () => {
     expect(characters_needing_outfit(reply, [], library).map((character) => character.id)).toEqual([
       "c2",
     ]);
-    expect(build_scene_update_input(null, reply, [], library)).toContain(
-      "empty slots are not an answer):\n- id c2: Kael",
-    );
+    expect(
+      build_scene_update_input({ ...STORY, user_message: null, reply }, [], library),
+    ).toContain("empty slots are not an answer):\n- id c2: Kael");
     expect(scene_update_json_schema(["c2"]).value).toMatchObject({
       required: ["characters", "initial_outfits"],
       properties: { initial_outfits: { required: ["c2"] } },

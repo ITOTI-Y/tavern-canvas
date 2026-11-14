@@ -14,6 +14,7 @@ export type {
   HostGenerationConnection,
   HostGenerationEvent,
   HostGenerationHandler,
+  HostHistoryMessage,
   HostJsonSchema,
   HostMessageRenderedHandler,
   HostMessageRole,

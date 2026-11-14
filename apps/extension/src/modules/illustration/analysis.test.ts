@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { test_character, test_outfit } from "../wardrobe/wardrobe_test_fixtures.js";
-import { AnalysisParseError, build_analysis_input, parse_analysis_output } from "./analysis.js";
+import { AnalysisParseError, parse_analysis_output } from "./analysis.js";
+import { build_analysis_input } from "./analysis_prompts.js";
 
 const PROPOSAL = {
   paragraph: 1,
@@ -20,6 +21,7 @@ describe("build_analysis_input", () => {
       2,
       { characters: [], outfits: [], loras: [] },
       "  ",
+      null,
     );
 
     expect(input).toContain("Choose at most 2 paragraphs");
@@ -28,12 +30,26 @@ describe("build_analysis_input", () => {
     expect(input).not.toContain("User guidance");
   });
 
+  it("asks for both sides of an exchange and names the user's character as you", () => {
+    const input = build_analysis_input(
+      [{ index: 0, text: "She hands you the cup.", line: 0 }],
+      1,
+      { characters: [], outfits: [], loras: [] },
+      "",
+      "Yu",
+    );
+
+    expect(input).toContain("both sides of an exchange are visible");
+    expect(input).toContain('"You" in the story is Yu');
+  });
+
   it("passes the user's guidance before the paragraphs", () => {
     const input = build_analysis_input(
       [{ index: 0, text: "Hi.", line: 0 }],
       1,
       { characters: [], outfits: [], loras: [] },
       " watercolor, summer evening ",
+      null,
     );
 
     expect(input).toMatch(/User guidance[^\n]*\nwatercolor, summer evening\n\nParagraphs:/u);
@@ -51,6 +67,7 @@ describe("build_analysis_input", () => {
         loras: [],
       },
       "",
+      null,
     );
 
     expect(input).toContain("never hair, eyes, face, body or clothing");

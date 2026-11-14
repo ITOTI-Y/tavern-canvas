@@ -1,4 +1,4 @@
-import { OUTFIT_SLOTS, type Wearing } from "@tavern-canvas/contracts";
+import { OUTFIT_SLOTS, type OutfitSlot, type Wearing } from "@tavern-canvas/contracts";
 
 import { default_outfit, type WardrobeCharacter, type WardrobeOutfit } from "./wardrobe_library.js";
 
@@ -15,20 +15,47 @@ export function initial_wearing(
   };
 }
 
-/** Outfit tags in slot order, with slot changes applied, followed by the passing conditions. */
-export function wearing_tags(
+/**
+ * Outfit tags in slot order with slot changes applied. A dress and separates cannot be worn
+ * together, so a changed top or bottom hides the outfit's own full-body piece and a changed full-body
+ * piece hides its own top and bottom.
+ */
+export function outfit_tags(
   wearing: Wearing,
   outfits: readonly WardrobeOutfit[],
 ): readonly string[] {
   const outfit = outfits.find((candidate) => candidate.id === wearing.outfit_id);
+  const replaced = (slot: OutfitSlot) => {
+    const override = wearing.overrides[slot];
+    return override !== undefined && override !== "removed";
+  };
+  const hidden = new Set<OutfitSlot>();
+  if (replaced("full_body")) {
+    hidden.add("top");
+    hidden.add("bottom");
+  }
+  if (replaced("top") || replaced("bottom")) {
+    hidden.add("full_body");
+  }
   const tags = OUTFIT_SLOTS.flatMap((slot) => {
     const override = wearing.overrides[slot];
     if (override === "removed") {
       return [];
     }
-    return override ?? outfit?.slots[slot] ?? [];
+    if (override !== undefined) {
+      return override;
+    }
+    return hidden.has(slot) ? [] : (outfit?.slots[slot] ?? []);
   });
-  return [...new Set([...tags, ...wearing.conditions])];
+  return [...new Set(tags)];
+}
+
+/** Outfit tags followed by the passing conditions. */
+export function wearing_tags(
+  wearing: Wearing,
+  outfits: readonly WardrobeOutfit[],
+): readonly string[] {
+  return [...new Set([...outfit_tags(wearing, outfits), ...wearing.conditions])];
 }
 
 /** The wearing recorded for a character, or what it starts in. */
