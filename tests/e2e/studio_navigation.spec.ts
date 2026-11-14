@@ -7,6 +7,7 @@ import {
   navigate_to_route,
   open_settings_section,
   ROUTES,
+  TAB_COUNT,
   route_label,
 } from "./studio_harness_utils.js";
 
@@ -15,14 +16,14 @@ const ROUTE_MARKERS: Readonly<Record<(typeof ROUTES)[number], string>> = {
   settings: '[data-testid="settings-view"]',
 };
 
-test.describe("Studio navigation: desktop rail", () => {
+test.describe("Studio navigation: desktop tabs", () => {
   test("switches the mounted view for both routes", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
     for (const route of ROUTES) {
       await navigate_to_route(page, route, "en");
       await expect(page.locator(ROUTE_MARKERS[route])).toBeVisible();
-      const selected = page.locator('[data-testid="studio-rail"] button[aria-current="page"]');
-      await expect(selected).toHaveAttribute("aria-label", route_label(route, "en"));
+      const selected = page.locator('[data-testid="studio-tabs"] button[aria-current="page"]');
+      await expect(selected).toHaveText(route_label(route, "en"));
     }
   });
 
@@ -64,7 +65,7 @@ test.describe("Studio navigation: mobile bottom nav", () => {
     }
   });
 
-  test("does not render the desktop rail on a mobile viewport", async ({ page }) => {
+  test("does not render the desktop tabs on a mobile viewport", async ({ page }) => {
     await goto_studio(page, { viewport: MOBILE_LARGE });
     await expect(page.locator('[data-viewport="desktop"]')).toHaveCount(0);
     await expect(page.locator('[data-viewport="mobile"]')).toBeVisible();
@@ -85,7 +86,7 @@ test.describe("Studio navigation: shell-level states", () => {
   }) => {
     await goto_studio(page, { scenario: "partial", viewport: DESKTOP_LARGE });
     await expect(page.locator('[data-testid="partial-banner"]')).toBeVisible();
-    await expect(page.locator('[data-testid="studio-rail"] button')).toHaveCount(ROUTES.length);
+    await expect(page.locator('[data-testid="studio-tabs"] button')).toHaveCount(TAB_COUNT);
     await page.locator('[data-testid="partial-banner-diagnostics"]').click();
     await expect(page.locator('[data-testid="diagnostics-view"]')).toBeVisible();
   });

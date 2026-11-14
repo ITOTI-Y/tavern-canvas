@@ -3,7 +3,7 @@ import type { Page } from "@playwright/test";
 export type ScenarioName = "full" | "empty" | "loading" | "partial" | "error";
 export type StudioLocale = "en" | "zh-CN";
 export type ColorMode = "light" | "dark";
-export type StudioRoute = "settings" | "gallery";
+export type StudioRoute = "settings" | "gallery" | "library";
 
 export interface Viewport {
   readonly name: string;
@@ -25,11 +25,13 @@ export const VIEWPORTS: readonly Viewport[] = [
 
 export const LOCALES: readonly StudioLocale[] = ["en", "zh-CN"];
 export const COLOR_MODES: readonly ColorMode[] = ["light", "dark"];
-export const ROUTES: readonly StudioRoute[] = ["settings", "gallery"];
+export const ROUTES = ["settings", "gallery"] as const satisfies readonly StudioRoute[];
+/** Opening, Create, Library, Gallery and Settings; the tests here visit only `ROUTES`. */
+export const TAB_COUNT = 5;
 
 const ROUTE_LABELS: Readonly<Record<StudioLocale, Readonly<Record<StudioRoute, string>>>> = {
-  en: { settings: "Settings", gallery: "Gallery" },
-  "zh-CN": { settings: "设置", gallery: "图库" },
+  en: { settings: "Settings", gallery: "Gallery", library: "Library" },
+  "zh-CN": { settings: "设置", gallery: "图库", library: "素材库" },
 };
 
 export function route_label(route: StudioRoute, locale: StudioLocale): string {
@@ -91,20 +93,13 @@ export async function navigate_to_route(
   if (await is_mobile_layout(page)) {
     await page.locator('[data-testid="studio-bottom-nav"] button', { hasText: label }).click();
   } else {
-    await page.locator(`[data-testid="studio-rail"] button[aria-label="${label}"]`).click();
+    await page.locator('[data-testid="studio-tabs"] button', { hasText: label }).click();
   }
   await page.locator('[data-testid="workspace"]').waitFor({ state: "visible" });
 }
 
 export type SettingsSectionLabel =
-  | "Illustration"
-  | "Image providers"
-  | "Translation"
-  | "Prompt presets"
-  | "Library"
-  | "Connections"
-  | "General"
-  | "Diagnostics";
+  "Illustration" | "Image providers" | "Translation" | "Prompt presets" | "General" | "Diagnostics";
 
 /** Opens Settings and one of its sections by the section's English label. */
 export async function open_settings_section(

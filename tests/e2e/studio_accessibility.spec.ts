@@ -6,6 +6,7 @@ import {
   MOBILE_LARGE,
   navigate_to_route,
   open_settings_section,
+  TAB_COUNT,
 } from "./studio_harness_utils.js";
 
 const SQUARE_GALLERY_RECORD_ID = `00000000-0000-4000-8000-${String(202).padStart(12, "0")}`;
@@ -21,15 +22,15 @@ async function open_bulk_delete_confirm(page: Page): Promise<Locator> {
 }
 
 test.describe("Studio accessibility: keyboard access", () => {
-  test("every desktop rail button is reachable by Tab and activates with the keyboard", async ({
+  test("every top-bar tab is reachable by Tab and activates with the keyboard", async ({
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    const rail_buttons = page.locator('[data-testid="studio-rail"] button');
-    const count = await rail_buttons.count();
-    expect(count).toBe(2);
+    const tabs = page.locator('[data-testid="studio-tabs"] button');
+    const count = await tabs.count();
+    expect(count).toBe(TAB_COUNT);
     for (let index = 0; index < count; index += 1) {
-      const button = rail_buttons.nth(index);
+      const button = tabs.nth(index);
       await button.focus();
       await expect(button).toBeFocused();
       await page.keyboard.press("Enter");
@@ -96,13 +97,7 @@ test.describe("Studio accessibility: accessible names", () => {
     page,
   }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE });
-    const sections = [
-      "Illustration",
-      "Image providers",
-      "Translation",
-      "Connections",
-      "General",
-    ] as const;
+    const sections = ["Illustration", "Image providers", "Translation", "General"] as const;
     for (const route of sections) {
       await open_settings_section(page, route);
       const unnamed = await page.evaluate(() => {
@@ -155,7 +150,8 @@ test.describe("Studio accessibility: accessible names", () => {
     });
     const labels = await page.evaluate(() => {
       const host = document.getElementById("tavern-canvas-root");
-      const toggles = host?.shadowRoot?.querySelectorAll("[aria-pressed]") ?? [];
+      const toggles =
+        host?.shadowRoot?.querySelectorAll('[aria-pressed][aria-label^="Select image:"]') ?? [];
       return [...toggles].map((toggle) => toggle.getAttribute("aria-label"));
     });
     expect(labels.length).toBeGreaterThan(0);

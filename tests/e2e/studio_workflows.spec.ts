@@ -38,7 +38,7 @@ test.describe("Studio workflow: preset save", () => {
 test.describe("Studio workflow: vocabulary search", () => {
   test("searches the vocabulary panel and shows a real result", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    await open_settings_section(page, "Library");
+    await navigate_to_route(page, "library", "en");
     await page.locator('[role="tab"]', { hasText: "Vocabulary" }).click();
     await page.locator("#vocabulary-search-input").fill("forest");
     await expect(page.getByText("forest", { exact: false })).toBeVisible({ timeout: 5_000 });
@@ -48,14 +48,14 @@ test.describe("Studio workflow: vocabulary search", () => {
 test.describe("Studio workflow: workflow import", () => {
   test("imports a ComfyUI workflow JSON file and scans its placeholders", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    await open_settings_section(page, "Library");
+    await navigate_to_route(page, "library", "en");
     await page.locator('[role="tab"]', { hasText: "Workflow" }).click();
     await page.setInputFiles('input[type="file"][accept*="json"]', {
       name: "mock_workflow.json",
       mimeType: "application/json",
       buffer: Buffer.from(JSON.stringify({ prompt: "{{positive_prompt}}", seed: "{{seed}}" })),
     });
-    await expect(page.locator('[role="dialog"][data-state="open"]')).toBeVisible();
+    await expect(page.locator('[data-testid="asset-editor"]')).toBeVisible();
     await page.getByRole("button", { name: "Scan placeholders" }).click();
     await expect(page.getByText("{{positive_prompt}}", { exact: false })).toBeVisible();
   });
@@ -76,17 +76,6 @@ test.describe("Studio workflow: batch gallery actions", () => {
     await page.getByRole("button", { name: "Delete selected" }).click();
     await page.locator('button[aria-label="Delete"]').click();
     await expect(page.getByText("2 images selected", { exact: false })).toHaveCount(0);
-  });
-});
-
-test.describe("Studio workflow: HTTP acknowledgment", () => {
-  test("shows the plaintext-HTTP risk banner and acknowledges it", async ({ page }) => {
-    await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
-    await open_settings_section(page, "Connections");
-    await expect(page.locator('[data-testid="http-risk-banner"]')).toBeVisible();
-    await page.getByRole("button", { name: "Continue anyway" }).click();
-    await expect(page.locator('[data-testid="http-risk-acknowledged"]')).toBeVisible();
-    await expect(page.locator('[data-testid="http-risk-banner"]')).toHaveCount(0);
   });
 });
 

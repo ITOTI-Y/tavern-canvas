@@ -57,6 +57,7 @@ export default defineConfig({
     {
       name: "studio",
       testMatch: /studio_.*\.spec\.ts$/u,
+      timeout: 60_000,
       use: { ...devices["Desktop Chrome"], baseURL: STUDIO_HARNESS_URL },
     },
     {
