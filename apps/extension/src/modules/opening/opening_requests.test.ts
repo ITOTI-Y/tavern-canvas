@@ -136,7 +136,7 @@ describe("opening follow-up question", () => {
   it("forces a question about a written step and shows the model the current result", () => {
     const written = draft();
     written.states[1] = { ...empty_state(), status: "done", entries: [{ id: "b", ...CONSTANT }] };
-    const request = follow_up_request(written, 1);
+    const request = follow_up_request(written, 1, "");
 
     expect(request.tools?.tools.map((tool) => tool.name)).toEqual(["ask_question"]);
     expect(request.tools?.choice).toEqual({ name: "ask_question" });
@@ -144,6 +144,15 @@ describe("opening follow-up question", () => {
     expect(request.tools?.user_input).toContain("- 世界观｜艾瑟里恩 (always active): 浮空城");
     expect(request.tools?.parse([call("ask_question", QUESTION)], "").options).toHaveLength(5);
     expect(() => request.parse(JSON.stringify({ question: null }))).toThrow(AnalysisParseError);
+  });
+
+  it("steers the question toward what the user asked about", () => {
+    const steered = follow_up_request(draft(), 1, "  反派的动机 ");
+
+    expect(steered.user_input).toContain("The user wants the question to be about: 反派的动机.");
+    expect(follow_up_request(draft(), 1, "").user_input).not.toContain(
+      "wants the question to be about",
+    );
   });
 });
 

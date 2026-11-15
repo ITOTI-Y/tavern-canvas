@@ -28,8 +28,11 @@ export interface OpeningFlow {
   dropped(draft_id: string): number;
   /** Asks the model about the step, or writes it once no question is left. */
   run_step(draft: OpeningDraft, index: number): Promise<void>;
-  /** Asks one more question about a step that already has a result, which stays until answered. */
-  ask_more(draft: OpeningDraft, index: number): Promise<void>;
+  /**
+   * Asks one more question about a step that already has a result, which stays until answered;
+   * `focus` is what the user wants asked about, empty to leave it to the model.
+   */
+  ask_more(draft: OpeningDraft, index: number, focus: string): Promise<void>;
   answer(draft: OpeningDraft, selected: readonly string[], other: string): Promise<void>;
   /** Writes the current step now, without the questions left. */
   skip(draft: OpeningDraft): Promise<void>;
@@ -146,9 +149,9 @@ export function use_opening_flow(port: OpeningPort, store: OpeningStore): Openin
     await generate(draft, index);
   }
 
-  async function ask_more(draft: OpeningDraft, index: number): Promise<void> {
+  async function ask_more(draft: OpeningDraft, index: number, focus: string): Promise<void> {
     await guarded(draft, { kind: "question", step: index }, async () => {
-      const question = await port.request(follow_up_request(draft, index), options(draft));
+      const question = await port.request(follow_up_request(draft, index, focus), options(draft));
       store.edit(draft, (current) => {
         current.current = index;
         const target = current.states[index];

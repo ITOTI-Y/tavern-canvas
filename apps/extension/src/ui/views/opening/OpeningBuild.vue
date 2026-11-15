@@ -15,7 +15,7 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-vue-next";
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { AnalysisParseError } from "../../../modules/illustration/analysis_error.js";
@@ -324,6 +324,36 @@ async function start(): Promise<void> {
 
 const picked = ref<readonly string[]>([]);
 const other = ref("");
+
+/* What the user wants the next "Ask more" question to be about; empty leaves it to the model. */
+const more_open = ref(false);
+const more_focus = ref("");
+const more_input = ref<HTMLInputElement | null>(null);
+
+async function open_more(): Promise<void> {
+  more_open.value = true;
+  await nextTick();
+  more_input.value?.focus();
+}
+
+watch(
+  () => [draft.value?.id, draft.value?.current],
+  () => {
+    more_open.value = false;
+    more_focus.value = "";
+  },
+);
+
+async function ask_more(): Promise<void> {
+  const item = draft.value;
+  if (item === null) {
+    return;
+  }
+  const focus = more_focus.value;
+  more_open.value = false;
+  more_focus.value = "";
+  await props.flow.ask_more(item, item.current, focus);
+}
 
 watch(
   () => state.value?.question,
@@ -946,14 +976,51 @@ watch(selected_id, () => {
               </div>
             </template>
 
+            <!-- What to ask about, before an "Ask more" question. -->
+            <div v-if="has_result && more_open" :class="styles.ask">
+              <FieldGroup
+                :label="t('opening.steps.ask_more_label')"
+                :hint="t('opening.steps.ask_more_hint')"
+              >
+                <template #default="{ fieldId, describedBy }">
+                  <input
+                    :id="fieldId"
+                    ref="more_input"
+                    v-model="more_focus"
+                    :class="styles.input"
+                    maxlength="500"
+                    :aria-describedby="describedBy"
+                    :placeholder="t('opening.steps.ask_more_placeholder')"
+                    @keydown.enter="ask_more"
+                  />
+                </template>
+              </FieldGroup>
+              <div :class="styles.row">
+                <AppButton
+                  :label="t('common.actions.cancel')"
+                  variant="ghost"
+                  @click="more_open = false"
+                />
+                <span :class="styles.spacer" />
+                <AppButton
+                  :icon="ArrowRight"
+                  :label="t('opening.steps.ask_more_start')"
+                  variant="primary"
+                  :disabled="busy !== null"
+                  @click="ask_more"
+                />
+              </div>
+            </div>
+
             <!-- Step actions. -->
             <div v-if="has_result" :class="styles.foot">
               <AppButton
                 :icon="ArrowLeft"
                 :label="t('opening.steps.ask_more')"
                 variant="ghost"
-                :disabled="busy !== null"
-                @click="flow.ask_more(draft, draft.current)"
+                :pending="busy?.kind === 'question'"
+                :disabled="busy !== null || more_open"
+                @click="open_more"
               />
               <AppButton
                 v-if="step.output === 'entries'"

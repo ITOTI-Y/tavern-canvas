@@ -334,6 +334,7 @@ function follow_up_question(value: unknown, raw: string): OpeningQuestion {
 export function follow_up_request(
   draft: OpeningDraftPayload,
   index: number,
+  focus: string,
 ): OpeningStructuredRequest<OpeningQuestion> {
   const state = draft.states[index];
   const result =
@@ -346,7 +347,10 @@ export function follow_up_request(
     "This step's current result:",
     ...(result.length === 0 ? ["(none)"] : result),
     "",
-    "The user has read this result and wants to be asked one more question before the step is written again. Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently.",
+    "The user has read this result and wants to be asked one more question before the step is written again.",
+    focus.trim() === ""
+      ? "Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently."
+      : `The user wants the question to be about: ${focus.trim()}. Ask about the choice within that which would change the result the most.`,
     ...QUESTION_RULES,
   ];
   const parse = (raw: string): OpeningQuestion =>

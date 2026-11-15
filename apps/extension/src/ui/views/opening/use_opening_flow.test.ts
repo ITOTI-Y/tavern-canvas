@@ -150,7 +150,7 @@ describe("use_opening_flow", () => {
     };
     await store.add(written);
 
-    await flow.ask_more(store.draft("d1") as OpeningDraft, 0);
+    await flow.ask_more(store.draft("d1") as OpeningDraft, 0, "");
 
     expect(asked).toEqual(["tavern_canvas_opening_question"]);
     expect(store.draft("d1")?.states[0]).toMatchObject({
