@@ -1,3 +1,4 @@
+import type { ComfyUiInspection } from "../../modules/comfyui/server_inspection.js";
 import type {
   NovelAiAccountStatus,
   NovelAiGenerationDefaults,
@@ -17,6 +18,7 @@ import type {
   DiagnosticsDomainEvent,
   GalleryDomainEvent,
   GenerationDomainEvent,
+  ComfyUiInspectionInput,
   GenerationJobSummary,
   InstalledVocabularyView,
   ProfileConnectionTestResult,
@@ -101,8 +103,11 @@ export interface StudioController {
 
   load_diagnostics_timeline(): Promise<void>;
   save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary>;
+  /** Chooses the one profile generation uses. */
+  set_active_provider_profile(profile_id: Uuid | null): Promise<void>;
   remove_provider_profile(profile_id: Uuid): Promise<void>;
   test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
+  inspect_comfyui(input: ComfyUiInspectionInput): Promise<ComfyUiInspection>;
   set_provider_profile_credential(
     profile_id: Uuid,
     plaintext_value: string,
@@ -613,30 +618,49 @@ class StudioControllerImpl implements StudioController {
 
   async save_provider_profile(draft: ProviderProfileDraft): Promise<ProviderProfileSummary> {
     const profile = await this.#capabilities.profiles.save(draft);
-    const should_select = profile.is_default || this.#state.generation.active_profile_id === null;
-    if (should_select) {
-      await this.#capabilities.settings.update({ active_provider_profile_id: profile.id });
-    }
     if (!this.#stopped) {
       this.#patch_generation({
         profiles: upsert_by_id(this.#state.generation.profiles, profile, (p) => p.id),
-        ...(should_select ? { active_profile_id: profile.id } : {}),
       });
+    }
+    // The first profile is the one generation uses until another is chosen.
+    if (this.#active_provider_profile() === null) {
+      await this.set_active_provider_profile(profile.id);
     }
     return profile;
   }
 
   async remove_provider_profile(profile_id: Uuid): Promise<void> {
     await this.#capabilities.profiles.remove(profile_id);
+    const profiles = this.#state.generation.profiles.filter((p) => p.id !== profile_id);
+    if (!this.#stopped) {
+      this.#patch_generation({ profiles });
+    }
+    if (this.#state.settings.settings?.active_provider_profile_id === profile_id) {
+      await this.set_active_provider_profile(profiles[0]?.id ?? null);
+    }
+  }
+
+  /** The profile generation uses, or `null` when none is chosen or the chosen one is gone. */
+  #active_provider_profile(): ProviderProfileSummary | null {
+    const profile_id = this.#state.settings.settings?.active_provider_profile_id ?? null;
+    return this.#state.generation.profiles.find((profile) => profile.id === profile_id) ?? null;
+  }
+
+  async set_active_provider_profile(profile_id: Uuid | null): Promise<void> {
+    await this.update_settings({ active_provider_profile_id: profile_id });
     if (!this.#stopped) {
       this.#patch_generation({
-        profiles: this.#state.generation.profiles.filter((p) => p.id !== profile_id),
+        active_profile_id: this.#state.settings.settings?.active_provider_profile_id ?? null,
       });
     }
   }
 
   test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult> {
     return this.#capabilities.profiles.test_connection(profile_id);
+  }
+  inspect_comfyui(input: ComfyUiInspectionInput): Promise<ComfyUiInspection> {
+    return this.#capabilities.profiles.inspect_comfyui(input);
   }
   async set_provider_profile_credential(
     profile_id: Uuid,

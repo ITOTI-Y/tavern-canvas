@@ -80,7 +80,6 @@ const PROFILE: ProviderProfileSummary = {
   display_name: "Local SD",
   model_id: "sdxl-base",
   workflow_id: null,
-  is_default: true,
   credential_reference: null,
   novelai_defaults: null,
   prompt_tags: {
@@ -223,15 +222,31 @@ describe("SettingsView provider profiles", () => {
     );
   });
 
-  it("lists existing profiles with their provider type and default badge", () => {
+  it("lists existing profiles with their provider type and marks the one in use", () => {
+    const state = build_state();
     const { wrapper } = mount_view(
-      build_state(),
+      {
+        ...state,
+        settings: {
+          ...state.settings,
+          settings: { ...DEFAULT_SETTINGS, active_provider_profile_id: PROFILE.id },
+        },
+      },
       build_controller(create_unavailable_capabilities()),
     );
     const row = wrapper.get('[data-testid="provider-profile-row"]');
     expect(row.text()).toContain("Local SD");
     expect(row.text()).toContain("SD WebUI");
-    expect(row.text()).toContain("Default");
+    expect(row.text()).toContain("In use");
+  });
+
+  it("marks no profile while none is chosen", () => {
+    const { wrapper } = mount_view(
+      build_state(),
+      build_controller(create_unavailable_capabilities()),
+    );
+
+    expect(wrapper.get('[data-testid="provider-profile-row"]').text()).not.toContain("In use");
   });
   it("saves a new provider profile through the controller and closes the dialog", async () => {
     const saved: ProviderProfileDraft[] = [];
@@ -247,7 +262,6 @@ describe("SettingsView provider profiles", () => {
           display_name: draft.display_name,
           model_id: draft.model_id,
           workflow_id: draft.workflow_id,
-          is_default: draft.is_default,
           credential_reference: null,
           novelai_defaults: null,
           prompt_tags: {
@@ -262,6 +276,7 @@ describe("SettingsView provider profiles", () => {
       clear_credential: capabilities.profiles.clear_credential,
       save_novelai_defaults: vi.fn(),
       save_prompt_tags: vi.fn(),
+      inspect_comfyui: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -357,6 +372,7 @@ describe("SettingsView provider profiles", () => {
       clear_credential: capabilities.profiles.clear_credential,
       save_novelai_defaults: vi.fn(),
       save_prompt_tags: vi.fn(),
+      inspect_comfyui: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -391,6 +407,7 @@ describe("SettingsView provider profiles", () => {
       clear_credential: capabilities.profiles.clear_credential,
       save_novelai_defaults: vi.fn(),
       save_prompt_tags: vi.fn(),
+      inspect_comfyui: vi.fn(),
       test_connection: (): Promise<ProfileConnectionTestResult> =>
         Promise.resolve({ status: "success", latency_ms: 77 }),
     };

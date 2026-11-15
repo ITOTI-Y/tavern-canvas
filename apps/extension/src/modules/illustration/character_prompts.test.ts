@@ -44,4 +44,15 @@ describe("attach_character_prompts", () => {
       "characters",
     );
   });
+
+  it("gives each character a line of its own in a ComfyUI prompt", () => {
+    const comfyui = {
+      provider_id: "comfyui",
+      prompt: "1girl, 1boy, tavern",
+    } as unknown as ImageGenerationRequest;
+
+    expect(attach_character_prompts(comfyui, PROMPTS)).toMatchObject({
+      prompt: "1girl, 1boy, tavern\ngirl, silver hair\nboy, armor",
+    });
+  });
 });

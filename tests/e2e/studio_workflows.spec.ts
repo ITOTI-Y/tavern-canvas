@@ -46,18 +46,20 @@ test.describe("Studio workflow: vocabulary search", () => {
 });
 
 test.describe("Studio workflow: workflow import", () => {
-  test("imports a ComfyUI workflow JSON file and scans its placeholders", async ({ page }) => {
+  test("imports a ComfyUI API workflow and names what is still to map", async ({ page }) => {
     await goto_studio(page, { viewport: DESKTOP_LARGE, scenario: "full" });
     await navigate_to_route(page, "library", "en");
     await page.locator('[role="tab"]', { hasText: "Workflow" }).click();
     await page.setInputFiles('input[type="file"][accept*="json"]', {
       name: "mock_workflow.json",
       mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify({ prompt: "{{positive_prompt}}", seed: "{{seed}}" })),
+      buffer: Buffer.from(
+        JSON.stringify({ "1": { class_type: "CLIPTextEncode", inputs: { text: "a cat" } } }),
+      ),
     });
     await expect(page.locator('[data-testid="asset-editor"]')).toBeVisible();
-    await page.getByRole("button", { name: "Scan placeholders" }).click();
-    await expect(page.getByText("{{positive_prompt}}", { exact: false })).toBeVisible();
+    await page.getByRole("button", { name: "Detect nodes" }).click();
+    await expect(page.getByText("Still to map: Positive prompt", { exact: false })).toBeVisible();
   });
 });
 

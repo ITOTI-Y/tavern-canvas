@@ -89,7 +89,6 @@ async function boot(): Promise<void> {
     provider_id: "sd_webui",
     payload: {
       display_name: "Local SD WebUI",
-      is_default: true,
       base_url: LOOPBACK_PROVIDER_ORIGIN,
       provider_profile: {
         model_allowlist: ["sd_xl_base"],

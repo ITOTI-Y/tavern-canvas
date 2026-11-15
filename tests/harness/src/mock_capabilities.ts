@@ -62,7 +62,6 @@ const PROFILE_SD: ProviderProfileSummary = {
   id: uuid(1),
   provider_id: "sd_webui",
   display_name: "Local SD WebUI",
-  is_default: true,
   credential_reference: null,
   novelai_defaults: null,
   prompt_tags: {
@@ -77,7 +76,6 @@ const PROFILE_NOVELAI: ProviderProfileSummary = {
   provider_id: "novelai",
   display_name:
     "NovelAI production account with an unusually long profile name for truncation testing 测试账号名称非常长用于验证省略号截断效果",
-  is_default: false,
   credential_reference: null,
   novelai_defaults: null,
   prompt_tags: {
@@ -91,7 +89,6 @@ const PROFILE_COMFYUI: ProviderProfileSummary = {
   id: uuid(3),
   provider_id: "comfyui",
   display_name: "ComfyUI (workflow, cannot illustrate yet)",
-  is_default: false,
   credential_reference: null,
   novelai_defaults: null,
   prompt_tags: {
@@ -592,7 +589,6 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
         display_name: draft.display_name,
         model_id: draft.model_id,
         workflow_id: draft.workflow_id,
-        is_default: draft.is_default,
         credential_reference: null,
         novelai_defaults: null,
         prompt_tags: {
@@ -647,6 +643,13 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
       profiles.set(profile_id, updated);
       return Promise.resolve(updated);
     },
+    inspect_comfyui: () =>
+      Promise.resolve({
+        version: "0.45.3",
+        options: { sampler_name: [], scheduler: [], model: [] },
+        missing_node_types: [],
+        missing_values: [],
+      }),
     test_connection: (profile_id): Promise<ProfileConnectionTestResult> => {
       const profile = profiles.get(profile_id);
       if (profile?.provider_id === "novelai") {

@@ -8,7 +8,7 @@ import type {
 
 import { execute_bounded_fetch, type ProviderFetch } from "./browser_fetch.js";
 import { validate_provider_operation, validate_remote_operation } from "./provider_operations.js";
-import { is_loopback_origin, normalize_http_origin } from "./http_origin.js";
+import { normalize_http_origin } from "./http_origin.js";
 
 export type { ProviderFetch } from "./browser_fetch.js";
 
@@ -30,12 +30,6 @@ export class LocalDirectTransport implements ProviderTransport {
         "configuration",
         "Direct provider base URL is invalid",
         { cause: error },
-      );
-    }
-    if (!is_loopback_origin(base_url)) {
-      throw new ProviderTransportBoundaryError(
-        "configuration",
-        "Direct provider base URL must use a loopback address",
       );
     }
     this.#base_url = base_url;

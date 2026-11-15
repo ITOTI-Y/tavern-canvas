@@ -192,7 +192,6 @@ async function boot(): Promise<void> {
     provider_id: "sd_webui",
     payload: {
       display_name: "模拟 SD WebUI",
-      is_default: true,
       base_url: "http://127.0.0.1:7860",
       provider_profile: {
         model_allowlist: ["sd_xl_base"],

@@ -57,7 +57,7 @@ export interface ActiveProfile {
   readonly record: ProviderProfile;
   readonly provider_id: ProviderId;
   readonly model_id: string | null;
-  /** Only reaches `LocalDirectTransport`, which requires a loopback origin; cloud origins come from the code-owned route catalog. */
+  /** The user's SD WebUI or ComfyUI server, reached by `LocalDirectTransport`; cloud origins come from the code-owned route catalog. */
   readonly base_url: string | null;
   readonly direct_cloud: DirectCloudCandidate;
 }

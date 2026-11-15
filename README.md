@@ -91,7 +91,7 @@ to image, inpainting, 2x upscaling and the Director tools.
 | Outfits       | Outfit tags by slot, optionally linked to a character                          |
 | LoRA          | SD WebUI LoRA file name, weight and trigger words, linked to a character       |
 | Vibe transfer | NovelAI vibe transfer images, chosen per NovelAI profile under Image providers |
-| Workflow      | ComfyUI workflow JSON with its placeholder mapping                             |
+| Workflow      | ComfyUI API-format workflow JSON and the node inputs Inkwell writes to         |
 
 A character's appearance is split into nine slots: character tag, age, body, skin, hair, eyes,
 makeup, expression and other features. The character tag holds the Danbooru tag of a character from
@@ -152,19 +152,23 @@ Five image providers have adapters:
 | Provider id    | Name         | Endpoint kind             | Illustrates replies |
 | -------------- | ------------ | ------------------------- | ------------------- |
 | `sd_webui`     | SD WebUI     | A server you run yourself | Yes                 |
-| `comfyui`      | ComfyUI      | A server you run yourself | No                  |
+| `comfyui`      | ComfyUI      | A server you run yourself | Yes                 |
 | `novelai`      | NovelAI      | Cloud vendor              | Yes                 |
 | `openai_image` | OpenAI Image | Cloud vendor              | Yes                 |
 | `google_image` | Google Image | Cloud vendor              | Yes                 |
 
 The active profile's provider and endpoint decide which transport carries a request.
 
-**Loopback providers.** `sd_webui` and `comfyui` are reached over a direct browser call to the
-`base_url` on the active profile. That URL must be a loopback address; a non loopback endpoint is
-rejected with `Direct provider endpoint must use a loopback address`. Set it in the profile's
-**Server address** field. The browser enforces CORS on these calls, so start SD WebUI with
+**Self-hosted providers.** `sd_webui` and `comfyui` are reached over a direct browser call to the
+`base_url` on the active profile, an HTTP or HTTPS origin set in the profile's **Server address**
+field. Their APIs take no credential and prompts go to that host, so point it at a machine you
+control. The browser enforces CORS on these calls, so start SD WebUI with
 `--api --cors-allow-origins=http://tauri.localhost` and ComfyUI with `--enable-cors-header`; in
 standard SillyTavern, allow the origin SillyTavern is served from instead.
+
+A ComfyUI profile renders one workflow from **Assets > Workflow**. Inkwell writes the prompt,
+negative prompt, seed, canvas size and image count into the node inputs the workflow maps, and the
+profile's steps, CFG, sampler, scheduler and model file replace the workflow's own when set.
 
 **Cloud providers.** `novelai`, `openai_image`, and `google_image` are called directly from the
 browser to the vendor's own origin, with a credential from the credential backend. The routes and

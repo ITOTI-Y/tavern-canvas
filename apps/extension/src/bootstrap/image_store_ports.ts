@@ -10,7 +10,9 @@ import {
   type StorageDatabase,
 } from "@tavern-canvas/storage";
 
+import { read_mapped_workflow, to_adapter_workflow } from "../modules/comfyui/workflow_mapping.js";
 import type { ImageStorePort } from "../modules/media/media_command_service.js";
+import { read_payload } from "./capabilities/_records.js";
 
 /** Longest side of a gallery or library thumbnail, in pixels. */
 const THUMBNAIL_EDGE = 384;
@@ -54,7 +56,9 @@ export async function build_provider_adapters(
       workflow_store: {
         async load(workflow_id) {
           const record = await repositories.comfy_workflows.get("primary", workflow_id);
-          return record?.payload;
+          return record === null
+            ? undefined
+            : to_adapter_workflow(workflow_id, read_mapped_workflow(read_payload(record)));
         },
       },
     });

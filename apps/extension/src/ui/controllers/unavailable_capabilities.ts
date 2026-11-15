@@ -101,6 +101,7 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     save: unavailable_command,
     remove: unavailable_command,
     test_connection: unavailable_command,
+    inspect_comfyui: unavailable_command,
     set_credential: unavailable_command,
     clear_credential: unavailable_command,
     save_novelai_defaults: unavailable_command,

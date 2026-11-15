@@ -79,7 +79,7 @@ describe("provider operation validation", () => {
 });
 
 describe("LocalDirectTransport", () => {
-  it("allows only loopback origins and composes relative provider routes", async () => {
+  it("composes relative provider routes onto the base URL", async () => {
     const requests: Request[] = [];
     const transport = new LocalDirectTransport({
       base_url: "http://127.0.0.1:7860",
@@ -125,11 +125,10 @@ describe("LocalDirectTransport", () => {
     expect(stream_cancelled).toBe(true);
   });
 
-  it.each([
-    "http://192.168.1.10:7860",
-    "https://provider.example",
-    "http://localhost.example:7860",
-  ])("rejects non-loopback base URL %s", (base_url) => {
-    expect(() => new LocalDirectTransport({ base_url })).toThrow(ProviderTransportBoundaryError);
-  });
+  it.each(["http://127.0.0.1:7860/api", "ftp://127.0.0.1", "not a url"])(
+    "rejects base URL %s, which is not an HTTP origin",
+    (base_url) => {
+      expect(() => new LocalDirectTransport({ base_url })).toThrow(ProviderTransportBoundaryError);
+    },
+  );
 });

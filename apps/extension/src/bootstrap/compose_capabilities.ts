@@ -52,6 +52,7 @@ import type { ProviderFetch } from "../transport/browser_fetch.js";
 import { select_transport, type TransportSelection } from "../transport/transport_selector.js";
 import type { CapabilityId, StudioCapabilities } from "../ui/contracts/ui_capabilities.js";
 import { create_unavailable_capabilities } from "../ui/controllers/unavailable_capabilities.js";
+import { read_payload } from "./capabilities/_records.js";
 import { create_assets_capability } from "./capabilities/assets_capability.js";
 import {
   create_diagnostics_capability,
@@ -355,6 +356,11 @@ export async function compose_studio_capabilities(
               (settings_adapter?.get_settings().credential_storage_mode ?? "host") === "host"
                 ? null
                 : secrets.probe_secret(reference),
+            async load_workflow(workflow_id) {
+              const record = await repositories.comfy_workflows.get(namespace(), workflow_id);
+              return record === null ? null : read_payload(record);
+            },
+            ...(options.provider_fetch === undefined ? {} : { fetch: options.provider_fetch }),
             now,
           }),
         ),

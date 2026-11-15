@@ -1,7 +1,7 @@
 import { direct_image_catalog_entry, type ProviderId } from "@tavern-canvas/contracts";
 import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
-import { is_loopback_origin, normalize_http_origin } from "./http_origin.js";
+import { normalize_http_origin } from "./http_origin.js";
 
 /** `secrets_readable`: storing a credential and reading one back are granted separately, and only reading makes a direct call possible. */
 export interface DirectCloudCandidate {
@@ -37,11 +37,10 @@ export function select_transport(input: TransportSelectionInput): TransportSelec
     return direct_cloud;
   }
   if (input.direct_provider_base_url !== null) {
-    const endpoint = normalize_or_configuration_error(input.direct_provider_base_url);
-    if (!is_loopback_origin(endpoint)) {
-      throw new TransportConfigurationError("Direct provider endpoint must use a loopback address");
-    }
-    return { kind: "local_direct", endpoint };
+    return {
+      kind: "local_direct",
+      endpoint: normalize_or_configuration_error(input.direct_provider_base_url),
+    };
   }
   throw new TransportConfigurationError("No provider transport is available");
 }

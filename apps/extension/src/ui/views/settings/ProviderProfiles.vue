@@ -13,25 +13,57 @@ import {
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import {
+  OPTION_TARGETS,
+  type ComfyUiInspection,
+} from "../../../modules/comfyui/server_inspection.js";
+import {
+  DEFAULT_TARGETS,
+  read_mapped_workflow,
+  workflow_value,
+  type ComfyUiDefaults,
+  type MappedWorkflow,
+} from "../../../modules/comfyui/workflow_mapping.js";
+
 import type { StudioController } from "../../controllers/studio_controller.js";
 import { DEFAULT_NOVELAI_MODEL_ID } from "../../../modules/novelai/novelai_request_defaults.js";
 import AppButton from "../../components/AppButton.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import AppSelect from "../../components/AppSelect.vue";
-import AppSwitch from "../../components/AppSwitch.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import PromptTagChips from "../../chat/PromptTagChips.vue";
-import { is_loopback_origin, normalize_http_origin } from "../../../transport/http_origin.js";
+import { normalize_http_origin } from "../../../transport/http_origin.js";
+import { workflow_target_label } from "../assets/workflow_target_label.js";
 import { PROVIDER_IDS, provider_type_label } from "./provider_labels.js";
 import styles from "./settings_styles.js";
 
 const props = defineProps<{
   readonly profiles: readonly ProviderProfileSummary[];
   readonly promptTagPresets: readonly AssetRecordSummary[];
+  readonly workflows: readonly AssetRecordSummary[];
+  /** The profile generation uses; `null` while none is chosen. */
+  readonly activeProfileId: Uuid | null;
   readonly controller: StudioController;
 }>();
+
+const active_options = computed(() =>
+  props.profiles.map((profile) => ({ value: profile.id, label: profile.display_name })),
+);
+
+const active_model = computed<string>({
+  get: () =>
+    props.profiles.some((profile) => profile.id === props.activeProfileId)
+      ? (props.activeProfileId ?? "")
+      : "",
+  set: (value) => {
+    const profile = props.profiles.find((candidate) => candidate.id === value);
+    if (profile !== undefined) {
+      void props.controller.set_active_provider_profile(profile.id);
+    }
+  },
+});
 
 function prompt_tags_port(profile: ProviderProfileSummary): PromptTagsPort {
   return {
@@ -51,7 +83,49 @@ interface DraftForm {
   model_id: string;
   workflow_id: string;
   base_url: string;
-  is_default: boolean;
+  /** ComfyUI sampling values as typed; an empty one keeps the workflow's value. */
+  comfyui: Record<DefaultTarget, string>;
+}
+
+type DefaultTarget = (typeof DEFAULT_TARGETS)[number];
+
+/** A ComfyUI profile's model is whatever its workflow loads; the adapter profile still needs a name. */
+const COMFYUI_MODEL_ID = "workflow";
+
+function default_fields(
+  defaults: ComfyUiDefaults | null | undefined,
+): Record<DefaultTarget, string> {
+  return {
+    steps: defaults?.steps?.toString() ?? "",
+    cfg: defaults?.cfg?.toString() ?? "",
+    sampler_name: defaults?.sampler_name ?? "",
+    scheduler: defaults?.scheduler ?? "",
+    model: defaults?.model ?? "",
+  };
+}
+
+/** `null` when steps or CFG is not a number in range. */
+function read_defaults(fields: Record<DefaultTarget, string>): ComfyUiDefaults | null {
+  const steps = fields.steps.trim() === "" ? undefined : Number(fields.steps);
+  const cfg = fields.cfg.trim() === "" ? undefined : Number(fields.cfg);
+  if (
+    (steps !== undefined && (!Number.isInteger(steps) || steps < 1 || steps > 200)) ||
+    (cfg !== undefined && (!Number.isFinite(cfg) || cfg < 0 || cfg > 100))
+  ) {
+    return null;
+  }
+  const text = (value: string): string | undefined =>
+    value.trim() === "" ? undefined : value.trim();
+  const sampler_name = text(fields.sampler_name);
+  const scheduler = text(fields.scheduler);
+  const model = text(fields.model);
+  return {
+    ...(steps === undefined ? {} : { steps }),
+    ...(cfg === undefined ? {} : { cfg }),
+    ...(sampler_name === undefined ? {} : { sampler_name }),
+    ...(scheduler === undefined ? {} : { scheduler }),
+    ...(model === undefined ? {} : { model }),
+  };
 }
 
 const dialog_open = ref(false);
@@ -81,6 +155,8 @@ const provider_id_model = computed<string>({
     if (draft.value) {
       draft.value.provider_id = value as ProviderId;
       draft.value.workflow_id = "";
+      inspection.value = null;
+      inspect_error.value = null;
       draft.value.base_url = value === "comfyui" ? DEFAULT_COMFYUI_URL : DEFAULT_SD_WEBUI_URL;
       if (value === "novelai" && !NOVELAI_MODEL_IDS.has(draft.value.model_id)) {
         draft.value.model_id = DEFAULT_NOVELAI_MODEL_ID;
@@ -103,10 +179,71 @@ const is_local_draft = computed(
   () => draft.value?.provider_id === "sd_webui" || draft.value?.provider_id === "comfyui",
 );
 
-function loopback_origin(value: string): string | null {
+const workflow_options = computed(() =>
+  props.workflows.map((workflow) => ({ value: workflow.id, label: workflow.display_name })),
+);
+
+/** The chosen workflow, to show which values a default would replace; `null` while none is chosen or its JSON is unreadable. */
+const selected_workflow = computed<MappedWorkflow | null>(() => {
+  const record = props.workflows.find((workflow) => workflow.id === draft.value?.workflow_id);
+  if (record === undefined) {
+    return null;
+  }
   try {
-    const origin = normalize_http_origin(value.trim());
-    return is_loopback_origin(origin) ? origin : null;
+    return read_mapped_workflow(record.payload);
+  } catch {
+    return null;
+  }
+});
+
+const default_targets = computed(() =>
+  DEFAULT_TARGETS.filter((target) => selected_workflow.value?.mapping.inputs[target] !== undefined),
+);
+
+function workflow_default(target: DefaultTarget): string {
+  const value =
+    selected_workflow.value === null ? null : workflow_value(selected_workflow.value, target);
+  return value === null ? "" : value.toString();
+}
+
+function choices_of(target: DefaultTarget): readonly string[] {
+  const option_target = OPTION_TARGETS.find((candidate) => candidate === target);
+  return option_target === undefined ? [] : (inspection.value?.options[option_target] ?? []);
+}
+
+const inspection = ref<ComfyUiInspection | null>(null);
+const inspect_pending = ref(false);
+const inspect_error = ref<string | null>(null);
+
+async function run_inspection(): Promise<void> {
+  const current = draft.value;
+  if (!current || inspect_pending.value) {
+    return;
+  }
+  const base_url = http_origin(current.base_url);
+  if (base_url === null) {
+    inspect_error.value = t("settings.provider_profiles.base_url_invalid");
+    return;
+  }
+  const workflow_id = UuidSchema.safeParse(current.workflow_id);
+  inspect_pending.value = true;
+  inspect_error.value = null;
+  inspection.value = null;
+  try {
+    inspection.value = await props.controller.inspect_comfyui({
+      base_url,
+      workflow_id: workflow_id.success ? workflow_id.data : null,
+    });
+  } catch {
+    inspect_error.value = t("settings.provider_profiles.comfyui.unreachable");
+  } finally {
+    inspect_pending.value = false;
+  }
+}
+
+function http_origin(value: string): string | null {
+  try {
+    return normalize_http_origin(value.trim());
   } catch {
     return null;
   }
@@ -121,9 +258,11 @@ function open_add_dialog(): void {
     model_id: DEFAULT_NOVELAI_MODEL_ID,
     workflow_id: "",
     base_url: DEFAULT_SD_WEBUI_URL,
-    is_default: props.profiles.length === 0,
+    comfyui: default_fields(null),
   };
   save_error.value = null;
+  inspection.value = null;
+  inspect_error.value = null;
   dialog_open.value = true;
 }
 
@@ -136,9 +275,11 @@ function open_edit_dialog(profile: ProviderProfileSummary): void {
     model_id: profile.model_id ?? "",
     workflow_id: profile.workflow_id ?? "",
     base_url: profile.base_url ?? "",
-    is_default: profile.is_default,
+    comfyui: default_fields(profile.comfyui_defaults),
   };
   save_error.value = null;
+  inspection.value = null;
+  inspect_error.value = null;
   dialog_open.value = true;
 }
 
@@ -154,7 +295,12 @@ async function submit_draft(): Promise<void> {
     return;
   }
   const display_name = current.display_name.trim();
-  const model_id = current.model_id.trim();
+  const model_id = current.provider_id === "comfyui" ? COMFYUI_MODEL_ID : current.model_id.trim();
+  const comfyui_defaults = read_defaults(current.comfyui);
+  if (current.provider_id === "comfyui" && comfyui_defaults === null) {
+    save_error.value = t("settings.provider_profiles.comfyui.number_invalid");
+    return;
+  }
   const workflow_id =
     current.provider_id === "comfyui" ? UuidSchema.safeParse(current.workflow_id.trim()) : null;
   if (
@@ -165,7 +311,7 @@ async function submit_draft(): Promise<void> {
     save_error.value = t("errors.validation_required");
     return;
   }
-  const base_url = is_local_draft.value ? loopback_origin(current.base_url) : null;
+  const base_url = is_local_draft.value ? http_origin(current.base_url) : null;
   if (is_local_draft.value && base_url === null) {
     save_error.value = t("settings.provider_profiles.base_url_invalid");
     return;
@@ -183,8 +329,10 @@ async function submit_draft(): Promise<void> {
           ? workflow_id.data
           : null,
       base_url,
-      is_default: current.is_default,
       updated_at: new Date().toISOString(),
+      ...(current.provider_id === "comfyui" && comfyui_defaults !== null
+        ? { comfyui_defaults }
+        : {}),
     });
     close_dialog();
   } catch {
@@ -289,6 +437,20 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
       />
     </div>
 
+    <FieldGroup
+      v-if="profiles.length > 0"
+      :label="t('settings.provider_profiles.active_label')"
+      :hint="t('settings.provider_profiles.active_hint')"
+    >
+      <template #default="{ fieldId }">
+        <AppSelect
+          :id="fieldId"
+          v-model="active_model"
+          :options="active_options"
+          :placeholder="t('settings.provider_profiles.active_label')"
+        />
+      </template>
+    </FieldGroup>
     <StateSurface
       :status="profiles.length === 0 ? 'empty' : 'ready'"
       :empty-message="t('settings.provider_profiles.empty_description')"
@@ -328,8 +490,8 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
             </div>
           </div>
           <div :class="styles.profile_actions">
-            <span v-if="profile.is_default" :class="styles.badge">{{
-              t("settings.provider_profiles.default_badge")
+            <span v-if="profile.id === activeProfileId" :class="styles.badge">{{
+              t("settings.provider_profiles.active_badge")
             }}</span>
             <AppButton
               :label="t('settings.provider_profiles.connection_test_action')"
@@ -413,7 +575,11 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
             />
           </template>
         </FieldGroup>
-        <FieldGroup v-else :label="t('settings.provider_profiles.model_label')" required>
+        <FieldGroup
+          v-else-if="draft.provider_id !== 'comfyui'"
+          :label="t('settings.provider_profiles.model_label')"
+          required
+        >
           <template #default="{ fieldId, describedBy }">
             <input
               :id="fieldId"
@@ -449,23 +615,112 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
         <FieldGroup
           v-if="draft.provider_id === 'comfyui'"
           :label="t('settings.provider_profiles.workflow_label')"
+          :hint="
+            workflow_options.length === 0
+              ? t('settings.provider_profiles.comfyui.no_workflows')
+              : undefined
+          "
           required
         >
-          <template #default="{ fieldId, describedBy }">
-            <input
+          <template #default="{ fieldId }">
+            <AppSelect
               :id="fieldId"
               v-model="draft.workflow_id"
-              type="text"
-              :aria-describedby="describedBy"
-              :class="styles.text_input"
-              data-testid="provider-workflow-input"
+              :options="workflow_options"
+              :placeholder="t('settings.provider_profiles.workflow_label')"
             />
           </template>
         </FieldGroup>
-        <AppSwitch
-          v-model="draft.is_default"
-          :label="t('settings.provider_profiles.set_default_action')"
-        />
+        <template v-if="draft.provider_id === 'comfyui'">
+          <FieldGroup
+            v-for="target in default_targets"
+            :key="target"
+            :label="workflow_target_label(t, target)"
+            :hint="
+              t('settings.provider_profiles.comfyui.default_hint', {
+                value: workflow_default(target),
+              })
+            "
+          >
+            <template #default="{ fieldId, describedBy }">
+              <input
+                :id="fieldId"
+                v-model="draft.comfyui[target]"
+                :type="target === 'steps' || target === 'cfg' ? 'number' : 'text'"
+                :step="target === 'cfg' ? 'any' : undefined"
+                :list="choices_of(target).length > 0 ? `${fieldId}-choices` : undefined"
+                :placeholder="workflow_default(target)"
+                :aria-describedby="describedBy"
+                :class="styles.text_input"
+                :data-testid="`comfyui-default-${target}`"
+              />
+              <datalist v-if="choices_of(target).length > 0" :id="`${fieldId}-choices`">
+                <option v-for="choice in choices_of(target)" :key="choice" :value="choice" />
+              </datalist>
+            </template>
+          </FieldGroup>
+          <div :class="styles.actions_row">
+            <AppButton
+              :label="t('settings.provider_profiles.comfyui.inspect_action')"
+              variant="secondary"
+              :pending="inspect_pending"
+              data-testid="comfyui-inspect"
+              @click="run_inspection"
+            />
+          </div>
+          <p
+            v-if="inspect_error"
+            :class="[styles.status_text, styles.description]"
+            data-tone="error"
+          >
+            {{ inspect_error }}
+          </p>
+          <div v-if="inspection" data-testid="comfyui-inspection">
+            <p :class="[styles.status_text, styles.description]">
+              {{
+                t("settings.provider_profiles.comfyui.connected", {
+                  version: inspection.version ?? "?",
+                })
+              }}
+            </p>
+            <p
+              v-if="inspection.missing_node_types.length > 0"
+              :class="[styles.status_text, styles.description]"
+              data-tone="error"
+            >
+              {{
+                t("settings.provider_profiles.comfyui.missing_nodes", {
+                  names: inspection.missing_node_types.join(", "),
+                })
+              }}
+            </p>
+            <p
+              v-for="missing in inspection.missing_values"
+              :key="`${missing.node_id}:${missing.property}`"
+              :class="[styles.status_text, styles.description]"
+              data-tone="error"
+            >
+              {{
+                t("settings.provider_profiles.comfyui.missing_value", {
+                  node: missing.node_id,
+                  class_type: missing.class_type,
+                  property: missing.property,
+                  value: missing.value,
+                })
+              }}
+            </p>
+            <p
+              v-if="
+                draft.workflow_id !== '' &&
+                inspection.missing_node_types.length === 0 &&
+                inspection.missing_values.length === 0
+              "
+              :class="[styles.status_text, styles.description]"
+            >
+              {{ t("settings.provider_profiles.comfyui.workflow_ready") }}
+            </p>
+          </div>
+        </template>
         <p v-if="save_error" :class="[styles.status_text, styles.description]" data-tone="error">
           {{ save_error }}
         </p>

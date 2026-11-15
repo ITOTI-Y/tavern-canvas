@@ -170,6 +170,7 @@ function build_mock_studio() {
     clear_credential: vi.fn(),
     save_novelai_defaults: vi.fn(),
     save_prompt_tags: vi.fn(),
+    inspect_comfyui: vi.fn(),
     test_connection: vi.fn(),
   };
 
@@ -355,7 +356,6 @@ describe("create_studio_controller", () => {
         id: PROFILE_ID,
         provider_id: "sd_webui",
         display_name: "Local SD",
-        is_default: true,
         credential_reference: null,
         novelai_defaults: null,
         prompt_tags: {
@@ -392,7 +392,6 @@ describe("create_studio_controller", () => {
         id: PROFILE_ID,
         provider_id: "novelai",
         display_name: "NovelAI",
-        is_default: false,
         credential_reference: null,
         novelai_defaults: null,
         prompt_tags: {
@@ -603,19 +602,24 @@ describe("create_studio_controller: archive import", () => {
 });
 
 describe("create_studio_controller: prompt and provider profile commands", () => {
-  it("selects and persists a newly saved default provider profile", async () => {
+  it("uses the first saved provider profile and keeps it when a second one is saved", async () => {
     const mock = build_mock_studio();
     const controller = create_studio_controller({ capabilities: mock.capabilities });
     const start_promise = controller.start();
     resolve_all_defaults(mock);
     await start_promise;
+    let stored = DEFAULT_SETTINGS;
+    vi.mocked(mock.capabilities.settings.update).mockImplementation((partial) => {
+      stored = { ...stored, ...partial };
+      return Promise.resolve(stored);
+    });
+    const OTHER_ID = "22222222-2222-4222-8222-222222222222" as Uuid;
     vi.mocked(mock.capabilities.profiles.save).mockResolvedValue({
       id: PROFILE_ID,
       provider_id: "novelai",
       display_name: "NovelAI",
       model_id: "nai-diffusion-4-5-full",
       workflow_id: null,
-      is_default: true,
       credential_reference: null,
       novelai_defaults: null,
       prompt_tags: {
@@ -632,7 +636,6 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
       base_url: null,
       model_id: "nai-diffusion-4-5-full",
       workflow_id: null,
-      is_default: true,
       updated_at: "2026-08-10T00:00:00Z",
     });
 
@@ -640,6 +643,29 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
       active_provider_profile_id: PROFILE_ID,
     });
     expect(controller.state.generation.active_profile_id).toBe(PROFILE_ID);
+    expect(controller.state.settings.settings?.active_provider_profile_id).toBe(PROFILE_ID);
+
+    const first = controller.state.generation.profiles[0];
+    if (first === undefined) {
+      throw new Error("the saved profile is not in state");
+    }
+    vi.mocked(mock.capabilities.profiles.save).mockResolvedValue({ ...first, id: OTHER_ID });
+    await controller.save_provider_profile({
+      id: OTHER_ID,
+      provider_id: "novelai",
+      display_name: "Second",
+      base_url: null,
+      model_id: "nai-diffusion-4-5-full",
+      workflow_id: null,
+      updated_at: "2026-08-10T00:00:00Z",
+    });
+    expect(controller.state.settings.settings?.active_provider_profile_id).toBe(PROFILE_ID);
+
+    await controller.set_active_provider_profile(OTHER_ID);
+    expect(controller.state.settings.settings?.active_provider_profile_id).toBe(OTHER_ID);
+
+    await controller.remove_provider_profile(OTHER_ID);
+    expect(controller.state.settings.settings?.active_provider_profile_id).toBe(PROFILE_ID);
   });
   it("keeps a vault passphrase out of state while applying the returned vault status", async () => {
     const mock = build_mock_studio();

@@ -13,7 +13,18 @@ import { ProviderAdapterError, type ProviderAdapter } from "@tavern-canvas/provi
 import type { ProviderProfile, ProviderProfileRepository } from "@tavern-canvas/storage";
 
 import type { SecretDestinationPort } from "../../host/secret_destination.js";
-import { is_loopback_origin, normalize_http_origin } from "../../transport/http_origin.js";
+import {
+  inspect_comfyui_server,
+  type ComfyUiGet,
+} from "../../modules/comfyui/server_inspection.js";
+import {
+  ComfyUiDefaultsSchema,
+  read_mapped_workflow,
+  type ComfyUiDefaults,
+} from "../../modules/comfyui/workflow_mapping.js";
+import type { ProviderFetch } from "../../transport/browser_fetch.js";
+import { LocalDirectTransport } from "../../transport/local_direct_transport.js";
+import { normalize_http_origin } from "../../transport/http_origin.js";
 import type {
   ProfileConnectionTestResult,
   ProfilesCapability,
@@ -26,7 +37,6 @@ import {
   as_record,
   DomainEventEmitter,
   read_array,
-  read_boolean,
   read_payload,
   read_string,
   to_json_value,
@@ -38,6 +48,7 @@ export const VAULT_KEY_FIELD = "vault_key";
 /** Generation defaults a NovelAI profile starts every request from; see `NovelAiGenerationDefaultsSchema`. */
 export const NOVELAI_DEFAULTS_FIELD = "novelai_defaults";
 const PROMPT_TAGS_FIELD = "prompt_tags";
+const COMFYUI_DEFAULTS_FIELD = "comfyui_defaults";
 
 /** Adapter-owned fields live in their own sub-object because adapter schemas are strict and would reject presentation fields. */
 const ADAPTER_PROFILE_FIELD = "provider_profile";
@@ -54,7 +65,33 @@ export interface ProfilesCapabilityDeps {
    * revealing secrets (SillyTavern's vault), so the stored reference is trusted.
    */
   readonly credential_present: (reference: string) => Promise<boolean | null>;
+  /** The payload of a stored ComfyUI workflow asset; `null` when it does not exist. */
+  readonly load_workflow: (workflow_id: Uuid) => Promise<Readonly<Record<string, unknown>> | null>;
+  readonly fetch?: ProviderFetch;
   readonly now: () => string;
+}
+
+const INSPECTION_TIMEOUT_MS = 15_000;
+const MAX_INSPECTION_RESPONSE_BYTES = 5_000_000;
+
+function comfyui_get(base_url: string, fetch_: ProviderFetch | undefined): ComfyUiGet {
+  const transport = new LocalDirectTransport({
+    base_url,
+    ...(fetch_ === undefined ? {} : { fetch: fetch_ }),
+  });
+  return async (route) => {
+    const response = await transport.execute({
+      route,
+      method: "GET",
+      accept: "application/json",
+      max_response_bytes: MAX_INSPECTION_RESPONSE_BYTES,
+      signal: AbortSignal.timeout(INSPECTION_TIMEOUT_MS),
+    });
+    if (response.status !== 200) {
+      throw new Error(`ComfyUI answered ${route} with status ${response.status.toString()}`);
+    }
+    return JSON.parse(new TextDecoder().decode(response.body)) as unknown;
+  };
 }
 
 const DEFAULT_MAX_BYTES = 20_000_000;
@@ -64,14 +101,6 @@ const BASE_URL_FIELD = "base_url";
 
 function is_local_provider(provider_id: ProviderId): boolean {
   return provider_id === "sd_webui" || provider_id === "comfyui";
-}
-
-function loopback_origin(value: string): string {
-  const origin = normalize_http_origin(value);
-  if (!is_loopback_origin(origin)) {
-    throw new TypeError("A local provider address must be a loopback address");
-  }
-  return origin;
 }
 
 function first_string(values: readonly unknown[]): string | null {
@@ -134,13 +163,25 @@ function to_summary(record: ProviderProfile): ProviderProfileSummary {
     model_id: first_string(read_array(adapter_profile, "model_allowlist")),
     workflow_id: first_string(read_array(adapter_profile, "workflow_allowlist")),
     base_url: typeof payload[BASE_URL_FIELD] === "string" ? payload[BASE_URL_FIELD] : null,
-    is_default: read_boolean(payload, "is_default", false),
     credential_reference:
       typeof payload[VAULT_KEY_FIELD] === "string" ? payload[VAULT_KEY_FIELD] : null,
     updated_at: record.updated_at,
     novelai_defaults: read_novelai_defaults(record),
     prompt_tags: read_prompt_tags(record),
+    comfyui_defaults: record.provider_id === "comfyui" ? read_comfyui_defaults(record) : null,
   };
+}
+
+export function read_comfyui_defaults(record: ProviderProfile): ComfyUiDefaults {
+  const parsed = ComfyUiDefaultsSchema.safeParse(read_payload(record)[COMFYUI_DEFAULTS_FIELD]);
+  return parsed.success ? parsed.data : {};
+}
+
+/** The workflow a ComfyUI profile renders. */
+export function read_workflow_id(record: ProviderProfile): string | null {
+  return first_string(
+    read_array(as_record(read_payload(record)[ADAPTER_PROFILE_FIELD]), "workflow_allowlist"),
+  );
 }
 
 export function read_prompt_tags(record: ProviderProfile): PromptTagSelection | null {
@@ -191,14 +232,18 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
       const payload: Record<string, unknown> = {
         ...read_payload(existing ?? ({ payload: {} } as ProviderProfile)),
         display_name: draft.display_name,
-        is_default: draft.is_default,
         [ADAPTER_PROFILE_FIELD]: to_json_value(build_adapter_profile(draft, existing)),
       };
       if (existing !== null && existing.provider_id !== draft.provider_id) {
         Reflect.deleteProperty(payload, VAULT_KEY_FIELD);
       }
+      if (draft.provider_id === "comfyui") {
+        payload[COMFYUI_DEFAULTS_FIELD] = ComfyUiDefaultsSchema.parse(draft.comfyui_defaults ?? {});
+      } else {
+        Reflect.deleteProperty(payload, COMFYUI_DEFAULTS_FIELD);
+      }
       if (is_local_provider(draft.provider_id) && draft.base_url !== null) {
-        payload[BASE_URL_FIELD] = loopback_origin(draft.base_url);
+        payload[BASE_URL_FIELD] = normalize_http_origin(draft.base_url);
       } else {
         Reflect.deleteProperty(payload, BASE_URL_FIELD);
       }
@@ -329,7 +374,22 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
           return { status: "failed", error: { code: "auth_failed", retryable: false } };
         }
       }
+      const base_url = read_payload(record)[BASE_URL_FIELD];
+      if (provider_id === "comfyui" && typeof base_url === "string") {
+        try {
+          await comfyui_get(base_url, deps.fetch)("/system_stats");
+        } catch {
+          return { status: "failed", error: { code: "provider_unavailable", retryable: true } };
+        }
+      }
       return { status: "success", latency_ms: Date.now() - started_at };
+    },
+    async inspect_comfyui({ base_url, workflow_id }) {
+      const payload = workflow_id === null ? null : await deps.load_workflow(workflow_id);
+      return inspect_comfyui_server(
+        comfyui_get(base_url, deps.fetch),
+        payload === null ? null : read_mapped_workflow(payload),
+      );
     },
   };
 }

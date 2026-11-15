@@ -20,7 +20,9 @@ function character_capacity(request: ImageGenerationRequest): number {
 /**
  * Sends the slot's character prompts as NovelAI character prompts where the model takes them;
  * the rest (another provider, a V3 model, or more characters than the model allows) is appended
- * to the positive prompt so no description is lost.
+ * to the positive prompt so no description is lost. A ComfyUI prompt gets each of them on a line
+ * of its own, which keeps one character's traits apart from the next for a model that reads
+ * natural language.
  */
 export function attach_character_prompts(
   request: ImageGenerationRequest,
@@ -32,10 +34,16 @@ export function attach_character_prompts(
   const capacity = character_capacity(request);
   const sent = prompts.slice(0, capacity);
   const folded = prompts.slice(capacity);
+  const descriptions = folded.map((character) => character.prompt);
   const prompt =
     folded.length === 0
       ? request.prompt
-      : join_prompt_parts([request.prompt, ...folded.map((character) => character.prompt)]);
+      : request.provider_id === "comfyui"
+        ? [request.prompt, ...descriptions]
+            .map((part) => part.trim())
+            .filter((part) => part !== "")
+            .join("\n")
+        : join_prompt_parts([request.prompt, ...descriptions]);
   if (sent.length === 0) {
     return { ...request, prompt };
   }

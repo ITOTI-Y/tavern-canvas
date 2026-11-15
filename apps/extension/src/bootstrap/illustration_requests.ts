@@ -8,9 +8,15 @@ import type { BusinessRepositories } from "@tavern-canvas/storage";
 import type { IllustrationServiceDeps } from "../modules/illustration/illustration_service.js";
 import { slot_library_of } from "../modules/illustration/illustration_module.js";
 import { find_characters } from "../modules/illustration/library_match.js";
+import type { ComfyUiDraft } from "../modules/generation/build_generation_request.js";
 import type { NovelAiRuntime } from "../modules/novelai/novelai_runtime.js";
 import type { AssetRecordSummary, AssetsCapability } from "../ui/contracts/ui_capabilities.js";
-import { read_novelai_defaults, read_prompt_tags } from "./capabilities/profiles_capability.js";
+import {
+  read_comfyui_defaults,
+  read_novelai_defaults,
+  read_prompt_tags,
+  read_workflow_id,
+} from "./capabilities/profiles_capability.js";
 import { read_number, read_payload } from "./capabilities/_records.js";
 import type { ActiveProfile } from "./provider_transports.js";
 
@@ -46,15 +52,61 @@ async function prompt_tag_injector(
   return (request) => tags.inject_prompt_tags(request, selection, presets);
 }
 
-/** A requested canvas, applied after the profile's defaults; providers sized by name keep theirs. */
+/**
+ * A requested canvas, applied after the profile's defaults; providers sized by name keep theirs,
+ * and so does a ComfyUI workflow that maps no width and height.
+ */
 function with_size(
   request: ImageGenerationRequest,
   size: { readonly width: number; readonly height: number } | undefined,
 ): ImageGenerationRequest {
-  if (size === undefined || !("width" in request)) {
+  if (size === undefined) {
     return request;
   }
-  return { ...request, width: size.width, height: size.height };
+  if (request.provider_id === "comfyui") {
+    const values = request.placeholder_values;
+    return "width" in values && "height" in values
+      ? { ...request, placeholder_values: { ...values, width: size.width, height: size.height } }
+      : request;
+  }
+  return "width" in request ? { ...request, width: size.width, height: size.height } : request;
+}
+
+/** The workflow an active ComfyUI profile renders; `undefined` for another provider or a profile whose workflow is gone. */
+async function comfyui_draft(
+  profile: ActiveProfile,
+  workflows: readonly AssetRecordSummary[],
+): Promise<ComfyUiDraft | undefined> {
+  if (profile.provider_id !== "comfyui") {
+    return undefined;
+  }
+  const workflow_id = read_workflow_id(profile.record);
+  const record = workflows.find((workflow) => workflow.id === workflow_id);
+  if (record === undefined) {
+    return undefined;
+  }
+  const { read_mapped_workflow } = await import("../modules/comfyui/workflow_mapping.js");
+  return {
+    workflow_id: record.id,
+    mapped: read_mapped_workflow(record.payload),
+    defaults: read_comfyui_defaults(profile.record),
+  };
+}
+
+/** Quality and undesired-content tags add a negative prompt that a workflow without a negative input cannot take. */
+function without_unmapped_negative(
+  request: ImageGenerationRequest,
+  comfyui: ComfyUiDraft | undefined,
+): ImageGenerationRequest {
+  if (
+    request.provider_id !== "comfyui" ||
+    comfyui?.mapped.mapping.inputs.negative_prompt !== undefined
+  ) {
+    return request;
+  }
+  const copy = { ...request };
+  Reflect.deleteProperty(copy, "negative_prompt");
+  return copy;
 }
 
 export function create_illustration_request_builders(
@@ -74,6 +126,7 @@ export function create_illustration_request_builders(
         character_prompts.map((character) => character.name),
         library,
       );
+      const comfyui = await comfyui_draft(profile, catalog.workflow);
       const request = assets_module.attach_character_loras(
         await build_generation_request(
           {
@@ -83,6 +136,7 @@ export function create_illustration_request_builders(
             image_count: 1,
             references: [],
             ...(profile.model_id === null ? {} : { model_id: profile.model_id }),
+            ...(comfyui === undefined ? {} : { comfyui }),
           },
           RequestIdSchema.parse(crypto.randomUUID()),
         ),
@@ -91,7 +145,7 @@ export function create_illustration_request_builders(
       );
       const novelai = deps.novelai;
       if (request.provider_id !== "novelai" || request.action !== "generate" || novelai === null) {
-        return with_prompt_tags(with_size(request, size));
+        return without_unmapped_negative(with_prompt_tags(with_size(request, size)), comfyui);
       }
       const [{ apply_novelai_defaults }, { reference_image_bytes }, runtime] = await Promise.all([
         import("../modules/novelai/novelai_profile_defaults.js"),

@@ -4,7 +4,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppButton from "../../components/AppButton.vue";
-import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
+import AppSelect from "../../components/AppSelect.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
 import type { StudioController } from "../../controllers/studio_controller.js";
@@ -13,11 +13,23 @@ import AssetCategoryList from "./AssetCategoryList.vue";
 import AssetEditorPanel from "./AssetEditorPanel.vue";
 import styles from "./assets_styles.js";
 import { use_asset_category_panel } from "./use_asset_category_panel.js";
+import { workflow_target_label } from "./workflow_target_label.js";
 import {
-  scan_workflow_placeholders,
-  WORKFLOW_INPUT_TARGETS,
-  type WorkflowInputTarget,
-} from "./workflow_placeholders.js";
+  detect_workflow_mapping,
+  missing_required,
+  NODE_MAP_FIELD,
+  parse_workflow,
+  read_mapped_workflow,
+  target_value_type,
+  WORKFLOW_JSON_FIELD,
+  WORKFLOW_TARGETS,
+  workflow_input_choices,
+  workflow_output_choices,
+  WorkflowFormatError,
+  type Workflow,
+  type WorkflowMapping,
+  type WorkflowTarget,
+} from "../../../modules/comfyui/workflow_mapping.js";
 
 const props = defineProps<{
   readonly records: readonly AssetRecordSummary[];
@@ -27,7 +39,9 @@ const props = defineProps<{
 
 const { t, locale } = useI18n();
 
-const FIELDS: readonly AssetFieldSpec[] = [{ key: "workflow_json", label: "", kind: "textarea" }];
+const FIELDS: readonly AssetFieldSpec[] = [
+  { key: WORKFLOW_JSON_FIELD, label: "", kind: "textarea" },
+];
 
 const panel = use_asset_category_panel(
   "workflow",
@@ -37,91 +51,119 @@ const panel = use_asset_category_panel(
 );
 
 const file_input = ref<HTMLInputElement | null>(null);
-const placeholder_entries = ref<{ name: string; target: string }[]>([]);
+const EMPTY_MAPPING: WorkflowMapping = { inputs: {}, output_node_ids: [] };
+const mapping = ref<WorkflowMapping>(EMPTY_MAPPING);
 
 /** Reka's SelectItem rejects an empty-string value. */
 const UNMAPPED = "unmapped";
 
-function target_label(target: WorkflowInputTarget): string {
-  switch (target) {
-    case "positive_prompt":
-      return t("assets.workflow.target_positive_prompt");
-    case "negative_prompt":
-      return t("assets.workflow.target_negative_prompt");
-    case "seed":
-      return t("assets.workflow.target_seed");
-    case "width":
-      return t("assets.workflow.target_width");
-    case "height":
-      return t("assets.workflow.target_height");
-    case "steps":
-      return t("assets.workflow.target_steps");
-  }
+interface SelectOption {
+  readonly value: string;
+  readonly label: string;
 }
-
-const target_options = computed<readonly AppSelectOption[]>(() => [
-  { value: UNMAPPED, label: t("assets.workflow.placeholder_unmapped") },
-  ...WORKFLOW_INPUT_TARGETS.map((target) => ({
-    value: target,
-    label: target_label(target),
-  })),
-]);
+/** Node ids and input names never contain a newline. */
+const CHOICE_SEPARATOR = "\n";
 
 function workflow_json(): string {
-  const raw = panel.values.workflow_json;
+  const raw = panel.values[WORKFLOW_JSON_FIELD];
   return typeof raw === "string" ? raw : "";
 }
 
-function load_placeholder_entries_from_payload(payload: Readonly<Record<string, unknown>>): void {
-  const raw = payload.placeholder_map;
-  let map: Record<string, string> = {};
-  if (typeof raw === "string") {
-    try {
-      const parsed: unknown = JSON.parse(raw);
-      if (parsed !== null && typeof parsed === "object") {
-        map = parsed as Record<string, string>;
-      }
-    } catch {
-      map = {};
-    }
+const parsed = computed<
+  | { readonly workflow: Workflow; readonly error: null }
+  | { readonly workflow: null; readonly error: string }
+>(() => {
+  try {
+    return { workflow: parse_workflow(workflow_json()), error: null };
+  } catch (error) {
+    return {
+      workflow: null,
+      error:
+        error instanceof WorkflowFormatError && error.reason === "not_api_format"
+          ? t("assets.workflow.format_not_api")
+          : t("assets.workflow.format_not_json"),
+    };
   }
-  placeholder_entries.value = Object.entries(map).map(([name, target]) => ({ name, target }));
+});
+
+const input_choices = computed(() =>
+  parsed.value.workflow === null ? [] : workflow_input_choices(parsed.value.workflow),
+);
+
+function target_options(target: WorkflowTarget): readonly SelectOption[] {
+  const type = target_value_type(target);
+  return [
+    { value: UNMAPPED, label: t("assets.workflow.unmapped") },
+    ...input_choices.value
+      .filter((choice) => choice.type === type)
+      .map((choice) => ({
+        value: `${choice.node_id}${CHOICE_SEPARATOR}${choice.property}`,
+        label: `${choice.title} · ${choice.property}`,
+      })),
+  ];
 }
+
+const output_options = computed<readonly SelectOption[]>(() => [
+  { value: UNMAPPED, label: t("assets.workflow.unmapped") },
+  ...(parsed.value.workflow === null ? [] : workflow_output_choices(parsed.value.workflow)).map(
+    (choice) => ({ value: choice.node_id, label: choice.title }),
+  ),
+]);
+
+function target_value(target: WorkflowTarget): string {
+  const input = mapping.value.inputs[target];
+  const value =
+    input === undefined ? UNMAPPED : `${input.node_id}${CHOICE_SEPARATOR}${input.property}`;
+  return target_options(target).some((option) => option.value === value) ? value : UNMAPPED;
+}
+
+function set_target(target: WorkflowTarget, value: string): void {
+  const inputs = { ...mapping.value.inputs };
+  const [node_id, property] = value.split(CHOICE_SEPARATOR);
+  if (value === UNMAPPED || node_id === undefined || property === undefined) {
+    Reflect.deleteProperty(inputs, target);
+  } else {
+    inputs[target] = { node_id, property };
+  }
+  mapping.value = { ...mapping.value, inputs };
+}
+
+const output_value = computed(() => {
+  const node_id = mapping.value.output_node_ids[0] ?? UNMAPPED;
+  return output_options.value.some((option) => option.value === node_id) ? node_id : UNMAPPED;
+});
+
+function set_output(value: string): void {
+  mapping.value = { ...mapping.value, output_node_ids: value === UNMAPPED ? [] : [value] };
+}
+
+const missing_labels = computed(() =>
+  missing_required(mapping.value).map((name) => workflow_target_label(t, name)),
+);
 
 watch(
   () => panel.editing_record.value,
   (record) => {
-    if (record) {
-      load_placeholder_entries_from_payload(record.payload);
-    } else {
-      placeholder_entries.value = [];
+    if (!record) {
+      mapping.value = EMPTY_MAPPING;
+      return;
+    }
+    try {
+      mapping.value = read_mapped_workflow(record.payload).mapping;
+    } catch {
+      mapping.value = EMPTY_MAPPING;
     }
   },
   { immediate: true },
 );
 
-function scan_placeholders(): void {
-  const found = scan_workflow_placeholders(workflow_json());
-  const existing = new Map(placeholder_entries.value.map((entry) => [entry.name, entry.target]));
-  placeholder_entries.value = found.map((name) => ({ name, target: existing.get(name) ?? "" }));
-}
-
-function set_target(name: string, target: string): void {
-  const entry = placeholder_entries.value.find((candidate) => candidate.name === name);
-  if (entry) {
-    entry.target = target === UNMAPPED ? "" : target;
-  }
+function detect_mapping(): void {
+  mapping.value =
+    parsed.value.workflow === null ? EMPTY_MAPPING : detect_workflow_mapping(parsed.value.workflow);
 }
 
 function trigger_import(): void {
   file_input.value?.click();
-}
-
-/** Built in script: a literal `{{name}}` inside a template mustache breaks Vue's delimiter scanning. */
-const OPEN_BRACES = "{{";
-const CLOSE_BRACES = "}}";
-function placeholder_display(name: string): string {
-  return `${OPEN_BRACES}${name}${CLOSE_BRACES}`;
 }
 
 async function handle_file_selected(event: Event): Promise<void> {
@@ -134,19 +176,15 @@ async function handle_file_selected(event: Event): Promise<void> {
   const text = await file.text();
   panel.open_create();
   panel.name.value = file.name.replace(/\.json$/iu, "");
-  panel.values.workflow_json = text;
-  placeholder_entries.value = scan_workflow_placeholders(text).map((name) => ({
-    name,
-    target: "",
-  }));
+  panel.values[WORKFLOW_JSON_FIELD] = text;
+  detect_mapping();
 }
 
 async function save_workflow(): Promise<void> {
-  const map: Record<string, string> = {};
-  for (const entry of placeholder_entries.value) {
-    map[entry.name] = entry.target;
+  if (parsed.value.workflow === null) {
+    return;
   }
-  panel.values.placeholder_map = JSON.stringify(map);
+  panel.values[NODE_MAP_FIELD] = JSON.stringify(mapping.value);
   await panel.save();
 }
 </script>
@@ -228,39 +266,58 @@ async function save_workflow(): Promise<void> {
               :id="fieldId"
               :class="[styles.textArea, styles.codeTextArea]"
               :value="workflow_json()"
-              @input="panel.values.workflow_json = ($event.target as HTMLTextAreaElement).value"
+              @input="
+                panel.values[WORKFLOW_JSON_FIELD] = ($event.target as HTMLTextAreaElement).value
+              "
             />
           </template>
         </FieldGroup>
+        <p v-if="parsed.error !== null" :class="styles.formError" role="alert">
+          {{ parsed.error }}
+        </p>
 
-        <AppButton
-          :label="t('assets.workflow.placeholder_scan_action')"
-          :icon="ScanSearch"
-          variant="secondary"
-          type="button"
-          @click="scan_placeholders"
-        />
-
-        <div v-if="placeholder_entries.length > 0" :class="styles.placeholderList">
-          <div
-            v-for="entry in placeholder_entries"
-            :key="entry.name"
-            :class="styles.placeholderRow"
-          >
-            <span :class="styles.placeholderKey">{{ placeholder_display(entry.name) }}</span>
+        <template v-if="parsed.workflow !== null">
+          <AppButton
+            :label="t('assets.workflow.detect_action')"
+            :icon="ScanSearch"
+            variant="secondary"
+            type="button"
+            @click="detect_mapping"
+          />
+          <p :class="styles.editorDescription">{{ t("assets.workflow.mapping_hint") }}</p>
+          <div :class="styles.mappingList">
             <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind AppSelect's prop -->
-            <!-- :key="locale" remounts the select: Reka's SelectValue keeps the old-locale label when option labels change. -->
-            <AppSelect
-              :key="locale"
-              :model-value="entry.target === '' ? UNMAPPED : entry.target"
-              :options="target_options"
-              :placeholder="t('assets.workflow.placeholder_unmapped')"
-              :ariaLabel="entry.name"
-              @update:model-value="(value) => set_target(entry.name, value)"
-            />
+            <!-- :key includes the locale: Reka's SelectValue keeps the old-locale label when option labels change. -->
+            <div v-for="target in WORKFLOW_TARGETS" :key="target" :class="styles.mappingRow">
+              <span :class="styles.mappingKey">
+                {{ workflow_target_label(t, target) }}
+              </span>
+              <AppSelect
+                :key="`${locale}:${target}`"
+                :model-value="target_value(target)"
+                :options="target_options(target)"
+                :placeholder="t('assets.workflow.unmapped')"
+                :ariaLabel="workflow_target_label(t, target)"
+                @update:model-value="(value) => set_target(target, value)"
+              />
+            </div>
+            <div :class="styles.mappingRow">
+              <span :class="styles.mappingKey">{{ workflow_target_label(t, "output") }}</span>
+              <AppSelect
+                :key="`${locale}:output`"
+                :model-value="output_value"
+                :options="output_options"
+                :placeholder="t('assets.workflow.unmapped')"
+                :ariaLabel="workflow_target_label(t, 'output')"
+                @update:model-value="set_output"
+              />
+            </div>
             <!-- eslint-enable vue/attribute-hyphenation -->
           </div>
-        </div>
+          <p v-if="missing_labels.length > 0" :class="styles.formError" role="alert">
+            {{ t("assets.workflow.mapping_missing", { names: missing_labels.join(", ") }) }}
+          </p>
+        </template>
 
         <div :class="styles.formActions">
           <AppButton
@@ -274,6 +331,7 @@ async function save_workflow(): Promise<void> {
             variant="primary"
             type="submit"
             :pending="panel.saving.value"
+            :disabled="parsed.workflow === null"
           />
         </div>
       </form>

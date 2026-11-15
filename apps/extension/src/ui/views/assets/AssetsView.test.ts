@@ -103,10 +103,12 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     start_new_prompt_preset: vi.fn(),
     bulk_remove_prompt_presets: vi.fn(() => Promise.resolve()),
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
+    set_active_provider_profile: vi.fn(),
     save_provider_profile: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["save_provider_profile"]>,
     ),
     remove_provider_profile: vi.fn(() => Promise.resolve()),
+    inspect_comfyui: vi.fn(),
     test_provider_profile_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["test_provider_profile_connection"]>,
     ),
@@ -737,62 +739,70 @@ describe("Vibe/reference group panel", () => {
 });
 
 describe("ComfyUI workflow panel", () => {
-  it("importing a workflow file scans and lists its placeholders", async () => {
-    mount_assets_view();
-    await click_tab("Workflow");
+  const API_WORKFLOW = JSON.stringify({
+    "1": { class_type: "CLIPTextEncode", inputs: { text: "a cat" } },
+    "2": { class_type: "CLIPTextEncode", inputs: { text: "blurry" } },
+    "3": { class_type: "EmptyLatentImage", inputs: { width: 832, height: 1216, batch_size: 1 } },
+    "4": {
+      class_type: "KSampler",
+      inputs: { seed: 7, steps: 8, positive: ["1", 0], negative: ["2", 0], latent_image: ["3", 0] },
+    },
+    "5": { class_type: "SaveImage", inputs: { images: ["4", 0] } },
+  });
 
-    const workflow_json = JSON.stringify({ text: "{{positive_prompt}}", seed_value: "{{seed}}" });
-    const file = new File([workflow_json], "my_workflow.json", { type: "application/json" });
+  async function import_workflow(text: string, file_name: string): Promise<void> {
+    await click_tab("Workflow");
+    const file = new File([text], file_name, { type: "application/json" });
     const file_input = dom().find<HTMLInputElement>('input[type="file"]');
     Object.defineProperty(file_input.element, "files", { value: [file], configurable: true });
     await file_input.trigger("change");
     await flushPromises();
+  }
 
-    expect(dom().text()).toContain("{{positive_prompt}}");
-    expect(dom().text()).toContain("{{seed}}");
+  it("importing an API workflow names it after the file and saves the detected node mapping", async () => {
+    const { controller } = mount_assets_view();
+    await import_workflow(API_WORKFLOW, "my_workflow.json");
+
     const name_input = dom().find<HTMLInputElement>('input[placeholder="Name"]');
     expect(name_input.element.value).toBe("my_workflow");
-  });
-
-  it("re-scanning after editing the JSON preserves already-mapped targets", async () => {
-    mount_assets_view();
-    await click_tab("Workflow");
-
-    const workflow_json = JSON.stringify({ text: "{{positive_prompt}}" });
-    const file = new File([workflow_json], "workflow.json", { type: "application/json" });
-    const file_input = dom().find<HTMLInputElement>('input[type="file"]');
-    Object.defineProperty(file_input.element, "files", { value: [file], configurable: true });
-    await file_input.trigger("change");
-    await flushPromises();
-
-    await dom().find('button[aria-label="Scan placeholders"]').trigger("click");
-    await flushPromises();
-    expect(dom().text()).toContain("{{positive_prompt}}");
-  });
-
-  it("saving a mapped workflow calls save_asset with the placeholder map JSON-encoded", async () => {
-    const { controller } = mount_assets_view();
-    await click_tab("Workflow");
-
-    const workflow_json = JSON.stringify({ text: "{{positive_prompt}}" });
-    const file = new File([workflow_json], "workflow.json", { type: "application/json" });
-    const file_input = dom().find<HTMLInputElement>('input[type="file"]');
-    Object.defineProperty(file_input.element, "files", { value: [file], configurable: true });
-    await file_input.trigger("change");
-    await flushPromises();
+    expect(dom().text()).not.toContain("Still to map");
 
     await dom().find('button[type="submit"]').trigger("click");
     await flushPromises();
 
-    expect(controller.save_asset).toHaveBeenCalledWith(
-      "workflow",
-      expect.objectContaining({
-        payload: expect.objectContaining({
-          workflow_json,
-          placeholder_map: JSON.stringify({ positive_prompt: "" }),
-        }),
-      }),
+    const saved = vi.mocked(controller.save_asset).mock.calls[0]?.[1];
+    expect(saved?.payload.workflow_json).toBe(API_WORKFLOW);
+    expect(JSON.parse(String(saved?.payload.node_map))).toEqual({
+      inputs: {
+        prompt: { node_id: "1", property: "text" },
+        negative_prompt: { node_id: "2", property: "text" },
+        seed: { node_id: "4", property: "seed" },
+        steps: { node_id: "4", property: "steps" },
+        width: { node_id: "3", property: "width" },
+        height: { node_id: "3", property: "height" },
+        output_count: { node_id: "3", property: "batch_size" },
+      },
+      output_node_ids: ["5"],
+    });
+  });
+
+  it("names what is still to map when the workflow has no sampler to follow", async () => {
+    mount_assets_view();
+    await import_workflow(
+      JSON.stringify({ "1": { class_type: "CLIPTextEncode", inputs: { text: "a cat" } } }),
+      "bare.json",
     );
+
+    expect(dom().text()).toContain("Still to map: Positive prompt, Image count, Output node");
+  });
+
+  it("refuses to save a workflow that is not in API format", async () => {
+    const { controller } = mount_assets_view();
+    await import_workflow(JSON.stringify({ nodes: [], links: [] }), "editor.json");
+
+    expect(dom().text()).toContain("not in API format");
+    expect(dom().find('button[type="submit"]').attributes("disabled")).toBeDefined();
+    expect(controller.save_asset).not.toHaveBeenCalled();
   });
 });
 

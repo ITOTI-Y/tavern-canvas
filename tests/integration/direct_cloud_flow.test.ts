@@ -98,7 +98,6 @@ async function seed_cloud_profile(
     provider_id: "novelai",
     payload: {
       display_name: "NovelAI",
-      is_default: true,
       ...(options.with_credential ? { vault_key: VAULT_REFERENCE } : {}),
       provider_profile: {
         model_allowlist: ["nai-diffusion-4-5-full"],

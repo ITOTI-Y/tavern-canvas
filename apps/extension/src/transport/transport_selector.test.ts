@@ -57,7 +57,7 @@ describe("transport selection", () => {
   );
 
   it.each(["sd_webui", "comfyui"] as const)(
-    "leaves the loopback provider %s on the local direct route",
+    "leaves the self-hosted provider %s on the local direct route",
     (provider_id) => {
       expect(
         select_transport({
@@ -87,16 +87,15 @@ describe("transport selection", () => {
     ).toThrowError(/cannot reveal stored credentials/u);
   });
 
-  it.each([
-    "http://192.168.1.10:7860",
-    "https://[2001:db8::1]:7860",
-    "http://localhost.example:7860",
-  ])("rejects non-loopback direct endpoint %s", (endpoint) => {
+  it("takes a direct endpoint on another machine", () => {
+    expect(
+      select_transport({ ...EMPTY_INPUT, direct_provider_base_url: "http://100.64.0.10:8188" }),
+    ).toEqual({ kind: "local_direct", endpoint: "http://100.64.0.10:8188" });
+  });
+
+  it("rejects a direct endpoint that is not an HTTP origin", () => {
     expect(() =>
-      select_transport({
-        ...EMPTY_INPUT,
-        direct_provider_base_url: endpoint,
-      }),
+      select_transport({ ...EMPTY_INPUT, direct_provider_base_url: "http://127.0.0.1:7860/api" }),
     ).toThrow(TransportConfigurationError);
   });
 

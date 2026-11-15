@@ -67,7 +67,6 @@ async function seed_provider_profile(database: StorageDatabase): Promise<void> {
     provider_id: "sd_webui",
     payload: {
       display_name: "Local SD WebUI",
-      is_default: true,
       base_url: PROVIDER_ORIGIN,
       provider_profile: {
         model_allowlist: ["sd_xl_base"],

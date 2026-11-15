@@ -244,10 +244,12 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     start_new_prompt_preset: vi.fn(),
     bulk_remove_prompt_presets: vi.fn(() => Promise.resolve()),
     test_prompt_regex: vi.fn(() => Promise.resolve("")),
+    set_active_provider_profile: vi.fn(),
     save_provider_profile: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["save_provider_profile"]>,
     ),
     remove_provider_profile: vi.fn(() => Promise.resolve()),
+    inspect_comfyui: vi.fn(),
     test_provider_profile_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["test_provider_profile_connection"]>,
     ),

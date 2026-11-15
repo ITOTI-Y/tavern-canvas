@@ -17,6 +17,8 @@ import type {
   NovelAiGenerationDefaults,
 } from "@tavern-canvas/contracts";
 import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
+import type { ComfyUiInspection } from "../../modules/comfyui/server_inspection.js";
+import type { ComfyUiDefaults } from "../../modules/comfyui/workflow_mapping.js";
 
 export type Unsubscribe = () => void;
 
@@ -57,15 +59,16 @@ export interface ProviderProfileSummary {
   readonly display_name: string;
   readonly model_id?: string | null;
   readonly workflow_id?: string | null;
-  /** The loopback origin of an SD WebUI or ComfyUI server. */
+  /** The origin of the user's SD WebUI or ComfyUI server. */
   readonly base_url?: string | null;
-  readonly is_default: boolean;
   readonly credential_reference: string | null;
   readonly updated_at: string;
   /** Only a NovelAI profile has them; `null` until saved once. */
   readonly novelai_defaults: NovelAiGenerationDefaults | null;
   /** `null` until saved once; the provider's default selection applies until then. */
   readonly prompt_tags: PromptTagSelection | null;
+  /** Only a ComfyUI profile has them; the sampling values it sets over the workflow's own. */
+  readonly comfyui_defaults?: ComfyUiDefaults | null;
 }
 
 export interface ProviderProfileDraft {
@@ -75,8 +78,15 @@ export interface ProviderProfileDraft {
   readonly model_id: string;
   readonly workflow_id: string | null;
   readonly base_url: string | null;
-  readonly is_default: boolean;
   readonly updated_at: string;
+  /** Read for a ComfyUI profile only. */
+  readonly comfyui_defaults?: ComfyUiDefaults;
+}
+
+export interface ComfyUiInspectionInput {
+  readonly base_url: string;
+  /** `null` checks the connection only. */
+  readonly workflow_id: Uuid | null;
 }
 
 export type ProfileConnectionTestResult =
@@ -93,6 +103,8 @@ export interface ProfilesCapability {
   save(profile: ProviderProfileDraft): Promise<ProviderProfileSummary>;
   remove(profile_id: Uuid): Promise<void>;
   test_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
+  /** Asks a ComfyUI server for its version, its choices for the workflow's inputs, and what the workflow needs that it lacks. Rejects when the server cannot be reached. */
+  inspect_comfyui(input: ComfyUiInspectionInput): Promise<ComfyUiInspection>;
   set_credential(profile_id: Uuid, plaintext_value: string): Promise<ProviderProfileSummary>;
   clear_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
   save_novelai_defaults(

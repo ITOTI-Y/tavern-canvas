@@ -256,7 +256,6 @@ describe("compose_studio_capabilities", () => {
       model_id: "sdxl-base",
       base_url: "http://127.0.0.1:7860",
       workflow_id: null,
-      is_default: true,
       updated_at: "",
     });
 
@@ -267,7 +266,6 @@ describe("compose_studio_capabilities", () => {
         provider_id: "sd_webui",
         display_name: "Local SD",
         model_id: "sdxl-base",
-        is_default: true,
       },
     ]);
     await expect(
@@ -288,7 +286,86 @@ describe("compose_studio_capabilities", () => {
     await composition.dispose();
   });
 
-  it("stores a local provider's loopback address and rejects any other host", async () => {
+  it("checks a ComfyUI profile's workflow against the server it points at", async () => {
+    const requested: string[] = [];
+    const composition = await compose({
+      provider_fetch: (input) => {
+        const url = input instanceof Request ? input.url : input.toString();
+        requested.push(url);
+        const class_type = decodeURIComponent(url.split("/object_info/")[1] ?? "");
+        const body = url.endsWith("/system_stats")
+          ? { system: { comfyui_version: "0.45.3" } }
+          : class_type === "KSampler"
+            ? { KSampler: { input: { required: { sampler_name: [["euler", "dpmpp_2m"]] } } } }
+            : class_type === "MissingNode"
+              ? {}
+              : { [class_type]: { input: { required: {} } } };
+        return Promise.resolve(Response.json(body));
+      },
+    });
+    const workflow_id = "33333333-3333-4333-8333-333333333333";
+    await composition.capabilities.assets.save("workflow", {
+      id: workflow_id,
+      category: "workflow",
+      record_key: workflow_id,
+      display_name: "Turbo",
+      payload: {
+        workflow_json: JSON.stringify({
+          "1": { class_type: "MissingNode", inputs: { text: "a cat" } },
+          "2": {
+            class_type: "EmptyLatentImage",
+            inputs: { width: 832, height: 1216, batch_size: 1 },
+          },
+          "3": {
+            class_type: "KSampler",
+            inputs: {
+              seed: 1,
+              sampler_name: "euler",
+              positive: ["1", 0],
+              negative: ["1", 0],
+              latent_image: ["2", 0],
+            },
+          },
+          "4": { class_type: "SaveImage", inputs: { images: ["3", 0] } },
+        }),
+      },
+    });
+
+    const saved = await composition.capabilities.profiles.save({
+      id: "44444444-4444-4444-8444-444444444444",
+      provider_id: "comfyui",
+      display_name: "Remote ComfyUI",
+      model_id: "workflow",
+      base_url: "http://100.64.0.10:8188",
+      workflow_id,
+      updated_at: "",
+      comfyui_defaults: { steps: 12, sampler_name: "dpmpp_2m" },
+    });
+    expect(saved).toMatchObject({
+      base_url: "http://100.64.0.10:8188",
+      workflow_id,
+      comfyui_defaults: { steps: 12, sampler_name: "dpmpp_2m" },
+    });
+
+    await expect(
+      composition.capabilities.profiles.test_connection(saved.id),
+    ).resolves.toMatchObject({ status: "success" });
+    await expect(
+      composition.capabilities.profiles.inspect_comfyui({
+        base_url: "http://100.64.0.10:8188",
+        workflow_id,
+      }),
+    ).resolves.toEqual({
+      version: "0.45.3",
+      options: { sampler_name: ["euler", "dpmpp_2m"], scheduler: [], model: [] },
+      missing_node_types: ["MissingNode"],
+      missing_values: [],
+    });
+    expect(requested).toContain("http://100.64.0.10:8188/object_info/KSampler");
+    await composition.dispose();
+  });
+
+  it("stores a local provider's address as an origin and rejects one with a path", async () => {
     const composition = await compose();
     const draft = {
       id: "11111111-1111-4111-8111-111111111111",
@@ -297,15 +374,19 @@ describe("compose_studio_capabilities", () => {
       model_id: "sdxl-base",
       base_url: "HTTP://127.0.0.1:7860",
       workflow_id: null,
-      is_default: true,
       updated_at: "",
     };
 
     const saved = await composition.capabilities.profiles.save(draft);
     expect(saved.base_url).toBe("http://127.0.0.1:7860");
     await expect(
-      composition.capabilities.profiles.save({ ...draft, base_url: "http://192.168.1.10:7860" }),
-    ).rejects.toThrowError(/loopback/u);
+      composition.capabilities.profiles.save({ ...draft, base_url: "http://127.0.0.1:7860/api" }),
+    ).rejects.toThrowError(/origin/u);
+    const remote = await composition.capabilities.profiles.save({
+      ...draft,
+      base_url: "http://192.168.1.10:7860",
+    });
+    expect(remote.base_url).toBe("http://192.168.1.10:7860");
 
     const cloud = await composition.capabilities.profiles.save({
       ...draft,
@@ -383,7 +464,7 @@ describe("compose_studio_capabilities", () => {
 });
 
 describe("create_provider_transport", () => {
-  it("builds a direct transport for a loopback provider endpoint", () => {
+  it("builds a direct transport for a provider endpoint", () => {
     const transport = create_provider_transport({
       kind: "local_direct",
       endpoint: "http://127.0.0.1:7860",
@@ -392,9 +473,9 @@ describe("create_provider_transport", () => {
     expect(transport.execute).toBeTypeOf("function");
   });
 
-  it("refuses a non-loopback direct endpoint", () => {
+  it("refuses a direct endpoint that is not an HTTP origin", () => {
     expect(() =>
-      create_provider_transport({ kind: "local_direct", endpoint: "http://provider.example.com" }),
-    ).toThrowError(/loopback/u);
+      create_provider_transport({ kind: "local_direct", endpoint: "http://127.0.0.1:7860/api" }),
+    ).toThrowError(/invalid/u);
   });
 });

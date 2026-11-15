@@ -599,24 +599,23 @@
   gap: var(--tc-space-2);
 }
 
-.placeholderList {
+.mappingList {
   display: flex;
   flex-direction: column;
   gap: var(--tc-space-2);
 }
 
-.placeholderRow {
+.mappingRow {
   display: flex;
   align-items: center;
   gap: var(--tc-space-2);
 }
 
-.placeholderKey {
+.mappingKey {
   flex: none;
-  width: 40%;
+  width: 30%;
   overflow: hidden;
   color: var(--tc-text);
-  font-family: var(--tc-font-mono);
   font-size: var(--tc-font-size-xs);
   white-space: nowrap;
   text-overflow: ellipsis;

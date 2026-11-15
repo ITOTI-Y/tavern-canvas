@@ -110,7 +110,7 @@ const active_novelai_profile = computed(
   () =>
     props.state.generation.profiles.find(
       (profile) =>
-        profile.id === props.state.generation.active_profile_id &&
+        profile.id === props.state.settings.settings?.active_provider_profile_id &&
         profile.provider_id === "novelai",
     ) ?? null,
 );
@@ -204,6 +204,8 @@ function test_prompt_regex(rule: PromptRegexRule, sample_text: string): Promise<
           <ProviderProfiles
             :profiles="state.generation.profiles"
             :prompt-tag-presets="state.assets.records.prompt_tag"
+            :workflows="state.assets.records.workflow"
+            :active-profile-id="state.settings.settings?.active_provider_profile_id ?? null"
             :controller="controller"
           />
           <NovelAiSettings

@@ -13,7 +13,6 @@ const PROFILE: ProviderProfileSummary = {
   display_name: "NovelAI",
   model_id: "nai-diffusion-4-5-full",
   workflow_id: null,
-  is_default: true,
   credential_reference: null,
   updated_at: "2026-10-27T00:00:00.000Z",
   novelai_defaults: null,

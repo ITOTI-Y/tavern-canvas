@@ -135,7 +135,6 @@ export async function create_security_probes(
           provider_id: "openai_image",
           payload: {
             display_name: "Attacker profile",
-            is_default: true,
             vault_key: "tavern_canvas:image:openai_image:default",
             ...attempt,
             provider_profile: {
