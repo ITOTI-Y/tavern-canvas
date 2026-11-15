@@ -308,6 +308,7 @@ var o = {
 			aliases_label: "Aliases",
 			aliases_hint: "Other names the story uses for this character, separated by commas; they are matched like the name.",
 			appearance: {
+				character: "Character tag",
 				age: "Age",
 				body: "Body",
 				skin: "Skin",
@@ -324,6 +325,7 @@ var o = {
 			editor_description: "Used when a reply mentions “{name}” or an alias",
 			default_outfit_label: "Default outfit",
 			default_outfit_first: "First linked outfit",
+			character_tag_hint: "The Danbooru tag of a character from an existing anime, manga or game, checked against the vocabulary; empty for an original character.",
 			excluded_traits_label: "Excluded traits",
 			excluded_traits_hint: "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",
 			reference_image_label: "Reference image",
@@ -974,7 +976,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-ALJnUSbd.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-bd90z3rn.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

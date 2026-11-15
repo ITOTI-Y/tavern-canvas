@@ -2437,7 +2437,7 @@ var Ge = ["id", "aria-describedby"], Ke = ["id", "aria-describedby"], qe = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-DubARoCH.js")), n = y(() => import("./PromptTagPresetPanel-BlynfcrQ.js")), r = y(() => import("./DiagnosticsView-Dkr5iEGY.js")), i = e, { t: a } = T(), o = [
+		let t = y(() => import("./PromptView-DubARoCH.js")), n = y(() => import("./PromptTagPresetPanel-BlynfcrQ.js")), r = y(() => import("./DiagnosticsView-BcOHkvhi.js")), i = e, { t: a } = T(), o = [
 			"illustration",
 			"providers",
 			"translation",

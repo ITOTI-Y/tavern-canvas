@@ -4,6 +4,8 @@ type Translate = (key: string) => string;
 
 export function appearance_slot_label(t: Translate, slot: AppearanceSlot): string {
   switch (slot) {
+    case "character":
+      return t("assets.characters.appearance.character");
     case "age":
       return t("assets.characters.appearance.age");
     case "body":

@@ -1,4 +1,4 @@
-import { a as e, i as t, n, o as r, s as i } from "./wardrobe_library-BkM-wKPK.js";
+import { a as e, i as t, n, o as r, s as i } from "./wardrobe_library-D08dVzPC.js";
 import { F as a, J as o, L as s, M as c, O as l, R as u, T as d, W as f, _ as p, a as m, at as h, c as g, ct as _, dt as v, g as y, gt as b, h as x, ht as S, j as C, k as w, m as T, n as E, p as D, pt as O, q as k, rt as A, s as j, u as M, v as N, x as P, y as F } from "./vue-i18n-XoxYzLIP.js";
 import { r as ee, t as I } from "./portal_keys-DthxrmWp.js";
 import { n as L, t as R } from "./AppIcon-DD754F_c.js";
@@ -528,6 +528,7 @@ var Ne = ["id"], Pe = ["id"], Fe = /* @__PURE__ */ P({
 //#region src/ui/views/assets/wardrobe_labels.ts
 function Ie(e, t) {
 	switch (t) {
+		case "character": return e("assets.characters.appearance.character");
 		case "age": return e("assets.characters.appearance.age");
 		case "body": return e("assets.characters.appearance.body");
 		case "skin": return e("assets.characters.appearance.skin");
@@ -575,7 +576,8 @@ var Re = ["data-editing"], ze = "none", Be = "solo, full body, standing, looking
 			...r.map((e) => ({
 				key: e,
 				label: Ie(c, e),
-				kind: "tags"
+				kind: "tags",
+				...e === "character" ? { hint: c("assets.characters.character_tag_hint") } : {}
 			})),
 			{
 				key: "excluded_traits",

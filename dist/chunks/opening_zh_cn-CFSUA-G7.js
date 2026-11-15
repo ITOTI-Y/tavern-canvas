@@ -52,6 +52,10 @@ var e = { opening: {
 		regenerate_stale: "依次重新生成",
 		run: "开始本步",
 		ask_more: "继续追问",
+		ask_more_label: "追问方向",
+		ask_more_hint: "写下希望模型围绕什么提问；留空时由模型根据已写出的结果自己决定。",
+		ask_more_placeholder: "例如：多问问反派势力的动机",
+		ask_more_start: "开始追问",
 		regenerate: "重新生成本步",
 		next: "确认，下一步"
 	},

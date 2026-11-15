@@ -770,7 +770,7 @@ export class IllustrationService {
       CHARACTER_FROM_IMAGE_JSON_SCHEMA,
       image,
     );
-    return parse_character_from_image(raw);
+    return this.#deps.wardrobe.check_character(parse_character_from_image(raw));
   }
 
   async generate(

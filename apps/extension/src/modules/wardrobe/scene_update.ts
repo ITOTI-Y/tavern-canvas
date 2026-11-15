@@ -264,7 +264,7 @@ export function build_scene_update_input(
     "- ref: the id listed for this exact character below, also when the story uses a shorter or fuller form of the listed name, or null for a named character not listed; never another character's id",
     "- name: the name as written in the story",
     "- new_character: only when ref is null: subject (see Subject), aliases (other names used for them), appearance tags per slot taken from what the story states, and outfit: what they wear now (see Outfit choice); otherwise null",
-    "- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them; otherwise null",
+    "- appearance_additions: for a known character, tags for the appearance slots listed as still empty, only when the reply states them, or for the character slot when you recognise the character from an existing work; otherwise null",
     "- subject: for a known character whose subject is not yet known, girl or boy when the story shows it; otherwise null",
     "Subject: girl for a woman or girl, boy for a man or boy, judged from pronouns such as 他 / 她 or he / she, how others address them, the name and the description. other only for a character without a gender, such as a creature or a machine.",
     "- wearing_changed: true only when the story changes what the character wears; describing clothing they already wear is no change; when false outfit_id, new_outfit and overrides are ignored",
@@ -275,7 +275,7 @@ export function build_scene_update_input(
     ...(story.since === null
       ? []
       : [`Since the last update the story moved from ${story.since.from} to ${story.since.to}.`]),
-    "All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
+    "All tags are visual Danbooru-style English tags for an anime image model. Leave a slot out, or give it an empty list, when the story does not state it; never write placeholders such as unknown or none. Appearance slots: character, age, body, skin, hair, eyes, makeup, expression, features (species traits such as pointy ears belong in features). Character: when the character comes from an existing anime, manga or game, its Danbooru character tag, such as hatsune_miku or rem_(re:zero), followed by the Danbooru copyright tag of the work, such as vocaloid; judge from the name, the story and the character description; an empty list for an original character. Outfit slots: full_body, outerwear, top, bottom, legwear, footwear, headwear, accessories.",
     "initial_outfits: one entry per id listed under Outfits needed, giving what that character wears now (see Outfit choice); an empty object when none are listed.",
     "Outfit choice: take the clothing from the story, else from the character description; when neither states it, choose plausible clothing for the character's role, the setting and the era. Fill at least the top and bottom, or full_body, and give the outfit a short descriptive name.",
     'Reply with only a JSON object of the form {"characters":[...],"initial_outfits":{...}}. Use an empty array when no named character appears.',

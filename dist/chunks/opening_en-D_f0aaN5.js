@@ -52,6 +52,10 @@ var e = { opening: {
 		regenerate_stale: "Regenerate in order",
 		run: "Start this step",
 		ask_more: "Ask more",
+		ask_more_label: "What to ask about",
+		ask_more_hint: "Tell the model what the question should be about; leave it empty to let the model choose from the written result.",
+		ask_more_placeholder: "For example: the rival faction's motives",
+		ask_more_start: "Ask",
 		regenerate: "Regenerate this step",
 		next: "Confirm, next step"
 	},

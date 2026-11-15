@@ -93,13 +93,16 @@ to image, inpainting, 2x upscaling and the Director tools.
 | Vibe transfer | NovelAI vibe transfer images, chosen per NovelAI profile under Image providers |
 | Workflow      | ComfyUI workflow JSON with its placeholder mapping                             |
 
-A character's appearance is split into eight slots: age, body, skin, hair, eyes, makeup, expression
-and other features. An outfit is split into slots such as headwear, top, bottom, full body,
-outerwear, legwear, footwear and accessories. When a paragraph names a library character or one of
-its aliases, or the analysis reports one, the character's appearance replaces whatever the model
-wrote about its looks, and the outfit the character currently wears is added. On NovelAI V4 and
-later each character gets its own character prompt with its excluded traits as that character's
-negative prompt, which keeps several characters from blending.
+A character's appearance is split into nine slots: character tag, age, body, skin, hair, eyes,
+makeup, expression and other features. The character tag holds the Danbooru tag of a character from
+an existing anime, manga or game and is placed first; a tag the wardrobe model proposes is stored
+only when the bundled vocabulary lists it as a character with at least 50 posts. An outfit is split
+into slots such as headwear, top, bottom, full body, outerwear, legwear, footwear and accessories.
+When a paragraph names a library character or one of its aliases, or the analysis reports one, the
+character's appearance replaces whatever the model wrote about its looks, and the outfit the
+character currently wears is added. On NovelAI V4 and later each character gets its own character
+prompt with its excluded traits as that character's negative prompt, which keeps several characters
+from blending.
 
 ### Wardrobe tracking
 

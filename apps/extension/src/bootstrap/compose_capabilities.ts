@@ -546,6 +546,17 @@ export async function compose_studio_capabilities(
                     on_attempt,
                   }),
                   new_id: () => crypto.randomUUID(),
+                  async character_tags(proposed, name) {
+                    const { resolve_character_tags } =
+                      await import("../modules/wardrobe/character_tags.js");
+                    return resolve_character_tags(proposed, name, async (query) => {
+                      try {
+                        return (await vocabulary.lookup(query))?.results ?? null;
+                      } catch {
+                        return null;
+                      }
+                    });
+                  },
                 }),
                 ...create_illustration_request_builders({
                   assets,

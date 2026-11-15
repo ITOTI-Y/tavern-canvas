@@ -1,5 +1,5 @@
-import { o as e } from "./wardrobe_library-BkM-wKPK.js";
-import { n as t, r as n } from "./library_match-CF9rnk-0.js";
+import { o as e } from "./wardrobe_library-D08dVzPC.js";
+import { n as t, r as n } from "./library_match-C6UXduZZ.js";
 import { n as r, r as i, t as a } from "./tag_normalizer-CEAU4497.js";
 //#region src/modules/illustration/slot_markers.ts
 var o = "[A-Za-z0-9_-]{8,32}", s = RegExp(`<!--tc-image:(${o})-->`, "gu");

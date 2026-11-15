@@ -85,6 +85,8 @@ function create(reply: unknown) {
     library,
     run,
     new_id: () => `new-${String((sequence += 1))}`,
+    character_tags: (proposed: readonly string[]) =>
+      Promise.resolve(proposed.filter((tag) => tag !== "made up")),
   });
   return { service, stored, library, run };
 }
@@ -118,6 +120,51 @@ describe("WardrobeService", () => {
       schema_version: 1,
       wearing: [{ character_id: "c1", outfit_id: "new-1", overrides: {}, conditions: [] }],
     });
+  });
+
+  it("stores only character tags that hold up, and skips an addition left empty", async () => {
+    const { service, library } = create({
+      characters: [
+        {
+          ref: null,
+          name: "Miku",
+          new_character: {
+            subject: "girl",
+            aliases: [],
+            appearance: { character: ["hatsune miku"], hair: ["aqua hair"] },
+            outfit: null,
+          },
+          appearance_additions: null,
+          wearing_changed: false,
+          outfit_id: null,
+          new_outfit: null,
+          overrides: [],
+          conditions: [],
+        },
+        {
+          ref: "c1",
+          name: "Ann",
+          new_character: null,
+          appearance_additions: { character: ["made up"] },
+          wearing_changed: false,
+          outfit_id: null,
+          new_outfit: null,
+          overrides: [],
+          conditions: [],
+        },
+      ],
+    });
+
+    await service.update(2);
+
+    expect(library.create_character).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Miku",
+        appearance: { character: ["hatsune miku"], hair: ["aqua hair"] },
+      }),
+      expect.anything(),
+    );
+    expect(library.add_appearance).not.toHaveBeenCalled();
   });
 
   it("reads the replies no update has seen since the last snapshot before the latest reply", async () => {

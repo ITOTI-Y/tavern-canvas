@@ -1,56 +1,56 @@
 import { c as e, d as t, g as n, i as r, o as i, p as a, r as o, t as s, u as c, y as l } from "./schemas-BjkyCQYG.js";
-import { D as u, F as d, J as f, L as p, M as m, O as h, T as g, U as _, W as v, _ as y, a as b, at as x, dt as S, g as C, gt as w, h as T, m as E, n as D, nt as O, p as k, pt as A, q as j, rt as M, u as N, v as P, x as F, y as I } from "./vue-i18n-XoxYzLIP.js";
-import { t as ee } from "./opening_port-CFwXS5qA.js";
-import { n as L, t as R } from "./AppIcon-DD754F_c.js";
-import { t as te } from "./book-open-BFHVGETM.js";
-import { n as z, r as ne, t as B } from "./StateSurface-C9eJEtTP.js";
+import { D as u, F as d, J as f, L as p, M as m, O as h, T as g, U as _, W as v, _ as y, a as b, at as x, dt as S, g as C, gt as w, h as T, k as E, m as D, n as O, nt as k, p as A, pt as j, q as M, rt as N, s as ee, u as P, v as F, x as I, y as L } from "./vue-i18n-XoxYzLIP.js";
+import { t as R } from "./opening_port-CFwXS5qA.js";
+import { n as z, t as B } from "./AppIcon-DD754F_c.js";
+import { t as V } from "./book-open-BFHVGETM.js";
+import { n as H, r as te, t as ne } from "./StateSurface-C9eJEtTP.js";
 import { t as re } from "./AppSelect-DKz1dWBv.js";
 import { n as ie, t as ae } from "./download-Dg_p_zFU.js";
-import { t as V } from "./AppCheckbox-mwSAcdjr.js";
-import { n as oe, t as se } from "./refresh-cw-BPQB33rx.js";
-import { n as H, t as U } from "./FieldGroup-D8VsaFMT.js";
-import { t as ce } from "./sparkles-DIwEk888.js";
-import { t as le } from "./trash-2-Cl_9_CUX.js";
-import { n as ue } from "./deferred_stylesheets-DhfsdqPo.js";
-import { t as W } from "./analysis_error-a25bWfWj.js";
-import { t as de } from "./model_json-B2EVqBvs.js";
-import { n as fe, t as pe } from "./NumberStepper-BUxNPDyt.js";
-import { t as G } from "./IconButton-CPI-A0bT.js";
-import { t as me } from "./ConfirmDialog-BMpZdMGH.js";
-import { t as he } from "./AppSwitch-CRj_joeq.js";
-import { t as ge } from "./AppDialog-luZAyPaX.js";
+import { t as oe } from "./AppCheckbox-mwSAcdjr.js";
+import { n as se, t as ce } from "./refresh-cw-BPQB33rx.js";
+import { n as le, t as U } from "./FieldGroup-D8VsaFMT.js";
+import { t as W } from "./sparkles-DIwEk888.js";
+import { t as ue } from "./trash-2-Cl_9_CUX.js";
+import { n as de } from "./deferred_stylesheets-DhfsdqPo.js";
+import { t as fe } from "./analysis_error-a25bWfWj.js";
+import { t as pe } from "./model_json-B2EVqBvs.js";
+import { n as G, t as me } from "./NumberStepper-BUxNPDyt.js";
+import { t as K } from "./IconButton-CPI-A0bT.js";
+import { t as he } from "./ConfirmDialog-BMpZdMGH.js";
+import { t as ge } from "./AppSwitch-CRj_joeq.js";
+import { t as _e } from "./AppDialog-luZAyPaX.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/arrow-down.js
-var _e = L("arrow-down", [["path", {
+var ve = z("arrow-down", [["path", {
 	d: "M12 5v14",
 	key: "s699le"
 }], ["path", {
 	d: "m19 12-7 7-7-7",
 	key: "1idqje"
-}]]), K = L("arrow-left", [["path", {
+}]]), ye = z("arrow-left", [["path", {
 	d: "m12 19-7-7 7-7",
 	key: "1l729n"
 }], ["path", {
 	d: "M19 12H5",
 	key: "x3x0zl"
-}]]), ve = L("arrow-right", [["path", {
+}]]), be = z("arrow-right", [["path", {
 	d: "M5 12h14",
 	key: "1ays0h"
 }], ["path", {
 	d: "m12 5 7 7-7 7",
 	key: "xquz4c"
-}]]), ye = L("arrow-up", [["path", {
+}]]), xe = z("arrow-up", [["path", {
 	d: "m5 12 7-7 7 7",
 	key: "hav0vg"
 }], ["path", {
 	d: "M12 19V5",
 	key: "x0mq9r"
-}]]), be = L("chevrons-right", [["path", {
+}]]), Se = z("chevrons-right", [["path", {
 	d: "m6 17 5-5-5-5",
 	key: "xnjwq"
 }], ["path", {
 	d: "m13 17 5-5-5-5",
 	key: "17xmmf"
-}]]), xe = L("file-text", [
+}]]), Ce = z("file-text", [
 	["path", {
 		d: "M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z",
 		key: "1oefj6"
@@ -71,16 +71,16 @@ var _e = L("arrow-down", [["path", {
 		d: "M16 17H8",
 		key: "z1uh3a"
 	}]
-]), Se = L("link", [["path", {
+]), we = z("link", [["path", {
 	d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",
 	key: "1cjeqo"
 }], ["path", {
 	d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
 	key: "19qd67"
-}]]), Ce = L("message-square", [["path", {
+}]]), Te = z("message-square", [["path", {
 	d: "M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z",
 	key: "18887p"
-}]]), we = t({
+}]]), Ee = t({
 	id: n().min(1),
 	name: n().max(40),
 	instruction: n().max(2e3),
@@ -89,13 +89,13 @@ var _e = L("arrow-down", [["path", {
 }), q = t({
 	label: n().trim().min(1).max(80),
 	detail: n().max(240)
-}), Te = t({
+}), De = t({
 	text: n().trim().min(1).max(240),
 	why: n().max(240),
 	multiple: r(),
 	options: o(q).min(2).max(5)
 }), J = t({
-	question: Te,
+	question: De,
 	selected: o(n()),
 	other: n()
 }), Y = t({
@@ -104,10 +104,10 @@ var _e = L("arrow-down", [["path", {
 	constant: r(),
 	keys: o(n().trim().min(1).max(80)).max(12),
 	content: n().max(8e3)
-}), Ee = t({
+}), Oe = t({
 	speaker: n().trim().min(1).max(80),
 	text: n().min(1).max(2e4)
-}), De = t({
+}), ke = t({
 	status: s([
 		"pending",
 		"asking",
@@ -115,50 +115,50 @@ var _e = L("arrow-down", [["path", {
 		"stale"
 	]),
 	answers: o(J),
-	question: Te.nullable(),
+	question: De.nullable(),
 	entries: o(Y),
-	message: Ee.nullable()
-}), Oe = i("kind", [
+	message: Oe.nullable()
+}), Ae = i("kind", [
 	t({ kind: e("analysis") }),
 	t({ kind: e("current") }),
 	t({
 		kind: e("proxy_preset"),
 		proxy_preset: n().min(1)
 	})
-]), ke = t({
+]), je = t({
 	name: n(),
 	description: n(),
 	personality: n(),
 	scenario: n(),
 	first_message: n()
-}), Ae = t({
+}), Me = t({
 	kind: e("draft"),
 	display_name: n(),
 	created_at: n(),
 	description: n().max(4e3),
 	template_name: n(),
-	steps: o(we).min(1).max(12),
-	states: o(De),
+	steps: o(Ee).min(1).max(12),
+	states: o(ke),
 	current: c().int().min(0),
 	started: r(),
-	connection: Oe,
+	connection: Ae,
 	preset_name: n().min(1),
 	worldbooks: o(n()).max(20),
-	card: ke.nullable().default(null),
+	card: je.nullable().default(null),
 	use_greeting: r().default(!1)
-}), je = t({
+}), Ne = t({
 	kind: e("template"),
 	display_name: n().max(60),
 	created_at: n(),
-	steps: o(we).min(1).max(12)
-}), Me = "builtin-default", Ne = [
+	steps: o(Ee).min(1).max(12)
+}), Pe = "builtin-default", Fe = [
 	"genre",
 	"world",
 	"cast",
 	"rules",
 	"opening"
 ];
-function Pe(e, t) {
+function Ie(e, t) {
 	let n = {
 		genre: 2,
 		world: 3,
@@ -167,12 +167,12 @@ function Pe(e, t) {
 		opening: 1
 	};
 	return {
-		id: Me,
+		id: Pe,
 		builtin: !0,
 		kind: "template",
 		display_name: t,
 		created_at: "1970-01-01T00:00:00.000Z",
-		steps: Ne.map((t) => ({
+		steps: Fe.map((t) => ({
 			id: t,
 			...e(t),
 			max_rounds: n[t],
@@ -180,7 +180,7 @@ function Pe(e, t) {
 		}))
 	};
 }
-function Fe() {
+function Le() {
 	return {
 		status: "pending",
 		answers: [],
@@ -189,34 +189,34 @@ function Fe() {
 		message: null
 	};
 }
-function Ie(e, t) {
+function Re(e, t) {
 	e.states.forEach((e, n) => {
 		n > t && (e.status === "done" || e.status === "stale") && (e.status = "stale");
 	});
 }
 function X(e) {
-	let t = Ae.safeParse(e.payload);
+	let t = Me.safeParse(e.payload);
 	if (!t.success) return null;
 	let n = t.data;
-	for (; n.states.length < n.steps.length;) n.states.push(Fe());
+	for (; n.states.length < n.steps.length;) n.states.push(Le());
 	return n.states.length = n.steps.length, {
 		...n,
 		current: Math.min(n.current, n.steps.length - 1),
 		id: e.id
 	};
 }
-function Le(e) {
-	let t = je.safeParse(e.payload);
+function ze(e) {
+	let t = Ne.safeParse(e.payload);
 	return t.success ? {
 		...t.data,
 		id: e.id,
 		builtin: !1
 	} : null;
 }
-function Re(e) {
+function Z(e) {
 	return JSON.parse(JSON.stringify(e));
 }
-var ze = {
+var Be = {
 	layout: "_layout_g6bg9_5",
 	aside: "_aside_g6bg9_11",
 	aside_new: "_aside_new_g6bg9_20",
@@ -298,8 +298,8 @@ var ze = {
 };
 //#endregion
 //#region src/ui/views/opening/opening_styles.ts
-ue("opening", "._layout_g6bg9_5{grid-template-columns:248px minmax(0,1fr);min-height:100%;display:grid}._aside_g6bg9_11{align-self:start;gap:var(--tc-space-1);padding:var(--tc-space-2) var(--tc-space-3) var(--tc-space-4);flex-direction:column;display:flex;overflow:auto}._aside_new_g6bg9_20{margin:0 var(--tc-space-1) var(--tc-space-2)}._aside_title_g6bg9_24{padding:var(--tc-space-2) var(--tc-space-2) var(--tc-space-1);color:var(--tc-text-muted);font-size:var(--tc-font-size-xs)}._item_g6bg9_30{color:var(--tc-text);text-align:start;border-radius:14px;gap:6px;padding:10px 12px;display:grid}._item_g6bg9_30:hover{background-color:var(--tc-surface-raised)}._item_g6bg9_30[aria-current=true]{background-color:var(--tc-accent-soft);box-shadow:0 0 0 1px var(--tc-accent-border)}._item_name_g6bg9_48{font-size:var(--tc-font-size-md);font-weight:var(--tc-font-weight-semibold);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}._item_meta_g6bg9_56{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs)}._dots_g6bg9_61{gap:3px;display:flex}._dot_g6bg9_61{background-color:var(--tc-divider);border-radius:999px;flex:1;height:4px}._dot_g6bg9_61[data-state=done]{background-color:var(--tc-accent)}._dot_g6bg9_61[data-state=asking]{background-color:var(--tc-marker)}._dot_g6bg9_61[data-state=stale]{background-color:var(--tc-accent-soft);box-shadow:inset 0 0 0 1px var(--tc-accent-border)}._columns_g6bg9_86{grid-template-columns:minmax(0,1fr) 280px;min-width:0;display:grid}._work_g6bg9_92{min-width:0;padding:var(--tc-space-2) var(--tc-panel-padding) var(--tc-panel-padding)}._work_inner_g6bg9_97{gap:var(--tc-form-row-gap);max-width:760px;display:grid}._work_inner_g6bg9_97[data-wide]{max-width:none}._topline_g6bg9_107{gap:var(--tc-space-2) var(--tc-space-3);flex-wrap:wrap;align-items:center;display:flex}._spacer_g6bg9_114{flex:1}._compact_g6bg9_118[data-layout]{justify-self:start;width:auto}._work_head_g6bg9_123{gap:var(--tc-space-1);display:grid}._work_title_g6bg9_128{color:var(--tc-text);font-size:var(--tc-font-size-xl);font-weight:700;line-height:var(--tc-line-height-xl);overflow-wrap:anywhere;margin:0}._work_description_g6bg9_137,._hint_g6bg9_138{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);margin:0}._error_g6bg9_145{color:var(--tc-error);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere;margin:0}._row_g6bg9_153{gap:var(--tc-space-2);flex-wrap:wrap;align-items:center;display:flex}._text_area_g6bg9_160{min-height:168px}._text_area_small_g6bg9_165{min-height:96px}._counter_g6bg9_174{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);text-align:end}._grid3_g6bg9_180{gap:var(--tc-space-4);grid-template-columns:repeat(auto-fill,minmax(200px,1fr));display:grid}._chip_toggle_g6bg9_186{align-items:center;gap:var(--tc-space-1-5);border:1px solid var(--tc-border-field);border-radius:var(--tc-radius-chip);background-color:var(--tc-surface);height:32px;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);padding:0 14px;display:inline-flex}._chip_toggle_g6bg9_186[aria-pressed=true]{border-color:var(--tc-marker);background-color:var(--tc-marker);color:var(--tc-on-marker)}._steps_g6bg9_206{gap:var(--tc-space-1);flex-wrap:wrap;display:flex}._step_g6bg9_206{align-items:center;gap:var(--tc-space-2);background-color:var(--tc-surface);height:34px;box-shadow:0 0 0 1px var(--tc-divider);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);white-space:nowrap;border-radius:999px;padding:0 14px 0 6px;display:inline-flex}._step_g6bg9_206:disabled{cursor:default}._step_number_g6bg9_230{background-color:var(--tc-chip-bg);width:22px;height:22px;font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);border-radius:999px;place-items:center;display:grid}._step_g6bg9_206[data-state=done] ._step_number_g6bg9_230{background-color:var(--tc-accent);color:var(--tc-on-accent)}._step_g6bg9_206[aria-current=step]{background-color:var(--tc-marker);box-shadow:none;color:var(--tc-on-marker);font-weight:var(--tc-font-weight-semibold)}._step_g6bg9_206[aria-current=step] ._step_number_g6bg9_230{background-color:var(--tc-on-marker);color:var(--tc-marker)}._step_g6bg9_206[data-state=stale]{background-color:var(--tc-accent-soft);box-shadow:0 0 0 1px var(--tc-accent-border);color:var(--tc-text)}._step_g6bg9_206[data-state=stale] ._step_number_g6bg9_230{border:1.5px dashed var(--tc-accent-border);background-color:#0000}._step_tag_g6bg9_269{color:var(--tc-text-muted);font-size:11px;font-weight:400}._banner_g6bg9_275{gap:var(--tc-space-2) var(--tc-space-3);padding:var(--tc-space-3) 14px;background-color:var(--tc-accent-soft);box-shadow:inset 0 0 0 1px var(--tc-accent-border);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);border-radius:14px;flex-wrap:wrap;align-items:center;display:flex}._banner_g6bg9_275>span{flex:260px}._answered_g6bg9_293{gap:2px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);border-radius:14px;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:10px 14px;display:grid}._answered_question_g6bg9_305{color:var(--tc-text-muted)}._answered_answer_g6bg9_309{font-weight:var(--tc-font-weight-semibold);grid-column:1}._answered_g6bg9_293>:last-child{grid-area:1/2/3}._ask_g6bg9_319{background-color:var(--tc-surface);box-shadow:0 0 0 1.5px var(--tc-accent-border), 0 8px 24px var(--tc-shadow);border-radius:18px;gap:14px;padding:18px;display:grid}._ask_head_g6bg9_330{gap:var(--tc-space-2) 10px;flex-wrap:wrap;align-items:baseline;display:flex}._ask_title_g6bg9_337{font-size:var(--tc-font-size-lg);font-weight:700;line-height:var(--tc-line-height-lg);margin:0}._badge_g6bg9_344{background-color:var(--tc-chip-bg);height:22px;color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);border-radius:999px;align-items:center;padding:0 8px;display:inline-flex}._options_g6bg9_355{gap:var(--tc-space-2);grid-template-columns:repeat(auto-fill,minmax(240px,1fr));display:grid}._option_g6bg9_355{gap:var(--tc-space-1) 10px;padding:var(--tc-space-3) 14px;border:1px solid var(--tc-divider);background-color:var(--tc-canvas);color:var(--tc-text);text-align:start;border-radius:14px;grid-template-columns:auto minmax(0,1fr);display:grid}._option_g6bg9_355[aria-checked=true]{border-color:var(--tc-accent-border);background-color:var(--tc-accent-soft)}._option_mark_g6bg9_378{border:1.5px solid var(--tc-border-field);background-color:var(--tc-field-bg);width:18px;height:18px;color:var(--tc-on-accent);border-radius:6px;grid-row:1/3;place-items:center;margin-top:2px;display:inline-grid}._option_mark_g6bg9_378[data-shape=radio]{border-radius:999px}._option_g6bg9_355[aria-checked=true] ._option_mark_g6bg9_378{border-color:var(--tc-accent);background-color:var(--tc-accent)}._option_label_g6bg9_400{font-weight:var(--tc-font-weight-semibold)}._option_detail_g6bg9_404{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);line-height:18px}._entries_g6bg9_411{gap:10px;display:grid}._entry_g6bg9_416{gap:var(--tc-space-2);padding:14px var(--tc-space-4);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);display:grid}._entry_head_g6bg9_425{gap:var(--tc-space-2);flex-wrap:wrap;align-items:center;display:flex}._entry_title_g6bg9_432{overflow-wrap:anywhere;font-size:15px;font-weight:650}._entry_content_g6bg9_438{font-size:var(--tc-font-size-sm);white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:21px}._pill_g6bg9_446{background-color:var(--tc-chip-bg);height:20px;color:var(--tc-text-muted);white-space:nowrap;border-radius:999px;align-items:center;padding:0 8px;font-size:11px;font-weight:600;display:inline-flex}._pill_g6bg9_446[data-tone=constant]{background-color:var(--tc-accent);color:var(--tc-on-accent)}._pill_g6bg9_446[data-tone=new]{background-color:var(--tc-marker);color:var(--tc-on-marker)}._pill_g6bg9_446[data-tone=modified]{background-color:var(--tc-accent-soft);box-shadow:inset 0 0 0 1px var(--tc-accent-border);color:var(--tc-text)}._keys_g6bg9_475{gap:var(--tc-space-1);color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);flex-wrap:wrap;align-items:center;display:flex}._key_g6bg9_475{background-color:var(--tc-chip-bg);border-radius:999px;align-items:center;height:22px;padding:0 8px;display:inline-flex}._editor_g6bg9_493{padding:var(--tc-space-4);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1.5px var(--tc-accent-border);gap:14px;display:grid}._foot_g6bg9_502{gap:var(--tc-space-2);padding:var(--tc-space-3) 0;background-color:var(--tc-canvas);flex-wrap:wrap;align-items:center;display:flex;position:sticky;bottom:0}._bubble_g6bg9_514{gap:var(--tc-space-2);padding:var(--tc-space-4);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);border-radius:18px;display:grid}._bubble_name_g6bg9_523{font-size:var(--tc-font-size-sm);font-weight:var(--tc-font-weight-semibold)}._bubble_text_g6bg9_528{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:23px}._outputs_g6bg9_535{gap:var(--tc-space-3);grid-template-columns:repeat(auto-fill,minmax(200px,1fr));display:grid}._output_g6bg9_535{gap:var(--tc-space-2);padding:14px var(--tc-space-4);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);align-content:start;display:grid}._output_title_g6bg9_551{gap:var(--tc-space-2);font-size:var(--tc-font-size-md);align-items:center;margin:0;display:flex}._known_g6bg9_560{gap:var(--tc-space-4);padding:var(--tc-space-3) var(--tc-space-4) var(--tc-space-4);border-left:1px solid var(--tc-divider);align-content:start;display:grid}._known_block_g6bg9_568{gap:6px;display:grid}._known_title_g6bg9_573{font-size:var(--tc-font-size-sm);margin:0;font-weight:700}._known_line_g6bg9_579{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere}._known_line_g6bg9_579 strong{color:var(--tc-text);font-weight:var(--tc-font-weight-semibold)}._known_toggle_g6bg9_591{display:none}._table_g6bg9_596{gap:6px;display:grid}._table_row_g6bg9_601{gap:var(--tc-space-3);padding:10px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);border-radius:14px;grid-template-columns:40px minmax(0,200px) minmax(0,1fr) 48px auto;align-items:center;display:grid}._table_row_g6bg9_601[data-off]{opacity:.55}._table_name_g6bg9_617{gap:var(--tc-space-1);font-weight:var(--tc-font-weight-semibold);overflow-wrap:anywhere;display:grid}._preview_g6bg9_624{color:var(--tc-text-muted);-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:19px;display:-webkit-box;overflow:hidden}._order_g6bg9_633{color:var(--tc-text-muted);font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);text-align:center}._write_list_g6bg9_641{gap:6px;max-height:46vh;display:grid;overflow:auto}._write_row_g6bg9_648{padding:10px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);border-radius:12px;grid-template-columns:auto auto minmax(0,1fr);align-items:start;gap:10px;display:grid}._write_row_g6bg9_648[data-status=same]{opacity:.6}._diff_g6bg9_664{font-size:var(--tc-font-size-xs);gap:2px;line-height:18px;display:grid}._diff_g6bg9_664 del{color:var(--tc-text-muted)}._diff_g6bg9_664 ins{background-color:var(--tc-accent-soft);text-decoration:none}._template_step_g6bg9_681{gap:10px var(--tc-space-3);padding:var(--tc-space-3) 14px;border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);grid-template-columns:auto minmax(0,1fr) auto;align-items:start;display:grid}._template_number_g6bg9_692{background-color:var(--tc-chip-bg);width:24px;height:24px;font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);border-radius:999px;place-items:center;margin-top:6px;display:grid}._template_fields_g6bg9_704{gap:var(--tc-space-2);min-width:0;display:grid}._template_side_g6bg9_710{gap:var(--tc-space-2);justify-items:end;display:grid}@container studio-workspace (width<=640px){._layout_g6bg9_5,._columns_g6bg9_86{grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr)}._aside_g6bg9_11{padding:var(--tc-space-1) var(--tc-space-4) var(--tc-space-2);scrollbar-width:none;flex-direction:row;overflow-x:auto}._aside_new_g6bg9_20{flex:none;margin:0}._aside_title_g6bg9_24,._item_meta_g6bg9_56,._dots_g6bg9_61{display:none}._item_g6bg9_30{max-width:200px;padding:6px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);border-radius:999px;flex:none}._work_g6bg9_92{padding:var(--tc-space-2) var(--tc-space-4) var(--tc-space-4)}._work_title_g6bg9_128{font-size:22px;line-height:28px}._steps_g6bg9_206{scrollbar-width:none;flex-wrap:nowrap;overflow-x:auto}._step_g6bg9_206{flex:none}._step_g6bg9_206:not([aria-current=step]) ._step_label_g6bg9_769{display:none}._known_g6bg9_560{border-left:0;display:none}._known_g6bg9_560[data-open]{padding:0 var(--tc-space-4) var(--tc-space-4);display:grid}._known_toggle_g6bg9_591{display:inline-flex}._table_row_g6bg9_601{grid-template-columns:40px minmax(0,1fr) auto}._preview_g6bg9_624,._order_g6bg9_633{display:none}._template_step_g6bg9_681{grid-template-columns:minmax(0,1fr)}._template_number_g6bg9_692{display:none}._template_side_g6bg9_710{justify-items:start}}");
-var Z = ze, Be = /* @__PURE__ */ F({
+de("opening", "._layout_g6bg9_5{grid-template-columns:248px minmax(0,1fr);min-height:100%;display:grid}._aside_g6bg9_11{align-self:start;gap:var(--tc-space-1);padding:var(--tc-space-2) var(--tc-space-3) var(--tc-space-4);flex-direction:column;display:flex;overflow:auto}._aside_new_g6bg9_20{margin:0 var(--tc-space-1) var(--tc-space-2)}._aside_title_g6bg9_24{padding:var(--tc-space-2) var(--tc-space-2) var(--tc-space-1);color:var(--tc-text-muted);font-size:var(--tc-font-size-xs)}._item_g6bg9_30{color:var(--tc-text);text-align:start;border-radius:14px;gap:6px;padding:10px 12px;display:grid}._item_g6bg9_30:hover{background-color:var(--tc-surface-raised)}._item_g6bg9_30[aria-current=true]{background-color:var(--tc-accent-soft);box-shadow:0 0 0 1px var(--tc-accent-border)}._item_name_g6bg9_48{font-size:var(--tc-font-size-md);font-weight:var(--tc-font-weight-semibold);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}._item_meta_g6bg9_56{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs)}._dots_g6bg9_61{gap:3px;display:flex}._dot_g6bg9_61{background-color:var(--tc-divider);border-radius:999px;flex:1;height:4px}._dot_g6bg9_61[data-state=done]{background-color:var(--tc-accent)}._dot_g6bg9_61[data-state=asking]{background-color:var(--tc-marker)}._dot_g6bg9_61[data-state=stale]{background-color:var(--tc-accent-soft);box-shadow:inset 0 0 0 1px var(--tc-accent-border)}._columns_g6bg9_86{grid-template-columns:minmax(0,1fr) 280px;min-width:0;display:grid}._work_g6bg9_92{min-width:0;padding:var(--tc-space-2) var(--tc-panel-padding) var(--tc-panel-padding)}._work_inner_g6bg9_97{gap:var(--tc-form-row-gap);max-width:760px;display:grid}._work_inner_g6bg9_97[data-wide]{max-width:none}._topline_g6bg9_107{gap:var(--tc-space-2) var(--tc-space-3);flex-wrap:wrap;align-items:center;display:flex}._spacer_g6bg9_114{flex:1}._compact_g6bg9_118[data-layout]{justify-self:start;width:auto}._work_head_g6bg9_123{gap:var(--tc-space-1);display:grid}._work_title_g6bg9_128{color:var(--tc-text);font-size:var(--tc-font-size-xl);font-weight:700;line-height:var(--tc-line-height-xl);overflow-wrap:anywhere;margin:0}._work_description_g6bg9_137,._hint_g6bg9_138{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);margin:0}._error_g6bg9_145{color:var(--tc-error);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere;margin:0}._row_g6bg9_153{gap:var(--tc-space-2);flex-wrap:wrap;align-items:center;display:flex}._text_area_g6bg9_160{min-height:168px}._text_area_small_g6bg9_165{min-height:96px}._counter_g6bg9_174{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);text-align:end}._grid3_g6bg9_180{gap:var(--tc-space-4);grid-template-columns:repeat(auto-fill,minmax(200px,1fr));display:grid}._chip_toggle_g6bg9_186{align-items:center;gap:var(--tc-space-1-5);border:1px solid var(--tc-border-field);border-radius:var(--tc-radius-chip);background-color:var(--tc-surface);height:32px;color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);padding:0 14px;display:inline-flex}._chip_toggle_g6bg9_186[aria-pressed=true]{border-color:var(--tc-marker);background-color:var(--tc-marker);color:var(--tc-on-marker)}._steps_g6bg9_206{gap:var(--tc-space-1);flex-wrap:wrap;display:flex}._step_g6bg9_206{align-items:center;gap:var(--tc-space-2);background-color:var(--tc-surface);height:34px;box-shadow:0 0 0 1px var(--tc-divider);color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);white-space:nowrap;border-radius:999px;padding:0 14px 0 6px;display:inline-flex}._step_g6bg9_206:disabled{cursor:default}._step_number_g6bg9_230{background-color:var(--tc-chip-bg);width:22px;height:22px;font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);border-radius:999px;place-items:center;display:grid}._step_g6bg9_206[data-state=done] ._step_number_g6bg9_230{background-color:var(--tc-accent);color:var(--tc-on-accent)}._step_g6bg9_206[aria-current=step]{background-color:var(--tc-marker);box-shadow:none;color:var(--tc-on-marker);font-weight:var(--tc-font-weight-semibold)}._step_g6bg9_206[aria-current=step] ._step_number_g6bg9_230{background-color:var(--tc-on-marker);color:var(--tc-marker)}._step_g6bg9_206[data-state=stale]{background-color:var(--tc-accent-soft);box-shadow:0 0 0 1px var(--tc-accent-border);color:var(--tc-text)}._step_g6bg9_206[data-state=stale] ._step_number_g6bg9_230{border:1.5px dashed var(--tc-accent-border);background-color:#0000}._step_tag_g6bg9_269{color:var(--tc-text-muted);font-size:11px;font-weight:400}._banner_g6bg9_275{gap:var(--tc-space-2) var(--tc-space-3);padding:var(--tc-space-3) 14px;background-color:var(--tc-accent-soft);box-shadow:inset 0 0 0 1px var(--tc-accent-border);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);border-radius:14px;flex-wrap:wrap;align-items:center;display:flex}._banner_g6bg9_275>span{flex:260px}._answered_g6bg9_293{gap:2px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);border-radius:14px;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:10px 14px;display:grid}._answered_question_g6bg9_305{color:var(--tc-text-muted)}._answered_answer_g6bg9_309{font-weight:var(--tc-font-weight-semibold);grid-column:1}._answered_g6bg9_293>:last-child{grid-area:1/2/3}._ask_g6bg9_319{background-color:var(--tc-surface);box-shadow:0 0 0 1.5px var(--tc-accent-border), 0 8px 24px var(--tc-shadow);border-radius:18px;gap:14px;padding:18px;display:grid}._ask_head_g6bg9_330{gap:var(--tc-space-2) 10px;flex-wrap:wrap;align-items:baseline;display:flex}._ask_title_g6bg9_337{font-size:var(--tc-font-size-lg);font-weight:700;line-height:var(--tc-line-height-lg);margin:0}._badge_g6bg9_344{background-color:var(--tc-chip-bg);height:22px;color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);border-radius:999px;align-items:center;padding:0 8px;display:inline-flex}._options_g6bg9_355{gap:var(--tc-space-2);grid-template-columns:repeat(auto-fill,minmax(240px,1fr));display:grid}._option_g6bg9_355{gap:var(--tc-space-1) 10px;padding:var(--tc-space-3) 14px;border:1px solid var(--tc-divider);background-color:var(--tc-canvas);color:var(--tc-text);text-align:start;border-radius:14px;grid-template-columns:auto minmax(0,1fr);display:grid}._option_g6bg9_355[aria-checked=true]{border-color:var(--tc-accent-border);background-color:var(--tc-accent-soft)}._option_mark_g6bg9_378{border:1.5px solid var(--tc-border-field);background-color:var(--tc-field-bg);width:18px;height:18px;color:var(--tc-on-accent);border-radius:6px;grid-row:1/3;place-items:center;margin-top:2px;display:inline-grid}._option_mark_g6bg9_378[data-shape=radio]{border-radius:999px}._option_g6bg9_355[aria-checked=true] ._option_mark_g6bg9_378{border-color:var(--tc-accent);background-color:var(--tc-accent)}._option_label_g6bg9_400{font-weight:var(--tc-font-weight-semibold)}._option_detail_g6bg9_404{color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);line-height:18px}._entries_g6bg9_411{gap:10px;display:grid}._entry_g6bg9_416{gap:var(--tc-space-2);padding:14px var(--tc-space-4);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);display:grid}._entry_head_g6bg9_425{gap:var(--tc-space-2);flex-wrap:wrap;align-items:center;display:flex}._entry_title_g6bg9_432{overflow-wrap:anywhere;font-size:15px;font-weight:650}._entry_content_g6bg9_438{font-size:var(--tc-font-size-sm);white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:21px}._pill_g6bg9_446{background-color:var(--tc-chip-bg);height:20px;color:var(--tc-text-muted);white-space:nowrap;border-radius:999px;align-items:center;padding:0 8px;font-size:11px;font-weight:600;display:inline-flex}._pill_g6bg9_446[data-tone=constant]{background-color:var(--tc-accent);color:var(--tc-on-accent)}._pill_g6bg9_446[data-tone=new]{background-color:var(--tc-marker);color:var(--tc-on-marker)}._pill_g6bg9_446[data-tone=modified]{background-color:var(--tc-accent-soft);box-shadow:inset 0 0 0 1px var(--tc-accent-border);color:var(--tc-text)}._keys_g6bg9_475{gap:var(--tc-space-1);color:var(--tc-text-muted);font-size:var(--tc-font-size-xs);flex-wrap:wrap;align-items:center;display:flex}._key_g6bg9_475{background-color:var(--tc-chip-bg);border-radius:999px;align-items:center;height:22px;padding:0 8px;display:inline-flex}._editor_g6bg9_493{padding:var(--tc-space-4);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1.5px var(--tc-accent-border);gap:14px;display:grid}._foot_g6bg9_502{gap:var(--tc-space-2);padding:var(--tc-space-3) 0;background-color:var(--tc-canvas);flex-wrap:wrap;align-items:center;display:flex;position:sticky;bottom:0}._bubble_g6bg9_514{gap:var(--tc-space-2);padding:var(--tc-space-4);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);border-radius:18px;display:grid}._bubble_name_g6bg9_523{font-size:var(--tc-font-size-sm);font-weight:var(--tc-font-weight-semibold)}._bubble_text_g6bg9_528{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:23px}._outputs_g6bg9_535{gap:var(--tc-space-3);grid-template-columns:repeat(auto-fill,minmax(200px,1fr));display:grid}._output_g6bg9_535{gap:var(--tc-space-2);padding:14px var(--tc-space-4);border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);align-content:start;display:grid}._output_title_g6bg9_551{gap:var(--tc-space-2);font-size:var(--tc-font-size-md);align-items:center;margin:0;display:flex}._known_g6bg9_560{gap:var(--tc-space-4);padding:var(--tc-space-3) var(--tc-space-4) var(--tc-space-4);border-left:1px solid var(--tc-divider);align-content:start;display:grid}._known_block_g6bg9_568{gap:6px;display:grid}._known_title_g6bg9_573{font-size:var(--tc-font-size-sm);margin:0;font-weight:700}._known_line_g6bg9_579{color:var(--tc-text-muted);font-size:var(--tc-font-size-sm);line-height:var(--tc-line-height-sm);overflow-wrap:anywhere}._known_line_g6bg9_579 strong{color:var(--tc-text);font-weight:var(--tc-font-weight-semibold)}._known_toggle_g6bg9_591{display:none}._table_g6bg9_596{gap:6px;display:grid}._table_row_g6bg9_601{gap:var(--tc-space-3);padding:10px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);border-radius:14px;grid-template-columns:40px minmax(0,200px) minmax(0,1fr) 48px auto;align-items:center;display:grid}._table_row_g6bg9_601[data-off]{opacity:.55}._table_name_g6bg9_617{gap:var(--tc-space-1);font-weight:var(--tc-font-weight-semibold);overflow-wrap:anywhere;display:grid}._preview_g6bg9_624{color:var(--tc-text-muted);-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:19px;display:-webkit-box;overflow:hidden}._order_g6bg9_633{color:var(--tc-text-muted);font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);text-align:center}._write_list_g6bg9_641{gap:6px;max-height:46vh;display:grid;overflow:auto}._write_row_g6bg9_648{padding:10px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);font-size:var(--tc-font-size-sm);border-radius:12px;grid-template-columns:auto auto minmax(0,1fr);align-items:start;gap:10px;display:grid}._write_row_g6bg9_648[data-status=same]{opacity:.6}._diff_g6bg9_664{font-size:var(--tc-font-size-xs);gap:2px;line-height:18px;display:grid}._diff_g6bg9_664 del{color:var(--tc-text-muted)}._diff_g6bg9_664 ins{background-color:var(--tc-accent-soft);text-decoration:none}._template_step_g6bg9_681{gap:10px var(--tc-space-3);padding:var(--tc-space-3) 14px;border-radius:var(--tc-radius-card);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);grid-template-columns:auto minmax(0,1fr) auto;align-items:start;display:grid}._template_number_g6bg9_692{background-color:var(--tc-chip-bg);width:24px;height:24px;font-family:var(--tc-font-mono);font-size:var(--tc-font-size-xs);border-radius:999px;place-items:center;margin-top:6px;display:grid}._template_fields_g6bg9_704{gap:var(--tc-space-2);min-width:0;display:grid}._template_side_g6bg9_710{gap:var(--tc-space-2);justify-items:end;display:grid}@container studio-workspace (width<=640px){._layout_g6bg9_5,._columns_g6bg9_86{grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr)}._aside_g6bg9_11{padding:var(--tc-space-1) var(--tc-space-4) var(--tc-space-2);scrollbar-width:none;flex-direction:row;overflow-x:auto}._aside_new_g6bg9_20{flex:none;margin:0}._aside_title_g6bg9_24,._item_meta_g6bg9_56,._dots_g6bg9_61{display:none}._item_g6bg9_30{max-width:200px;padding:6px var(--tc-space-3);background-color:var(--tc-surface);box-shadow:0 0 0 1px var(--tc-divider);border-radius:999px;flex:none}._work_g6bg9_92{padding:var(--tc-space-2) var(--tc-space-4) var(--tc-space-4)}._work_title_g6bg9_128{font-size:22px;line-height:28px}._steps_g6bg9_206{scrollbar-width:none;flex-wrap:nowrap;overflow-x:auto}._step_g6bg9_206{flex:none}._step_g6bg9_206:not([aria-current=step]) ._step_label_g6bg9_769{display:none}._known_g6bg9_560{border-left:0;display:none}._known_g6bg9_560[data-open]{padding:0 var(--tc-space-4) var(--tc-space-4);display:grid}._known_toggle_g6bg9_591{display:inline-flex}._table_row_g6bg9_601{grid-template-columns:40px minmax(0,1fr) auto}._preview_g6bg9_624,._order_g6bg9_633{display:none}._template_step_g6bg9_681{grid-template-columns:minmax(0,1fr)}._template_number_g6bg9_692{display:none}._template_side_g6bg9_710{justify-items:start}}");
+var Q = Be, Ve = /* @__PURE__ */ I({
 	__name: "OpeningSectionSwitch",
 	props: {
 		modelValue: { required: !0 },
@@ -307,7 +307,7 @@ var Z = ze, Be = /* @__PURE__ */ F({
 	},
 	emits: ["update:modelValue"],
 	setup(e) {
-		let t = _(e, "modelValue"), { t: n } = D(), r = k(() => [
+		let t = _(e, "modelValue"), { t: n } = O(), r = A(() => [
 			{
 				value: "build",
 				label: n("opening.sections.build")
@@ -324,9 +324,9 @@ var Z = ze, Be = /* @__PURE__ */ F({
 		function i(e) {
 			(e === "build" || e === "books" || e === "templates") && (t.value = e);
 		}
-		return (e, a) => (d(), T(fe, {
+		return (e, a) => (d(), T(G, {
 			"model-value": t.value,
-			class: A(S(Z).compact),
+			class: j(S(Q).compact),
 			options: r.value,
 			label: S(n)("opening.sections.label"),
 			"onUpdate:modelValue": i
@@ -340,12 +340,12 @@ var Z = ze, Be = /* @__PURE__ */ F({
 });
 //#endregion
 //#region src/ui/views/opening/opening_section.ts
-function Ve(e) {
+function He(e) {
 	return e instanceof Error ? e.message : String(e);
 }
 //#endregion
 //#region src/ui/views/opening/OpeningBooks.vue?vue&type=script&setup=true&lang.ts
-var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", "aria-label"], Ge = ["id"], Ke = ["id", "aria-describedby"], qe = ["id"], Je = ["data-off"], Ye = ["aria-label"], Xe = /* @__PURE__ */ F({
+var Ue = ["aria-label"], We = ["aria-current", "onClick"], Ge = ["placeholder", "aria-label"], Ke = ["id"], qe = ["id", "aria-describedby"], Je = ["id"], Ye = ["data-off"], Xe = ["aria-label"], Ze = /* @__PURE__ */ I({
 	__name: "OpeningBooks",
 	props: /*@__PURE__*/ u({
 		host: {},
@@ -357,14 +357,14 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 	}),
 	emits: /*@__PURE__*/ u(["refresh-lists"], ["update:section"]),
 	setup(e, { emit: t }) {
-		let n = e, r = _(e, "section"), i = t, { t: a } = D(), o = M(n.lists.chat_book ?? n.lists.books[0] ?? null), s = M([]), c = M(!1), l = M(!1), u = M(null);
+		let n = e, r = _(e, "section"), i = t, { t: a } = O(), o = N(n.lists.chat_book ?? n.lists.books[0] ?? null), s = N([]), c = N(!1), l = N(!1), u = N(null);
 		async function m() {
 			if (s.value = [], n.host !== null && o.value !== null) {
 				c.value = !0, u.value = null;
 				try {
 					s.value = await n.host.read_entries(o.value);
 				} catch (e) {
-					u.value = a("opening.errors.failed", { reason: Ve(e) });
+					u.value = a("opening.errors.failed", { reason: He(e) });
 				} finally {
 					c.value = !1;
 				}
@@ -379,32 +379,32 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 			try {
 				return await e(n.host), i("refresh-lists"), await m(), !0;
 			} catch (e) {
-				return u.value = a("opening.errors.failed", { reason: Ve(e) }), !1;
+				return u.value = a("opening.errors.failed", { reason: He(e) }), !1;
 			} finally {
 				l.value = !1;
 			}
 		}
-		let x = M(null), O = M(""), F = k(() => O.value.trim() !== o.value && n.lists.books.includes(O.value.trim()));
+		let x = N(null), E = N(""), k = A(() => E.value.trim() !== o.value && n.lists.books.includes(E.value.trim()));
 		function ee(e) {
-			O.value = e === "rename" ? o.value ?? "" : "", x.value = e;
+			E.value = e === "rename" ? o.value ?? "" : "", x.value = e;
 		}
-		async function L() {
-			let e = O.value.trim(), t = x.value, n = o.value;
-			e === "" || F.value || t === null || await g((r) => t === "create" || n === null ? r.create_worldbook(e) : r.rename_worldbook(n, e)) && (x.value = null, o.value = e);
+		async function I() {
+			let e = E.value.trim(), t = x.value, n = o.value;
+			e === "" || k.value || t === null || await g((r) => t === "create" || n === null ? r.create_worldbook(e) : r.rename_worldbook(n, e)) && (x.value = null, o.value = e);
 		}
-		let R = M(!1);
-		async function te() {
+		let R = N(!1);
+		async function z() {
 			let e = o.value;
 			e !== null && await g((t) => t.delete_worldbook(e)) && (R.value = !1, o.value = null);
 		}
-		async function ne() {
+		async function B() {
 			let e = o.value;
 			e !== null && await g((t) => t.bind_chat_worldbook(e));
 		}
-		function ie(e) {
+		function V(e) {
 			return e === n.lists.chat_book ? a("opening.books.bound") : "";
 		}
-		let ae = M(""), V = M("all"), se = k(() => [
+		let te = N(""), ie = N("all"), ae = A(() => [
 			{
 				value: "all",
 				label: a("opening.books.filter_all")
@@ -417,14 +417,14 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				value: "keyword",
 				label: a("opening.books.filter_keyword")
 			}
-		]), ce = k(() => {
-			let e = ae.value.trim().toLowerCase();
-			return s.value.filter((t) => V.value === "constant" && !t.constant || V.value === "keyword" && t.constant ? !1 : e === "" || [
+		]), oe = A(() => {
+			let e = te.value.trim().toLowerCase();
+			return s.value.filter((t) => ie.value === "constant" && !t.constant || ie.value === "keyword" && t.constant ? !1 : e === "" || [
 				t.name,
 				t.content,
 				...t.keys
 			].some((t) => t.toLowerCase().includes(e)));
-		}), ue = k(() => s.value.filter((e) => e.enabled).length), W = M(null);
+		}), ce = A(() => s.value.filter((e) => e.enabled).length), W = N(null);
 		function de(e) {
 			let t = s.value.reduce((e, t) => Math.max(e, t.order), 0);
 			W.value = e === null ? {
@@ -462,7 +462,7 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				remove: []
 			})) && (W.value = null);
 		}
-		async function _e(e, t) {
+		async function pe(e, t) {
 			let n = o.value;
 			n !== null && await g((r) => r.save_entries(n, {
 				upsert: [{
@@ -472,22 +472,22 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				remove: []
 			}));
 		}
-		let K = M(null);
+		let G = N(null);
 		async function ve() {
-			let e = K.value, t = o.value;
+			let e = G.value, t = o.value;
 			e !== null && t !== null && (await g((n) => n.save_entries(t, {
 				upsert: [],
 				remove: [e.uid]
-			})), K.value = null);
+			})), G.value = null);
 		}
-		return (t, n) => (d(), y("div", { class: A(S(Z).layout) }, [
-			E("aside", {
-				class: A(S(Z).aside),
+		return (t, n) => (d(), y("div", { class: j(S(Q).layout) }, [
+			D("aside", {
+				class: j(S(Q).aside),
 				"aria-label": S(a)("opening.books.list_label")
 			}, [
-				I(z, {
-					class: A(S(Z).aside_new),
-					icon: S(H),
+				L(H, {
+					class: j(S(Q).aside_new),
+					icon: S(le),
 					label: S(a)("opening.books.new"),
 					disabled: e.host === null,
 					onClick: n[0] ||= (e) => ee("create")
@@ -499,43 +499,43 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				]),
 				e.lists.books.length > 0 ? (d(), y("div", {
 					key: 0,
-					class: A(S(Z).aside_title)
+					class: j(S(Q).aside_title)
 				}, w(S(a)("opening.books.list_title")), 3)) : C("", !0),
-				(d(!0), y(N, null, p(e.lists.books, (e) => (d(), y("button", {
+				(d(!0), y(P, null, p(e.lists.books, (e) => (d(), y("button", {
 					key: e,
 					type: "button",
-					class: A(["tc-interactive", S(Z).item]),
+					class: j(["tc-interactive", S(Q).item]),
 					"aria-current": e === o.value ? "true" : void 0,
 					onClick: (t) => o.value = e
-				}, [E("span", { class: A(S(Z).item_name) }, w(e), 3), ie(e) === "" ? C("", !0) : (d(), y("span", {
+				}, [D("span", { class: j(S(Q).item_name) }, w(e), 3), V(e) === "" ? C("", !0) : (d(), y("span", {
 					key: 0,
-					class: A(S(Z).item_meta)
-				}, w(ie(e)), 3))], 10, Ue))), 128))
-			], 10, He),
-			E("div", { class: A(S(Z).work) }, [E("div", {
-				class: A(S(Z).work_inner),
+					class: j(S(Q).item_meta)
+				}, w(V(e)), 3))], 10, We))), 128))
+			], 10, Ue),
+			D("div", { class: j(S(Q).work) }, [D("div", {
+				class: j(S(Q).work_inner),
 				"data-wide": ""
-			}, [E("div", { class: A(S(Z).topline) }, [
-				I(Be, {
+			}, [D("div", { class: j(S(Q).topline) }, [
+				L(Ve, {
 					modelValue: r.value,
 					"onUpdate:modelValue": n[1] ||= (e) => r.value = e
 				}, null, 8, ["modelValue"]),
-				E("span", { class: A(S(Z).spacer) }, null, 2),
-				o.value === null ? C("", !0) : (d(), y(N, { key: 0 }, [
-					o.value !== e.lists.chat_book && e.host?.chat_name() !== null ? (d(), T(z, {
+				D("span", { class: j(S(Q).spacer) }, null, 2),
+				o.value === null ? C("", !0) : (d(), y(P, { key: 0 }, [
+					o.value !== e.lists.chat_book && e.host?.chat_name() !== null ? (d(), T(H, {
 						key: 0,
-						icon: S(Se),
+						icon: S(we),
 						label: S(a)("opening.books.bind"),
 						variant: "ghost",
 						disabled: l.value,
-						onClick: ne
+						onClick: B
 					}, null, 8, [
 						"icon",
 						"label",
 						"disabled"
 					])) : C("", !0),
-					I(z, {
-						icon: S(oe),
+					L(H, {
+						icon: S(se),
 						label: S(a)("opening.books.rename"),
 						variant: "ghost",
 						disabled: l.value,
@@ -545,8 +545,8 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 						"label",
 						"disabled"
 					]),
-					I(G, {
-						icon: S(le),
+					L(K, {
+						icon: S(ue),
 						label: S(a)("opening.books.delete"),
 						destructive: "",
 						disabled: l.value,
@@ -557,36 +557,36 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 						"disabled"
 					])
 				], 64))
-			], 2), e.host === null ? (d(), T(B, {
+			], 2), e.host === null ? (d(), T(ne, {
 				key: 0,
 				status: "empty",
 				"empty-title": S(a)("opening.books.unavailable_title"),
 				"empty-message": e.hostError ?? S(a)("opening.books.unavailable_message")
 			}, null, 8, ["empty-title", "empty-message"])) : o.value === null ? (d(), y("div", {
 				key: 1,
-				class: A(S(Z).work_head)
-			}, [E("h1", { class: A(S(Z).work_title) }, w(S(a)("opening.books.title")), 3), E("p", { class: A(S(Z).work_description) }, w(S(a)("opening.books.empty")), 3)], 2)) : (d(), y(N, { key: 2 }, [
-				E("div", { class: A(S(Z).work_head) }, [E("h1", { class: A(S(Z).work_title) }, w(o.value), 3), E("p", { class: A(S(Z).work_description) }, [P(w(S(a)("opening.books.summary", {
+				class: j(S(Q).work_head)
+			}, [D("h1", { class: j(S(Q).work_title) }, w(S(a)("opening.books.title")), 3), D("p", { class: j(S(Q).work_description) }, w(S(a)("opening.books.empty")), 3)], 2)) : (d(), y(P, { key: 2 }, [
+				D("div", { class: j(S(Q).work_head) }, [D("h1", { class: j(S(Q).work_title) }, w(o.value), 3), D("p", { class: j(S(Q).work_description) }, [F(w(S(a)("opening.books.summary", {
 					n: s.value.length,
-					enabled: ue.value
-				})) + " ", 1), o.value === e.lists.chat_book ? (d(), y(N, { key: 0 }, [P(" · " + w(S(a)("opening.books.bound")), 1)], 64)) : C("", !0)], 2)], 2),
+					enabled: ce.value
+				})) + " ", 1), o.value === e.lists.chat_book ? (d(), y(P, { key: 0 }, [F(" · " + w(S(a)("opening.books.bound")), 1)], 64)) : C("", !0)], 2)], 2),
 				u.value === null ? C("", !0) : (d(), y("p", {
 					key: 0,
-					class: A(S(Z).error),
+					class: j(S(Q).error),
 					role: "alert"
 				}, w(u.value), 3)),
-				E("div", { class: A(S(Z).row) }, [
-					f(E("input", {
-						"onUpdate:modelValue": n[4] ||= (e) => ae.value = e,
-						class: A([S(Z).input, S(Z).spacer]),
+				D("div", { class: j(S(Q).row) }, [
+					f(D("input", {
+						"onUpdate:modelValue": n[4] ||= (e) => te.value = e,
+						class: j([S(Q).input, S(Q).spacer]),
 						type: "search",
 						placeholder: S(a)("opening.books.search"),
 						"aria-label": S(a)("opening.books.search")
-					}, null, 10, We), [[b, ae.value]]),
-					I(re, {
-						modelValue: V.value,
-						"onUpdate:modelValue": n[5] ||= (e) => V.value = e,
-						options: se.value,
+					}, null, 10, Ge), [[b, te.value]]),
+					L(re, {
+						modelValue: ie.value,
+						"onUpdate:modelValue": n[5] ||= (e) => ie.value = e,
+						options: ae.value,
 						placeholder: S(a)("opening.books.filter_all"),
 						"aria-label": S(a)("opening.books.filter_label")
 					}, null, 8, [
@@ -595,8 +595,8 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 						"placeholder",
 						"aria-label"
 					]),
-					I(z, {
-						icon: S(H),
+					L(H, {
+						icon: S(le),
 						label: S(a)("opening.books.add_entry"),
 						disabled: l.value,
 						onClick: n[6] ||= (e) => de(null)
@@ -608,18 +608,18 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				], 2),
 				W.value === null ? C("", !0) : (d(), y("div", {
 					key: 1,
-					class: A(S(Z).editor)
+					class: j(S(Q).editor)
 				}, [
-					E("div", { class: A(S(Z).grid3) }, [I(U, { label: S(a)("opening.entry.title_label") }, {
-						default: j(({ fieldId: e }) => [f(E("input", {
+					D("div", { class: j(S(Q).grid3) }, [L(U, { label: S(a)("opening.entry.title_label") }, {
+						default: M(({ fieldId: e }) => [f(D("input", {
 							id: e,
 							"onUpdate:modelValue": n[7] ||= (e) => W.value.name = e,
-							class: A(S(Z).input),
+							class: j(S(Q).input),
 							maxlength: "120"
-						}, null, 10, Ge), [[b, W.value.name]])]),
+						}, null, 10, Ke), [[b, W.value.name]])]),
 						_: 1
-					}, 8, ["label"]), I(U, { label: S(a)("opening.books.order_label") }, {
-						default: j(({ fieldId: e }) => [I(pe, {
+					}, 8, ["label"]), L(U, { label: S(a)("opening.books.order_label") }, {
+						default: M(({ fieldId: e }) => [L(me, {
 							id: e,
 							modelValue: W.value.order,
 							"onUpdate:modelValue": n[8] ||= (e) => W.value.order = e,
@@ -637,7 +637,7 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 						])]),
 						_: 1
 					}, 8, ["label"])], 2),
-					I(he, {
+					L(ge, {
 						modelValue: W.value.constant,
 						"onUpdate:modelValue": n[9] ||= (e) => W.value.constant = e,
 						label: S(a)("opening.entry.constant_label"),
@@ -652,30 +652,30 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 						label: S(a)("opening.entry.keys_label"),
 						hint: S(a)("opening.entry.keys_hint")
 					}, {
-						default: j(({ fieldId: e, describedBy: t }) => [f(E("input", {
+						default: M(({ fieldId: e, describedBy: t }) => [f(D("input", {
 							id: e,
 							"onUpdate:modelValue": n[10] ||= (e) => W.value.keys = e,
-							class: A(S(Z).input),
+							class: j(S(Q).input),
 							"aria-describedby": t
-						}, null, 10, Ke), [[b, W.value.keys]])]),
+						}, null, 10, qe), [[b, W.value.keys]])]),
 						_: 1
 					}, 8, ["label", "hint"])),
-					I(U, { label: S(a)("opening.entry.content_label") }, {
-						default: j(({ fieldId: e }) => [f(E("textarea", {
+					L(U, { label: S(a)("opening.entry.content_label") }, {
+						default: M(({ fieldId: e }) => [f(D("textarea", {
 							id: e,
 							"onUpdate:modelValue": n[11] ||= (e) => W.value.content = e,
-							class: A(S(Z).text_area)
-						}, null, 10, qe), [[b, W.value.content]])]),
+							class: j(S(Q).text_area)
+						}, null, 10, Je), [[b, W.value.content]])]),
 						_: 1
 					}, 8, ["label"]),
-					E("div", { class: A(S(Z).row) }, [
-						E("span", { class: A(S(Z).spacer) }, null, 2),
-						I(z, {
+					D("div", { class: j(S(Q).row) }, [
+						D("span", { class: j(S(Q).spacer) }, null, 2),
+						L(H, {
 							label: S(a)("common.actions.cancel"),
 							variant: "ghost",
 							onClick: n[12] ||= (e) => W.value = null
 						}, null, 8, ["label"]),
-						I(z, {
+						L(H, {
 							label: S(a)("common.actions.save"),
 							variant: "primary",
 							pending: l.value,
@@ -688,40 +688,40 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 						])
 					], 2)
 				], 2)),
-				I(B, {
-					status: c.value ? "loading" : ce.value.length === 0 ? "empty" : "ready",
+				L(ne, {
+					status: c.value ? "loading" : oe.value.length === 0 ? "empty" : "ready",
 					"empty-title": S(a)("opening.books.no_entries"),
 					"min-height": "80px"
 				}, {
-					default: j(() => [E("div", { class: A(S(Z).table) }, [(d(!0), y(N, null, p(ce.value, (e) => (d(), y("div", {
+					default: M(() => [D("div", { class: j(S(Q).table) }, [(d(!0), y(P, null, p(oe.value, (e) => (d(), y("div", {
 						key: e.uid,
-						class: A(S(Z).table_row),
+						class: j(S(Q).table_row),
 						"data-off": e.enabled ? void 0 : ""
 					}, [
-						I(he, {
+						L(ge, {
 							"model-value": e.enabled,
 							label: S(a)("opening.books.enabled", { name: e.name }),
 							"label-hidden": "",
 							disabled: l.value,
-							"onUpdate:modelValue": (t) => _e(e, t)
+							"onUpdate:modelValue": (t) => pe(e, t)
 						}, null, 8, [
 							"model-value",
 							"label",
 							"disabled",
 							"onUpdate:modelValue"
 						]),
-						E("span", { class: A(S(Z).table_name) }, [P(w(e.name) + " ", 1), E("span", { class: A(S(Z).keys) }, [e.constant ? (d(), y("span", {
+						D("span", { class: j(S(Q).table_name) }, [F(w(e.name) + " ", 1), D("span", { class: j(S(Q).keys) }, [e.constant ? (d(), y("span", {
 							key: 0,
-							class: A(S(Z).pill),
+							class: j(S(Q).pill),
 							"data-tone": "constant"
-						}, w(S(a)("opening.entry.constant")), 3)) : (d(!0), y(N, { key: 1 }, p(e.keys.slice(0, 4), (e) => (d(), y("span", {
+						}, w(S(a)("opening.entry.constant")), 3)) : (d(!0), y(P, { key: 1 }, p(e.keys.slice(0, 4), (e) => (d(), y("span", {
 							key: e,
-							class: A(S(Z).key)
+							class: j(S(Q).key)
 						}, w(e), 3))), 128))], 2)], 2),
-						E("span", { class: A(S(Z).preview) }, w(e.content), 3),
-						E("span", { class: A(S(Z).order) }, w(e.order), 3),
-						E("span", { class: A(S(Z).row) }, [I(G, {
-							icon: S(oe),
+						D("span", { class: j(S(Q).preview) }, w(e.content), 3),
+						D("span", { class: j(S(Q).order) }, w(e.order), 3),
+						D("span", { class: j(S(Q).row) }, [L(K, {
+							icon: S(se),
 							label: S(a)("opening.entry.edit"),
 							size: "sm",
 							disabled: l.value,
@@ -731,54 +731,54 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 							"label",
 							"disabled",
 							"onClick"
-						]), I(G, {
-							icon: S(le),
+						]), L(K, {
+							icon: S(ue),
 							label: S(a)("opening.entry.remove"),
 							size: "sm",
 							destructive: "",
 							disabled: l.value,
-							onClick: (t) => K.value = e
+							onClick: (t) => G.value = e
 						}, null, 8, [
 							"icon",
 							"label",
 							"disabled",
 							"onClick"
 						])], 2)
-					], 10, Je))), 128))], 2)]),
+					], 10, Ye))), 128))], 2)]),
 					_: 1
 				}, 8, ["status", "empty-title"])
 			], 64))], 2)], 2),
-			I(ge, h({
+			L(_e, h({
 				open: x.value !== null,
 				title: x.value === "rename" ? S(a)("opening.books.rename") : S(a)("opening.books.new")
 			}, x.value === "rename" ? { description: S(a)("opening.books.rename_hint") } : {}, {
 				"close-label": S(a)("common.actions.close"),
 				"onUpdate:open": n[15] ||= (e) => x.value = e ? x.value : null
 			}), {
-				default: j(() => [E("div", { class: A(S(Z).work_inner) }, [
-					f(E("input", {
-						"onUpdate:modelValue": n[13] ||= (e) => O.value = e,
-						class: A(S(Z).input),
+				default: M(() => [D("div", { class: j(S(Q).work_inner) }, [
+					f(D("input", {
+						"onUpdate:modelValue": n[13] ||= (e) => E.value = e,
+						class: j(S(Q).input),
 						maxlength: "120",
 						"aria-label": S(a)("opening.books.name_label")
-					}, null, 10, Ye), [[b, O.value]]),
-					F.value ? (d(), y("p", {
+					}, null, 10, Xe), [[b, E.value]]),
+					k.value ? (d(), y("p", {
 						key: 0,
-						class: A(S(Z).error)
+						class: j(S(Q).error)
 					}, w(S(a)("opening.write.name_taken")), 3)) : C("", !0),
-					E("div", { class: A(S(Z).row) }, [
-						E("span", { class: A(S(Z).spacer) }, null, 2),
-						I(z, {
+					D("div", { class: j(S(Q).row) }, [
+						D("span", { class: j(S(Q).spacer) }, null, 2),
+						L(H, {
 							label: S(a)("common.actions.cancel"),
 							variant: "ghost",
 							onClick: n[14] ||= (e) => x.value = null
 						}, null, 8, ["label"]),
-						I(z, {
+						L(H, {
 							label: S(a)("common.actions.save"),
 							variant: "primary",
 							pending: l.value,
-							disabled: O.value.trim() === "" || F.value,
-							onClick: L
+							disabled: E.value.trim() === "" || k.value,
+							onClick: I
 						}, null, 8, [
 							"label",
 							"pending",
@@ -792,7 +792,7 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				"title",
 				"close-label"
 			]),
-			I(me, {
+			L(he, {
 				open: R.value,
 				"onUpdate:open": n[16] ||= (e) => R.value = e,
 				title: S(a)("opening.books.delete_title", { name: o.value ?? "" }),
@@ -800,7 +800,7 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				"confirm-label": S(a)("common.actions.delete"),
 				"cancel-label": S(a)("common.actions.cancel"),
 				pending: l.value,
-				onConfirm: te
+				onConfirm: z
 			}, null, 8, [
 				"open",
 				"title",
@@ -809,14 +809,14 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 				"cancel-label",
 				"pending"
 			]),
-			I(me, {
-				open: K.value !== null,
-				title: S(a)("opening.books.delete_entry_title", { name: K.value?.name ?? "" }),
+			L(he, {
+				open: G.value !== null,
+				title: S(a)("opening.books.delete_entry_title", { name: G.value?.name ?? "" }),
 				description: S(a)("opening.books.delete_entry_description"),
 				"confirm-label": S(a)("common.actions.delete"),
 				"cancel-label": S(a)("common.actions.cancel"),
 				pending: l.value,
-				"onUpdate:open": n[17] ||= (e) => K.value = e ? K.value : null,
+				"onUpdate:open": n[17] ||= (e) => G.value = e ? G.value : null,
 				onConfirm: ve
 			}, null, 8, [
 				"open",
@@ -831,18 +831,18 @@ var He = ["aria-label"], Ue = ["aria-current", "onClick"], We = ["placeholder", 
 });
 //#endregion
 //#region src/modules/opening/opening_output.ts
-function Ze(e) {
+function Qe(e) {
 	return e.states.flatMap((e) => e.status === "done" || e.status === "stale" ? e.entries : []);
 }
-var Qe = (e) => e.trim().toLowerCase();
-function $e(e, t) {
+var $e = (e) => e.trim().toLowerCase();
+function et(e, t) {
 	let n = (e) => [...e].sort().join("\n");
 	return n(e) === n(t);
 }
-function et(e, t) {
-	let n = new Map(t.map((e) => [Qe(e.name), e]));
+function tt(e, t) {
+	let n = new Map(t.map((e) => [$e(e.name), e]));
 	return e.map((e) => {
-		let t = n.get(Qe(e.title)) ?? null;
+		let t = n.get($e(e.title)) ?? null;
 		return t === null ? {
 			entry: e,
 			existing: null,
@@ -850,12 +850,12 @@ function et(e, t) {
 		} : {
 			entry: e,
 			existing: t,
-			status: t.content.trim() === e.content.trim() && t.constant === e.constant && (e.constant || $e(t.keys, e.keys)) ? "same" : "modified"
+			status: t.content.trim() === e.content.trim() && t.constant === e.constant && (e.constant || et(t.keys, e.keys)) ? "same" : "modified"
 		};
 	});
 }
-var tt = 10;
-function nt(e, t, n) {
+var nt = 10;
+function rt(e, t, n) {
 	let r = n.reduce((e, t) => Math.max(e, t.order), 0);
 	return {
 		upsert: e.filter((e) => e.status !== "same" && t.has(e.entry.id)).map((e) => {
@@ -865,7 +865,7 @@ function nt(e, t, n) {
 				keys: e.entry.constant ? [] : e.entry.keys,
 				content: e.entry.content
 			};
-			return e.existing === null ? (r += tt, {
+			return e.existing === null ? (r += nt, {
 				...t,
 				enabled: !0,
 				order: r
@@ -879,7 +879,7 @@ function nt(e, t, n) {
 		remove: []
 	};
 }
-function rt(e, t) {
+function it(e, t) {
 	let n = [
 		`# ${e.display_name}`,
 		"",
@@ -901,7 +901,7 @@ function rt(e, t) {
 }
 //#endregion
 //#region src/ui/views/opening/OpeningEntryCard.vue?vue&type=script&setup=true&lang.ts
-var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ */ F({
+var at = ["id"], ot = ["id", "aria-describedby"], st = ["id"], ct = /* @__PURE__ */ I({
 	__name: "OpeningEntryCard",
 	props: {
 		entry: {},
@@ -916,7 +916,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 		"cancel"
 	],
 	setup(e, { emit: t }) {
-		let n = e, r = t, { t: i } = D(), a = M(n.editing), o = M(""), s = M(!1), c = M(""), l = M("");
+		let n = e, r = t, { t: i } = O(), a = N(n.editing), o = N(""), s = N(!1), c = N(""), l = N("");
 		function u() {
 			o.value = n.entry.title, s.value = n.entry.constant, c.value = n.entry.keys.join(", "), l.value = n.entry.content, a.value = !0;
 		}
@@ -936,18 +936,18 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 		}
 		return (t, n) => a.value ? (d(), y("div", {
 			key: 0,
-			class: A(S(Z).editor)
+			class: j(S(Q).editor)
 		}, [
-			I(U, { label: S(i)("opening.entry.title_label") }, {
-				default: j(({ fieldId: e }) => [f(E("input", {
+			L(U, { label: S(i)("opening.entry.title_label") }, {
+				default: M(({ fieldId: e }) => [f(D("input", {
 					id: e,
 					"onUpdate:modelValue": n[0] ||= (e) => o.value = e,
-					class: A(S(Z).input),
+					class: j(S(Q).input),
 					maxlength: "120"
-				}, null, 10, it), [[b, o.value]])]),
+				}, null, 10, at), [[b, o.value]])]),
 				_: 1
 			}, 8, ["label"]),
-			I(he, {
+			L(ge, {
 				modelValue: s.value,
 				"onUpdate:modelValue": n[1] ||= (e) => s.value = e,
 				label: S(i)("opening.entry.constant_label"),
@@ -962,31 +962,31 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				label: S(i)("opening.entry.keys_label"),
 				hint: S(i)("opening.entry.keys_hint")
 			}, {
-				default: j(({ fieldId: e, describedBy: t }) => [f(E("input", {
+				default: M(({ fieldId: e, describedBy: t }) => [f(D("input", {
 					id: e,
 					"onUpdate:modelValue": n[2] ||= (e) => c.value = e,
-					class: A(S(Z).input),
+					class: j(S(Q).input),
 					"aria-describedby": t
-				}, null, 10, at), [[b, c.value]])]),
+				}, null, 10, ot), [[b, c.value]])]),
 				_: 1
 			}, 8, ["label", "hint"])),
-			I(U, { label: S(i)("opening.entry.content_label") }, {
-				default: j(({ fieldId: e }) => [f(E("textarea", {
+			L(U, { label: S(i)("opening.entry.content_label") }, {
+				default: M(({ fieldId: e }) => [f(D("textarea", {
 					id: e,
 					"onUpdate:modelValue": n[3] ||= (e) => l.value = e,
-					class: A(S(Z).text_area),
+					class: j(S(Q).text_area),
 					maxlength: "8000"
-				}, null, 10, Q), [[b, l.value]])]),
+				}, null, 10, st), [[b, l.value]])]),
 				_: 1
 			}, 8, ["label"]),
-			E("div", { class: A(S(Z).row) }, [
-				E("span", { class: A(S(Z).spacer) }, null, 2),
-				I(z, {
+			D("div", { class: j(S(Q).row) }, [
+				D("span", { class: j(S(Q).spacer) }, null, 2),
+				L(H, {
 					label: S(i)("common.actions.cancel"),
 					variant: "ghost",
 					onClick: h
 				}, null, 8, ["label"]),
-				I(z, {
+				L(H, {
 					label: S(i)("common.actions.save"),
 					variant: "primary",
 					disabled: o.value.trim() === "" || l.value.trim() === "",
@@ -995,21 +995,21 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 			], 2)
 		], 2)) : (d(), y("article", {
 			key: 1,
-			class: A(S(Z).entry)
+			class: j(S(Q).entry)
 		}, [
-			E("div", { class: A(S(Z).entry_head) }, [
-				E("span", { class: A(S(Z).entry_title) }, w(e.entry.title), 3),
+			D("div", { class: j(S(Q).entry_head) }, [
+				D("span", { class: j(S(Q).entry_title) }, w(e.entry.title), 3),
 				e.entry.constant ? (d(), y("span", {
 					key: 0,
-					class: A(S(Z).pill),
+					class: j(S(Q).pill),
 					"data-tone": "constant"
 				}, w(S(i)("opening.entry.constant")), 3)) : (d(), y("span", {
 					key: 1,
-					class: A(S(Z).pill)
+					class: j(S(Q).pill)
 				}, w(S(i)("opening.entry.keyword")), 3)),
-				E("span", { class: A(S(Z).spacer) }, null, 2),
-				I(G, {
-					icon: S(se),
+				D("span", { class: j(S(Q).spacer) }, null, 2),
+				L(K, {
+					icon: S(ce),
 					label: S(i)("opening.entry.rewrite"),
 					size: "sm",
 					disabled: e.disabled || e.rewriting,
@@ -1019,8 +1019,8 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					"label",
 					"disabled"
 				]),
-				I(G, {
-					icon: S(oe),
+				L(K, {
+					icon: S(se),
 					label: S(i)("opening.entry.edit"),
 					size: "sm",
 					disabled: e.disabled,
@@ -1030,8 +1030,8 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					"label",
 					"disabled"
 				]),
-				I(G, {
-					icon: S(le),
+				L(K, {
+					icon: S(ue),
 					label: S(i)("opening.entry.remove"),
 					size: "sm",
 					destructive: "",
@@ -1045,20 +1045,20 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 			], 2),
 			!e.entry.constant && e.entry.keys.length > 0 ? (d(), y("div", {
 				key: 0,
-				class: A(S(Z).keys)
-			}, [P(w(S(i)("opening.entry.keys_label")) + " ", 1), (d(!0), y(N, null, p(e.entry.keys, (e) => (d(), y("span", {
+				class: j(S(Q).keys)
+			}, [F(w(S(i)("opening.entry.keys_label")) + " ", 1), (d(!0), y(P, null, p(e.entry.keys, (e) => (d(), y("span", {
 				key: e,
-				class: A(S(Z).key)
+				class: j(S(Q).key)
 			}, w(e), 3))), 128))], 2)) : C("", !0),
 			e.rewriting ? (d(), y("p", {
 				key: 1,
-				class: A(S(Z).hint),
+				class: j(S(Q).hint),
 				role: "status"
 			}, w(S(i)("opening.status.rewriting")), 3)) : C("", !0),
-			E("p", { class: A(S(Z).entry_content) }, w(e.entry.content), 3)
+			D("p", { class: j(S(Q).entry_content) }, w(e.entry.content), 3)
 		], 2));
 	}
-}), st = ["aria-label"], ct = ["data-status"], lt = ["data-tone"], ut = /* @__PURE__ */ F({
+}), lt = ["aria-label"], ut = ["data-status"], dt = ["data-tone"], ft = /* @__PURE__ */ I({
 	__name: "OpeningWriteDialog",
 	props: /*@__PURE__*/ u({
 		host: {},
@@ -1074,77 +1074,77 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 	}),
 	emits: /*@__PURE__*/ u(["written"], ["update:open"]),
 	setup(e, { emit: t }) {
-		let n = e, r = _(e, "open"), i = t, { t: a } = D(), o = M("new"), s = M(""), c = M(void 0), l = M([]), u = M(!1), m = M(!1), h = M(null), g = M(/* @__PURE__ */ new Set()), x = k(() => [{
+		let n = e, r = _(e, "open"), i = t, { t: a } = O(), o = N("new"), s = N(""), c = N(void 0), l = N([]), u = N(!1), m = N(!1), h = N(null), g = N(/* @__PURE__ */ new Set()), x = A(() => [{
 			value: "new",
 			label: a("opening.write.mode_new")
 		}, {
 			value: "existing",
 			label: a("opening.write.mode_existing")
-		}]), O = k(() => n.lists.books.map((e) => ({
+		}]), E = A(() => n.lists.books.map((e) => ({
 			value: e,
 			label: e
-		}))), P = k(() => et(n.entries, o.value === "existing" ? l.value : []));
-		function F() {
-			g.value = new Set(P.value.filter((e) => e.status !== "same").map((e) => e.entry.id));
+		}))), k = A(() => tt(n.entries, o.value === "existing" ? l.value : []));
+		function ee() {
+			g.value = new Set(k.value.filter((e) => e.status !== "same").map((e) => e.entry.id));
 		}
-		async function ee() {
+		async function F() {
 			if (l.value = [], o.value !== "existing" || c.value === void 0) {
-				F();
+				ee();
 				return;
 			}
 			u.value = !0, h.value = null;
 			try {
 				l.value = await n.host.read_entries(c.value);
 			} catch (e) {
-				h.value = a("opening.write.read_failed", { reason: Ve(e) });
+				h.value = a("opening.write.read_failed", { reason: He(e) });
 			} finally {
-				u.value = !1, F();
+				u.value = !1, ee();
 			}
 		}
 		v(r, (e) => {
-			e && (h.value = null, s.value = n.defaultName, c.value = n.lists.chat_book ?? n.lists.books[0], o.value = n.lists.chat_book === null ? "new" : "existing", ee());
+			e && (h.value = null, s.value = n.defaultName, c.value = n.lists.chat_book ?? n.lists.books[0], o.value = n.lists.chat_book === null ? "new" : "existing", F());
 		}), v([o, c], () => {
-			ee();
+			F();
 		});
-		function L(e, t) {
+		function I(e, t) {
 			let n = new Set(g.value);
 			t === !0 ? n.add(e) : n.delete(e), g.value = n;
 		}
-		let R = k(() => o.value === "new" ? s.value.trim() : c.value ?? ""), te = k(() => o.value === "new" && n.lists.books.includes(s.value.trim())), ne = k(() => P.value.filter((e) => e.status !== "same" && g.value.has(e.entry.id)).length), B = k(() => r.value ? n.host.chat_name() : null);
-		function ie(e) {
+		let R = A(() => o.value === "new" ? s.value.trim() : c.value ?? ""), z = A(() => o.value === "new" && n.lists.books.includes(s.value.trim())), B = A(() => k.value.filter((e) => e.status !== "same" && g.value.has(e.entry.id)).length), V = A(() => r.value ? n.host.chat_name() : null);
+		function te(e) {
 			switch (e.status) {
 				case "new": return a("opening.write.status_new");
 				case "modified": return a("opening.write.status_modified");
 				case "same": return a("opening.write.status_same");
 			}
 		}
-		async function ae() {
+		async function ne() {
 			let e = R.value;
-			if (!(e === "" || te.value)) {
+			if (!(e === "" || z.value)) {
 				m.value = !0, h.value = null;
 				try {
 					o.value === "new" && await n.host.create_worldbook(e);
 					let t = o.value === "new" ? [] : l.value;
-					await n.host.save_entries(e, nt(P.value, g.value, t)), B.value !== null && await n.host.bind_chat_worldbook(e), i("written", e), r.value = !1;
+					await n.host.save_entries(e, rt(k.value, g.value, t)), V.value !== null && await n.host.bind_chat_worldbook(e), i("written", e), r.value = !1;
 				} catch (e) {
-					h.value = a("opening.write.failed", { reason: Ve(e) });
+					h.value = a("opening.write.failed", { reason: He(e) });
 				} finally {
 					m.value = !1;
 				}
 			}
 		}
-		return (e, t) => (d(), T(ge, {
+		return (e, t) => (d(), T(_e, {
 			open: r.value,
 			"onUpdate:open": t[4] ||= (e) => r.value = e,
 			title: S(a)("opening.write.title"),
 			description: S(a)("opening.write.description"),
 			"close-label": S(a)("common.actions.close")
 		}, {
-			default: j(() => [E("div", { class: A(S(Z).work_inner) }, [
-				I(fe, {
+			default: M(() => [D("div", { class: j(S(Q).work_inner) }, [
+				L(G, {
 					modelValue: o.value,
 					"onUpdate:modelValue": t[0] ||= (e) => o.value = e,
-					class: A(S(Z).compact),
+					class: j(S(Q).compact),
 					options: x.value,
 					label: S(a)("opening.write.mode_label")
 				}, null, 8, [
@@ -1156,14 +1156,14 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				o.value === "new" ? f((d(), y("input", {
 					key: 0,
 					"onUpdate:modelValue": t[1] ||= (e) => s.value = e,
-					class: A(S(Z).input),
+					class: j(S(Q).input),
 					maxlength: "120",
 					"aria-label": S(a)("opening.write.name_label")
-				}, null, 10, st)), [[b, s.value]]) : (d(), T(re, {
+				}, null, 10, lt)), [[b, s.value]]) : (d(), T(re, {
 					key: 1,
 					modelValue: c.value,
 					"onUpdate:modelValue": t[2] ||= (e) => c.value = e,
-					options: O.value,
+					options: E.value,
 					placeholder: S(a)("opening.write.book_placeholder"),
 					"aria-label": S(a)("opening.write.book_label")
 				}, null, 8, [
@@ -1172,65 +1172,65 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					"placeholder",
 					"aria-label"
 				])),
-				te.value ? (d(), y("p", {
+				z.value ? (d(), y("p", {
 					key: 2,
-					class: A(S(Z).error)
+					class: j(S(Q).error)
 				}, w(S(a)("opening.write.name_taken")), 3)) : C("", !0),
 				u.value ? (d(), y("p", {
 					key: 3,
-					class: A(S(Z).hint),
+					class: j(S(Q).hint),
 					role: "status"
 				}, w(S(a)("opening.write.loading")), 3)) : (d(), y("div", {
 					key: 4,
-					class: A(S(Z).write_list)
-				}, [(d(!0), y(N, null, p(P.value, (e) => (d(), y("div", {
+					class: j(S(Q).write_list)
+				}, [(d(!0), y(P, null, p(k.value, (e) => (d(), y("div", {
 					key: e.entry.id,
-					class: A(S(Z).write_row),
+					class: j(S(Q).write_row),
 					"data-status": e.status
 				}, [
-					I(V, {
+					L(oe, {
 						"model-value": e.status !== "same" && g.value.has(e.entry.id),
 						label: e.entry.title,
 						"label-hidden": "",
 						disabled: e.status === "same",
-						"onUpdate:modelValue": (t) => L(e.entry.id, t)
+						"onUpdate:modelValue": (t) => I(e.entry.id, t)
 					}, null, 8, [
 						"model-value",
 						"label",
 						"disabled",
 						"onUpdate:modelValue"
 					]),
-					E("span", {
-						class: A(S(Z).pill),
+					D("span", {
+						class: j(S(Q).pill),
 						"data-tone": e.status
-					}, w(ie(e)), 11, lt),
-					E("span", null, [E("strong", null, w(e.entry.title), 1), e.status === "modified" && e.existing !== null ? (d(), y("span", {
+					}, w(te(e)), 11, dt),
+					D("span", null, [D("strong", null, w(e.entry.title), 1), e.status === "modified" && e.existing !== null ? (d(), y("span", {
 						key: 0,
-						class: A(S(Z).diff)
-					}, [E("del", null, w(e.existing.content), 1), E("ins", null, w(e.entry.content), 1)], 2)) : C("", !0)])
-				], 10, ct))), 128))], 2)),
-				E("p", { class: A(S(Z).hint) }, w(B.value === null ? S(a)("opening.write.no_chat") : S(a)("opening.write.bind_note", {
+						class: j(S(Q).diff)
+					}, [D("del", null, w(e.existing.content), 1), D("ins", null, w(e.entry.content), 1)], 2)) : C("", !0)])
+				], 10, ut))), 128))], 2)),
+				D("p", { class: j(S(Q).hint) }, w(V.value === null ? S(a)("opening.write.no_chat") : S(a)("opening.write.bind_note", {
 					book: R.value,
-					chat: B.value
+					chat: V.value
 				})), 3),
 				h.value === null ? C("", !0) : (d(), y("p", {
 					key: 5,
-					class: A(S(Z).error),
+					class: j(S(Q).error),
 					role: "alert"
 				}, w(h.value), 3)),
-				E("div", { class: A(S(Z).row) }, [
-					E("span", { class: A(S(Z).spacer) }, null, 2),
-					I(z, {
+				D("div", { class: j(S(Q).row) }, [
+					D("span", { class: j(S(Q).spacer) }, null, 2),
+					L(H, {
 						label: S(a)("common.actions.cancel"),
 						variant: "ghost",
 						onClick: t[3] ||= (e) => r.value = !1
 					}, null, 8, ["label"]),
-					I(z, {
-						label: S(a)("opening.write.confirm", { n: ne.value }),
+					L(H, {
+						label: S(a)("opening.write.confirm", { n: B.value }),
 						variant: "primary",
 						pending: m.value,
-						disabled: ne.value === 0 || R.value === "" || te.value || u.value,
-						onClick: ae
+						disabled: B.value === 0 || R.value === "" || z.value || u.value,
+						onClick: ne
 					}, null, 8, [
 						"label",
 						"pending",
@@ -1246,22 +1246,26 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 			"close-label"
 		]));
 	}
-}), dt = ["aria-label"], ft = ["aria-current", "onClick"], pt = ["data-state"], mt = ["id", "value"], ht = [
+}), pt = ["aria-label"], mt = ["aria-current", "onClick"], ht = ["data-state"], gt = ["id", "value"], _t = [
 	"id",
 	"value",
 	"aria-describedby",
 	"placeholder"
-], gt = ["aria-pressed", "onClick"], _t = ["aria-label"], vt = [
+], vt = ["aria-pressed", "onClick"], yt = ["aria-label"], bt = [
 	"data-state",
 	"aria-current",
 	"disabled",
 	"onClick"
-], yt = ["role", "aria-label"], bt = [
+], xt = ["role", "aria-label"], St = [
 	"role",
 	"aria-checked",
 	"disabled",
 	"onClick"
-], xt = ["data-shape"], St = ["id", "placeholder"], Ct = ["id"], wt = ["id"], Tt = ["data-open", "aria-label"], Et = 4e3, Dt = /* @__PURE__ */ F({
+], Ct = ["data-shape"], wt = ["id", "placeholder"], Tt = ["id"], Et = ["id"], Dt = [
+	"id",
+	"aria-describedby",
+	"placeholder"
+], Ot = ["data-open", "aria-label"], kt = 4e3, At = /* @__PURE__ */ I({
 	__name: "OpeningBuild",
 	props: /*@__PURE__*/ u({
 		store: {},
@@ -1277,7 +1281,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 	}),
 	emits: /*@__PURE__*/ u(["refresh-lists"], ["update:section"]),
 	setup(e, { emit: t }) {
-		let n = e, r = _(e, "section"), i = t, { t: a } = D(), o = M(n.store.drafts.value[0]?.id ?? null), s = k(() => o.value === null ? null : n.store.draft(o.value)), c = M(null);
+		let n = e, r = _(e, "section"), i = t, { t: a } = O(), o = N(n.store.drafts.value[0]?.id ?? null), s = A(() => o.value === null ? null : n.store.draft(o.value)), c = N(null);
 		function l(e) {
 			return e.states.map((t, n) => t.status === "pending" && e.started && n === e.current ? "asking" : t.status);
 		}
@@ -1301,7 +1305,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				description: "",
 				template_name: e.display_name,
 				steps: e.steps.map((e) => ({ ...e })),
-				states: e.steps.map(Fe),
+				states: e.steps.map(Le),
 				current: 0,
 				started: !1,
 				connection: { kind: "analysis" },
@@ -1312,8 +1316,8 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 			};
 			await n.store.add(t), o.value = t.id;
 		}
-		let g = M(!1), x = M(!1);
-		async function O() {
+		let g = N(!1), x = N(!1);
+		async function k() {
 			let e = s.value;
 			if (e !== null) {
 				x.value = !0;
@@ -1324,23 +1328,23 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				}
 			}
 		}
-		function F(e, t = !1) {
+		function I(e, t = !1) {
 			s.value !== null && n.store.edit(s.value, e, { debounce: t });
 		}
-		let ee = k(() => n.templates.map((e) => ({
+		let R = A(() => n.templates.map((e) => ({
 			value: e.id,
 			label: e.display_name
-		}))), L = M(Me);
+		}))), z = N(Pe);
 		v(() => s.value?.template_name, (e) => {
-			L.value = n.templates.find((t) => t.display_name === e)?.id ?? "builtin-default";
+			z.value = n.templates.find((t) => t.display_name === e)?.id ?? "builtin-default";
 		}, { immediate: !0 });
-		function B(e) {
+		function ne(e) {
 			let t = e === void 0 ? void 0 : m(e);
-			t !== void 0 && (L.value = t.id, F((e) => {
-				e.template_name = t.display_name, e.steps = t.steps.map((e) => ({ ...e })), e.states = t.steps.map(Fe), e.current = 0;
+			t !== void 0 && (z.value = t.id, I((e) => {
+				e.template_name = t.display_name, e.steps = t.steps.map((e) => ({ ...e })), e.states = t.steps.map(Le), e.current = 0;
 			}));
 		}
-		let ue = k(() => [
+		let de = A(() => [
 			{
 				value: "analysis",
 				label: a("opening.settings.connection_analysis")
@@ -1353,39 +1357,39 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				value: `proxy:${e}`,
 				label: a("opening.settings.connection_proxy", { name: e })
 			}))
-		]), de = k(() => {
+		]), pe = A(() => {
 			let e = s.value?.connection;
 			return e?.kind === "proxy_preset" ? `proxy:${e.proxy_preset}` : e?.kind;
 		});
-		function fe(e) {
-			e !== void 0 && F((t) => {
+		function G(e) {
+			e !== void 0 && I((t) => {
 				t.connection = e.startsWith("proxy:") ? {
 					kind: "proxy_preset",
 					proxy_preset: e.slice(6)
 				} : e === "current" ? { kind: "current" } : { kind: "analysis" };
 			});
 		}
-		let pe = k(() => n.lists.presets.map((e) => ({
+		let me = A(() => n.lists.presets.map((e) => ({
 			value: e,
 			label: e === "in_use" ? a("opening.settings.preset_in_use") : e
 		})));
-		function he(e) {
-			e !== void 0 && F((t) => {
+		function ge(e) {
+			e !== void 0 && I((t) => {
 				t.preset_name = e;
 			});
 		}
-		function ge(e) {
-			F((t) => {
+		function _e(e) {
+			I((t) => {
 				t.worldbooks = t.worldbooks.includes(e) ? t.worldbooks.filter((t) => t !== e) : [...t.worldbooks, e].slice(0, 20);
 			});
 		}
-		let _e = M(null);
+		let ve = N(null);
 		v([o, () => n.host], () => {
-			_e.value = n.host?.character() ?? null;
+			ve.value = n.host?.character() ?? null;
 		}, { immediate: !0 });
-		function ye(e) {
-			let t = _e.value;
-			F((n) => {
+		function xe(e) {
+			let t = ve.value;
+			I((n) => {
 				if (e === !0 && t !== null) {
 					n.card = {
 						name: t.name,
@@ -1399,41 +1403,53 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				n.card = null, n.use_greeting = !1;
 			});
 		}
-		function Se(e) {
-			F((t) => {
+		function we(e) {
+			I((t) => {
 				t.use_greeting = e === !0 && t.card !== null;
 			});
 		}
-		function we(e) {
-			return ue.value.find((e) => e.value === de.value)?.label ?? e.connection.kind;
+		function Ee(e) {
+			return de.value.find((e) => e.value === pe.value)?.label ?? e.connection.kind;
 		}
-		let q = k(() => s.value === null ? null : n.flow.busy(s.value.id)), Te = k(() => s.value === null ? null : n.flow.error(s.value.id)), J = k(() => s.value?.steps[s.value.current] ?? null), Y = k(() => s.value?.states[s.value.current] ?? null), Ee = k(() => s.value !== null && s.value.current === s.value.steps.length - 1), De = k(() => Y.value?.status === "done" || Y.value?.status === "stale"), Oe = k(() => s.value?.states.some((e) => e.status === "stale") ?? !1);
-		function ke(e) {
-			return e instanceof W ? a("opening.errors.unparsable", { excerpt: e.excerpt }) : a("opening.errors.failed", { reason: Ve(e) });
+		let q = A(() => s.value === null ? null : n.flow.busy(s.value.id)), De = A(() => s.value === null ? null : n.flow.error(s.value.id)), J = A(() => s.value?.steps[s.value.current] ?? null), Y = A(() => s.value?.states[s.value.current] ?? null), Oe = A(() => s.value !== null && s.value.current === s.value.steps.length - 1), ke = A(() => Y.value?.status === "done" || Y.value?.status === "stale"), Ae = A(() => s.value?.states.some((e) => e.status === "stale") ?? !1);
+		function je(e) {
+			return e instanceof fe ? a("opening.errors.unparsable", { excerpt: e.excerpt }) : a("opening.errors.failed", { reason: He(e) });
 		}
-		function Ae(e) {
+		function Me(e) {
 			return e === "stale" ? a("opening.steps.stale") : "";
 		}
-		function je(e) {
+		function Ne(e) {
 			let t = s.value;
 			return t !== null && (t.states[e]?.status !== "pending" || e === t.current);
 		}
-		function Ne(e) {
-			F((t) => {
+		function Fe(e) {
+			I((t) => {
 				t.current = e;
 			});
 		}
-		async function Pe() {
+		async function Ie() {
 			let e = s.value;
-			e !== null && e.description.trim() !== "" && (F((e) => {
+			e !== null && e.description.trim() !== "" && (I((e) => {
 				e.started = !0;
 			}), await n.flow.run_step(e, 0));
 		}
-		let X = M([]), Le = M("");
-		v(() => Y.value?.question, () => {
-			X.value = [], Le.value = "";
+		let X = N([]), ze = N(""), Z = N(!1), Be = N(""), Ue = N(null);
+		async function We() {
+			Z.value = !0, await E(), Ue.value?.focus();
+		}
+		v(() => [s.value?.id, s.value?.current], () => {
+			Z.value = !1, Be.value = "";
 		});
-		function Re(e) {
+		async function Ge() {
+			let e = s.value;
+			if (e === null) return;
+			let t = Be.value;
+			Z.value = !1, Be.value = "", await n.flow.ask_more(e, e.current, t);
+		}
+		v(() => Y.value?.question, () => {
+			X.value = [], ze.value = "";
+		});
+		function Ke(e) {
 			let t = Y.value?.question;
 			if (t != null) {
 				if (!t.multiple) {
@@ -1443,29 +1459,29 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				X.value = X.value.includes(e) ? X.value.filter((t) => t !== e) : [...X.value, e];
 			}
 		}
-		async function ze() {
-			s.value !== null && await n.flow.answer(s.value, X.value, Le.value);
+		async function qe() {
+			s.value !== null && await n.flow.answer(s.value, X.value, ze.value);
 		}
-		function He(e, t) {
+		function Je(e, t) {
 			let n = [...e, ...t === "" ? [] : [t]];
 			return n.length === 0 ? a("opening.ask.left_to_model") : n.join(a("opening.ask.joiner"));
 		}
-		let Ue = M(null);
-		function We(e, t) {
-			F((n) => {
+		let Ye = N(null);
+		function Xe(e, t) {
+			I((n) => {
 				let r = n.states[e]?.entries, i = r?.findIndex((e) => e.id === t.id) ?? -1;
-				r !== void 0 && i >= 0 && (r[i] = t), Ie(n, e);
-			}), Ue.value = null;
+				r !== void 0 && i >= 0 && (r[i] = t), Re(n, e);
+			}), Ye.value = null;
 		}
-		function Ge(e, t) {
-			F((n) => {
+		function Ze(e, t) {
+			I((n) => {
 				let r = n.states[e];
-				r !== void 0 && (r.entries = r.entries.filter((e) => e.id !== t)), Ie(n, e);
+				r !== void 0 && (r.entries = r.entries.filter((e) => e.id !== t)), Re(n, e);
 			});
 		}
-		function Ke(e) {
+		function $e(e) {
 			let t = crypto.randomUUID();
-			F((n) => {
+			I((n) => {
 				n.states[e]?.entries.push({
 					id: t,
 					title: a("opening.entry.new_title"),
@@ -1473,73 +1489,73 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					keys: [],
 					content: ""
 				});
-			}), Ue.value = t;
+			}), Ye.value = t;
 		}
-		function qe(e, t) {
-			Ue.value === t && (Ge(e, t), Ue.value = null);
+		function et(e, t) {
+			Ye.value === t && (Ze(e, t), Ye.value = null);
 		}
-		let Je = M(!1), Ye = M(""), Xe = M("");
-		function Qe() {
-			Ye.value = Y.value?.message?.speaker ?? "", Xe.value = Y.value?.message?.text ?? "", Je.value = !0;
+		let tt = N(!1), nt = N(""), rt = N("");
+		function at() {
+			nt.value = Y.value?.message?.speaker ?? "", rt.value = Y.value?.message?.text ?? "", tt.value = !0;
 		}
-		function $e() {
+		function ot() {
 			let e = s.value?.current ?? 0;
-			F((t) => {
+			I((t) => {
 				let n = t.states[e];
 				n !== void 0 && (n.message = {
-					speaker: Ye.value.trim(),
-					text: Xe.value
+					speaker: nt.value.trim(),
+					text: rt.value
 				});
-			}), Je.value = !1;
+			}), tt.value = !1;
 		}
-		let et = k(() => s.value === null ? [] : Ze(s.value)), tt = k(() => [...s.value?.states ?? []].reverse().find((e) => e.message !== null)?.message ?? null), nt = M(!1), it = M(null);
-		function at(e) {
-			it.value = a("opening.output.book_written", { book: e }), i("refresh-lists");
+		let st = A(() => s.value === null ? [] : Qe(s.value)), lt = A(() => [...s.value?.states ?? []].reverse().find((e) => e.message !== null)?.message ?? null), ut = N(!1), dt = N(null);
+		function At(e) {
+			dt.value = a("opening.output.book_written", { book: e }), i("refresh-lists");
 		}
-		let Q = M(!1), st = M(!1), ct = k(() => Q.value ? n.host?.chat_name() ?? null : null);
-		async function lt() {
-			let e = tt.value;
+		let jt = N(!1), Mt = N(!1), Nt = A(() => jt.value ? n.host?.chat_name() ?? null : null);
+		async function Pt() {
+			let e = lt.value;
 			if (n.host !== null && e !== null) {
-				st.value = !0;
+				Mt.value = !0;
 				try {
-					await n.host.append_character_message(e.speaker, e.text), Q.value = !1, it.value = a("opening.output.message_added");
+					await n.host.append_character_message(e.speaker, e.text), jt.value = !1, dt.value = a("opening.output.message_added");
 				} catch (e) {
-					c.value = a("opening.errors.failed", { reason: Ve(e) }), Q.value = !1;
+					c.value = a("opening.errors.failed", { reason: He(e) }), jt.value = !1;
 				} finally {
-					st.value = !1;
+					Mt.value = !1;
 				}
 			}
 		}
-		function Dt() {
+		function Ft() {
 			let e = s.value;
-			return e === null ? "" : rt(e, {
+			return e === null ? "" : it(e, {
 				description: a("opening.markdown.description"),
 				constant: a("opening.entry.constant"),
 				keys: a("opening.entry.keys_label")
 			});
 		}
-		async function Ot() {
+		async function It() {
 			try {
-				await navigator.clipboard.writeText(Dt()), it.value = a("opening.output.copied");
+				await navigator.clipboard.writeText(Ft()), dt.value = a("opening.output.copied");
 			} catch (e) {
-				c.value = a("opening.errors.failed", { reason: Ve(e) });
+				c.value = a("opening.errors.failed", { reason: He(e) });
 			}
 		}
-		function kt() {
-			let e = URL.createObjectURL(new Blob([Dt()], { type: "text/markdown" })), t = document.createElement("a");
+		function $() {
+			let e = URL.createObjectURL(new Blob([Ft()], { type: "text/markdown" })), t = document.createElement("a");
 			t.href = e, t.download = `${s.value?.display_name ?? "opening"}.md`, t.click(), URL.revokeObjectURL(e);
 		}
-		let At = M(!1);
+		let Lt = N(!1);
 		return v(o, () => {
-			c.value = null, it.value = null, Je.value = !1;
-		}), (t, n) => (d(), y("div", { class: A(S(Z).layout) }, [
-			E("aside", {
-				class: A(S(Z).aside),
+			c.value = null, dt.value = null, tt.value = !1;
+		}), (t, n) => (d(), y("div", { class: j(S(Q).layout) }, [
+			D("aside", {
+				class: j(S(Q).aside),
 				"aria-label": S(a)("opening.draft.list_label")
 			}, [
-				I(z, {
-					class: A(S(Z).aside_new),
-					icon: S(H),
+				L(H, {
+					class: j(S(Q).aside_new),
+					icon: S(le),
 					label: S(a)("opening.draft.new"),
 					onClick: h
 				}, null, 8, [
@@ -1549,102 +1565,102 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				]),
 				e.store.drafts.value.length > 0 ? (d(), y("div", {
 					key: 0,
-					class: A(S(Z).aside_title)
+					class: j(S(Q).aside_title)
 				}, w(S(a)("opening.draft.list_title")), 3)) : C("", !0),
-				(d(!0), y(N, null, p(e.store.drafts.value, (e) => (d(), y("button", {
+				(d(!0), y(P, null, p(e.store.drafts.value, (e) => (d(), y("button", {
 					key: e.id,
 					type: "button",
-					class: A(["tc-interactive", S(Z).item]),
+					class: j(["tc-interactive", S(Q).item]),
 					"aria-current": e.id === o.value ? "true" : void 0,
 					onClick: (t) => o.value = e.id
 				}, [
-					E("span", { class: A(S(Z).item_name) }, w(e.display_name), 3),
-					E("span", { class: A(S(Z).dots) }, [(d(!0), y(N, null, p(l(e), (e, t) => (d(), y("i", {
+					D("span", { class: j(S(Q).item_name) }, w(e.display_name), 3),
+					D("span", { class: j(S(Q).dots) }, [(d(!0), y(P, null, p(l(e), (e, t) => (d(), y("i", {
 						key: t,
-						class: A(S(Z).dot),
+						class: j(S(Q).dot),
 						"data-state": e
-					}, null, 10, pt))), 128))], 2),
-					E("span", { class: A(S(Z).item_meta) }, w(u(e)), 3)
-				], 10, ft))), 128))
-			], 10, dt),
-			E("div", { class: A(S(Z).columns) }, [E("div", { class: A(S(Z).work) }, [E("div", { class: A(S(Z).work_inner) }, [
-				E("div", { class: A(S(Z).topline) }, [
-					I(Be, {
+					}, null, 10, ht))), 128))], 2),
+					D("span", { class: j(S(Q).item_meta) }, w(u(e)), 3)
+				], 10, mt))), 128))
+			], 10, pt),
+			D("div", { class: j(S(Q).columns) }, [D("div", { class: j(S(Q).work) }, [D("div", { class: j(S(Q).work_inner) }, [
+				D("div", { class: j(S(Q).topline) }, [
+					L(Ve, {
 						modelValue: r.value,
 						"onUpdate:modelValue": n[0] ||= (e) => r.value = e
 					}, null, 8, ["modelValue"]),
-					E("span", { class: A(S(Z).spacer) }, null, 2),
-					s.value !== null && s.value.started ? (d(), T(z, {
+					D("span", { class: j(S(Q).spacer) }, null, 2),
+					s.value !== null && s.value.started ? (d(), T(H, {
 						key: 0,
-						class: A(S(Z).known_toggle),
-						icon: S(te),
+						class: j(S(Q).known_toggle),
+						icon: S(V),
 						label: S(a)("opening.known.toggle"),
 						variant: "ghost",
-						onClick: n[1] ||= (e) => At.value = !At.value
+						onClick: n[1] ||= (e) => Lt.value = !Lt.value
 					}, null, 8, [
 						"class",
 						"icon",
 						"label"
 					])) : C("", !0),
-					s.value === null ? C("", !0) : (d(), T(G, {
+					s.value === null ? C("", !0) : (d(), T(K, {
 						key: 1,
-						icon: S(le),
+						icon: S(ue),
 						label: S(a)("opening.draft.delete"),
 						onClick: n[2] ||= (e) => g.value = !0
 					}, null, 8, ["icon", "label"]))
 				], 2),
 				e.hostError === null ? C("", !0) : (d(), y("p", {
 					key: 0,
-					class: A(S(Z).error)
+					class: j(S(Q).error)
 				}, w(S(a)("opening.errors.host", { reason: e.hostError })), 3)),
 				e.saveError === null ? C("", !0) : (d(), y("p", {
 					key: 1,
-					class: A(S(Z).error),
+					class: j(S(Q).error),
 					role: "alert"
 				}, w(S(a)("opening.errors.save", { reason: e.saveError })), 3)),
 				c.value === null ? C("", !0) : (d(), y("p", {
 					key: 2,
-					class: A(S(Z).error),
+					class: j(S(Q).error),
 					role: "alert"
 				}, w(c.value), 3)),
 				s.value === null ? (d(), y("div", {
 					key: 3,
-					class: A(S(Z).work_head)
+					class: j(S(Q).work_head)
 				}, [
-					E("h1", { class: A(S(Z).work_title) }, w(S(a)("opening.title")), 3),
-					E("p", { class: A(S(Z).work_description) }, w(S(a)("opening.empty_hint")), 3),
-					E("div", { class: A(S(Z).row) }, [I(z, {
-						icon: S(H),
+					D("h1", { class: j(S(Q).work_title) }, w(S(a)("opening.title")), 3),
+					D("p", { class: j(S(Q).work_description) }, w(S(a)("opening.empty_hint")), 3),
+					D("div", { class: j(S(Q).row) }, [L(H, {
+						icon: S(le),
 						label: S(a)("opening.draft.new"),
 						variant: "primary",
 						onClick: h
 					}, null, 8, ["icon", "label"])], 2)
-				], 2)) : s.value.started ? J.value !== null && Y.value !== null ? (d(), y(N, { key: 5 }, [
-					E("nav", {
-						class: A(S(Z).steps),
+				], 2)) : s.value.started ? J.value !== null && Y.value !== null ? (d(), y(P, { key: 5 }, [
+					D("nav", {
+						class: j(S(Q).steps),
 						"aria-label": S(a)("opening.steps.label")
-					}, [(d(!0), y(N, null, p(s.value.steps, (e, t) => (d(), y("button", {
+					}, [(d(!0), y(P, null, p(s.value.steps, (e, t) => (d(), y("button", {
 						key: e.id,
 						type: "button",
-						class: A(["tc-interactive", S(Z).step]),
+						class: j(["tc-interactive", S(Q).step]),
 						"data-state": s.value.states[t]?.status,
 						"aria-current": t === s.value.current ? "step" : void 0,
-						disabled: !je(t) || q.value !== null,
-						onClick: (e) => Ne(t)
+						disabled: !Ne(t) || q.value !== null,
+						onClick: (e) => Fe(t)
 					}, [
-						E("span", { class: A(S(Z).step_number) }, [s.value.states[t]?.status === "done" ? (d(), T(R, {
+						D("span", { class: j(S(Q).step_number) }, [s.value.states[t]?.status === "done" ? (d(), T(B, {
 							key: 0,
-							icon: S(ne),
+							icon: S(te),
 							size: 13
-						}, null, 8, ["icon"])) : (d(), y(N, { key: 1 }, [P(w(t + 1), 1)], 64))], 2),
-						E("span", { class: A(S(Z).step_label) }, w(e.name), 3),
-						E("span", { class: A(S(Z).step_tag) }, w(Ae(s.value.states[t]?.status ?? "")), 3)
-					], 10, vt))), 128))], 10, _t),
-					Oe.value ? (d(), y("div", {
+						}, null, 8, ["icon"])) : (d(), y(P, { key: 1 }, [F(w(t + 1), 1)], 64))], 2),
+						D("span", { class: j(S(Q).step_label) }, w(e.name), 3),
+						D("span", { class: j(S(Q).step_tag) }, w(Me(s.value.states[t]?.status ?? "")), 3)
+					], 10, bt))), 128))], 10, yt),
+					Ae.value ? (d(), y("div", {
 						key: 0,
-						class: A(S(Z).banner)
-					}, [E("span", null, w(S(a)("opening.steps.stale_banner")), 1), I(z, {
-						icon: S(se),
+						class: j(S(Q).banner)
+					}, [D("span", null, w(S(a)("opening.steps.stale_banner")), 1), L(H, {
+						icon: S(ce),
 						label: S(a)("opening.steps.regenerate_stale"),
 						pending: q.value !== null,
 						onClick: n[5] ||= (t) => e.flow.regenerate_stale(s.value)
@@ -1653,18 +1669,18 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 						"label",
 						"pending"
 					])], 2)) : C("", !0),
-					E("div", { class: A(S(Z).work_head) }, [E("h1", { class: A(S(Z).work_title) }, w(J.value.name), 3), E("p", { class: A(S(Z).work_description) }, w(J.value.instruction), 3)], 2),
-					(d(!0), y(N, null, p(Y.value.answers, (t, n) => (d(), y("div", {
+					D("div", { class: j(S(Q).work_head) }, [D("h1", { class: j(S(Q).work_title) }, w(J.value.name), 3), D("p", { class: j(S(Q).work_description) }, w(J.value.instruction), 3)], 2),
+					(d(!0), y(P, null, p(Y.value.answers, (t, n) => (d(), y("div", {
 						key: n,
-						class: A(S(Z).answered)
+						class: j(S(Q).answered)
 					}, [
-						E("span", { class: A(S(Z).answered_question) }, w(S(a)("opening.ask.answered", {
+						D("span", { class: j(S(Q).answered_question) }, w(S(a)("opening.ask.answered", {
 							n: n + 1,
 							question: t.question.text
 						})), 3),
-						E("span", { class: A(S(Z).answered_answer) }, w(He(t.selected, t.other)), 3),
-						I(z, {
-							icon: S(oe),
+						D("span", { class: j(S(Q).answered_answer) }, w(Je(t.selected, t.other)), 3),
+						L(H, {
+							icon: S(se),
 							label: S(a)("opening.ask.change"),
 							variant: "ghost",
 							disabled: q.value !== null,
@@ -1678,86 +1694,86 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					], 2))), 128)),
 					q.value === null ? C("", !0) : (d(), y("p", {
 						key: 1,
-						class: A(S(Z).hint),
+						class: j(S(Q).hint),
 						role: "status"
 					}, w(q.value.kind === "question" ? S(a)("opening.status.asking") : q.value.kind === "generate" ? S(a)("opening.status.generating", { step: s.value.steps[q.value.step]?.name ?? "" }) : S(a)("opening.status.rewriting")), 3)),
-					q.value === null && e.flow.dropped(s.value.id) > 0 && De.value ? (d(), y("p", {
+					q.value === null && e.flow.dropped(s.value.id) > 0 && ke.value ? (d(), y("p", {
 						key: 2,
-						class: A(S(Z).hint),
+						class: j(S(Q).hint),
 						role: "status"
 					}, w(S(a)("opening.status.dropped", { n: e.flow.dropped(s.value.id) })), 3)) : C("", !0),
-					Te.value === null ? C("", !0) : (d(), y("div", {
+					De.value === null ? C("", !0) : (d(), y("div", {
 						key: 3,
-						class: A(S(Z).banner),
+						class: j(S(Q).banner),
 						role: "alert"
-					}, [E("span", null, w(ke(Te.value)), 1), Y.value.status === "asking" && Y.value.question === null ? (d(), T(z, {
+					}, [D("span", null, w(je(De.value)), 1), Y.value.status === "asking" && Y.value.question === null ? (d(), T(H, {
 						key: 0,
-						icon: S(se),
+						icon: S(ce),
 						label: S(a)("opening.status.retry"),
 						onClick: n[6] ||= (t) => e.flow.run_step(s.value, s.value.current)
 					}, null, 8, ["icon", "label"])) : C("", !0)], 2)),
 					Y.value.question === null ? Y.value.status === "pending" && q.value === null ? (d(), y("div", {
 						key: 5,
-						class: A(S(Z).row)
-					}, [I(z, {
-						icon: S(ce),
+						class: j(S(Q).row)
+					}, [L(H, {
+						icon: S(W),
 						label: S(a)("opening.steps.run"),
 						variant: "primary",
 						onClick: n[9] ||= (t) => e.flow.run_step(s.value, s.value.current)
 					}, null, 8, ["icon", "label"])], 2)) : C("", !0) : (d(), y("div", {
 						key: 4,
-						class: A(S(Z).ask)
+						class: j(S(Q).ask)
 					}, [
-						E("div", { class: A(S(Z).ask_head) }, [
-							E("h2", { class: A(S(Z).ask_title) }, w(Y.value.question.text), 3),
-							E("span", { class: A(S(Z).badge) }, w(Y.value.question.multiple ? S(a)("opening.ask.multiple") : S(a)("opening.ask.single")), 3),
-							E("span", { class: A(S(Z).spacer) }, null, 2),
-							E("span", { class: A(S(Z).hint) }, w(Y.value.answers.length < J.value.max_rounds ? S(a)("opening.ask.round", {
+						D("div", { class: j(S(Q).ask_head) }, [
+							D("h2", { class: j(S(Q).ask_title) }, w(Y.value.question.text), 3),
+							D("span", { class: j(S(Q).badge) }, w(Y.value.question.multiple ? S(a)("opening.ask.multiple") : S(a)("opening.ask.single")), 3),
+							D("span", { class: j(S(Q).spacer) }, null, 2),
+							D("span", { class: j(S(Q).hint) }, w(Y.value.answers.length < J.value.max_rounds ? S(a)("opening.ask.round", {
 								n: Y.value.answers.length + 1,
 								max: J.value.max_rounds
 							}) : S(a)("opening.ask.round_more", { n: Y.value.answers.length + 1 })), 3)
 						], 2),
 						Y.value.question.why === "" ? C("", !0) : (d(), y("p", {
 							key: 0,
-							class: A(S(Z).hint)
+							class: j(S(Q).hint)
 						}, w(Y.value.question.why), 3)),
-						E("div", {
-							class: A(S(Z).options),
+						D("div", {
+							class: j(S(Q).options),
 							role: Y.value.question.multiple ? "group" : "radiogroup",
 							"aria-label": Y.value.question.text
-						}, [(d(!0), y(N, null, p(Y.value.question.options, (e) => (d(), y("button", {
+						}, [(d(!0), y(P, null, p(Y.value.question.options, (e) => (d(), y("button", {
 							key: e.label,
 							type: "button",
-							class: A(["tc-interactive", S(Z).option]),
+							class: j(["tc-interactive", S(Q).option]),
 							role: Y.value.question.multiple ? "checkbox" : "radio",
 							"aria-checked": X.value.includes(e.label),
 							disabled: q.value !== null,
-							onClick: (t) => Re(e.label)
+							onClick: (t) => Ke(e.label)
 						}, [
-							E("span", {
-								class: A(S(Z).option_mark),
+							D("span", {
+								class: j(S(Q).option_mark),
 								"data-shape": Y.value.question.multiple ? "box" : "radio"
-							}, [X.value.includes(e.label) ? (d(), T(R, {
+							}, [X.value.includes(e.label) ? (d(), T(B, {
 								key: 0,
-								icon: S(ne),
+								icon: S(te),
 								size: 13
-							}, null, 8, ["icon"])) : C("", !0)], 10, xt),
-							E("span", { class: A(S(Z).option_label) }, w(e.label), 3),
-							E("span", { class: A(S(Z).option_detail) }, w(e.detail), 3)
-						], 10, bt))), 128))], 10, yt),
-						I(U, { label: S(a)("opening.ask.other_label") }, {
-							default: j(({ fieldId: e }) => [f(E("input", {
+							}, null, 8, ["icon"])) : C("", !0)], 10, Ct),
+							D("span", { class: j(S(Q).option_label) }, w(e.label), 3),
+							D("span", { class: j(S(Q).option_detail) }, w(e.detail), 3)
+						], 10, St))), 128))], 10, xt),
+						L(U, { label: S(a)("opening.ask.other_label") }, {
+							default: M(({ fieldId: e }) => [f(D("input", {
 								id: e,
-								"onUpdate:modelValue": n[7] ||= (e) => Le.value = e,
-								class: A(S(Z).input),
+								"onUpdate:modelValue": n[7] ||= (e) => ze.value = e,
+								class: j(S(Q).input),
 								maxlength: "500",
 								placeholder: S(a)("opening.ask.other_placeholder")
-							}, null, 10, St), [[b, Le.value]])]),
+							}, null, 10, wt), [[b, ze.value]])]),
 							_: 1
 						}, 8, ["label"]),
-						E("div", { class: A(S(Z).row) }, [
-							I(z, {
-								icon: S(be),
+						D("div", { class: j(S(Q).row) }, [
+							L(H, {
+								icon: S(Se),
 								label: S(a)("opening.ask.skip"),
 								variant: "ghost",
 								disabled: q.value !== null,
@@ -1767,14 +1783,14 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 								"label",
 								"disabled"
 							]),
-							E("span", { class: A(S(Z).spacer) }, null, 2),
-							I(z, {
-								icon: S(ve),
+							D("span", { class: j(S(Q).spacer) }, null, 2),
+							L(H, {
+								icon: S(be),
 								label: S(a)("opening.ask.confirm"),
 								variant: "primary",
 								pending: q.value !== null,
-								disabled: X.value.length === 0 && Le.value.trim() === "",
-								onClick: ze
+								disabled: X.value.length === 0 && ze.value.trim() === "",
+								onClick: qe
 							}, null, 8, [
 								"icon",
 								"label",
@@ -1783,19 +1799,19 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							])
 						], 2)
 					], 2)),
-					De.value && J.value.output === "entries" ? (d(), y("div", {
+					ke.value && J.value.output === "entries" ? (d(), y("div", {
 						key: 6,
-						class: A(S(Z).entries)
-					}, [(d(!0), y(N, null, p(Y.value.entries, (t) => (d(), T(ot, {
+						class: j(S(Q).entries)
+					}, [(d(!0), y(P, null, p(Y.value.entries, (t) => (d(), T(ct, {
 						key: t.id,
 						entry: t,
-						editing: t.id === Ue.value,
+						editing: t.id === Ye.value,
 						rewriting: q.value?.kind === "rewrite" && q.value.entry_id === t.id,
 						disabled: q.value !== null,
-						onSave: n[10] ||= (e) => We(s.value.current, e),
-						onRemove: (e) => Ge(s.value.current, t.id),
+						onSave: n[10] ||= (e) => Xe(s.value.current, e),
+						onRemove: (e) => Ze(s.value.current, t.id),
 						onRewrite: (n) => e.flow.rewrite_entry(s.value, s.value.current, t),
-						onCancel: (e) => qe(s.value.current, t.id)
+						onCancel: (e) => et(s.value.current, t.id)
 					}, null, 8, [
 						"entry",
 						"editing",
@@ -1805,190 +1821,230 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 						"onRewrite",
 						"onCancel"
 					]))), 128))], 2)) : C("", !0),
-					De.value && J.value.output === "message" && Y.value.message !== null ? (d(), y(N, { key: 7 }, [Je.value ? (d(), y("div", {
+					ke.value && J.value.output === "message" && Y.value.message !== null ? (d(), y(P, { key: 7 }, [tt.value ? (d(), y("div", {
 						key: 0,
-						class: A(S(Z).editor)
+						class: j(S(Q).editor)
 					}, [
-						I(U, { label: S(a)("opening.message.speaker_label") }, {
-							default: j(({ fieldId: e }) => [f(E("input", {
+						L(U, { label: S(a)("opening.message.speaker_label") }, {
+							default: M(({ fieldId: e }) => [f(D("input", {
 								id: e,
-								"onUpdate:modelValue": n[11] ||= (e) => Ye.value = e,
-								class: A(S(Z).input),
+								"onUpdate:modelValue": n[11] ||= (e) => nt.value = e,
+								class: j(S(Q).input),
 								maxlength: "80"
-							}, null, 10, Ct), [[b, Ye.value]])]),
+							}, null, 10, Tt), [[b, nt.value]])]),
 							_: 1
 						}, 8, ["label"]),
-						I(U, { label: S(a)("opening.message.text_label") }, {
-							default: j(({ fieldId: e }) => [f(E("textarea", {
+						L(U, { label: S(a)("opening.message.text_label") }, {
+							default: M(({ fieldId: e }) => [f(D("textarea", {
 								id: e,
-								"onUpdate:modelValue": n[12] ||= (e) => Xe.value = e,
-								class: A(S(Z).text_area)
-							}, null, 10, wt), [[b, Xe.value]])]),
+								"onUpdate:modelValue": n[12] ||= (e) => rt.value = e,
+								class: j(S(Q).text_area)
+							}, null, 10, Et), [[b, rt.value]])]),
 							_: 1
 						}, 8, ["label"]),
-						E("div", { class: A(S(Z).row) }, [
-							E("span", { class: A(S(Z).spacer) }, null, 2),
-							I(z, {
+						D("div", { class: j(S(Q).row) }, [
+							D("span", { class: j(S(Q).spacer) }, null, 2),
+							L(H, {
 								label: S(a)("common.actions.cancel"),
 								variant: "ghost",
-								onClick: n[13] ||= (e) => Je.value = !1
+								onClick: n[13] ||= (e) => tt.value = !1
 							}, null, 8, ["label"]),
-							I(z, {
+							L(H, {
 								label: S(a)("common.actions.save"),
 								variant: "primary",
-								disabled: Ye.value.trim() === "" || Xe.value.trim() === "",
-								onClick: $e
+								disabled: nt.value.trim() === "" || rt.value.trim() === "",
+								onClick: ot
 							}, null, 8, ["label", "disabled"])
 						], 2)
 					], 2)) : (d(), y("div", {
 						key: 1,
-						class: A(S(Z).bubble)
-					}, [E("span", { class: A(S(Z).bubble_name) }, w(Y.value.message.speaker), 3), E("p", { class: A(S(Z).bubble_text) }, w(Y.value.message.text), 3)], 2)), Je.value ? C("", !0) : (d(), y("div", {
+						class: j(S(Q).bubble)
+					}, [D("span", { class: j(S(Q).bubble_name) }, w(Y.value.message.speaker), 3), D("p", { class: j(S(Q).bubble_text) }, w(Y.value.message.text), 3)], 2)), tt.value ? C("", !0) : (d(), y("div", {
 						key: 2,
-						class: A(S(Z).row)
-					}, [I(z, {
-						icon: S(oe),
+						class: j(S(Q).row)
+					}, [L(H, {
+						icon: S(se),
 						label: S(a)("opening.message.edit"),
 						disabled: q.value !== null,
-						onClick: Qe
+						onClick: at
 					}, null, 8, [
 						"icon",
 						"label",
 						"disabled"
 					])], 2))], 64)) : C("", !0),
-					De.value ? (d(), y("div", {
+					ke.value && Z.value ? (d(), y("div", {
 						key: 8,
-						class: A(S(Z).foot)
+						class: j(S(Q).ask)
+					}, [L(U, {
+						label: S(a)("opening.steps.ask_more_label"),
+						hint: S(a)("opening.steps.ask_more_hint")
+					}, {
+						default: M(({ fieldId: e, describedBy: t }) => [f(D("input", {
+							id: e,
+							ref_key: "more_input",
+							ref: Ue,
+							"onUpdate:modelValue": n[14] ||= (e) => Be.value = e,
+							class: j(S(Q).input),
+							maxlength: "500",
+							"aria-describedby": t,
+							placeholder: S(a)("opening.steps.ask_more_placeholder"),
+							onKeydown: ee(Ge, ["enter"])
+						}, null, 42, Dt), [[b, Be.value]])]),
+						_: 1
+					}, 8, ["label", "hint"]), D("div", { class: j(S(Q).row) }, [
+						L(H, {
+							label: S(a)("common.actions.cancel"),
+							variant: "ghost",
+							onClick: n[15] ||= (e) => Z.value = !1
+						}, null, 8, ["label"]),
+						D("span", { class: j(S(Q).spacer) }, null, 2),
+						L(H, {
+							icon: S(be),
+							label: S(a)("opening.steps.ask_more_start"),
+							variant: "primary",
+							disabled: q.value !== null,
+							onClick: Ge
+						}, null, 8, [
+							"icon",
+							"label",
+							"disabled"
+						])
+					], 2)], 2)) : C("", !0),
+					ke.value ? (d(), y("div", {
+						key: 9,
+						class: j(S(Q).foot)
 					}, [
-						I(z, {
-							icon: S(K),
+						L(H, {
+							icon: S(ye),
 							label: S(a)("opening.steps.ask_more"),
 							variant: "ghost",
-							disabled: q.value !== null,
-							onClick: n[14] ||= (t) => e.flow.ask_more(s.value, s.value.current)
-						}, null, 8, [
-							"icon",
-							"label",
-							"disabled"
-						]),
-						J.value.output === "entries" ? (d(), T(z, {
-							key: 0,
-							icon: S(H),
-							label: S(a)("opening.entry.add"),
-							disabled: q.value !== null,
-							onClick: n[15] ||= (e) => Ke(s.value.current)
-						}, null, 8, [
-							"icon",
-							"label",
-							"disabled"
-						])) : C("", !0),
-						E("span", { class: A(S(Z).spacer) }, null, 2),
-						I(z, {
-							icon: S(se),
-							label: S(a)("opening.steps.regenerate"),
-							pending: q.value?.kind === "generate",
-							disabled: q.value !== null,
-							onClick: n[16] ||= (t) => e.flow.generate(s.value, s.value.current)
+							pending: q.value?.kind === "question",
+							disabled: q.value !== null || Z.value,
+							onClick: We
 						}, null, 8, [
 							"icon",
 							"label",
 							"pending",
 							"disabled"
 						]),
-						Ee.value ? C("", !0) : (d(), T(z, {
+						J.value.output === "entries" ? (d(), T(H, {
+							key: 0,
+							icon: S(le),
+							label: S(a)("opening.entry.add"),
+							disabled: q.value !== null,
+							onClick: n[16] ||= (e) => $e(s.value.current)
+						}, null, 8, [
+							"icon",
+							"label",
+							"disabled"
+						])) : C("", !0),
+						D("span", { class: j(S(Q).spacer) }, null, 2),
+						L(H, {
+							icon: S(ce),
+							label: S(a)("opening.steps.regenerate"),
+							pending: q.value?.kind === "generate",
+							disabled: q.value !== null,
+							onClick: n[17] ||= (t) => e.flow.generate(s.value, s.value.current)
+						}, null, 8, [
+							"icon",
+							"label",
+							"pending",
+							"disabled"
+						]),
+						Oe.value ? C("", !0) : (d(), T(H, {
 							key: 1,
-							icon: S(ve),
+							icon: S(be),
 							label: S(a)("opening.steps.next"),
 							variant: "primary",
 							disabled: q.value !== null,
-							onClick: n[17] ||= (t) => e.flow.next(s.value)
+							onClick: n[18] ||= (t) => e.flow.next(s.value)
 						}, null, 8, [
 							"icon",
 							"label",
 							"disabled"
 						]))
 					], 2)) : C("", !0),
-					Ee.value && De.value ? (d(), y(N, { key: 9 }, [E("div", { class: A(S(Z).outputs) }, [
-						E("div", { class: A(S(Z).output) }, [
-							E("h3", { class: A(S(Z).output_title) }, [I(R, { icon: S(te) }, null, 8, ["icon"]), P(w(S(a)("opening.output.book_title")), 1)], 2),
-							E("p", { class: A(S(Z).hint) }, w(S(a)("opening.output.book_hint", { n: et.value.length })), 3),
-							E("div", { class: A(S(Z).row) }, [I(z, {
+					Oe.value && ke.value ? (d(), y(P, { key: 10 }, [D("div", { class: j(S(Q).outputs) }, [
+						D("div", { class: j(S(Q).output) }, [
+							D("h3", { class: j(S(Q).output_title) }, [L(B, { icon: S(V) }, null, 8, ["icon"]), F(w(S(a)("opening.output.book_title")), 1)], 2),
+							D("p", { class: j(S(Q).hint) }, w(S(a)("opening.output.book_hint", { n: st.value.length })), 3),
+							D("div", { class: j(S(Q).row) }, [L(H, {
 								label: S(a)("opening.output.book_action"),
 								variant: "primary",
-								disabled: e.host === null || et.value.length === 0 || q.value !== null,
-								onClick: n[18] ||= (e) => nt.value = !0
+								disabled: e.host === null || st.value.length === 0 || q.value !== null,
+								onClick: n[19] ||= (e) => ut.value = !0
 							}, null, 8, ["label", "disabled"])], 2)
 						], 2),
-						E("div", { class: A(S(Z).output) }, [
-							E("h3", { class: A(S(Z).output_title) }, [I(R, { icon: S(Ce) }, null, 8, ["icon"]), P(w(S(a)("opening.output.message_title")), 1)], 2),
-							E("p", { class: A(S(Z).hint) }, w(S(a)("opening.output.message_hint")), 3),
-							E("div", { class: A(S(Z).row) }, [I(z, {
+						D("div", { class: j(S(Q).output) }, [
+							D("h3", { class: j(S(Q).output_title) }, [L(B, { icon: S(Te) }, null, 8, ["icon"]), F(w(S(a)("opening.output.message_title")), 1)], 2),
+							D("p", { class: j(S(Q).hint) }, w(S(a)("opening.output.message_hint")), 3),
+							D("div", { class: j(S(Q).row) }, [L(H, {
 								label: S(a)("opening.output.message_action"),
-								disabled: e.host === null || tt.value === null || q.value !== null,
-								onClick: n[19] ||= (e) => Q.value = !0
+								disabled: e.host === null || lt.value === null || q.value !== null,
+								onClick: n[20] ||= (e) => jt.value = !0
 							}, null, 8, ["label", "disabled"])], 2)
 						], 2),
-						E("div", { class: A(S(Z).output) }, [
-							E("h3", { class: A(S(Z).output_title) }, [I(R, { icon: S(xe) }, null, 8, ["icon"]), P(w(S(a)("opening.output.markdown_title")), 1)], 2),
-							E("p", { class: A(S(Z).hint) }, w(S(a)("opening.output.markdown_hint")), 3),
-							E("div", { class: A(S(Z).row) }, [I(z, {
+						D("div", { class: j(S(Q).output) }, [
+							D("h3", { class: j(S(Q).output_title) }, [L(B, { icon: S(Ce) }, null, 8, ["icon"]), F(w(S(a)("opening.output.markdown_title")), 1)], 2),
+							D("p", { class: j(S(Q).hint) }, w(S(a)("opening.output.markdown_hint")), 3),
+							D("div", { class: j(S(Q).row) }, [L(H, {
 								icon: S(ie),
 								label: S(a)("opening.output.copy"),
-								onClick: Ot
-							}, null, 8, ["icon", "label"]), I(z, {
+								onClick: It
+							}, null, 8, ["icon", "label"]), L(H, {
 								icon: S(ae),
 								label: S(a)("opening.output.download"),
 								variant: "ghost",
-								onClick: kt
+								onClick: $
 							}, null, 8, ["icon", "label"])], 2)
 						], 2)
-					], 2), it.value === null ? C("", !0) : (d(), y("p", {
+					], 2), dt.value === null ? C("", !0) : (d(), y("p", {
 						key: 0,
-						class: A(S(Z).hint),
+						class: j(S(Q).hint),
 						role: "status"
-					}, w(it.value), 3))], 64)) : C("", !0)
-				], 64)) : C("", !0) : (d(), y(N, { key: 4 }, [
-					I(U, { label: S(a)("opening.draft.name_label") }, {
-						default: j(({ fieldId: e }) => [E("input", {
+					}, w(dt.value), 3))], 64)) : C("", !0)
+				], 64)) : C("", !0) : (d(), y(P, { key: 4 }, [
+					L(U, { label: S(a)("opening.draft.name_label") }, {
+						default: M(({ fieldId: e }) => [D("input", {
 							id: e,
 							value: s.value.display_name,
-							class: A(S(Z).input),
+							class: j(S(Q).input),
 							maxlength: "60",
 							onInput: n[3] ||= (e) => {
-								F((t) => {
+								I((t) => {
 									t.display_name = e.target.value;
 								}, !0);
 							}
-						}, null, 42, mt)]),
+						}, null, 42, gt)]),
 						_: 1
 					}, 8, ["label"]),
-					I(U, {
+					L(U, {
 						label: S(a)("opening.draft.description_label"),
 						hint: S(a)("opening.draft.description_hint")
 					}, {
-						default: j(({ fieldId: e, describedBy: t }) => [E("textarea", {
+						default: M(({ fieldId: e, describedBy: t }) => [D("textarea", {
 							id: e,
 							value: s.value.description,
-							class: A(S(Z).text_area),
-							maxlength: Et,
+							class: j(S(Q).text_area),
+							maxlength: kt,
 							"aria-describedby": t,
 							placeholder: S(a)("opening.draft.description_placeholder"),
 							onInput: n[4] ||= (e) => {
-								F((t) => {
+								I((t) => {
 									t.description = e.target.value;
 								}, !0);
 							}
-						}, null, 42, ht), E("div", { class: A(S(Z).counter) }, w(s.value.description.length) + " / " + w(Et), 3)]),
+						}, null, 42, _t), D("div", { class: j(S(Q).counter) }, w(s.value.description.length) + " / " + w(kt), 3)]),
 						_: 1
 					}, 8, ["label", "hint"]),
-					E("div", { class: A(S(Z).grid3) }, [
-						I(U, { label: S(a)("opening.settings.template_label") }, {
-							default: j(({ fieldId: e }) => [I(re, {
+					D("div", { class: j(S(Q).grid3) }, [
+						L(U, { label: S(a)("opening.settings.template_label") }, {
+							default: M(({ fieldId: e }) => [L(re, {
 								id: e,
-								"model-value": L.value,
-								options: ee.value,
+								"model-value": z.value,
+								options: R.value,
 								placeholder: S(a)("opening.settings.template_label"),
-								"onUpdate:modelValue": B
+								"onUpdate:modelValue": ne
 							}, null, 8, [
 								"id",
 								"model-value",
@@ -1997,13 +2053,13 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							])]),
 							_: 1
 						}, 8, ["label"]),
-						I(U, { label: S(a)("opening.settings.connection_label") }, {
-							default: j(({ fieldId: e }) => [I(re, {
+						L(U, { label: S(a)("opening.settings.connection_label") }, {
+							default: M(({ fieldId: e }) => [L(re, {
 								id: e,
-								"model-value": de.value,
-								options: ue.value,
+								"model-value": pe.value,
+								options: de.value,
 								placeholder: S(a)("opening.settings.connection_label"),
-								"onUpdate:modelValue": fe
+								"onUpdate:modelValue": G
 							}, null, 8, [
 								"id",
 								"model-value",
@@ -2012,13 +2068,13 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							])]),
 							_: 1
 						}, 8, ["label"]),
-						I(U, { label: S(a)("opening.settings.preset_label") }, {
-							default: j(({ fieldId: e }) => [I(re, {
+						L(U, { label: S(a)("opening.settings.preset_label") }, {
+							default: M(({ fieldId: e }) => [L(re, {
 								id: e,
 								"model-value": s.value.preset_name,
-								options: pe.value,
+								options: me.value,
 								placeholder: S(a)("opening.settings.preset_label"),
-								"onUpdate:modelValue": he
+								"onUpdate:modelValue": ge
 							}, null, 8, [
 								"id",
 								"model-value",
@@ -2028,46 +2084,46 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							_: 1
 						}, 8, ["label"])
 					], 2),
-					I(U, {
+					L(U, {
 						label: S(a)("opening.settings.worldbooks_label"),
 						hint: S(a)("opening.settings.worldbooks_hint")
 					}, {
-						default: j(() => [e.lists.books.length > 0 ? (d(), y("div", {
+						default: M(() => [e.lists.books.length > 0 ? (d(), y("div", {
 							key: 0,
-							class: A(S(Z).row)
-						}, [(d(!0), y(N, null, p(e.lists.books, (e) => (d(), y("button", {
+							class: j(S(Q).row)
+						}, [(d(!0), y(P, null, p(e.lists.books, (e) => (d(), y("button", {
 							key: e,
 							type: "button",
-							class: A(["tc-interactive", S(Z).chip_toggle]),
+							class: j(["tc-interactive", S(Q).chip_toggle]),
 							"aria-pressed": s.value.worldbooks.includes(e),
-							onClick: (t) => ge(e)
-						}, [I(R, {
-							icon: S(te),
+							onClick: (t) => _e(e)
+						}, [L(B, {
+							icon: S(V),
 							size: 14
-						}, null, 8, ["icon"]), P(w(e), 1)], 10, gt))), 128))], 2)) : (d(), y("p", {
+						}, null, 8, ["icon"]), F(w(e), 1)], 10, vt))), 128))], 2)) : (d(), y("p", {
 							key: 1,
-							class: A(S(Z).hint)
+							class: j(S(Q).hint)
 						}, w(S(a)("opening.settings.no_worldbooks")), 3))]),
 						_: 1
 					}, 8, ["label", "hint"]),
-					I(U, {
+					L(U, {
 						label: S(a)("opening.settings.card_label"),
 						hint: S(a)("opening.settings.card_hint")
 					}, {
-						default: j(() => [E("div", { class: A(S(Z).row) }, [I(V, {
+						default: M(() => [D("div", { class: j(S(Q).row) }, [L(oe, {
 							"model-value": s.value.card !== null,
-							label: s.value.card === null ? _e.value === null ? S(a)("opening.settings.card_none") : S(a)("opening.settings.card_use", { name: _e.value.name }) : S(a)("opening.settings.card_use", { name: s.value.card.name }),
-							disabled: s.value.card === null && _e.value === null,
-							"onUpdate:modelValue": ye
+							label: s.value.card === null ? ve.value === null ? S(a)("opening.settings.card_none") : S(a)("opening.settings.card_use", { name: ve.value.name }) : S(a)("opening.settings.card_use", { name: s.value.card.name }),
+							disabled: s.value.card === null && ve.value === null,
+							"onUpdate:modelValue": xe
 						}, null, 8, [
 							"model-value",
 							"label",
 							"disabled"
-						]), I(V, {
+						]), L(oe, {
 							"model-value": s.value.use_greeting,
 							label: S(a)("opening.settings.greeting_use"),
 							disabled: s.value.card === null || s.value.card.first_message.trim() === "",
-							"onUpdate:modelValue": Se
+							"onUpdate:modelValue": we
 						}, null, 8, [
 							"model-value",
 							"label",
@@ -2075,16 +2131,16 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 						])], 2)]),
 						_: 1
 					}, 8, ["label", "hint"]),
-					E("div", { class: A(S(Z).row) }, [
-						E("span", { class: A(S(Z).spacer) }, null, 2),
-						E("span", { class: A(S(Z).hint) }, w(S(a)("opening.draft.step_count", { n: s.value.steps.length })), 3),
-						I(z, {
-							icon: S(ce),
+					D("div", { class: j(S(Q).row) }, [
+						D("span", { class: j(S(Q).spacer) }, null, 2),
+						D("span", { class: j(S(Q).hint) }, w(S(a)("opening.draft.step_count", { n: s.value.steps.length })), 3),
+						L(H, {
+							icon: S(W),
 							label: S(a)("opening.draft.start"),
 							variant: "primary",
 							pending: q.value !== null,
 							disabled: s.value.description.trim() === "",
-							onClick: Pe
+							onClick: Ie
 						}, null, 8, [
 							"icon",
 							"label",
@@ -2095,43 +2151,43 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				], 64))
 			], 2)], 2), s.value !== null && s.value.started ? (d(), y("aside", {
 				key: 0,
-				class: A(S(Z).known),
-				"data-open": At.value ? "" : void 0,
+				class: j(S(Q).known),
+				"data-open": Lt.value ? "" : void 0,
 				"aria-label": S(a)("opening.known.label")
 			}, [
-				E("div", { class: A(S(Z).known_block) }, [E("h3", { class: A(S(Z).known_title) }, w(S(a)("opening.known.settled")), 3), (d(!0), y(N, null, p(s.value.steps, (e, t) => (d(), y(N, { key: e.id }, [t !== s.value.current && (s.value.states[t]?.entries.length ?? 0) > 0 ? (d(), y("div", {
+				D("div", { class: j(S(Q).known_block) }, [D("h3", { class: j(S(Q).known_title) }, w(S(a)("opening.known.settled")), 3), (d(!0), y(P, null, p(s.value.steps, (e, t) => (d(), y(P, { key: e.id }, [t !== s.value.current && (s.value.states[t]?.entries.length ?? 0) > 0 ? (d(), y("div", {
 					key: 0,
-					class: A(S(Z).known_line)
+					class: j(S(Q).known_line)
 				}, [
-					E("strong", null, w(e.name), 1),
-					n[24] ||= E("br", null, null, -1),
-					P(w((s.value.states[t]?.entries ?? []).map((e) => e.title).join(S(a)("opening.ask.joiner"))), 1)
+					D("strong", null, w(e.name), 1),
+					n[25] ||= D("br", null, null, -1),
+					F(w((s.value.states[t]?.entries ?? []).map((e) => e.title).join(S(a)("opening.ask.joiner"))), 1)
 				], 2)) : C("", !0)], 64))), 128))], 2),
 				Y.value !== null && Y.value.answers.length > 0 ? (d(), y("div", {
 					key: 0,
-					class: A(S(Z).known_block)
-				}, [E("h3", { class: A(S(Z).known_title) }, w(S(a)("opening.known.answered")), 3), (d(!0), y(N, null, p(Y.value.answers, (e, t) => (d(), y("div", {
+					class: j(S(Q).known_block)
+				}, [D("h3", { class: j(S(Q).known_title) }, w(S(a)("opening.known.answered")), 3), (d(!0), y(P, null, p(Y.value.answers, (e, t) => (d(), y("div", {
 					key: t,
-					class: A(S(Z).known_line)
-				}, w(He(e.selected, e.other)), 3))), 128))], 2)) : C("", !0),
-				E("div", { class: A(S(Z).known_block) }, [E("h3", { class: A(S(Z).known_title) }, w(S(a)("opening.known.draft")), 3), E("div", { class: A(S(Z).known_line) }, [
-					P(w(S(a)("opening.known.connection", { name: we(s.value) })), 1),
-					n[26] ||= E("br", null, null, -1),
-					P(w(S(a)("opening.known.preset", { name: s.value.preset_name === "in_use" ? S(a)("opening.settings.preset_in_use") : s.value.preset_name })), 1),
-					n[27] ||= E("br", null, null, -1),
-					s.value.card === null ? C("", !0) : (d(), y(N, { key: 0 }, [P(w(s.value.use_greeting ? S(a)("opening.known.card_greeting", { name: s.value.card.name }) : S(a)("opening.known.card", { name: s.value.card.name })), 1), n[25] ||= E("br", null, null, -1)], 64)),
-					P(w(s.value.worldbooks.length === 0 ? S(a)("opening.known.no_books") : S(a)("opening.known.books", { names: s.value.worldbooks.join(S(a)("opening.ask.joiner")) })), 1)
+					class: j(S(Q).known_line)
+				}, w(Je(e.selected, e.other)), 3))), 128))], 2)) : C("", !0),
+				D("div", { class: j(S(Q).known_block) }, [D("h3", { class: j(S(Q).known_title) }, w(S(a)("opening.known.draft")), 3), D("div", { class: j(S(Q).known_line) }, [
+					F(w(S(a)("opening.known.connection", { name: Ee(s.value) })), 1),
+					n[27] ||= D("br", null, null, -1),
+					F(w(S(a)("opening.known.preset", { name: s.value.preset_name === "in_use" ? S(a)("opening.settings.preset_in_use") : s.value.preset_name })), 1),
+					n[28] ||= D("br", null, null, -1),
+					s.value.card === null ? C("", !0) : (d(), y(P, { key: 0 }, [F(w(s.value.use_greeting ? S(a)("opening.known.card_greeting", { name: s.value.card.name }) : S(a)("opening.known.card", { name: s.value.card.name })), 1), n[26] ||= D("br", null, null, -1)], 64)),
+					F(w(s.value.worldbooks.length === 0 ? S(a)("opening.known.no_books") : S(a)("opening.known.books", { names: s.value.worldbooks.join(S(a)("opening.ask.joiner")) })), 1)
 				], 2)], 2)
-			], 10, Tt)) : C("", !0)], 2),
-			e.host !== null && s.value !== null ? (d(), T(ut, {
+			], 10, Ot)) : C("", !0)], 2),
+			e.host !== null && s.value !== null ? (d(), T(ft, {
 				key: 0,
-				open: nt.value,
-				"onUpdate:open": n[20] ||= (e) => nt.value = e,
+				open: ut.value,
+				"onUpdate:open": n[21] ||= (e) => ut.value = e,
 				host: e.host,
-				entries: et.value,
+				entries: st.value,
 				"default-name": s.value.display_name,
 				lists: e.lists,
-				onWritten: at
+				onWritten: At
 			}, null, 8, [
 				"open",
 				"host",
@@ -2139,19 +2195,19 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				"default-name",
 				"lists"
 			])) : C("", !0),
-			I(me, {
-				open: Q.value,
-				"onUpdate:open": n[21] ||= (e) => Q.value = e,
+			L(he, {
+				open: jt.value,
+				"onUpdate:open": n[22] ||= (e) => jt.value = e,
 				title: S(a)("opening.output.append_title"),
-				description: ct.value === null ? S(a)("opening.output.append_no_chat") : S(a)("opening.output.append_description", {
-					chat: ct.value,
-					speaker: tt.value?.speaker ?? ""
+				description: Nt.value === null ? S(a)("opening.output.append_no_chat") : S(a)("opening.output.append_description", {
+					chat: Nt.value,
+					speaker: lt.value?.speaker ?? ""
 				}),
 				"confirm-label": S(a)("opening.output.append_confirm"),
 				"cancel-label": S(a)("common.actions.cancel"),
-				pending: st.value,
+				pending: Mt.value,
 				destructive: !1,
-				onConfirm: n[22] ||= (e) => ct.value === null ? Q.value = !1 : lt()
+				onConfirm: n[23] ||= (e) => Nt.value === null ? jt.value = !1 : Pt()
 			}, null, 8, [
 				"open",
 				"title",
@@ -2160,15 +2216,15 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				"cancel-label",
 				"pending"
 			]),
-			I(me, {
+			L(he, {
 				open: g.value,
-				"onUpdate:open": n[23] ||= (e) => g.value = e,
+				"onUpdate:open": n[24] ||= (e) => g.value = e,
 				title: S(a)("opening.draft.delete_title", { name: s.value?.display_name ?? "" }),
 				description: S(a)("opening.draft.delete_description"),
 				"confirm-label": S(a)("common.actions.delete"),
 				"cancel-label": S(a)("common.actions.cancel"),
 				pending: x.value,
-				onConfirm: O
+				onConfirm: k
 			}, null, 8, [
 				"open",
 				"title",
@@ -2179,18 +2235,18 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 			])
 		], 2));
 	}
-}), Ot = ["aria-label"], kt = ["aria-current", "onClick"], At = ["id", "value"], jt = [
+}), jt = ["aria-label"], Mt = ["aria-current", "onClick"], Nt = ["id", "value"], Pt = [
 	"value",
 	"disabled",
 	"aria-label",
 	"onInput"
-], Mt = [
+], Ft = [
 	"value",
 	"disabled",
 	"aria-label",
 	"placeholder",
 	"onInput"
-], Nt = /* @__PURE__ */ F({
+], It = /* @__PURE__ */ I({
 	__name: "OpeningTemplates",
 	props: /*@__PURE__*/ u({
 		store: {},
@@ -2202,7 +2258,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 	}),
 	emits: ["update:section"],
 	setup(e) {
-		let t = e, n = _(e, "section"), { t: r } = D(), i = M(Me), a = k(() => t.templates.find((e) => e.id === i.value) ?? t.templates[0] ?? null), o = k(() => a.value !== null && !a.value.builtin), s = k(() => [{
+		let t = e, n = _(e, "section"), { t: r } = O(), i = N(Pe), a = A(() => t.templates.find((e) => e.id === i.value) ?? t.templates[0] ?? null), o = A(() => a.value !== null && !a.value.builtin), s = A(() => [{
 			value: "entries",
 			label: r("opening.templates.output_entries")
 		}, {
@@ -2265,19 +2321,19 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				e.output = t;
 			});
 		}
-		let v = M(!1);
+		let v = N(!1);
 		async function b() {
 			let e = a.value;
-			e !== null && !e.builtin && (await t.store.remove(e.id), v.value = !1, i.value = Me);
+			e !== null && !e.builtin && (await t.store.remove(e.id), v.value = !1, i.value = Pe);
 		}
-		return (t, _) => (d(), y("div", { class: A(S(Z).layout) }, [
-			E("aside", {
-				class: A(S(Z).aside),
+		return (t, _) => (d(), y("div", { class: j(S(Q).layout) }, [
+			D("aside", {
+				class: j(S(Q).aside),
 				"aria-label": S(r)("opening.templates.list_label")
 			}, [
-				I(z, {
-					class: A(S(Z).aside_new),
-					icon: S(H),
+				L(H, {
+					class: j(S(Q).aside_new),
+					icon: S(le),
 					label: S(r)("opening.templates.new"),
 					onClick: _[0] ||= (e) => c(null)
 				}, null, 8, [
@@ -2285,34 +2341,34 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					"icon",
 					"label"
 				]),
-				E("div", { class: A(S(Z).aside_title) }, w(S(r)("opening.templates.list_title")), 3),
-				(d(!0), y(N, null, p(e.templates, (e) => (d(), y("button", {
+				D("div", { class: j(S(Q).aside_title) }, w(S(r)("opening.templates.list_title")), 3),
+				(d(!0), y(P, null, p(e.templates, (e) => (d(), y("button", {
 					key: e.id,
 					type: "button",
-					class: A(["tc-interactive", S(Z).item]),
+					class: j(["tc-interactive", S(Q).item]),
 					"aria-current": e.id === a.value?.id ? "true" : void 0,
 					onClick: (t) => i.value = e.id
-				}, [E("span", { class: A(S(Z).item_name) }, w(e.display_name), 3), E("span", { class: A(S(Z).item_meta) }, w(e.builtin ? S(r)("opening.templates.builtin_meta", { n: e.steps.length }) : S(r)("opening.templates.meta", { n: e.steps.length })), 3)], 10, kt))), 128))
-			], 10, Ot),
-			E("div", { class: A(S(Z).work) }, [a.value === null ? C("", !0) : (d(), y("div", {
+				}, [D("span", { class: j(S(Q).item_name) }, w(e.display_name), 3), D("span", { class: j(S(Q).item_meta) }, w(e.builtin ? S(r)("opening.templates.builtin_meta", { n: e.steps.length }) : S(r)("opening.templates.meta", { n: e.steps.length })), 3)], 10, Mt))), 128))
+			], 10, jt),
+			D("div", { class: j(S(Q).work) }, [a.value === null ? C("", !0) : (d(), y("div", {
 				key: 0,
-				class: A(S(Z).work_inner)
+				class: j(S(Q).work_inner)
 			}, [
-				E("div", { class: A(S(Z).topline) }, [
-					I(Be, {
+				D("div", { class: j(S(Q).topline) }, [
+					L(Ve, {
 						modelValue: n.value,
 						"onUpdate:modelValue": _[1] ||= (e) => n.value = e
 					}, null, 8, ["modelValue"]),
-					E("span", { class: A(S(Z).spacer) }, null, 2),
-					I(z, {
+					D("span", { class: j(S(Q).spacer) }, null, 2),
+					L(H, {
 						icon: S(ie),
 						label: S(r)("opening.templates.copy"),
 						variant: "ghost",
 						onClick: _[2] ||= (e) => c(a.value)
 					}, null, 8, ["icon", "label"]),
-					o.value ? (d(), T(G, {
+					o.value ? (d(), T(K, {
 						key: 0,
-						icon: S(le),
+						icon: S(ue),
 						label: S(r)("opening.templates.delete"),
 						destructive: "",
 						onClick: _[3] ||= (e) => v.value = !0
@@ -2320,37 +2376,37 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				], 2),
 				e.saveError === null ? C("", !0) : (d(), y("p", {
 					key: 0,
-					class: A(S(Z).error),
+					class: j(S(Q).error),
 					role: "alert"
 				}, w(S(r)("opening.errors.save", { reason: e.saveError })), 3)),
-				E("div", { class: A(S(Z).work_head) }, [o.value ? (d(), T(U, {
+				D("div", { class: j(S(Q).work_head) }, [o.value ? (d(), T(U, {
 					key: 1,
 					label: S(r)("opening.templates.name_label")
 				}, {
-					default: j(({ fieldId: e }) => [E("input", {
+					default: M(({ fieldId: e }) => [D("input", {
 						id: e,
 						value: a.value.display_name,
-						class: A(S(Z).input),
+						class: j(S(Q).input),
 						maxlength: "60",
 						onInput: _[4] ||= (e) => {
 							l((t) => {
 								t.display_name = e.target.value;
 							}, !0);
 						}
-					}, null, 42, At)]),
+					}, null, 42, Nt)]),
 					_: 1
 				}, 8, ["label"])) : (d(), y("h1", {
 					key: 0,
-					class: A(S(Z).work_title)
-				}, w(a.value.display_name), 3)), E("p", { class: A(S(Z).work_description) }, w(o.value ? S(r)("opening.templates.hint") : S(r)("opening.templates.builtin_hint")), 3)], 2),
-				(d(!0), y(N, null, p(a.value.steps, (e, t) => (d(), y("div", {
+					class: j(S(Q).work_title)
+				}, w(a.value.display_name), 3)), D("p", { class: j(S(Q).work_description) }, w(o.value ? S(r)("opening.templates.hint") : S(r)("opening.templates.builtin_hint")), 3)], 2),
+				(d(!0), y(P, null, p(a.value.steps, (e, t) => (d(), y("div", {
 					key: e.id,
-					class: A(S(Z).template_step)
+					class: j(S(Q).template_step)
 				}, [
-					E("span", { class: A(S(Z).template_number) }, w(t + 1), 3),
-					E("div", { class: A(S(Z).template_fields) }, [E("input", {
+					D("span", { class: j(S(Q).template_number) }, w(t + 1), 3),
+					D("div", { class: j(S(Q).template_fields) }, [D("input", {
 						value: e.name,
-						class: A(S(Z).input),
+						class: j(S(Q).input),
 						maxlength: "40",
 						disabled: !o.value,
 						"aria-label": S(r)("opening.templates.step_name", { n: t + 1 }),
@@ -2359,9 +2415,9 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 								t.name = e.target.value;
 							}, !0);
 						}
-					}, null, 42, jt), E("textarea", {
+					}, null, 42, Pt), D("textarea", {
 						value: e.instruction,
-						class: A(S(Z).text_area_small),
+						class: j(S(Q).text_area_small),
 						maxlength: "2000",
 						disabled: !o.value,
 						"aria-label": S(r)("opening.templates.step_instruction", { n: t + 1 }),
@@ -2371,10 +2427,10 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 								t.instruction = e.target.value;
 							}, !0);
 						}
-					}, null, 42, Mt)], 2),
-					E("div", { class: A(S(Z).template_side) }, [
-						E("span", { class: A(S(Z).hint) }, w(S(r)("opening.templates.rounds_label")), 3),
-						I(pe, {
+					}, null, 42, Ft)], 2),
+					D("div", { class: j(S(Q).template_side) }, [
+						D("span", { class: j(S(Q).hint) }, w(S(r)("opening.templates.rounds_label")), 3),
+						L(me, {
 							"model-value": e.max_rounds,
 							label: S(r)("opening.templates.rounds_label"),
 							"increment-label": S(r)("opening.templates.rounds_up"),
@@ -2394,7 +2450,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							"disabled",
 							"onUpdate:modelValue"
 						]),
-						I(re, {
+						L(re, {
 							"model-value": e.output,
 							options: s.value,
 							placeholder: S(r)("opening.templates.output_label"),
@@ -2411,10 +2467,10 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 						]),
 						o.value ? (d(), y("div", {
 							key: 0,
-							class: A(S(Z).row)
+							class: j(S(Q).row)
 						}, [
-							I(G, {
-								icon: S(ye),
+							L(K, {
+								icon: S(xe),
 								label: S(r)("opening.templates.move_up"),
 								size: "sm",
 								disabled: t === 0,
@@ -2425,8 +2481,8 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 								"disabled",
 								"onClick"
 							]),
-							I(G, {
-								icon: S(_e),
+							L(K, {
+								icon: S(ve),
 								label: S(r)("opening.templates.move_down"),
 								size: "sm",
 								disabled: t === a.value.steps.length - 1,
@@ -2437,8 +2493,8 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 								"disabled",
 								"onClick"
 							]),
-							I(G, {
-								icon: S(le),
+							L(K, {
+								icon: S(ue),
 								label: S(r)("opening.templates.remove_step"),
 								size: "sm",
 								destructive: "",
@@ -2455,9 +2511,9 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 				], 2))), 128)),
 				o.value ? (d(), y("div", {
 					key: 1,
-					class: A(S(Z).row)
-				}, [I(z, {
-					icon: S(H),
+					class: j(S(Q).row)
+				}, [L(H, {
+					icon: S(le),
 					label: S(r)("opening.templates.add_step"),
 					disabled: a.value.steps.length >= S(12),
 					onClick: m
@@ -2467,7 +2523,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 					"disabled"
 				])], 2)) : C("", !0)
 			], 2))], 2),
-			I(me, {
+			L(he, {
 				open: v.value,
 				"onUpdate:open": _[5] ||= (e) => v.value = e,
 				title: S(r)("opening.templates.delete_title", { name: a.value?.display_name ?? "" }),
@@ -2484,7 +2540,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 			])
 		], 2));
 	}
-}), $ = { type: "string" }, Pt = {
+}), $ = { type: "string" }, Lt = {
 	type: "object",
 	properties: {
 		text: $,
@@ -2510,7 +2566,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 		"options"
 	],
 	additionalProperties: !1
-}, Ft = {
+}, Rt = {
 	type: "object",
 	properties: {
 		title: $,
@@ -2528,26 +2584,26 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 		"content"
 	],
 	additionalProperties: !1
-}, It = {
+}, zt = {
 	name: "tavern_canvas_opening_entries",
 	value: {
 		type: "object",
 		properties: { entries: {
 			type: "array",
-			items: Ft
+			items: Rt
 		} },
 		required: ["entries"],
 		additionalProperties: !1
 	}
-}, Lt = {
+}, Bt = {
 	name: "tavern_canvas_opening_entry",
 	value: {
 		type: "object",
-		properties: { entry: Ft },
+		properties: { entry: Rt },
 		required: ["entry"],
 		additionalProperties: !1
 	}
-}, Rt = {
+}, Vt = {
 	name: "tavern_canvas_opening_message",
 	value: {
 		type: "object",
@@ -2558,29 +2614,29 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 		required: ["speaker", "text"],
 		additionalProperties: !1
 	}
-}, zt = [
+}, Ht = [
 	"[Inkwell opening builder]",
 	"You help the user build the opening of a roleplay story one step at a time: its world, characters, rules and first scene.",
 	"Write every value in the language of the user's description.",
 	"The user's own character is {{user}}. Refer to them only as {{user}} and never decide their appearance, personality or past.",
 	"Keep everything consistent with what is settled below and with any world info you were given."
 ];
-function Bt(e) {
+function Ut(e) {
 	let t = [...e.selected, ...e.other.trim() === "" ? [] : [e.other.trim()]];
 	return `- Q: ${e.question.text}\n  A: ${t.length === 0 ? "(left to you)" : t.join("; ")}`;
 }
-function Vt(e) {
+function Wt(e) {
 	let t = e.constant ? "always active" : `keys: ${e.keys.join(", ")}`;
 	return `- ${e.title} (${t}): ${e.content}`;
 }
-function Ht(e, t) {
+function Gt(e, t) {
 	let n = [];
 	return e.steps.slice(0, t).forEach((t, r) => {
 		let i = e.states[r];
-		i === void 0 || i.status !== "done" && i.status !== "stale" || (n.push(`## ${t.name}`), n.push(...i.entries.map(Vt)), i.message !== null && n.push(`- Opening message by ${i.message.speaker}: ${i.message.text}`));
+		i === void 0 || i.status !== "done" && i.status !== "stale" || (n.push(`## ${t.name}`), n.push(...i.entries.map(Wt)), i.message !== null && n.push(`- Opening message by ${i.message.speaker}: ${i.message.text}`));
 	}), n.length === 0 ? ["(nothing yet)"] : n;
 }
-function Ut(e) {
+function Kt(e) {
 	let { card: t } = e;
 	if (t === null) return [];
 	let n = (e, t) => t.trim() === "" ? [] : [`${e}: ${t.trim()}`], r = e.use_greeting && t.first_message.trim() !== "" ? [
@@ -2597,27 +2653,27 @@ function Ut(e) {
 		...r
 	];
 }
-function Wt(e, t) {
+function qt(e, t) {
 	let n = e.steps[t], r = e.states[t];
 	if (n === void 0 || r === void 0) throw RangeError(`The draft has no step ${String(t)}`);
 	return [
-		...zt,
+		...Ht,
 		"",
 		"The user's description:",
 		e.description.trim(),
-		...Ut(e),
+		...Kt(e),
 		"",
 		"Settled so far:",
-		...Ht(e, t),
+		...Gt(e, t),
 		"",
 		`Current step: ${n.name}`,
 		`What this step settles: ${n.instruction}`,
 		"",
 		"Answers given in this step:",
-		...r.answers.length === 0 ? ["(none)"] : r.answers.map(Bt)
+		...r.answers.length === 0 ? ["(none)"] : r.answers.map(Ut)
 	];
 }
-function Gt(e) {
+function Jt(e) {
 	let { card: t } = e;
 	return [
 		e.description,
@@ -2626,8 +2682,8 @@ function Gt(e) {
 		...e.states.flatMap((e) => [...e.answers.flatMap((e) => [...e.selected, e.other]), ...e.entries.map((e) => `${e.title} ${e.content}`)])
 	].join("\n");
 }
-function Kt(e, t, n, r) {
-	for (let r of de(e, t)) {
+function Yt(e, t, n, r) {
+	for (let r of pe(e, t)) {
 		let e;
 		try {
 			e = JSON.parse(r);
@@ -2637,36 +2693,36 @@ function Kt(e, t, n, r) {
 		let t = n.safeParse(e);
 		if (t.success) return t.data;
 	}
-	throw new W(`The reply contains no ${r} JSON object`, e);
+	throw new fe(`The reply contains no ${r} JSON object`, e);
 }
-var qt = a((e) => typeof e == "object" && e && "options" in e && Array.isArray(e.options) ? {
+var Xt = a((e) => typeof e == "object" && e && "options" in e && Array.isArray(e.options) ? {
 	...e,
 	options: e.options.slice(0, 5)
-} : e, Te), Jt = t({
+} : e, De), Zt = t({
 	title: n().trim().min(1).max(120),
 	constant: r(),
 	keys: o(n()).transform((e) => [...new Set(e.map((e) => e.trim()).filter((e) => e !== ""))].slice(0, 12)),
 	content: n().trim().min(1).max(8e3)
-}), Yt = 30;
-function Xt(e) {
+}), Qt = 30;
+function $t(e) {
 	return {
 		id: crypto.randomUUID(),
 		...e,
 		keys: e.constant ? [] : e.keys
 	};
 }
-function Zt(e, t) {
-	let n = e.slice(0, Yt).flatMap((e) => {
-		let t = Jt.safeParse(e);
-		return t.success ? [Xt(t.data)] : [];
+function en(e, t) {
+	let n = e.slice(0, Qt).flatMap((e) => {
+		let t = Zt.safeParse(e);
+		return t.success ? [$t(t.data)] : [];
 	});
-	if (n.length === 0) throw new W("The reply contains no valid entry", t);
+	if (n.length === 0) throw new fe("The reply contains no valid entry", t);
 	return {
 		entries: n,
 		dropped: e.length - n.length
 	};
 }
-function Qt(e, t) {
+function tn(e, t) {
 	return e.filter((e) => e.name === t).flatMap((e) => {
 		try {
 			return [JSON.parse(e.arguments)];
@@ -2675,87 +2731,88 @@ function Qt(e, t) {
 		}
 	});
 }
-var $t = [
+var nn = [
 	"- One entry per distinct thing: the world overview, each faction, each place, each character, each group of rules.",
 	"- title: '<kind>｜<name>', both in the language of the description, for example a faction, a place or a character.",
 	"- constant: true only for what must always be in context: the world overview, hard rules of the world, narration and style requirements, content boundaries. Otherwise false.",
 	"- keys: when constant is false, 1 to 5 words or names that appear in the story whenever this entry matters; [] when constant is true.",
 	"- content: self-contained prose a storyteller can rely on, without referring to other entries by number."
-], en = [
+], rn = [
 	"The opening message is the first message of the roleplay, sent by the character who meets {{user}} first.",
 	"- speaker: that character's name.",
 	"- text: the whole message, following the narration person, style and length settled above, ending at a moment {{user}} can answer. Do not speak or act for {{user}}."
-], tn = ["Ask only about a choice that changes what this step writes and that the description and the answers leave open. Never ask about anything already settled.", "A question has the question text, a one-sentence reason it matters (why), and 3 or 4 options, each a short label with a one-sentence detail. Set multiple to true only when several options can hold at once. Do not add an 'other' option; the user can always type their own."], nn = "ask_question", rn = "add_entry", an = t({ entries: o(l()).min(1) });
-function on(e, t) {
+], an = ["Ask only about a choice that changes what this step writes and that the description and the answers leave open. Never ask about anything already settled.", "A question has the question text, a one-sentence reason it matters (why), and 3 or 4 options, each a short label with a one-sentence detail. Set multiple to true only when several options can hold at once. Do not add an 'other' option; the user can always type their own."], on = "ask_question", sn = "add_entry", cn = t({ entries: o(l()).min(1) });
+function ln(e, t) {
 	let n = [
-		...Wt(e, t),
+		...qt(e, t),
 		"",
 		"Now write this step's result as world book entries.",
-		...$t
-	], r = (e) => Zt(Kt(e, "entries", an, "entries").entries, e);
+		...nn
+	], r = (e) => en(Yt(e, "entries", cn, "entries").entries, e);
 	return {
 		user_input: [...n, "Reply with only a JSON object of the form {\"entries\": [...]}."].join("\n"),
-		json_schema: It,
+		json_schema: zt,
 		parse: r,
 		tools: {
 			tools: [{
-				name: rn,
+				name: sn,
 				description: "Add one world book entry.",
-				parameters: Ft
+				parameters: Rt
 			}],
 			choice: "required",
-			user_input: [...n, `Call ${rn} once for each entry, all in this reply.`].join("\n"),
+			user_input: [...n, `Call ${sn} once for each entry, all in this reply.`].join("\n"),
 			parse: (e, t) => {
-				let n = Qt(e, rn);
-				return n.length === 0 ? r(t) : Zt(n, t);
+				let n = tn(e, sn);
+				return n.length === 0 ? r(t) : en(n, t);
 			}
 		}
 	};
 }
-var sn = {
+var un = {
 	name: "tavern_canvas_opening_question",
 	value: {
 		type: "object",
-		properties: { question: Pt },
+		properties: { question: Lt },
 		required: ["question"],
 		additionalProperties: !1
 	}
-}, cn = t({ question: l() });
-function ln(e, t) {
-	let n = qt.safeParse(e);
-	if (!n.success) throw new W("The reply contains no well-formed question", t);
+}, dn = t({ question: l() });
+function fn(e, t) {
+	let n = Xt.safeParse(e);
+	if (!n.success) throw new fe("The reply contains no well-formed question", t);
 	return n.data;
 }
-function un(e, t) {
-	let n = e.states[t], r = n?.message == null ? (n?.entries ?? []).map(Vt) : [`${n.message.speaker}: ${n.message.text}`], i = [
-		...Wt(e, t),
+function pn(e, t, n) {
+	let r = e.states[t], i = r?.message == null ? (r?.entries ?? []).map(Wt) : [`${r.message.speaker}: ${r.message.text}`], a = [
+		...qt(e, t),
 		"",
 		"This step's current result:",
-		...r.length === 0 ? ["(none)"] : r,
+		...i.length === 0 ? ["(none)"] : i,
 		"",
-		"The user has read this result and wants to be asked one more question before the step is written again. Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently.",
-		...tn
-	], a = (e) => ln(Kt(e, "question", cn, "question").question, e);
+		"The user has read this result and wants to be asked one more question before the step is written again.",
+		n.trim() === "" ? "Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently." : `The user wants the question to be about: ${n.trim()}. Ask about the choice within that which would change the result the most.`,
+		...an
+	], o = (e) => fn(Yt(e, "question", dn, "question").question, e);
 	return {
-		user_input: [...i, "Reply with only a JSON object of the form {\"question\": {...}}."].join("\n"),
-		json_schema: sn,
-		parse: a,
+		user_input: [...a, "Reply with only a JSON object of the form {\"question\": {...}}."].join("\n"),
+		json_schema: un,
+		parse: o,
 		tools: {
 			tools: [{
-				name: nn,
+				name: on,
 				description: "Ask the user one question with options.",
-				parameters: Pt
+				parameters: Lt
 			}],
-			choice: { name: nn },
-			user_input: [...i, `Call ${nn} once.`].join("\n"),
+			choice: { name: on },
+			user_input: [...a, `Call ${on} once.`].join("\n"),
 			parse: (e, t) => {
-				let [n] = Qt(e, nn);
-				return n === void 0 ? a(t) : ln(n, t);
+				let [n] = tn(e, on);
+				return n === void 0 ? o(t) : fn(n, t);
 			}
 		}
 	};
 }
-var dn = "step_ready", fn = {
+var mn = "step_ready", hn = {
 	type: "array",
 	items: {
 		type: "object",
@@ -2766,120 +2823,120 @@ var dn = "step_ready", fn = {
 		required: ["aspect", "settled"],
 		additionalProperties: !1
 	}
-}, pn = {
+}, gn = {
 	name: "tavern_canvas_opening_next",
 	value: {
 		type: "object",
 		properties: {
-			aspects: fn,
-			question: { anyOf: [Pt, { type: "null" }] }
+			aspects: hn,
+			question: { anyOf: [Lt, { type: "null" }] }
 		},
 		required: ["aspects", "question"],
 		additionalProperties: !1
 	}
-}, mn = o(t({
+}, _n = o(t({
 	aspect: n().trim().min(1),
 	settled: r()
-})).min(1), hn = t({
+})).min(1), vn = t({
 	aspects: l(),
 	question: l()
 });
-function gn(e, t, n) {
-	let r = mn.safeParse(e);
-	if (!r.success) throw new W("The reply lists no aspects of the step", n);
-	if (t != null) return ln(t, n);
-	if (r.data.some((e) => !e.settled)) throw new W("The reply leaves an aspect open without asking about it", n);
+function yn(e, t, n) {
+	let r = _n.safeParse(e);
+	if (!r.success) throw new fe("The reply lists no aspects of the step", n);
+	if (t != null) return fn(t, n);
+	if (r.data.some((e) => !e.settled)) throw new fe("The reply leaves an aspect open without asking about it", n);
 	return null;
 }
-function _n(e, t, n) {
+function bn(e, t, n) {
 	let r = [
-		...Wt(e, t),
+		...qt(e, t),
 		"",
 		"Before this step is written, check what it still needs from the user.",
 		"First list 2 to 6 aspects this step must settle, taken from what this step settles, each a few words in the language of the description.",
 		"An aspect is settled only when the user's description, a settled earlier step or an answer in this step states it. An aspect you would have to choose yourself is not settled.",
 		`If any aspect is not settled, ask one question about the most important one; at most ${String(n)} more questions may be asked in this step. Only when every aspect is settled, ask nothing.`,
-		...tn
+		...an
 	], i = (e) => {
-		let t = Kt(e, "aspects", hn, "question");
-		return gn(t.aspects, t.question, e);
+		let t = Yt(e, "aspects", vn, "question");
+		return yn(t.aspects, t.question, e);
 	};
 	return {
 		user_input: [...r, "Reply with only a JSON object of the form {\"aspects\": [{\"aspect\": \"...\", \"settled\": true or false}, ...], \"question\": {...} or null}."].join("\n"),
-		json_schema: pn,
+		json_schema: gn,
 		parse: i,
 		tools: {
 			tools: [{
-				name: nn,
+				name: on,
 				description: "List the step's aspects and ask the user about the most important open one.",
 				parameters: {
 					type: "object",
 					properties: {
-						aspects: fn,
-						question: Pt
+						aspects: hn,
+						question: Lt
 					},
 					required: ["aspects", "question"],
 					additionalProperties: !1
 				}
 			}, {
-				name: dn,
+				name: mn,
 				description: "List the step's aspects when every one is settled.",
 				parameters: {
 					type: "object",
-					properties: { aspects: fn },
+					properties: { aspects: hn },
 					required: ["aspects"],
 					additionalProperties: !1
 				}
 			}],
 			choice: "required",
-			user_input: [...r, `Call ${nn} once to ask, or ${dn} once when every aspect is settled.`].join("\n"),
+			user_input: [...r, `Call ${on} once to ask, or ${mn} once when every aspect is settled.`].join("\n"),
 			parse: (e, t) => {
-				let [n] = Qt(e, nn), [r] = Qt(e, dn), a = hn.partial().safeParse(n ?? r);
-				return a.success ? gn(a.data.aspects, n === void 0 ? null : a.data.question, t) : i(t);
+				let [n] = tn(e, on), [r] = tn(e, mn), a = vn.partial().safeParse(n ?? r);
+				return a.success ? yn(a.data.aspects, n === void 0 ? null : a.data.question, t) : i(t);
 			}
 		}
 	};
 }
-function vn(e, n, r) {
+function xn(e, n, r) {
 	return {
 		user_input: [
-			...Wt(e, n),
+			...qt(e, n),
 			"",
 			"Entries this step already has:",
-			...(e.states[n]?.entries ?? []).map(Vt),
+			...(e.states[n]?.entries ?? []).map(Wt),
 			"",
-			`Rewrite only this entry, keeping its subject and fitting everything above: ${Vt(r)}`,
-			...$t.slice(1),
+			`Rewrite only this entry, keeping its subject and fitting everything above: ${Wt(r)}`,
+			...nn.slice(1),
 			"Reply with only a JSON object of the form {\"entry\": {...}}."
 		].join("\n"),
-		json_schema: Lt,
+		json_schema: Bt,
 		parse: (e) => ({
-			...Xt(Kt(e, "entry", t({ entry: Jt }), "entry").entry),
+			...$t(Yt(e, "entry", t({ entry: Zt }), "entry").entry),
 			id: r.id
 		})
 	};
 }
-function yn(e, t) {
+function Sn(e, t) {
 	return {
 		user_input: [
-			...Wt(e, t),
+			...qt(e, t),
 			"",
 			"Now write the opening message.",
-			...en,
+			...rn,
 			"Reply with only a JSON object of the form {\"speaker\": \"...\", \"text\": \"...\"}."
 		].join("\n"),
-		json_schema: Rt,
-		parse: (e) => Kt(e, "text", Ee, "opening message")
+		json_schema: Vt,
+		parse: (e) => Yt(e, "text", Oe, "opening message")
 	};
 }
 //#endregion
 //#region src/ui/views/opening/use_opening_flow.ts
-function bn(e, t) {
-	let n = O(/* @__PURE__ */ new Map()), r = O(/* @__PURE__ */ new Map()), i = O(/* @__PURE__ */ new Map());
+function Cn(e, t) {
+	let n = k(/* @__PURE__ */ new Map()), r = k(/* @__PURE__ */ new Map()), i = k(/* @__PURE__ */ new Map());
 	function a(e, n, r) {
 		i.set(e.id, r.kind === "entries" ? r.dropped : 0), t.edit(e, (e) => {
 			let t = e.states[n];
-			t !== void 0 && (t.question = null, t.status = "done", r.kind === "entries" ? t.entries = r.entries : t.message = r.message), Ie(e, n);
+			t !== void 0 && (t.question = null, t.status = "done", r.kind === "entries" ? t.entries = r.entries : t.message = r.message), Re(e, n);
 		});
 	}
 	function o(e) {
@@ -2887,7 +2944,7 @@ function bn(e, t) {
 			connection: e.connection,
 			preset_name: e.preset_name,
 			worldbooks: e.worldbooks,
-			text: Gt(e)
+			text: Jt(e)
 		};
 	}
 	async function s(e, t, i) {
@@ -2909,10 +2966,10 @@ function bn(e, t) {
 		}, async () => {
 			r.output === "message" ? a(t, n, {
 				kind: "message",
-				message: await e.request(yn(t, n), o(t))
+				message: await e.request(Sn(t, n), o(t))
 			}) : a(t, n, {
 				kind: "entries",
-				...await e.request(on(t, n), o(t))
+				...await e.request(ln(t, n), o(t))
 			});
 		});
 	}
@@ -2931,7 +2988,7 @@ function bn(e, t) {
 				kind: "question",
 				step: r
 			}, async () => {
-				let a = await e.request(_n(n, r, l), o(n));
+				let a = await e.request(bn(n, r, l), o(n));
 				a !== null && (i.asked = !0, t.edit(n, (e) => {
 					let t = e.states[r];
 					t !== void 0 && (t.question = a);
@@ -2940,16 +2997,16 @@ function bn(e, t) {
 		}
 		await c(n, r);
 	}
-	async function u(n, r) {
+	async function u(n, r, i) {
 		await s(n, {
 			kind: "question",
 			step: r
 		}, async () => {
-			let i = await e.request(un(n, r), o(n));
+			let a = await e.request(pn(n, r, i), o(n));
 			t.edit(n, (e) => {
 				e.current = r;
 				let t = e.states[r];
-				t !== void 0 && (t.question = i, t.status = "asking");
+				t !== void 0 && (t.question = a, t.status = "asking");
 			});
 		});
 	}
@@ -2980,7 +3037,7 @@ function bn(e, t) {
 		reask(e, n, r) {
 			t.edit(e, (e) => {
 				let t = e.states[n], i = t?.answers[r];
-				t !== void 0 && i !== void 0 && (t.answers = t.answers.slice(0, r), t.question = i.question, t.status = "asking", e.current = n, Ie(e, n));
+				t !== void 0 && i !== void 0 && (t.answers = t.answers.slice(0, r), t.question = i.question, t.status = "asking", e.current = n, Re(e, n));
 			});
 		},
 		async next(e) {
@@ -2998,10 +3055,10 @@ function bn(e, t) {
 				step: r,
 				entry_id: i.id
 			}, async () => {
-				let a = await e.request(vn(n, r, i), o(n));
+				let a = await e.request(xn(n, r, i), o(n));
 				t.edit(n, (e) => {
 					let t = e.states[r]?.entries, n = t?.findIndex((e) => e.id === i.id) ?? -1;
-					t !== void 0 && n >= 0 && (t[n] = a), Ie(e, r);
+					t !== void 0 && n >= 0 && (t[n] = a), Re(e, r);
 				});
 			});
 		}
@@ -3009,15 +3066,15 @@ function bn(e, t) {
 }
 //#endregion
 //#region src/ui/views/opening/use_opening_messages.ts
-var xn = {
-	en: async () => (await import("./opening_en-BexCGuz1.js")).en_messages,
-	"zh-CN": async () => (await import("./opening_zh_cn-DZCoAzb0.js")).zh_cn_messages
+var wn = {
+	en: async () => (await import("./opening_en-D_f0aaN5.js")).en_messages,
+	"zh-CN": async () => (await import("./opening_zh_cn-CFSUA-G7.js")).zh_cn_messages
 };
-function Sn() {
-	let e = D({ useScope: "global" }), t = M(!1);
+function Tn() {
+	let e = O({ useScope: "global" }), t = N(!1);
 	async function n(n) {
 		for (let t of /* @__PURE__ */ new Set(["en", n])) {
-			let n = xn[t];
+			let n = wn[t];
 			n !== void 0 && !e.te("opening.title", t) && e.mergeLocaleMessage(t, await n());
 		}
 		t.value = !0;
@@ -3028,25 +3085,25 @@ function Sn() {
 }
 //#endregion
 //#region src/ui/views/opening/use_opening_store.ts
-var Cn = 600;
-function wn(e) {
+var En = 600;
+function Dn(e) {
 	if (e.kind === "draft") {
 		let { id: t, ...n } = e;
-		return Ae.parse(Re(n));
+		return Me.parse(Z(n));
 	}
 	let { id: t, builtin: n, ...r } = e;
-	return je.parse(Re(r));
+	return Ne.parse(Z(r));
 }
-function Tn(e) {
-	let t = O(/* @__PURE__ */ new Map()), n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
+function On(e) {
+	let t = k(/* @__PURE__ */ new Map()), n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
 	function i(e) {
-		return t.get(e.id) ?? (e.payload.kind === "template" ? Le(e) : X(e));
+		return t.get(e.id) ?? (e.payload.kind === "template" ? ze(e) : X(e));
 	}
-	let a = k(() => {
+	let a = A(() => {
 		let n = e.records().map(i).filter((e) => e !== null);
 		for (let e of t.values()) n.some((t) => t.id === e.id) || n.push(e);
 		return n.sort((e, t) => t.created_at.localeCompare(e.created_at));
-	}), o = k(() => a.value.filter((e) => e.kind === "draft")), s = k(() => a.value.filter((e) => e.kind === "template"));
+	}), o = A(() => a.value.filter((e) => e.kind === "draft")), s = A(() => a.value.filter((e) => e.kind === "template"));
 	function c(n) {
 		let r = t.get(n);
 		if (r !== void 0) return r;
@@ -3063,7 +3120,7 @@ function Tn(e) {
 				category: "opening",
 				record_key: i,
 				display_name: n.display_name,
-				payload: wn(n)
+				payload: Dn(n)
 			});
 		}).catch(e.on_save_error);
 		return n.set(i, o), o;
@@ -3092,7 +3149,7 @@ function Tn(e) {
 			let a = r.get(e.id);
 			a !== void 0 && clearTimeout(a), r.set(e.id, setTimeout(() => {
 				l(e.id);
-			}, Cn));
+			}, En));
 		},
 		async remove(i) {
 			let a = r.get(i);
@@ -3102,25 +3159,25 @@ function Tn(e) {
 }
 //#endregion
 //#region src/ui/views/opening/OpeningView.vue
-var En = /* @__PURE__ */ F({
+var kn = /* @__PURE__ */ I({
 	__name: "OpeningView",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = e, { t: n } = D(), r = g(ee, null), i = Sn(), a = M(null);
+		let t = e, { t: n } = O(), r = g(R, null), i = Tn(), a = N(null);
 		function o(e) {
 			return e instanceof Error ? e.message : String(e);
 		}
-		let s = Tn({
+		let s = On({
 			records: () => t.state.assets.records.opening,
 			save: (e) => t.controller.save_asset("opening", e),
 			remove: (e) => t.controller.remove_asset("opening", e),
 			on_save_error: (e) => {
 				a.value = o(e);
 			}
-		}), c = r === null ? null : bn(r, s), l = M("build"), u = x(null), f = M(null), p = M({
+		}), c = r === null ? null : Cn(r, s), l = N("build"), u = x(null), f = N(null), p = N({
 			books: [],
 			presets: ["in_use"],
 			proxies: [],
@@ -3170,13 +3227,13 @@ var En = /* @__PURE__ */ F({
 				};
 			}
 		}
-		let v = k(() => i.value ? [Pe(_, n("opening.builtin.name")), ...s.templates.value] : []);
-		return (e, t) => S(i) ? S(r) === null || S(c) === null ? (d(), T(B, {
+		let v = A(() => i.value ? [Ie(_, n("opening.builtin.name")), ...s.templates.value] : []);
+		return (e, t) => S(i) ? S(r) === null || S(c) === null ? (d(), T(ne, {
 			key: 1,
 			status: "empty",
 			"empty-title": S(n)("opening.unavailable_title"),
 			"empty-message": S(n)("opening.unavailable_message")
-		}, null, 8, ["empty-title", "empty-message"])) : (d(), y(N, { key: 2 }, [l.value === "build" ? (d(), T(Dt, {
+		}, null, 8, ["empty-title", "empty-message"])) : (d(), y(P, { key: 2 }, [l.value === "build" ? (d(), T(At, {
 			key: 0,
 			section: l.value,
 			"onUpdate:section": t[0] ||= (e) => l.value = e,
@@ -3197,7 +3254,7 @@ var En = /* @__PURE__ */ F({
 			"lists",
 			"templates",
 			"save-error"
-		])) : l.value === "books" ? (d(), T(Xe, {
+		])) : l.value === "books" ? (d(), T(Ze, {
 			key: 1,
 			section: l.value,
 			"onUpdate:section": t[1] ||= (e) => l.value = e,
@@ -3210,7 +3267,7 @@ var En = /* @__PURE__ */ F({
 			"host",
 			"host-error",
 			"lists"
-		])) : (d(), T(Nt, {
+		])) : (d(), T(It, {
 			key: 2,
 			section: l.value,
 			"onUpdate:section": t[2] ||= (e) => l.value = e,
@@ -3222,11 +3279,11 @@ var En = /* @__PURE__ */ F({
 			"store",
 			"templates",
 			"save-error"
-		]))], 64)) : (d(), T(B, {
+		]))], 64)) : (d(), T(ne, {
 			key: 0,
 			status: "loading"
 		}));
 	}
 });
 //#endregion
-export { En as default };
+export { kn as default };

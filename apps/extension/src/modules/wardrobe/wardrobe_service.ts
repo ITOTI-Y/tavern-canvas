@@ -1,4 +1,4 @@
-import { SwipeWardrobeSchema, type Wearing } from "@tavern-canvas/contracts";
+import { SwipeWardrobeSchema, type AppearanceSlot, type Wearing } from "@tavern-canvas/contracts";
 
 import type {
   HostAdapter,
@@ -9,6 +9,7 @@ import type {
 } from "../../host/index.js";
 import { viewer_name } from "../illustration/analysis_requests.js";
 import { strip_slot_markers } from "../illustration/slot_markers.js";
+import type { CharacterTags } from "./character_from_image.js";
 import type {
   AppearanceAddition,
   CharacterDraft,
@@ -30,6 +31,11 @@ export interface WardrobeServiceDeps {
   /** Sends the wardrobe request through the analysis preset and connection; resolves with the reply. */
   readonly run: (input: string, json_schema: HostJsonSchema) => Promise<string>;
   readonly new_id: () => string;
+  /** The character tag slot to store for the model's proposal; see `resolve_character_tags`. */
+  readonly character_tags: (
+    proposed: readonly string[],
+    name: string,
+  ) => Promise<readonly string[]>;
 }
 
 /** How much of the untracked story one update reads: the latest messages, within both limits. */
@@ -222,15 +228,48 @@ export class WardrobeService {
           await this.#deps.library.create_outfit(outfit, location.chat_id);
         }
         for (const character of applied.new_characters) {
-          await this.#deps.library.create_character(character, location);
+          await this.#deps.library.create_character(
+            {
+              ...character,
+              appearance: await this.#checked(character.appearance, character.name),
+            },
+            location,
+          );
         }
         for (const addition of applied.appearance_additions) {
-          await this.#deps.library.add_appearance(addition);
+          const name =
+            library.characters.find((character) => character.id === addition.character_id)?.name ??
+            "";
+          const slots = await this.#checked(addition.slots, name);
+          if (Object.keys(slots).length > 0 || addition.subject !== null) {
+            await this.#deps.library.add_appearance({ ...addition, slots });
+          }
         }
         await this.#write(location, applied.wearing);
         return applied.wearing;
       },
     };
+  }
+
+  /**
+   * Appearance tags with the character tag slot checked against the vocabulary; the slot is left
+   * out when nothing in it holds up, so a later update can fill it.
+   */
+  async #checked(
+    appearance: Readonly<Partial<Record<AppearanceSlot, readonly string[]>>>,
+    name: string,
+  ): Promise<Partial<Record<AppearanceSlot, readonly string[]>>> {
+    const { character, ...rest } = appearance;
+    if (character === undefined) {
+      return rest;
+    }
+    const tags = await this.#deps.character_tags(character, name);
+    return tags.length === 0 ? rest : { character: tags, ...rest };
+  }
+
+  /** A character read from an image, with its character tag checked like a story's. */
+  async check_character(tags: CharacterTags): Promise<CharacterTags> {
+    return { ...tags, appearance: await this.#checked(tags.appearance, "") };
   }
 
   /** Replaces one character's wearing on this reply; later replies inherit the correction. */

@@ -131,6 +131,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
         add_appearance: () => Promise.resolve(),
       },
       run: () => Promise.resolve(JSON.stringify({ characters: [] })),
+      character_tags: (proposed) => Promise.resolve(proposed),
       new_id: () => "id-1",
     }),
     build_request: () => Promise.reject(new Error("no provider profile")),

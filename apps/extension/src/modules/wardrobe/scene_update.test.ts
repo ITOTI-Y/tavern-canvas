@@ -382,7 +382,7 @@ describe("build_scene_update_input", () => {
       "- id c1: Seraphina; wears outfit o1 (Forest cloak): green cloak, white dress",
     );
     expect(input).toContain(
-      "appearance slots still empty: age, body, skin, makeup, expression, features",
+      "appearance slots still empty: character, age, body, skin, makeup, expression, features",
     );
     expect(input).toContain("- id o2: Nightgown (Seraphina): nightgown");
     expect(input).toContain("Latest user message:\nChange for bed.");

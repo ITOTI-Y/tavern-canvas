@@ -1,7 +1,7 @@
 import { d as e, t } from "./schemas-BjkyCQYG.js";
-import { o as n, s as r } from "./wardrobe_library-BkM-wKPK.js";
+import { o as n, s as r } from "./wardrobe_library-D08dVzPC.js";
 import { t as i } from "./model_json-B2EVqBvs.js";
-import { OutfitSchema as a, clean_slots as o, slot_record as s, slots_schema as c } from "./scene_update-D3DtnMuG.js";
+import { OutfitSchema as a, clean_slots as o, slot_record as s, slots_schema as c } from "./scene_update-BG8abQmG.js";
 //#region src/modules/wardrobe/character_from_image.ts
 var l = {
 	name: "tavern_canvas_character",
@@ -38,7 +38,7 @@ var l = {
 	"[Inkwell character from image]",
 	"The attached image shows one character. Describe how they look as visual Danbooru-style English tags for an anime image model.",
 	"- subject: girl for a woman or girl, boy for a man or boy, other only for a character without a gender, such as a creature or a machine",
-	"- appearance: tags per slot: age, body, skin, hair (length, color, style), eyes (color, shape), makeup, expression, features (species traits such as pointy ears, scars, tattoos)",
+	"- appearance: tags per slot: character: when the character comes from an existing anime, manga or game, its Danbooru character tag, such as hatsune_miku or rem_(re:zero), followed by the Danbooru copyright tag of the work, such as vocaloid; only when the image clearly shows that character; an empty list for an original character; age, body, skin, hair (length, color, style), eyes (color, shape), makeup, expression, features (species traits such as pointy ears, scars, tattoos)",
 	"- outfit: the clothing and accessories worn, sorted into these slots: full_body (dresses, jumpsuits, swimsuits), outerwear, top, bottom, legwear, footwear, headwear, accessories; give the outfit a short descriptive name",
 	"Leave out the pose, the background and the art style. Give an empty list for a slot the image does not show; never write placeholders such as unknown or none.",
 	"Reply with only a JSON object of the form {\"subject\":\"...\",\"appearance\":{...},\"outfit\":{\"name\":\"...\",\"slots\":{...}}}."

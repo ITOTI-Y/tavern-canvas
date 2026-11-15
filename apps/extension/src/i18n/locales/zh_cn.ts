@@ -296,6 +296,7 @@ const assets = {
     aliases_label: "别名",
     aliases_hint: "故事里对该角色的其他称呼，用逗号分隔；出现这些称呼时同样识别为该角色。",
     appearance: {
+      character: "角色标签",
       age: "年龄",
       body: "体型",
       skin: "肤色",
@@ -312,6 +313,8 @@ const assets = {
     editor_description: "回复里出现“{name}”或别名时套用",
     default_outfit_label: "默认服装",
     default_outfit_first: "使用第一套关联服装",
+    character_tag_hint:
+      "动漫、漫画、游戏中已有角色的 Danbooru 角色标签，经词库核对后写入；原创角色留空。",
     excluded_traits_label: "排除特征",
     excluded_traits_hint:
       "该角色不应出现的标签，例如其他角色的尖耳；生成时作为该角色自己的负向提示词。",

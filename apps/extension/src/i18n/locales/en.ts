@@ -302,6 +302,7 @@ const assets = {
     aliases_hint:
       "Other names the story uses for this character, separated by commas; they are matched like the name.",
     appearance: {
+      character: "Character tag",
       age: "Age",
       body: "Body",
       skin: "Skin",
@@ -318,6 +319,8 @@ const assets = {
     editor_description: "Used when a reply mentions “{name}” or an alias",
     default_outfit_label: "Default outfit",
     default_outfit_first: "First linked outfit",
+    character_tag_hint:
+      "The Danbooru tag of a character from an existing anime, manga or game, checked against the vocabulary; empty for an original character.",
     excluded_traits_label: "Excluded traits",
     excluded_traits_hint:
       "Tags this character must not show, such as another character's pointy ears; sent as this character's own negative prompt.",

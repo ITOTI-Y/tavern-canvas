@@ -10,6 +10,7 @@ var s = [
 	"headwear",
 	"accessories"
 ], c = a(s), l = [
+	"character",
 	"age",
 	"body",
 	"skin",

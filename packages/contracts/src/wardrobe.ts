@@ -14,6 +14,7 @@ export const OutfitSlotSchema = z.enum(OUTFIT_SLOTS);
 export type OutfitSlot = z.infer<typeof OutfitSlotSchema>;
 
 export const APPEARANCE_SLOTS = [
+  "character",
   "age",
   "body",
   "skin",

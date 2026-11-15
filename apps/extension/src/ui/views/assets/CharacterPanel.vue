@@ -62,6 +62,7 @@ const FIELDS = computed<readonly AssetFieldSpec[]>(() => [
     key: slot,
     label: appearance_slot_label(t, slot),
     kind: "tags",
+    ...(slot === "character" ? { hint: t("assets.characters.character_tag_hint") } : {}),
   })),
   {
     key: "excluded_traits",

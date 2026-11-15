@@ -1,6 +1,6 @@
-import { s as e } from "./wardrobe_library-BkM-wKPK.js";
+import { s as e } from "./wardrobe_library-D08dVzPC.js";
 import { t } from "./model_json-B2EVqBvs.js";
-import { OutfitSchema as n, clean_slots as r, slots_schema as i } from "./scene_update-D3DtnMuG.js";
+import { OutfitSchema as n, clean_slots as r, slots_schema as i } from "./scene_update-BG8abQmG.js";
 //#region src/modules/wardrobe/outfit_from_image.ts
 var a = {
 	name: "tavern_canvas_outfit",
