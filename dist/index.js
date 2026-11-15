@@ -18,7 +18,7 @@ import { t as Be } from "./chunks/host_image_icon-CySMeJr8.js";
 import { t as Ve } from "./chunks/deferred_stylesheets-DhfsdqPo.js";
 import { c as He, h as Ue, i as We, o as Ge } from "./chunks/business_repositories-BoVGOpBd.js";
 import { a as Ke, c as qe, i as Je, n as Ye, o as Xe, r as Ze, t as Qe } from "./chunks/image_store-CVggs1Gh.js";
-import { a as $e, i as et, n as tt, o as nt, r as rt, s as it, t as at } from "./chunks/proposal_slots-DyrdF1N_.js";
+import { a as $e, i as et, n as tt, o as nt, r as rt, s as it, t as at } from "./chunks/proposal_slots-BhcUvnko.js";
 import { t as ot } from "./chunks/user_guidance-Bx38WM6V.js";
 import { i as st, t as ct } from "./chunks/library_match-C6UXduZZ.js";
 import { a as lt, i as ut, n as dt, o as ft, s as L } from "./chunks/provider_transport-CdL7IECS.js";
@@ -2465,7 +2465,7 @@ var $r = /* @__PURE__ */ ke({
 		opening: {}
 	},
 	setup(t) {
-		let n = t, r = he(() => import("./chunks/ChatLayer-DMC39A5Q.js")), i = he(() => import("./chunks/StudioShell-jFF9Ce5z.js")), { t: a } = Ce();
+		let n = t, r = he(() => import("./chunks/ChatLayer-DMC39A5Q.js")), i = he(() => import("./chunks/StudioShell-oOvaMALP.js")), { t: a } = Ce();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}
@@ -3115,7 +3115,7 @@ var Ui = class {
 			slots: []
 		};
 		if (r.length > 0) {
-			let o = await this.#e.host.get_active_chat(), s = _i(o, e.message_id, i.max_chat_history), c = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e, !0) : null, l = await this.#e.prompt_context(e.chat_id), { build_analysis_input: u } = await import("./chunks/analysis_prompts-MT5pm1R7.js").then((e) => e.t), { analysis_json_schema: d, combined_analysis_json_schema: f, COMBINED_REPLY_FORMAT: p, COMBINED_TOOLS_FORMAT: m, ILLUSTRATIONS_TOOL: h, parse_analysis_output: g, WARDROBE_TOOL: _, wardrobe_reply_of: v } = await import("./chunks/analysis-DfAZxhlb.js").then((e) => e.r), { active_sizes: y } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), b = y(i, e.chat_id), x = u(r, i.max_images_per_message, l.library, i.analysis_guidance, vi(o), b), S = (e) => g(e, r.length, i.max_images_per_message, b), { proposals: C, wardrobe_reply: w } = await Di(this.#e, t, c === null ? {
+			let o = await this.#e.host.get_active_chat(), s = _i(o, e.message_id, i.max_chat_history), c = this.#e.wardrobe.read(e) === null ? await this.#e.wardrobe.prepare_update(e, !0) : null, l = await this.#e.prompt_context(e.chat_id), { build_analysis_input: u } = await import("./chunks/analysis_prompts-MT5pm1R7.js").then((e) => e.t), { analysis_json_schema: d, combined_analysis_json_schema: f, COMBINED_REPLY_FORMAT: p, COMBINED_TOOLS_FORMAT: m, ILLUSTRATIONS_TOOL: h, parse_analysis_output: g, WARDROBE_TOOL: _, wardrobe_reply_of: v } = await import("./chunks/analysis-6BRuPB_U.js").then((e) => e.i), { active_sizes: y } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), b = y(i, e.chat_id), x = u(r, i.max_images_per_message, l.library, i.analysis_guidance, vi(o), b), S = (e) => g(e, r.length, i.max_images_per_message, b), { proposals: C, wardrobe_reply: w } = await Di(this.#e, t, c === null ? {
 				user_input: x,
 				history: s,
 				json_schema: d(b),
@@ -3198,7 +3198,7 @@ var Ui = class {
 	async add_paragraphs(e, t) {
 		let n = await this.#s(e), r = nt(n), i = this.read(e), a = new Set(i?.slots.map((e) => e.paragraph) ?? []), o = [...new Set(t)].filter((e) => e < r.length && !a.has(e)).sort((e, t) => e - t);
 		if (o.length === 0) return [];
-		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await this.#e.host.get_active_chat(), { build_chosen_paragraphs_input: d } = await import("./chunks/analysis_prompts-MT5pm1R7.js").then((e) => e.t), { analysis_json_schema: f, parse_analysis_output: p } = await import("./chunks/analysis-DfAZxhlb.js").then((e) => e.r), { active_sizes: m } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), h = m(s, e.chat_id), g = await Di(this.#e, n, {
+		let s = this.#e.settings(), c = await this.#h(e), l = await this.#e.prompt_context(e.chat_id), u = await this.#e.host.get_active_chat(), { build_chosen_paragraphs_input: d } = await import("./chunks/analysis_prompts-MT5pm1R7.js").then((e) => e.t), { analysis_json_schema: f, parse_analysis_output: p } = await import("./chunks/analysis-6BRuPB_U.js").then((e) => e.i), { active_sizes: m } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), h = m(s, e.chat_id), g = await Di(this.#e, n, {
 			user_input: d(r, o, l.library, s.analysis_guidance, vi(u), h),
 			history: _i(u, e.message_id, s.max_chat_history),
 			json_schema: f(h),
@@ -3253,7 +3253,7 @@ var Ui = class {
 		}
 	}
 	async plan_story(e, t) {
-		let n = await import("./chunks/creation_planning-B29Cfi6U.js").then((e) => e.n), r = nt(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), { active_sizes: o } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), s = o(a, null), c = await Di(this.#e, e, {
+		let n = await import("./chunks/creation_planning-B64h6hlc.js").then((e) => e.n), r = nt(e), i = await this.#e.prompt_context(null), a = this.#e.settings(), { active_sizes: o } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), s = o(a, null), c = await Di(this.#e, e, {
 			user_input: n.build_scene_input("story", r, zi, i, a.analysis_guidance, null, !1, s),
 			history: [],
 			json_schema: n.scene_json_schema(s),
@@ -3298,7 +3298,7 @@ var Ui = class {
 		};
 	}
 	async plan_strip(e, t, n) {
-		let r = await import("./chunks/creation_planning-B29Cfi6U.js").then((e) => e.n), { chat_id: i, messages: a } = await this.strip_messages(), o = a.filter((n) => n.message_id >= e && n.message_id <= t), s = r.strip_paragraphs(o), c = s.map((e) => e.text).join("\n"), l = this.#e.settings(), u = await this.#e.prompt_context(i), { active_sizes: d } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), f = d(l, i), p = o.at(-1), m = p === void 0 ? [] : await this.#h(await this.active_location(p.message_id)), h = await Di(this.#e, c, {
+		let r = await import("./chunks/creation_planning-B64h6hlc.js").then((e) => e.n), { chat_id: i, messages: a } = await this.strip_messages(), o = a.filter((n) => n.message_id >= e && n.message_id <= t), s = r.strip_paragraphs(o), c = s.map((e) => e.text).join("\n"), l = this.#e.settings(), u = await this.#e.prompt_context(i), { active_sizes: d } = await import("./chunks/size_choice-BAuN1-V0.js").then((e) => e.r), f = d(l, i), p = o.at(-1), m = p === void 0 ? [] : await this.#h(await this.active_location(p.message_id)), h = await Di(this.#e, c, {
 			user_input: r.build_scene_input("strip", s, n, u, l.analysis_guidance, a.find((e) => e.is_user)?.name ?? null, l.strip.symbol_bubbles, f),
 			history: [],
 			json_schema: r.scene_json_schema(f),

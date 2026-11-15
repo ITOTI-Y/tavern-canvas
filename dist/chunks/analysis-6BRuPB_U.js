@@ -5,18 +5,19 @@ import { t as l } from "./model_json-B2EVqBvs.js";
 import { a as u, n as d } from "./size_choice-BAuN1-V0.js";
 //#region src/modules/illustration/analysis.ts
 var f = /* @__PURE__ */ e({
-	ANALYSIS_JSON_SCHEMA: () => v,
-	COMBINED_REPLY_FORMAT: () => x,
-	COMBINED_TOOLS_FORMAT: () => w,
-	ILLUSTRATIONS_TOOL: () => S,
-	POSITION_JSON_SCHEMA: () => h,
-	PositionSchema: () => g,
-	WARDROBE_TOOL: () => C,
-	analysis_json_schema: () => y,
-	center_of: () => _,
-	combined_analysis_json_schema: () => b,
-	parse_analysis_output: () => O,
-	wardrobe_reply_of: () => T
+	ANALYSIS_JSON_SCHEMA: () => y,
+	COMBINED_REPLY_FORMAT: () => S,
+	COMBINED_TOOLS_FORMAT: () => T,
+	ILLUSTRATIONS_TOOL: () => C,
+	POSITION_COLUMNS: () => h,
+	POSITION_JSON_SCHEMA: () => g,
+	PositionSchema: () => _,
+	WARDROBE_TOOL: () => w,
+	analysis_json_schema: () => b,
+	center_of: () => v,
+	combined_analysis_json_schema: () => x,
+	parse_analysis_output: () => k,
+	wardrobe_reply_of: () => E
 }), p = {
 	left: .1,
 	"center-left": .3,
@@ -27,7 +28,7 @@ var f = /* @__PURE__ */ e({
 	top: .3,
 	middle: .5,
 	bottom: .7
-}, h = {
+}, h = Object.values(p), g = {
 	type: "object",
 	properties: {
 		x: {
@@ -41,7 +42,7 @@ var f = /* @__PURE__ */ e({
 	},
 	required: ["x", "y"],
 	additionalProperties: !1
-}, g = t({
+}, _ = t({
 	x: i([
 		"left",
 		"center-left",
@@ -55,13 +56,13 @@ var f = /* @__PURE__ */ e({
 		"bottom"
 	])
 }).nullable().catch(null);
-function _(e) {
+function v(e) {
 	return e === null ? {} : { center: {
 		x: p[e.x],
 		y: m[e.y]
 	} };
 }
-var v = {
+var y = {
 	name: "tavern_canvas_illustrations",
 	value: {
 		type: "object",
@@ -81,7 +82,7 @@ var v = {
 							properties: {
 								name: { type: "string" },
 								tags: { type: "string" },
-								position: h
+								position: g
 							},
 							required: [
 								"name",
@@ -106,11 +107,11 @@ var v = {
 		additionalProperties: !1
 	}
 };
-function y(e) {
-	if (e.length < 2) return v;
-	let t = v.value, n = t.properties.illustrations;
+function b(e) {
+	if (e.length < 2) return y;
+	let t = y.value, n = t.properties.illustrations;
 	return {
-		name: v.name,
+		name: y.name,
 		value: {
 			...t,
 			properties: { illustrations: {
@@ -127,7 +128,7 @@ function y(e) {
 		}
 	};
 }
-function b(e, t = v) {
+function x(e, t = y) {
 	let n = t.value;
 	return {
 		name: t.name,
@@ -142,8 +143,8 @@ function b(e, t = v) {
 		}
 	};
 }
-var x = "Answer both requests above in one JSON object of the form {\"illustrations\":[...],\"wardrobe\":{\"characters\":[...],\"initial_outfits\":{...}}}. This replaces the reply format each request states.", S = "submit_illustrations", C = "submit_wardrobe", w = `Answer both requests above in this one reply by calling two tools: ${S} with {"illustrations":[...]} and ${C} with {"characters":[...],"initial_outfits":{...}}. This replaces the reply format each request states.`;
-function T(e) {
+var S = "Answer both requests above in one JSON object of the form {\"illustrations\":[...],\"wardrobe\":{\"characters\":[...],\"initial_outfits\":{...}}}. This replaces the reply format each request states.", C = "submit_illustrations", w = "submit_wardrobe", T = `Answer both requests above in this one reply by calling two tools: ${C} with {"illustrations":[...]} and ${w} with {"characters":[...],"initial_outfits":{...}}. This replaces the reply format each request states.`;
+function E(e) {
 	for (let t of l(e, "illustrations")) try {
 		let e = JSON.parse(t);
 		if (typeof e.wardrobe == "object" && e.wardrobe !== null) return JSON.stringify(e.wardrobe);
@@ -152,7 +153,7 @@ function T(e) {
 	}
 	return null;
 }
-var E = t({
+var D = t({
 	paragraph: a().int().min(0),
 	scene: n().trim().min(1).max(2e3),
 	caption: n().trim().max(600).catch(""),
@@ -160,17 +161,17 @@ var E = t({
 	characters: r(t({
 		name: n().trim().min(1).max(120),
 		tags: n().trim(),
-		position: g
+		position: _
 	})).max(16),
 	size: s().optional()
 }).transform(({ characters: e, ...t }) => ({
 	...t,
 	characters: e.map(({ position: e, ...t }) => ({
 		...t,
-		..._(e)
+		...v(e)
 	}))
-})), D = t({ illustrations: r(E) });
-function O(e, t, n, r = []) {
+})), O = t({ illustrations: r(D) });
+function k(e, t, n, r = []) {
 	for (let i of l(e, "illustrations")) {
 		let e;
 		try {
@@ -178,7 +179,7 @@ function O(e, t, n, r = []) {
 		} catch {
 			continue;
 		}
-		let a = D.safeParse(e);
+		let a = O.safeParse(e);
 		if (!a.success) continue;
 		let o = /* @__PURE__ */ new Set();
 		return a.data.illustrations.filter((e) => e.paragraph >= t || o.has(e.paragraph) ? !1 : (o.add(e.paragraph), !0)).slice(0, n).map(({ size: e, ...t }) => {
@@ -192,4 +193,4 @@ function O(e, t, n, r = []) {
 	throw new c("The analysis reply contains no illustrations JSON object", e);
 }
 //#endregion
-export { _ as i, g as n, f as r, h as t };
+export { v as a, f as i, g as n, _ as r, h as t };

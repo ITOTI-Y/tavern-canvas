@@ -28,6 +28,9 @@ export interface IllustrationProposal {
 const POSITION_X = { left: 0.1, "center-left": 0.3, center: 0.5, "center-right": 0.7, right: 0.9 };
 const POSITION_Y = { top: 0.3, middle: 0.5, bottom: 0.7 };
 
+/** The x coordinates a named position can take, left to right. */
+export const POSITION_COLUMNS: readonly number[] = Object.values(POSITION_X);
+
 /** The JSON Schema of a character's place in the picture, shared with created scenes. */
 export const POSITION_JSON_SCHEMA = {
   type: "object",

@@ -6,7 +6,7 @@ import {
 
 import { apply_regex_rules, type RegexRule } from "../prompt/regex_transform.js";
 import { deduplicate_tags, get_base_tag, join_prompt_parts } from "../prompt/tag_normalizer.js";
-import type { ProposedCharacter } from "./analysis.js";
+import { POSITION_COLUMNS, type ProposedCharacter } from "./analysis.js";
 import type { WardrobeCharacter } from "../wardrobe/wardrobe_library.js";
 import { is_named, type LibraryMatch } from "./library_match.js";
 
@@ -157,11 +157,65 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
       });
     }
   }
-  // Library characters the text names but the analysis left out still get their own prompt.
-  library.forEach((_, index) => {
-    add_library(index, "");
-  });
   return drafts;
+}
+
+function same_place(left: CharacterCenter, right: CharacterCenter): boolean {
+  return left.x === right.x && left.y === right.y;
+}
+
+/**
+ * Two characters at one position merge, so a later one moves to the nearest column of its row
+ * that no character asked for.
+ */
+function spread_out(drafts: readonly CharacterDraft[]): readonly CharacterDraft[] {
+  const taken: CharacterCenter[] = [];
+  const displaced = new Set<number>();
+  drafts.forEach((draft, index) => {
+    const wanted = draft.center;
+    if (wanted === undefined) {
+      return;
+    }
+    if (taken.some((center) => same_place(center, wanted))) {
+      displaced.add(index);
+    } else {
+      taken.push(wanted);
+    }
+  });
+  return drafts.map((draft, index) => {
+    const wanted = draft.center;
+    if (wanted === undefined || !displaced.has(index)) {
+      return draft;
+    }
+    const x = POSITION_COLUMNS.filter(
+      (column) => !taken.some((center) => same_place(center, { x: column, y: wanted.y })),
+    ).sort((left, right) => Math.abs(left - wanted.x) - Math.abs(right - wanted.x))[0];
+    if (x === undefined) {
+      return draft;
+    }
+    const center = { x, y: wanted.y };
+    taken.push(center);
+    return { ...draft, center };
+  });
+}
+
+/**
+ * NovelAI places characters left to right in prompt order, and positions that disagree with that
+ * order put traits on the wrong person. Characters without a position keep the analysis order.
+ */
+function left_to_right(drafts: readonly CharacterDraft[]): readonly CharacterDraft[] {
+  if (drafts.some((draft) => draft.center === undefined)) {
+    return drafts;
+  }
+  return drafts
+    .map((draft, index) => ({ draft, index }))
+    .sort(
+      (left, right) =>
+        (left.draft.center?.x ?? 0) - (right.draft.center?.x ?? 0) ||
+        (left.draft.center?.y ?? 0) - (right.draft.center?.y ?? 0) ||
+        left.index - right.index,
+    )
+    .map(({ draft }) => draft);
 }
 
 /**
@@ -169,10 +223,13 @@ function character_drafts(input: SlotPromptInput): readonly CharacterDraft[] {
  * the outfit the wardrobe snapshot records, then that character's pose and action), so traits stay on the right person. The base
  * prompt keeps the preset's fixed tags, the subject count and the shared scene tags. Without
  * characters everything stays in the base prompt.
+ *
+ * Only the characters the analysis placed in the picture get a prompt. They are sent left to
+ * right, no two at one position.
  */
 export function assemble_slot_prompt(input: SlotPromptInput): SlotPrompt {
   const preset = input.preset;
-  const drafts = character_drafts(input);
+  const drafts = left_to_right(spread_out(character_drafts(input)));
   const negative_prompt = deduplicate_tags(preset?.fixed_negative_prompt ?? "");
   if (drafts.length === 0) {
     return {

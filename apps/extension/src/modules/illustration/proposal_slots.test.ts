@@ -5,7 +5,7 @@ import { proposal_slots } from "./proposal_slots.js";
 const CONTEXT = { preset: null, library: { characters: [], outfits: [], loras: [] } };
 
 describe("proposal_slots", () => {
-  it("ends the prompt with the caption as one part and keeps each character's place", () => {
+  it("ends the prompt with the caption as one part and sends the characters left to right", () => {
     const [slot] = proposal_slots(
       [{ index: 0, text: "Three wolves close in on her at the river.", line: 0 }],
       [
@@ -33,8 +33,8 @@ describe("proposal_slots", () => {
       "1girl, 1other, river, forest, a girl stands in a river facing three wolves on the bank",
     );
     expect(slot?.character_prompts).toEqual([
-      expect.objectContaining({ name: "Lin", center: { x: 0.5, y: 0.7 } }),
       expect.objectContaining({ name: "wolf 1", center: { x: 0.1, y: 0.3 } }),
+      expect.objectContaining({ name: "Lin", center: { x: 0.5, y: 0.7 } }),
     ]);
   });
 });

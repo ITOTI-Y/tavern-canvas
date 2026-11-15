@@ -91,6 +91,42 @@ describe("assemble_slot_prompt", () => {
     ]);
   });
 
+  it("leaves out a library character the text names but the analysis did not place", () => {
+    const prompt = assemble_slot_prompt({
+      preset: null,
+      library: {
+        characters: [{ character: ALICE, outfit_tags: [] }],
+        outfit_names: [],
+      },
+      characters: [{ name: "Bob", tags: "boy, standing" }],
+      scene_tags: "tavern",
+    });
+
+    expect(prompt.positive_prompt).toBe("1boy, tavern");
+    expect(prompt.character_prompts.map((character) => character.name)).toEqual(["Bob"]);
+  });
+
+  it("sends characters left to right and moves one off a position already taken", () => {
+    const prompt = assemble_slot_prompt({
+      preset: null,
+      library: { characters: [], outfit_names: [] },
+      characters: [
+        { name: "Ann", tags: "girl, waving", center: { x: 0.7, y: 0.5 } },
+        { name: "Bea", tags: "girl, sitting", center: { x: 0.7, y: 0.5 } },
+        { name: "Cy", tags: "boy, standing", center: { x: 0.5, y: 0.5 } },
+      ],
+      scene_tags: "street",
+    });
+
+    expect(
+      prompt.character_prompts.map((character) => [character.name, character.center?.x]),
+    ).toEqual([
+      ["Cy", 0.5],
+      ["Ann", 0.7],
+      ["Bea", 0.9],
+    ]);
+  });
+
   it("takes the analysis subject for a library character stored as other", () => {
     const prompt = assemble_slot_prompt({
       preset: null,

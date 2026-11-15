@@ -1,12 +1,12 @@
 import { n as e } from "./rolldown-runtime-B0aSnxlc.js";
 import { d as t, g as n, r, t as i, u as a, v as o, y as s } from "./schemas-BjkyCQYG.js";
-import { o as c, t as l } from "./proposal_slots-DyrdF1N_.js";
+import { o as c, t as l } from "./proposal_slots-BhcUvnko.js";
 import { t as u } from "./user_guidance-Bx38WM6V.js";
 import { n as d } from "./library_match-C6UXduZZ.js";
 import { t as f } from "./analysis_error-a25bWfWj.js";
 import { t as p } from "./model_json-B2EVqBvs.js";
 import { a as m, i as h, n as g } from "./size_choice-BAuN1-V0.js";
-import { i as _, n as v, t as y } from "./analysis-DfAZxhlb.js";
+import { a as _, n as v, r as y } from "./analysis-6BRuPB_U.js";
 import { n as b } from "./analysis_prompts-MT5pm1R7.js";
 //#region src/modules/creation/creation_planning.ts
 var x = /* @__PURE__ */ e({
@@ -97,7 +97,7 @@ var x = /* @__PURE__ */ e({
 			enum: ["none", ...T]
 		},
 		picture: { type: "string" },
-		position: y
+		position: v
 	},
 	required: [
 		"name",
@@ -249,7 +249,7 @@ var z = o([n(), r(n()).transform((e) => e.join(", "))]), B = t({
 	]).catch("none"),
 	symbol: i(["none", ...T]).catch("none"),
 	picture: n().trim().max(120).catch(""),
-	position: v
+	position: y
 });
 function H(e) {
 	if (e.bubble === "none") return "";
