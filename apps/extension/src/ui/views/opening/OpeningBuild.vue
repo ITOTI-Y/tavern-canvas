@@ -952,7 +952,7 @@ watch(selected_id, () => {
                 :label="t('opening.steps.ask_more')"
                 variant="ghost"
                 :disabled="busy !== null"
-                @click="flow.run_step(draft, draft.current)"
+                @click="flow.ask_more(draft, draft.current)"
               />
               <AppButton
                 v-if="step.output === 'entries'"

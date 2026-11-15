@@ -2465,7 +2465,7 @@ var $r = /* @__PURE__ */ ke({
 		opening: {}
 	},
 	setup(t) {
-		let n = t, r = he(() => import("./chunks/ChatLayer-BtRwUSX9.js")), i = he(() => import("./chunks/StudioShell-CWaMG-Yv.js")), { t: a } = Ce();
+		let n = t, r = he(() => import("./chunks/ChatLayer-BtRwUSX9.js")), i = he(() => import("./chunks/StudioShell-D8Y1hbXu.js")), { t: a } = Ce();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}

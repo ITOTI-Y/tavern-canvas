@@ -4,9 +4,10 @@ import { AnalysisParseError } from "../illustration/analysis_error.js";
 import { empty_state, type OpeningDraftPayload } from "./opening_model.js";
 import {
   entries_request,
+  follow_up_request,
   message_request,
+  question_request,
   rewrite_request,
-  turn_request,
 } from "./opening_requests.js";
 
 function draft(): OpeningDraftPayload {
@@ -76,9 +77,15 @@ const BROKEN = { title: "", constant: false, keys: [], content: "" };
 
 const call = (name: string, value: unknown) => ({ name, arguments: JSON.stringify(value) });
 
-describe("opening turn request", () => {
+const OPEN = [
+  { aspect: "势力", settled: true },
+  { aspect: "地点", settled: false },
+];
+const SETTLED = [{ aspect: "势力", settled: true }];
+
+describe("opening question request", () => {
   it("puts the description, settled steps and this step's answers into both modes' input", () => {
-    const request = turn_request(draft(), 1, 2);
+    const request = question_request(draft(), 1, 2);
 
     for (const input of [request.user_input, request.tools?.user_input ?? ""]) {
       expect(input).toContain("一座漂浮在云海上的蒸汽城市。");
@@ -87,65 +94,56 @@ describe("opening turn request", () => {
       expect(input).toContain("at most 2 more");
     }
     expect(request.tools?.choice).toBe("required");
-    expect(request.tools?.tools.map((tool) => tool.name)).toEqual(["ask_question", "add_entry"]);
+    expect(request.tools?.tools.map((tool) => tool.name)).toEqual(["ask_question", "step_ready"]);
   });
 
   it("reads a question from the ask tool, keeping at most five options", () => {
-    const turn = turn_request(draft(), 1, 2).tools?.parse([call("ask_question", QUESTION)], "");
-
-    expect(turn).toMatchObject({ kind: "question" });
-    expect(turn?.kind === "question" ? turn.question.options : []).toHaveLength(5);
-  });
-
-  it("writes the step from parallel add_entry calls, leaving out a malformed one", () => {
-    const turn = turn_request(draft(), 1, 2).tools?.parse(
-      [call("add_entry", ENTRY), call("add_entry", BROKEN), call("add_entry", CONSTANT)],
+    const question = question_request(draft(), 1, 2).tools?.parse(
+      [call("ask_question", { aspects: OPEN, question: QUESTION })],
       "",
     );
 
-    expect(turn).toMatchObject({ kind: "entries", dropped: 1 });
-    expect(turn?.kind === "entries" ? turn.entries.map((entry) => entry.keys) : []).toEqual([
-      ["公会"],
-      [],
-    ]);
+    expect(question?.options).toHaveLength(5);
   });
 
-  it("reads the JSON form: a question, or a null question with the entries", () => {
-    const request = turn_request(draft(), 1, 2);
+  it("reports the step ready only when every listed aspect is settled", () => {
+    const request = question_request(draft(), 1, 2);
 
-    expect(request.parse(JSON.stringify({ question: QUESTION, entries: [] })).kind).toBe(
-      "question",
+    expect(request.tools?.parse([call("step_ready", { aspects: SETTLED })], "")).toBeNull();
+    expect(() => request.tools?.parse([call("step_ready", { aspects: OPEN })], "")).toThrow(
+      AnalysisParseError,
     );
-    expect(request.parse(JSON.stringify({ question: null, entries: [ENTRY] }))).toMatchObject({
-      kind: "entries",
-      dropped: 0,
-    });
-  });
-
-  it("asks or writes the message on a message step", () => {
-    const request = turn_request({ ...draft(), current: 2 }, 2, 1);
-
-    expect(request.tools?.tools.map((tool) => tool.name)).toEqual([
-      "ask_question",
-      "write_message",
-    ]);
-    expect(
-      request.tools?.parse([call("write_message", { speaker: "伊芙琳", text: "雾很浓。" })], ""),
-    ).toEqual({ kind: "message", message: { speaker: "伊芙琳", text: "雾很浓。" } });
-    expect(
-      request.parse(
-        JSON.stringify({ question: null, message: { speaker: "伊芙琳", text: "雾。" } }),
-      ),
-    ).toMatchObject({ kind: "message" });
+    expect(request.parse(JSON.stringify({ aspects: SETTLED, question: null }))).toBeNull();
+    expect(() => request.parse(JSON.stringify({ aspects: OPEN, question: null }))).toThrow(
+      AnalysisParseError,
+    );
+    expect(() => request.parse(JSON.stringify({ aspects: [], question: null }))).toThrow(
+      AnalysisParseError,
+    );
   });
 
   it("falls back to the reply's text when the model answered without calling a tool", () => {
-    const turn = turn_request(draft(), 1, 2).tools?.parse(
+    const question = question_request(draft(), 1, 2).tools?.parse(
       [],
-      '```json\n{"question": null, "entries": [{"title": "地点｜锈街", "constant": false, "keys": ["锈街"], "content": "雾"}]}\n```',
+      "```json\n" + JSON.stringify({ aspects: OPEN, question: QUESTION }) + "\n```",
     );
 
-    expect(turn).toMatchObject({ kind: "entries" });
+    expect(question).toMatchObject({ text: "有哪些势力？" });
+  });
+});
+
+describe("opening follow-up question", () => {
+  it("forces a question about a written step and shows the model the current result", () => {
+    const written = draft();
+    written.states[1] = { ...empty_state(), status: "done", entries: [{ id: "b", ...CONSTANT }] };
+    const request = follow_up_request(written, 1);
+
+    expect(request.tools?.tools.map((tool) => tool.name)).toEqual(["ask_question"]);
+    expect(request.tools?.choice).toEqual({ name: "ask_question" });
+    expect(request.json_schema.value).toMatchObject({ required: ["question"] });
+    expect(request.tools?.user_input).toContain("- 世界观｜艾瑟里恩 (always active): 浮空城");
+    expect(request.tools?.parse([call("ask_question", QUESTION)], "").options).toHaveLength(5);
+    expect(() => request.parse(JSON.stringify({ question: null }))).toThrow(AnalysisParseError);
   });
 });
 
@@ -185,8 +183,12 @@ describe("opening write requests", () => {
       scenario: "",
       first_message: "你在林间醒来。",
     };
-    const without = turn_request({ ...draft(), card }, 1, 2).user_input;
-    const with_greeting = turn_request({ ...draft(), card, use_greeting: true }, 1, 2).user_input;
+    const without = question_request({ ...draft(), card }, 1, 2).user_input;
+    const with_greeting = question_request(
+      { ...draft(), card, use_greeting: true },
+      1,
+      2,
+    ).user_input;
 
     expect(without).toContain("Character card of Seraphina");
     expect(without).toContain("Description: 森林的守护者");

@@ -67,7 +67,9 @@ describe("use_opening_flow", () => {
       },
     });
     const { port, asked } = fake_port({
-      tavern_canvas_opening_turn: [JSON.stringify({ question: QUESTION, entries: [] })],
+      tavern_canvas_opening_next: [
+        JSON.stringify({ aspects: [{ aspect: "势力", settled: false }], question: QUESTION }),
+      ],
       tavern_canvas_opening_entries: [
         JSON.stringify({
           entries: [{ title: "势力｜公会", constant: false, keys: ["公会"], content: "垄断晶核" }],
@@ -89,7 +91,7 @@ describe("use_opening_flow", () => {
     await flow.next(draft());
     expect(draft().states[1]).toMatchObject({ status: "done", message: { speaker: "伊芙琳" } });
     expect(asked).toEqual([
-      "tavern_canvas_opening_turn",
+      "tavern_canvas_opening_next",
       "tavern_canvas_opening_entries",
       "tavern_canvas_opening_message",
     ]);
@@ -99,6 +101,63 @@ describe("use_opening_flow", () => {
     expect(draft().states[0]?.question?.text).toBe("有哪些势力？");
     expect(draft().states[1]?.status).toBe("stale");
     expect(save).toHaveBeenCalled();
+  });
+
+  it("writes the step once the model reports every aspect settled", async () => {
+    const store = use_opening_store({
+      records: () => [],
+      save: () => Promise.resolve(),
+      remove: () => Promise.resolve(),
+      on_save_error: () => {},
+    });
+    const { port, asked } = fake_port({
+      tavern_canvas_opening_next: [
+        JSON.stringify({ aspects: [{ aspect: "势力", settled: true }], question: null }),
+      ],
+      tavern_canvas_opening_entries: [
+        JSON.stringify({
+          entries: [{ title: "势力｜公会", constant: false, keys: ["公会"], content: "垄断晶核" }],
+        }),
+      ],
+    });
+    const flow = use_opening_flow(port, store);
+    await store.add(new_draft());
+
+    await flow.run_step(store.draft("d1") as OpeningDraft, 0);
+
+    expect(asked).toEqual(["tavern_canvas_opening_next", "tavern_canvas_opening_entries"]);
+    expect(store.draft("d1")?.states[0]).toMatchObject({ status: "done", question: null });
+  });
+
+  it("asks one more question about a written step instead of writing it again", async () => {
+    const store = use_opening_store({
+      records: () => [],
+      save: () => Promise.resolve(),
+      remove: () => Promise.resolve(),
+      on_save_error: () => {},
+    });
+    const { port, asked } = fake_port({
+      tavern_canvas_opening_question: [JSON.stringify({ question: QUESTION })],
+    });
+    const flow = use_opening_flow(port, store);
+    const written = new_draft();
+    written.states[0] = {
+      ...empty_state(),
+      status: "done",
+      entries: [
+        { id: "a", title: "势力｜公会", constant: false, keys: ["公会"], content: "垄断晶核" },
+      ],
+    };
+    await store.add(written);
+
+    await flow.ask_more(store.draft("d1") as OpeningDraft, 0);
+
+    expect(asked).toEqual(["tavern_canvas_opening_question"]);
+    expect(store.draft("d1")?.states[0]).toMatchObject({
+      status: "asking",
+      question: { text: "有哪些势力？" },
+      entries: [{ id: "a" }],
+    });
   });
 
   it("keeps a failed request's error for the page and leaves the step asking", async () => {

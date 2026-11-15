@@ -10,8 +10,9 @@ import {
   entries_request,
   message_request,
   rewrite_request,
-  turn_request,
-  type OpeningTurn,
+  follow_up_request,
+  question_request,
+  type OpeningResult,
 } from "../../../modules/opening/opening_requests.js";
 import type { OpeningPort, OpeningRequestOptions } from "../../contracts/opening_port.js";
 import type { OpeningStore } from "./use_opening_store.js";
@@ -27,6 +28,8 @@ export interface OpeningFlow {
   dropped(draft_id: string): number;
   /** Asks the model about the step, or writes it once no question is left. */
   run_step(draft: OpeningDraft, index: number): Promise<void>;
+  /** Asks one more question about a step that already has a result, which stays until answered. */
+  ask_more(draft: OpeningDraft, index: number): Promise<void>;
   answer(draft: OpeningDraft, selected: readonly string[], other: string): Promise<void>;
   /** Writes the current step now, without the questions left. */
   skip(draft: OpeningDraft): Promise<void>;
@@ -45,11 +48,7 @@ export function use_opening_flow(port: OpeningPort, store: OpeningStore): Openin
   const dropped = reactive(new Map<string, number>());
 
   /** Stores a written result; later steps that already had one are now stale. */
-  function store_result(
-    draft: OpeningDraft,
-    index: number,
-    turn: Exclude<OpeningTurn, { kind: "question" }>,
-  ) {
+  function store_result(draft: OpeningDraft, index: number, turn: OpeningResult) {
     dropped.set(draft.id, turn.kind === "entries" ? turn.dropped : 0);
     store.edit(draft, (current) => {
       const state = current.states[index];
@@ -123,21 +122,39 @@ export function use_opening_flow(port: OpeningPort, store: OpeningStore): Openin
       }
     });
     const rounds_left = step.max_rounds - state.answers.length;
-    if (rounds_left <= 0) {
-      await generate(draft, index);
-      return;
-    }
-    // One request either asks the next question or writes the step.
-    await guarded(draft, { kind: "question", step: index }, async () => {
-      const turn = await port.request(turn_request(draft, index, rounds_left), options(draft));
-      if (turn.kind !== "question") {
-        store_result(draft, index, turn);
+    if (rounds_left > 0) {
+      const outcome = { asked: false };
+      const ok = await guarded(draft, { kind: "question", step: index }, async () => {
+        const question = await port.request(
+          question_request(draft, index, rounds_left),
+          options(draft),
+        );
+        if (question !== null) {
+          outcome.asked = true;
+          store.edit(draft, (current) => {
+            const target = current.states[index];
+            if (target !== undefined) {
+              target.question = question;
+            }
+          });
+        }
+      });
+      if (!ok || outcome.asked) {
         return;
       }
+    }
+    await generate(draft, index);
+  }
+
+  async function ask_more(draft: OpeningDraft, index: number): Promise<void> {
+    await guarded(draft, { kind: "question", step: index }, async () => {
+      const question = await port.request(follow_up_request(draft, index), options(draft));
       store.edit(draft, (current) => {
+        current.current = index;
         const target = current.states[index];
         if (target !== undefined) {
-          target.question = turn.question;
+          target.question = question;
+          target.status = "asking";
         }
       });
     });
@@ -148,6 +165,7 @@ export function use_opening_flow(port: OpeningPort, store: OpeningStore): Openin
     error: (id) => errors.get(id) ?? null,
     dropped: (id) => dropped.get(id) ?? 0,
     run_step,
+    ask_more,
     generate,
     async answer(draft, selected, other) {
       const index = draft.current;

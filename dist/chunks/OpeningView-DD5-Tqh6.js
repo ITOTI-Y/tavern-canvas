@@ -1866,7 +1866,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							label: S(a)("opening.steps.ask_more"),
 							variant: "ghost",
 							disabled: q.value !== null,
-							onClick: n[14] ||= (t) => e.flow.run_step(s.value, s.value.current)
+							onClick: n[14] ||= (t) => e.flow.ask_more(s.value, s.value.current)
 						}, null, 8, [
 							"icon",
 							"label",
@@ -2686,14 +2686,14 @@ var $t = [
 	"The opening message is the first message of the roleplay, sent by the character who meets {{user}} first.",
 	"- speaker: that character's name.",
 	"- text: the whole message, following the narration person, style and length settled above, ending at a moment {{user}} can answer. Do not speak or act for {{user}}."
-], tn = ["Ask only about a choice that changes what this step writes and that the description and the answers leave open. Never ask about anything already settled.", "A question has the question text, a one-sentence reason it matters (why), and 3 or 4 options, each a short label with a one-sentence detail. Set multiple to true only when several options can hold at once. Do not add an 'other' option; the user can always type their own."], nn = "ask_question", rn = "add_entry", an = "write_message", on = t({ entries: o(l()).min(1) });
-function sn(e, t) {
+], tn = ["Ask only about a choice that changes what this step writes and that the description and the answers leave open. Never ask about anything already settled.", "A question has the question text, a one-sentence reason it matters (why), and 3 or 4 options, each a short label with a one-sentence detail. Set multiple to true only when several options can hold at once. Do not add an 'other' option; the user can always type their own."], nn = "ask_question", rn = "add_entry", an = t({ entries: o(l()).min(1) });
+function on(e, t) {
 	let n = [
 		...Wt(e, t),
 		"",
 		"Now write this step's result as world book entries.",
 		...$t
-	], r = (e) => Zt(Kt(e, "entries", on, "entries").entries, e);
+	], r = (e) => Zt(Kt(e, "entries", an, "entries").entries, e);
 	return {
 		user_input: [...n, "Reply with only a JSON object of the form {\"entries\": [...]}."].join("\n"),
 		json_schema: It,
@@ -2713,111 +2713,135 @@ function sn(e, t) {
 		}
 	};
 }
-var cn = {
-	name: "tavern_canvas_opening_turn",
+var sn = {
+	name: "tavern_canvas_opening_question",
 	value: {
 		type: "object",
-		properties: {
-			question: { anyOf: [Pt, { type: "null" }] },
-			entries: {
-				type: "array",
-				items: Ft
-			}
-		},
-		required: ["question", "entries"],
+		properties: { question: Pt },
+		required: ["question"],
 		additionalProperties: !1
 	}
-}, ln = {
-	name: "tavern_canvas_opening_turn",
-	value: {
-		type: "object",
-		properties: {
-			question: { anyOf: [Pt, { type: "null" }] },
-			message: { anyOf: [Rt.value, { type: "null" }] }
-		},
-		required: ["question", "message"],
-		additionalProperties: !1
-	}
-}, un = t({
-	question: l().optional(),
-	entries: o(l()).optional(),
-	message: l().optional()
-});
-function dn(e, t, n) {
-	let r = e.steps[t]?.output === "message", i = r ? en : ["The step's result is world book entries.", ...$t], a = [
+}, cn = t({ question: l() });
+function ln(e, t) {
+	let n = qt.safeParse(e);
+	if (!n.success) throw new W("The reply contains no well-formed question", t);
+	return n.data;
+}
+function un(e, t) {
+	let n = e.states[t], r = n?.message == null ? (n?.entries ?? []).map(Vt) : [`${n.message.speaker}: ${n.message.text}`], i = [
 		...Wt(e, t),
 		"",
-		`Either ask one more question before writing this step (at most ${String(n)} more may be asked in this step), or write the step now if nothing important is open.`,
-		...tn,
-		...i
-	];
-	function o(e, t, n) {
-		let r = qt.safeParse(e);
-		if (r.success) return {
-			kind: "question",
-			question: r.data
-		};
-		if (e != null) throw new W("The reply asks a malformed question", n);
-		return t();
-	}
-	let s = (e) => {
-		let t = Kt(e, "question", un, "opening turn");
-		return o(t.question, () => {
-			if (r) {
-				let n = Ee.safeParse(t.message);
-				if (!n.success) throw new W("The reply contains no opening message", e);
-				return {
-					kind: "message",
-					message: n.data
-				};
-			}
-			return {
-				kind: "entries",
-				...Zt(t.entries ?? [], e)
-			};
-		}, e);
-	};
+		"This step's current result:",
+		...r.length === 0 ? ["(none)"] : r,
+		"",
+		"The user has read this result and wants to be asked one more question before the step is written again. Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently.",
+		...tn
+	], a = (e) => ln(Kt(e, "question", cn, "question").question, e);
 	return {
-		user_input: [...a, r ? "Reply with only a JSON object of the form {\"question\": {...} or null, \"message\": {\"speaker\": \"...\", \"text\": \"...\"} or null}: a question and a null message, or a null question and the message." : "Reply with only a JSON object of the form {\"question\": {...} or null, \"entries\": [...]}: a question and no entries, or a null question and the entries."].join("\n"),
-		json_schema: r ? ln : cn,
-		parse: s,
+		user_input: [...i, "Reply with only a JSON object of the form {\"question\": {...}}."].join("\n"),
+		json_schema: sn,
+		parse: a,
 		tools: {
 			tools: [{
 				name: nn,
 				description: "Ask the user one question with options.",
 				parameters: Pt
-			}, r ? {
-				name: an,
-				description: "Write the opening message.",
-				parameters: Rt.value
-			} : {
-				name: rn,
-				description: "Add one world book entry.",
-				parameters: Ft
 			}],
-			choice: "required",
-			user_input: [...a, r ? `Call ${nn} once to ask, or ${an} once to write the message.` : `Call ${nn} once to ask, or ${rn} once for each entry, all in this reply, to write the step.`].join("\n"),
+			choice: { name: nn },
+			user_input: [...i, `Call ${nn} once.`].join("\n"),
 			parse: (e, t) => {
 				let [n] = Qt(e, nn);
-				return e.length === 0 ? s(t) : o(n ?? null, () => {
-					if (r) {
-						let n = Ee.safeParse(Qt(e, an)[0]);
-						if (!n.success) throw new W("The reply contains no opening message", t);
-						return {
-							kind: "message",
-							message: n.data
-						};
-					}
-					return {
-						kind: "entries",
-						...Zt(Qt(e, rn), t)
-					};
-				}, t);
+				return n === void 0 ? a(t) : ln(n, t);
 			}
 		}
 	};
 }
-function fn(e, n, r) {
+var dn = "step_ready", fn = {
+	type: "array",
+	items: {
+		type: "object",
+		properties: {
+			aspect: $,
+			settled: { type: "boolean" }
+		},
+		required: ["aspect", "settled"],
+		additionalProperties: !1
+	}
+}, pn = {
+	name: "tavern_canvas_opening_next",
+	value: {
+		type: "object",
+		properties: {
+			aspects: fn,
+			question: { anyOf: [Pt, { type: "null" }] }
+		},
+		required: ["aspects", "question"],
+		additionalProperties: !1
+	}
+}, mn = o(t({
+	aspect: n().trim().min(1),
+	settled: r()
+})).min(1), hn = t({
+	aspects: l(),
+	question: l()
+});
+function gn(e, t, n) {
+	let r = mn.safeParse(e);
+	if (!r.success) throw new W("The reply lists no aspects of the step", n);
+	if (t != null) return ln(t, n);
+	if (r.data.some((e) => !e.settled)) throw new W("The reply leaves an aspect open without asking about it", n);
+	return null;
+}
+function _n(e, t, n) {
+	let r = [
+		...Wt(e, t),
+		"",
+		"Before this step is written, check what it still needs from the user.",
+		"First list 2 to 6 aspects this step must settle, taken from what this step settles, each a few words in the language of the description.",
+		"An aspect is settled only when the user's description, a settled earlier step or an answer in this step states it. An aspect you would have to choose yourself is not settled.",
+		`If any aspect is not settled, ask one question about the most important one; at most ${String(n)} more questions may be asked in this step. Only when every aspect is settled, ask nothing.`,
+		...tn
+	], i = (e) => {
+		let t = Kt(e, "aspects", hn, "question");
+		return gn(t.aspects, t.question, e);
+	};
+	return {
+		user_input: [...r, "Reply with only a JSON object of the form {\"aspects\": [{\"aspect\": \"...\", \"settled\": true or false}, ...], \"question\": {...} or null}."].join("\n"),
+		json_schema: pn,
+		parse: i,
+		tools: {
+			tools: [{
+				name: nn,
+				description: "List the step's aspects and ask the user about the most important open one.",
+				parameters: {
+					type: "object",
+					properties: {
+						aspects: fn,
+						question: Pt
+					},
+					required: ["aspects", "question"],
+					additionalProperties: !1
+				}
+			}, {
+				name: dn,
+				description: "List the step's aspects when every one is settled.",
+				parameters: {
+					type: "object",
+					properties: { aspects: fn },
+					required: ["aspects"],
+					additionalProperties: !1
+				}
+			}],
+			choice: "required",
+			user_input: [...r, `Call ${nn} once to ask, or ${dn} once when every aspect is settled.`].join("\n"),
+			parse: (e, t) => {
+				let [n] = Qt(e, nn), [r] = Qt(e, dn), a = hn.partial().safeParse(n ?? r);
+				return a.success ? gn(a.data.aspects, n === void 0 ? null : a.data.question, t) : i(t);
+			}
+		}
+	};
+}
+function vn(e, n, r) {
 	return {
 		user_input: [
 			...Wt(e, n),
@@ -2836,7 +2860,7 @@ function fn(e, n, r) {
 		})
 	};
 }
-function pn(e, t) {
+function yn(e, t) {
 	return {
 		user_input: [
 			...Wt(e, t),
@@ -2851,7 +2875,7 @@ function pn(e, t) {
 }
 //#endregion
 //#region src/ui/views/opening/use_opening_flow.ts
-function mn(e, t) {
+function bn(e, t) {
 	let n = O(/* @__PURE__ */ new Map()), r = O(/* @__PURE__ */ new Map()), i = O(/* @__PURE__ */ new Map());
 	function a(e, n, r) {
 		i.set(e.id, r.kind === "entries" ? r.dropped : 0), t.edit(e, (e) => {
@@ -2886,38 +2910,47 @@ function mn(e, t) {
 		}, async () => {
 			r.output === "message" ? a(t, n, {
 				kind: "message",
-				message: await e.request(pn(t, n), o(t))
+				message: await e.request(yn(t, n), o(t))
 			}) : a(t, n, {
 				kind: "entries",
-				...await e.request(sn(t, n), o(t))
+				...await e.request(on(t, n), o(t))
 			});
 		});
 	}
 	async function l(n, r) {
-		let i = n.steps[r], l = n.states[r];
-		if (i === void 0 || l === void 0) return;
+		let i = n.steps[r], a = n.states[r];
+		if (i === void 0 || a === void 0) return;
 		t.edit(n, (e) => {
 			e.current = r;
 			let t = e.states[r];
 			t !== void 0 && (t.status = "asking");
 		});
-		let u = i.max_rounds - l.answers.length;
-		if (u <= 0) {
-			await c(n, r);
-			return;
+		let l = i.max_rounds - a.answers.length;
+		if (l > 0) {
+			let i = { asked: !1 };
+			if (!await s(n, {
+				kind: "question",
+				step: r
+			}, async () => {
+				let a = await e.request(_n(n, r, l), o(n));
+				a !== null && (i.asked = !0, t.edit(n, (e) => {
+					let t = e.states[r];
+					t !== void 0 && (t.question = a);
+				}));
+			}) || i.asked) return;
 		}
+		await c(n, r);
+	}
+	async function u(n, r) {
 		await s(n, {
 			kind: "question",
 			step: r
 		}, async () => {
-			let i = await e.request(dn(n, r, u), o(n));
-			if (i.kind !== "question") {
-				a(n, r, i);
-				return;
-			}
+			let i = await e.request(un(n, r), o(n));
 			t.edit(n, (e) => {
+				e.current = r;
 				let t = e.states[r];
-				t !== void 0 && (t.question = i.question);
+				t !== void 0 && (t.question = i, t.status = "asking");
 			});
 		});
 	}
@@ -2926,6 +2959,7 @@ function mn(e, t) {
 		error: (e) => r.get(e) ?? null,
 		dropped: (e) => i.get(e) ?? 0,
 		run_step: l,
+		ask_more: u,
 		generate: c,
 		async answer(e, n, r) {
 			let i = e.current, a = e.states[i]?.question;
@@ -2965,7 +2999,7 @@ function mn(e, t) {
 				step: r,
 				entry_id: i.id
 			}, async () => {
-				let a = await e.request(fn(n, r, i), o(n));
+				let a = await e.request(vn(n, r, i), o(n));
 				t.edit(n, (e) => {
 					let t = e.states[r]?.entries, n = t?.findIndex((e) => e.id === i.id) ?? -1;
 					t !== void 0 && n >= 0 && (t[n] = a), Ie(e, r);
@@ -2976,15 +3010,15 @@ function mn(e, t) {
 }
 //#endregion
 //#region src/ui/views/opening/use_opening_messages.ts
-var hn = {
+var xn = {
 	en: async () => (await import("./opening_en-S0jZZdno.js")).en_messages,
 	"zh-CN": async () => (await import("./opening_zh_cn-G-FkmPX_.js")).zh_cn_messages
 };
-function gn() {
+function Sn() {
 	let e = D({ useScope: "global" }), t = M(!1);
 	async function n(n) {
 		for (let t of /* @__PURE__ */ new Set(["en", n])) {
-			let n = hn[t];
+			let n = xn[t];
 			n !== void 0 && !e.te("opening.title", t) && e.mergeLocaleMessage(t, await n());
 		}
 		t.value = !0;
@@ -2995,8 +3029,8 @@ function gn() {
 }
 //#endregion
 //#region src/ui/views/opening/use_opening_store.ts
-var _n = 600;
-function vn(e) {
+var Cn = 600;
+function wn(e) {
 	if (e.kind === "draft") {
 		let { id: t, ...n } = e;
 		return Ae.parse(Re(n));
@@ -3004,7 +3038,7 @@ function vn(e) {
 	let { id: t, builtin: n, ...r } = e;
 	return je.parse(Re(r));
 }
-function yn(e) {
+function Tn(e) {
 	let t = O(/* @__PURE__ */ new Map()), n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
 	function i(e) {
 		return t.get(e.id) ?? (e.payload.kind === "template" ? Le(e) : X(e));
@@ -3030,7 +3064,7 @@ function yn(e) {
 				category: "opening",
 				record_key: i,
 				display_name: n.display_name,
-				payload: vn(n)
+				payload: wn(n)
 			});
 		}).catch(e.on_save_error);
 		return n.set(i, o), o;
@@ -3059,7 +3093,7 @@ function yn(e) {
 			let a = r.get(e.id);
 			a !== void 0 && clearTimeout(a), r.set(e.id, setTimeout(() => {
 				l(e.id);
-			}, _n));
+			}, Cn));
 		},
 		async remove(i) {
 			let a = r.get(i);
@@ -3069,25 +3103,25 @@ function yn(e) {
 }
 //#endregion
 //#region src/ui/views/opening/OpeningView.vue
-var bn = /* @__PURE__ */ F({
+var En = /* @__PURE__ */ F({
 	__name: "OpeningView",
 	props: {
 		state: {},
 		controller: {}
 	},
 	setup(e) {
-		let t = e, { t: n } = D(), r = g(ee, null), i = gn(), a = M(null);
+		let t = e, { t: n } = D(), r = g(ee, null), i = Sn(), a = M(null);
 		function o(e) {
 			return e instanceof Error ? e.message : String(e);
 		}
-		let s = yn({
+		let s = Tn({
 			records: () => t.state.assets.records.opening,
 			save: (e) => t.controller.save_asset("opening", e),
 			remove: (e) => t.controller.remove_asset("opening", e),
 			on_save_error: (e) => {
 				a.value = o(e);
 			}
-		}), c = r === null ? null : mn(r, s), l = M("build"), u = x(null), f = M(null), p = M({
+		}), c = r === null ? null : bn(r, s), l = M("build"), u = x(null), f = M(null), p = M({
 			books: [],
 			presets: ["in_use"],
 			proxies: [],
@@ -3196,4 +3230,4 @@ var bn = /* @__PURE__ */ F({
 	}
 });
 //#endregion
-export { bn as default };
+export { En as default };

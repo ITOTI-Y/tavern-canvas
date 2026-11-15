@@ -269,7 +269,6 @@ const QUESTION_RULES = [
 
 const ASK_TOOL = "ask_question";
 const ENTRY_TOOL = "add_entry";
-const MESSAGE_TOOL = "write_message";
 
 const EntriesReplySchema = z.object({ entries: z.array(z.unknown()).min(1) });
 
@@ -308,101 +307,55 @@ export function entries_request(
   };
 }
 
-export type OpeningTurn =
-  | { readonly kind: "question"; readonly question: OpeningQuestion }
-  | ({ readonly kind: "entries" } & WrittenEntries)
-  | { readonly kind: "message"; readonly message: OpeningMessage };
-
-const TURN_ENTRIES_SCHEMA = {
-  name: "tavern_canvas_opening_turn",
+const FOLLOW_UP_SCHEMA = {
+  name: "tavern_canvas_opening_question",
   value: {
     type: "object",
-    properties: {
-      question: { anyOf: [QUESTION_VALUE, { type: "null" }] },
-      entries: { type: "array", items: ENTRY_VALUE },
-    },
-    required: ["question", "entries"],
+    properties: { question: QUESTION_VALUE },
+    required: ["question"],
     additionalProperties: false,
   },
 } as const;
 
-const TURN_MESSAGE_SCHEMA = {
-  name: "tavern_canvas_opening_turn",
-  value: {
-    type: "object",
-    properties: {
-      question: { anyOf: [QUESTION_VALUE, { type: "null" }] },
-      message: { anyOf: [MESSAGE_JSON_SCHEMA.value, { type: "null" }] },
-    },
-    required: ["question", "message"],
-    additionalProperties: false,
-  },
-} as const;
+const FollowUpReplySchema = z.object({ question: z.unknown() });
 
-const TurnReplySchema = z.object({
-  question: z.unknown().optional(),
-  entries: z.array(z.unknown()).optional(),
-  message: z.unknown().optional(),
-});
+function follow_up_question(value: unknown, raw: string): OpeningQuestion {
+  const asked = QuestionSchema.safeParse(value);
+  if (!asked.success) {
+    throw new AnalysisParseError("The reply contains no well-formed question", raw);
+  }
+  return asked.data;
+}
 
 /**
- * One request that either asks the step's next question or, when nothing important is open,
- * writes the step at once; with tools the model picks by which tool it calls.
+ * Asks one more question about a step that already has a result: the user asked for it, so the
+ * model must ask rather than decide that nothing is open.
  */
-export function turn_request(
+export function follow_up_request(
   draft: OpeningDraftPayload,
   index: number,
-  rounds_left: number,
-): OpeningStructuredRequest<OpeningTurn> {
-  const message_step = draft.steps[index]?.output === "message";
-  const write_rules = message_step
-    ? MESSAGE_RULES
-    : ["The step's result is world book entries.", ...ENTRY_RULES];
+): OpeningStructuredRequest<OpeningQuestion> {
+  const state = draft.states[index];
+  const result =
+    state?.message != null
+      ? [`${state.message.speaker}: ${state.message.text}`]
+      : (state?.entries ?? []).map(entry_line);
   const context = [
     ...context_lines(draft, index),
     "",
-    `Either ask one more question before writing this step (at most ${String(rounds_left)} more may be asked in this step), or write the step now if nothing important is open.`,
+    "This step's current result:",
+    ...(result.length === 0 ? ["(none)"] : result),
+    "",
+    "The user has read this result and wants to be asked one more question before the step is written again. Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently.",
     ...QUESTION_RULES,
-    ...write_rules,
   ];
-
-  function turn_of(question: unknown, written: () => OpeningTurn, raw: string): OpeningTurn {
-    const asked = QuestionSchema.safeParse(question);
-    if (asked.success) {
-      return { kind: "question", question: asked.data };
-    }
-    if (question !== null && question !== undefined) {
-      throw new AnalysisParseError("The reply asks a malformed question", raw);
-    }
-    return written();
-  }
-
-  const parse = (raw: string): OpeningTurn => {
-    const reply = first_match(raw, "question", TurnReplySchema, "opening turn");
-    return turn_of(
-      reply.question,
-      () => {
-        if (message_step) {
-          const message = OpeningMessageSchema.safeParse(reply.message);
-          if (!message.success) {
-            throw new AnalysisParseError("The reply contains no opening message", raw);
-          }
-          return { kind: "message", message: message.data };
-        }
-        return { kind: "entries", ...written_entries(reply.entries ?? [], raw) };
-      },
-      raw,
-    );
-  };
-
+  const parse = (raw: string): OpeningQuestion =>
+    follow_up_question(first_match(raw, "question", FollowUpReplySchema, "question").question, raw);
   return {
-    user_input: [
-      ...context,
-      message_step
-        ? 'Reply with only a JSON object of the form {"question": {...} or null, "message": {"speaker": "...", "text": "..."} or null}: a question and a null message, or a null question and the message.'
-        : 'Reply with only a JSON object of the form {"question": {...} or null, "entries": [...]}: a question and no entries, or a null question and the entries.',
-    ].join("\n"),
-    json_schema: message_step ? TURN_MESSAGE_SCHEMA : TURN_ENTRIES_SCHEMA,
+    user_input: [...context, 'Reply with only a JSON object of the form {"question": {...}}.'].join(
+      "\n",
+    ),
+    json_schema: FOLLOW_UP_SCHEMA,
     parse,
     tools: {
       tools: [
@@ -411,43 +364,135 @@ export function turn_request(
           description: "Ask the user one question with options.",
           parameters: QUESTION_VALUE,
         },
-        message_step
-          ? {
-              name: MESSAGE_TOOL,
-              description: "Write the opening message.",
-              parameters: MESSAGE_JSON_SCHEMA.value,
-            }
-          : { name: ENTRY_TOOL, description: "Add one world book entry.", parameters: ENTRY_VALUE },
+      ],
+      choice: { name: ASK_TOOL },
+      user_input: [...context, `Call ${ASK_TOOL} once.`].join("\n"),
+      parse: (calls, content) => {
+        const [question] = call_arguments(calls, ASK_TOOL);
+        return question === undefined ? parse(content) : follow_up_question(question, content);
+      },
+    },
+  };
+}
+
+export type OpeningResult =
+  | ({ readonly kind: "entries" } & WrittenEntries)
+  | { readonly kind: "message"; readonly message: OpeningMessage };
+
+const READY_TOOL = "step_ready";
+
+const ASPECTS_VALUE = {
+  type: "array",
+  items: {
+    type: "object",
+    properties: { aspect: STRING, settled: { type: "boolean" } },
+    required: ["aspect", "settled"],
+    additionalProperties: false,
+  },
+} as const;
+
+const NEXT_QUESTION_SCHEMA = {
+  name: "tavern_canvas_opening_next",
+  value: {
+    type: "object",
+    properties: {
+      aspects: ASPECTS_VALUE,
+      question: { anyOf: [QUESTION_VALUE, { type: "null" }] },
+    },
+    required: ["aspects", "question"],
+    additionalProperties: false,
+  },
+} as const;
+
+const AspectsSchema = z
+  .array(z.object({ aspect: z.string().trim().min(1), settled: z.boolean() }))
+  .min(1);
+
+const NextReplySchema = z.object({ aspects: z.unknown(), question: z.unknown() });
+
+/** The question to show, or `null` when every aspect the model listed is settled. */
+function next_question(aspects: unknown, question: unknown, raw: string): OpeningQuestion | null {
+  const listed = AspectsSchema.safeParse(aspects);
+  if (!listed.success) {
+    throw new AnalysisParseError("The reply lists no aspects of the step", raw);
+  }
+  if (question !== null && question !== undefined) {
+    return follow_up_question(question, raw);
+  }
+  if (listed.data.some((item) => !item.settled)) {
+    throw new AnalysisParseError("The reply leaves an aspect open without asking about it", raw);
+  }
+  return null;
+}
+
+/**
+ * Lists what the step must settle and asks about the most important aspect still open; `null`
+ * once the description, the earlier steps and the answers settle every aspect.
+ */
+export function question_request(
+  draft: OpeningDraftPayload,
+  index: number,
+  rounds_left: number,
+): OpeningStructuredRequest<OpeningQuestion | null> {
+  const context = [
+    ...context_lines(draft, index),
+    "",
+    "Before this step is written, check what it still needs from the user.",
+    "First list 2 to 6 aspects this step must settle, taken from what this step settles, each a few words in the language of the description.",
+    "An aspect is settled only when the user's description, a settled earlier step or an answer in this step states it. An aspect you would have to choose yourself is not settled.",
+    `If any aspect is not settled, ask one question about the most important one; at most ${String(rounds_left)} more questions may be asked in this step. Only when every aspect is settled, ask nothing.`,
+    ...QUESTION_RULES,
+  ];
+  const parse = (raw: string): OpeningQuestion | null => {
+    const reply = first_match(raw, "aspects", NextReplySchema, "question");
+    return next_question(reply.aspects, reply.question, raw);
+  };
+  return {
+    user_input: [
+      ...context,
+      'Reply with only a JSON object of the form {"aspects": [{"aspect": "...", "settled": true or false}, ...], "question": {...} or null}.',
+    ].join("\n"),
+    json_schema: NEXT_QUESTION_SCHEMA,
+    parse,
+    tools: {
+      tools: [
+        {
+          name: ASK_TOOL,
+          description:
+            "List the step's aspects and ask the user about the most important open one.",
+          parameters: {
+            type: "object",
+            properties: { aspects: ASPECTS_VALUE, question: QUESTION_VALUE },
+            required: ["aspects", "question"],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: READY_TOOL,
+          description: "List the step's aspects when every one is settled.",
+          parameters: {
+            type: "object",
+            properties: { aspects: ASPECTS_VALUE },
+            required: ["aspects"],
+            additionalProperties: false,
+          },
+        },
       ],
       choice: "required",
       user_input: [
         ...context,
-        message_step
-          ? `Call ${ASK_TOOL} once to ask, or ${MESSAGE_TOOL} once to write the message.`
-          : `Call ${ASK_TOOL} once to ask, or ${ENTRY_TOOL} once for each entry, all in this reply, to write the step.`,
+        `Call ${ASK_TOOL} once to ask, or ${READY_TOOL} once when every aspect is settled.`,
       ].join("\n"),
       parse: (calls, content) => {
-        const [question] = call_arguments(calls, ASK_TOOL);
-        if (calls.length === 0) {
+        const [asked] = call_arguments(calls, ASK_TOOL);
+        const [ready] = call_arguments(calls, READY_TOOL);
+        const reply = NextReplySchema.partial().safeParse(asked ?? ready);
+        if (!reply.success) {
           return parse(content);
         }
-        return turn_of(
-          question ?? null,
-          () => {
-            if (message_step) {
-              const message = OpeningMessageSchema.safeParse(
-                call_arguments(calls, MESSAGE_TOOL)[0],
-              );
-              if (!message.success) {
-                throw new AnalysisParseError("The reply contains no opening message", content);
-              }
-              return { kind: "message", message: message.data };
-            }
-            return {
-              kind: "entries",
-              ...written_entries(call_arguments(calls, ENTRY_TOOL), content),
-            };
-          },
+        return next_question(
+          reply.data.aspects,
+          asked === undefined ? null : reply.data.question,
           content,
         );
       },
