@@ -1712,10 +1712,10 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							E("h2", { class: A(S(Z).ask_title) }, w(Y.value.question.text), 3),
 							E("span", { class: A(S(Z).badge) }, w(Y.value.question.multiple ? S(a)("opening.ask.multiple") : S(a)("opening.ask.single")), 3),
 							E("span", { class: A(S(Z).spacer) }, null, 2),
-							E("span", { class: A(S(Z).hint) }, w(S(a)("opening.ask.round", {
+							E("span", { class: A(S(Z).hint) }, w(Y.value.answers.length < J.value.max_rounds ? S(a)("opening.ask.round", {
 								n: Y.value.answers.length + 1,
 								max: J.value.max_rounds
-							})), 3)
+							}) : S(a)("opening.ask.round_more", { n: Y.value.answers.length + 1 })), 3)
 						], 2),
 						Y.value.question.why === "" ? C("", !0) : (d(), y("p", {
 							key: 0,
@@ -1860,8 +1860,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 						key: 8,
 						class: A(S(Z).foot)
 					}, [
-						Y.value.answers.length < J.value.max_rounds ? (d(), T(z, {
-							key: 0,
+						I(z, {
 							icon: S(K),
 							label: S(a)("opening.steps.ask_more"),
 							variant: "ghost",
@@ -1871,9 +1870,9 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							"icon",
 							"label",
 							"disabled"
-						])) : C("", !0),
+						]),
 						J.value.output === "entries" ? (d(), T(z, {
-							key: 1,
+							key: 0,
 							icon: S(H),
 							label: S(a)("opening.entry.add"),
 							disabled: q.value !== null,
@@ -1897,7 +1896,7 @@ var it = ["id"], at = ["id", "aria-describedby"], Q = ["id"], ot = /* @__PURE__ 
 							"disabled"
 						]),
 						Ee.value ? C("", !0) : (d(), T(z, {
-							key: 2,
+							key: 1,
 							icon: S(ve),
 							label: S(a)("opening.steps.next"),
 							variant: "primary",
@@ -3011,8 +3010,8 @@ function bn(e, t) {
 //#endregion
 //#region src/ui/views/opening/use_opening_messages.ts
 var xn = {
-	en: async () => (await import("./opening_en-S0jZZdno.js")).en_messages,
-	"zh-CN": async () => (await import("./opening_zh_cn-G-FkmPX_.js")).zh_cn_messages
+	en: async () => (await import("./opening_en-BexCGuz1.js")).en_messages,
+	"zh-CN": async () => (await import("./opening_zh_cn-DZCoAzb0.js")).zh_cn_messages
 };
 function Sn() {
 	let e = D({ useScope: "global" }), t = M(!1);

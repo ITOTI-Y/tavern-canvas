@@ -808,7 +808,9 @@ watch(selected_id, () => {
                 }}</span>
                 <span :class="styles.spacer" />
                 <span :class="styles.hint">{{
-                  t("opening.ask.round", { n: state.answers.length + 1, max: step.max_rounds })
+                  state.answers.length < step.max_rounds
+                    ? t("opening.ask.round", { n: state.answers.length + 1, max: step.max_rounds })
+                    : t("opening.ask.round_more", { n: state.answers.length + 1 })
                 }}</span>
               </div>
               <p v-if="state.question.why !== ''" :class="styles.hint">{{ state.question.why }}</p>
@@ -947,7 +949,6 @@ watch(selected_id, () => {
             <!-- Step actions. -->
             <div v-if="has_result" :class="styles.foot">
               <AppButton
-                v-if="state.answers.length < step.max_rounds"
                 :icon="ArrowLeft"
                 :label="t('opening.steps.ask_more')"
                 variant="ghost"

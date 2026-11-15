@@ -63,6 +63,7 @@ export const zh_cn_messages = {
       single: "单选",
       multiple: "可多选",
       round: "第 {n} 问，最多 {max} 问",
+      round_more: "第 {n} 问，继续追问",
       answered: "问 {n} · {question}",
       change: "修改",
       left_to_model: "交给模型决定",

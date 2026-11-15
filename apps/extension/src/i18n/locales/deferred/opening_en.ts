@@ -68,6 +68,7 @@ export const en_messages = {
       single: "Choose one",
       multiple: "Choose any",
       round: "Question {n}, at most {max}",
+      round_more: "Question {n}, asked for more",
       answered: "Q{n} · {question}",
       change: "Change",
       left_to_model: "Left to the model",
