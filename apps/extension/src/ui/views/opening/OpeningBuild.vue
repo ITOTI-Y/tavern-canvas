@@ -22,6 +22,7 @@ import { AnalysisParseError } from "../../../modules/illustration/analysis_error
 import type { OpeningCharacter, OpeningHost } from "../../../modules/opening/opening_host.js";
 import {
   BUILTIN_TEMPLATE_ID,
+  change_description,
   empty_state,
   mark_later_stale,
   type OpeningDraft,
@@ -320,6 +321,24 @@ async function start(): Promise<void> {
   await props.flow.run_step(item, 0);
 }
 
+/* ---------- Description of a draft under way ---------- */
+
+const editing_description = ref(false);
+const description_text = ref("");
+
+function edit_description(): void {
+  description_text.value = draft.value?.description ?? "";
+  editing_description.value = true;
+}
+
+function save_description(): void {
+  const text = description_text.value;
+  edit((item) => {
+    change_description(item, text);
+  });
+  editing_description.value = false;
+}
+
 /* ---------- Questions ---------- */
 
 const picked = ref<readonly string[]>([]);
@@ -529,6 +548,7 @@ watch(selected_id, () => {
   action_error.value = null;
   output_note.value = null;
   editing_message.value = false;
+  editing_description.value = false;
 });
 </script>
 
@@ -572,6 +592,14 @@ watch(selected_id, () => {
           <div :class="styles.topline">
             <OpeningSectionSwitch v-model="section" />
             <span :class="styles.spacer" />
+            <AppButton
+              v-if="draft !== null && draft.started"
+              :icon="Pencil"
+              :label="t('opening.draft.description_label')"
+              variant="ghost"
+              :disabled="busy !== null || editing_description"
+              @click="edit_description"
+            />
             <AppButton
               v-if="draft !== null && draft.started"
               :class="styles.known_toggle"
@@ -749,6 +777,44 @@ watch(selected_id, () => {
 
           <!-- A draft under way. -->
           <template v-else-if="step !== null && state !== null">
+            <div v-if="editing_description" :class="styles.editor">
+              <FieldGroup
+                :label="t('opening.draft.description_label')"
+                :hint="t('opening.draft.description_change_hint')"
+              >
+                <template #default="{ fieldId, describedBy }">
+                  <textarea
+                    :id="fieldId"
+                    v-model="description_text"
+                    :class="styles.text_area"
+                    :maxlength="DESCRIPTION_MAX_LENGTH"
+                    :aria-describedby="describedBy"
+                  />
+                  <div :class="styles.counter">
+                    {{ description_text.length }} / {{ DESCRIPTION_MAX_LENGTH }}
+                  </div>
+                </template>
+              </FieldGroup>
+              <div :class="styles.row">
+                <span :class="styles.spacer" />
+                <AppButton
+                  :label="t('common.actions.cancel')"
+                  variant="ghost"
+                  @click="editing_description = false"
+                />
+                <AppButton
+                  :label="t('common.actions.save')"
+                  variant="primary"
+                  :disabled="
+                    busy !== null ||
+                    description_text.trim() === '' ||
+                    description_text === draft.description
+                  "
+                  @click="save_description"
+                />
+              </div>
+            </div>
+
             <nav :class="styles.steps" :aria-label="t('opening.steps.label')">
               <button
                 v-for="(item, index) in draft.steps"

@@ -165,6 +165,12 @@ export function mark_later_stale(draft: OpeningDraftPayload, index: number): voi
   });
 }
 
+/** Replaces the story description; every step that has a result was written from the old one. */
+export function change_description(draft: OpeningDraftPayload, description: string): void {
+  draft.description = description;
+  mark_later_stale(draft, -1);
+}
+
 type RecordLike = { readonly id: string; readonly payload: Readonly<Record<string, unknown>> };
 
 export function read_draft(record: RecordLike): OpeningDraft | null {

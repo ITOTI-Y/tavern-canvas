@@ -21,6 +21,7 @@ var e = { opening: {
 		name_label: "草稿名称",
 		description_label: "故事描述",
 		description_hint: "越具体越好；没想好的部分交给后面的步骤逐个确认。",
+		description_change_hint: "保存后，已有结果的步骤会标为需重新生成，原结果保留到重新生成为止；之后的提问和生成都按新描述进行。",
 		description_placeholder: "例如：一座漂浮在云海上的蒸汽城市，我是刚调来的见习调查员……",
 		step_count: "共 {n} 步",
 		start: "开始构建",
@@ -48,7 +49,7 @@ var e = { opening: {
 	steps: {
 		label: "步骤",
 		stale: "需重新生成",
-		stale_banner: "前面的步骤有改动，标出的步骤是按旧设定生成的。重新生成之前，原结果会保留。",
+		stale_banner: "故事描述或前面的步骤有改动，标出的步骤是按旧设定生成的。重新生成之前，原结果会保留。",
 		regenerate_stale: "依次重新生成",
 		run: "开始本步",
 		ask_more: "继续追问",

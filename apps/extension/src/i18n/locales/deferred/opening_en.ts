@@ -25,6 +25,8 @@ export const en_messages = {
       description_label: "Story description",
       description_hint:
         "The more specific the better; anything left open is asked about in the steps.",
+      description_change_hint:
+        "After saving, steps that have a result are marked as needing regeneration and keep their result until written again; later questions and writing use the new description.",
       description_placeholder:
         "For example: a steam city floating on a sea of clouds, where I am a newly arrived investigator...",
       step_count: "{n} steps",
@@ -57,7 +59,7 @@ export const en_messages = {
       label: "Steps",
       stale: "Needs regenerating",
       stale_banner:
-        "An earlier step changed, so the marked steps were written from old settings. Their results stay until written again.",
+        "The story description or an earlier step changed, so the marked steps were written from old settings. Their results stay until written again.",
       regenerate_stale: "Regenerate in order",
       run: "Start this step",
       ask_more: "Ask more",
