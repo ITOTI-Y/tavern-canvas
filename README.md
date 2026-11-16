@@ -173,7 +173,9 @@ profile's steps, CFG, sampler, scheduler, diffusion model, text encoder and VAE 
 workflow's own when set; the file and sampler names are chosen from what the server lists. The
 profile's LoRAs and those of the characters in the picture are loaded by `LoraLoaderModelOnly`
 nodes Inkwell chains in front of the model input the workflow maps, so a workflow takes any number
-of LoRAs without holding a LoRA node.
+of LoRAs without holding a LoRA node. Each character in the picture is written into the prompt as
+a sentence on a line of its own that starts with the character's place in the picture, such as
+`On the far left is a girl with red hair, squatting.`
 
 **Cloud providers.** `novelai`, `openai_image`, and `google_image` are called directly from the
 browser to the vendor's own origin, with a credential from the credential backend. The routes and

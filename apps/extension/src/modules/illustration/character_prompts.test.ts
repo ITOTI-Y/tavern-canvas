@@ -45,14 +45,34 @@ describe("attach_character_prompts", () => {
     );
   });
 
-  it("gives each character a line of its own in a ComfyUI prompt", () => {
+  it("writes each character as a sentence with its position in a ComfyUI prompt", () => {
     const comfyui = {
       provider_id: "comfyui",
       prompt: "1girl, 1boy, tavern",
     } as unknown as ImageGenerationRequest;
 
     expect(attach_character_prompts(comfyui, PROMPTS)).toMatchObject({
-      prompt: "1girl, 1boy, tavern\ngirl, silver hair\nboy, armor",
+      prompt:
+        "1girl, 1boy, tavern\nA girl with silver hair.\nOn the far right is a boy with armor.",
+    });
+  });
+
+  it("names the depth of a character away from the middle row and drops interaction prefixes", () => {
+    const comfyui = { provider_id: "comfyui", prompt: "" } as unknown as ImageGenerationRequest;
+
+    expect(
+      attach_character_prompts(comfyui, [
+        {
+          name: "wolf 1",
+          prompt: "other, wolf, source#threatening",
+          negative_prompt: "",
+          center: { x: 0.3, y: 0.7 },
+        },
+        { name: "Cara", prompt: "girl", negative_prompt: "", center: { x: 0.5, y: 0.3 } },
+      ]),
+    ).toMatchObject({
+      prompt:
+        "At center-left in the foreground is a creature with wolf, threatening.\nIn the center in the background is a girl.",
     });
   });
 });

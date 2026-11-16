@@ -12,7 +12,7 @@ function i(e) {
 	let t = new Map(e.characters.map((e) => [e.id, e.name]));
 	return [
 		"",
-		"Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action and expression, never hair, eyes, face, body or clothing, and never an outfit name; use exactly the name shown, not an alias.",
+		"Characters and outfits below have stored appearance tags that are added automatically. For these characters, character tags hold only pose, action, gaze and expression, never hair, eyes, face, body or clothing, and never an outfit name; use exactly the name shown, not an alias.",
 		...e.characters.map((e) => `- character: ${e.name}${e.aliases.length > 0 ? ` (also called ${e.aliases.join(", ")})` : ""}`),
 		...e.outfits.map((e) => {
 			let n = e.character_id === null ? void 0 : t.get(e.character_id);
@@ -25,12 +25,13 @@ var a = [
 	"- scene: one sentence describing what the picture shows",
 	"- caption: one plain English sentence without commas that tells the image model who is where and doing what to whom, calling every character by their look, such as the pink-haired girl, never by name",
 	"- tags: comma-separated Danbooru-style English tags for an anime image model describing what the characters share: setting, background, lighting, composition. When nobody is visible, describe the whole picture here",
-	"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action and expression; use a character name tag only when it is a well-known Danbooru character; and position: where the character is in the picture, x one of left, center-left, center, center-right, right and y one of top, middle, bottom, where bottom is nearer the viewer"
+	"- characters: one entry per character visible in the picture, with name exactly as written in the story and tags: that character's own Danbooru-style tags starting with girl or boy by the character's gender as the story shows it (other only for a creature or machine without one; no numbers), then appearance, clothing, pose, action, gaze and expression; use a character name tag only when it is a well-known Danbooru character; and position: where the character is in the picture, x one of left, center-left, center, center-right, right and y one of top, middle, bottom, where bottom is nearer the viewer"
 ];
 function o(e) {
 	return [
 		"Put everyone who takes part in the moment into the picture, so both sides of an exchange are visible: a character being tended, handed something or spoken to belongs in it too.",
 		"In each character's tags include what they hold and the visible states the story has set up that still hold, such as wet hair, a bandaged arm, blood or torn clothing.",
+		"Give every character one gaze tag that says where they look and fits their pose: looking at another, looking down, looking up, looking to the side, looking back, looking away or closed eyes. Characters look at each other or at what they are doing; looking at viewer is only for a character who addresses the viewer. For a character turned away from the viewer add profile, from side or from behind.",
 		"Animals and creatures that take part in the moment are characters too: give each its own entry named by kind, such as wolf 1, with tags starting with other.",
 		"For an action between two characters, put it in both entries with a prefix: source# for the one who acts and target# for the one acted on, or mutual# on both when they act on each other, such as source#hug and target#hug.",
 		...e === null ? [] : [`"You" in the story is ${e}; when ${e} is visible, list them under that name.`]

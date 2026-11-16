@@ -205,6 +205,7 @@ const STORYBOARD_LINES: readonly string[] = [
   "- Vary shot sizes and camera angles; do not repeat the same framing in consecutive pictures.",
   "- Keep the place, the lighting and each character's look the same unless the story changes them.",
   "- Put everyone who takes part in a moment into its picture, so both sides of an exchange are visible. Characters look at each other or at what they are doing, not at the viewer, except in a pov shot.",
+  "- Give every character in every picture one gaze tag that says where they look and fits their pose: looking at another, looking down, looking up, looking to the side, looking back, looking away or closed eyes. For a character turned away from the viewer add profile, from side or from behind.",
   "- Make what is only said or thought visible. When a character tells of a danger, a memory or something far away, draw that thing itself, or the speaker pointing at it with the listener reacting in the same picture; never a picture of something the reader has not been shown a reason for.",
   "- Lead into every change of view: before a picture of a new place or object, the previous picture shows someone looking at it, pointing at it or moving toward it.",
   "- Break an important action into setup, action and reaction over consecutive pictures. Between two consecutive pictures change one thing only, so the reader can tell what happened.",
