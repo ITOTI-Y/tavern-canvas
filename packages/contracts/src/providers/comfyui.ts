@@ -37,6 +37,15 @@ const ComfyUiInputAssetBindingsSchema = z
     }
   });
 
+/** A LoRA file as the server lists it, applied to the diffusion model at `strength`. */
+export const ComfyUiLoraSchema = z.strictObject({
+  lora_name: z.string().trim().min(1).max(512),
+  strength: z.number().min(-10).max(10),
+});
+export type ComfyUiLora = z.infer<typeof ComfyUiLoraSchema>;
+
+export const MAX_COMFYUI_LORAS = 64;
+
 export const ComfyUiRequestSchema = z
   .strictObject({
     provider_id: z.literal("comfyui"),
@@ -46,6 +55,8 @@ export const ComfyUiRequestSchema = z
     input_asset_bindings: ComfyUiInputAssetBindingsSchema,
     output_node_ids: z.array(ProviderIdentifierSchema).min(1).max(16),
     seed: ProviderSeedSchema.optional(),
+    /** Loaded in this order between the workflow's model and the node that samples from it. */
+    loras: z.array(ComfyUiLoraSchema).max(MAX_COMFYUI_LORAS).optional(),
   })
   .check((context) => {
     if (new Set(context.value.output_node_ids).size !== context.value.output_node_ids.length) {

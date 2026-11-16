@@ -89,7 +89,7 @@ to image, inpainting, 2x upscaling and the Director tools.
 | Vocabulary    | Tag packages for tag search and Chinese-to-tag translation                     |
 | Characters    | Aliases, appearance tags by slot, excluded traits, default outfit, reference   |
 | Outfits       | Outfit tags by slot, optionally linked to a character                          |
-| LoRA          | SD WebUI LoRA file name, weight and trigger words, linked to a character       |
+| LoRA          | LoRA file name, weight and trigger words, linked to a character                |
 | Vibe transfer | NovelAI vibe transfer images, chosen per NovelAI profile under Image providers |
 | Workflow      | ComfyUI API-format workflow JSON and the node inputs Inkwell writes to         |
 
@@ -142,8 +142,9 @@ NovelAI requests" box is ticked, and then in the use chosen for it:
   costs 5 extra Anlas per image and cannot be combined with vibe transfer, so vibes are dropped
   while it is in use. Several references blend into one person, so only the first is sent.
 
-LoRAs apply to SD WebUI requests only: a LoRA linked to a character in the picture is added as
-`<lora:file_name:weight>` together with its trigger words.
+LoRAs apply to SD WebUI and ComfyUI requests: a LoRA linked to a character in the picture is
+added together with its trigger words, as `<lora:file_name:weight>` for SD WebUI and as a loader
+node for ComfyUI.
 
 ## Providers and transports
 
@@ -168,7 +169,11 @@ standard SillyTavern, allow the origin SillyTavern is served from instead.
 
 A ComfyUI profile renders one workflow from **Assets > Workflow**. Inkwell writes the prompt,
 negative prompt, seed, canvas size and image count into the node inputs the workflow maps, and the
-profile's steps, CFG, sampler, scheduler and model file replace the workflow's own when set.
+profile's steps, CFG, sampler, scheduler, diffusion model, text encoder and VAE replace the
+workflow's own when set; the file and sampler names are chosen from what the server lists. The
+profile's LoRAs and those of the characters in the picture are loaded by `LoraLoaderModelOnly`
+nodes Inkwell chains in front of the model input the workflow maps, so a workflow takes any number
+of LoRAs without holding a LoRA node.
 
 **Cloud providers.** `novelai`, `openai_image`, and `google_image` are called directly from the
 browser to the vendor's own origin, with a credential from the credential backend. The routes and

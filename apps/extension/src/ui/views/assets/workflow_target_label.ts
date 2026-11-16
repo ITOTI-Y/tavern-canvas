@@ -3,7 +3,10 @@ import type { WorkflowTarget } from "../../../modules/comfyui/workflow_mapping.j
 export type Translate = (key: string) => string;
 
 /** Each key is spelled out so the locale check sees it referenced. */
-export function workflow_target_label(t: Translate, target: WorkflowTarget | "output"): string {
+export function workflow_target_label(
+  t: Translate,
+  target: WorkflowTarget | "output" | "lora_model",
+): string {
   switch (target) {
     case "prompt":
       return t("assets.workflow.targets.prompt");
@@ -27,6 +30,12 @@ export function workflow_target_label(t: Translate, target: WorkflowTarget | "ou
       return t("assets.workflow.targets.scheduler");
     case "model":
       return t("assets.workflow.targets.model");
+    case "text_encoder":
+      return t("assets.workflow.targets.text_encoder");
+    case "vae":
+      return t("assets.workflow.targets.vae");
+    case "lora_model":
+      return t("assets.workflow.targets.lora_model");
     case "output":
       return t("assets.workflow.targets.output");
   }

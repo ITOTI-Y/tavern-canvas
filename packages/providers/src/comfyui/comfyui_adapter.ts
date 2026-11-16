@@ -500,6 +500,7 @@ function render_request_workflow(
     output_count: request.output_count,
     placeholder_values: request.placeholder_values,
     input_asset_names,
+    ...(request.loras === undefined ? {} : { loras: request.loras }),
   });
 }
 

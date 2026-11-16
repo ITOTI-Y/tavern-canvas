@@ -646,7 +646,8 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
     inspect_comfyui: () =>
       Promise.resolve({
         version: "0.45.3",
-        options: { sampler_name: [], scheduler: [], model: [] },
+        options: { sampler_name: [], scheduler: [], model: [], text_encoder: [], vae: [] },
+        lora_names: [],
         missing_node_types: [],
         missing_values: [],
       }),

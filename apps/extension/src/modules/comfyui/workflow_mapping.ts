@@ -1,3 +1,4 @@
+import { ComfyUiLoraSchema, MAX_COMFYUI_LORAS, type ComfyUiLora } from "@tavern-canvas/contracts";
 import { z } from "zod";
 
 /** The values Inkwell writes into a workflow before submitting it. */
@@ -13,6 +14,8 @@ export const WORKFLOW_TARGETS = [
   "sampler_name",
   "scheduler",
   "model",
+  "text_encoder",
+  "vae",
 ] as const;
 export type WorkflowTarget = (typeof WORKFLOW_TARGETS)[number];
 
@@ -22,6 +25,8 @@ const TEXT_TARGETS: ReadonlySet<WorkflowTarget> = new Set([
   "sampler_name",
   "scheduler",
   "model",
+  "text_encoder",
+  "vae",
 ]);
 
 export function target_value_type(target: WorkflowTarget): "string" | "number" {
@@ -37,6 +42,8 @@ export type NodeInput = z.infer<typeof NodeInputSchema>;
 export const WorkflowMappingSchema = z.strictObject({
   inputs: z.partialRecord(z.enum(WORKFLOW_TARGETS), NodeInputSchema),
   output_node_ids: z.array(z.string().min(1).max(128)).max(16),
+  /** The node input linked to the diffusion model, where LoRA loaders are chained in. */
+  lora_model: NodeInputSchema.optional(),
 });
 export type WorkflowMapping = z.infer<typeof WorkflowMappingSchema>;
 
@@ -125,6 +132,8 @@ function find_literal(
 
 const TEXT_INPUTS = ["text", "prompt", "string", "value", "conditioning"] as const;
 const MODEL_INPUTS = ["unet_name", "ckpt_name", "model_name", "model"] as const;
+const TEXT_ENCODER_INPUTS = ["clip_name", "clip"] as const;
+const VAE_INPUTS = ["vae_name", "vae"] as const;
 
 function is_image_output(node: WorkflowNode): boolean {
   return linked_node(node.inputs.images) !== null && /save|preview/iu.test(node.class_type);
@@ -133,7 +142,9 @@ function is_image_output(node: WorkflowNode): boolean {
 /**
  * Finds the inputs to write by following the sampler's links: `positive` and `negative` to the
  * prompt texts, `latent_image` to the canvas size and batch, `model` to the loader's file name.
- * A workflow without such a sampler yields an empty mapping for the user to fill in.
+ * The text encoder is the one the positive prompt is encoded with, and the VAE the one that decodes
+ * the output image. A workflow without such a sampler yields an empty mapping for the user to fill
+ * in.
  */
 export function detect_workflow_mapping(workflow: Workflow): WorkflowMapping {
   const inputs: Partial<Record<WorkflowTarget, NodeInput>> = {};
@@ -146,8 +157,16 @@ export function detect_workflow_mapping(workflow: Workflow): WorkflowMapping {
     const node_inputs = workflow[node_id]?.inputs ?? {};
     return linked_node(node_inputs.positive) !== null && linked_node(node_inputs.negative) !== null;
   });
+  let lora_model: NodeInput | undefined;
   if (sampler_id !== undefined) {
     const sampler = workflow[sampler_id]?.inputs ?? {};
+    if (linked_node(sampler.model) !== null) {
+      lora_model = { node_id: sampler_id, property: "model" };
+    }
+    const encoder_id = linked_node(sampler.positive);
+    if (encoder_id !== null) {
+      set("text_encoder", find_literal(workflow, encoder_id, TEXT_ENCODER_INPUTS, "string"));
+    }
     const follow = (
       property: string,
       properties: readonly string[],
@@ -172,7 +191,16 @@ export function detect_workflow_mapping(workflow: Workflow): WorkflowMapping {
     const node = workflow[node_id];
     return node !== undefined && is_image_output(node);
   });
-  return { inputs, output_node_ids: output_node_id === undefined ? [] : [output_node_id] };
+  const decoder_id =
+    output_node_id === undefined ? null : linked_node(workflow[output_node_id]?.inputs.images);
+  if (decoder_id !== null) {
+    set("vae", find_literal(workflow, decoder_id, VAE_INPUTS, "string"));
+  }
+  return {
+    inputs,
+    output_node_ids: output_node_id === undefined ? [] : [output_node_id],
+    ...(lora_model === undefined ? {} : { lora_model }),
+  };
 }
 
 export interface WorkflowInputChoice extends NodeInput {
@@ -209,6 +237,17 @@ export function workflow_output_choices(
 ): readonly { readonly node_id: string; readonly title: string }[] {
   return Object.entries(workflow).flatMap(([node_id, node]) =>
     linked_node(node.inputs.images) === null ? [] : [{ node_id, title: node_title(node_id, node) }],
+  );
+}
+
+/** The node inputs linked to a model, for choosing where LoRA loaders are chained in. */
+export function workflow_model_input_choices(
+  workflow: Workflow,
+): readonly (NodeInput & { readonly title: string })[] {
+  return Object.entries(workflow).flatMap(([node_id, node]) =>
+    linked_node(node.inputs.model) === null
+      ? []
+      : [{ node_id, property: "model", title: node_title(node_id, node) }],
   );
 }
 
@@ -251,11 +290,16 @@ export function read_mapped_workflow(payload: Readonly<Record<string, unknown>>)
       inputs[target] = input;
     }
   }
+  const lora_model = parsed.data.lora_model;
   return {
     workflow,
     mapping: {
       inputs,
       output_node_ids: parsed.data.output_node_ids.filter((node_id) => node_id in workflow),
+      ...(lora_model !== undefined &&
+      linked_node(workflow[lora_model.node_id]?.inputs[lora_model.property]) !== null
+        ? { lora_model }
+        : {}),
     },
   };
 }
@@ -323,19 +367,26 @@ export function to_adapter_workflow(workflow_id: string, mapped: MappedWorkflow)
       ...(negative === undefined ? {} : { negative_prompt: negative }),
       ...(mapping.inputs.seed === undefined ? {} : { seed: mapping.inputs.seed }),
       output_count,
+      ...(mapping.lora_model === undefined ? {} : { lora_model: mapping.lora_model }),
       placeholders,
       input_assets: {},
     },
   };
 }
 
-/** Sampling values a ComfyUI profile sets over the workflow's own; an absent one keeps the workflow's. */
+/**
+ * What a ComfyUI profile sets over the workflow's own values; an absent one keeps the workflow's.
+ * `loras` are loaded with every request made with the profile.
+ */
 export const ComfyUiDefaultsSchema = z.strictObject({
   steps: z.number().int().min(1).max(200).optional(),
   cfg: z.number().min(0).max(100).optional(),
   sampler_name: z.string().trim().min(1).max(128).optional(),
   scheduler: z.string().trim().min(1).max(128).optional(),
   model: z.string().trim().min(1).max(512).optional(),
+  text_encoder: z.string().trim().min(1).max(512).optional(),
+  vae: z.string().trim().min(1).max(512).optional(),
+  loras: z.array(ComfyUiLoraSchema).max(MAX_COMFYUI_LORAS).optional(),
 });
 export type ComfyUiDefaults = z.infer<typeof ComfyUiDefaultsSchema>;
 
@@ -345,6 +396,8 @@ export const DEFAULT_TARGETS = [
   "sampler_name",
   "scheduler",
   "model",
+  "text_encoder",
+  "vae",
 ] as const satisfies readonly WorkflowTarget[];
 
 function literal_at(workflow: Workflow, input: NodeInput | undefined): string | number | null {
@@ -385,4 +438,15 @@ export function request_placeholder_values(
     }
   }
   return values;
+}
+
+/**
+ * The LoRAs a request made with the profile starts from, or `undefined` when the workflow maps no
+ * model input to chain them into.
+ */
+export function request_loras(
+  mapped: MappedWorkflow,
+  defaults: ComfyUiDefaults,
+): readonly ComfyUiLora[] | undefined {
+  return mapped.mapping.lora_model === undefined ? undefined : (defaults.loras ?? []);
 }

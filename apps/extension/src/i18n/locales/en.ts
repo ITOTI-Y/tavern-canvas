@@ -386,10 +386,15 @@ const assets = {
   lora: {
     empty_title: "No LoRA yet",
     empty_description:
-      "Add a LoRA and link it to a character. SD WebUI requests that show the character get the LoRA and its trigger words.",
+      "Add a LoRA and link it to a character. SD WebUI and ComfyUI requests that show the character get the LoRA and its trigger words.",
     add_action: "Add LoRA",
     file_name_label: "File name",
-    file_name_hint: "The LoRA's file name in SD WebUI without the extension, such as seraphina_v2.",
+    file_name_hint:
+      "For SD WebUI, the file name without the extension, such as seraphina_v2. ComfyUI takes the full file name its server lists, which can be chosen below.",
+    server_file_label: "Choose from ComfyUI",
+    server_file_hint:
+      "Listed from the LoRA folder of the server a ComfyUI profile points at; choosing one fills in the file name.",
+    server_file_placeholder: "Choose a LoRA file",
     character_label: "Character",
     character_hint: "A LoRA linked to no character is never added automatically.",
     character_placeholder: "Choose a character",
@@ -421,7 +426,7 @@ const assets = {
     json_label: "Workflow JSON",
     unmapped: "Not mapped",
     mapping_hint:
-      "When generating, Inkwell writes each item below into the chosen node input. An unmapped item keeps the workflow's value; the prompt, image count and output node must be mapped.",
+      "When generating, Inkwell writes each item below into the chosen node input. An unmapped item keeps the workflow's value; the prompt, image count and output node must be mapped. The LoRA entry point is the node input that takes the diffusion model; LoRA loaders are chained in front of it.",
     mapping_missing: "Still to map: {names}",
     format_not_json: "This is not valid JSON.",
     format_not_api:
@@ -437,7 +442,10 @@ const assets = {
       cfg: "CFG",
       sampler_name: "Sampler",
       scheduler: "Scheduler",
-      model: "Model file",
+      model: "Diffusion model",
+      text_encoder: "Text encoder",
+      vae: "VAE",
+      lora_model: "LoRA entry point",
       output: "Output node",
     },
   },
@@ -771,7 +779,17 @@ const settings = {
     comfyui: {
       no_workflows: "No workflows yet. Import one in API format under Assets > Workflow first.",
       default_hint: "Leave empty to use the workflow's value: {value}",
-      number_invalid: "Steps must be an integer from 1 to 200 and CFG a number from 0 to 100.",
+      keep_workflow_value: "Use the workflow's value: {value}",
+      number_invalid:
+        "Steps must be an integer from 1 to 200, CFG a number from 0 to 100, and a LoRA strength between -10 and 10.",
+      loras_label: "LoRAs always loaded",
+      loras_hint:
+        "Loaded in this order with every image, on the diffusion model only. LoRAs linked to characters follow them.",
+      loras_unmapped:
+        "The chosen workflow maps no LoRA entry point, so no LoRA can be loaded. Map one under Assets > Workflow.",
+      lora_placeholder: "Choose a LoRA file",
+      lora_strength_label: "LoRA strength",
+      add_lora_action: "Add LoRA",
       inspect_action: "Check connection and workflow",
       unreachable:
         "This address cannot be reached. Make sure ComfyUI is running and was started with --enable-cors-header.",

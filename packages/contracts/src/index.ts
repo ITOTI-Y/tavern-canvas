@@ -85,8 +85,10 @@ export type {
 } from "./provider.js";
 
 export {
+  ComfyUiLoraSchema,
   ComfyUiPlaceholderValueSchema,
   ComfyUiRequestSchema,
+  MAX_COMFYUI_LORAS,
   GoogleImageRequestSchema,
   NOVELAI_MAX_PIXELS,
   NOVELAI_MAX_UPSCALE_PIXELS,
@@ -128,6 +130,7 @@ export {
   SdWebuiRequestSchema,
 } from "./providers/index.js";
 export type {
+  ComfyUiLora,
   ComfyUiRequest,
   GoogleImageRequest,
   NovelAiAccountStatus,

@@ -22,12 +22,14 @@ function workflow(negative: boolean): string {
       inputs: {
         seed: 7,
         steps: 8,
+        model: ["6", 0],
         positive: ["1", 0],
         negative: negative ? ["2", 0] : ["1", 0],
         latent_image: ["3", 0],
       },
     },
     "5": { class_type: "SaveImage", inputs: { images: ["4", 0] } },
+    "6": { class_type: "UNETLoader", inputs: { unet_name: "anima.safetensors" } },
   });
 }
 
@@ -41,7 +43,7 @@ function draft(workflow_json: string): GenerationDraftInput {
     comfyui: {
       workflow_id: WORKFLOW_ID,
       mapped: read_mapped_workflow({ workflow_json }),
-      defaults: { steps: 12 },
+      defaults: { steps: 12, loras: [{ lora_name: "style.safetensors", strength: 0.8 }] },
     },
   };
 }
@@ -59,6 +61,7 @@ describe("build_provider_request for ComfyUI", () => {
       workflow_id: WORKFLOW_ID,
       placeholder_values: { width: 832, height: 1216, steps: 12 },
       output_node_ids: ["5"],
+      loras: [{ lora_name: "style.safetensors", strength: 0.8 }],
     });
     expect("seed" in request && Number.isInteger(request.seed)).toBe(true);
   });

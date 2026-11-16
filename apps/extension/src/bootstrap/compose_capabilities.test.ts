@@ -295,11 +295,13 @@ describe("compose_studio_capabilities", () => {
         const class_type = decodeURIComponent(url.split("/object_info/")[1] ?? "");
         const body = url.endsWith("/system_stats")
           ? { system: { comfyui_version: "0.45.3" } }
-          : class_type === "KSampler"
-            ? { KSampler: { input: { required: { sampler_name: [["euler", "dpmpp_2m"]] } } } }
-            : class_type === "MissingNode"
-              ? {}
-              : { [class_type]: { input: { required: {} } } };
+          : url.endsWith("/models/loras")
+            ? ["style.safetensors"]
+            : class_type === "KSampler"
+              ? { KSampler: { input: { required: { sampler_name: [["euler", "dpmpp_2m"]] } } } }
+              : class_type === "MissingNode"
+                ? {}
+                : { [class_type]: { input: { required: {} } } };
         return Promise.resolve(Response.json(body));
       },
     });
@@ -339,12 +341,20 @@ describe("compose_studio_capabilities", () => {
       base_url: "http://100.64.0.10:8188",
       workflow_id,
       updated_at: "",
-      comfyui_defaults: { steps: 12, sampler_name: "dpmpp_2m" },
+      comfyui_defaults: {
+        steps: 12,
+        sampler_name: "dpmpp_2m",
+        loras: [{ lora_name: "style.safetensors", strength: 0.8 }],
+      },
     });
     expect(saved).toMatchObject({
       base_url: "http://100.64.0.10:8188",
       workflow_id,
-      comfyui_defaults: { steps: 12, sampler_name: "dpmpp_2m" },
+      comfyui_defaults: {
+        steps: 12,
+        sampler_name: "dpmpp_2m",
+        loras: [{ lora_name: "style.safetensors", strength: 0.8 }],
+      },
     });
 
     await expect(
@@ -357,7 +367,14 @@ describe("compose_studio_capabilities", () => {
       }),
     ).resolves.toEqual({
       version: "0.45.3",
-      options: { sampler_name: ["euler", "dpmpp_2m"], scheduler: [], model: [] },
+      options: {
+        sampler_name: ["euler", "dpmpp_2m"],
+        scheduler: [],
+        model: [],
+        text_encoder: [],
+        vae: [],
+      },
+      lora_names: ["style.safetensors"],
       missing_node_types: ["MissingNode"],
       missing_values: [],
     });

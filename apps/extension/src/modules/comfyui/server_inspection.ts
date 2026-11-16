@@ -4,6 +4,8 @@ export const OPTION_TARGETS = [
   "sampler_name",
   "scheduler",
   "model",
+  "text_encoder",
+  "vae",
 ] as const satisfies readonly WorkflowTarget[];
 export type OptionTarget = (typeof OPTION_TARGETS)[number];
 
@@ -19,6 +21,8 @@ export interface ComfyUiInspection {
   readonly version: string | null;
   /** What the server offers for each mapped target; empty when the target is unmapped. */
   readonly options: Readonly<Record<OptionTarget, readonly string[]>>;
+  /** The LoRA files the server can load. */
+  readonly lora_names: readonly string[];
   /** Node classes the workflow uses that the server has not installed. */
   readonly missing_node_types: readonly string[];
   /** Workflow values, such as model files, that are not among the server's choices for that input. */
@@ -72,9 +76,12 @@ export async function inspect_comfyui_server(
     sampler_name: [],
     scheduler: [],
     model: [],
+    text_encoder: [],
+    vae: [],
   };
+  const lora_names = string_list(await get("/models/loras")) ?? [];
   if (mapped === null) {
-    return { version, options, missing_node_types: [], missing_values: [] };
+    return { version, options, lora_names, missing_node_types: [], missing_values: [] };
   }
 
   const class_types = [...new Set(Object.values(mapped.workflow).map((node) => node.class_type))];
@@ -109,6 +116,7 @@ export async function inspect_comfyui_server(
   return {
     version,
     options,
+    lora_names,
     missing_node_types: class_types.filter((class_type) => node_info.get(class_type) === undefined),
     missing_values,
   };

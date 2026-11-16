@@ -1,6 +1,9 @@
 export {
+  ComfyUiLoraSchema,
   ComfyUiPlaceholderValueSchema,
   ComfyUiRequestSchema,
+  MAX_COMFYUI_LORAS,
+  type ComfyUiLora,
   type ComfyUiRequest,
 } from "./comfyui.js";
 export { GoogleImageRequestSchema, type GoogleImageRequest } from "./google_image.js";

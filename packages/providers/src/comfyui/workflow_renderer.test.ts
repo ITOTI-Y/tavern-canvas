@@ -115,6 +115,55 @@ describe("render_comfyui_workflow", () => {
     ).toThrow(ProviderAdapterError);
   });
 
+  it("chains one model-only loader per LoRA in front of the bound model input", () => {
+    const stored = validate_stored_comfyui_workflow({
+      ...(stored_fixture as Record<string, unknown>),
+      bindings: {
+        ...(stored_fixture as { bindings: Record<string, unknown> }).bindings,
+        lora_model: { node_id: "3", property: "model" },
+      },
+    });
+    const rendered = render_comfyui_workflow(stored, {
+      prompt: "fixture prompt",
+      output_count: 1,
+      placeholder_values: {},
+      input_asset_names: {},
+      loras: [
+        { lora_name: "style.safetensors", strength: 0.8 },
+        { lora_name: "character/alice.safetensors", strength: 1 },
+      ],
+    });
+
+    expect(rendered.tavern_canvas_lora_0).toEqual({
+      class_type: "LoraLoaderModelOnly",
+      inputs: { model: ["4", 0], lora_name: "style.safetensors", strength_model: 0.8 },
+    });
+    expect(rendered.tavern_canvas_lora_1).toEqual({
+      class_type: "LoraLoaderModelOnly",
+      inputs: {
+        model: ["tavern_canvas_lora_0", 0],
+        lora_name: "character/alice.safetensors",
+        strength_model: 1,
+      },
+    });
+    expect(rendered["3"]?.inputs.model).toEqual(["tavern_canvas_lora_1", 0]);
+    expect(rendered["6"]?.inputs.clip).toEqual(["4", 1]);
+  });
+
+  it("rejects LoRAs for a workflow that binds no model input", () => {
+    const stored = validate_stored_comfyui_workflow(stored_fixture);
+
+    expect(() =>
+      render_comfyui_workflow(stored, {
+        prompt: "fixture prompt",
+        output_count: 1,
+        placeholder_values: {},
+        input_asset_names: {},
+        loras: [{ lora_name: "style.safetensors", strength: 1 }],
+      }),
+    ).toThrow(ProviderAdapterError);
+  });
+
   it("never mutates the stored workflow", () => {
     const stored = validate_stored_comfyui_workflow(stored_fixture);
     const before = structuredClone(stored);

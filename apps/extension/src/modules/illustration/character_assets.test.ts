@@ -62,6 +62,46 @@ describe("attach_character_loras", () => {
       lora_tokens: [{ lora_id: "seraphina_v2", weight: 0.8 }],
     });
   });
+
+  it("chains the characters' LoRAs after the profile's in a ComfyUI request, each file once", () => {
+    const comfyui = {
+      provider_id: "comfyui",
+      prompt: "tavern",
+      loras: [{ lora_name: "style.safetensors", strength: 0.6 }],
+    } as unknown as ImageGenerationRequest;
+    const linked = [
+      {
+        file_name: "seraphina.safetensors",
+        weight: 0.8,
+        trigger_words: "seraphina",
+        character_id: "c1",
+      },
+      { file_name: "style.safetensors", weight: 1, trigger_words: "", character_id: "c1" },
+    ];
+
+    expect(attach_character_loras(comfyui, [character("c1", null)], linked)).toMatchObject({
+      prompt: "tavern, seraphina",
+      loras: [
+        { lora_name: "style.safetensors", strength: 0.6 },
+        { lora_name: "seraphina.safetensors", strength: 0.8 },
+      ],
+    });
+  });
+
+  it("leaves a ComfyUI request alone when its workflow takes no LoRAs", () => {
+    const comfyui = {
+      provider_id: "comfyui",
+      prompt: "tavern",
+    } as unknown as ImageGenerationRequest;
+
+    expect(
+      attach_character_loras(
+        comfyui,
+        [character("c1", null)],
+        [{ file_name: "a.safetensors", weight: 1, trigger_words: "a", character_id: "c1" }],
+      ),
+    ).toBe(comfyui);
+  });
 });
 
 describe("attach_character_references", () => {

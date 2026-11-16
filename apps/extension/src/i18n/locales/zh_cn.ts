@@ -378,10 +378,14 @@ const assets = {
   lora: {
     empty_title: "还没有 LoRA",
     empty_description:
-      "添加 LoRA 并关联到角色。用 SD WebUI 出图且画面中有该角色时，会自动附加 LoRA 和触发词。",
+      "添加 LoRA 并关联到角色。用 SD WebUI 或 ComfyUI 出图且画面中有该角色时，会自动附加 LoRA 和触发词。",
     add_action: "添加 LoRA",
     file_name_label: "文件名",
-    file_name_hint: "SD WebUI 中 LoRA 的文件名，不含扩展名，例如 seraphina_v2。",
+    file_name_hint:
+      "SD WebUI 填不含扩展名的文件名，例如 seraphina_v2；ComfyUI 使用服务端列出的完整文件名，可在下方直接选择。",
+    server_file_label: "从 ComfyUI 选择",
+    server_file_hint: "列表来自 ComfyUI 配置所指服务端的 LoRA 目录，选择后填入文件名。",
+    server_file_placeholder: "选择 LoRA 文件",
     character_label: "关联角色",
     character_hint: "不关联角色的 LoRA 不会自动附加。",
     character_placeholder: "选择角色",
@@ -412,7 +416,7 @@ const assets = {
     json_label: "工作流 JSON",
     unmapped: "未映射",
     mapping_hint:
-      "出图时 Inkwell 把下列各项写入所选的节点输入。未映射的项保持工作流里的值；提示词、出图张数和输出节点必须映射。",
+      "出图时 Inkwell 把下列各项写入所选的节点输入。未映射的项保持工作流里的值；提示词、出图张数和输出节点必须映射。LoRA 接入点是接收扩散模型的节点输入，LoRA 加载节点会依次接在它前面。",
     mapping_missing: "还需要映射：{names}",
     format_not_json: "内容不是合法的 JSON。",
     format_not_api: "这不是 API 格式的工作流。请在 ComfyUI 中用“导出 (API)”重新保存。",
@@ -427,7 +431,10 @@ const assets = {
       cfg: "CFG",
       sampler_name: "采样器",
       scheduler: "调度器",
-      model: "模型文件",
+      model: "扩散模型",
+      text_encoder: "文本编码器",
+      vae: "VAE",
+      lora_model: "LoRA 接入点",
       output: "输出节点",
     },
   },
@@ -749,7 +756,16 @@ const settings = {
     comfyui: {
       no_workflows: "还没有工作流。先在“素材 > 工作流”中导入一个 API 格式的工作流。",
       default_hint: "留空时使用工作流里的值：{value}",
-      number_invalid: "步数应为 1 到 200 的整数，CFG 应为 0 到 100 的数值。",
+      keep_workflow_value: "使用工作流里的值：{value}",
+      number_invalid:
+        "步数应为 1 到 200 的整数，CFG 应为 0 到 100 的数值，LoRA 权重应在 -10 到 10 之间。",
+      loras_label: "固定加载的 LoRA",
+      loras_hint: "每次出图都按顺序加载，只作用于扩散模型。角色关联的 LoRA 会接在它们之后。",
+      loras_unmapped:
+        "所选工作流没有映射 LoRA 接入点，无法加载 LoRA。请在“素材库 > 工作流”中映射。",
+      lora_placeholder: "选择 LoRA 文件",
+      lora_strength_label: "LoRA 权重",
+      add_lora_action: "添加 LoRA",
       inspect_action: "检查连接和工作流",
       unreachable:
         "无法访问这个地址。请确认 ComfyUI 正在运行，并且启动参数里带有 --enable-cors-header。",

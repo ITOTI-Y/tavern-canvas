@@ -1,4 +1,5 @@
 import {
+  MAX_COMFYUI_LORAS,
   resolve_novelai_model,
   type AssetId,
   type ImageGenerationRequest,
@@ -20,21 +21,38 @@ export interface ReferenceImagePort {
 }
 
 /**
- * Adds the LoRAs linked to these characters, with their trigger words, to an SD WebUI request.
- * Other providers have no LoRA field and are returned unchanged.
+ * Adds the LoRAs linked to these characters, with their trigger words, to an SD WebUI request or
+ * to a ComfyUI request whose workflow takes LoRAs. Other providers have no LoRA field and are
+ * returned unchanged.
  */
 export function attach_character_loras(
   request: ImageGenerationRequest,
   characters: readonly WardrobeCharacter[],
   loras: readonly LibraryLora[],
 ): ImageGenerationRequest {
-  if (request.provider_id !== "sd_webui") {
+  if (request.provider_id !== "sd_webui" && request.provider_id !== "comfyui") {
     return request;
   }
   const ids = new Set(characters.map((character) => character.id));
   const linked = loras.filter((lora) => ids.has(lora.character_id) && lora.file_name !== "");
   if (linked.length === 0) {
     return request;
+  }
+  if (request.provider_id === "comfyui") {
+    if (request.loras === undefined) {
+      return request;
+    }
+    const taken = new Set(request.loras.map((lora) => lora.lora_name));
+    return {
+      ...request,
+      prompt: join_prompt_parts([request.prompt, ...linked.map((lora) => lora.trigger_words)]),
+      loras: [
+        ...request.loras,
+        ...linked
+          .filter((lora) => !taken.has(lora.file_name))
+          .map((lora) => ({ lora_name: lora.file_name, strength: lora.weight })),
+      ].slice(0, MAX_COMFYUI_LORAS),
+    };
   }
   const tokens = [
     ...(request.lora_tokens ?? []),

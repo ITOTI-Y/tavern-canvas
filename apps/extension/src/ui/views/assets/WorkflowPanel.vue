@@ -24,6 +24,7 @@ import {
   WORKFLOW_JSON_FIELD,
   WORKFLOW_TARGETS,
   workflow_input_choices,
+  workflow_model_input_choices,
   workflow_output_choices,
   WorkflowFormatError,
   type Workflow,
@@ -109,6 +110,33 @@ const output_options = computed<readonly SelectOption[]>(() => [
     (choice) => ({ value: choice.node_id, label: choice.title }),
   ),
 ]);
+
+const lora_model_options = computed<readonly SelectOption[]>(() => [
+  { value: UNMAPPED, label: t("assets.workflow.unmapped") },
+  ...(parsed.value.workflow === null
+    ? []
+    : workflow_model_input_choices(parsed.value.workflow)
+  ).map((choice) => ({
+    value: `${choice.node_id}${CHOICE_SEPARATOR}${choice.property}`,
+    label: `${choice.title} · ${choice.property}`,
+  })),
+]);
+
+const lora_model_value = computed(() => {
+  const input = mapping.value.lora_model;
+  const value =
+    input === undefined ? UNMAPPED : `${input.node_id}${CHOICE_SEPARATOR}${input.property}`;
+  return lora_model_options.value.some((option) => option.value === value) ? value : UNMAPPED;
+});
+
+function set_lora_model(value: string): void {
+  const [node_id, property] = value.split(CHOICE_SEPARATOR);
+  const { lora_model: _previous, ...rest } = mapping.value;
+  mapping.value =
+    value === UNMAPPED || node_id === undefined || property === undefined
+      ? rest
+      : { ...rest, lora_model: { node_id, property } };
+}
 
 function target_value(target: WorkflowTarget): string {
   const input = mapping.value.inputs[target];
@@ -299,6 +327,17 @@ async function save_workflow(): Promise<void> {
                 :placeholder="t('assets.workflow.unmapped')"
                 :ariaLabel="workflow_target_label(t, target)"
                 @update:model-value="(value) => set_target(target, value)"
+              />
+            </div>
+            <div :class="styles.mappingRow">
+              <span :class="styles.mappingKey">{{ workflow_target_label(t, "lora_model") }}</span>
+              <AppSelect
+                :key="`${locale}:lora_model`"
+                :model-value="lora_model_value"
+                :options="lora_model_options"
+                :placeholder="t('assets.workflow.unmapped')"
+                :ariaLabel="workflow_target_label(t, 'lora_model')"
+                @update:model-value="set_lora_model"
               />
             </div>
             <div :class="styles.mappingRow">

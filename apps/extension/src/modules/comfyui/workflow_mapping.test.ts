@@ -4,6 +4,7 @@ import {
   detect_workflow_mapping,
   parse_workflow,
   read_mapped_workflow,
+  request_loras,
   request_placeholder_values,
   to_adapter_workflow,
   WorkflowFormatError,
@@ -14,6 +15,7 @@ import {
 const WORKFLOW = {
   "1": { class_type: "UNETLoader", inputs: { unet_name: "anima.safetensors" } },
   "2": { class_type: "CLIPLoader", inputs: { clip_name: "qwen.safetensors" } },
+  "3": { class_type: "VAELoader", inputs: { vae_name: "qwen_vae.safetensors" } },
   "4": { class_type: "PromptConverter", inputs: { text: "1girl" } },
   "5": { class_type: "PromptConverter", inputs: { text: "worst quality" } },
   "6": { class_type: "CLIPTextEncode", inputs: { text: ["4", 0], clip: ["2", 0] } },
@@ -33,7 +35,7 @@ const WORKFLOW = {
       latent_image: ["8", 0],
     },
   },
-  "10": { class_type: "VAEDecode", inputs: { samples: ["9", 0] } },
+  "10": { class_type: "VAEDecode", inputs: { samples: ["9", 0], vae: ["3", 0] } },
   "11": { class_type: "PreviewImage", inputs: { images: ["10", 0] } },
 };
 const TEXT = JSON.stringify(WORKFLOW);
@@ -50,8 +52,11 @@ const DETECTED = {
     height: { node_id: "8", property: "height" },
     output_count: { node_id: "8", property: "batch_size" },
     model: { node_id: "1", property: "unet_name" },
+    text_encoder: { node_id: "2", property: "clip_name" },
+    vae: { node_id: "3", property: "vae_name" },
   },
   output_node_ids: ["11"],
+  lora_model: { node_id: "9", property: "model" },
 };
 
 describe("parse_workflow", () => {
@@ -92,6 +97,7 @@ describe("read_mapped_workflow", () => {
         output_count: { node_id: "8", property: "batch_size" },
       },
       output_node_ids: ["10", "42"],
+      lora_model: { node_id: "9", property: "steps" },
     };
 
     expect(
@@ -120,6 +126,7 @@ describe("to_adapter_workflow", () => {
       negative_prompt: DETECTED.inputs.negative_prompt,
       seed: DETECTED.inputs.seed,
       output_count: DETECTED.inputs.output_count,
+      lora_model: DETECTED.lora_model,
       placeholders: {
         width: { ...DETECTED.inputs.width, value_type: "number" },
         height: { ...DETECTED.inputs.height, value_type: "number" },
@@ -128,6 +135,8 @@ describe("to_adapter_workflow", () => {
         sampler_name: { ...DETECTED.inputs.sampler_name, value_type: "string" },
         scheduler: { ...DETECTED.inputs.scheduler, value_type: "string" },
         model: { ...DETECTED.inputs.model, value_type: "string" },
+        text_encoder: { ...DETECTED.inputs.text_encoder, value_type: "string" },
+        vae: { ...DETECTED.inputs.vae, value_type: "string" },
       },
       input_assets: {},
     });
@@ -163,5 +172,24 @@ describe("request_placeholder_values", () => {
         model: "b.safetensors",
       }),
     ).toEqual({ width: 832, height: 1216, steps: 12, model: "b.safetensors" });
+  });
+});
+
+describe("request_loras", () => {
+  it("starts from the profile's LoRAs when the workflow maps a model input", () => {
+    const mapped = read_mapped_workflow({ workflow_json: TEXT });
+    const loras = [{ lora_name: "style.safetensors", strength: 0.8 }];
+
+    expect(request_loras(mapped, { loras })).toEqual(loras);
+    expect(request_loras(mapped, {})).toEqual([]);
+  });
+
+  it("is undefined when the workflow has no model input to chain LoRAs into", () => {
+    const { lora_model: _unmapped, ...mapping } = DETECTED;
+    const mapped = read_mapped_workflow({ workflow_json: TEXT, node_map: JSON.stringify(mapping) });
+
+    expect(
+      request_loras(mapped, { loras: [{ lora_name: "style.safetensors", strength: 1 }] }),
+    ).toBeUndefined();
   });
 });

@@ -44,6 +44,9 @@ const get: ComfyUiGet = (route) => {
   if (route === "/system_stats") {
     return Promise.resolve({ system: { comfyui_version: "0.45.3" } });
   }
+  if (route === "/models/loras") {
+    return Promise.resolve(["style.safetensors", "character/alice.safetensors"]);
+  }
   const class_type = decodeURIComponent(route.replace("/object_info/", ""));
   const info = OBJECT_INFO[class_type];
   return Promise.resolve(info === undefined ? {} : { [class_type]: info });
@@ -53,7 +56,8 @@ describe("inspect_comfyui_server", () => {
   it("reports the version alone when no workflow is chosen", async () => {
     await expect(inspect_comfyui_server(get, null)).resolves.toEqual({
       version: "0.45.3",
-      options: { sampler_name: [], scheduler: [], model: [] },
+      options: { sampler_name: [], scheduler: [], model: [], text_encoder: [], vae: [] },
+      lora_names: ["style.safetensors", "character/alice.safetensors"],
       missing_node_types: [],
       missing_values: [],
     });
@@ -66,7 +70,10 @@ describe("inspect_comfyui_server", () => {
         sampler_name: ["euler", "dpmpp_2m"],
         scheduler: ["simple", "karras"],
         model: ["a.safetensors", "b.safetensors"],
+        text_encoder: [],
+        vae: [],
       },
+      lora_names: ["style.safetensors", "character/alice.safetensors"],
       missing_node_types: ["CustomPrompt"],
       missing_values: [
         {

@@ -10,7 +10,7 @@ import {
   type ProviderId,
   type Uuid,
 } from "@tavern-canvas/contracts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import {
@@ -83,11 +83,21 @@ interface DraftForm {
   model_id: string;
   workflow_id: string;
   base_url: string;
-  /** ComfyUI sampling values as typed; an empty one keeps the workflow's value. */
+  /** ComfyUI values as entered; an empty one keeps the workflow's value. */
   comfyui: Record<DefaultTarget, string>;
+  /** LoRAs loaded with every request; a row without a file is dropped on save. */
+  loras: { lora_name: string; strength: string }[];
 }
 
 type DefaultTarget = (typeof DEFAULT_TARGETS)[number];
+type OptionTarget = (typeof OPTION_TARGETS)[number];
+
+function is_option_target(target: DefaultTarget): target is OptionTarget {
+  return OPTION_TARGETS.some((candidate) => candidate === target);
+}
+
+/** Reka's SelectItem rejects an empty-string value. */
+const KEEP_WORKFLOW_VALUE = "keep-workflow-value";
 
 /** A ComfyUI profile's model is whatever its workflow loads; the adapter profile still needs a name. */
 const COMFYUI_MODEL_ID = "workflow";
@@ -101,16 +111,32 @@ function default_fields(
     sampler_name: defaults?.sampler_name ?? "",
     scheduler: defaults?.scheduler ?? "",
     model: defaults?.model ?? "",
+    text_encoder: defaults?.text_encoder ?? "",
+    vae: defaults?.vae ?? "",
   };
 }
 
-/** `null` when steps or CFG is not a number in range. */
-function read_defaults(fields: Record<DefaultTarget, string>): ComfyUiDefaults | null {
+function lora_rows(defaults: ComfyUiDefaults | null | undefined): DraftForm["loras"] {
+  return (defaults?.loras ?? []).map((lora) => ({
+    lora_name: lora.lora_name,
+    strength: lora.strength.toString(),
+  }));
+}
+
+/** `null` when steps, CFG or a LoRA strength is not a number in range. */
+function read_defaults(
+  fields: Record<DefaultTarget, string>,
+  rows: DraftForm["loras"],
+): ComfyUiDefaults | null {
   const steps = fields.steps.trim() === "" ? undefined : Number(fields.steps);
   const cfg = fields.cfg.trim() === "" ? undefined : Number(fields.cfg);
+  const loras = rows
+    .filter((row) => row.lora_name !== "")
+    .map((row) => ({ lora_name: row.lora_name, strength: Number(row.strength) }));
   if (
     (steps !== undefined && (!Number.isInteger(steps) || steps < 1 || steps > 200)) ||
-    (cfg !== undefined && (!Number.isFinite(cfg) || cfg < 0 || cfg > 100))
+    (cfg !== undefined && (!Number.isFinite(cfg) || cfg < 0 || cfg > 100)) ||
+    loras.some((lora) => !Number.isFinite(lora.strength) || Math.abs(lora.strength) > 10)
   ) {
     return null;
   }
@@ -119,12 +145,17 @@ function read_defaults(fields: Record<DefaultTarget, string>): ComfyUiDefaults |
   const sampler_name = text(fields.sampler_name);
   const scheduler = text(fields.scheduler);
   const model = text(fields.model);
+  const text_encoder = text(fields.text_encoder);
+  const vae = text(fields.vae);
   return {
     ...(steps === undefined ? {} : { steps }),
     ...(cfg === undefined ? {} : { cfg }),
     ...(sampler_name === undefined ? {} : { sampler_name }),
     ...(scheduler === undefined ? {} : { scheduler }),
     ...(model === undefined ? {} : { model }),
+    ...(text_encoder === undefined ? {} : { text_encoder }),
+    ...(vae === undefined ? {} : { vae }),
+    ...(loras.length === 0 ? {} : { loras }),
   };
 }
 
@@ -206,14 +237,69 @@ function workflow_default(target: DefaultTarget): string {
   return value === null ? "" : value.toString();
 }
 
-function choices_of(target: DefaultTarget): readonly string[] {
-  const option_target = OPTION_TARGETS.find((candidate) => candidate === target);
-  return option_target === undefined ? [] : (inspection.value?.options[option_target] ?? []);
+/**
+ * What the server offers for a target, after the entry that keeps the workflow's own value. A saved
+ * value the server no longer lists stays selectable so opening the dialog does not drop it.
+ */
+function target_options(target: OptionTarget): readonly { value: string; label: string }[] {
+  const saved = draft.value?.comfyui[target] ?? "";
+  const listed = inspection.value?.options[target] ?? [];
+  return [
+    {
+      value: KEEP_WORKFLOW_VALUE,
+      label: t("settings.provider_profiles.comfyui.keep_workflow_value", {
+        value: workflow_default(target),
+      }),
+    },
+    ...[...new Set([...(saved === "" ? [] : [saved]), ...listed])].map((value) => ({
+      value,
+      label: value,
+    })),
+  ];
+}
+
+function set_target(target: OptionTarget, value: string): void {
+  if (draft.value) {
+    draft.value.comfyui[target] = value === KEEP_WORKFLOW_VALUE ? "" : value;
+  }
+}
+
+const takes_loras = computed(() => selected_workflow.value?.mapping.lora_model !== undefined);
+
+function lora_options(current: string): readonly { value: string; label: string }[] {
+  const listed = inspection.value?.lora_names ?? [];
+  return [...new Set([...(current === "" ? [] : [current]), ...listed])].map((value) => ({
+    value,
+    label: value,
+  }));
+}
+
+function add_lora(): void {
+  draft.value?.loras.push({ lora_name: "", strength: "1" });
+}
+
+function remove_lora(index: number): void {
+  draft.value?.loras.splice(index, 1);
 }
 
 const inspection = ref<ComfyUiInspection | null>(null);
 const inspect_pending = ref(false);
 const inspect_error = ref<string | null>(null);
+
+/** Reads the server's choices as soon as an address and a workflow are in the form. */
+let inspection_timer: ReturnType<typeof setTimeout> | undefined;
+watch(
+  () =>
+    draft.value?.provider_id === "comfyui"
+      ? `${draft.value.base_url}\n${draft.value.workflow_id}`
+      : null,
+  (key) => {
+    clearTimeout(inspection_timer);
+    if (key !== null && http_origin(draft.value?.base_url ?? "") !== null) {
+      inspection_timer = setTimeout(() => void run_inspection(), 600);
+    }
+  },
+);
 
 async function run_inspection(): Promise<void> {
   const current = draft.value;
@@ -259,6 +345,7 @@ function open_add_dialog(): void {
     workflow_id: "",
     base_url: DEFAULT_SD_WEBUI_URL,
     comfyui: default_fields(null),
+    loras: [],
   };
   save_error.value = null;
   inspection.value = null;
@@ -276,6 +363,7 @@ function open_edit_dialog(profile: ProviderProfileSummary): void {
     workflow_id: profile.workflow_id ?? "",
     base_url: profile.base_url ?? "",
     comfyui: default_fields(profile.comfyui_defaults),
+    loras: lora_rows(profile.comfyui_defaults),
   };
   save_error.value = null;
   inspection.value = null;
@@ -296,7 +384,7 @@ async function submit_draft(): Promise<void> {
   }
   const display_name = current.display_name.trim();
   const model_id = current.provider_id === "comfyui" ? COMFYUI_MODEL_ID : current.model_id.trim();
-  const comfyui_defaults = read_defaults(current.comfyui);
+  const comfyui_defaults = read_defaults(current.comfyui, current.loras);
   if (current.provider_id === "comfyui" && comfyui_defaults === null) {
     save_error.value = t("settings.provider_profiles.comfyui.number_invalid");
     return;
@@ -632,31 +720,89 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
           </template>
         </FieldGroup>
         <template v-if="draft.provider_id === 'comfyui'">
+          <template v-for="target in default_targets" :key="target">
+            <FieldGroup v-if="is_option_target(target)" :label="workflow_target_label(t, target)">
+              <template #default="{ fieldId }">
+                <AppSelect
+                  :id="fieldId"
+                  :model-value="draft.comfyui[target] || KEEP_WORKFLOW_VALUE"
+                  :options="target_options(target)"
+                  :placeholder="workflow_target_label(t, target)"
+                  @update:model-value="(value) => set_target(target, value)"
+                />
+              </template>
+            </FieldGroup>
+            <FieldGroup
+              v-else
+              :label="workflow_target_label(t, target)"
+              :hint="
+                t('settings.provider_profiles.comfyui.default_hint', {
+                  value: workflow_default(target),
+                })
+              "
+            >
+              <template #default="{ fieldId, describedBy }">
+                <input
+                  :id="fieldId"
+                  v-model="draft.comfyui[target]"
+                  type="number"
+                  :step="target === 'cfg' ? 'any' : 1"
+                  :placeholder="workflow_default(target)"
+                  :aria-describedby="describedBy"
+                  :class="styles.text_input"
+                  :data-testid="`comfyui-default-${target}`"
+                />
+              </template>
+            </FieldGroup>
+          </template>
           <FieldGroup
-            v-for="target in default_targets"
-            :key="target"
-            :label="workflow_target_label(t, target)"
+            v-if="selected_workflow !== null"
+            :label="t('settings.provider_profiles.comfyui.loras_label')"
             :hint="
-              t('settings.provider_profiles.comfyui.default_hint', {
-                value: workflow_default(target),
-              })
+              takes_loras
+                ? t('settings.provider_profiles.comfyui.loras_hint')
+                : t('settings.provider_profiles.comfyui.loras_unmapped')
             "
           >
-            <template #default="{ fieldId, describedBy }">
-              <input
-                :id="fieldId"
-                v-model="draft.comfyui[target]"
-                :type="target === 'steps' || target === 'cfg' ? 'number' : 'text'"
-                :step="target === 'cfg' ? 'any' : undefined"
-                :list="choices_of(target).length > 0 ? `${fieldId}-choices` : undefined"
-                :placeholder="workflow_default(target)"
-                :aria-describedby="describedBy"
-                :class="styles.text_input"
-                :data-testid="`comfyui-default-${target}`"
-              />
-              <datalist v-if="choices_of(target).length > 0" :id="`${fieldId}-choices`">
-                <option v-for="choice in choices_of(target)" :key="choice" :value="choice" />
-              </datalist>
+            <template #default>
+              <div :class="styles.form_grid" data-testid="comfyui-loras">
+                <div
+                  v-for="(lora, index) in draft.loras"
+                  :key="index"
+                  :class="styles.lora_row"
+                  data-testid="comfyui-lora-row"
+                >
+                  <!-- eslint-disable vue/attribute-hyphenation -- ariaLabel must stay camelCase to bind AppSelect's prop -->
+                  <AppSelect
+                    v-model="lora.lora_name"
+                    :options="lora_options(lora.lora_name)"
+                    :placeholder="t('settings.provider_profiles.comfyui.lora_placeholder')"
+                    :ariaLabel="t('settings.provider_profiles.comfyui.lora_placeholder')"
+                  />
+                  <!-- eslint-enable vue/attribute-hyphenation -->
+                  <input
+                    v-model="lora.strength"
+                    type="number"
+                    step="0.05"
+                    :aria-label="t('settings.provider_profiles.comfyui.lora_strength_label')"
+                    :class="styles.text_input"
+                  />
+                  <AppButton
+                    :label="t('common.actions.delete')"
+                    variant="ghost"
+                    @click="remove_lora(index)"
+                  />
+                </div>
+                <div :class="styles.actions_row">
+                  <AppButton
+                    :label="t('settings.provider_profiles.comfyui.add_lora_action')"
+                    variant="secondary"
+                    :disabled="!takes_loras"
+                    data-testid="comfyui-add-lora"
+                    @click="add_lora"
+                  />
+                </div>
+              </div>
             </template>
           </FieldGroup>
           <div :class="styles.actions_row">

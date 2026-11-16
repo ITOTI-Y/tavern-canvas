@@ -27,6 +27,8 @@ const StoredComfyUiWorkflowSchema = z.strictObject({
     negative_prompt: BindingTargetSchema.optional(),
     seed: BindingTargetSchema.optional(),
     output_count: BindingTargetSchema,
+    /** The node input that takes the diffusion model; LoRA loaders are chained in front of it. */
+    lora_model: BindingTargetSchema.optional(),
     placeholders: z.record(z.string().trim().min(1).max(128), PlaceholderBindingSchema).default({}),
     input_assets: z.record(z.string().trim().min(1).max(128), BindingTargetSchema).default({}),
   }),
@@ -51,6 +53,7 @@ export interface ComfyUiRenderValues {
   readonly output_count: number;
   readonly placeholder_values: Readonly<Record<string, string | number | boolean>>;
   readonly input_asset_names: Readonly<Record<string, string>>;
+  readonly loras?: readonly { readonly lora_name: string; readonly strength: number }[];
 }
 
 export function validate_stored_comfyui_workflow(value: unknown): StoredComfyUiWorkflow {
@@ -130,7 +133,44 @@ export function render_comfyui_workflow(
     }
     assign_target(rendered, binding, asset_name, "string");
   }
+  chain_loras(rendered, stored.bindings.lora_model, values.loras ?? []);
   return rendered;
+}
+
+const LORA_NODE_PREFIX = "tavern_canvas_lora_";
+
+/**
+ * Puts one model-only LoRA loader per entry between the model the bound input was linked to and
+ * that input, so a workflow needs no LoRA nodes of its own and takes any number of them.
+ */
+function chain_loras(
+  workflow: Record<string, ComfyUiWorkflowNode>,
+  target: z.infer<typeof BindingTargetSchema> | undefined,
+  loras: readonly { readonly lora_name: string; readonly strength: number }[],
+): void {
+  if (loras.length === 0) {
+    return;
+  }
+  if (target === undefined || !is_safe_key(target.node_id) || !is_safe_key(target.property)) {
+    throw invalid_request();
+  }
+  const node = workflow[target.node_id];
+  let model: unknown = node?.inputs[target.property];
+  if (node === undefined || !Array.isArray(model)) {
+    throw invalid_request();
+  }
+  loras.forEach((lora, index) => {
+    const node_id = `${LORA_NODE_PREFIX}${index.toString()}`;
+    if (Object.hasOwn(workflow, node_id)) {
+      throw invalid_request();
+    }
+    workflow[node_id] = {
+      class_type: "LoraLoaderModelOnly",
+      inputs: { model, lora_name: lora.lora_name, strength_model: lora.strength },
+    };
+    model = [node_id, 0];
+  });
+  (node.inputs as Record<string, unknown>)[target.property] = model;
 }
 
 function assign_target(

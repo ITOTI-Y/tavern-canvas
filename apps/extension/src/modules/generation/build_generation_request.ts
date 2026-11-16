@@ -2,6 +2,7 @@ import type { AssetId, ImageGenerationRequest, ProviderId, Uuid } from "@tavern-
 
 import {
   missing_required,
+  request_loras,
   request_placeholder_values,
   WorkflowMappingError,
   type ComfyUiDefaults,
@@ -170,6 +171,7 @@ export function build_provider_request(
         throw new WorkflowMappingError(missing);
       }
       const { negative_prompt, ...without_negative } = base;
+      const loras = request_loras(comfyui.mapped, comfyui.defaults);
       return {
         provider_id: "comfyui",
         ...(mapping.inputs.negative_prompt === undefined || negative_prompt === undefined
@@ -179,6 +181,7 @@ export function build_provider_request(
         placeholder_values: request_placeholder_values(comfyui.mapped, comfyui.defaults),
         input_asset_bindings: {},
         output_node_ids: [...mapping.output_node_ids],
+        ...(loras === undefined ? {} : { loras: [...loras] }),
         ...(mapping.inputs.seed === undefined
           ? {}
           : { seed: crypto.getRandomValues(new Uint32Array(1))[0] ?? 0 }),

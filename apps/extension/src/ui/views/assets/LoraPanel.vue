@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AppSelect, { type AppSelectOption } from "../../components/AppSelect.vue";
@@ -64,6 +64,37 @@ function open_create(): void {
   panel.open_create();
   panel.values.weight = 1;
 }
+
+/** The LoRA files of the ComfyUI server a profile points at, the one in use first. */
+const server_loras = ref<readonly string[]>([]);
+
+onMounted(async () => {
+  const { generation, settings } = props.controller.state;
+  const active_id = settings.settings?.active_provider_profile_id ?? null;
+  const profile = [...generation.profiles]
+    .sort((left, right) => Number(right.id === active_id) - Number(left.id === active_id))
+    .find((candidate) => candidate.provider_id === "comfyui" && candidate.base_url);
+  if (profile?.base_url) {
+    try {
+      const inspection = await props.controller.inspect_comfyui({
+        base_url: profile.base_url,
+        workflow_id: null,
+      });
+      server_loras.value = inspection.lora_names;
+    } catch {
+      server_loras.value = [];
+    }
+  }
+});
+
+const server_lora_options = computed<readonly AppSelectOption[]>(() =>
+  server_loras.value.map((name) => ({ value: name, label: name })),
+);
+
+const selected_server_lora = computed<string | undefined>(() => {
+  const raw = panel.values.file_name;
+  return typeof raw === "string" && server_loras.value.includes(raw) ? raw : undefined;
+});
 
 const character_options = computed<readonly AppSelectOption[]>(() =>
   props.characterRecords.map((record) => ({ value: record.id, label: record.display_name })),
@@ -140,6 +171,22 @@ const selected_character_id = computed<string | undefined>(() => {
         @cancel="panel.close_dialog"
       >
         <template #extra-fields>
+          <FieldGroup
+            v-if="server_lora_options.length > 0"
+            :label="t('assets.lora.server_file_label')"
+            :hint="t('assets.lora.server_file_hint')"
+          >
+            <template #default="{ fieldId, describedBy }">
+              <AppSelect
+                :id="fieldId"
+                :model-value="selected_server_lora"
+                :options="server_lora_options"
+                :placeholder="t('assets.lora.server_file_placeholder')"
+                v-bind="drop_undefined({ describedBy })"
+                @update:model-value="(file_name) => (panel.values.file_name = file_name)"
+              />
+            </template>
+          </FieldGroup>
           <FieldGroup
             :label="t('assets.lora.character_label')"
             :hint="t('assets.lora.character_hint')"
