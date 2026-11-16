@@ -159,10 +159,12 @@ function chain_loras(
   if (node === undefined || !Array.isArray(model)) {
     throw invalid_request();
   }
-  loras.forEach((lora, index) => {
-    const node_id = `${LORA_NODE_PREFIX}${index.toString()}`;
-    if (Object.hasOwn(workflow, node_id)) {
-      throw invalid_request();
+  let next_index = 0;
+  loras.forEach((lora) => {
+    let node_id = `${LORA_NODE_PREFIX}${next_index.toString()}`;
+    while (Object.hasOwn(workflow, node_id)) {
+      next_index += 1;
+      node_id = `${LORA_NODE_PREFIX}${next_index.toString()}`;
     }
     workflow[node_id] = {
       class_type: "LoraLoaderModelOnly",

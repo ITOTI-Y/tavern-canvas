@@ -5352,7 +5352,7 @@ async function cs(e, t) {
 	return new Uint8Array(await o.arrayBuffer());
 }
 async function ls(e) {
-	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-Os7UJ7jJ.js"), o = {
+	let { ComfyUiAdapter: t, GoogleImageAdapter: n, NovelAiAdapter: r, OpenAiImageAdapter: i, SdWebuiAdapter: a } = await import("./chunks/adapters-C82ktQKU.js"), o = {
 		novelai: new r(),
 		sd_webui: new a(),
 		openai_image: new i(),
@@ -5967,7 +5967,7 @@ async function ec(e) {
 		let e = await T();
 		if (e === null) throw Error("No provider profile is active; choose one in Settings");
 		return e;
-	}, ie = null, D = C === null || u === null ? null : () => ie ??= import("./chunks/novelai_runtime-D6lKE3KJ.js").then((t) => t.create_novelai_runtime({
+	}, ie = null, D = C === null || u === null ? null : () => ie ??= import("./chunks/novelai_runtime-CRliMFX0.js").then((t) => t.create_novelai_runtime({
 		vibe_encodings: C.novelai_vibe_encodings,
 		provider_inputs: C.provider_input_assets,
 		namespace: m,
