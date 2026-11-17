@@ -1901,12 +1901,17 @@ function Je(e, t) {
 //#region src/ui/views/settings/ProviderProfiles.vue?vue&type=script&setup=true&lang.ts
 var Ye = ["id", "aria-describedby"], Xe = ["id", "aria-describedby"], Ze = ["id", "aria-describedby"], Qe = [
 	"id",
-	"onUpdate:modelValue",
+	"value",
 	"step",
 	"placeholder",
 	"aria-describedby",
-	"data-testid"
-], $e = ["onUpdate:modelValue", "aria-label"], et = {
+	"data-testid",
+	"onInput"
+], $e = [
+	"value",
+	"aria-label",
+	"onInput"
+], et = {
 	key: 2,
 	"data-testid": "comfyui-inspection"
 }, tt = ["id", "aria-describedby"], nt = "keep-workflow-value", rt = "workflow", it = "http://127.0.0.1:7860", at = "http://127.0.0.1:8188", ot = /* @__PURE__ */ M({
@@ -2424,16 +2429,19 @@ var Ye = ["id", "aria-describedby"], Xe = ["id", "aria-describedby"], Ze = ["id"
 							label: b(K)(b(s), e),
 							hint: b(s)("settings.provider_profiles.comfyui.default_hint", { value: de(e) })
 						}, {
-							default: D(({ fieldId: t, describedBy: n }) => [f(w("input", {
+							default: D(({ fieldId: t, describedBy: n }) => [w("input", {
 								id: t,
-								"onUpdate:modelValue": (t) => j.value.comfyui[e] = t,
+								value: j.value.comfyui[e],
 								type: "number",
 								step: e === "cfg" ? "any" : 1,
 								placeholder: de(e),
 								"aria-describedby": n,
 								class: E(b(H).text_input),
-								"data-testid": `comfyui-default-${e}`
-							}, null, 10, Qe), [[v, j.value.comfyui[e]]])]),
+								"data-testid": `comfyui-default-${e}`,
+								onInput: (t) => {
+									j.value !== null && (j.value.comfyui[e] = t.target.value);
+								}
+							}, null, 42, Qe)]),
 							_: 2
 						}, 1032, ["label", "hint"]))], 64))), 128)),
 						Y.value === null ? x("", !0) : (d(), C(W, {
@@ -2462,13 +2470,14 @@ var Ye = ["id", "aria-describedby"], Xe = ["id", "aria-describedby"], Ze = ["id"
 									"placeholder",
 									"ariaLabel"
 								]),
-								f(w("input", {
-									"onUpdate:modelValue": (t) => e.strength = t,
+								w("input", {
+									value: e.strength,
 									type: "number",
 									step: "0.05",
 									"aria-label": b(s)("settings.provider_profiles.comfyui.lora_strength_label"),
-									class: E(b(H).text_input)
-								}, null, 10, $e), [[v, e.strength]]),
+									class: E(b(H).text_input),
+									onInput: (t) => e.strength = t.target.value
+								}, null, 42, $e),
 								N(X, {
 									label: b(s)("common.actions.delete"),
 									variant: "ghost",

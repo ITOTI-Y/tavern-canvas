@@ -1900,7 +1900,7 @@ var Wr = /* @__PURE__ */ Me({
 		opening: {}
 	},
 	setup(t) {
-		let n = t, r = ve(() => import("./chunks/ChatLayer-COxGHcPp.js")), i = ve(() => import("./chunks/StudioShell-_b8qI3i2.js")), { t: a } = Ee();
+		let n = t, r = ve(() => import("./chunks/ChatLayer-COxGHcPp.js")), i = ve(() => import("./chunks/StudioShell-QMXycuhV.js")), { t: a } = Ee();
 		function o() {
 			return typeof window > "u" || typeof window.matchMedia != "function" ? "light" : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		}

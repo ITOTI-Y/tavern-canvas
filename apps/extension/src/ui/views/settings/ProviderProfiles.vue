@@ -742,15 +742,23 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               "
             >
               <template #default="{ fieldId, describedBy }">
+                <!-- v-model would hand over a number for type="number"; the draft keeps the text. -->
                 <input
                   :id="fieldId"
-                  v-model="draft.comfyui[target]"
+                  :value="draft.comfyui[target]"
                   type="number"
                   :step="target === 'cfg' ? 'any' : 1"
                   :placeholder="workflow_default(target)"
                   :aria-describedby="describedBy"
                   :class="styles.text_input"
                   :data-testid="`comfyui-default-${target}`"
+                  @input="
+                    (event) => {
+                      if (draft !== null) {
+                        draft.comfyui[target] = (event.target as HTMLInputElement).value;
+                      }
+                    }
+                  "
                 />
               </template>
             </FieldGroup>
@@ -781,11 +789,12 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
                   />
                   <!-- eslint-enable vue/attribute-hyphenation -->
                   <input
-                    v-model="lora.strength"
+                    :value="lora.strength"
                     type="number"
                     step="0.05"
                     :aria-label="t('settings.provider_profiles.comfyui.lora_strength_label')"
                     :class="styles.text_input"
+                    @input="(event) => (lora.strength = (event.target as HTMLInputElement).value)"
                   />
                   <AppButton
                     :label="t('common.actions.delete')"
