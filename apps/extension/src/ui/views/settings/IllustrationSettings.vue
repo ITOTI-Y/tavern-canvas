@@ -326,6 +326,13 @@ function set_worldbook(name: string, chosen: boolean): void {
         :disabled="!settings"
         @update:model-value="(value) => update({ auto_generation_enabled: value })"
       />
+      <AppSwitch
+        :model-value="illustration?.inline_analysis ?? false"
+        :label="t('settings.illustration.inline_analysis_label')"
+        :description="t('settings.illustration.inline_analysis_hint')"
+        :disabled="!settings"
+        @update:model-value="(value) => update_illustration({ inline_analysis: value })"
+      />
       <div :class="styles.field_grid">
         <div :class="styles.row">
           <span :class="styles.row_label">{{ t("settings.illustration.max_images_label") }}</span>

@@ -50,6 +50,7 @@ const SETTINGS: IllustrationSettings = {
   structured_output: "auto",
   analysis_reasoning: "preset",
   skip_thought: true,
+  inline_analysis: false,
 };
 
 class MemoryHost {
@@ -159,6 +160,9 @@ class MemoryHost {
     list_worldbooks: () => [...this.worldbooks.keys()],
     prevent_world_info_recursion: () => () => {},
     inject_world_info_slims: () => () => {},
+    sync_inline_structure: () => Promise.resolve("off" as const),
+    read_inline_structure: () => null,
+    provide_inline_request: () => () => {},
     read_worldbook: (name: string) => Promise.resolve(this.worldbooks.get(name) ?? []),
     stop_generation: (generation_id: string) => {
       this.stopped.push(generation_id);
@@ -800,6 +804,7 @@ describe("create_wardrobe_runner", () => {
         structured_output: "auto",
         analysis_reasoning: "preset",
         skip_thought: true,
+        inline_analysis: false,
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",

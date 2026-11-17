@@ -174,6 +174,11 @@ export const IllustrationSettingsSchema = z.strictObject({
    * the last user message.
    */
   skip_thought: z.boolean().default(true),
+  /**
+   * The story reply carries the illustration analysis and wardrobe update through a structure
+   * Inkwell adds to the active Advanced Preset preset, so no analysis request follows the reply.
+   */
+  inline_analysis: z.boolean().default(false),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

@@ -595,6 +595,15 @@ export async function compose_studio_capabilities(
                 wait: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
               });
               modules.push(new IllustrationModule(illustrations, host));
+              // Turning inline analysis off takes Inkwell's structure out of Advanced Preset at once.
+              const inline_service = illustrations;
+              let inline_on = settings_adapter.get_settings().illustration.inline_analysis;
+              settings.subscribe((event) => {
+                if (event.settings.illustration.inline_analysis !== inline_on) {
+                  inline_on = event.settings.illustration.inline_analysis;
+                  void inline_service.sync_inline_structure().catch(() => {});
+                }
+              });
               modules.push(
                 new WorldInfoOverridesModule(
                   host,

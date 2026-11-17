@@ -1,3 +1,4 @@
+import { INLINE_FIELD, INLINE_MACRO, INLINE_STRUCTURE_ID } from "./inline_analysis.js";
 import {
   SwipeIllustrationsSchema,
   type IllustrationSettings,
@@ -17,6 +18,7 @@ import type {
   HostGenerationEvent,
   HostPreambleMessage,
   HostSwipeLocation,
+  InlineStructureStatus,
 } from "../../host/index.js";
 import { AnalysisParseError } from "./analysis_error.js";
 import type { SlotEdit } from "./slot_edits.js";
@@ -186,7 +188,29 @@ export class IllustrationService {
       this.#deps.jobs.subscribe((job) => {
         void this.#handle_job(job);
       }),
+      this.#deps.host.provide_inline_request(INLINE_MACRO, async (generation_type) => {
+        try {
+          await this.sync_inline_structure();
+          return await this.inline_request(generation_type);
+        } catch {
+          // Without the request the structure stays empty and the reply gets the inline_missing notice.
+          return "";
+        }
+      }),
     ];
+    void this.sync_inline_structure().catch(() => {});
+  }
+
+  /**
+   * Adds Inkwell's structure to the active Advanced Preset preset while inline analysis is on, or
+   * takes it out; it runs again before every generation, so a preset switch is followed.
+   */
+  sync_inline_structure(): Promise<InlineStructureStatus> {
+    return this.#deps.host.sync_inline_structure(this.#deps.settings().inline_analysis, {
+      structure_id: INLINE_STRUCTURE_ID,
+      field: INLINE_FIELD,
+      macro: INLINE_MACRO,
+    });
   }
 
   stop(): void {
@@ -404,6 +428,16 @@ export class IllustrationService {
         ...proposal_slots(paragraphs, proposals, context, snapshot, this.#deps.new_slot_id),
       );
     }
+    await this.#write_record(location, text, record);
+    return record;
+  }
+
+  /** Writes a swipe's slot record and the markers after its paragraphs. */
+  async #write_record(
+    location: HostSwipeLocation,
+    text: string,
+    record: SwipeIllustrations,
+  ): Promise<void> {
     // The record lands first so the re-render triggered by the text change already finds it.
     await this.#deps.host.write_swipe_record(location, record);
     if (record.slots.length > 0) {
@@ -416,7 +450,6 @@ export class IllustrationService {
         throw new MessageChangedError(location.message_id);
       }
     }
-    return record;
   }
 
   async #swipe_text(location: HostSwipeLocation): Promise<string> {
@@ -957,6 +990,85 @@ export class IllustrationService {
     }
   }
 
+  /**
+   * What the story model reads this turn when inline analysis is on: the illustration request and
+   * the wardrobe request, as the injected Advanced Preset module expands them. Empty otherwise.
+   */
+  async inline_request(generation_type: string): Promise<string> {
+    const settings = this.#deps.settings();
+    if (!settings.inline_analysis || !ILLUSTRATED_GENERATION_TYPES.has(generation_type)) {
+      return "";
+    }
+    const chat = await this.#deps.host.get_active_chat();
+    const last = chat.messages.at(-1);
+    const message_id =
+      generation_type === "swipe" && last !== undefined ? last.message_id : chat.messages.length;
+    const [context, { build_inline_illustrations }, { active_sizes }, { build_inline_request }] =
+      await Promise.all([
+        this.#deps.prompt_context(chat.chat_id),
+        import("./analysis_prompts.js"),
+        import("./size_choice.js"),
+        import("./inline_analysis.js"),
+      ]);
+    const illustrations = build_inline_illustrations(
+      settings.max_images_per_message,
+      context.library,
+      settings.analysis_guidance,
+      viewer_name(chat),
+      active_sizes(settings, chat.chat_id),
+    );
+    const wardrobe = await this.#deps.wardrobe.request_before_reply(message_id);
+    return build_inline_request(
+      illustrations,
+      [wardrobe, ...guidance_lines(settings.wardrobe_guidance)].join("\n"),
+    );
+  }
+
+  /**
+   * Builds the slots and wardrobe snapshot of a reply from the structure it carried. A reply
+   * without a usable structure gets no illustrations and an `inline_missing` notice; its wardrobe
+   * is still updated.
+   */
+  async #illustrate_inline(location: HostSwipeLocation): Promise<SwipeIllustrations | null> {
+    const text = await this.#swipe_text(location);
+    const paragraphs = split_paragraphs(text);
+    const settings = this.#deps.settings();
+    const [{ resolve_inline_reply }, analysis, { active_sizes }] = await Promise.all([
+      import("./inline_analysis.js"),
+      import("./analysis.js"),
+      import("./size_choice.js"),
+    ]);
+    const raw = this.#deps.host.read_inline_structure(location, INLINE_STRUCTURE_ID);
+    const resolved = raw === null ? null : resolve_inline_reply(raw, paragraphs);
+    if (resolved === null) {
+      await this.#wardrobe_snapshot(location);
+      this.#emit({ type: "analysis_failed", location, message: "inline_missing", excerpt: null });
+      return null;
+    }
+    const proposals = analysis.parse_analysis_output(
+      resolved,
+      paragraphs.length,
+      settings.max_images_per_message,
+      active_sizes(settings, location.chat_id),
+    );
+    const pending =
+      this.#deps.wardrobe.read(location) === null
+        ? await this.#deps.wardrobe.prepare_update(location, true)
+        : null;
+    const snapshot =
+      pending === null
+        ? await this.#wardrobe_snapshot(location)
+        : await this.#apply_wardrobe(location, pending, analysis.wardrobe_reply_of(resolved));
+    const context = await this.#deps.prompt_context(location.chat_id);
+    const record: SwipeIllustrations = {
+      schema_version: 2,
+      slots: [...proposal_slots(paragraphs, proposals, context, snapshot, this.#deps.new_slot_id)],
+    };
+    await this.#write_record(location, text, record);
+    this.#emit({ type: "slots_changed", location });
+    return record;
+  }
+
   #handle_generation(event: HostGenerationEvent): void {
     if (event.phase === "started") {
       this.#last_generation_type = event.dry_run ? null : event.generation_type;
@@ -977,6 +1089,13 @@ export class IllustrationService {
           // A new swipe starts with a copy of the previous swipe's extra, records included.
           await this.#deps.host.write_swipe_record(location, null);
           await this.#deps.host.write_swipe_wardrobe(location, null);
+        }
+        if (this.#deps.settings().inline_analysis) {
+          const record = await this.#illustrate_inline(location);
+          if (record !== null && record.slots.length > 0 && this.#deps.auto_generation_enabled()) {
+            await this.generate_missing(location);
+          }
+          return;
         }
         // With automatic illustration on, the analysis request carries the wardrobe update.
         if (this.#deps.auto_generation_enabled()) {

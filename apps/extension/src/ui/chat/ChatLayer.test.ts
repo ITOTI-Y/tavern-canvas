@@ -85,6 +85,9 @@ function create_host(text_element: HTMLElement): HostAdapter {
     list_worldbooks: () => [],
     prevent_world_info_recursion: () => () => {},
     inject_world_info_slims: () => () => {},
+    sync_inline_structure: () => Promise.resolve("off" as const),
+    read_inline_structure: () => null,
+    provide_inline_request: () => () => {},
     read_worldbook: () => Promise.resolve([]),
     translate_deepl: () => Promise.reject(new Error("not used")),
     read_swipe_wardrobe: () => null,
@@ -123,6 +126,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       structured_output: "auto",
       analysis_reasoning: "preset",
       skip_thought: true,
+      inline_analysis: false,
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>

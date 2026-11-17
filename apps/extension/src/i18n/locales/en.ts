@@ -659,6 +659,9 @@ const settings = {
     auto_generation_label: "Illustrate every reply automatically",
     auto_generation_hint:
       "When off, use the image button beside a reply to choose paragraphs and confirm before generating.",
+    inline_analysis_label: "Analyze illustrations within the story reply",
+    inline_analysis_hint:
+      "Requires the Advanced Preset extension with one of its built-in presets selected. When on, Inkwell adds a hidden illustration structure to the active preset at runtime, so the story model returns the picture plan and wardrobe update with the reply and no analysis request follows; turning it off removes the structure before the next generation. A copy of the preset you installed yourself is left alone.",
     analysis_guidance_label: "Illustration guidance",
     analysis_guidance_hint:
       "Style, setting, or era for the pictures, sent with every paragraph analysis. Where the reply states otherwise, the reply wins.",
@@ -1085,6 +1088,8 @@ const chat = {
     storage_failed: "the image could not be saved to browser storage, which may be full",
     interrupted: "the page was reloaded or closed before the job finished",
     analysis_unparsable: "the analysis reply contained no usable JSON",
+    inline_missing:
+      "this reply carried no illustration data, so it gets no pictures; use “Illustrate this reply” to analyze it separately. Check that Advanced Preset is enabled with one of its built-in presets selected",
     message_changed: "the reply was edited or swiped while it was being analyzed",
     no_chat_open: "no chat is open; open a chat first",
   },

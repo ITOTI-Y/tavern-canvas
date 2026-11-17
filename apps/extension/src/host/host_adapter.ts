@@ -1,3 +1,4 @@
+import type { InlineStructureNames } from "./ap_inline_structure.js";
 import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
 export const HOST_CAPABILITY_IDS = [
@@ -148,6 +149,15 @@ export type WorldInfoSlimLookup = (book: string, uid: number, hash: string) => s
  */
 export type InjectWorldInfoSlims = (lookup: WorldInfoSlimLookup) => () => void;
 
+/**
+ * Where inline analysis stands with Advanced Preset: `ready` when the active preset carries
+ * Inkwell's structure; `no_ap` without Advanced Preset, `no_preset` while no Advanced Preset preset
+ * is selected, `own_copy` when the user installed their own copy of the active preset, which
+ * Inkwell leaves alone, and `unsupported` when the preset lacks the parts the structure needs.
+ */
+export type InlineStructureStatus =
+  "off" | "ready" | "no_ap" | "no_preset" | "own_copy" | "unsupported";
+
 export interface PresetGenerationRequest {
   readonly generation_id: string;
   readonly preset: HostGenerationPreset;
@@ -233,6 +243,24 @@ export interface HostAdapter {
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
   prevent_world_info_recursion: PreventWorldInfoRecursion;
   inject_world_info_slims: InjectWorldInfoSlims;
+  /**
+   * Puts Inkwell's copy of the active Advanced Preset built-in preset, with the inline structure,
+   * in Advanced Preset's installed slot, or removes Inkwell's copies when `enabled` is false.
+   */
+  sync_inline_structure(
+    enabled: boolean,
+    names: InlineStructureNames,
+  ): Promise<InlineStructureStatus>;
+  /** The inline structure Advanced Preset saved for this swipe of a story reply, or `null`. */
+  read_inline_structure(location: HostSwipeLocation, structure_id: string): string | null;
+  /**
+   * Registers the macro the injected module expands, holding what `produce` returned for the
+   * generation in progress; `produce` runs before each prompt is built.
+   */
+  provide_inline_request(
+    macro: string,
+    produce: (generation_type: string) => Promise<string>,
+  ): () => void;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;
   /** `null` when SillyTavern is set to a text completion API, which cannot call tools. */
   chat_completion_target?(): HostChatCompletionTarget | null;

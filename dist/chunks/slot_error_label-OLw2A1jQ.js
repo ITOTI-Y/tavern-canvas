@@ -3,6 +3,7 @@ import { n as e } from "./provider-BmQsAS1d.js";
 function t(t, n) {
 	switch (n) {
 		case "analysis_unparsable": return t("chat.errors.analysis_unparsable");
+		case "inline_missing": return t("chat.errors.inline_missing");
 		case "message_changed": return t("chat.errors.message_changed");
 		case "no_chat_open": return t("chat.errors.no_chat_open");
 	}

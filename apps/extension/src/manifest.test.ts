@@ -17,6 +17,7 @@ const expected_manifest = {
   optional: [],
   dependencies: ["third-party/JS-Slash-Runner"],
   js: "dist/index.js",
+  generate_interceptor: "inkwellGenerateInterceptor",
   css: "dist/index.css",
   author: "ITOTI-Y",
   version: package_version,

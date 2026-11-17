@@ -600,6 +600,8 @@ var e = {
 			strip_no_text_hint: "无论哪种风格都会附加，保证画面不出现文字。",
 			auto_generation_label: "每条回复后自动配图",
 			auto_generation_hint: "关闭时，可点击回复旁的配图按钮选择段落，确认后再生成。",
+			inline_analysis_label: "随正式回复返回配图分析",
+			inline_analysis_hint: "依赖 Advanced Preset 扩展，并需要选用它的内置预设。打开后，Inkwell 会在运行时为当前 AP 预设加入一个隐藏的配图结构，正式回复的模型在写正文的同时交回配图方案和衣橱更新，不再另发分析请求；关闭后在下一次生成前移除。你自己安装的同名预设副本不会被改动。",
 			analysis_guidance_label: "配图引导",
 			analysis_guidance_hint: "填写画风、场景或时代等要求，每次段落分析都会附上这段文字。与回复中明确写出的内容冲突时，以回复为准。",
 			analysis_guidance_placeholder: "例如：水彩画风，现代都市，夏日傍晚",
@@ -987,6 +989,7 @@ var e = {
 			storage_failed: "图片无法保存到浏览器存储，存储空间可能已满",
 			interrupted: "页面刷新或关闭时任务尚未完成",
 			analysis_unparsable: "分析模型的回复中没有可用的 JSON",
+			inline_missing: "这条回复没有附带配图数据，本条不配图；可以点“为这条回复配图”单独分析。请确认 Advanced Preset 已启用，并选用了它的内置预设。",
 			message_changed: "分析期间这条回复被修改或切换了候选",
 			no_chat_open: "没有打开的聊天，请先打开一个聊天"
 		}

@@ -1,8 +1,8 @@
 import { a as e } from "./ids-pPJWL4BL.js";
 import { i as t, o as n } from "./novelai-CAMu2SDf.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { a, i as o, o as s, r as c, t as l } from "./server_inspection-DD63nnqJ.js";
-import { n as u } from "./settings-CYSF9cKn.js";
+import { a, i as o, o as s, r as c, t as l } from "./server_inspection-DgAoI1zy.js";
+import { n as u } from "./settings-CPEkVgp_.js";
 import { F as d, J as f, L as p, M as m, T as h, W as g, _, a as v, b as y, dt as b, g as x, gt as S, h as C, m as w, n as ee, p as T, pt as E, q as D, rt as O, s as k, u as A, v as j, x as M, y as N } from "./vue-i18n-XoxYzLIP.js";
 import { t as P } from "./portal_keys-CIBE-_PC.js";
 import { n as F, t as I } from "./AppIcon-DD754F_c.js";
@@ -1129,6 +1129,18 @@ var ge = F("cable", [
 					"description",
 					"disabled"
 				]),
+				N(fe, {
+					"model-value": r.value?.inline_analysis ?? !1,
+					label: b(n)("settings.illustration.inline_analysis_label"),
+					description: b(n)("settings.illustration.inline_analysis_hint"),
+					disabled: !e.settings,
+					"onUpdate:modelValue": u[1] ||= (e) => a({ inline_analysis: e })
+				}, null, 8, [
+					"model-value",
+					"label",
+					"description",
+					"disabled"
+				]),
 				w("div", { class: E(b(H).field_grid) }, [
 					w("div", { class: E(b(H).row) }, [w("span", { class: E(b(H).row_label) }, S(b(n)("settings.illustration.max_images_label")), 3), N(Y, {
 						"model-value": r.value?.max_images_per_message,
@@ -1138,7 +1150,7 @@ var ge = F("cable", [
 						"increment-label": b(n)("common.actions.increase"),
 						"decrement-label": b(n)("common.actions.decrease"),
 						disabled: !e.settings,
-						"onUpdate:modelValue": u[1] ||= (e) => a({ max_images_per_message: e })
+						"onUpdate:modelValue": u[2] ||= (e) => a({ max_images_per_message: e })
 					}, null, 8, [
 						"model-value",
 						"label",
@@ -1168,7 +1180,7 @@ var ge = F("cable", [
 						"increment-label": b(n)("common.actions.increase"),
 						"decrement-label": b(n)("common.actions.decrease"),
 						disabled: !e.settings,
-						"onUpdate:modelValue": u[2] ||= (e) => i({ global_concurrency: e })
+						"onUpdate:modelValue": u[3] ||= (e) => i({ global_concurrency: e })
 					}, null, 8, [
 						"model-value",
 						"label",
@@ -1203,7 +1215,7 @@ var ge = F("cable", [
 				}, {
 					default: D(({ fieldId: e, describedBy: t }) => [f(w("input", {
 						id: e,
-						"onUpdate:modelValue": u[3] ||= (e) => h.value = e,
+						"onUpdate:modelValue": u[4] ||= (e) => h.value = e,
 						type: "text",
 						"aria-describedby": t,
 						class: E(b(H).text_input),
@@ -1217,7 +1229,7 @@ var ge = F("cable", [
 				}, {
 					default: D(({ fieldId: e, describedBy: t }) => [f(w("input", {
 						id: e,
-						"onUpdate:modelValue": u[4] ||= (e) => y.value = e,
+						"onUpdate:modelValue": u[5] ||= (e) => y.value = e,
 						type: "text",
 						"aria-describedby": t,
 						class: E(b(H).text_input),
@@ -1233,7 +1245,7 @@ var ge = F("cable", [
 					}, {
 						default: D(({ fieldId: e, describedBy: t }) => [f(w("input", {
 							id: e,
-							"onUpdate:modelValue": u[5] ||= (e) => k.value = e,
+							"onUpdate:modelValue": u[6] ||= (e) => k.value = e,
 							type: "url",
 							placeholder: "https://",
 							"aria-describedby": t,
@@ -1250,7 +1262,7 @@ var ge = F("cable", [
 					N(W, { label: b(n)("settings.illustration.custom_model_label") }, {
 						default: D(({ fieldId: e, describedBy: t }) => [f(w("input", {
 							id: e,
-							"onUpdate:modelValue": u[6] ||= (e) => j.value = e,
+							"onUpdate:modelValue": u[7] ||= (e) => j.value = e,
 							type: "text",
 							"aria-describedby": t,
 							class: E(b(H).text_input),
@@ -1265,7 +1277,7 @@ var ge = F("cable", [
 					}, {
 						default: D(({ fieldId: e, describedBy: t }) => [w("div", { class: E(b(H).input_row) }, [f(w("input", {
 							id: e,
-							"onUpdate:modelValue": u[7] ||= (e) => G.value = e,
+							"onUpdate:modelValue": u[8] ||= (e) => G.value = e,
 							type: "password",
 							autocomplete: "off",
 							"aria-describedby": t,
@@ -1321,7 +1333,7 @@ var ge = F("cable", [
 				}, {
 					default: D(({ fieldId: t, describedBy: r }) => [f(w("input", {
 						id: t,
-						"onUpdate:modelValue": u[8] ||= (e) => l.value = e,
+						"onUpdate:modelValue": u[9] ||= (e) => l.value = e,
 						type: "text",
 						placeholder: b(n)("settings.illustration.preset_placeholder"),
 						"aria-describedby": r,
@@ -1359,7 +1371,7 @@ var ge = F("cable", [
 					label: b(n)("settings.illustration.skip_thought_label"),
 					description: b(n)("settings.illustration.skip_thought_hint"),
 					disabled: !e.settings,
-					"onUpdate:modelValue": u[9] ||= (e) => a({ skip_thought: e })
+					"onUpdate:modelValue": u[10] ||= (e) => a({ skip_thought: e })
 				}, null, 8, [
 					"model-value",
 					"label",
@@ -1396,7 +1408,7 @@ var ge = F("cable", [
 					"increment-label": b(n)("common.actions.increase"),
 					"decrement-label": b(n)("common.actions.decrease"),
 					disabled: !e.settings,
-					"onUpdate:modelValue": u[10] ||= (e) => a({ max_chat_history: e })
+					"onUpdate:modelValue": u[11] ||= (e) => a({ max_chat_history: e })
 				}, null, 8, [
 					"model-value",
 					"label",
@@ -1449,7 +1461,7 @@ var ge = F("cable", [
 				}, {
 					default: D(({ fieldId: t, describedBy: n }) => [f(w("input", {
 						id: t,
-						"onUpdate:modelValue": u[11] ||= (e) => M.value = e,
+						"onUpdate:modelValue": u[12] ||= (e) => M.value = e,
 						type: "text",
 						"aria-describedby": n,
 						class: E(b(H).text_input),
@@ -1468,7 +1480,7 @@ var ge = F("cable", [
 				}, {
 					default: D(({ fieldId: t, describedBy: r }) => [f(w("textarea", {
 						id: t,
-						"onUpdate:modelValue": u[12] ||= (e) => P.value = e,
+						"onUpdate:modelValue": u[13] ||= (e) => P.value = e,
 						rows: "3",
 						maxlength: "2000",
 						placeholder: b(n)("settings.illustration.analysis_guidance_placeholder"),
@@ -1476,7 +1488,7 @@ var ge = F("cable", [
 						class: E(b(H).text_area),
 						disabled: !e.settings,
 						"data-testid": "analysis-guidance-input",
-						onBlur: u[13] ||= (e) => a({ analysis_guidance: P.value.trim() })
+						onBlur: u[14] ||= (e) => a({ analysis_guidance: P.value.trim() })
 					}, null, 42, Le), [[v, P.value]])]),
 					_: 1
 				}, 8, ["label", "hint"]),
@@ -1486,7 +1498,7 @@ var ge = F("cable", [
 				}, {
 					default: D(({ fieldId: t, describedBy: r }) => [f(w("textarea", {
 						id: t,
-						"onUpdate:modelValue": u[14] ||= (e) => F.value = e,
+						"onUpdate:modelValue": u[15] ||= (e) => F.value = e,
 						rows: "3",
 						maxlength: "2000",
 						placeholder: b(n)("settings.illustration.wardrobe_guidance_placeholder"),
@@ -1494,7 +1506,7 @@ var ge = F("cable", [
 						class: E(b(H).text_area),
 						disabled: !e.settings,
 						"data-testid": "wardrobe-guidance-input",
-						onBlur: u[15] ||= (e) => a({ wardrobe_guidance: F.value.trim() })
+						onBlur: u[16] ||= (e) => a({ wardrobe_guidance: F.value.trim() })
 					}, null, 42, Re), [[v, F.value]])]),
 					_: 1
 				}, 8, ["label", "hint"])
@@ -1510,7 +1522,7 @@ var ge = F("cable", [
 						options: c.value,
 						label: b(n)("settings.illustration.strip_style_label"),
 						disabled: !e.settings,
-						"onUpdate:modelValue": u[16] ||= (e) => s({ style: e === "default" ? "default" : "strip" })
+						"onUpdate:modelValue": u[17] ||= (e) => s({ style: e === "default" ? "default" : "strip" })
 					}, null, 8, [
 						"model-value",
 						"options",
@@ -1529,7 +1541,7 @@ var ge = F("cable", [
 						"increment-label": b(n)("common.actions.increase"),
 						"decrement-label": b(n)("common.actions.decrease"),
 						disabled: !e.settings,
-						"onUpdate:modelValue": u[17] ||= (e) => s({ max_panels: e ?? o.value.max_panels })
+						"onUpdate:modelValue": u[18] ||= (e) => s({ max_panels: e ?? o.value.max_panels })
 					}, null, 8, [
 						"id",
 						"model-value",
@@ -1545,7 +1557,7 @@ var ge = F("cable", [
 					label: b(n)("settings.illustration.strip_bubbles_label"),
 					description: b(n)("settings.illustration.strip_bubbles_hint"),
 					disabled: !e.settings,
-					"onUpdate:modelValue": u[18] ||= (e) => s({ symbol_bubbles: e })
+					"onUpdate:modelValue": u[19] ||= (e) => s({ symbol_bubbles: e })
 				}, null, 8, [
 					"model-value",
 					"label",
@@ -1556,7 +1568,7 @@ var ge = F("cable", [
 					default: D(({ fieldId: e }) => [N(de, {
 						id: e,
 						"model-value": o.value.style_tags,
-						"onUpdate:modelValue": u[19] ||= (e) => s({ style_tags: e })
+						"onUpdate:modelValue": u[20] ||= (e) => s({ style_tags: e })
 					}, null, 8, ["id", "model-value"])]),
 					_: 1
 				}, 8, ["label"]),
@@ -1568,7 +1580,7 @@ var ge = F("cable", [
 						id: e,
 						"model-value": o.value.no_text_tags,
 						"described-by": t,
-						"onUpdate:modelValue": u[20] ||= (e) => s({ no_text_tags: e })
+						"onUpdate:modelValue": u[21] ||= (e) => s({ no_text_tags: e })
 					}, null, 8, [
 						"id",
 						"model-value",
@@ -2788,7 +2800,7 @@ var Ye = ["id", "aria-describedby"], Xe = ["id", "aria-describedby"], Ze = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-CpaeXTjp.js")), n = y(() => import("./PromptTagPresetPanel-C6QwXlpK.js")), r = y(() => import("./DiagnosticsView-BTGKyU--.js")), i = e, { t: a } = ee(), s = [
+		let t = y(() => import("./PromptView-CpaeXTjp.js")), n = y(() => import("./PromptTagPresetPanel-C6QwXlpK.js")), r = y(() => import("./DiagnosticsView-DBMgRfXk.js")), i = e, { t: a } = ee(), s = [
 			"illustration",
 			"providers",
 			"translation",

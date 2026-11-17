@@ -1,3 +1,4 @@
+import type { InlineStructureNames } from "./ap_inline_structure.js";
 import type { CapabilityMatrix } from "@tavern-canvas/contracts";
 
 import type {
@@ -16,6 +17,7 @@ import type {
   PresetGenerationRequest,
   PresetGenerationResult,
   WorldInfoSlimLookup,
+  InlineStructureStatus,
 } from "./host_adapter.js";
 import type { ChatSurfaceMounts } from "./chat_surface.js";
 import {
@@ -162,6 +164,24 @@ export class CompositeHostAdapter implements HostAdapter {
 
   inject_world_info_slims(lookup: WorldInfoSlimLookup): () => void {
     return this.#sillytavern.inject_world_info_slims(lookup);
+  }
+
+  sync_inline_structure(
+    enabled: boolean,
+    names: InlineStructureNames,
+  ): Promise<InlineStructureStatus> {
+    return this.#sillytavern.sync_inline_structure(enabled, names);
+  }
+
+  read_inline_structure(location: HostSwipeLocation, structure_id: string): string | null {
+    return this.#sillytavern.read_inline_structure(location, structure_id);
+  }
+
+  provide_inline_request(
+    macro: string,
+    produce: (generation_type: string) => Promise<string>,
+  ): () => void {
+    return this.#sillytavern.provide_inline_request(macro, produce);
   }
 
   read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]> {

@@ -15,6 +15,7 @@ Gallery.
 | --------------- | ---------------------------------------------------------------------- |
 | SillyTavern     | 1.18.0 or newer (`minimum_client_version`), or TauriTavern             |
 | JS Slash Runner | 4.11.1 or newer (`minimum_tavern_helper_version`, enforced at startup) |
+| Advanced Preset | Optional; needed only for analysis within the story reply (see below)  |
 
 JS Slash Runner is a hard dependency, declared in `manifest.json` as
 `dependencies: ["third-party/JS-Slash-Runner"]`. Paragraph analysis, message editing and world info
@@ -73,6 +74,31 @@ paragraph analysis, the second to every wardrobe update, and what the reply stat
 With automatic illustration on, the wardrobe update for a new reply travels in the same request as
 its paragraph analysis, so each reply costs one analysis call; with it off, the wardrobe update is
 sent on its own through the wardrobe model.
+
+### Analysis within the story reply
+
+**Settings > Illustration > Analyze illustrations within the story reply** removes the analysis
+request that follows each reply. It depends on the Advanced Preset extension
+(https://github.com/mirrorange/advanced-preset) with one of its built-in presets selected as the
+chat completion preset. While the setting is on, Inkwell puts a copy of that built-in preset in
+Advanced Preset's installed presets, with the same id and version and one addition: a hidden custom
+structure, `inkwell_illustrations`, and an always-on module that asks for it. Advanced Preset then
+requests the structure through its own submit tool, so the story model returns the picture plan and
+the wardrobe update together with the reply, and Advanced Preset saves them in the message's
+sidecar, where Inkwell reads them. The module's text is a SillyTavern macro,
+`{{inkwell_illustration_request}}`, which Inkwell fills before every generation with the same
+instructions, library and wardrobe state the separate analysis would send.
+
+The copy keeps the preset's configuration, user modules and carrier, which Advanced Preset stores by
+preset id. Inkwell rebuilds it from the built-in preset whenever Advanced Preset ships a new
+version, follows a switch to another Advanced Preset preset before the next generation, and removes
+its copies when the setting is turned off. A copy of the preset that you installed yourself is left
+untouched, and inline analysis does not run with it; nor does it run without Advanced Preset or with
+a preset Advanced Preset does not manage. A reply that comes back without the structure gets no
+illustrations and a notice, and its wardrobe update is sent on its own; **Illustrate this reply**
+still runs the separate analysis. Each reply then costs no analysis call, while the story request
+grows by the illustration and wardrobe instructions. Turn the setting off before removing Inkwell: the copy stays in Advanced
+Preset's settings until Inkwell removes it.
 
 NovelAI answers 429 to image requests that reach one account together, so Inkwell starts NovelAI
 requests at least 1.5 seconds apart and lets them run in parallel where the account allows it. A

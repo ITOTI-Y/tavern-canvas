@@ -23,7 +23,7 @@ import { n as me } from "./_prop_utils-CvImpN6J.js";
 import { a as he, c as ge, i as _e, n as ve, r as ye, s as be, t as J } from "./IconButton-CgMe_yUU.js";
 import { n as Y, t as xe } from "./StateSurface-BclMzzSh.js";
 import { t as Se } from "./AppDialog-BpBOf7Tt.js";
-import { t as Ce } from "./slot_error_label-Dz5Iarxp.js";
+import { t as Ce } from "./slot_error_label-OLw2A1jQ.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/ellipsis.js
 var we = F("ellipsis", [
 	["circle", {

@@ -5,6 +5,7 @@ import { i as n } from "./size_choice-BAuN1-V0.js";
 var r = /* @__PURE__ */ e({
 	build_analysis_input: () => c,
 	build_chosen_paragraphs_input: () => l,
+	build_inline_illustrations: () => u,
 	library_lines: () => i
 });
 function i(e) {
@@ -57,6 +58,18 @@ function c(e, t, n, r, i, a) {
 }
 function l(e, t, n, r, i, a) {
 	return s(`Read the latest reply below, split into numbered paragraphs. Illustrate exactly these paragraphs, one entry each: ${t.map((e) => `[${String(e)}]`).join(", ")}. For each one give:`, "Reply with only a JSON object of the form {\"illustrations\":[...]}.", e, n, r, i, a);
+}
+function u(e, r, s, c, l) {
+	return [
+		"[Inkwell illustration request]",
+		`After writing your reply, choose 1 to ${String(e)} of its paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
+		"- quote: the first 8 to 12 words of that paragraph of your reply, copied exactly",
+		...a.slice(1),
+		...n(l),
+		...o(c),
+		...i(r),
+		...t(s)
+	].join("\n");
 }
 //#endregion
 export { i as n, r as t };

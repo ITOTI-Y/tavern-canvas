@@ -1,3 +1,10 @@
+import {
+  derive_inline_artifact,
+  inline_copy_source,
+  is_inline_copy,
+  type InlineStructureNames,
+} from "./ap_inline_structure.js";
+import { set_generation_interceptor } from "./generation_interceptor.js";
 import type {
   HostChatCompletionTarget,
   DeepLEndpoint,
@@ -8,6 +15,7 @@ import type {
   HostStoryStatus,
   HostSwipeLocation,
   WorldInfoSlimLookup,
+  InlineStructureStatus,
 } from "./host_adapter.js";
 import { content_hash, is_slimmable } from "../modules/world_info/slim_store.js";
 
@@ -44,6 +52,26 @@ function story_status_of(sidecar: unknown): HostStoryStatus | null {
     location: text_field(status, "location") ?? text_field(synopsis, "location"),
   };
   return result.date === null && result.time === null && result.location === null ? null : result;
+}
+
+/** The built-in artifact Advanced Preset ships for `id`, or `null` when it has none. */
+async function load_builtin_artifact(id: string): Promise<Record<string, unknown> | null> {
+  const base = "/scripts/extensions/third-party/advanced-preset/dist/presets/";
+  try {
+    const index: unknown = await (await fetch(`${base}index.json`, { cache: "no-cache" })).json();
+    const file = Array.isArray(index)
+      ? (index as unknown[]).find((item) => is_plain_record(item) && item["id"] === id)
+      : undefined;
+    if (!is_plain_record(file) || typeof file["file"] !== "string") {
+      return null;
+    }
+    const artifact: unknown = await (
+      await fetch(`${base}${file["file"]}`, { cache: "no-cache" })
+    ).json();
+    return is_plain_record(artifact) && artifact["id"] === id ? artifact : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface SillyTavernEventSource {
@@ -86,6 +114,10 @@ export interface SillyTavernContextSurface {
   readonly chatCompletionSettings?: unknown;
   readonly chatMetadata?: Record<string, unknown>;
   readonly substituteParams?: (text: string) => string;
+  readonly extensionSettings?: Record<string, unknown>;
+  readonly saveSettingsDebounced?: () => void;
+  readonly registerMacro?: (name: string, value: () => string) => void;
+  readonly unregisterMacro?: (name: string) => void;
 }
 
 export interface RequestAdjustments {
@@ -307,6 +339,93 @@ export class SillyTavernHost {
     return () => {
       context.eventSource.removeListener(JS_GENERATION_STARTED, on_started);
       context.eventSource.removeListener(settings_ready, on_settings);
+    };
+  }
+
+  /**
+   * Advanced Preset looks a preset up by id at every generation, an installed copy first when its
+   * version is not older than the built-in, and reads `installed` live; a copy put there takes
+   * effect from the next generation and keeps the id's configuration, modules and carrier.
+   */
+  async sync_inline_structure(
+    enabled: boolean,
+    names: InlineStructureNames,
+  ): Promise<InlineStructureStatus> {
+    const context = this.#get_context();
+    const api = (globalThis as { AdvancedPreset?: { activePresetId?: () => unknown } })
+      .AdvancedPreset;
+    const settings = context.extensionSettings?.["advancedPreset"];
+    const installed =
+      is_plain_record(settings) && is_plain_record(settings["installed"])
+        ? settings["installed"]
+        : null;
+    if (api?.activePresetId === undefined || installed === null) {
+      return enabled ? "no_ap" : "off";
+    }
+    const active = api.activePresetId();
+    let changed = false;
+    for (const [id, copy] of Object.entries(installed)) {
+      if (is_inline_copy(copy) && (!enabled || id !== active)) {
+        Reflect.deleteProperty(installed, id);
+        changed = true;
+      }
+    }
+    const result = await (async (): Promise<InlineStructureStatus> => {
+      if (!enabled) {
+        return "off";
+      }
+      if (typeof active !== "string") {
+        return "no_preset";
+      }
+      const current = installed[active];
+      if (current !== undefined && !is_inline_copy(current)) {
+        return "own_copy";
+      }
+      const builtin = await load_builtin_artifact(active);
+      if (builtin === null) {
+        return "unsupported";
+      }
+      if (current !== undefined && inline_copy_source(current) === builtin["hash"]) {
+        return "ready";
+      }
+      const copy = derive_inline_artifact(builtin, names);
+      if (copy === null) {
+        return "unsupported";
+      }
+      installed[active] = copy;
+      changed = true;
+      return "ready";
+    })();
+    if (changed) {
+      context.saveSettingsDebounced?.();
+    }
+    return result;
+  }
+
+  read_inline_structure(location: HostSwipeLocation, structure_id: string): string | null {
+    const sidecar = this.#find_extra(location, false)?.[ADVANCED_PRESET_EXTRA_KEY];
+    if (!is_plain_record(sidecar) || sidecar["v"] !== 1 || sidecar["turn"] !== "story") {
+      return null;
+    }
+    const structures = sidecar["structures"];
+    const value = is_plain_record(structures) ? structures[structure_id] : undefined;
+    return typeof value === "string" && value.trim() !== "" ? value : null;
+  }
+
+  provide_inline_request(
+    macro: string,
+    produce: (generation_type: string) => Promise<string>,
+  ): () => void {
+    const context = this.#get_context();
+    let current = "";
+    context.registerMacro?.(macro, () => current);
+    set_generation_interceptor(async (generation_type) => {
+      current = "";
+      current = await produce(generation_type);
+    });
+    return () => {
+      set_generation_interceptor(null);
+      context.unregisterMacro?.(macro);
     };
   }
 

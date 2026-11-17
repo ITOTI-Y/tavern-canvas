@@ -10,6 +10,8 @@ export function slot_error_label(t: Translate, error: string): string {
   switch (error) {
     case "analysis_unparsable":
       return t("chat.errors.analysis_unparsable");
+    case "inline_missing":
+      return t("chat.errors.inline_missing");
     case "message_changed":
       return t("chat.errors.message_changed");
     case "no_chat_open":

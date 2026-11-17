@@ -11,7 +11,7 @@ import { t as j } from "./AppTooltip-D3BiEM01.js";
 import { t as M } from "./ToastViewport-DmwVzyoR.js";
 import { n as N, r as P, t as F } from "./PopoverPortal-CubTQ6nq.js";
 import { t as I } from "./PopoverTrigger-Ds3NuxQO.js";
-import { t as L } from "./slot_error_label-Dz5Iarxp.js";
+import { t as L } from "./slot_error_label-OLw2A1jQ.js";
 import { t as R } from "./use_portal_target-Dz0vdIvT.js";
 //#region ../../node_modules/.pnpm/lucide-vue-next@1.0.0_vue@3.5.40_typescript@6.0.3_/node_modules/lucide-vue-next/dist/esm/icons/feather.js
 var z = w("feather", [
@@ -68,7 +68,7 @@ var z = w("feather", [
 		controller: {}
 	},
 	setup(e) {
-		let n = a(() => import("./GalleryView-f3fYtAYm.js")), r = a(() => import("./SettingsView-DuRcc3VT.js")), i = a(() => import("./AssetsView-RClWTg3Q.js")), s = a(() => import("./CreateView-B9ehgFfR.js")), c = a(() => import("./OpeningView-B8QqIv3q.js"));
+		let n = a(() => import("./GalleryView-BMT06IVz.js")), r = a(() => import("./SettingsView-prY-DyeX.js")), i = a(() => import("./AssetsView-RClWTg3Q.js")), s = a(() => import("./CreateView-D9BKlqPX.js")), c = a(() => import("./OpeningView-B8QqIv3q.js"));
 		return (a, u) => e.state.route === "gallery" ? (t(), l(o(n), {
 			key: 0,
 			state: e.state,

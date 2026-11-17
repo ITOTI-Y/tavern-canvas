@@ -109,3 +109,26 @@ export function build_chosen_paragraphs_input(
     sizes,
   );
 }
+
+/**
+ * The illustration half of an inline request, read by the story model before it writes the reply:
+ * paragraphs are named by a quote of their opening words, since they are not written yet.
+ */
+export function build_inline_illustrations(
+  max_images: number,
+  library: SlotLibrary,
+  guidance: string,
+  viewer: string | null,
+  sizes: readonly ImageSize[],
+): string {
+  return [
+    "[Inkwell illustration request]",
+    `After writing your reply, choose 1 to ${String(max_images)} of its paragraphs that would benefit most from an illustration: vivid, visually distinct moments. For each one give:`,
+    "- quote: the first 8 to 12 words of that paragraph of your reply, copied exactly",
+    ...PROPOSAL_FIELD_LINES.slice(1),
+    ...size_field_lines(sizes),
+    ...continuity_lines(viewer),
+    ...library_lines(library),
+    ...guidance_lines(guidance),
+  ].join("\n");
+}

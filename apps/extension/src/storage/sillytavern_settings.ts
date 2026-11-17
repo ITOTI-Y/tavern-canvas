@@ -62,6 +62,7 @@ export const DEFAULT_TAVERN_CANVAS_SETTINGS = {
     structured_output: "auto",
     analysis_reasoning: "preset",
     skip_thought: true,
+    inline_analysis: false,
   },
   world_info_overrides: { no_recursion_books: [], slim_books: [], slim_guidance: "" },
   translation: {

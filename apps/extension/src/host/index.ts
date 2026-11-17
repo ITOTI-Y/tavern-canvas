@@ -15,6 +15,7 @@ export type {
   HostGenerationPreset,
   HostPreambleMessage,
   WorldInfoSlimLookup,
+  InlineStructureStatus,
   HostGenerationEvent,
   HostGenerationHandler,
   HostHistoryMessage,

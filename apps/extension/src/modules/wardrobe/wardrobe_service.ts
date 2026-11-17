@@ -147,21 +147,44 @@ export class WardrobeService {
     location: HostSwipeLocation,
     reply_shown_above: boolean,
   ): Promise<PendingWardrobeUpdate> {
-    return this.#prepare(await this.#deps.host.get_active_chat(), location, reply_shown_above);
+    return this.#prepare(
+      await this.#deps.host.get_active_chat(),
+      location,
+      reply_shown_above,
+      null,
+    );
+  }
+
+  /**
+   * The wardrobe request for a reply not written yet, at `message_id` of the active chat: the story
+   * so far, with the reply left for the story model to write.
+   */
+  async request_before_reply(message_id: number): Promise<string> {
+    const chat = await this.#deps.host.get_active_chat();
+    const pending = await this.#prepare(
+      chat,
+      { chat_id: chat.chat_id, message_id, swipe_id: 0 },
+      true,
+      "",
+    );
+    return pending.input;
   }
 
   async #update(chat: HostChatSnapshot, location: HostSwipeLocation): Promise<readonly Wearing[]> {
-    const pending = await this.#prepare(chat, location, false);
+    const pending = await this.#prepare(chat, location, false, null);
     return pending.apply(await this.#deps.run(pending.input, pending.json_schema));
   }
 
+  /** `reply_text` stands in for the swipe's text; `null` reads the swipe. */
   async #prepare(
     chat: HostChatSnapshot,
     location: HostSwipeLocation,
     reply_shown_above: boolean,
+    reply_text: string | null,
   ): Promise<PendingWardrobeUpdate> {
     const message = chat.messages.find((candidate) => candidate.message_id === location.message_id);
-    const reply = strip_slot_markers(message?.swipes[location.swipe_id]?.content ?? "");
+    const reply =
+      reply_text ?? strip_slot_markers(message?.swipes[location.swipe_id]?.content ?? "");
     const before = chat.messages.filter(
       (candidate) =>
         candidate.message_id < location.message_id &&

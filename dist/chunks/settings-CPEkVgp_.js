@@ -84,7 +84,8 @@ var _ = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	size_set_by_chat: a(n().min(1).max(300), n().trim().min(1).max(64).nullable()).default({}),
 	structured_output: s((e) => e === "json_schema" ? "auto" : e, l(["auto", "tools"])).default("auto"),
 	analysis_reasoning: l(["preset", "min"]).default("preset"),
-	skip_thought: i().default(!0)
+	skip_thought: i().default(!0),
+	inline_analysis: i().default(!1)
 }), D = r({
 	source: n().trim().min(1).max(32),
 	target: n().trim().min(1).max(128)
