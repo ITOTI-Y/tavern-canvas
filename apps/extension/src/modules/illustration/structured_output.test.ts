@@ -8,7 +8,8 @@ import type {
 } from "../../host/index.js";
 import { DEFAULT_TAVERN_CANVAS_SETTINGS } from "../../storage/sillytavern_settings.js";
 import { AnalysisParseError } from "./analysis_error.js";
-import { request_analysis, run_wardrobe_request } from "./analysis_requests.js";
+import { builtin_postscript, request_analysis, run_wardrobe_request } from "./analysis_requests.js";
+import { CLOSING_PROMPT, SKIP_THOUGHT_PROMPT } from "./skip_thought.js";
 import {
   reset_tool_memory,
   type StructuredMode,
@@ -74,6 +75,19 @@ const called = (args: string): PresetGenerationResult => ({
 
 afterEach(() => {
   reset_tool_memory();
+});
+
+describe("built-in preset postscript", () => {
+  it("ends requests with the skip-thought instruction unless the user turns it off", () => {
+    const settings = DEFAULT_TAVERN_CANVAS_SETTINGS.illustration;
+
+    expect(settings.skip_thought).toBe(true);
+    expect(builtin_postscript(settings)).toEqual([
+      { role: "system", content: SKIP_THOUGHT_PROMPT },
+      { role: "system", content: CLOSING_PROMPT },
+    ]);
+    expect(builtin_postscript({ ...settings, skip_thought: false })).toEqual([]);
+  });
 });
 
 describe("structured replies", () => {

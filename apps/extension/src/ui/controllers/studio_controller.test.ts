@@ -104,6 +104,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     size_set_by_chat: {},
     structured_output: "auto",
     analysis_reasoning: "preset",
+    skip_thought: true,
   },
   world_info_overrides: { no_recursion_books: [], slim_books: [], slim_guidance: "" },
   translation: { deepl_endpoint: "free", glossary: [] },

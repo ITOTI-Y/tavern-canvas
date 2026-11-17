@@ -122,6 +122,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       size_set_by_chat: {},
       structured_output: "auto",
       analysis_reasoning: "preset",
+      skip_thought: true,
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>

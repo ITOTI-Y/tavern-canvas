@@ -26,6 +26,7 @@ import {
   type ToolPlan,
 } from "./structured_output.js";
 import { guidance_lines } from "./user_guidance.js";
+import { CLOSING_PROMPT, SKIP_THOUGHT_PROMPT } from "./skip_thought.js";
 import { activate_worldbook } from "./worldbook.js";
 
 const ANALYSIS_ATTEMPTS = 3;
@@ -111,9 +112,31 @@ function closing_input(plan: ToolPlan<unknown> | null): string {
     : `Answer the request above by calling ${plan.choice.name}.`;
 }
 
-function to_host_preset(settings: IllustrationSettings): HostGenerationPreset {
+/**
+ * What a built-in preset sends after the last user message: Advanced Preset's skip-thought
+ * instruction, then its closing instruction. With the first alone Gemini skips its reasoning and
+ * often submits an empty result; with neither it answers some requests about mature story text
+ * with empty results.
+ */
+export function builtin_postscript(settings: IllustrationSettings): readonly HostPreambleMessage[] {
+  return settings.skip_thought
+    ? [
+        { role: "system", content: SKIP_THOUGHT_PROMPT },
+        { role: "system", content: CLOSING_PROMPT },
+      ]
+    : [];
+}
+
+function to_host_preset(
+  settings: IllustrationSettings,
+  postscript: readonly HostPreambleMessage[],
+): HostGenerationPreset {
   return settings.preset_source === "builtin"
-    ? { kind: "builtin", preamble: [{ role: "system", content: BUILTIN_ANALYSIS_SYSTEM_PROMPT }] }
+    ? {
+        kind: "builtin",
+        preamble: [{ role: "system", content: BUILTIN_ANALYSIS_SYSTEM_PROMPT }],
+        postscript,
+      }
     : { kind: "sillytavern", name: settings.preset_name };
 }
 
@@ -194,7 +217,7 @@ export async function run_wardrobe_request(
     generation_id = deps.new_generation_id();
     const result = await deps.host.generate_with_preset({
       generation_id,
-      preset: to_host_preset(settings),
+      preset: to_host_preset(settings, builtin_postscript(settings)),
       instructions: input,
       user_input: closing_input(tools ? plan : null),
       chat_history: [],
@@ -284,10 +307,11 @@ export async function request_analysis<T>(
   );
   const key = tool_key(deps.host, connection);
   const plan = request.tools ?? submit_tool(request.json_schema, request.parse);
+  const postscript = builtin_postscript(settings);
   const preset: HostGenerationPreset =
     overrides.preamble === undefined
-      ? to_host_preset(settings)
-      : { kind: "builtin", preamble: overrides.preamble };
+      ? to_host_preset(settings, postscript)
+      : { kind: "builtin", preamble: overrides.preamble, postscript };
   // After a failed tool attempt the request continues with the JSON schema; the switch is not
   // counted as an attempt, and tools are forgotten for the session only if the schema then works,
   // since a failure in both modes points to the backend rather than to tool calling.

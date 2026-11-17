@@ -248,6 +248,7 @@ describe("TavernHelperHost", () => {
       preset: {
         kind: "builtin",
         preamble: [{ role: "system", content: "Answer through the tool." }],
+        postscript: [{ role: "system", content: "Answer now." }],
       },
       instructions: "request",
       user_input: "analyze",
@@ -277,6 +278,7 @@ describe("TavernHelperHost", () => {
           "world_info_after",
           "chat_history",
           "user_input",
+          { role: "system", content: "Answer now." },
         ],
         overrides: {
           chat_history: { prompts: [{ role: "user", content: "Hello." }, REQUEST_MESSAGE] },

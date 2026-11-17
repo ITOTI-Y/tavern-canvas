@@ -49,6 +49,7 @@ const SETTINGS: IllustrationSettings = {
   size_set_by_chat: {},
   structured_output: "auto",
   analysis_reasoning: "preset",
+  skip_thought: true,
 };
 
 class MemoryHost {
@@ -798,6 +799,7 @@ describe("create_wardrobe_runner", () => {
         size_set_by_chat: {},
         structured_output: "auto",
         analysis_reasoning: "preset",
+        skip_thought: true,
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",

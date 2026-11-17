@@ -111,18 +111,23 @@ export interface HostHistoryMessage {
   readonly content: string;
 }
 
-/** One message of a built-in preset's preamble, sent before the card and the request. */
+/** One message a built-in preset adds around the card, chat and request. */
 export interface HostPreambleMessage {
   readonly role: "system" | "assistant";
   readonly content: string;
 }
 
 /**
- * The prompt layout of a request: the extension's own preamble followed by the character card,
- * persona, world info and chat history, or a SillyTavern chat completion preset by name.
+ * The prompt layout of a request: the extension's own preamble, the character card, persona, world
+ * info, chat history and request, then its postscript after the last user message; or a
+ * SillyTavern chat completion preset by name.
  */
 export type HostGenerationPreset =
-  | { readonly kind: "builtin"; readonly preamble: readonly HostPreambleMessage[] }
+  | {
+      readonly kind: "builtin";
+      readonly preamble: readonly HostPreambleMessage[];
+      readonly postscript: readonly HostPreambleMessage[];
+    }
   | { readonly kind: "sillytavern"; readonly name: string };
 
 /**

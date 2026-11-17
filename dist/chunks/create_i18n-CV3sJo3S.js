@@ -663,6 +663,8 @@ var o = {
 			custom_key_saved: "Key saved.",
 			custom_key_cleared: "Key removed.",
 			custom_key_failed: "The key could not be changed.",
+			skip_thought_label: "Skip-thought instruction",
+			skip_thought_hint: "With the built-in preset, ends each request with Advanced Preset's skip-thought and closing instructions, so Gemini answers without reasoning first. Gemini returns empty illustration results for some mature story text without it. A SillyTavern preset decides this for itself.",
 			reasoning_label: "Analysis reasoning effort",
 			reasoning_hint: "Applies to illustration analysis and wardrobe requests only; story replies and the opening page keep their own. Lowest cuts the output tokens spent on reasoning on models that support it; some, such as Gemini 4 Hydrogen, reason as much at the lowest level as at low. Switch back if the analysis gets worse.",
 			reasoning_preset: "Follow the current preset",
@@ -1038,7 +1040,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-6FWRWzwO.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-DBnygqXi.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

@@ -497,6 +497,7 @@ export class TavernHelperHost {
             "world_info_after",
             "chat_history",
             "user_input",
+            ...request.preset.postscript,
           ],
         })
       : this.#helper.generate({ ...config, preset_name: request.preset.name });

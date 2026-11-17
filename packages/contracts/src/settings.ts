@@ -169,6 +169,11 @@ export const IllustrationSettingsSchema = z.strictObject({
    * `preset` keeps the chat completion settings' effort.
    */
   analysis_reasoning: z.enum(["preset", "min"]).default("preset"),
+  /**
+   * Requests with the built-in preset end with Advanced Preset's skip-thought instruction after
+   * the last user message.
+   */
+  skip_thought: z.boolean().default(true),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 

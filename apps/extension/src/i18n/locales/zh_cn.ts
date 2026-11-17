@@ -675,6 +675,9 @@ const settings = {
     custom_key_cleared: "密钥已移除。",
     custom_key_failed: "密钥修改失败。",
     proxy_model_hint: "留空则使用代理预设中的模型。",
+    skip_thought_label: "跳过思考提示",
+    skip_thought_hint:
+      "使用内建预设时，在请求末尾附上 Advanced Preset 的 skip-thought 指令和收尾指令，让 Gemini 跳过思考后直接给出结果。Gemini 对部分成人向剧情会返回空的配图结果，打开后可以正常给出提示词。只作用于内建预设，选用 SillyTavern 预设时由预设自己决定。",
     reasoning_label: "分析推理强度",
     reasoning_hint:
       "只作用于插图分析和衣橱判断请求，正式生成和开篇不受影响。“最低”可以减少推理消耗的输出 token；部分模型不区分最低档，例如 Gemini 4 Hydrogen 的最低档与低档推理量相同。分析结果变差时改回“跟随当前预设”。",

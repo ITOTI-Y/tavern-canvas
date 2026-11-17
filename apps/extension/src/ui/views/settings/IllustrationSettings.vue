@@ -536,6 +536,13 @@ function set_worldbook(name: string, chosen: boolean): void {
           />
         </template>
       </FieldGroup>
+      <AppSwitch
+        :model-value="illustration?.skip_thought ?? true"
+        :label="t('settings.illustration.skip_thought_label')"
+        :description="t('settings.illustration.skip_thought_hint')"
+        :disabled="!settings"
+        @update:model-value="(value) => update_illustration({ skip_thought: value })"
+      />
       <FieldGroup
         :label="t('settings.illustration.reasoning_label')"
         :hint="t('settings.illustration.reasoning_hint')"
