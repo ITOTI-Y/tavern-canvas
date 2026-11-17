@@ -111,12 +111,18 @@ export interface HostHistoryMessage {
   readonly content: string;
 }
 
+/** One message of a built-in preset's preamble, sent before the card and the request. */
+export interface HostPreambleMessage {
+  readonly role: "system" | "assistant";
+  readonly content: string;
+}
+
 /**
- * The prompt layout of a request: the extension's own system prompt followed by the character
- * card, persona, world info and chat history, or a SillyTavern chat completion preset by name.
+ * The prompt layout of a request: the extension's own preamble followed by the character card,
+ * persona, world info and chat history, or a SillyTavern chat completion preset by name.
  */
 export type HostGenerationPreset =
-  | { readonly kind: "builtin"; readonly system_prompt: string }
+  | { readonly kind: "builtin"; readonly preamble: readonly HostPreambleMessage[] }
   | { readonly kind: "sillytavern"; readonly name: string };
 
 /**
@@ -140,6 +146,12 @@ export type InjectWorldInfoSlims = (lookup: WorldInfoSlimLookup) => () => void;
 export interface PresetGenerationRequest {
   readonly generation_id: string;
   readonly preset: HostGenerationPreset;
+  /**
+   * The request itself, sent as a system message after the chat history. Gemini blocks some story
+   * text with PROHIBITED_CONTENT when it is the last user message and accepts it there.
+   */
+  readonly instructions: string;
+  /** A short last user message asking for the answer; carries `image`. */
   readonly user_input: string;
   /** Oldest first; empty sends no chat history. */
   readonly chat_history: readonly HostHistoryMessage[];

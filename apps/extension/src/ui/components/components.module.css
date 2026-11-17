@@ -684,6 +684,10 @@
   padding: var(--tc-space-6);
 }
 
+.dialogContent[data-wide] {
+  width: min(960px, calc(100vw - 2 * var(--tc-space-4)));
+}
+
 .confirmDialogContent {
   gap: var(--tc-space-4);
 }

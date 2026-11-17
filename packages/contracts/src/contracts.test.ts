@@ -420,7 +420,7 @@ describe("initial settings and capability contracts", () => {
       structured_output: "auto",
       analysis_reasoning: "preset",
     },
-    world_info_overrides: { no_recursion_books: [], slim_books: [] },
+    world_info_overrides: { no_recursion_books: [], slim_books: [], slim_guidance: "" },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system" as const,
@@ -548,7 +548,7 @@ describe("strict public object boundaries", () => {
       structured_output: "auto",
       analysis_reasoning: "preset",
     },
-    world_info_overrides: { no_recursion_books: [], slim_books: [] },
+    world_info_overrides: { no_recursion_books: [], slim_books: [], slim_guidance: "" },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system" as const,

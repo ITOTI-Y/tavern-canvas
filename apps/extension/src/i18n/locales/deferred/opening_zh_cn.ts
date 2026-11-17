@@ -199,6 +199,28 @@ export const zh_cn_messages = {
       slim_stats: "已精简 {done} / {total} 条，{before} → {after} 字",
       slim_generate: "生成精简版（{n} 条）",
       slim_finished: "精简完成；{rejected} 条未通过检查，继续使用原文。",
+      slim_failed:
+        "精简结束；{failed} 条请求失败，{rejected} 条未通过检查，这些条目继续使用原文。最后一次失败：{reason}",
+      slim_compare: "精简对照",
+      slim_compare_title: "精简对照：{name}",
+      slim_original: "原文（{n} 字）",
+      slim_condensed: "精简版（{n} 字，原文的 {ratio}%）",
+      slim_placeholder: "还没有精简版。可以直接填写，也可以点“生成精简版”。",
+      slim_stale:
+        "条目原文在精简后改过，这份精简版不会被注入。保存后会按当前原文重新生效，也可以重新生成。",
+      slim_check_warning: "这份精简版超过原文的 75%，或缺少原文中出现的关键词；保存后仍会注入。",
+      slim_generate_one: "生成精简版",
+      slim_regenerate: "重新生成",
+      slim_revert: "退回原文",
+      slim_revert_entry: "将“{name}”退回原文",
+      slim_guidance: "精简要求（可选）",
+      slim_guidance_hint:
+        "随每次精简请求一起发送，告诉模型你希望保留或去掉什么；与内置规则冲突时以这里为准。",
+      slim_guidance_placeholder: "例如：保留所有人物的外貌描写；对白只留一句代表性的",
+      slim_clear: "全部退回原文",
+      slim_label: "“{name}”的精简版",
+      slim_badge: "已精简",
+      slim_stale_badge: "精简版失效",
       no_recursion: "正文不触发其他条目",
       no_recursion_hint:
         "开启后，这本书的条目被激活时，其正文不会再递归激活其他条目，可以避免常驻条目每轮把大条目带进提示词。只在扫描时生效，不修改世界书文件。",

@@ -203,6 +203,30 @@ export const en_messages = {
       slim_generate: "Condense ({n} entries)",
       slim_finished:
         "Condensing finished; {rejected} entries failed the check and keep their original text.",
+      slim_failed:
+        "Condensing ended; {failed} requests failed and {rejected} entries failed the check, so these entries keep their original text. Last failure: {reason}",
+      slim_compare: "Compare condensed version",
+      slim_compare_title: "Condensed version: {name}",
+      slim_original: "Original ({n} characters)",
+      slim_condensed: "Condensed ({n} characters, {ratio}% of the original)",
+      slim_placeholder: "No condensed version yet. Write one here, or generate it.",
+      slim_stale:
+        "The entry changed after it was condensed, so this version is not sent. Saving makes it apply to the current text; you can also generate it again.",
+      slim_check_warning:
+        "This version is longer than 75% of the original or leaves out a key word the original names; it is still sent once saved.",
+      slim_generate_one: "Generate condensed version",
+      slim_regenerate: "Generate again",
+      slim_revert: "Revert to original",
+      slim_revert_entry: "Revert “{name}” to its original",
+      slim_guidance: "Condensing requirements (optional)",
+      slim_guidance_hint:
+        "Sent with every condensing request to tell the model what to keep or leave out; it wins over the built-in rules where they conflict.",
+      slim_guidance_placeholder:
+        "For example: keep every character's appearance; keep one representative line of dialogue",
+      slim_clear: "Revert all to originals",
+      slim_label: "Condensed version of “{name}”",
+      slim_badge: "Condensed",
+      slim_stale_badge: "Condensed version outdated",
       no_recursion: "Entry text does not activate other entries",
       no_recursion_hint:
         "When on, the text of this book's active entries no longer activates other entries by recursion, so always-active entries do not pull large entries into every prompt. Applies at scan time only; the book file is not changed.",

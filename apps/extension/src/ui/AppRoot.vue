@@ -123,7 +123,8 @@ provide(
       : {
           request: (request, options, signal) =>
             illustrations.request_opening(request, options, signal),
-          request_lean: (request, signal) => illustrations.request_lean(request, signal),
+          request_lean: (request, preamble, signal) =>
+            illustrations.request_lean(request, preamble, signal),
           host: async () =>
             (await import("../host/tavern_helper_opening.js")).create_opening_host(globalThis),
         }),

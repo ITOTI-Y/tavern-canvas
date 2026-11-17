@@ -10,6 +10,9 @@ import {
 
 const NO_TIMERS = () => ({ restore: () => {} });
 
+/** The request text as the host sends it: a system message after the history. */
+const REQUEST_MESSAGE = { role: "system" as const, content: "request" };
+
 function create_helper(overrides: Partial<TavernHelperSurface> = {}): TavernHelperSurface {
   return {
     getChatMessages: vi.fn(() => [
@@ -122,6 +125,7 @@ describe("TavernHelperHost", () => {
     const result = await host.generate_with_preset({
       generation_id: "g1",
       preset: { kind: "sillytavern", name: "in_use" },
+      instructions: "request",
       user_input: "analyze",
       chat_history: [],
       connection: {
@@ -142,7 +146,7 @@ describe("TavernHelperHost", () => {
       generation_id: "g1",
       preset_name: "in_use",
       user_input: "analyze",
-      max_chat_history: 0,
+      overrides: { chat_history: { prompts: [REQUEST_MESSAGE] } },
       should_silence: true,
       should_stream: false,
       should_return_reasoning: true,
@@ -167,6 +171,7 @@ describe("TavernHelperHost", () => {
     const result = await host.generate_with_preset({
       generation_id: "g1",
       preset: { kind: "sillytavern", name: "in_use" },
+      instructions: "request",
       user_input: "write",
       chat_history: [],
       connection: { kind: "current" },
@@ -216,6 +221,7 @@ describe("TavernHelperHost", () => {
       host.generate_with_preset({
         generation_id: "g1",
         preset: { kind: "sillytavern", name: "in_use" },
+        instructions: "request",
         user_input: "analyze",
         chat_history: [],
         connection: { kind: "current" },
@@ -239,7 +245,11 @@ describe("TavernHelperHost", () => {
 
     await host.generate_with_preset({
       generation_id: "g1",
-      preset: { kind: "builtin", system_prompt: "Answer through the tool." },
+      preset: {
+        kind: "builtin",
+        preamble: [{ role: "system", content: "Answer through the tool." }],
+      },
+      instructions: "request",
       user_input: "analyze",
       chat_history: [{ role: "user", content: "Hello." }],
       connection: { kind: "current" },
@@ -268,7 +278,9 @@ describe("TavernHelperHost", () => {
           "chat_history",
           "user_input",
         ],
-        overrides: { chat_history: { prompts: [{ role: "user", content: "Hello." }] } },
+        overrides: {
+          chat_history: { prompts: [{ role: "user", content: "Hello." }, REQUEST_MESSAGE] },
+        },
         tool_choice: { type: "function", function: { name: "submit" } },
       }),
     );
@@ -288,6 +300,7 @@ describe("TavernHelperHost", () => {
     await host.generate_with_preset({
       generation_id: "g1",
       preset: { kind: "sillytavern", name: "in_use" },
+      instructions: "request",
       user_input: "analyze",
       chat_history,
       connection: { kind: "current" },
@@ -298,8 +311,9 @@ describe("TavernHelperHost", () => {
     });
 
     const config = (generate.mock.calls[0] as unknown[])[0] as Record<string, unknown>;
-    expect(config["overrides"]).toEqual({ chat_history: { prompts: chat_history } });
-    expect(config).not.toHaveProperty("max_chat_history");
+    expect(config["overrides"]).toEqual({
+      chat_history: { prompts: [...chat_history, REQUEST_MESSAGE] },
+    });
   });
 
   it("replaces world info and depth entries when the analysis brings its own", async () => {
@@ -309,6 +323,7 @@ describe("TavernHelperHost", () => {
     await host.generate_with_preset({
       generation_id: "g1",
       preset: { kind: "sillytavern", name: "in_use" },
+      instructions: "request",
       user_input: "analyze",
       chat_history: [],
       connection: { kind: "current" },
@@ -323,7 +338,7 @@ describe("TavernHelperHost", () => {
         overrides: {
           world_info_before: "Doors are blue.",
           world_info_after: "",
-          chat_history: { with_depth_entries: false },
+          chat_history: { with_depth_entries: false, prompts: [REQUEST_MESSAGE] },
         },
       }),
     );

@@ -323,7 +323,7 @@ describe("IllustrationService.analyze", () => {
     expect(host.generate_calls[0]?.json_schema?.value).toMatchObject({
       required: ["illustrations", "wardrobe"],
     });
-    expect(host.generate_calls[0]?.user_input).toContain("[Inkwell wardrobe update]");
+    expect(host.generate_calls[0]?.instructions).toContain("[Inkwell wardrobe update]");
     expect(host.wardrobes.get("3:0")).toEqual({ schema_version: 1, wearing: [] });
     expect(events).not.toContain("wardrobe_failed");
     expect(record.slots).toHaveLength(1);
@@ -354,7 +354,7 @@ describe("IllustrationService.analyze", () => {
       "submit_illustrations",
       "submit_wardrobe",
     ]);
-    expect(host.generate_calls[0]?.user_input).toContain("calling two tools");
+    expect(host.generate_calls[0]?.instructions).toContain("calling two tools");
     expect(record.slots).toHaveLength(1);
     expect(events).toContain("wardrobe_failed");
   });
@@ -369,7 +369,7 @@ describe("IllustrationService.analyze", () => {
     expect(host.generate_calls[0]?.json_schema?.value).toMatchObject({
       required: ["illustrations"],
     });
-    expect(host.generate_calls[0]?.user_input).not.toContain("[Inkwell wardrobe update]");
+    expect(host.generate_calls[0]?.instructions).not.toContain("[Inkwell wardrobe update]");
   });
 
   it("still illustrates when the combined reply has no wardrobe, reporting the wardrobe failure", async () => {
@@ -403,7 +403,7 @@ describe("IllustrationService.analyze", () => {
       ],
       world_info: { kind: "chat" },
     });
-    expect(host.generate_calls[0]?.user_input).toContain('"You" in the story is Yu');
+    expect(host.generate_calls[0]?.instructions).toContain('"You" in the story is Yu');
   });
 
   it("replaces the chat's world info with the entries one book activates for this reply", async () => {
@@ -805,10 +805,10 @@ describe("create_wardrobe_runner", () => {
 
     await run("[Inkwell wardrobe update]", { name: "tavern_canvas_wardrobe", value: {} });
 
-    expect(requests[0]?.user_input).toMatch(
+    expect(requests[0]?.instructions).toMatch(
       /^\[Inkwell wardrobe update\]\n\nUser guidance[^\n]*\nsummer clothing$/u,
     );
-    expect(requests[0]?.user_input).not.toContain("watercolor");
+    expect(requests[0]?.instructions).not.toContain("watercolor");
   });
 });
 
@@ -829,7 +829,7 @@ describe("IllustrationService.add_paragraphs", () => {
       { paragraph: 0, scene: "door", positive_prompt: "door" },
       { paragraph: 1, scene: "Rain fell outside.", positive_prompt: "" },
     ]);
-    expect(host.generate_calls[0]?.user_input).toContain(
+    expect(host.generate_calls[0]?.instructions).toContain(
       "Illustrate exactly these paragraphs, one entry each: [0], [1].",
     );
     expect(host.text).toBe(
@@ -916,7 +916,7 @@ describe("IllustrationService size sets", () => {
     await service.analyze(3);
     await service.generate(LOCATION, "slot_0001");
 
-    expect(host.generate_calls[0]?.user_input).toContain("1344x768 (wide 1.75:1)");
+    expect(host.generate_calls[0]?.instructions).toContain("1344x768 (wide 1.75:1)");
     expect(service.read(LOCATION)?.slots[0]?.size).toEqual({ width: 1344, height: 768 });
     expect(submit).toHaveBeenCalledWith(
       expect.objectContaining({ size: { width: 1344, height: 768 } }),

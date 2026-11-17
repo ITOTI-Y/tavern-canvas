@@ -202,6 +202,8 @@ export const WorldInfoOverridesSchema = z.strictObject({
   no_recursion_books: z.array(z.string().trim().min(1).max(200)).max(100).default([]),
   /** Books whose active entries are sent as their condensed versions where one is stored. */
   slim_books: z.array(z.string().trim().min(1).max(200)).max(100).default([]),
+  /** The user's own requirements, added to every condensing request; empty adds none. */
+  slim_guidance: z.string().max(2000).default(""),
 });
 export type WorldInfoOverrides = z.infer<typeof WorldInfoOverridesSchema>;
 
@@ -219,6 +221,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   world_info_overrides: WorldInfoOverridesSchema.default({
     no_recursion_books: [],
     slim_books: [],
+    slim_guidance: "",
   }),
   ui: TavernCanvasUiSettingsSchema,
 });

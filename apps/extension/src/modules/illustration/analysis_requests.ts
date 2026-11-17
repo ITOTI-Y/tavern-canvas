@@ -11,6 +11,7 @@ import type {
   HostGenerationPreset,
   HostHistoryMessage,
   HostJsonSchema,
+  HostPreambleMessage,
   HostWorldInfo,
 } from "../../host/index.js";
 import { AnalysisStoppedError } from "./analysis_error.js";
@@ -100,9 +101,19 @@ const BUILTIN_ANALYSIS_SYSTEM_PROMPT = [
   "Answer only through the provided tool or the requested format, with no other text.",
 ].join("\n");
 
+/** The last user message; the request itself goes before it as a system message. */
+function closing_input(plan: ToolPlan<unknown> | null): string {
+  if (plan === null) {
+    return "Answer the request above with only the JSON object it asks for.";
+  }
+  return plan.choice === "required"
+    ? "Answer the request above by calling the provided tools."
+    : `Answer the request above by calling ${plan.choice.name}.`;
+}
+
 function to_host_preset(settings: IllustrationSettings): HostGenerationPreset {
   return settings.preset_source === "builtin"
-    ? { kind: "builtin", system_prompt: BUILTIN_ANALYSIS_SYSTEM_PROMPT }
+    ? { kind: "builtin", preamble: [{ role: "system", content: BUILTIN_ANALYSIS_SYSTEM_PROMPT }] }
     : { kind: "sillytavern", name: settings.preset_name };
 }
 
@@ -178,11 +189,14 @@ export async function run_wardrobe_request(
   const host_connection = await to_host_connection(connection, deps.resolve_analysis_key);
   const key = tool_key(deps.host, host_connection);
   const plan = submit_tool(json_schema, (raw) => raw);
+  let generation_id = "";
   const send = async (tools: boolean): Promise<string> => {
+    generation_id = deps.new_generation_id();
     const result = await deps.host.generate_with_preset({
-      generation_id: deps.new_generation_id(),
+      generation_id,
       preset: to_host_preset(settings),
-      user_input: input,
+      instructions: input,
+      user_input: closing_input(tools ? plan : null),
       chat_history: [],
       connection: host_connection,
       json_schema: tools ? null : json_schema,
@@ -198,14 +212,14 @@ export async function run_wardrobe_request(
   }
   try {
     const raw = await send(true);
-    deps.on_attempt?.("tools", "ok");
+    deps.on_attempt?.("tools", "ok", generation_id);
     return raw;
   } catch (error) {
     if (settings.structured_output !== "auto") {
-      deps.on_attempt?.("tools", "failed");
+      deps.on_attempt?.("tools", "failed", generation_id);
       throw error;
     }
-    deps.on_attempt?.("tools", "fallback");
+    deps.on_attempt?.("tools", "fallback", generation_id);
     const raw = await send(false);
     // The schema answered where tools failed, so tools are the problem on this connection.
     forget_tools(key);
@@ -248,9 +262,10 @@ export interface AnalysisRequest<T> {
   readonly tools?: ToolPlan<T>;
 }
 
-/** Replaces the analysis settings' world info for one request. */
+/** Replaces the analysis settings' world info, or its preset with a built-in preamble, for one request. */
 export interface AnalysisOverrides {
   readonly world_info?: AnalysisWorldInfo;
+  readonly preamble?: readonly HostPreambleMessage[];
 }
 
 export async function request_analysis<T>(
@@ -269,6 +284,10 @@ export async function request_analysis<T>(
   );
   const key = tool_key(deps.host, connection);
   const plan = request.tools ?? submit_tool(request.json_schema, request.parse);
+  const preset: HostGenerationPreset =
+    overrides.preamble === undefined
+      ? to_host_preset(settings)
+      : { kind: "builtin", preamble: overrides.preamble };
   // After a failed tool attempt the request continues with the JSON schema; the switch is not
   // counted as an attempt, and tools are forgotten for the session only if the schema then works,
   // since a failure in both modes points to the backend rather than to tool calling.
@@ -286,8 +305,9 @@ export async function request_analysis<T>(
         generation_id,
         deps.host.generate_with_preset({
           generation_id,
-          preset: to_host_preset(settings),
-          user_input: tools ? (plan.user_input ?? request.user_input) : request.user_input,
+          preset,
+          instructions: tools ? (plan.user_input ?? request.user_input) : request.user_input,
+          user_input: closing_input(tools ? plan : null),
           chat_history: request.history,
           connection,
           json_schema: tools ? null : request.json_schema,
@@ -304,7 +324,7 @@ export async function request_analysis<T>(
       if (switched) {
         forget_tools(key);
       }
-      deps.on_attempt?.(mode, "ok");
+      deps.on_attempt?.(mode, "ok", generation_id);
       return value;
     } catch (error) {
       if (error instanceof AnalysisStoppedError) {
@@ -312,10 +332,10 @@ export async function request_analysis<T>(
       }
       if (tools && settings.structured_output === "auto") {
         switched = true;
-        deps.on_attempt?.(mode, "fallback");
+        deps.on_attempt?.(mode, "fallback", generation_id);
         continue;
       }
-      deps.on_attempt?.(mode, "failed");
+      deps.on_attempt?.(mode, "failed", generation_id);
       if (attempt >= ANALYSIS_ATTEMPTS) {
         throw error;
       }

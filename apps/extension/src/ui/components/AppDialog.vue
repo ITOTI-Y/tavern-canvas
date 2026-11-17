@@ -20,6 +20,8 @@ defineProps<{
   readonly title: string;
   readonly description?: string;
   readonly closeLabel: string;
+  /** Room for two texts side by side on wide screens. */
+  readonly wide?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -67,6 +69,7 @@ onBeforeUnmount(() => {
       <DialogOverlay :class="styles.dialogOverlay" />
       <DialogContent
         :class="styles.dialogContent"
+        :data-wide="wide ? '' : undefined"
         @pointer-down-outside="keep_open_for_another_layer"
       >
         <header :class="styles.dialogHeader">

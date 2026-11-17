@@ -12,7 +12,12 @@ import {
 import type { GenerationJobSnapshot } from "@tavern-canvas/core";
 import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 
-import type { HostAdapter, HostGenerationEvent, HostSwipeLocation } from "../../host/index.js";
+import type {
+  HostAdapter,
+  HostGenerationEvent,
+  HostPreambleMessage,
+  HostSwipeLocation,
+} from "../../host/index.js";
 import { AnalysisParseError } from "./analysis_error.js";
 import type { SlotEdit } from "./slot_edits.js";
 import {
@@ -666,17 +671,16 @@ export class IllustrationService {
     );
   }
 
-  /** One request with the analysis connection and the built-in preset, without world info or chat. */
-  request_lean<T>(request: OpeningStructuredRequest<T>, signal: AbortSignal): Promise<T> {
-    const base = this.#deps.settings();
-    const settings: IllustrationSettings = { ...base, preset_source: "builtin" };
-    return request_analysis(
-      { ...this.#deps, settings: () => settings },
-      "",
-      { ...request, history: [] },
-      signal,
-      { world_info: { mode: "off" } },
-    );
+  /** One request with the analysis connection and `preamble` as its preset, without world info or chat. */
+  request_lean<T>(
+    request: OpeningStructuredRequest<T>,
+    preamble: readonly HostPreambleMessage[],
+    signal: AbortSignal,
+  ): Promise<T> {
+    return request_analysis(this.#deps, "", { ...request, history: [] }, signal, {
+      world_info: { mode: "off" },
+      preamble,
+    });
   }
 
   /** The open chat's messages as the strip range picker lists them, each with its active swipe. */

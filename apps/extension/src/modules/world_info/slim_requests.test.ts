@@ -1,12 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  accept_slim,
-  is_slim_candidate,
-  slim_batches,
-  slim_request,
-  type SlimSource,
-} from "./slim_requests.js";
+import { accept_slim, is_slim_candidate, slim_request, type SlimSource } from "./slim_requests.js";
 import { content_hash, create_slim_store } from "./slim_store.js";
 
 const LONG = "迷雾港是一座建在悬崖上的港口城市。".repeat(30);
@@ -22,12 +16,6 @@ describe("world info condensing", () => {
     expect(is_slim_candidate(source(3, `${LONG}{{random:a,b}}`))).toBe(false);
   });
 
-  it("splits entries into batches of bounded text", () => {
-    const sources = Array.from({ length: 30 }, (_, index) => source(index, "x".repeat(1000)));
-
-    expect(slim_batches(sources).map((batch) => batch.length)).toEqual([6, 6, 6, 6, 6]);
-  });
-
   it("accepts a condensed text only when it is shorter and keeps the keys the original names", () => {
     const original = source(1, LONG, ["迷雾港", "不在原文中"]);
 
@@ -36,14 +24,24 @@ describe("world info condensing", () => {
     expect(accept_slim(original, LONG)).toBe(false);
   });
 
-  it("reads the tool call of a condensing request", () => {
-    const request = slim_request([source(7, LONG)]);
-    const calls = [
-      { name: "submit_slim", arguments: JSON.stringify({ entries: [{ uid: 7, slim: "s" }] }) },
-    ];
+  it("condenses one entry per request through a forced tool call", () => {
+    const { preamble, request } = slim_request(source(7, LONG), "");
+    const calls = [{ name: "submit_slim", arguments: JSON.stringify({ slim: "s" }) }];
 
-    expect(request.tools?.parse(calls, "")).toEqual([{ uid: 7, slim: "s" }]);
-    expect(request.tools?.user_input).toContain("### uid 7: entry 7");
+    expect(preamble.map((message) => message.role)).toEqual(["system"]);
+    expect(request.tools?.user_input).toContain(LONG.trim());
+    expect(request.tools?.choice).toEqual({ name: "submit_slim" });
+    expect(request.tools?.parse(calls, "")).toBe("s");
+  });
+
+  it("adds the user's requirements only when there are some", () => {
+    const guided = slim_request(source(7, LONG), "  保留全部对白  ").request.tools?.user_input;
+
+    expect(guided).toContain("The user's requirements");
+    expect(guided).toContain("保留全部对白");
+    expect(slim_request(source(7, LONG), " ").request.tools?.user_input).not.toContain(
+      "The user's requirements",
+    );
   });
 
   it("returns a stored condensed text only for the exact original it was made from", () => {
@@ -64,5 +62,24 @@ describe("world info condensing", () => {
         .matching("book", new Map([[7, hash]]))
         .get(7),
     ).toBe("s");
+  });
+
+  it("removes a stored text and shows other instances the change at once", () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    } as unknown as Storage;
+    const studio = create_slim_store(storage);
+    const generation = create_slim_store(storage);
+    const hash = content_hash(LONG);
+    expect(generation.lookup("book", 7, hash)).toBeNull();
+
+    studio.save("book", [{ uid: 7, hash, slim: "s" }]);
+    expect(generation.lookup("book", 7, hash)).toBe("s");
+
+    expect(studio.remove("book", 7)).toEqual({ hash, slim: "s" });
+    expect(generation.lookup("book", 7, hash)).toBeNull();
+    expect(studio.get("book", 7)).toBeNull();
   });
 });

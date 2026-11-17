@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, Pencil, Plus, Trash2 } from "lucide-vue-next";
+import { Link, Pencil, Plus, Scissors, Trash2, Undo2 } from "lucide-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -11,7 +11,7 @@ import AppSwitch from "../../components/AppSwitch.vue";
 import {
   accept_slim,
   is_slim_candidate,
-  slim_batches,
+  SLIM_CONCURRENCY,
   slim_request,
   type SlimSource,
 } from "../../../modules/world_info/slim_requests.js";
@@ -24,6 +24,7 @@ import IconButton from "../../components/IconButton.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
 import StateSurface from "../../components/StateSurface.vue";
 import OpeningSectionSwitch from "./OpeningSectionSwitch.vue";
+import SlimCompareDialog from "./SlimCompareDialog.vue";
 import { reason, type OpeningLists, type OpeningSection } from "./opening_section.js";
 import styles from "./opening_styles.js";
 
@@ -35,6 +36,8 @@ const props = defineProps<{
   readonly noRecursionBooks: readonly string[];
   /** Books whose active entries are sent as their stored condensed versions. */
   readonly slimBooks: readonly string[];
+  /** The user's requirements added to every condensing request. */
+  readonly slimGuidance: string;
   readonly port: OpeningPort | null;
 }>();
 
@@ -44,6 +47,7 @@ const emit = defineEmits<{
   "refresh-lists": [];
   "set-no-recursion": [book: string, value: boolean];
   "set-slim": [book: string, value: boolean];
+  "set-slim-guidance": [text: string];
 }>();
 
 const { t } = useI18n();
@@ -331,40 +335,130 @@ async function generate_slims(): Promise<void> {
   }
   const controller = new AbortController();
   slim_running.value = controller;
-  const stopped = (): boolean => controller.signal.aborted;
   slim_note.value = null;
-  let failed = 0;
+  const stopped = (): boolean => controller.signal.aborted;
+  const queue = [...slim_stats.value.pending];
   let rejected = 0;
-  try {
-    for (const batch of slim_batches(slim_stats.value.pending)) {
+  let failed = 0;
+  let last_failure = "";
+  const work = async (): Promise<void> => {
+    for (let source = queue.shift(); source !== undefined; source = queue.shift()) {
       if (stopped()) {
-        break;
+        return;
       }
       try {
-        const results = await port.request_lean(slim_request(batch), controller.signal);
-        const accepted = batch.flatMap((source) => {
-          const slim = results.find((result) => result.uid === source.uid)?.slim;
-          if (slim === undefined || !accept_slim(source, slim)) {
-            rejected += 1;
-            return [];
-          }
-          return [{ uid: source.uid, hash: content_hash(source.content), slim: slim.trim() }];
-        });
-        slims.save(name, accepted);
-        slim_version.value += 1;
+        const { preamble, request } = slim_request(source, props.slimGuidance);
+        const slim = await port.request_lean(request, preamble, controller.signal);
+        if (accept_slim(source, slim)) {
+          slims.save(name, [
+            { uid: source.uid, hash: content_hash(source.content), slim: slim.trim() },
+          ]);
+          slim_version.value += 1;
+        } else {
+          rejected += 1;
+        }
       } catch (caught) {
         if (stopped()) {
-          break;
+          return;
         }
-        failed += batch.length;
-        slim_note.value = t("opening.errors.failed", { reason: reason(caught) });
+        failed += 1;
+        last_failure = reason(caught);
       }
     }
+  };
+  try {
+    await Promise.all(Array.from({ length: SLIM_CONCURRENCY }, work));
   } finally {
     slim_running.value = null;
   }
-  if (failed === 0) {
-    slim_note.value = t("opening.books.slim_finished", { rejected });
+  if (stopped()) {
+    return;
+  }
+  slim_note.value =
+    failed === 0
+      ? t("opening.books.slim_finished", { rejected })
+      : t("opening.books.slim_failed", { rejected, failed, reason: last_failure });
+}
+
+/** Whether each listed entry has a condensed text for its current original, or an outdated one. */
+const slim_states = computed(() => {
+  void slim_version.value;
+  const name = book.value;
+  const states = new Map<number, "fresh" | "stale">();
+  if (name === null) {
+    return states;
+  }
+  for (const entry of entries.value) {
+    const stored = slims.get(name, entry.uid);
+    if (stored !== null) {
+      states.set(entry.uid, stored.hash === content_hash(entry.content) ? "fresh" : "stale");
+    }
+  }
+  return states;
+});
+
+const comparing = ref<OpeningBookEntry | null>(null);
+const comparing_stored = computed(() => {
+  void slim_version.value;
+  const name = book.value;
+  const entry = comparing.value;
+  return name === null || entry === null ? null : slims.get(name, entry.uid);
+});
+
+function save_compared(slim: string): void {
+  const name = book.value;
+  const entry = comparing.value;
+  if (name === null || entry === null) {
+    return;
+  }
+  slims.save(name, [{ uid: entry.uid, hash: content_hash(entry.content), slim }]);
+  slim_version.value += 1;
+  comparing.value = null;
+}
+
+/** Removes condensed texts at once; the undo toast saves them back. */
+function revert_slims(name: string, uids: readonly number[], label: string | null): void {
+  const removed = uids.flatMap((uid) => {
+    const entry = slims.remove(name, uid);
+    return entry === null ? [] : [{ uid, ...entry }];
+  });
+  if (removed.length === 0) {
+    return;
+  }
+  slim_version.value += 1;
+  defer_deletion(
+    { label, count: removed.length },
+    {
+      commit: () => Promise.resolve(),
+      restore: () => {
+        slims.save(name, removed);
+        slim_version.value += 1;
+      },
+    },
+  );
+}
+
+function revert_compared(): void {
+  const name = book.value;
+  const entry = comparing.value;
+  if (name === null || entry === null) {
+    return;
+  }
+  comparing.value = null;
+  revert_slims(name, [entry.uid], t("opening.books.slim_label", { name: entry.name }));
+}
+
+function revert_entry(entry: OpeningBookEntry): void {
+  const name = book.value;
+  if (name !== null) {
+    revert_slims(name, [entry.uid], t("opening.books.slim_label", { name: entry.name }));
+  }
+}
+
+function clear_book_slims(): void {
+  const name = book.value;
+  if (name !== null) {
+    revert_slims(name, [...slim_states.value.keys()], null);
   }
 }
 
@@ -489,12 +583,37 @@ function delete_entry(): void {
               @click="slim_running?.abort()"
             />
             <AppButton
+              v-if="slim_states.size > 0"
+              :label="t('opening.books.slim_clear')"
+              variant="ghost"
+              :disabled="slim_running !== null"
+              @click="clear_book_slims"
+            />
+            <AppButton
               :label="t('opening.books.slim_generate', { n: slim_stats.pending.length })"
               :pending="slim_running !== null"
               :disabled="port === null || slim_stats.pending.length === 0 || slim_running !== null"
               @click="() => void generate_slims()"
             />
           </div>
+          <FieldGroup
+            :label="t('opening.books.slim_guidance')"
+            :hint="t('opening.books.slim_guidance_hint')"
+          >
+            <template #default="{ fieldId, describedBy }">
+              <textarea
+                :id="fieldId"
+                :aria-describedby="describedBy"
+                :class="styles.text_area_small"
+                :value="slimGuidance"
+                maxlength="2000"
+                :placeholder="t('opening.books.slim_guidance_placeholder')"
+                @change="
+                  (event) => emit('set-slim-guidance', (event.target as HTMLTextAreaElement).value)
+                "
+              />
+            </template>
+          </FieldGroup>
           <p v-if="slim_note !== null" :class="styles.hint" role="status">{{ slim_note }}</p>
         </template>
 
@@ -639,6 +758,18 @@ function delete_entry(): void {
                 <span :class="styles.table_name">
                   {{ entry.name }}
                   <span :class="styles.keys">
+                    <span
+                      v-if="slim_states.get(entry.uid) === 'fresh'"
+                      :class="styles.pill"
+                      data-tone="new"
+                      >{{ t("opening.books.slim_badge") }}</span
+                    >
+                    <span
+                      v-else-if="slim_states.get(entry.uid) === 'stale'"
+                      :class="styles.pill"
+                      data-tone="changed"
+                      >{{ t("opening.books.slim_stale_badge") }}</span
+                    >
                     <span v-if="entry.constant" :class="styles.pill" data-tone="constant">{{
                       t("opening.entry.constant")
                     }}</span>
@@ -654,6 +785,21 @@ function delete_entry(): void {
                 <span :class="styles.preview">{{ entry.content }}</span>
                 <span :class="styles.order">{{ entry.order }}</span>
                 <span :class="styles.row">
+                  <IconButton
+                    v-if="slim_states.has(entry.uid)"
+                    :icon="Undo2"
+                    :label="t('opening.books.slim_revert_entry', { name: entry.name })"
+                    size="sm"
+                    :disabled="working || slim_running !== null"
+                    @click="revert_entry(entry)"
+                  />
+                  <IconButton
+                    :icon="Scissors"
+                    :label="t('opening.books.slim_compare')"
+                    size="sm"
+                    :disabled="working"
+                    @click="comparing = entry"
+                  />
                   <IconButton
                     :icon="Pencil"
                     :label="t('opening.entry.edit')"
@@ -709,6 +855,16 @@ function delete_entry(): void {
         </div>
       </div>
     </AppDialog>
+    <SlimCompareDialog
+      :entry="comparing"
+      :stored="comparing_stored"
+      :guidance="slimGuidance"
+      :port="port"
+      @close="comparing = null"
+      @save="save_compared"
+      @remove="revert_compared"
+      @set-guidance="(text: string) => emit('set-slim-guidance', text)"
+    />
     <ConfirmDialog
       v-model:open="confirm_delete_book"
       :title="t('opening.books.delete_title', { name: book ?? '' })"

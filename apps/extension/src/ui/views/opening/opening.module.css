@@ -820,3 +820,21 @@
     justify-items: start;
   }
 }
+
+.compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--tc-space-3);
+}
+
+.compare_column {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--tc-space-1);
+  min-width: 0;
+}
+
+.compare_text {
+  composes: tc-field tc-field-multiline from global;
+  min-height: 280px;
+}

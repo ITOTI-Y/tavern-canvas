@@ -519,12 +519,12 @@ export async function compose_studio_capabilities(
                   ),
                 );
               };
-              const on_attempt: StructuredAttemptLog = (mode, outcome) => {
+              const on_attempt: StructuredAttemptLog = (mode, outcome, generation_id) => {
                 timeline.append({
                   event_code: `analysis.${mode}.${outcome}`,
                   module_id: "analysis",
                   generation_anchor: null,
-                  request_id: null,
+                  request_id: generation_id,
                   job_id: null,
                   provider_id: null,
                   error_code: null,

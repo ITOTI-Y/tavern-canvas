@@ -28,43 +28,84 @@ export function content_hash(text: string): string {
 
 type Books = Record<string, Record<string, SlimEntry>>;
 
-function read_all(storage: Storage): Books {
+function parse_books(raw: string | null): Books {
   try {
-    const parsed: unknown = JSON.parse(storage.getItem(STORAGE_KEY) ?? "{}");
+    const parsed: unknown = JSON.parse(raw ?? "{}");
     return typeof parsed === "object" && parsed !== null ? (parsed as Books) : {};
   } catch {
     return {};
   }
 }
 
+export interface StoredSlim {
+  readonly uid: number;
+  readonly hash: string;
+  readonly slim: string;
+}
+
 export interface SlimStore {
   /** The condensed text when one is stored for this exact original. */
   lookup(book: string, uid: number, hash: string): string | null;
-  save(book: string, entries: readonly { uid: number; hash: string; slim: string }[]): void;
+  /** The stored entry whatever original it was made from; `null` when there is none. */
+  get(book: string, uid: number): SlimEntry | null;
+  save(book: string, entries: readonly StoredSlim[]): void;
+  /** Removes and returns the stored entry, so it can be saved back. */
+  remove(book: string, uid: number): SlimEntry | null;
   /** Stored entries of a book that still match `current` original hashes, by uid. */
   matching(book: string, current: ReadonlyMap<number, string>): ReadonlyMap<number, string>;
 }
 
+/**
+ * Every instance reads the storage again whenever its text changed, so the studio's edits reach
+ * the generation hook's instance at once.
+ */
 export function create_slim_store(storage: Storage): SlimStore {
-  let books = read_all(storage);
+  let raw: string | null = null;
+  let books: Books = {};
+  const current = (): Books => {
+    const next = storage.getItem(STORAGE_KEY);
+    if (next !== raw) {
+      raw = next;
+      books = parse_books(next);
+    }
+    return books;
+  };
+  const write = (next: Books): void => {
+    raw = JSON.stringify(next);
+    books = next;
+    storage.setItem(STORAGE_KEY, raw);
+  };
   return {
     lookup(book, uid, hash) {
-      const entry = books[book]?.[String(uid)];
+      const entry = current()[book]?.[String(uid)];
       return entry !== undefined && entry.hash === hash ? entry.slim : null;
     },
+    get(book, uid) {
+      return current()[book]?.[String(uid)] ?? null;
+    },
     save(book, entries) {
-      books = read_all(storage);
-      const stored = { ...books[book] };
+      const all = current();
+      const stored = { ...all[book] };
       for (const entry of entries) {
         stored[String(entry.uid)] = { hash: entry.hash, slim: entry.slim };
       }
-      books = { ...books, [book]: stored };
-      storage.setItem(STORAGE_KEY, JSON.stringify(books));
+      write({ ...all, [book]: stored });
     },
-    matching(book, current) {
+    remove(book, uid) {
+      const all = current();
+      const entry = all[book]?.[String(uid)];
+      if (entry === undefined) {
+        return null;
+      }
+      const { [String(uid)]: _removed, ...rest } = all[book] ?? {};
+      write({ ...all, [book]: rest });
+      return entry;
+    },
+    matching(book, hashes) {
+      const stored = current()[book];
       const result = new Map<number, string>();
-      for (const [uid, hash] of current) {
-        const entry = books[book]?.[String(uid)];
+      for (const [uid, hash] of hashes) {
+        const entry = stored?.[String(uid)];
         if (entry !== undefined && entry.hash === hash) {
           result.set(uid, entry.slim);
         }

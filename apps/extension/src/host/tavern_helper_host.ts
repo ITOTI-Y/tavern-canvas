@@ -48,18 +48,19 @@ export interface TavernRegex {
 interface TavernHelperRequestConfig {
   readonly generation_id: string;
   readonly user_input: string;
-  readonly max_chat_history?: 0;
   readonly should_silence: true;
   readonly should_stream: false;
   readonly should_return_reasoning: true;
   readonly custom_api?: Readonly<Record<string, string>>;
-  readonly overrides?: {
+  readonly overrides: {
     readonly world_info_before?: string;
     readonly world_info_after?: string;
-    readonly chat_history?: {
+    readonly chat_history: {
       readonly with_depth_entries?: false;
       /** Replaces the chat's messages; oldest first. */
-      readonly prompts?: readonly HostHistoryMessage[];
+      readonly prompts: readonly (
+        HostHistoryMessage | { readonly role: "system"; readonly content: string }
+      )[];
     };
   };
   readonly json_schema?: {
@@ -103,7 +104,8 @@ export type TavernHelperPlaceholderPrompt =
 export interface TavernHelperGenerateRawConfig extends TavernHelperRequestConfig {
   /** Sent in this order; a part left out is not sent. */
   readonly ordered_prompts: readonly (
-    TavernHelperPlaceholderPrompt | { readonly role: "system"; readonly content: string }
+    | TavernHelperPlaceholderPrompt
+    | { readonly role: "system" | "assistant"; readonly content: string }
   )[];
 }
 
@@ -440,30 +442,24 @@ export class TavernHelperHost {
   async generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
     const custom_api = to_custom_api(request.connection);
     const replace_world_info = request.world_info.kind === "replace";
-    const history = request.chat_history.length > 0;
     const config: TavernHelperRequestConfig = {
       generation_id: request.generation_id,
       user_input: request.user_input,
-      // An empty prompts list would also drop the persona and author's note, so no history is
-      // asked for by count instead.
-      ...(history ? {} : { max_chat_history: 0 as const }),
       should_silence: true,
       should_stream: false,
       should_return_reasoning: true,
       ...(custom_api === undefined ? {} : { custom_api }),
-      ...(!replace_world_info && !history
-        ? {}
-        : {
-            overrides: {
-              ...(request.world_info.kind === "replace"
-                ? { world_info_before: request.world_info.text, world_info_after: "" }
-                : {}),
-              chat_history: {
-                ...(replace_world_info ? { with_depth_entries: false as const } : {}),
-                ...(history ? { prompts: request.chat_history } : {}),
-              },
-            },
-          }),
+      overrides: {
+        ...(replace_world_info
+          ? { world_info_before: request.world_info.text, world_info_after: "" }
+          : {}),
+        chat_history: {
+          ...(replace_world_info ? { with_depth_entries: false as const } : {}),
+          // World info scans skip system messages, so the request activates entries as before,
+          // when it was the user input that scans also skip.
+          prompts: [...request.chat_history, { role: "system", content: request.instructions }],
+        },
+      },
       ...(request.tools !== undefined
         ? {
             tools: request.tools.tools.map((tool) => ({
@@ -492,7 +488,7 @@ export class TavernHelperHost {
       ? this.#helper.generateRaw({
           ...config,
           ordered_prompts: [
-            { role: "system", content: request.preset.system_prompt },
+            ...request.preset.preamble,
             "world_info_before",
             "persona_description",
             "char_description",

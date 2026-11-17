@@ -41,8 +41,15 @@ export interface ToolPlan<T> {
 export type StructuredMode = "tools" | "json_schema";
 export type StructuredOutcome = "ok" | "fallback" | "failed";
 
-/** One attempt as the diagnostics timeline records it; never the prompt or the reply. */
-export type StructuredAttemptLog = (mode: StructuredMode, outcome: StructuredOutcome) => void;
+/**
+ * One attempt as the diagnostics timeline records it; never the prompt or the reply.
+ * `generation_id` identifies the request, so a host's request log can be matched to Inkwell.
+ */
+export type StructuredAttemptLog = (
+  mode: StructuredMode,
+  outcome: StructuredOutcome,
+  generation_id: string,
+) => void;
 
 /** The single submit tool a JSON schema becomes; the arguments are parsed as the JSON reply was. */
 export function submit_tool<T>(schema: HostJsonSchema, parse: (raw: string) => T): ToolPlan<T> {

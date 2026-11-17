@@ -121,12 +121,23 @@ function current_overrides(): WorldInfoOverrides {
     props.state.settings.settings?.world_info_overrides ?? {
       no_recursion_books: [],
       slim_books: [],
+      slim_guidance: "",
     }
   );
 }
 
 const no_recursion_books = computed(() => current_overrides().no_recursion_books);
 const slim_books = computed(() => current_overrides().slim_books);
+const slim_guidance = computed(() => current_overrides().slim_guidance);
+
+function set_slim_guidance(text: string): void {
+  if (text === slim_guidance.value) {
+    return;
+  }
+  void props.controller.update_settings({
+    world_info_overrides: { ...current_overrides(), slim_guidance: text },
+  });
+}
 
 function set_slim(book: string, value: boolean): void {
   const others = slim_books.value.filter((name) => name !== book);
@@ -178,10 +189,12 @@ function set_no_recursion(book: string, value: boolean): void {
       :lists="lists"
       :no-recursion-books="no_recursion_books"
       :slim-books="slim_books"
+      :slim-guidance="slim_guidance"
       :port="port"
       @refresh-lists="refresh_lists"
       @set-no-recursion="set_no_recursion"
       @set-slim="set_slim"
+      @set-slim-guidance="set_slim_guidance"
     />
     <OpeningTemplates
       v-else

@@ -1,5 +1,6 @@
 import type { InjectionKey } from "vue";
 
+import type { HostPreambleMessage } from "../../host/index.js";
 import type { ToolPlan } from "../../modules/illustration/structured_output.js";
 import type { OpeningHost } from "../../modules/opening/opening_host.js";
 
@@ -39,10 +40,14 @@ export interface OpeningPort {
     signal: AbortSignal,
   ): Promise<T>;
   /**
-   * One request over the analysis connection with Inkwell's built-in preset, without world info or
-   * chat history; aborting `signal` stops it.
+   * One request over the analysis connection with `preamble` in place of a preset, without world
+   * info or chat history; aborting `signal` stops it.
    */
-  request_lean<T>(request: OpeningStructuredRequest<T>, signal: AbortSignal): Promise<T>;
+  request_lean<T>(
+    request: OpeningStructuredRequest<T>,
+    preamble: readonly HostPreambleMessage[],
+    signal: AbortSignal,
+  ): Promise<T>;
   /** Rejects when JS-Slash-Runner lacks the world book or chat message methods. */
   host(): Promise<OpeningHost>;
 }
