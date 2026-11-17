@@ -229,7 +229,6 @@ function set_preset_source(value: string | undefined): void {
 
 const structured_output_options = computed(() => [
   { value: "auto", label: t("settings.illustration.structured_output_auto") },
-  { value: "json_schema", label: t("settings.illustration.structured_output_json") },
   { value: "tools", label: t("settings.illustration.structured_output_tools") },
 ]);
 
@@ -245,7 +244,7 @@ function set_reasoning(value: string | undefined): void {
 }
 
 function set_structured_output(value: string | undefined): void {
-  if (value === "auto" || value === "json_schema" || value === "tools") {
+  if (value === "auto" || value === "tools") {
     update_illustration({ structured_output: value });
   }
 }

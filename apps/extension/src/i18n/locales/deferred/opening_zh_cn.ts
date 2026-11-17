@@ -193,6 +193,12 @@ export const zh_cn_messages = {
       list_title: "全部世界书",
       new: "新建世界书",
       empty: "选择或新建一本世界书。",
+      slim: "注入精简版",
+      slim_hint:
+        "开启后，这本书被激活的条目改为发送已生成的精简版，激活判定仍按原文进行；没有精简版或原文改过的条目照常发送原文。精简版存在本机浏览器中。",
+      slim_stats: "已精简 {done} / {total} 条，{before} → {after} 字",
+      slim_generate: "生成精简版（{n} 条）",
+      slim_finished: "精简完成；{rejected} 条未通过检查，继续使用原文。",
       no_recursion: "正文不触发其他条目",
       no_recursion_hint:
         "开启后，这本书的条目被激活时，其正文不会再递归激活其他条目，可以避免常驻条目每轮把大条目带进提示词。只在扫描时生效，不修改世界书文件。",

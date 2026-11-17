@@ -1,8 +1,8 @@
 import { a as e } from "./ids-pPJWL4BL.js";
 import { i as t, o as n } from "./novelai-CAMu2SDf.js";
 import { i as r, t as i } from "./novelai_models-CXz0Nwhv.js";
-import { a, i as o, o as s, r as c, t as l } from "./server_inspection-CrQSfXpo.js";
-import { n as u } from "./settings-mdfenwE1.js";
+import { a, i as o, o as s, r as c, t as l } from "./server_inspection-CtUW-sWw.js";
+import { n as u } from "./settings-Dgouxv02.js";
 import { F as d, J as f, L as p, M as m, T as h, W as g, _, a as v, b as y, dt as b, g as x, gt as S, h as C, m as w, n as ee, p as T, pt as E, q as D, rt as O, s as k, u as A, v as j, x as M, y as N } from "./vue-i18n-XoxYzLIP.js";
 import { t as P } from "./portal_keys-CIBE-_PC.js";
 import { n as F, t as I } from "./AppIcon-DD754F_c.js";
@@ -1053,20 +1053,13 @@ var ge = F("cable", [
 		function pe(e) {
 			(e === "builtin" || e === "sillytavern") && a({ preset_source: e });
 		}
-		let me = T(() => [
-			{
-				value: "auto",
-				label: n("settings.illustration.structured_output_auto")
-			},
-			{
-				value: "json_schema",
-				label: n("settings.illustration.structured_output_json")
-			},
-			{
-				value: "tools",
-				label: n("settings.illustration.structured_output_tools")
-			}
-		]), he = T(() => [{
+		let me = T(() => [{
+			value: "auto",
+			label: n("settings.illustration.structured_output_auto")
+		}, {
+			value: "tools",
+			label: n("settings.illustration.structured_output_tools")
+		}]), he = T(() => [{
 			value: "preset",
 			label: n("settings.illustration.reasoning_preset")
 		}, {
@@ -1077,7 +1070,7 @@ var ge = F("cable", [
 			(e === "preset" || e === "min") && a({ analysis_reasoning: e });
 		}
 		function _e(e) {
-			(e === "auto" || e === "json_schema" || e === "tools") && a({ structured_output: e });
+			(e === "auto" || e === "tools") && a({ structured_output: e });
 		}
 		let ve = T(() => [
 			{
@@ -2774,7 +2767,7 @@ var Ye = ["id", "aria-describedby"], Xe = ["id", "aria-describedby"], Ze = ["id"
 		controller: {}
 	},
 	setup(e) {
-		let t = y(() => import("./PromptView-D_YvnbZ5.js")), n = y(() => import("./PromptTagPresetPanel-CpfFq9LQ.js")), r = y(() => import("./DiagnosticsView-kCF5XSPz.js")), i = e, { t: a } = ee(), s = [
+		let t = y(() => import("./PromptView-D_YvnbZ5.js")), n = y(() => import("./PromptTagPresetPanel-CpfFq9LQ.js")), r = y(() => import("./DiagnosticsView-DyVRPpZt.js")), i = e, { t: a } = ee(), s = [
 			"illustration",
 			"providers",
 			"translation",

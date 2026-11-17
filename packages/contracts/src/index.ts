@@ -191,6 +191,7 @@ export type {
   TavernCanvasSettings,
   TavernCanvasUiSettings,
   TranslationSettings,
+  WorldInfoOverrides,
   VocabularyRemoteSettings,
 } from "./settings.js";
 export {

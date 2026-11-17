@@ -143,14 +143,10 @@ describe("structured replies", () => {
     expect(attempts).toEqual([["tools", "ok"]]);
   });
 
-  it("keeps retrying with tools in tools-only mode, and never offers tools in JSON-only mode", async () => {
+  it("keeps retrying with tools in tools-only mode", async () => {
     const only_tools = setup([new Error("tool use unsupported"), called('{"n": 6}')], "tools");
     await expect(only_tools.run()).resolves.toEqual({ n: 6 });
     expect(only_tools.sent.every((request) => request.tools !== undefined)).toBe(true);
-
-    const only_json = setup([text('{"n": 7}')], "json_schema");
-    await expect(only_json.run()).resolves.toEqual({ n: 7 });
-    expect(only_json.sent[0]?.tools).toBeUndefined();
   });
 
   it("sends the JSON schema to a text completion API", async () => {

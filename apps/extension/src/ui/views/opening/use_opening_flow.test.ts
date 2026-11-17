@@ -52,6 +52,7 @@ function fake_port(replies: Record<string, string[]>): { port: OpeningPort; aske
       }
       return Promise.resolve(request.parse(reply));
     },
+    request_lean: () => Promise.reject(new Error("unused")),
     host: () => Promise.reject(new Error("unused")),
   };
   return { port, asked };
@@ -209,6 +210,7 @@ describe("use_opening_flow", () => {
           });
         });
       },
+      request_lean: () => Promise.reject(new Error("unused")),
       host: () => Promise.reject(new Error("unused")),
     };
     const flow = use_opening_flow(port, store);
@@ -236,6 +238,7 @@ describe("use_opening_flow", () => {
           ),
         );
       },
+      request_lean: () => Promise.reject(new Error("unused")),
       host: () => Promise.reject(new Error("unused")),
     };
     const flow = use_opening_flow(port, store);

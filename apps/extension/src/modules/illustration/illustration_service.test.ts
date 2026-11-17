@@ -157,6 +157,7 @@ class MemoryHost {
     chat_completion_target: () => this.tool_target,
     list_worldbooks: () => [...this.worldbooks.keys()],
     prevent_world_info_recursion: () => () => {},
+    inject_world_info_slims: () => () => {},
     read_worldbook: (name: string) => Promise.resolve(this.worldbooks.get(name) ?? []),
     stop_generation: (generation_id: string) => {
       this.stopped.push(generation_id);

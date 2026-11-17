@@ -494,7 +494,7 @@ async function save_workflow(): Promise<void> {
           <AppButton
             :label="t('assets.workflow.server_import')"
             variant="ghost"
-            :disabled="item.format !== 'api'"
+            :disabled="item.format === 'unreadable'"
             @click="() => void import_server_workflow(item.path)"
           />
         </li>

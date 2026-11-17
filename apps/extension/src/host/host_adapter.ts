@@ -125,6 +125,18 @@ export type HostGenerationPreset =
  */
 export type PreventWorldInfoRecursion = (books: () => ReadonlySet<string>) => () => void;
 
+/**
+ * The condensed text to send for an active entry, given its book, uid and the hash of its
+ * original text; `null` sends the original.
+ */
+export type WorldInfoSlimLookup = (book: string, uid: number, hash: string) => string | null;
+
+/**
+ * Until the returned function is called, each scan's active entries go to the prompt as the
+ * text `lookup` gives; activation, recursion and timers have already been decided on the originals.
+ */
+export type InjectWorldInfoSlims = (lookup: WorldInfoSlimLookup) => () => void;
+
 export interface PresetGenerationRequest {
   readonly generation_id: string;
   readonly preset: HostGenerationPreset;
@@ -203,6 +215,7 @@ export interface HostAdapter {
   /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
   prevent_world_info_recursion: PreventWorldInfoRecursion;
+  inject_world_info_slims: InjectWorldInfoSlims;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;
   /** `null` when SillyTavern is set to a text completion API, which cannot call tools. */
   chat_completion_target?(): HostChatCompletionTarget | null;

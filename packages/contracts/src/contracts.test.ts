@@ -420,7 +420,7 @@ describe("initial settings and capability contracts", () => {
       structured_output: "auto",
       analysis_reasoning: "preset",
     },
-    world_info_overrides: { no_recursion_books: [] },
+    world_info_overrides: { no_recursion_books: [], slim_books: [] },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system" as const,
@@ -432,6 +432,15 @@ describe("initial settings and capability contracts", () => {
 
   it("accepts bounded settings", () => {
     expect(TavernCanvasSettingsSchema.parse(settings)).toEqual(settings);
+  });
+
+  it("reads the former JSON-only structured output choice as auto", () => {
+    const saved = {
+      ...settings,
+      illustration: { ...settings.illustration, structured_output: "json_schema" },
+    };
+
+    expect(TavernCanvasSettingsSchema.parse(saved).illustration.structured_output).toBe("auto");
   });
 
   it("reads illustration settings saved without a preset source as using a SillyTavern preset", () => {
@@ -539,7 +548,7 @@ describe("strict public object boundaries", () => {
       structured_output: "auto",
       analysis_reasoning: "preset",
     },
-    world_info_overrides: { no_recursion_books: [] },
+    world_info_overrides: { no_recursion_books: [], slim_books: [] },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system" as const,

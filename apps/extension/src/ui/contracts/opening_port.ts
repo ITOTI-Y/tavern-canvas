@@ -38,6 +38,11 @@ export interface OpeningPort {
     options: OpeningRequestOptions,
     signal: AbortSignal,
   ): Promise<T>;
+  /**
+   * One request over the analysis connection with Inkwell's built-in preset, without world info or
+   * chat history; aborting `signal` stops it.
+   */
+  request_lean<T>(request: OpeningStructuredRequest<T>, signal: AbortSignal): Promise<T>;
   /** Rejects when JS-Slash-Runner lacks the world book or chat message methods. */
   host(): Promise<OpeningHost>;
 }

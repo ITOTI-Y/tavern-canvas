@@ -72,15 +72,15 @@ export function tool_key(host: HostAdapter, connection: HostGenerationConnection
     : `${target.source}:${target.model}`;
 }
 
-/** Whether this attempt offers tools: always in `tools` mode, in `auto` unless this connection failed them. */
+/**
+ * Whether this attempt offers tools: always in `tools` mode; in `auto` unless the API takes text
+ * completions (`key` is null) or this connection already failed them.
+ */
 export function uses_tools(
   mode: IllustrationSettings["structured_output"],
   key: string | null,
 ): boolean {
-  if (mode === "tools") {
-    return true;
-  }
-  return mode === "auto" && key !== null && !no_tools.has(key);
+  return mode === "tools" || (key !== null && !no_tools.has(key));
 }
 
 export function forget_tools(key: string | null): void {

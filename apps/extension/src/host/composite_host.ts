@@ -15,6 +15,7 @@ import type {
   HostWorldbookEntry,
   PresetGenerationRequest,
   PresetGenerationResult,
+  WorldInfoSlimLookup,
 } from "./host_adapter.js";
 import type { ChatSurfaceMounts } from "./chat_surface.js";
 import {
@@ -157,6 +158,10 @@ export class CompositeHostAdapter implements HostAdapter {
 
   prevent_world_info_recursion(books: () => ReadonlySet<string>): () => void {
     return this.#sillytavern.prevent_world_info_recursion(books);
+  }
+
+  inject_world_info_slims(lookup: WorldInfoSlimLookup): () => void {
+    return this.#sillytavern.inject_world_info_slims(lookup);
   }
 
   read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]> {

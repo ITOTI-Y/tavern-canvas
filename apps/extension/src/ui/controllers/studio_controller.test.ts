@@ -105,7 +105,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     structured_output: "auto",
     analysis_reasoning: "preset",
   },
-  world_info_overrides: { no_recursion_books: [] },
+  world_info_overrides: { no_recursion_books: [], slim_books: [] },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {
     color_mode: "system",

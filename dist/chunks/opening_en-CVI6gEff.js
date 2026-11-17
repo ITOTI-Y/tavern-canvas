@@ -178,6 +178,11 @@ var e = { opening: {
 		failed: "Writing failed: {reason}"
 	},
 	books: {
+		slim: "Send condensed versions",
+		slim_hint: "When on, this book's active entries are sent as their condensed versions; activation still uses the originals. Entries without one, or edited since, are sent as they are. Condensed versions are kept in this browser.",
+		slim_stats: "{done} / {total} entries condensed, {before} → {after} characters",
+		slim_generate: "Condense ({n} entries)",
+		slim_finished: "Condensing finished; {rejected} entries failed the check and keep their original text.",
 		no_recursion: "Entry text does not activate other entries",
 		no_recursion_hint: "When on, the text of this book's active entries no longer activates other entries by recursion, so always-active entries do not pull large entries into every prompt. Applies at scan time only; the book file is not changed.",
 		title: "World books",

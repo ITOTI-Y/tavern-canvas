@@ -8,7 +8,16 @@ import AppButton from "../../components/AppButton.vue";
 import AppDialog from "../../components/AppDialog.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
+import {
+  accept_slim,
+  is_slim_candidate,
+  slim_batches,
+  slim_request,
+  type SlimSource,
+} from "../../../modules/world_info/slim_requests.js";
+import { content_hash, create_slim_store } from "../../../modules/world_info/slim_store.js";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import type { OpeningPort } from "../../contracts/opening_port.js";
 import { use_deferred_deletion } from "../../components/use_deferred_deletion.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import IconButton from "../../components/IconButton.vue";
@@ -24,6 +33,9 @@ const props = defineProps<{
   readonly lists: OpeningLists;
   /** Books whose entry text never activates other entries; the books stay unchanged. */
   readonly noRecursionBooks: readonly string[];
+  /** Books whose active entries are sent as their stored condensed versions. */
+  readonly slimBooks: readonly string[];
+  readonly port: OpeningPort | null;
 }>();
 
 const section = defineModel<OpeningSection>("section", { required: true });
@@ -31,6 +43,7 @@ const section = defineModel<OpeningSection>("section", { required: true });
 const emit = defineEmits<{
   "refresh-lists": [];
   "set-no-recursion": [book: string, value: boolean];
+  "set-slim": [book: string, value: boolean];
 }>();
 
 const { t } = useI18n();
@@ -274,6 +287,87 @@ async function toggle(entry: OpeningBookEntry, enabled: boolean): Promise<void> 
 
 const deleting_entry = ref<OpeningBookEntry | null>(null);
 
+/* ---------- Condensed entries ---------- */
+
+const slims = create_slim_store(globalThis.localStorage);
+const slim_version = ref(0);
+const slim_running = ref<AbortController | null>(null);
+const slim_note = ref<string | null>(null);
+
+const slim_sources = computed<SlimSource[]>(() =>
+  entries.value
+    .filter((entry) => entry.enabled)
+    .map((entry) => ({
+      uid: entry.uid,
+      name: entry.name,
+      keys: entry.keys,
+      content: entry.content,
+    }))
+    .filter(is_slim_candidate),
+);
+
+const slim_stats = computed(() => {
+  void slim_version.value;
+  const name = book.value;
+  const hashes = new Map(
+    slim_sources.value.map((source) => [source.uid, content_hash(source.content)]),
+  );
+  const stored = name === null ? new Map<number, string>() : slims.matching(name, hashes);
+  const done = slim_sources.value.filter((source) => stored.has(source.uid));
+  return {
+    total: slim_sources.value.length,
+    done: done.length,
+    before: done.reduce((sum, source) => sum + source.content.length, 0),
+    after: [...stored.values()].reduce((sum, slim) => sum + slim.length, 0),
+    pending: slim_sources.value.filter((source) => !stored.has(source.uid)),
+  };
+});
+
+async function generate_slims(): Promise<void> {
+  const name = book.value;
+  const port = props.port;
+  if (name === null || port === null || slim_running.value !== null) {
+    return;
+  }
+  const controller = new AbortController();
+  slim_running.value = controller;
+  const stopped = (): boolean => controller.signal.aborted;
+  slim_note.value = null;
+  let failed = 0;
+  let rejected = 0;
+  try {
+    for (const batch of slim_batches(slim_stats.value.pending)) {
+      if (stopped()) {
+        break;
+      }
+      try {
+        const results = await port.request_lean(slim_request(batch), controller.signal);
+        const accepted = batch.flatMap((source) => {
+          const slim = results.find((result) => result.uid === source.uid)?.slim;
+          if (slim === undefined || !accept_slim(source, slim)) {
+            rejected += 1;
+            return [];
+          }
+          return [{ uid: source.uid, hash: content_hash(source.content), slim: slim.trim() }];
+        });
+        slims.save(name, accepted);
+        slim_version.value += 1;
+      } catch (caught) {
+        if (stopped()) {
+          break;
+        }
+        failed += batch.length;
+        slim_note.value = t("opening.errors.failed", { reason: reason(caught) });
+      }
+    }
+  } finally {
+    slim_running.value = null;
+  }
+  if (failed === 0) {
+    slim_note.value = t("opening.books.slim_finished", { rejected });
+  }
+}
+
 function delete_entry(): void {
   const entry = deleting_entry.value;
   const target = book.value;
@@ -371,6 +465,39 @@ function delete_entry(): void {
           "
         />
 
+        <template v-if="book !== null">
+          <AppSwitch
+            :model-value="slimBooks.includes(book)"
+            :label="t('opening.books.slim')"
+            :description="t('opening.books.slim_hint')"
+            @update:model-value="(value: boolean) => book !== null && emit('set-slim', book, value)"
+          />
+          <div :class="styles.row">
+            <span :class="styles.hint">{{
+              t("opening.books.slim_stats", {
+                done: slim_stats.done,
+                total: slim_stats.total,
+                before: slim_stats.before,
+                after: slim_stats.after,
+              })
+            }}</span>
+            <span :class="styles.spacer" />
+            <AppButton
+              v-if="slim_running !== null"
+              :label="t('opening.status.stop')"
+              variant="ghost"
+              @click="slim_running?.abort()"
+            />
+            <AppButton
+              :label="t('opening.books.slim_generate', { n: slim_stats.pending.length })"
+              :pending="slim_running !== null"
+              :disabled="port === null || slim_stats.pending.length === 0 || slim_running !== null"
+              @click="() => void generate_slims()"
+            />
+          </div>
+          <p v-if="slim_note !== null" :class="styles.hint" role="status">{{ slim_note }}</p>
+        </template>
+
         <StateSurface
           v-if="host === null"
           status="empty"
@@ -414,63 +541,81 @@ function delete_entry(): void {
             />
           </div>
 
-          <div v-if="form !== null" :class="styles.editor">
-            <div :class="styles.grid3">
-              <FieldGroup :label="t('opening.entry.title_label')">
-                <template #default="{ fieldId }">
-                  <input :id="fieldId" v-model="form.name" :class="styles.input" maxlength="120" />
-                </template>
-              </FieldGroup>
-              <FieldGroup :label="t('opening.books.order_label')">
-                <template #default="{ fieldId }">
-                  <NumberStepper
+          <AppDialog
+            :open="form !== null"
+            :title="
+              form?.uid === undefined ? t('opening.books.add_entry') : t('opening.entry.edit')
+            "
+            :close-label="t('common.actions.close')"
+            @update:open="(value) => (form = value ? form : null)"
+          >
+            <div v-if="form !== null" :class="styles.work_inner">
+              <div :class="styles.grid3">
+                <FieldGroup :label="t('opening.entry.title_label')">
+                  <template #default="{ fieldId }">
+                    <input
+                      :id="fieldId"
+                      v-model="form.name"
+                      :class="styles.input"
+                      maxlength="120"
+                    />
+                  </template>
+                </FieldGroup>
+                <FieldGroup :label="t('opening.books.order_label')">
+                  <template #default="{ fieldId }">
+                    <NumberStepper
+                      :id="fieldId"
+                      v-model="form.order"
+                      :label="t('opening.books.order_label')"
+                      :increment-label="t('opening.books.order_up')"
+                      :decrement-label="t('opening.books.order_down')"
+                      :min="0"
+                      :max="10000"
+                    />
+                  </template>
+                </FieldGroup>
+              </div>
+              <AppSwitch
+                v-model="form.constant"
+                :label="t('opening.entry.constant_label')"
+                :description="t('opening.entry.constant_hint')"
+              />
+              <FieldGroup
+                v-if="!form.constant"
+                :label="t('opening.entry.keys_label')"
+                :hint="t('opening.entry.keys_hint')"
+              >
+                <template #default="{ fieldId, describedBy }">
+                  <input
                     :id="fieldId"
-                    v-model="form.order"
-                    :label="t('opening.books.order_label')"
-                    :increment-label="t('opening.books.order_up')"
-                    :decrement-label="t('opening.books.order_down')"
-                    :min="0"
-                    :max="10000"
+                    v-model="form.keys"
+                    :class="styles.input"
+                    :aria-describedby="describedBy"
                   />
                 </template>
               </FieldGroup>
-            </div>
-            <AppSwitch
-              v-model="form.constant"
-              :label="t('opening.entry.constant_label')"
-              :description="t('opening.entry.constant_hint')"
-            />
-            <FieldGroup
-              v-if="!form.constant"
-              :label="t('opening.entry.keys_label')"
-              :hint="t('opening.entry.keys_hint')"
-            >
-              <template #default="{ fieldId, describedBy }">
-                <input
-                  :id="fieldId"
-                  v-model="form.keys"
-                  :class="styles.input"
-                  :aria-describedby="describedBy"
+              <FieldGroup :label="t('opening.entry.content_label')">
+                <template #default="{ fieldId }">
+                  <textarea :id="fieldId" v-model="form.content" :class="styles.text_area" />
+                </template>
+              </FieldGroup>
+              <div :class="styles.row">
+                <span :class="styles.spacer" />
+                <AppButton
+                  :label="t('common.actions.cancel')"
+                  variant="ghost"
+                  @click="form = null"
                 />
-              </template>
-            </FieldGroup>
-            <FieldGroup :label="t('opening.entry.content_label')">
-              <template #default="{ fieldId }">
-                <textarea :id="fieldId" v-model="form.content" :class="styles.text_area" />
-              </template>
-            </FieldGroup>
-            <div :class="styles.row">
-              <span :class="styles.spacer" />
-              <AppButton :label="t('common.actions.cancel')" variant="ghost" @click="form = null" />
-              <AppButton
-                :label="t('common.actions.save')"
-                variant="primary"
-                :pending="working"
-                :disabled="form.name.trim() === ''"
-                @click="save_form"
-              />
+                <AppButton
+                  :label="t('common.actions.save')"
+                  variant="primary"
+                  :pending="working"
+                  :disabled="form.name.trim() === ''"
+                  @click="save_form"
+                />
+              </div>
             </div>
-          </div>
+          </AppDialog>
 
           <StateSurface
             :status="loading ? 'loading' : shown.length === 0 ? 'empty' : 'ready'"

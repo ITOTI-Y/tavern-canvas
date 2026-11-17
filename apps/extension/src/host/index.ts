@@ -13,6 +13,7 @@ export type {
   HostChatSnapshot,
   HostGenerationConnection,
   HostGenerationPreset,
+  WorldInfoSlimLookup,
   HostGenerationEvent,
   HostGenerationHandler,
   HostHistoryMessage,

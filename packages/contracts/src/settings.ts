@@ -157,10 +157,13 @@ export const IllustrationSettingsSchema = z.strictObject({
     .record(z.string().min(1).max(300), z.string().trim().min(1).max(64).nullable())
     .default({}),
   /**
-   * How analysis replies are kept structured: `auto` calls a submit tool and falls back to a JSON
-   * schema when the connection cannot call tools; the other two use only that mode.
+   * How model replies are kept structured. Every request calls a submit tool; `auto` falls back to
+   * a JSON schema only when the connection cannot call tools. Settings saved with the former
+   * JSON-only choice read as `auto`.
    */
-  structured_output: z.enum(["auto", "tools", "json_schema"]).default("auto"),
+  structured_output: z
+    .preprocess((value) => (value === "json_schema" ? "auto" : value), z.enum(["auto", "tools"]))
+    .default("auto"),
   /**
    * `min` asks for the lowest reasoning effort on the analysis and wardrobe requests only;
    * `preset` keeps the chat completion settings' effort.
@@ -197,6 +200,8 @@ export type VocabularyRemoteSettings = z.infer<typeof VocabularyRemoteSettingsSc
 export const WorldInfoOverridesSchema = z.strictObject({
   /** Books whose entry text never activates other entries by recursion. */
   no_recursion_books: z.array(z.string().trim().min(1).max(200)).max(100).default([]),
+  /** Books whose active entries are sent as their condensed versions where one is stored. */
+  slim_books: z.array(z.string().trim().min(1).max(200)).max(100).default([]),
 });
 export type WorldInfoOverrides = z.infer<typeof WorldInfoOverridesSchema>;
 
@@ -211,7 +216,10 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   vocabulary_remote: VocabularyRemoteSettingsSchema,
   illustration: IllustrationSettingsSchema,
   translation: TranslationSettingsSchema,
-  world_info_overrides: WorldInfoOverridesSchema.default({ no_recursion_books: [] }),
+  world_info_overrides: WorldInfoOverridesSchema.default({
+    no_recursion_books: [],
+    slim_books: [],
+  }),
   ui: TavernCanvasUiSettingsSchema,
 });
 export type TavernCanvasSettings = z.infer<typeof TavernCanvasSettingsSchema>;

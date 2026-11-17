@@ -6,6 +6,7 @@ import {
   type SillyTavernContextSurface,
   type SillyTavernEventListener,
 } from "./sillytavern_host.js";
+import { content_hash } from "../modules/world_info/slim_store.js";
 
 const EVENT_TYPES = {
   GENERATION_STARTED: "generation_started",
@@ -19,6 +20,7 @@ const EVENT_TYPES = {
   MORE_MESSAGES_LOADED: "more_messages_loaded",
   CHAT_COMPLETION_SETTINGS_READY: "chat_completion_settings_ready",
   WORLDINFO_ENTRIES_LOADED: "worldinfo_entries_loaded",
+  WORLDINFO_SCAN_DONE: "worldinfo_scan_done",
 };
 
 function create_host(
@@ -144,6 +146,45 @@ describe("SillyTavernHost world info recursion", () => {
       false,
       false,
     ]);
+  });
+});
+
+describe("SillyTavernHost condensed world info", () => {
+  it("sends the stored condensed text of active entries whose original is unchanged", () => {
+    const { host, context, emit } = create_host();
+    (context as { substituteParams?: (text: string) => string }).substituteParams = (text) =>
+      text.replace("{{char}}", "Seraphina");
+    const lookup = vi.fn((_book: string, uid: number, hash: string) =>
+      uid === 1 && hash === content_hash("long original") ? "{{char}} guards it" : null,
+    );
+    const stop = host.inject_world_info_slims(lookup);
+    const kept = { world: "Eldoria", uid: 2, content: "kept" };
+    const condensed = { world: "Eldoria", uid: 1, content: "long original, substituted" };
+
+    emit("worldinfo_entries_loaded", {
+      globalLore: [
+        { world: "Eldoria", uid: 1, content: "long original" },
+        { world: "Eldoria", uid: 2, content: "kept" },
+      ],
+    });
+    emit("worldinfo_scan_done", {
+      isFinal: false,
+      activated: { entries: new Map([["1", condensed]]) },
+    });
+    expect(condensed.content).toBe("long original, substituted");
+    emit("worldinfo_scan_done", {
+      isFinal: true,
+      activated: {
+        entries: new Map([
+          ["1", condensed],
+          ["2", kept],
+        ]),
+      },
+    });
+    stop();
+
+    expect(condensed.content).toBe("Seraphina guards it");
+    expect(kept.content).toBe("kept");
   });
 });
 

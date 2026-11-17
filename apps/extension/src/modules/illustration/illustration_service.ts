@@ -666,6 +666,19 @@ export class IllustrationService {
     );
   }
 
+  /** One request with the analysis connection and the built-in preset, without world info or chat. */
+  request_lean<T>(request: OpeningStructuredRequest<T>, signal: AbortSignal): Promise<T> {
+    const base = this.#deps.settings();
+    const settings: IllustrationSettings = { ...base, preset_source: "builtin" };
+    return request_analysis(
+      { ...this.#deps, settings: () => settings },
+      "",
+      { ...request, history: [] },
+      signal,
+      { world_info: { mode: "off" } },
+    );
+  }
+
   /** The open chat's messages as the strip range picker lists them, each with its active swipe. */
   async strip_messages(): Promise<{
     readonly chat_id: string;

@@ -17,6 +17,7 @@ import {
   open_database,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
+import { create_slim_store } from "../modules/world_info/slim_store.js";
 import { WorldInfoOverridesModule } from "../modules/world_info/world_info_overrides_module.js";
 import { create_wardrobe_runner } from "../modules/illustration/analysis_requests.js";
 import type { StructuredAttemptLog } from "../modules/illustration/structured_output.js";
@@ -597,7 +598,8 @@ export async function compose_studio_capabilities(
               modules.push(
                 new WorldInfoOverridesModule(
                   host,
-                  () => settings_adapter.get_settings().world_info_overrides.no_recursion_books,
+                  () => settings_adapter.get_settings().world_info_overrides,
+                  create_slim_store(globalThis.localStorage),
                 ),
               );
             }

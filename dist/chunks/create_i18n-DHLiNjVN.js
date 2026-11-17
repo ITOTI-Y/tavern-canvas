@@ -421,7 +421,7 @@ var o = {
 			import_action: "Import workflow",
 			server_action: "Import from server",
 			server_title: "Workflows on the ComfyUI server",
-			server_description: "Lists the workflows saved in ComfyUI's workflows folder. Those in API format can be imported as they are; save an editor-format one again with ComfyUI's \"Export (API)\" first.",
+			server_description: "Lists the workflows saved in ComfyUI's workflows folder. Those in API format are imported as they are; editor-format ones are converted with the server's node definitions. Save a workflow with subgraphs with ComfyUI's \"Export (API)\" first.",
 			server_label: "Server",
 			server_loading: "Reading the workflows on the server…",
 			server_empty: "No workflows are saved on this server.",
@@ -429,7 +429,7 @@ var o = {
 			server_no_profile: "There is no ComfyUI image profile yet. Add one under Image services in Settings, then import from here.",
 			server_import: "Import",
 			format_api: "API format",
-			format_editor: "Editor format, needs Export (API)",
+			format_editor: "Editor format, converted on import",
 			format_unreadable: "Not recognised",
 			detect_action: "Detect nodes",
 			edit_action: "Edit workflow",
@@ -664,13 +664,12 @@ var o = {
 			custom_key_cleared: "Key removed.",
 			custom_key_failed: "The key could not be changed.",
 			reasoning_label: "Analysis reasoning effort",
-			reasoning_hint: "Applies to illustration analysis and wardrobe requests only; story replies and the opening page keep their own. Lowest cuts the output tokens spent on reasoning; switch back if the analysis gets worse.",
+			reasoning_hint: "Applies to illustration analysis and wardrobe requests only; story replies and the opening page keep their own. Lowest cuts the output tokens spent on reasoning on models that support it; some, such as Gemini 4 Hydrogen, reason as much at the lowest level as at low. Switch back if the analysis gets worse.",
 			reasoning_preset: "Follow the current preset",
 			reasoning_min: "Lowest",
 			structured_output_label: "Structured replies",
-			structured_output_hint: "Tool calling sends each reply through submit tools; when the connection cannot call tools, auto mode switches to a JSON schema for this session. With the Advanced Preset extension enabled, tool calling requests are sent by SillyTavern instead of Advanced Preset: the preset's prompt is kept, its workflow stages are skipped. JSON schema requests are still sent by Advanced Preset.",
-			structured_output_auto: "Tool calling, JSON schema as fallback",
-			structured_output_json: "JSON schema only",
+			structured_output_hint: "Every Inkwell model request returns its result through a submit tool. When the connection cannot call tools, auto mode switches to a JSON schema for this session; tool calling only reports an error instead. With the Advanced Preset extension enabled, tool calling requests are sent by SillyTavern instead of Advanced Preset: the preset's prompt is kept, its workflow stages are skipped.",
+			structured_output_auto: "Tool calling, JSON schema when unsupported",
 			structured_output_tools: "Tool calling only",
 			chat_history_label: "Chat messages sent with the analysis",
 			wardrobe_model_label: "Wardrobe update model",
@@ -1039,7 +1038,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-xwucDonr.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-6FWRWzwO.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

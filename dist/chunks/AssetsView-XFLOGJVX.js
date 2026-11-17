@@ -2303,7 +2303,7 @@ var et = ["data-editing"], tt = "none", nt = "solo, full body, standing, looking
 				F(Q, {
 					label: v(n)("assets.workflow.server_import"),
 					variant: "ghost",
-					disabled: e.format !== "api",
+					disabled: e.format === "unreadable",
 					onClick: () => void be(e.path)
 				}, null, 8, [
 					"label",

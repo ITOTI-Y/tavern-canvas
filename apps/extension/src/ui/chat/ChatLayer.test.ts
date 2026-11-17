@@ -84,6 +84,7 @@ function create_host(text_element: HTMLElement): HostAdapter {
     sync_regex_scripts: () => Promise.resolve(false),
     list_worldbooks: () => [],
     prevent_world_info_recursion: () => () => {},
+    inject_world_info_slims: () => () => {},
     read_worldbook: () => Promise.resolve([]),
     translate_deepl: () => Promise.reject(new Error("not used")),
     read_swipe_wardrobe: () => null,

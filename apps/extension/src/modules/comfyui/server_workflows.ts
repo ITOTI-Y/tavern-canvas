@@ -1,9 +1,10 @@
+import { convert_editor_workflow, editor_node_types } from "./editor_workflow.js";
 import type { ComfyUiGet } from "./server_inspection.js";
 import { parse_workflow, WorkflowFormatError } from "./workflow_mapping.js";
 
 /**
  * A workflow saved on the ComfyUI server. `api` can be used as it is; `editor` is the editor's own
- * save format, which has to be saved again with ComfyUI's "Export (API)" first.
+ * save format, converted to API format with the server's node definitions when imported.
  */
 export interface ServerWorkflow {
   /** Relative to the user's `workflows` folder, with `/` separators. */
@@ -62,10 +63,23 @@ export async function list_server_workflows(get: ComfyUiGet): Promise<readonly S
   );
 }
 
-/** A saved workflow's JSON text, ready for the workflow import; rejects unless it is in API format. */
+/**
+ * A saved workflow's JSON text in API format, ready for the workflow import. An editor workflow is
+ * converted with the `/object_info` of each node class it uses; rejects when it cannot be.
+ */
 export async function read_server_workflow(get: ComfyUiGet, path: string): Promise<string> {
   const value = await get(file_route(path));
-  const text = JSON.stringify(value, null, 2);
-  parse_workflow(text);
-  return text;
+  if (workflow_format(value) !== "editor") {
+    const text = JSON.stringify(value, null, 2);
+    parse_workflow(text);
+    return text;
+  }
+  const node_info = new Map<string, unknown>();
+  for (const type of editor_node_types(value)) {
+    const answer = await get(`/object_info/${encodeURIComponent(type)}`);
+    if (is_record(answer) && answer[type] !== undefined) {
+      node_info.set(type, answer[type]);
+    }
+  }
+  return JSON.stringify(convert_editor_workflow(value, node_info), null, 2);
 }

@@ -82,11 +82,7 @@ var _ = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	size_sets: c(T).max(20).default([]),
 	size_set_id: n().trim().min(1).max(64).nullable().default(null),
 	size_set_by_chat: a(n().min(1).max(300), n().trim().min(1).max(64).nullable()).default({}),
-	structured_output: l([
-		"auto",
-		"tools",
-		"json_schema"
-	]).default("auto"),
+	structured_output: s((e) => e === "json_schema" ? "auto" : e, l(["auto", "tools"])).default("auto"),
 	analysis_reasoning: l(["preset", "min"]).default("preset")
 }), D = r({
 	source: n().trim().min(1).max(32),
@@ -97,7 +93,10 @@ var _ = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 }), k = "tavern_canvas:vocabulary:hf_token", A = r({
 	catalog_url: d([t(""), e({ protocol: /^https$/u }).max(2048)]),
 	token_saved: i()
-}), j = r({ no_recursion_books: c(n().trim().min(1).max(200)).max(100).default([]) }), M = r({
+}), j = r({
+	no_recursion_books: c(n().trim().min(1).max(200)).max(100).default([]),
+	slim_books: c(n().trim().min(1).max(200)).max(100).default([])
+}), M = r({
 	schema_version: t(1),
 	active_namespace: _,
 	locale: l([
@@ -112,7 +111,10 @@ var _ = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	vocabulary_remote: A,
 	illustration: E,
 	translation: O,
-	world_info_overrides: j.default({ no_recursion_books: [] }),
+	world_info_overrides: j.default({
+		no_recursion_books: [],
+		slim_books: []
+	}),
 	ui: y
 });
 //#endregion

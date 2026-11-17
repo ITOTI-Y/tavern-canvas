@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { WorldInfoOverrides } from "@tavern-canvas/contracts";
 import { computed, inject, onMounted, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -115,14 +116,35 @@ const templates = computed<readonly OpeningTemplate[]>(() =>
     : [],
 );
 
-const no_recursion_books = computed(
-  () => props.state.settings.settings?.world_info_overrides.no_recursion_books ?? [],
-);
+function current_overrides(): WorldInfoOverrides {
+  return (
+    props.state.settings.settings?.world_info_overrides ?? {
+      no_recursion_books: [],
+      slim_books: [],
+    }
+  );
+}
+
+const no_recursion_books = computed(() => current_overrides().no_recursion_books);
+const slim_books = computed(() => current_overrides().slim_books);
+
+function set_slim(book: string, value: boolean): void {
+  const others = slim_books.value.filter((name) => name !== book);
+  void props.controller.update_settings({
+    world_info_overrides: {
+      ...current_overrides(),
+      slim_books: value ? [...others, book] : others,
+    },
+  });
+}
 
 function set_no_recursion(book: string, value: boolean): void {
   const others = no_recursion_books.value.filter((name) => name !== book);
   void props.controller.update_settings({
-    world_info_overrides: { no_recursion_books: value ? [...others, book] : others },
+    world_info_overrides: {
+      ...current_overrides(),
+      no_recursion_books: value ? [...others, book] : others,
+    },
   });
 }
 </script>
@@ -155,8 +177,11 @@ function set_no_recursion(book: string, value: boolean): void {
       :host-error="host_error"
       :lists="lists"
       :no-recursion-books="no_recursion_books"
+      :slim-books="slim_books"
+      :port="port"
       @refresh-lists="refresh_lists"
       @set-no-recursion="set_no_recursion"
+      @set-slim="set_slim"
     />
     <OpeningTemplates
       v-else

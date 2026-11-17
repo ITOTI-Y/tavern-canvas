@@ -7,7 +7,9 @@ import type {
   HostMessageRenderedHandler,
   HostStoryStatus,
   HostSwipeLocation,
+  WorldInfoSlimLookup,
 } from "./host_adapter.js";
+import { content_hash, is_slimmable } from "../modules/world_info/slim_store.js";
 
 export type SillyTavernEventListener = (...arguments_: readonly unknown[]) => void;
 
@@ -83,6 +85,7 @@ export interface SillyTavernContextSurface {
   readonly mainApi?: unknown;
   readonly chatCompletionSettings?: unknown;
   readonly chatMetadata?: Record<string, unknown>;
+  readonly substituteParams?: (text: string) => string;
 }
 
 export interface RequestAdjustments {
@@ -334,6 +337,71 @@ export class SillyTavernHost {
     context.eventSource.on(event_name, listener);
     return () => {
       context.eventSource.removeListener(event_name, listener);
+    };
+  }
+
+  /**
+   * Hashes each entry's original text as the scan loads it, then, once the scan has settled which
+   * entries are active, swaps in the condensed text the lookup holds for that exact original.
+   */
+  inject_world_info_slims(lookup: WorldInfoSlimLookup): () => void {
+    const context = this.#get_context();
+    const names = context.eventTypes as Readonly<Record<string, string | undefined>>;
+    const loaded_event = names.WORLDINFO_ENTRIES_LOADED;
+    const done_event = names.WORLDINFO_SCAN_DONE;
+    if (loaded_event === undefined || done_event === undefined) {
+      return () => {};
+    }
+    let hashes = new Map<string, string>();
+    const key = (world: string, uid: number): string => `${world}\u0000${String(uid)}`;
+    const on_loaded: SillyTavernEventListener = (loaded) => {
+      hashes = new Map();
+      if (!is_plain_record(loaded)) {
+        return;
+      }
+      for (const list of Object.values(loaded)) {
+        for (const entry of Array.isArray(list) ? list : []) {
+          if (
+            is_plain_record(entry) &&
+            typeof entry.world === "string" &&
+            typeof entry.uid === "number" &&
+            typeof entry.content === "string" &&
+            is_slimmable(entry.content)
+          ) {
+            hashes.set(key(entry.world, entry.uid), content_hash(entry.content));
+          }
+        }
+      }
+    };
+    const on_done: SillyTavernEventListener = (args) => {
+      if (!is_plain_record(args) || args.isFinal !== true || !is_plain_record(args.activated)) {
+        return;
+      }
+      const entries = args.activated.entries;
+      if (!(entries instanceof Map)) {
+        return;
+      }
+      const substitute = this.#get_context().substituteParams ?? ((text: string) => text);
+      for (const entry of entries.values() as Iterable<unknown>) {
+        if (
+          !is_plain_record(entry) ||
+          typeof entry.world !== "string" ||
+          typeof entry.uid !== "number"
+        ) {
+          continue;
+        }
+        const hash = hashes.get(key(entry.world, entry.uid));
+        const slim = hash === undefined ? null : lookup(entry.world, entry.uid, hash);
+        if (slim !== null) {
+          entry.content = substitute(slim);
+        }
+      }
+    };
+    context.eventSource.on(loaded_event, on_loaded);
+    context.eventSource.on(done_event, on_done);
+    return () => {
+      context.eventSource.removeListener(loaded_event, on_loaded);
+      context.eventSource.removeListener(done_event, on_done);
     };
   }
 
