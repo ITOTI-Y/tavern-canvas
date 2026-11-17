@@ -1,13 +1,36 @@
-import type { OpeningBookEntry, OpeningEntryChanges } from "./opening_host.js";
-import type { OpeningDraftPayload, OpeningEntry } from "./opening_model.js";
+import type {
+  EntryPlacement,
+  OpeningBookEntry,
+  OpeningEntryChanges,
+  OpeningEntryInput,
+} from "./opening_host.js";
+import type { OpeningDraftPayload, OpeningEntry, WrittenEntry } from "./opening_model.js";
 
-export type WriteStatus = "new" | "modified" | "same";
+/**
+ * How a draft entry stands against the target book, judged from the draft, the book and the last
+ * write: `changed` the draft changed since; `book_edited` only the book did; `conflict` both did;
+ * `book_deleted` the written entry is gone from the book; `removed` a written entry the draft no
+ * longer has.
+ */
+export type WriteStatus =
+  "new" | "changed" | "same" | "book_edited" | "conflict" | "book_deleted" | "removed";
 
-/** One draft entry against the target book: matched by name, ignoring case and outer spaces. */
 export interface WriteRow {
-  readonly entry: OpeningEntry;
+  /** The draft entry's id, or `book:<uid>` for a removed entry. */
+  readonly key: string;
+  /** `null` only for a removed entry. */
+  readonly entry: OpeningEntry | null;
   readonly existing: OpeningBookEntry | null;
   readonly status: WriteStatus;
+  /** Ticked when the dialog opens: the change comes from the draft and overwrites nothing the user edited. */
+  readonly suggested: boolean;
+}
+
+/** Where new entries go; `constant_no_recursion` keeps always-active text from activating other entries. */
+export interface WritePlacement {
+  readonly position: EntryPlacement["position"];
+  readonly depth: number;
+  readonly constant_no_recursion: boolean;
 }
 
 /** Entries of every step that has a result, in step order. */
@@ -19,59 +42,199 @@ export function draft_entries(draft: OpeningDraftPayload): OpeningEntry[] {
 
 const name_key = (name: string): string => name.trim().toLowerCase();
 
-function same_keys(left: readonly string[], right: readonly string[]): boolean {
+interface Comparable {
+  readonly name: string;
+  readonly constant: boolean;
+  readonly keys: readonly string[];
+  readonly content: string;
+}
+
+const of_entry = (entry: OpeningEntry): Comparable => ({
+  name: entry.title,
+  constant: entry.constant,
+  keys: entry.constant ? [] : entry.keys,
+  content: entry.content,
+});
+
+function same(left: Comparable, right: Comparable): boolean {
   const sorted = (keys: readonly string[]): string => [...keys].sort().join("\n");
-  return sorted(left) === sorted(right);
+  return (
+    name_key(left.name) === name_key(right.name) &&
+    left.content.trim() === right.content.trim() &&
+    left.constant === right.constant &&
+    (left.constant || sorted(left.keys) === sorted(right.keys))
+  );
 }
 
 export function plan_write(
   entries: readonly OpeningEntry[],
   existing: readonly OpeningBookEntry[],
+  written: readonly WrittenEntry[],
 ): WriteRow[] {
-  const by_name = new Map(existing.map((entry) => [name_key(entry.name), entry]));
-  return entries.map((entry) => {
-    const match = by_name.get(name_key(entry.title)) ?? null;
-    if (match === null) {
-      return { entry, existing: null, status: "new" };
+  const book_by_uid = new Map(existing.map((entry) => [entry.uid, entry]));
+  const base_by_entry = new Map(written.map((base) => [base.entry_id, base]));
+  const draft_ids = new Set(entries.map((entry) => entry.id));
+  // Book entries already tied to a draft entry by the last write; a name match never takes them.
+  const claimed = new Set(
+    written.filter((base) => draft_ids.has(base.entry_id)).map((base) => base.uid),
+  );
+  const by_name = new Map(
+    existing
+      .filter((entry) => !claimed.has(entry.uid))
+      .map((entry) => [name_key(entry.name), entry]),
+  );
+
+  const rows: WriteRow[] = entries.map((entry) => {
+    const base = base_by_entry.get(entry.id);
+    if (base !== undefined) {
+      const book = book_by_uid.get(base.uid);
+      if (book === undefined) {
+        return { key: entry.id, entry, existing: null, status: "book_deleted", suggested: false };
+      }
+      const draft_changed = !same(of_entry(entry), base);
+      const book_changed = !same(book, base);
+      const status: WriteStatus = draft_changed
+        ? book_changed
+          ? "conflict"
+          : "changed"
+        : book_changed
+          ? "book_edited"
+          : "same";
+      return { key: entry.id, entry, existing: book, status, suggested: status === "changed" };
     }
-    const same =
-      match.content.trim() === entry.content.trim() &&
-      match.constant === entry.constant &&
-      (entry.constant || same_keys(match.keys, entry.keys));
-    return { entry, existing: match, status: same ? "same" : "modified" };
+    const match = by_name.get(name_key(entry.title));
+    if (match === undefined) {
+      return { key: entry.id, entry, existing: null, status: "new", suggested: true };
+    }
+    by_name.delete(name_key(entry.title));
+    claimed.add(match.uid);
+    const status: WriteStatus = same(of_entry(entry), match) ? "same" : "changed";
+    return { key: entry.id, entry, existing: match, status, suggested: status === "changed" };
   });
+
+  for (const base of written) {
+    const book = book_by_uid.get(base.uid);
+    if (draft_ids.has(base.entry_id) || book === undefined || claimed.has(book.uid)) {
+      continue;
+    }
+    claimed.add(book.uid);
+    rows.push({
+      key: `book:${String(book.uid)}`,
+      entry: null,
+      existing: book,
+      status: "removed",
+      suggested: same(book, base),
+    });
+  }
+  return rows;
 }
 
 const ORDER_STEP = 10;
 
-/** New entries go after the book's last entry, in draft order; changed ones keep their place. */
+/**
+ * New entries go after the book's last entry, in draft order, with `placement`; changed ones keep
+ * their uid, state, order and placement. A chosen removed row deletes its book entry.
+ */
 export function write_changes(
   rows: readonly WriteRow[],
   chosen: ReadonlySet<string>,
   existing: readonly OpeningBookEntry[],
+  placement: WritePlacement,
 ): OpeningEntryChanges {
   let next_order = existing.reduce((highest, entry) => Math.max(highest, entry.order), 0);
-  const upsert = rows
-    .filter((row) => row.status !== "same" && chosen.has(row.entry.id))
-    .map((row) => {
-      const base = {
-        name: row.entry.title,
-        constant: row.entry.constant,
-        keys: row.entry.constant ? [] : row.entry.keys,
-        content: row.entry.content,
-      };
-      if (row.existing !== null) {
-        return {
+  const upsert = rows.flatMap((row): OpeningEntryInput[] => {
+    const { entry } = row;
+    if (entry === null || row.status === "same" || !chosen.has(row.key)) {
+      return [];
+    }
+    const base = {
+      name: entry.title,
+      constant: entry.constant,
+      keys: entry.constant ? [] : entry.keys,
+      content: entry.content,
+    };
+    if (row.existing !== null) {
+      return [
+        {
           ...base,
           uid: row.existing.uid,
           enabled: row.existing.enabled,
           order: row.existing.order,
-        };
+        },
+      ];
+    }
+    next_order += ORDER_STEP;
+    return [
+      {
+        ...base,
+        enabled: true,
+        order: next_order,
+        placement: {
+          position: placement.position,
+          depth: placement.depth,
+          prevent_outgoing: entry.constant && placement.constant_no_recursion,
+        },
+      },
+    ];
+  });
+  const remove = rows.flatMap((row) =>
+    row.status === "removed" && row.existing !== null && chosen.has(row.key)
+      ? [row.existing.uid]
+      : [],
+  );
+  return { upsert, remove };
+}
+
+/**
+ * The snapshot to keep after a write: every draft entry the book now holds as the draft has it,
+ * and the last snapshot of anything the write left alone.
+ */
+export function written_after(
+  rows: readonly WriteRow[],
+  chosen: ReadonlySet<string>,
+  book_after: readonly OpeningBookEntry[],
+  previous: readonly WrittenEntry[],
+): WrittenEntry[] {
+  const previous_by_entry = new Map(previous.map((base) => [base.entry_id, base]));
+  const taken = new Set(
+    rows.flatMap((row) =>
+      row.existing !== null && row.status !== "book_deleted" ? [row.existing.uid] : [],
+    ),
+  );
+  const result: WrittenEntry[] = [];
+  for (const row of rows) {
+    if (row.entry === null) {
+      const kept = row.existing !== null && !chosen.has(row.key);
+      const base = previous.find((item) => item.uid === row.existing?.uid);
+      if (kept && base !== undefined) {
+        result.push(base);
       }
-      next_order += ORDER_STEP;
-      return { ...base, enabled: true, order: next_order };
-    });
-  return { upsert, remove: [] };
+      continue;
+    }
+    const entry = row.entry;
+    const in_book = row.status === "same" || chosen.has(row.key);
+    if (!in_book) {
+      const base = previous_by_entry.get(entry.id);
+      if (base !== undefined) {
+        result.push(base);
+      }
+      continue;
+    }
+    let uid = row.existing !== null && row.status !== "book_deleted" ? row.existing.uid : null;
+    if (uid === null) {
+      const created = book_after.find(
+        (candidate) =>
+          !taken.has(candidate.uid) && name_key(candidate.name) === name_key(entry.title),
+      );
+      if (created === undefined) {
+        continue;
+      }
+      taken.add(created.uid);
+      uid = created.uid;
+    }
+    result.push({ entry_id: entry.id, uid, ...of_entry(entry), keys: [...of_entry(entry).keys] });
+  }
+  return result;
 }
 
 export interface MarkdownLabels {

@@ -1,8 +1,17 @@
 import type { InjectionKey, Ref } from "vue";
 
+import type { DeferredDeletionActions } from "../controllers/studio_controller.js";
+import type { DeletionSubject } from "./view_models.js";
+
 import type { PromptTranslator } from "../../modules/translation/prompt_translator.js";
 import type { CharacterTags } from "../../modules/wardrobe/character_from_image.js";
 import type { OutfitTags } from "../../modules/wardrobe/outfit_from_image.js";
+
+/** Deletes after an undo window; views hide the item themselves and `restore` shows it again. */
+export type DeferDeletion = (subject: DeletionSubject, actions: DeferredDeletionActions) => void;
+export const DEFER_DELETION_KEY: InjectionKey<DeferDeletion> = Symbol(
+  "tavern-canvas-defer-deletion",
+);
 
 /** Reka portals must render into the Shadow Root's portal element, never `document.body`. */
 export const PORTAL_TARGET_KEY: InjectionKey<HTMLElement> = Symbol("tavern-canvas-portal-target");

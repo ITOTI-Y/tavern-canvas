@@ -48,7 +48,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
-    gallery: { records: [], selected_record_id: null, bulk_delete_command: IDLE_COMMAND_STATE },
+    gallery: { records: [], selected_record_id: null },
     diagnostics: {
       snapshot: null,
       timeline: [],
@@ -61,6 +61,8 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],
+    pending_deletions: [],
+    deletion_failure: null,
     ...overrides,
   };
 }
@@ -525,5 +527,23 @@ describe("StudioShell narrow and long locale labels", () => {
     const nav = wrapper.find('[data-testid="studio-bottom-nav"]');
     const items = nav.findAll("button");
     expect(items.map((item) => item.text())).toEqual(["开篇", "创作", "素材库", "图库", "设置"]);
+  });
+});
+
+describe("StudioShell deletion toasts", () => {
+  it("shows a pending deletion with an undo button that cancels it", async () => {
+    const { portal_target, controller } = await mount_shell({
+      state: { pending_deletions: [{ id: "p1", label: "Seraphina", count: 1 }] },
+    });
+    const undo = vi.spyOn(controller, "undo_deletion");
+
+    expect(portal_target.textContent).toContain("Deleted “Seraphina”");
+    const button = [...portal_target.querySelectorAll("button")].find(
+      (candidate) => candidate.textContent?.trim() === "Undo",
+    );
+    button?.click();
+    await flushPromises();
+
+    expect(undo).toHaveBeenCalledWith("p1");
   });
 });

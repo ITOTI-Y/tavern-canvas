@@ -18,6 +18,7 @@ const EVENT_TYPES = {
   CHARACTER_MESSAGE_RENDERED: "character_message_rendered",
   MORE_MESSAGES_LOADED: "more_messages_loaded",
   CHAT_COMPLETION_SETTINGS_READY: "chat_completion_settings_ready",
+  WORLDINFO_ENTRIES_LOADED: "worldinfo_entries_loaded",
 };
 
 function create_host(
@@ -91,7 +92,7 @@ describe("SillyTavernHost events", () => {
 describe("SillyTavernHost Advanced Preset marker", () => {
   it("removes the marker only from the request sent right after the given generation started", () => {
     const { host, emit } = create_host();
-    const restore = host.send_natively("inkwell-1");
+    const restore = host.adjust_request("inkwell-1", { native: true, reasoning_effort: null });
     const ready = (data: object) => {
       emit(EVENT_TYPES.CHAT_COMPLETION_SETTINGS_READY, data);
       return "__ap_gen_id" in data;
@@ -108,6 +109,41 @@ describe("SillyTavernHost Advanced Preset marker", () => {
     const after = ready({ __ap_gen_id: "e" });
 
     expect([before, own, next, other, after]).toEqual([true, false, true, true, true]);
+  });
+
+  it("lowers the reasoning effort of its own request only, keeping the marker", () => {
+    const { host, emit } = create_host();
+    const restore = host.adjust_request("inkwell-1", { native: false, reasoning_effort: "min" });
+    const own: Record<string, unknown> = { __ap_gen_id: "b", reasoning_effort: "low" };
+    const next: Record<string, unknown> = { reasoning_effort: "low" };
+
+    emit("js_generation_started", "inkwell-1");
+    emit(EVENT_TYPES.CHAT_COMPLETION_SETTINGS_READY, own);
+    emit(EVENT_TYPES.CHAT_COMPLETION_SETTINGS_READY, next);
+    restore();
+
+    expect(own).toEqual({ __ap_gen_id: "b", reasoning_effort: "min" });
+    expect(next).toEqual({ reasoning_effort: "low" });
+  });
+});
+
+describe("SillyTavernHost world info recursion", () => {
+  it("stops entries of the named books from activating others at each scan", () => {
+    const { host, emit } = create_host();
+    const stop = host.prevent_world_info_recursion(() => new Set(["开篇"]));
+    const own = { world: "开篇", preventRecursion: false };
+    const other = { world: "设定集", preventRecursion: false };
+
+    emit("worldinfo_entries_loaded", { chatLore: [own], globalLore: [other] });
+    stop();
+    const later = { world: "开篇", preventRecursion: false };
+    emit("worldinfo_entries_loaded", { chatLore: [later] });
+
+    expect([own.preventRecursion, other.preventRecursion, later.preventRecursion]).toEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 });
 

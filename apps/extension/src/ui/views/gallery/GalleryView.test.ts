@@ -189,7 +189,6 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
     gallery: {
       records: [],
       selected_record_id: null,
-      bulk_delete_command: IDLE_COMMAND_STATE,
       ...overrides,
     },
     diagnostics: {
@@ -204,6 +203,8 @@ function build_state(overrides: Partial<StudioState["gallery"]> = {}): StudioSta
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],
+    pending_deletions: [],
+    deletion_failure: null,
   };
 }
 
@@ -239,6 +240,9 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     delete_gallery_record: vi.fn(() => Promise.resolve()),
     bulk_delete_gallery_records: vi.fn(() => Promise.resolve()),
     dismiss_failed_tasks: vi.fn(() => Promise.resolve()),
+    defer_deletion: vi.fn(),
+    undo_deletion: vi.fn(),
+    dismiss_deletion_failure: vi.fn(),
     update_prompt_draft: vi.fn(),
     select_prompt_preset: vi.fn(),
     start_new_prompt_preset: vi.fn(),
@@ -250,6 +254,8 @@ function build_controller(state: StudioState): StudioController & { state: Studi
     ),
     remove_provider_profile: vi.fn(() => Promise.resolve()),
     inspect_comfyui: vi.fn(),
+    list_comfyui_workflows: vi.fn(),
+    read_comfyui_workflow: vi.fn(),
     test_provider_profile_connection: vi.fn(
       () => Promise.resolve({}) as ReturnType<StudioController["test_provider_profile_connection"]>,
     ),

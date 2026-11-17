@@ -86,6 +86,35 @@ describe("create_opening_host", () => {
     expect(written[1]).toMatchObject({ name: "c", strategy: { type: "selective", keys: ["c"] } });
   });
 
+  it("places a new entry and turns off its recursion when the write asks for it", async () => {
+    const tavern = helper([]);
+    const host = create_opening_host({ TavernHelper: tavern });
+
+    await host.save_entries("book", {
+      upsert: [
+        {
+          name: "rule",
+          enabled: true,
+          constant: true,
+          keys: [],
+          content: "x",
+          order: 10,
+          placement: { position: "after_character_definition", depth: 4, prevent_outgoing: true },
+        },
+      ],
+      remove: [],
+    });
+
+    const [, written] = tavern.replaceWorldbook.mock.calls[0] as unknown as [
+      string,
+      Record<string, unknown>[],
+    ];
+    expect(written[0]).toMatchObject({
+      position: { type: "after_character_definition", role: "system", depth: 4, order: 10 },
+      recursion: { prevent_outgoing: true },
+    });
+  });
+
   it("reads the open chat's character card with the books bound to it", () => {
     const tavern = {
       ...helper([]),

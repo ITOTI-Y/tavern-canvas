@@ -18,6 +18,7 @@ import type {
 } from "@tavern-canvas/contracts";
 import type { BrowserSecretVaultStatus } from "../../storage/browser_secret_vault.js";
 import type { ComfyUiInspection } from "../../modules/comfyui/server_inspection.js";
+import type { ServerWorkflow } from "../../modules/comfyui/server_workflows.js";
 import type { ComfyUiDefaults } from "../../modules/comfyui/workflow_mapping.js";
 
 export type Unsubscribe = () => void;
@@ -105,6 +106,10 @@ export interface ProfilesCapability {
   test_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
   /** Asks a ComfyUI server for its version, its choices for the workflow's inputs, and what the workflow needs that it lacks. Rejects when the server cannot be reached. */
   inspect_comfyui(input: ComfyUiInspectionInput): Promise<ComfyUiInspection>;
+  /** The workflows saved on a ComfyUI server, each with its format. Rejects when the server cannot be reached. */
+  list_comfyui_workflows(base_url: string): Promise<readonly ServerWorkflow[]>;
+  /** A saved workflow's JSON text; rejects unless it is in API format. */
+  read_comfyui_workflow(base_url: string, path: string): Promise<string>;
   set_credential(profile_id: Uuid, plaintext_value: string): Promise<ProviderProfileSummary>;
   clear_credential(profile_id: Uuid): Promise<ProviderProfileSummary>;
   save_novelai_defaults(

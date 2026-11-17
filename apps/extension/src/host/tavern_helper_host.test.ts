@@ -8,6 +8,8 @@ import {
   type TavernRegex,
 } from "./tavern_helper_host.js";
 
+const NO_TIMERS = () => ({ restore: () => {} });
+
 function create_helper(overrides: Partial<TavernHelperSurface> = {}): TavernHelperSurface {
   return {
     getChatMessages: vi.fn(() => [
@@ -81,7 +83,7 @@ describe("inspect_tavern_helper", () => {
 
 describe("TavernHelperHost", () => {
   it("normalizes the active chat snapshot", async () => {
-    const host = new TavernHelperHost(create_helper(), () => "chat-1");
+    const host = new TavernHelperHost(create_helper(), () => "chat-1", NO_TIMERS);
 
     await expect(host.get_active_chat()).resolves.toEqual({
       chat_id: "chat-1",
@@ -103,7 +105,7 @@ describe("TavernHelperHost", () => {
 
   it("replaces message text only while it still matches the expected text", async () => {
     const helper = create_helper();
-    const host = new TavernHelperHost(helper, () => "chat-1");
+    const host = new TavernHelperHost(helper, () => "chat-1", NO_TIMERS);
 
     await expect(host.replace_message_text(0, "edited by user", "b<!--x-->")).resolves.toBe(false);
     await expect(host.replace_message_text(0, "b", "b<!--x-->")).resolves.toBe(true);
@@ -115,7 +117,7 @@ describe("TavernHelperHost", () => {
 
   it("sends a custom connection and schema and separates reasoning from content", async () => {
     const generate = vi.fn(() => Promise.resolve({ content: '{"a":1}', reasoning: "thinking" }));
-    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1", NO_TIMERS);
 
     const result = await host.generate_with_preset({
       generation_id: "g1",
@@ -132,6 +134,7 @@ describe("TavernHelperHost", () => {
       json_schema: { name: "illustrations", value: { type: "object" } },
       world_info: { kind: "chat" },
       image: "data:image/jpeg;base64,AAAA",
+      reasoning: "preset",
     });
 
     expect(result).toEqual({ content: '{"a":1}', reasoning: "thinking", tool_calls: [] });
@@ -159,7 +162,7 @@ describe("TavernHelperHost", () => {
         ],
       }),
     );
-    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1", NO_TIMERS);
 
     const result = await host.generate_with_preset({
       generation_id: "g1",
@@ -174,6 +177,7 @@ describe("TavernHelperHost", () => {
       },
       world_info: { kind: "chat" },
       image: null,
+      reasoning: "preset",
     });
 
     expect(generate).toHaveBeenCalledWith(
@@ -197,10 +201,41 @@ describe("TavernHelperHost", () => {
     ]);
   });
 
+  it("puts the world info timers back after a request, also when it fails", async () => {
+    const restore = vi.fn();
+    const generate = vi.fn(() => Promise.reject(new Error("offline")));
+    const host = new TavernHelperHost(
+      create_helper({ generate }),
+      () => "chat-1",
+      () => ({
+        restore,
+      }),
+    );
+
+    await expect(
+      host.generate_with_preset({
+        generation_id: "g1",
+        preset: { kind: "sillytavern", name: "in_use" },
+        user_input: "analyze",
+        chat_history: [],
+        connection: { kind: "current" },
+        json_schema: null,
+        world_info: { kind: "chat" },
+        image: null,
+        reasoning: "preset",
+      }),
+    ).rejects.toThrow("offline");
+    expect(restore).toHaveBeenCalledOnce();
+  });
+
   it("sends the built-in preset as its system prompt, the card, world info and chat", async () => {
     const generate = vi.fn(() => Promise.resolve("{}"));
     const generateRaw = vi.fn(() => Promise.resolve("{}"));
-    const host = new TavernHelperHost(create_helper({ generate, generateRaw }), () => "chat-1");
+    const host = new TavernHelperHost(
+      create_helper({ generate, generateRaw }),
+      () => "chat-1",
+      NO_TIMERS,
+    );
 
     await host.generate_with_preset({
       generation_id: "g1",
@@ -215,6 +250,7 @@ describe("TavernHelperHost", () => {
       },
       world_info: { kind: "chat" },
       image: null,
+      reasoning: "preset",
     });
 
     expect(generate).not.toHaveBeenCalled();
@@ -243,7 +279,7 @@ describe("TavernHelperHost", () => {
 
   it("sends the given messages as the chat history, oldest first", async () => {
     const generate = vi.fn(() => Promise.resolve("{}"));
-    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1", NO_TIMERS);
     const chat_history = [
       { role: "user" as const, content: "Hi" },
       { role: "assistant" as const, content: "Hello" },
@@ -258,6 +294,7 @@ describe("TavernHelperHost", () => {
       json_schema: null,
       world_info: { kind: "chat" },
       image: null,
+      reasoning: "preset",
     });
 
     const config = (generate.mock.calls[0] as unknown[])[0] as Record<string, unknown>;
@@ -267,7 +304,7 @@ describe("TavernHelperHost", () => {
 
   it("replaces world info and depth entries when the analysis brings its own", async () => {
     const generate = vi.fn(() => Promise.resolve("{}"));
-    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
+    const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1", NO_TIMERS);
 
     await host.generate_with_preset({
       generation_id: "g1",
@@ -278,6 +315,7 @@ describe("TavernHelperHost", () => {
       json_schema: null,
       world_info: { kind: "replace", text: "Doors are blue." },
       image: null,
+      reasoning: "preset",
     });
 
     expect(generate).toHaveBeenCalledWith(
@@ -309,7 +347,7 @@ describe("TavernHelperHost", () => {
         },
       ]),
     );
-    const host = new TavernHelperHost(create_helper({ getWorldbook }), () => "chat-1");
+    const host = new TavernHelperHost(create_helper({ getWorldbook }), () => "chat-1", NO_TIMERS);
 
     await expect(host.read_worldbook("Town")).resolves.toEqual([
       {
@@ -329,7 +367,7 @@ describe("TavernHelperHost", () => {
     const helper = create_helper({
       getTavernRegexes: vi.fn(() => [installed(DISPLAY_SCRIPT, { enabled: false })]),
     });
-    const host = new TavernHelperHost(helper, () => "chat-1");
+    const host = new TavernHelperHost(helper, () => "chat-1", NO_TIMERS);
 
     await expect(host.sync_regex_scripts([DISPLAY_SCRIPT])).resolves.toBe(false);
     expect(helper.replaceTavernRegexes).not.toHaveBeenCalled();
@@ -340,7 +378,7 @@ describe("TavernHelperHost", () => {
     const helper = create_helper({
       getTavernRegexes: vi.fn(() => [other, installed(DISPLAY_SCRIPT, { replace_string: "old" })]),
     });
-    const host = new TavernHelperHost(helper, () => "chat-1");
+    const host = new TavernHelperHost(helper, () => "chat-1", NO_TIMERS);
 
     await expect(host.sync_regex_scripts([DISPLAY_SCRIPT])).resolves.toBe(true);
     expect(helper.replaceTavernRegexes).toHaveBeenCalledWith([other, installed(DISPLAY_SCRIPT)], {

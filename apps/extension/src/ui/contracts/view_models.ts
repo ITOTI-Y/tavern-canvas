@@ -51,7 +51,6 @@ export interface AssetsViewModel {
 export interface GalleryViewModel {
   readonly records: readonly GalleryRecordSummary[];
   readonly selected_record_id: Uuid | null;
-  readonly bulk_delete_command: CommandState<void>;
 }
 
 export interface DiagnosticsViewModel {
@@ -89,8 +88,26 @@ export interface TaskStripItemViewModel {
 export type SettingsSection =
   "illustration" | "providers" | "translation" | "prompts" | "general" | "diagnostics";
 
+/** What a deletion removes: one item by the name the user gave it, or a number of unnamed items. */
+export interface DeletionSubject {
+  readonly label: string | null;
+  readonly count: number;
+}
+
+/** A deletion shown with an undo button until it is carried out. */
+export interface PendingDeletionView extends DeletionSubject {
+  readonly id: string;
+}
+
+export interface DeletionFailureView extends DeletionSubject {
+  readonly message: string;
+}
+
 export interface StudioState {
   route: "opening" | "create" | "library" | "gallery" | "settings";
+  pending_deletions: readonly PendingDeletionView[];
+  /** The last deletion that failed; its item is shown again. */
+  deletion_failure: DeletionFailureView | null;
   settings_section: SettingsSection;
   color_mode: "light" | "dark";
   loading: ReadonlySet<string>;

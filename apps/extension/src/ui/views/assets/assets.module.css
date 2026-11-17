@@ -593,6 +593,32 @@
 /* WorkflowPanel extras                                                   */
 /* ---------------------------------------------------------------------- */
 
+.workflowHint {
+  color: var(--tc-text-muted);
+  font-size: var(--tc-font-size-sm);
+}
+
+.workflowServerList {
+  display: grid;
+  gap: var(--tc-space-1);
+  max-height: 50vh;
+  margin: var(--tc-space-2) 0 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.workflowServerRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--tc-space-2);
+  align-items: center;
+}
+
+.workflowServerName {
+  overflow-wrap: anywhere;
+}
+
 .workflowToolbarRow {
   display: flex;
   flex-wrap: wrap;

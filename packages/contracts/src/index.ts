@@ -176,6 +176,7 @@ export {
   TavernCanvasSettingsSchema,
   TavernCanvasUiSettingsSchema,
   TranslationSettingsSchema,
+  WorldInfoOverridesSchema,
   VOCABULARY_TOKEN_REFERENCE,
   VocabularyRemoteSettingsSchema,
   derive_analysis_credential_reference,

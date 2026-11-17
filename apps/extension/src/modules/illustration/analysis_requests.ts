@@ -13,6 +13,7 @@ import type {
   HostJsonSchema,
   HostWorldInfo,
 } from "../../host/index.js";
+import { AnalysisStoppedError } from "./analysis_error.js";
 import { strip_slot_markers } from "./slot_markers.js";
 import {
   forget_tools,
@@ -61,17 +62,6 @@ export function viewer_name(chat: HostChatSnapshot): string | null {
 }
 const ANALYSIS_RETRY_DELAY_MS = 2_000;
 const ANALYSIS_TIMEOUT_MS = 180_000;
-
-/** The analysis request was stopped by the user or ran past its time limit; it is not retried. */
-export class AnalysisStoppedError extends Error {
-  readonly reason: "cancelled" | "timed_out";
-
-  constructor(reason: "cancelled" | "timed_out") {
-    super(reason === "cancelled" ? "Analysis was cancelled" : "Analysis timed out");
-    this.name = "AnalysisStoppedError";
-    this.reason = reason;
-  }
-}
 
 /** Settles with the generation, or stops it on the host when `signal` aborts or the time limit passes. */
 async function generate_until_stopped<T>(
@@ -199,6 +189,7 @@ export async function run_wardrobe_request(
       ...(tools ? { tools: tool_request(plan) } : {}),
       world_info: { kind: "replace", text: "" },
       image,
+      reasoning: settings.analysis_reasoning,
     });
     return tools ? plan.parse(result.tool_calls ?? [], result.content) : result.content;
   };
@@ -303,6 +294,7 @@ export async function request_analysis<T>(
           ...(tools ? { tools: tool_request(plan) } : {}),
           world_info,
           image: null,
+          reasoning: settings.analysis_reasoning,
         }),
         signal,
       );

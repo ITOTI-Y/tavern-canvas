@@ -56,6 +56,7 @@ function draft(): OpeningDraftPayload {
     worldbooks: [],
     card: null,
     use_greeting: false,
+    written: {},
   };
 }
 
@@ -136,7 +137,7 @@ describe("opening follow-up question", () => {
   it("forces a question about a written step and shows the model the current result", () => {
     const written = draft();
     written.states[1] = { ...empty_state(), status: "done", entries: [{ id: "b", ...CONSTANT }] };
-    const request = follow_up_request(written, 1, "");
+    const request = follow_up_request(written, 1, "", []);
 
     expect(request.tools?.tools.map((tool) => tool.name)).toEqual(["ask_question"]);
     expect(request.tools?.choice).toEqual({ name: "ask_question" });
@@ -147,11 +148,26 @@ describe("opening follow-up question", () => {
   });
 
   it("steers the question toward what the user asked about", () => {
-    const steered = follow_up_request(draft(), 1, "  反派的动机 ");
+    const steered = follow_up_request(draft(), 1, "  反派的动机 ", []);
 
     expect(steered.user_input).toContain("The user wants the question to be about: 反派的动机.");
-    expect(follow_up_request(draft(), 1, "").user_input).not.toContain(
+    expect(follow_up_request(draft(), 1, "", []).user_input).not.toContain(
       "wants the question to be about",
+    );
+  });
+
+  it("asks anew from every question the user turned down and their feedback", () => {
+    const request = follow_up_request(draft(), 1, "", [
+      { question: QUESTION, feedback: "" },
+      { question: { ...QUESTION, text: "主角的身份？" }, feedback: " 想要更黑暗的选项 " },
+    ]);
+
+    expect(request.user_input).toContain("1. 有哪些势力？");
+    expect(request.user_input).toContain("The user gave no reason.");
+    expect(request.user_input).toContain("2. 主角的身份？");
+    expect(request.user_input).toContain("The user's feedback: 想要更黑暗的选项");
+    expect(request.user_input).toContain(
+      "Do not repeat a question or option the user turned down.",
     );
   });
 });

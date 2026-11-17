@@ -18,6 +18,10 @@ import {
   type ComfyUiGet,
 } from "../../modules/comfyui/server_inspection.js";
 import {
+  list_server_workflows,
+  read_server_workflow,
+} from "../../modules/comfyui/server_workflows.js";
+import {
   ComfyUiDefaultsSchema,
   read_mapped_workflow,
   type ComfyUiDefaults,
@@ -383,6 +387,12 @@ export function create_profiles_capability(deps: ProfilesCapabilityDeps): Profil
         }
       }
       return { status: "success", latency_ms: Date.now() - started_at };
+    },
+    list_comfyui_workflows(base_url) {
+      return list_server_workflows(comfyui_get(base_url, deps.fetch));
+    },
+    read_comfyui_workflow(base_url, path) {
+      return read_server_workflow(comfyui_get(base_url, deps.fetch), path);
     },
     async inspect_comfyui({ base_url, workflow_id }) {
       const payload = workflow_id === null ? null : await deps.load_workflow(workflow_id);

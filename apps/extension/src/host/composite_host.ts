@@ -22,6 +22,7 @@ import {
   SillyTavernHost,
   type SillyTavernContextSurface,
 } from "./sillytavern_host.js";
+import { hold_world_info_timers } from "./world_info_timers.js";
 import {
   inspect_tavern_helper,
   TavernHelperHost,
@@ -135,10 +136,14 @@ export class CompositeHostAdapter implements HostAdapter {
   }
 
   async generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult> {
-    if (request.tools === undefined) {
+    const adjustments = {
+      native: request.tools !== undefined,
+      reasoning_effort: request.reasoning === "min" ? ("min" as const) : null,
+    };
+    if (!adjustments.native && adjustments.reasoning_effort === null) {
       return this.#helper.generate_with_preset(request);
     }
-    const restore = this.#sillytavern.send_natively(request.generation_id);
+    const restore = this.#sillytavern.adjust_request(request.generation_id, adjustments);
     try {
       return await this.#helper.generate_with_preset(request);
     } finally {
@@ -148,6 +153,10 @@ export class CompositeHostAdapter implements HostAdapter {
 
   list_worldbooks(): readonly string[] {
     return this.#helper.list_worldbooks();
+  }
+
+  prevent_world_info_recursion(books: () => ReadonlySet<string>): () => void {
+    return this.#sillytavern.prevent_world_info_recursion(books);
   }
 
   read_worldbook(name: string): Promise<readonly HostWorldbookEntry[]> {
@@ -201,16 +210,19 @@ export function create_composite_host(
     return null;
   }
 
-  const sillytavern = new SillyTavernHost(
-    () => (sillytavern_global as { getContext(): SillyTavernContextSurface }).getContext(),
-    fetch_ as typeof fetch,
+  const get_context = (): SillyTavernContextSurface =>
+    (sillytavern_global as { getContext(): SillyTavernContextSurface }).getContext();
+  const sillytavern = new SillyTavernHost(get_context, fetch_ as typeof fetch);
+  const helper = new TavernHelperHost(
+    helper_surface as TavernHelperSurface,
+    () => {
+      const chat_id = sillytavern.get_active_chat_id();
+      if (chat_id === null) {
+        throw new Error("no_chat_open");
+      }
+      return chat_id;
+    },
+    () => hold_world_info_timers(get_context),
   );
-  const helper = new TavernHelperHost(helper_surface as TavernHelperSurface, () => {
-    const chat_id = sillytavern.get_active_chat_id();
-    if (chat_id === null) {
-      throw new Error("no_chat_open");
-    }
-    return chat_id;
-  });
   return new CompositeHostAdapter(capabilities, helper, sillytavern, surface);
 }

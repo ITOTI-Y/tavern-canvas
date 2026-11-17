@@ -17,6 +17,12 @@ const app = {
       "运行时初始化失败。下方是错误信息，反馈问题时请一并附上；浏览器控制台中带 [Inkwell] 前缀的记录包含完整调用栈。",
     reload_action: "重新加载 SillyTavern",
   },
+  deletion: {
+    deleted_named: "已删除“{name}”",
+    deleted_count: "已删除 {n} 项",
+    undo: "撤销",
+    failed: "删除失败，已恢复",
+  },
   partial_init: {
     banner_title: "部分功能不可用",
     banner_description: "部分数据未能加载，可在诊断页重试，或继续使用当前可用的功能。",
@@ -411,6 +417,19 @@ const assets = {
     empty_description:
       "导入从 ComfyUI 用“导出 (API)”保存的工作流 JSON，Inkwell 会识别提示词、种子和尺寸所在的节点。",
     import_action: "导入工作流",
+    server_action: "从服务器导入",
+    server_title: "ComfyUI 服务器上的工作流",
+    server_description:
+      "列出 ComfyUI 的 workflows 目录中保存的工作流。API 格式的可以直接导入；编辑器格式需要先在 ComfyUI 中用“导出 (API)”另存一份。",
+    server_label: "服务器",
+    server_loading: "正在读取服务器上的工作流……",
+    server_empty: "这台服务器上没有保存的工作流。",
+    server_failed: "无法读取服务器工作流：{reason}",
+    server_no_profile: "还没有 ComfyUI 生图配置。先在设置的图像服务中添加一个，再从这里导入。",
+    server_import: "导入",
+    format_api: "API 格式",
+    format_editor: "编辑器格式，需导出 (API)",
+    format_unreadable: "无法识别",
     detect_action: "自动识别节点",
     edit_action: "编辑工作流",
     json_label: "工作流 JSON",
@@ -656,6 +675,11 @@ const settings = {
     custom_key_cleared: "密钥已移除。",
     custom_key_failed: "密钥修改失败。",
     proxy_model_hint: "留空则使用代理预设中的模型。",
+    reasoning_label: "分析推理强度",
+    reasoning_hint:
+      "只作用于插图分析和衣橱判断请求，正式生成和开篇不受影响。“最低”可明显减少推理消耗的输出 token；如果分析结果变差，改回“跟随当前预设”。",
+    reasoning_preset: "跟随当前预设",
+    reasoning_min: "最低",
     structured_output_label: "结构化回复",
     structured_output_hint:
       "工具调用让模型通过提交工具返回结果；连接不支持工具调用时，自动模式在本次会话内改用 JSON 模式。启用 Advanced Preset 扩展时，工具调用请求改由 SillyTavern 直接发送，保留预设拼装的提示词，跳过 Advanced Preset 的工作流阶段；JSON 模式的请求仍由 Advanced Preset 发送。",

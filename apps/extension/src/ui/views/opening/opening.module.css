@@ -466,10 +466,25 @@
   color: var(--tc-on-marker);
 }
 
+.pill[data-tone="changed"],
 .pill[data-tone="modified"] {
   background-color: var(--tc-accent-soft);
   box-shadow: inset 0 0 0 1px var(--tc-accent-border);
   color: var(--tc-text);
+}
+
+.pill[data-tone="book_edited"],
+.pill[data-tone="conflict"],
+.pill[data-tone="book_deleted"] {
+  background-color: var(--tc-surface);
+  box-shadow: inset 0 0 0 1px var(--tc-border-strong);
+  color: var(--tc-text);
+}
+
+.pill[data-tone="removed"] {
+  background-color: var(--tc-surface);
+  box-shadow: inset 0 0 0 1px var(--tc-error);
+  color: var(--tc-error);
 }
 
 .keys {

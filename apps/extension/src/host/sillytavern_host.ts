@@ -82,6 +82,13 @@ export interface SillyTavernContextSurface {
   readonly eventTypes: Readonly<Record<EventTypeName, string>>;
   readonly mainApi?: unknown;
   readonly chatCompletionSettings?: unknown;
+  readonly chatMetadata?: Record<string, unknown>;
+}
+
+export interface RequestAdjustments {
+  readonly native: boolean;
+  /** `null` keeps the chat completion settings' effort. */
+  readonly reasoning_effort: "min" | null;
 }
 
 /** Most sources keep their model under `<source>_model`; Google AI Studio is the exception. */
@@ -266,14 +273,15 @@ export class SillyTavernHost {
 
   /**
    * Until the returned function is called, the chat completion request that JS-Slash-Runner sends
-   * for `generation_id` loses the Advanced Preset marker, so SillyTavern sends it as built. Advanced
-   * Preset's own sending replaces `tool_choice` with `auto`, adds its workflow tools and rejects a
-   * reply that holds only tool calls; the preset's prompt is assembled before the marker is set.
-   * The request is told apart by JS-Slash-Runner's `js_generation_started` event, emitted with the
-   * generation id right before its request; the tools themselves are added to the request by a
-   * listener that runs after this one.
+   * for `generation_id` is changed as `adjustments` asks. With `native` it loses the Advanced
+   * Preset marker, so SillyTavern sends it as built: Advanced Preset's own sending replaces
+   * `tool_choice` with `auto`, adds its workflow tools and rejects a reply that holds only tool
+   * calls; the preset's prompt is assembled before the marker is set. A `reasoning_effort` replaces
+   * the chat completion settings' effort for this request alone. The request is told apart by
+   * JS-Slash-Runner's `js_generation_started` event, emitted with the generation id right before
+   * its request; tools are added to the request by a listener that runs after this one.
    */
-  send_natively(generation_id: string): () => void {
+  adjust_request(generation_id: string, adjustments: RequestAdjustments): () => void {
     const context = this.#get_context();
     const settings_ready = context.eventTypes.CHAT_COMPLETION_SETTINGS_READY;
     let ours = false;
@@ -283,7 +291,12 @@ export class SillyTavernHost {
     const on_settings: SillyTavernEventListener = (data) => {
       if (ours && is_plain_record(data)) {
         ours = false;
-        delete data.__ap_gen_id;
+        if (adjustments.native) {
+          delete data.__ap_gen_id;
+        }
+        if (adjustments.reasoning_effort !== null) {
+          data.reasoning_effort = adjustments.reasoning_effort;
+        }
       }
     };
     context.eventSource.on(JS_GENERATION_STARTED, on_started);
@@ -291,6 +304,36 @@ export class SillyTavernHost {
     return () => {
       context.eventSource.removeListener(JS_GENERATION_STARTED, on_started);
       context.eventSource.removeListener(settings_ready, on_settings);
+    };
+  }
+
+  /** SillyTavern hands each scan fresh copies of the entries, so the flag never reaches the books. */
+  prevent_world_info_recursion(books: () => ReadonlySet<string>): () => void {
+    const context = this.#get_context();
+    const event_name = (context.eventTypes as Readonly<Record<string, string | undefined>>)
+      .WORLDINFO_ENTRIES_LOADED;
+    if (event_name === undefined) {
+      return () => {};
+    }
+    const listener: SillyTavernEventListener = (loaded) => {
+      const names = books();
+      if (names.size === 0 || !is_plain_record(loaded)) {
+        return;
+      }
+      for (const list of Object.values(loaded)) {
+        if (!Array.isArray(list)) {
+          continue;
+        }
+        for (const entry of list) {
+          if (is_plain_record(entry) && typeof entry.world === "string" && names.has(entry.world)) {
+            entry.preventRecursion = true;
+          }
+        }
+      }
+    };
+    context.eventSource.on(event_name, listener);
+    return () => {
+      context.eventSource.removeListener(event_name, listener);
     };
   }
 

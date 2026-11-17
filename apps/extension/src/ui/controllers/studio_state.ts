@@ -149,7 +149,6 @@ export function create_initial_state(
     gallery: {
       records: [],
       selected_record_id: null,
-      bulk_delete_command: IDLE_COMMAND_STATE,
     },
     diagnostics: {
       snapshot: null,
@@ -167,6 +166,8 @@ export function create_initial_state(
       selected_record: null,
     },
     tasks: [],
+    pending_deletions: [],
+    deletion_failure: null,
   };
 }
 

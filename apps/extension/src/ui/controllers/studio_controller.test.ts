@@ -1,5 +1,5 @@
 import type { TavernCanvasSettings, Uuid } from "@tavern-canvas/contracts";
-import { describe, expect, it, vi, type Mock } from "vitest";
+import { afterEach, describe, expect, it, vi, type Mock } from "vitest";
 
 import type {
   AssetCategory,
@@ -29,7 +29,7 @@ import type {
   StudioCapabilities,
   VocabularyCapability,
 } from "../contracts/ui_capabilities.js";
-import { create_studio_controller } from "./studio_controller.js";
+import { create_studio_controller, DELETION_UNDO_MS } from "./studio_controller.js";
 import { create_unavailable_capabilities } from "./unavailable_capabilities.js";
 
 const PROFILE_ID = "11111111-1111-4111-8111-111111111111" as Uuid;
@@ -103,7 +103,9 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     size_set_id: null,
     size_set_by_chat: {},
     structured_output: "auto",
+    analysis_reasoning: "preset",
   },
+  world_info_overrides: { no_recursion_books: [] },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {
     color_mode: "system",
@@ -172,6 +174,8 @@ function build_mock_studio() {
     save_novelai_defaults: vi.fn(),
     save_prompt_tags: vi.fn(),
     inspect_comfyui: vi.fn(),
+    list_comfyui_workflows: vi.fn(),
+    read_comfyui_workflow: vi.fn(),
     test_connection: vi.fn(),
   };
 
@@ -834,5 +838,90 @@ describe("create_studio_controller: prompt and provider profile commands", () =>
 
     expect(mock.capabilities.prompt_presets.test_regex).toHaveBeenCalledWith(rule, "foo baz");
     expect(result).toBe("bar baz");
+  });
+});
+
+describe("create_studio_controller: deferred deletion", () => {
+  const record = {
+    id: RECORD_ID,
+    category: "character" as const,
+    record_key: `primary:${RECORD_ID}`,
+    display_name: "Seraphina",
+    updated_at: "2026-11-17T00:00:00.000Z",
+    payload: {},
+  };
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  async function started() {
+    vi.useFakeTimers();
+    const mock = build_mock_studio();
+    const controller = create_studio_controller({ capabilities: mock.capabilities });
+    const start_promise = controller.start();
+    resolve_all_defaults(mock);
+    await start_promise;
+    mock.assets.sub.emit({ type: "asset_upserted", asset: record });
+    return { mock, controller };
+  }
+
+  it("hides a deleted asset at once, keeps it hidden on refresh and deletes it after the undo window", async () => {
+    const { mock, controller } = await started();
+    vi.mocked(mock.capabilities.assets.remove).mockResolvedValue(undefined);
+    await controller.remove_asset("character", RECORD_ID);
+    mock.assets.sub.emit({ type: "asset_upserted", asset: record });
+
+    expect(controller.state.assets.records.character).toEqual([]);
+    expect(controller.state.pending_deletions).toEqual([
+      { id: expect.any(String), label: "Seraphina", count: 1 },
+    ]);
+    expect(mock.capabilities.assets.remove).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(DELETION_UNDO_MS);
+
+    expect(mock.capabilities.assets.remove).toHaveBeenCalledWith("character", RECORD_ID);
+    expect(controller.state.pending_deletions).toEqual([]);
+  });
+
+  it("brings an asset back on undo and never deletes it", async () => {
+    const { mock, controller } = await started();
+
+    await controller.remove_asset("character", RECORD_ID);
+    const pending = controller.state.pending_deletions[0];
+    if (pending === undefined) {
+      throw new Error("the deletion should be pending");
+    }
+    controller.undo_deletion(pending.id);
+    await vi.advanceTimersByTimeAsync(DELETION_UNDO_MS);
+
+    expect(controller.state.assets.records.character.map((item) => item.id)).toEqual([RECORD_ID]);
+    expect(controller.state.pending_deletions).toEqual([]);
+    expect(mock.capabilities.assets.remove).not.toHaveBeenCalled();
+  });
+
+  it("shows the asset again and reports the failure when the deletion fails", async () => {
+    const { mock, controller } = await started();
+    vi.mocked(mock.capabilities.assets.remove).mockRejectedValue(new Error("disk full"));
+
+    await controller.remove_asset("character", RECORD_ID);
+    await vi.advanceTimersByTimeAsync(DELETION_UNDO_MS);
+
+    expect(controller.state.assets.records.character.map((item) => item.id)).toEqual([RECORD_ID]);
+    expect(controller.state.deletion_failure).toEqual({
+      label: "Seraphina",
+      count: 1,
+      message: "disk full",
+    });
+  });
+
+  it("carries out pending deletions when the studio stops", async () => {
+    const { mock, controller } = await started();
+    vi.mocked(mock.capabilities.gallery.bulk_delete).mockResolvedValue(undefined);
+
+    await controller.bulk_delete_gallery_records([RECORD_ID]);
+    await controller.stop();
+
+    expect(mock.capabilities.gallery.bulk_delete).toHaveBeenCalledWith([RECORD_ID]);
   });
 });

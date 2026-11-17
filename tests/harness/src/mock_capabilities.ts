@@ -313,7 +313,9 @@ function build_settings(): TavernCanvasSettings {
       size_set_id: null,
       size_set_by_chat: {},
       structured_output: "auto",
+      analysis_reasoning: "preset",
     },
+    world_info_overrides: { no_recursion_books: [] },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system",
@@ -644,6 +646,8 @@ function create_profiles_capability(initial: ProviderProfileSummary[]): Profiles
       profiles.set(profile_id, updated);
       return Promise.resolve(updated);
     },
+    list_comfyui_workflows: () => Promise.resolve([]),
+    read_comfyui_workflow: () => Promise.reject(new Error("no server workflows")),
     inspect_comfyui: () =>
       Promise.resolve({
         version: "0.45.3",

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { AnalysisStoppedError } from "../../../modules/illustration/analysis_error.js";
 import { empty_state, type OpeningDraft } from "../../../modules/opening/opening_model.js";
 import type { OpeningPort, OpeningStructuredRequest } from "../../contracts/opening_port.js";
 import { use_opening_flow } from "./use_opening_flow.js";
@@ -35,6 +36,7 @@ function new_draft(): OpeningDraft {
     worldbooks: [],
     card: null,
     use_greeting: false,
+    written: {},
   };
 }
 
@@ -177,5 +179,84 @@ describe("use_opening_flow", () => {
     expect(flow.error("d1")).toBeInstanceOf(Error);
     expect(flow.busy("d1")).toBeNull();
     expect(store.draft("d1")?.states[0]).toMatchObject({ status: "asking", question: null });
+  });
+
+  function written_store() {
+    const store = use_opening_store({
+      records: () => [],
+      save: () => Promise.resolve(),
+      remove: () => Promise.resolve(),
+      on_save_error: () => {},
+    });
+    const item = new_draft();
+    item.states[0] = {
+      ...empty_state(),
+      status: "done",
+      entries: [
+        { id: "a", title: "势力｜公会", constant: false, keys: ["公会"], content: "垄断晶核" },
+      ],
+    };
+    return { store, item };
+  }
+
+  it("stops a running question without an error and leaves the written step as it was", async () => {
+    const { store, item } = written_store();
+    const port: OpeningPort = {
+      request<T>(_request: OpeningStructuredRequest<T>, _options: unknown, signal: AbortSignal) {
+        return new Promise<T>((_resolve, reject) => {
+          signal.addEventListener("abort", () => {
+            reject(new AnalysisStoppedError("cancelled"));
+          });
+        });
+      },
+      host: () => Promise.reject(new Error("unused")),
+    };
+    const flow = use_opening_flow(port, store);
+    await store.add(item);
+    const draft = store.draft("d1") as OpeningDraft;
+
+    const asking = flow.ask_more(draft, 0, "");
+    flow.cancel(draft);
+    await asking;
+
+    expect(flow.error("d1")).toBeNull();
+    expect(flow.busy("d1")).toBeNull();
+    expect(store.draft("d1")?.states[0]).toMatchObject({ status: "done", question: null });
+  });
+
+  it("asks again with every question turned down, then drops the question back to the result", async () => {
+    const { store, item } = written_store();
+    const inputs: string[] = [];
+    const port: OpeningPort = {
+      request<T>(request: OpeningStructuredRequest<T>): Promise<T> {
+        inputs.push(request.user_input);
+        return Promise.resolve(
+          request.parse(
+            JSON.stringify({ question: { ...QUESTION, text: `问题${String(inputs.length)}` } }),
+          ),
+        );
+      },
+      host: () => Promise.reject(new Error("unused")),
+    };
+    const flow = use_opening_flow(port, store);
+    await store.add(item);
+    const draft = store.draft("d1") as OpeningDraft;
+
+    await flow.ask_more(draft, 0, "");
+    await flow.refine_question(draft, "太温和");
+    await flow.refine_question(draft, "");
+
+    expect(inputs[2]).toContain("1. 问题1");
+    expect(inputs[2]).toContain("The user's feedback: 太温和");
+    expect(inputs[2]).toContain("2. 问题2");
+    expect(store.draft("d1")?.states[0]?.question?.text).toBe("问题3");
+
+    flow.cancel_question(draft);
+
+    expect(store.draft("d1")?.states[0]).toMatchObject({
+      status: "done",
+      question: null,
+      entries: [{ id: "a" }],
+    });
   });
 });

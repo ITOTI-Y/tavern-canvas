@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ScanSearch, Upload } from "lucide-vue-next";
+import { ScanSearch, Server, Upload } from "lucide-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import type { ServerWorkflow } from "../../../modules/comfyui/server_workflows.js";
 import AppButton from "../../components/AppButton.vue";
+import AppDialog from "../../components/AppDialog.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import FieldGroup from "../../components/FieldGroup.vue";
 import type { AssetRecordSummary } from "../../contracts/ui_capabilities.js";
@@ -208,6 +210,82 @@ async function handle_file_selected(event: Event): Promise<void> {
   detect_mapping();
 }
 
+/* ---------- Workflows saved on the ComfyUI server ---------- */
+
+const server_open = ref(false);
+const server_url = ref<string | undefined>(undefined);
+const server_workflows = ref<readonly ServerWorkflow[]>([]);
+const server_loading = ref(false);
+const server_error = ref<string | null>(null);
+const server_options = ref<readonly SelectOption[]>([]);
+
+async function load_server_workflows(): Promise<void> {
+  server_workflows.value = [];
+  server_error.value = null;
+  const url = server_url.value;
+  if (url === undefined) {
+    return;
+  }
+  server_loading.value = true;
+  try {
+    server_workflows.value = await props.controller.list_comfyui_workflows(url);
+  } catch (error) {
+    server_error.value = t("assets.workflow.server_failed", {
+      reason: error instanceof Error ? error.message : String(error),
+    });
+  } finally {
+    server_loading.value = false;
+  }
+}
+
+function open_server(): void {
+  server_options.value = props.controller.state.generation.profiles.flatMap((profile) =>
+    profile.provider_id === "comfyui" &&
+    typeof profile.base_url === "string" &&
+    profile.base_url !== ""
+      ? [{ value: profile.base_url, label: `${profile.display_name} · ${profile.base_url}` }]
+      : [],
+  );
+  server_url.value = server_options.value[0]?.value;
+  server_open.value = true;
+  void load_server_workflows();
+}
+
+function choose_server(value: string | undefined): void {
+  server_url.value = value;
+  void load_server_workflows();
+}
+
+function server_format_label(format: ServerWorkflow["format"]): string {
+  switch (format) {
+    case "api":
+      return t("assets.workflow.format_api");
+    case "editor":
+      return t("assets.workflow.format_editor");
+    case "unreadable":
+      return t("assets.workflow.format_unreadable");
+  }
+}
+
+async function import_server_workflow(path: string): Promise<void> {
+  const url = server_url.value;
+  if (url === undefined) {
+    return;
+  }
+  try {
+    const text = await props.controller.read_comfyui_workflow(url, path);
+    server_open.value = false;
+    panel.open_create();
+    panel.name.value = (path.split("/").at(-1) ?? path).replace(/\.json$/iu, "");
+    panel.values[WORKFLOW_JSON_FIELD] = text;
+    detect_mapping();
+  } catch (error) {
+    server_error.value = t("assets.workflow.server_failed", {
+      reason: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 async function save_workflow(): Promise<void> {
   if (parsed.value.workflow === null) {
     return;
@@ -226,6 +304,12 @@ async function save_workflow(): Promise<void> {
           :icon="Upload"
           variant="primary"
           @click="trigger_import"
+        />
+        <AppButton
+          :label="t('assets.workflow.server_action')"
+          :icon="Server"
+          variant="ghost"
+          @click="open_server"
         />
         <input
           ref="file_input"
@@ -376,4 +460,45 @@ async function save_workflow(): Promise<void> {
       </form>
     </AssetEditorPanel>
   </div>
+  <AppDialog
+    v-model:open="server_open"
+    :title="t('assets.workflow.server_title')"
+    :description="t('assets.workflow.server_description')"
+    :close-label="t('common.actions.close')"
+  >
+    <p v-if="server_options.length === 0" :class="styles.workflowHint">
+      {{ t("assets.workflow.server_no_profile") }}
+    </p>
+    <template v-else>
+      <AppSelect
+        v-if="server_options.length > 1"
+        :model-value="server_url"
+        :options="server_options"
+        :placeholder="t('assets.workflow.server_label')"
+        :aria-label="t('assets.workflow.server_label')"
+        @update:model-value="choose_server"
+      />
+      <p v-if="server_loading" :class="styles.workflowHint" role="status">
+        {{ t("assets.workflow.server_loading") }}
+      </p>
+      <p v-else-if="server_error !== null" :class="styles.workflowHint" role="alert">
+        {{ server_error }}
+      </p>
+      <p v-else-if="server_workflows.length === 0" :class="styles.workflowHint">
+        {{ t("assets.workflow.server_empty") }}
+      </p>
+      <ul v-else :class="styles.workflowServerList">
+        <li v-for="item in server_workflows" :key="item.path" :class="styles.workflowServerRow">
+          <span :class="styles.workflowServerName">{{ item.path }}</span>
+          <span :class="styles.workflowHint">{{ server_format_label(item.format) }}</span>
+          <AppButton
+            :label="t('assets.workflow.server_import')"
+            variant="ghost"
+            :disabled="item.format !== 'api'"
+            @click="() => void import_server_workflow(item.path)"
+          />
+        </li>
+      </ul>
+    </template>
+  </AppDialog>
 </template>

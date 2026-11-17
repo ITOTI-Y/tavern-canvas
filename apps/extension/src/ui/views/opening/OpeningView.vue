@@ -114,6 +114,17 @@ const templates = computed<readonly OpeningTemplate[]>(() =>
     ? [builtin_template(step_text, t("opening.builtin.name")), ...store.templates.value]
     : [],
 );
+
+const no_recursion_books = computed(
+  () => props.state.settings.settings?.world_info_overrides.no_recursion_books ?? [],
+);
+
+function set_no_recursion(book: string, value: boolean): void {
+  const others = no_recursion_books.value.filter((name) => name !== book);
+  void props.controller.update_settings({
+    world_info_overrides: { no_recursion_books: value ? [...others, book] : others },
+  });
+}
 </script>
 
 <template>
@@ -143,7 +154,9 @@ const templates = computed<readonly OpeningTemplate[]>(() =>
       :host="host"
       :host-error="host_error"
       :lists="lists"
+      :no-recursion-books="no_recursion_books"
       @refresh-lists="refresh_lists"
+      @set-no-recursion="set_no_recursion"
     />
     <OpeningTemplates
       v-else

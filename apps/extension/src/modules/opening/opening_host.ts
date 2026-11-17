@@ -10,8 +10,23 @@ export interface OpeningBookEntry {
   readonly order: number;
 }
 
-/** A new entry has no `uid`; an existing one keeps every field this type does not name. */
-export type OpeningEntryInput = Omit<OpeningBookEntry, "uid"> & { readonly uid?: number };
+/** Where an entry is inserted and whether its text may activate other entries. */
+export interface EntryPlacement {
+  readonly position: "before_character_definition" | "after_character_definition" | "at_depth";
+  /** Used with `at_depth`: how many messages from the end the entry goes. */
+  readonly depth: number;
+  /** The entry's text never activates other entries by recursion. */
+  readonly prevent_outgoing: boolean;
+}
+
+/**
+ * A new entry has no `uid`; an existing one keeps every field this type does not name. Without
+ * `placement` the entry keeps the book's placement, or the host's default for a new one.
+ */
+export type OpeningEntryInput = Omit<OpeningBookEntry, "uid"> & {
+  readonly uid?: number;
+  readonly placement?: EntryPlacement;
+};
 
 export interface OpeningEntryChanges {
   readonly upsert: readonly OpeningEntryInput[];

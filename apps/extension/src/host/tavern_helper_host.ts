@@ -10,6 +10,7 @@ import type {
   PresetGenerationRequest,
   PresetGenerationResult,
 } from "./host_adapter.js";
+import type { WorldInfoTimersHold } from "./world_info_timers.js";
 
 interface TavernHelperChatMessage {
   readonly message_id: number;
@@ -395,10 +396,16 @@ function regex_matches(current: TavernRegex, desired: TavernRegex): boolean {
 export class TavernHelperHost {
   readonly #helper: TavernHelperSurface;
   readonly #get_active_chat_id: () => string;
+  readonly #hold_timers: () => WorldInfoTimersHold;
 
-  constructor(helper: TavernHelperSurface, get_active_chat_id: () => string) {
+  constructor(
+    helper: TavernHelperSurface,
+    get_active_chat_id: () => string,
+    hold_timers: () => WorldInfoTimersHold,
+  ) {
     this.#helper = helper;
     this.#get_active_chat_id = get_active_chat_id;
+    this.#hold_timers = hold_timers;
   }
 
   #read_messages(range: string | number): readonly TavernHelperChatMessage[] {
@@ -473,24 +480,30 @@ export class TavernHelperHost {
           : { json_schema: { ...request.json_schema, strict: true } }),
       ...(request.image === null ? {} : { image: [request.image] }),
     };
-    const result =
-      request.preset.kind === "builtin"
-        ? await this.#helper.generateRaw({
-            ...config,
-            ordered_prompts: [
-              { role: "system", content: request.preset.system_prompt },
-              "world_info_before",
-              "persona_description",
-              "char_description",
-              "char_personality",
-              "scenario",
-              "world_info_after",
-              "chat_history",
-              "user_input",
-            ],
-          })
-        : await this.#helper.generate({ ...config, preset_name: request.preset.name });
+    const timers = this.#hold_timers();
+    const result = await this.#send(request, config).finally(() => {
+      timers.restore();
+    });
     return read_generation_result(result);
+  }
+
+  #send(request: PresetGenerationRequest, config: TavernHelperRequestConfig): Promise<unknown> {
+    return request.preset.kind === "builtin"
+      ? this.#helper.generateRaw({
+          ...config,
+          ordered_prompts: [
+            { role: "system", content: request.preset.system_prompt },
+            "world_info_before",
+            "persona_description",
+            "char_description",
+            "char_personality",
+            "scenario",
+            "world_info_after",
+            "chat_history",
+            "user_input",
+          ],
+        })
+      : this.#helper.generate({ ...config, preset_name: request.preset.name });
   }
 
   list_worldbooks(): readonly string[] {

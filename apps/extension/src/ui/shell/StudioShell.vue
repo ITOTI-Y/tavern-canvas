@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref } from "vue";
+import { computed, defineAsyncComponent, provide, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { StudioRoute, StudioState } from "../contracts/view_models.js";
-import type { StudioController } from "../controllers/studio_controller.js";
+import ToastViewport, { type ToastItem } from "../components/ToastViewport.vue";
+import { DEFER_DELETION_KEY } from "../contracts/portal_keys.js";
+import type { DeletionSubject, StudioRoute, StudioState } from "../contracts/view_models.js";
+import { DELETION_UNDO_MS, type StudioController } from "../controllers/studio_controller.js";
 import styles from "./shell.module.css";
 import StudioWorkspace from "./StudioWorkspace.vue";
 import TopCommandBar from "./TopCommandBar.vue";
@@ -59,6 +61,53 @@ function handle_set_inspector_collapsed(collapsed: boolean): void {
 
 function select_route(route: StudioRoute): void {
   emit("select-route", route);
+}
+
+provide(DEFER_DELETION_KEY, (subject, actions) => {
+  props.controller.defer_deletion(subject, actions);
+});
+
+function deleted_text(subject: DeletionSubject): string {
+  return subject.label === null
+    ? t("app.deletion.deleted_count", { n: subject.count })
+    : t("app.deletion.deleted_named", { name: subject.label });
+}
+
+/** Deletion toasts the user closed; the deletion itself still runs. */
+const closed_toasts = ref<ReadonlySet<string>>(new Set());
+
+const deletion_toasts = computed<readonly ToastItem[]>(() => [
+  ...props.state.pending_deletions
+    .filter((item) => !closed_toasts.value.has(item.id))
+    .map((item) => ({
+      id: item.id,
+      title: deleted_text(item),
+      duration: DELETION_UNDO_MS,
+      action: {
+        label: t("app.deletion.undo"),
+        run: () => {
+          props.controller.undo_deletion(item.id);
+        },
+      },
+    })),
+  ...(props.state.deletion_failure === null
+    ? []
+    : [
+        {
+          id: "deletion-failure",
+          title: t("app.deletion.failed"),
+          description: props.state.deletion_failure.message,
+          variant: "error" as const,
+        },
+      ]),
+]);
+
+function close_deletion_toast(id: string): void {
+  if (id === "deletion-failure") {
+    props.controller.dismiss_deletion_failure();
+    return;
+  }
+  closed_toasts.value = new Set([...closed_toasts.value, id]);
 }
 </script>
 
@@ -132,6 +181,14 @@ function select_route(route: StudioRoute): void {
       :open="mobile_inspector_open"
       :selection="props.state.inspector.selected_record"
       @update:open="(open) => handle_set_inspector_collapsed(!open)"
+    />
+
+    <ToastViewport
+      :toasts="deletion_toasts"
+      :viewport-label="t('common.notifications.viewport_label')"
+      :announce-label="t('common.notifications.announce_label')"
+      :close-label="t('common.actions.close')"
+      @dismiss="close_deletion_toast"
     />
   </div>
 </template>

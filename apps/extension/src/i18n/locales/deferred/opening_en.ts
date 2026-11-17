@@ -82,6 +82,13 @@ export const en_messages = {
       joiner: ", ",
       other_label: "Other",
       other_placeholder: "Write your own answer",
+      cancel: "Drop this question",
+      refine: "Ask differently",
+      refine_label: "What is wrong with this question",
+      refine_hint:
+        "Say what does not fit in the question or its options and the model asks again; leave it empty for a different question. Every question turned down in this step is sent along, so you can keep asking.",
+      refine_placeholder: "For example: the options are all too mild, I want a darker direction",
+      refine_start: "Ask again",
       skip: "Skip questions, write this step",
       confirm: "Confirm, continue",
     },
@@ -92,6 +99,7 @@ export const en_messages = {
       dropped:
         "{n} entries were left out because they did not match the entry format; regenerate the step or add them by hand.",
       retry: "Try again",
+      stop: "Stop",
     },
     errors: {
       failed: "The request failed: {reason}",
@@ -170,6 +178,17 @@ export const en_messages = {
       read_failed: "The world book could not be read: {reason}",
       status_new: "New",
       status_modified: "Changed",
+      status_book_edited: "Edited in book",
+      status_conflict: "Edited on both sides",
+      status_book_deleted: "Deleted from book",
+      status_removed: "Dropped from draft",
+      position_label: "Position of new entries",
+      position_after: "After character definition",
+      position_before: "Before character definition",
+      position_depth: "In chat at depth 4",
+      constant_no_recursion: "Always-active entries do not activate others",
+      placement_hint:
+        "Position and recursion apply to newly written entries only; existing entries keep the book's settings. Unticked rows marked edited or deleted in the book are entries you changed there; ticking one overwrites it with the draft's version. A ticked dropped entry is deleted from the book.",
       status_same: "Unchanged",
       bind_note: "After writing, {book} is bound to the chat {chat}.",
       no_chat: "No chat is open, so the book is written without being bound.",
@@ -177,6 +196,9 @@ export const en_messages = {
       failed: "Writing failed: {reason}",
     },
     books: {
+      no_recursion: "Entry text does not activate other entries",
+      no_recursion_hint:
+        "When on, the text of this book's active entries no longer activates other entries by recursion, so always-active entries do not pull large entries into every prompt. Applies at scan time only; the book file is not changed.",
       title: "World books",
       list_label: "World books",
       list_title: "All world books",

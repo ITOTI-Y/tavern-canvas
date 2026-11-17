@@ -16,6 +16,12 @@ const app = {
       "Runtime initialization failed. The error is shown below; include it when reporting the problem. Browser console entries prefixed with [Inkwell] carry the full stack.",
     reload_action: "Reload SillyTavern",
   },
+  deletion: {
+    deleted_named: "Deleted “{name}”",
+    deleted_count: "Deleted {n} items",
+    undo: "Undo",
+    failed: "Delete failed and was undone",
+  },
   partial_init: {
     banner_title: "Running with limited functionality",
     banner_description:
@@ -421,6 +427,20 @@ const assets = {
     empty_description:
       'Import a workflow JSON saved from ComfyUI with "Export (API)". Inkwell finds the nodes that hold the prompt, seed and size.',
     import_action: "Import workflow",
+    server_action: "Import from server",
+    server_title: "Workflows on the ComfyUI server",
+    server_description:
+      "Lists the workflows saved in ComfyUI's workflows folder. Those in API format can be imported as they are; save an editor-format one again with ComfyUI's \"Export (API)\" first.",
+    server_label: "Server",
+    server_loading: "Reading the workflows on the server…",
+    server_empty: "No workflows are saved on this server.",
+    server_failed: "Could not read the server's workflows: {reason}",
+    server_no_profile:
+      "There is no ComfyUI image profile yet. Add one under Image services in Settings, then import from here.",
+    server_import: "Import",
+    format_api: "API format",
+    format_editor: "Editor format, needs Export (API)",
+    format_unreadable: "Not recognised",
     detect_action: "Detect nodes",
     edit_action: "Edit workflow",
     json_label: "Workflow JSON",
@@ -678,6 +698,11 @@ const settings = {
     custom_key_saved: "Key saved.",
     custom_key_cleared: "Key removed.",
     custom_key_failed: "The key could not be changed.",
+    reasoning_label: "Analysis reasoning effort",
+    reasoning_hint:
+      "Applies to illustration analysis and wardrobe requests only; story replies and the opening page keep their own. Lowest cuts the output tokens spent on reasoning; switch back if the analysis gets worse.",
+    reasoning_preset: "Follow the current preset",
+    reasoning_min: "Lowest",
     structured_output_label: "Structured replies",
     structured_output_hint:
       "Tool calling sends each reply through submit tools; when the connection cannot call tools, auto mode switches to a JSON schema for this session. With the Advanced Preset extension enabled, tool calling requests are sent by SillyTavern instead of Advanced Preset: the preset's prompt is kept, its workflow stages are skipped. JSON schema requests are still sent by Advanced Preset.",

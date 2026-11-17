@@ -76,7 +76,9 @@ const EMPTY_SETTINGS: TavernCanvasSettings = {
     size_set_id: null,
     size_set_by_chat: {},
     structured_output: "auto",
+    analysis_reasoning: "preset",
   },
+  world_info_overrides: { no_recursion_books: [] },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {
     color_mode: "system",
@@ -103,6 +105,8 @@ export function create_unavailable_capabilities(): StudioCapabilities {
     remove: unavailable_command,
     test_connection: unavailable_command,
     inspect_comfyui: unavailable_command,
+    list_comfyui_workflows: unavailable_command,
+    read_comfyui_workflow: unavailable_command,
     set_credential: unavailable_command,
     clear_credential: unavailable_command,
     save_novelai_defaults: unavailable_command,

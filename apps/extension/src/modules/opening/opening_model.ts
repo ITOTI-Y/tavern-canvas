@@ -73,6 +73,20 @@ export const OpeningConnectionSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("proxy_preset"), proxy_preset: z.string().min(1) }),
 ]);
 
+/**
+ * A draft entry as it was last written to a world book, with the book entry it became. Comparing
+ * the draft, this and the book tells which side changed since.
+ */
+export const WrittenEntrySchema = z.object({
+  entry_id: z.string().min(1),
+  uid: z.number().int(),
+  name: z.string(),
+  constant: z.boolean(),
+  keys: z.array(z.string()),
+  content: z.string(),
+});
+export type WrittenEntry = z.infer<typeof WrittenEntrySchema>;
+
 /** A copy of the character card taken when the user chose it, so later card edits never shift a draft. */
 export const OpeningCardSchema = z.object({
   name: z.string(),
@@ -100,6 +114,8 @@ export const OpeningDraftPayloadSchema = z.object({
   card: OpeningCardSchema.nullable().default(null),
   /** Sends the card's first message too, which some cards use to describe the world. */
   use_greeting: z.boolean().default(false),
+  /** The last write to each world book, by book name. */
+  written: z.record(z.string(), z.array(WrittenEntrySchema)).default({}),
 });
 export type OpeningDraftPayload = z.infer<typeof OpeningDraftPayloadSchema>;
 

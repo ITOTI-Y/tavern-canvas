@@ -119,6 +119,12 @@ export type HostGenerationPreset =
   | { readonly kind: "builtin"; readonly system_prompt: string }
   | { readonly kind: "sillytavern"; readonly name: string };
 
+/**
+ * Until the returned function is called, entries of the books `books()` names at each scan cannot
+ * activate other entries by recursion; the books themselves stay unchanged.
+ */
+export type PreventWorldInfoRecursion = (books: () => ReadonlySet<string>) => () => void;
+
 export interface PresetGenerationRequest {
   readonly generation_id: string;
   readonly preset: HostGenerationPreset;
@@ -132,6 +138,8 @@ export interface PresetGenerationRequest {
   readonly world_info: HostWorldInfo;
   /** A data URL sent with the user input; the connection's model must accept images. */
   readonly image: string | null;
+  /** `min` asks for the lowest reasoning effort on this request alone. */
+  readonly reasoning: "preset" | "min";
 }
 
 export type HostWorldbookKey = string | { readonly source: string; readonly flags: string };
@@ -194,6 +202,7 @@ export interface HostAdapter {
   read_story_status(location: HostSwipeLocation): HostStoryStatus | null;
   /** Replaces the active swipe's text only if it still equals `expected`, so a concurrent edit is never overwritten. */
   replace_message_text(message_id: number, expected: string, next: string): Promise<boolean>;
+  prevent_world_info_recursion: PreventWorldInfoRecursion;
   generate_with_preset(request: PresetGenerationRequest): Promise<PresetGenerationResult>;
   /** `null` when SillyTavern is set to a text completion API, which cannot call tools. */
   chat_completion_target?(): HostChatCompletionTarget | null;

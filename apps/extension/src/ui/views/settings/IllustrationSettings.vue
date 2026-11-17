@@ -233,6 +233,17 @@ const structured_output_options = computed(() => [
   { value: "tools", label: t("settings.illustration.structured_output_tools") },
 ]);
 
+const reasoning_options = computed(() => [
+  { value: "preset", label: t("settings.illustration.reasoning_preset") },
+  { value: "min", label: t("settings.illustration.reasoning_min") },
+]);
+
+function set_reasoning(value: string | undefined): void {
+  if (value === "preset" || value === "min") {
+    update_illustration({ analysis_reasoning: value });
+  }
+}
+
 function set_structured_output(value: string | undefined): void {
   if (value === "auto" || value === "json_schema" || value === "tools") {
     update_illustration({ structured_output: value });
@@ -523,6 +534,22 @@ function set_worldbook(name: string, chosen: boolean): void {
             :placeholder="t('settings.illustration.structured_output_label')"
             :disabled="!settings"
             @update:model-value="set_structured_output"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup
+        :label="t('settings.illustration.reasoning_label')"
+        :hint="t('settings.illustration.reasoning_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <AppSelect
+            :id="fieldId"
+            :described-by="describedBy"
+            :model-value="illustration?.analysis_reasoning ?? 'preset'"
+            :options="reasoning_options"
+            :placeholder="t('settings.illustration.reasoning_label')"
+            :disabled="!settings"
+            @update:model-value="set_reasoning"
           />
         </template>
       </FieldGroup>

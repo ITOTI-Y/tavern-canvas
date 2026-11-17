@@ -121,7 +121,8 @@ provide(
     (illustrations === null
       ? null
       : {
-          request: (request, options) => illustrations.request_opening(request, options),
+          request: (request, options, signal) =>
+            illustrations.request_opening(request, options, signal),
           host: async () =>
             (await import("../host/tavern_helper_opening.js")).create_opening_host(globalThis),
         }),

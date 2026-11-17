@@ -9,6 +9,7 @@ import AppDialog from "../../components/AppDialog.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import AppSwitch from "../../components/AppSwitch.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { use_deferred_deletion } from "../../components/use_deferred_deletion.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import IconButton from "../../components/IconButton.vue";
 import NumberStepper from "../../components/NumberStepper.vue";
@@ -21,15 +22,28 @@ const props = defineProps<{
   readonly host: OpeningHost | null;
   readonly hostError: string | null;
   readonly lists: OpeningLists;
+  /** Books whose entry text never activates other entries; the books stay unchanged. */
+  readonly noRecursionBooks: readonly string[];
 }>();
 
 const section = defineModel<OpeningSection>("section", { required: true });
 
 const emit = defineEmits<{
   "refresh-lists": [];
+  "set-no-recursion": [book: string, value: boolean];
 }>();
 
 const { t } = useI18n();
+
+const defer_deletion = use_deferred_deletion();
+
+/** Books and entries waiting for a deferred deletion, left out of the lists until then. */
+const hidden_books = ref<ReadonlySet<string>>(new Set());
+const hidden_entries = ref<ReadonlySet<string>>(new Set());
+const entry_key = (name: string, uid: number): string => `${name}\u0000${String(uid)}`;
+const visible_books = computed(() =>
+  props.lists.books.filter((name) => !hidden_books.value.has(name)),
+);
 
 const book = ref<string | null>(props.lists.chat_book ?? props.lists.books[0] ?? null);
 const entries = ref<readonly OpeningBookEntry[]>([]);
@@ -45,7 +59,10 @@ async function load(): Promise<void> {
   loading.value = true;
   error.value = null;
   try {
-    entries.value = await props.host.read_entries(book.value);
+    const name = book.value;
+    entries.value = (await props.host.read_entries(name)).filter(
+      (entry) => !hidden_entries.value.has(entry_key(name, entry.uid)),
+    );
   } catch (caught) {
     error.value = t("opening.errors.failed", { reason: reason(caught) });
   } finally {
@@ -54,14 +71,11 @@ async function load(): Promise<void> {
 }
 
 watch(book, () => void load(), { immediate: true });
-watch(
-  () => props.lists.books,
-  (books) => {
-    if (book.value === null || !books.includes(book.value)) {
-      book.value = props.lists.chat_book ?? books[0] ?? null;
-    }
-  },
-);
+watch(visible_books, (books) => {
+  if (book.value === null || !books.includes(book.value)) {
+    book.value = props.lists.chat_book ?? books[0] ?? null;
+  }
+});
 
 /** Runs one host write, then reads the lists and the open book again. */
 async function act(work: (host: OpeningHost) => Promise<void>): Promise<boolean> {
@@ -117,12 +131,28 @@ async function save_name(): Promise<void> {
 
 const confirm_delete_book = ref(false);
 
-async function delete_book(): Promise<void> {
+function delete_book(): void {
   const current = book.value;
-  if (current !== null && (await act((host) => host.delete_worldbook(current)))) {
-    confirm_delete_book.value = false;
-    book.value = null;
+  const host = props.host;
+  if (current === null || host === null) {
+    return;
   }
+  hidden_books.value = new Set([...hidden_books.value, current]);
+  confirm_delete_book.value = false;
+  book.value = props.lists.chat_book !== current ? props.lists.chat_book : null;
+  book.value ??= visible_books.value[0] ?? null;
+  defer_deletion(
+    { label: current, count: 1 },
+    {
+      commit: async () => {
+        await host.delete_worldbook(current);
+        emit("refresh-lists");
+      },
+      restore: () => {
+        hidden_books.value = new Set([...hidden_books.value].filter((name) => name !== current));
+      },
+    },
+  );
 }
 
 async function bind(): Promise<void> {
@@ -244,13 +274,33 @@ async function toggle(entry: OpeningBookEntry, enabled: boolean): Promise<void> 
 
 const deleting_entry = ref<OpeningBookEntry | null>(null);
 
-async function delete_entry(): Promise<void> {
+function delete_entry(): void {
   const entry = deleting_entry.value;
   const target = book.value;
-  if (entry !== null && target !== null) {
-    await act((host) => host.save_entries(target, { upsert: [], remove: [entry.uid] }));
-    deleting_entry.value = null;
+  const host = props.host;
+  if (entry === null || target === null || host === null) {
+    return;
   }
+  const key = entry_key(target, entry.uid);
+  hidden_entries.value = new Set([...hidden_entries.value, key]);
+  entries.value = entries.value.filter((candidate) => candidate.uid !== entry.uid);
+  deleting_entry.value = null;
+  defer_deletion(
+    { label: entry.name, count: 1 },
+    {
+      commit: async () => {
+        await host.save_entries(target, { upsert: [], remove: [entry.uid] });
+        hidden_entries.value = new Set([...hidden_entries.value].filter((item) => item !== key));
+        emit("refresh-lists");
+      },
+      restore: () => {
+        hidden_entries.value = new Set([...hidden_entries.value].filter((item) => item !== key));
+        if (book.value === target) {
+          void load();
+        }
+      },
+    },
+  );
 }
 </script>
 
@@ -264,11 +314,11 @@ async function delete_entry(): Promise<void> {
         :disabled="host === null"
         @click="open_name_dialog('create')"
       />
-      <div v-if="lists.books.length > 0" :class="styles.aside_title">
+      <div v-if="visible_books.length > 0" :class="styles.aside_title">
         {{ t("opening.books.list_title") }}
       </div>
       <button
-        v-for="name in lists.books"
+        v-for="name in visible_books"
         :key="name"
         type="button"
         class="tc-interactive"
@@ -311,6 +361,15 @@ async function delete_entry(): Promise<void> {
             />
           </template>
         </div>
+        <AppSwitch
+          v-if="book !== null"
+          :model-value="noRecursionBooks.includes(book)"
+          :label="t('opening.books.no_recursion')"
+          :description="t('opening.books.no_recursion_hint')"
+          @update:model-value="
+            (value: boolean) => book !== null && emit('set-no-recursion', book, value)
+          "
+        />
 
         <StateSurface
           v-if="host === null"

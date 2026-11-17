@@ -115,6 +115,8 @@ function to_entry(raw: unknown): OpeningBookEntry {
 function apply_input(raw: RawEntry, input: OpeningEntryInput): RawEntry {
   const strategy = is_record(raw.strategy) ? raw.strategy : {};
   const position = is_record(raw.position) ? raw.position : {};
+  const recursion = is_record(raw.recursion) ? raw.recursion : {};
+  const { placement } = input;
   return {
     ...raw,
     name: input.name,
@@ -125,7 +127,19 @@ function apply_input(raw: RawEntry, input: OpeningEntryInput): RawEntry {
       type: input.constant ? "constant" : "selective",
       keys: input.keys.map(key_value),
     },
-    position: { ...position, order: input.order },
+    position:
+      placement === undefined
+        ? { ...position, order: input.order }
+        : {
+            ...position,
+            type: placement.position,
+            role: "system",
+            depth: placement.depth,
+            order: input.order,
+          },
+    ...(placement === undefined
+      ? {}
+      : { recursion: { ...recursion, prevent_outgoing: placement.prevent_outgoing } }),
   };
 }
 

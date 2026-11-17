@@ -6,6 +6,8 @@ export interface ToastItem {
   readonly description?: string;
   readonly variant?: "info" | "success" | "error";
   readonly duration?: number;
+  /** A button beside the title, such as Undo; pressing it also closes the toast. */
+  readonly action?: { readonly label: string; readonly run: () => void };
 }
 
 export function use_toasts() {

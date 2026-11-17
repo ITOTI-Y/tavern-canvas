@@ -78,7 +78,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
-    gallery: { records: [], selected_record_id: null, bulk_delete_command: IDLE_COMMAND_STATE },
+    gallery: { records: [], selected_record_id: null },
     diagnostics: {
       snapshot: null,
       timeline: [],
@@ -91,6 +91,8 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],
+    pending_deletions: [],
+    deletion_failure: null,
     ...overrides,
   };
 }

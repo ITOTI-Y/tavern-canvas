@@ -161,6 +161,11 @@ export const IllustrationSettingsSchema = z.strictObject({
    * schema when the connection cannot call tools; the other two use only that mode.
    */
   structured_output: z.enum(["auto", "tools", "json_schema"]).default("auto"),
+  /**
+   * `min` asks for the lowest reasoning effort on the analysis and wardrobe requests only;
+   * `preset` keeps the chat completion settings' effort.
+   */
+  analysis_reasoning: z.enum(["preset", "min"]).default("preset"),
 });
 export type IllustrationSettings = z.infer<typeof IllustrationSettingsSchema>;
 
@@ -188,6 +193,13 @@ export const VocabularyRemoteSettingsSchema = z.strictObject({
 });
 export type VocabularyRemoteSettings = z.infer<typeof VocabularyRemoteSettingsSchema>;
 
+/** Changes Inkwell makes to world info scans without editing the books. */
+export const WorldInfoOverridesSchema = z.strictObject({
+  /** Books whose entry text never activates other entries by recursion. */
+  no_recursion_books: z.array(z.string().trim().min(1).max(200)).max(100).default([]),
+});
+export type WorldInfoOverrides = z.infer<typeof WorldInfoOverridesSchema>;
+
 export const TavernCanvasSettingsSchema = z.strictObject({
   schema_version: z.literal(1),
   active_namespace: NamespaceIdentifierSchema,
@@ -199,6 +211,7 @@ export const TavernCanvasSettingsSchema = z.strictObject({
   vocabulary_remote: VocabularyRemoteSettingsSchema,
   illustration: IllustrationSettingsSchema,
   translation: TranslationSettingsSchema,
+  world_info_overrides: WorldInfoOverridesSchema.default({ no_recursion_books: [] }),
   ui: TavernCanvasUiSettingsSchema,
 });
 export type TavernCanvasSettings = z.infer<typeof TavernCanvasSettingsSchema>;

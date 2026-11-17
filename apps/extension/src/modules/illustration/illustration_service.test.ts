@@ -7,7 +7,8 @@ import {
 import { ProviderTransportBoundaryError } from "@tavern-canvas/providers";
 import { describe, expect, it, vi } from "vitest";
 import { reactive } from "vue";
-import { AnalysisStoppedError, create_wardrobe_runner } from "./analysis_requests.js";
+import { AnalysisStoppedError } from "./analysis_error.js";
+import { create_wardrobe_runner } from "./analysis_requests.js";
 
 import type {
   HostAdapter,
@@ -47,6 +48,7 @@ const SETTINGS: IllustrationSettings = {
   size_set_id: null,
   size_set_by_chat: {},
   structured_output: "auto",
+  analysis_reasoning: "preset",
 };
 
 class MemoryHost {
@@ -154,6 +156,7 @@ class MemoryHost {
     },
     chat_completion_target: () => this.tool_target,
     list_worldbooks: () => [...this.worldbooks.keys()],
+    prevent_world_info_recursion: () => () => {},
     read_worldbook: (name: string) => Promise.resolve(this.worldbooks.get(name) ?? []),
     stop_generation: (generation_id: string) => {
       this.stopped.push(generation_id);
@@ -793,6 +796,7 @@ describe("create_wardrobe_runner", () => {
         size_set_id: null,
         size_set_by_chat: {},
         structured_output: "auto",
+        analysis_reasoning: "preset",
       }),
       resolve_analysis_key: () => Promise.resolve(""),
       new_generation_id: () => "g1",

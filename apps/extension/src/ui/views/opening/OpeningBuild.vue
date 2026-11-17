@@ -13,7 +13,9 @@ import {
   Plus,
   RefreshCw,
   Sparkles,
+  Square,
   Trash2,
+  X,
 } from "lucide-vue-next";
 import { computed, nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -24,11 +26,12 @@ import {
   BUILTIN_TEMPLATE_ID,
   change_description,
   empty_state,
-  mark_later_stale,
+  plain,
   type OpeningDraft,
   type OpeningEntry,
   type OpeningStepState,
   type OpeningTemplate,
+  type WrittenEntry,
 } from "../../../modules/opening/opening_model.js";
 import { draft_entries, draft_markdown } from "../../../modules/opening/opening_output.js";
 import AppButton from "../../components/AppButton.vue";
@@ -36,6 +39,7 @@ import AppCheckbox from "../../components/AppCheckbox.vue";
 import AppIcon from "../../components/AppIcon.vue";
 import AppSelect from "../../components/AppSelect.vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { use_deferred_deletion } from "../../components/use_deferred_deletion.js";
 import FieldGroup from "../../components/FieldGroup.vue";
 import IconButton from "../../components/IconButton.vue";
 import OpeningEntryCard from "./OpeningEntryCard.vue";
@@ -63,6 +67,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const defer_deletion = use_deferred_deletion();
 
 const DESCRIPTION_MAX_LENGTH = 4000;
 
@@ -115,6 +121,7 @@ async function new_draft(): Promise<void> {
     worldbooks: [],
     card: null,
     use_greeting: false,
+    written: {},
   };
   await props.store.add(item);
   selected_id.value = item.id;
@@ -344,6 +351,21 @@ function save_description(): void {
 const picked = ref<readonly string[]>([]);
 const other = ref("");
 
+/* What was wrong with the question shown, sent when asking for another; may be empty. */
+const refine_open = ref(false);
+const refine_feedback = ref("");
+
+async function refine(): Promise<void> {
+  const item = draft.value;
+  if (item === null) {
+    return;
+  }
+  const feedback = refine_feedback.value;
+  refine_open.value = false;
+  refine_feedback.value = "";
+  await props.flow.refine_question(item, feedback);
+}
+
 /* What the user wants the next "Ask more" question to be about; empty leaves it to the model. */
 const more_open = ref(false);
 const more_focus = ref("");
@@ -418,18 +440,40 @@ function save_entry(index: number, entry: OpeningEntry): void {
     if (entries !== undefined && position >= 0) {
       entries[position] = entry;
     }
-    mark_later_stale(item, index);
   });
   added_entry.value = null;
 }
 
 function remove_entry(index: number, id: string): void {
+  const item_id = draft.value?.id;
+  const entries = draft.value?.states[index]?.entries ?? [];
+  const position = entries.findIndex((entry) => entry.id === id);
+  const removed = entries[position];
+  if (item_id !== undefined && removed !== undefined && added_entry.value !== id) {
+    const snapshot = plain(removed);
+    defer_deletion(
+      { label: removed.title, count: 1 },
+      {
+        commit: () => Promise.resolve(),
+        restore: () => {
+          const owner = props.store.draft(item_id);
+          if (owner !== null) {
+            props.store.edit(owner, (current) => {
+              const target = current.states[index];
+              if (target !== undefined && !target.entries.some((entry) => entry.id === id)) {
+                target.entries.splice(Math.min(position, target.entries.length), 0, snapshot);
+              }
+            });
+          }
+        },
+      },
+    );
+  }
   edit((item) => {
     const target = item.states[index];
     if (target !== undefined) {
       target.entries = target.entries.filter((entry) => entry.id !== id);
     }
-    mark_later_stale(item, index);
   });
 }
 
@@ -486,7 +530,10 @@ const message = computed(() => {
 const write_open = ref(false);
 const output_note = ref<string | null>(null);
 
-function written(book: string): void {
+function written(book: string, snapshot: WrittenEntry[]): void {
+  edit((item) => {
+    item.written = { ...item.written, [book]: snapshot };
+  });
   output_note.value = t("opening.output.book_written", { book });
   emit("refresh-lists");
 }
@@ -869,15 +916,23 @@ watch(selected_id, () => {
               />
             </div>
 
-            <p v-if="busy !== null" :class="styles.hint" role="status">
-              {{
-                busy.kind === "question"
-                  ? t("opening.status.asking")
-                  : busy.kind === "generate"
-                    ? t("opening.status.generating", { step: draft.steps[busy.step]?.name ?? "" })
-                    : t("opening.status.rewriting")
-              }}
-            </p>
+            <div v-if="busy !== null" :class="styles.row">
+              <p :class="styles.hint" role="status">
+                {{
+                  busy.kind === "question"
+                    ? t("opening.status.asking")
+                    : busy.kind === "generate"
+                      ? t("opening.status.generating", { step: draft.steps[busy.step]?.name ?? "" })
+                      : t("opening.status.rewriting")
+                }}
+              </p>
+              <AppButton
+                :icon="Square"
+                :label="t('opening.status.stop')"
+                variant="ghost"
+                @click="flow.cancel(draft)"
+              />
+            </div>
             <p
               v-if="busy === null && flow.dropped(draft.id) > 0 && has_result"
               :class="styles.hint"
@@ -947,7 +1002,54 @@ watch(selected_id, () => {
                   />
                 </template>
               </FieldGroup>
+              <div v-if="refine_open" :class="styles.ask">
+                <FieldGroup
+                  :label="t('opening.ask.refine_label')"
+                  :hint="t('opening.ask.refine_hint')"
+                >
+                  <template #default="{ fieldId, describedBy }">
+                    <input
+                      :id="fieldId"
+                      v-model="refine_feedback"
+                      :class="styles.input"
+                      maxlength="500"
+                      :aria-describedby="describedBy"
+                      :placeholder="t('opening.ask.refine_placeholder')"
+                      @keydown.enter="refine"
+                    />
+                  </template>
+                </FieldGroup>
+                <div :class="styles.row">
+                  <AppButton
+                    :label="t('common.actions.cancel')"
+                    variant="ghost"
+                    @click="refine_open = false"
+                  />
+                  <span :class="styles.spacer" />
+                  <AppButton
+                    :icon="RefreshCw"
+                    :label="t('opening.ask.refine_start')"
+                    variant="primary"
+                    :disabled="busy !== null"
+                    @click="refine"
+                  />
+                </div>
+              </div>
               <div :class="styles.row">
+                <AppButton
+                  :icon="X"
+                  :label="t('opening.ask.cancel')"
+                  variant="ghost"
+                  :disabled="busy !== null"
+                  @click="flow.cancel_question(draft)"
+                />
+                <AppButton
+                  :icon="RefreshCw"
+                  :label="t('opening.ask.refine')"
+                  variant="ghost"
+                  :disabled="busy !== null || refine_open"
+                  @click="refine_open = true"
+                />
                 <AppButton
                   :icon="ChevronsRight"
                   :label="t('opening.ask.skip')"
@@ -1237,6 +1339,7 @@ watch(selected_id, () => {
       :entries="all_entries"
       :default-name="draft.display_name"
       :lists="lists"
+      :written="draft.written"
       @written="written"
     />
     <ConfirmDialog

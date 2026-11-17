@@ -17,6 +17,7 @@ import {
   open_database,
   type StorageDatabase,
 } from "@tavern-canvas/storage";
+import { WorldInfoOverridesModule } from "../modules/world_info/world_info_overrides_module.js";
 import { create_wardrobe_runner } from "../modules/illustration/analysis_requests.js";
 import type { StructuredAttemptLog } from "../modules/illustration/structured_output.js";
 
@@ -593,6 +594,12 @@ export async function compose_studio_capabilities(
                 wait: (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
               });
               modules.push(new IllustrationModule(illustrations, host));
+              modules.push(
+                new WorldInfoOverridesModule(
+                  host,
+                  () => settings_adapter.get_settings().world_info_overrides.no_recursion_books,
+                ),
+              );
             }
             return generation_capability;
           }),

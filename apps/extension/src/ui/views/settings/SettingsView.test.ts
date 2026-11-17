@@ -66,7 +66,9 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
     size_set_id: null,
     size_set_by_chat: {},
     structured_output: "auto",
+    analysis_reasoning: "preset",
   },
+  world_info_overrides: { no_recursion_books: [] },
   translation: { deepl_endpoint: "free", glossary: [] },
   ui: {
     color_mode: "system",
@@ -124,7 +126,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
       vocabulary_catalog: [],
       vocabulary_install_command: IDLE_COMMAND_STATE,
     },
-    gallery: { records: [], selected_record_id: null, bulk_delete_command: IDLE_COMMAND_STATE },
+    gallery: { records: [], selected_record_id: null },
     diagnostics: {
       snapshot: null,
       timeline: [],
@@ -137,6 +139,8 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
     },
     inspector: { collapsed: false, width: 320, selected_record: null },
     tasks: [],
+    pending_deletions: [],
+    deletion_failure: null,
     ...overrides,
   };
 }
@@ -279,6 +283,8 @@ describe("SettingsView provider profiles", () => {
       save_novelai_defaults: vi.fn(),
       save_prompt_tags: vi.fn(),
       inspect_comfyui: vi.fn(),
+      list_comfyui_workflows: vi.fn(),
+      read_comfyui_workflow: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -375,6 +381,8 @@ describe("SettingsView provider profiles", () => {
       save_novelai_defaults: vi.fn(),
       save_prompt_tags: vi.fn(),
       inspect_comfyui: vi.fn(),
+      list_comfyui_workflows: vi.fn(),
+      read_comfyui_workflow: vi.fn(),
       test_connection: capabilities.profiles.test_connection,
     };
     const controller = build_controller({ ...capabilities, profiles });
@@ -410,6 +418,8 @@ describe("SettingsView provider profiles", () => {
       save_novelai_defaults: vi.fn(),
       save_prompt_tags: vi.fn(),
       inspect_comfyui: vi.fn(),
+      list_comfyui_workflows: vi.fn(),
+      read_comfyui_workflow: vi.fn(),
       test_connection: (): Promise<ProfileConnectionTestResult> =>
         Promise.resolve({ status: "success", latency_ms: 77 }),
     };

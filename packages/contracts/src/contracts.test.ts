@@ -418,7 +418,9 @@ describe("initial settings and capability contracts", () => {
       size_set_id: null,
       size_set_by_chat: {},
       structured_output: "auto",
+      analysis_reasoning: "preset",
     },
+    world_info_overrides: { no_recursion_books: [] },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system" as const,
@@ -535,7 +537,9 @@ describe("strict public object boundaries", () => {
       size_set_id: null,
       size_set_by_chat: {},
       structured_output: "auto",
+      analysis_reasoning: "preset",
     },
+    world_info_overrides: { no_recursion_books: [] },
     translation: { deepl_endpoint: "free", glossary: [] },
     ui: {
       color_mode: "system" as const,

@@ -1,4 +1,5 @@
 import type { ComfyUiInspection } from "../../modules/comfyui/server_inspection.js";
+import type { ServerWorkflow } from "../../modules/comfyui/server_workflows.js";
 import type {
   NovelAiAccountStatus,
   NovelAiGenerationDefaults,
@@ -43,6 +44,7 @@ import {
   type GalleryViewModel,
   type GenerationViewModel,
   type InspectorSelection,
+  type DeletionSubject,
   type InspectorViewModel,
   type PromptViewModel,
   type SettingsSection,
@@ -108,6 +110,8 @@ export interface StudioController {
   remove_provider_profile(profile_id: Uuid): Promise<void>;
   test_provider_profile_connection(profile_id: Uuid): Promise<ProfileConnectionTestResult>;
   inspect_comfyui(input: ComfyUiInspectionInput): Promise<ComfyUiInspection>;
+  list_comfyui_workflows(base_url: string): Promise<readonly ServerWorkflow[]>;
+  read_comfyui_workflow(base_url: string, path: string): Promise<string>;
   set_provider_profile_credential(
     profile_id: Uuid,
     plaintext_value: string,
@@ -167,7 +171,24 @@ export interface StudioController {
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void>;
   /** Removes every failed job from the task strip and the job store. */
   dismiss_failed_tasks(): Promise<void>;
+
+  /**
+   * Shows a deletion with an undo button and carries it out after `DELETION_UNDO_MS`. The caller
+   * hides the item itself; `restore` shows it again on undo or when `commit` fails.
+   */
+  defer_deletion(subject: DeletionSubject, actions: DeferredDeletionActions): void;
+  /** Cancels a pending deletion and shows its item again. */
+  undo_deletion(pending_id: string): void;
+  dismiss_deletion_failure(): void;
 }
+
+export interface DeferredDeletionActions {
+  readonly commit: () => Promise<void>;
+  readonly restore: () => void;
+}
+
+/** How long a deletion can be undone before it is carried out. */
+export const DELETION_UNDO_MS = 8000;
 
 class StudioControllerImpl implements StudioController {
   readonly #capabilities: StudioCapabilities;
@@ -176,6 +197,17 @@ class StudioControllerImpl implements StudioController {
   #unsubscribes: readonly Unsubscribe[] = [];
   #stopped = false;
   #settings_queue: Promise<void> = Promise.resolve();
+  readonly #pending_deletions = new Map<
+    string,
+    {
+      readonly subject: DeletionSubject;
+      readonly actions: DeferredDeletionActions;
+      readonly timer: ReturnType<typeof setTimeout>;
+    }
+  >();
+  /** Records waiting for a deferred deletion; every write to the state leaves them out. */
+  readonly #hidden_assets = new Set<Uuid>();
+  readonly #hidden_gallery = new Set<Uuid>();
 
   constructor(options: StudioControllerOptions) {
     this.#capabilities = options.capabilities;
@@ -204,8 +236,81 @@ class StudioControllerImpl implements StudioController {
   }
 
   #patch(patch: Partial<StudioState>): void {
-    this.#state = { ...this.#state, ...patch };
+    this.#state = { ...this.#state, ...this.#without_hidden(patch) };
     this.#notify();
+  }
+
+  #without_hidden(patch: Partial<StudioState>): Partial<StudioState> {
+    let result = patch;
+    if (patch.assets !== undefined && this.#hidden_assets.size > 0) {
+      const records: Record<AssetCategory, readonly AssetRecordSummary[]> = {
+        ...patch.assets.records,
+      };
+      for (const category of Object.keys(records) as AssetCategory[]) {
+        records[category] = records[category].filter(
+          (record) => !this.#hidden_assets.has(record.id),
+        );
+      }
+      result = { ...result, assets: { ...patch.assets, records } };
+    }
+    if (patch.gallery !== undefined && this.#hidden_gallery.size > 0) {
+      const records = patch.gallery.records.filter(
+        (record) => !this.#hidden_gallery.has(record.id),
+      );
+      result = { ...result, gallery: { ...patch.gallery, records } };
+    }
+    return result;
+  }
+
+  defer_deletion(subject: DeletionSubject, actions: DeferredDeletionActions): void {
+    const id = crypto.randomUUID();
+    const timer = setTimeout(() => {
+      void this.#commit_deletion(id);
+    }, DELETION_UNDO_MS);
+    this.#pending_deletions.set(id, { subject, actions, timer });
+    this.#patch({
+      pending_deletions: [...this.#state.pending_deletions, { id, ...subject }],
+    });
+  }
+
+  undo_deletion(pending_id: string): void {
+    const pending = this.#pending_deletions.get(pending_id);
+    if (pending === undefined) {
+      return;
+    }
+    clearTimeout(pending.timer);
+    this.#pending_deletions.delete(pending_id);
+    pending.actions.restore();
+    this.#patch({
+      pending_deletions: this.#state.pending_deletions.filter((item) => item.id !== pending_id),
+    });
+  }
+
+  dismiss_deletion_failure(): void {
+    this.#patch({ deletion_failure: null });
+  }
+
+  async #commit_deletion(pending_id: string): Promise<void> {
+    const pending = this.#pending_deletions.get(pending_id);
+    if (pending === undefined) {
+      return;
+    }
+    clearTimeout(pending.timer);
+    this.#pending_deletions.delete(pending_id);
+    this.#patch({
+      pending_deletions: this.#state.pending_deletions.filter((item) => item.id !== pending_id),
+    });
+    try {
+      await pending.actions.commit();
+    } catch (error) {
+      pending.actions.restore();
+      this.#patch({
+        deletion_failure: {
+          ...pending.subject,
+          message: error instanceof Error ? error.message : String(error),
+        },
+      });
+    }
   }
 
   #patch_generation(patch: Partial<GenerationViewModel>): void {
@@ -433,6 +538,8 @@ class StudioControllerImpl implements StudioController {
   }
 
   stop(): Promise<void> {
+    // Deletions the user did not undo are carried out now rather than dropped.
+    const commits = [...this.#pending_deletions.keys()].map((id) => this.#commit_deletion(id));
     this.#stopped = true;
     const cleanup_failures: unknown[] = [];
     for (const unsubscribe of [...this.#unsubscribes].reverse()) {
@@ -448,7 +555,7 @@ class StudioControllerImpl implements StudioController {
         new AggregateError(cleanup_failures, "Studio controller cleanup failed"),
       );
     }
-    return Promise.resolve();
+    return Promise.all(commits).then(() => undefined);
   }
 
   set_route(route: StudioRoute): void {
@@ -662,6 +769,12 @@ class StudioControllerImpl implements StudioController {
   inspect_comfyui(input: ComfyUiInspectionInput): Promise<ComfyUiInspection> {
     return this.#capabilities.profiles.inspect_comfyui(input);
   }
+  list_comfyui_workflows(base_url: string): Promise<readonly ServerWorkflow[]> {
+    return this.#capabilities.profiles.list_comfyui_workflows(base_url);
+  }
+  read_comfyui_workflow(base_url: string, path: string): Promise<string> {
+    return this.#capabilities.profiles.read_comfyui_workflow(base_url, path);
+  }
   async set_provider_profile_credential(
     profile_id: Uuid,
     plaintext_value: string,
@@ -815,17 +928,32 @@ class StudioControllerImpl implements StudioController {
     });
   }
 
-  async remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void> {
-    await this.#capabilities.assets.remove(category, asset_id);
-    if (this.#stopped) {
-      return;
-    }
-    this.#patch_assets({
-      records: {
-        ...this.#state.assets.records,
-        [category]: this.#state.assets.records[category].filter((a) => a.id !== asset_id),
+  remove_asset(category: AssetCategory, asset_id: Uuid): Promise<void> {
+    const list = this.#state.assets.records[category];
+    const index = list.findIndex((record) => record.id === asset_id);
+    const record = list[index];
+    this.#hidden_assets.add(asset_id);
+    this.#patch_assets({ records: { ...this.#state.assets.records } });
+    this.defer_deletion(
+      { label: record?.display_name ?? null, count: 1 },
+      {
+        commit: async () => {
+          await this.#capabilities.assets.remove(category, asset_id);
+          this.#hidden_assets.delete(asset_id);
+        },
+        restore: () => {
+          this.#hidden_assets.delete(asset_id);
+          const current = this.#state.assets.records[category];
+          if (record === undefined || current.some((candidate) => candidate.id === asset_id)) {
+            return;
+          }
+          const restored = [...current];
+          restored.splice(Math.min(index, restored.length), 0, record);
+          this.#patch_assets({ records: { ...this.#state.assets.records, [category]: restored } });
+        },
       },
-    });
+    );
+    return Promise.resolve();
   }
 
   async reorder_assets(category: AssetCategory, ordered_ids: readonly Uuid[]): Promise<void> {
@@ -898,18 +1026,56 @@ class StudioControllerImpl implements StudioController {
     });
   }
 
-  async delete_gallery_record(record_id: Uuid): Promise<void> {
-    await this.#capabilities.gallery.delete_record(record_id);
-    if (this.#stopped) {
-      return;
+  delete_gallery_record(record_id: Uuid): Promise<void> {
+    this.#hide_gallery_records([record_id], () =>
+      this.#capabilities.gallery.delete_record(record_id),
+    );
+    return Promise.resolve();
+  }
+
+  /** Hides gallery records at once and deletes them unless the user undoes it in time. */
+  #hide_gallery_records(record_ids: readonly Uuid[], remove: () => Promise<void>): void {
+    const ids = new Set(record_ids);
+    const before = this.#state.gallery.records;
+    for (const id of ids) {
+      this.#hidden_gallery.add(id);
     }
     this.#patch_gallery({
-      records: this.#state.gallery.records.filter((record) => record.id !== record_id),
+      records: before,
       selected_record_id:
-        this.#state.gallery.selected_record_id === record_id
+        this.#state.gallery.selected_record_id !== null &&
+        ids.has(this.#state.gallery.selected_record_id)
           ? null
           : this.#state.gallery.selected_record_id,
     });
+    this.defer_deletion(
+      { label: null, count: ids.size },
+      {
+        commit: async () => {
+          await remove();
+          for (const id of ids) {
+            this.#hidden_gallery.delete(id);
+          }
+        },
+        restore: () => {
+          for (const id of ids) {
+            this.#hidden_gallery.delete(id);
+          }
+          const present = new Set(this.#state.gallery.records.map((record) => record.id));
+          const missing = before.filter((record) => ids.has(record.id) && !present.has(record.id));
+          if (missing.length === 0) {
+            return;
+          }
+          const order = new Map(before.map((record, index) => [record.id, index] as const));
+          const records = [...this.#state.gallery.records, ...missing].sort(
+            (a, b) =>
+              (order.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+              (order.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+          );
+          this.#patch_gallery({ records });
+        },
+      },
+    );
   }
 
   async dismiss_failed_tasks(): Promise<void> {
@@ -918,24 +1084,10 @@ class StudioControllerImpl implements StudioController {
   }
 
   bulk_delete_gallery_records(record_ids: readonly Uuid[]): Promise<void> {
-    return run_command(
-      () => this.#state.gallery.bulk_delete_command,
-      (next) => {
-        this.#patch_gallery({ bulk_delete_command: next });
-      },
-      async () => {
-        await this.#capabilities.gallery.bulk_delete(record_ids);
-        const removed_ids = new Set(record_ids);
-        this.#patch_gallery({
-          records: this.#state.gallery.records.filter((record) => !removed_ids.has(record.id)),
-          selected_record_id:
-            this.#state.gallery.selected_record_id !== null &&
-            removed_ids.has(this.#state.gallery.selected_record_id)
-              ? null
-              : this.#state.gallery.selected_record_id,
-        });
-      },
+    this.#hide_gallery_records(record_ids, () =>
+      this.#capabilities.gallery.bulk_delete(record_ids),
     );
+    return Promise.resolve();
   }
 }
 

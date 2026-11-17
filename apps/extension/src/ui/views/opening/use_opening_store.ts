@@ -35,6 +35,7 @@ export interface OpeningStore {
     change: (item: T) => void,
     options?: { readonly debounce: boolean },
   ): void;
+  /** Resolves once the record is hidden from `records`; the host may still undo the deletion. */
   remove(id: string): Promise<void>;
 }
 
@@ -51,8 +52,13 @@ export function use_opening_store(deps: OpeningStoreDeps): OpeningStore {
   const working = reactive(new Map<string, Item>());
   const chains = new Map<string, Promise<void>>();
   const timers = new Map<string, ReturnType<typeof setTimeout>>();
+  /** Items being deleted; a stale record or a late save must not bring one back. */
+  const removed = new Set<string>();
 
   function loaded(record: AssetRecordSummary): Item | null {
+    if (removed.has(record.id)) {
+      return null;
+    }
     return (
       working.get(record.id) ??
       (record.payload.kind === "template" ? read_template(record) : read_draft(record))
@@ -80,6 +86,9 @@ export function use_opening_store(deps: OpeningStoreDeps): OpeningStore {
   );
 
   function get(id: string): Item | null {
+    if (removed.has(id)) {
+      return null;
+    }
     const current = working.get(id);
     if (current !== undefined) {
       return current;
@@ -102,7 +111,7 @@ export function use_opening_store(deps: OpeningStoreDeps): OpeningStore {
     }
     const next = (chains.get(id) ?? Promise.resolve()).then(async () => {
       const item = working.get(id);
-      if (item === undefined) {
+      if (item === undefined || removed.has(id)) {
         return;
       }
       await deps.save({
@@ -155,15 +164,21 @@ export function use_opening_store(deps: OpeningStoreDeps): OpeningStore {
       );
     },
     async remove(id) {
-      const timer = timers.get(id);
-      if (timer !== undefined) {
-        clearTimeout(timer);
-        timers.delete(id);
+      // A text edit still waiting for its save is written first, so undoing the deletion brings
+      // back the latest text.
+      if (timers.has(id)) {
+        await persist(id);
       }
+      removed.add(id);
       await chains.get(id);
       working.delete(id);
       chains.delete(id);
-      await deps.remove(id);
+      try {
+        await deps.remove(id);
+      } finally {
+        // The removal hides the record from `records`; an undo brings it back through there.
+        removed.delete(id);
+      }
     },
   };
 }

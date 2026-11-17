@@ -910,6 +910,19 @@
   opacity: 1;
 }
 
+.toastAction {
+  flex: none;
+  margin-left: auto;
+  padding: 0 var(--tc-space-2);
+  height: var(--tc-control-height-sm);
+  border-radius: var(--tc-radius-control);
+  color: inherit;
+  font-size: var(--tc-font-size-sm);
+  font-weight: var(--tc-font-weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .toastError {
   border-color: var(--tc-error);
   background-color: var(--tc-surface);

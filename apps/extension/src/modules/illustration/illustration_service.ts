@@ -27,8 +27,8 @@ import type { OutfitTags } from "../wardrobe/outfit_from_image.js";
 import type { PendingWardrobeUpdate, WardrobeService } from "../wardrobe/wardrobe_service.js";
 import { guidance_lines } from "./user_guidance.js";
 import { type SlotLibrary } from "./library_match.js";
+import { AnalysisStoppedError } from "./analysis_error.js";
 import {
-  AnalysisStoppedError,
   history_before,
   request_analysis,
   run_wardrobe_request,
@@ -635,6 +635,7 @@ export class IllustrationService {
   request_opening<T>(
     request: OpeningStructuredRequest<T>,
     options: OpeningRequestOptions,
+    signal: AbortSignal,
   ): Promise<T> {
     const base = this.#deps.settings();
     const { connection } = options;
@@ -642,6 +643,7 @@ export class IllustrationService {
       ...base,
       preset_source: "sillytavern",
       preset_name: options.preset_name,
+      analysis_reasoning: "preset",
       connection:
         connection.kind === "analysis"
           ? base.connection
@@ -654,7 +656,7 @@ export class IllustrationService {
       { ...this.#deps, settings: () => settings },
       options.text,
       { ...request, history: [] },
-      new AbortController().signal,
+      signal,
       {
         world_info:
           worldbooks.length === 0

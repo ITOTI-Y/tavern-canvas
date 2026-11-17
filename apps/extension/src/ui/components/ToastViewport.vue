@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check, X } from "lucide-vue-next";
 import {
+  ToastAction,
   ToastClose,
   ToastDescription,
   ToastPortal,
@@ -21,6 +22,8 @@ export interface ToastItem {
   readonly description?: string;
   readonly variant?: "info" | "success" | "error";
   readonly duration?: number;
+  /** A button beside the title, such as Undo; pressing it also closes the toast. */
+  readonly action?: { readonly label: string; readonly run: () => void };
 }
 
 defineProps<{
@@ -75,6 +78,16 @@ const portal_props = computed(() => (portal_target ? { to: portal_target } : {})
           <ToastDescription v-if="toast.description" :class="styles.toastDescription">
             {{ toast.description }}
           </ToastDescription>
+          <ToastAction v-if="toast.action" :alt-text="toast.action.label" as-child>
+            <button
+              type="button"
+              class="tc-interactive"
+              :class="styles.toastAction"
+              @click="toast.action.run()"
+            >
+              {{ toast.action.label }}
+            </button>
+          </ToastAction>
           <ToastClose class="tc-interactive" :class="styles.toastClose" :aria-label="closeLabel">
             <AppIcon :icon="X" :size="14" />
           </ToastClose>

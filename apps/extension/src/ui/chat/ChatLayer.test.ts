@@ -83,6 +83,7 @@ function create_host(text_element: HTMLElement): HostAdapter {
     stop_generation: () => undefined,
     sync_regex_scripts: () => Promise.resolve(false),
     list_worldbooks: () => [],
+    prevent_world_info_recursion: () => () => {},
     read_worldbook: () => Promise.resolve([]),
     translate_deepl: () => Promise.reject(new Error("not used")),
     read_swipe_wardrobe: () => null,
@@ -119,6 +120,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
       size_set_id: null,
       size_set_by_chat: {},
       structured_output: "auto",
+      analysis_reasoning: "preset",
     }),
     auto_generation_enabled: () => false,
     prompt_context: () =>

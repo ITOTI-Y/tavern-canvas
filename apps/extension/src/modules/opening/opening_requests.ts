@@ -331,10 +331,40 @@ function follow_up_question(value: unknown, raw: string): OpeningQuestion {
  * Asks one more question about a step that already has a result: the user asked for it, so the
  * model must ask rather than decide that nothing is open.
  */
+/** A question the user turned down, with what they said they wanted instead. */
+export interface RejectedQuestion {
+  readonly question: OpeningQuestion;
+  /** Empty when the user gave no reason. */
+  readonly feedback: string;
+}
+
+function rejected_lines(rejected: readonly RejectedQuestion[]): string[] {
+  if (rejected.length === 0) {
+    return [];
+  }
+  return [
+    "",
+    "The user turned down these questions in this step, oldest first:",
+    ...rejected.flatMap((item, position) => [
+      `${String(position + 1)}. ${item.question.text}`,
+      `   Options: ${item.question.options.map((option) => option.label).join(" / ")}`,
+      item.feedback.trim() === ""
+        ? "   The user gave no reason."
+        : `   The user's feedback: ${item.feedback.trim()}`,
+    ]),
+    "Ask one new question that follows the latest feedback. Do not repeat a question or option the user turned down.",
+  ];
+}
+
+/**
+ * One more question about a step; `rejected` lists the questions the user turned down in this
+ * step, so the new one builds on their feedback.
+ */
 export function follow_up_request(
   draft: OpeningDraftPayload,
   index: number,
   focus: string,
+  rejected: readonly RejectedQuestion[],
 ): OpeningStructuredRequest<OpeningQuestion> {
   const state = draft.states[index];
   const result =
@@ -345,12 +375,15 @@ export function follow_up_request(
     ...context_lines(draft, index),
     "",
     "This step's current result:",
-    ...(result.length === 0 ? ["(none)"] : result),
+    ...(result.length === 0 ? ["(none yet)"] : result),
     "",
-    "The user has read this result and wants to be asked one more question before the step is written again.",
+    result.length === 0
+      ? "The user wants to be asked one more question before the step is written."
+      : "The user has read this result and wants to be asked one more question before the step is written again.",
     focus.trim() === ""
       ? "Ask about the open choice whose answer would change the result the most: something the description and the answers left to you, or a decision in the result the user may want to make differently."
       : `The user wants the question to be about: ${focus.trim()}. Ask about the choice within that which would change the result the most.`,
+    ...rejected_lines(rejected),
     ...QUESTION_RULES,
   ];
   const parse = (raw: string): OpeningQuestion =>

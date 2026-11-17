@@ -3,10 +3,12 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { OpeningBookEntry, OpeningHost } from "../../../modules/opening/opening_host.js";
-import type { OpeningEntry } from "../../../modules/opening/opening_model.js";
+import type { OpeningEntry, WrittenEntry } from "../../../modules/opening/opening_model.js";
 import {
   plan_write,
   write_changes,
+  written_after,
+  type WritePlacement,
   type WriteRow,
 } from "../../../modules/opening/opening_output.js";
 import AppButton from "../../components/AppButton.vue";
@@ -22,12 +24,14 @@ const props = defineProps<{
   readonly entries: readonly OpeningEntry[];
   readonly defaultName: string;
   readonly lists: OpeningLists;
+  /** The draft's last write to each book, by book name. */
+  readonly written: Readonly<Record<string, readonly WrittenEntry[]>>;
 }>();
 
 const open = defineModel<boolean>("open", { required: true });
 
 const emit = defineEmits<{
-  written: [book: string];
+  written: [book: string, snapshot: WrittenEntry[]];
 }>();
 
 const { t } = useI18n();
@@ -50,14 +54,28 @@ const book_options = computed(() =>
   props.lists.books.map((name) => ({ value: name, label: name })),
 );
 
+const position = ref<WritePlacement["position"]>("after_character_definition");
+const constant_no_recursion = ref(true);
+const position_options = computed(() => [
+  { value: "after_character_definition", label: t("opening.write.position_after") },
+  { value: "before_character_definition", label: t("opening.write.position_before") },
+  { value: "at_depth", label: t("opening.write.position_depth") },
+]);
+
+const previous = computed<readonly WrittenEntry[]>(() =>
+  mode.value === "existing" && book.value !== undefined ? (props.written[book.value] ?? []) : [],
+);
+
 const rows = computed<WriteRow[]>(() =>
-  plan_write(props.entries, mode.value === "existing" ? existing.value : []),
+  plan_write(props.entries, mode.value === "existing" ? existing.value : [], previous.value),
 );
 
 function choose_defaults(): void {
-  chosen.value = new Set(
-    rows.value.filter((row) => row.status !== "same").map((row) => row.entry.id),
-  );
+  chosen.value = new Set(rows.value.filter((row) => row.suggested).map((row) => row.key));
+}
+
+function row_name(row: WriteRow): string {
+  return row.entry?.title ?? row.existing?.name ?? "";
 }
 
 async function load_book(): Promise<void> {
@@ -108,7 +126,7 @@ const name_taken = computed(
   () => mode.value === "new" && props.lists.books.includes(new_name.value.trim()),
 );
 const chosen_count = computed(
-  () => rows.value.filter((row) => row.status !== "same" && chosen.value.has(row.entry.id)).length,
+  () => rows.value.filter((row) => row.status !== "same" && chosen.value.has(row.key)).length,
 );
 const chat_name = computed(() => (open.value ? props.host.chat_name() : null));
 
@@ -116,10 +134,18 @@ function status_label(row: WriteRow): string {
   switch (row.status) {
     case "new":
       return t("opening.write.status_new");
-    case "modified":
+    case "changed":
       return t("opening.write.status_modified");
     case "same":
       return t("opening.write.status_same");
+    case "book_edited":
+      return t("opening.write.status_book_edited");
+    case "conflict":
+      return t("opening.write.status_conflict");
+    case "book_deleted":
+      return t("opening.write.status_book_deleted");
+    case "removed":
+      return t("opening.write.status_removed");
   }
 }
 
@@ -135,11 +161,22 @@ async function write(): Promise<void> {
       await props.host.create_worldbook(name);
     }
     const base = mode.value === "new" ? [] : existing.value;
-    await props.host.save_entries(name, write_changes(rows.value, chosen.value, base));
+    const placement: WritePlacement = {
+      position: position.value,
+      depth: 4,
+      constant_no_recursion: constant_no_recursion.value,
+    };
+    await props.host.save_entries(name, write_changes(rows.value, chosen.value, base, placement));
+    const snapshot = written_after(
+      rows.value,
+      chosen.value,
+      await props.host.read_entries(name),
+      previous.value,
+    );
     if (chat_name.value !== null) {
       await props.host.bind_chat_worldbook(name);
     }
-    emit("written", name);
+    emit("written", name, snapshot);
     open.value = false;
   } catch (caught) {
     error.value = t("opening.write.failed", { reason: reason(caught) });
@@ -180,29 +217,46 @@ async function write(): Promise<void> {
       <p v-if="name_taken" :class="styles.error">{{ t("opening.write.name_taken") }}</p>
       <p v-if="loading" :class="styles.hint" role="status">{{ t("opening.write.loading") }}</p>
       <div v-else :class="styles.write_list">
-        <div
-          v-for="row in rows"
-          :key="row.entry.id"
-          :class="styles.write_row"
-          :data-status="row.status"
-        >
+        <div v-for="row in rows" :key="row.key" :class="styles.write_row" :data-status="row.status">
           <AppCheckbox
-            :model-value="row.status !== 'same' && chosen.has(row.entry.id)"
-            :label="row.entry.title"
+            :model-value="row.status !== 'same' && chosen.has(row.key)"
+            :label="row_name(row)"
             label-hidden
             :disabled="row.status === 'same'"
-            @update:model-value="(value) => toggle(row.entry.id, value)"
+            @update:model-value="(value) => toggle(row.key, value)"
           />
           <span :class="styles.pill" :data-tone="row.status">{{ status_label(row) }}</span>
           <span>
-            <strong>{{ row.entry.title }}</strong>
-            <span v-if="row.status === 'modified' && row.existing !== null" :class="styles.diff">
+            <strong>{{ row_name(row) }}</strong>
+            <span
+              v-if="
+                row.entry !== null &&
+                row.existing !== null &&
+                (row.status === 'changed' ||
+                  row.status === 'conflict' ||
+                  row.status === 'book_edited')
+              "
+              :class="styles.diff"
+            >
               <del>{{ row.existing.content }}</del>
               <ins>{{ row.entry.content }}</ins>
             </span>
           </span>
         </div>
       </div>
+      <div :class="styles.row">
+        <AppSelect
+          v-model="position"
+          :options="position_options"
+          :placeholder="t('opening.write.position_label')"
+          :aria-label="t('opening.write.position_label')"
+        />
+        <AppCheckbox
+          v-model="constant_no_recursion"
+          :label="t('opening.write.constant_no_recursion')"
+        />
+      </div>
+      <p :class="styles.hint">{{ t("opening.write.placement_hint") }}</p>
       <p :class="styles.hint">
         {{
           chat_name === null

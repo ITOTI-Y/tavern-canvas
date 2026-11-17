@@ -32,7 +32,12 @@ export interface OpeningStructuredRequest<T> {
 
 /** What the opening page needs from the host and the analysis model. */
 export interface OpeningPort {
-  request<T>(request: OpeningStructuredRequest<T>, options: OpeningRequestOptions): Promise<T>;
+  /** Aborting `signal` stops the request; it then rejects with `AnalysisStoppedError`. */
+  request<T>(
+    request: OpeningStructuredRequest<T>,
+    options: OpeningRequestOptions,
+    signal: AbortSignal,
+  ): Promise<T>;
   /** Rejects when JS-Slash-Runner lacks the world book or chat message methods. */
   host(): Promise<OpeningHost>;
 }
