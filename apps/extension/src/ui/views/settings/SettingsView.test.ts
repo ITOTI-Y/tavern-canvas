@@ -26,6 +26,7 @@ import { create_unavailable_capabilities } from "../../controllers/unavailable_c
 import type { BrowserSecretVaultStatus } from "../../../storage/browser_secret_vault.js";
 import { en_messages } from "../../../i18n/locales/en.js";
 import { zh_cn_messages } from "../../../i18n/locales/zh_cn.js";
+import AppSelect from "../../components/AppSelect.vue";
 import SettingsView from "./SettingsView.vue";
 
 const PROFILE_ID: Uuid = "11111111-1111-4111-8111-111111111111";
@@ -44,6 +45,7 @@ const DEFAULT_SETTINGS: TavernCanvasSettings = {
   auto_generation_enabled: false,
   vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
+    preset_source: "sillytavern",
     preset_name: "in_use",
     connection: { kind: "current" },
     max_chat_history: 4,
@@ -577,6 +579,31 @@ describe("SettingsView illustration settings", () => {
       "in_use",
       "Analysis preset",
     ]);
+  });
+
+  it("switches the analysis to the built-in preset and hides the preset name", async () => {
+    const updates: Partial<TavernCanvasSettings>[] = [];
+    const capabilities = create_unavailable_capabilities();
+    const controller = build_controller({
+      ...capabilities,
+      settings: recording_settings_capability(updates),
+    });
+    const { wrapper } = await mount_view_with_live_controller(controller);
+    expect(wrapper.find('[data-testid="analysis-preset-input"]').exists()).toBe(true);
+
+    const source = wrapper
+      .findAllComponents(AppSelect)
+      .find((select) =>
+        (select.props("options") as readonly { value: string }[]).some(
+          (option) => option.value === "builtin",
+        ),
+      );
+    expect(source).toBeDefined();
+    source?.vm.$emit("update:modelValue", "builtin");
+    await flushPromises();
+
+    expect(updates.at(-1)?.illustration?.preset_source).toBe("builtin");
+    expect(wrapper.find('[data-testid="analysis-preset-input"]').exists()).toBe(false);
   });
 
   it("lets analysis read several chosen books, and can turn world info off", async () => {

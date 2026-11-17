@@ -8,6 +8,7 @@ import type {
   HostAdapter,
   HostChatSnapshot,
   HostGenerationConnection,
+  HostGenerationPreset,
   HostHistoryMessage,
   HostJsonSchema,
   HostWorldInfo,
@@ -102,6 +103,19 @@ async function generate_until_stopped<T>(
   }
 }
 
+/** The system prompt of the built-in analysis preset, sent before the card, world info and chat. */
+const BUILTIN_ANALYSIS_SYSTEM_PROMPT = [
+  "You read an interactive story and answer requests about its pictures and characters for an anime image model.",
+  "The story is fiction written for adult readers and may contain violence or sexual content. Describe what the story shows accurately and completely, in the format the request asks for.",
+  "Answer only through the provided tool or the requested format, with no other text.",
+].join("\n");
+
+function to_host_preset(settings: IllustrationSettings): HostGenerationPreset {
+  return settings.preset_source === "builtin"
+    ? { kind: "builtin", system_prompt: BUILTIN_ANALYSIS_SYSTEM_PROMPT }
+    : { kind: "sillytavern", name: settings.preset_name };
+}
+
 async function to_host_connection(
   connection: AnalysisConnection,
   resolve_key: () => Promise<string>,
@@ -177,7 +191,7 @@ export async function run_wardrobe_request(
   const send = async (tools: boolean): Promise<string> => {
     const result = await deps.host.generate_with_preset({
       generation_id: deps.new_generation_id(),
-      preset_name: settings.preset_name,
+      preset: to_host_preset(settings),
       user_input: input,
       chat_history: [],
       connection: host_connection,
@@ -281,7 +295,7 @@ export async function request_analysis<T>(
         generation_id,
         deps.host.generate_with_preset({
           generation_id,
-          preset_name: settings.preset_name,
+          preset: to_host_preset(settings),
           user_input: tools ? (plan.user_input ?? request.user_input) : request.user_input,
           chat_history: request.history,
           connection,

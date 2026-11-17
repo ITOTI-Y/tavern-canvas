@@ -12,6 +12,7 @@ export type {
   HostChatMessageSnapshot,
   HostChatSnapshot,
   HostGenerationConnection,
+  HostGenerationPreset,
   HostGenerationEvent,
   HostGenerationHandler,
   HostHistoryMessage,

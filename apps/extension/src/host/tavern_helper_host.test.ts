@@ -22,6 +22,7 @@ function create_helper(overrides: Partial<TavernHelperSurface> = {}): TavernHelp
     ]),
     setChatMessages: vi.fn(() => Promise.resolve()),
     generate: vi.fn(() => Promise.resolve("{}")),
+    generateRaw: vi.fn(() => Promise.resolve("{}")),
     stopGenerationById: vi.fn(() => true),
     getTavernRegexes: vi.fn(() => []),
     replaceTavernRegexes: vi.fn(() => Promise.resolve()),
@@ -118,7 +119,7 @@ describe("TavernHelperHost", () => {
 
     const result = await host.generate_with_preset({
       generation_id: "g1",
-      preset_name: "in_use",
+      preset: { kind: "sillytavern", name: "in_use" },
       user_input: "analyze",
       chat_history: [],
       connection: {
@@ -162,7 +163,7 @@ describe("TavernHelperHost", () => {
 
     const result = await host.generate_with_preset({
       generation_id: "g1",
-      preset_name: "in_use",
+      preset: { kind: "sillytavern", name: "in_use" },
       user_input: "write",
       chat_history: [],
       connection: { kind: "current" },
@@ -196,6 +197,50 @@ describe("TavernHelperHost", () => {
     ]);
   });
 
+  it("sends the built-in preset as its system prompt, the card, world info and chat", async () => {
+    const generate = vi.fn(() => Promise.resolve("{}"));
+    const generateRaw = vi.fn(() => Promise.resolve("{}"));
+    const host = new TavernHelperHost(create_helper({ generate, generateRaw }), () => "chat-1");
+
+    await host.generate_with_preset({
+      generation_id: "g1",
+      preset: { kind: "builtin", system_prompt: "Answer through the tool." },
+      user_input: "analyze",
+      chat_history: [{ role: "user", content: "Hello." }],
+      connection: { kind: "current" },
+      json_schema: null,
+      tools: {
+        tools: [{ name: "submit", description: "Submit.", parameters: { type: "object" } }],
+        choice: { name: "submit" },
+      },
+      world_info: { kind: "chat" },
+      image: null,
+    });
+
+    expect(generate).not.toHaveBeenCalled();
+    expect(generateRaw).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user_input: "analyze",
+        ordered_prompts: [
+          { role: "system", content: "Answer through the tool." },
+          "world_info_before",
+          "persona_description",
+          "char_description",
+          "char_personality",
+          "scenario",
+          "world_info_after",
+          "chat_history",
+          "user_input",
+        ],
+        overrides: { chat_history: { prompts: [{ role: "user", content: "Hello." }] } },
+        tool_choice: { type: "function", function: { name: "submit" } },
+      }),
+    );
+    expect(generateRaw).toHaveBeenCalledWith(
+      expect.not.objectContaining({ preset_name: "in_use" }),
+    );
+  });
+
   it("sends the given messages as the chat history, oldest first", async () => {
     const generate = vi.fn(() => Promise.resolve("{}"));
     const host = new TavernHelperHost(create_helper({ generate }), () => "chat-1");
@@ -206,7 +251,7 @@ describe("TavernHelperHost", () => {
 
     await host.generate_with_preset({
       generation_id: "g1",
-      preset_name: "in_use",
+      preset: { kind: "sillytavern", name: "in_use" },
       user_input: "analyze",
       chat_history,
       connection: { kind: "current" },
@@ -226,7 +271,7 @@ describe("TavernHelperHost", () => {
 
     await host.generate_with_preset({
       generation_id: "g1",
-      preset_name: "in_use",
+      preset: { kind: "sillytavern", name: "in_use" },
       user_input: "analyze",
       chat_history: [],
       connection: { kind: "current" },

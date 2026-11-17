@@ -292,6 +292,7 @@ function build_settings(): TavernCanvasSettings {
     auto_generation_enabled: false,
     vocabulary_remote: { catalog_url: "", token_saved: false },
     illustration: {
+      preset_source: "builtin",
       preset_name: "in_use",
       connection: { kind: "current" },
       max_chat_history: 4,

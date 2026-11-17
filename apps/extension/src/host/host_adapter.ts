@@ -111,10 +111,17 @@ export interface HostHistoryMessage {
   readonly content: string;
 }
 
-/** Always runs through a SillyTavern preset: the extension never sends a request the user's preset has not shaped. */
+/**
+ * The prompt layout of a request: the extension's own system prompt followed by the character
+ * card, persona, world info and chat history, or a SillyTavern chat completion preset by name.
+ */
+export type HostGenerationPreset =
+  | { readonly kind: "builtin"; readonly system_prompt: string }
+  | { readonly kind: "sillytavern"; readonly name: string };
+
 export interface PresetGenerationRequest {
   readonly generation_id: string;
-  readonly preset_name: string;
+  readonly preset: HostGenerationPreset;
   readonly user_input: string;
   /** Oldest first; empty sends no chat history. */
   readonly chat_history: readonly HostHistoryMessage[];

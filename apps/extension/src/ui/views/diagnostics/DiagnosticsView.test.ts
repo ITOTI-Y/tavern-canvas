@@ -119,6 +119,7 @@ function build_state(overrides: Partial<StudioState> = {}): StudioState {
         auto_generation_enabled: false,
         vocabulary_remote: { catalog_url: "", token_saved: false },
         illustration: {
+          preset_source: "sillytavern",
           preset_name: "in_use",
           connection: { kind: "current" },
           max_chat_history: 4,
@@ -267,6 +268,7 @@ const SETTINGS: TavernCanvasSettings = {
   auto_generation_enabled: false,
   vocabulary_remote: { catalog_url: "", token_saved: false },
   illustration: {
+    preset_source: "sillytavern",
     preset_name: "in_use",
     connection: { kind: "current" },
     max_chat_history: 4,

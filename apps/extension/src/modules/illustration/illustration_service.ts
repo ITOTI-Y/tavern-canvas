@@ -640,6 +640,7 @@ export class IllustrationService {
     const { connection } = options;
     const settings: IllustrationSettings = {
       ...base,
+      preset_source: "sillytavern",
       preset_name: options.preset_name,
       connection:
         connection.kind === "analysis"

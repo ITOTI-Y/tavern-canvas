@@ -68,6 +68,7 @@ var _ = n().min(1).max(128).refine((e) => e === e.trim(), "active_namespace must
 	name: n().trim().min(1).max(60),
 	sizes: c(w).min(1).max(16)
 }), E = r({
+	preset_source: l(["builtin", "sillytavern"]).default("sillytavern"),
 	preset_name: n().trim().min(1).max(200),
 	connection: b,
 	max_chat_history: u().int().min(0).max(20),

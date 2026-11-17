@@ -311,6 +311,10 @@ export function create_host_environment(options: HostEnvironmentOptions): {
         generate_calls.push(structuredClone(config));
         return Promise.resolve({ content: generate_response });
       },
+      generateRaw: (config: Record<string, unknown>) => {
+        generate_calls.push(structuredClone(config));
+        return Promise.resolve({ content: generate_response });
+      },
       stopGenerationById: () => true,
       getWorldbookNames: () => [],
       getWorldbook: () => Promise.resolve([]),

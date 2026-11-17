@@ -216,6 +216,17 @@ function set_prompt_preset(value: string): void {
   update_illustration({ prompt_preset_id: preset?.id ?? null });
 }
 
+const preset_source_options = computed(() => [
+  { value: "builtin", label: t("settings.illustration.preset_source_builtin") },
+  { value: "sillytavern", label: t("settings.illustration.preset_source_sillytavern") },
+]);
+
+function set_preset_source(value: string | undefined): void {
+  if (value === "builtin" || value === "sillytavern") {
+    update_illustration({ preset_source: value });
+  }
+}
+
 const structured_output_options = computed(() => [
   { value: "auto", label: t("settings.illustration.structured_output_auto") },
   { value: "json_schema", label: t("settings.illustration.structured_output_json") },
@@ -465,6 +476,23 @@ function set_worldbook(name: string, chosen: boolean): void {
         </div>
       </template>
       <FieldGroup
+        :label="t('settings.illustration.preset_source_label')"
+        :hint="t('settings.illustration.preset_source_hint')"
+      >
+        <template #default="{ fieldId, describedBy }">
+          <AppSelect
+            :id="fieldId"
+            :described-by="describedBy"
+            :model-value="illustration?.preset_source ?? 'builtin'"
+            :options="preset_source_options"
+            :placeholder="t('settings.illustration.preset_source_label')"
+            :disabled="!settings"
+            @update:model-value="set_preset_source"
+          />
+        </template>
+      </FieldGroup>
+      <FieldGroup
+        v-if="illustration?.preset_source === 'sillytavern'"
         :label="t('settings.illustration.preset_label')"
         :hint="t('settings.illustration.preset_hint')"
       >

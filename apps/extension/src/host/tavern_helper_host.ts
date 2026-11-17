@@ -40,10 +40,12 @@ export interface TavernRegex {
   max_depth: number | null;
 }
 
-/** The `generate` config fields TavernCanvas sends; see JS-Slash-Runner `@types/function/generate.d.ts`. */
-export interface TavernHelperGenerateConfig {
+/**
+ * The config fields TavernCanvas sends to `generate` and `generateRaw`; see JS-Slash-Runner
+ * `@types/function/generate.d.ts`.
+ */
+interface TavernHelperRequestConfig {
   readonly generation_id: string;
-  readonly preset_name: string;
   readonly user_input: string;
   readonly max_chat_history?: 0;
   readonly should_silence: true;
@@ -82,6 +84,28 @@ export interface TavernHelperGenerateConfig {
   readonly image?: readonly string[];
 }
 
+export interface TavernHelperGenerateConfig extends TavernHelperRequestConfig {
+  readonly preset_name: string;
+}
+
+/** The places SillyTavern fills in a `generateRaw` prompt order. */
+export type TavernHelperPlaceholderPrompt =
+  | "world_info_before"
+  | "persona_description"
+  | "char_description"
+  | "char_personality"
+  | "scenario"
+  | "world_info_after"
+  | "chat_history"
+  | "user_input";
+
+export interface TavernHelperGenerateRawConfig extends TavernHelperRequestConfig {
+  /** Sent in this order; a part left out is not sent. */
+  readonly ordered_prompts: readonly (
+    TavernHelperPlaceholderPrompt | { readonly role: "system"; readonly content: string }
+  )[];
+}
+
 interface GlobalRegexOption {
   readonly type: "global";
 }
@@ -93,6 +117,7 @@ export interface TavernHelperSurface {
     options: { readonly refresh: "affected" },
   ): Promise<void>;
   generate(config: TavernHelperGenerateConfig): Promise<unknown>;
+  generateRaw(config: TavernHelperGenerateRawConfig): Promise<unknown>;
   getWorldbookNames(): unknown;
   getWorldbook(worldbook_name: string): Promise<unknown>;
   stopGenerationById(generation_id: string): boolean;
@@ -103,7 +128,13 @@ export interface TavernHelperSurface {
 
 const REQUIRED_HELPER_METHODS = {
   message_swipe_metadata: ["getChatMessages", "setChatMessages"],
-  preset_generation: ["generate", "stopGenerationById", "getWorldbookNames", "getWorldbook"],
+  preset_generation: [
+    "generate",
+    "generateRaw",
+    "stopGenerationById",
+    "getWorldbookNames",
+    "getWorldbook",
+  ],
   tavern_regex: ["getTavernRegexes", "replaceTavernRegexes", "retrieveDisplayedMessage"],
 } as const;
 
@@ -403,9 +434,8 @@ export class TavernHelperHost {
     const custom_api = to_custom_api(request.connection);
     const replace_world_info = request.world_info.kind === "replace";
     const history = request.chat_history.length > 0;
-    const result = await this.#helper.generate({
+    const config: TavernHelperRequestConfig = {
       generation_id: request.generation_id,
-      preset_name: request.preset_name,
       user_input: request.user_input,
       // An empty prompts list would also drop the persona and author's note, so no history is
       // asked for by count instead.
@@ -442,7 +472,24 @@ export class TavernHelperHost {
           ? {}
           : { json_schema: { ...request.json_schema, strict: true } }),
       ...(request.image === null ? {} : { image: [request.image] }),
-    });
+    };
+    const result =
+      request.preset.kind === "builtin"
+        ? await this.#helper.generateRaw({
+            ...config,
+            ordered_prompts: [
+              { role: "system", content: request.preset.system_prompt },
+              "world_info_before",
+              "persona_description",
+              "char_description",
+              "char_personality",
+              "scenario",
+              "world_info_after",
+              "chat_history",
+              "user_input",
+            ],
+          })
+        : await this.#helper.generate({ ...config, preset_name: request.preset.name });
     return read_generation_result(result);
   }
 

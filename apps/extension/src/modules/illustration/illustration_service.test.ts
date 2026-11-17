@@ -26,6 +26,7 @@ const IMAGE_ID = "01906f4e-5f1c-7a2a-8d73-cc3a51abf1ed";
 const REQUEST_ID = RequestIdSchema.parse("550e8400-e29b-41d4-a716-446655440000");
 
 const SETTINGS: IllustrationSettings = {
+  preset_source: "sillytavern",
   preset_name: "in_use",
   connection: { kind: "current" },
   max_chat_history: 4,
@@ -391,7 +392,7 @@ describe("IllustrationService.analyze", () => {
     expect(host.text).toBe(`${REPLY}\n<!--tc-image:slot_0001-->`);
     expect(service.read(LOCATION)).toEqual(record);
     expect(host.generate_calls[0]).toMatchObject({
-      preset_name: "in_use",
+      preset: { kind: "sillytavern", name: "in_use" },
       chat_history: [
         { role: "assistant", content: "The clouds gathered." },
         { role: "user", content: "Look outside." },

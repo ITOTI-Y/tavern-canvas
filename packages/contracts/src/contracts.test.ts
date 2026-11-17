@@ -397,6 +397,7 @@ describe("initial settings and capability contracts", () => {
     auto_generation_enabled: true,
     vocabulary_remote: { catalog_url: "", token_saved: false },
     illustration: {
+      preset_source: "builtin" as const,
       preset_name: "in_use",
       connection: { kind: "current" },
       max_chat_history: 4,
@@ -429,6 +430,15 @@ describe("initial settings and capability contracts", () => {
 
   it("accepts bounded settings", () => {
     expect(TavernCanvasSettingsSchema.parse(settings)).toEqual(settings);
+  });
+
+  it("reads illustration settings saved without a preset source as using a SillyTavern preset", () => {
+    const { preset_source: _preset_source, ...saved_illustration } = settings.illustration;
+
+    expect(
+      TavernCanvasSettingsSchema.parse({ ...settings, illustration: saved_illustration })
+        .illustration.preset_source,
+    ).toBe("sillytavern");
   });
 
   it.each([0, 5])("rejects global concurrency %i", (global_concurrency) => {

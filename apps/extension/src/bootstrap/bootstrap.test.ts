@@ -37,6 +37,7 @@ function create_host_fixture(version = "4.11.1"): HostFixture {
         getChatMessages: vi.fn(() => []),
         setChatMessages: vi.fn(),
         generate: vi.fn(),
+        generateRaw: vi.fn(),
         stopGenerationById: vi.fn(),
         getWorldbookNames: vi.fn(() => []),
         getWorldbook: vi.fn(() => Promise.resolve([])),

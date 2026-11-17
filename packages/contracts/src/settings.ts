@@ -129,6 +129,12 @@ export type SizeSet = z.infer<typeof SizeSetSchema>;
 export const MAX_CHAT_SIZE_SETS = 100;
 
 export const IllustrationSettingsSchema = z.strictObject({
+  /**
+   * `builtin` sends the extension's own short instruction with the character card, persona, world
+   * info and chat history; `sillytavern` sends the chat completion preset named by `preset_name`.
+   * Settings saved before the choice existed used a SillyTavern preset.
+   */
+  preset_source: z.enum(["builtin", "sillytavern"]).default("sillytavern"),
   /** A SillyTavern chat completion preset name; `in_use` is the preset currently loaded. */
   preset_name: z.string().trim().min(1).max(200),
   connection: AnalysisConnectionSchema,

@@ -98,6 +98,7 @@ function mount_layer(options: { readonly edits?: boolean } = {}) {
   const service = new IllustrationService({
     host,
     settings: () => ({
+      preset_source: "sillytavern",
       preset_name: "in_use",
       connection: { kind: "current" },
       max_chat_history: 4,

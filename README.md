@@ -58,8 +58,12 @@ adds them as new slots; a paragraph the model leaves out is added with empty pro
 analysis request or an unparsable reply is retried after 2 and then 4 seconds; when all three
 attempts fail, the reply shows the reason with an **Analyze again** button.
 
-The analysis runs through a SillyTavern chat completion preset, by default the one currently
-loaded, over the current API, a proxy preset, or a custom OpenAI compatible API. The illustration
+The analysis uses either Inkwell's built-in lean preset, the default, or a SillyTavern chat
+completion preset, by default the one currently loaded. The built-in preset sends a short task
+instruction, the character card, persona, world info and the chosen chat history, without the chat
+preset's writing rules, so the request is about half the size. A SillyTavern preset applies its
+jailbreak, obfuscation and output format to the request as is. Either one runs over the current API,
+a proxy preset, or a custom OpenAI compatible API. The illustration
 settings also choose how much chat history and which world info the analysis sees: the world info
 SillyTavern activates for the current chat (the default), the entries one chosen book activates for
 the analyzed reply, or none. Two separate text boxes, Illustration guidance and Wardrobe guidance,

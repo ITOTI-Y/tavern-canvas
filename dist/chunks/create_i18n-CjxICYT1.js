@@ -619,6 +619,10 @@ var o = {
 			wardrobe_guidance_label: "Wardrobe guidance",
 			wardrobe_guidance_hint: "Direction for the clothing the wardrobe update picks, sent with every wardrobe update. Where the reply states otherwise, the reply wins.",
 			wardrobe_guidance_placeholder: "e.g. contemporary casual wear, light clothing for summer",
+			preset_source_label: "Preset for the analysis",
+			preset_source_hint: "The built-in lean preset sends only a short task instruction, the character card, persona, world info and the latest chat messages, without the chat preset's writing rules, so requests are shorter. A SillyTavern preset is applied to the request as is.",
+			preset_source_builtin: "Inkwell built-in lean preset",
+			preset_source_sillytavern: "SillyTavern preset",
 			preset_label: "SillyTavern preset for the analysis",
 			preset_placeholder: "Current preset",
 			preset_hint: "Leave empty to use the preset loaded in SillyTavern. The analysis request goes through this preset as is, including any jailbreak, obfuscation, or output format it applies.",
@@ -1013,7 +1017,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-CGj03r7O.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-CZQomXPr.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2
