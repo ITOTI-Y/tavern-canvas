@@ -780,6 +780,7 @@ var o = {
 				unreachable: "This address cannot be reached. Make sure ComfyUI is running and was started with --enable-cors-header.",
 				connected: "Connected to ComfyUI {version}.",
 				missing_nodes: "The server has not installed these nodes: {names}",
+				missing_lora: "The server has no LoRA \"{value}\".",
 				missing_value: "The server has no \"{value}\" for {property} of node #{node} ({class_type}).",
 				workflow_ready: "The server has every node and model file the workflow uses."
 			},
@@ -1043,7 +1044,7 @@ var o = {
 		text_label: "Tags",
 		text_hint: "Separate tags with commas; they are injected as written."
 	}
-}, s = { "zh-CN": async () => (await import("./zh_cn-C-wfn02G.js")).zh_cn_messages }, c = {
+}, s = { "zh-CN": async () => (await import("./zh_cn-CCEHXdaX.js")).zh_cn_messages }, c = {
 	decimal: {
 		style: "decimal",
 		maximumFractionDigits: 2

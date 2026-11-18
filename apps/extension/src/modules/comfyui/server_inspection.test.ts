@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { inspect_comfyui_server, type ComfyUiGet } from "./server_inspection.js";
+import {
+  inspect_comfyui_server,
+  missing_values_with_choices,
+  type ComfyUiGet,
+} from "./server_inspection.js";
 import { read_mapped_workflow } from "./workflow_mapping.js";
 
 const MAPPED = read_mapped_workflow({
@@ -90,5 +94,25 @@ describe("inspect_comfyui_server", () => {
     await expect(
       inspect_comfyui_server(() => Promise.reject(new Error("offline")), MAPPED),
     ).rejects.toThrowError("offline");
+  });
+
+  it("judges a target by the value chosen in the profile instead of the workflow's own", async () => {
+    if (MAPPED === null) {
+      throw new Error("workflow did not map");
+    }
+    const inspection = await inspect_comfyui_server(get, MAPPED);
+
+    expect(missing_values_with_choices(inspection, MAPPED, { model: "a.safetensors" })).toEqual([]);
+    expect(missing_values_with_choices(inspection, MAPPED, { model: "" })).toEqual(
+      inspection.missing_values,
+    );
+    expect(
+      missing_values_with_choices(inspection, MAPPED, {
+        model: "a.safetensors",
+        sampler_name: "unknown",
+      }),
+    ).toEqual([
+      { node_id: "5", class_type: "KSampler", property: "sampler_name", value: "unknown" },
+    ]);
   });
 });

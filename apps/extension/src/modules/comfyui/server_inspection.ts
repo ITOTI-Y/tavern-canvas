@@ -121,3 +121,43 @@ export async function inspect_comfyui_server(
     missing_values,
   };
 }
+
+/**
+ * The inspection's missing values after the profile's choices replace the workflow's own values:
+ * a target the profile sets is judged by the chosen value, checked against the server's choices.
+ */
+export function missing_values_with_choices(
+  inspection: ComfyUiInspection,
+  mapped: MappedWorkflow,
+  choices: Readonly<Partial<Record<OptionTarget, string>>>,
+): readonly MissingWorkflowValue[] {
+  const replaced: MissingWorkflowValue[] = [];
+  const kept = inspection.missing_values.filter((missing) =>
+    OPTION_TARGETS.every((target) => {
+      const input = mapped.mapping.inputs[target];
+      return (
+        (choices[target] ?? "") === "" ||
+        input?.node_id !== missing.node_id ||
+        input.property !== missing.property
+      );
+    }),
+  );
+  for (const target of OPTION_TARGETS) {
+    const chosen = choices[target] ?? "";
+    const input = mapped.mapping.inputs[target];
+    const node = input === undefined ? undefined : mapped.workflow[input.node_id];
+    const offered = inspection.options[target];
+    if (chosen === "" || input === undefined || node === undefined || offered.length === 0) {
+      continue;
+    }
+    if (!offered.includes(chosen)) {
+      replaced.push({
+        node_id: input.node_id,
+        class_type: node.class_type,
+        property: input.property,
+        value: chosen,
+      });
+    }
+  }
+  return [...kept, ...replaced];
+}

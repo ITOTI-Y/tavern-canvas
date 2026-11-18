@@ -14,6 +14,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import {
+  missing_values_with_choices,
   OPTION_TARGETS,
   type ComfyUiInspection,
 } from "../../../modules/comfyui/server_inspection.js";
@@ -285,6 +286,31 @@ function remove_lora(index: number): void {
 const inspection = ref<ComfyUiInspection | null>(null);
 const inspect_pending = ref(false);
 const inspect_error = ref<string | null>(null);
+
+/** Fixed LoRAs in the form that the server does not list. */
+const missing_loras = computed(() => {
+  const listed = inspection.value?.lora_names ?? [];
+  return takes_loras.value && listed.length > 0
+    ? [
+        ...new Set(
+          (draft.value?.loras ?? [])
+            .map((lora) => lora.lora_name)
+            .filter((name) => name !== "" && !listed.includes(name)),
+        ),
+      ]
+    : [];
+});
+
+/** The values the server lacks, judged by the models and samplers chosen in the form. */
+const missing_values = computed(() => {
+  const found = inspection.value;
+  if (found === null) {
+    return [];
+  }
+  return selected_workflow.value === null || draft.value === null
+    ? found.missing_values
+    : missing_values_with_choices(found, selected_workflow.value, draft.value.comfyui);
+});
 
 /** Reads the server's choices as soon as an address and a workflow are in the form. */
 let inspection_timer: ReturnType<typeof setTimeout> | undefined;
@@ -850,7 +876,7 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               }}
             </p>
             <p
-              v-for="missing in inspection.missing_values"
+              v-for="missing in missing_values"
               :key="`${missing.node_id}:${missing.property}`"
               :class="[styles.status_text, styles.description]"
               data-tone="error"
@@ -865,10 +891,19 @@ async function run_connection_test(profile: ProviderProfileSummary): Promise<voi
               }}
             </p>
             <p
+              v-for="name in missing_loras"
+              :key="`lora:${name}`"
+              :class="[styles.status_text, styles.description]"
+              data-tone="error"
+            >
+              {{ t("settings.provider_profiles.comfyui.missing_lora", { value: name }) }}
+            </p>
+            <p
               v-if="
                 draft.workflow_id !== '' &&
+                missing_loras.length === 0 &&
                 inspection.missing_node_types.length === 0 &&
-                inspection.missing_values.length === 0
+                missing_values.length === 0
               "
               :class="[styles.status_text, styles.description]"
             >

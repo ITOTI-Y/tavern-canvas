@@ -133,5 +133,21 @@ async function y(e, t) {
 		missing_values: u
 	};
 }
+function b(e, t, n) {
+	let r = [], i = e.missing_values.filter((e) => h.every((r) => {
+		let i = t.mapping.inputs[r];
+		return (n[r] ?? "") === "" || i?.node_id !== e.node_id || i.property !== e.property;
+	}));
+	for (let i of h) {
+		let a = n[i] ?? "", o = t.mapping.inputs[i], s = o === void 0 ? void 0 : t.workflow[o.node_id], c = e.options[i];
+		a !== "" && o !== void 0 && s !== void 0 && c.length !== 0 && (c.includes(a) || r.push({
+			node_id: o.node_id,
+			class_type: s.class_type,
+			property: o.property,
+			value: a
+		}));
+	}
+	return [...i, ...r];
+}
 //#endregion
-export { d as a, p as i, y as n, f as o, m as r, h as t };
+export { p as a, m as i, y as n, d as o, b as r, f as s, h as t };

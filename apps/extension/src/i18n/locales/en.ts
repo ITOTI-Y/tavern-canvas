@@ -830,6 +830,7 @@ const settings = {
         "This address cannot be reached. Make sure ComfyUI is running and was started with --enable-cors-header.",
       connected: "Connected to ComfyUI {version}.",
       missing_nodes: "The server has not installed these nodes: {names}",
+      missing_lora: 'The server has no LoRA "{value}".',
       missing_value: 'The server has no "{value}" for {property} of node #{node} ({class_type}).',
       workflow_ready: "The server has every node and model file the workflow uses.",
     },

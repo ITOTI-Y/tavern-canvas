@@ -749,6 +749,7 @@ var e = {
 				unreachable: "无法访问这个地址。请确认 ComfyUI 正在运行，并且启动参数里带有 --enable-cors-header。",
 				connected: "已连接，ComfyUI 版本 {version}。",
 				missing_nodes: "服务端没有安装这些节点：{names}",
+				missing_lora: "服务端没有 LoRA“{value}”。",
 				missing_value: "节点 #{node}（{class_type}）的 {property} 在服务端没有“{value}”。",
 				workflow_ready: "工作流用到的节点和模型文件在服务端都存在。"
 			},
