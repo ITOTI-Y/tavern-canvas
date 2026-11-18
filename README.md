@@ -207,6 +207,12 @@ of LoRAs without holding a LoRA node. Each character in the picture is written i
 a sentence on a line of its own that starts with the character's place in the picture, such as
 `On the far left is a girl with red hair, squatting.`
 
+ComfyUI reads emphasis as `(tag:1.2)`, while Inkwell's prompts and quality tags use NovelAI's
+`{tag}`, `[tag]` and `1.5::tag::`. The repository's `custom_nodes/comfyui_nai_prompt` folder holds a
+ComfyUI custom node that converts one into the other; the extension does not install it. Copy the
+folder into `ComfyUI/custom_nodes/` on the server, restart ComfyUI and put the node between the
+prompt text and its text encoder, as its README describes.
+
 **Cloud providers.** `novelai`, `openai_image`, and `google_image` are called directly from the
 browser to the vendor's own origin, with a credential from the credential backend. The routes and
 auth headers are fixed by a built in catalog, so a cloud profile cannot be pointed at an arbitrary

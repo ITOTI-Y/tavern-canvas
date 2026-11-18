@@ -22,3 +22,5 @@ docs/_dev/
 data/vocabulary/*.jsonl
 !data/vocabulary/raw_vocabulary_tags_public.jsonl
 .claude/
+__pycache__/
+.pytest_cache/
